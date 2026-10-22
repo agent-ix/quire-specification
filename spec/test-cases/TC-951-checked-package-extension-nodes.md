@@ -42,8 +42,8 @@ cause and pointer. Scope: FR-469-AC-1 to FR-469-AC-10.
 
 Read the fixture through the strict V2 reader with the `retention` definition
 held, then read each vector below. Unless a vector says otherwise, a mutation
-keeps every other member, recomputes every changed node key, patches the
-`identity_projection` entry and recomputes `package_id`.
+keeps every other member, recomputes every changed node key and recomputes
+`package_id`.
 
 | Vector | Input | Expected result |
 | --- | --- | --- |

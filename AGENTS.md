@@ -18,7 +18,7 @@ version they ran.
 - Do not infer licensing from process or repository boundaries.
 - Keep private research, traces and issue links out of public releases. No public posting, visibility change, or source relicensing without explicit approval.
 - Use isolated worktrees for concurrent code sessions; preserve unrelated edits.
-- Owner directive: checks run locally until stable. This repository has no hosted workflows; any future workflow must be manual-dispatch only (`workflow_dispatch`). Do not add automatic triggers or dispatch a run without explicit direction.
+- Owner directive: build, test, and qualification checks run locally until stable. Hosted workflows for those checks must be manual-dispatch only (`workflow_dispatch`); do not add automatic triggers or dispatch a run without explicit direction. Only `.github/workflows/language-boundary.yml` may use `pull_request_target` to call the trusted Rust language-boundary checker and report status on the pull request head without executing its code. The existing CLA workflow may continue its automatic administration.
 - Prototype workflow: maintain one current draft and use Git for working history.
   Update existing artifacts, record material decisions, and review at PR
   readiness; avoid repeated status logs, intermediate reviews and speculative

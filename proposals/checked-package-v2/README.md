@@ -189,11 +189,15 @@ structures, but any external consumer receives only the contract.
 
 The package key is the selected contract version and a
 `quire.package.semantic/v2` digest over a non-circular JCS preimage. The
-preimage is exactly the `quire.checked-package-id/v2` object containing ordered
-edition, profile, definition, model, feature and dependency selections plus the
+package shows `identity_preimage`, the `quire.checked-package-id/v2` object
+containing ordered edition, profile, definition, model, feature and dependency
+selections and no node. The package-id preimage is that object plus the
 checked semantic graph's identity projection, one occurrence-free entry per
 node in graph order (the producer's order of `semantic_graph.nodes`, which a
-reader does not sort and which enters the id). It excludes
+reader does not sort and which enters the id); a reader derives the
+projection from the graph and a package never ships it, so every node is on
+the wire once. An `identity_preimage` carrying `identity_projection` fails the
+schema. The preimage excludes
 package identity itself, source-occurrence/source-map data, raw-byte artifacts,
 presentation, runtime inputs, installed backends, diagnostic wording and reader
 limits.
@@ -214,7 +218,7 @@ package. A node id depends only on content: an unchanged source- or
 definition-owned declaration retains its identity across unrelated document
 changes. A structural node carries its `owner` member (`SourceOwner` on a
 declared node, `ModelOwner` on a model declaration node or clause function, none
-elsewhere), also on its `identity_projection` entry, so a reader re-derives
+elsewhere), which the derived identity projection carries, so a reader re-derives
 every structural key from the package alone. `fixtures/positive-two-owners-a.json`
 and `-b.json` declare the same records under two `SourceOwner`s and differ in
 every owner-keyed node id. Qualified names are arrays of ASCII identifier segments.

@@ -136,7 +136,10 @@ aliases and captures" table above (`0` for `self`, ascending for `result`
 and each operation parameter in bound order). Every occurrence has role
 `expression`. The node's `semantic_type` is the value's type, as that table
 and [FR-322](FR-322-checked-package-artifact.md)'s "Model-owned members"
-step 4 derive it.
+step 4 derive it. A step relation's execution binders are the one exception to
+the table's levels: they take the levels that continue across executions
+([FR-477](FR-477-checked-package-step-relation-claim-body.md)
+`parameters`), so a later execution's `self` has a level above `0`.
 
 ## Reader order
 

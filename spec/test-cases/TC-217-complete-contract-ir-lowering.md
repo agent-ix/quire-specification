@@ -39,7 +39,7 @@ of ascending-digest order; this mutation must also refuse as
 `invalid_semantic_graph` (FR-322-AC-10). In a real package, retain an
 enum/member/unit preimage while independently changing the enum literal case,
 `semantic_type`, declaration/dimension dependency or unit target dependency,
-mirror the changed identity projection and recompute package ID; the reader must
+recompute package ID; the reader must
 still refuse the contradictory cross-field join. Then execute the positive case,
 every admitted graph family, each declared boundary, and every explicit
 refusal/non-conclusive mutation through lowering. Compare complete typed

@@ -329,7 +329,7 @@ fn package_lock_matches_identity_preimage(package: &Value) -> bool {
 
 fn package_nominal_nodes_are_valid(package: &Value) -> bool {
     if !package_lock_matches_identity_preimage(package)
-        || unqualified_jcs_sha256(&package["identity_preimage"])
+        || unqualified_jcs_sha256(&package_id_preimage(&package))
             != package["package_id"]["digest"].as_str().unwrap_or_default()
     {
         return false;
@@ -346,60 +346,39 @@ fn package_nominal_nodes_are_valid(package: &Value) -> bool {
             })
         })
         .collect::<Vec<_>>();
-    let projections = package["identity_preimage"]["identity_projection"]
-        .as_array()
-        .expect("nominal package projections are an array");
-
     nodes.iter().all(|node| {
         let preimage = &node["nominal_identity_preimage"];
         let node_digest = node["node_id"]["digest"].as_str().unwrap_or_default();
-        let Some(projection) = projections
-            .iter()
-            .find(|projection| projection["node_id"] == node["node_id"])
-        else {
-            return false;
-        };
-        let mut projected_node = node.clone();
-        projected_node
-            .as_object_mut()
-            .expect("node is an object")
-            .remove("occurrences");
-        projected_node == *projection
-            && unqualified_jcs_sha256(preimage) == node_digest
+        unqualified_jcs_sha256(preimage) == node_digest
             && semantic_preimage_is_valid(preimage, &vectors)
             && nominal_node_cross_fields_are_valid(node)
             && owner_joins_lock(preimage, &package["lock"])
     })
 }
 
-fn replace_node_field_in_graph_and_projection(
+fn replace_node_field_in_graph(
     package: &mut Value,
     node_index: usize,
     relative_pointer: &str,
     replacement: Value,
 ) {
-    for prefix in [
-        "/semantic_graph/nodes",
-        "/identity_preimage/identity_projection",
-    ] {
-        let pointer = format!("{prefix}/{node_index}{relative_pointer}");
-        *package
-            .pointer_mut(&pointer)
-            .expect("authored package-node mutation pointer exists") = replacement.clone();
-    }
+    let pointer = format!("/semantic_graph/nodes/{node_index}{relative_pointer}");
+    *package
+        .pointer_mut(&pointer)
+        .expect("authored package-node mutation pointer exists") = replacement;
 }
 
 fn refresh_package_id(package: &mut Value) {
-    package["package_id"]["digest"] = json!(unqualified_jcs_sha256(&package["identity_preimage"]));
+    package["package_id"]["digest"] = json!(unqualified_jcs_sha256(&package_id_preimage(&package)));
 }
 
-fn replace_nominal_preimage_in_graph_and_projection(
+fn replace_nominal_preimage_in_graph(
     package: &mut Value,
     node_index: usize,
     relative_pointer: &str,
     replacement: Value,
 ) {
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         package,
         node_index,
         &format!("/nominal_identity_preimage{relative_pointer}"),
@@ -2837,19 +2816,6 @@ fn is_model_reference_target(node: &Value) -> bool {
 /// `model_selections` row whose admitted document declares its `node`
 /// (`missing-selection` at the node).
 fn owner_join_refusal(package: &Value, nodes: &[Value]) -> Result<(), ReadRefusal> {
-    let projection = package["identity_preimage"]["identity_projection"]
-        .as_array()
-        .map(Vec::as_slice)
-        .unwrap_or_default();
-    if let Some(index) = nodes
-        .iter()
-        .zip(projection)
-        .position(|(node, entry)| node.get("owner") != entry.get("owner"))
-    {
-        return Err(ReadRefusal::InvalidOwnerValue(format!(
-            "/identity_preimage/identity_projection/{index}/owner"
-        )));
-    }
     let mut owned = nodes
         .iter()
         .filter(|node| node.get("owner").is_some())
@@ -2927,9 +2893,7 @@ enum ReadRefusal {
     /// lock does not select or whose selected document does not declare it.
     OwnerSelection(Value),
     /// `invalid_package`/`invalid-value` at a `/source_map/{i}` entry whose
-    /// region names a source other than its declared node's `SourceOwner`, or
-    /// at `/identity_preimage/identity_projection/{i}/owner` when that entry's
-    /// owner differs from its node's.
+    /// region names a source other than its declared node's `SourceOwner`.
     InvalidOwnerValue(String),
     StaleNodeKey(Value),
     Declaration(DeclarationRefusal, Value),
@@ -3066,7 +3030,7 @@ fn dependency_supply_refusal(
                 locus,
             ));
         };
-        if entry["package_id"]["digest"] != unqualified_jcs_sha256(&dependency["identity_preimage"])
+        if entry["package_id"]["digest"] != unqualified_jcs_sha256(&package_id_preimage(&dependency))
         {
             return Err(ReadRefusal::Dependency(
                 "stale_dependency",
@@ -5084,8 +5048,8 @@ fn tc_233_frame_defect_ordering_does_not_depend_on_collection_order() {
     );
 }
 
-/// Rekey one application-bearing node in the graph, its projection and the
-/// source map to its preimage digest, then refresh the package identity.
+/// Rekey one application-bearing node in the graph and the source map to its
+/// preimage digest, then refresh the package identity.
 fn rekey_application_node(package: &mut Value, node_index: usize) {
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
@@ -5095,7 +5059,7 @@ fn rekey_application_node(package: &mut Value, node_index: usize) {
     let new_digest = unqualified_jcs_sha256(
         &application_node_preimage(node, nodes).expect("rekeyed node bears an application"),
     );
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         package,
         node_index,
         "/node_id/digest",
@@ -5198,18 +5162,18 @@ fn modelize_legacy_record_reference(package: &mut Value) -> BTreeMap<String, Str
         .find(|node| is_model_declaration(node))
         .expect("fixture model declaration")["node_id"]
         .clone();
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         package,
         index,
         "/body/members/0/target",
         model_id.clone(),
     );
-    replace_node_field_in_graph_and_projection(package, index, "/dependencies", json!([model_id]));
+    replace_node_field_in_graph(package, index, "/dependencies", json!([model_id]));
     rekey_stale_nodes(package)
 }
 
-/// Append a structural node to a fixture and bind its current key and package
-/// projection. The caller supplies the complete wire body and cross-fields;
+/// Append a structural node to a fixture, bind its current key and recompute
+/// the package id. The caller supplies the complete wire body and cross-fields;
 /// this helper is used only by reader qualification vectors.
 fn append_rekeyed_structural_node(package: &mut Value, mut node: Value) {
     let self_typed = node["semantic_type"] == node["node_id"]
@@ -5226,19 +5190,10 @@ fn append_rekeyed_structural_node(package: &mut Value, mut node: Value) {
     if self_typed {
         node["semantic_type"] = node["node_id"].clone();
     }
-    let mut projection = node.clone();
-    projection
-        .as_object_mut()
-        .expect("structural node is an object")
-        .remove("occurrences");
     package["semantic_graph"]["nodes"]
         .as_array_mut()
         .expect("fixture nodes are an array")
         .push(node);
-    package["identity_preimage"]["identity_projection"]
-        .as_array_mut()
-        .expect("fixture projections are an array")
-        .push(projection);
     package["identity_preimage"] = derive_identity_preimage(package);
     refresh_package_id(package);
 }
@@ -5258,15 +5213,15 @@ fn renamed_locus(renames: &BTreeMap<String, String>, locus: &Value) -> Value {
 /// Unit node index in `positive-nominal-identities.json`; no other node depends on it.
 const NOMINAL_UNIT_NODE: usize = 2;
 
-/// Replace the unit node owner and consistently rekey the node, its projection,
-/// its source-map entry and the package identity.
+/// Replace the unit node owner and consistently rekey the node, its source-map
+/// entry and the package identity.
 fn rekey_nominal_unit_owner(package: &mut Value, owner: Value) {
-    replace_nominal_preimage_in_graph_and_projection(package, NOMINAL_UNIT_NODE, "/owner", owner);
+    replace_nominal_preimage_in_graph(package, NOMINAL_UNIT_NODE, "/owner", owner);
     let old_id = package["semantic_graph"]["nodes"][NOMINAL_UNIT_NODE]["node_id"].clone();
     let new_digest = unqualified_jcs_sha256(
         &package["semantic_graph"]["nodes"][NOMINAL_UNIT_NODE]["nominal_identity_preimage"],
     );
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         package,
         NOMINAL_UNIT_NODE,
         "/node_id/digest",
@@ -5309,17 +5264,14 @@ fn tc_233_all_checked_semantic_node_families_are_admitted_by_the_public_schema()
         .expect("positive I04 all-family vector has the closed public shape");
 
     let vector = parsed_fixture(POSITIVE_ALL_FAMILIES);
-    let projections = vector["identity_preimage"]["identity_projection"]
-        .as_array()
-        .expect("identity projections are an array");
+    assert_eq!(
+        vector["identity_preimage"].get("identity_projection"),
+        None,
+        "the graph is shipped once: the identity preimage carries no projection"
+    );
     let nodes = vector["semantic_graph"]["nodes"]
         .as_array()
         .expect("semantic graph nodes are an array");
-    assert_eq!(
-        nodes.len(),
-        projections.len(),
-        "every identity-projected node must be present in the admitted graph"
-    );
     let node_tags = nodes
         .iter()
         .map(|node| node["node_tag"].as_str().expect("node tag is a string"))
@@ -5417,7 +5369,7 @@ fn tc_233_schema_names_every_fr208_systems_meaning_as_a_model_semantic_form() {
 fn tc_233_package_identity_is_the_jcs_digest_of_its_non_circular_preimage() {
     let vector = parsed_fixture(POSITIVE_ALL_FAMILIES);
     let qualified_digest =
-        jcs_sha256(&vector["identity_preimage"]).expect("identity preimage is canonicalizable");
+        jcs_sha256(&package_id_preimage(&vector)).expect("package-id preimage is canonicalizable");
     let actual = qualified_digest
         .strip_prefix("sha256-jcs:")
         .expect("qualified canonicalizer retains its selected prefix");
@@ -5441,30 +5393,64 @@ const IDENTITY_SELECTION_MEMBERS: [&str; 6] = [
     "dependency_selections",
 ];
 
-/// Rebuild the non-circular V2 identity preimage from a package's lock and
-/// semantic graph alone, dropping node source occurrences, so that the package
-/// id is recomputed from its named members rather than read back.
+/// Rebuild the shipped V2 identity preimage from a package's lock alone: the
+/// version and the selection members, with no node.
 fn derive_identity_preimage(package: &Value) -> Value {
     let mut preimage = serde_json::Map::new();
     preimage.insert("version".to_owned(), json!("quire.checked-package-id/v2"));
     for member in IDENTITY_SELECTION_MEMBERS {
         preimage.insert(member.to_owned(), package["lock"][member].clone());
     }
-    let projection = package["semantic_graph"]["nodes"]
-        .as_array()
-        .expect("semantic graph nodes are an array")
-        .iter()
-        .map(|node| {
-            let mut projected = node.clone();
-            projected
-                .as_object_mut()
-                .expect("semantic node is an object")
-                .remove("occurrences");
-            projected
-        })
-        .collect();
-    preimage.insert("identity_projection".to_owned(), Value::Array(projection));
     Value::Object(preimage)
+}
+
+/// The FR-322 identity projection a reader derives from the semantic graph:
+/// every node in graph order with its source occurrences removed.
+fn occurrence_free_projection(package: &Value) -> Value {
+    Value::Array(
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("semantic graph nodes are an array")
+            .iter()
+            .map(|node| {
+                let mut projected = node.clone();
+                projected
+                    .as_object_mut()
+                    .expect("semantic node is an object")
+                    .remove("occurrences");
+                projected
+            })
+            .collect(),
+    )
+}
+
+/// The package-id preimage of a package as shipped: its `identity_preimage`
+/// with the identity projection derived from its semantic graph.
+fn package_id_preimage(package: &Value) -> Value {
+    let mut preimage = package["identity_preimage"].clone();
+    preimage
+        .as_object_mut()
+        .expect("identity preimage is an object")
+        .insert(
+            "identity_projection".to_owned(),
+            occurrence_free_projection(package),
+        );
+    preimage
+}
+
+/// The package-id preimage rebuilt from a package's lock and semantic graph
+/// alone, so that the package id is recomputed from its named members rather
+/// than read back.
+fn derive_package_id_preimage(package: &Value) -> Value {
+    let mut preimage = derive_identity_preimage(package);
+    preimage
+        .as_object_mut()
+        .expect("identity preimage is an object")
+        .insert(
+            "identity_projection".to_owned(),
+            occurrence_free_projection(package),
+        );
+    preimage
 }
 
 #[trace("TC-233", "FR-322-AC-14")]
@@ -5481,7 +5467,7 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
             .as_str()
             .expect("package digest is a string");
         assert_eq!(
-            unqualified_jcs_sha256(&derive_identity_preimage(&package)),
+            unqualified_jcs_sha256(&derive_package_id_preimage(&package)),
             package_id,
             "{fixture} package id is recomputed from its named members"
         );
@@ -5501,9 +5487,9 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
                 "node source occurrence",
                 "/semantic_graph/nodes/0/occurrences/0/ordinal",
                 json!(7),
-                "/identity_preimage/identity_projection/0",
-                "occurrences",
-                package["semantic_graph"]["nodes"][0]["occurrences"].clone(),
+                "/identity_preimage",
+                "identity_projection",
+                package["semantic_graph"]["nodes"].clone(),
             ),
             (
                 "raw source digest",
@@ -5549,7 +5535,7 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
                 "{fixture} stored identity preimage still matches the package after editing the excluded {label}"
             );
             assert_eq!(
-                unqualified_jcs_sha256(&derive_identity_preimage(&candidate)),
+                unqualified_jcs_sha256(&derive_package_id_preimage(&candidate)),
                 package_id,
                 "{fixture} editing the excluded {label} leaves the package id unchanged"
             );
@@ -5633,7 +5619,7 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
                 .pointer_mut(pointer)
                 .unwrap_or_else(|| panic!("{fixture} has a named {label}")) = replacement;
             assert_ne!(
-                unqualified_jcs_sha256(&derive_identity_preimage(&candidate)),
+                unqualified_jcs_sha256(&derive_package_id_preimage(&candidate)),
                 package_id,
                 "{fixture} editing the named preimage member {label} changes the package id"
             );
@@ -5707,11 +5693,11 @@ fn tc_233_closure_vectors_bind_real_dependency_identities() {
             for selected in selections {
                 assert_eq!(
                     selected["package_id"]["digest"],
-                    unqualified_jcs_sha256(&base["identity_preimage"]),
+                    unqualified_jcs_sha256(&package_id_preimage(&base)),
                     "the selected leaf id is the real base package id"
                 );
             }
-            let mut preimage = base["identity_preimage"].clone();
+            let mut preimage = package_id_preimage(&base);
             preimage["dependency_selections"] = lock["dependency_selections"].clone();
             assert_eq!(
                 entry["package_id"]["digest"],
@@ -5797,7 +5783,7 @@ fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
         package["identity_preimage"],
         "dependency selections enter the identity preimage exactly as locked"
     );
-    let package_id = unqualified_jcs_sha256(&derive_identity_preimage(&package));
+    let package_id = unqualified_jcs_sha256(&derive_package_id_preimage(&package));
     assert_eq!(
         package_id,
         vectors["package_id"]
@@ -5816,7 +5802,7 @@ fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
             json!("5555555555555555555555555555555555555555555555555555555555555555");
     }
     assert_ne!(
-        unqualified_jcs_sha256(&derive_identity_preimage(&repinned)),
+        unqualified_jcs_sha256(&derive_package_id_preimage(&repinned)),
         package_id,
         "a dependency's package id enters the importing package id"
     );
@@ -6059,7 +6045,7 @@ fn tc_233_a_dependency_call_is_admitted_and_its_mutations_refuse_at_their_loci()
     );
     assert_eq!(
         library["package_id"]["digest"],
-        unqualified_jcs_sha256(&library["identity_preimage"]),
+        unqualified_jcs_sha256(&package_id_preimage(&library)),
         "the library's recorded package_id recomputes"
     );
     assert_eq!(read_package_semantics(&library, &catalog), Ok(()));
@@ -6081,7 +6067,7 @@ fn tc_233_a_dependency_call_is_admitted_and_its_mutations_refuse_at_their_loci()
     assert_eq!(derive_identity_preimage(&base), base["identity_preimage"]);
     assert_eq!(
         base["package_id"]["digest"],
-        unqualified_jcs_sha256(&base["identity_preimage"]),
+        unqualified_jcs_sha256(&package_id_preimage(&base)),
         "the importer's recorded package_id recomputes"
     );
     assert_eq!(
@@ -6347,11 +6333,11 @@ fn tc_233_nominal_preimages_are_closed_inside_a_real_package_and_lock() {
         .expect("nominal identity package has the closed I04 wire shape");
     assert!(
         package_nominal_nodes_are_valid(&package),
-        "package nodes bind exact preimages, projections, package id and owner lock joins"
+        "package nodes bind exact preimages, package id and owner lock joins"
     );
 
     let mut absent_owner = package.clone();
-    replace_nominal_preimage_in_graph_and_projection(
+    replace_nominal_preimage_in_graph(
         &mut absent_owner,
         1,
         "/owner/identity",
@@ -6370,7 +6356,7 @@ fn tc_233_nominal_preimages_are_closed_inside_a_real_package_and_lock() {
     ));
 
     let mut unreduced = package.clone();
-    replace_nominal_preimage_in_graph_and_projection(
+    replace_nominal_preimage_in_graph(
         &mut unreduced,
         2,
         "/offset",
@@ -6379,7 +6365,7 @@ fn tc_233_nominal_preimages_are_closed_inside_a_real_package_and_lock() {
     assert!(!package_nominal_nodes_are_valid(&unreduced));
 
     let mut signed_denominator = package.clone();
-    replace_nominal_preimage_in_graph_and_projection(
+    replace_nominal_preimage_in_graph(
         &mut signed_denominator,
         2,
         "/scale/denominator",
@@ -6388,7 +6374,7 @@ fn tc_233_nominal_preimages_are_closed_inside_a_real_package_and_lock() {
     assert!(!schema.is_valid(&signed_denominator));
 
     let mut invalid_root = package.clone();
-    replace_nominal_preimage_in_graph_and_projection(
+    replace_nominal_preimage_in_graph(
         &mut invalid_root,
         2,
         "/scale/numerator",
@@ -6397,7 +6383,7 @@ fn tc_233_nominal_preimages_are_closed_inside_a_real_package_and_lock() {
     assert!(!package_nominal_nodes_are_valid(&invalid_root));
 
     let mut invalid_root_offset = package.clone();
-    replace_nominal_preimage_in_graph_and_projection(
+    replace_nominal_preimage_in_graph(
         &mut invalid_root_offset,
         2,
         "/offset/numerator",
@@ -6411,7 +6397,7 @@ fn tc_233_nominal_preimages_are_closed_inside_a_real_package_and_lock() {
     assert!(!package_nominal_nodes_are_valid(&stale_node_id));
 
     let mut unordered_enum = package.clone();
-    replace_nominal_preimage_in_graph_and_projection(
+    replace_nominal_preimage_in_graph(
         &mut unordered_enum,
         1,
         "/ordered",
@@ -6427,7 +6413,7 @@ fn tc_233_nominal_preimages_join_semantic_fields_and_dependencies() {
     let package = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
 
     let mut changed_enum_body = package.clone();
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         &mut changed_enum_body,
         0,
         "/body/value",
@@ -6439,7 +6425,7 @@ fn tc_233_nominal_preimages_join_semantic_fields_and_dependencies() {
 
     let mut changed_enum_type = package.clone();
     let wrong_enum_type = package["semantic_graph"]["nodes"][2]["node_id"].clone();
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         &mut changed_enum_type,
         0,
         "/semantic_type",
@@ -6450,7 +6436,7 @@ fn tc_233_nominal_preimages_join_semantic_fields_and_dependencies() {
     assert!(!package_nominal_nodes_are_valid(&changed_enum_type));
 
     let mut missing_enum_dependency = package.clone();
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         &mut missing_enum_dependency,
         0,
         "/dependencies",
@@ -6462,7 +6448,7 @@ fn tc_233_nominal_preimages_join_semantic_fields_and_dependencies() {
 
     let mut changed_unit_type = package.clone();
     let wrong_unit_type = package["semantic_graph"]["nodes"][1]["node_id"].clone();
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         &mut changed_unit_type,
         2,
         "/semantic_type",
@@ -6473,7 +6459,7 @@ fn tc_233_nominal_preimages_join_semantic_fields_and_dependencies() {
     assert!(!package_nominal_nodes_are_valid(&changed_unit_type));
 
     let mut missing_dimension_dependency = package.clone();
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         &mut missing_dimension_dependency,
         2,
         "/dependencies",
@@ -6581,7 +6567,7 @@ fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
             "{name} mutation keeps the lock and identity preimage consistent"
         );
         assert_eq!(
-            unqualified_jcs_sha256(&unjoined["identity_preimage"]),
+            unqualified_jcs_sha256(&package_id_preimage(&unjoined)),
             unjoined["package_id"]["digest"]
                 .as_str()
                 .expect("package digest is a string"),
@@ -6839,16 +6825,10 @@ fn tc_233_package_selection_vectors_admit_exact_conditional_and_alternative_prof
 }
 
 /// Replace one application-bearing node of a package, recompute its exact
-/// dependencies and key it, its projection and the package from the preimage.
+/// dependencies and key it and the package from the preimage.
 fn replace_application_node(package: &mut Value, index: usize, mut node: Value) {
     node["dependencies"] = json!(application_dependencies(&node["body"]));
-    let mut projected = node.clone();
-    projected
-        .as_object_mut()
-        .expect("semantic node is an object")
-        .remove("occurrences");
     package["semantic_graph"]["nodes"][index] = node;
-    package["identity_preimage"]["identity_projection"][index] = projected;
     rekey_application_node(package, index);
 }
 
@@ -8402,10 +8382,7 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
     };
     let mut undeclared = families.clone();
     let scalar = index_of(&families, "scalar_type");
-    for prefix in [
-        "/semantic_graph/nodes",
-        "/identity_preimage/identity_projection",
-    ] {
+    for prefix in ["/semantic_graph/nodes"] {
         undeclared
             .pointer_mut(&format!("{prefix}/{scalar}"))
             .and_then(Value::as_object_mut)
@@ -8418,10 +8395,7 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
     );
     let mut stray = families.clone();
     let expression = index_of(&families, "expression");
-    for prefix in [
-        "/semantic_graph/nodes",
-        "/identity_preimage/identity_projection",
-    ] {
+    for prefix in ["/semantic_graph/nodes"] {
         stray
             .pointer_mut(&format!("{prefix}/{expression}"))
             .and_then(Value::as_object_mut)
@@ -8449,10 +8423,7 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
         })
         .expect("the operation package uses a builtin scalar only as a type occurrence");
     let mut named_builtin = operations.clone();
-    for prefix in [
-        "/semantic_graph/nodes",
-        "/identity_preimage/identity_projection",
-    ] {
+    for prefix in ["/semantic_graph/nodes"] {
         named_builtin
             .pointer_mut(&format!("{prefix}/{anonymous}"))
             .and_then(Value::as_object_mut)
@@ -8514,7 +8485,7 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
     for (renamed, replacement) in [("Length", "Other"), ("Length", "Status")] {
         let index = named(renamed);
         let mut mismatched = nominal.clone();
-        replace_node_field_in_graph_and_projection(
+        replace_node_field_in_graph(
             &mut mismatched,
             index,
             "/declaration/qualified_name",
@@ -9552,7 +9523,7 @@ fn clause_node_index(package: &Value, clause: &str) -> usize {
 }
 
 /// Replace one clause node's body through `edit`, rekeying the node, its
-/// dependencies, projection and package id as a producer would.
+/// dependencies and package id as a producer would.
 fn edited_clause(package: &Value, clause: &str, edit: impl FnOnce(&mut Value)) -> Value {
     let mut candidate = package.clone();
     let index = clause_node_index(&candidate, clause);
@@ -9865,10 +9836,6 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
     wrong["semantic_graph"]["nodes"]
         .as_array_mut()
         .expect("nodes")
-        .push(function.clone());
-    wrong["identity_preimage"]["identity_projection"]
-        .as_array_mut()
-        .expect("identity projection")
         .push(function.clone());
     replace_application_node(&mut wrong, index, function);
     let misplaced_id = wrong["semantic_graph"]["nodes"][index]["node_id"].clone();
@@ -10334,7 +10301,7 @@ fn tc_395_union_nodes_fixture_is_a_closed_v2_package_with_member_ordered_arms() 
         "the union fixture's identity preimage is its selections and occurrence-free graph"
     );
     assert_eq!(
-        unqualified_jcs_sha256(&package["identity_preimage"]),
+        unqualified_jcs_sha256(&package_id_preimage(&package)),
         package["package_id"]["digest"].as_str().unwrap_or_default(),
         "the union fixture's package id is recomputed from its preimage"
     );
@@ -10412,7 +10379,7 @@ fn tc_395_value_and_nullary_union_values_use_application_node_keys() {
     assert_eq!(
         read_package_semantics(&current, &catalog),
         Ok(()),
-        "payload and nullary union values are admitted after graph/projection rekey"
+        "payload and nullary union values are admitted after graph rekey"
     );
     for &index in &indexes {
         let current_digest = current["semantic_graph"]["nodes"][index]["node_id"]["digest"]
@@ -10439,10 +10406,6 @@ fn tc_395_value_and_nullary_union_values_use_application_node_keys() {
         .expect("stale package parses");
         refresh_package_id(&mut stale);
         let expected = stale["semantic_graph"]["nodes"][index]["node_id"].clone();
-        assert_eq!(
-            stale["identity_preimage"]["identity_projection"][index]["node_id"], expected,
-            "the stale candidate also rekeys its identity projection"
-        );
         assert_eq!(
             read_package_semantics(&stale, &catalog),
             Err(ReadRefusal::StaleNodeKey(expected)),
@@ -12019,8 +11982,8 @@ fn tc_233_positive_fixtures_carry_derived_structural_keys() {
     }
 }
 
-/// A tampered derived-shape node (same `node_id`, patched body and
-/// projection, recomputed `package_id`) is schema-valid and identity-consistent
+/// A tampered derived-shape node (same `node_id`, patched body, recomputed
+/// `package_id`) is schema-valid and identity-consistent
 /// yet refused `invalid_package`/`stale-node-key` at its own `node_id`, while
 /// the untampered package is admitted. The rows cover an ungrouped
 /// `integer_range`, `reference` and `set`, the declared record
@@ -12090,10 +12053,7 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
             })
             .expect("the mutated node is published");
         let mut candidate = base.clone();
-        for prefix in [
-            "/semantic_graph/nodes",
-            "/identity_preimage/identity_projection",
-        ] {
+        for prefix in ["/semantic_graph/nodes"] {
             let node = candidate
                 .pointer_mut(&format!("{prefix}/{index}"))
                 .expect("node pointer exists");
@@ -12110,7 +12070,7 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
         assert_eq!(
             derive_identity_preimage(&candidate),
             candidate["identity_preimage"],
-            "{id}: projection and package id agree with the tampered graph"
+            "{id}: the identity preimage and package id agree with the tampered graph"
         );
         assert!(schema.is_valid(&candidate), "{id}: the schema admits it");
         assert_eq!(
@@ -12241,7 +12201,7 @@ fn tc_322_derived_form_key_mutations() {
                 .expect("reader fixture nodes are an array")
                 .len()
                 - 1;
-            replace_node_field_in_graph_and_projection(
+            replace_node_field_in_graph(
                 &mut package,
                 node_index,
                 "/node_id/digest",
@@ -12282,13 +12242,13 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         })
         .unwrap();
     let integer_id = wrong_reference["semantic_graph"]["nodes"][16]["node_id"].clone();
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         &mut wrong_reference,
         reference_index,
         "/body/members/0/target",
         integer_id.clone(),
     );
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         &mut wrong_reference,
         reference_index,
         "/dependencies",
@@ -12314,13 +12274,13 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
             })
             .unwrap();
         let target = candidate["semantic_graph"]["nodes"][replacement_index]["node_id"].clone();
-        replace_node_field_in_graph_and_projection(
+        replace_node_field_in_graph(
             &mut candidate,
             index,
             "/body/members/0/target",
             target.clone(),
         );
-        replace_node_field_in_graph_and_projection(
+        replace_node_field_in_graph(
             &mut candidate,
             index,
             "/dependencies",
@@ -12400,15 +12360,11 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         - 1;
     positive_population["semantic_graph"]["nodes"][positive_index]["body"]["members"][0]["value"]
         ["value"] = json!("3");
-    positive_population["identity_preimage"]["identity_projection"][positive_index]["body"]["members"]
-        [0]["value"]["value"] = json!("3");
     let positive_preimage =
         structural_node_preimage(&positive_population["semantic_graph"]["nodes"][positive_index])
             .unwrap();
     let positive_digest = unqualified_jcs_sha256(&positive_preimage);
     positive_population["semantic_graph"]["nodes"][positive_index]["node_id"]["digest"] =
-        json!(positive_digest);
-    positive_population["identity_preimage"]["identity_projection"][positive_index]["node_id"]["digest"] =
         json!(positive_digest);
     positive_population["identity_preimage"] = derive_identity_preimage(&positive_population);
     refresh_package_id(&mut positive_population);
@@ -12426,8 +12382,6 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         - 1;
     arbitrary_set_population["semantic_graph"]["nodes"][population_index]["body"]["members"][0]["value"]
         ["value"] = json!("3");
-    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["body"]
-        ["members"][0]["value"]["value"] = json!("3");
     let integer_set = arbitrary_set_population["semantic_graph"]["nodes"][42].clone();
     let integer_id = arbitrary_set_population["semantic_graph"]["nodes"][16]["node_id"].clone();
     let mut integer_set = integer_set;
@@ -12442,13 +12396,8 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .clone();
     arbitrary_set_population["semantic_graph"]["nodes"][population_index]["semantic_type"] =
         integer_set_id.clone();
-    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["semantic_type"] =
-        integer_set_id;
     arbitrary_set_population["semantic_graph"]["nodes"][population_index]["dependencies"] =
         json!([integer_id]);
-    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["dependencies"] =
-        arbitrary_set_population["semantic_graph"]["nodes"][population_index]["dependencies"]
-            .clone();
     let population_preimage = structural_node_preimage(
         &arbitrary_set_population["semantic_graph"]["nodes"][population_index],
     )
@@ -12456,8 +12405,6 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let population_digest = unqualified_jcs_sha256(&population_preimage);
     arbitrary_set_population["semantic_graph"]["nodes"][population_index]["node_id"]["digest"] =
         json!(population_digest);
-    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["node_id"]
-        ["digest"] = json!(population_digest);
     arbitrary_set_population["identity_preimage"] =
         derive_identity_preimage(&arbitrary_set_population);
     refresh_package_id(&mut arbitrary_set_population);
@@ -12494,19 +12441,10 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     second["nominal_identity_preimage"]["dimension_node_id"]["digest"] =
         json!("628777f8df3c2700593d56dc20fb110640214dd09bc6cb961d802fdb9b7f6077");
     second["dependencies"] = json!([second["semantic_type"].clone()]);
-    let mut second_projection = second.clone();
-    second_projection
-        .as_object_mut()
-        .unwrap()
-        .remove("occurrences");
     actual_u2["semantic_graph"]["nodes"]
         .as_array_mut()
         .unwrap()
         .push(second.clone());
-    actual_u2["identity_preimage"]["identity_projection"]
-        .as_array_mut()
-        .unwrap()
-        .push(second_projection);
     let metre_source_map = actual_u2["source_map"]
         .as_array()
         .unwrap()
@@ -12605,8 +12543,6 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .as_array_mut()
         .unwrap()
         .reverse();
-    wrong_compound["identity_preimage"]["identity_projection"][compound_index]["body"] =
-        wrong_compound["semantic_graph"]["nodes"][compound_index]["body"].clone();
     let preimage =
         structural_node_preimage(&wrong_compound["semantic_graph"]["nodes"][compound_index])
             .unwrap();
@@ -12615,10 +12551,6 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let compound_id = wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"].clone();
     wrong_compound["semantic_graph"]["nodes"][compound_index]["semantic_type"] =
         compound_id.clone();
-    wrong_compound["identity_preimage"]["identity_projection"][compound_index]["node_id"]["digest"] =
-        json!(digest);
-    wrong_compound["identity_preimage"]["identity_projection"][compound_index]["semantic_type"] =
-        compound_id;
     wrong_compound["identity_preimage"] = derive_identity_preimage(&wrong_compound);
     refresh_package_id(&mut wrong_compound);
     let compound_id = wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"].clone();
@@ -12637,15 +12569,11 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let integer_type = non_self_typed["semantic_graph"]["nodes"][16]["node_id"].clone();
     non_self_typed["semantic_graph"]["nodes"][compound_index]["semantic_type"] =
         integer_type.clone();
-    non_self_typed["identity_preimage"]["identity_projection"][compound_index]["semantic_type"] =
-        integer_type;
     let preimage =
         structural_node_preimage(&non_self_typed["semantic_graph"]["nodes"][compound_index])
             .unwrap();
     let digest = unqualified_jcs_sha256(&preimage);
     non_self_typed["semantic_graph"]["nodes"][compound_index]["node_id"]["digest"] = json!(digest);
-    non_self_typed["identity_preimage"]["identity_projection"][compound_index]["node_id"]["digest"] =
-        json!(digest);
     non_self_typed["identity_preimage"] = derive_identity_preimage(&non_self_typed);
     refresh_package_id(&mut non_self_typed);
     assert_eq!(
@@ -12664,18 +12592,12 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         - 1;
     non_root["semantic_graph"]["nodes"][non_root_index]["body"]["members"][0]["members"][0]["value"]
         ["target"] = non_root["semantic_graph"]["nodes"][16]["node_id"].clone();
-    non_root["identity_preimage"]["identity_projection"][non_root_index]["body"] =
-        non_root["semantic_graph"]["nodes"][non_root_index]["body"].clone();
     let preimage =
         structural_node_preimage(&non_root["semantic_graph"]["nodes"][non_root_index]).unwrap();
     let digest = unqualified_jcs_sha256(&preimage);
     non_root["semantic_graph"]["nodes"][non_root_index]["node_id"]["digest"] = json!(digest);
     let non_root_id = non_root["semantic_graph"]["nodes"][non_root_index]["node_id"].clone();
     non_root["semantic_graph"]["nodes"][non_root_index]["semantic_type"] = non_root_id.clone();
-    non_root["identity_preimage"]["identity_projection"][non_root_index]["node_id"]["digest"] =
-        json!(digest);
-    non_root["identity_preimage"]["identity_projection"][non_root_index]["semantic_type"] =
-        non_root_id;
     non_root["identity_preimage"] = derive_identity_preimage(&non_root);
     refresh_package_id(&mut non_root);
     assert_eq!(
@@ -12706,7 +12628,7 @@ fn tc_233_recursive_record_fixture_carries_derived_group_keys() {
         package["identity_preimage"]
     );
     assert_eq!(
-        unqualified_jcs_sha256(&package["identity_preimage"]),
+        unqualified_jcs_sha256(&package_id_preimage(&package)),
         package["package_id"]["digest"]
             .as_str()
             .expect("package digest")
@@ -12901,19 +12823,14 @@ fn required_owner_kind(node: &Value) -> Option<&'static str> {
     }
 }
 
-/// Apply `edit` to the node at `index` and to its `identity_projection`
-/// entry, keep the node id, and recompute the package id.
-fn edit_node_and_projection(package: &mut Value, index: usize, edit: impl Fn(&mut Value)) {
-    for prefix in [
-        "/semantic_graph/nodes",
-        "/identity_preimage/identity_projection",
-    ] {
-        edit(
-            package
-                .pointer_mut(&format!("{prefix}/{index}"))
-                .expect("node pointer exists"),
-        );
-    }
+/// Apply `edit` to the node at `index`, keep the node id, and recompute the
+/// package id.
+fn edit_node(package: &mut Value, index: usize, edit: impl Fn(&mut Value)) {
+    edit(
+        package
+            .pointer_mut(&format!("/semantic_graph/nodes/{index}"))
+            .expect("node pointer exists"),
+    );
     refresh_package_id(package);
 }
 
@@ -12958,8 +12875,8 @@ fn add_lock_source(package: &mut Value, source: &Value) {
         .push(source.clone());
 }
 
-/// FR-322-AC-51: a node carries `owner` exactly when its preimage does, and so
-/// does its projection entry; the full reader admits every positive fixture.
+/// FR-322-AC-51: a node carries `owner` exactly when its preimage does; the
+/// full reader admits every positive fixture.
 #[trace("TC-233", "FR-322-AC-51", "FR-322-AC-50")]
 #[test]
 fn tc_233_every_positive_fixture_carries_owners_exactly_where_the_rule_requires() {
@@ -12971,21 +12888,13 @@ fn tc_233_every_positive_fixture_carries_owners_exactly_where_the_rule_requires(
         let nodes = package["semantic_graph"]["nodes"]
             .as_array()
             .expect("nodes");
-        let projection = package["identity_preimage"]["identity_projection"]
-            .as_array()
-            .expect("projection");
-        for (node, projected) in nodes.iter().zip(projection) {
+        for node in nodes {
             assert_eq!(
                 node["owner"]["kind"].as_str(),
                 required_owner_kind(node),
                 "{name}: {} {} carries an owner exactly when the rule requires one",
                 node["node_tag"],
                 node["semantic_form"]
-            );
-            assert_eq!(
-                projected.get("owner"),
-                node.get("owner"),
-                "{name}: projection owner"
             );
             kinds.extend(node["owner"]["kind"].as_str().map(str::to_owned));
         }
@@ -13018,7 +12927,7 @@ fn tc_233_owner_mutations_fail_the_schema_as_malformed_wire() {
                 && node["semantic_form"] == mutation["node"]["semantic_form"]
         });
         let mut candidate = base.clone();
-        edit_node_and_projection(&mut candidate, index, |node| {
+        edit_node(&mut candidate, index, |node| {
             for patch in mutation["patch"].as_array().expect("patch") {
                 apply_authored_patch(node, patch);
             }
@@ -13030,7 +12939,7 @@ fn tc_233_owner_mutations_fail_the_schema_as_malformed_wire() {
 
 /// FR-322-AC-51: a declared record whose owner moves to a second source, with
 /// that source in the lock, the declaration regions moved, the node id kept
-/// and the projection and package id patched, is refused stale-node-key.
+/// and the package id recomputed, is refused stale-node-key.
 #[trace("TC-233", "FR-322-AC-51")]
 #[test]
 fn tc_233_a_changed_owner_refuses_stale_node_key_at_that_node() {
@@ -13042,7 +12951,7 @@ fn tc_233_a_changed_owner_refuses_stale_node_key_at_that_node() {
     add_lock_source(&mut package, &other);
     move_declaration_regions(&mut package, point, &other);
     let owner = source_owner("agent-ix", "example-b");
-    edit_node_and_projection(&mut package, point, |node| node["owner"] = owner.clone());
+    edit_node(&mut package, point, |node| node["owner"] = owner.clone());
     assert_eq!(package["semantic_graph"]["nodes"][point]["node_id"], id);
     assert_eq!(
         read_package_semantics(&package, &catalog),
@@ -13068,7 +12977,7 @@ fn tc_233_an_unjoined_owner_refuses_missing_selection_ahead_of_a_stale_key() {
     let record = declared_index(&base, &["Example", "Point"]);
     let mut source = base.clone();
     let id = nodes[record]["node_id"].clone();
-    edit_node_and_projection(&mut source, record, |node| {
+    edit_node(&mut source, record, |node| {
         node["owner"] = source_owner("agent-ix", "missing");
     });
     assert_eq!(
@@ -13079,7 +12988,7 @@ fn tc_233_an_unjoined_owner_refuses_missing_selection_ahead_of_a_stale_key() {
     let relationship = node_index_where(&base, |node| node["semantic_form"] == "relationship");
     let mut model = base.clone();
     let id = nodes[relationship]["node_id"].clone();
-    edit_node_and_projection(&mut model, relationship, |node| {
+    edit_node(&mut model, relationship, |node| {
         node["owner"]["identity"] = json!("acme/billing");
     });
     assert_eq!(
@@ -13104,13 +13013,13 @@ fn tc_233_an_unjoined_owner_refuses_missing_selection_ahead_of_a_stale_key() {
     assert!(digest(&nodes[stale]) < digest(&nodes[owned]));
     let mut both = base.clone();
     let id = nodes[owned]["node_id"].clone();
-    edit_node_and_projection(&mut both, stale, |node| {
+    edit_node(&mut both, stale, |node| {
         node["body"] = json!({"term": "aggregate", "members": [{
             "term": "binding", "name": "tampered",
             "value": {"term": "aggregate", "members": []}
         }]});
     });
-    edit_node_and_projection(&mut both, owned, |node| {
+    edit_node(&mut both, owned, |node| {
         node["owner"] = source_owner("agent-ix", "missing");
     });
     assert_eq!(
@@ -13250,7 +13159,7 @@ fn tc_233_two_owners_share_content_keyed_nodes_and_differ_on_owner_keyed_ones() 
     for index in owned {
         move_declaration_regions(&mut crossed, index, &other);
         let owner = source_owner("agent-ix", "example-b");
-        edit_node_and_projection(&mut crossed, index, |node| node["owner"] = owner.clone());
+        edit_node(&mut crossed, index, |node| node["owner"] = owner.clone());
     }
     assert!(matches!(
         read_package_semantics(&crossed, &catalog),
@@ -13281,7 +13190,7 @@ fn tc_233_the_key_stage_leaves_an_abstraction_relation_node_to_fr_451() {
 
     let mut edited = package.clone();
     let id = node["node_id"].clone();
-    edit_node_and_projection(&mut edited, index, |node| {
+    edit_node(&mut edited, index, |node| {
         node["body"]["frames"][0]["function"][1] = json!("attempt_other");
     });
     assert!(schema.is_valid(&edited));
@@ -13341,7 +13250,7 @@ fn tc_395_a_case_must_hold_one_arm_per_union_member_in_order() {
             .clone();
         edit(&mut arguments, &scrutinee);
         let arguments = Value::Array(arguments);
-        edit_node_and_projection(&mut candidate, case, |node| {
+        edit_node(&mut candidate, case, |node| {
             node["body"]["arguments"] = arguments.clone();
             node["dependencies"] = json!(application_dependencies(&node["body"]));
         });
@@ -13399,7 +13308,7 @@ fn tc_233_clause_function_owners_follow_their_clause_kind() {
         let id = case["id"].as_str().expect("id");
         let (case, base, index, node_id) = adverse_case("clause_owner_cases", id);
         let mut candidate = base.clone();
-        edit_node_and_projection(&mut candidate, index, |node| {
+        edit_node(&mut candidate, index, |node| {
             for patch in case["patch"].as_array().expect("patch") {
                 apply_authored_patch(node, patch);
             }
@@ -13417,51 +13326,66 @@ fn tc_233_clause_function_owners_follow_their_clause_kind() {
     }
 }
 
-/// FR-322-AC-51 (projection owner): each published `projection_owner_mutations`
-/// entry gives an `identity_projection` entry an owner that differs from its
-/// node's, with the `package_id` recomputed; the full reader refuses
-/// `invalid_package`/`invalid-value` at that entry's `owner`, ahead of every
-/// other owner refusal.
-#[trace("TC-233", "FR-322-AC-51")]
+/// FR-322-AC-100 (one wire graph): each published `shipped_projection_cases`
+/// entry ships an `identity_projection` member inside `identity_preimage`, as
+/// the occurrence-free graph or as an empty array; the closed V2 schema
+/// refuses it, which a reader reports `malformed_wire` at that member.
+#[trace("TC-233", "FR-322-AC-100")]
 #[test]
-fn tc_233_a_projection_owner_that_differs_from_its_node_is_refused() {
-    let catalog = parsed_fixture(OPERATION_CATALOG);
+fn tc_233_an_identity_preimage_that_ships_a_projection_is_refused() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     let adverse = parsed_fixture(ADVERSE);
-    let cases = adverse["projection_owner_mutations"]
+    let cases = adverse["shipped_projection_cases"]
         .as_array()
         .expect("cases");
     assert_eq!(cases.len(), 2);
     for case in cases {
         let id = case["id"].as_str().expect("id");
-        let (case, base, index, _) = adverse_case("projection_owner_mutations", id);
+        assert_eq!(case["base"], "positive-all-families", "{id}");
+        let base = parsed_fixture(POSITIVE_ALL_FAMILIES);
+        assert!(schema.is_valid(&base), "{id}: the base is admitted");
+        let shipped = match &case["identity_projection"] {
+            Value::String(form) if form == "occurrence-free-graph" => {
+                occurrence_free_projection(&base)
+            }
+            literal @ Value::Array(_) => literal.clone(),
+            other => panic!("{id}: unknown shipped projection {other}"),
+        };
         let mut candidate = base.clone();
-        apply_projection_patches(&mut candidate, index, &case["projection_patch"]);
-        assert!(schema.is_valid(&candidate), "{id}: the schema admits it");
-        assert_eq!(case["expected_code"], "invalid_package", "{id}");
-        assert_eq!(case["expected_cause"], "invalid-value", "{id}");
-        let locus = case["expected_locus"]
-            .as_str()
-            .expect("locus")
-            .replace("{index}", &index.to_string());
-        assert_eq!(
-            read_package_semantics(&candidate, &catalog),
-            Err(ReadRefusal::InvalidOwnerValue(locus)),
-            "{id}"
+        candidate["identity_preimage"]
+            .as_object_mut()
+            .expect("identity preimage is an object")
+            .insert("identity_projection".to_owned(), shipped);
+        // The shipped copy disagrees with the lock-only derivation, while the
+        // package id rebuilt from the lock and graph alone still names the
+        // package: the copy is never part of its identity.
+        assert_ne!(
+            candidate["identity_preimage"],
+            derive_identity_preimage(&candidate),
+            "{id}: a shipped projection is not part of the derived identity preimage"
         );
+        assert_eq!(
+            unqualified_jcs_sha256(&derive_package_id_preimage(&candidate)),
+            base["package_id"]["digest"].as_str().expect("digest"),
+            "{id}: the package id is rebuilt from the lock and graph, not the shipped copy"
+        );
+        assert!(!schema.is_valid(&candidate), "{id}: the schema refuses it");
+        assert_eq!(case["expected_code"], "malformed_wire", "{id}");
+        // The locus names the shipped member: it exists in the candidate and
+        // not in the base, and removing it restores the admitted package.
+        let locus = case["expected_locus"].as_str().expect("locus");
+        assert!(candidate.pointer(locus).is_some(), "{id}: locus names a member of the candidate");
+        assert!(base.pointer(locus).is_none(), "{id}: locus names no member of the base");
+        let (parent, member) = locus.rsplit_once('/').expect("locus has a parent");
+        let mut repaired = candidate.clone();
+        repaired
+            .pointer_mut(parent)
+            .and_then(Value::as_object_mut)
+            .expect("locus parent is an object")
+            .remove(member);
+        assert_eq!(repaired, base, "{id}: removing the locus member restores the base");
+        assert!(schema.is_valid(&repaired), "{id}: the repaired package is admitted");
     }
-}
-
-/// Apply `patches` to the projection entry at `index` only, then recompute the
-/// package id.
-fn apply_projection_patches(package: &mut Value, index: usize, patches: &Value) {
-    let entry = package
-        .pointer_mut(&format!("/identity_preimage/identity_projection/{index}"))
-        .expect("projection entry");
-    for patch in patches.as_array().expect("patches") {
-        apply_authored_patch(entry, patch);
-    }
-    refresh_package_id(package);
 }
 
 /// FR-322 "Owner member schema": a `state`/`state_clause` node (FR-341) is
@@ -13487,7 +13411,7 @@ fn tc_233_a_state_clause_node_carries_no_owner() {
                 .is_none()
         );
         let mut owned = package.clone();
-        edit_node_and_projection(&mut owned, index, |node| {
+        edit_node(&mut owned, index, |node| {
             node["owner"] = json!({"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"});
         });
         assert!(
@@ -13621,7 +13545,7 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
             });
             let as_declaration = case["member_declaration"] == true;
             let as_link = case["member_population"] == true;
-            edit_node_and_projection(&mut candidate, application, |node| {
+            edit_node(&mut candidate, application, |node| {
                 if as_declaration {
                     node["body"]["operation"]["member"]["declaration"] = population_id.clone();
                 } else if as_link {
@@ -13635,7 +13559,7 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
                 let second = node_index_where(&candidate, |node| {
                     node["body"]["operation"]["identity"] == format!("quire.op.{also}").as_str()
                 });
-                edit_node_and_projection(&mut candidate, second, |node| {
+                edit_node(&mut candidate, second, |node| {
                     node["body"]["arguments"][0]["target"] = population_id.clone();
                     node["dependencies"] = json!(application_dependencies(&node["body"]));
                 });
@@ -13770,7 +13694,7 @@ fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
         let relationship = node_index_where(&candidate, |node| {
             node["node_tag"] == "relation" && node["semantic_form"] == "relationship"
         });
-        edit_node_and_projection(&mut candidate, relationship, |node| {
+        edit_node(&mut candidate, relationship, |node| {
             node["owner"]["node"] = case["relationship_owner_node"].clone();
         });
         let applications = (0..candidate["semantic_graph"]["nodes"]
@@ -13784,7 +13708,7 @@ fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
             .collect::<Vec<_>>();
         assert!(!applications.is_empty(), "{id}");
         for index in applications {
-            edit_node_and_projection(&mut candidate, index, |node| {
+            edit_node(&mut candidate, index, |node| {
                 node["body"]["operation"]["member"]["name"] = case["member_name"].clone();
             });
         }
@@ -13904,14 +13828,14 @@ fn tc_233_a_model_population_with_no_max_is_the_unbounded_population() {
                     "value_kind": "integer"
                 }
             });
-            edit_node_and_projection(&mut candidate, index, |node| {
+            edit_node(&mut candidate, index, |node| {
                 node["body"]["members"]
                     .as_array_mut()
                     .expect("members")
                     .push(extra.clone());
             });
         }
-        edit_node_and_projection(&mut candidate, application, |node| {
+        edit_node(&mut candidate, application, |node| {
             node["body"]["operation"]["member"]["population"] = link.clone();
             node["dependencies"] = json!(application_dependencies(&node["body"]));
         });
@@ -14079,7 +14003,7 @@ fn tc_233_a_reaches_population_link_names_a_population_over_its_role_end_type() 
         };
         if let Some(link) = &link {
             let without_dependency = case["dependencies"] == "without-population";
-            edit_node_and_projection(&mut candidate, application, |node| {
+            edit_node(&mut candidate, application, |node| {
                 node["body"]["operation"]["member"]["population"] = link.clone();
                 node["dependencies"] = json!(application_dependencies(&node["body"]));
             });
@@ -14095,7 +14019,7 @@ fn tc_233_a_reaches_population_link_names_a_population_over_its_role_end_type() 
                 let kept = application_dependencies(
                     &published["semantic_graph"]["nodes"][application]["body"],
                 );
-                edit_node_and_projection(&mut candidate, application, |node| {
+                edit_node(&mut candidate, application, |node| {
                     node["dependencies"] = json!(kept);
                 });
             }
@@ -14496,7 +14420,7 @@ fn tc_940_variant_type_is_a_model_declaration_node_with_a_model_owner() {
         json!({"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Tier"});
     let with = |edit: &dyn Fn(&mut Value)| {
         let mut candidate = base.clone();
-        edit_node_and_projection(&mut candidate, index, |node| {
+        edit_node(&mut candidate, index, |node| {
             node["semantic_form"] = json!("variant_type");
             node.as_object_mut().expect("node").remove("declaration");
             if node.get("occurrences").is_some() {
@@ -14566,13 +14490,10 @@ fn tc_233_event_type_is_a_model_declaration_node_with_a_model_owner() {
         json!({"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/OrderPlaced"});
     let with = |edit: &dyn Fn(&mut Value)| {
         let mut candidate = base.clone();
-        edit_node_and_projection(&mut candidate, index, |node| {
+        edit_node(&mut candidate, index, |node| {
             node["semantic_form"] = json!("event_type");
             node.as_object_mut().expect("node").remove("declaration");
-            // The graph node carries occurrences; its projection entry does not.
-            if node.get("occurrences").is_some() {
-                node["occurrences"] = json!([{"ordinal": 0, "role": "generated"}]);
-            }
+            node["occurrences"] = json!([{"ordinal": 0, "role": "generated"}]);
             node["semantic_type"] = node["node_id"].clone();
             node["owner"] = model_owner.clone();
             edit(node);
@@ -15610,12 +15531,6 @@ fn only_form_node_id(package: &Value) -> Value {
 fn mutate_audit_form(package: &mut Value, mutate: impl FnOnce(&mut Value)) {
     let index = extension_node_index(package, "Audit");
     mutate(&mut package["semantic_graph"]["nodes"][index]);
-    let mut projected = package["semantic_graph"]["nodes"][index].clone();
-    projected
-        .as_object_mut()
-        .expect("node is an object")
-        .remove("occurrences");
-    package["identity_preimage"]["identity_projection"][index] = projected;
     rekey_stale_nodes(package);
 }
 
@@ -15932,12 +15847,7 @@ fn tc_951_the_node_key_binds_definition_kind_name_owner_and_clause_subnodes_not_
                     .iter()
                     .position(|node| node["node_tag"] == "value" && node["body"]["value"] == "30")
                     .expect("the days literal");
-                for prefix in ["/semantic_graph/nodes", "/identity_preimage/identity_projection"] {
-                    package
-                        .pointer_mut(&format!("{prefix}/{days}/body/value"))
-                        .map(|value| *value = json!("31"))
-                        .expect("the days literal value");
-                }
+                package["semantic_graph"]["nodes"][days]["body"]["value"] = json!("31");
                 rekey_stale_nodes(package);
             }),
         ),
@@ -15975,7 +15885,7 @@ fn tc_951_the_node_key_binds_definition_kind_name_owner_and_clause_subnodes_not_
 
     // X04: the old key retained after a definition identity change.
     let mut stale = package.clone();
-    replace_node_field_in_graph_and_projection(
+    replace_node_field_in_graph(
         &mut stale,
         index,
         "/body/definition/identity",
@@ -16111,14 +16021,9 @@ fn tc_951_clause_type_joins_refuse_a_mistyped_absent_or_other_kind_subnode() {
         .iter()
         .position(|node| node["node_tag"] == "value" && node["body"]["value"] == "30")
         .expect("the days literal");
-    for prefix in ["/semantic_graph/nodes", "/identity_preimage/identity_projection"] {
-        let node = mistyped
-            .pointer_mut(&format!("{prefix}/{days}"))
-            .expect("the days literal");
-        node["semantic_type"] = text.clone();
-        node["body"] =
-            json!({"term": "literal", "type": text, "value": "thirty", "value_kind": "text"});
-    }
+    let node = &mut mistyped["semantic_graph"]["nodes"][days];
+    node["semantic_type"] = text.clone();
+    node["body"] = json!({"term": "literal", "type": text, "value": "thirty", "value_kind": "text"});
     rekey_stale_nodes(&mut mistyped);
     assert_eq!(
         read_extension_package(&mistyped, &held),
@@ -16220,7 +16125,7 @@ fn tc_951_wire_graph_shape_and_name_refusals_of_the_extension_node() {
     let mut missing = base.clone();
     let node_id = base["semantic_graph"]["nodes"][index]["node_id"].clone();
     let kept = base["semantic_graph"]["nodes"][index]["dependencies"][0].clone();
-    replace_node_field_in_graph_and_projection(&mut missing, index, "/dependencies", json!([kept]));
+    replace_node_field_in_graph(&mut missing, index, "/dependencies", json!([kept]));
     missing["identity_preimage"] = derive_identity_preimage(&missing);
     refresh_package_id(&mut missing);
     assert_eq!(

@@ -577,7 +577,26 @@ fn tc_431_package_member_carries_the_v2_bytes_of_its_package_id() {
         "the bytes are already canonical"
     );
     assert_eq!(package["contract_version"], "quire.checked-package/v2");
-    let recomputed = jcs_sha256(&package["identity_preimage"]).expect("preimage canonicalizes");
+    // FR-322: the package-id preimage is the shipped `identity_preimage` with
+    // the identity projection derived from the graph, every node in graph
+    // order without its source occurrences.
+    let mut preimage = package["identity_preimage"].clone();
+    preimage["identity_projection"] = Value::Array(
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("graph nodes are an array")
+            .iter()
+            .map(|node| {
+                let mut projected = node.clone();
+                projected
+                    .as_object_mut()
+                    .expect("node is an object")
+                    .remove("occurrences");
+                projected
+            })
+            .collect(),
+    );
+    let recomputed = jcs_sha256(&preimage).expect("preimage canonicalizes");
     let recomputed = recomputed
         .strip_prefix("sha256-jcs:")
         .expect("canonicalizer retains its prefix");

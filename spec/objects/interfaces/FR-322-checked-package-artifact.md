@@ -89,16 +89,24 @@ boundary.
 
 - `contract_version` — exactly `quire.checked-package/v2`, the document-type
   tag that tells a checked package apart from every other document.
-- `identity_preimage` — exact `quire.checked-package-id/v2` JCS value whose
-  ordered members are `edition`, `profile_selections`, `definition_selections`,
-  `model_selections`, `required_features`, `dependency_selections` and the
-  semantic graph's `identity_projection`. Source regions, raw artifact
+- `identity_preimage` — the `quire.checked-package-id/v2` selection object
+  whose members are `version`, `edition`, `profile_selections`,
+  `definition_selections`, `model_selections`, `required_features` and
+  `dependency_selections`. It carries no node: the semantic graph appears on
+  the wire once, in `semantic_graph.nodes`. The **package-id preimage** is
+  `identity_preimage` with one further member, the semantic graph's
+  `identity_projection`, which the reader derives from `semantic_graph.nodes`
+  (see `semantic_graph`) and no producer ships. Source regions, raw artifact
   bytes/digests, diagnostic rendering, reader limits, runtime inputs, backend
-  availability and presentation are excluded.
+  availability and presentation are excluded. An `identity_preimage` that
+  carries an `identity_projection` member, or any other member outside that
+  list, fails the closed V2 schema and the reader refuses it `malformed_wire`
+  at that member's pointer, `/identity_preimage/identity_projection` for the
+  projection (FR-322-AC-100).
 - `package_id` — a `quire.package.semantic/v2` SHA-256 digest of exactly the
-  UTF-8 RFC 8785 canonical bytes of `identity_preimage`; it is not embedded in
-  that preimage. Its digest value is an unprefixed 64-lowercase-hex string and
-  its domain and algorithm are explicit fields.
+  UTF-8 RFC 8785 canonical bytes of the package-id preimage; it is not
+  embedded in that preimage. Its digest value is an unprefixed
+  64-lowercase-hex string and its domain and algorithm are explicit fields.
 - `lock` — exact source-document, edition, ordered profile, dependency,
   domain package selection and required-feature identities. A definition
   selection is a `DefinitionRef` `{authority, identity}`. Every byte digest
@@ -185,8 +193,11 @@ boundary.
   (`node_id.domain`, `node_id.digest`); node identifiers are unique within the
   graph. **Graph order** is the order of the `semantic_graph.nodes` array,
   which the producer chooses. The `identity_projection` holds one entry per
-  node in graph order: entry `i` is node `i` with its source occurrences and
-  presentation removed. A reader neither sorts the nodes nor requires them in
+  node in graph order: entry `i` is node `i` with its `occurrences` member
+  removed and every other member unchanged. The reader derives it from the
+  nodes it reads; it exists only inside the package-id preimage, so each node
+  body and every other node member is shipped once and no projection entry can
+  differ from its node. A reader neither sorts the nodes nor requires them in
   any sort order, so a graph in any order is admitted when every other check
   passes. Graph order is significant to identity: it enters `package_id`
   through the projection, so two packages whose nodes differ only in order
@@ -254,10 +265,10 @@ boundary.
   source reference to `P` adds a second `expression` occurrence, ordinal 1, and
   its own `source_map` entry to the same `R`; it adds no node). `R`'s node key
   is the `quire.structural-node/v1` digest of its preimage with
-  `declaration: null` and `recursion: null`. Include `R` in the graph and, at
-  the same graph-order position, in the identity projection, and in the source
-  map (`R`'s occurrences in ascending ordinal, which is not a requirement), then
-  recompute `package_id`; the reader admits this package and resolves `R` to
+  `declaration: null` and `recursion: null`. Add `R` to `semantic_graph.nodes`
+  and its occurrences to the source map (in ascending ordinal, which is not a
+  requirement), then recompute `package_id` over the identity projection the
+  reader derives from the new graph; the reader admits this package and resolves `R` to
   `P`. Replacing `R.body.target` and its sole dependency together with a local
   non-protocol node's key, or with a key absent from the graph, while
   recomputing the carrier and package identities,
@@ -425,6 +436,13 @@ boundary.
   [FR-341](FR-341-checked-package-state-clause-body.md)'s `state_clause`
   joins) is reported after every frame refusal and before any operation
   refusal, in the order FR-341's "Reader order" fixes.
+  **Body steps.** After every state refusal and before any operation
+  refusal, the reader runs the body steps in this one order, each over its
+  own node forms and each reporting before the next starts: the state-graph
+  step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
+  the terminal step (FR-476), the step-relation step (FR-477) and the
+  protocol step (FR-464). Each body artifact's "Reader order" fixes the
+  checks inside its step; its place among the steps is this list's.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
   re-derives by QSL FR-092's `quire.structural-node/v1` preimage the key of
@@ -557,8 +575,11 @@ boundary.
   [FR-440](FR-440-checked-package-union-and-case-nodes.md),
   [FR-451](FR-451-checked-package-abstraction-relation-body.md),
   [FR-464](FR-464-checked-package-protocol-node-bodies.md) to
-  [FR-466](FR-466-checked-package-protocol-control-bodies.md) and
-  [FR-469](FR-469-checked-package-extension-nodes.md). For example:
+  [FR-466](FR-466-checked-package-protocol-control-bodies.md),
+  [FR-469](FR-469-checked-package-extension-nodes.md),
+  [FR-475](FR-475-checked-package-state-graph-claim-body.md),
+  [FR-476](FR-476-checked-package-model-terminal-declaration-body.md) and
+  [FR-477](FR-477-checked-package-step-relation-claim-body.md). For example:
 
   | Node | `dependencies` |
   | --- | --- |
@@ -650,10 +671,20 @@ boundary.
   locked package (itself or a `dependency_selections` entry) and then matching
   `Name`, byte for byte, against the `qualified_name` path of that package's
   declarations; no case folding, normalization, suffix match or search across
-  packages applies. It enters the node identity preimage. On a node carrying a
+  packages applies. A dimension or unit that an admitted domain package
+  declares ("Model-owned members" step 4) is a node with no `declaration`, so
+  no `qualified_name` names it: a source reaches a package unit only as
+  `M::name` in a unit position, where `M` is the model alias of a
+  `model_selections` row and `name` matches, byte for byte, the `name` of a
+  unit in that row's selected document, and it reaches a package dimension
+  by its bare `name` in the dimension namespace (FR-142 "Namespaces"). It enters the node identity preimage. On a node carrying a
   `nominal_identity_preimage` it equals that preimage's
   `qualified_declaration`, else the reader refuses as `invalid_package` with
-  cause `declaration-nominal-mismatch`; two nodes carrying the same name in one namespace refuse
+  cause `declaration-nominal-mismatch`. The one exception is a nominal node
+  whose `owner` is a `ModelOwner` (a dimension or unit an admitted domain
+  package declares, "Model-owned members" step 4): it carries no
+  `declaration`, and its preimage's `qualified_declaration` is the
+  one-segment `[<name>]`, the last segment of its FCD identity; two nodes carrying the same name in one namespace refuse
   as `ambiguous_declaration` with cause `ambiguous-name`, both before any
   operation refusal. The namespaces are three: dimensions
   (`scalar_type`/`dimension`), units (`scalar_type`/`unit`) and types (every
@@ -678,11 +709,7 @@ boundary.
   carries its `ModelOwner`, `{kind: "model", identity, node}`, with no
   `version` member (FR-322-AC-28). The value is exactly the `owner` member of
   the node's `quire.structural-node/v1` preimage, so the reader copies it
-  into that preimage unchanged. A projection entry whose `owner` differs
-  from its node's, or is present where the node's is absent, refuses
-  `invalid_package`/`invalid-value` at that entry's `owner`,
-  `/identity_preimage/identity_projection/{i}/owner`, before the owner join.
-  Every other node carries no `owner`: a
+  into that preimage unchanged. Every other node carries no `owner`: a
   builtin or anonymous type, an undeclared value, parameter or expression,
   any other undeclared node, a nominal node (its owner is its
   `nominal_identity_preimage`'s) and a node keyed by
@@ -977,11 +1004,11 @@ as its own node, so the grammar holds for an expression of any depth.
 
 ## Owner member schema
 
-`schema.json` gives `NodeBase` and `NodeProjection` the optional property
+`schema.json` gives `NodeBase` the optional property
 `owner`, `{"$ref": "#/$defs/NodeOwner"}`, where `NodeOwner` is
 `{"oneOf": [SourceOwner, ModelOwner]}` over the existing closed
-`SourceOwner` and `ModelOwner` definitions. Both node definitions carry one
-further rule, `OwnerPresenceRule`, in their `allOf`. A node is
+`SourceOwner` and `ModelOwner` definitions. The node definition carries one
+further rule, `OwnerPresenceRule`, in its `allOf`. A node is
 **structural** for this rule when it carries no `nominal_identity_preimage`
 and its `body.term` is not `application` (an application stands only at a
 body root, so this is "its body holds no application"). This includes a
@@ -1001,12 +1028,8 @@ A node that breaks the rule, or whose `owner` is a `DefinitionOwner`, has a
 member outside its owner's closed definition or a `ModelOwner` carrying
 `version`, fails the schema, and a reader refuses it `malformed_wire` at
 `/semantic_graph/nodes/{i}/owner`, or at `/semantic_graph/nodes/{i}` when a
-required `owner` is absent; the same holds for its `identity_projection`
-entry. An identity projection entry carries exactly its node's `owner`; a
-well-shaped entry whose `owner` differs from its node's refuses
-`invalid_package`/`invalid-value` at `/identity_preimage/identity_projection/{i}/owner`
-(the schema cannot state the equality), reported before the owner join
-(FR-322-AC-51).
+required `owner` is absent (FR-322-AC-51). The identity projection entry
+the reader derives carries exactly its node's `owner`.
 
 ## Model-owned members
 
@@ -1027,9 +1050,14 @@ constraints ("Reference conformance" below).
    document's declarations under FR-154 and normalizes them under the
    `quire.model.complete/v1` rules. The selected document is an FCD semantic IR
    2.0.0 domain package (FR-154 step 3; filament-core-data FR-091 and FR-095):
-   `contractVersion`, `package`, `constructs`, `types` and `populations`, each type carrying its
-   `fields`, `operations`, `supertypes` and `relationships`, and each population its
-   members of "Population references" ("Owner join"; filament-core-data FR-141). A relationship's IR
+   `contractVersion`, `package`, `constructs`, `types`, `populations`,
+   `dimensions` and `units`, each type carrying its
+   `fields`, `operations`, `supertypes` and `relationships`, each population its
+   members of "Population references" ("Owner join"; filament-core-data FR-141),
+   and each dimension and unit node the members filament-core-data FR-146
+   states (`dimensions` and `units` may be absent, which is the empty list).
+   A field typed `ix://quire/native/Clock` is a clock field of its owning type
+   (FR-154). A relationship's IR
    node identity is FCD's, `ix://<org>/<name>/relationship/<Name>-<verb>-<Target>`,
    and it is declared in its source type's `relationships` with `sourceEnd` and
    `targetEnd`. The declarations steps 2 to 4 read are the projection of that
@@ -1105,11 +1133,12 @@ constraints ("Reference conformance" below).
    | `ix://quire/native/String` | `String`, a native with no text profile; it is not `Text` and has no `Text` bounds, profile or leaf | `scalar_type`/`string` |
    | `ix://quire/native/UUID` | `UUID`, compared by its canonical payload under FR-149's UUID row; no ordering | `scalar_type`/`uuid` |
    | `ix://quire/native/Timestamp` | `Timestamp`, compared by its canonical payload under FR-149's Timestamp row; no ordering and no arithmetic | `scalar_type`/`timestamp` |
+   | `ix://quire/native/Clock`, on a field with FR-154's clock field shape | `Clock`, the clock type of FR-415: the field is one clock per object of its owning type, holds no data value, is read only as the clock operand of an atomic clock constraint (in a guard or a time invariant) and is written only by a reset (FR-415) | none: no node stands for a clock. This artifact carries no clock constraint, reset or timed-model member; the checker reads a clock operand there by (declaring node, field name) and records the timed model (FR-415, QSL FR-230). A `field` application whose member resolves to a clock field in any other position, a value position, refuses `invalid_timed_model`/`clock-read-outside-constraint` |
    | a value type (FR-208 `quire.meaning.model.value-type/v1`) of the same domain package bound as `Int[lo, hi]`, `lo <= hi`, as TC-196's `Count` and `Small` and TC-197's `Count` are | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over the `Integer` node |
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
    | a record value type `R` of the same domain package, admitted under FR-208 | `R`, a value with no object identity | the self-typed `model`/`record_value_type` declaration node owned by `R`; no `composite_type`/`reference` is introduced |
    | a variant type `V` of the same domain package, admitted under FR-208 | `V`, an unordered enumeration whose cases are the case names of `V` | the self-typed `model`/`variant_type` declaration node owned by `V`; no `composite_type`/`reference` and no unit-owned `scalar_type`/`enum` node is introduced |
-   | `ix://quire/unit/<name>`, where `<name>` is the qualified declaration name of a unit of the checked package, its segments joined by `/`, and never a dimension segment: the unit `ms` declared as `unit ms : Time` is `ix://quire/unit/ms` | `Quantity<u>`, the type of a quantity in unit `u`; the declaring unit of compilation supplies the unit, not the domain package | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced |
+   | `ix://quire/unit/<name>`, naming either a unit the unit of compilation declares, by its qualified declaration name with its segments joined by `/` and never a dimension segment (`unit ms : Time` is `ix://quire/unit/ms`), or a unit an admitted domain package declares, by its FCD identity's package identity and `name` (`ms` in the `units` of `acme/rpc`, FCD identity `ix://acme/rpc/unit/ms`, is `ix://quire/unit/acme/rpc/ms`) | `Quantity<u>`, the type of a quantity in unit `u`, whether the unit of compilation or an admitted domain package declares `u` | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced |
    | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
 
    The multiplicity `{lower, upper, ordered, unique}` then gives the type.
@@ -1124,7 +1153,35 @@ constraints ("Reference conformance" below).
    (`quire.model.complete/v1` Presence row), so `[0, 1]` gives `K<E>[0, 1]`
    and a field whose presence is `optional` has `Option<X>`, the
    `composite_type`/`option` node over the node of the type `X` the
-   multiplicity gives. A unit `typeRef` that names no unit of the checked package refuses
+   multiplicity gives. The unit graph of the checked package holds the
+   dimensions and units the unit of compilation declares and those of every
+   admitted domain package (FR-154). Each dimension and unit an admitted
+   domain package declares is one checked-package node: a
+   `scalar_type`/`dimension` or `scalar_type`/`unit` node that carries no
+   `declaration` and carries as `owner` the `ModelOwner` `{kind: "model",
+   identity, node}` of its selection, `identity` the selection's identity and
+   `node` its FCD identity (`ix://acme/rpc/unit/ms`). Its
+   `quire.dimension-node/v1` or `quire.unit-node/v1` preimage (FR-142) carries
+   that `owner` and `qualified_declaration` `[<name>]`, the last segment of
+   its FCD identity (`["ms"]` for `ix://acme/rpc/unit/ms`), which the V2
+   schema's one-identifier-or-more rule for `qualified_declaration` admits.
+   The node carries no `declaration`, under
+   the `ModelOwner` exception of the `declaration` rule. Its key stays
+   distinct from a source unit `ms`'s, whose preimage carries the same
+   `qualified_declaration` under a `SourceOwner`; a dimension's `terms` are
+   its FCD terms and a unit's `dimension_node_id`, `target_unit_node_id`,
+   `scale` and `offset` are its FCD `dimension`, `target`, `scale` and
+   `offset` resolved to those nodes. A dimension node is self-typed and
+   depends exactly on the dimension nodes of its terms; a unit node's
+   `semantic_type` is its dimension node and it depends exactly on that node
+   and its non-null target. A `typeRef` `ix://quire/unit/<p>/<name>` whose
+   leading segments `<p>` equal the identity of a `model_selections` row
+   names that row's unit `name`; any other `typeRef` names a source unit by
+   its qualified declaration name. A `typeRef` that names both a source unit
+   and a package unit refuses `ambiguous_declaration`/`ambiguous-name`. A
+   source names a package unit as `M::ms` through the row's model alias
+   (`Quantity<M::ms>` after `model M = "acme/rpc" …`) and a package dimension
+   by its bare `name` (FR-142 "Namespaces"). A unit `typeRef` that names no unit of the checked package refuses
    `missing_declaration`/`missing-name`. A declared type outside the table, an `unbounded`
    upper bound with a lower bound above `0` and an operation with no result
    give the member no type, and the application refuses
@@ -1934,7 +1991,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-9 | The reader result is exactly admitted, refused or incomplete; malformed input and the first exhausted measured limit remain distinguishable and carry their specified typed provenance/accounting. | Test (TC-217) |
 | FR-322-AC-10 | Enum, dimension and declared-unit node keys match the closed JCS preimage vectors; stale-body keys, non-normalized rationals, invalid owner joins and every other noncanonical member or term order this artifact refuses -- including an application node's `dependencies` list -- refuse as `invalid_semantic_graph`, except a `state`/`frame` node's own `modifies`/`creates`/`deletes` canonical order, which [FR-340-AC-4](FR-340-checked-package-frame-location.md) owns. | Test |
 | FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 14 closed node tags with an exact source-map entry for every occurrence, and refuses each authored document-type, digest-domain and node mutation. | Test |
-| FR-322-AC-14 | Each published V2 package fixture's `package_id` equals the RFC 8785 JCS SHA-256 of the identity preimage rebuilt from its lock selections and occurrence-free semantic graph; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test |
+| FR-322-AC-14 | Each published V2 package fixture's `identity_preimage` equals the selection object rebuilt from its lock alone and carries no `identity_projection`, and its `package_id` equals the RFC 8785 JCS SHA-256 of the package-id preimage, that object with the `identity_projection` the reader derives from its semantic graph, every node in graph order without `occurrences`; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
 | FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef` names a complete-value lock definition by authority and identity; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne`, ordering or `negate` identity, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
 | FR-322-AC-18 | Each published operation vector validates against the closed node-preimage schema, recomputes its recorded JCS SHA-256 and is distinct from every other vector; every application node of the published operation package is keyed by its application-node preimage and is a published vector, and a vector outside the package refuses as `operation-law-unselected` when placed in it; floor-to-Euclidean division changes the node and package ids; a retained key refuses as `stale-node-key`; a contradictory form, missing member-declaration dependency, stray recursion group or extra dependency is refused; an application without an operation fails the V2 schema; and the all-families function body calls a published function, changes its node id when rewritten as `dispatch_call` and then refuses as `operation-member-mismatch`. | Test (TC-233) |
@@ -1965,13 +2022,13 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-45 | `quire.op.structural.eq` over two `Label` values of `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }` carries exactly the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` in that order, each with the `nfc` text law and mode, and none for `Empty`; both V2 schemas admit the `member:<Ident>` segment. | Test |
 | FR-322-AC-46 | `quire.op.structural.eq` over two values of `union List { Cons(Integer, List), Nil }`, whose cycle names one `recursion_group`, is admitted with empty `leaves`, and a record whose field's type cycles back to the record through a union is likewise admitted; neither refuses `operator-ineligible`. Over `Node`, `Cell`, `Chain` and `Option<Chain>` of the "Structural leaf walk" examples it is admitted with exactly the listed leaves in that order, each recursion leaf with `laws` `[]` and `mode` `null`; both V2 schemas admit the `recursion:<d>` segment. | Test |
 | FR-322-AC-47 | The V2 `Diagnostic` schema admits `type-mismatch` only with `ill_typed`, `missing-selection` only with `missing_import` or `missing_declaration`, `unsupported-selection` and `wrong-selection-role` only with `unknown_language`, `unknown_edition` or `unknown_profile`, and `declaration-form`, `expression-form` and `not-yet-implemented` only with `unsupported_construct`. | Test (TC-233) |
-| FR-322-AC-48 | A published package whose ungrouped structural node is tampered, with its `node_id` kept, its `identity_projection` entry patched the same way and its `package_id` recomputed, is schema-valid and identity-consistent and refuses `invalid_package`/`stale-node-key` at that node's `node_id`: an `integer_range` `max` narrowed to `2` and widened to `5000`, its `min` raised to `1` and its bounds swapped, a `reference` target re-pointed at the `Integer` node, a `set` element re-pointed at the `Integer` node, and the declared record `Example::Point`'s field `x` re-pointed from the `Integer` node at the `Int[0, 9]` node. The untampered package is admitted. | Test |
-| FR-322-AC-49 | The recursive-records package (`record List { next?: List; }` and `record Tree { kids: Sequence<Tree>[0, 3]; }`, each one recursion group keyed by QSL FR-092) is admitted. With one in-group node tampered, its `node_id` kept, its `identity_projection` entry patched and its `package_id` recomputed, it refuses `invalid_package`/`stale-node-key` at that node's `node_id`: `Tree`'s `collection_bounds` `max` widened from `3` to `1000` and its `min` raised to `1`, `Tree`'s `Sequence` element re-pointed from the record at the `collection_bounds` node, and `List`'s `Option` re-pointed at the `Integer` node. The `Tree` group relabelled with a label that is not its group digest, each member rekeyed under that label and every reference rewritten, refuses `invalid_package`/`stale-node-key` at the group member with the lowest node-id digest. | Test |
+| FR-322-AC-48 | A published package whose ungrouped structural node is tampered, with its `node_id` kept and its `package_id` recomputed, is schema-valid and identity-consistent and refuses `invalid_package`/`stale-node-key` at that node's `node_id`: an `integer_range` `max` narrowed to `2` and widened to `5000`, its `min` raised to `1` and its bounds swapped, a `reference` target re-pointed at the `Integer` node, a `set` element re-pointed at the `Integer` node, and the declared record `Example::Point`'s field `x` re-pointed from the `Integer` node at the `Int[0, 9]` node. The untampered package is admitted. | Test |
+| FR-322-AC-49 | The recursive-records package (`record List { next?: List; }` and `record Tree { kids: Sequence<Tree>[0, 3]; }`, each one recursion group keyed by QSL FR-092) is admitted. With one in-group node tampered, its `node_id` kept and its `package_id` recomputed, it refuses `invalid_package`/`stale-node-key` at that node's `node_id`: `Tree`'s `collection_bounds` `max` widened from `3` to `1000` and its `min` raised to `1`, `Tree`'s `Sequence` element re-pointed from the record at the `collection_bounds` node, and `List`'s `Option` re-pointed at the `Integer` node. The `Tree` group relabelled with a label that is not its group digest, each member rekeyed under that label and every reference rewritten, refuses `invalid_package`/`stale-node-key` at the group member with the lowest node-id digest. | Test |
 | FR-322-AC-50 | Every structural node of every published positive fixture, grouped or not, model declaration nodes included, carries the key QSL's FR-092 key function (FR-094's for a model-owned node) mints for it from its own members, its `owner` included, and no placeholder key; the recursive-records fixture's group labels are its groups' digests; and the full reader admits every published positive fixture. | Test |
-| FR-322-AC-51 | Every owner-bearing node of every published V2 package carries `owner` with exactly its identity preimage's `owner` value, a `SourceOwner` on a declared structural node and a `ModelOwner` on a model declaration node or clause function, and its `identity_projection` entry carries the same `owner`; no other node carries one. The V2 schema refuses, and a reader refuses `malformed_wire`: a declared record without `owner`, a declared record with a `ModelOwner`, a model declaration node without `owner` or with a `SourceOwner`, an `owner` on the builtin `Integer` node, on a nominal enum node and on an application node, a `DefinitionOwner`, a `SourceOwner` with an extra member and a `ModelOwner` with `version`. A declared record's `owner` changed to a second source that is added to `lock.sources`, with its `declaration` occurrence's regions moved to that source and its node id kept, its projection entry patched the same way and `package_id` recomputed, refuses `invalid_package`/`stale-node-key` at that node. An `identity_projection` entry whose `owner` differs from its node's (the `adverse.json` `projection_owner_mutations` entries `projection-source-owner-differs-from-node` and `projection-model-owner-differs-from-node`, each with `package_id` recomputed) passes the schema and refuses `invalid_package`/`invalid-value` at `/identity_preimage/identity_projection/{i}/owner`. | Test |
+| FR-322-AC-51 | Every owner-bearing node of every published V2 package carries `owner` with exactly its identity preimage's `owner` value, a `SourceOwner` on a declared structural node and a `ModelOwner` on a model declaration node or clause function; no other node carries one. The V2 schema refuses, and a reader refuses `malformed_wire`: a declared record without `owner`, a declared record with a `ModelOwner`, a model declaration node without `owner` or with a `SourceOwner`, an `owner` on the builtin `Integer` node, on a nominal enum node and on an application node, a `DefinitionOwner`, a `SourceOwner` with an extra member and a `ModelOwner` with `version`. A declared record's `owner` changed to a second source that is added to `lock.sources`, with its `declaration` occurrence's regions moved to that source and its node id kept and `package_id` recomputed, refuses `invalid_package`/`stale-node-key` at that node. | Test |
 | FR-322-AC-52 | The derived-shape key stage joins each node's `owner` to the lock before either pass: a `SourceOwner` whose (`authority`, `identity`) is no `lock.sources` entry's, and a `ModelOwner` whose `identity` is no `model_selections` row's, refuse `missing_declaration`/`missing-selection` at that node's `node_id`, and are reported ahead of a stale key at a node of lower node-id digest. A declared node's `owner` and its source map agree: changing the `source` of the region of a declared node's `declaration` occurrence to another lock source, which leaves every node id and the `package_id` unchanged, refuses `invalid_package`/`invalid-value` at that occurrence's `source_map` entry. | Test |
-| FR-322-AC-53 | The two-owner fixtures `positive-two-owners-a.json` and `positive-two-owners-b.json` declare the same records `Point { x: Integer; }` and `List { next?: List; }`, with the qualified names QSL emits for them, `["Point"]` and `["List"]` (QSL FR-092 D1), in both, with identical bodies, under the `SourceOwner`s (`agent-ix`, `example-a`) and (`agent-ix`, `example-b`). Both are admitted. Both also declare `three` (qualified name `["three"]`), a declared `value` whose body root is the application `1 + 2` (`quire.application-node/v1`, no `owner`). Their `Point` node ids differ, their `List` group labels differ and every member of the `List` group (the record and its `Option` node) has a different id in each, while the builtin `Integer` node and the application-keyed `three` node each have one id in both, as intended content addressing; their `package_id`s differ. Each package's in-group keys and group label recompute from that package alone. Package `a` with the `owner` members of `b`, `b`'s source added to `lock.sources`, the declared nodes' `declaration` occurrence regions moved to it, node ids kept, projection patched and `package_id` recomputed, refuses `invalid_package`/`stale-node-key`. | Test |
-| FR-322-AC-54 | The derived-shape key stage leaves every `correspondence`/`abstraction_relation` node untouched: `positive-clause-operations.json`'s `correspondence`/`abstraction_relation` node, keyed by FR-451's `quire.abstraction-relation-node/v1` preimage and so not by any `quire.structural-node/v1` preimage, passes the stage and the full reader admits the package; the same node with one `function` segment of its `frames` entry changed, canonical order and `dependencies` kept, node id kept, projection entry patched and `package_id` recomputed, refuses `invalid_semantic_graph` at FR-451's abstraction step 1 (Identity) and not `invalid_package`/`stale-node-key`. | Test |
+| FR-322-AC-53 | The two-owner fixtures `positive-two-owners-a.json` and `positive-two-owners-b.json` declare the same records `Point { x: Integer; }` and `List { next?: List; }`, with the qualified names QSL emits for them, `["Point"]` and `["List"]` (QSL FR-092 D1), in both, with identical bodies, under the `SourceOwner`s (`agent-ix`, `example-a`) and (`agent-ix`, `example-b`). Both are admitted. Both also declare `three` (qualified name `["three"]`), a declared `value` whose body root is the application `1 + 2` (`quire.application-node/v1`, no `owner`). Their `Point` node ids differ, their `List` group labels differ and every member of the `List` group (the record and its `Option` node) has a different id in each, while the builtin `Integer` node and the application-keyed `three` node each have one id in both, as intended content addressing; their `package_id`s differ. Each package's in-group keys and group label recompute from that package alone. Package `a` with the `owner` members of `b`, `b`'s source added to `lock.sources`, the declared nodes' `declaration` occurrence regions moved to it, node ids kept and `package_id` recomputed, refuses `invalid_package`/`stale-node-key`. | Test |
+| FR-322-AC-54 | The derived-shape key stage leaves every `correspondence`/`abstraction_relation` node untouched: `positive-clause-operations.json`'s `correspondence`/`abstraction_relation` node, keyed by FR-451's `quire.abstraction-relation-node/v1` preimage and so not by any `quire.structural-node/v1` preimage, passes the stage and the full reader admits the package; the same node with one `function` segment of its `frames` entry changed, canonical order and `dependencies` kept, node id kept and `package_id` recomputed, refuses `invalid_semantic_graph` at FR-451's abstraction step 1 (Identity) and not `invalid_package`/`stale-node-key`. | Test |
 | FR-322-AC-55 | The owner join resolves every `ModelOwner` against the selected document, whether or not anything reaches the node: a model declaration node whose owner `node` the document does not declare, and a `model`/`object_type` node whose owner names the relationship `Order-order-Order`, each keyed by its own preimage, refuse `missing_declaration`/`missing-selection`; a precondition clause function owned by the operation member `Order/size` (MW-11, and the `clause-precondition-operation-owner` function of `positive-all-families.json`), an invariant owned by the object type `Order` (MW-12) and a body clause function owned by `Order/size` (MW-17) pass the join, while a clause function owned by an undeclared member `Order/missing` (MW-13), one owned by the field `Order/total` (MW-14), a precondition owned by the object type `Order` (MW-16, `clause-precondition-owned-by-object-type`), an invariant owned by the operation member `Order/size` (MW-18, `clause-invariant-owned-by-operation-member`), an invariant owned by the systems interface `Flow` (MW-22, `clause-invariant-owned-by-systems-interface`), a `postcondition` kind (MW-19, `clause-kind-postcondition`), a clause function with two `clause` bindings (MW-20, `clause-two-kind-bindings`) and one with none (MW-21, `clause-without-kind`) refuse `missing_declaration`/`missing-selection` at the clause function's `node_id`. The `clause-*` ids are the `adverse.json` `clause_owner_cases`. | Test |
 | FR-322-AC-56 | A `relationship_end` member of a model-owned relationship resolves to one of the relationship's named ends, `sourceEnd.role` or, when the document declares one, `targetEnd.role`, and refuses `missing_declaration`/`missing-name` for any other name. The `Order-invoiced-Invoice` relationship of the published document declares no `targetEnd.role`, so it names only `invoiced`: `invoiced` resolves (`relationship-end-forward-without-inverse` in `adverse.json` `relationship_end_cases`, admitted by the full reader) and `next` refuses (`relationship-end-names-missing-inverse`; RE-ends-4 and RE-ends-5). `Order-order-Order` is `bidirectional` and names `order` and `next`. `Order-follows-Order` is `source-to-target` and names `follows` and `followedBy`: `follows` resolves (RE-ends-7) and `followedBy`, a named inverse traversed from target to source against that direction, refuses `ill_typed`/`operator-ineligible` at `member.name` (`relationship-end-inverse-against-direction`; RE-ends-8). `Order-twin-Order` names `twin` as both its source and its target role, so `twin` refuses `ambiguous_declaration`/`ambiguous-name` at `member.name` (`relationship-end-names-ambiguous-role`; RE-ends-9). A `relationship_end` whose `declaration` is not a relationship refuses `ill_typed`/`operator-ineligible` at `member.declaration`, after owner recovery and before role lookup (RE-ends-6). A missing role refuses at `member.name`. | Test |
 | FR-322-AC-57 | `quire.op.model.navigate` has operator class `query`. `quire.op.model.navigate` and `quire.op.model.reaches` over a model-owned relationship end apply the checks in this order, each refusing at its recorded application pointer: declaration kind (`member.declaration`), role lookup (`member.name`: missing-name, ambiguous-name), receiver effective endpoint (`arguments/0`, and for `reaches` `arguments/1`: an operand conforms to the receiver endpoint type directly or through a supertype, else `ill_typed`/`operator-ineligible`), direction (FR-152; `member.name`), destination multiplicity (an unbounded upper or an ordered destination is `unsupported_construct`/`expression-form` at `member.name`), then the operation's own type comparison (`navigate`: `result_type` equals the canonical `Reference<U>`, `Option<Reference<U>>`, `Set<Reference<U>>[l,u]` or `Bag<Reference<U>>[l,u]` of FR-152, else `ill_typed`/`operator-ineligible` at `result_type`; `reaches`: a destination end of the receiver endpoint's own type, whether single-valued (`[0,1]`, `[1,1]`) or finite multi-valued (`Set`/`Bag` shaped, unique or not), else `ill_typed`/`operator-ineligible` at `member.name`; a `reaches` has no result type to compare, so a multi-valued destination end admits exactly as a single-valued one does). The published `relationship_navigation_cases` RN-01 to RN-27 record each. | Test |
@@ -2012,9 +2069,12 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-92 | In every published producer-output package (every published positive package except the reader-admission fixture `positive-integer-literal-references.json` of FR-322-AC-93), each operand of a `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` or `ne` application that is an integer literal typed at the builtin Integer node is an inline `literal` term with `value_kind` `integer` and that type, and no such operand is a `reference` to a `value`/`literal` node of `value_kind` `integer`, whatever the node's type. In `positive-two-owners-a.json` and `-b.json` the `three` application holds the inline operands `1` and `2` and has empty `dependencies`; in `positive-operation-identities.json` the `integer.mul` and `integer.add` hold `7` and `-2` inline, and the `value`/`literal` nodes `7` and `-2` are present for the nodes that reference them. For each of the six operators, `inline_literal_cases` in `node-identity-vectors.json` records an application over inline integer literal operands with its JCS SHA-256, which differs from the key of the same application over references to literal nodes. | Test (TC-233) |
 | FR-322-AC-93 | The reader admits the reference form of an integer literal operand under the six operators: `positive-integer-literal-references.json`, whose `three` application is `quire.op.integer.add` over references to two `value`/`literal` nodes, validates against the V2 schema and passes every reader check, and its `three` node identity and `package_id` differ from those of `positive-two-owners-a.json`, which holds the inline form. | Test (TC-233) |
 | FR-322-AC-94 | `quire.op.reference.upcast` admits an operand `Reference<S>` with `type_argument` `Reference<T>` exactly when `S` and `T` are selected object types of one document and `S` conforms to `T` along declared supertypes: one type to itself, a subtype to its supertype, a subtype two levels down to its root, and a type with two supertypes to either. A supertype to its subtype (a downcast), two unrelated object types, a systems interface with no declared supertype to an object type, a reference to a relationship at either end and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand or member whose owner is not selected refuses `missing_declaration`/`missing-selection`. | Test |
-| FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id digest order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id digest, each with its `identity_projection` rebuilt in the new graph order and its `package_id` recomputed. Each reorder that changes the node sequence changes the `package_id`, and the reader reports no refusal for the order of the nodes. A published fixture whose `identity_projection` lists the same entries in an order other than graph order fails the identity recomputation of FR-322-AC-14. | Test (TC-233) |
-| FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node `7916…` and the `correspondence`/`source_locus` node `eda3…` each list their body target `8a2a…`, and the `bounded_domain`/`integer_range` node `652c…` lists its `semantic_type` `07f6…`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node `1ffe…` lists its `semantic_type` `0ec8…` alone, not its `max` literal's `type`. Each fixture's `package_id` recomputes with those lists. With the projection entry patched and `package_id` recomputed, the full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
+| FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id digest order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id digest, each with its `package_id` recomputed over the identity projection derived in the new graph order. Each reorder that changes the node sequence changes the `package_id`, and the reader reports no refusal for the order of the nodes. A published fixture with its `semantic_graph.nodes` reversed and its recorded `package_id` kept fails the identity recomputation of FR-322-AC-14. | Test (TC-233) |
+| FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node `7916…` and the `correspondence`/`source_locus` node `eda3…` each list their body target `8a2a…`, and the `bounded_domain`/`integer_range` node `652c…` lists its `semantic_type` `07f6…`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node `1ffe…` lists its `semantic_type` `0ec8…` alone, not its `max` literal's `type`. Each fixture's `package_id` recomputes with those lists. With `package_id` recomputed, the full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
 | FR-322-AC-97 | The `quire.structural-node/v1` preimages that "Structural node preimage" spells recompute: P4, the `value`/`parameter` node of `x: Int[0, 9]` at level 0, to `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda`, and U2, the `scalar_type`/`compound_unit` node of `metre / second`, to `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`; P4 at level `1`, and P4 named `y`, each give a different key. The V2 schema admits a `value`/`parameter` node whose body binds `name` then `level`, and a `scalar_type`/`compound_unit` node; a parameter body with `level` before `name`, or with a third member, fails the V2 schema (`malformed_wire`). Every `value`/`parameter` node of every published positive fixture is current under that preimage, and the full reader admits each fixture. | Test (TC-233) |
+| FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
+| FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
+| FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
 
 ## Dependencies
 
