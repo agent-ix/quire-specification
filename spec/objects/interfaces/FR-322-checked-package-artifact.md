@@ -423,15 +423,10 @@ boundary.
   **Body steps.** After every state refusal and before any operation
   refusal, the reader runs the body steps in this one order, each over its
   own node forms and each reporting before the next starts: the state-graph
-  step (FR-475), the temporal step
-  ([FR-370](FR-370-checked-package-temporal-clause-body.md)), the
-  abstraction step
-  ([FR-451](FR-451-checked-package-abstraction-relation-body.md)), the
-  terminal step (FR-476), the step-relation step
-  ([FR-477](FR-477-checked-package-step-relation-claim-body.md)) and the
-  protocol step ([FR-464](FR-464-checked-package-protocol-node-bodies.md)).
-  Each body artifact's "Reader order" fixes the checks inside its step; its
-  place among the steps is this list's.
+  step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
+  the terminal step (FR-476), the step-relation step (FR-477) and the
+  protocol step (FR-464). Each body artifact's "Reader order" fixes the
+  checks inside its step; its place among the steps is this list's.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
   re-derives by QSL FR-092's `quire.structural-node/v1` preimage the key of

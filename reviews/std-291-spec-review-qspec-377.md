@@ -46,3 +46,22 @@ The FND-001 fix needs an owner or planner decision on how executions get distinc
 ## Verdict
 
 Not mergeable until FND-001 is resolved. The rest of the form (by-reference premises, exact premise sets, code-claim request rule, identity through FR-322) is sound. FND-002 should be fixed in the same round; FND-003 to FND-005 are wording.
+
+## New findings (disposition pass 1)
+
+Head 2ea9d5a7e (`origin/main` is an ancestor). Re-derived HB-11 with the fix: `x`'s binders are `self`@0 and `i`@1, `y`'s are `self`@2 and `i`@3, so the four keys differ. `(pre(x.self.l) = pre(y.self.l) and x.i = y.i) implies x.self.l = y.self.l` now reads four distinct nodes and is refuted by two runs from equal pre-states and inputs whose post `l` differs. The vacuity is gone. Continuing levels agree with QSL FR-092 ("a binder's level is its position among the binders in scope").
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | medium | minor: FR-322's new "Body steps" list names the state-graph step (FR-475) and the terminal step (FR-476). Those requirements exist only on open PRs #370 and #375. If #377 lands first, main's order list names two absent requirements. <br>Fix: merge #370 and #375 before #377 (or in one train), or drop the two entries here and have #370 and #375 insert their own. Either way, the lead owns the merge order. | spec/objects/interfaces/FR-322-checked-package-artifact.md:423-434 |
+| FND-007 | medium | minor: FR-341 owns the `value`/`parameter` body and defines `level` as "the value's binder level in the 'Operation anchors, aliases and captures' table (`0` for `self`, ...)". FR-477's `y` binders (`self` at level 2) contradict that definition, and FR-341 was not amended. <br>Fix: one sentence in FR-341's `value`/`parameter` body section: a step relation's execution binders take FR-477's continuing levels. | spec/objects/interfaces/FR-341-checked-package-state-clause-body.md:131-138 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Each execution has its own binders, with levels continuing across executions. Reader step 4 checks names, types and level continuation. FR-477-AC-5, RN-13 (binders differ, body not a tautology) and RN-14 (shared binders refused). Re-derived: HB-11 reads four distinct nodes. |
+| FND-002 | fixed | FR-322 "Body steps" fixes one order: state-graph, temporal, abstraction, terminal, step-relation, protocol. FR-477 places its step after terminal and before protocol. This agrees with FR-451, FR-464, FR-370 and #375's FR-476. See FND-006 for the cross-PR references. |
+| FND-003 | fixed | Properties carry `owner`, the SourceOwner that enters the key. |
+| FND-004 | fixed | RN-01: `step` takes `i` and has no result; `x` is at levels 0 and 1, `y` at 2 and 3. |
+| FND-005 | fixed | FR-477 now follows the FR-464 to FR-466 range. |
