@@ -103,12 +103,16 @@ reported with its exact received bytes and no replacement member.
 
 Each requested item is one claim and requires exactly one kind. A clause's
 kind comes from the clause's own claim form; an expression nested in it, such
-as a function application or a `case` expression, adds no kind.
+as a function application or a `case` expression, adds no kind. A function
+declaration carries no clause; each scalar operation application in its body
+is a claim of its own, as the table below states.
 
 | Claim form | Required kind |
 | --- | --- |
 | Boolean clause over pure expressions, including function application | `value-validity` |
 | Clause containing a `case` expression over a sum type | `value-validity` |
+| Scalar operation application in a function body ([FR-146](../../functional/expressions/FR-146-check-total-pure-functions.md)): the application is defined and its result lies in its result bound, for every argument assignment under which its path condition holds | `value-validity`, one claim per occurrence |
+| Range narrowing (`quire.op.numeric.narrow`) in a function body | none. When its operand is a scalar operation application, its target range is that application's result bound; otherwise its FR-146 range obligation discharges it |
 | FR-146 `case` exhaustiveness obligation | none; it is discharged during language admission, and an unproved obligation refuses as `undefined_expression`/`unproved-exhaustiveness` |
 | Operation precondition, postcondition or invariant ([FR-196](../../functional/ir-proof/FR-196-generate-kani-contracts.md)) | `operation-contract` |
 | Frame obligation over `modifies`, `creates` and `deletes` sets | `operation-contract` |
@@ -128,6 +132,22 @@ as a function application or a `case` expression, adds no kind.
 | Temporal claim over a timed subject under any profile, and the derived time-lock-freedom item ([FR-417](../../functional/temporal/FR-417-settle-time-lock-freedom.md)) | `temporal-satisfaction` |
 | `schedulable` or `response` claim over a task set | `schedulability` |
 | Hybrid-model claim ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)) | `temporal-satisfaction` |
+
+A scalar operation application is an application in a function body whose
+operation is an integer (FR-044, FR-147), rational (FR-149), decimal (FR-140),
+IEEE (FR-148), quantity (FR-142), numeric conversion, or text or enumeration
+(FR-141) operation, other than a range narrowing
+(`quire.op.numeric.narrow`). Every other application in a body (`let`, `if`,
+a Boolean connective, Boolean, structural or reference equality, a projection, an option read, a call, a
+dispatch, a collection or model operation) is not a claim of its own. The
+application's result bound is the target range of the range narrowing whose
+operand it is, when there is one, and otherwise its own result type. Each
+occurrence of a scalar operation application in the body is one claim, so an
+application written twice is two claims; an occurrence in the function's
+termination measure is not in the body. The claim is requested beside the
+function's FR-146 admission: FR-146's definedness and range obligations still
+refuse an unproved occurrence when the body is linked, and the claim does not
+discharge or replace them.
 
 Unbounded quantification (FR-346), induction (FR-347), compositional discharge
 (FR-348), mathematical integers (FR-147), the three state-graph forms (FR-390)
@@ -356,7 +376,7 @@ backend identity, then by the manifest's RFC 8785 bytes.
 | FR-290-AC-2 | Every pair of claim kinds may retain independent execution and outcome states without promotion or premise transfer. | Test (TC-060, TC-271) |
 | FR-290-AC-3 | A non-global claim cannot carry the complete-global-conformance premise set as evidence for its own success. | Test (TC-060, TC-061, TC-271) |
 | FR-290-AC-4 | An item whose candidate set is empty settles `unsupported` with a warning naming its capability kind, and the named backend when there is one. | Test (TC-060, TC-271) |
-| FR-290-AC-5 | Each claim form in the claim-form assignment table requires exactly its listed kind; an expression nested in a clause adds no kind; a `case` exhaustiveness obligation and an FR-353 abstraction relation request no backend. | Test (TC-271, TC-330, TC-342, TC-343) |
+| FR-290-AC-5 | Each claim form in the claim-form assignment table requires exactly its listed kind; an expression nested in a clause adds no kind; a scalar operation application in a function body requires `value-validity` once per occurrence and a range narrowing requires none; a `case` exhaustiveness obligation and an FR-353 abstraction relation request no backend. | Test (TC-271, TC-330, TC-342, TC-343) |
 | FR-290-AC-6 | For each row of the advertised-mode table, negotiation settles the listed disposition; an unbounded extent on a bounded-only advertisement never settles `supported`; an item with no extent classification settles `invalid-request`. | Test (TC-271) |
 | FR-290-AC-7 | Each row of the candidate table settles its listed disposition and cause; an item with two or more candidates and no named backend settles `invalid-request` naming every candidate in candidate order, identically under every registration order; a malformed registration is refused and keyed by backend identity. | Test (TC-271) |
 | FR-290-AC-8 | A routed item whose tool is missing, or whose probe errors or exceeds its limit, records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind and backend; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that becomes unavailable after a passing probe records the FR-331 result `failed` with the same cause. | Test (TC-271) |
