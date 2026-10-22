@@ -486,7 +486,7 @@
   "selection_cases": [
     {"name": "MS-01", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"admission": "passed"}},
     {"name": "MS-02", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [], "expected": {"refused": {"code": "missing_import", "cause": "missing-selection"}}},
-    {"name": "MS-03", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": [{"path": "/types/5/constraints/1/operands/value", "value": 8}]}], "expected": {"admission": "passed"}},
+    {"name": "MS-03", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": [{"path": "/types/8/constraints/1/operands/value", "value": "8"}]}], "expected": {"admission": "passed"}},
     {"name": "MS-05", "selection": {"identity": "acme/orders", "digest_domain": "sha256", "digest": "$document"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "stale_dependency", "cause": "digest-domain-mismatch"}}},
     {"name": "MS-06", "selection": {"identity": "acme/invoices", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "invalid_model_binding", "cause": "wrong-model-selection"}}}
   ],

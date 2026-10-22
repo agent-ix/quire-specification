@@ -93,3 +93,18 @@ refusal this PR removes. FND-002 and FND-003 are low.
 | FND-001 | high | FR-150-AC-3 still requires "a stale package digest" to refuse normalization, while the FR-150 statement now says the digest is not recomputed from a supplied document, and TC-195 N05, its only row, no longer tests a stale digest | spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md:158,133-135; spec/test-cases/TC-195-model-normalization-provenance.md:58 |
 | FND-002 | low | The `content-mismatch` definitions in native-diagnostics.md and FR-272 drop the form "a selection's digest that differs from the digest recomputed from the supplied document", but FR-323 byte_provision and TC-277 BP-13 still refuse in exactly that form ("naming the selected and the recomputed digest") | proposals/quire-v1/definitions/native-diagnostics.md:67; spec/objects/foundation/FR-272-typed-diagnostic-cause.md:72; spec/objects/interfaces/FR-323-native-runtime-envelope.md:94-97; spec/test-cases/TC-277-replay-byte-provision.md:49 |
 | FND-003 | low | FR-150's new clause "the digest is not recomputed from a supplied document" has no scope, while FR-323's replay byte_provision still recomputes a `sha256-jcs` domain-package document's digest. It should say that intake does not recompute it | spec/functional/type-model/FR-150-preserve-model-normalization-provenance.md:134-135; spec/objects/interfaces/FR-323-native-runtime-envelope.md:94-97 |
+
+## Dispositions
+
+Disposition pass 1, against PR head f14d1d8b11d8b8f40694c248777fbde513773202
+(fix commit f14d1d8). The head contains origin/main (014f0ce). `quire
+validate --scope . 'spec/**/*.md'` still reports 134 failing documents, the
+same as main, and the touched files add no new failure. `cargo test --test
+checked_package_v2 --test backend_provider_v1 --test model_member_types`
+passes (117, 14 and 23 tests).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-150-AC-3 now reads "A wrong digest domain or a conflicting phase 4 derivation refuses normalization with its named cause, and a supplied document whose own canonical digest differs from the selected digest is admitted." TC-195 N05 gained a third case: "then with `A/x`'s multiplicity changed and the selection unchanged" expecting "admitted with three declarations, the changed multiplicity on `A/x` (FR-150-AC-3)". |
+| FND-002 | fixed | native-diagnostics.md `content-mismatch` now includes "or, in replay byte provision (FR-323), a `sha256-jcs` domain-package document whose digest differs from the digest it is keyed by"; FR-272 includes "the digest a replay byte-provision domain-package entry is keyed by and the digest recomputed from its document". Both match FR-323 byte_provision and TC-277 BP-13. |
+| FND-003 | fixed | FR-150 now reads "A ModelSelection whose digest domain is not `sha256-jcs` is refused `stale_dependency`/`digest-domain-mismatch`; model intake does not recompute the digest of a supplied document." The clause is scoped to model intake and no longer conflicts with FR-323 replay byte provision. |

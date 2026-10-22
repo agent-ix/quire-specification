@@ -31,3 +31,12 @@ Pass with one low finding.
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | FR-154-AC-2 ends with "intake never recomputes it", which states an internal step no test can observe. The observable behaviour is the admission clause before it ("a supplied document is admitted whatever its own canonical digest is") | spec/functional/type-model/FR-154-admit-domain-package-model.md:261 |
+
+## Dispositions
+
+Disposition pass 1, against PR head f14d1d8b11d8b8f40694c248777fbde513773202
+(fix commit f14d1d8).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-154-AC-2 now ends "a package supplied under the selected digest with the selection's identity is admitted, and a supplied document is admitted whatever its own canonical digest is." The unobservable clause "intake never recomputes it" is gone. |
