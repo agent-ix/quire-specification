@@ -900,6 +900,15 @@
       "additionalProperties": false
     },
     "CertificateIdentity": {"description": "FR-201: the canonical identity digest that binds a certificate to the obligation it proves.", "type": "object", "required": ["domain", "algorithm", "digest"], "properties": {"domain": {"$ref": "#/$defs/Nonempty"}, "algorithm": {"const": "sha256"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
+    "ProbabilityWitnessChoice": {"description": "FR-331 transport of QSL FR-202 canonical WitnessChoice body octets: FR-196 ProductAction or FR-202 conditioned FreeDelays. Actual receiver/arguments/support/delay and unsigned choice-octet order are rederived; no identity/index/default aliases or second encoder.", "$ref": "#/$defs/Base64Url"},
+    "ProbabilityWitnessEntry": {
+      "description": "FR-331 transport of QSL FR-201/202 WitnessEntry. Each choice carries complete RFC 8785 canonical choice-body octets (FR-196 ProductAction or FR-202 FreeDelays), not an ordinary transition alias. Reader checks actual enabled choices, mode, unique canonical octet order, positive reduced masses summing to one, conditioned support and admissible continuation/fairness/TS-5.",
+      "type": "object",
+      "oneOf": [
+        {"required": ["type", "choice"], "properties": {"type": {"const": "choice"}, "choice": {"$ref": "#/$defs/ProbabilityWitnessChoice"}}, "additionalProperties": false},
+        {"required": ["type", "choices"], "properties": {"type": {"const": "randomized"}, "choices": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["choice", "probability"], "properties": {"choice": {"$ref": "#/$defs/ProbabilityWitnessChoice"}, "probability": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}}}, "additionalProperties": false}
+      ]
+    },
     "ProbabilityCertificate": {
       "description": "FR-412 ProbabilityCertificate{identity, objective, kind, values, ranking, policy, components}.",
       "type": "object",
@@ -910,7 +919,7 @@
         "kind": {"enum": ["lower", "upper", "exact", "long-run"]},
         "values": {"type": "array", "items": {"type": "object", "required": ["state", "value"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "value": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}},
         "ranking": {"type": "array", "items": {"type": "object", "required": ["state", "rank"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "rank": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
-        "policy": {"type": "array", "items": {"type": "object", "required": ["state", "choice"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "choice": {"$ref": "#/$defs/TransitionIdentity"}}, "additionalProperties": false}},
+        "policy": {"type": "array", "items": {"type": "object", "required": ["state", "choice"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "choice": {"$ref": "#/$defs/ProbabilityWitnessEntry"}}, "additionalProperties": false}},
         "components": {"type": "array", "items": {"type": "object", "required": ["value", "gain", "bias"], "properties": {"value": {"$ref": "#/$defs/Rational"}, "gain": {"$ref": "#/$defs/Rational"}, "bias": {"type": "array", "items": {"type": "object", "required": ["state", "value"], "properties": {"state": {"$ref": "#/$defs/ProbabilityProductKey"}, "value": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}}}, "additionalProperties": false}}
       },
       "additionalProperties": false

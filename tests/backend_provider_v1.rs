@@ -889,7 +889,7 @@ fn tc_431_canonical_key_bindings_are_complete() {
     assert_eq!(certificate["components"]["items"]["properties"]["bias"]
         ["items"]["properties"]["state"]["$ref"], "#/$defs/ProbabilityProductKey");
     assert_eq!(certificate["policy"]["items"]["properties"]["choice"]["$ref"],
-        "#/$defs/TransitionIdentity");
+        "#/$defs/ProbabilityWitnessEntry");
     for shape in ["ProductStateLocus", "HyperProductStateLocus"] {
         assert_eq!(schema["$defs"][shape]["properties"]["automaton_state"]["$ref"],
             "#/$defs/AutomatonStateKey");
@@ -918,6 +918,25 @@ fn tc_431_canonical_key_bindings_are_complete() {
         serde_json::json!({"product_key": "AQ", "state": "AQ"})] {
         assert!(!locus.is_valid(&invalid));
     }
+    let policy = definition("ProbabilityWitnessEntry");
+    let deterministic = serde_json::json!({"type": "choice", "choice": "AQ"});
+    let randomized = serde_json::json!({"type": "randomized", "choices": [
+        {"choice": "AQ", "probability": {"numerator": "3", "denominator": "4"}},
+        {"choice": "Ag", "probability": {"numerator": "1", "denominator": "4"}}]});
+    for entry in [deterministic, randomized] {
+        assert!(policy.is_valid(&entry));
+        for field in entry.as_object().expect("closed entry").keys() {
+            let mut missing = entry.clone();
+            missing.as_object_mut().expect("closed entry").remove(field);
+            assert!(!policy.is_valid(&missing), "policy needs {field}");
+        }
+        let mut extra = entry;
+        extra["operation"] = serde_json::json!("invented-observe");
+        assert!(!policy.is_valid(&extra));
+    }
+    assert!(!policy.is_valid(&serde_json::json!({"type": "transition",
+        "operation": "inc", "receiver": null, "arguments": []})));
+    assert!(!policy.is_valid(&serde_json::json!({"type": "randomized", "choices": []})));
 
     // Independent exact octet oracle: QSL TC-525's parameter-free Counter
     // deadlock-freedom safety key. Codec/JCS checks only, not translation.
