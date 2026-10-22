@@ -57,8 +57,8 @@ reference and lock unchanged.
 
 ## Expected Results
 
-The package contains one `semantic_graph.nodes` collection in FR-322 typed-key
-order, with each semantic node represented once; its intra-package semantic
+The package contains one `semantic_graph.nodes` collection in the producer's
+graph order (FR-322), with each semantic node represented once; its intra-package semantic
 references resolve locally, the dependency function call resolves through the
 selected admitted package, and recursion-group cycles remain keyed references
 in a finite value. The dependency-package mutation refuses
