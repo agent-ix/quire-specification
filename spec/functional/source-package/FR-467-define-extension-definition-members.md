@@ -82,5 +82,5 @@ The definition reader SHALL read the two members and the dependency edges of the
 
 - [FR-133](FR-133-extend-language-uniformly.md) owns what an extension may change; this requirement owns the definition members that carry its forms.
 - [FR-339](FR-339-define-complete-native-grammar.md) owns the core keywords and token vocabulary.
-- [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) owns the core node kinds, and [FR-469](../../objects/interfaces/FR-469-checked-package-extension-nodes.md) the checked-package node that carries a form of an extension's node kind.
+- [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) owns the core node kinds. The checked-package carrier for an extension's node kind is not defined by this requirement; it is tracked as STD-236.
 - [FR-131](FR-131-compose-complete-profile-bundle.md) owns the bundle in which the definitions are selected.

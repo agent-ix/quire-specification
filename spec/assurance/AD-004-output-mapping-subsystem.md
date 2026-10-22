@@ -18,7 +18,7 @@ relationships:
 FS06 refines AD-001's output branch; it does not replace PR #15's architecture.
 S9 produces optional derived OCL, SysML/KerML or FRETish output and a complete
 source-bound loss report. It also owns the authoring/tool boundary for the
-lossless CST, formatter, language server, CLI, WASM surface, metadata/views,
+lossless CST, formatter, language server, CLI, metadata/views,
 Rust plugin manifests, AOT/JIT providers and reusable semantic libraries. It
 never admits generated target text as source or uses a foreign runtime to decide
 native truth.

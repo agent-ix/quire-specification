@@ -70,8 +70,6 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-461
     type: references
-  - target: ix://agent-ix/quire-specification/FR-469
-    type: references
 ---
 
 # FR-322: Immutable checked-package artifact
@@ -178,10 +176,7 @@ boundary.
 - `semantic_graph` — one `quire.checked-semantic-graph/v2` closed tagged-node
   union. Its current tags are `scalar_type`, `composite_type`,
   `bounded_domain`, `value`, `expression`, `function`, `model`, `relation`,
-  `state`, `temporal`, `protocol`, `claim`, `correspondence` and
-  `extension`. An `extension` node, of the one form `extension_form`, carries
-  a selected extension's declaration form, with the extension's node kind as
-  body data ([FR-469](FR-469-checked-package-extension-nodes.md)). A node key is
+  `state`, `temporal`, `protocol`, `claim` and `correspondence`. A node key is
   (`node_id.domain`, `node_id.digest`); node identifiers are unique within the
   graph. **Graph order** is the order of the `semantic_graph.nodes` array,
   which the producer chooses. The `identity_projection` holds one entry per
@@ -555,10 +550,9 @@ boundary.
   [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md),
   [FR-402](FR-402-hyperproperty-obligation-identity.md),
   [FR-440](FR-440-checked-package-union-and-case-nodes.md),
-  [FR-451](FR-451-checked-package-abstraction-relation-body.md),
+  [FR-451](FR-451-checked-package-abstraction-relation-body.md) and
   [FR-464](FR-464-checked-package-protocol-node-bodies.md) to
-  [FR-466](FR-466-checked-package-protocol-control-bodies.md) and
-  [FR-469](FR-469-checked-package-extension-nodes.md). For example:
+  [FR-466](FR-466-checked-package-protocol-control-bodies.md). For example:
 
   | Node | `dependencies` |
   | --- | --- |
@@ -568,7 +562,6 @@ boundary.
   | `composite_type` `option`, a collection kind, `reference`; declared `record` or `tuple` | each node the body references |
   | `expression`/`reference`, `correspondence`/`source_locus`, `protocol`/`protocol_reference` | the body's target |
   | `scalar_type`/`compound_unit` | each unit its terms reference |
-| `extension`/`extension_form` | the unique digest-ascending targets of its clause bindings |
   | `function`, a clause function included | each node its body references: its parameter nodes, its body's root node and its measure's node |
   | an `expression` holding an application | rules 1 and 2 over the application |
 
@@ -640,7 +633,7 @@ boundary.
 - `declaration` — `{qualified_name}`, the name a named, source-declared node
   introduces, with the `qualified_declaration` grammar. It is carried exactly by
   a `scalar_type`, `composite_type`, `bounded_domain`, `function`, `model`,
-  `protocol`, `claim` or `extension` node, or a `value` node other than an `enum_value`, that
+  `protocol` or `claim` node, or a `value` node other than an `enum_value`, that
   has a `declaration` source occurrence. A builtin or anonymous type reached
   only through `type` occurrences, an expression, a let value and every other
   node must not carry it, and a producer never invents a name.
@@ -785,9 +778,9 @@ boundary.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
   available loci. Message text is not a classification or identity component.
 
-`read` receives limits from its caller, the domain package documents its
+`read` receives limits from its caller, and the domain package documents its
 `model_selections` name, keyed by `sha256-jcs` digest (FR-154's package
-input), and the extension definitions the reader holds (FR-469); they are not artifact data and never participate in package identity. Its closed `ReadResult` is exactly one of:
+input); they are not artifact data and never participate in package identity. Its closed `ReadResult` is exactly one of:
 `admitted { package }`; `refused { code, stage, cause, loci }`; or
 `incomplete { limit_kind, limit, consumed, stage, loci }`. The v2 refusal code
 vocabulary is `unknown_contract_version`, `malformed_wire`, `duplicate_member`,
@@ -913,7 +906,7 @@ fixed by the schema, whatever the model's size.
 | Group | `aggregate` whose members are each a Leaf or a `binding` whose value is a Leaf |
 | Tuple | `aggregate` whose members are each a Leaf or a Group |
 | Member | a Leaf, a Group, or a `binding` whose value is a Leaf, a Group or a Tuple |
-| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)); or an `extension_form` body, whose clause values are each a `reference` ([FR-469](FR-469-checked-package-extension-nodes.md)) |
+| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); or an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)) |
 
 **Integer literal operands.** The producer SHALL write an integer literal
 operand of `quire.op.integer.add`, `quire.op.integer.sub`,
@@ -1933,7 +1926,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-8 | Two conformers derive the same package id from the specified JCS identity preimage; changing an excluded raw artifact/source-map/presentation or reader-limit member does not change it, while changing any named preimage member does. | Test (TC-217) |
 | FR-322-AC-9 | The reader result is exactly admitted, refused or incomplete; malformed input and the first exhausted measured limit remain distinguishable and carry their specified typed provenance/accounting. | Test (TC-217) |
 | FR-322-AC-10 | Enum, dimension and declared-unit node keys match the closed JCS preimage vectors; stale-body keys, non-normalized rationals, invalid owner joins and every other noncanonical member or term order this artifact refuses -- including an application node's `dependencies` list -- refuse as `invalid_semantic_graph`, except a `state`/`frame` node's own `modifies`/`creates`/`deletes` canonical order, which [FR-340-AC-4](FR-340-checked-package-frame-location.md) owns. | Test |
-| FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 14 closed node tags with an exact source-map entry for every occurrence, and refuses each authored document-type, digest-domain and node mutation. | Test |
+| FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 13 closed node tags with an exact source-map entry for every occurrence, and refuses each authored document-type, digest-domain and node mutation. | Test |
 | FR-322-AC-14 | Each published V2 package fixture's `package_id` equals the RFC 8785 JCS SHA-256 of the identity preimage rebuilt from its lock selections and occurrence-free semantic graph; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
 | FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef` names a complete-value lock definition by authority and identity; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne`, ordering or `negate` identity, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
