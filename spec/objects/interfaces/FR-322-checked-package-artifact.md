@@ -1020,9 +1020,14 @@ constraints ("Reference conformance" below).
    document's declarations under FR-154 and normalizes them under the
    `quire.model.complete/v1` rules. The selected document is an FCD semantic IR
    2.0.0 domain package (FR-154 step 3; filament-core-data FR-091 and FR-095):
-   `contractVersion`, `package`, `constructs`, `types` and `populations`, each type carrying its
-   `fields`, `operations`, `supertypes` and `relationships`, and each population its
-   members of "Population references" ("Owner join"; filament-core-data FR-141). A relationship's IR
+   `contractVersion`, `package`, `constructs`, `types`, `populations`,
+   `dimensions` and `units`, each type carrying its
+   `fields`, `operations`, `supertypes` and `relationships`, each population its
+   members of "Population references" ("Owner join"; filament-core-data FR-141),
+   and each dimension and unit node the members filament-core-data FR-146
+   states (`dimensions` and `units` may be absent, which is the empty list).
+   A field typed `ix://quire/native/Clock` is a clock field of its owning type
+   (FR-154). A relationship's IR
    node identity is FCD's, `ix://<org>/<name>/relationship/<Name>-<verb>-<Target>`,
    and it is declared in its source type's `relationships` with `sourceEnd` and
    `targetEnd`. The declarations steps 2 to 4 read are the projection of that
@@ -2008,6 +2013,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id digest order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id digest, each with its `identity_projection` rebuilt in the new graph order and its `package_id` recomputed. Each reorder that changes the node sequence changes the `package_id`, and the reader reports no refusal for the order of the nodes. A published fixture whose `identity_projection` lists the same entries in an order other than graph order fails the identity recomputation of FR-322-AC-14. | Test (TC-233) |
 | FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node `7916…` and the `correspondence`/`source_locus` node `eda3…` each list their body target `8a2a…`, and the `bounded_domain`/`integer_range` node `652c…` lists its `semantic_type` `07f6…`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node `1ffe…` lists its `semantic_type` `0ec8…` alone, not its `max` literal's `type`. Each fixture's `package_id` recomputes with those lists. With the projection entry patched and `package_id` recomputed, the full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
 | FR-322-AC-97 | The `quire.structural-node/v1` preimages that "Structural node preimage" spells recompute: P4, the `value`/`parameter` node of `x: Int[0, 9]` at level 0, to `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda`, and U2, the `scalar_type`/`compound_unit` node of `metre / second`, to `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`; P4 at level `1`, and P4 named `y`, each give a different key. The V2 schema admits a `value`/`parameter` node whose body binds `name` then `level`, and a `scalar_type`/`compound_unit` node; a parameter body with `level` before `name`, or with a third member, fails the V2 schema (`malformed_wire`). Every `value`/`parameter` node of every published positive fixture is current under that preimage, and the full reader admits each fixture. | Test (TC-233) |
+| FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 
 ## Dependencies
 
