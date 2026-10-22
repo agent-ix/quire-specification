@@ -85,18 +85,27 @@ receiver's `cur` and `acq`. `ra` has no gate and no memory step.
 value. Branch-local locations hold their thread's value.
 
 **Garbage collection.** After every step, every message of `ℓ` earlier in mo
-than the earliest message any view points to at `ℓ` (every thread's three
-views, every message view, and `S`) is removed. No step can read a removed
-message. After an outermost `join all` only the parent's views remain and each
-location keeps one message.
+than the earliest message that any running thread's current view points to at
+`ℓ` is removed. A thread is **running** unless it is waiting at a `join`; a
+branch that has finished and is not yet joined is running. Only the current
+views of running threads pin a message. A thread waiting at a `join` pins
+nothing, since the `join` replaces its views with the join of its branches'
+views. An acquire view, a release view, a message view, a view a `send`
+carries and `S` pin nothing: a pointer below every running thread's current
+view joins into a current view as nothing, and a view that points at a removed
+message reads as, and is encoded in the state key as, pointing at the earliest
+live message of its location. No step can read a removed message. After an
+outermost `join all` only the parent's views remain and each location keeps
+one message.
 
 ### RC11 `seq_cst` accesses: the SC event graph
 
 - **State.** The live SC events, each a `seq_cst` access or fence with its
   thread, kind, location and message; a directed acyclic graph `P` over them,
   `e → x` when `e` precedes `x` in RC11's `psc`, closed under transitivity;
-  and for each location `ℓ` the set `F(ℓ)` of live SC events that precede in
-  `psc` every SC write to `ℓ` still to come.
+  for each location `ℓ` the set `F(ℓ)` of live SC events that precede in
+  `psc` every SC write to `ℓ` still to come; and the `owed` sets of the
+  collection rule below, one per thread and the pairs of every view.
 - **Frontier.** Every view also records, for each thread, the latest live SC
   event of that thread that happens before the view or that the join of `S`
   reaches; every live SC event of that thread no later in program order is
@@ -144,12 +153,39 @@ location keeps one message.
   holds under RC11, and a counterexample is an `ra` execution that replay
   checks under `ra`.
 - **Collection.** When garbage collection removes a message, each live SC
-  event on it leaves `P`: a removed write and its predecessors join `F(ℓ)`; a
-  removed SC read's predecessors join `F(ℓ)`; `P` is restricted to the
-  remaining events with its transitive closure kept. An SC event is live only
-  while its message is.
-- **Key.** `P`, `F` and the frontiers are part of the state key, with events
-  named by thread and message depth.
+  event on it leaves `P`, which is restricted to the remaining events with its
+  transitive closure kept, and its live predecessors are kept for every later
+  event they precede:
+  - a removed write's predecessors, and a removed SC read's, join `F(ℓ)`; the
+    read's own edges to later writes need nothing more, since a later event
+    takes no edge to the read;
+  - each thread `b` holds `owed(b)`, the live SC events that precede every
+    later SC event of `b`; a removed event of `b` adds its live predecessors
+    to it, and a new SC event of `b` takes it as predecessors;
+  - every view, including a view that a `send` carries and no `receive` has
+    yet joined, also holds pairs `(ℓ, p)`, `p` a live SC event that precedes
+    every later SC event on `ℓ` of a thread whose current view includes the
+    view; a removed event on `ℓ` adds `(ℓ, p)` for each live predecessor `p`
+    to every view whose frontier covers it, wherever the view is held (by a
+    thread, in a message, as `S`, or in flight on a channel); joining views
+    unions the pairs;
+  - a member of `F(ℓ)` or of `owed(b)`, or the `p` of a pair, that is itself
+    removed is replaced by its live predecessors.
+  An SC access is live only while its message is.
+- **Fence lifetime.** A fence is on no message, so no message collection
+  removes it; fence removal runs with garbage collection, after every step. A
+  `seq_cst` fence `f` of thread `t` is live while some view has
+  `f` as the latest live `seq_cst` fence of `t` that its frontier covers: a
+  thread's three views, every message view, `S`, and every view a `send`
+  carries that a `receive` has not yet joined. A view covers `f` when its
+  frontier entry for `t` is `f` or a later event. When no view does, every view
+  that covered `f` covers a later live fence of `t`, which takes each edge `f`
+  would take, and `f` leaves `P`. Because a `seq_cst` fence enters the
+  frontier of its thread's views as it becomes an SC event, a thread that
+  fences twice with no store between holds the second fence, not the first, in
+  every view after the second fence.
+- **Key.** `P`, `F`, the frontiers and the `owed` sets are part of the state
+  key, with events named by thread and message depth.
 
 ### Visibility fairness
 
@@ -191,12 +227,16 @@ RC11 excludes.
 | FR-437-AC-1 | The store-buffering protocol under `ra` reaches exactly 14 states inside the `parallel` and 4 joined states, and the claim settles `refuted` with the counterexample whose last load reads `x` at depth 1. | Test (TC-390) |
 | FR-437-AC-2 | Each `ra` row of the litmus table (TC-391) gives its stated outcome: SB, MP with relaxed flags, IRIW with release/acquire and 2+2W with release stores allowed; SB with `seq_cst` fences, SB with `seq_cst` accesses, MP with release/acquire, LB, IRIW all `seq_cst` and CoRR forbidden. | Test (TC-391) |
 | FR-437-AC-3 | With every store and load `seq_cst`, the store-buffering outcome is excluded because the second load's old-message choice would close the cycle `Sx → Ly → Sy → Lx → Sx` in `P`, and the claim settles `proved`. | Test (TC-390) |
-| FR-437-AC-4 | Once every view points at or after a location's mo-last message, every earlier message of that location is removed in the same step; after an outermost `join all` each location keeps one message; and two histories that admit the same futures share one state key. | Test (TC-393) |
+| FR-437-AC-4 | Once every running thread's current view points at or after a message of a location, every earlier message of that location is removed in the same step, whatever its acquire, release and message views and `S` point at; after an outermost `join all` each location keeps one message; and two histories that admit the same futures share one state key. | Test (TC-393) |
 | FR-437-AC-5 | A lasso on which a thread keeps loading a stale message of a location without ever loading its mo-last message is rejected by visibility fairness. | Test (TC-391) |
 | FR-437-AC-6 | The litmus vectors' outcomes under `ra` include every outcome that an independent RC11 execution-graph checker allows on the same tests, and differ from the checker's only on LT-12 and LT-13, which the checker forbids and `ra` allows. | Test (TC-391) |
 | FR-437-AC-7 | On an accepting SCC with states `p`, `q`, `r` and the edges `p → q`, `q → p` and `r → q` (thread `a`, which loads nothing), and `q → r` (thread `b` loads `ℓ` from a message that is not mo-last), with `p` the only accepting state, visibility fairness removes the edge `q → r`, decomposes the SCC into `{r}` and `{p, q}`, and passes `{p, q}`, whose loop `p q p q …` is visibility-fair. | Test (TC-391) |
 | FR-437-AC-8 | TC-391 LT-12 and LT-13 each reach their weak outcome under `ra`, the two shapes of the omitted clauses, and neither under `sc` or `tso`. | Test (TC-391) |
 | FR-437-AC-9 | TC-391 LT-14 and LT-18 do not reach their weak outcomes under `ra`. | Test (TC-391) |
+| FR-437-AC-10 | TC-391 LT-15 does not reach its weak outcome under `ra`, whether or not garbage collection has removed the SC event on `L := 2`, the earlier message the storing thread wrote: when it has, its live predecessors, among them `X := 1`, are kept for that thread, so `X := 2` is not offered the slot before the first writer's `X := 1` in modification order. | Test (TC-391) |
+| FR-437-AC-11 | TC-391 LT-16 does not reach its weak outcome under `ra`: a thread that read the last message of `L` with a `relaxed` load and executed an acquire fence has a view that covers the collected SC event it synchronised with, though the message its next `seq_cst` load of `L` reads does not; the load takes the predecessors held in the view, so its thread's `X := 2` is not offered the slot before `X := 1` in modification order. | Test (TC-391) |
+| FR-437-AC-12 | TC-391 LT-17 does not reach its weak outcome under `ra` in any interleaving, including those in which the fence's thread fences a second time before the other thread loads the flag: the first fence stays in `P` while the flag's message view covers it and not the second. | Test (TC-391) |
+| FR-437-AC-13 | A thread that fences twice with `seq_cst` and stores no flag between has, after its second fence, the first fence absent from the SC event graph; with a `release` flag stored between the fences, the first fence remains while the flag's message is live and its view covers the first fence and not the second. | Test (TC-393) |
 
 ## Dependencies
 

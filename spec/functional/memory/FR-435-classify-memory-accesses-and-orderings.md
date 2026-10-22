@@ -129,6 +129,12 @@ goes to the memory model; branch-local writes apply in place. An RMW
 application whose post-state leaves `ℓ` unchanged is a load with the read
 part of its ordering.
 
+Under `ra`, the value the model gives the reading thread at a shared location
+is the value of the message the access chose, at the location a load or the
+read part of an RMW reads, and otherwise the value of the message the thread's
+current view points at. A store's precondition, and a local access's, read the
+current-view message.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -140,6 +146,7 @@ part of its ordering.
 | FR-435-AC-5 | A load whose precondition requires the value 1 is enabled under `tso` only when its thread observation of the location is 1, and an RMW whose post-state leaves the location unchanged takes no write step. | Test (TC-389) |
 | FR-435-AC-6 | `fence F ordering relaxed;` is `refused { code: invalid_syntax, cause: unexpected-token }` at the `relaxed` token, because `fence-order` admits only `acquire`, `release`, `acq_rel` and `seq_cst`; an admitted fence is a step with members `thread`, `node` and `ordering`, uncounted for intervals. | Test (TC-389) |
 | FR-435-AC-7 | A branch holding an `event` whose constraint reads `x.v`, beside a branch whose attempt stores `x.v`, settles `unsupported` with cause `weak-access-shape` and shape `multi-location` naming the event and `(x, v)` under a `tso` selection, and is admitted under `sc`; an `event` reading a field of an object that no attempt accesses, and a `finish` reading `x.v` after the join, are admitted under `tso`. | Test (TC-389) |
+| FR-435-AC-8 | Under `ra`, a store whose precondition requires `x.v = 0` is enabled only while its thread's current view points at a message of `x` with value 0, whatever the mo-last message holds; a load of `x` whose precondition requires `x.v = 1` is enabled for each message at or after the current view whose value is 1. | Test (TC-389) |
 
 ## Dependencies
 
