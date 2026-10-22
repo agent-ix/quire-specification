@@ -50,6 +50,8 @@ checker forbids the outcome and `ra` allows it.
 | LT-12 | three threads, all locations 0: `u`: `X := 1` seq_cst; `Y := 1` release. `v`: `a := Y` acquire; `b := Z` seq_cst. `w`: `Z := 1` seq_cst; `c := X` seq_cst | a = 1, b = 0, c = 0 | forbidden | forbidden | allowed (RC11 forbids it: the `po|≠loc ; hb ; po|≠loc` edge from `X := 1` to `b := Z`) |
 | LT-13 | `u`: `X := 1` seq_cst; `a := Y` seq_cst. `v`: `Y := 1` relaxed; fence seq_cst; `b := X` relaxed | a = 0, b = 0 | forbidden | forbidden | allowed (RC11 forbids it: `a := Y` precedes the fence through the relaxed store, the fence precedes `X := 1` through the relaxed load) |
 | LT-14 | `u`: `X := 1` seq_cst; fence seq_cst; `Y := 1` release. `v`: `a := Y` acquire; `P := 1` seq_cst. `w`: `P := 2` seq_cst; `b := X` seq_cst | a = 1, b = 0, final P = 2 | forbidden | forbidden | forbidden (the fence precedes `P := 1` through the flag) |
+| LT-15 | `u`: `X := 1` seq_cst; `L := 1` seq_cst; `a := L` relaxed; `b := L` relaxed. `t`: `L := 2` seq_cst; `L := 3` relaxed; `X := 2` seq_cst | a = 2, b = 3, final X = 1 | forbidden | forbidden | forbidden (RC11 forbids it; the cycle runs `X := 1`, `L := 1`, `L := 2`, `X := 2` and back through modification order) |
+| LT-16 | `u` and `t` as in LT-15 without `X := 2`. `w`: `c := L` relaxed; fence acquire; `d := L` seq_cst; `X := 2` seq_cst | a = 2, b = 3, c = 3, d = 3, final X = 1 | forbidden | forbidden | forbidden (RC11 forbids it; `L := 2` happens before `d := L` through the acquire fence) |
 
 Separately, pass the synthesized SCC of FR-437-AC-7 straight to the visibility
 filter (no protocol is run): states `p`, `q`, `r`, edges `p → q`, `q → p` and

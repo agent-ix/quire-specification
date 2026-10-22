@@ -124,12 +124,24 @@ location keeps one message.
   cycles use an omitted edge, so a `proved` verdict holds under RC11 and a
   counterexample is an `ra` execution that replay checks under `ra`.
 - **Collection.** When garbage collection removes a message, each live SC
-  event on it leaves `P`: a removed write and its predecessors join `F(ℓ)`; a
-  removed SC read's predecessors join `F(ℓ)`; `P` is restricted to the
-  remaining events with its transitive closure kept. An SC event is live only
-  while its message is.
-- **Key.** `P`, `F` and the frontiers are part of the state key, with events
-  named by thread and message depth.
+  event on it leaves `P`, which is restricted to the remaining events with its
+  transitive closure kept, and its live predecessors are kept for every later
+  event they precede:
+  - a removed write's predecessors, and a removed SC read's, join `F(ℓ)`; the
+    read's own edges to later writes need nothing more, since a later event
+    takes no edge to the read;
+  - each thread `b` holds `owed(b)`, the live SC events that precede every
+    later SC event of `b`; a removed event of `b` adds its live predecessors
+    to it, and a new SC event of `b` takes it as predecessors;
+  - every view also holds pairs `(ℓ, p)`, `p` a live SC event that precedes
+    every later SC event on `ℓ` of a thread whose current view includes the
+    view; a removed event on `ℓ` adds `(ℓ, p)` for each live predecessor `p`
+    to every view whose frontier covers it; joining views unions the pairs;
+  - a member of `owed(b)`, or the `p` of a pair, that is itself removed is
+    replaced by its live predecessors.
+  An SC access is live only while its message is.
+- **Key.** `P`, `F`, the frontiers and the `owed` sets are part of the state
+  key, with events named by thread and message depth.
 
 ### Visibility fairness
 
@@ -177,6 +189,8 @@ RC11 excludes.
 | FR-437-AC-7 | On an accepting SCC with states `p`, `q`, `r` and the edges `p → q`, `q → p` and `r → q` (thread `a`, which loads nothing), and `q → r` (thread `b` loads `ℓ` from a message that is not mo-last), with `p` the only accepting state, visibility fairness removes the edge `q → r`, decomposes the SCC into `{r}` and `{p, q}`, and passes `{p, q}`, whose loop `p q p q …` is visibility-fair. | Test (TC-391) |
 | FR-437-AC-8 | TC-391 LT-12 and LT-13 each reach their weak outcome under `ra`, the two shapes of the omitted clauses, and neither under `sc` or `tso`. | Test (TC-391) |
 | FR-437-AC-9 | TC-391 LT-14 does not reach its weak outcome under `ra`: after the fence's thread has released the flag, a thread that acquired it and stored with `seq_cst` leaves the third thread's `seq_cst` load of the fenced location enabled for the new message only. | Test (TC-391) |
+| FR-437-AC-10 | TC-391 LT-15 does not reach its weak outcome under `ra`: after the loads have moved every current view of `L` to its last message and collected the SC events on the earlier messages, the thread that wrote them is still ordered after the first writer's `X := 1`, so its `X := 2` is not offered the slot before it in modification order. | Test (TC-391) |
+| FR-437-AC-11 | TC-391 LT-16 does not reach its weak outcome under `ra`: a thread that read the last message of `L` with a `relaxed` load, executed an acquire fence and then loaded `L` with `seq_cst` takes the predecessors of the collected SC event it synchronised with, so its `X := 2` is not offered the slot before `X := 1` in modification order. | Test (TC-391) |
 
 ## Dependencies
 
