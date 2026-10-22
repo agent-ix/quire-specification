@@ -52,10 +52,16 @@ claim, and the body, through the node's references, and from nothing else.
       ([FR-342](FR-342-checked-package-operation-anchor-body.md)), whose
       `frame` member reaches the operation's `state`/`frame` node;
     - `binding("parameters", …)`, an aggregate of `reference`s to the
-      execution's `value`/`parameter` nodes in the binder-level order
+      execution's own `value`/`parameter` nodes, with the names and types
       [FR-341](FR-341-checked-package-state-clause-body.md) gives a
-      postcondition: `self`, then `result` when the operation has one, then
-      the operation's parameters in declared order;
+      postcondition's binders, in its binder order: `self`, then `result`
+      when the operation has one, then the operation's parameters in
+      declared order. Levels continue across executions: the first
+      execution's binders take levels 0, 1, … in that order, and each later
+      execution's binders take the next levels after the previous
+      execution's last. A `value`/`parameter` node is keyed by its name,
+      level and type (FR-322), so two executions of one operation have
+      distinct binder nodes, and the body tells their reads apart;
     - `binding("preconditions", …)` and `binding("postconditions", …)`, each
       an aggregate of `reference`s, ascending by node-id digest, to every
       `state`/`state_clause` node of that clause kind whose anchor argument
@@ -74,13 +80,18 @@ claim, and the body, through the node's references, and from nothing else.
   - `body` — a `reference` to the `expression` node of the relation's
     Boolean body, whose reads of an execution's arguments, receiver
     pre-state, receiver post-state and result are the reads of that
-    execution's `parameters` nodes, as a postcondition's are.
+    execution's own `parameters` nodes, as a postcondition's are of its
+    binders.
 - **semantic_type** — the `scalar_type`/`boolean` node.
 - **declaration** — `{qualified_name}`, the relation's declared name.
-- **occurrences** — every occurrence has role `claim`, one per declaration
-  that checks to this node. The model claim and, when requested, the code
-  claim are two items over one occurrence, told apart by their capability
-  kinds (FR-402 "Obligation identity").
+- **owner** — the declaring source unit's `SourceOwner`
+  ([FR-322](FR-322-checked-package-artifact.md) `owner`), required for a
+  declared node whose body holds no application; it enters the node key.
+- **occurrences** — one occurrence of role `declaration`, at the relation's
+  declaration, and one of role `claim`, which provider requests name. The
+  model claim and, when requested, the code claim are two items over that
+  `claim` occurrence, told apart by their capability kinds (FR-402
+  "Obligation identity").
 - **dependencies** — exactly the unique, digest-ascending set of the body's
   `reference` targets.
 
@@ -105,9 +116,10 @@ identities of the model claim and the code claim are FR-402's.
 
 ## Reader order
 
-The step-relation step runs after the abstraction step of FR-451 and before
-the operation step, over every `claim`/`step_relation` node in ascending
-node-id digest order. For one node, the checks run in this order and the
+The step-relation step is a body step of
+[FR-322](FR-322-checked-package-artifact.md) "Body steps": it runs after the
+terminal step and before the protocol step. It visits every
+`claim`/`step_relation` node in ascending node-id digest order. For one node, the checks run in this order and the
 first failing check is its defect:
 
 1. **Shape.** The body is an aggregate of exactly the four bindings in
@@ -125,8 +137,10 @@ first failing check is its defect:
    `correspondence`/`abstraction_relation` node holding a `frames` entry
    keyed by the operation, refuses `invalid_model_binding`/
    `malformed-declaration` at the target.
-4. **Premises.** An execution's `parameters` that are not the FR-341
-   postcondition binders of its operation, a `preconditions` or
+4. **Premises.** An execution's `parameters` whose names and types, in
+   order, are not the FR-341 postcondition binders of its operation, or
+   whose levels do not continue from the previous execution's as the
+   Properties state, a `preconditions` or
    `postconditions` aggregate, or an `invariants` aggregate, that is not
    exactly the set the Properties define over the package, refuses
    `invalid_model_binding`/`malformed-declaration` at that aggregate.
@@ -138,10 +152,11 @@ first failing check is its defect:
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-477-AC-1 | A determinism relation `x: V::Vault::step, y: V::Vault::step` over a vault whose `step` is bound by an abstraction relation produces one `claim`/`step_relation` node whose body has `subjects`, `executions`, `invariants` and `body` in order; `subjects` holds `V` once; each of the two `executions` entries holds alias `V`, a reference to `step`'s `state`/`operation_anchor` node, the `self`, `result` and declared-parameter nodes in FR-341 order, `step`'s precondition and postcondition nodes and a reference to the abstraction relation node; `invariants` holds `Vault`'s invariant nodes; every occurrence has role `claim`. | Test (TC-962) |
+| FR-477-AC-1 | A determinism relation `x: V::Vault::step, y: V::Vault::step` over a vault whose `step` is bound by an abstraction relation produces one `claim`/`step_relation` node whose body has `subjects`, `executions`, `invariants` and `body` in order; `subjects` holds `V` once; each of the two `executions` entries holds alias `V`, a reference to `step`'s `state`/`operation_anchor` node, its own `self` and `i` parameter nodes in FR-341 order (`step` has no result), `x`'s at levels 0 and 1 and `y`'s at levels 2 and 3, `step`'s precondition and postcondition nodes and a reference to the abstraction relation node; `invariants` holds `Vault`'s invariant nodes; the node carries `declaration` `Det`, its `owner`, and one `declaration` and one `claim` occurrence. | Test (TC-962) |
 | FR-477-AC-2 | The same relation over a vault whose `step` has no binding has empty `implementation` members and yields the model claim alone; with the binding it yields both claims, with different obligation identities (FR-402-AC-4). | Test (TC-962) |
 | FR-477-AC-3 | Adding a declared invariant to `Vault`, changing `step`'s precondition, or swapping `x` and `y` changes the node id and the `package_id`; the same relation respelled with different whitespace and comments has the same node id. | Test (TC-962) |
 | FR-477-AC-4 | An `executions` entry missing `implementation` refuses `invalid_semantic_graph`; an `alias` naming no `subjects` binding refuses `missing_declaration`/`missing-name`; an `operation` naming an object type node, and an `implementation` naming an abstraction relation with no `frames` entry for `step`, refuse `invalid_model_binding`/`malformed-declaration`; a `preconditions` aggregate missing `step`'s precondition and an `invariants` aggregate missing one of `Vault`'s invariants refuse `invalid_model_binding`/`malformed-declaration`; a `body` naming an integer-typed expression node refuses `ill_typed`/`non-boolean-root`. | Test (TC-962) |
+| FR-477-AC-5 | In AC-1's node, `x`'s and `y`'s `self` nodes are different nodes, as are their `i` nodes, and the body's `pre(x.self.l) = pre(y.self.l)` reads both; an `executions` entry for `y` that references `x`'s `self` and `i` nodes refuses `invalid_model_binding`/`malformed-declaration` at `y`'s `parameters`. | Test (TC-962) |
 
 ## Published artifacts
 

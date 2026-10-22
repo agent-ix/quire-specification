@@ -19,8 +19,11 @@ identity, and the reader's refusals of a malformed node.
 
 Compile each vector through the real local Rust boundary, read the
 `claim`/`step_relation` node and the items the clause yields, and compare node
-ids and `package_id`s. For RN-07 to RN-12, edit RN-01's node as stated,
-recompute its key, and feed the package to the reader. The vault declares
+ids and `package_id`s. For RN-07 to RN-12 and RN-14, edit RN-01's node as
+stated, adding to the graph any node the edit references; then set its
+`dependencies` to the body's targets, recompute its node key, rewrite its
+`identity_projection` entry and recompute the `package_id`, as TC-233 does
+for its patched vectors, and feed the package to the reader. The vault declares
 `step(i)` with a precondition `pre StepOk using v on V::Vault::step { self.h
 >= 0 }`, a postcondition, and the invariant `self.l <= self.h`.
 
@@ -28,7 +31,7 @@ recompute its key, and feed the package to the reader. The vault declares
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| RN-01 | TC-343 SR-05: TC-337 HB-11 with `V::Vault::step` bound by an abstraction relation | one node; `subjects` holds `V` once; two `executions` entries `x`, `y`, each with alias `V`, `step`'s `operation_anchor` node, `self`, `result` (when `step` has one) and `i` parameter nodes in order, `StepOk` in `preconditions`, the postcondition node in `postconditions` and the abstraction relation node in `implementation`; `invariants` holds the `self.l <= self.h` node; occurrence role `claim` |
+| RN-01 | TC-343 SR-05: TC-337 HB-11 with `V::Vault::step` bound by an abstraction relation | one node; `subjects` holds `V` once; two `executions` entries `x`, `y`, each with alias `V`, `step`'s `operation_anchor` node, its own `self` and `i` parameter nodes in that order (`step` takes `i` and has no result; `x`'s at levels 0 and 1, `y`'s at levels 2 and 3), `StepOk` in `preconditions`, the postcondition node in `postconditions` and the abstraction relation node in `implementation`; `invariants` holds the `self.l <= self.h` node; `declaration` `Det` with its `owner`; one `declaration` and one `claim` occurrence |
 | RN-02 | HB-11 with no abstraction relation | both `implementation` members empty; one item, the model claim |
 | RN-03 | RN-01's two items | model claim `temporal-satisfaction`, code claim `operation-contract`, different obligation identities |
 | RN-04 | RN-01 with a second invariant added to `Vault`; RN-01 with `StepOk` changed to `self.h >= 1` | each a different node id and `package_id` from RN-01 |
@@ -37,9 +40,11 @@ recompute its key, and feed the package to the reader. The vault declares
 | RN-07 | RN-01 with `x`'s `implementation` binding removed | `invalid_semantic_graph` at `x`'s entry |
 | RN-08 | RN-01 with `x`'s `alias` `W` | `missing_declaration`/`missing-name` at the `alias` binding |
 | RN-09 | RN-01 with `x`'s `operation` a reference to the `Vault` object type node | `invalid_model_binding`/`malformed-declaration` at the target |
-| RN-10 | RN-01 with `implementation` naming an abstraction relation with no `frames` entry for `step` | `invalid_model_binding`/`malformed-declaration` at the target |
+| RN-10 | RN-01 with `implementation` naming an added abstraction relation with no `frames` entry for `step` | `invalid_model_binding`/`malformed-declaration` at the target |
 | RN-11 | RN-01 with `StepOk` removed from `x`'s `preconditions`; RN-01 with the invariant removed from `invariants` | `invalid_model_binding`/`malformed-declaration` at that aggregate, each |
 | RN-12 | RN-01 with `body` a reference to the `expression` node of `x.self.l` | `ill_typed`/`non-boolean-root` at the target |
+| RN-13 | RN-01's `x` and `y` binder nodes and its body | `x`'s `self` node differs from `y`'s, and `x`'s `i` node from `y`'s; the body's `pre(x.self.l) = pre(y.self.l)` reads two different nodes, so the body is not a tautology |
+| RN-14 | RN-01 with `y`'s `parameters` referencing `x`'s `self` and `i` nodes | `invalid_model_binding`/`malformed-declaration` at `y`'s `parameters` |
 
 ## Expected Results
 
