@@ -37,3 +37,9 @@ Examined:
 ## Verdict
 
 Wording is behaviour-only and EARS-conformant apart from one ambiguous condition (minor).
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | c930f02 drops the necessary-only condition from FR-154 and the model-complete Fields row. FR-154:166 now reads "Intake admits a `typeRef` naming `Rational`, `Decimal` or `Text` as it admits any other native name: the name is a type that exists, and a `typeRef` carries no parameters. The bounds of a `Text`, `Integer` range and the like come from a value type of the package that the field names (FR-322 'Model-owned members'), not from the reference." The Fields row says the reference "carries no parameters, and intake admits `Rational`, `Decimal` and `Text` like any other native name, their use being decided at member resolution (FR-322)". One reading remains. |

@@ -37,3 +37,15 @@ Examined:
 ## Verdict
 
 FR-154-AC-17 has a TC row (TC-234 I11) that covers every clause of the AC; recomputed by script, run 1's eight keys and their order are right. The coverage gaps are in paragraph content outside the AC (minor). TC-195 N16 only changes spelling. The ticket's TC-197 item needs nothing: TC-197 uses package value types only.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | medium | [minor] QSL main (b453e10) no longer matches the revised FR-154 and no follow-up ticket was found (ix-board search): `read_value_type_ref` still refuses bare `ix://quire/native/Rational`, `Decimal` and `Text` at intake `unsupported_construct`/`declaration-form` through `NativeValueType::unsupported_parameters`, where FR-154 now admits them and leaves the refusal to member resolution; and it reads only the native and own-package forms, so `ix://quire/unit/ms` refuses `malformed-declaration` ("is not ix://quire/native/<Name> or ix://{package}/<artifact id>") where FR-154 and FR-208 admit it unresolved. Spec-only PR, so this needs a QSL implementation ticket, not a change here. | qsl-semantics/src/model/intake.rs:2957-2995; qsl-semantics/src/model/domain_package.rs:300-312; spec/functional/type-model/FR-154-admit-domain-package-model.md:85,166 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | c930f02: FR-154-AC-17 now adds "an operation parameter and an operation result typed `ix://quire/native/Int` refuse the same at the operation node and `Operation.params[i].typeRef` and `Operation.returns.typeRef`, while the same parameter and result typed `ix://quire/native/Text` are admitted", plus admitted Text, Rational, Decimal and `ix://quire/unit/ms` fields; TC-234 I11 covers every field clause (twelve keys, recomputed by script, byte order correct) and new I12 covers the parameter and result runs. The constraint clause is now "A field typed by a native value type declares no type node of its own", which I11's "none is a type declaration for a native-typed field" asserts. |
