@@ -70,9 +70,10 @@ The explicit refusal/non-conclusive mutations include:
 - Encode decimal `1.50`, the quantity `1.50` in `Units::metre` and a
   `Set<Timestamp>` of `2` and `10` as set elements and as a record field, and
   compare the bytes FR-181-AC-20 states (FR-181-AC-20).
-- Explore a model whose state member holds the objects of a population,
-  creating the same objects in two orders, and compare the state keys; read
-  the uppercase UUID and the `+1` and `01` Timestamp payloads against the
+- Encode two states whose population member holds the same reference
+  identities, inserted into the set in two different orders, and compare the
+  state keys; read the uppercase UUID, the `+1` and `01` Timestamp payloads,
+  the Timestamp payloads 2^127 and -2^127 - 1, and 2^127 - 1 against the
   form (FR-181-AC-21).
 
 ## Sampler index-sequence vector
