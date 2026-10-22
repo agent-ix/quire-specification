@@ -37,3 +37,25 @@ The node form is sound. The `when`/`any` mode with a condition exactly for `when
 Gates at e7b95454: `quire validate --scope . 'spec/**/*.md'` gives 86 failure lines (baseline), and FR-476 and TC-961 validate clean. `cargo test --test checked_package_v2 --test backend_provider_v1` passes (23 + 119). The QSL conformance run (`qsl-package --lib checked_v2`, QSPEC_DIR at this head) is reported separately.
 
 Merge order: #375 merges first. #370 and #377 each conflict with #375 in FR-322's list line and in spec.md, and with each other in schema.json's `ClaimNode` line. Resolve each as main plus its own entry. **Not mergeable until FND-001 is fixed, and FND-002 and FND-003 should be fixed in the same round.**
+
+## Dispositions
+
+Round 1, reviewed at 06cb0bdc88354ddfe860de207a6ddc7f3ee84175 (fix commit 6ca9dc60).
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-366 now gives `self` its type `T`, its per-object evaluation, the vacuous case and both refusals (FR-366-AC-9, TC-297 step 9). FR-476 step 4 checks `self` at level 0 and its type, `parameters` holds at most one entry, and MT-13 to MT-15 test this. |
+| FND-002 | fixed | The TC-961 procedure now adds the referenced nodes, sets `dependencies`, rewrites the projection entry and recomputes `package_id`, as TC-233 does. MT-09 and MT-11 name the added nodes. |
+| FND-003 | fixed | The node carries no `declaration`, as the schema's `DeclarationTagRules` require for a `temporal` node, so no FR-322 name rule precedes the check. FR-476 step 5 alone owns the duplicate refusal, at the second node. |
+| FND-004 | fixed | Identity now binds the subject through the package identity (FR-361), and the request carries no separate terminal member. |
+| FND-005 | fixed | Mode fit runs in body order and names `parameters` for an `any` node with both defects (MT-14). |
+| FND-006 | fixed | FR-476 now follows FR-466 in the FR-322 list. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | medium | FR-322's new "Body steps" paragraph links FR-475 (the state-graph step), but FR-475 exists neither on main (c1033008) nor in this PR. It arrives only with #370, whose own version of the same paragraph has no terminal step, while #377's adds a step-relation step. As it stands, #375 merged first leaves a dangling link. Either merge #370 before #375, or drop the state-graph clause here and let #370 add it. The merge-order plan must also name one final text of the paragraph covering FR-475, FR-370, FR-451, FR-476, FR-477 and FR-464. | spec/objects/interfaces/FR-322-checked-package-artifact.md:423-434 |
+| FND-008 | low | The node's occurrences have role `declaration`, but the node carries no `declaration`. FR-322's rules for a "declared node's `declaration` occurrence" (owner and source agreement) do not apply to it. The other undeclared clause nodes use role `claim` (FR-341, FR-370). Use `claim`, or state why a `declaration` occurrence on an undeclared node is admitted. | spec/objects/interfaces/FR-476-checked-package-model-terminal-declaration-body.md:58-60 |
+| FND-009 | low | The second MT-15 case types `self` `Reference<M::D>` "for a second object type `D` of `M`". If `D` has a population, FR-366 binds no `self` for `M` at all (several covered types), so the expected refusal and its cause are unclear. State that `D` is covered by no population. | spec/test-cases/TC-961-checked-package-model-terminal-node.md:48 |
+| FND-010 | low | The new FR-366 bullet refuses `self` with `ambiguous_declaration`/`ambiguous-name` when two populations cover `T`, but FR-366-AC-9 and TC-297 step 9 test only the two-object-type `missing-name` branch. Add the two-population case. | spec/functional/temporal/FR-366-check-deadlock-freedom.md:136 |

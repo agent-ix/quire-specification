@@ -41,7 +41,8 @@ successor-free.
 9. With universe `{j, k}`, declare `terminal Finished using v on M when {
    self.status = done }`; classify the terminal state with both objects
    `done` and the one with `j` `done` and `k` `stuck`; repeat with universe
-   `{}`; then add a second object type with its own population to `M`.
+   `{}`; then add a second object type with its own population to `M`;
+   then, instead, add a second population of `Job` to `M`.
 
 ## Expected Results
 
@@ -66,4 +67,6 @@ successor-free.
    `running` (FR-364-AC-6).
 9. Both `done`: intended; `j` `done`, `k` `stuck`: deadlocked; universe
    `{}`: the initial terminal state is intended; two object types: `self`
-   refuses `missing_declaration`/`missing-name` at `self` (FR-366-AC-9).
+   refuses `missing_declaration`/`missing-name` at `self`; two populations of
+   `Job`: `self` refuses `ambiguous_declaration`/`ambiguous-name` at `self`,
+   naming both (FR-366-AC-9).

@@ -31,7 +31,7 @@ vectors, and feed the package to the reader.
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| MT-01 | `terminal Done using v on M when { self.value = 3 };` | one node with no `declaration`; `mode` `when`; `parameters` holds one reference, to the `self` parameter node at level 0 typed `Reference<M::C>`; `condition` references the `expression` node of `self.value = 3`; occurrence role `declaration` |
+| MT-01 | `terminal Done using v on M when { self.value = 3 };` | one node with no `declaration`; `mode` `when`; `parameters` holds one reference, to the `self` parameter node at level 0 typed `Reference<M::C>`; `condition` references the `expression` node of `self.value = 3`; occurrence role `claim` |
 | MT-02 | `terminal Halt using v on M any;` | `mode` `any`; `parameters` and `condition` empty aggregates; `dependencies` the `model` node only |
 | MT-03 | `terminal Done using v on M when { forall(c in M::Counters : c.value = 3) };` | `parameters` empty |
 | MT-04 | MT-01 and MT-01 with `Done` renamed `Stop` | one node id and one `package_id` |
@@ -45,7 +45,8 @@ vectors, and feed the package to the reader.
 | MT-12 | a package holding MT-01's and MT-02's nodes for `M` | `ambiguous_declaration`/`ambiguous-name` at the second node in ascending node-id digest order, naming both |
 | MT-13 | MT-01 with `parameters` holding the `self` node twice | `invalid_semantic_graph` at the `parameters` binding |
 | MT-14 | MT-02 with `parameters` holding MT-01's `self` node and `condition` a reference to the added node of `self.value = 3` | `invalid_semantic_graph` at the `parameters` binding |
-| MT-15 | MT-01 with its `self` entry replaced by an added parameter node named `result` at level 1; then by an added `self` node typed `Reference<M::D>` for a second object type `D` of `M` | `ill_typed`/`operator-ineligible` at the target, each |
+| MT-15 | MT-01 with its `self` entry replaced by an added parameter node named `result` at level 1; then by an added `self` node typed `Reference<M::D>` for a second object type `D` of `M` that no population covers, so `C` stays FR-366's `T` | `ill_typed`/`operator-ineligible` at the target, each |
+| MT-16 | one unit declaring MT-01 twice for `M` | one node with two `claim` occurrences; `ambiguous_declaration`/`ambiguous-name` at that node, naming both occurrences |
 
 ## Expected Results
 
