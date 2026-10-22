@@ -11,6 +11,12 @@ relationships:
 
 # [interface_001] I01 exact source document
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| read | operation |
+
 ## Contract
 
 ```yaml

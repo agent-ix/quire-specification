@@ -9,6 +9,12 @@ relationships:
 
 # [interface_014] I14 linked verification plan
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| link_plan | operation |
+
 ## Contract
 
 ```yaml

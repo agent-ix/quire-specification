@@ -9,6 +9,12 @@ relationships:
 
 # [interface_016] I16 output mapping package
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| map | operation |
+
 ## Contract
 
 ```yaml

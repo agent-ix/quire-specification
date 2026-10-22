@@ -9,6 +9,13 @@ relationships:
 
 # [interface_002] I02 lossless parsed source
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| parse | operation |
+| apply_edit | operation |
+
 ## Contract
 
 ```yaml
