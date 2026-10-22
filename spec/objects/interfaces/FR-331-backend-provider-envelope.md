@@ -133,11 +133,11 @@ SHALL NOT invent one to select a checker.
 
 | Locus | `at` | Meaning owned by | Rules |
 | --- | --- | --- | --- |
-| Query part | `"unrolling"`, `"base"` or `"step"`; for a refinement certificate's step row `r`, `"step/<r>"`, `r` the zero-based row as a `U64String`, so `"step/3"` is the fourth row and `"step"` alone is an `Inductive` proof's step query | QSL FR-338's `Query { part }`, QSL FR-314 | `query-mismatch`, `shape-mismatch`, `malformed`, `not-refutation` |
+| Query part | `"unrolling"`, `"base"` or `"step"`; for a refinement certificate's step row `r`, `"step/<r>"`, `r` the zero-based row as a `U64String`, so `"step/3"` is the fourth row and `"step"` alone is an `Inductive` proof's step query | QSL FR-338's `Query { part }`, QSL FR-314; for the step row, `step/<r>` is the spelling QSL FR-338 specifies and FR-468's per-step refinement certificate supplies the row | `query-mismatch`, `shape-mismatch`, `malformed`, `not-refutation` |
 | Proof step | `{part, index}`: `part` a query part spelling, `step/<r>` included, and `index` the `U64String` of QSL FR-314's command number, the command's position from 0 in the proof's flattened text order whatever its `:id` | QSL FR-314's `ProofStep { part, index }` | `proof-step-invalid`, `not-refutation` |
 | Product state | `{model_state, automaton_state}`: the model state's digest record and the bytes of the automaton state's canonical key | QSL FR-338's `ProductState`, QSL FR-339 | `initial-missing`, `successor-missing`, `bad-state`, `not-partition`, `backward-edge`, `witness-fails`, `shape-mismatch` |
 | Hyper product state | `{states, automaton_state, witness_set}`: each component's `StateKey` in variable order; the automaton key's bytes, absent for an HP-1 member; for HP-3, the witness set's pairs `{states, automaton_state}` in their sorted order | QSL FR-163's `HyperProductState` | `initial-missing`, `successor-missing`, `not-partition`, `backward-edge`, `witness-fails`, `malformed`, `undefined-member`, `violating-member` |
-| State | `{domain, digest}`, the model state's digest record: `domain` is `quire.simulation.state-key/v1` and `digest` the state's `StateKey` | QSL FR-169's `ModelState`; FR-418 (the initial discrete state). FR-412's complete probabilistic product key is a separate identity, not this model key. | `initial-missing`, `successor-missing`, `bad-state`, `predicate-undefined`, `rank-missing`, `rank-broken`, `order-broken`, `count-broken`, `malformed` |
+| State | `{domain, digest}`, the model state's digest record: `domain` is `quire.simulation.state-key/v1` and `digest` the state's `StateKey`; under `malformed` the record is that of a state-graph closure entry, whose `domain` may be any FR-201 digest domain, since FR-169 rejects an entry outside the state-key domain at that entry | QSL FR-169's `ModelState`; FR-418 (the initial discrete state). FR-412's complete probabilistic product key is a separate identity, not this model key. | `initial-missing`, `successor-missing`, `bad-state`, `predicate-undefined`, `rank-missing`, `rank-broken`, `order-broken`, `count-broken`, `malformed` (any FR-201 domain; every other rule, the state-key domain only) |
 | State-graph entry | `{entry}`, the `U64String` closure index that names no closure state | QSL FR-169's `Entry { index }` | `malformed` |
 | Probabilistic product state | `{product_key}`, the unpadded base64url spelling of the complete canonical QSL FR-196 product-key octets defined below | FR-411, FR-412 | `inequality-fails`, `rank-missing`, `rank-broken`, `threshold-missed` |
 | Hyper transition tuple | `{transitions}`: the ordered, nonempty tuple of labelled edges `{pre_state, transition, post_state, result}` defined below | QSL FR-163, FR-179, FR-120 | `undefined-member`, `violating-member` |
@@ -149,7 +149,10 @@ SHALL NOT invent one to select a checker.
 
 A model state's digest record is `{"domain": "quire.simulation.state-key/v1",
 "digest": <StateKey>}`, in a State locus, as a product state's `model_state`
-and as an undefined evaluation's `state_key`. A query part that names a step
+and as an undefined evaluation's `state_key`. Only a State locus under rule
+`malformed` carries another FR-201 digest domain, with a lower-case hexadecimal
+digest; the reader SHALL refuse a `domain` that FR-201 does not list, and a
+State locus in another domain under any other rule, before consumption. A query part that names a step
 row is the text `step/`, then the row's `U64String`; `step/02`, `step/` and a
 row after `unrolling` or `base` are not query parts.
 
@@ -179,9 +182,10 @@ project it onto `states`. FR-412 state failures SHALL preserve the complete
 probabilistic product key in every keyed certificate member and rejection.
 For a zero-universal HP-3 claim, every supplied witness tuple has at least
 two existential state keys (`n = 0`, `n + m >= 2`, ADR-023 HC-2). The
-reader SHALL check the exact universal and existential tuple arities,
-variable bindings and required HP-3 witness set against the originating
-checked claim; matching this global shape does not authorize another form.
+When the universal and existential tuple arities, variable bindings or
+HP-3 witness set differ from those of the originating checked claim, the
+reader SHALL refuse the rejection before consumption; matching this global
+shape does not authorize another form.
 
 An HP-1 `HyperTransitionTuple` SHALL carry exactly `transitions`, with one
 edge for each execution-variable binding in binding order. Each edge
@@ -199,11 +203,11 @@ automaton key is attached to this HP-1 tuple.
 
 `AutomatonStateKey` SHALL travel as unpadded base64url of exactly QSL
 FR-338 / ADR-018 PC-3's RFC 8785 UTF-8 octets of
-`["quire.automaton-state-key/v1", context, state]`. The reader SHALL check
-the complete closed context and translation-state algebra against the
-originating checked property, including canonical sets, occurrence paths,
-past memory, windows and acceptance obligations. Neither a materialization
-index nor an opaque residual body is a substitute.
+`["quire.automaton-state-key/v1", context, state]`. When the key's canonical sets, occurrence
+paths, past memory, windows or acceptance obligations differ from those the
+checked property derives, the reader SHALL refuse the rejection before
+consumption. Neither a materialization index nor an opaque residual body is a
+substitute.
 
 `ProbabilityProductKey` SHALL travel as unpadded base64url of exactly QSL
 FR-196 / ADR-028 PR-4's RFC 8785 UTF-8 octets of
@@ -220,10 +224,11 @@ embeds the parsed complete FR-338 array, not its base64url spelling.
 The certificate's existing row member name `state` in `values`, `ranking`,
 `policy` and each component's `bias` SHALL carry this same
 `ProbabilityProductKey`; a rejection uses `{product_key}` to remain
-disjoint from the model-only `{domain, digest}` State locus. The reader SHALL decode,
-check the owner's complete algebra in the actual checked claim/model
-context, and require byte equality with canonical re-encoding before
-consumption. Equality and sorting use complete decoded unsigned octets,
+disjoint from the model-only `{domain, digest}` State locus. When a decoded
+key differs from the canonical re-encoding of the key that the checked claim
+and model derive under QSL FR-196 PR-4, or has an absent, extra or
+inadmissible component, the reader SHALL refuse the certificate or rejection
+before consumption. Equality and sorting use complete decoded unsigned octets,
 never the base64url text's order, a local index or a digest projection.
 
 Each policy `choice` SHALL carry QSL FR-202's closed WitnessEntry:
@@ -239,45 +244,10 @@ choice-octet order, with positive reduced probabilities summing to one.
 The actual mode, support, admissible continuation, fairness and TS-5
 progress checks remain QSL FR-201/202 obligations, not schema admission.
 
-FR-413's `scheduler.entries` SHALL use the same complete
-`ProbabilityProductKey` in each existing `state` member and the same closed
-WitnessEntry in `choice`, not a model-only key or open choice payload.
-The actual admitted scheduler/workload and checked profile determine when
-the scheduler is required or absent and whether randomized evidence is
-applicable, including derived TS-5 without authored fairness. Entry/support
-uniqueness, decoded octet order, exact positive reduced normalized masses,
-enabledness and original-subject admissible continuation SHALL be checked
-before consumption; no absent scheduler or unlisted state gets a default.
-
-Each FR-413 path-set or undefined-path step SHALL carry exactly the required
-`transition`, `post_state`, `random`, `action`, `post_key` and `elapsed`,
-and optional `delay` only as actual FR-181 timed trace content. `action`
-transports the complete canonical FR-196 ProductAction octets, not a
-FreeDelays policy body or projected TransitionIdentity. `post_key` carries
-the complete ProbabilityProductKey. `post_state` retains the existing
-FR-181 canonical model post-state content identity and is separately
-recomputed/checked; it is not a product-key substitute or new digest use.
-`transition` retains the actual FR-181 transition/terminal-stutter projection
-or null when that semantic edge has no such projection; `random` retains
-the actual typed drawn vector or null for actual no draw. A genuinely drawn
-empty vector remains distinct from null. Required-member omission is never
-that absence. No operation, receiver or drawn vector is synthesized for a
-timed tail. `elapsed` is the actual nonnegative reduced Rational in the
-model time unit, zero for untimed/IdleObserve and 1/scale for each digital
-delay. The reader SHALL rederive all projections, draws, clock/tail/control
-post-keys and elapsed/optional trace delay from the actual semantic edge,
-retaining the full requested property/profile/binding context and applying
-an already-delayed pending resolution exactly once. Missing/extra members,
-model/index/transition aliases, foreign contexts and unsupported choice
-forms SHALL refuse before consumption, not become a root-only admission.
-FR-410 SampledWitness keeps its separate sampled trace contract.
-
 Base64url only transports these owner-defined bytes and does not create a
 digest domain. Padded/aliased transport, non-JCS bodies, unknown tags,
 missing/extra members and contextually invalid components SHALL refuse
-before consumption. Synthetic fixture bytes such as `AQ` and `Ag` are
-transport-shape samples only, with no canonical meaning or semantic
-admission claimed. All required rejection outcomes remain required.
+before consumption.
 
 A `U64String` is the canonical decimal string of an unsigned 64-bit
 integer, `0` to `18446744073709551615`, so RFC 8785 keeps every value
@@ -599,10 +569,10 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-21 | Every `ProofBound` carries the `kind` of the domain it bounds, from the ADR-014 domain-kind vocabulary shared with an unbounded extent's `domains`, and a bound matching that kind; a `ProofBound` without `kind`, with a kind outside the vocabulary, with a non-boundable kind or with a bound of another kind refuses before consumption: of the seven kinds and three bound types, exactly the pairs `collection` and `population` with `cardinality`, `integer` with `integer-range` and `recursive` with `depth` are admitted. | Test (TC-431) |
 | FR-331-AC-22 | The manifest schema applies FR-290's `domains` registration rule to every descriptor: one whose `domains` is present and empty, holds a non-boundable or unknown kind or repeats a kind is refused whatever modes it advertises, one that advertises a `bounded` mode without `domains` is refused, and one that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-431) |
 | FR-331-AC-23 | Every `proved` result entry carries exactly one `certification`, `certified`, `uncertified` or `trusted`: a Kani `bounded-proof`, a checked `value-bounds` and a checked `witnessed` proof, and an SMT `bounded-complete` proof whose certificate the core verified, carry `certified`, a symmetry-`reduced` proof (copy-swap with symmetry), a partial-order-`reduced` proof and an SMT `inductive` proof with no verified certificate `uncertified`, and a plugin proof `trusted`; a `proved` entry without `certification`, a `reduced` proof with a `symmetry` or `partial-order` reduction or a `bounded-solver` proof carrying `certified`, one with another value, and a `certification` on any other result are refused. | Test (TC-431) |
-| FR-331-AC-24 | A `certificate-rejected` cause is admitted with each locus form of the Certification table: each query part, `unrolling`, `base`, `step` and `step/<r>` with `r` `"2"`, `"6"` or `"18446744073709551615"`; a proof step `{part, index}` with index `"0"`, `"41"` or `"18446744073709551615"`, and one whose part is `step/4`; a product state; a hyper product state with and without its automaton key and with a witness set; a state; a state-graph entry; each simulation-step form, with `null` `edge` and `verdict`, with an `edge` and `null` `verdict`, and `step-fails` carrying each verdict kind; a zone node, edge and component; and a certificate member. An `at` that is an unknown part, an empty string or an empty object; a query part `step/`, `step/02`, `step/18446744073709551616`, `unrolling/2` or `base/0`; a proof step with an unknown part, a part `step/-1`, without `part` or `index`, with another member, or whose `index` is a JSON number, `"-1"`, `"18446744073709551616"` or `"041"`; a product state whose automaton key is padded or whose model state is a bare `state` member; a hyper product state with no states; a state whose `digest` is not a `StateKey`, whose `domain` is absent or another domain, or that is a bare `state` member; an entry whose index is a JSON number; a simulation step without its `null` `edge` or `verdict`, a `post-differs` with a `null` `edge` and a `step-fails` with a `null` `verdict`; a negative zone node; an unknown member; and a `step-fails` verdict that is another inconclusive cause, a `type`-tagged cause, a JSON-number position, an `Undefined` failure, an `Undetermined` verdict with another cause spelling or an incomplete evaluation without `limit`, or an undefined evaluation without `state_key`, are each refused. Across every digit position of `18446744073709551615`, and lengths up to 21 digits, an `index` is admitted exactly when it is the canonical decimal spelling of an unsigned 64-bit integer. | Test (TC-431) |
+| FR-331-AC-24 | A `certificate-rejected` cause is admitted with each locus form of the Certification table: each query part, `unrolling`, `base`, `step` and `step/<r>` with `r` `"2"`, `"6"` or `"18446744073709551615"`; a proof step `{part, index}` with index `"0"`, `"41"` or `"18446744073709551615"`, and one whose part is `step/4`; a product state; a hyper product state with and without its automaton key and with a witness set; a state, and under `malformed` a state record in another FR-201 domain such as `package-fingerprint`; a state-graph entry; each simulation-step form, with `null` `edge` and `verdict`, with an `edge` and `null` `verdict`, and `step-fails` carrying each verdict kind; a zone node, edge and component; and a certificate member. An `at` that is an unknown part, an empty string or an empty object; a query part `step/`, `step/02`, `step/18446744073709551616`, `unrolling/2` or `base/0`; a proof step with an unknown part, a part `step/-1`, without `part` or `index`, with another member, or whose `index` is a JSON number, `"-1"`, `"18446744073709551616"` or `"041"`; a product state whose automaton key is padded or whose model state is a bare `state` member; a hyper product state with no states; a state whose `digest` is not a `StateKey`, whose `domain` is absent or empty, or that is a bare `state` member; a state record in another domain under any rule but `malformed`; an entry whose index is a JSON number; a simulation step without its `null` `edge` or `verdict`, a `post-differs` with a `null` `edge` and a `step-fails` with a `null` `verdict`; a negative zone node; an unknown member; and a `step-fails` verdict that is another inconclusive cause, a `type`-tagged cause, a JSON-number position, an `Undefined` failure, an `Undetermined` verdict with another cause spelling or an incomplete evaluation without `limit`, or an undefined evaluation without `state_key`, are each refused. Across every digit position of `18446744073709551615`, and lengths up to 21 digits, an `index` is admitted exactly when it is the canonical decimal spelling of an unsigned 64-bit integer. | Test (TC-431) |
 | FR-331-AC-25 | A `certificate-rejected` cause is admitted with each rule at a locus listed with it, `not-refutation` and `malformed` at a query part included. An independent finite inventory enumerates all 24 owned rule spellings and equals both the schema's rule set and the positive-vector rule set; removing a rule from both fails that comparison. A rule outside the closed set, such as `state-missing`; a rule written as its variant name, `QueryMismatch`; and a rule at a locus not listed with it are each refused: `query-mismatch` at a proof step, `proof-step-invalid` at a query part, `bad-state` at a hyper product state, `witness-fails` at a state, `rank-broken` at a zone node, `bad-state` at a zone component, `rank-missing` at a certificate member, `bad-state` at a state-graph entry, `initial-mismatch` with an `edge`, `post-differs` without an `edge`, and `step-fails` without a `verdict`. | Test (TC-431) |
-| FR-331-AC-26 | A structurally admitted `inequality-fails` rejection is refused when bound to an EN-1 temporal claim; `successor-missing` at a model-only state is refused for FR-338's product-state checker even if the global schema admits that State locus. A rejection with absent, conflicting or ambiguous request/claim/checker context is refused before consumption. The same rule/locus in its actual owning context is consumed as a certificate rejection, never replaced by a default cause. | Test (TC-431) |
-| FR-331-AC-27 | An HP-3 key for zero universal variables preserves a present empty `states` tuple and both empty and nonempty actual witness sets; absent `states` or absent HP-3 `witness_set` is refused. An HP-1 failing transition tuple preserves every edge's pre-state, transition identity, post-state and result in binding order. An FR-412 rejection preserves the complete probabilistic product key, distinguishing equal model states with different monitor, accumulator or pending components. FR-413 scheduler keys and path post-keys preserve that same complete representation; scheduler choice/randomized mode and path semantic action, draw/real absence and exact elapsed survive reading. Missing fields, open choices, projected model/index/action aliases and foreign request/property/profile/binding contexts refuse before consumption. | Test (TC-431, TC-363) |
+| FR-331-AC-26 | A reader consuming a `certificate-rejected` cause binds it to the request's admitted checked claim and the checker that claim's classified form resolves, and refuses before consumption a rejection whose rule and locus do not belong to that checker, such as an `inequality-fails` cause on an EN-1 temporal claim or a model-only `successor-missing` for the FR-338 product-state checker, and one whose request, claim or checker context is absent, conflicting or ambiguous. A rejection whose rule and locus belong to the resolved checker is consumed as that certificate rejection and keeps its rule and locus. The global schema admits each such pair on its shape alone, so the schema run does not discharge this criterion. | Inspection (TC-431) |
+| FR-331-AC-27 | The schema keeps the identities the checkers name distinct: an HP-3 key for zero universal variables carries a present empty `states` tuple with both empty and nonempty witness sets, and absent `states` or an absent HP-3 `witness_set` is refused; an HP-1 failing transition tuple carries every edge's pre-state, transition identity, post-state and result in binding order, and a missing edge member, a protocol transition and a state-only projection are refused; an FR-412 rejection and each keyed certificate member carry the complete probabilistic product key, so two product states with equal model states and different monitor, accumulator or pending components stay distinct; and a policy choice that is open, empty or an ordinary transition identity is refused. | Test (TC-431, TC-363) |
 | FR-331-AC-28 | A model-subject item with no initial state, and one with zero instances, each record `inconclusive` with the cause `no-initial-state` and `no-instance` respectively, spelled exactly so; the temporal-outcome vector carries a result entry of each, and a `no-instances` spelling is refused. | Test (TC-431) |
 | FR-331-AC-29 | A hybrid item's solver that exhausts `hybrid.limits.max_solver_steps` records `incomplete` with `limit-reached` whose `limit` is `max_solver_steps` and whose `setting` is `hybrid.max_solver_steps`; one that exhausts `max_solver_time` records `incomplete` with `timed-out`; a `limit-reached{limit: max_solver_time}` or a `time-limit` cause on a hybrid item is refused `invalid_result`/`unknown-cause`; a fractional `max_solver_time`, a zero budget, an unknown `hybrid.limits` member and an empty `hybrid` or `limits` are refused before consumption; two requests differing only in `max_solver_time` have equal request identity. | Test (TC-373) |
 | FR-331-AC-30 | The descriptor schema admits `memory_models` as a nonempty duplicate-free subset of `sc`, `tso` and `ra` on a descriptor that advertises `temporal-satisfaction`, and refuses an empty `memory_models`, a repeated or unknown model, and `memory_models` on a descriptor that does not advertise `temporal-satisfaction`. | Test (TC-431) |
@@ -613,15 +583,12 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 
 In AC-24, a hyper product state "with no states" means the required
 `states` member is absent. It does not mean HP-3's valid empty universal
-tuple; AC-27 pins that distinction. The schema-source proposal binds the
-closed HP-1 transition tuple, admits HP-3's present empty universal tuple
-with its required automaton and witness-set members, and extends FR-163's
-`components` member ownership. These shapes still require checker-context
-and round-trip qualification. The model-only State locus cannot
-losslessly bind FR-412's complete product key; the separate
-`ProbabilityProductStateLocus` and certificate row bindings above replace
-that projection using the published QSL FR-196 forms. Actual reader and
-checker qualification remains required; no source amendment closes it.
+tuple; AC-27 pins that distinction. The closed HP-1 transition tuple,
+HP-3's present empty universal tuple with its required automaton and
+witness-set members, and FR-163's `components` member ownership are bound by
+the schema. The model-only State locus cannot losslessly bind FR-412's
+complete product key, so the separate `ProbabilityProductStateLocus` and the
+certificate row bindings above carry the QSL FR-196 forms.
 
 - [interface_013](./interface_013-backend-provider.md) owns the operation boundary.
 - FR-195 owns the behavior that produces or consumes this value.

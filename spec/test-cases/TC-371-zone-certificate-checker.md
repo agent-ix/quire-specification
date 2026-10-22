@@ -40,6 +40,8 @@ The models below are defined here in full; the citation names the QSL design rec
 | ZC-05 | ZC-01 with another item's identity | Refused `invalid_runtime_input`/`conflicting-identity` |
 | ZC-06 | A model with constant `rational(123456789123456789, 7) ms` | Constants scale by 7 and DBM bounds hold the exact integers |
 | ZC-07 | The `Rpc` time-lock-freedom certificate | Every node states a reachable time-divergent target, and the checker verifies each |
+| ZC-08 | The certificate of `NoLateReply` with `T = 4 ms`, with the node covering the initial symbolic state removed | `inconclusive`, `certificate-rejected` with rule `initial-missing` at `{domain, digest}`, the State record of the initial discrete state |
+| ZC-09 | The `Rpc` time-lock-freedom certificate with one node's named target replaced by a node that is not a reachable time-divergent target | `certificate-rejected` with rule `witness-fails` at `{node}`, that node's position |
 
 ## Expected Results
 

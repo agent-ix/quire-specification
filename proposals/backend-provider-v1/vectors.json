@@ -2,23 +2,6 @@
   "package_fixture": "positive-all-families.json",
   "positive": [
     {
-      "name": "probability-witness-shapes",
-      "stage": "outcome",
-      "owners": {"/counterexamples/0/counterexample/scheduler": "FR-413", "/counterexamples/1/counterexample/scheduler": "FR-413", "/counterexamples/0/counterexample/evidence": "FR-413", "/counterexamples/1/counterexample/evidence": "FR-413"},
-      "document": {
-        "contract_version": "quire.backend-provider/v1",
-        "capability_vocabulary": "quire.capability-kind/v1",
-        "dispositions": [{"request_index": 0, "disposition": "supported"}, {"request_index": 1, "disposition": "supported"}],
-        "artifacts": [],
-        "results": [{"request_index": 0, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "refuted", "counterexample": 0}, {"request_index": 1, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "refuted", "counterexample": 1}],
-        "counterexamples": [
-          {"request_index": 0, "backend": "qsl-prob", "counterexample": {"initial_state": 0, "binding": null, "bound": {"threshold": {"numerator": "1", "denominator": "2"}}, "scheduler": {"entries": [{"state": "AQ", "choice": {"type": "choice", "choice": "Ag"}}]}, "evidence": {"type": "path-set", "paths": [[]]}}},
-          {"request_index": 1, "backend": "qsl-prob", "counterexample": {"initial_state": 0, "binding": null, "bound": {"threshold": {"numerator": "1", "denominator": "2"}}, "scheduler": {"entries": [{"state": "Ag", "choice": {"type": "randomized", "choices": [{"choice": "AQ", "probability": {"numerator": "3", "denominator": "4"}}, {"choice": "Ag", "probability": {"numerator": "1", "denominator": "4"}}]}}]}, "evidence": {"type": "undefined-path", "path": []}}}
-        ],
-        "accounting": [{"request_index": 0, "settled_by": "result"}, {"request_index": 1, "settled_by": "result"}]
-      }
-    },
-    {
       "name": "probability-product-rejections",
       "stage": "outcome",
       "owners": {"/results/0/cause": "FR-412", "/results/1/cause": "FR-412", "/results/2/cause": "FR-412", "/results/3/cause": "FR-412"},
@@ -2183,7 +2166,8 @@
         "/results/13/cause": "FR-331",
         "/results/14/cause": "FR-331",
         "/results/15/cause": "FR-331",
-        "/results/16/cause": "FR-331"
+        "/results/16/cause": "FR-331",
+        "/results/17/cause": "FR-331"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -2255,6 +2239,10 @@
           },
           {
             "request_index": 16,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 17,
             "disposition": "supported"
           }
         ],
@@ -2558,6 +2546,20 @@
                 }
               }
             }
+          },
+          {
+            "request_index": 17,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "domain": "package-fingerprint",
+                "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+              }
+            }
           }
         ],
         "counterexamples": [],
@@ -2628,6 +2630,10 @@
           },
           {
             "request_index": 16,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 17,
             "settled_by": "result"
           }
         ]
@@ -3463,13 +3469,6 @@
     }
   ],
   "adverse": [
-    {"name": "probability-witness-key-padded", "base": "probability-witness-shapes", "owner": "FR-331", "patch": [{"op": "replace", "path": "/counterexamples/0/counterexample/scheduler/entries/0/state", "value": "AQ=="}]},
-    {"name": "probability-witness-key-missing", "base": "probability-witness-shapes", "owner": "FR-331", "patch": [{"op": "remove", "path": "/counterexamples/0/counterexample/scheduler/entries/0/state"}]},
-    {"name": "probability-witness-open-choice", "base": "probability-witness-shapes", "owner": "FR-331", "patch": [{"op": "replace", "path": "/counterexamples/0/counterexample/scheduler/entries/0/choice", "value": {"operation": "send_b"}}]},
-    {"name": "probability-witness-randomized-empty", "base": "probability-witness-shapes", "owner": "FR-331", "patch": [{"op": "replace", "path": "/counterexamples/1/counterexample/scheduler/entries/0/choice/choices", "value": []}]},
-    {"name": "probability-witness-mode-missing", "base": "probability-witness-shapes", "owner": "FR-331", "patch": [{"op": "remove", "path": "/counterexamples/1/counterexample/scheduler/entries/0/choice/type"}]},
-    {"name": "probability-witness-step-action-only", "base": "probability-witness-shapes", "owner": "FR-331", "patch": [{"op": "add", "path": "/counterexamples/0/counterexample/evidence/paths/0/-", "value": {"action": "AQ"}}]},
-    {"name": "probability-witness-undefined-step-key-only", "base": "probability-witness-shapes", "owner": "FR-331", "patch": [{"op": "add", "path": "/counterexamples/1/counterexample/evidence/path/-", "value": {"post_key": "Ag"}}]},
     {"name": "probability-inequality-model-projection", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/21/cause/at", "value": {"domain": "quire.simulation.state-key/v1", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}}]},
     {"name": "probability-threshold-model-projection", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/22/cause/at", "value": {"domain": "quire.simulation.state-key/v1", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}}]},
     {"name": "probability-product-key-padded", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/21/cause/at/product_key", "value": "AQ=="}]},
@@ -3482,7 +3481,8 @@
     {"name": "query-part-base-row", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": "base/0"}]},
     {"name": "proof-step-part-step-row-negative", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/at/part", "value": "step/-1"}]},
     {"name": "product-state-bare-state-key", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/4/cause/at", "value": {"state": "1111111111111111111111111111111111111111111111111111111111111111", "automaton_state": "AQ"}}]},
-    {"name": "model-state-other-domain", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/5/cause/at/domain", "value": "quire.automaton-state-key/v1"}]},
+    {"name": "model-state-other-domain", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/17/cause/rule", "value": "bad-state"}]},
+    {"name": "model-state-malformed-empty-domain", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/17/cause/at/domain", "value": ""}]},
     {"name": "model-state-without-domain", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/5/cause/at/domain"}]},
     {"name": "model-state-bare-state-key", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/5/cause/at", "value": {"state": "1111111111111111111111111111111111111111111111111111111111111111"}}]},
     {"name": "entry-index-number", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/7/cause/at/entry", "value": 2}]},
