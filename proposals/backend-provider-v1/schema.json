@@ -774,7 +774,8 @@
       "required": ["type"],
       "oneOf": [
         {"$ref": "#/$defs/CertificateRejected"},
-        {"properties": {"type": {"enum": ["undecided-successor", "no-initial-state", "no-instance", "replay-parity", "replay-refused", "sufficient-test-failed", "solver-inconclusive", "lasso-not-concretized", "no-admitted-behaviour", "well-definedness-unchecked", "match-undetermined", "vacuous-match", "kani_vacuous_proof"]}}, "required": ["type"], "additionalProperties": false},
+        {"$ref": "#/$defs/SolverInconclusive"},
+        {"properties": {"type": {"enum": ["undecided-successor", "no-initial-state", "no-instance", "replay-parity", "replay-refused", "sufficient-test-failed", "lasso-not-concretized", "no-admitted-behaviour", "well-definedness-unchecked", "match-undetermined", "vacuous-match", "kani_vacuous_proof"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["bound-reached", "induction-not-closed"]}, "depth": {"$ref": "#/$defs/Count"}}, "required": ["type", "depth"], "additionalProperties": false},
         {"properties": {"type": {"const": "reduction-not-preserving"}, "reduction": {"enum": ["symmetry", "partial-order", "constraint"]}, "form": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "reduction", "form"], "additionalProperties": false},
         {"properties": {"type": {"const": "symmetry-broken"}, "population": {"$ref": "#/$defs/Nonempty"}, "initial": {"$ref": "#/$defs/Count"}, "generator": {"type": "object", "required": ["type", "keys"], "properties": {"type": {"enum": ["transposition", "cycle"]}, "keys": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/TypedValue"}}}, "additionalProperties": false}}, "required": ["type", "population", "initial", "generator"], "additionalProperties": false},
@@ -846,6 +847,53 @@
     "Quantity": {"type": "object", "required": ["value"], "properties": {"value": {"$ref": "#/$defs/Rational"}, "unit": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
     "Estimate": {"description": "FR-410 estimate: the probability, mean or ratio its decision reads, and for a quantile claim the empirical nearest-rank quantile with the threshold's unit.", "type": "object", "required": ["value"], "properties": {"value": {"$ref": "#/$defs/Rational"}, "quantile": {"$ref": "#/$defs/Quantity"}}, "additionalProperties": false},
     "Interval": {"type": "object", "required": ["lower", "upper"], "properties": {"lower": {"$ref": "#/$defs/Rational"}, "upper": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false},
+    "SolverInconclusive": {
+      "description": "FR-193, FR-331: a hybrid solver result that proves nothing; trace, when present, is the solver's reported path to a possible violation, kept as unverified evidence and never replayed.",
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {"const": "solver-inconclusive"},
+        "trace": {"$ref": "#/$defs/HybridTrace"}
+      },
+      "additionalProperties": false
+    },
+    "HybridTrace": {
+      "description": "FR-193 Hybrid trace: the start state in the declaration's first mode and each jump, by the zero-based position of the transition taken among the previous state's mode's transitions, to the state it reaches.",
+      "type": "object",
+      "required": ["start", "jumps"],
+      "properties": {
+        "start": {"$ref": "#/$defs/HybridTraceState"},
+        "jumps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["transition", "state"],
+            "properties": {
+              "transition": {"$ref": "#/$defs/Count"},
+              "state": {"$ref": "#/$defs/HybridTraceState"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "HybridTraceState": {
+      "description": "FR-193 Hybrid trace: a mode of the declaration, the enclosure of the time at which the state is reached in exact rational seconds, and one interval per continuous variable keyed by its name.",
+      "type": "object",
+      "required": ["mode", "time", "enclosure"],
+      "properties": {
+        "mode": {"$ref": "#/$defs/Identifier"},
+        "time": {"$ref": "#/$defs/Interval"},
+        "enclosure": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {"$ref": "#/$defs/Identifier"},
+          "additionalProperties": {"$ref": "#/$defs/Interval"}
+        }
+      },
+      "additionalProperties": false
+    },
     "StatisticalVerdict": {
       "description": "FR-410 StatisticalVerdict.",
       "type": "object",

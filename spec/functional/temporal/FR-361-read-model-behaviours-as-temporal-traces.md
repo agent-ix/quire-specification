@@ -43,7 +43,7 @@ their anchors; or `unsupported` for a profile the model subject does not
 admit; or `requires-bound` for an unbounded root; or the FR-363 verdict
 `inconclusive` with cause `no-initial-state` when the list of initial states
 is empty; or the FR-363 verdict `inconclusive` with cause `no-instance` for an
-item with zero instances.
+item with zero instances over a non-empty list of initial states.
 
 ## Behavior
 
@@ -68,13 +68,24 @@ The `requires-bound` classification below runs first. Only over bounded
 universes is an item with zero instances found, an item having zero
 instances when it has no admitted key (below): no population overlaps its
 `over` type, every overlapping population has an empty universe, or no member
-record of an initial state admits a key of their universes. A population
-overlapping the type that has no universe makes the item `requires-bound`,
-never `no-instance`. A key whose object does not conform to the type is still
-an instance (below), so it never makes the item `no-instance`. The
-analyzer SHALL settle it `inconclusive` with cause `no-instance` before it
+record of a non-empty list of initial states admits a key of their
+universes. A population overlapping the type that has no universe makes the
+item `requires-bound`, never `no-instance`. A key whose object does not
+conform to the type is still an instance (below), so it never makes the item
+`no-instance`. Over a non-empty list of initial states, the analyzer SHALL
+settle it `inconclusive` with cause `no-instance` before it
 explores any state, so an item that was never evaluated is never read as
 holding.
+
+An empty list of initial states holds no member record, so it admits no key
+and every item over that subject also has zero instances. The analyzer SHALL
+settle such an item `inconclusive` with cause `no-initial-state`, never
+`no-instance`. The order of these outcomes is: the `requires-bound`
+classification first, then `no-initial-state` for an empty list of initial
+states, then the cross-population `conflicting-identity` check below, then
+`no-instance`. So `no-instance` names an item whose subject has an initial
+state and no admitted key, and `no-initial-state` names a subject with no
+behaviour at all, whatever its universes hold.
 
 Before any expansion, the analyzer SHALL classify every root of the subject
 under the request's universes. An unbounded population root, parameter domain,
@@ -189,7 +200,7 @@ population lists the key or on the population order, and reference equality
 key has no type until a member record admits it, so the instance itself names
 none. A refutation names the instance, its key, that it refutes.
 
-Every temporal clause names an `over` parameter, so the clause is checked once for each of its instances (one per admitted key, above); a claim that reads no one object still names one, and each check evaluates the same formula. The cost of that rule is that such a claim's decidability depends on the admitted keys of the named type: when the item has no admitted key (no population overlaps the named type, every overlapping population has an empty universe, or no member record of an initial state admits a key of their universes), FR-361-AC-8 settles it `inconclusive`/`no-instance` before any exploration although the formula never reads the parameter, so an author names a type for which the subject has at least one admitted key.
+Every temporal clause names an `over` parameter, so the clause is checked once for each of its instances (one per admitted key, above); a claim that reads no one object still names one, and each check evaluates the same formula. The cost of that rule is that such a claim's decidability depends on the admitted keys of the named type: when the item has no admitted key (no population overlaps the named type, every overlapping population has an empty universe, or no member record of a non-empty list of initial states admits a key of their universes), FR-361-AC-8 settles it `inconclusive`/`no-instance` before any exploration although the formula never reads the parameter, so an author names a type for which the subject has at least one admitted key.
 
 FR-153 checks one type per key within one population binding, so the analyzer
 SHALL check it across populations: after the `requires-bound`
@@ -256,6 +267,7 @@ unguarded read, whatever the property.
 | FR-361-AC-13 | The universe provision of population `counters` with list `[c, d]` is the RFC 8785 canonical array of its two keys in list order, each exactly `universe` and `identity`, whose `sha256-jcs` digest is the published `counters-c-d` digest; the list `[d, c]` gives a different document and digest; a key with a missing, extra (`object_type` included) or non-hex member is not a universe key. | Test (TC-290) |
 | FR-361-AC-14 | After the `requires-bound` classification, two member records with the universe and identity of `c` and different types, one in `all` as `Entity` and one in `counters` as `Counter`, in one initial state or in two initial states of the subject, refuse the item `invalid_runtime_input`/`conflicting-identity` before any instance is formed, as do two such records in one population; a population with no universe gives `requires-bound` first; one record per key with agreeing types in every initial state is admitted. | Test (TC-290) |
 | FR-361-AC-15 | The instance `e` (an `Entity` that is not a `Counter`) is bound to (`universe`, `Entity`, `e`) under `x: Reference<Counter>`, and an unguarded read through it is `absent-key`; after `drop` removes `d`, the instance `d` still carries `Counter` from its admitted record, every use of `x` other than the guard is `absent-key`, and a universe key that no member record of any initial state admits is not an instance; with `inc` disabled, `c` and `d` at value 0 and an operation `make` that creates a `Counter` with value 1 under such a key `z` of `counters`, `z` is still not an instance, the item's excluded keys are exactly [`z`], and `always holds(x.value = 0)` is checked for `c` and `d` only and settles `proved`, although `z`'s object has value 1 at a reachable position. | Test (TC-290) |
+| FR-361-AC-16 | A subject with an empty list of initial states and a bounded universe `counters = [c, d]`, whose item over `Counter` therefore has no admitted key, settles `inconclusive` with cause `no-initial-state`, never `no-instance`, `proved` or `refuted`; the same subject with an empty universe list for `counters` and with no population overlapping `Counter` each settles `no-initial-state` too; the same item over that subject with `counters` given no universe returns `requires-bound`, not `no-initial-state`. | Test (TC-294) |
 
 ## Dependencies
 
