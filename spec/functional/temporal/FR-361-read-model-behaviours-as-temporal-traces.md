@@ -68,11 +68,12 @@ The `requires-bound` classification below runs first. Only over bounded
 universes is an item with zero instances found, an item having zero
 instances when it has no admitted key (below): no population overlaps its
 `over` type, every overlapping population has an empty universe, or no member
-record of an initial state admits a key of their universes. A population
-overlapping the type that has no universe makes the item `requires-bound`,
-never `no-instance`. A key whose object does not conform to the type is still
-an instance (below), so it never makes the item `no-instance`. The
-analyzer SHALL settle it `inconclusive` with cause `no-instance` before it
+record of a non-empty list of initial states admits a key of their
+universes. A population overlapping the type that has no universe makes the
+item `requires-bound`, never `no-instance`. A key whose object does not
+conform to the type is still an instance (below), so it never makes the item
+`no-instance`. Over a non-empty list of initial states, the analyzer SHALL
+settle it `inconclusive` with cause `no-instance` before it
 explores any state, so an item that was never evaluated is never read as
 holding.
 
@@ -199,7 +200,7 @@ population lists the key or on the population order, and reference equality
 key has no type until a member record admits it, so the instance itself names
 none. A refutation names the instance, its key, that it refutes.
 
-Every temporal clause names an `over` parameter, so the clause is checked once for each of its instances (one per admitted key, above); a claim that reads no one object still names one, and each check evaluates the same formula. The cost of that rule is that such a claim's decidability depends on the admitted keys of the named type: when the item has no admitted key (no population overlaps the named type, every overlapping population has an empty universe, or no member record of an initial state admits a key of their universes), FR-361-AC-8 settles it `inconclusive`/`no-instance` before any exploration although the formula never reads the parameter, so an author names a type for which the subject has at least one admitted key.
+Every temporal clause names an `over` parameter, so the clause is checked once for each of its instances (one per admitted key, above); a claim that reads no one object still names one, and each check evaluates the same formula. The cost of that rule is that such a claim's decidability depends on the admitted keys of the named type: when the item has no admitted key (no population overlaps the named type, every overlapping population has an empty universe, or no member record of a non-empty list of initial states admits a key of their universes), FR-361-AC-8 settles it `inconclusive`/`no-instance` before any exploration although the formula never reads the parameter, so an author names a type for which the subject has at least one admitted key.
 
 FR-153 checks one type per key within one population binding, so the analyzer
 SHALL check it across populations: after the `requires-bound`
