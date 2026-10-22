@@ -9,6 +9,14 @@ relationships:
 
 # [interface_003] I03 authoritative model selection
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| select_package | operation |
+| intake | operation |
+| normalize | operation |
+
 ## Contract
 
 ```yaml

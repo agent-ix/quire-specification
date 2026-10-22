@@ -9,6 +9,13 @@ relationships:
 
 # [interface_007] I07 observation authority bundle
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| select | operation |
+| supersede | operation |
+
 ## Contract
 
 ```yaml

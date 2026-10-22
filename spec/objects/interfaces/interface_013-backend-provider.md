@@ -9,6 +9,13 @@ relationships:
 
 # [interface_013] I13 backend capability, request and result
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| negotiate | operation |
+| execute | operation |
+
 ## Contract
 
 ```yaml

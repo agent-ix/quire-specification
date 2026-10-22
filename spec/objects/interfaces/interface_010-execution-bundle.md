@@ -9,6 +9,12 @@ relationships:
 
 # [interface_010] I10 composed execution bundle
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| compose | operation |
+
 ## Contract
 
 ```yaml
