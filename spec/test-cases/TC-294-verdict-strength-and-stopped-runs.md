@@ -38,6 +38,21 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
    states whose `config_history` universe is `[v1, v2]`; then with an empty
    universe list for `config_history`; then with only unrelated populations;
    then with `config_history` given no universe.
+9. Over the same subject, take the safety claim `on each always[0,1]
+   holds(c.versionNumber >= 0)` (a bounded claim activated `on each`). Its
+   step case closes over `Int[0, 1000]`, so no solver run yields a step
+   counterexample, and an undecided answer or a stop cannot be produced on
+   demand. Each run below is therefore settled from an injected backend
+   outcome, a k-induction result handed to the settlement in place of a
+   solver run, and the vectors check the settlement, not the solver. Settle
+   a k-induction outcome at depth 2 whose step case has a counterexample to
+   induction; then one whose solver returns `unknown` on
+   the base query; then on the step query; then on the search query; then
+   one whose solver stops for a resource internal to it that no request
+   limit names; then one stopped by the request's named time budget; then
+   one that overruns the request's `deadline_ms`; then one the caller
+   cancels; then one the caller's own deadline ends; then one whose solver
+   answers `unknown` while the caller's deadline also ends the run.
 
 ## Expected Results
 
@@ -59,6 +74,13 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
 8. The first three subjects each settle `inconclusive`, basis `unsettled`,
    cause `no-initial-state`, never `no-instance`; the fourth returns
    `requires-bound` before expansion (FR-361-AC-16).
+9. The first five settle `inconclusive`, basis `unsettled`,
+   `induction-not-closed{depth: 2}`; the sixth settles `incomplete`,
+   `limit-reached` naming the time budget; the seventh settles `incomplete`,
+   `timed-out`; the eighth and ninth settle `incomplete`,
+   `cancelled{source}` with `source` `requested` and `deadline`; the tenth
+   settles `cancelled{source: deadline}`, never `induction-not-closed`
+   (FR-363-AC-10).
 
 No row carries a proof basis, and each row's label, basis and result equal the
 FR-363 verdict table (FR-363-AC-1).
