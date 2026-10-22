@@ -63,3 +63,11 @@ Round 1, reviewed QSpec #366 at ba8287988.
 | FND-004 | fixed | - |
 
 Round 1 verdict: FND-001 to FND-004 fixed. FND-005 is a new major, so #366 is not mergeable until it is fixed.
+
+Round 2, reviewed QSpec #366 at f7ee3a2da and QSL #1219 at daad319eb.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-005 | fixed | Fixed at f7ee3a2da (QSL daad319eb cites it). The core-only basis list equals QSL FR-290's six CoreOnlyBasis spellings and the core-only causes equal its QSL-only causes. FR-305 lines 62-68 support the subset (no in-core checker; counterexample is canonical assignments). Sample entries agree between a reader that follows QSpec and QSL: AC-6 core-only spellings (and closed-form+extra) unknown-cause at /basis/type; AC-9 QSL-only causes at /cause/type; hyphenated kani-vacuous-proof is outside FR-331, so unknown-cause in both; AC-9's eight Unsupported causes are plugin-sendable, so unsupported-feature in both; AC-10 transcript without counterexample missing-member at /counterexample (step 4 before 5), transcript beside it unknown-member at /transcript, TemporalCounterexample invalid-value at /counterexample/type; AC-7 and FR-289-AC-14 consistent. No regression: certification-mismatch for a plugin's certified+closed-form still decides at step 6. |
+
+Round 2 verdict: every finding is fixed. #366 is mergeable.
