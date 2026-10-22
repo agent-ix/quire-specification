@@ -181,7 +181,12 @@ settles stopped, naming that limit, its value and how to raise it.
 
 A verdict holds for exactly its subject: the checked package, the initial
 states, the universes and any substituted proof bounds. A verdict over one
-universe is joined only to the request that names that universe.
+universe is joined only to the request that names that universe. Over an
+`over` parameter it holds for the item's instances only: a universe key that
+no member record of an initial state admits, including one only an operation
+could create, is an excluded key of the item
+([FR-361](FR-361-read-model-behaviours-as-temporal-traces.md)), and the verdict
+states nothing about the object an operation creates under it.
 
 ## Acceptance Criteria
 

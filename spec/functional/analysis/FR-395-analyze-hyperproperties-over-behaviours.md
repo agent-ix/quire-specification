@@ -61,9 +61,10 @@ One result per clause instance, classified by
   different aliases range over different subjects. The request supplies one
   subject per distinct alias.
 - **Object parameters.** `behaviours (v: V::T)` binds an object of a
-  population of alias `V`'s model. The clause has one instance per key of the
-  universe of every population of that model that overlaps `T`, a key listed by
-  several of them being one instance, as FR-361 defines an instance. Within an instance, `v` denotes the object with
+  population of alias `V`'s model. The clause has one instance per admitted key
+  (FR-361): a key of the universe of a population of that model that overlaps
+  `T` and that a member record of an initial state admits, a key listed by
+  several of them being one instance. Within an instance, `v` denotes the object with
   that key in every trace of that alias: objects are correlated across traces
   by universe key, never by local name. A clause over two aliases names one
   parameter per alias it reads, and its instances range over the product of
@@ -176,7 +177,7 @@ One result per clause instance, classified by
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-395-AC-1 | Under `behaviours`, a quantifier without `of`, and under a finite trace domain a quantifier with `of`, refuse at the quantifier; an indexed read through a variable of another model and an unindexed member read refuse `ill_typed`; a match that reads state refuses. | Test (TC-337) |
-| FR-395-AC-2 | Two quantifiers over one alias range independently over one subject, quantifiers over two aliases over two subjects, and an object parameter yields one instance per key of each overlapping population's universe with the object correlated by key in every trace. | Test (TC-337, TC-338) |
+| FR-395-AC-2 | Two quantifiers over one alias range independently over one subject, quantifiers over two aliases over two subjects, and an object parameter yields one instance per admitted key (FR-361) of the overlapping populations' universes with the object correlated by key in every trace. | Test (TC-337, TC-338) |
 | FR-395-AC-3 | Lockstep noninterference with matched inputs is refuted on the leaky vault and proved on the secure vault; without `match` it is refuted on both. | Test (TC-338) |
 | FR-395-AC-4 | `μ_U` restricts the universal tuples and `μ_E` the existential tuples, so a `∀∃` clause is refuted on the leaky vault and proved on the secure vault. | Test (TC-339) |
 | FR-395-AC-5 | A component at a terminal state stutters with step label `stutter`, and a match of equal operations pairs it only with another stuttering component; `a.step.receiver` is none at its terminal-stutter step, so `a.step.receiver = b.step.receiver` holds between two stuttering components. | Test (TC-340) |
