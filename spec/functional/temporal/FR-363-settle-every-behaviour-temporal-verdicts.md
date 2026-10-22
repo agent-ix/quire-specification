@@ -193,10 +193,13 @@ states nothing about the object an operation creates under it.
 A k-induction run that ends without a decision at depth `k` SHALL settle by
 the first of these that applies:
 
-1. A cancellation settles the Stopped row with FR-331 `cancelled{source}`.
-2. The backend's own wall-clock limit, or a provider's overrun of the
-   request's `deadline_ms`, settles FR-331 `incomplete`, cause `timed-out`
+1. A tripped cancellation handle, including the caller's own deadline
+   ending the run, settles the Stopped row, FR-331 `incomplete`, cause
+   `cancelled{source}`, `source` `requested` or `deadline`
    ([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md)).
+2. The backend's own wall-clock limit expiring, or the backend overrunning
+   the deadline the request gave it (`deadline_ms`), settles FR-331
+   `incomplete`, cause `timed-out`.
 3. A stop under a limit the request names (its state, transition or
    automaton-state limit, its work meter or its time budget) settles the
    Stopped row, FR-331 `incomplete`, cause `limit-reached{limit, value,
@@ -228,7 +231,7 @@ step counterexample to it settles `induction-not-closed{depth: 1}`.
 | FR-363-AC-7 | A verdict carries its subject; a verdict over one universe never settles an item whose request names a different universe. | Test (TC-302) |
 | FR-363-AC-8 | A claim that evaluates undefined at a reachable position settles `refuted`, basis `decisive-counterexample`, FR-331 result `refuted`, cause `undefined-evaluation` whose `where` names the position, its state-key digest and the expression's locus and whose `cause` names the undefined value's catalogued reason; the same claim with the read defined at every reachable position settles by its truth values. | Test (TC-305) |
 | FR-363-AC-9 | A model whose operation guard evaluates undefined for a candidate transition at a reachable state settles every item over the subject `refuted`, cause `undefined-evaluation` whose `where` names that position, its state-key digest, the guard's locus and the transition identity, and never reads the transition as disabled; a model whose `terminal when` predicate evaluates undefined at a reachable state with no enabled transition settles `refuted` the same way, never reading the state as non-terminal; a state constraint that evaluates undefined at a reachable state settles `refuted` the same way, naming the constraint's locus; at a state where the claim is both false and undefined, the reported cause is `undefined-evaluation`. | Test (TC-305) |
-| FR-363-AC-10 | A k-induction run whose step case at depth 2 has a counterexample to induction, one whose solver returns `unknown` on the base query at depth 2, one on the step query, one on the search query, and one whose solver stops for a resource internal to it that no request limit names each settle `inconclusive`, basis `unsettled`, cause `induction-not-closed{depth: 2}`; a run stopped by the request's named time budget settles `incomplete`, `limit-reached` naming that limit; a run that exceeds the request's `deadline_ms` settles `incomplete`, `timed-out`; neither is ever `induction-not-closed`. | Test (TC-294) |
+| FR-363-AC-10 | A k-induction run whose step case at depth 2 has a counterexample to induction, one whose solver returns `unknown` on the base query at depth 2, one on the step query, one on the search query, and one whose solver stops for a resource internal to it that no request limit names each settle `inconclusive`, basis `unsettled`, cause `induction-not-closed{depth: 2}`; a run stopped by the request's named time budget settles `incomplete`, `limit-reached` naming that limit; a run that overruns the request's `deadline_ms` settles `incomplete`, `timed-out`; a run cancelled by the caller, and one ended by the caller's own deadline, settle `incomplete`, `cancelled{source}` with `source` `requested` and `deadline`; none of these three stops is ever `induction-not-closed`, and a run where the solver answers `unknown` and the caller's deadline also ends it settles `cancelled{source: deadline}`. | Test (TC-294) |
 
 ## Dependencies
 

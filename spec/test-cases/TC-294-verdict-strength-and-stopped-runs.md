@@ -45,7 +45,9 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
    the base query; then on the step query; then on the search query; then
    one whose solver stops for a resource internal to it that no request
    limit names; then one stopped by the request's named time budget; then
-   one that exceeds the request's `deadline_ms`.
+   one that overruns the request's `deadline_ms`; then one the caller
+   cancels; then one the caller's own deadline ends; then one whose solver
+   answers `unknown` while the caller's deadline also ends the run.
 
 ## Expected Results
 
@@ -70,7 +72,10 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
 9. The first five settle `inconclusive`, basis `unsettled`,
    `induction-not-closed{depth: 2}`; the sixth settles `incomplete`,
    `limit-reached` naming the time budget; the seventh settles `incomplete`,
-   `timed-out` (FR-363-AC-10).
+   `timed-out`; the eighth and ninth settle `incomplete`,
+   `cancelled{source}` with `source` `requested` and `deadline`; the tenth
+   settles `cancelled{source: deadline}`, never `induction-not-closed`
+   (FR-363-AC-10).
 
 No row carries a proof basis, and each row's label, basis and result equal the
 FR-363 verdict table (FR-363-AC-1).
