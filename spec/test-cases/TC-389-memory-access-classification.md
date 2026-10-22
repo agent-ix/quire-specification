@@ -14,7 +14,8 @@ relationships:
 ## Description
 
 Check shared and branch-local locations, access classes, admitted orderings,
-the one-location rule at check time and at the pre-check, the shared-guard
+the one-location rule at check time and at the pre-check, the ordering-mismatch
+shape at the pre-check, the shared-guard
 rule, the reader rule, access application over the thread observation, and fences.
 
 ## Test Procedure
@@ -28,7 +29,7 @@ item's settlement.
 | Vector | Protocol | Expected result |
 | --- | --- | --- |
 | AC-01 | `SB` of TC-390 | `Sx`, `Sy` atomic stores; `Ly`, `Lx` atomic loads; `(x, v)` and `(y, v)` shared; `(c1, r)` and `(c2, r)` branch-local |
-| AC-02 | a store with `ordering acquire`; a load with `ordering release`; an RMW `incr` with no ordering | each refuses `ill_typed`/`operator-ineligible` naming the attempt, class and ordering |
+| AC-02 | an attempt that touches no data place with `ordering relaxed`; an attempt that only writes with `ordering acquire`; an attempt that only reads with `ordering release`; an RMW `incr` with no ordering; a `release` attempt that reads `x.v` and writes the register `r` | the first three refuse `ill_typed`/`operator-ineligible` at check time naming the attempt and ordering; the last two are admitted at check time (FR-435-AC-2) |
 | AC-03 | each class with each admitted ordering, and a local attempt with none | admitted |
 | AC-04 | `parallel memory tso` with an attempt writing two shared fields of its receiver | refuses `unsupported_construct`/`declaration-form` naming both locations |
 | AC-05 | the AC-04 attempt under source `sc`, request selecting `tso` | settles `unsupported`, cause `weak-access-shape` with its site, transition and shape `multi-location` naming both locations |
@@ -40,6 +41,7 @@ item's settlement.
 | AC-11 | `fence F ordering seq_cst;` | a `fence` step with transition identity members `thread`, `node` and `ordering`, uncounted for intervals |
 | AC-12 | under a `tso` selection, a branch holding an `event` whose constraint reads `x.v` beside the branch whose attempt stores `x.v`; the same under `sc`; an `event` reading a field of an object that no attempt accesses; a `finish` reading `x.v` after the join | the first settles `unsupported`, cause `weak-access-shape`, shape `multi-location` naming the event and `(x, v)`; the other three are admitted (FR-435-AC-7) |
 | AC-13 | under `ra`, a branch storing `x := 1` once and a second branch repeating an attempt that stores `x := 0` with precondition `x.v = 0` and then loads `x` with precondition `x.v = 1` | after the first branch's store, the second branch's store is enabled while its current view points at the message with value 0 and is not enabled once its view points at the message with value 1; its load is enabled for the messages at or after its view whose value is 1 (FR-435-AC-8) |
+| AC-14 | under a `tso` selection, then an `ra` selection, then `sc`: an instantiated load with `release`, a load with `acq_rel`, a store with `acquire`, a store with `acq_rel`, an RMW with no ordering, a `release` attempt that writes a branch-local register and touches no shared location, and an `acquire` attempt that reads a branch-local register and writes two shared fields | under `tso` and `ra`, the first six settle `unsupported`, cause `weak-access-shape`, before any state is explored, with the `ordering-mismatch` shapes FR-435-AC-9 spells (`access` `load`, `load`, `store`, `store`, `rmw`, `local`; `ordering` `release`, `acq_rel`, `acquire`, `acq_rel`, `null`, `release`), and the seventh settles `multi-location` naming both fields; under `sc` all seven are admitted (FR-435-AC-9, FR-439-AC-11) |
 
 ## Expected Results
 

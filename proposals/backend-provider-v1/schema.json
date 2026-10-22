@@ -816,7 +816,8 @@
         {"properties": {"type": {"const": "zero-delay-cycle"}, "states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}}}, "required": ["type", "states"], "additionalProperties": false},
         {"properties": {"type": {"const": "weak-access-shape"}, "site": {"$ref": "#/$defs/Locus"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "shape": {"oneOf": [
           {"type": "object", "required": ["type", "locations"], "properties": {"type": {"const": "multi-location"}, "locations": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/TypedValue"}}}, "additionalProperties": false},
-          {"type": "object", "required": ["type"], "properties": {"type": {"const": "join-policy"}}, "additionalProperties": false}
+          {"type": "object", "required": ["type"], "properties": {"type": {"const": "join-policy"}}, "additionalProperties": false},
+          {"type": "object", "required": ["type", "access", "ordering"], "properties": {"type": {"const": "ordering-mismatch"}, "access": {"enum": ["load", "store", "rmw", "local"]}, "ordering": {"oneOf": [{"type": "null"}, {"enum": ["relaxed", "acquire", "release", "acq_rel", "seq_cst"]}]}}, "additionalProperties": false}
         ]}}, "required": ["type", "site", "transition", "shape"], "additionalProperties": false}
       ]
     },
