@@ -14,7 +14,9 @@ relationships:
 Show that the published operation catalog and FR-322 admit the two model
 operations a native producer emits over the lock-selected domain package:
 `quire.op.reference.eq` and `quire.op.reference.ne` over two references whose
-object types conform one to the other ("Reference conformance"), and
+object types conform one to the other ("Reference conformance"),
+`quire.op.reference.upcast` of a reference to the reference type of a type
+its object type conforms to, and
 `quire.op.record.project` of a model field over a `quire.op.model.deref`
 result, whose family is `object` and which the `field_owner` operand group
 admits.
@@ -23,14 +25,16 @@ admits.
 
 - `proposals/checked-package-v2/model-member-type-vectors.json` carries
   TC-280's domain package `acme/orders` `1.0.0`, the model declaration node
-  vectors M1 to M9, and the `reference_equality_cases` and
-  `projection_cases`. In a case, `{reference: M}` is an operand of type
+  vectors M1 to M13, and the `reference_equality_cases`,
+  `reference_upcast_cases` and `projection_cases`. In a case, `{reference: M}` is an operand of type
   `Reference<M>`, the `composite_type`/`reference` node over node vector `M`,
-  and `{object: M}` is an operand of type `M` itself. A projection case
+  and `{object: M}` is an operand of type `M` itself. An upcast case's
+  `type_argument` `{reference: M}` names `Reference<M>` the same way. A projection case
   also carries the projection's declared `result_type`.
 - `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts` supplies the
-  `quire.op.reference.eq`, `quire.op.reference.ne`, `quire.op.model.deref`
-  and `quire.op.record.project` entries: their operand positions, groups,
+  `quire.op.reference.eq`, `quire.op.reference.ne`,
+  `quire.op.reference.upcast`, `quire.op.model.deref` and
+  `quire.op.record.project` entries: their operand positions, groups,
   result form and constraints are read from the catalog.
 - The lock selects the identity `acme/orders` only. In that package `Sub` (M5)
   declares supertype `Order` (M1), `SubSub` (M7) declares supertype `Sub`,
@@ -43,7 +47,12 @@ admits.
 For each reference equality case, fit each operand's family to the entry's
 operand position, then decide each constraint the entry names; for
 `conforming_reference`, look up both declarations by FR-322 step 2 from the operands' wire owners and decide
-conformance along declared supertypes, for one type node as for two. For each projection case, check a
+conformance along declared supertypes, for one type node as for two. For each
+upcast case, fit the operand to the entry's `reference` position, check the
+`type_argument` member's family, and decide `conforming_upcast`: look up the
+operand's declaration and the member's declaration by FR-322 step 2 and
+decide whether the operand's object type conforms to the member's along
+declared supertypes, in that direction only. For each projection case, check a
 `deref` operand against the `deref` entry (a `reference` operand, and a
 declared result equal to the `inner:0` type with a family), fit the
 projection operand to the `record.project` operand group, decide `member_of`,
@@ -81,6 +90,20 @@ not unique), `peers` (`Order` `[0, 3]`, unordered, unique) and `trail`
 | RC-14 | `reference.ne` over `Reference<Tagged>` and `Reference<Both>` | Admitted | FR-322-AC-33 |
 | RC-15 | `reference.eq` over `Reference<Flow>` and `Reference<Order>` | `ill_typed`/`operator-ineligible`: no declared supertype chain | FR-322-AC-33 |
 | RC-16 | `reference.eq` over two `Reference<Flow>` operands | Admitted | FR-322-AC-33 |
+| RU-01 | `reference.upcast` of `Reference<Sub>` to `Reference<Order>` | Admitted: `Sub` conforms to `Order` | FR-322-AC-94 |
+| RU-02 | `reference.upcast` of `Reference<SubSub>` to `Reference<Order>` | Admitted through the supertype chain `SubSub`, `Sub`, `Order` | FR-322-AC-94 |
+| RU-03 | `reference.upcast` of `Reference<Order>` to `Reference<Order>` | Admitted: one type node | FR-322-AC-94 |
+| RU-04 | `reference.upcast` of `Reference<Both>` to `Reference<Tagged>` | Admitted: `Both` conforms to its supertype `Tagged` | FR-322-AC-94 |
+| RU-05 | `reference.upcast` of `Reference<Order>` to `Reference<Sub>` | `ill_typed`/`operator-ineligible`: a downcast | FR-322-AC-94 |
+| RU-06 | `reference.upcast` of `Reference<Order>` to `Reference<Invoice>` | `ill_typed`/`operator-ineligible`: unrelated types | FR-322-AC-94 |
+| RU-07 | `reference.upcast` of `Reference<Sub>` to `Reference<Both>` | `ill_typed`/`operator-ineligible`: unrelated types | FR-322-AC-94 |
+| RU-08 | `reference.upcast` of `Reference<Flow>` to `Reference<Order>` | `ill_typed`/`operator-ineligible`: no declared supertype chain | FR-322-AC-94 |
+| RU-09 | `reference.upcast` of `Reference<Order>` to a reference to the relationship `Order-order-Order` (M4) | `ill_typed`/`operator-ineligible` | FR-322-AC-94 |
+| RU-10 | `reference.upcast` of a reference to M2 to `Reference<Order>` | `missing_declaration`/`missing-selection` | FR-322-AC-94 |
+| RU-11 | `reference.upcast` of `Reference<Order>` to a reference to M2 | `missing_declaration`/`missing-selection` | FR-322-AC-94 |
+| RU-12 | `reference.upcast` of an `Order` object operand to `Reference<Order>` | `ill_typed`/`operator-ineligible`: family `object` is not `reference` | FR-322-AC-94 |
+| RU-13 | `reference.upcast` of `Reference<Both>` to `Reference<Coded>` | Admitted: `Both` conforms to its second supertype `Coded` | FR-322-AC-94 |
+| RU-14 | `reference.upcast` of a reference to the relationship `Order-order-Order` (M4) to `Reference<Order>` | `ill_typed`/`operator-ineligible`: a relationship at the source end | FR-322-AC-94 |
 | RP-01 | `record.project` of field `total` of M5 over `deref` of `Reference<Sub>` typed M5 | Resolves the inherited `Order/total`; type `Int[0, 9]` | FR-322-AC-34 |
 | RP-02 | `record.project` of field `invoice` of M1 over `deref` of `Reference<Order>` typed M1 | Resolves `Order/invoice`; type `Reference<Invoice>` over M3 | FR-322-AC-34 |
 | RP-03 | `record.project` of field `total` of M5 over a `Reference<Sub>` operand with no `deref` | `ill_typed`/`operator-ineligible` | FR-322-AC-34 |
@@ -141,7 +164,7 @@ text field `note`; `Money` declares `amount_minor`. These vectors are a referenc
 
 ## Expected Results
 
-Every reference equality, projection, reaches, record conformance and event case gives exactly its
+Every reference equality, upcast, projection, reaches, record conformance and event case gives exactly its
 recorded result.
 
 ## Relationship ends
