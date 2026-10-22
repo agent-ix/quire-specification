@@ -554,8 +554,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-307
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-308
-    type: contains
   - target: ix://agent-ix/quire-specification/FR-309
     type: contains
   - target: ix://agent-ix/quire-specification/FR-310
