@@ -126,11 +126,13 @@ location keeps one message.
 - **Omitted clauses.** `P` does not build three kinds of RC11 `psc` edge. (a)
   The `po|≠loc ; hb ; po|≠loc` edge from an SC access to an SC access, whose
   test names locations a view does not record. (b) The edges of `psc_base`
-  with an SC fence at one or both ends whose `scb` step is an `mo` or `rb`
+  with an SC fence at one end whose `scb` step is an `mo` or `rb`
   step with a non-SC access at an end on a fence's side, such as the `rb` step
   from a `relaxed` load in the fence's thread to an SC write; `P` holds SC
   events only. The `scb` steps `po` and `hb|loc` are built, so the
-  fence-to-access edge of LT-14 is built. (c) The `eco` part of the fence
+  fence-to-access edge of LT-14 is built. The fence-to-fence form is covered by
+  `S`: every `seq_cst` fence joins `S` and enters its frontier, so every two
+  live SC fences are ordered. (c) The `eco` part of the fence
   clause, `[Fsc] ; hb ; eco ; hb ; [Fsc]`, which the join of `S` at a
   `seq_cst` fence is meant to carry by not offering the message choices that
   would complete it. That it does is not proved; it was checked by exhaustive
