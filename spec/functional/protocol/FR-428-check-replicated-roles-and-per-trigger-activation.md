@@ -59,12 +59,23 @@ role instances and queues. A trigger record is not kept.
 ### Replicated roles
 
 A role `role r each T from pop max n lifetime L` has one **role instance** per
-object of population `pop` it spawns. The population's universe is the
-subject's, set by the caller. `max n` is the protocol's authored limit on live
+object of population `pop` it spawns. `pop` names a population declared by
+the domain package that declares `T`, written as its declared name; a `pop`
+that names no population of that package refuses
+`missing_declaration`/`missing-name` at the name, and a `pop` that names a
+population whose element type is not `T` refuses `ill_typed`/`type-mismatch`
+at the name, each retaining the role and the population name. The population's
+universe is the subject's, set by the caller. `max n` is the protocol's authored limit on live
 instances of `r` at once, part of the checked package.
 
 - An event node `by r` is taken by any live instance of `r`, one step per
   instance, and its binder records the acting instance.
+- A `send` node is owned by the `from` role of its channel and a `receive`
+  node by the `to` role of its channel. When that role is replicated, the
+  node is taken by any live instance of the role, one step per instance, with
+  the acting instance in the `actor` member, as an event node `by r` is; a
+  thread at such a node while the role has no live instance and no enabled
+  `spawn` waits with the `no-role-instance` cause (FR-429).
 - A role instance's identity in the state key is the object's reference. The
   FR-171 spawn ordinal is trace data, recomputed by replay, so equal instance
   sets key equal in whatever order they were spawned.
@@ -136,6 +147,8 @@ obligation identity.
 | FR-428-AC-8 | In `role w each M::Worker from workers max 2 lifetime until(w.done)`, `w` names one instance of type `Reference<M::Worker>` inside the `until` expression, and the same role written with a brace-delimited `until({w.done})` refuses `invalid_syntax`/`unexpected-token` at the `{`, while an `until` expression naming a binder other than `w` (`z`) refuses `missing_declaration`/`missing-name` at `z`. | Test (TC-382, TC-947) |
 | FR-428-AC-9 | With `Work` by `r` as the only node inside a `repeat`, a `scope` instance is not retired while the `repeat` can iterate again and retires in the step that leaves it; with `Work` nodes inside two sibling `sequence`s of one `parallel`, the region is the `parallel`, and the instance retires only after no live thread can reach either `Work`; with every `Work` directly in the root `run`, the region is the root. | Test (TC-382) |
 | FR-428-AC-10 | A role name used as a value outside its own `until(p)` refuses `missing_declaration`/`missing-name` at the name: `w` read in a `choice` guard of the protocol, in a node constraint, and in another replicated role's `until`, each refuse and none is read as the acting instance. | Test (TC-382) |
+| FR-428-AC-11 | `role w each M::Worker from workers max 1 lifetime workflow` checks when `workers` is a population of `M::Worker` in the domain package; the same role with `from absent` refuses `missing_declaration`/`missing-name` at `absent`, and with `from jobs` where `jobs` is a population of `M::Job` refuses `ill_typed`/`type-mismatch` at `jobs`, each retaining the role and the population name. | Test (TC-382) |
+| FR-428-AC-12 | A channel `from r to c` where `r` is a replicated role with two live instances: a `send` on it gives two steps, each naming its acting instance in the `actor` member; a `receive` on a channel `from c to r` does the same; with `r`'s population universe empty, a thread at the `send` deadlocks with the `no-role-instance` cause naming `r`. | Test (TC-382) |
 
 ## Dependencies
 
