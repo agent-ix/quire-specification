@@ -500,6 +500,63 @@ boundary.
   owner have different labels and different member keys. A conformant
   package carries on every structural node the key QSL's FR-092 key function
   (FR-094's for a model-owned node) mints from the node's own members.
+- `dependencies` — the nodes a node's definition is built from: a list of
+  node ids of the node's own graph, unique and ascending by digest. It is a
+  member of the node's `identity_projection` entry, so it enters
+  `package_id`, and a reader follows it beside `semantic_type` and the body's
+  references when it builds a node's closure and checks graph cycles. A node
+  that is its own `semantic_type` (a self-typed node, `semantic_type` `null`
+  in its preimage) adds no edge by that type and is not a cycle; only a path through two or more distinct
+  nodes, or through a reference, is a cycle under the cycle rule above. A
+  producer SHALL write, and a reader SHALL require, exactly the nodes these
+  rules name for every node:
+  1. each `reference` term target in the node's `body`, at any depth: an
+     aggregate member, a binding's value, an application argument or a body
+     root. A reference to a member of the node's own recursion group is a
+     `reference` naming that member's `node_id` on the wire, so it counts by
+     that `node_id`; `{term: "group_reference", ordinal}` is its spelling
+     inside a key preimage only;
+  2. for each application in the body, the declaration its
+     `operation.member` names and that member's `population` node, as the
+     application-node rule above states;
+  3. for a `bounded_domain` node, its `semantic_type`, the type it bounds;
+  4. for a node carrying a `nominal_identity_preimage`, the nodes its nominal
+     join names (`nominal_identity_preimage` below; FR-142 for dimensions and
+     units), and for a `state`/`frame` node the entries of its body
+     ([FR-340](FR-340-checked-package-frame-location.md)).
+
+  The rules give the whole list. A literal's `type`, an application's
+  `result_type` and the `semantic_type` of every node other than a
+  `bounded_domain` are type annotations: a reader reads them through those
+  members, and one is in the list only when a rule names the same node. A
+  law's `definition` is a `DefinitionRef`, not a node. A
+  `dependency_reference` names a node of another package and adds no entry,
+  in an application's join as anywhere else. A node form whose body artifact
+  states its own list keeps that list, which these rules restate for its
+  `reference` terms: [FR-341](FR-341-checked-package-state-clause-body.md),
+  [FR-342](FR-342-checked-package-operation-anchor-body.md),
+  [FR-370](FR-370-checked-package-temporal-clause-body.md),
+  [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md),
+  [FR-402](FR-402-hyperproperty-obligation-identity.md),
+  [FR-440](FR-440-checked-package-union-and-case-nodes.md),
+  [FR-451](FR-451-checked-package-abstraction-relation-body.md) and
+  [FR-464](FR-464-checked-package-protocol-node-bodies.md) to
+  [FR-466](FR-466-checked-package-protocol-control-bodies.md). For example:
+
+  | Node | `dependencies` |
+  | --- | --- |
+  | builtin `scalar_type`, `model` or `relation` declaration node, enum declaration | `[]` |
+  | `value`/`literal`, `value`/`parameter` | `[]`; the body holds literals only |
+  | `bounded_domain` (`integer_range`, `collection_bounds`, `model_population` and every other form) | its `semantic_type` only; a bound's literal `type` is not listed |
+  | `composite_type` `option`, a collection kind, `reference`; declared `record` or `tuple` | each node the body references |
+  | `expression`/`reference`, `correspondence`/`source_locus`, `protocol`/`protocol_reference` | the body's target |
+  | `scalar_type`/`compound_unit` | each unit its terms reference |
+  | `function`, a clause function included | each node its body references: its parameter nodes, its body's root node and its measure's node |
+  | an `expression` holding an application | rules 1 and 2 over the application |
+
+  A list that differs from the one these rules rebuild from the node as
+  written refuses `invalid_semantic_graph` at the node's `/dependencies`, a
+  graph-shape refusal (FR-322-AC-96).
 - `dependency_reference` — a reference to a declaration exported by a
   directly selected `dependency_selections` package:
   `PackageNodeKey{package, node}`, where
@@ -878,8 +935,8 @@ well-shaped entry whose `owner` differs from its node's refuses
 A `model_member` is resolved in four steps. Step 1 runs before graph
 admission. Steps 2 to 4 run at the application's `operator-ineligible`
 check, and their refusals take that check's place in the refusal order.
-Steps 1 and 2 also serve the `conforming_reference` constraint ("Reference
-conformance" below).
+Steps 1 and 2 also serve the `conforming_reference` and `conforming_upcast`
+constraints ("Reference conformance" below).
 
 1. **Selection evidence.** After strict syntax and member validation and
    before graph admission, the reader admits the document of each
@@ -1133,6 +1190,25 @@ a relationship declaration, refuse `ill_typed`/`operator-ineligible`. That
 is the cause of every catalog operand check; FR-149-AC-12 and TC-198 L08
 report the same pair, found while checking source, as
 `ill_typed`/`type-mismatch`.
+
+`quire.op.reference.upcast` carries the `conforming_upcast` constraint over
+operand 0, of type `Reference<S>`, and its `type_argument` member, which
+names `Reference<T>`. At the application's `operator-ineligible` check, the
+reader looks up the declarations of `S`'s and `T`'s model declaration nodes
+by step 2, with step 2's refusal, including when both name one type node;
+the operand's declaration is the source and the member's is the target. The
+constraint holds exactly when both are object type declarations, with or
+without `interfaceFeatures`, of one selected document and the source
+conforms to the target under FR-151's conformance relation as above: they
+are the same effective type, or a chain of declared supertypes leads from
+the source to the target. Unlike `conforming_reference`, the direction
+matters: an upcast whose target conforms to its source and not the reverse
+is a downcast, which no catalog operation admits (FR-149). A downcast, two
+object types with no supertype chain from the source to the target, a
+systems interface with no declared supertype against an object type, a
+relationship declaration at either end
+refuse `ill_typed`/`operator-ineligible`, so a reader admits an upcast only
+between the pair FR-149's `Reference<S>` to `Reference<T>` row admits.
 
 ### Record conformance
 
@@ -1657,6 +1733,7 @@ even when its value is also non-canonical.
 | `same_family` | The two named operands have equal families. |
 | `same_type` | The two named operands resolve to the same type node. |
 | `conforming_reference` | The two named `reference` operands conform: they resolve to the same type node, or their object types conform one to the other as "Reference conformance" below decides. |
+| `conforming_upcast` | The named `reference` operand and the `type_argument` member resolve to the same type node, or the operand's object type conforms to the member's object type, in that direction, as "Reference conformance" below decides. |
 | `reference_edge` | The `field` member is a reference edge between the two named `reference` operands, as "Reaches over a field" above decides. |
 | `same_dimension` | Operand 0's unit and the `type_argument` member's unit carry the same `dimension_node_id`. |
 | `inner_type` | Operand 1's family is the element family of collection operand 0 and, when operand 1 names a type, the same element type node, or, when that element type is a record type, a record type node that conforms to it ("Record conformance"). |
@@ -1850,7 +1927,9 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-91 | A refinement owner that is not proof-eligible, with a history field, with an `any` step target or with an abstract field that has no field row, is admitted with its `declaration` occurrence alone and refuses `invalid_package`/`invalid-value` at the first `generated` entry on its node when one is present (`RS-12` to `RS-15`). The hidden field is derived from the abstract model's fields against the `objects` entries' field rows, whatever their order (`RS-14`, `RS-16`, `RS-17`). | Test (TC-233) |
 | FR-322-AC-92 | In every published producer-output package (every published positive package except the reader-admission fixture `positive-integer-literal-references.json` of FR-322-AC-93), each operand of a `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` or `ne` application that is an integer literal typed at the builtin Integer node is an inline `literal` term with `value_kind` `integer` and that type, and no such operand is a `reference` to a `value`/`literal` node of `value_kind` `integer`, whatever the node's type. In `positive-two-owners-a.json` and `-b.json` the `three` application holds the inline operands `1` and `2` and has empty `dependencies`; in `positive-operation-identities.json` the `integer.mul` and `integer.add` hold `7` and `-2` inline, and the `value`/`literal` nodes `7` and `-2` are present for the nodes that reference them. For each of the six operators, `inline_literal_cases` in `node-identity-vectors.json` records an application over inline integer literal operands with its JCS SHA-256, which differs from the key of the same application over references to literal nodes. | Test (TC-233) |
 | FR-322-AC-93 | The reader admits the reference form of an integer literal operand under the six operators: `positive-integer-literal-references.json`, whose `three` application is `quire.op.integer.add` over references to two `value`/`literal` nodes, validates against the V2 schema and passes every reader check, and its `three` node identity and `package_id` differ from those of `positive-two-owners-a.json`, which holds the inline form. | Test (TC-233) |
+| FR-322-AC-94 | `quire.op.reference.upcast` admits an operand `Reference<S>` with `type_argument` `Reference<T>` exactly when `S` and `T` are selected object types of one document and `S` conforms to `T` along declared supertypes: one type to itself, a subtype to its supertype, a subtype two levels down to its root, and a type with two supertypes to either. A supertype to its subtype (a downcast), two unrelated object types, a systems interface with no declared supertype to an object type, a reference to a relationship at either end and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand or member whose owner is not selected refuses `missing_declaration`/`missing-selection`. | Test |
 | FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id digest order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id digest, each with its `identity_projection` rebuilt in the new graph order and its `package_id` recomputed. Each reorder that changes the node sequence changes the `package_id`, and the reader reports no refusal for the order of the nodes. A published fixture whose `identity_projection` lists the same entries in an order other than graph order fails the identity recomputation of FR-322-AC-14. | Test (TC-233) |
+| FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node `7916…` and the `correspondence`/`source_locus` node `eda3…` each list their body target `8a2a…`, and the `bounded_domain`/`integer_range` node `652c…` lists its `semantic_type` `07f6…`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node `1ffe…` lists its `semantic_type` `0ec8…` alone, not its `max` literal's `type`. Each fixture's `package_id` recomputes with those lists. With the projection entry patched and `package_id` recomputed, the full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
 
 ## Dependencies
 

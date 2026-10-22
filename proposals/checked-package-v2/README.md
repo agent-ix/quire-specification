@@ -115,8 +115,8 @@ structures, but any external consumer receives only the contract.
 - `model-member-type-vectors.json` carries a domain package as a projection
   of the declaration records FR-154 intake reads from it, the model declaration node vectors
   that recover a declaring node's `ModelOwner`, the member and selection
-  cases for FR-322's "Model-owned members", and the reference equality and
-  field projection cases for its "Reference conformance" and model field
+  cases for FR-322's "Model-owned members", and the reference equality,
+  reference upcast and field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
   of its `domain_package` member stands for the document's `sha256-jcs`
   digest.
@@ -314,7 +314,8 @@ semantic_type, declaration, recursion, body}`, where a reference to a member of
 the node's own recursion group becomes a `group_reference` ordinal. An
 expression whose root is an application has the semantic form fixed by its
 operator class, and its dependencies are exactly the unique digest-ascending
-reference targets and member declarations of its body. Changing division from
+reference targets and member declarations of its body. Every other node's
+dependencies follow FR-322's `dependencies` rules. Changing division from
 floor to Euclidean therefore changes the node id and the package id, and the
 `division-law-unselected-by-package-lock` mutation shows that a law absent from
 the lock refuses.
@@ -339,8 +340,12 @@ A field of a model object is `quire.op.record.project` over a
 declaration node, of family `object`, which the projection's `field_owner`
 operand group admits. `quire.op.reference.eq` and `quire.op.reference.ne`
 compare two references whose object types conform one to the other
-(`conforming_reference`), decided over the owners the same recovery yields
+(`conforming_reference`), and `quire.op.reference.upcast` retypes a
+reference only to a type its object type conforms to (`conforming_upcast`),
+each decided over the owners the same recovery yields
 ([FR-322's "Reference conformance"](../../spec/objects/interfaces/FR-322-checked-package-artifact.md#reference-conformance)).
+The operation catalog's `constraint_kinds` vocabulary lists `conforming_upcast`
+beside `conforming_reference`.
 
 ## Declarations
 
