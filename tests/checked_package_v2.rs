@@ -8924,6 +8924,42 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
     }
 }
 
+/// The `invalid_result` cause set is closed: the native-diagnostics row and
+/// the FR-272 row list exactly these causes, and each names the pointer and
+/// the expected and received certification it retains (FR-272-AC-23).
+#[trace("TC-233", "FR-272-AC-23")]
+#[test]
+fn tc_233_invalid_result_cause_set_is_closed() {
+    let causes = [
+        "measured-with-truth",
+        "missing-member",
+        "unknown-member",
+        "invalid-value",
+        "certification-mismatch",
+        "unknown-cause",
+    ]
+    .iter()
+    .map(|cause| (*cause).to_owned())
+    .collect::<BTreeSet<_>>();
+    for (document, label) in [
+        (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+        (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+    ] {
+        assert_eq!(
+            diagnostic_row_causes(document, "invalid_result"),
+            causes,
+            "{label} `invalid_result` row lists exactly its causes"
+        );
+        let keys = diagnostic_row_payload_keys(document, "invalid_result");
+        for key in ["document_pointer", "expected", "actual"] {
+            assert!(
+                keys.contains(key),
+                "{label} `invalid_result` row names `{key}`"
+            );
+        }
+    }
+}
+
 /// The `resource_exhausted`, `cancelled` and `conflicting_declaration` rows of
 /// native-diagnostics and FR-272 list exactly the same closed causes, and each
 /// cause names exactly its payload keys in both, every key a canonical FR-272

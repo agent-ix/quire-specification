@@ -495,6 +495,26 @@ member that raises the budget, `max_store_buffer` or `max_messages`), FR-428
 `recovery-view{predicate}`, `predicate` the qualified name of the compensation
 template whose recovery predicate reads its recovery binder.
 
+A reader SHALL refuse a result entry, or the `counterexamples` entry a
+`refuted` result names, before consumption with the FR-272 `invalid_result`
+cause that names its defect, retaining the result item index and the
+offending member's RFC 6901 pointer relative to that entry (the empty pointer
+names the whole entry):
+
+| Cause | Defect | Pointer and payload |
+| --- | --- | --- |
+| `missing-member` | A member the entry's result or spelling requires is absent, such as a `proved` entry without `certification` | The first absent member in member-name order (RFC 8785) |
+| `unknown-member` | A member the entry's result or spelling does not define is present, such as a `certification` on a result other than `proved` | The first such member in member-name order |
+| `invalid-value` | A member is of the wrong JSON kind or outside its domain here, such as a `certification` other than `certified`, `uncertified` and `trusted`, or a count outside 0 to 2^53 − 1 | The member |
+| `certification-mismatch` | A `proved` entry's `certification` is one of the three values but not the one the Certification table gives that proof, such as `certified` on a `bounded-solver` proof or on a plugin's proof | `/certification`; `expected` the table's value, `actual` the received one |
+| `unknown-cause` | A result cause or proof basis spelling outside the closed set ("Wire spellings of result causes and proof bases") | The `type` member; the received spelling |
+| `measured-with-truth` | A `measured` value with a truth or basis (FR-409) | The member |
+
+A value inside these closed sets that a reader's own types cannot hold is
+not an invalid result. The reader refuses it before consumption with
+`unknown_required_feature`/`unsupported-feature`, the feature being the
+received spelling and the scope the reader.
+
 ### Kani results
 
 A Kani item settles exactly one result: from its AD-016 `KaniOutcomeKind`,
@@ -568,7 +588,7 @@ probabilistic engine's is `exact_prob`.
 
 Request identity includes the capability vocabulary, manifest, package, each item's claim, extent with its proof bounds, options and limits, each item's kind, extent classification, named backend and candidates, each temporal item's subject, item kind, fairness set, `max_depth` and `limits`, the `witness_samples` and `seed` of a state-graph item, and each item's symmetry declarations, partial-order selection and state constraint; the state constraint is also recorded in the item's terminal record. A different temporal horizon or deterministic budget can produce a different result, so a result is reused only for a request with the same request identity; a wall-clock setting, a hybrid item's `hybrid.limits.max_solver_time`, is outside it. Result identity includes artifacts and results.
 Unknown contract versions, missing required properties, duplicate keys,
-out-of-domain values and non-canonical encodings refuse before consumption. A `capability_vocabulary` other than `quire.capability-kind/v1`, or none, refuses the envelope as `invalid_capability`/`unknown-vocabulary`.
+out-of-domain values and non-canonical encodings refuse before consumption; in a result entry or a `counterexamples` entry, an unknown member and an out-of-domain value refuse with the `invalid_result` causes of "Result entries". A `capability_vocabulary` other than `quire.capability-kind/v1`, or none, refuses the envelope as `invalid_capability`/`unknown-vocabulary`.
 
 ## Acceptance Criteria
 
@@ -606,6 +626,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-31 | An accounting record whose `warnings` hold `{code: memory.load-buffering-shape, load, store}` with `load` and `store` transition identities is admitted; one missing `store`, one with an extra member and one with a `load` that is not a transition identity are refused. | Test (TC-431) |
 | FR-331-AC-32 | A temporal request item whose `extent` is `unbounded` with an `infinite-trace` domain, `finite_bound_available` false and no `bounds`, and whose `subject.proof_bounds` holds a `population` `cardinality` bound, is admitted by the request schema; the same item with `subject.proof_bounds` empty is also admitted. That the bound moves nothing into `extent.bounds` and changes neither the classification nor `finite_bound_available` is an obligation of the request's producer, which this wire criterion does not check. | Test (TC-431) |
 | FR-331-AC-33 | An in-process request holds the manifest, `deadline_ms`, items, checked package and subject binding as typed values; its results carry the members a process provider's do; two in-process requests of the same items run the engine twice and the second result comes from the second run; an item of a process provider over a checked package that `package` refuses to emit settles `unsupported` with `unsupported_projection`/`unsupported-requested-capability` naming the kind, the backend and that the package is not emitted, with no frame written; and a request frame of the same items without `package` and `package_id` refuses before consumption. | Test (TC-220) |
+| FR-331-AC-34 | A reader refuses each of these before consumption with the `invalid_result` cause given, naming the pointer given: `certification-missing`, `missing-member` at `/certification`; `certification-on-refuted`, `unknown-member` at `/certification`; `certification-other-value`, `invalid-value` at `/certification`; `certification-reduced-certified`, `certification-bounded-solver-certified` and `certification-symmetry-certified`, `certification-mismatch` at `/certification` with `expected` `uncertified` and `actual` `certified`; and a plugin's `proved` entry carrying `certified`, `certification-mismatch` with `expected` `trusted`. A plugin's proof basis or inconclusive cause that is in the closed set but outside the reader's types is refused `unknown_required_feature`/`unsupported-feature`, not `invalid_result`. The schema refuses each vector on its shape alone, so the schema run does not discharge the cause. | Inspection (TC-431) |
 
 ## Dependencies
 
