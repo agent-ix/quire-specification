@@ -12,7 +12,7 @@ relationships:
 ## Description
 
 Show that an FR-323 replay request's `replay` property carries the
-`ReplaySource`, the replay target (a function's `QualifiedName` or a frame operation), for a function request arguments keyed by
+`ReplaySource`, the replay target (a function's `QualifiedName`, a frame operation or a state clause's `QualifiedName`), for a function request arguments keyed by
 parameter node id, the semantic profile selections, for a function request the failing node's
 occurrence key, the proof bounds and declared domains, the trace position
 and the `backend` member, and that a non-replay request carries no `replay`
@@ -25,8 +25,9 @@ request/result amendment, binding FR-323-AC-10..16 without a new TC id.
 - FR-197's `ReplaySource` structural separation (`Witness`/`Input`) exists.
 - FR-322 owns the `source_map` occurrence key (`node_id`, `role`, `ordinal`).
 - QSL ADR-011 E9: the `replay` facade resolves the selected function by
-  `QualifiedName`, or the selected frame operation by `object` and `operation`,
-  against the recompiled package's declarations.
+  `QualifiedName`, the selected frame operation by `object` and `operation`,
+  or the selected state clause by its declared name, against the recompiled
+  package's declarations.
 - Supplied vectors require the reviewed real QSV FR-109 / QSL FR-277
   bounded path and actual QSL-675 typed native mapping before execution is
   qualified. Default vectors use the published A/H default 16777216 units each
@@ -101,6 +102,11 @@ and additional spend must be observed, not inferred from equal Booleans.
 | RE-34 | RE-30's request with a stale proved `package_id`, and `operation` naming an undeclared operation | `stale_dependency`/`content-mismatch` (rule 5), not `missing-name` | FR-323-AC-20 |
 | RE-35 | RE-30's request with a current `package_id` and: `operation` undeclared; `operation` naming an operation no clause or attempt names (no frame node is emitted for it, QSL FR-105, ADR-017); `object` naming a record value type; `object` naming a subtype that only inherits `operation`; `operation` exposed by two supertypes | `missing_declaration`/`missing-name`; `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`malformed-declaration`; `ambiguous_declaration`/`ambiguous-name`, each naming the target | FR-323-AC-20 |
 | RE-36 | RE-30's request with `arguments` added; then with an occurrence key added | `invalid_runtime_input`/`unknown-member` at `/replay/arguments`; at `/replay/occurrence_key` | FR-323-AC-19 |
+| RE-37 | A state-clause counterexample's replay request (an operation's postcondition) carrying `state_clause` naming the clause, no `function`, no `frame_operation`, no `arguments` and no occurrence key | Admitted; the replay target resolves to that postcondition | FR-323-AC-18, FR-323-AC-21 |
+| RE-38 | RE-37's request with `state_clause` removed | `invalid_runtime_input`/`missing-member` at `/replay` | FR-323-AC-19 |
+| RE-39 | RE-37's request with a `function` member added; then with a `frame_operation` member added instead; then with both `function` and `frame_operation` added (all three members); then the second with a byte-provision entry removed | `invalid_runtime_input`/`invalid-value` at `/replay/state_clause` for each, the fourth not the provision refusal | FR-323-AC-19 |
+| RE-40 | RE-37's request with `arguments` added; then with an occurrence key added | `invalid_runtime_input`/`unknown-member` at `/replay/arguments`; at `/replay/occurrence_key` | FR-323-AC-19 |
+| RE-41 | RE-37's request with a stale proved `package_id` and `state_clause` naming an undeclared clause; then with a current `package_id` and `state_clause` naming an undeclared clause; then naming a function of the package; then naming an invariant and, separately, a precondition | `stale_dependency`/`content-mismatch` (rule 5), not `missing-name`; `missing_declaration`/`missing-name`; `missing_declaration`/`missing-name`; admitted, resolving to that invariant and that precondition | FR-323-AC-21 |
 
 ## Expected Results
 
@@ -110,6 +116,11 @@ refused before consumption when it is missing or malformed, in turn. RE-11
 finds the `replay` property entirely absent from a non-replay request.
 
 RE-30 is admitted; RE-31, RE-32 and RE-36 refuse the member shape with their stated code and locus, RE-33 shows the member refusal before the byte-provision rule, RE-34 the `package_id` rule before the resolution, and RE-35 each resolution outcome of FR-323-AC-20.
+
+RE-37 is admitted; RE-38, RE-39 and RE-40 refuse the state-clause member
+shape with their stated code and locus, the last case of RE-39 before the
+byte-provision rule, and RE-41 shows the `package_id` rule before the
+resolution and each resolution outcome of FR-323-AC-21.
 
 RE-12..20 and RE-23..29 require the complete typed request/result forms and distinct
 pre-call provenance of FR-323, with unchanged canonical contract_version,
