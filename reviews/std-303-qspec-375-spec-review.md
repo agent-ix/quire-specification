@@ -74,3 +74,11 @@ Round 2, reviewed at 76bda9f43a8b1def1cc4b411ff63c5254309fa83 (FND-001 to FND-00
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-011 | medium | MT-16 ("one unit declaring MT-01 twice for `M`") is compiled through the Rust boundary, because the procedure's edit range is MT-07 to MT-15. The checker refuses a second `terminal` declaration for one alias (FR-366-AC-6), so no package and no node exist, and its expected "one node with two `claim` occurrences" never happens. The reader rule of FR-476 step 5 is never exercised. Make MT-16 a reader mutation (MT-01's package with a second `claim` occurrence added to the node and the `source_map`, with `package_id` recomputed) and extend the edit range to MT-16. | spec/test-cases/TC-961-checked-package-model-terminal-node.md:24; :49 |
+
+Round 3, reviewed at 5fd4e7d44e120217040b80a13d97a1d1c7134672.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-011 | fixed | MT-16 is now a reader mutation: MT-01's node with a second `claim` occurrence at ordinal 1 and its own `source_map` entry, in the extended MT-07 to MT-16 edit range. It notes that the checker never produces this (FR-366-AC-6), and FR-476-AC-4 describes the same mutation. |
+
+Closing verdict: every finding FND-001 to FND-011 is fixed. Gates at 5fd4e7d4: quire validate gives 86 failure lines (baseline), and `cargo test --test checked_package_v2 --test backend_provider_v1` passes. **Mergeable.**
