@@ -53,8 +53,8 @@ lookups are prohibited. Runtime fuel exhaustion remains incomplete.
 The checker constructs a declaration-identity call graph and checks each
 strongly connected component. An acyclic component needs no termination
 measure. Every recursive component declares one shared lexicographically
-ordered tuple whose elements are nonnegative mathematical integers, finite
-collection cardinalities or strict-subvalue depths. Each recursive edge must
+ordered tuple whose elements are nonnegative mathematical integers or
+strict-subvalue depths. Each recursive edge must
 prove that the substituted callee tuple is lexicographically smaller than the
 caller's tuple; this rule also applies across mutual recursion.
 
@@ -166,10 +166,12 @@ still type checked and imposes no obligation.
 `decreases(m)` supplies the measure. `m` is either one measure element or a call
 of a declared `tuple` whose arguments are measure elements, and a one-element
 measure is a one-tuple. A measure element is exactly one of: an *integer
-element*, a parameter of `Integer` or `Int[..]` type; a *cardinality element*,
-`size(p)` for a collection parameter `p`; or a *structural element*, a parameter
-of a recursive record type ordered by strict containment. Any other expression
-in a measure is a `measure-kind` failure.
+element*, a parameter of `Integer` or `Int[..]` type; or a *structural element*,
+a parameter of a recursive record type ordered by strict containment. Any other
+expression in a measure is a `measure-kind` failure, including `size(p)` for a
+collection parameter `p`: Complete V1 has no source form that yields a
+collection strictly smaller than `p`, so a collection's cardinality cannot
+decrease along a call edge and is not a measure element.
 
 Every function in one strongly connected component declares a measure. The
 checker checks each component's obligations in this order and reports the first
@@ -186,9 +188,7 @@ exactly `p`. It is *strictly smaller* when:
 - for a structural element, `a` is a nonempty projection path from `p`, whose
   each step is a field projection `.f`, or `value(q)` of an `Option` path `q`
   whose `present(q)` is a guard fact at that call site; for example
-  `value(n.next)` under `present(n.next)` is a strict subvalue of `n`;
-- for a cardinality element, never, because Complete V1 has no source form
-  that proves a strictly smaller collection.
+  `value(n.next)` under `present(n.next)` is a strict subvalue of `n`.
 
 The edge decreases when some position is strictly smaller and every earlier
 position is equal. The call argument `p - k` must still meet its parameter type
@@ -354,7 +354,7 @@ counter, and no call depth turns into an outcome (FR-460).
 | FR-146-AC-5 | Exhausting execution fuel for an admitted function returns incomplete without changing the function's totality verdict. | Test (TC-191) |
 | FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
 | FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
-| FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements, guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking limit exceeded is `stage_limit_exceeded` naming the limit, its value and its setting. | Test (TC-191) |
+| FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements (integer and structural; a `size(p)` measure position is `measure-kind`), guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking limit exceeded is `stage_limit_exceeded` naming the limit, its value and its setting. | Test (TC-191) |
 | FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, and every quantity division in a linked body is `unproved-nonzero`. | Test (TC-191) |
 | FR-146-AC-10 | A `case` expression's arm set is checked against its scrutinee's declared union in order — `duplicate-arm`, `unknown-member`, `arm-arity`, `missing-arm` — and the first violated obligation is `undefined_expression` with cause `unproved-exhaustiveness`, naming the union, the arm set and the failed obligation. | Test (TC-264) |
 | FR-146-AC-11 | An admitted `case` evaluates the arm matching the scrutinee's active member, binds its payload positionally to the arm's bound identifiers, and every arm's body is checked against the `case` expression's result type. | Test (TC-265) |
