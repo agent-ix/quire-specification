@@ -212,7 +212,7 @@ QSL's emitter, which replaces the non-emittable placeholders, among them
 nodes typed at it, and `positive-operation-identities.json`'s undeclared
 record node and its placeholder function `double` and model `Counter`.
 Only a node of a kind QSL never writes (FR-093-AC-19), kept so that the
-all-families fixture carries all 14 node tags (FR-322-AC-13), is hand
+all-families fixture carries all 13 node tags (FR-322-AC-13), is hand
 authored, and it is keyed by FR-092/FR-094's rule: the
 `quire.structural-node/v1` preimage FR-322's derived-shape key stage
 recomputes. The pass/fail oracle for every node, emitted or hand authored,
