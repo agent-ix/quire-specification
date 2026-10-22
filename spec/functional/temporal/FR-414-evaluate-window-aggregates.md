@@ -48,6 +48,34 @@ admitted over trace subjects; over a model subject the probabilistic measures
 of FR-407 serve and an aggregate atom refuses with
 `unsupported_construct`/`expression-form`.
 
+### Check-time refusals
+
+The checker SHALL refuse a malformed aggregate atom at check time, each fault
+with its code, cause and locus:
+
+- An aggregate term in a claim over a model subject:
+  `unsupported_construct`/`expression-form` at the aggregate term.
+- A bound of `past[a, b]` whose kind the profile does not take (a duration
+  under event-position, a position count under timestamped-event):
+  `ill_typed`/`unit-mismatch` at the first such bound.
+- A window with `a > b`: `invalid_package`/`invalid-value` at the window
+  `past[a, b]`. Neither bound alone is wrong, so the locus is the whole
+  window.
+- `quantile q` with `q` outside `0 < q < 1`: `invalid_package`/`invalid-value`
+  at the literal `q`.
+- `min_count 0`: `invalid_package`/`invalid-value` at the literal.
+- A threshold of another dimension than the aggregate's value:
+  `ill_typed`/`unit-mismatch` at the threshold.
+
+An aggregate atom (the aggregate term with its comparison and threshold) with
+several of these faults SHALL report each, in source order. When a bound of
+`past[a, b]` has the wrong kind, the checker SHALL report that refusal and
+SHALL NOT compare `a` with `b`, since the two bounds are not of one kind. In a
+claim over a model subject, which selects no window profile, the checker SHALL
+NOT run the window-kind or `a > b` check; it SHALL report the term's
+`expression-form` refusal, then any `quantile`, `min_count` or threshold
+fault, in source order.
+
 ### Windows
 
 Under event-position false-extension, `past[a, b]` holds the positions `j`
@@ -125,6 +153,8 @@ consumes the derived signal unchanged.
 | FR-414-AC-6 | An aggregate atom over a model subject refuses `unsupported_construct`/`expression-form`; a holding monitor result is `tested`. | Test (TC-366) |
 | FR-414-AC-7 | The atom is `Undefined` with the cause of the first undefined window position oldest first, when the filter is undefined at a position or the value expression or `fraction` predicate is undefined at an admitted position; the clause result is `UndefinedEvaluation` in the O-16 category violation, never `undefined` and never a holding result; a position is never skipped, positions after it are not visited, and a guard filter that rejects the position keeps the atom defined. | Test (TC-366) |
 | FR-414-AC-8 | One evaluation charges one unit of clause work per window position visited, including positions the filter rejects, and up to and including the first undefined position. | Test (TC-366) |
+| FR-414-AC-9 | Each check-time refusal at its locus: `count over past[0, 9]` in a claim over a model subject, `unsupported_construct`/`expression-form` at the `count` term; `past[0, 300 s]` under event-position, `ill_typed`/`unit-mismatch` at `300 s`; `past[0, 9]` under timestamped-event, `ill_typed`/`unit-mismatch` at `0`; `past[5, 2]` under event-position, `invalid_package`/`invalid-value` at `past[5, 2]`; `quantile 1`, `quantile 0` and `quantile 3/2`, `invalid_package`/`invalid-value` at the `q` literal; `min_count 0`, `invalid_package`/`invalid-value` at `0`; a threshold `5 m` against a time value, `ill_typed`/`unit-mismatch` at `5 m`. A term with `quantile 1` and `min_count 0` reports both refusals, the quantile's first. | Test (TC-366) |
+| FR-414-AC-10 | Under event-position, `count over past[5, 2 s] >= 1` reports exactly one refusal, `ill_typed`/`unit-mismatch` at `2 s`, and no `invalid-value`. Under event-position, `quantile 1 of e.latency over past[0, 9] <= 5 m` against a time value reports `invalid_package`/`invalid-value` at `1` and then `ill_typed`/`unit-mismatch` at `5 m`. In a claim over a model subject, `count over past[0, 300 s] >= 1` reports only `unsupported_construct`/`expression-form` at the `count` term, and `quantile 1 of x.v over past[5, 2] <= 1` reports `expression-form` at the term and then `invalid-value` at `1`, with no `a > b` refusal. | Test (TC-366) |
 
 ## Dependencies
 
@@ -138,6 +168,7 @@ consumes the derived signal unchanged.
 
 ## References
 
-- QSL FR-194 states the same rule and charge in the QSL half.
+- QSL FR-194 states the same rule, charge and check-time refusals in the QSL
+  half (FR-194-AC-7, FR-194-AC-8).
 - QSL ADR-024 WA-1 to WA-8 (WA-4: insufficient data is O-16 undefined).
 - Ticket: STD-137 (paired with QSL-371).
