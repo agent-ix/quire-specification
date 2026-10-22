@@ -44,3 +44,19 @@ and `cargo test --test checked_package_v2 --test backend_provider_v1` passes
 | FND-001 | medium | "Established" is the deciding condition in both amended rows, but QSpec never says what establishes a matched fair universal tuple. QSL fixes it as an `Accepted` `MatchWitnessCheck` of a fair `μ_U`-matched lasso tuple for the outcome's instance that replays (FR-182, FR-183), and treats a `Refused` check or a witness for another instance as none. Without this in FR-399, two engines can read "established" differently, and an engine could settle `proved` from an inductive proof with no checkable evidence. | spec/functional/analysis/FR-399-settle-hyperproperty-results.md:77, spec/functional/analysis/FR-399-settle-hyperproperty-results.md:82 |
 | FND-002 | medium | VS-01's second and third runs do not give the input that separates them. "with no matched fair universal tuple of the instance established" and "with a matched tuple of that instance established" name no witness tuple and no way to supply or check one. So the `proved` run cannot be built from the vector, and nothing can fail on a wrong witness. QSL FR-182-AC-10 uses FR-183-AC-8's matched and unmatched witnesses and adds an Accepted witness for another instance; VS-01 has no such case. | spec/test-cases/TC-340-hyper-vacuity-and-stutter.md:26 |
 | FND-003 | low | The amended inductive-proof row lists its preconditions (`μ_U` empty or a matched tuple established) but leaves out "every subject has an initial state". It also states no precedence against the `no-initial-state` row, while QSL FR-182 checks `NoInitialState` first "whatever witness comes with it". As written, an empty-`μ_U` inductive proof over a subject with no initial state matches both the `proved` row and the `no-initial-state` row. | spec/functional/analysis/FR-399-settle-hyperproperty-results.md:77, spec/functional/analysis/FR-399-settle-hyperproperty-results.md:83 |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | medium | VS-01 (b)-(e) run on the secure vault, which TC-337 declares with population universe `{v}` and the single operation `step`. The vectors use instances `v1` and `v2`, which that universe does not have, and (c) uses a lasso step `mix`, an operation only TC-344's busy/mix vault declares. As written, (b)-(e) cannot be built. They need a secure-vault variant with a two-key universe (as QSL FR-182-AC-10 uses `{v, w}`), and (c) needs a mismatch the secure vault can produce, for example a second lasso whose `step` argument `i` differs from the first's. | spec/test-cases/TC-340-hyper-vacuity-and-stutter.md:26, spec/test-cases/TC-337-hyperproperty-syntax-and-binding.md:22 |
+
+## Dispositions
+
+Round 1, against head aedc1063f6057846f31e408a81981720653ce851.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
