@@ -178,8 +178,19 @@ boundary.
   `bounded_domain`, `value`, `expression`, `function`, `model`, `relation`,
   `state`, `temporal`, `protocol`, `claim` and `correspondence`. A node key is
   (`node_id.domain`, `node_id.digest`); node identifiers are unique within the
-  graph and the `identity_projection` is the typed-key ordered projection of
-  every node excluding source occurrences and presentation. References name a
+  graph. **Graph order** is the order of the `semantic_graph.nodes` array,
+  which the producer chooses. The `identity_projection` holds one entry per
+  node in graph order: entry `i` is node `i` with its source occurrences and
+  presentation removed. A reader neither sorts the nodes nor requires them in
+  any sort order, so a graph in any order is admitted when every other check
+  passes. Graph order is significant to identity: it enters `package_id`
+  through the projection, so two packages whose nodes differ only in order
+  have different `package_id`s, and a recursion-group member's `ordinal` is
+  its position among the group's members in graph order (derived-shape key
+  stage below). Where this artifact says that a reader checks nodes "in
+  ascending node-id digest order", that phrase orders the reader's visits
+  for choosing which refusal to report; it orders neither
+  `semantic_graph.nodes` nor the `identity_projection`. References name a
   compatible declared target by node key; a `state` node with
   `semantic_form: "frame"` carries its references in the closed
   `modifies`/`creates`/`deletes` body shape
@@ -219,8 +230,9 @@ boundary.
   target by exact typed node key. An absent target refuses
   `missing_declaration`/`missing-name`; a present non-`protocol` target or
   unequal `semantic_type` refuses `ill_typed`/`operator-ineligible`, at the
-  carrier's `/body/target` pointer. Carriers are checked in ascending node-id
-  digest order at the declaration step, before frame and operation checks.
+  carrier's `/body/target` pointer. At the declaration step, before frame and
+  operation checks, the reader visits carriers in ascending node-id digest
+  order and reports the first that fails.
   The earlier graph-shape step compares `dependencies` with the body target
   without resolving that target; an unequal list is
   `invalid_semantic_graph` at `/dependencies`. Target existence, tag and type
@@ -237,9 +249,9 @@ boundary.
   source reference to `P` adds a second `expression` occurrence, ordinal 1, and
   its own `source_map` entry to the same `R`; it adds no node). `R`'s node key
   is the `quire.structural-node/v1` digest of its preimage with
-  `declaration: null` and `recursion: null`. Include `R` in the graph and
-  identity projection in typed-key order and in the source map (`R`'s
-  occurrences in ascending ordinal, which is not a requirement), then
+  `declaration: null` and `recursion: null`. Include `R` in the graph and, at
+  the same graph-order position, in the identity projection, and in the source
+  map (`R`'s occurrences in ascending ordinal, which is not a requirement), then
   recompute `package_id`; the reader admits this package and resolves `R` to
   `P`. Replacing `R.body.target` and its sole dependency together with a local
   non-protocol node's key, or with a key absent from the graph, while
@@ -385,11 +397,11 @@ boundary.
   dependency list is `invalid_semantic_graph`. A node whose retained key differs
   from the digest of its preimage refuses as `invalid_package` with cause
   `stale-node-key`, after every graph-shape refusal and before any declaration,
-  frame or operation refusal, at the first such node in ascending retained
-  digest order. A frame body refusal, meaning-join or canonical-order
+  frame or operation refusal, at the first such node the reader visits in
+  ascending retained digest order. A frame body refusal, meaning-join or canonical-order
   ([FR-340](FR-340-checked-package-frame-location.md)), is reported after
   every declaration refusal and before any state or operation refusal, at
-  the first `state`/`frame` node in ascending node-id digest order that
+  the first `state`/`frame` node, visiting them in ascending node-id digest order, that
   FR-340's own meaning-join/canonical-order precedence selects a defect for.
   A state refusal (the placement of `quire.op.state.clause`, then
   [FR-342](FR-342-checked-package-operation-anchor-body.md)'s
@@ -415,8 +427,8 @@ boundary.
   `profile_correspondence`) whose body holds no application is a structural
   node and is keyed by this stage. So a consumer reading a range, bound, element type or field
   type from such a node reads the content its key names. The stage first
-  joins the `owner` of every owner-bearing node, ascending by retained
-  node-id digest, and refuses the first owner that fails, before either
+  joins the `owner` of every owner-bearing node, visiting them ascending by
+  retained node-id digest, and refuses the first owner that fails, before either
   pass below:
   - A `SourceOwner` joins when its (`authority`, `identity`) equals a
     `lock.sources` entry's, else `missing_declaration`/`missing-selection`
@@ -469,8 +481,8 @@ boundary.
   naming a member written `{term: "group_reference", ordinal}`, `owner`
   equal to the node's `owner` member when it carries one) with
   `recursion.group` set to its retained `recursion_group`. The stage runs two
-  passes. The first visits every structural node, grouped or not, ascending
-  by retained node-id digest, and refuses the first node that is not
+  passes. The first visits every structural node, grouped or not, in a visit
+  order ascending by retained node-id digest, and refuses the first node that is not
   current. The second
   recomputes each group's digest, the JCS SHA-256 of the array of the digests
   of its members' group-local preimages in ordinal order (an in-group
@@ -691,8 +703,8 @@ boundary.
     at `/source_map` only when every entry passes.
   - The reader SHALL run this check after the owner join and the owner and
     source-map agreement of the derived-shape key stage (FR-322-AC-52), over the
-    refinement owner nodes in ascending retained node-id digest, and report the
-    first failing owner.
+    refinement owner nodes, visiting them in ascending retained node-id digest
+    order, and report the first failing owner.
 - `capability_report` — one closed disposition for every required feature and
   selected model capability. Backend/provider installation is absent.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
@@ -1137,7 +1149,7 @@ matters: an upcast whose target conforms to its source and not the reverse
 is a downcast, which no catalog operation admits (FR-149). A downcast, two
 object types with no supertype chain from the source to the target, a
 systems interface with no declared supertype against an object type, a
-relationship declaration at either end, and declarations of two documents
+relationship declaration at either end
 refuse `ill_typed`/`operator-ineligible`, so a reader admits an upcast only
 between the pair FR-149's `Reference<S>` to `Reference<T>` row admits.
 
@@ -1859,6 +1871,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-92 | In every published producer-output package (every published positive package except the reader-admission fixture `positive-integer-literal-references.json` of FR-322-AC-93), each operand of a `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` or `ne` application that is an integer literal typed at the builtin Integer node is an inline `literal` term with `value_kind` `integer` and that type, and no such operand is a `reference` to a `value`/`literal` node of `value_kind` `integer`, whatever the node's type. In `positive-two-owners-a.json` and `-b.json` the `three` application holds the inline operands `1` and `2` and has empty `dependencies`; in `positive-operation-identities.json` the `integer.mul` and `integer.add` hold `7` and `-2` inline, and the `value`/`literal` nodes `7` and `-2` are present for the nodes that reference them. For each of the six operators, `inline_literal_cases` in `node-identity-vectors.json` records an application over inline integer literal operands with its JCS SHA-256, which differs from the key of the same application over references to literal nodes. | Test (TC-233) |
 | FR-322-AC-93 | The reader admits the reference form of an integer literal operand under the six operators: `positive-integer-literal-references.json`, whose `three` application is `quire.op.integer.add` over references to two `value`/`literal` nodes, validates against the V2 schema and passes every reader check, and its `three` node identity and `package_id` differ from those of `positive-two-owners-a.json`, which holds the inline form. | Test (TC-233) |
 | FR-322-AC-94 | `quire.op.reference.upcast` admits an operand `Reference<S>` with `type_argument` `Reference<T>` exactly when `S` and `T` are selected object types of one document and `S` conforms to `T` along declared supertypes: one type to itself, a subtype to its supertype, a subtype two levels down to its root, and a type with two supertypes to either. A supertype to its subtype (a downcast), two unrelated object types, a systems interface with no declared supertype to an object type, a reference to a relationship at either end and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand or member whose owner is not selected refuses `missing_declaration`/`missing-selection`. | Test |
+| FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id digest order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id digest, each with its `identity_projection` rebuilt in the new graph order and its `package_id` recomputed. Each reorder that changes the node sequence changes the `package_id`, and the reader reports no refusal for the order of the nodes. A published fixture whose `identity_projection` lists the same entries in an order other than graph order fails the identity recomputation of FR-322-AC-14. | Test (TC-233) |
 
 ## Dependencies
 

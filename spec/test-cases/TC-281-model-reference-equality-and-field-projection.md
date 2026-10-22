@@ -25,7 +25,7 @@ admits.
 
 - `proposals/checked-package-v2/model-member-type-vectors.json` carries
   TC-280's domain package `acme/orders` `1.0.0`, the model declaration node
-  vectors M1 to M9, and the `reference_equality_cases`,
+  vectors M1 to M13, and the `reference_equality_cases`,
   `reference_upcast_cases` and `projection_cases`. In a case, `{reference: M}` is an operand of type
   `Reference<M>`, the `composite_type`/`reference` node over node vector `M`,
   and `{object: M}` is an operand of type `M` itself. An upcast case's
@@ -102,6 +102,8 @@ not unique), `peers` (`Order` `[0, 3]`, unordered, unique) and `trail`
 | RU-10 | `reference.upcast` of a reference to M2 to `Reference<Order>` | `missing_declaration`/`missing-selection` | FR-322-AC-94 |
 | RU-11 | `reference.upcast` of `Reference<Order>` to a reference to M2 | `missing_declaration`/`missing-selection` | FR-322-AC-94 |
 | RU-12 | `reference.upcast` of an `Order` object operand to `Reference<Order>` | `ill_typed`/`operator-ineligible`: family `object` is not `reference` | FR-322-AC-94 |
+| RU-13 | `reference.upcast` of `Reference<Both>` to `Reference<Coded>` | Admitted: `Both` conforms to its second supertype `Coded` | FR-322-AC-94 |
+| RU-14 | `reference.upcast` of a reference to the relationship `Order-order-Order` (M4) to `Reference<Order>` | `ill_typed`/`operator-ineligible`: a relationship at the source end | FR-322-AC-94 |
 | RP-01 | `record.project` of field `total` of M5 over `deref` of `Reference<Sub>` typed M5 | Resolves the inherited `Order/total`; type `Int[0, 9]` | FR-322-AC-34 |
 | RP-02 | `record.project` of field `invoice` of M1 over `deref` of `Reference<Order>` typed M1 | Resolves `Order/invoice`; type `Reference<Invoice>` over M3 | FR-322-AC-34 |
 | RP-03 | `record.project` of field `total` of M5 over a `Reference<Sub>` operand with no `deref` | `ill_typed`/`operator-ineligible` | FR-322-AC-34 |
