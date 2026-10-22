@@ -499,17 +499,34 @@ A reader SHALL refuse a result entry, or the `counterexamples` entry a
 `refuted` result names, before consumption with the FR-272 `invalid_result`
 cause that names its first defect in the reading order below, retaining the
 result item index and the offending member's RFC 6901 pointer relative to
-that entry (the empty pointer names the whole entry). This table lists the
-same closed causes as FR-272's `invalid_result` row:
+that entry (the empty pointer names the whole entry).
+
+A plugin's entry (a backend loaded as a plugin, FR-305) carries a subset of
+the closed values. FR-305 gives a plugin's `proved` result no in-core
+certificate checker and makes its counterexample canonical assignments, so:
+
+- A **core-only basis** is a proof basis whose settlement is a core check or
+  the core's own prove path: `bounded-proof` (the Kani check count, AD-016),
+  `closed-form` (evidence the core recomputes, FR-419), `witnessed` (a witness
+  the core replayed, FR-391), and `exact-value`, `value-bounds` and
+  `zone-certified` (certificates a core checker accepted, FR-412, FR-418). A
+  plugin's entry carries none.
+- A **core-only cause** is an inconclusive cause that only the core's own
+  replay or Kani run settles: `replay-parity` (AD-016 arrow 7), `replay-refused`
+  (FR-399) and `kani_vacuous_proof` (AD-016). A plugin's entry carries none.
+- A plugin's `counterexamples` entry carries a `counterexample` whose `type`
+  is `assignments`, and no `transcript`.
+
+This table lists the same closed causes as FR-272's `invalid_result` row:
 
 | Cause | Defect | Pointer and payload |
 | --- | --- | --- |
 | `missing-member` | A member the entry's result or spelling requires is absent, such as a `proved` entry without `certification` | The first absent member in member-name order (RFC 8785) |
 | `unknown-member` | A member the entry's result or spelling does not define is present, such as a `certification` on a result other than `proved` | The first such member in member-name order |
 | `wrong-value-kind` | A member's JSON kind is not the kind its domain takes, such as a `certification` that is not a string, or an entry that is not an object | The member |
-| `invalid-value` | A member of the right JSON kind lies outside its domain here, such as a `certification` other than `certified`, `uncertified` and `trusted`, or a count outside 0 to 2^53 − 1 | The member |
+| `invalid-value` | A member of the right JSON kind lies outside its domain here, such as a `certification` other than `certified`, `uncertified` and `trusted`, a count outside 0 to 2^53 − 1, or a plugin's counterexample `type` other than `assignments` | The member |
 | `certification-mismatch` | A `proved` entry's `certification` is one of the three values but not the one the Certification table fixes for that proof | `/certification`; `expected` the fixed value, when there is one, and `actual` the received one |
-| `unknown-cause` | A result cause or proof basis spelling outside the closed set ("Wire spellings of result causes and proof bases") | The `type` member; the received spelling |
+| `unknown-cause` | A result cause or proof basis spelling outside the closed set ("Wire spellings of result causes and proof bases"), or outside the subset its backend may send: a core-only basis or core-only cause in a plugin's entry | The `type` member; the received spelling |
 | `measured-with-truth` | A `measured` entry carries a truth or a basis (FR-409) | The truth or `basis` member |
 
 The reader reads an entry in this order and reports the first defect:
@@ -519,7 +536,8 @@ The reader reads an entry in this order and reports the first defect:
    (`wrong-value-kind`) or not an FR-331 result (`invalid-value`).
 3. A `measured` entry carries a truth or a basis: `measured-with-truth`.
 4. A member the entry requires is absent: `missing-member`.
-5. A member the entry does not define is present: `unknown-member`.
+5. A member the entry does not define is present: `unknown-member`. A
+   `transcript` in a plugin's `counterexamples` entry is one.
 6. A `proved` entry's `certification` is not a string
    (`wrong-value-kind`), is not one of the three values (`invalid-value`),
    or is the wrong one of them (`certification-mismatch`).
@@ -549,8 +567,8 @@ certificate check or state constraint that the entry does not show, so the
 reader admits either; it carries `trusted` only as a `certification-mismatch`
 with no `expected`.
 
-A value inside these closed sets that a reader's own types cannot hold is
-not an invalid result. The reader refuses it before consumption with
+A value inside the subset its backend may send that a reader's own types
+cannot hold is not an invalid result. The reader refuses it before consumption with
 `unknown_required_feature`/`unsupported-feature`, the feature being the
 received spelling and the scope the reader, at the point in the reading order
 where it reads that value.
@@ -666,7 +684,7 @@ out-of-domain values and non-canonical encodings refuse before consumption; in a
 | FR-331-AC-31 | An accounting record whose `warnings` hold `{code: memory.load-buffering-shape, load, store}` with `load` and `store` transition identities is admitted; one missing `store`, one with an extra member and one with a `load` that is not a transition identity are refused. | Test (TC-431) |
 | FR-331-AC-32 | A temporal request item whose `extent` is `unbounded` with an `infinite-trace` domain, `finite_bound_available` false and no `bounds`, and whose `subject.proof_bounds` holds a `population` `cardinality` bound, is admitted by the request schema; the same item with `subject.proof_bounds` empty is also admitted. That the bound moves nothing into `extent.bounds` and changes neither the classification nor `finite_bound_available` is an obligation of the request's producer, which this wire criterion does not check. | Test (TC-431) |
 | FR-331-AC-33 | An in-process request holds the manifest, `deadline_ms`, items, checked package and subject binding as typed values; its results carry the members a process provider's do; two in-process requests of the same items run the engine twice and the second result comes from the second run; an item of a process provider over a checked package that `package` refuses to emit settles `unsupported` with `unsupported_projection`/`unsupported-requested-capability` naming the kind, the backend and that the package is not emitted, with no frame written; and a request frame of the same items without `package` and `package_id` refuses before consumption. | Test (TC-220) |
-| FR-331-AC-34 | A reader refuses each of these before consumption with the `invalid_result` cause given, naming the pointer given: `certification-missing`, `missing-member` at `/certification`; `certification-on-refuted`, `unknown-member` at `/certification`; `certification-other-value`, `invalid-value` at `/certification`; a `proved` entry whose `certification` is `7`, `wrong-value-kind` at `/certification`; `certification-reduced-certified`, `certification-bounded-solver-certified` and `certification-symmetry-certified`, `certification-mismatch` at `/certification` with `expected` `uncertified` and `actual` `certified`; a plugin's `proved` entry carrying `certified`, `certification-mismatch` with `expected` `trusted`, also when its basis is core-only; and a `refuted` entry carrying `certification` `7`, `unknown-member` at `/certification`. A first-party `exhaustive` proof carrying `uncertified` is admitted. A plugin's proof basis or inconclusive cause that is in the closed set but outside the reader's types is refused `unknown_required_feature`/`unsupported-feature`, not `invalid_result`. The schema refuses each vector on its shape alone, so the schema run does not discharge the cause. | Inspection (TC-431) |
+| FR-331-AC-34 | A reader refuses each of these before consumption with the `invalid_result` cause given, naming the pointer given: `certification-missing`, `missing-member` at `/certification`; `certification-on-refuted`, `unknown-member` at `/certification`; `certification-other-value`, `invalid-value` at `/certification`; a `proved` entry whose `certification` is `7`, `wrong-value-kind` at `/certification`; `certification-reduced-certified`, `certification-bounded-solver-certified` and `certification-symmetry-certified`, `certification-mismatch` at `/certification` with `expected` `uncertified` and `actual` `certified`; a plugin's `proved` entry carrying `certified`, `certification-mismatch` with `expected` `trusted`, also when its basis is core-only; a `refuted` entry carrying `certification` `7`, `unknown-member` at `/certification`; a plugin's `proved` entry carrying `trusted` and a `closed-form` basis, `unknown-cause` at `/basis/type`; a plugin's `inconclusive` entry with cause `replay-parity`, `unknown-cause` at `/cause/type`; a plugin's `counterexamples` entry whose `counterexample` is a `TemporalCounterexample`, `invalid-value` at `/counterexample/type`; and a plugin's `counterexamples` entry carrying canonical assignments and a `transcript`, `unknown-member` at `/transcript`. A first-party `exhaustive` proof carrying `uncertified` is admitted. A plugin's proof basis or inconclusive cause that a plugin may send but that is outside the reader's types is refused `unknown_required_feature`/`unsupported-feature`, not `invalid_result`. The schema refuses each vector on its shape alone, so the schema run does not discharge the cause. | Inspection (TC-431) |
 
 ## Dependencies
 

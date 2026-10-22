@@ -44,3 +44,22 @@ Units examined:
 ## Verdict
 
 Not mergeable: one major (FND-001, AC-23's untested second clause). The rest are minor. The six causes are consistent across native-diagnostics, FR-272 and FR-331, and every FR-331-AC-34 assignment matches its vector and the Certification table.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | high | major (new, disposition pass 1; missed in the review pass): FR-331's 'Result entries' table defines `unknown-cause` as 'a result cause or proof basis spelling outside the closed set', and the next paragraph says a value inside the closed sets that the reader's types cannot hold is `unknown_required_feature`/`unsupported-feature`, not an invalid result. Merged QSL FR-289-AC-14 and #1219's FR-290 refuse in-set spellings as `unknown-cause`: `replay-parity` (listed among FR-331's inconclusive causes, line 264) and every core-only basis (`closed-form`, `exact-value`, ... listed among FR-331's proof bases). The new reading-order example and AC-34 ('a plugin's `proved` entry carrying `certified` and a core-only basis') use 'core-only basis' too, which QSpec never defines. A reader that follows QSpec gives a plugin's `closed-form` basis `unsupported-feature` (or admits it), and QSL gives it `invalid_result`/`unknown-cause`. Two conforming readers disagree, and QSL cannot conform to both. #1219's new `invalid-value` at `/counterexample/type` for a plugin's TemporalCounterexample (an FR-331 counterexample) is the same question. Fix in FR-331: say which spellings a plugin's entry may carry (FR-305 / FR-462: a plugin's basis excludes the core-checked bases, it sends no QSL-only cause, and its counterexample is canonical assignments) and that any other in-set spelling from a plugin is `unknown-cause` (basis or cause) or `invalid-value` (counterexample `type`). Then extend 'outside the closed set' to 'outside the closed set, or outside the subset its backend may send'. | spec/objects/interfaces/FR-331-backend-provider-envelope.md:510-516,537-538,669 |
+
+## Dispositions
+
+Round 1, reviewed QSpec #366 at ba8287988.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | Added in all three sources, AC-23, AC-34 (`certification` `7`), BP-25 and the test. |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |
+
+Round 1 verdict: FND-001 to FND-004 fixed. FND-005 is a new major, so #366 is not mergeable until it is fixed.

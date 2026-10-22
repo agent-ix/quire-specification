@@ -31,3 +31,11 @@ Units examined:
 ## Verdict
 
 Mergeable for code: the test is sound and fails under every mutation tried. One minor finding: the third copy of the cause set in FR-331 is not pinned.
+
+## Dispositions
+
+Round 1, reviewed QSpec #366 at ba8287988.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Re-mutation check at ba8287988, each reverted: removing `wrong-value-kind` from the native-diagnostics invalid_result row, removing it from the FR-272 row, deleting the FR-331 table's `wrong-value-kind` row, deleting its `measured-with-truth` row, and adding a `duplicate-member` row each fail the test. (A first native-diagnostics attempt hit the identical cause list of the `invalid_package` row and passed; that mutation was outside this test's scope, and the retargeted one fails.) |

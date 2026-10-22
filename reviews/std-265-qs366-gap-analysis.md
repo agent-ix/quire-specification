@@ -37,3 +37,11 @@ Units examined:
 ## Verdict
 
 Mergeable for gaps apart from SR-15501 FND-001. One minor: BP-25's inspection names no reader.
+
+## Dispositions
+
+Round 1, reviewed QSpec #366 at ba8287988.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |

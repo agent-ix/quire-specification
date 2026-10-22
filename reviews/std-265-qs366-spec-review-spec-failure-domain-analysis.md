@@ -34,3 +34,12 @@ Units examined:
 ## Verdict
 
 Mergeable for failure domains: two minor ambiguities that make two conforming readers emit different diagnostics for the same entry. Neither is a contradiction.
+
+## Dispositions
+
+Round 1, reviewed QSpec #366 at ba8287988.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Checked against the vectors: certification-missing gives step 4, certification-on-refuted step 5, other-value and the three `certified` patches step 6. Both worked examples follow from the order (`refuted` + `certification` `7` gives step 5 before 6; plugin `certified` + core-only basis gives step 6 before 7). The order matches QSL FR-290's driver (certification before basis) and its basis, cause and assignments orders. |
+| FND-002 | fixed | - |
