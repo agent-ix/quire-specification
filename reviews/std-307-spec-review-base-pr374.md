@@ -71,3 +71,11 @@ Round 1 at e9bb63e.
 | FND-005 | fixed | - |
 
 Round 1 verdict: MERGEABLE after FND-006 (minor) or with it accepted: all five round-0 findings fixed at e9bb63e. FR-154 now has one `conflicting-binding` row for duplicate dimension/unit identities, a complete FCD-code table, general FCD-pointer loci, Clock refused at every FCD position (payload never `declaration-form`), and AC-18/I13 break all nine shape members. I14's single-defect runs each check by hand. Gates at e9bb63e: quire validate 86 failure lines, same set as main c103300; cargo checked_package_v2 119 and backend_provider_v1 23 pass; main is an ancestor. No test-parsed fixture changed.
+
+Round 2 at f3b56c5.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-006 | fixed | - |
+
+Round 2 verdict: Spec content MERGEABLE: every finding (FND-001..006) is fixed at f3b56c5. Gates at f3b56c5: quire validate 86 failure lines, same set as main; cargo checked_package_v2 119 and backend_provider_v1 23 pass. Merge blocker (not a spec finding): origin/main moved to 867e128 (#378, STD-292) and the head now conflicts with it in FR-154 (adjacent declaration-refusal rows and the identity paragraph); merge origin/main as main plus this PR's rows, then re-run the two QSpec gates before landing.
