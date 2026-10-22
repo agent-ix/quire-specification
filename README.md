@@ -159,3 +159,5 @@ here is Rust; see [AGENTS.md](AGENTS.md) for the language and review rules.
 Research and private issue links must not enter a public release. This
 repository is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE).
 Publishing it needs a fresh review.
+
+<!-- STD-30 language-boundary canary: inert README change. -->
