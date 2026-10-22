@@ -73,7 +73,7 @@ excluded member injected into the identity preimage to be refused. Add an
 `identity_projection` member to the all-families `identity_preimage` for each
 `adverse.json` `shipped_projection_cases` entry (the occurrence-free graph,
 and `[]`) and require the schema to refuse it, a reader refusing
-`malformed_wire` at `/identity_preimage/identity_projection` (FR-322-AC-14). Insert the
+`malformed_wire` at `/identity_preimage/identity_projection` (FR-322-AC-100). Insert the
 published dependency selections of `dependency-selection-vectors.json` into
 the all-families package's lock and identity preimage, require the schema to
 admit it and its recorded package id to recompute, require each authored

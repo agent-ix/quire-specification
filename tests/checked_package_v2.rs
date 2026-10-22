@@ -13302,11 +13302,11 @@ fn tc_233_clause_function_owners_follow_their_clause_kind() {
     }
 }
 
-/// FR-322-AC-14 (one wire graph): each published `shipped_projection_cases`
+/// FR-322-AC-100 (one wire graph): each published `shipped_projection_cases`
 /// entry ships an `identity_projection` member inside `identity_preimage`, as
 /// the occurrence-free graph or as an empty array; the closed V2 schema
 /// refuses it, which a reader reports `malformed_wire` at that member.
-#[trace("TC-233", "FR-322-AC-14")]
+#[trace("TC-233", "FR-322-AC-100")]
 #[test]
 fn tc_233_an_identity_preimage_that_ships_a_projection_is_refused() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
@@ -13332,17 +13332,35 @@ fn tc_233_an_identity_preimage_that_ships_a_projection_is_refused() {
             .as_object_mut()
             .expect("identity preimage is an object")
             .insert("identity_projection".to_owned(), shipped);
+        // The shipped copy disagrees with the lock-only derivation, while the
+        // package id rebuilt from the lock and graph alone still names the
+        // package: the copy is never part of its identity.
+        assert_ne!(
+            candidate["identity_preimage"],
+            derive_identity_preimage(&candidate),
+            "{id}: a shipped projection is not part of the derived identity preimage"
+        );
         assert_eq!(
-            unqualified_jcs_sha256(&package_id_preimage(&candidate)),
+            unqualified_jcs_sha256(&derive_package_id_preimage(&candidate)),
             base["package_id"]["digest"].as_str().expect("digest"),
-            "{id}: the package-id preimage ignores a shipped copy"
+            "{id}: the package id is rebuilt from the lock and graph, not the shipped copy"
         );
         assert!(!schema.is_valid(&candidate), "{id}: the schema refuses it");
         assert_eq!(case["expected_code"], "malformed_wire", "{id}");
-        assert_eq!(
-            case["expected_locus"], "/identity_preimage/identity_projection",
-            "{id}"
-        );
+        // The locus names the shipped member: it exists in the candidate and
+        // not in the base, and removing it restores the admitted package.
+        let locus = case["expected_locus"].as_str().expect("locus");
+        assert!(candidate.pointer(locus).is_some(), "{id}: locus names a member of the candidate");
+        assert!(base.pointer(locus).is_none(), "{id}: locus names no member of the base");
+        let (parent, member) = locus.rsplit_once('/').expect("locus has a parent");
+        let mut repaired = candidate.clone();
+        repaired
+            .pointer_mut(parent)
+            .and_then(Value::as_object_mut)
+            .expect("locus parent is an object")
+            .remove(member);
+        assert_eq!(repaired, base, "{id}: removing the locus member restores the base");
+        assert!(schema.is_valid(&repaired), "{id}: the repaired package is admitted");
     }
 }
 
