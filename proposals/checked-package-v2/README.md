@@ -82,8 +82,8 @@ structures, but any external consumer receives only the contract.
   they exercise the schema, the order rule and the supply order only, and a
   reader that requires every entry's package to be supplied refuses them
   `missing_import`/`missing-selection` at entry 0 by design. Only
-  `closure_vectors`, whose digests are recomputed from real packages, name
-  packages a reader can be supplied. Each `supply_vectors` entry lists the
+  `closure_vectors`, whose digests are recomputed from real packages, and
+  `dependency-call-vectors.json` name packages a reader can be supplied. Each `supply_vectors` entry lists the
   direct entries in lock order with a symbolic `supply` state (`bound`,
   `stale` for a supplied package whose recomputed `package_id` differs, or
   `absent`) and the outcome FR-322-AC-84 requires.
@@ -101,6 +101,27 @@ structures, but any external consumer receives only the contract.
   naming a declaration node of that dependency. The node-identity preimage
   spells it as the wire does, so both components enter the referencing
   node's id, and it is never listed in a node's `dependencies`.
+- `fixtures/positive-dependency-library.json` is an admitted library package,
+  supplied under the library identity `test/predicates`, whose recorded
+  `package_id` recomputes. It declares `Lib::is_small`, a `function` over
+  `Int[0, 9]` returning `Boolean` whose signature type nodes carry no
+  `declaration` or `ModelOwner`, together with the declared record
+  `Lib::Point`, a function returning it, functions over `Set<Point>`, over a
+  tuple holding `Point` and over `Reference<acme/orders::Order>`, and
+  `value`/`parameter` nodes that carry no `declaration`.
+  `fixtures/positive-dependency-call.json` selects that library by its
+  `package_id` and declares `App::check`, whose body is a
+  `quire.op.function.call` with a `dependency_reference` callee naming
+  `Lib::is_small`, the Boolean node as `result_type` and no `dependencies`
+  entry for the target; it is admitted when the library is supplied.
+  `dependency-call-vectors.json` carries FR-322-AC-37's mutations of that
+  package as patches over it: no dependency supplied, a `package` that is no
+  direct selection, a `node` carrying no `declaration`, a `node` naming the
+  record or a function whose signature reaches it or a model type, the term
+  as a non-callee argument and as a node body root, and the target listed in
+  `dependencies`. Each records its refusal `outcome` and its `locus`, the JSON
+  pointer FR-322 fixes for it in the mutated package; node keys and the
+  `package_id` are recomputed after the patch.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
