@@ -73,7 +73,7 @@ the timed model form that declares it.
 | Solver result | FR-331 value | Proof basis or cause |
 | --- | --- | --- |
 | A result the solver's method makes sound for the claim, such as an `unsat` from a δ-complete solver for bounded unreachability, or a flowpipe enclosure computed with outward rounding that satisfies the property | `proved`, basis `closed-scope` | `bounded-solver{method, horizon, jumps}`; the proof holds for the claim within that time horizon and jump bound |
-| `δ-sat`, a flowpipe meeting the unsafe set, `unknown`, or a method without sound rounding | `inconclusive` | `solver-inconclusive`, retaining any reported trace as unverified evidence |
+| `δ-sat`, a flowpipe meeting the unsafe set, `unknown`, or a method without sound rounding | `inconclusive` | `solver-inconclusive{trace}`, retaining any reported trace as unverified evidence ("Hybrid trace" below) |
 | A solver stopped by its step budget | `incomplete`, execution `resource-incomplete` | `limit-reached{limit: max_solver_steps, value, setting: hybrid.max_solver_steps}` |
 | A solver that exhausts `max_solver_time`, or a provider that overruns the provider deadline `deadline_ms` (FR-462) | `incomplete`, execution `resource-incomplete` | `timed-out`, the backend's own wall-clock limit |
 | A run the caller's frontend ends at the caller's own deadline (a frontend-owned timer that cancels the run, QSL FR-276) | `incomplete`, execution `resource-incomplete` | `cancelled{source: deadline}`, never `timed-out` |
@@ -116,6 +116,65 @@ A solver result settles only `proved`, `inconclusive`, incomplete or
 `unsupported`: a hybrid result does not refute, because no solver witness
 replays exactly.
 
+## Solver result on the wire
+
+A hybrid provider reports each item's solver result as one FR-331 result
+entry, and that entry is the wire form of the solver result. The reader, not
+the provider, applies the verdict map: it settles `proved` only where the
+entry's `method` is sound for its outcome, and it reads no soundness claim
+the provider makes about itself.
+
+- A result the provider offers as a proof SHALL be a `proved` entry with the
+  basis `bounded-solver{method, horizon, jumps}`, `method` the solver's
+  method kind, `horizon` an FR-331 `Rational` number of seconds and `jumps` a
+  count, and `certification` `uncertified`.
+- Every other non-budget result SHALL be an `inconclusive` entry with the
+  cause `solver-inconclusive`. When the solver reports a possible violation
+  with a path to it, the cause SHALL carry that path as its `trace` member, a
+  `HybridTrace`; when it reports none, the cause SHALL carry no `trace`.
+- A budget stop and a deadline overrun take the `incomplete` rows of the
+  verdict map, and carry no trace.
+
+### Hybrid trace
+
+A `HybridTrace` is the path to a possible violation, stated in the names of
+the source `hybrid-decl`, so each state corresponds to a source mode and
+each jump to a source transition:
+
+```json
+{
+  "start": {"mode": "Moving", "time": {"lower": …, "upper": …},
+            "enclosure": {"a": {"lower": …, "upper": …}, "v": {"lower": …, "upper": …}}},
+  "jumps": [
+    {"transition": 0,
+     "state": {"mode": "Stopped", "time": {…}, "enclosure": {…}}}
+  ]
+}
+```
+
+- `start` SHALL be the trace's first state, in the declaration's first mode.
+- Each state SHALL carry `mode`, the name of a mode of the declaration;
+  `time`, an FR-331 `Interval` of exact rational seconds enclosing the time
+  at which the state is reached; and `enclosure`, one FR-331 `Interval` for
+  each continuous variable of the declaration, keyed by the variable's name.
+- Each `jumps` entry SHALL carry `transition`, the zero-based position of
+  the transition taken among the transitions of the previous state's mode in
+  source order, and `state`, the state the jump reaches, whose `mode` is that
+  transition's target. `jumps` SHALL be present, and empty for a trace with
+  no jump.
+- The trace's last state SHALL be the state at which the solver reports the
+  possible violation.
+- A reader SHALL refuse with `invalid_result`/`invalid-value`, at the
+  member's pointer, a trace whose `mode` names no mode of the declaration,
+  whose `start` is not in the first mode, whose `transition` names no
+  transition of the previous state's mode, whose jump reaches a mode other
+  than that transition's target, whose `enclosure` keys differ from the
+  declaration's continuous variables, or whose `Interval` has `lower`
+  greater than `upper`.
+- A trace SHALL be unverified evidence: a reader SHALL keep it on the item's
+  `inconclusive` record, SHALL NOT replay it, SHALL NOT record it in
+  `counterexamples`, and SHALL NOT settle any result from it.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -129,6 +188,7 @@ replays exactly.
 | FR-193-AC-7 | A `hybrid-decl` whose every continuous variable has rate 1 refuses `invalid_timed_model`/`rate-one-hybrid`; a hybrid item with no registered candidate settles `unsupported`. | Test (TC-373) |
 | FR-193-AC-8 | A solver stopped after 1,000 steps by a `max_solver_steps` of 1,000 settles `incomplete`, execution `resource-incomplete`, `limit-reached{limit: max_solver_steps, value: 1000, setting: hybrid.max_solver_steps}`, in steps and unconverted; a solver that exhausts `max_solver_time`, and a plugin provider that overruns `deadline_ms`, each settle `incomplete`, `resource-incomplete`, `timed-out`; a run the caller's frontend ends at the caller's own deadline settles `incomplete`, `cancelled{source: deadline}`, so no event has two causes. | Test (TC-373) |
 | FR-193-AC-9 | A caller's `max_solver_time` of 1.5 s is written as the wire integer 2, 2 s as 2 and 0.2 s as 1, and a wire value of 1.5 is refused before consumption; two requests that differ only in `max_solver_time` have equal request identity and cache key bytes, two that differ only in `max_solver_steps` differ, and a `timed-out` result is stored by neither request and holds no wall-time member. | Test (TC-373) |
+| FR-193-AC-10 | A `solver-inconclusive` cause carrying a `HybridTrace` with a `start` in mode `Moving` and one jump by `transition` 0 to `Stopped`, and one carrying no `trace`, are each admitted and settle `inconclusive`, `solver-inconclusive`, the trace kept on the record and absent from `counterexamples`; a trace with an empty `enclosure`, and one with a member outside `start` and `jumps`, are refused by the schema at that member; a reader refuses `invalid_result`/`invalid-value` a trace whose jump names a transition the mode does not have, one whose enclosure omits a continuous variable, and one with an `Interval` whose `lower` exceeds its `upper`. | Test (TC-373, TC-431) |
 
 ## Dependencies
 

@@ -3320,6 +3320,137 @@
       }
     },
     {
+      "name": "hybrid-inconclusive-trace-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause/trace": "FR-193",
+        "/results/1/cause": "FR-193"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "dreal",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "solver-inconclusive",
+              "trace": {
+                "start": {
+                  "mode": "Moving",
+                  "time": {
+                    "lower": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    },
+                    "upper": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    }
+                  },
+                  "enclosure": {
+                    "a": {
+                      "lower": {
+                        "numerator": "2",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "2",
+                        "denominator": "1"
+                      }
+                    },
+                    "v": {
+                      "lower": {
+                        "numerator": "20",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "20",
+                        "denominator": "1"
+                      }
+                    }
+                  }
+                },
+                "jumps": [
+                  {
+                    "transition": 0,
+                    "state": {
+                      "mode": "Stopped",
+                      "time": {
+                        "lower": {
+                          "numerator": "9",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "21",
+                          "denominator": "2"
+                        }
+                      },
+                      "enclosure": {
+                        "a": {
+                          "lower": {
+                            "numerator": "2",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "2",
+                            "denominator": "1"
+                          }
+                        },
+                        "v": {
+                          "lower": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "1",
+                            "denominator": "100"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "dreal",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "solver-inconclusive"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
       "name": "refinement-hypotheses-outcome",
       "stage": "outcome",
       "owners": {
@@ -5589,6 +5720,30 @@
             },
             "cause": "absent-key"
           }
+        }
+      ]
+    },
+    {
+      "name": "solver-inconclusive-trace-empty-enclosure",
+      "base": "hybrid-inconclusive-trace-outcome",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/trace/start/enclosure",
+          "value": {}
+        }
+      ]
+    },
+    {
+      "name": "solver-inconclusive-trace-unknown-member",
+      "base": "hybrid-inconclusive-trace-outcome",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/0/cause/trace/verified",
+          "value": true
         }
       ]
     }
