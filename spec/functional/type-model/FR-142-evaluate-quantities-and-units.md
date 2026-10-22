@@ -254,7 +254,21 @@ tuples, unions, enums, aliases, functions, predicates, protocols, claims and
 declared values, which FR-322 carries as every declared node but a dimension
 or a unit; a name is unique within its namespace in the
 linked package, and two units of one name in the linked package refuse
-`ambiguous_declaration`/`ambiguous-name` at the use. A bare `type-ref` looks up
+`ambiguous_declaration`/`ambiguous-name` at the use. The unit namespace holds
+the units the unit of compilation declares and the units of every admitted
+domain package (FR-154): a package unit's name is qualified by the package
+identity, `<package identity segments>/<name>` (FR-322 "Model-owned members"
+step 4), so a unit `ms` the source declares and a unit `ms` the domain package
+`acme/rpc` declares are the two names `ms` and `acme/rpc/ms` and never one
+ambiguous name. The dimension namespace holds the dimensions the unit of
+compilation declares and the dimensions of every admitted domain package,
+each by its single-segment name. A dimension name declared both by the unit
+of compilation and by an admitted domain package, or by two admitted domain
+packages, refuses `conflicting_declaration`/`duplicate-declaration` naming
+both declarations, at the source declaration's span when the unit of
+compilation declares it and otherwise at the later package's selection row
+`/lock/model_selections/<i>`. A source dimension term or unit dimension may
+name a package dimension. A bare `type-ref` looks up
 the type namespace only, and `Quantity<...>` is the one `type-ref` that looks up
 the unit namespace. A source that writes a unit name where a type is required
 (`d: ms`) therefore refuses `missing_declaration`/`missing-name` at the name,
@@ -320,6 +334,7 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-16 | The base-dimension rule refuses `L` in U11g1, U11g2, U11g4 and U11z1 (an imported `L` reached only through the imported `Area` a local unit is typed by) and admits U11g3 (`N = L / L` with `unit one : N = 1;`); U11m fixes that the check runs at the base dimension's own turn: a unit cycle in the earlier-declared `Area` is reported first, and with the order reversed `L` is refused; U11y refuses an imported unitless base dimension named by a local dimension's term. | Test (TC-187) |
 | FR-142-AC-17 | A dimension's own terms are checked at its turn before its units: U11n (cycle of two), U11o (self-cycle) and U11p (unknown term) refuse as FR-142 states; U11w refuses the unknown term before the cycle; U11x refuses a transitive unknown term at the dimension that owns it, not at the dimension that reaches it, and U11z3 reports a dimension that only reaches a cycle by its own earlier unit defect before the cycle member's refusal. The order of two documents in the request fixes the first declaration (U11q). | Test (TC-187) |
 | FR-142-AC-18 | Local units typed by an imported dimension are checked at that node's turn with the imported units as admitted members: U11r admits a local unit targeting an imported root; U11s refuses a local cycle, U11t a second local root beside the imported root, and U11u a local zero scale; the imported dimension's own definition is not re-checked; U11z2 fixes the turn list: a dimension's mentioned nodes take their turn in mention order before the declaration, so `P.L` precedes `Q.T`. | Test (TC-187) |
+| FR-142-AC-19 | A unit of compilation that declares `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` beside the admitted domain package `acme/rpc` declaring base dimension `Rate`, root `us` of `Rate` and its own `ms` of `Rate` checks with no `ambiguous_declaration`: `Quantity<ms>` names the source unit and `Quantity<M::ms>` under `model M = "acme/rpc" …` names the package unit `acme/rpc/ms`; a source `unit tick : Rate = 1/2 * M::us;` is admitted, typed by the package dimension; the same package also declaring a dimension `Time` refuses `conflicting_declaration`/`duplicate-declaration` at the source `dimension Time` span, naming both declarations; two admitted packages that each declare a dimension `Rate`, with no source `Rate`, refuse it at the later package's selection row. | Test (TC-187) |
 
 ## Dependencies
 
