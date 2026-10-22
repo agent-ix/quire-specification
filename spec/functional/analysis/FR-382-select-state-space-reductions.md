@@ -125,6 +125,31 @@ reduction. Negotiation never removes, adds or replaces a selected reduction,
 and the engine never answers a reduced request by running unreduced, or an
 unreduced request by running reduced.
 
+**Dense-time subjects.** These rules apply to a subject that declares
+`time dense`; a `time tick` subject is read through digital time
+([FR-416](../temporal/FR-416-evaluate-timed-temporal-claims.md)) and keeps the
+rules above unchanged.
+
+- A symmetry permutation SHALL permute each object of a declared class
+  together with its clock fields: the zone's clocks of object `k` move to the
+  clocks of the object `k` is mapped to.
+- The symbolic provider SHALL canonicalise a symbolic state by the
+  permutation that canonicalises its discrete state, ties between objects
+  with equal discrete state broken by the least permutation in key order, and
+  SHALL apply the same permutation to the zone. Zone coverage is tested on the
+  canonicalised state. A state and its image under a permutation
+  canonicalise to equal states when the discrete permutation is unique (no
+  two objects of a class have equal discrete state); otherwise they may stay
+  distinct, which is sound and only reduces less.
+- The symbolic provider's manifest entry SHALL advertise `symmetry` and no
+  other reduction, so negotiation SHALL settle an item over a `time dense`
+  subject that selects partial-order reduction or a state constraint
+  `unsupported`, `unsupported_projection`/`unsupported-requested-capability`,
+  naming the first such reduction in the order partial-order, constraint,
+  with no candidate run and no state expanded.
+- The symmetry declarations enter the obligation identity as for an untimed
+  subject.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -135,6 +160,7 @@ unreduced request by running reduced.
 | FR-382-AC-4 | An initial state that some generator of `G` maps to no initial state settles the item `inconclusive`, cause `symmetry-broken`, naming the population, the initial state and the generator, before any expansion; the declaration `[[a], [b, c]]` over the same initial state is admitted. | Test (TC-321) |
 | FR-382-AC-5 | A `constraint` clause is checked like an invariant body and holds at a state when it holds for every object of its type; a non-Boolean body refuses `ill_typed`/`non-boolean-root`. | Test (TC-324) |
 | FR-382-AC-6 | An item selecting a reduction its single candidate does not advertise, or partial-order reduction over a transition system with no footprints, settles `unsupported` with `unsupported_projection`/`unsupported-requested-capability` naming the reduction, and no unreduced run happens. | Test (TC-327) |
+| FR-382-AC-7 | A `time dense` model with population `Timer` over universe `{t1, t2}` (each with `armed: Bool` and clock `x`; `arm` with precondition `not self.armed`, guard `x >= 1`, reset `x`; `disarm` with precondition `self.armed`, guard `x >= 1`, reset `x`): with symmetry `[[t1, t2]]` its deadlock-freedom item settles `proved` as with no reduction and stores fewer symbolic states, and `always holds(not (t1.armed and t2.armed))` settles `refuted` as with no reduction, its counterexample replaying; the symbolic state with `t1` armed, `t2` unarmed and zone `Z`, and its image with `t1` unarmed, `t2` armed and `Z` with the clocks of `t1` and `t2` swapped, canonicalise to equal states; the deadlock-freedom item selecting partial-order reduction, and the same item selecting a state constraint, each settle `unsupported`, `unsupported_projection`/`unsupported-requested-capability` at negotiation naming the reduction, with no state expanded; the same item selecting both partial-order reduction and a state constraint settles the same way naming partial-order reduction only. | Test (TC-963) |
 
 ## Dependencies
 
@@ -155,5 +181,6 @@ unreduced request by running reduced.
 ## References
 
 - Design: quire-spec-language ADR-021 (RD-1 to RD-3, SYM-1, SYM-2, SYM-4,
-  SYM-5, SC-1, SC-3, EI-1, RV-6, RV-8, RV-9, QS-1, QS-3, QS-9).
+  SYM-5, SC-1, SC-3, EI-1, RV-6, RV-8, RV-9, QS-1, QS-3, QS-9); ADR-026 §15
+  and QSL FR-430 (reductions over a dense-time subject).
 - Tickets: Linear STD-134; paired QSL-368.

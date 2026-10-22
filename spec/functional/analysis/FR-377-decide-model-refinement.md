@@ -212,6 +212,30 @@ A per-step obligation reads one concrete step and cannot see history values,
 so a declaration with a history field is decided by the explicit-state engine
 only.
 
+**Timed concrete subject.** A refinement whose concrete model is timed
+([FR-415](../temporal/FR-415-declare-clocks-and-timed-models.md)) and whose
+abstract model is untimed is admitted. The checker SHALL refuse:
+
+- a refinement whose abstract model is timed, with
+  `unsupported_construct`/`declaration-form` at the refinement's abstract
+  model reference;
+- a mapping row or step row that reads a clock field of the concrete model,
+  with `unsupported_construct`/`expression-form` at the read, so the mapped
+  abstract state is a function of the discrete state alone.
+
+A delay of the concrete model maps to no abstract step: the step function
+SHALL run only on discrete steps, and the abstract state is unchanged across
+a delay, which is an abstract stutter. Over a `time dense` concrete subject,
+the symbolic provider (FR-416) SHALL decide the safety half on the product
+whose states are (discrete product state, zone), running the step function on
+each discrete symbolic edge in canonical breadth-first order. A failing edge
+SHALL refute only when its pre-state has a point with a time-divergent
+continuation, and its counterexample carries exact rational delays chosen
+canonically (FR-416) that replay by FR-181 timed replay. The liveness half
+over a timed concrete subject SHALL read only time-divergent concrete
+behaviours: an accepting cycle refutes only when its loop has positive total
+delay.
+
 **Stuttering-invariant reading.** With stutter positions removed, an infinite
 mapped behaviour is a behaviour of the abstract subject, and a finite one is a
 prefix of one followed by a stutter tail that `F_A` admits. Infinite-trace
@@ -234,6 +258,8 @@ until and since are non-strict ([FR-161](../temporal/FR-161-analyze-infinite-tra
 | FR-377-AC-11 | A concrete object of a most-specific type no object row names makes `map` undetermined at that state and is never dropped from the mapped state; a reference to such an object makes `map` undetermined naming the row that holds it; the mapped state of a refinement holds no relationship extent. | Test (TC-315) |
 | FR-377-AC-12 | Among the receiver, arguments, post history and post-state rows of one step, an internal fault settles the item `failed` whatever the other reads return; otherwise the first undefined read in the order receiver, arguments as written, post history, post-state rows is reported and refutes the claim even when an earlier read is refused, incomplete, out of type or of an unmapped type; otherwise the first undetermined read is reported; an undefined receiver is reported before an undefined argument, an undefined argument before an undefined post-state row, an undefined post history before an undefined post-state row, and an incomplete argument before an out-of-type post history; the reported read is the same in the verdict and its replay. | Test (TC-315) |
 | FR-377-AC-13 | A meter the abstract subject exhausts while deciding a step whose reads all returned values settles `incomplete`, execution `resource-incomplete`, cause `limit-reached{limit, value, setting}` for the limit bounding one clause evaluation, never `failed`, `refuted`, `mapping-undetermined` or `undecided-successor`; an undefined read, an undetermined read or a fault in the same step settles by AC-12 instead of the stop; an abstract contract left incomplete without exhausting its meter is `undecided-successor`. | Test (TC-315) |
+| FR-377-AC-14 | An untimed abstract model `Req` (object `r` with `sent: Bool`, initial `false`; `send` with postcondition `self.sent = true`) refined by a timed model `TReq` (`time dense`; `r` with `sent: Bool` and clock `x`, initial `sent = false`, `x = 0`; `send` with guard `x >= 1` and postcondition `self.sent = true`; step map `send -> send`; mapping `sent -> sent`) settles the safety half `proved`, with no step-function call for a delay; the variant whose mapping is `sent -> (x >= 1)` refuses `unsupported_construct`/`expression-form` at the read of `x`; a refinement whose abstract model is `TReq` and whose concrete model is a copy of `TReq` refuses `unsupported_construct`/`declaration-form` at the abstract model reference. | Test (TC-963) |
+| FR-377-AC-15 | `TReq` extended with `trap: Bool` (initial `false`), `send` resetting `x`, `enter` (precondition `self.sent`, guard `x >= 1`, reset `x`, postcondition `self.trap = true`) and `undo` (precondition `self.trap and self.sent`, postcondition `self.sent = false`), with step map `send -> send`, `enter -> stutter`, `undo -> stutter`, settles the safety half `refuted` with the counterexample `send` after delay 1, `enter` after delay 1, `undo` after delay 0, failing at position 3, which replays; with the time invariant `when self.trap { x <= 0 }`, the pre-state points of `undo` reach no time-divergent continuation, so the failing edge does not refute and the safety half settles `proved`, while that model's time-lock-freedom item is refuted. | Test (TC-963) |
 
 ## Dependencies
 
@@ -261,6 +287,6 @@ until and since are non-strict ([FR-161](../temporal/FR-161-analyze-infinite-tra
 ## References
 
 - Design: quire-spec-language ADR-020 (RS-1 to RS-13, CO-1, CO-2, RE-1,
-  RE-2, QS-2, RU-2).
+  RE-2, QS-2, RU-2); ADR-026 §15 and QSL FR-430 (timed refinement).
 - Tickets: Linear STD-133; paired QSL-367. The model-subject temporal
   requirement is Linear STD-131.
