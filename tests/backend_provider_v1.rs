@@ -176,35 +176,111 @@ fn positive(name: &str) -> Value {
         .unwrap_or_else(|| panic!("positive vector {name} exists"))
 }
 
-fn apply(document: &mut Value, patch: &Value) {
-    let path = patch["path"].as_str().expect("patch path");
-    let (parent, member) = path.rsplit_once('/').expect("patch path has a parent");
-    match patch["op"].as_str().expect("patch op") {
-        "replace" => {
-            *document.pointer_mut(path).expect("replace target exists") = patch["value"].clone();
-        }
-        "remove" => {
-            document
-                .pointer_mut(parent)
-                .and_then(Value::as_object_mut)
-                .expect("remove parent is an object")
-                .remove(member)
-                .expect("remove target exists");
-        }
-        "add" => match document.pointer_mut(parent).expect("add parent exists") {
-            Value::Object(object) => {
-                assert!(
-                    object
-                        .insert(member.to_owned(), patch["value"].clone())
-                        .is_none(),
-                    "add creates a new member at {path}"
-                );
-            }
-            Value::Array(array) if member == "-" => array.push(patch["value"].clone()),
-            _ => panic!("add parent at {path} is an object or an array append"),
-        },
-        other => panic!("unsupported patch op {other}"),
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum PatchError {
+    InvalidOperation,
+    InvalidPath,
+    MissingValue,
+    MissingParent,
+    InvalidParent,
+    InvalidArrayIndex,
+    IndexOutOfBounds,
+    MissingTarget,
+    ExistingTarget,
+}
+
+fn patch_token(token: &str) -> Result<String, PatchError> {
+    let mut decoded = String::new();
+    let mut chars = token.chars();
+    while let Some(character) = chars.next() {
+        decoded.push(match character {
+            '~' => match chars.next() {
+                Some('0') => '~',
+                Some('1') => '/',
+                _ => return Err(PatchError::InvalidPath),
+            },
+            other => other,
+        });
     }
+    Ok(decoded)
+}
+
+fn patch_index(member: &str) -> Result<usize, PatchError> {
+    if member.is_empty() || (member.len() > 1 && member.starts_with('0'))
+        || !member.bytes().all(|byte| byte.is_ascii_digit()) {
+        return Err(PatchError::InvalidArrayIndex);
+    }
+    member.parse().map_err(|_| PatchError::InvalidArrayIndex)
+}
+
+/// The fixture protocol supports non-root add/remove/replace JSON pointers;
+/// object adds retain the existing new-member-only invariant. Array adds
+/// insert at a checked index or append at '-'.
+/// Errors are fixture defects, never evidence of schema refusal. No missing
+/// value becomes null; invalid operations leave the document unchanged.
+fn apply(document: &mut Value, patch: &Value) -> Result<(), PatchError> {
+    let op = patch.get("op").and_then(Value::as_str).ok_or(PatchError::InvalidOperation)?;
+    if !matches!(op, "add" | "remove" | "replace") {
+        return Err(PatchError::InvalidOperation);
+    }
+    let path = patch.get("path").and_then(Value::as_str).ok_or(PatchError::InvalidPath)?;
+    let tokens = path.strip_prefix('/').ok_or(PatchError::InvalidPath)?;
+    for token in tokens.split('/') {
+        patch_token(token)?;
+    }
+    let (parent, member) = path.rsplit_once('/').ok_or(PatchError::InvalidPath)?;
+    let member = patch_token(member)?;
+    let value = if op == "remove" {
+        None
+    } else {
+        Some(patch.get("value").ok_or(PatchError::MissingValue)?.clone())
+    };
+    match document.pointer_mut(parent).ok_or(PatchError::MissingParent)? {
+        Value::Object(object) => match op {
+            "remove" => {
+                object.remove(&member).ok_or(PatchError::MissingTarget)?;
+            }
+            "add" => {
+                if object.contains_key(&member) {
+                    return Err(PatchError::ExistingTarget);
+                }
+                object.insert(member, value.ok_or(PatchError::MissingValue)?);
+            }
+            "replace" => {
+                *object.get_mut(&member).ok_or(PatchError::MissingTarget)? =
+                    value.ok_or(PatchError::MissingValue)?;
+            }
+            _ => return Err(PatchError::InvalidOperation),
+        },
+        Value::Array(array) => {
+            let index = if op == "add" && member == "-" {
+                array.len()
+            } else {
+                patch_index(&member)?
+            };
+            match op {
+                "remove" => {
+                    if index >= array.len() {
+                        return Err(PatchError::IndexOutOfBounds);
+                    }
+                    array.remove(index);
+                }
+                "add" => {
+                    if index > array.len() {
+                        return Err(PatchError::IndexOutOfBounds);
+                    }
+                    array.insert(index, value.ok_or(PatchError::MissingValue)?);
+                }
+                "replace" => {
+                    *array.get_mut(index).ok_or(PatchError::IndexOutOfBounds)? =
+                        value.ok_or(PatchError::MissingValue)?;
+                }
+                _ => return Err(PatchError::InvalidOperation),
+            }
+        }
+        _ => return Err(PatchError::InvalidParent),
+    }
+    Ok(())
 }
 
 fn errors(validator: &jsonschema::Validator, document: &Value) -> Vec<String> {
@@ -214,10 +290,158 @@ fn errors(validator: &jsonschema::Validator, document: &Value) -> Vec<String> {
         .collect()
 }
 
+/// Literal outputs are independent of the patch runner and its branches.
+#[test]
+fn patch_operations_preserve_literal_results() {
+    for (document, patch, expected) in [
+        (serde_json::json!([10, 20, 30]),
+            serde_json::json!({"op": "remove", "path": "/1"}),
+            serde_json::json!([10, 30])),
+        (serde_json::json!([10, 20, 30]),
+            serde_json::json!({"op": "remove", "path": "/0"}),
+            serde_json::json!([20, 30])),
+        (serde_json::json!([10, 20, 30]),
+            serde_json::json!({"op": "remove", "path": "/2"}),
+            serde_json::json!([10, 20])),
+        (serde_json::json!([10, 30]),
+            serde_json::json!({"op": "add", "path": "/1", "value": 20}),
+            serde_json::json!([10, 20, 30])),
+        (serde_json::json!([20]),
+            serde_json::json!({"op": "add", "path": "/0", "value": 10}),
+            serde_json::json!([10, 20])),
+        (serde_json::json!([10]),
+            serde_json::json!({"op": "add", "path": "/1", "value": 20}),
+            serde_json::json!([10, 20])),
+        (serde_json::json!([]),
+            serde_json::json!({"op": "add", "path": "/-", "value": null}),
+            serde_json::json!([null])),
+        (serde_json::json!([10, 20]),
+            serde_json::json!({"op": "replace", "path": "/1", "value": null}),
+            serde_json::json!([10, null])),
+        (serde_json::json!({"keep": 1, "remove": null}),
+            serde_json::json!({"op": "remove", "path": "/remove"}),
+            serde_json::json!({"keep": 1})),
+        (serde_json::json!({"keep": 1}),
+            serde_json::json!({"op": "add", "path": "/new", "value": null}),
+            serde_json::json!({"keep": 1, "new": null})),
+        (serde_json::json!({"keep": 1}),
+            serde_json::json!({"op": "replace", "path": "/keep", "value": 2}),
+            serde_json::json!({"keep": 2})),
+        (serde_json::json!({"a/b": {"~key": [10, 20]}}),
+            serde_json::json!({"op": "remove", "path": "/a~1b/~0key/0"}),
+            serde_json::json!({"a/b": {"~key": [20]}})),
+        (serde_json::json!({"a/b": 1, "~key": 2}),
+            serde_json::json!({"op": "remove", "path": "/a~1b"}),
+            serde_json::json!({"~key": 2})),
+    ] {
+        let mut actual = document;
+        assert_eq!(apply(&mut actual, &patch), Ok(()), "literal patch applies");
+        assert_eq!(actual, expected, "literal patch result for {patch}");
+    }
+}
+
+/// Malformed fixture patches fail explicitly, without partial mutation or
+/// laundering a runner error into an adverse schema-refusal success.
+#[test]
+fn invalid_patches_are_errors_and_leave_the_document_unchanged() {
+    let original = serde_json::json!({"array": [10, 20], "empty": [],
+        "object": {"existing": 1}, "scalar": 7});
+    for (patch, expected) in [
+        (serde_json::json!({"op": "remove", "path": "/object/missing"}), PatchError::MissingTarget),
+        (serde_json::json!({"op": "replace", "path": "/object/missing", "value": 3}), PatchError::MissingTarget),
+        (serde_json::json!({"op": "add", "path": "/object/existing", "value": 2}), PatchError::ExistingTarget),
+        (serde_json::json!({"op": "remove", "path": "/array/2"}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "replace", "path": "/array/2", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "add", "path": "/array/3", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "remove", "path": "/empty/0"}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "replace", "path": "/empty/0", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "add", "path": "/empty/1", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "move", "path": "/array/0"}), PatchError::InvalidOperation),
+        (serde_json::json!({"path": "/array/0"}), PatchError::InvalidOperation),
+        (serde_json::json!({"op": 1, "path": "/array/0"}), PatchError::InvalidOperation),
+        (serde_json::json!({"op": "remove"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": 1}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "array/0"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": ""}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "/object/~"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "/object/~2"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "/bad~2/child"}), PatchError::InvalidPath),
+    ] {
+        let mut actual = original.clone();
+        assert_eq!(apply(&mut actual, &patch), Err(expected), "fixture error for {patch}");
+        assert_eq!(actual, original, "failed patch cannot mutate {patch}");
+    }
+    for op in ["add", "remove", "replace"] {
+        for member in ["", "01", "+1", "-1", "one", "184467440737095516160"] {
+            let patch = serde_json::json!({"op": op, "path": format!("/array/{member}"), "value": 3});
+            let mut actual = original.clone();
+            assert_eq!(apply(&mut actual, &patch), Err(PatchError::InvalidArrayIndex));
+            assert_eq!(actual, original);
+        }
+        for (path, expected) in [("/missing/child", PatchError::MissingParent),
+            ("/scalar/child", PatchError::InvalidParent)] {
+            let patch = serde_json::json!({"op": op, "path": path, "value": 3});
+            let mut actual = original.clone();
+            assert_eq!(apply(&mut actual, &patch), Err(expected));
+            assert_eq!(actual, original);
+        }
+    }
+    for op in ["remove", "replace"] {
+        let mut actual = original.clone();
+        assert_eq!(apply(&mut actual, &serde_json::json!({"op": op,
+            "path": "/array/-", "value": 3})), Err(PatchError::InvalidArrayIndex));
+        assert_eq!(actual, original);
+    }
+    for op in ["add", "replace"] {
+        let mut actual = original.clone();
+        assert_eq!(apply(&mut actual, &serde_json::json!({"op": op,
+            "path": "/array/0"})), Err(PatchError::MissingValue));
+        assert_eq!(actual, original);
+    }
+}
+
+/// The real adverse vector retains n=0 and changes m=2 to m=1 only.
+#[trace("TC-431", "FR-331-AC-27")]
+#[test]
+fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
+    let base = composed(&positive("certificate-rejected-hyper-identities"));
+    let whole = validator();
+    assert!(whole.is_valid(&base), "original positive is admitted");
+    let adverse = parsed(VECTORS);
+    let vector = adverse["adverse"].as_array().expect("adverse vectors").iter()
+        .find(|vector| vector["name"] == "hp3-empty-universal-single-existential")
+        .expect("original adverse vector retained");
+    assert_eq!(vector["base"], "certificate-rejected-hyper-identities");
+    assert_eq!(vector["patch"], serde_json::json!([
+        {"op": "remove", "path": "/results/4/cause/at/witness_set/0/states/1"}
+    ]));
+    let mut actual = base.clone();
+    assert_eq!(apply(&mut actual, &vector["patch"][0]), Ok(()), "real removal applies");
+    assert_eq!(actual["results"][4]["cause"]["at"], serde_json::json!({
+        "states": [], "automaton_state": "AQ", "witness_set": [{
+            "states": ["1111111111111111111111111111111111111111111111111111111111111111"],
+            "automaton_state": "Ag"
+        }]
+    }));
+    assert!(!whole.is_valid(&actual), "n=0, m=1 is a real negative");
+    let stage = definition("OutcomeStage");
+    assert!(stage.iter_errors(&actual).any(|error| located_at_patch(
+        &error.instance_path().to_string(), "/results/4/cause/at/witness_set/0/states/1")),
+        "refusal belongs to the changed witness tuple");
+    assert_eq!(apply(&mut actual, &serde_json::json!({"op": "add",
+        "path": "/results/4/cause/at/witness_set/0/states/1",
+        "value": "2222222222222222222222222222222222222222222222222222222222222222"})),
+        Ok(()), "restoring insertion applies");
+    assert_eq!(actual, base, "restoration changes no other component");
+    assert!(whole.is_valid(&actual), "restored n=0, m=2 positive is admitted");
+}
+
 /// Every positive vector of every stage is admitted by the schema, and every
 /// member it names an owner for exists and names an FR of this specification.
 #[trace("TC-431", "FR-331-AC-19")]
 #[trace("TC-431", "FR-331-AC-23")]
+#[trace("TC-431", "FR-331-AC-24")]
+#[trace("TC-431", "FR-331-AC-25")]
 #[trace("TC-431", "FR-331-AC-28")]
 #[trace("TC-431", "FR-364-AC-10")]
 #[test]
@@ -288,6 +512,8 @@ fn located_at_patch(error: &str, patched: &str) -> bool {
 #[trace("TC-431", "FR-331-AC-19")]
 #[trace("TC-431", "FR-331-AC-20")]
 #[trace("TC-431", "FR-331-AC-23")]
+#[trace("TC-431", "FR-331-AC-24")]
+#[trace("TC-431", "FR-331-AC-25")]
 #[trace("TC-431", "FR-331-AC-28")]
 #[trace("TC-431", "FR-368-AC-10")]
 #[trace("TC-431", "FR-364-AC-10")]
@@ -309,7 +535,7 @@ fn tc_431_adverse_vectors_are_refused() {
         let patch = vector["patch"].as_array().expect("patch list");
         assert_eq!(patch.len(), 1, "{name} changes one member");
         let mut document = composed(&base);
-        apply(&mut document, &patch[0]);
+        assert_eq!(apply(&mut document, &patch[0]), Ok(()), "{name}: authored patch applies");
         assert!(
             !whole.is_valid(&document),
             "{name} is refused by the schema"
@@ -514,10 +740,10 @@ fn tc_431_item_level_causes_reach_negotiation() {
     let document = composed(&positive("request-item-level-defects"));
     assert!(validator.is_valid(&document));
     let mut missing = document.clone();
-    apply(
+    assert_eq!(apply(
         &mut missing,
         &serde_json::json!({"op": "remove", "path": "/request/items/0/candidates"}),
-    );
+    ), Ok(()), "candidate removal applies");
     assert!(!validator.is_valid(&missing));
 }
 
@@ -646,6 +872,417 @@ fn tc_431_bounded_descriptors_carry_domains() {
             "unbounded-only descriptor with domains {malformed} is refused"
         );
     }
+}
+
+/// Owner-derived canonical transport bindings, not a substitute for native
+/// key-body admission or checker qualification. Expected references and
+/// rule pairs are independent of the schema/vector inventories.
+#[trace("TC-431", "FR-331-AC-25", "FR-331-AC-27", "FR-412-AC-8")]
+#[test]
+fn tc_431_canonical_key_bindings_are_complete() {
+    let schema = parsed(SCHEMA);
+    let certificate = &schema["$defs"]["ProbabilityCertificate"]["properties"];
+    for field in ["values", "ranking", "policy"] {
+        assert_eq!(certificate[field]["items"]["properties"]["state"]["$ref"],
+            "#/$defs/ProbabilityProductKey", "complete key for {field}");
+    }
+    assert_eq!(certificate["components"]["items"]["properties"]["bias"]
+        ["items"]["properties"]["state"]["$ref"], "#/$defs/ProbabilityProductKey");
+    assert_eq!(certificate["policy"]["items"]["properties"]["choice"]["$ref"],
+        "#/$defs/TransitionIdentity");
+    for shape in ["ProductStateLocus", "HyperProductStateLocus"] {
+        assert_eq!(schema["$defs"][shape]["properties"]["automaton_state"]["$ref"],
+            "#/$defs/AutomatonStateKey");
+    }
+    assert_eq!(schema["$defs"]["HyperProductStateLocus"]["properties"]["witness_set"]
+        ["items"]["properties"]["automaton_state"]["$ref"], "#/$defs/AutomatonStateKey");
+
+    let rejection = definition("CertificateRejected");
+    let mut admitted = 0;
+    for rule in CERTIFICATE_RULES {
+        let expected = matches!(rule,
+            "inequality-fails" | "rank-missing" | "rank-broken" | "threshold-missed");
+        let candidate = serde_json::json!({"type": "certificate-rejected", "rule": rule,
+            "at": {"product_key": "AQ"}});
+        assert_eq!(rejection.is_valid(&candidate), expected, "probability locus / {rule}");
+        admitted += usize::from(expected);
+    }
+    assert_eq!(admitted, 4);
+    for rule in ["inequality-fails", "threshold-missed"] {
+        assert!(!rejection.is_valid(&serde_json::json!({"type": "certificate-rejected",
+            "rule": rule, "at": {"domain": "quire.simulation.state-key/v1",
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"}})));
+    }
+    let locus = definition("ProbabilityProductStateLocus");
+    for invalid in [serde_json::json!({}), serde_json::json!({"product_key": "AQ=="}),
+        serde_json::json!({"product_key": "AQ", "state": "AQ"})] {
+        assert!(!locus.is_valid(&invalid));
+    }
+
+    // Independent exact octet oracle: QSL TC-525's parameter-free Counter
+    // deadlock-freedom safety key. Codec/JCS checks only, not translation.
+    let octets = br#"["quire.automaton-state-key/v1",[["deadlock-freedom"],"quire.temporal.infinite-trace/v1","infinite",[]],["safety",[[[[[],"positive"]],[],[],[]]]]]"#;
+    assert_eq!(jcs_canonicalize(&serde_json::from_slice::<Value>(octets)
+        .expect("literal canonical key")).expect("JCS"), octets.to_vec());
+    let spelling = encode(octets);
+    assert_eq!(decode(&spelling), Some(octets.to_vec()));
+    assert!(definition("AutomatonStateKey").is_valid(&serde_json::json!(spelling)));
+}
+
+// Normative rule inventory, independent of both schema and vector contents.
+const CERTIFICATE_RULES: [&str; 24] = [
+    "initial-missing",
+    "successor-missing",
+    "bad-state",
+    "not-partition",
+    "backward-edge",
+    "witness-fails",
+    "query-mismatch",
+    "shape-mismatch",
+    "proof-step-invalid",
+    "not-refutation",
+    "initial-mismatch",
+    "successors-differ",
+    "step-fails",
+    "post-differs",
+    "malformed",
+    "undefined-member",
+    "violating-member",
+    "predicate-undefined",
+    "rank-missing",
+    "rank-broken",
+    "order-broken",
+    "count-broken",
+    "inequality-fails",
+    "threshold-missed",
+];
+
+/// The closed rule inventory is authored independently of the schema and
+/// fixture data. Removing a rule from both cannot make this check pass.
+/// This covers every rule at least once, not every rule/locus pair or an
+/// actual checker's context-dependent applicability.
+#[trace("TC-431", "FR-331-AC-25")]
+#[test]
+fn tc_431_certificate_rules_have_positive_coverage() {
+    let expected: BTreeSet<&str> = CERTIFICATE_RULES.into_iter().collect();
+    let vectors = positives();
+    let mut covered = BTreeSet::new();
+    for vector in &vectors {
+        if let Some(results) = vector["document"]["results"].as_array() {
+            for result in results {
+                let cause = &result["cause"];
+                if cause["type"] == "certificate-rejected" {
+                    covered.insert(cause["rule"].as_str().expect("rejection rule"));
+                }
+            }
+        }
+    }
+    assert_eq!(covered, expected, "every owned rule has a positive vector");
+
+    let schema = parsed(SCHEMA);
+    let branches = schema["$defs"]["CertificateRejected"]["oneOf"]
+        .as_array()
+        .expect("rejection branches");
+    let mut admitted = BTreeSet::new();
+    for branch in branches {
+        let rule = &branch["properties"]["rule"];
+        if let Some(values) = rule["enum"].as_array() {
+            for value in values {
+                admitted.insert(value.as_str().expect("closed rule spelling"));
+            }
+        } else {
+            admitted.insert(rule["const"].as_str().expect("single rule spelling"));
+        }
+    }
+    assert_eq!(admitted, expected, "schema retains the entire owned rule set");
+}
+
+/// Independent finite rule/shape and required-field controls. These are
+/// schema-only transport samples, not canonical automaton identity evidence
+/// or production-reader/checker qualification.
+#[trace("TC-431", "FR-331-AC-25", "FR-331-AC-27")]
+#[test]
+fn tc_431_hyper_loci_have_closed_shapes_and_rule_pairs() {
+    let rejection = definition("CertificateRejected");
+    let tuple_shape = definition("HyperTransitionTupleLocus");
+    let state_shape = definition("HyperProductStateLocus");
+    let first = "1111111111111111111111111111111111111111111111111111111111111111";
+    let second = "2222222222222222222222222222222222222222222222222222222222222222";
+    let tuple = serde_json::json!({"transitions": [
+        {"pre_state": first, "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "0"}]}, "post_state": first, "result": null},
+        {"pre_state": first, "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "1"}]}, "post_state": second, "result": null}
+    ]});
+    let empty_witnesses = serde_json::json!({"states": [], "automaton_state": "AQ", "witness_set": []});
+    let nonempty_witnesses = serde_json::json!({"states": [], "automaton_state": "AQ", "witness_set": [
+        {"states": [first, second], "automaton_state": "Ag"}
+    ]});
+    let member = serde_json::json!({"member": "components"});
+    for rule in CERTIFICATE_RULES {
+        let hyper_state_rule = matches!(
+            rule,
+            "initial-missing"
+                | "successor-missing"
+                | "not-partition"
+                | "backward-edge"
+                | "witness-fails"
+                | "malformed"
+                | "undefined-member"
+                | "violating-member"
+        );
+        for (at, expected) in [
+            (
+                &tuple,
+                matches!(rule, "undefined-member" | "violating-member"),
+            ),
+            (&empty_witnesses, hyper_state_rule),
+            (&nonempty_witnesses, hyper_state_rule),
+            (&member, rule == "malformed"),
+        ] {
+            let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
+            assert_eq!(rejection.is_valid(&cause), expected, "rule {rule} at {at}");
+        }
+    }
+    assert!(tuple_shape.is_valid(&tuple));
+    assert!(!state_shape.is_valid(&tuple), "tuple is not a state locus");
+    for at in [&empty_witnesses, &nonempty_witnesses] {
+        assert!(state_shape.is_valid(at));
+        assert!(!tuple_shape.is_valid(at), "state locus is not a tuple");
+        for field in ["states", "automaton_state", "witness_set"] {
+            let mut missing = at.clone();
+            missing.as_object_mut().expect("state object").remove(field);
+            assert!(
+                !state_shape.is_valid(&missing),
+                "empty universal key requires {field}"
+            );
+        }
+    }
+    for edge in 0..2 {
+        for field in ["pre_state", "transition", "post_state", "result"] {
+            let mut missing = tuple.clone();
+            missing["transitions"][edge]
+                .as_object_mut()
+                .expect("edge object")
+                .remove(field);
+            assert!(
+                !tuple_shape.is_valid(&missing),
+                "edge {edge} requires {field}"
+            );
+        }
+        for field in ["type", "operation", "receiver", "arguments"] {
+            let mut missing = tuple.clone();
+            missing["transitions"][edge]["transition"]
+                .as_object_mut()
+                .expect("transition object")
+                .remove(field);
+            assert!(
+                !tuple_shape.is_valid(&missing),
+                "transition {edge} requires {field}"
+            );
+        }
+    }
+    for result in [
+        serde_json::json!(null),
+        serde_json::json!({"type": "null"}),
+        serde_json::json!({"type": "boolean", "value": true}),
+    ] {
+        let mut with_result = tuple.clone();
+        with_result["transitions"][0]["result"] = result;
+        assert!(
+            tuple_shape.is_valid(&with_result),
+            "none and typed results are distinct admitted shapes"
+        );
+    }
+    for result in [
+        serde_json::json!(false),
+        serde_json::json!(0),
+        serde_json::json!({}),
+    ] {
+        let mut untyped = tuple.clone();
+        untyped["transitions"][0]["result"] = result;
+        assert!(!tuple_shape.is_valid(&untyped), "untyped result is refused");
+    }
+    for existential_count in 0..=2 {
+        let mut candidate = nonempty_witnesses.clone();
+        candidate["witness_set"][0]["states"]
+            .as_array_mut()
+            .expect("existential tuple")
+            .truncate(existential_count);
+        assert_eq!(
+            state_shape.is_valid(&candidate),
+            existential_count == 2,
+            "n=0 requires m>=2"
+        );
+    }
+    let mut protocol = tuple.clone();
+    protocol["transitions"][0]["transition"] = serde_json::json!({"type": "protocol-transition"});
+    assert!(!tuple_shape.is_valid(&protocol));
+    let mut extra_edge = tuple.clone();
+    extra_edge["transitions"][0]["extra"] = serde_json::json!(true);
+    assert!(!tuple_shape.is_valid(&extra_edge));
+    let mut extra_locus = tuple.clone();
+    extra_locus["automaton_state"] = serde_json::json!("AQ");
+    assert!(!tuple_shape.is_valid(&extra_locus));
+    let empty_tuple = serde_json::json!({"transitions": []});
+    assert!(!tuple_shape.is_valid(&empty_tuple));
+    assert!(!tuple_shape.is_valid(&serde_json::json!({})));
+    // A state-only projection can match the global state union, but must
+    // still be refused for an HP-1 body failure by the context-aware reader.
+    // That semantic obligation remains BP-13/14, not asserted by this test.
+    let projection = serde_json::json!({"states": [first, first]});
+    assert!(state_shape.is_valid(&projection));
+    assert!(!tuple_shape.is_valid(&projection));
+}
+
+/// The `at` forms FR-331 catalogues, spelled here independently of the schema
+/// and the vectors: a query part is `unrolling`, `base`, `step` or
+/// `step/<row>` (QSL FR-338's specified spelling); a proof step is `{part,
+/// index}`; a product state is `{model_state, automaton_state}`; a model
+/// state is its `{domain, digest}` record, in the state-key domain for every
+/// rule and in any domain for `malformed`; a state-graph entry is `{entry}`;
+/// a simulation step always carries `position`, `edge` and `verdict`, null
+/// when absent. Each rule is admitted exactly at the forms listed with it.
+#[trace("TC-431", "FR-331-AC-24", "FR-331-AC-25")]
+#[test]
+fn tc_431_certificate_loci_are_the_catalogued_spellings() {
+    let rejection = definition("CertificateRejected");
+    let part = definition("QueryPart");
+    let digest = "1111111111111111111111111111111111111111111111111111111111111111";
+    let model_state = serde_json::json!({"domain": "quire.simulation.state-key/v1", "digest": digest});
+    let verdict = serde_json::json!({"kind": "NoAbstractMatch", "position": "1"});
+    let foreign_state = serde_json::json!({"domain": "package-fingerprint",
+        "digest": "3333333333333333333333333333333333333333333333333333333333333333"});
+    let loci: [(Value, &[&str]); 11] = [
+        (serde_json::json!("step/3"),
+            &["query-mismatch", "shape-mismatch", "malformed", "not-refutation"]),
+        (serde_json::json!({"part": "step/3", "index": "7"}),
+            &["proof-step-invalid", "not-refutation"]),
+        (serde_json::json!({"model_state": model_state, "automaton_state": "AQ"}),
+            &["initial-missing", "successor-missing", "bad-state", "not-partition",
+              "backward-edge", "witness-fails", "shape-mismatch"]),
+        (model_state.clone(),
+            &["initial-missing", "successor-missing", "bad-state", "predicate-undefined",
+              "rank-missing", "rank-broken", "order-broken", "count-broken", "malformed"]),
+        (foreign_state.clone(), &["malformed"]),
+        (serde_json::json!({"domain": "", "digest": digest}), &[]),
+        (serde_json::json!({"entry": "2"}), &["malformed"]),
+        (serde_json::json!({"position": "0", "edge": null, "verdict": null}),
+            &["initial-mismatch", "successors-differ", "bad-state", "malformed"]),
+        (serde_json::json!({"position": "0", "edge": "1", "verdict": null}), &["post-differs"]),
+        (serde_json::json!({"position": "0", "edge": "1", "verdict": verdict}), &["step-fails"]),
+        (serde_json::json!("base"),
+            &["query-mismatch", "shape-mismatch", "malformed", "not-refutation"]),
+    ];
+    for (at, rules) in &loci {
+        for rule in CERTIFICATE_RULES {
+            let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
+            assert_eq!(rejection.is_valid(&cause), rules.contains(&rule), "rule {rule} at {at}");
+        }
+    }
+    for spelling in ["unrolling", "base", "step", "step/0", "step/7", "step/18446744073709551615"] {
+        assert!(part.is_valid(&serde_json::json!(spelling)), "{spelling} is a query part");
+    }
+    for spelling in ["Step", "loop", "step/", "step/01", "step/-1", "step/+1", "step/1.0",
+        "step/ 1", "step/1/2", "step/18446744073709551616", "base/0", "unrolling/0", "step3"] {
+        assert!(!part.is_valid(&serde_json::json!(spelling)), "{spelling} is not a query part");
+    }
+    let maximum = u64::MAX.to_string();
+    for length in 1..=maximum.len() + 1 {
+        for row in [format!("1{}", "0".repeat(length - 1)), "9".repeat(length)] {
+            let canonical = row.parse::<u64>().is_ok_and(|value| value.to_string() == row);
+            assert_eq!(part.is_valid(&serde_json::json!(format!("step/{row}"))), canonical,
+                "step/{row} is admitted exactly when {row} is a canonical u64");
+        }
+    }
+    // The member names and nesting of other spellings are refused at every rule.
+    for at in [
+        serde_json::json!({"state": digest, "automaton_state": "AQ"}),
+        serde_json::json!({"state": digest}),
+        serde_json::json!(digest),
+        serde_json::json!({"position": "0"}),
+        serde_json::json!({"position": "0", "edge": "1"}),
+        serde_json::json!({"entry": 2}),
+    ] {
+        for rule in CERTIFICATE_RULES {
+            let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
+            assert!(!rejection.is_valid(&cause), "rule {rule} at {at} is refused");
+        }
+    }
+    // FR-149's verdict is tagged by `kind`, with decimal-string integers.
+    let step_verdict = definition("StepVerdict");
+    for admitted in [
+        serde_json::json!({"kind": "InitialNotAbstract", "initial": "0"}),
+        serde_json::json!({"kind": "StutterChanged", "position": "2"}),
+        serde_json::json!({"kind": "AbstractStepRejected", "position": "2",
+            "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []},
+            "cause": {"kind": "Postcondition"}}),
+        serde_json::json!({"kind": "UndefinedEvaluation",
+            "where": {"position": "1", "state_key": model_state, "locus": "contract"}, "cause": "family"}),
+        serde_json::json!({"kind": "Undetermined", "cause": "UndecidedSuccessor",
+            "evaluation": {"outcome": "incomplete", "limit": "integer_bits"}}),
+    ] {
+        assert!(step_verdict.is_valid(&admitted), "{admitted} is a step verdict");
+    }
+    for refused in [
+        serde_json::json!({"kind": "StutterChanged", "position": 2}),
+        serde_json::json!({"kind": "Undefined", "position": "1"}),
+        serde_json::json!({"kind": "AbstractStepRejected", "position": "2",
+            "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []},
+            "cause": {"type": "Postcondition"}}),
+        serde_json::json!({"type": "replay-parity"}),
+        serde_json::json!({"kind": "Undetermined", "cause": "UndecidedSuccessor",
+            "evaluation": {"outcome": "incomplete"}}),
+    ] {
+        assert!(!step_verdict.is_valid(&refused), "{refused} is not a step verdict");
+    }
+}
+
+/// A proof-step locus's `index` admits exactly the canonical decimal
+/// spellings of `u64`: the schema's `U64String` agrees with Rust's `u64`
+/// parse at every digit of `u64::MAX`, at every length up to one past it,
+/// and on each non-canonical spelling.
+#[trace("TC-431", "FR-331-AC-24")]
+#[test]
+fn tc_431_proof_step_index_admits_exactly_the_u64_range() {
+    let pattern = definition("U64String");
+    let maximum = u64::MAX.to_string();
+    let mut samples: Vec<String> = ["", "00", "01", "-0", "-1", "+1", " 1", "1 ", "1.0", "1e3"]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+    for length in 1..=maximum.len() + 1 {
+        samples.push(format!("1{}", "0".repeat(length - 1)));
+        samples.push("9".repeat(length));
+    }
+    for prefix in 0..maximum.len() {
+        for digit in '0'..='9' {
+            for fill in ['0', '9'] {
+                let tail = maximum.len() - prefix - 1;
+                samples.push(format!(
+                    "{}{digit}{}",
+                    &maximum[..prefix],
+                    fill.to_string().repeat(tail)
+                ));
+            }
+        }
+    }
+    let mut admitted = 0;
+    for sample in samples {
+        let canonical = sample
+            .parse::<u64>()
+            .is_ok_and(|value| value.to_string() == sample);
+        assert_eq!(
+            pattern.is_valid(&Value::String(sample.clone())),
+            canonical,
+            "U64String admits {sample:?} exactly when it is a canonical u64"
+        );
+        admitted += usize::from(canonical);
+    }
+    assert!(admitted > 0, "some u64 spellings are exercised");
+    assert!(pattern.is_valid(&Value::String(maximum)), "u64::MAX");
+    assert!(
+        !pattern.is_valid(&Value::String("18446744073709551616".into())),
+        "u64::MAX + 1"
+    );
 }
 
 /// FR-331-AC-30: `memory_models` is a nonempty, duplicate-free subset of
@@ -848,5 +1485,24 @@ fn tc_431_the_arm_coupling_vectors_are_present() {
         "observed-undefined-evaluation-with-state-keys",
     ] {
         assert!(adverse.contains(name), "adverse vector {name}");
+    }
+}
+
+/// FR-331-AC-26: the global shape union cannot tell which checker a
+/// rejection belongs to, so a pairing that is well formed for one checker is
+/// admitted by the schema for a claim it does not fit. The reader's context
+/// binding is therefore not discharged by the schema: each pair below is
+/// schema-admitted, and the reader refuses it for a claim of the wrong form.
+#[trace("TC-431", "FR-331-AC-26")]
+#[test]
+fn tc_431_context_pairs_are_admitted_by_shape_alone() {
+    let rejection = definition("CertificateRejected");
+    let digest = "1111111111111111111111111111111111111111111111111111111111111111";
+    for (rule, at) in [
+        ("inequality-fails", serde_json::json!({"product_key": "AQ"})),
+        ("successor-missing", serde_json::json!({"domain": "quire.simulation.state-key/v1", "digest": digest})),
+    ] {
+        let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
+        assert!(rejection.is_valid(&cause), "{rule} at {at} is a well-formed pair");
     }
 }
