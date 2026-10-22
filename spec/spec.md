@@ -572,6 +572,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-075
     type: contains
+  - target: ix://agent-ix/quire-specification/NFR-076
+    type: contains
   - target: ix://agent-ix/quire-specification/IT-070
     type: contains
   - target: ix://agent-ix/quire-specification/IT-071
