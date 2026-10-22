@@ -223,9 +223,14 @@ evaluator-owned value identity in the `quire.value.compound-unit/v1` domain.
 Its JCS preimage is `{ version: quire.value.compound-unit/v1, terms }`, where
 `terms` is the ascending list of admitted I04 canonical root-unit node IDs with
 their nonzero mathematical integer exponents. The empty list is the
-dimensionless unit. This digest is not an I04 checked-semantic node, graph
-reference, declaration or source-mapped authority, and evaluation does not
-insert it into the checked package. Its closed schema and vectors are selected
+dimensionless unit. This runtime value digest is not an I04 checked-semantic
+node key, graph reference, declaration or source-mapped authority, and
+evaluation does not insert it into the checked package. A compound unit that
+a checked source type forms is a separate thing: the I04
+`scalar_type`/`compound_unit` node of FR-322 "Derived type forms and
+forwarding", keyed by FR-322's structural node preimage, whose terms follow
+this order. Neither identity is derived from the other. The value
+identity's closed schema and vectors are selected
 by `quire.value.complete/v1`. An explicit later conversion may select a
 compatible declared I04 unit; multiplication never guesses one from a matching
 name or scale. For an integer exponent, `x^0` is exactly one for every `x`,

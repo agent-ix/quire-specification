@@ -140,8 +140,9 @@ order):
    (`missing_import`) and `wrong-model-selection` (`invalid_model_binding`); then the first FR-154 intake or
    `quire.model.complete/v1` normalization refusal in FR-154's report order;
 3. graph-shape refusals of FR-322 (`invalid_semantic_graph`): an application
-   node whose `semantic_form` contradicts its body or whose dependency list is
-   not exactly the derived one;
+   node whose `semantic_form` contradicts its body, and any node whose
+   `dependencies` list is not exactly the one FR-322's `dependencies` rules
+   derive;
 4. `stale-node-key` (`invalid_package`), at the first application node in
    ascending retained node-id digest order whose retained key differs from the
    JCS SHA-256 of its `quire.application-node/v1` preimage;
