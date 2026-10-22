@@ -83,6 +83,7 @@ closed computation that replay repeats.
 | An undecided successor, no initial state, an item with zero instances, an induction not closed at its depth (a step counterexample, or the solver's own undecided answer to a base, step or search query at that depth, ordered after the other stops as FR-363 "Undecided k-induction runs" states), replay disagreement or replay refusal | `inconclusive` | `unsettled` | `undecided-successor`, `no-initial-state`, `no-instance`, `induction-not-closed`, `replay-parity` or `replay-refused` |
 | A run limit, meter or time budget stopped the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `limit-reached{limit, value, setting}` |
 | The caller cancelled the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled{source}` |
+| The backend's own wall-clock limit expired, or the backend overran the request's `deadline_ms` | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `timed-out` |
 | HP-4, or a clause over `behaviours` under a profile other than infinite-trace | `unsupported` | `unavailable` | `unsupported_projection`/`unsupported-requested-capability` |
 
 A **matched fair universal tuple of an instance is established** exactly when the

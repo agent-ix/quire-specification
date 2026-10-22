@@ -56,3 +56,21 @@ The new FR-363 paragraph that tells a reader to retry at a larger depth only aft
 ## Verdict
 
 Changes requested. The verdict-table rows in FR-363 and FR-399 match QSL #1282's ADR-018 V-6 and FR-182, the ids are unique, the lead defaults are flagged and both gates pass. FND-001 must be fixed before merge: the retry paragraph adds a rule no reader can follow, and it reintroduces the sentence QSL deleted, so the two specs would disagree again. FND-002 and FND-003 should be fixed in the same round. FND-004 to FND-006 are small additions. The head also needs origin/main c323199f merged in, which merges cleanly.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-007 | low | FR-399's verdict table has no row for a stop under the backend's own wall-clock limit or an overrun of `deadline_ms`. FR-399-AC-12 and TC-340 VS-07 (4374ec62) now test that this stop settles `incomplete`, `timed-out`, and FR-363 "Undecided k-induction runs" item 2 and QSL #1288's V-7 `Incomplete(TimedOut)` agree. But FR-399's two stop rows give only `limit-reached` ("a run limit, meter or time budget") and `cancelled{source}`, so the AC tests an outcome the table does not state. Fix: add `timed-out` to FR-399's stop rows, with label `failed` and execution `resource-incomplete`. | spec/functional/analysis/FR-399-settle-hyperproperty-results.md:84-85 |
+| FND-008 | low | TC-294 step 9's safety claim `on each always[0,1] holds(c.versionNumber >= 0)` holds for every state of the declared type `Int[0, 1000]`. Its step case therefore always closes, and the first vector (a step counterexample to induction) cannot come from a real backend, only from an injected outcome. Fix: use a claim that is true on reachable states but not inductive over the declared type, for example `on each always[0,1] holds(c.versionNumber <= 2)` together with a step case whose counterexample starts at an unreachable `versionNumber` of 3 or more, or say that the vectors inject the backend outcome. | spec/test-cases/TC-294-verdict-strength-and-stopped-runs.md:41-48 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 (fix diff 39c06f23..4374ec62): the retry paragraph is gone. FR-363 now says `induction-not-closed` "means only that the induction is not closed at `k`; it does not say whether the step case had a counterexample or the solver did not decide", which matches ADR-018 V-6 in QSL #1282 and #1288. |
+| FND-002 | fixed | Round 1: the new "Undecided k-induction runs" section orders the stops: a tripped cancellation handle, the caller's own deadline included, gives `cancelled{source}` with `source` `requested` or `deadline`; then the backend's own wall-clock limit or an overrun of the request's `deadline_ms` gives `timed-out`; then a named request limit (time budget included) gives `limit-reached`; and only the solver's own `unknown` (an unnamed internal stop included) gives `induction-not-closed`. This is the same order and the same causes as QSL #1288 (09a19b63) ADR-018 V-6 and FR-182 stop list 1-4. FR-363-AC-10 and TC-294 step 9 test the time-budget, `deadline_ms`, requested-cancellation and caller-deadline cases, and `unknown` together with the caller's deadline, where rule 1 wins. |
+| FND-003 | fixed | Round 1: TC-294 step 9 now uses the safety claim `on each always[0,1] holds(c.versionNumber >= 0)`, a bounded `on each` claim. A remaining low issue with this vehicle is recorded as FND-008. |
+| FND-004 | fixed | Round 1: FR-363 states that a per-step refinement query (FR-468) is not a k-induction run, so a solver `unknown` on it keeps `solver-inconclusive`, and only its step counterexample settles `induction-not-closed{depth: 1}`. This agrees with FR-468:98,100. |
+| FND-005 | fixed | Round 1: FR-363-AC-10 and TC-294 step 9 add the `unknown` on the search query at depth 2. |
+| FND-006 | fixed | Round 1: FR-399-AC-12 and TC-340 VS-07 add a stop under a named request limit (`failed`, `resource-incomplete`, `limit-reached`), the caller's own deadline (`cancelled{source: deadline}`) and a `deadline_ms` overrun (`timed-out`), each never `induction-not-closed`, in FR-363's order. |

@@ -39,9 +39,14 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
    universe list for `config_history`; then with only unrelated populations;
    then with `config_history` given no universe.
 9. Over the same subject, take the safety claim `on each always[0,1]
-   holds(c.versionNumber >= 0)` (a bounded claim activated `on each`) and
-   settle a k-induction run of it at depth 2 whose step case has a
-   counterexample to induction; then one whose solver returns `unknown` on
+   holds(c.versionNumber >= 0)` (a bounded claim activated `on each`). Its
+   step case closes over `Int[0, 1000]`, so no solver run yields a step
+   counterexample, and an undecided answer or a stop cannot be produced on
+   demand. Each run below is therefore settled from an injected backend
+   outcome, a k-induction result handed to the settlement in place of a
+   solver run, and the vectors check the settlement, not the solver. Settle
+   a k-induction outcome at depth 2 whose step case has a counterexample to
+   induction; then one whose solver returns `unknown` on
    the base query; then on the step query; then on the search query; then
    one whose solver stops for a resource internal to it that no request
    limit names; then one stopped by the request's named time budget; then
