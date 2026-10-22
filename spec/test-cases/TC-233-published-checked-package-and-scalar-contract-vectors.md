@@ -82,11 +82,14 @@ diamond reaches one identity at distinct real IDs, and that the reference's
 package is in the derived closure but absent from the importer's direct entries.
 With one direct dependency, name its transitive-only selection in a
 `dependency_reference` and require `missing_declaration`/`missing-selection`,
-even though the named package is in the derived closure. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Read
-a package whose function calls a dependency `function` returning `Boolean`
-through a `dependency_reference` callee, with its dependency package supplied,
-and then its FR-322-AC-37 mutations: no dependency package supplied, a
-`package` absent from `dependency_selections`, a `node` with no
+even though the named package is in the derived closure. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Validate
+`fixtures/positive-dependency-library.json` and recompute its `package_id`,
+then read `fixtures/positive-dependency-call.json`, whose function calls the
+library's `Int[0, 9] -> Boolean` function through a `dependency_reference`
+callee, with the library supplied under its identity, and then apply each
+FR-322-AC-37 mutation `dependency-call-vectors.json` publishes, recomputing
+node keys and the `package_id` after the patch: no dependency package
+supplied, a `package` absent from `dependency_selections`, a `node` with no
 `declaration`, a `node` naming a declared record or a function returning one,
 a function over `Set<R>` and one over a tuple holding `R` for a declared
 record `R`, a function over `Reference<M::T>` for a model type `M::T`,
@@ -361,6 +364,18 @@ projection entry patched and `package_id` recomputed (FR-322-AC-54).
 | NS-03 | a `composite_type`/`record` and a `scalar_type`/`enum` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | SE-20 | literal of `value_kind` `uuid` typed by a `string` type with an uppercase value; literal of `value_kind` `timestamp` typed by an `integer` type with value `01` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-67 |
 
+### Structural node preimage vectors
+
+Build each preimage exactly as FR-322 "Structural node preimage" spells it and hash its RFC 8785 bytes.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| SP-01 | P4: `value`/`parameter`, name `x`, level `0`, `semantic_type` the `Int[0, 9]` node, `declaration` and `recursion` `null`, no `owner` | Key `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda` | FR-322-AC-97 |
+| SP-02 | P4 with level `1`; P4 with name `y` | Each key differs from SP-01's and from the other's | FR-322-AC-97 |
+| SP-03 | U2: `scalar_type`/`compound_unit` over `U_metre` exponent `1` and `U_second` exponent `-1`, self-typed | Key `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7` | FR-322-AC-97 |
+| SP-04 | A `value`/`parameter` node whose body binds `level` before `name`; one with a third binding | Each fails the V2 schema; `malformed_wire` | FR-322-AC-97 |
+| SP-05 | Every `value`/`parameter` node of every published positive fixture | Its `node_id` is the key of its preimage; the full reader admits each fixture | FR-322-AC-97 |
+
 ### Event type vectors
 
 The owner join, projection and equality behaviour of an event type (FR-322-AC-68) and record conformance (FR-322-AC-69) are decided by TC-281's `EV-` and `RCF-` vectors.
@@ -423,10 +438,15 @@ recorded outcome and loci. The new closure vectors record the diamond's two
 dependency paths and its `invalid_package`/`conflicting-definition` refusal,
 and the transitive-only reference's `missing_declaration`/`missing-selection`
 refusal. Their reader outcomes remain planned until the IR implementation
-lands. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency call package is admitted, and its
-mutations refuse `missing_import`/`missing-selection`,
-`missing_declaration`/`missing-selection`, `missing_declaration`/`missing-name`,
-`ill_typed`/`operator-ineligible` (seven times) and `invalid_semantic_graph`. Every catalog entry names an authored
+lands. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency library is admitted with its recorded `package_id`,
+and the dependency call package that selects it by that id is admitted with it
+supplied. Each published mutation passes the V2 schema and refuses
+`missing_import`/`missing-selection` at the selection entry,
+`missing_declaration`/`missing-selection` at the term's `package`,
+`missing_declaration`/`missing-name` at its `node`,
+`ill_typed`/`operator-ineligible` (seven times) at the term, and
+`invalid_semantic_graph` at the node's `dependencies`, each exactly as its
+vector records. Every catalog entry names an authored
 artifact, and every selection vector is admitted or refused with exactly
 its recorded selection code. The published fixture's frame node is admitted
 with no defect; every frame-entry meaning-join and canonical-order mutation
