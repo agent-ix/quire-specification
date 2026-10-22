@@ -189,7 +189,7 @@ members not listed for a kind being absent:
 | `receiver` | `attempt`, `cattempt` | the receiver reference |
 | `arguments` | `attempt`, `cattempt` | the argument vector, in parameter order |
 | `record` | `event`, `send`, `receive`, `finish`, `activate` | the bound record or payload |
-| `actor` | a step by a replicated role | the acting instance's object reference |
+| `actor` | a step taken by an instance of a replicated role, `send` and `receive` it owns included | the acting instance's object reference |
 | `channel` | `duplicate`, `lose` | the channel's qualified name and instance ordinal |
 | `entry` | `duplicate`, `lose` | the queue entry |
 | `template`, `registration` | `cattempt`, `cend` | the template's qualified name and the registration key |
