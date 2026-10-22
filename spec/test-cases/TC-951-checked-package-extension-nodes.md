@@ -17,7 +17,7 @@ Show that a checked package carries a selected extension's declaration form
 as the `extension`/`extension_form` node FR-469 specifies, that its key binds
 the definition, node kind, name, owner and clause subnodes and not its source
 span, and that the V2 reader refuses each broken join with its named code,
-cause and pointer. Scope: FR-469-AC-1 to FR-469-AC-9.
+cause and pointer. Scope: FR-469-AC-1 to FR-469-AC-10.
 
 ## Preconditions
 
@@ -64,7 +64,8 @@ keeps every other member, recomputes every changed node key, patches the
 | X15 | A declared record `Audit` added beside the form | `refused { code: ambiguous_declaration, cause: ambiguous-name }` at the later of the two nodes in node-id order (FR-469-AC-6) |
 | X16 | A second held, selected extension `quota` (node kind `quota`, clause `limit: Int[1, 100]`) and a form `quota Q { limit: 5 }` | admitted under both unchanged V2 schemas with tag `extension` and form `extension_form` (FR-469-AC-7) |
 | X17 | The fixture and `positive-all-families.json`, and the fixture read by a reader that does not hold the `retention` definition | `lock.required_features` holds no definition identity of `lock.definition_selections` in either package; the unheld read is `unknown_required_capability`, never `unknown_required_feature` (FR-469-AC-8) |
-| X18 | `extension-definitions.json` against its schema and FR-467's member pairing; each `extension-definition-vectors.json` vector: the named fixture read with the published definitions its lock selects, less the `withheld` references | the file meets its schema, one entry per reference in reference order, each production paired with a node entry of its clause names; XD-01 and XD-03 admitted; XD-02 and XD-04 `refused { code: unknown_required_capability }` with no cause, the stated `locus` and `document_pointer` (FR-469-AC-9) |
+| X18 | `extension-definitions.json` against its schema and FR-467's member pairing | the file meets its schema, one entry per reference in reference order, each production paired with a node entry of its clause names (FR-469-AC-9) |
+| X19 | Each `extension-definition-vectors.json` vector: the named fixture read with every published definition its lock selects held, less the `withheld` references | XD-01 and XD-03 admitted; XD-02 and XD-04 `refused { code: unknown_required_capability }` with no cause, the stated `locus` and `document_pointer` (FR-469-AC-10) |
 
 ## Expected Results
 

@@ -47,6 +47,14 @@ Units examined:
 
 One minor EARS finding (compound statement).
 
+## New findings (disposition pass 2)
+
+Reviewed on QSpec PR #365 (the restore of #341 after revert #363), head b0ad3e9dc8e3f153b9e52764d4c5bc34d79ca585. Examined: the FR-469 "Published definitions" property, FR-469-AC-9 and TC-951 X18. The restored #341 text is unchanged from #341. The new property uses no status or changelog language.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-002 | low | Minor: FR-469-AC-9 is compound. It holds a publication check (the file meets its schema, one entry per reference in order, production and node-entry pairing) and a reader check (four vector outcomes) in one criterion. Split it into a publication AC and a withheld-definition AC so that each one can fail on its own. | spec/objects/interfaces/FR-469-checked-package-extension-nodes.md:190 |
+
 ## Dispositions
 
 Round 1, reviewed at e75fc63294fd81b2a8d46e9d1c241a9018be3b29. FR-469 and TC-951 validate clean.

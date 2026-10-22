@@ -112,20 +112,28 @@ joins below do not hold with the refusal this requirement names, in
   `DefinitionRef` `{authority, identity}` as a
   `lock.definition_selections` entry spells it. `definition` is exactly the
   definition's two FR-467 members `{grammar_schema, typed_node_schema}` in
-  FR-467's "Members" shape, with no other member. The file publishes
-  `retention` (FR-467-AC-1) and the `quota` and `policy` definitions of
-  TC-951. A conformance reader of a published fixture holds, for each
-  `lock.definition_selections` entry of the fixture, the published
+  FR-467's "Members" shape, with no other member. The file publishes no
+  dependency edges: the reader holds caller-validated definitions, and FR-467
+  validation, including its `definition-cycle` rule over the dependency
+  edges, happens before a definition is held, outside the reader. A
+  definition's clause typed by another extension's node kind, as `policy`'s
+  `retain` clause is typed by the `retention` node kind, is therefore checked
+  by join 5 against the subnode in the graph, never against an edge. The
+  file publishes `retention` (FR-467-AC-1) and the `quota` and `policy`
+  definitions of TC-951. A conformance reader of a published fixture holds,
+  for each `lock.definition_selections` entry of the fixture, the published
   definition whose `reference` equals it, and holds no definition the file
-  does not publish; a selection with no published definition is not an
-  extension definition and is not held. The definitions are reader input
-  under join 2 below, never fixture data, so loading them changes no fixture
-  byte, node id or `package_id`. `extension-definition-vectors.json` names
-  the definitions file and lists withheld-definition controls: each vector
-  names a fixture, the references the reader withholds, and the expected
-  result, either `admitted` or the `unknown_required_capability` refusal
-  with `cause` `null`, the extension node's `node_id` as `locus` and
-  `/semantic_graph/nodes/{i}/body/definition` as `document_pointer`.
+  does not publish; a selection with no published definition is not held.
+  The definitions are reader input under join 2 below, never fixture data,
+  so loading them changes no fixture byte, node id or `package_id`.
+  `extension-definition-vectors.json` names the definitions file and lists
+  withheld-definition controls: each vector names a fixture, the references
+  the reader withholds, and the expected result, either `admitted` or the
+  `unknown_required_capability` refusal with `cause` `null`, the extension
+  node's `node_id` as `locus` and
+  `/semantic_graph/nodes/{i}/body/definition` as `document_pointer`. Its
+  relative paths, the `definitions` file and each vector's `fixture`,
+  resolve against `proposals/checked-package-v2/`.
 
 ## Reader joins
 
@@ -187,7 +195,8 @@ FR-322's `invalid_semantic_graph` at `/dependencies`, at the graph-shape step.
 | FR-469-AC-6 | An inline `literal` clause value, an `extension` node with a second occurrence or an `expression` occurrence, and an `extension` node with a form other than `extension_form` each fail the V2 schema and refuse `malformed_wire`; a `dependencies` list missing a clause target refuses `invalid_semantic_graph` at `/dependencies`; a record `Audit` beside the form `Audit` refuses `ambiguous_declaration`/`ambiguous-name` at the later node in node-id order. | Test (TC-951) |
 | FR-469-AC-7 | The node kind is body data: a second extension with node kind `quota` uses the same `extension`/`extension_form` tag and form, and both V2 schemas admit it without change. | Test (TC-951) |
 | FR-469-AC-8 | The published packages that carry the `retention` form list the `retention` definition in `lock.definition_selections` and list no definition identity in `lock.required_features`; a reader that does not hold the definition refuses `unknown_required_capability`, never `unknown_required_feature`. | Test (TC-951) |
-| FR-469-AC-9 | `extension-definitions.json` meets `extension-definitions.schema.json`, lists one entry per `reference` in reference order, and gives each production of each definition a node entry of the same `keyword` listing the production's clause names in order; reading `positive-extension-nodes.json` and `positive-all-families.json` with the published definitions their locks select held admits both, and withholding `retention` refuses each `unknown_required_capability` with no cause, the `Audit` node's `node_id` as `locus` and that node's `/semantic_graph/nodes/{i}/body/definition` as `document_pointer`, exactly as `extension-definition-vectors.json` states. | Test (TC-951) |
+| FR-469-AC-9 | `extension-definitions.json` meets `extension-definitions.schema.json`, lists one entry per `reference` in reference order, and gives each production of each definition a node entry of the same `keyword` listing the production's clause names in order. | Test (TC-951) |
+| FR-469-AC-10 | Reading `positive-extension-nodes.json` and `positive-all-families.json` with the published definitions their locks select held admits both, and withholding `retention` refuses each `unknown_required_capability` with no cause, the `Audit` node's `node_id` as `locus` and that node's `/semantic_graph/nodes/{i}/body/definition` as `document_pointer`, exactly as `extension-definition-vectors.json` states. | Test (TC-951) |
 
 ## Dependencies
 

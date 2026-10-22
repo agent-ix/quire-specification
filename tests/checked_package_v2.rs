@@ -15322,19 +15322,29 @@ fn extension_definition(identity: &str) -> Value {
     json!({"authority": "example", "identity": identity})
 }
 
-/// The published FR-467 extension definition under `{example, identity}`,
-/// held as the reader holds it: its `typed_node_schema` node entries.
-fn published_extension(identity: &str) -> HeldExtension {
-    let reference = extension_definition(identity);
-    let published = parsed_fixture(EXTENSION_DEFINITIONS);
-    let entry = published["definitions"]
+/// Every entry of `extension-definitions.json`, held as the reader holds a
+/// definition: its reference and its `typed_node_schema` node entries.
+fn published_extensions() -> Vec<HeldExtension> {
+    parsed_fixture(EXTENSION_DEFINITIONS)["definitions"]
         .as_array()
         .expect("published definitions are an array")
         .iter()
-        .find(|entry| entry["reference"] == reference)
-        .unwrap_or_else(|| panic!("extension-definitions.json publishes {identity}"));
+        .map(held_entry)
+        .collect()
+}
+
+/// The published FR-467 extension definition under `{example, identity}`.
+fn published_extension(identity: &str) -> HeldExtension {
+    let reference = extension_definition(identity);
+    published_extensions()
+        .into_iter()
+        .find(|held| held.definition == reference)
+        .unwrap_or_else(|| panic!("extension-definitions.json publishes {identity}"))
+}
+
+fn held_entry(entry: &Value) -> HeldExtension {
     HeldExtension {
-        definition: reference,
+        definition: entry["reference"].clone(),
         nodes: entry["definition"]["typed_node_schema"]["nodes"]
             .as_array()
             .expect("typed_node_schema nodes")
@@ -16306,7 +16316,7 @@ fn tc_951_a_selected_extension_is_carried_by_definition_selections_not_required_
 
 #[trace("TC-951", "FR-469-AC-9")]
 #[test]
-fn tc_951_published_definitions_are_fr_467_members_and_withholding_one_refuses_its_fixture() {
+fn tc_951_published_definitions_meet_their_schema_and_pair_fr_467_members() {
     let published = parsed_fixture(EXTENSION_DEFINITIONS);
     let schema = jsonschema::validator_for(&parsed_fixture(EXTENSION_DEFINITIONS_SCHEMA))
         .expect("extension definitions schema is valid");
@@ -16348,9 +16358,14 @@ fn tc_951_published_definitions_are_fr_467_members_and_withholding_one_refuses_i
             assert_eq!(json!(names), production["clauses"], "clause names in production order");
         }
     }
+}
+
+#[trace("TC-951", "FR-469-AC-10")]
+#[test]
+fn tc_951_withholding_a_published_definition_refuses_its_fixture() {
     let vectors = parsed_fixture(EXTENSION_DEFINITION_VECTORS);
     assert_eq!(vectors["definitions"], "extension-definitions.json");
-    let all = [held_policy(), held_quota(), held_retention()];
+    let all = published_extensions();
     for vector in vectors["vectors"].as_array().expect("vectors") {
         let id = vector["id"].as_str().expect("vector id");
         let package = match vector["fixture"].as_str() {
