@@ -374,8 +374,9 @@ naming it and the selected protocol profile
 This is the one reader order for the protocol nodes; FR-465 and FR-466 name
 the checks each member runs and defer the order to this section. The protocol
 step runs after the state step ([FR-341](FR-341-checked-package-state-clause-body.md)
-"Reader order"), the temporal step ([FR-370](FR-370-checked-package-temporal-clause-body.md))
-and the abstraction step, and before any operation refusal
+"Reader order") and every other body step of FR-322 "Body steps" (the
+state-graph, temporal ([FR-370](FR-370-checked-package-temporal-clause-body.md))
+and abstraction steps among them), and before any operation refusal
 ([FR-322](FR-322-checked-package-artifact.md)). Strict wire validation, which
 refuses a nested protocol application and, for a protocol application, a
 layout, term shape or enumerated value outside its operator's layout
