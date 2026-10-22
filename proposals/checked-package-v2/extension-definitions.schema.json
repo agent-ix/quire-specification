@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:quire:checked-package-extension-definitions:v2",
+  "title": "Published FR-467 extension definitions held by a checked-package reader",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["definitions"],
+  "properties": {
+    "definitions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/HeldDefinition"}
+    }
+  },
+  "$defs": {
+    "Text": {"type": "string", "minLength": 1},
+    "DefinitionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "identity"],
+      "properties": {
+        "authority": {"$ref": "#/$defs/Text"},
+        "identity": {"$ref": "#/$defs/Text"}
+      }
+    },
+    "HeldDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference", "definition"],
+      "properties": {
+        "reference": {"$ref": "#/$defs/DefinitionRef"},
+        "definition": {"$ref": "#/$defs/ExtensionDefinition"}
+      }
+    },
+    "ExtensionDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grammar_schema", "typed_node_schema"],
+      "properties": {
+        "grammar_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["productions"],
+          "properties": {
+            "productions": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["keyword", "clauses"],
+                "properties": {
+                  "keyword": {"$ref": "#/$defs/Text"},
+                  "clauses": {"type": "array", "items": {"$ref": "#/$defs/Text"}}
+                }
+              }
+            }
+          }
+        },
+        "typed_node_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["nodes"],
+          "properties": {
+            "nodes": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["keyword", "node_kind", "clauses"],
+                "properties": {
+                  "keyword": {"$ref": "#/$defs/Text"},
+                  "node_kind": {"$ref": "#/$defs/Text"},
+                  "clauses": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["name", "type"],
+                      "properties": {
+                        "name": {"$ref": "#/$defs/Text"},
+                        "type": {"$ref": "#/$defs/Text"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
