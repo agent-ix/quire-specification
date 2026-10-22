@@ -69,6 +69,7 @@ Admission refusals, in order:
 
 | Check | Refusal |
 | --- | --- |
+| The selection's domain package identity is not the reserved identity `quire/native` | `invalid_model_binding`/`malformed-declaration` |
 | The digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` |
 | The package input supplies bytes under the selected digest | `missing_import`/`missing-selection` |
 | The package's own identity equals the selection's | `invalid_model_binding`/`wrong-model-selection` |
@@ -81,6 +82,8 @@ Declaration refusals:
 | A type definition's or population node's `kind` names no entry of the `constructs` table, or its construct has no `meaning` or a `meaning` that is not a Quire meaning id (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An IR node is not valid for its construct's meaning, including a reference that names a node of the wrong meaning and a `supertypes` entry that names a node of another meaning (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An operation parameter's `name` is absent, is not a string, is empty, does not match `^[A-Za-z][A-Za-z0-9_]*$`, or differs from the last segment of the parameter's identity `<operation identity>/<param>`, on a parameter not refused as a repeated identity of its operation (checked after that row and before the frame entries) | `invalid_model_binding`/`malformed-declaration` |
+| A field, parameter or result `typeRef` of the form `ix://quire/native/<Name>` whose `<Name>` is not a native value type name, or a `typeRef` of any other form that is not `ix://<package identity>/<artifact id>` | `invalid_model_binding`/`malformed-declaration` |
+| A field, parameter or result `typeRef` names `ix://quire/native/Rational`, `ix://quire/native/Decimal` or `ix://quire/native/Text` without every parameter of that type's `type-ref` production | `unsupported_construct`/`declaration-form` |
 | A supertype, field type, subsets, redefines, relationship end, frame entry, population member, `occurrenceField`, transition `from`, `to`, `trigger`, `guard` or `emits` entry, step `consumes` or `emits` entry, `persists` entry or namespace `members` entry names no node or member of the package | `missing_declaration`/`missing-name` |
 | A node of a business model meaning (FR-208) declares a form that meaning does not support: a non-empty `supertypes` or a `quire` clause of a persistence interface or namespace, an operation of a record value type, or an operation contract of a persistence interface | `unsupported_construct`/`declaration-form` |
 | A case of a variant type (FR-208) has a `payloadType` that resolves | `unsupported_construct`/`declaration-form` |
@@ -138,6 +141,29 @@ variants refusals name these members:
   of both colliding cases, including an earlier case whose identity is not its
   slot identity (`[Silver, Gold]` with `Silver` carrying `Gold`'s identity):
   exactly one refusal is reported.
+
+A field `typeRef`, an operation parameter's `typeRef` and an operation result's
+`typeRef` each name either a native value type or a type of the package, and
+no other form is read. A native value type is named
+`ix://quire/native/<Name>`, where `<Name>` is exactly one of `Boolean`,
+`Integer`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `String`,
+`UUID` and `Timestamp`, compared byte for byte. These are the value-type
+keywords of the shared grammar's `type-ref` production together with
+`String`, `UUID` and `Timestamp`, whose member types FR-322 states. A native
+reference declares no node: intake builds no declaration for it, no
+declaration key names the identity `quire/native`, and it resolves the same
+way in every package. A package type is named `ix://<package
+identity>/<artifact id>`, so a package type whose artifact id equals a native
+name (`ix://test/orders/Integer`) is a different type from the native one and
+the two never collide. The domain package identity `quire/native` is
+reserved: a selection that names it refuses before any other admission check,
+so no package can declare a node whose identity reads as a native reference.
+`Rational`, `Decimal` and `Text` resolve only with every parameter of their
+`type-ref` production. A constraint, such as a `min` or `max`, on a field typed
+by a native value type applies to that field, and intake mints no type node
+for the constrained field. A refusal of a `typeRef` names the field node and
+`Field.typeRef`, the operation node and `Operation.params[i].typeRef`, or the
+operation node and `Operation.returns.typeRef`.
 
 A field `typeRef`, an operation parameter or an operation result that names a
 variant type is admitted and raises no refusal of its own (FR-208), including
@@ -290,6 +316,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-13 | Two fields of one owner, two operations of one owner, a field and an operation of one owner, two parameters of one operation and two variant cases of one type that share one identity each refuse once, `invalid_model_binding`/`conflicting-binding`, naming the shared identity at the later member's path: `TypeDefinition.fields[j]`, `TypeDefinition.operations[k]` (the operation, for a field and an operation), `TypeDefinition.operations[k].params[s]` and `TypeDefinition.variants[i]`; the refusal carries the code, cause, shared identity and path only, and the collision suppresses the identity, origin and payload checks of both colliding cases (FR-154-AC-11 and FR-208-AC-15 apply to a case not already refused by a collision), so exactly one refusal is reported whichever of the two cases carries the correctly minted identity, and no declaration of the package is admitted. The same members with distinct identities are admitted, and one member name used in two different owners is two distinct identities and no collision. | Test (TC-235) |
 | FR-154-AC-14 | An operation parameter whose `name` is absent, not a string, null, empty, begins with a digit, contains a separator or differs from the last segment of its identity, and which is not one of two parameters sharing an identity, refuses `invalid_model_binding`/`malformed-declaration` at the selection row, naming the operation's identity and `TypeDefinition.operations[k].params[s].name`; two parameters of one operation with one identity refuse once, `invalid_model_binding`/`conflicting-binding`, naming the shared parameter identity at the later parameter's `TypeDefinition.operations[k].params[s]`, and that collision suppresses the name check of both, so a malformed name on either colliding parameter is not reported; distinct valid names, including names differing only in letter case, are admitted and no relationship declaration outcome changes. | Test (TC-280) |
 | FR-154-AC-16 | An operation whose `Operation.redefines` names a supertype's operation (`Sub/size` naming `Order/size`) is admitted with that redefinition. The same operation with its `redefines` member removed redefines nothing, and so does one whose redefinition is listed only in an extension payload of its owning type, `required` true or false when the consumer admits the extension; a consumer that does not admit a `required` extension refuses the document before intake, `unknown_required_feature`/`unsupported-feature` at the owning type node and its `extensions` member. An `Operation.redefines` naming no node of the package refuses `missing_declaration`/`missing-name` at the operation node and `Operation.redefines`. | Test (TC-280) |
+| FR-154-AC-17 | A field typed `ix://quire/native/Integer`, a field typed `ix://quire/native/Timestamp` and a field typed `ix://quire/native/UUID` are admitted, each resolving to that native value type, with no declaration built and no declaration key naming `quire/native`; a package type with artifact id `Integer` is admitted beside them and a field typed `ix://test/orders/Integer` resolves to that package type, not to the native `Integer`. A field typed `ix://quire/native/Int`, `ix://quire/native/integer` or `ix://quire/native/JsonObject`, or typed `Integer` with no URI, refuses `invalid_model_binding`/`malformed-declaration` at the field node and `Field.typeRef`; a field typed `ix://quire/native/Decimal` with no `digits` and `scale` refuses `unsupported_construct`/`declaration-form` at the field node and `Field.typeRef`; a selection naming the identity `quire/native` refuses `invalid_model_binding`/`malformed-declaration` at its selection row before its digest domain or bytes are read, and builds no declaration. | Test (TC-234) |
 
 ## Dependencies
 
