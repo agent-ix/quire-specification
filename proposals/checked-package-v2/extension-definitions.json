@@ -1,0 +1,58 @@
+{
+  "definitions": [
+    {
+      "reference": {"authority": "example", "identity": "policy"},
+      "definition": {
+        "grammar_schema": {
+          "productions": [{"keyword": "policy", "clauses": ["retain"]}]
+        },
+        "typed_node_schema": {
+          "nodes": [
+            {
+              "keyword": "policy",
+              "node_kind": "policy",
+              "clauses": [{"name": "retain", "type": "retention"}]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "reference": {"authority": "example", "identity": "quota"},
+      "definition": {
+        "grammar_schema": {
+          "productions": [{"keyword": "quota", "clauses": ["limit"]}]
+        },
+        "typed_node_schema": {
+          "nodes": [
+            {
+              "keyword": "quota",
+              "node_kind": "quota",
+              "clauses": [{"name": "limit", "type": "Int[1, 100]"}]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "reference": {"authority": "example", "identity": "retention"},
+      "definition": {
+        "grammar_schema": {
+          "productions": [{"keyword": "retention", "clauses": ["subject", "days"]}]
+        },
+        "typed_node_schema": {
+          "nodes": [
+            {
+              "keyword": "retention",
+              "node_kind": "retention",
+              "clauses": [
+                {"name": "subject", "type": "Text"},
+                {"name": "days", "type": "Int[1, 3650]"}
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

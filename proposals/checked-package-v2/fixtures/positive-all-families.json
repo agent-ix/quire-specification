@@ -14,7 +14,12 @@
     "entries": []
   },
   "identity_preimage": {
-    "definition_selections": [],
+    "definition_selections": [
+      {
+        "authority": "example",
+        "identity": "retention"
+      }
+    ],
     "dependency_selections": [],
     "edition": {
       "definition": {
@@ -52,7 +57,12 @@
     "version": "quire.checked-package-id/v2"
   },
   "lock": {
-    "definition_selections": [],
+    "definition_selections": [
+      {
+        "authority": "example",
+        "identity": "retention"
+      }
+    ],
     "dependency_selections": [],
     "edition": {
       "definition": {
@@ -98,7 +108,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "1105c967d9aa5d0b8802540d7d78186945f6f0e7a705ddcd72a880c7d558acf9",
+    "digest": "1f1b7742c01c381ded5d2a40c6c7a1eb934b5b1987cb8c766fb43069dc73704f",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -1424,6 +1434,191 @@
           "digest": "2c8a0dce10573206bc442b2da6d32ad0ba75373e04e91b09059467e791b211ec",
           "domain": "quire.checked-semantic-node/v1"
         }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "min",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "1",
+                "value_kind": "integer"
+              }
+            },
+            {
+              "name": "max",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "3650",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "e7cb7a32f766160fc3a0d315a7c708aa9c66bb528d4f5fd904f853ed7dc11bc2",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "bounded_domain",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "integer_range",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "term": "literal",
+          "type": {
+            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "value": "audit",
+          "value_kind": "text"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "literal",
+        "semantic_type": {
+          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "term": "literal",
+          "type": {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          "value": "30",
+          "value_kind": "integer"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "9f40ce2fc8c460f2b406ad355f7dbda9655829798630460e681190ced32503a0",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "literal",
+        "semantic_type": {
+          "digest": "e7cb7a32f766160fc3a0d315a7c708aa9c66bb528d4f5fd904f853ed7dc11bc2",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "clauses": [
+            {
+              "name": "subject",
+              "term": "binding",
+              "value": {
+                "target": {
+                  "digest": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "term": "reference"
+              }
+            },
+            {
+              "name": "days",
+              "term": "binding",
+              "value": {
+                "target": {
+                  "digest": "9f40ce2fc8c460f2b406ad355f7dbda9655829798630460e681190ced32503a0",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "term": "reference"
+              }
+            }
+          ],
+          "definition": {
+            "authority": "example",
+            "identity": "retention"
+          },
+          "node_kind": "retention",
+          "term": "extension_form"
+        },
+        "declaration": {
+          "qualified_name": [
+            "Audit"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "9f40ce2fc8c460f2b406ad355f7dbda9655829798630460e681190ced32503a0",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "7aa76a0f7633d621a548cdca00ddd91513fdb0aebdc4e9aae9fd43c2d92b1832",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "extension",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "declaration"
+          }
+        ],
+        "owner": {
+          "authority": "agent-ix",
+          "identity": "example",
+          "kind": "source"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "extension_form",
+        "semantic_type": {
+          "digest": "7aa76a0f7633d621a548cdca00ddd91513fdb0aebdc4e9aae9fd43c2d92b1832",
+          "domain": "quire.checked-semantic-node/v1"
+        }
       }
     ]
   },
@@ -2047,6 +2242,86 @@
         }
       ],
       "role": "generated"
+    },
+    {
+      "node_id": {
+        "digest": "e7cb7a32f766160fc3a0d315a7c708aa9c66bb528d4f5fd904f853ed7dc11bc2",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 156,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 155
+        }
+      ],
+      "role": "type"
+    },
+    {
+      "node_id": {
+        "digest": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 142,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 135
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "9f40ce2fc8c460f2b406ad355f7dbda9655829798630460e681190ced32503a0",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 152,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 150
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "7aa76a0f7633d621a548cdca00ddd91513fdb0aebdc4e9aae9fd43c2d92b1832",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 154,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 108
+        }
+      ],
+      "role": "declaration"
     }
   ]
 }
