@@ -2289,18 +2289,32 @@ fn application_node_preimage(node: &Value, nodes: &[Value]) -> Option<Value> {
 /// whose root is an application has the operator's semantic form, and its
 /// dependencies are exactly its reference targets and member declarations.
 fn application_node_shape_is_valid(node: &Value) -> bool {
+    application_node_shape_locus(node).is_none()
+}
+
+/// The node member that makes an application-bearing node's shape invalid, as
+/// a pointer relative to the node: `/dependencies` when the list differs from
+/// the body's references, `/semantic_form` when the form does not fit the
+/// operator, `""` when the node is no application-bearing node. `None` when
+/// the shape is valid.
+fn application_node_shape_locus(node: &Value) -> Option<&'static str> {
     let body = &node["body"];
+    if !is_application_node(node) {
+        return Some("");
+    }
     let form_fits = node["node_tag"] != "expression"
         || body["term"] != "application"
         || body["operator"]
             .as_str()
             .and_then(expression_form_for_class)
             == node["semantic_form"].as_str();
-    is_application_node(node)
-        && form_fits
-        && node["dependencies"]
-            .as_array()
-            .is_some_and(|actual| *actual == application_dependencies(body))
+    if !form_fits {
+        return Some("/semantic_form");
+    }
+    let dependencies_fit = node["dependencies"]
+        .as_array()
+        .is_some_and(|actual| *actual == application_dependencies(body));
+    (!dependencies_fit).then_some("/dependencies")
 }
 
 /// Whether an application-bearing node retains the JCS digest of its preimage.
@@ -5987,9 +6001,17 @@ fn dependency_call_outcome(package: &Value, result: Result<(), ReadRefusal>) -> 
         }
         Err(ReadRefusal::GraphShape(id)) => {
             let index = node_index_where(package, |node| node["node_id"] == id);
+            // The locus member is the one the reader's shape check rejects,
+            // not a fixed spelling, so a graph-shape refusal for another
+            // reason does not match a dependency-list vector.
+            let member = application_node_shape_locus(&package["semantic_graph"]["nodes"][index])
+                .map_or_else(
+                    || "/unclassified".to_owned(),
+                    |member| member.to_owned(),
+                );
             (
                 "refused:invalid_semantic_graph".to_owned(),
-                json!(format!("/semantic_graph/nodes/{index}/dependencies")),
+                json!(format!("/semantic_graph/nodes/{index}{member}")),
             )
         }
         Err(other) => (format!("refused:{other:?}"), Value::Null),
