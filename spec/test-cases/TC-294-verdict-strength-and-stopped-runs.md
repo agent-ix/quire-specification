@@ -34,6 +34,10 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
    bounded and holds no key; then against a subject whose only populations are
    unrelated to `ConfigVersion`; then against a subject whose
    `config_history` has no universe.
+8. Run the step 7 claim against a subject with an empty list of initial
+   states whose `config_history` universe is `[v1, v2]`; then with an empty
+   universe list for `config_history`; then with only unrelated populations;
+   then with `config_history` given no universe.
 
 ## Expected Results
 
@@ -52,6 +56,9 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
 7. `inconclusive`, basis `unsettled`, cause `no-instance`, before any state is
    explored, for the empty-universe subject and for the unrelated-population subject (FR-361-AC-8); the third subject returns `requires-bound` before
    instantiation, never `no-instance` (FR-361-AC-8).
+8. The first three subjects each settle `inconclusive`, basis `unsettled`,
+   cause `no-initial-state`, never `no-instance`; the fourth returns
+   `requires-bound` before expansion (FR-361-AC-16).
 
 No row carries a proof basis, and each row's label, basis and result equal the
 FR-363 verdict table (FR-363-AC-1).
