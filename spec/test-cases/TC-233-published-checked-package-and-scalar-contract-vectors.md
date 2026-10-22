@@ -361,6 +361,18 @@ projection entry patched and `package_id` recomputed (FR-322-AC-54).
 | NS-03 | a `composite_type`/`record` and a `scalar_type`/`enum` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | SE-20 | literal of `value_kind` `uuid` typed by a `string` type with an uppercase value; literal of `value_kind` `timestamp` typed by an `integer` type with value `01` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-67 |
 
+### Structural node preimage vectors
+
+Build each preimage exactly as FR-322 "Structural node preimage" spells it and hash its RFC 8785 bytes.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| SP-01 | P4: `value`/`parameter`, name `x`, level `0`, `semantic_type` the `Int[0, 9]` node, `declaration` and `recursion` `null`, no `owner` | Key `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda` | FR-322-AC-97 |
+| SP-02 | P4 with level `1`; P4 with name `y` | Each key differs from SP-01's and from the other's | FR-322-AC-97 |
+| SP-03 | U2: `scalar_type`/`compound_unit` over `U_metre` exponent `1` and `U_second` exponent `-1`, self-typed | Key `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7` | FR-322-AC-97 |
+| SP-04 | A `value`/`parameter` node whose body binds `level` before `name`; one with a third binding | Each fails the V2 schema; `malformed_wire` | FR-322-AC-97 |
+| SP-05 | Every `value`/`parameter` node of every published positive fixture | Its `node_id` is the key of its preimage; the full reader admits each fixture | FR-322-AC-97 |
+
 ### Event type vectors
 
 The owner join, projection and equality behaviour of an event type (FR-322-AC-68) and record conformance (FR-322-AC-69) are decided by TC-281's `EV-` and `RCF-` vectors.

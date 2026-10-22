@@ -265,9 +265,18 @@ boundary.
   each union member is keyed as
   [FR-441](FR-441-union-member-key.md) specifies. A
   `value` node with `semantic_form: "parameter"` stands for a value a binder
-  binds (a function parameter, or the `self`, `result` and operation
-  parameters of a state clause), and its `semantic_type` is the bound
-  value's type. A model member (field, operation, clause) has no node of
+  binds (a function parameter; a `let`, query, `count` or `sum` binder; a
+  `fold` or `reduce` accumulator or element binder; or the `self`, `result`
+  and operation parameters of a state clause), and its `semantic_type` is the
+  bound value's type. It carries no `declaration` and no `owner`, and its
+  body is exactly `aggregate{[binding "name" = literal text, binding "level"
+  = literal integer]}`, in that order: `name` is the binder's name as a
+  `text` literal typed at the builtin text node, and `level` is the binder's
+  level, its position among the binders in scope where it is bound (QSL
+  FR-092), as an `integer` literal typed at the builtin Integer node. It is a
+  structural node, keyed by the "Structural node preimage" below, so its key
+  depends on its name, level and type and not on the function that binds it.
+  A model member (field, operation, clause) has no node of
   its own: it is named by its declaring node and its name. A recursive reference is legal only
   when every cycle member names the same explicit `recursion_group`; all other
   graph cycles refuse. Every node has one or more exact source occurrences.
@@ -826,6 +835,62 @@ and no admitted package. Equal-limit input is admitted if all later checks
 succeed. The reader has no depth limit: the body grammar fixes the JSON depth
 of every package
 ([FR-460](../../functional/foundation/FR-460-bound-every-stage-by-resource-limits.md)).
+
+## Structural node preimage
+
+A structural node (the derived-shape key stage above: no
+`nominal_identity_preimage`, a body holding no application, and not a
+`value`/`union_value` or `correspondence`/`abstraction_relation` node) is
+keyed by the SHA-256 of the RFC 8785 bytes of one `quire.structural-node/v1`
+object. QSL FR-092 mints the key; this section is the same preimage, so that
+a reader re-derives every structural key from the package and this artifact
+alone. The object has exactly these members:
+
+| Member | Value |
+| --- | --- |
+| `version` | `"quire.structural-node/v1"` |
+| `owner` | The node's `owner` member, present exactly when the node carries one (`owner` above); absent otherwise. |
+| `node_tag` | The node's `node_tag`. |
+| `semantic_form` | The node's `semantic_form`. |
+| `semantic_type` | The node's `semantic_type` `NodeId`, or `null` when the node is its own semantic type. For a node inside a recursion group whose semantic type is a member of that group, `{term: "group_reference", ordinal}`. |
+| `declaration` | The node's `declaration` member, or `null`. |
+| `recursion` | `null` for a node outside every recursion group; for an in-group node, `{size, ordinal, group}`, where `group` is the node's retained `recursion_group` label. |
+| `body` | The node's `body` term, with each `reference` to a member of the node's own recursion group written `{term: "group_reference", ordinal}`. |
+
+The node's `node_id`, `dependencies`, `occurrences` and `recursion_group`
+members are not in the preimage. Integers follow "Integers in a node-key
+preimage" below. Two worked vectors fix the shape for the two forms QSL's
+emitter writes that no other vector here covers:
+
+- **P4**, the parameter `x: Int[0, 9]` at level 0: the `value`/`parameter`
+  preimage
+  `{"body":{"members":[{"name":"name","term":"binding","value":{"term":"literal","type":T3,"value":"x","value_kind":"text"}},{"name":"level","term":"binding","value":{"term":"literal","type":T2,"value":"0","value_kind":"integer"}}],"term":"aggregate"},"declaration":null,"node_tag":"value","recursion":null,"semantic_form":"parameter","semantic_type":T4,"version":"quire.structural-node/v1"}`,
+  where `T3` is the text node
+  (`0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659`),
+  `T2` the Integer node
+  (`07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32`) and
+  `T4` the `Int[0, 9]` node
+  (`652cc5b63910aca98b8c91b1c1ba42a8da1f568517c70f37de083414cd192477`),
+  each as a `quire.checked-semantic-node/v1` `NodeId`, keys to
+  `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda`, QSL
+  FR-092's P4. Level `1` or name `y` gives another key.
+- **U2**, `metre / second` ("Derived type forms and forwarding" below): the
+  `scalar_type`/`compound_unit` preimage with `semantic_type` `null`,
+  `declaration` `null`, `recursion` `null` and the body of two term
+  aggregates, `unit` = `reference(U_metre)` with `exponent` `"1"` and
+  `unit` = `reference(U_second)` with `exponent` `"-1"`, each exponent a
+  literal typed at `T2`, keys to
+  `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`.
+  `U_metre` is
+  `79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4` and
+  `U_second`
+  `d0f0c5d24d6accb2f1d9afff7c6cdda3143df382e50af4bda0704d48c67ed998`. The
+  empty body `aggregate{[]}` is the dimensionless compound unit.
+
+A `scalar_type`/`compound_unit` node is an I04 checked-semantic node, keyed
+here. The evaluator's runtime compound-unit value identity
+(`quire.value.compound-unit/v1`, FR-142) is a different domain: it is never
+a node key, and neither identity is derived from the other.
 
 ## Body grammar
 
@@ -1934,6 +1999,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-94 | `quire.op.reference.upcast` admits an operand `Reference<S>` with `type_argument` `Reference<T>` exactly when `S` and `T` are selected object types of one document and `S` conforms to `T` along declared supertypes: one type to itself, a subtype to its supertype, a subtype two levels down to its root, and a type with two supertypes to either. A supertype to its subtype (a downcast), two unrelated object types, a systems interface with no declared supertype to an object type, a reference to a relationship at either end and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand or member whose owner is not selected refuses `missing_declaration`/`missing-selection`. | Test |
 | FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id digest order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id digest, each with its `identity_projection` rebuilt in the new graph order and its `package_id` recomputed. Each reorder that changes the node sequence changes the `package_id`, and the reader reports no refusal for the order of the nodes. A published fixture whose `identity_projection` lists the same entries in an order other than graph order fails the identity recomputation of FR-322-AC-14. | Test (TC-233) |
 | FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node `7916…` and the `correspondence`/`source_locus` node `eda3…` each list their body target `8a2a…`, and the `bounded_domain`/`integer_range` node `652c…` lists its `semantic_type` `07f6…`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node `1ffe…` lists its `semantic_type` `0ec8…` alone, not its `max` literal's `type`. Each fixture's `package_id` recomputes with those lists. With the projection entry patched and `package_id` recomputed, the full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
+| FR-322-AC-97 | The `quire.structural-node/v1` preimages that "Structural node preimage" spells recompute: P4, the `value`/`parameter` node of `x: Int[0, 9]` at level 0, to `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda`, and U2, the `scalar_type`/`compound_unit` node of `metre / second`, to `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`; P4 at level `1`, and P4 named `y`, each give a different key. The V2 schema admits a `value`/`parameter` node whose body binds `name` then `level`, and a `scalar_type`/`compound_unit` node; a parameter body with `level` before `name`, or with a third member, fails the V2 schema (`malformed_wire`). Every `value`/`parameter` node of every published positive fixture is current under that preimage, and the full reader admits each fixture. | Test (TC-233) |
 
 ## Dependencies
 
