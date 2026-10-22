@@ -652,10 +652,20 @@ boundary.
   locked package (itself or a `dependency_selections` entry) and then matching
   `Name`, byte for byte, against the `qualified_name` path of that package's
   declarations; no case folding, normalization, suffix match or search across
-  packages applies. It enters the node identity preimage. On a node carrying a
+  packages applies. A dimension or unit that an admitted domain package
+  declares ("Model-owned members" step 4) is a node with no `declaration`, so
+  no `qualified_name` names it: a source reaches a package unit only as
+  `M::name` in a unit position, where `M` is the model alias of a
+  `model_selections` row and `name` matches, byte for byte, the `name` of a
+  unit in that row's selected document, and it reaches a package dimension
+  by its bare `name` in the dimension namespace (FR-142 "Namespaces"). It enters the node identity preimage. On a node carrying a
   `nominal_identity_preimage` it equals that preimage's
   `qualified_declaration`, else the reader refuses as `invalid_package` with
-  cause `declaration-nominal-mismatch`; two nodes carrying the same name in one namespace refuse
+  cause `declaration-nominal-mismatch`. The one exception is a nominal node
+  whose `owner` is a `ModelOwner` (a dimension or unit an admitted domain
+  package declares, "Model-owned members" step 4): it carries no
+  `declaration`, and its preimage's `qualified_declaration` is the
+  one-segment `[<name>]`, the last segment of its FCD identity; two nodes carrying the same name in one namespace refuse
   as `ambiguous_declaration` with cause `ambiguous-name`, both before any
   operation refusal. The namespaces are three: dimensions
   (`scalar_type`/`dimension`), units (`scalar_type`/`unit`) and types (every
@@ -1112,11 +1122,12 @@ constraints ("Reference conformance" below).
    | `ix://quire/native/String` | `String`, a native with no text profile; it is not `Text` and has no `Text` bounds, profile or leaf | `scalar_type`/`string` |
    | `ix://quire/native/UUID` | `UUID`, compared by its canonical payload under FR-149's UUID row; no ordering | `scalar_type`/`uuid` |
    | `ix://quire/native/Timestamp` | `Timestamp`, compared by its canonical payload under FR-149's Timestamp row; no ordering and no arithmetic | `scalar_type`/`timestamp` |
+   | `ix://quire/native/Clock`, on a field with FR-154's clock field shape | `Clock`, the clock type of FR-415: the field is one clock per object of its owning type, holds no data value, is read only as the clock operand of an atomic clock constraint (in a guard or a time invariant) and is written only by a reset (FR-415) | none: no node stands for a clock. This artifact carries no clock constraint, reset or timed-model member; the checker reads a clock operand there by (declaring node, field name) and records the timed model (FR-415, QSL FR-230). A `field` application whose member resolves to a clock field in any other position, a value position, refuses `invalid_timed_model`/`clock-read-outside-constraint` |
    | a value type (FR-208 `quire.meaning.model.value-type/v1`) of the same domain package bound as `Int[lo, hi]`, `lo <= hi`, as TC-196's `Count` and `Small` and TC-197's `Count` are | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over the `Integer` node |
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
    | a record value type `R` of the same domain package, admitted under FR-208 | `R`, a value with no object identity | the self-typed `model`/`record_value_type` declaration node owned by `R`; no `composite_type`/`reference` is introduced |
    | a variant type `V` of the same domain package, admitted under FR-208 | `V`, an unordered enumeration whose cases are the case names of `V` | the self-typed `model`/`variant_type` declaration node owned by `V`; no `composite_type`/`reference` and no unit-owned `scalar_type`/`enum` node is introduced |
-   | `ix://quire/unit/<name>`, where `<name>` is the qualified declaration name of a unit of the checked package, its segments joined by `/`, and never a dimension segment: the unit `ms` declared as `unit ms : Time` is `ix://quire/unit/ms` | `Quantity<u>`, the type of a quantity in unit `u`; the declaring unit of compilation supplies the unit, not the domain package | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced |
+   | `ix://quire/unit/<name>`, naming either a unit the unit of compilation declares, by its qualified declaration name with its segments joined by `/` and never a dimension segment (`unit ms : Time` is `ix://quire/unit/ms`), or a unit an admitted domain package declares, by its FCD identity's package identity and `name` (`ms` in the `units` of `acme/rpc`, FCD identity `ix://acme/rpc/unit/ms`, is `ix://quire/unit/acme/rpc/ms`) | `Quantity<u>`, the type of a quantity in unit `u`, whether the unit of compilation or an admitted domain package declares `u` | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced |
    | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
 
    The multiplicity `{lower, upper, ordered, unique}` then gives the type.
@@ -1131,7 +1142,35 @@ constraints ("Reference conformance" below).
    (`quire.model.complete/v1` Presence row), so `[0, 1]` gives `K<E>[0, 1]`
    and a field whose presence is `optional` has `Option<X>`, the
    `composite_type`/`option` node over the node of the type `X` the
-   multiplicity gives. A unit `typeRef` that names no unit of the checked package refuses
+   multiplicity gives. The unit graph of the checked package holds the
+   dimensions and units the unit of compilation declares and those of every
+   admitted domain package (FR-154). Each dimension and unit an admitted
+   domain package declares is one checked-package node: a
+   `scalar_type`/`dimension` or `scalar_type`/`unit` node that carries no
+   `declaration` and carries as `owner` the `ModelOwner` `{kind: "model",
+   identity, node}` of its selection, `identity` the selection's identity and
+   `node` its FCD identity (`ix://acme/rpc/unit/ms`). Its
+   `quire.dimension-node/v1` or `quire.unit-node/v1` preimage (FR-142) carries
+   that `owner` and `qualified_declaration` `[<name>]`, the last segment of
+   its FCD identity (`["ms"]` for `ix://acme/rpc/unit/ms`), which the V2
+   schema's one-identifier-or-more rule for `qualified_declaration` admits.
+   The node carries no `declaration`, under
+   the `ModelOwner` exception of the `declaration` rule. Its key stays
+   distinct from a source unit `ms`'s, whose preimage carries the same
+   `qualified_declaration` under a `SourceOwner`; a dimension's `terms` are
+   its FCD terms and a unit's `dimension_node_id`, `target_unit_node_id`,
+   `scale` and `offset` are its FCD `dimension`, `target`, `scale` and
+   `offset` resolved to those nodes. A dimension node is self-typed and
+   depends exactly on the dimension nodes of its terms; a unit node's
+   `semantic_type` is its dimension node and it depends exactly on that node
+   and its non-null target. A `typeRef` `ix://quire/unit/<p>/<name>` whose
+   leading segments `<p>` equal the identity of a `model_selections` row
+   names that row's unit `name`; any other `typeRef` names a source unit by
+   its qualified declaration name. A `typeRef` that names both a source unit
+   and a package unit refuses `ambiguous_declaration`/`ambiguous-name`. A
+   source names a package unit as `M::ms` through the row's model alias
+   (`Quantity<M::ms>` after `model M = "acme/rpc" …`) and a package dimension
+   by its bare `name` (FR-142 "Namespaces"). A unit `typeRef` that names no unit of the checked package refuses
    `missing_declaration`/`missing-name`. A declared type outside the table, an `unbounded`
    upper bound with a lower bound above `0` and an operation with no result
    give the member no type, and the application refuses
@@ -2023,6 +2062,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node `7916…` and the `correspondence`/`source_locus` node `eda3…` each list their body target `8a2a…`, and the `bounded_domain`/`integer_range` node `652c…` lists its `semantic_type` `07f6…`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node `1ffe…` lists its `semantic_type` `0ec8…` alone, not its `max` literal's `type`. Each fixture's `package_id` recomputes with those lists. With the projection entry patched and `package_id` recomputed, the full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
 | FR-322-AC-97 | The `quire.structural-node/v1` preimages that "Structural node preimage" spells recompute: P4, the `value`/`parameter` node of `x: Int[0, 9]` at level 0, to `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda`, and U2, the `scalar_type`/`compound_unit` node of `metre / second`, to `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`; P4 at level `1`, and P4 named `y`, each give a different key. The V2 schema admits a `value`/`parameter` node whose body binds `name` then `level`, and a `scalar_type`/`compound_unit` node; a parameter body with `level` before `name`, or with a third member, fails the V2 schema (`malformed_wire`). Every `value`/`parameter` node of every published positive fixture is current under that preimage, and the full reader admits each fixture. | Test (TC-233) |
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
+| FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 
 ## Dependencies
 
