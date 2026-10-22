@@ -44,3 +44,13 @@ Units examined:
 | FND-001 | medium | NR-14 tests FR-352-AC-12's 'a counterexample whose trace_position differs from position' by setting `trace_position` to the string "1". A string is refused by any strict reader as a type error, so the vector passes on a reader that never compares `trace_position` with `position`. Set it to an unsigned integer other than the record's `position` (for example `position + 1`). | spec/test-cases/TC-255-native-run-result-v2-wire.md:41 |
 | FND-002 | low | The extension is scoped to 'a temporal selection', not to the two rows that use it. The `undefined` row's outcome is 'the undefined value's FR-100 reason' and the `incomplete` row's is 'FR-100's incomplete with its limit', so whether a temporal `undefined` disposition with reason `insufficient-data`, or an `incomplete` one with limit `max_window_values`, reads or is refused as 'an outcome other than the row's' depends on the reader. Say the reason is admitted only in the `insufficient-data` row and the limit only in the `window-limit-reached` row, as QSL FR-267's rows spell them. | spec/functional/foundation/FR-352-mint-native-run-result-witness-wire.md:152-158 |
 | FND-003 | low | Three reader refusals go beyond QSL FR-267's list: a `temporal` on a non-temporal selection, a `temporal` beside a top-level `refusal` (QSL says only that no row writes one), and the two temporal-only values on a non-temporal run. The PR body flags only the last as a lead default. TC-255 NR-07, NR-13 and NR-14 test all three, and QSL-902's TC-255 conformance will run them against a QSL reader whose FR-267 states none of them. Flag the other two as lead defaults and add the matching QSL FR-267 sentences (a QSL follow-up). | spec/functional/foundation/FR-352-mint-native-run-result-witness-wire.md:164-173 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | see after_excerpt |
+| FND-002 | fixed | see after_excerpt |
+| FND-003 | deferred | The QSpec text is unchanged by design. The PR body now flags all three extra reader refusals as lead defaults, and QSL agent-ix/quire-spec-language#1283 (reviewed as SR-16193) adds the same three refusals to QSL FR-267 with FR-267-AC-16, so both readers state them once #1283 merges. |
+
+Disposition pass 1 verdict (head f30d03b1): **MERGEABLE.** FND-001 and FND-002 fixed in f30d03b1; FND-003 deferred to QSL #1283. Merges cleanly onto current main 6f24ddd4. QSL #1283 should merge with or after this PR.
