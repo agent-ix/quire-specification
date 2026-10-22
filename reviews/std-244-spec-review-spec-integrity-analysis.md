@@ -42,3 +42,20 @@ Units examined:
 ## Verdict
 
 Not mergeable as is: one major finding (FND-001, traversal class narrowed below QSL FR-150 and FR-381's own statement) and one minor (FND-002).
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | high | Major: in TC-320 case 7, each added postcondition folds over the converted value with an element-choosing step, and the expected result admits the `Bag` variant. FR-145 admits an out-of-catalog step only over a sequence or an ordered set, and FR-381's fold breaking form covers a `Set` or `Bag` whose element type contains a reference into a symmetric population. So an element-choosing `fold` over `convert<Bag<Reference<ConfigVersion>>[0,3]>(self.peers)` refuses `ill_typed`/`identity-observing-form` naming `config_history` at the fold node, under FR-381's precedence rule. A test built from this oracle asserts an admission the spec refuses. Either drop the fold from the `Bag` variant (convert alone, as FR-381-AC-6 states) or expect the fold-node refusal. | spec/test-cases/TC-320-symmetric-population-authoring.md:48-71 |
+| FND-004 | low | Minor: FR-145's "Explicit kind conversion and loss" paragraph states that converting a set or bag to a sequence or an ordered set uses ascending canonical-key order, with no pointer to FR-381's new refusal of that `convert` over a symmetric population. The fold paragraph does carry such a pointer. Add the same pointer here. | spec/functional/expressions/FR-145-convert-and-query-collections.md:171 |
+| FND-005 | low | Minor: head 7c9ba25 does not contain origin/main bb6d08a (5 commits since merge-base 8d59511). A trial merge is clean, and no main commit touches FR-381, FR-145 or TC-320. Merge or rebase main before landing. | - |
+
+## Dispositions
+
+Round 1, reviewed at 7c9ba258b0218c4574bfa6a22e9d434f1efe8c68 (fix commit 7c9ba25 on top of merge 38687a7). Gates: `quire validate` gives 134 (baseline 134), with no diagnostics on FR-381, FR-145 or TC-320. cargo `checked_package_v2` gives 117 passed and `backend_provider_v1` gives 14 passed. FR-381-AC-6 is a new id; no other open QSpec PR touches FR-381, FR-145 or TC-320.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 7c9ba25: breaking form "a `convert` of a `Set` or `Bag` whose element type contains such a reference to a `Sequence` or an ordered set", FR-381-AC-6 and TC-320 case 7. Only the `Bag` oracle in case 7 is wrong (FND-003). |
+| FND-002 | fixed | 7c9ba25: precedence scoped to "a clause the check covers"; outside those clauses, FR-145 alone applies (`operator-ineligible`). FR-145 is scoped the same way. |

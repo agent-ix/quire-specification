@@ -48,7 +48,9 @@ of `ConfigVersion` objects (`versionNumber: Int[0, 2]`,
 7. With the annotation, add a postcondition that folds, with an
    element-choosing step, over `convert<Sequence<Reference<ConfigVersion>>[0,3]>(self.peers)`;
    then one with `convert<OrderedSet<Reference<ConfigVersion>>[0,3]>(self.peers)`;
-   then one with `convert<Bag<Reference<ConfigVersion>>[0,3]>(self.peers)`;
+   then one that binds `convert<Bag<Reference<ConfigVersion>>[0,3]>(self.peers)`
+   and does not fold it;
+   then one that folds that `Bag` conversion with an element-choosing step;
    then one with `convert<Sequence<Reference<Draft>>[0,3]>(self.others)`.
 
 ## Expected Results
@@ -67,5 +69,7 @@ Case 4 is admitted (FR-381-AC-4). Case 5 refuses the request
 `config_history` at the `self.peers` fold and `ill_typed`/`operator-ineligible`
 at the `self.others` fold (FR-381-AC-5). Case 7 refuses the first two
 `ill_typed`/`identity-observing-form` at the `convert` node naming
-`config_history`, and admits the `Bag` conversion and the `Draft` sequence
-conversion (FR-381-AC-6).
+`config_history`, admits the `Bag` conversion that is not folded and the `Draft`
+sequence conversion, and refuses the fold of the `Bag` conversion
+`ill_typed`/`identity-observing-form` at the `fold` node naming
+`config_history` (FR-381-AC-6).

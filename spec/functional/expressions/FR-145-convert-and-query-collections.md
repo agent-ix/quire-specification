@@ -169,7 +169,10 @@ element type must be identical, and element conversion is
 of the `K1` properties minus the `K2` properties, listed in the order `order`,
 `uniqueness`, `multiplicity`. It is recorded even when no duplicate actually
 occurs. Converting a set or bag to a sequence or an ordered set uses ascending
-canonical-key order. The authored target bound is checked after coalescing and before
+canonical-key order; in a clause that
+[FR-381](../analysis/FR-381-check-symmetric-populations.md) checks, such a
+conversion of a collection of references into a `symmetric` population is refused
+by FR-381. The authored target bound is checked after coalescing and before
 materialization.
 
 ## Accounting

@@ -41,3 +41,11 @@ Units examined:
 ## Verdict
 
 One minor EARS finding.
+
+## Dispositions
+
+Round 1, reviewed at 7c9ba258b0218c4574bfa6a22e9d434f1efe8c68. FR-381 validates clean.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 7c9ba25: "When a clause the check covers contains a `fold` or `reduce` ..., the checker SHALL report `ill_typed`/`identity-observing-form` ... and SHALL NOT also report FR-145's `operator-ineligible` for that fold." |
