@@ -9,6 +9,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-426
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-239
+    type: verifies
 ---
 
 # TC-380: Compensation in a protocol subject
@@ -69,6 +71,7 @@ Parse the protocol text above at S1 under the `quire.value.complete/v1` profile 
 | CP-08 | variant with two sibling branches each binding a `Failure` record with `failed` true | two behaviours, each activating the registration once at the first trigger taken; the second trigger changes no registration |
 | CP-09 | Undefined recovery predicate | A variant whose `recover` predicate reads `lookup<T>(p, r) absent undefined` at a key the population does not hold settles every item `refuted`, cause `undefined-evaluation`, with the prefix to t6 and `where` naming the recovery predicate; the registration is never recorded `unrecovered` |
 | CP-10 | Undefined activation guard | A variant whose `activate first` guard reads `lookup<T>(p, r) absent undefined` at a key the population does not hold settles every item `refuted`, cause `undefined-evaluation`, with the prefix to t2, at the `event(Fail)` expansion |
+| CP-11 | Attempt type position | The model gains a scalar type `Total` and a variant type `Mode`. Variants of the protocol text above with `attempts 1 of Set<M::Total>[0, 3]`, `attempts 1 of Integer` and `attempts 1 of M::Mode` each parse at S1 with no diagnostic; checking each refuses once `invalid_model_binding`/`malformed-declaration` at the type, retaining the compensation `Refund`, member `attempts` and the type as written, with no refusal at the `retry` binders; the unchanged `attempts 1 of M::RefundAttempt` checks (FR-239-AC-8) |
 
 ## Expected Results
 

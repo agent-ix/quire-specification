@@ -77,6 +77,7 @@ never repaired from key, timestamp, table or arrival order.
 | FR-239-AC-5 | The attempt count is the number of distinct admitted compensation-attempt FR-287 keys under one registration, including the initial attempt and every admitted outcome; replay or repeated receipt counts once. | Test (TC-058) |
 | FR-239-AC-6 | A candidate beyond the maximum refuses before retention and leaves the previous count unchanged; repeating it neither increments the count nor changes the refusal. | Test (TC-058) |
 | FR-239-AC-7 | Only an exact authored predecessor/successor relation orders retries; missing observation/progress remains incomplete, while a missing, foreign, conflicting or ambiguous relation refuses. | Test (TC-058) |
+| FR-239-AC-8 | The source grammar admits any `type-ref` after `attempts N of`: `attempts 3 of Set<M::Total>[0, 3]`, `attempts 2 of Integer` and `attempts 3 of M::Mode`, a variant type, each parse, and the checker refuses each with `invalid_model_binding`/`malformed-declaration` at the type, retaining the compensation, the member `attempts` and the type as written, while `attempts 3 of M::RefundAttempt`, a record type, parses and checks. | Test (TC-380) |
 
 ## Dependencies
 

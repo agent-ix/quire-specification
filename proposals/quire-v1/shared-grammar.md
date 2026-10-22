@@ -201,7 +201,7 @@ compensation = 'compensate', ident, 'for', node-ref,
                'on', operation-name, 'using', ident, 'clock', string, '{',
                { capture }, 'activate', 'first', '(', parameter, ')',
                'when', block, '{', { capture }, '}',
-               'within', interval, ';', 'attempts', uint, 'of', type-name, ';',
+               'within', interval, ';', 'attempts', uint, 'of', type-ref, ';',
                'retry', '(', parameter, ',', parameter, ')', block, ';',
                'commit', (node-ref | 'never'), ';',
                'recover', '(', parameter, ')', block, ';', '}' ;
@@ -238,6 +238,14 @@ commit       = 'commit', ident, 'by', ident,
                'as', '(', parameter, ')', block, ';' ;
 finish       = 'finish', ident, 'as', '(', parameter, ')', block, ';' ;
 ```
+
+The type after `attempts N of` is a `type-ref`, so the grammar admits an
+inline type form (`Set<M::Total>[0, 3]`), a bare `Integer` and a model-owned
+name (a variant type) as well as a record or event type name. Which of these
+the attempt type may be is a checker rule, not a grammar rule: the checker
+admits only a record or event type and refuses every other `type-ref`,
+including `attempts 2 of Integer`, with `invalid_model_binding`/
+`malformed-declaration` at the type (FR-239-AC-8).
 
 `composed-unit` subsumes the earlier common-only and state/temporal drafting
 entry points. None has an adopted profile identity. All three families are now
