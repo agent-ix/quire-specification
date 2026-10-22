@@ -44,3 +44,11 @@ Units examined:
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | FR-382 says negotiation names 'the first such reduction in the order partial-order, constraint', but AC-7 and TC-963 TR-06 select partial-order reduction and a state constraint only one at a time, so the order rule has no vector that can fail. Add the item selecting both, naming partial-order reduction. (QSL FR-430-AC-3 has the same gap.) | spec/functional/analysis/FR-382-select-state-space-reductions.md:144-149, spec/functional/analysis/FR-382-select-state-space-reductions.md:163, spec/test-cases/TC-963-timed-refinement-reductions-and-strong-fairness.md |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | see after_excerpt |
+
+Disposition pass 1 verdict (head eddbc43a): **MERGEABLE.** FND-001 fixed in eddbc43a (AC-7 and TC-963 TR-06 add the both-selected item naming partial-order reduction only); QSL #1284 mirrors it. Merges cleanly onto current main 6f24ddd4.
