@@ -1162,7 +1162,7 @@
     ],
     "model_selections": [
       {
-        "digest": "6e192170e0e8b1e10f9d2dcc219c843ec4876fa2c435bdeb998d5483c6c2a941",
+        "digest": "31a582821f4316a945f741a4b01265664fa61a4990704ee297c46835404c6190",
         "digest_domain": "sha256-jcs",
         "identity": "acme/orders"
       }
@@ -1200,7 +1200,7 @@
     },
     "model_selections": [
       {
-        "digest": "6e192170e0e8b1e10f9d2dcc219c843ec4876fa2c435bdeb998d5483c6c2a941",
+        "digest": "31a582821f4316a945f741a4b01265664fa61a4990704ee297c46835404c6190",
         "digest_domain": "sha256-jcs",
         "identity": "acme/orders"
       }
@@ -1235,7 +1235,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "1b62f696c63fdb903b9f4afedb9bf9f38b153f46412b8b683129d12a4a06446f",
+    "digest": "1105c967d9aa5d0b8802540d7d78186945f6f0e7a705ddcd72a880c7d558acf9",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {

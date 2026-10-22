@@ -117,7 +117,7 @@
             },
             "package": {
               "algorithm": "sha256",
-              "digest": "4376612918ef50f8d068dc04638ffa8719d0b500fa4e66a92633710ca9254c36",
+              "digest": "526892c2187cae01cfa6673f905e9020c3d4ce338cc104f09b46dd5ee29cd8d4",
               "domain": "quire.package.semantic/v2"
             },
             "term": "dependency_reference"
@@ -140,7 +140,7 @@
             },
             "package": {
               "algorithm": "sha256",
-              "digest": "4376612918ef50f8d068dc04638ffa8719d0b500fa4e66a92633710ca9254c36",
+              "digest": "526892c2187cae01cfa6673f905e9020c3d4ce338cc104f09b46dd5ee29cd8d4",
               "domain": "quire.package.semantic/v2"
             },
             "term": "dependency_reference"
