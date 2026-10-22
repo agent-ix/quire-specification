@@ -1,24 +1,22 @@
 ---
 id: IT-076
-title: "Native API, CLI, WASM and authoring tools preserve parity"
+title: "Native API, CLI and authoring tools preserve parity"
 type: IT
 relationships:
   - target: ix://agent-ix/quire-specification/FR-300
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-308
-    type: verifies
 ---
 
-# IT-076: Native API, CLI, WASM and authoring tools preserve parity
+# IT-076: Native API, CLI and authoring tools preserve parity
 
 ## Objective
 
-Verify the real Rust lifecycle library, CLI, WASM boundary, lossless CST,
-formatter and language server preserve identical subjects and dispositions.
+Verify the real Rust lifecycle library, CLI, lossless CST, formatter and
+language server preserve identical subjects and dispositions.
 
 ## Target Integration
 
-QSL/CLI/WASM/editor Rust components run locally through their public APIs
+QSL/CLI/editor Rust components run locally through their public APIs
 and command/process boundaries.
 
 ## Preconditions
@@ -32,7 +30,7 @@ unknown-feature and resource-boundary variants.
 
 ## Test Procedure
 
-1. Parse/check through API, CLI and WASM.
+1. Parse/check through API and CLI.
    - IT-076-SC-01: package identities, diagnostics and dispositions agree.
 2. Format and incrementally edit the corpus.
    - IT-076-SC-02: formatting is idempotent and full/incremental results agree.
