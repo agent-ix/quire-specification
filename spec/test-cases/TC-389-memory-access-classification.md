@@ -38,7 +38,7 @@ item's settlement.
 | AC-09 | under `tso`, an RMW `cas(0, 1)` on `x` whose post-state leaves `x` unchanged because `x = 1` | a load with the read part of its ordering: no locked write occurs |
 | AC-10 | `fence F ordering relaxed;` | `refused { code: invalid_syntax, cause: unexpected-token }` at `relaxed` |
 | AC-11 | `fence F ordering seq_cst;` | a `fence` step with transition identity members `thread`, `node` and `ordering`, uncounted for intervals |
-| AC-12 | under `ra`, a branch storing `x := 1` once and a second branch whose attempt stores `x` with precondition `x.v = 0` and then loads `x` with precondition `x.v = 1` | after the first branch's store, the second branch's store is enabled while its current view points at the message with value 0 and is not enabled once its view points at the message with value 1; its load is enabled for the messages at or after its view whose value is 1 (FR-435-AC-7) |
+| AC-13 | under `ra`, a branch storing `x := 1` once and a second branch repeating an attempt that stores `x := 0` with precondition `x.v = 0` and then loads `x` with precondition `x.v = 1` | after the first branch's store, the second branch's store is enabled while its current view points at the message with value 0 and is not enabled once its view points at the message with value 1; its load is enabled for the messages at or after its view whose value is 1 (FR-435-AC-8) |
 
 ## Expected Results
 

@@ -85,15 +85,18 @@ receiver's `cur` and `acq`. `ra` has no gate and no memory step.
 value. Branch-local locations hold their thread's value.
 
 **Garbage collection.** After every step, every message of `ℓ` earlier in mo
-than the earliest message that a running thread's current view points to at
-`ℓ` is removed. Only the current views of running threads pin a message. A
-thread waiting at a `join` pins nothing, since the `join` replaces its views
-with the join of its branches' views. An acquire view, a release view, a
-message view, a view a `send` carries and `S` pin nothing: a pointer below
-every running thread's current view joins into a current view as nothing, and
-a view that points at a removed message is encoded as pointing at the earliest
-live message of its location. No step can read a removed message. After an outermost `join all` only the parent's views remain and each
-location keeps one message.
+than the earliest message that any running thread's current view points to at
+`ℓ` is removed. A thread is **running** unless it is waiting at a `join`; a
+branch that has finished and is not yet joined is running. Only the current
+views of running threads pin a message. A thread waiting at a `join` pins
+nothing, since the `join` replaces its views with the join of its branches'
+views. An acquire view, a release view, a message view, a view a `send`
+carries and `S` pin nothing: a pointer below every running thread's current
+view joins into a current view as nothing, and a view that points at a removed
+message reads as, and is encoded in the state key as, pointing at the earliest
+live message of its location. No step can read a removed message. After an
+outermost `join all` only the parent's views remain and each location keeps
+one message.
 
 ### RC11 `seq_cst` accesses: the SC event graph
 

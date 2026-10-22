@@ -135,7 +135,7 @@ current-view message.
 | FR-435-AC-4 | A choice guard that reads a model field refuses `ill_typed`/`operator-ineligible` at the read, under `sc`, `tso` and `ra` alike; the same guard over the binder of a load attempt of that field is admitted. | Test (TC-389) |
 | FR-435-AC-5 | A load whose precondition requires the value 1 is enabled under `tso` only when its thread observation of the location is 1, and an RMW whose post-state leaves the location unchanged takes no write step. | Test (TC-389) |
 | FR-435-AC-6 | `fence F ordering relaxed;` is `refused { code: invalid_syntax, cause: unexpected-token }` at the `relaxed` token, because `fence-order` admits only `acquire`, `release`, `acq_rel` and `seq_cst`; an admitted fence is a step with members `thread`, `node` and `ordering`, uncounted for intervals. | Test (TC-389) |
-| FR-435-AC-7 | Under `ra`, a store whose precondition requires `x.v = 0` is enabled only while its thread's current view points at a message of `x` with value 0, whatever the mo-last message holds; a load of `x` whose precondition requires `x.v = 1` is enabled for each message at or after the current view whose value is 1. | Test (TC-389) |
+| FR-435-AC-8 | Under `ra`, a store whose precondition requires `x.v = 0` is enabled only while its thread's current view points at a message of `x` with value 0, whatever the mo-last message holds; a load of `x` whose precondition requires `x.v = 1` is enabled for each message at or after the current view whose value is 1. | Test (TC-389) |
 
 ## Dependencies
 
