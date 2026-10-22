@@ -2,7 +2,11 @@
 
 Definition identity: `quire.value.compound-unit/v1`.
 This evaluator-owned value identity is selected by `quire.value.complete/v1`.
-It is not an I04 checked-semantic node and has no source occurrence.
+This value identity is not an I04 checked-semantic node key and has no source
+occurrence. The `scalar_type`/`compound_unit` node that a checked source type
+forms is a separate I04 node, keyed by FR-322's structural node preimage; its
+terms follow this identity's term order, and neither identity is derived from
+the other.
 
 The normative preimage shape is
 [value-compound-unit.schema.json](value-compound-unit.schema.json).
