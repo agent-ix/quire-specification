@@ -7,6 +7,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-82
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-98
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-99
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-154
@@ -165,6 +169,10 @@ process or state machine.
 | MU-04 | `field` `ghost` on T1, `typeRef` `ix://quire/unit/ghost` | `missing_declaration`/`missing-name` | FR-322-AC-80 |
 | MU-05 | `operation` `wait` on T1 with a `Quantity<s>` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-80 |
 | MU-06 | `operation` `wait` on T1 with an `Integer` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-80 |
+| MU-07 | `field` `budget` on T2 (`Call` of the admitted domain package `acme/rpc`, which declares base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate`, `target` `us`, `scale` `1000`), `typeRef` `ix://quire/unit/acme/rpc/ms`, beside MU-01's source units `ms` and `s` of the source dimension `Time` | Resolves `Call/budget`; type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's `scalar_type`/`unit` node, which carries no `declaration`, has `owner` `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, a preimage with `qualified_declaration` `["ms"]`, and a key distinct from the source `ms` node's, and depends exactly on the package `Rate` and `us` nodes; no `ambiguous_declaration` | FR-322-AC-99 |
+| MU-08 | `field` `limit` on T2, `typeRef` `ix://quire/unit/ms` | Resolves `Call/limit`; type `Quantity<ms>` over the source unit's node, distinct from MU-07's | FR-322-AC-99 |
+| MU-09 | `field` `stale` on T2, `typeRef` `ix://quire/unit/rpc/ms` | `missing_declaration`/`missing-name` | FR-322-AC-99 |
+| MU-10 | `field` `x` on T2, `typeRef` `ix://quire/native/Clock` with FR-154's clock field shape, resolved as a `field` member; then a `field` application over `x` used as a value; then `x` as the clock operand of the atomic clock constraint `self.x >= 1 ms` in a guard | The member resolves to the clock type with no checked-package node; the value application refuses `invalid_timed_model`/`clock-read-outside-constraint`; the clock-constraint operand raises no such refusal | FR-322-AC-99 |
 | RE-ends-1 | `relationship_end` `order` on M4, the relationship `Order-order-Order` | Resolves the end `order` | FR-322-AC-56 |
 | RE-ends-2 | `relationship_end` `next` on M4 | Resolves the end `next` (`targetEnd.role`) | FR-322-AC-56 |
 | RE-ends-3 | `relationship_end` `invoiced` on M10, the relationship `Order-invoiced-Invoice` with no `targetEnd.role` | Resolves the end `invoiced` | FR-322-AC-56 |
@@ -201,6 +209,8 @@ process or state machine.
 | MS-03 | A document with `OrderTotal`'s upper bound changed to 8, supplied under the selected digest, identity equal | Passes the selection admission checks: the document's own canonical digest is not compared with the selected digest | FR-322-AC-32 |
 | MS-05 | The selection names digest domain `sha256` | `stale_dependency`/`digest-domain-mismatch` | FR-322-AC-32 |
 | MS-06 | The selection names identity `acme/invoices` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
+| MS-07 | The selected document with `dimensions` `[Time (base), Rate (terms [{Time, "-1"}])]`, `units` `[s (root of Time), ms (target s, scale 1/1000)]` and a clock field `Order/x` typed `ix://quire/native/Clock` with the clock field shape, re-digested and selected; then the same document with `dimensions` and `units` removed, re-digested and selected | The first read holds the dimension nodes `Time` then `Rate`, the unit nodes `s` then `ms` and the clock field `Order/x`, in authored order; the second read holds no dimension and no unit node and is otherwise equal | FR-322-AC-98 |
+| MS-08 | MS-07's first document with unit `ms`'s `scale` set to `0`, re-digested and selected | `invalid_model_binding`/`malformed-declaration` at stage `package_read`, naming `ix://acme/orders/unit/ms` and `Unit.scale` | FR-322-AC-98 |
 | FF-01 | Frame field entry `(M1, "total")` | Resolves `Order/total` | FR-340-AC-13 |
 | FF-02 | Frame field entry `(M5, "total")` | Resolves the inherited `Order/total` | FR-340-AC-13 |
 | FF-03 | Frame field entry `(M1, "missing")` | `missing_declaration`/`missing-name` | FR-340-AC-13 |

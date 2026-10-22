@@ -724,6 +724,10 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-402
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-475
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-476
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-403
     type: contains
   - target: ix://agent-ix/quire-specification/FR-405
@@ -1025,6 +1029,8 @@ The requirement artifacts are indexed below.
 | [FR-400](objects/interfaces/FR-400-hyper-counterexample.md) | FR | `HyperCounterexample` wire: lockstep, witness-exhausted, projected and step-tuple kinds |
 | [FR-401](functional/analysis/FR-401-replay-hyper-counterexamples.md) | FR | Replay of hyper counterexamples and step-relation code-claim counterexamples |
 | [FR-402](objects/interfaces/FR-402-hyperproperty-obligation-identity.md) | FR | Checked-package hyperproperty claim body and obligation identity |
+| [FR-475](objects/interfaces/FR-475-checked-package-state-graph-claim-body.md) | FR | Checked-package `claim`/`state_graph` body and state-graph obligation identity |
+| [FR-476](objects/interfaces/FR-476-checked-package-model-terminal-declaration-body.md) | FR | Checked-package `temporal`/`terminal` body of a model `terminal` declaration |
 | [FR-403](functional/analysis/FR-403-reduce-hyperproperty-state-spaces.md) | FR | Reduction preservation rows for hyper forms and compiler-verified copy-swap symmetry |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-571–580 |

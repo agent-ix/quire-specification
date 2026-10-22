@@ -59,6 +59,18 @@ alias refuses `ambiguous_declaration`/`ambiguous-name`, naming both.
   observation. A terminal state that satisfies `P` is intended. `P` classifies
   terminal states only: a state that satisfies `P` and has an enabled
   transition is not terminal.
+- `self` in `P`: when the model's populations cover exactly one object type
+  `T` and exactly one population covers `T`, `self` is typed
+  `Reference<M::T>` and `P` is evaluated once for each object of that
+  population at the terminal state. `P` is satisfied when it is true for
+  every object, so a terminal state with no object of `T` satisfies it; not
+  satisfied when it is false for any object, even when it is undefined for
+  another; and otherwise, when it is undefined for some object, undefined.
+  When two or more populations cover `T`, `self` refuses
+  `ambiguous_declaration`/`ambiguous-name` at `self`; when the populations
+  cover no object type or several, `self` refuses
+  `missing_declaration`/`missing-name` at `self`. A `P` that does not read
+  `self` is evaluated once at the terminal state.
 - `terminal T using v on M any`: every terminal state is intended. This is the
   per-model opt-out.
 - A model with no `terminal` declaration intends no terminal state.
@@ -121,6 +133,7 @@ A `terminal` declaration changes only the deadlock-freedom item.
 | FR-366-AC-6 | A second `terminal` declaration for one model alias refuses `ambiguous_declaration`/`ambiguous-name` naming both declarations. | Test (TC-297) |
 | FR-366-AC-7 | A state that satisfies `P` and enables a transition is not terminal and is never reported as a deadlock or as intended. | Test (TC-297) |
 | FR-366-AC-8 | A model whose `terminal when` predicate evaluates undefined at a reachable state with no enabled transition settles the deadlock-freedom item `refuted`, cause `undefined-evaluation`, with an undefined-evaluation counterexample ending at that state, never `proved` and never a `deadlock` counterexample. | Test (TC-305) |
+| FR-366-AC-9 | Over the Job subject with universe `{j, k}`, `terminal Finished using v on M when { self.status = done }` classifies a terminal state where both objects are `done` as intended, one where `j` is `done` and `k` is `stuck` as deadlocked, and, with universe `{}`, the initial terminal state as intended; a model whose populations cover two object types refuses `self` with `missing_declaration`/`missing-name` at `self`; a model with two populations that both cover `Job` refuses `self` with `ambiguous_declaration`/`ambiguous-name` at `self`, naming both populations. | Test (TC-297) |
 
 ## Dependencies
 
