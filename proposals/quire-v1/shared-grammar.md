@@ -984,12 +984,13 @@ authors write `not (a = b)` for negating a comparison.
 
 Model and profile aliases are unique within their source unit; they do not
 pollute another source unit's alias scope. Native declaration names are unique
-within the linked package, per namespace: dimensions, units and every other declaration (records, tuples, unions, enums,
-aliases, functions, predicates, protocols, claims and declared values, the type
-namespace) are three namespaces, so a unit may
-share its name with a dimension or with a type. Ambiguous cross-unit
-declarations refuse. A bare `type-ref` looks up the type namespace only, and
-`Quantity<u>` is the one `type-ref` that looks up the unit namespace. A unit
+within the linked package across every declaration: dimensions, units and every
+other declaration (records, tuples, unions, enums, aliases, functions,
+predicates, protocols, claims and declared values) share one declaration
+namespace, so a unit or a dimension that carries the name of another
+declaration is refused `ambiguous_declaration`/`ambiguous-name`, as are
+ambiguous cross-unit declarations. A bare `type-ref` looks up declared types
+only, and `Quantity<u>` is the one `type-ref` that looks up units. A unit
 containing only model-independent Boolean predicates needs no dummy model import.
 Any referenced model declaration still requires an exact explicit import. Predicate
 parameters and lexical binders are unique in their enclosing declaration and

@@ -355,7 +355,9 @@ projection entry patched and `package_id` recomputed (FR-322-AC-54).
 | QL-02 | literal of `value_kind` `quantity` typed by `integer`, `string` or `boolean` | `ill_typed`/`operator-ineligible` | FR-322-AC-79 |
 | QL-03 | literal of `value_kind` `integer` typed by a unit node | `ill_typed`/`operator-ineligible` | FR-322-AC-79 |
 | QL-04 | literal of `value_kind` `quantity` with value `03`, `+3`, `2/4`, `3/1`, `0/5`, `1/0`, `2.5` or empty text | `invalid_package`/`invalid-value` | FR-322-AC-79 |
-| NS-01 | nodes of one `declaration` name `ms`: a `scalar_type`/`unit`, a `composite_type`/`record` and a `scalar_type`/`dimension` | Admitted | FR-322-AC-81 |
+| NS-01 | a `scalar_type`/`unit` and a `composite_type`/`record` of one `declaration` name `ms` | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
+| NS-04 | a `scalar_type`/`unit` and a `scalar_type`/`dimension` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
+| NS-05 | a `scalar_type`/`dimension` and a `composite_type`/`record` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | NS-02 | two `scalar_type`/`unit` nodes of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | NS-03 | a `composite_type`/`record` and a `scalar_type`/`enum` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | SE-20 | literal of `value_kind` `uuid` typed by a `string` type with an uppercase value; literal of `value_kind` `timestamp` typed by an `integer` type with value `01` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-67 |

@@ -244,16 +244,16 @@ word of the complete-V1 facets, so a declaration named `Quantity` is
 `invalid_syntax`.
 
 **Namespaces.** Dimensions, units and everything else a unit of compilation
-declares are three namespaces. The third, the type namespace, holds records,
-tuples, unions, enums, aliases, functions, predicates, protocols, claims and
-declared values, which FR-322 carries as every declared node but a dimension
-or a unit; a name is unique within its namespace in the
-linked package, and two units of one name in the linked package refuse
-`ambiguous_declaration`/`ambiguous-name` at the use. A bare `type-ref` looks up
-the type namespace only, and `Quantity<...>` is the one `type-ref` that looks up
-the unit namespace. A source that writes a unit name where a type is required
-(`d: ms`) therefore refuses `missing_declaration`/`missing-name` at the name,
-unless a type of that name is declared, and then it means that type.
+declares (records, tuples, unions, enums, aliases, functions, predicates,
+protocols, claims and declared values, which FR-322 carries as every declared
+node) share one declaration namespace. A name is unique within it in the linked
+package: a unit or a dimension that carries the name of any other declaration,
+and two units or two dimensions of one name, each refuse
+`ambiguous_declaration`/`ambiguous-name`, naming both declarations (the checked
+package: at the later node in node-id order, FR-322-AC-81). A bare `type-ref`
+looks up the declared types, and `Quantity<...>` is the one `type-ref` that looks
+up the units. A source that writes a unit name where a type is required
+(`d: ms`) therefore refuses `missing_declaration`/`missing-name` at the name.
 
 **Where the form is written.** `Quantity<u>` is a `type-ref`, so it appears in
 every position that takes one: a function, predicate or operation parameter and
@@ -280,7 +280,7 @@ the element of `Option` and of the collection types, and the target of
   declared random-parameter support is the exception: FR-405-AC-3's
   `value-outside-type` at the value refuses a support that is not a
   `Quantity<u>` value.
-- When the qualified name of `Quantity<u>` names no unit in the unit namespace,
+- When the qualified name of `Quantity<u>` names no declared unit,
   a dimension name included, the checker SHALL refuse
   `missing_declaration`/`missing-name` at the name.
 - The checker SHALL admit under `Quantity<u>` every quantity of the unit and no
@@ -309,7 +309,7 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-10 | A conversion with a compound side compares normalized base-dimension maps, traverses only the declared side's root path, and admits a declared-to-compound-to-declared pivot in two explicit steps. | Test (TC-187) |
 | FR-142-AC-11 | With the dimension `T`, the unit `s` (root of `T`) and the unit `ms` (target `s`, scale `1/1000`), a function `f(d: Quantity<ms>)` called as `f(3 ms)` admits the argument `3 ms` and refuses `f(3 s)` with `ill_typed`/`type-mismatch` at the argument; `d: Quantity<T>` (a dimension) and `d: Quantity<nothing>` each refuse `missing_declaration`/`missing-name` at the name, and a bare `d: ms` refuses `missing_declaration`/`missing-name` at `ms`. | Test (TC-187) |
 | FR-142-AC-12 | A function `f(d: Quantity<ms>): Quantity<ms>` returning `d` checks; returning `convert<Quantity<s>>(d)` refuses `ill_typed`/`type-mismatch` at the returned expression; and `Quantity<ms>` annotations introduce no checked-package node, naming the node of `ms`. | Test (TC-187) |
-| FR-142-AC-13 | A unit and a record of one name coexist, and a use of the name in a type position means the record while `Quantity<name>` means the unit; two units of one name in the linked package refuse `ambiguous_declaration`/`ambiguous-name` at `Quantity<name>`; and a declaration named `Quantity` refuses `invalid_syntax`. | Test (TC-187) |
+| FR-142-AC-13 | A unit and a record of one name, a unit and a dimension of one name, a dimension and a record of one name, and two units of one name each refuse `ambiguous_declaration`/`ambiguous-name`, naming both declarations; a use of a unit name in a type position (`d: ms`) refuses `missing_declaration`/`missing-name`, and `Quantity<ms>` over a unique unit `ms` means that unit; and a declaration named `Quantity` refuses `invalid_syntax`. | Test (TC-187) |
 | FR-142-AC-14 | A quantity literal in a lowered body is a checked-package `literal` of `value_kind` `quantity` typed by its unit's node, and a domain-package operation parameter whose `typeRef` names a unit has the unit's type; FR-322-AC-79 and FR-322-AC-80 own the wire checks. | Test (TC-187, TC-233, TC-280) |
 | FR-142-AC-15 | Over the `L` unit graph of TC-187, each single defect of TC-187 U06 and U11a to U11f refuses with its row's code and cause naming the dimension and units shown, and exposes no conversion value; the cycle of U11b and U11l is retained from the least unit by source position, which differs from name order; the orderings of U11h to U11k fix the first-defect rule: scale zero before an unknown target in one unit, the earlier unit before a later one, duplicate root before a self-cycle, and the earlier dimension before a later one. | Test (TC-187) |
 | FR-142-AC-16 | The base-dimension rule refuses `L` in U11g1, U11g2, U11g4 and U11z1 (an imported `L` reached only through the imported `Area` a local unit is typed by) and admits U11g3 (`N = L / L` with `unit one : N = 1;`); U11m fixes that the check runs at the base dimension's own turn: a unit cycle in the earlier-declared `Area` is reported first, and with the order reversed `L` is refused; U11y refuses an imported unitless base dimension named by a local dimension's term. | Test (TC-187) |

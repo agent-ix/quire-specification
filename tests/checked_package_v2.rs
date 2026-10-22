@@ -3074,17 +3074,12 @@ fn package_declaration_refusal(package: &Value) -> Result<(), (DeclarationRefusa
     }
     let mut seen = BTreeSet::new();
     for node in nodes {
-        // FR-322 "declaration": a name is unique within its namespace, and
-        // dimensions, units and every other declared type are three namespaces.
-        let namespace = match (node["node_tag"].as_str(), node["semantic_form"].as_str()) {
-            (Some("scalar_type"), Some("dimension")) => "dimension",
-            (Some("scalar_type"), Some("unit")) => "unit",
-            _ => "type",
-        };
+        // FR-322 "declaration": a name is unique across every declaring node;
+        // dimensions, units and every other declaration share one namespace.
         if let Some(name) = node
             .get("declaration")
             .filter(|declaration| !declaration.is_null())
-            .map(|d| format!("{namespace}:{}", d["qualified_name"]))
+            .map(|d| d["qualified_name"].to_string())
             && !seen.insert(name)
         {
             return Err((DeclarationRefusal::AmbiguousName, node["node_id"].clone()));
@@ -8109,12 +8104,13 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
     }
 }
 
-/// FR-322-AC-81: a name is unique within its namespace. A unit, a dimension
-/// and a record that carry one name coexist; two units of one name refuse
+/// FR-322-AC-81: a declared name is unique across every declaring node. A
+/// unit and a record, a dimension and a record, a unit and a dimension, two
+/// units, and two types of one name each refuse
 /// `ambiguous_declaration`/`ambiguous-name` at the later node.
 #[trace("TC-233", "FR-322-AC-81")]
 #[test]
-fn tc_233_declaration_names_are_unique_per_namespace() {
+fn tc_233_declaration_names_are_unique_across_every_declaring_node() {
     let node = |id: &str, tag: &str, form: &str| {
         json!({
             "node_id": walk_id(id),
@@ -8124,28 +8120,31 @@ fn tc_233_declaration_names_are_unique_per_namespace() {
         })
     };
     let package = |nodes: Vec<Value>| json!({"semantic_graph": {"nodes": nodes}});
-    let coexisting = package(vec![
+    for (first, second) in [
+        (("scalar_type", "unit"), ("composite_type", "record")),
+        (("scalar_type", "dimension"), ("composite_type", "record")),
+        (("scalar_type", "unit"), ("scalar_type", "dimension")),
+        (("scalar_type", "unit"), ("scalar_type", "unit")),
+        (("composite_type", "record"), ("scalar_type", "enum")),
+    ] {
+        let colliding = package(vec![
+            node("a", first.0, first.1),
+            node("b", second.0, second.1),
+        ]);
+        assert_eq!(
+            package_declaration_refusal(&colliding),
+            Err((DeclarationRefusal::AmbiguousName, walk_id("b"))),
+            "{first:?} and {second:?} of one name"
+        );
+    }
+    let distinct = package(vec![
         node("a", "scalar_type", "unit"),
-        node("b", "composite_type", "record"),
-        node("c", "scalar_type", "dimension"),
+        json!({
+            "node_id": walk_id("b"), "node_tag": "composite_type", "semantic_form": "record",
+            "declaration": {"qualified_name": ["other"]}
+        }),
     ]);
-    assert_eq!(package_declaration_refusal(&coexisting), Ok(()));
-    let twice = package(vec![
-        node("a", "scalar_type", "unit"),
-        node("b", "scalar_type", "unit"),
-    ]);
-    assert_eq!(
-        package_declaration_refusal(&twice),
-        Err((DeclarationRefusal::AmbiguousName, walk_id("b")))
-    );
-    let two_types = package(vec![
-        node("a", "composite_type", "record"),
-        node("b", "scalar_type", "enum"),
-    ]);
-    assert_eq!(
-        package_declaration_refusal(&two_types),
-        Err((DeclarationRefusal::AmbiguousName, walk_id("b")))
-    );
+    assert_eq!(package_declaration_refusal(&distinct), Ok(()));
 }
 
 /// Index of the node whose root application names `identity`.
