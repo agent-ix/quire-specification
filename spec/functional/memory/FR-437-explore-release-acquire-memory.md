@@ -140,6 +140,14 @@ location keeps one message.
   - a member of `owed(b)`, or the `p` of a pair, that is itself removed is
     replaced by its live predecessors.
   An SC access is live only while its message is.
+- **Fence lifetime.** A fence is on no message, so no message collection
+  removes it. A `seq_cst` fence `f` of thread `t` is live while some view has
+  `f` as the latest live `seq_cst` fence of `t` that its frontier covers: a
+  thread's three views, every message view, `S`, and every view a `send`
+  carries that a `receive` has not yet joined. A view covers `f` when its
+  frontier entry for `t` is `f` or a later event. When no view does, every view
+  that covered `f` covers a later live fence of `t`, which takes each edge `f`
+  would take, and `f` leaves `P`.
 - **Key.** `P`, `F`, the frontiers and the `owed` sets are part of the state
   key, with events named by thread and message depth.
 
@@ -191,6 +199,8 @@ RC11 excludes.
 | FR-437-AC-9 | TC-391 LT-14 does not reach its weak outcome under `ra`: after the fence's thread has released the flag, a thread that acquired it and stored with `seq_cst` leaves the third thread's `seq_cst` load of the fenced location enabled for the new message only. | Test (TC-391) |
 | FR-437-AC-10 | TC-391 LT-15 does not reach its weak outcome under `ra`: after the loads have moved every current view of `L` to its last message and collected the SC events on the earlier messages, the thread that wrote them is still ordered after the first writer's `X := 1`, so its `X := 2` is not offered the slot before it in modification order. | Test (TC-391) |
 | FR-437-AC-11 | TC-391 LT-16 does not reach its weak outcome under `ra`: a thread that read the last message of `L` with a `relaxed` load, executed an acquire fence and then loaded `L` with `seq_cst` takes the predecessors of the collected SC event it synchronised with, so its `X := 2` is not offered the slot before `X := 1` in modification order. | Test (TC-391) |
+| FR-437-AC-12 | TC-391 LT-17 does not reach its weak outcome under `ra` in any interleaving, including those in which the fence's thread fences a second time before the other thread loads the flag: the first fence stays in `P` while the flag's message view covers it and not the second. | Test (TC-391) |
+| FR-437-AC-13 | A thread that fences twice with `seq_cst` and stores no flag between has, after its second fence, the first fence absent from the SC event graph; with a `release` flag stored between the fences, the first fence remains while the flag's message is live and its view covers the first fence and not the second. | Test (TC-393) |
 
 ## Dependencies
 
