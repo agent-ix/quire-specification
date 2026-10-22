@@ -77,7 +77,10 @@ its method, the value of `max_store_buffer` (under `tso`) or `max_messages`
 
 An item whose subject has an access the pre-check finds not to be one access
 settles `unsupported`, cause `weak-access-shape`, carrying `site`,
-`transition` and `shape`, with `shape` one of
+`transition` and `shape`; so does an item in which a reader
+([FR-435](FR-435-classify-memory-accesses-and-orderings.md)) reads a shared
+location, with shape `multi-location` naming the reader as the site and the
+shared locations it reads. The `shape` is one of
 `{"type":"multi-location","locations":[<location>, ...]}` and
 `{"type":"join-policy"}`.
 An item whose resolved model no candidate advertises settles `unsupported`,
