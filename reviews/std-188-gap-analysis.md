@@ -46,3 +46,17 @@ passes (117 and 14).
 Every new or changed AC has a TC row. Two vectors leave part of their input
 unstated (FND-001, FND-002), which is minor. The PF-02 buildability defect is
 recorded in SR-14743.
+
+## Dispositions
+
+Disposition pass 1, against head `85fc4212aca2a5622de140243505f916ab110526`
+(fix commit `85fc421`).
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | PD-11 now reads "then `reward duration on Server::attempt = d;` followed by `reward duration on Server::request = 0 ms;`, both `Quantity<ms>`", so the admitted case is one exact input. |
+| FND-002 | fixed | PF-16 now reads "`LongRun` with its scheduler clause written `under Steady fair weak Server::tick`; the same with `under every scheduler fair weak Server::tick`". `LongRun` is defined over `Avail`, which has `Server::tick`, and FR-407-AC-15 says the same thing. |
+
+Verdict, pass 1: both findings are fixed, and none remain open. The changed
+rows still map to FR-405-AC-9, FR-407-AC-6, AC-11 and AC-15. PF-02 now tests
+only `foreign-workload`, which matches the fixed AC-6.

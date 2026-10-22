@@ -63,3 +63,34 @@ trace-subject, profile, `over`-type, fraction-bound, quantile-over-fraction
 and confidence rules, and the grammar note.
 `quire validate --scope . spec/**/*.md` reports 134, the baseline, and the
 touched files have the same diagnostics as on main.
+
+## Dispositions
+
+Disposition pass 1, against head `85fc4212aca2a5622de140243505f916ab110526`
+(fix commit `85fc421`).
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | `fairness-under-workload` is removed from FR-272, native-diagnostics, FR-407 and FR-407-AC-6, and PF-02 keeps only its `foreign-workload` vector. FR-407 now reads: "source text that writes `under W fair weak Op` refuses `invalid_syntax`/`unexpected-token` at the first `fair`; no other input carries a workload together with a fairness set." No reference to the cause remains in `spec/` or `proposals/`. |
+| FND-002 | fixed | FR-407: "A formula event whose operators are not all interval operators with an interval bounded above, or whose profile is neither a bounded profile nor the timed profile, refuses with `invalid_probabilistic_model`/`unbounded-event` ... A bounded-window formula under the timed profile is an admitted event; a strict timed interval is admitted by the frontend and settles `unsupported`, `strict-clock-constraint` (FR-421)." AC-11 and PF-12 now admit `Deadline`'s `eventually[0 ms, 4 ms] holds(m.delivered)`, which matches TC-374. |
+| FND-003 | fixed | FR-407: "An interval-less operator under a profile other than the infinite-trace profile never reaches this check: the temporal frontend refuses it first with `unsupported_construct` (FR-048, FR-048-AC-9)." FR-407-AC-11 and PF-12 now expect `unsupported_construct` at the construct span for `always holds(n.healthy)` under the false-extension profile. This matches FR-048-AC-9. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | The rewritten FR-407-AC-6 is a comma splice: "Changing the workload or the fairness set changes the obligation identity, changing the evidence kind, method or a budget does not." Use a semicolon or "; changing ...". The meaning is clear, so this is minor. | spec/functional/analysis/FR-407-state-probabilistic-claims.md:207 |
+
+Verdict, pass 1: all three high findings are fixed. One new low finding,
+FND-004, is wording only. The PR is mergeable on this artifact. Notes: the
+head does not contain `origin/main` (`bb6d08a`, 5 commits ahead), but
+`git merge-tree` reports a clean merge and none of those commits touch the
+changed rows. `quire validate --scope . spec/**/*.md` reports 134, the
+baseline, and no touched file reports diagnostics. `cargo test --test
+checked_package_v2 --test backend_provider_v1` passes (117 and 14). No
+fixture or vector bytes changed. QSL FR-186 (agent-ix/quire-spec-language@0f34179e2)
+still names `fairness-under-workload` as a QSpec cause, still refuses a timed
+event as not a bounded profile, and in AC-3 still expects `unbounded-event`
+for `always holds(n.healthy)` under a bounded profile. That needs a QSL
+follow-up after this PR lands. The merged STD-252 and STD-250 text touches
+none of these rows.
