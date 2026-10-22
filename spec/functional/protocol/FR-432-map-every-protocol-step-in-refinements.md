@@ -82,6 +82,30 @@ rows for one template, two operation rows for one operation, or two rows for
 any other class refuse `invalid_model_binding`/`conflicting-binding`, naming
 both.
 
+### The binder record of an abstract node
+
+The arguments of `node <A>::<protocol>::<node>(…)` are one expression per
+field of the node's **binder record**, in the order below, `_` leaving a field
+open. A row with no argument list leaves every field open. The fields by node
+kind are:
+
+| Node kind | Fields, in order | Field types |
+| --- | --- | --- |
+| `attempt` | `receiver`; one field per parameter of the node's operation, in declaration order; `result`, present only when the operation declares a result | the reference type of the operation's owner; each parameter's declared type; the declared result type |
+| `event`, `finish` | when the node's binder type `T` is a record type, one field per field of `T`, in declaration order; otherwise exactly one field | each field's declared type; otherwise `T` |
+| `send`, `receive` | as `event`, over the channel's `carries` type | as `event` |
+
+So a binder of a scalar, enumeration, variant or object type is one field of
+that type, and no node kind is refused as a right side for its binder's type.
+Each argument expression is typed against its field's type. An argument list
+whose length differs from the field count refuses
+`ill_typed`/`operator-ineligible` at the node, retaining `expected` and
+`actual`, the two counts, as an operation application with the wrong number of
+arguments does. An argument whose type is not its field's type refuses
+`ill_typed`/`type-mismatch` at the argument, retaining `expected` and `actual`.
+The observation label of the visible step holds the field values the row gives
+and leaves an open field unconstrained.
+
 ### A protocol on the abstract side
 
 A declaration selects an abstract protocol subject in its header, by
@@ -208,6 +232,8 @@ FR-177 over the same product.
 | FR-432-AC-11 | Renaming the abstract alias `Spec` to `spec` with the list's entries renamed to match gives the same resolved list in the same order and the same node id: the alias-free order puts `Full::fin` before `lose Full::ch`, while the alias-including spellings `spec::Full::fin` and `lose spec::Full::ch` order the other way, so the rename discriminates the two orders. | Test (TC-386) |
 | FR-432-AC-12 | A refinement headed `abstract Spec` with a non-empty list reports only the last defect row (or only the not-yet-built refusal), never `missing_declaration`/`missing-name` for an entry naming a protocol. | Test (TC-386) |
 | FR-432-AC-13 | Over the abstract protocol `Full` of TC-386 IL-01, a step row whose right side is `node Spec::Full::to` (a `timeout`), `node Spec::Full::fe` (a `fence`), `node Spec::Full::par` (a `parallel`) or `node Spec::Full::Ghost` (no node) refuses `missing_declaration`/`missing-name` at the node; the same row naming an attempt, event, send, receive or finish node is admitted. | Test (TC-386) |
+| FR-432-AC-14 | Over an abstract protocol with attempt `a1` on `twice(x: Int[0, 9])` (no result), attempt `a2` on `quad(x: Int[0, 9])` with result `Int[0, 99]`, event `ev as (e: M::Evt)` with `Evt{p: Boolean, q: Int[0, 9]}` and event `eb as (b: Boolean)`, the binder record of `a1` is (`receiver`, `x`), of `a2` is (`receiver`, `x`, `result`), of `ev` is (`p`, `q`) and of `eb` is the one field `b`; the rows `node A::a1(self, 1)`, `node A::a2(self, 1, _)`, `node A::ev(true, 3)`, `node A::eb(true)` and `node A::a1` with no argument list are admitted. | Test (TC-386) |
+| FR-432-AC-15 | In the protocol of FR-432-AC-14, `node A::a1(self, 1, 2)`, `node A::a1(self)`, `node A::ev(true)` and `node A::eb(true, false)` each refuse `ill_typed`/`operator-ineligible` at the node retaining `expected` and `actual`; `node A::eb(1)` and `node A::ev(true, true)` refuse `ill_typed`/`type-mismatch` at the argument retaining `expected` and `actual`. | Test (TC-386) |
 
 ## Dependencies
 
