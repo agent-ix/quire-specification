@@ -3837,6 +3837,82 @@
           }
         ]
       }
+    },
+    {
+      "name": "certificate-stale-dependency-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause": "FR-331",
+        "/results/1/cause": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "stale-dependency",
+              "requested": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              },
+              "recompiled": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+              }
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "stale-dependency",
+              "requested": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              },
+              "recompiled": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+              }
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result",
+            "method": "exploration"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result",
+            "method": "exploration"
+          }
+        ]
+      }
     }
   ],
   "adverse": [
@@ -6002,6 +6078,17 @@
           "op": "replace",
           "path": "/results/2/cause/shape/ordering",
           "value": "consume"
+        }
+      ]
+    },
+    {
+      "name": "certificate-stale-dependency-without-requested",
+      "base": "certificate-stale-dependency-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/1/cause/requested"
         }
       ]
     }
