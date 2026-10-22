@@ -44,6 +44,18 @@ The `code-review` method was skipped, because the diff contains no code.
 | FND-002 | low | minor: the Timestamp form states the signed 128-bit domain, but no vector exercises it. AC-21, AC-22 and C24 refuse only `+1`, `01` and uppercase hex. A reader that accepts `170141183460469231731687303715884105728` (2^127) passes every listed case. <br>Fix: add that payload, or `-170141183460469231731687303715884105729`, to FR-144-AC-22 and C24 as `invalid_runtime_input`/`invalid-value`, and keep 2^127 - 1 admitted. | spec/functional/type-model/FR-144-preserve-complete-collection-algebra.md:314, spec/test-cases/TC-189-collection-kind-algebra.md:56 |
 | FND-003 | low | minor: layout. "canonical as / defined above. Two / kinds" is broken across three short lines, and the new population sentence runs into one long line with "A unit-bearing quantity ...". <br>Fix: reflow both paragraphs. | spec/functional/runtime/FR-181-simulate-finite-executions.md:131-134, spec/functional/runtime/FR-181-simulate-finite-executions.md:147-150 |
 
+## Dispositions
+
+Disposition pass 1, head 8f6263d74 (fix commit; origin/main is an ancestor). `quire validate --scope . 'spec/**/*.md'` gives 86 failure lines, none on a touched file; `cargo test --test checked_package_v2 --test backend_provider_v1` passes 23 and 119. The 2^127, -2^127 - 1 and 2^127 - 1 decimal strings were recomputed and are exact.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-181-AC-21 now reads "two states whose population member holds the same reference identities, inserted into the set in two different orders, have equal state keys", and the TC-210 step encodes two such states. The AC no longer depends on how created objects get identities. |
+| FND-002 | fixed | FR-181-AC-21 lists 2^127 and -2^127 - 1 as outside the form and 2^127 - 1 inside it; FR-144-AC-22 and TC-189 C24 refuse 2^127 as `invalid-value` at `/elements/0` and admit 2^127 - 1. |
+| FND-003 | fixed | The "canonical as defined above. Two kinds" paragraph is reflowed, and the unit-bearing quantity sentence is its own paragraph. |
+
 ## Verdict
 
-Mergeable after FND-001 is fixed, a one-sentence change to AC-21 and the TC-210 step. FND-002 and FND-003 are minor and cheap to fix in the same round. The byte vectors, the K2 payload agreement, the FR-144 key row, the AC-22 rewrite, the nanoseconds default, the absence of test-parsed fixture edits, id uniqueness and both gates are verified. Owner or planner decisions: confirm the `nanoseconds` Timestamp form over STD-269's `seconds`/`nanos` default, and record STD-285 item 3 (QSL Decimal element form) on a Linear ticket, because neither PR decides it.
+Disposition pass 1: FND-001 to FND-003 are fixed and there is no new finding. Mergeable; it merges before QSL #1255.
+
+Review pass: Mergeable after FND-001 is fixed, a one-sentence change to AC-21 and the TC-210 step. FND-002 and FND-003 are minor and cheap to fix in the same round. The byte vectors, the K2 payload agreement, the FR-144 key row, the AC-22 rewrite, the nanoseconds default, the absence of test-parsed fixture edits, id uniqueness and both gates are verified. Owner or planner decisions: confirm the `nanoseconds` Timestamp form over STD-269's `seconds`/`nanos` default, and record STD-285 item 3 (QSL Decimal element form) on a Linear ticket, because neither PR decides it.
