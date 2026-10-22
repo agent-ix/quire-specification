@@ -22,7 +22,8 @@ replay-result type stores a witness-backed field.
 - QSL ADR-013 TK-01: the QSL layer-6 `replay` facade exists.
 - QSL ADR-013 TK-04: IR admits a `Witness` only through `Witness::parse` and
   the packet carries `ReplaySource`.
-- QSL ADR-013 TK-07: the FR-201 obligation-identity digest domain exists.
+- CG computes the obligation identity in the FR-201
+  `quire.ir-proof.obligation-identity/v1` domain (TC-952).
 - CG #50: the CG replay adapter and parity comparator exist.
 - WP9 vendors the seed counterexample vector.
 
