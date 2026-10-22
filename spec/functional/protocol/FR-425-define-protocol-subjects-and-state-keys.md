@@ -194,9 +194,11 @@ FR-181 simulator state key with these member contents:
 | --- | --- | --- |
 | `semantic` | — | the model state's population map, as for a model subject |
 | `control` | `{"type":"protocol-instance","ordinal":"<decimal>"}` | `{"type":"instance-state","finished":true\|false}` |
-| `control` | a thread path | `{"type":"thread-state","rest":<rest>,"disposition":"running"\|"completed"\|"cancelled"}` |
+| `control` | a thread path | `{"type":"thread-state","rest":<rest>,"disposition":"running"\|"completed"\|"cancelled"}`; for a compensation thread also `"registration":<registration key>`, the `control` key of the registration it compensates |
 | `control` | `{"type":"parallel-instance","parent":<thread path>,"node":"<node>","ordinal":"<decimal>"}` | `{"type":"parallel-state","settled":true\|false,"dispositions":<map from branch label text to disposition text>}` |
 | `control` | `{"type":"registration","template":"<qualified-name>","thread":<thread path>,"ordinal":"<decimal>"}` | `{"type":"registration-state","status":<status>,"captures":<record>}` (FR-427) |
+| `control` | `{"type":"commit","instance":"<decimal>","node":"<node>"}` | `{"type":"commit-state","occurred":true}`, present from the step of that commit node until the instance is removed |
+| `observations` | `{"type":"attempt-record","thread":<thread path>}` | the record of the compensation thread's previous attempt, present from its first `cattempt` until its `cend`; the template's retry relation reads it |
 | `observations` | `{"type":"binder","node":"<node>","thread":<thread path>}` | the binder's record, one entry for each (binder node, thread whose environment holds it), each environment pruned by the reach rule |
 | `bounds` | `{"type":"repeat-counter","node":"<node>","thread":<thread path>}` | the counter, an integer |
 | `bounds` | `{"type":"attempt-count","thread":<thread path>}` | a compensation thread's attempt count, an integer |
@@ -241,6 +243,7 @@ state holds the model state and no instance.
 | FR-425-AC-9 | An entry bound in a branch of an inner `all`-joined `parallel` and read after the outermost join is held by the inner branch, then by the enclosing branch, then by the outermost joiner, and is absent from `observations` in the step after the reading node's step. A joining thread whose entry is read only by branches of a later `parallel` keeps it through that fork, which copies it into each branch; a thread resting at or before the node's binding node holds no entry for it. | Test (TC-375) |
 | FR-425-AC-10 | Two protocol definitions of one package that each declare `channel Pay` give subjects whose `queues` entries and `duplicate` and `lose` identities hold channel names in each protocol's own qualified name; no key or identity of one names the other's channel. | Test (TC-375) |
 | FR-425-AC-11 | Inside a `repeat`, a `parallel Outer` with an `all` join has a branch holding an inner `parallel Inner` joined `any` whose branch binds `x`, and a reader of `x` after the binding, in the same branch of `Inner` as the binding node and inside the loop body. After `join(Outer)` the joiner's environment holds no entry for `x`, and `observations` holds none under the joiner's path, although the `repeat` back edge widens the joiner's reach to the whole body; the same with `Inner` joined `all` holds `x` after `join(Outer)` for as long as the reach rule keeps it. | Test (TC-375) |
+| FR-425-AC-12 | Template `Refund` with two registrations `r1` and `r2` activated in either order reaches two states whose keys differ, because each compensation thread's `thread-state` names its registration. A state after a step of the commit node `Committed` and the state before it have different keys, the first holding the `commit` entry for its instance, and the entry is absent once the instance is removed. A compensation thread after its first `cattempt` holds an `attempt-record` entry, a retry relation over it evaluates, and the entry is absent after the thread's `cend`. | Test (TC-375) |
 
 ## Dependencies
 
