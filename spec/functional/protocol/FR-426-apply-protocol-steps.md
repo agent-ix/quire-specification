@@ -188,7 +188,7 @@ members not listed for a kind being absent:
 | `operation` | `attempt`, `cattempt` | the operation's qualified name |
 | `receiver` | `attempt`, `cattempt` | the receiver reference |
 | `arguments` | `attempt`, `cattempt` | the argument vector, in parameter order |
-| `record` | `event`, `send`, `receive`, `finish`, `activate` | the bound record or payload |
+| `record` | `event`, `send`, `receive`, `finish`, `activate`, `cattempt` | the bound record or payload; for `cattempt`, its attempt record ([FR-427](FR-427-check-protocol-compensation.md)) |
 | `actor` | a step taken by an instance of a replicated role, `send` and `receive` it owns included | the acting instance's object reference |
 | `channel` | `duplicate`, `lose` | the channel's qualified name and instance ordinal |
 | `entry` | `duplicate`, `lose` | the queue entry |
