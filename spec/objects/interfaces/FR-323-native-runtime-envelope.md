@@ -137,9 +137,10 @@ the others are absent (never `null`, an empty name or a placeholder):
   `operation` its `Identifier` ([FR-340](FR-340-checked-package-frame-location.md),
   [FR-342](FR-342-checked-package-operation-anchor-body.md)), for the replay of
   an operation's frame;
-- `state_clause`: the `QualifiedName` a state clause (an invariant, a
-  precondition or a postcondition, [FR-341](FR-341-checked-package-state-clause-body.md))
-  is declared under, for the replay of a state clause's counterexample. A
+- `state_clause`: the state clause's own declared `QualifiedName` (the
+  clause's name, such as `VersionUnchanged`, never the name of the object
+  type or operation it constrains), the clause being an invariant, a
+  precondition or a postcondition ([FR-341](FR-341-checked-package-state-clause-body.md)), for the replay of a state clause's counterexample. A
   precondition or a postcondition of an operation is a state clause and
   selects by `state_clause`, not by `frame_operation`: the frame and the
   clause are two obligations of one operation, and the target names the one
@@ -165,8 +166,8 @@ that applies:
    request with more than one, `invalid_runtime_input`/`invalid-value` at the
    pointer of the last member present in the order `function`,
    `frame_operation`, `state_clause` (`/replay/frame_operation` for a request
-   with `function` and `frame_operation`, `/replay/state_clause` for any pair
-   with `state_clause`); and a frame or a state-clause request that carries
+   with `function` and `frame_operation`, `/replay/state_clause` for any request
+   carrying `state_clause` with one or both other members); and a frame or a state-clause request that carries
    `arguments` or an occurrence key, `invalid_runtime_input`/`unknown-member`
    at `/replay/arguments` or at `/replay/occurrence_key`;
 2. the resolution of the replay target against the recompiled package, after
@@ -526,7 +527,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-16 | NORM: for a nested retained type link comparison, the `type-comparison` event is charged first and then every numeric endpoint (4 Integer, 8 Rational, 4 Decimal) is checked against B by the AC-15 bit-length rule; the first endpoint over B refuses by the same `limit` cause with `event: type-comparison` and a `type-link-` `operand`, before the endpoint equality runs, and an endpoint at exactly B admits. | Test (TC-278) |
 | FR-323-AC-17 | A replay request for a proved package whose lock carries `refinement_internals`, with the member copied onto `package` (and a dependency's own onto its `dependencies` entry), recompiles each refinement with its list and reaches the proved `package_id`; the same request with the member removed, or with a spelling changed to another class that resolves, recompiles to another `package_id` and refuses `stale_dependency`/`content-mismatch` naming the request's `package_id` and the recompiled one (for a dependency, that entry's `identity`, its `package_id` and the recompiled one); a spelling that resolves to no class refuses `missing_declaration`/`missing-name` in the recompile, located at `/package/refinement_internals/<pointer>` for the proved package's value and at `/package/dependencies/<n>/refinement_internals/<pointer>` for the `n`th dependency entry's. None yields a result. | Test (TC-277) |
 | FR-323-AC-18 | A function counterexample's replay request carries `function` and no `frame_operation` or `state_clause`; a frame counterexample's carries `frame_operation` (`object` and `operation`) and no `function` or `state_clause`; and a state-clause counterexample's, an operation's postcondition included, carries `state_clause` and no `function` or `frame_operation`. A frame or a state-clause request carries no `arguments` and no occurrence key (one that carries either is refused by AC-19). | Test (TC-278) |
-| FR-323-AC-19 | A replay request with none of `function`, `frame_operation` and `state_clause` refuses `invalid_runtime_input`/`missing-member` at `/replay`; one with `function` and `frame_operation` refuses `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation`, and one with `state_clause` and either other member at `/replay/state_clause`; and a frame or a state-clause request carrying `arguments` or an occurrence key refuses `invalid_runtime_input`/`unknown-member` at `/replay/arguments` or `/replay/occurrence_key`; each at decode before the byte-provision rule and any recompile, so a request with two members and a missing provision entry reports the member refusal. | Test (TC-278) |
+| FR-323-AC-19 | A replay request with none of `function`, `frame_operation` and `state_clause` refuses `invalid_runtime_input`/`missing-member` at `/replay`; one with `function` and `frame_operation` refuses `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation`, and one with `state_clause` and either other member, or with all three members, at `/replay/state_clause`; and a frame or a state-clause request carrying `arguments` or an occurrence key refuses `invalid_runtime_input`/`unknown-member` at `/replay/arguments` or `/replay/occurrence_key`; each at decode before the byte-provision rule and any recompile, so a request with two members and a missing provision entry reports the member refusal. | Test (TC-278) |
 | FR-323-AC-20 | A `frame_operation` is resolved after dependency rule 5: with a stale proved `package_id` the rule 5 refusal is reported; with a current one, an undeclared operation or an operation with no frame node refuses `missing_declaration`/`missing-name`, an `object` naming a record value type and an operation that `object` only inherits refuse `invalid_model_binding`/`malformed-declaration`, and a name two supertypes expose refuses `ambiguous_declaration`/`ambiguous-name`, each naming the target. | Test (TC-278) |
 | FR-323-AC-21 | A `state_clause` is resolved after dependency rule 5: with a stale proved `package_id` the rule 5 refusal is reported; with a current one, a `state_clause` naming a declared invariant, precondition or postcondition resolves to that clause, and one naming no declaration or naming a function refuses `missing_declaration`/`missing-name` naming the target. | Test (TC-278) |
 
