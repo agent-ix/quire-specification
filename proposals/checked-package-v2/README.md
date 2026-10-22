@@ -60,8 +60,8 @@ structures, but any external consumer receives only the contract.
   `NodeId`). One vector additionally carries a
   `second_frame` member: a complete second `state`/`frame` node object,
   every member a real semantic-graph node requires, inserted into the graph
-  verbatim, so the vector exercises the reader's ascending-node-id-digest
-  order across two frame nodes.
+  verbatim, so the vector exercises the reader's visit order across two
+  frame nodes, which ascends by node-id digest.
 - `dependency-selection-vectors.json` carries two `DependencySelection`
   entries (`{identity, package_id}`), the `package_id` of
   `fixtures/positive-all-families.json` with those entries as its lock's and
@@ -174,7 +174,9 @@ The package key is the selected contract version and a
 `quire.package.semantic/v2` digest over a non-circular JCS preimage. The
 preimage is exactly the `quire.checked-package-id/v2` object containing ordered
 edition, profile, definition, model, feature and dependency selections plus the
-checked semantic graph's typed-key ordered identity projection. It excludes
+checked semantic graph's identity projection, one occurrence-free entry per
+node in graph order (the producer's order of `semantic_graph.nodes`, which a
+reader does not sort and which enters the id). It excludes
 package identity itself, source-occurrence/source-map data, raw-byte artifacts,
 presentation, runtime inputs, installed backends, diagnostic wording and reader
 limits.
@@ -310,14 +312,16 @@ A reader reports the first refusal in the order owned by
 `quire.native.diagnostics/v1`: graph-shape refusals, then
 `stale-node-key` (`invalid_package`) for an application node whose retained key
 is not its preimage digest, then declaration refusals, then frame refusals at
-the first `state`/`frame` node in ascending node-id digest order carrying one
+the first `state`/`frame` node carrying one, visiting them in ascending
+node-id digest order
 (that node's own `missing_declaration`/`invalid_model_binding` meaning-join
 defect outranking its `invalid_semantic_graph` canonical-order defect, per
 FR-340), then state refusals (the placement of `quire.op.state.clause`, then
 each `state`/`operation_anchor` node and then each `state`/`state_clause`
-node in ascending node-id digest order, per FR-341 and FR-342), then nodes
-in ascending node-id digest order and, inside a
-node, applications in pre-order. One
+node, visiting each kind in ascending node-id digest order, per FR-341 and
+FR-342), then nodes, visited in ascending node-id digest order and, inside a
+node, applications in pre-order. These visit orders choose the refusal to
+report; they are not an order of `semantic_graph.nodes`. One
 application checks `unknown-operation`, `operation-class-mismatch`,
 `operation-law-missing`, `operation-law-mismatch`,
 `operation-law-unselected`, `operation-mode-mismatch` and
