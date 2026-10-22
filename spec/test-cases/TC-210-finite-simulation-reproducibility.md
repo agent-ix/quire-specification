@@ -50,8 +50,8 @@ The explicit refusal/non-conclusive mutations include:
 ## Successor and initial-state order vectors
 
 - A parent with one transition identity `t` and two post-states `s1` and
-  `s2` whose state-key bytes order `s1` before `s2` visits `s1`'s successor
-  first, whichever order the successor relation yields them in; an equal
+  `s2` whose state-key bytes order `s1` before `s2` visits `s1` before
+  `s2`, whichever order the successor relation yields them in; an equal
   third post-state with the key of `s1` is not a further successor
   (FR-181-AC-16).
 - A subject supplied with initial states `[b, a]`, where `a`'s state-key bytes
