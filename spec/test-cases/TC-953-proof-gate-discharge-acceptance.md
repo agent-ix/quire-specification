@@ -36,7 +36,7 @@ report.
 | P06 | P01 with `m2` leaving the proof green; then the same with `m2` listed as exempt in the gate configuration; then P01 with `m2` removed, so `M2` has no mutant | each run fails; the first two name module `M2` and mutant `m2` as surviving, and the third names `M2` as having no mutant (NFR-076-AC-3) |
 | P07 | P01 with `M1`'s expectation and `f1` both calling helper `decode`; a mutation of `decode` leaves the proof VERIFICATION SUCCESSFUL | the gate fails and names `decode` as a shared helper whose mutation left the proof green (NFR-076-AC-4) |
 | P08 | P07 with `M1`'s expectation taken from the QSpec operation vectors, so it reaches no helper of `f1` | the gate passes with no shared helper reported, as P01 (NFR-076-AC-4) |
-| P09 | P01 with the prover replaced by an executor that returns VERIFICATION SUCCESSFUL without running; then with a build-only run that compiles `M1` and `M2` and runs no proof | each run fails, and the run contributes no proof evidence to a qualification claim (NFR-076-AC-5) |
+| P09 | P01 with the prover replaced by an executor that returns VERIFICATION SUCCESSFUL without running; then with a build-only run that compiles `M1` and `M2` and runs no proof | each run fails and reports no module of `M1` or `M2` as discharged (NFR-076-AC-5) |
 | P10 | P01 with `f1` an exact kernel operation and `M1`'s expectation for it built by calling `f1` itself; then built by calling a different exact kernel operation; then taken from a checked-in specification model that calls no exact kernel operation | the first two runs fail and name `f1`; the third passes (NFR-076-AC-6) |
 
 ## Expected Results

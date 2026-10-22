@@ -27,8 +27,9 @@ mutated. A gate that declares no claimed module fails.
   agent-ix/quire-contract-codegen.
 - Binds those gates in their own repositories, whether or not an epic or
   qualification gate counts their result.
-- Proof evidence from other gates counts toward a qualification claim
-  (NFR-075) only when those gates meet this requirement.
+- Proof evidence from the runtime exact-kernel gate and from the
+  generated-harness gate named above counts toward a qualification claim
+  (NFR-075) only when that gate meets this requirement.
 - Does not govern the prover's own soundness, the choice of prover, how a
   backend settles a claim or a terminal record, or the `proved` result a
   backend returns (FR-331).
@@ -106,7 +107,7 @@ that caused it.
 | NFR-076-AC-2 | A claimed module that the prover compiles and in which no check is discharged, including one whose only checks report UNREACHABLE or a status other than SUCCESS, is reported `unreached` and the gate fails. On a backend with no per-check status, a module whose obligations are all reported other than proved is `unreached`, and one proved obligation counts as one discharged check. | Test |
 | NFR-076-AC-3 | A mutant injected inside a claimed module that leaves the gate green fails the gate, and the report names the module and the mutant. A gate configuration that exempts that mutant still fails. A claimed module with no mutant run fails. | Test |
 | NFR-076-AC-4 | When the expectation and the function under proof both reach a helper, a mutation of that helper that leaves the proof green fails the gate, and the report names the helper. An expectation taken from the QSpec operation vectors, which reaches no helper of the function under proof, requires no helper mutation. | Test |
-| NFR-076-AC-5 | A gate whose pass rests on a stubbed executor, a predetermined verdict or a build-only run fails, and contributes no proof evidence to a qualification claim (NFR-075). | Test |
+| NFR-076-AC-5 | A gate whose pass rests on a stubbed executor, a predetermined verdict or a build-only run fails, so its result is not offered as proof evidence to a qualification claim (NFR-075). | Test |
 | NFR-076-AC-6 | An expectation for an exact kernel operation, or for a runtime operation that calls one, that is derived from anything other than the QSpec operation vectors or a checked-in specification model that calls no exact kernel operation fails the gate, and the report names the operation. | Test |
 | NFR-076-AC-7 | The runtime exact-kernel gate and the code generation generated-harness gate each meet NFR-076-AC-1 to AC-6 in their own repository, whether or not an epic or qualification gate counts their result. | Inspection |
 
