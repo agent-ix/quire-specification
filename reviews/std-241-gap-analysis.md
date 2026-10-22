@@ -29,3 +29,11 @@ Ticket: STD-241. Plan completion: not assessed. This is a manual mapping.
 ## Verdict
 
 Every new AC has a TC row. One clause is duplicated across two ACs.
+
+## Dispositions
+
+Round 1. Against QSpec #336 head 7235b5c (fix commit 7235b5c).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-437-AC-14 now ends at the encoded state: "… `left`'s `cur` view has `at` mapping `x` to depth `"0"` and `y` to depth `"0"` and `frontier` mapping `left` to `"1"`, and `right`'s has an empty `frontier`." The replay refusals live only in FR-439-AC-10 and MK-10. |

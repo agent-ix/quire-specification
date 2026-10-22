@@ -52,3 +52,33 @@ and engine `content-mismatch`, or QSpec's `revision-mismatch`. FND-002
 should go into the Remaining work or a test vector. The typed form is
 otherwise complete and adopts the ticket's engine form, with two justified
 additions. The PR body contains no review-finding paraphrase.
+
+## Dispositions
+
+Round 1. Against QSpec #336 head 7235b5c (merge of std-ra-247-qspec
+eadbce6, then fix commit 7235b5c). The head contains origin/main and the
+current #333 head. `quire validate` reports 134 failing documents, none
+touched; `cargo test --test checked_package_v2 --test backend_provider_v1`
+14 and 117 passed. #336 merges cleanly with #334 and #335. FR-437-AC-14,
+FR-439-AC-10, MK-09 and MK-10 occur in no other open QSpec PR.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | still-open | FR-439-AC-10 and MK-10 no longer name a cause. They defer to "the refusal this section's replay rule names". But the replay sentence this PR edits names `stale_dependency`/`revision-mismatch` for the new members: "refuses `stale_dependency`/`revision-mismatch` when it differs from the carried one in any member, including a view's `frontier` or `owed` and the SC event graph". So the new ACs still resolve to the cause that QSL FR-227-AC-2 (`content-mismatch`), the engine and the ticket's acceptance contradict. The PR body calls this an open owner decision. QSL-473 (Done) already deleted `revision-mismatch` in QSL in favour of `content-mismatch`, and no follow-up Linear ticket is cited. To close: either name `content-mismatch` in the edited sentence, or defer to a filed ticket (QSpec still uses `revision-mismatch` in about 10 places, so a QSpec-wide follow-up fits). |
+| FND-002 | fixed | The view rule still reads "a pointer at a removed message encodes as the depth of its location's earliest live message". The PR body's Remaining work now lists the engine change: "encode a pointer at a removed message as the depth of its location's earliest live message (the view encoding drops the entry today)". QSpec #334's FR-437-AC-4 and MB-07 carry the equal-key test. |
+| FND-003 | fixed | FR-437 Key bullet: "`P`, `F`, the frontiers and the `owed` sets are part of the state key, with events named by thread, kind, ordinal and message depth (the typed form below)." |
+| FND-004 | deferred | The PR is QSpec-only. Its body records that QSL FR-229's Outputs still describe views as location-to-position maps and that the QSL change is out of this PR. QSL #1195 does not touch that section. No follow-up ticket id is cited, so the lead should file a QSL ticket. |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | low | The PR body's Remaining work restates the review findings near verbatim ("QSL FR-229's Outputs still describe views as maps from location to message position", and the refusal-cause disagreement). It should cite follow-up ticket ids instead of carrying the review text. | QSpec #336 body (Remaining work, Lead defaults 3) |
+
+## Dispositions (pass 2)
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | The edited FR-439 replay sentence names `stale_dependency`/`content-mismatch`, as QSL FR-227-AC-2 and the engine do. FR-439-AC-5 and TC-394 MK-03 (the same refusal for a carried buffer) take the same cause so the section is consistent, and FR-439-AC-10 and MK-10 name it directly. |
+| FND-004 | deferred | QSL FR-229's Outputs wording is owned by QSL-960; the PR body cites it. |
+| FND-005 | fixed | The PR body cites STD-241 and QSL-960 and carries no review text. |
