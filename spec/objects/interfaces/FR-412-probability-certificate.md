@@ -41,6 +41,27 @@ components}`:
 A certificate names its states and carries no qualitative sets; the checker
 recomputes them.
 
+Every state key in `values`, `ranking`, `policy`, each component's `bias`
+and a state-located rejection SHALL preserve FR-411's complete product key:
+the model state key, monitor state and accumulator, including the
+activation flag. For the intermediate states of QSL
+FR-196 / ADR-028 SCH-2, it SHALL also preserve the pending scheduled
+identity and drawn vector. For an exact-only form, the absent monitor and
+accumulator remain absent. A model-state digest alone SHALL NOT stand for
+a bounded or intermediate product state. No new digest domain is implied.
+
+QSL FR-196 / ADR-028 PR-4 now own the complete canonical octet basis:
+`["quire.probability-product-key/v1", model, monitor, accumulator, pending]`
+in RFC 8785 UTF-8, with every component present and actual None as null.
+FR-331 transports those complete octets as `ProbabilityProductKey` in
+each existing `state` row member and at `{product_key}` in a rejection.
+The model is the full canonical simulation-state body, not its digest;
+formula monitors embed the complete parsed FR-338 array. The checker
+SHALL admit every component under the actual subject/claim and compare
+complete decoded canonical octets. Distinct accumulator values,
+digital tail modes, pending action/draw vectors and genuine empty drawn
+vectors SHALL remain distinct; None is not a fabricated zero component.
+
 ## Checker
 
 `check_probability_certificate` recompiles the package, re-admits the subject
@@ -81,8 +102,14 @@ proof of `>= θ` or a refutation of `<= θ`; `upper` for a proof of `<= θ` or a
 refutation of `>= θ`; `exact` for either. It refuses a certificate whose
 `identity` differs from the item's with `invalid_runtime_input`/`conflicting-identity`.
 A rejected certificate settles the item `inconclusive`,
-`certificate-rejected{rule, at}`, naming the inequality or rule that failed and
-the state where it failed;
+`certificate-rejected{rule, at}`, `at` the complete product state key where
+it failed, preserving the same components as the certificate's keys
+(FR-411, FR-331): rule `inequality-fails` where an
+upper, lower, exact or long-run condition above fails; `rank-missing` at a
+named non-target state with `x > 0` and no rank; `rank-broken` at such a state
+with no successor of positive probability, `x > 0` and a smaller rank; and
+`threshold-missed` at the initial state when its value is not on the claim's
+side of the threshold;
 a checker stopped by a budget settles `incomplete`, `limit-reached` naming
 the budget. The checker runs under the request's budgets; its cost is the
 re-enumeration plus one pass over the edges.
@@ -93,8 +120,8 @@ re-enumeration plus one pass over the edges.
 - **Key** — every member above.
 - **Absence** — a `lower` or `exact` certificate without `ranking`, a lower
   bound on a maximum without `policy`, or a `long-run` certificate without
-  `components` is rejected, `certificate-rejected{rule, at}` naming the missing
-  member.
+  `components` is rejected, `certificate-rejected{rule, at}` with rule
+  `malformed` at `{member}`, the missing member's name.
 
 ## Acceptance Criteria
 
@@ -102,11 +129,12 @@ re-enumeration plus one pass over the edges.
 | --- | --- | --- |
 | FR-412-AC-1 | The checker accepts the `Deliver` `exact` certificate (TC-363) (values `24/25`, `4/5`, 1 at delivered states, 0 at the two-loss state) after checking the minimum over both actions at each live state. | Test (TC-363) |
 | FR-412-AC-2 | The checker accepts the `LongRun` `long-run` certificate (TC-362) (gain `1800/1801`, bias 0 at `up` and `−2000/1801` at `down`) by exact equality. | Test (TC-362) |
-| FR-412-AC-3 | A certificate that violates one inequality, a `lower` certificate with a missing rank, or one with a rank that does not decrease, settles `inconclusive`, `certificate-rejected{rule, at}` naming the failed rule and its state. | Test (TC-363) |
+| FR-412-AC-3 | A certificate that violates one inequality settles `inconclusive`, `certificate-rejected` with rule `inequality-fails` at that state; a `lower` certificate with a missing rank, `rank-missing` at the unranked state; one with a rank that does not decrease, `rank-broken` at that state; one whose initial value is on the wrong side of the threshold, `threshold-missed` at the initial state; and a `lower` certificate without `ranking`, `malformed` at member `ranking`. | Test (TC-363) |
 | FR-412-AC-4 | A certificate whose identity differs from the item's is refused `invalid_runtime_input`/`conflicting-identity`. | Test (TC-363) |
 | FR-412-AC-5 | A `lower` certificate is checked over its named states and their successors only, with each unnamed successor at value 0. | Test (TC-363) |
 | FR-412-AC-6 | The checker recomputes every qualitative set and component itself and reads no other output of the provider. | Test (TC-363) |
 | FR-412-AC-7 | The checker accepts the `FairTerminates` `exact` certificate, whose objective names the fairness set, after recomputing that no fair end component exists. | Test (TC-363) |
+| FR-412-AC-8 | Two named product states with the same model state but different monitor states or accumulators retain distinct keys in `values`, `ranking`, `policy`, component `bias` and state-located rejections after serialization and reading. Intermediate states that differ only in their pending action or draw also remain distinct; replacing either complete key with the model-state digest fails the comparison. | Test (TC-363) |
 
 ## Dependencies
 
