@@ -8924,9 +8924,10 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
     }
 }
 
-/// The `invalid_result` cause set is closed: the native-diagnostics row and
-/// the FR-272 row list exactly these causes, and each names the pointer and
-/// the expected and received certification it retains (FR-272-AC-23).
+/// The `invalid_result` cause set is closed: the native-diagnostics row, the
+/// FR-272 row and FR-331's "Result entries" table list exactly these causes,
+/// and each catalog row names the pointer and the expected and received
+/// certification it retains (FR-272-AC-23).
 #[trace("TC-233", "FR-272-AC-23")]
 #[test]
 fn tc_233_invalid_result_cause_set_is_closed() {
@@ -8934,6 +8935,7 @@ fn tc_233_invalid_result_cause_set_is_closed() {
         "measured-with-truth",
         "missing-member",
         "unknown-member",
+        "wrong-value-kind",
         "invalid-value",
         "certification-mismatch",
         "unknown-cause",
@@ -8958,7 +8960,30 @@ fn tc_233_invalid_result_cause_set_is_closed() {
             );
         }
     }
+    assert_eq!(
+        result_entry_refusal_causes(),
+        causes,
+        "FR-331 \"Result entries\" table lists exactly the invalid_result causes"
+    );
 }
+
+/// The first cell of each row of FR-331's "Result entries" refusal table.
+fn result_entry_refusal_causes() -> BTreeSet<String> {
+    let header = "| Cause | Defect | Pointer and payload |";
+    let table = &BACKEND_PROVIDER_ENVELOPE[BACKEND_PROVIDER_ENVELOPE
+        .find(header)
+        .expect("FR-331 has its result-entry refusal table")
+        + header.len()..];
+    table
+        .lines()
+        .skip(2)
+        .take_while(|line| line.starts_with('|'))
+        .flat_map(|line| backticked(line.split('|').nth(1).unwrap_or_default()))
+        .collect()
+}
+
+const BACKEND_PROVIDER_ENVELOPE: &str =
+    include_str!("../spec/objects/interfaces/FR-331-backend-provider-envelope.md");
 
 /// The `resource_exhausted`, `cancelled` and `conflicting_declaration` rows of
 /// native-diagnostics and FR-272 list exactly the same closed causes, and each
