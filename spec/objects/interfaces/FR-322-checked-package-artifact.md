@@ -420,6 +420,13 @@ boundary.
   [FR-341](FR-341-checked-package-state-clause-body.md)'s `state_clause`
   joins) is reported after every frame refusal and before any operation
   refusal, in the order FR-341's "Reader order" fixes.
+  **Body steps.** After every state refusal and before any operation
+  refusal, the reader runs the body steps in this one order, each over its
+  own node forms and each reporting before the next starts: the state-graph
+  step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
+  the terminal step (FR-476), the step-relation step (FR-477) and the
+  protocol step (FR-464). Each body artifact's "Reader order" fixes the
+  checks inside its step; its place among the steps is this list's.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
   re-derives by QSL FR-092's `quire.structural-node/v1` preimage the key of
@@ -550,9 +557,10 @@ boundary.
   [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md),
   [FR-402](FR-402-hyperproperty-obligation-identity.md),
   [FR-440](FR-440-checked-package-union-and-case-nodes.md),
-  [FR-451](FR-451-checked-package-abstraction-relation-body.md) and
+  [FR-451](FR-451-checked-package-abstraction-relation-body.md),
   [FR-464](FR-464-checked-package-protocol-node-bodies.md) to
-  [FR-466](FR-466-checked-package-protocol-control-bodies.md). For example:
+  [FR-466](FR-466-checked-package-protocol-control-bodies.md) and
+  [FR-475](FR-475-checked-package-state-graph-claim-body.md). For example:
 
   | Node | `dependencies` |
   | --- | --- |
@@ -1030,9 +1038,14 @@ constraints ("Reference conformance" below).
    document's declarations under FR-154 and normalizes them under the
    `quire.model.complete/v1` rules. The selected document is an FCD semantic IR
    2.0.0 domain package (FR-154 step 3; filament-core-data FR-091 and FR-095):
-   `contractVersion`, `package`, `constructs`, `types` and `populations`, each type carrying its
-   `fields`, `operations`, `supertypes` and `relationships`, and each population its
-   members of "Population references" ("Owner join"; filament-core-data FR-141). A relationship's IR
+   `contractVersion`, `package`, `constructs`, `types`, `populations`,
+   `dimensions` and `units`, each type carrying its
+   `fields`, `operations`, `supertypes` and `relationships`, each population its
+   members of "Population references" ("Owner join"; filament-core-data FR-141),
+   and each dimension and unit node the members filament-core-data FR-146
+   states (`dimensions` and `units` may be absent, which is the empty list).
+   A field typed `ix://quire/native/Clock` is a clock field of its owning type
+   (FR-154). A relationship's IR
    node identity is FCD's, `ix://<org>/<name>/relationship/<Name>-<verb>-<Target>`,
    and it is declared in its source type's `relationships` with `sourceEnd` and
    `targetEnd`. The declarations steps 2 to 4 read are the projection of that
@@ -2047,6 +2060,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id digest order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id digest, each with its `identity_projection` rebuilt in the new graph order and its `package_id` recomputed. Each reorder that changes the node sequence changes the `package_id`, and the reader reports no refusal for the order of the nodes. A published fixture whose `identity_projection` lists the same entries in an order other than graph order fails the identity recomputation of FR-322-AC-14. | Test (TC-233) |
 | FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node `7916…` and the `correspondence`/`source_locus` node `eda3…` each list their body target `8a2a…`, and the `bounded_domain`/`integer_range` node `652c…` lists its `semantic_type` `07f6…`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node `1ffe…` lists its `semantic_type` `0ec8…` alone, not its `max` literal's `type`. Each fixture's `package_id` recomputes with those lists. With the projection entry patched and `package_id` recomputed, the full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
 | FR-322-AC-97 | The `quire.structural-node/v1` preimages that "Structural node preimage" spells recompute: P4, the `value`/`parameter` node of `x: Int[0, 9]` at level 0, to `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda`, and U2, the `scalar_type`/`compound_unit` node of `metre / second`, to `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`; P4 at level `1`, and P4 named `y`, each give a different key. The V2 schema admits a `value`/`parameter` node whose body binds `name` then `level`, and a `scalar_type`/`compound_unit` node; a parameter body with `level` before `name`, or with a third member, fails the V2 schema (`malformed_wire`). Every `value`/`parameter` node of every published positive fixture is current under that preimage, and the full reader admits each fixture. | Test (TC-233) |
+| FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 
 ## Dependencies
