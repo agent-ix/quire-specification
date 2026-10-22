@@ -73,7 +73,9 @@ so a wrong-stage input fails to compile. Every operation is a function of its
 request except for cancellation.
 
 `prove` hands a process provider the emitted package and an in-process
-provider the checked package (FR-331, "In-process providers"). An item routed
+provider the checked package, with `emitted` as `None` when `package` refuses
+to emit and an in-process provider ignoring it (FR-331, "In-process
+providers"; QSL ADR-029 PV-3). An item routed
 to an in-process engine is therefore served over a checked package that
 `package` refuses to emit, such as one that declares a probabilistic claim
 (QSL FR-185); an item routed to a process provider over such a package has
