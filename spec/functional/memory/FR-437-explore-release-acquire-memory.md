@@ -169,13 +169,15 @@ one message.
   live SC fences are ordered. (c) The `eco` part of the fence
   clause, `[Fsc] ; hb ; eco ; hb ; [Fsc]`, which the join of `S` at a
   `seq_cst` fence is meant to carry by not offering the message choices that
-  would complete it. `P` builds no edge for the `eco` part. That the join of `S` carries it is
-  not proved; it is checked by script over about 460,000 random litmus
-  programs of up to 8 events, none with an RMW or a non-atomic access, and by
-  exhaustive enumeration of two bounded families of programs with fences, with
-  no RMW and no non-atomic access. Every RC11 execution is an `ra` execution, and `ra`
-  also admits an execution only when every RC11 `psc` cycle through it uses
-  an omitted edge; both claims were checked on bounded random programs without
+  would complete it. That the join of `S` carries it is not proved. It is
+  checked by script over 196,961 random litmus programs of up to 8 events
+  with at least two `seq_cst` fences and no RMW or non-atomic access, in which
+  the `eco` part changes the RC11 outcomes of 2 programs and `ra` excluded the
+  outcomes in both, and by exhaustive enumeration of two bounded families of
+  programs with fences, with no RMW and no non-atomic access. Every RC11
+  execution is an `ra` execution, and `ra` also admits an execution only when
+  every RC11 `psc` cycle through it uses an omitted edge; both claims were
+  checked over about 460,000 random litmus programs of up to 8 events without
   RMW or non-atomic accesses and are not proved. A `proved` verdict therefore
   holds under RC11, and a counterexample is an `ra` execution that replay
   checks under `ra`.
