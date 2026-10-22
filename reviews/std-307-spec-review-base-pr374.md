@@ -51,3 +51,23 @@ CHANGES REQUESTED: two major findings (a duplicate dimension/unit identity has t
 | TC-280 | spec/test-cases/TC-280-model-owned-member-types.md | examined |
 | TC-280 | spec/test-cases/TC-280-model-owned-member-types.md | examined |
 | FR-146 | agent-ix/filament-core-data spec/functional/FR-146-carry-clock-fields-and-a-dimension-and-unit-graph.md (origin/main 0439946) | context_only |
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | low | I14 states each run has exactly one defect, and one of its runs makes a missing `origin` a defect (Unit.origin), but the duplicate-identity run's 'third unit appended, named ms with identity ix://test/orders/unit/ms, target s, scale "1/1000"' gives no `dimension`, `offset` or `origin`. Read literally that unit also refuses at Unit.dimension/Unit.offset/Unit.origin (schema). Say it is a copy of `ms` (dimension Time, offset "0", its own origin). | spec/test-cases/TC-234-domain-package-model-intake.md:55 |
+
+## Dispositions
+
+Round 1 at e9bb63e.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |
+| FND-005 | fixed | - |
+
+Round 1 verdict: MERGEABLE after FND-006 (minor) or with it accepted: all five round-0 findings fixed at e9bb63e. FR-154 now has one `conflicting-binding` row for duplicate dimension/unit identities, a complete FCD-code table, general FCD-pointer loci, Clock refused at every FCD position (payload never `declaration-form`), and AC-18/I13 break all nine shape members. I14's single-defect runs each check by hand. Gates at e9bb63e: quire validate 86 failure lines, same set as main c103300; cargo checked_package_v2 119 and backend_provider_v1 23 pass; main is an ancestor. No test-parsed fixture changed.
