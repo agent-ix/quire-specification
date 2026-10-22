@@ -310,7 +310,8 @@ semantic_type, declaration, recursion, body}`, where a reference to a member of
 the node's own recursion group becomes a `group_reference` ordinal. An
 expression whose root is an application has the semantic form fixed by its
 operator class, and its dependencies are exactly the unique digest-ascending
-reference targets and member declarations of its body. Changing division from
+reference targets and member declarations of its body. Every other node's
+dependencies follow FR-322's `dependencies` rules. Changing division from
 floor to Euclidean therefore changes the node id and the package id, and the
 `division-law-unselected-by-package-lock` mutation shows that a law absent from
 the lock refuses.
