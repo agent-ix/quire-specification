@@ -45,7 +45,9 @@ changing the token's original span. No punctuation, Unicode normalization or
 implicit model-name repair is admitted by this contextual rule.
 
 An unsigned integer spelling is `0` or `[1-9][0-9]*`. A minus is a separate unary
-token. Leading zeros and malformed exponent/string forms are syntax errors.
+token. `..` is one two-character punctuation token, scanned by longest match, and
+only the refinement `seq` form uses it (FR-376); `.` stays member selection, so
+`0 .. 1`, `0..1` and `a.b` scan as `uint` `..` `uint` and `ident` `.` `member-name`. Leading zeros and malformed exponent/string forms are syntax errors.
 Decimal/exponent number forms may be recognized for an unsupported numeric-form
 diagnostic; recognition does not admit floating point. Numeric value/range
 checking follows syntax and the selected scalar domain.
@@ -70,7 +72,7 @@ This candidate inventory is edition-owned, not an extensible runtime registry.
 The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `ordered`, `enum`, `record`, `tuple`, `union`, `type`, `function`, `pure`, `decreases`,
 `Integer`, `Int`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `Option`,
-`Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `null`, `none`, `decimal`,
+`Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `Quantity`, `Population`, `null`, `none`, `decimal`,
 `float32`, `float64`, `bits`, `convert`, `allInstances`, `collect`, `flatMap`,
 `flatten`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
 `toward-negative`, `nearest-even`, `nearest-away`, `unicode-scalars`, `nfc`,
@@ -151,6 +153,11 @@ signed-int   = [ '-' ], uint ;
 temporal-clause = 'temporal', ident, 'using', ident,
                  'over', '(', parameter, ')', [ 'clock', string ],
                  activation, '{', { capture }, temporal-expr, '}' ;
+```
+
+The `over` parameter of a `temporal-clause`, here and in the complete-V1 form below, is required: a temporal clause has no form without it, and the checked clause's argument 1 (FR-370) is always that parameter's reference. A claim that reads no one object still names one `over` parameter.
+
+```ebnf
 activation   = 'on', 'origin'
              | 'on', 'each', '(', parameter, ')',
                [ 'when', '(', expr, ')' ] ;
@@ -182,17 +189,20 @@ role         = 'role', ident, 'on', model-name, ';' ;
 relationship = 'relationship', ident, '=', model-name, ';' ;
 channel      = 'channel', ident, 'from', ident, 'to', ident,
                'carries', type-name, 'ordering', ordering,
-               'delivery', interval, ';' ;
+               'delivery', delivery-policy,
+               'capacity', capacity,
+               'overflow', overflow-policy, ';' ;
 ordering     = 'unordered'
              | 'fifo', 'by', '(', parameter, ')', block ;
 protocol-requirement = 'requires', 'temporal', ident, ';' ;
 node-ref     = ident, { '::', ident } ;
+attempt-type = type-name ;
 compensation = 'compensate', ident, 'for', node-ref,
                'as', '(', parameter, ')', 'by', ident,
                'on', operation-name, 'using', ident, 'clock', string, '{',
                { capture }, 'activate', 'first', '(', parameter, ')',
                'when', block, '{', { capture }, '}',
-               'within', interval, ';', 'attempts', uint, 'of', type-name, ';',
+               'within', interval, ';', 'attempts', uint, 'of', attempt-type, ';',
                'retry', '(', parameter, ',', parameter, ')', block, ';',
                'commit', (node-ref | 'never'), ';',
                'recover', '(', parameter, ')', block, ';', '}' ;
@@ -264,7 +274,10 @@ import is part of the package identity. Clauses name domain types by qualified
 name through the model alias, for example `Orders::Order` after
 `model Orders = "acme/orders" digest "…";`. A qualified name
 resolves to one effective declaration key (domain package identity, IR node
-identity, `sha256-jcs`). A name absent from the domain package refuses.
+identity, `sha256-jcs`). A name absent from the domain package refuses. The
+three-segment name `Orders::Tier::Gold` names the case `Gold` of the variant
+type `Tier` (the grammar is unchanged; resolution is in
+[model-complete](definitions/model-complete.md)).
 The [package contract](package-contract.md) defines the closed source inventory,
 domain package import, exact definition dependencies and typed binding roles.
 The explicit compiler inventory supplies the edition definition matching the
@@ -305,7 +318,9 @@ type-ref      = 'Boolean' | 'Integer' | qualified-name
               | 'Option', '<', type-ref, '>'
               | ('Sequence' | 'Set' | 'Bag' | 'OrderedSet'),
                 '<', type-ref, '>', [ '[', uint, ',', uint, ']' ]
-              | 'Reference', '<', qualified-name, '>' ;
+              | 'Reference', '<', qualified-name, '>'
+              | 'Quantity', '<', qualified-name, '>'
+              | 'Population', '<', qualified-name, '>', [ '[', uint, ']' ] ;
 qualified-name = ident, { '::', member-name } ;
 rounding-mode = 'exact' | 'toward-zero' | 'toward-positive'
               | 'toward-negative' | 'nearest-even' | 'nearest-away' ;
@@ -350,9 +365,11 @@ primary       = 'true' | 'false' | 'null' | 'none' | 'self' | 'result'
               | 'convert', '<', type-ref, '>', '(', expr, ')'
               | 'allInstances', '<', type-ref, '>', '(', expr, ')'
               | collection-call
+              | protocol-reference
               | 'reaches', '(', expr, ',', expr, ',', qualified-name, ')'
               | 'lookup', '<', type-ref, '>', '(', expr, ',', expr, ')',
                 'absent', absence-mode ;
+protocol-reference = 'protocol', qualified-name ;
 absence-mode  = 'undefined' | 'empty' | 'refused' ;
 operation-body = 'body', ident, 'using', ident, 'on', qualified-name,
                  '(', [ ident, { ',', ident } ], ')', block ;
@@ -398,8 +415,9 @@ float conversion is an explicit library function under a selected rounding
 profile, not a literal shortcut.
 
 The one qualified reference/call production is syntactically canonical. Static
-resolution classifies a bare qualified reference as an enum member or other
-declared value and a qualified call as a tuple constructor, union member
+resolution classifies a bare qualified reference as an enum member, a
+domain-package population (inside a state clause, as the operand of
+`allInstances` or `lookup`; FR-153) or other declared value and a qualified call as a tuple constructor, union member
 constructor or pure function; the parser does not duplicate those token
 strings into `enum-value`, `tuple-value`, `union-value` and call alternatives.
 
@@ -428,6 +446,19 @@ library: `quire::value::ieee::sqrt(x)`,
 `quire::value::ieee::bitIdentical(a,b)`. User declarations cannot replace or
 shadow those selected definition identities.
 
+`Population<T>[N]` spells an explicit population binding's type, where `T`
+is a qualified name resolving to a model `object` type and `N` is its declared
+maximum. The maximum is optional: `Population<T>` declares no maximum, not a
+default finite bound. The bracketed form has one `uint`, including `0`, rather
+than the two bounds of a collection type; it admits no sign, leading zero,
+fraction, exponent or `*`. Recognition of a qualified name does not prove its
+object kind; FR-153 owns that semantic check and the query result types.
+`Population` is case-sensitive and reserved in complete-V1 native binder
+positions; contextual `member-name` positions still admit it. Lowercase
+`population` remains the distinct contextual abstraction-binding keyword and
+an identifier elsewhere, never an alias for the uppercase type constructor.
+Neither spelling creates a population or supplies an ambient binding. A state clause names a domain-package population by the qualified name `M::P` as the operand of `allInstances` or `lookup` (FR-153); that name selects a declaration and takes its binding from the clause's observation.
+
 The selected `quire.model.complete/v1` definition gives the model forms above
 their meaning; FR-150 through FR-153 own it. `lookup<T>(p, r) absent m` reads
 the closed population binding `p` at key `r` with the per-query absence mode
@@ -442,7 +473,10 @@ selects a declared profile alias, as for every native declaration;
 its identifiers bind the receiver-less operation parameters positionally, in
 signature order, and the body reads the receiver as `self`. A package that does
 not select `quire.model.complete/v1` receives `unsupported_construct` for each
-of these forms.
+of `lookup`, a dispatched call and an `operation-body`. This sentence does not
+gate `Population<T>[N]`, `allInstances<T>(p)` or the field and relationship-end
+navigation: they are not refused as `unsupported_construct`, and are admitted
+or refused by the package's layer selection, not by this gate.
 
 ### Complete temporal, choreography and analysis forms
 
@@ -469,6 +503,15 @@ role          = 'role', ident, 'on', qualified-name, ';'
                 'from', ident, 'max', uint,
                 'lifetime', role-lifetime, ';' ;
 role-lifetime = 'workflow' | 'scope' | 'until', '(', expr, ')' ;
+```
+
+A replicated role's instance binder is the role's own name: in `role w each
+M::Worker from workers max 2 lifetime until(w.done)`, `w` names one instance
+inside the `until` expression, typed `Reference<M::Worker>`. The grammar has
+no separate binder production, and the `until` expression is written between
+the parentheses with no braces. The binder is readable only in that role's own `until` expression; a role name used as a value anywhere else refuses `missing_declaration`/`missing-name` at the name (FR-428).
+
+```ebnf
 channel       = 'channel', ident, 'from', ident, 'to', ident,
                 'carries', type-ref, 'ordering', ordering,
                 'delivery', delivery-policy,
@@ -477,7 +520,8 @@ channel       = 'channel', ident, 'from', ident, 'to', ident,
 delivery-policy = 'unknown' | 'at-most-once' | 'at-least-once'
                 | 'exactly-once-premise' ;
 capacity      = uint | 'symbolic', '(', ident, ')' ;
-overflow-policy = 'reject' | 'block' | 'loss' ;
+overflow-policy = 'reject' | 'block' | 'loss', loss-selector ;
+loss-selector = 'head' | 'tail' | 'new' ;
 parallel      = 'parallel', ident, [ memory-clause ],
                 '{', branch, branch, { branch }, '}',
                 'join', join-policy, '[', ident, { ',', ident }, ']',
@@ -548,13 +592,31 @@ indexed-read  = postfix, '@', ident ;
 state-graph-clause = possible-clause | always-possible-clause
                    | unique-path-clause ;
 possible-clause = 'possible', ident, 'using', ident,
-                  [ graph-over ], block ;
+                  [ graph-over ], graph-body ;
 always-possible-clause = 'always', 'possible', ident, 'using', ident,
-                         [ graph-over ], [ 'from', '(', expr, ')' ],
-                         block ;
+                         [ graph-over ],
+                         [ 'from', '(', graph-predicate, ')' ],
+                         graph-body ;
 unique-path-clause = 'unique', 'path', ident, 'using', ident,
-                     [ graph-over ], 'from', '(', expr, ')',
-                     'to', '(', expr, ')', ';' ;
+                     [ graph-over ], 'from', '(', graph-predicate, ')',
+                     'to', '(', graph-predicate, ')', ';' ;
+graph-body    = '{', { fairness }, graph-predicate, '}' ;
+graph-predicate = 'let', ident, '=', expr, 'in', graph-predicate
+                | 'if', expr, 'then', graph-predicate,
+                  'else', graph-predicate
+                | graph-implication ;
+graph-implication = graph-disjunction,
+                    [ 'implies', graph-implication ] ;
+graph-disjunction = graph-conjunction, { 'or', graph-conjunction } ;
+graph-conjunction = graph-relation, { 'and', graph-relation } ;
+graph-relation = graph-unary,
+                 [ ('until' | 'release' | 'since' | 'triggered'),
+                   [ interval ], graph-unary ] ;
+graph-unary   = 'not', graph-unary
+              | ('eventually' | 'always' | 'once' | 'historically'),
+                [ interval ], graph-unary
+              | comparison
+              | '(', graph-predicate, ')' ;
 graph-over    = 'over', '(', parameter, ')' ;
 hybrid-decl   = 'hybrid', ident, 'using', ident, '{', hybrid-mode,
                 { hybrid-mode }, '}' ;
@@ -574,7 +636,19 @@ verification-step = 'check', ident, 'claim', qualified-name,
                     'domain', qualified-name,
                     [ 'depends', '[', ident, { ',', ident }, ']' ],
                     [ 'bound', uint ], ';' ;
+attempt-type  = type-ref ;
 ```
+
+The attempt type after `attempts N of` is a `type-ref` here, replacing the
+bounded `attempt-type = type-name`, so the grammar admits an inline type form
+(`Set<M::Total>[0, 3]`), a bare `Integer` and a model-owned name (a variant
+type) as well as a record or event type name. Which of these the attempt type
+may be is a checker rule, not a grammar rule: the checker admits only a record
+or event type and refuses every other `type-ref`, including
+`attempts 2 of Integer`, with `invalid_model_binding`/`malformed-declaration`
+at the type (FR-239-AC-8).
+
+
 
 An interval is a closed `[a,b]` or a lower-bounded `[a,*]`; `[a,*]` is
 admitted only on a clause that selects `quire.temporal.infinite-trace/v1`, and
@@ -609,6 +683,47 @@ concrete side is a protocol subject (FR-432); it is admitted wherever that
 declaration admits a step row, and its first `qualified-name` names a
 concrete protocol node, template, channel, role or protocol. `step-target`
 and `step-argument` are the refinement declaration's productions (FR-375).
+
+The refinement header selects its abstract subject with
+`abstract-subject = ident, [ '::', member-name ] ;` (FR-375): a lone `ident`
+is a model alias and `ident '::' name` is a model alias with one protocol
+clause of that model, as in `abstract Spec::Twice`. The parser tells the two
+apart by the `::` only, and the token after `::` is always the name (reserved words included); it resolves neither name, and the checker resolves the
+alias and the protocol (FR-375, FR-432). The `concrete` side stays one
+`ident`.
+
+#### Refinement population and option forms
+
+Inside a refinement declaration, and only there, `primary` additionally admits:
+
+```ebnf
+primary   =/ model-name
+           | 'count', '(', binder, ')'
+           | 'sum', '(', binder, ':', expr, ')'
+           | ('exists' | 'all'), '(', binder, ')'
+           | 'only', '(', binder, ':', expr, ')'
+           | 'seq', '(', ident, 'in', expr, '..', expr, ':', expr, ')'
+           | 'Some', '(', expr, ')' ;
+binder    = ident, 'in', model-name, [ 'where', expr ] ;
+```
+
+A `model-name` in `primary` position names a concrete population. `count`,
+`sum`, `exists` and `all` are reserved words already. The population forms
+differ from the existing forms by what follows: `count` and `sum` read the
+population form when no `<` follows the word (the typed aggregates are
+`count<T>(` and `sum<T>(`), and `exists(binder)` reads the population form
+when `where` or `)` follows the binder's `model-name`, while `:` reads the
+state-clause quantifier over a collection expression. `only`, `seq` and `Some`
+are matched as keyword spellings only in these productions and remain
+identifiers elsewhere; inside a refinement row `only(`, `seq(` and `Some(`
+always read as the forms and so hide a pure function of the same name. `where`
+is matched as a keyword in `binder`, as it already is in the temporal
+`aggregate-term`, and is an identifier in other positions. `FR-376` owns the typing and value of the six
+population forms and the `..` bounds; `FR-375` owns `Some` and the rows it
+appears in. A state-clause body outside a refinement declaration that uses
+a population name or the `count`, `sum`, `exists` or `all` population form refuses
+`unsupported_construct`/`expression-form`; `only` and `seq` spelled as forms there
+are syntax errors (`invalid_syntax`/`unexpected-token`) at their `in` token.
 
 ### Abstraction relation declaration
 
@@ -674,6 +789,29 @@ rules only.
 - An `align-skip` entry and a model-operation execution binding each name an
   operation as `qualified-name`, whose first segment is a model alias the
   clause binds.
+- The predicate positions of a state-graph clause (its body and its `from`
+  and `to` operands) are `graph-predicate`s: a clause expression in which the
+  unary and binary temporal operators of the temporal facet stand at any
+  operand position, each with an optional `interval`, and in which `fairness`
+  constraints may stand at the start of a `graph-body`. One rule resolves
+  every overlap between `graph-predicate` and `expr`: a predicate or
+  parenthesised group that derives as an `expr` is read as that `expr`, and
+  the `not`, `(` and temporal alternatives of `graph-unary` apply only to a
+  phrase that does not. So `not c.n = 2` is the `expr` `(not c.n) = 2`, as in
+  any expression, and `not eventually c.n = 2` and `(eventually c.n = 2)` are
+  read through `graph-unary`. The production is recognition only: it carries
+  no profile selection, and a temporal operator or a fairness constraint that
+  a production recognizes is parsed and then refused by
+  [FR-390](../../spec/functional/analysis/FR-390-analyze-state-graph-claims.md)
+  at admission. Everything else is a syntax error: a fairness constraint
+  anywhere but the start of a `graph-body` (so none in a `from` or `to`
+  operand, and none on a `unique path` clause, which has no body), and a
+  temporal operator in an `if` condition, a `let` binding, or an operand of
+  a primary, such as a call argument or a quantifier body.
+  A `graph-relation` admits at most one binary temporal operator, as the
+  temporal clause's `temporal-relation` does, so `c.a until c.b until c.c` is
+  a syntax error and a chain is written `(c.a until c.b) until c.c`. `over` is
+  optional in all three clauses.
 - The keywords of the state-graph clauses are distinct from the `reaches`
   primary: `reaches` reads one state's object graph and the state-graph
   clauses read the model's state graph.
@@ -683,10 +821,20 @@ rules only.
 | `hyper NI using inf over behaviours (v: V::Vault) forall trace a of V forall trace b of V match { a.step.op = b.step.op } { always holds(v.l @ a = v.l @ b) }` | One hyper clause over behaviours, two quantifiers over alias `V`, one match block and one temporal body with two indexed reads. |
 | `hyper NI using inf over behaviours forall trace a of V fair weak V::Vault::step; forall trace b of V { always holds(true) }` | Quantifier `a` with one weak `whole` constraint; quantifier `b` with the empty fairness set. |
 | `hyper H using inf over t in Q bounded 4 forall trace a of V { true }` | Parses; the `of` on a finite trace domain refuses at semantic admission (FR-395). |
+| `temporal` clause with no `over` parameter, such as `temporal T using inf clock "c" on origin { always holds(true) }` | Syntax error `invalid_syntax`/`unexpected-token` at the `clock` token, which stands where `over` is required: a `temporal-clause` always names one `over` parameter. |
 | `always holds(v.l @ a)` in a `temporal` clause | Syntax error: `indexed-read` is admitted only in a hyper body over `behaviours`. |
 | `possible Win using v over (g: G::Game) { g.phase = G::Phase::Won }` | One `possible` state-graph clause with one `over` parameter. |
 | `always possible Rec using v from (not x.lost) { x.ok }` | One `always possible` clause with no `over` parameter and one `from` predicate. |
 | `unique path One using v over (j: M::Job) from (not j.a) to (j.done);` | One `unique path` clause with its two predicates. |
+| `possible R using v over (c: C::Cfg) { c.n = 1 and eventually c.n = 2 }` | Parses: a conjunction whose second operand is an unbounded `eventually`. Refused at admission, `unsupported_construct`/`expression-form` at `eventually` (FR-390-AC-2). |
+| `possible N using v { not eventually[0,5] c.n = 2 }` and `possible P using v { (eventually c.n = 2) }` | Both parse, with an interval operator and a parenthesised temporal operand; each is refused at admission at the operator (FR-390-AC-2). |
+| `possible U using v { a until b }` | Parses as a binary temporal operator with no interval; refused at admission at `until` (FR-390-AC-2). |
+| `always possible Rec using v from (always c.ok) { c.done }` | Parses: a temporal operator in a `from` operand; refused at admission at `always` (FR-390-AC-2). |
+| `always possible Rec using v { fair weak M::Cfg::step; c.done }` | Parses: a fairness constraint at the start of the body; refused at admission at the constraint (FR-390-AC-2). |
+| `possible P using v { c.done; fair weak M::Cfg::step }` | Syntax error: a fairness constraint is admitted only at the start of a body. |
+| `possible N using v over (c: C::Cfg) { not c.n = 2 }` | Parses as the `expr` `(not c.n) = 2`, as in any expression; a type error at the checker, not a grammar case. |
+| `possible W using v over (c: C::Cfg) { eventually[1,*] c.done }` | Parses; the interval is recognized and FR-390 refuses at `eventually` (`expression-form`); no profile refusal applies, since a state-graph claim selects no temporal profile. |
+| `possible B using v over (c: C::Cfg) { if eventually c.a then c.b else c.c }` and `unique path One using v from (c.a) to (c.d); fair weak M::Cfg::step` | Syntax errors: a temporal operator in an `if` condition, and a fairness constraint on a clause with no body. |
 
 ### Probabilistic, timed and real-time forms
 
@@ -817,6 +965,25 @@ compares a `Clock` field with a `quantity-literal` of the time dimension. In
 `task`, `wcet` is `C`, or `C(LO)` for a `hi` task whose `wcet_hi` is `C(HI)`.
 A form whose facet is not selected receives `unsupported_construct`.
 
+`Clock` in a `type-ref` is a keyword of the facet that admits the timed forms,
+not a `qualified-name`: an unqualified `Clock` in a type position is always read
+as the clock type, whether or not the unit selects that facet (a unit that does
+not select it receives `unsupported_construct` for the form). `Clock` is not
+admitted as a declared type name: a declaration of a record, type alias, enum,
+tuple or union that would introduce an unqualified type named `Clock` is refused
+`invalid_syntax` at the name.
+
+### Protocol reference expression
+
+`protocol-reference` is a `primary` alternative of the complete-V1 grammar
+under `quire.protocol.complete/v1`. Its target is a `qualified-name` naming one
+protocol declared in the same unit; the expression carries no package
+selector, alias or key. `protocol` leads a reference only in expression
+position, where no declaration can begin, so it never changes how a
+`protocol-clause` declaration parses. A target that is not a `qualified-name`
+is `invalid_syntax`. [FR-463](../../spec/functional/protocol/FR-463-refer-to-a-declared-protocol-in-an-expression.md)
+owns the meaning.
+
 ## Precedence and bindings
 
 From lowest to highest: `let`/`if`; `implies` (right associative); `or`; `and`;
@@ -828,7 +995,12 @@ authors write `not (a = b)` for negating a comparison.
 
 Model and profile aliases are unique within their source unit; they do not
 pollute another source unit's alias scope. Native declaration names are unique
-within the linked package; ambiguous cross-unit declarations refuse. A unit
+within the linked package, per namespace: dimensions, units and every other declaration (records, tuples, unions, enums,
+aliases, functions, predicates, protocols, claims and declared values, the type
+namespace) are three namespaces, so a unit may
+share its name with a dimension or with a type. Ambiguous cross-unit
+declarations refuse. A bare `type-ref` looks up the type namespace only, and
+`Quantity<u>` is the one `type-ref` that looks up the unit namespace. A unit
 containing only model-independent Boolean predicates needs no dummy model import.
 Any referenced model declaration still requires an exact explicit import. Predicate
 parameters and lexical binders are unique in their enclosing declaration and
@@ -1066,10 +1238,22 @@ Resource exhaustion is incomplete execution/admission, not a false predicate.
 punctuation. Under the carried-forward admission it requires two values of one
 named dimensionless rational type, a proved nonzero divisor and a normalized
 result inside that same domain. `rational(1,2) / rational(1,2)` can therefore
-denote 1/1 under an appropriate explicit type. Bare `1/2` cannot introduce a
-rational value: ordinary integer literals do not implicitly convert to rational.
-Integer slash, `div`, `rem` and `mod` are recognized but refused even in
-unreachable syntax. Historical `0-draft` arithmetic retains its original meaning.
+denote 1/1 under an appropriate explicit type. Under a declaration selecting
+`quire.state.core/v1` without `quire.value.complete/v1`, `/` still requires
+operands of that same named rational type: integer operands refuse even when a
+rational result type is expected. Under `quire.value.complete/v1`, bare `1/2`
+cannot introduce a rational value without an expected rational type; with one,
+[FR-149](../../spec/functional/type-model/FR-149-apply-complete-equality-matrix.md)
+promotes integer operands exactly to `n/1` for rational `/`. `/` never denotes
+integer division. `div`, `rem` and `mod` are
+recognized at product precedence. When a declaration selects
+`quire.value.complete/v1`, integer `div` and `rem` are admitted only with exactly
+one checked integer-division definition, and `mod` has the independent
+Euclidean meaning specified by [FR-147](../../spec/functional/expressions/FR-147-evaluate-integer-division-domains.md).
+Without that facet, each integer operator receives a located profile refusal,
+including when its expression is unreachable. Recognition alone never supplies
+a missing definition or changes a selected law. Historical `0-draft` arithmetic
+retains its original meaning.
 
 ## Protocol expressions and bindings
 

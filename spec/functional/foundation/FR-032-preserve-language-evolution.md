@@ -32,4 +32,3 @@ Edition, semantic-profile, wire/canonicalization and backend implementation iden
 
 - [Shared drafting foundation](../../../proposals/quire-v1/shared-foundation.md).
 - [Composed architecture](../../assurance/AD-001-composed-native-language.md).
-- [Planned acceptance matrix](../../composed-foundation/tests.md).

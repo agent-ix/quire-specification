@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "PR #154 (STD-92) at 41a2e0e: FR-281 recast from a local enumeration to a value object carrying the Engineering Assurance FR-022 vocabulary, with the FR-061, FR-240 and spec/spec.md amendments"
 review_set: base
-evaluated_revision: "41a2e0e"
 review_date: "2026-09-22"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-281, type: reviews }

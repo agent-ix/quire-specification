@@ -1066,7 +1066,9 @@
         "/results/2/cause": "FR-363",
         "/accounting/2/max_depth": "FR-363",
         "/results/3/cause": "FR-428",
-        "/results/4/cause": "FR-439"
+        "/results/4/cause": "FR-439",
+        "/results/5/cause": "FR-363",
+        "/results/6/cause": "FR-363"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -1090,6 +1092,14 @@
           },
           {
             "request_index": 4,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 5,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 6,
             "disposition": "supported"
           }
         ],
@@ -1153,6 +1163,24 @@
               "limit": "max_store_buffer",
               "value": 2,
               "states": 3
+            }
+          },
+          {
+            "request_index": 5,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "no-instance"
+            }
+          },
+          {
+            "request_index": 6,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "no-initial-state"
             }
           }
         ],
@@ -1247,6 +1275,14 @@
             "reached": [
               "max_store_buffer"
             ]
+          },
+          {
+            "request_index": 5,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 6,
+            "settled_by": "result"
           }
         ]
       }
@@ -2423,7 +2459,8 @@
         "/results/0/verdict": "FR-410",
         "/results/0/verdict/decision": "FR-409",
         "/results/1/basis": "FR-411",
-        "/results/1/certificate": "FR-412"
+        "/results/1/certificate": "FR-412",
+        "/results/2/cause": "FR-331"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -2435,6 +2472,10 @@
           },
           {
             "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
             "disposition": "supported"
           }
         ],
@@ -2588,6 +2629,15 @@
                 }
               ]
             }
+          },
+          {
+            "request_index": 2,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "unsupported",
+            "cause": {
+              "type": "confidence-beyond-precision"
+            }
           }
         ],
         "counterexamples": [],
@@ -2605,6 +2655,338 @@
             "limits": {
               "precision_bits": 64
             }
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid-request",
+      "stage": "request",
+      "owners": {
+        "/request/items/0/hybrid/limits/max_solver_steps": "FR-193",
+        "/request/items/0/hybrid/limits/max_solver_time": "FR-193"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "manifest": [
+          {
+            "backend": "qsl-model-check",
+            "advertises": [
+              {
+                "kind": "temporal-satisfaction",
+                "mode": "bounded"
+              },
+              {
+                "kind": "temporal-satisfaction",
+                "mode": "unbounded"
+              }
+            ],
+            "fairness_kinds": [
+              "strong",
+              "weak"
+            ],
+            "reductions": [
+              "constraint",
+              "partial-order",
+              "symmetry"
+            ],
+            "bounds": {
+              "max_automaton_states": 100000,
+              "max_states": 1000000,
+              "max_transitions": 10000000
+            },
+            "domains": [
+              "collection",
+              "integer",
+              "population",
+              "recursive"
+            ]
+          }
+        ],
+        "request": {
+          "deadline_ms": 600000,
+          "provision": [
+            {
+              "digest_domain": "sha256-jcs",
+              "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "bytes": "e30"
+            }
+          ],
+          "items": [
+            {
+              "request_index": 0,
+              "kind": "temporal-satisfaction",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                },
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                      },
+                      "path": []
+                    },
+                    "kind": "infinite-trace"
+                  }
+                ],
+                "finite_bound_available": false
+              },
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "qsl-model-check"
+                ]
+              },
+              "reductions": {
+                "symmetry": [],
+                "partial_order": {
+                  "proviso": "breadth-first-revisit"
+                }
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": [
+                    {
+                      "domain": {
+                        "type": "population",
+                        "member_type": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+                        },
+                        "ordinal": 0
+                      },
+                      "kind": "population",
+                      "bound": {
+                        "type": "cardinality",
+                        "maximum": 3
+                      }
+                    }
+                  ]
+                },
+                "item_kind": "formula",
+                "fairness": [
+                  {
+                    "kind": "weak",
+                    "operation": "Example::Session::step",
+                    "granularity": "whole"
+                  }
+                ],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000,
+                  "max_walk_steps": 64
+                },
+                "witness_samples": 4,
+                "seed": "42"
+              },
+              "hybrid": {
+                "limits": {
+                  "max_solver_steps": 1000,
+                  "max_solver_time": 2
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "refinement-hypotheses-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause": "FR-468"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "hypotheses-not-established",
+              "hypothesis": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+              },
+              "result": "refuted"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result",
+            "method": "exploration",
+            "max_depth": 40,
+            "limits": {
+              "max_states": 250000
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "observed-counterexample-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/counterexamples/0/counterexample": "FR-364"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "counterexample": {
+              "trace": "observed",
+              "kind": "formula",
+              "initial_state": null,
+              "prefix": [
+                {
+                  "document": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                {
+                  "document": "3333333333333333333333333333333333333333333333333333333333333333"
+                }
+              ],
+              "loop": [],
+              "over_binding": null,
+              "fairness": [],
+              "interval": null,
+              "trace_position": 0
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "name": "observed-undefined-evaluation-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/counterexamples/0/counterexample": "FR-364"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "counterexample": {
+              "trace": "observed",
+              "kind": {
+                "type": "undefined-evaluation",
+                "where": {
+                  "position": 1,
+                  "document": "3333333333333333333333333333333333333333333333333333333333333333",
+                  "locus": {
+                    "node": {
+                      "domain": "quire.checked-semantic-node/v1",
+                      "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                    },
+                    "occurrence": {
+                      "role": "claim",
+                      "ordinal": 0
+                    }
+                  }
+                },
+                "cause": "absent-key"
+              },
+              "initial_state": null,
+              "prefix": [
+                {
+                  "document": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                {
+                  "document": "3333333333333333333333333333333333333333333333333333333333333333"
+                }
+              ],
+              "loop": [],
+              "over_binding": null,
+              "fairness": [],
+              "interval": null,
+              "trace_position": 1
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
           }
         ]
       }
@@ -4260,6 +4642,455 @@
           ]
         }
       ]
+    },
+    {
+      "name": "temporal-cause-no-instances",
+      "base": "temporal-outcome",
+      "owner": "FR-363",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/5/cause/type",
+          "value": "no-instances"
+        }
+      ]
+    },
+    {
+      "name": "temporal-cause-no-initial-state-underscore",
+      "base": "temporal-outcome",
+      "owner": "FR-363",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/6/cause/type",
+          "value": "no_initial_state"
+        }
+      ]
+    },
+    {
+      "name": "hybrid-time-fractional",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid/limits/max_solver_time",
+          "value": 1.5
+        }
+      ]
+    },
+    {
+      "name": "hybrid-steps-zero",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid/limits/max_solver_steps",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "hybrid-limits-unknown-member",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/0/hybrid/limits/max_solver_memory",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "name": "hybrid-empty",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid",
+          "value": {}
+        }
+      ]
+    },
+    {
+      "name": "hybrid-limits-empty",
+      "base": "hybrid-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/hybrid/limits",
+          "value": {}
+        }
+      ]
+    },
+    {
+      "name": "unsupported-cause-unlisted-spelling",
+      "base": "probabilistic-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/2/cause/type",
+          "value": "confidence-beyond-precisions"
+        }
+      ]
+    },
+    {
+      "name": "hypotheses-not-established-bare-hypothesis",
+      "base": "refinement-hypotheses-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/hypothesis",
+          "value": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+        }
+      ]
+    },
+    {
+      "name": "hypotheses-not-established-extra-member",
+      "base": "refinement-hypotheses-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/0/cause/premise",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "manifest-fairness-kinds-not-a-list",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/fairness_kinds",
+          "value": "weak"
+        }
+      ]
+    },
+    {
+      "name": "manifest-fairness-kinds-unknown-label",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/fairness_kinds",
+          "value": [
+            "weak",
+            "fair"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "manifest-fairness-kinds-duplicate-label",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/fairness_kinds",
+          "value": [
+            "weak",
+            "weak"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "manifest-fairness-kinds-on-non-temporal-descriptor",
+      "base": "kani-hello",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/manifest/0/fairness_kinds",
+          "value": [
+            "weak"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-names-an-initial-state",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/initial_state",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-with-a-model-step-in-the-prefix",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/prefix/0",
+          "value": {
+            "transition": {
+              "type": "terminal-stutter"
+            },
+            "post_state": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-with-a-model-step-in-the-loop",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/loop",
+          "value": [
+            {
+              "transition": {
+                "type": "terminal-stutter"
+              },
+              "post_state": "2222222222222222222222222222222222222222222222222222222222222222"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-deadlock-kind",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": "deadlock"
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-time-lock-with-final-delay",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample",
+          "value": {
+            "trace": "observed",
+            "kind": "time-lock",
+            "initial_state": null,
+            "prefix": [
+              {
+                "document": "2222222222222222222222222222222222222222222222222222222222222222"
+              },
+              {
+                "document": "3333333333333333333333333333333333333333333333333333333333333333"
+              }
+            ],
+            "loop": [],
+            "over_binding": null,
+            "fairness": [],
+            "interval": null,
+            "trace_position": 0,
+            "final_delay": {
+              "numerator": "1",
+              "denominator": "1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed-counterexample-over-binding",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/over_binding",
+          "value": {
+            "type": "null"
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed-undefined-evaluation-with-a-state-key",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": {
+            "type": "undefined-evaluation",
+            "where": {
+              "position": 1,
+              "state_key": "2222222222222222222222222222222222222222222222222222222222222222",
+              "locus": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                },
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              }
+            },
+            "cause": "absent-key"
+          }
+        }
+      ]
+    },
+    {
+      "name": "model-counterexample-with-a-document-step-in-the-prefix",
+      "base": "temporal-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/prefix/0",
+          "value": {
+            "document": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        }
+      ]
+    },
+    {
+      "name": "model-counterexample-with-a-document-step-in-the-loop",
+      "base": "temporal-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/loop/0",
+          "value": {
+            "document": "2222222222222222222222222222222222222222222222222222222222222222"
+          }
+        }
+      ]
+    },
+    {
+      "name": "model-counterexample-without-an-initial-state",
+      "base": "temporal-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/initial_state",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "model-undefined-evaluation-with-a-document",
+      "base": "temporal-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": {
+            "type": "undefined-evaluation",
+            "where": {
+              "position": 1,
+              "document": "2222222222222222222222222222222222222222222222222222222222222222",
+              "locus": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                },
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              }
+            },
+            "cause": "absent-key"
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed-undefined-evaluation-with-state-keys",
+      "base": "observed-counterexample-outcome",
+      "owner": "FR-364",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": {
+            "type": "undefined-evaluation",
+            "where": {
+              "positions": [
+                0,
+                1
+              ],
+              "state_keys": [
+                "2222222222222222222222222222222222222222222222222222222222222222"
+              ],
+              "locus": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                },
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              }
+            },
+            "cause": "absent-key"
+          }
+        }
+      ]
+    }
+  ],
+  "universe_provision_vectors": [
+    {
+      "name": "counters-c-d",
+      "description": "FR-361: the universe provision of population counters, universe list [c, d]; identity bytes are the UTF-8 of the object identities c (0x63) and d (0x64).",
+      "keys": [
+        {
+          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
+          "identity": "63"
+        },
+        {
+          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
+          "identity": "64"
+        }
+      ],
+      "jcs": "[{\"identity\":\"63\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"},{\"identity\":\"64\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"}]",
+      "digest": "ebdd6190dfd24ceb2a6147007beffd22b1d3dc1ce73550af0c033ed61efa1be9"
+    },
+    {
+      "name": "counters-d-c",
+      "description": "The same keys in the order [d, c]: a different provision and digest.",
+      "keys": [
+        {
+          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
+          "identity": "64"
+        },
+        {
+          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
+          "identity": "63"
+        }
+      ],
+      "jcs": "[{\"identity\":\"64\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"},{\"identity\":\"63\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"}]",
+      "digest": "f59722af7334950a9b7b4d19a3e2ad477f7f71941fdbaf6fd4a82d75ee52a695"
     }
   ]
 }

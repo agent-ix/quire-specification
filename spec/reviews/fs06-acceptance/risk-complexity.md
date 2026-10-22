@@ -5,7 +5,6 @@ type: SpecReview
 analysis: risk-complexity
 scope: "common loss/resource behavior and semantic volatility in the three selected target profiles"
 review_set: subset
-evaluated_revision: "task/7 working tree based on 0dd4384"
 review_date: "2026-09-14"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-121, type: reviews }

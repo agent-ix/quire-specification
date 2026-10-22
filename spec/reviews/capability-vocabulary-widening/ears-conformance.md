@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "quire-specification #134 diff 818f555..5d3aa25: FR-290, FR-331, FR-349, FR-355, FR-060, FR-061, FR-240, FR-291, FR-292, FR-270, FR-271, FR-272, TC-271"
 review_set: all
-evaluated_revision: "5d3aa25+wt"
 review_date: "2026-09-19"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-290, type: references }

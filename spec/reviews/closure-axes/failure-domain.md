@@ -5,7 +5,6 @@ type: SpecReview
 analysis: failure-domain
 scope: "Branch objects/closure-axes-vocabulary at 7a050c9: what a conforming implementation can still get wrong once the four axes are enumerated"
 review_set: subset
-evaluated_revision: "7a050c9"
 review_date: "2026-09-12"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-061, type: reviews }

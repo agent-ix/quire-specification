@@ -14,7 +14,7 @@ description: "Chronological log of changes to the Plan-002 bundle."
   (`202210c`). Public TL syntax/parser/evaluator/rewrite APIs are merged at
   `842d825`, `00c1b8d`, `2286218` and `fe03f29`; qcir #71 is therefore the sole
   active native-correspondence composition item rather than blocked work.
-  Task-007 and TM-004/TM-007 remain unexecuted pending that implementation.
+  Task-007 remains unexecuted pending that implementation.
 
 * **2026-09-13** — Reconciled the plan against merged default branches under
   quire-specification #33. Task-001 is complete at specification PR #15

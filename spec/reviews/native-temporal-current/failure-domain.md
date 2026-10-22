@@ -5,7 +5,6 @@ type: SpecReview
 analysis: failure-domain
 scope: "FR-090 through FR-095, NFR-040 and TC-110 through TC-118"
 review_set: all
-evaluated_revision: "2f347b8"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-094, type: reviews }

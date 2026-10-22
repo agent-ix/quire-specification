@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Accepted portable controls for [FR-045](../functional/foundation/FR-045-preserve-control-and-presence-facts.md).
-The matrix remains Planned; no executable test or observed coverage is claimed.
+No executable test or observed coverage is claimed.
 
 ## Test Procedure
 

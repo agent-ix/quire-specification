@@ -11,8 +11,7 @@ relationships:
 ## Description
 
 Accepted portable contract control for FR-017-AC-1 using six separately
-identified artifacts with actual bytes and exact artifact references. TM-001
-remains Planned; this artifact does not claim executed portfolio coverage.
+identified artifacts with actual bytes and exact artifact references. This artifact does not claim executed portfolio coverage.
 
 ## Test Procedure
 

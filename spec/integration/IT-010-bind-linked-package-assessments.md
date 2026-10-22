@@ -70,10 +70,9 @@ Additional stage and declaration-key controls:
    name an IR node the domain package does not declare, and supply a runtime
    reference keyed to a foreign domain package independently. Change one
    declared field in a source artifact and relift. Intake the relifted package
-   with its bytes supplied under the old ModelSelection's digest, then with its
-   bytes supplied under its own digest and a ModelSelection naming that digest. Separately remove one referenced
+   with its bytes supplied under its own digest and a ModelSelection naming that digest. Separately remove one referenced
    artifact, relift and bind with its old declaration key.
-   - IT-010-SC-08: the original declaration keys survive linking and binding; each substitution refuses its dependent binding. After the field change, the declaration key is unchanged; the old ModelSelection, with the changed document supplied under its digest, refuses `stale_dependency`/`content-mismatch`, and the new ModelSelection binds the changed declaration. After the removal, the old key refuses `missing_declaration`/`missing-name`.
+   - IT-010-SC-08: the original declaration keys survive linking and binding; each substitution refuses its dependent binding. After the field change, the declaration key is unchanged and the new ModelSelection binds the changed declaration. After the removal, the old key refuses `missing_declaration`/`missing-name`.
 
 ## Expected Results
 

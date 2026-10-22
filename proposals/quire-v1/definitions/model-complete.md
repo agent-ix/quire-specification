@@ -52,20 +52,25 @@ package identity. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
 declaration. Clauses name a declaration by qualified name: the model alias,
 then the segments of its IR node identity after the package identity, such as
-`Orders::Order` for IR node `ix://acme/orders/Order`.
+`Orders::Order` for IR node `ix://acme/orders/Order`. One form is an
+exception: a case of a variant type is named `Alias::Tier::Gold`, the alias, the
+variant type's artifact id and the case name matched byte for byte, and not by
+its IR identity `variant/Tier-Gold`. In a type position `Alias::Tier` names the
+variant type. A variant type name that resolves to no variant type of the alias
+is `missing_declaration`/`missing-name`, and a case the type does not declare is
+`ill_typed`/`type-mismatch`. FR-208 "Naming a variant type and its cases" states
+the rule.
 
 ### Intake
 
 Rule `quire.model.normalize.intake/v1` admits one domain package. The package
 input is a map from `sha256-jcs` digest to package bytes. Intake looks up the
-bytes by the selected digest, recomputes their canonical `sha256-jcs` digest,
-and then reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
+bytes by the selected digest and then reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
 
 | Check | Refusal |
 | --- | --- |
 | The selection's digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` with the expected and actual domain |
 | The package input supplies bytes under the selected digest | `missing_import`/`missing-selection` with the ModelSelection |
-| SHA-256 over the supplied document's RFC 8785 JCS bytes equals the selected digest | `stale_dependency`/`content-mismatch` with the selected and the recomputed digest |
 | The package's own identity equals the selection's | `invalid_model_binding`/`wrong-model-selection` with both |
 
 Intake then reads each IR node and builds one original declaration per node.
@@ -102,8 +107,11 @@ id `Order` in domain package `acme/orders` has IR node identity
 `ix://acme/orders/Order`, and a port declared by the artifact with id
 `pump_out` has `ix://acme/orders/pump_out`. A member's identity appends its
 member name to its owner's identity: field `total` of `Order` is
-`ix://acme/orders/Order/total`. Fields, relationships, operations and clauses
-are the only members. The owner of a part or port and the ends of a connection
+`ix://acme/orders/Order/total`. The members are fields, operations, clauses, states, transitions and steps, each identified by
+`<owner identity>/<member name>`, and relationships and the cases of a
+variant type, each identified by its own node
+(`ix://acme/orders/relationship/<Name>-<verb>-<TargetName>`,
+`ix://acme/orders/variant/<Name>-<value>`; FR-154). The owner of a part or port and the ends of a connection
 or allocation are references, not members, and never part of an identity. The
 artifact title is the declaration's
 `displayName`, used for presentation only; it is never part of an identity and
@@ -132,10 +140,11 @@ and `origin`.
 | Value type | `TypeDefinition` whose construct meaning is `quire.meaning.model.value-type/v1` | none |
 | Variant type | `TypeDefinition` whose construct meaning is `quire.meaning.model.variant-type/v1` | none |
 | Record value type, event type, state machine, process, persistence interface, namespace | the `TypeDefinition` whose construct meaning is `quire.meaning.model.record-value-type/v1`, `quire.meaning.model.event-type/v1`, `quire.meaning.model.state-machine/v1`, `quire.meaning.model.process/v1`, `quire.meaning.model.persistence-interface/v1` or `quire.meaning.model.namespace/v1`, valid as FR-208 defines that meaning | none |
+| Variant case | the `variant` node of a variant type's case, `ix://<package identity>/variant/<Name>-<value>` | its variant type |
 | Field | `TypeDefinition.fields[]` entry | its type |
 | Relationship | `TypeDefinition.relationships[]` entry | its type |
 | Operation | `Operation` | its receiver type |
-| Invariant | `Clause` with `language: quire` | its type or operation |
+| Invariant | `Clause` with `language: quire` | its type |
 | Population | Population node whose construct meaning is `quire.meaning.model.population/v1` | none |
 | Part, Port, Interface, Connection, Allocation | the `TypeDefinition` whose construct meaning is that kind's `quire.meaning.systems.*` id | none; the `owner` and end references place it in the effective view as below |
 
@@ -150,7 +159,7 @@ Every refusal names the IR node identity and its FCD `origin`.
 
 | Feature | Rule | Refusal |
 | --- | --- | --- |
-| Identity | A type definition's identity, including a population's and a systems construct's, is `ix://<package identity>/<artifact id>`. Only a field, an operation and an operation parameter nest under their owner (`<owner identity>/<member>`, `<operation identity>/<param>`); a relationship, a clause and every other node kind take their own global slot, as FR-154 states from FCD FR-095 (`relationship/<Name>-<verb>-<TargetName>`, `clause/<Name>-<clauseId>`). The artifact title is `displayName`, for presentation only, and the declaration's `origin` is not part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
+| Identity | A type definition's identity, including a population's and a systems construct's, is `ix://<package identity>/<artifact id>`. A field, an operation, an operation parameter, a clause, a state, a transition and a step nest under their owner (`<owner identity>/<member name>`, `<operation identity>/<param>`); a relationship and every other node kind take their own global slot, as FR-154 states from FCD FR-095, departing from it for the four nested kinds (`relationship/<Name>-<verb>-<TargetName>`). The artifact title is `displayName`, for presentation only, and the declaration's `origin` is not part of any identity. Two nodes with one identity are not allowed. | `invalid_model_binding`/`conflicting-binding` |
 | Supertypes | Every `supertypes[]` entry of an object type names an object type of the package, and every entry of a record value type, event type, state machine or process names a node of its own meaning (FR-208); an entry naming a node of another meaning is refused. The supertype graph is acyclic; phase 3 checks it. A persistence interface or namespace with a non-empty `supertypes` is refused and its entries are not checked further. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `unsupported_construct`/`declaration-form`; `invalid_model_binding`/`specialization-cycle` in phase 3 |
 | Abstract | An abstract type has no direct instances. A population member whose most-specific type is abstract is refused. Dispatch covers only concrete subtypes. | `invalid_runtime_input`/`abstract-instance` |
 | Fields | `typeRef` names a native value type, or a type of the package; a `typeRef` naming an event type, state machine, process, persistence interface or namespace (FR-208) is refused. `multiplicity` has `lower <= upper`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`unpreserved-model-meaning` |
@@ -158,7 +167,8 @@ Every refusal names the IR node identity and its FCD `origin`.
 | Subsets | Every `subsets[]` entry names a field of the owning type or of a supertype. | `missing_declaration`/`missing-name` |
 | Redefines | `redefines` names a field or operation of the package. Phase 4 checks that the target is inherited by the owning type and that no two members of one type redefine one target. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`redefinition-target` in phase 4 |
 | Relationships | Each end names an object type or a process (FR-208) of the package, and a relationship may be owned by an object type or a process, with object-type relationship meaning; an end naming a node of any other business model meaning (FR-208), and a relationship owned by one, is refused. Each end has a role and a multiplicity with `lower <= upper`. `direction` is exactly `source-to-target`, `target-to-source`, `bidirectional` or `undirected`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`unpreserved-model-meaning` |
-| Frames | `Operation.frame` has exactly `modifies`, `creates` and `deletes`. Each `modifies` entry names a field or relationship. Each `creates` or `deletes` entry names an object type or a process (FR-208); an entry naming a node of any other meaning is refused. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration` |
+| Operation parameters | Each parameter has a `name`, a string matching `^[A-Za-z][A-Za-z0-9_]*$` and equal to the last segment of its identity `<operation identity>/<param>`; an absent, non-string, empty or otherwise mismatching `name` is refused at the selection row before the operation's frame is read, except on a parameter that shares its identity with another of the operation, which is refused once as a repeated identity before any name is checked; equal names under one operation are equal identities. `deletes_parameters` and every by-name parameter reference resolve against this `name`. | `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`conflicting-binding` |
+| Frames | `Operation.frame` is a closed object whose members are the following, and no other. `modifies`, `creates` and `deletes` are required arrays of node identity strings, each present and empty when empty; they carry the type-wide and every-object entries, `modifies f` being the every-object scope of FR-013. Three members are optional, and an absent one is empty or false: `modifies_receiver`, an array of field node identity strings, the receiver-scoped `modifies self.f` entries; `deletes_receiver`, a boolean, `true` for `deletes self`; `deletes_parameters`, an array of parameter-name strings, the `deletes p` entries for reference parameters. An absent required member, a member this row does not name, a member of the wrong JSON type and an array element that is not a string are `invalid_model_binding`/`malformed-declaration` at the member. The member shapes are checked first, then the entries in the order `modifies`, `modifies_receiver`, `creates`, `deletes`, `deletes_parameters`, each in document order, and the first failure is reported. Each `modifies` entry names a field or relationship. Each `modifies_receiver` entry names a field, own or inherited, of the operation's declaring object type: an entry naming no node of the package is `missing_declaration`/`missing-name`; an entry naming a relationship, an object type or a field of a type the declaring object type does not conform to is `invalid_model_binding`/`malformed-declaration`. Each `creates` or `deletes` entry names an object type or a process (FR-208); an entry naming a node of any other meaning is refused. Each `deletes_parameters` name is a parameter of the operation whose type is `Reference<T>`; any other name is `missing_declaration`/`missing-name`. `deletes_receiver: true` is admitted for every operation of an object type. The receiver of an operation of a process or a state machine is a run or the machine context, not an object of an object type, so on such an operation a non-empty `modifies_receiver` and `deletes_receiver: true` are `invalid_model_binding`/`malformed-declaration` at that member, checked once the member shapes hold and before any entry, `modifies_receiver` first; an empty `modifies_receiver`, `deletes_receiver: false` and `deletes_parameters` read as for an object type. Once every entry resolves, a `modifies` entry and a `modifies_receiver` entry for one field are `invalid_model_binding`/`conflicting-binding` naming both entries and the operation, located at the later of the two in document order, and intake never merges them; a field written twice with one scope, and a scoped `deletes` written twice, are one entry. The members lift to the checked-package frame body as FR-340 states. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`conflicting-binding` |
 | Populations | Each member type names an object type or a process (FR-208); a member type naming a node of any other business model meaning (FR-208), such as a namespace, is refused. `extent` is exactly `closed` or `open`. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration` |
 | Business model meanings | Each record value type, event type, state machine, process, persistence interface and namespace node meets its FR-208 rules: required members present, identity fields absent or present as its meaning states, `occurrenceField` resolving to `Timestamp`, transition, step, `persists` and `members` references naming nodes of the stated meaning, guard clauses in `quire`, unique state, transition and step identities, and no unsupported form. A process has an object universe of runs; no node of the other five meanings has one. Invariants, `Pre:` and `Post:` contracts and generalization have the meanings FR-208 states. | `missing_declaration`/`missing-name`; `invalid_model_binding`/`malformed-declaration`; `invalid_model_binding`/`conflicting-binding`; `unsupported_construct`/`declaration-form`; `wrong_snapshot`/`forbidden-pre-read`; `invalid_model_binding`/`derivation-conflict` in phase 3 |
 | Systems kinds | Each part, port, interface, connection and allocation node meets the systems-model kind rules below. | as below |
@@ -182,11 +192,20 @@ domain string differs from `sha256-jcs`, from `quire.checked-semantic-node/v1`
 and from every other QSL domain, so no QSL identity can equal a domain package
 digest or an I04 node key, even with equal digest bytes.
 
+Only these three identity domains and the inherit, subset and redefine rule
+identities (`quire.model.normalize.inherit/v2`, `.subset/v2`, `.redefine/v2`)
+are `/v2`. The definition `quire.model.complete/v1`, its rule manifest
+`quire.model.complete.rules/v1`, the schema and vector artifacts and
+`quire.value.accounting/v1` keep their identities and are edited in place to
+carry the `/v2` domains and rules, so no consumer's selection changes. A `/v1`
+identity digest is not an identity under the `/v2` domains: no reader accepts
+one, relabels it or derives one from the other.
+
 | Domain | Preimage | Identifies |
 | --- | --- | --- |
-| `quire.model.effective-declaration/v1` | `{version, owner_effective_type, original, derivation}` | One effective declaration: an effective type (`owner_effective_type` is `null`) or an effective member of an effective type. |
-| `quire.model.effective-view/v1` | `{version, model_selection, rules, declarations}` | One complete effective view of one ModelSelection under one rule manifest. |
-| `quire.model.object-universe/v1` | `{version, model_selection, root_types}` | The object universe shared by a connected generalization component. |
+| `quire.model.effective-declaration/v2` | `{version, owner_effective_type, original, derivation}` | One effective declaration: an effective type (`owner_effective_type` is `null`) or an effective member of an effective type. |
+| `quire.model.effective-view/v2` | `{version, model_selection, rules, declarations}` | One complete effective view of one ModelSelection under one rule manifest. |
+| `quire.model.object-universe/v2` | `{version, model_selection, root_types}` | The object universe shared by a connected generalization component. |
 
 A declaration key carries no digest. An effective declaration identity binds
 declaration keys and derivation facts only. Two domain package documents
@@ -203,31 +222,140 @@ identity, which binds the selection.
 Declaration keys compare by `package`, then `node`, as UTF-8 bytes, a proper
 prefix first.
 
+Every phase-1 original declaration and its FCD origin remains available from
+the immutable ModelSelection declaration inventory. That inventory and the
+effective declarations are different sets: a scalar, a population, a namespace, a clause
+in a language other than `quire` have no
+phase-2 qualify rule and remain originals, without an invented qualify fact or
+effective declaration. An operation's `Pre:` and `Post:` contract clause is not a
+declaration: it is not retained and is never qualified. Effective entries and their fact input
+keys reference only that retained inventory. Retention adds no derivation,
+effective-declaration or hash charge and changes no effective identity
+preimage. The fixed `digest_domain: "sha256-jcs"` discriminator in an original
+key is not the selected package's content digest.
+
+After structural normalization, the accounting definition orders systems
+checks, source resolution and structural assembly, checked-fact admission,
+the complete exhaustive conformance stage, then dispatch. Checked-fact
+admission uses one existing checker graph and its actual authored clauses;
+it is a process stage, not an extra normalization rule or derivation fact.
+The rule manifest and effective identity preimages are unchanged. A normalized
+view is internal checking input; a validated package requires completion of
+all these stages without refusal or incompleteness.
+
 The effective member key is `(owner effective type identity, original
 declaration key)`. Paths that reach the same original declaration collapse to
-one effective member that retains a derivation fact for every path. Two
+one effective member that links to each direct parent that reaches it. Two
 different original declarations never collapse, whatever their names or
 shapes.
 
+### Chain-link derivation
+
+An effective declaration's identity chains through the identities of its
+direct parents. Its preimage binds exactly its own content and the digests of
+its direct parents; it never contains an ancestor path longer than one edge.
+
 `derivation` is the ordered array of the declaration's own facts. Each fact is
-`{ordinal, rule, inputs}`: `rule` is `{identity}` from the manifest's
+`{ordinal, rule, inputs, parent}`: `rule` is `{identity}` from the manifest's
 `normalization_rules`; `inputs` is the ordered array of declaration keys the
-fact consumed; and `ordinal` is the fact's zero-based decimal-string position
-in the array. Facts are ordered by phase, then by `inputs` compared element by
-element in declaration key order, a proper prefix first.
+fact consumed; `ordinal` is the fact's zero-based decimal-string position in
+the array; and `parent` is `null` or `{domain, digest}`, naming one effective
+declaration in `quire.model.effective-declaration/v2` by a 64-character
+lowercase hex digest, which has a fixed width. A fact links to its parent only
+when its rule is `quire.model.normalize.inherit/v2`; every other fact has
+`parent` `null`. Facts are ordered by phase, then by `inputs` compared element
+by element in declaration key order, a proper prefix first, then by the rule
+identity's exact UTF-8 bytes. Thus equal-input phase-4
+`quire.model.normalize.redefine/v2` facts precede
+`quire.model.normalize.subset/v2` facts. This is serialization order, not
+semantic override or conflict precedence.
+
+For a type `T`, with `parents(T)` its direct supertypes in ascending
+declaration key order, the facts are:
+
+1. phase 2 `qualify`, inputs `[T]`, `parent` `null`; then
+2. phase 3 `inherit/v2`, inputs `[P]`, `parent` the identity of `P`, for each
+   `P` in `parents(T)`.
+
+For the effective member `(T, m)` of the original declaration `m`, owned by
+`A`, which exists when `T` is `A` or `A` is a proper ancestor of `T`, the
+preimage's `owner_effective_type` is the identity of `T`, its `original` is
+`m`, and the facts are:
+
+1. phase 2 `qualify`, inputs `[m]`, `parent` `null`, when `T` is `A`;
+2. phase 3 `inherit/v2`, inputs `[P, m]`, `parent` the identity of `(P, m)`,
+   for each `P` in `parents(T)` for which `(P, m)` exists, ascending; none when
+   `T` is `A`;
+3. phase 4 `subset/v2`, inputs `[m, t]`, `parent` `null`, for each `t` in
+   `m.subsets`, ascending `t`;
+4. phase 4 `redefine/v2`, inputs `[m, t]`, `parent` `null`, when `m` redefines
+   `t`; and
+5. phase 4 `redefine/v2`, inputs `[r, m]`, `parent` `null`, for each member `r`
+   that redefines `m` and whose owner is `T` or an ancestor of `T`, ascending
+   `r`.
+
+No fact repeats, and two inherit facts of one declaration never share a parent.
+A subset or redefine fact states a relation between original declarations; the
+path from `T` to an owner is the sequence of parent links, one hop per fact,
+and each parent identity binds the whole sub-DAG below that hop. A diamond
+stores one inherit fact per direct edge that reaches the owner, never one per
+path, so the number of retained facts and the preimage bytes depend on the
+number of types and direct edges, not on the number of ancestor paths. A
+hidden declaration (a redefined or losing member) has the same preimage rule,
+keeps its identity and stays in the digest-ordered view; hiding is in no
+preimage. A redefinition chain gives each member constantly many phase-4 facts
+(at most four).
+
+Types are identified in topological order, parents before children; members
+follow their phase-4 facts, in topological order of their parents. A type not
+placed by that pass lies on or below a supertype cycle: it gets no identity and
+the cycle refusals below report it.
+
+**Expansion.** The path-form derivation, with every distinct inheritance path
+and the same facts, order and ordinals as the earlier path-form fact array, is
+the deterministic expansion of the retained facts through the parent
+identities. A reader derives it on demand under its own limits; no identity,
+preimage or hash charge is made for an expanded path. An inherit fact expands
+to one fact per distinct path from its declaration to the owner, in ascending
+declaration-key depth-first order. A phase-4 fact expands to one fact per
+redefiner or subsets target carrying the least path from `T` to the owner of
+that declaration, whether one or several paths reach it. Where exactly one path
+reaches each owner the expansion equals the path-form array element for
+element. Refusals that list derivation paths (`derivation-conflict`,
+`redefinition-target`) list expanded paths.
+
+**Injectivity.** The preimage is a JSON object with fixed member names and
+typed values, serialized with RFC 8785 JCS, so JSON syntax delimits every
+field and no key and digest can be shifted across a boundary. The version
+string is inside the preimage, which separates the domain. Under SHA-256
+collision resistance, equal identities imply equal preimages. A preimage fixes
+the expanded fact set (the expansion is a function of the preimage and of the
+parent preimages its digests determine; the recursion ends because the
+supertype graph is acyclic), so two effective declarations that differ in
+owner, original key or expanded facts have different preimages, and one
+effective declaration has exactly one preimage; there is no alternative
+factoring and no canonical-form tie-break. A strict reader validates every
+link: the linked declaration is of the fact's kind (a type for a type fact; a
+member with the named supertype as owner and the fact's last input as original
+for a member fact), and its original equals the fact's last input. A link of
+the wrong kind, owner or original is refused; it cannot alias.
+
+Hashed bytes follow the same shape: for `V` effective types and `E` direct
+supertype edges and no members, the bytes admitted to identity hashing are
+linear in `V + E`.
 
 The effective view's `declarations` is the array of `{effective_id, preimage}`
 for every effective declaration, ascending by the `effective_id` digest hex.
 Replaying normalization from the same domain package and rule manifest
 reproduces the effective view byte for byte; replay equality is equality of
-the `quire.model.effective-view/v1` identity. An I04 checked package carries it
+the `quire.model.effective-view/v2` identity. An I04 checked package carries it
 as a `correspondence` node with semantic form `model_correspondence`.
 
 ### Object universe
 
 The object universe of an object type `T` is the connected component of `T` in
 the supertype graph restricted to object types. Its identity is
-`quire.model.object-universe/v1` over the ModelSelection and the ascending
+`quire.model.object-universe/v2` over the ModelSelection and the ascending
 array of effective type identities in that component that have no supertype.
 A population is a membership view inside a universe, never a universe. Its
 declaration key never contributes to a universe identity. Every type that
@@ -265,37 +393,64 @@ effective-member order.
 | Phase | Rule | Derivation |
 | --- | --- | --- |
 | 1 | `quire.model.normalize.intake/v1` | Admit the domain package and build one original declaration per IR node, then apply `quire.model.features/v1`. No derivation fact. |
-| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[declaration]`: an object type or an interface (owner `null`); a field, relationship or operation, owned by its type or interface; a part, owned by its owning type; a port, owned by the owning type of its part; and a connection or allocation, owned by the end-owner type of each end, source end first. |
-| 3 | `quire.model.normalize.inherit/v1` | For each type `T` and each supertype path `T -> P1 -> ... -> A`: one fact on `T` with inputs `[P1, ..., A]`; then, for each member `m` whose owner is `A`, one fact on the effective member `(T, m)` with inputs `[P1, ..., A, m]`. |
-| 4 | `quire.model.normalize.subset/v1` | For each field `s` whose `subsets[]` names `t`, where the owner of `s` is `T` or a supertype of `T`: one fact on `(T, s)` with inputs `[path types..., s, t]`. |
-| 4 | `quire.model.normalize.redefine/v1` | For each member `r` whose `redefines` names `t`, where the owner of `r` is `T` or a supertype of `T`: one fact on `(T, r)` and one on `(T, t)`, each with inputs `[path types..., r, t]`. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. When several non-conflicting members redefine one member reaching `T`, only the redefining member of the most derived owner is exposed; every other redefining member keeps its facts and is hidden in `T` the same way. |
-| 5 | `quire.model.normalize.canonicalize/v1` | Compute every effective identity and the effective view. No derivation fact; ordering never changes a declaration key or resolves ambiguity. |
+| 2 | `quire.model.normalize.qualify/v1` | One fact per original declaration and owner, with inputs `[declaration]`: an object type, a record value type, an event type, a state machine, a process, a persistence interface, a variant type or an interface (owner `null`); a variant type's case, owned by its variant type and keyed by the case node's own declaration key, never the `variant` export key; a field, relationship or operation, owned by its type, interface or persistence interface; an invariant clause in language `quire`, owned by its type; a part, owned by its owning type; a port, owned by the owning type of its part; and a connection or allocation, owned by the end-owner type of each end, source end first. |
+| 3 | `quire.model.normalize.inherit/v2` | For each type `T` and each direct supertype `P` of `T`: one fact on `T` with inputs `[P]`, linked to the identity of `P`; then, for each member `m` of `P`'s effective members, one fact on the effective member `(T, m)` with inputs `[P, m]`, linked to the identity of `(P, m)`. |
+| 4 | `quire.model.normalize.subset/v2` | For each field `s` whose `subsets[]` names `t`, where the owner of `s` is `T` or a supertype of `T`: one fact on `(T, s)` with inputs `[s, t]`, no link. |
+| 4 | `quire.model.normalize.redefine/v2` | For each member `r` whose `redefines` names `t`, where the owner of `r` is `T` or a supertype of `T`: one fact on `(T, r)` with inputs `[r, t]` and one on `(T, t)` with inputs `[r, t]`, no link. The redefined member stays in the view and is hidden from name resolution, lookup and dispatch candidacy. When several non-conflicting members redefine one member reaching `T`, only the redefining member of the most derived owner is exposed; every other redefining member keeps its facts and is hidden in `T` the same way. |
+| 5 | `quire.model.normalize.canonicalize/v1` | Compute every effective identity, parents before children, and the effective view. No derivation fact; ordering never changes a declaration key or resolves ambiguity. |
 
-`path types` is the list of supertypes from the specific type `T` to the owner,
-excluding `T`. It is empty when `T` is the owner.
+A record value type, an event type, a state machine and a process are
+qualified like an object type: one owner-less fact, then the phase 3 inherit
+facts for each direct supertype, with their fields, operations and `quire`
+invariant clauses as members owned by the type. A process also has an object
+universe of runs; no other kind named here does. A persistence interface
+declares no supertype (a non-empty `supertypes` is refused), so it has a
+qualify fact and its operations are its members, with no inherit fact. A
+`quire` invariant clause owned by a type is a member of that type, qualified
+and inherited like a field. A variant type has no inherit fact and no object
+universe. A variant type's `supertypes` list is admitted only when it is
+acyclic and every entry names another variant type; it is then ignored, so the
+type's declarations are those it has without the list. An entry that names no
+type, names a type of another kind, or closes a cycle is refused
+`unsupported_construct`/`declaration-form` at `supertypes`. Reordering its
+`variants` list changes no effective identity, entry or position, and its
+effective identity depends on declaration keys alone.
+
+A phase-3 or phase-4 fact states one edge or one relation between original
+declarations. The full path of a derivation is not stored; it is the expansion
+the chain-link derivation above defines.
 
 The *element owner* of a declaration is: the type itself for an object type or
 an interface; the owning type for a field, relationship or operation; the type
 a part's `owner` names; and, for a port, the element owner of the part its
 `owner` names. The *end-owner type* of
 a connection or allocation end is the element owner of the declaration that
-the end names. A relationship end `e` is an end of effective type `T` exactly
-when `T` has the effective member for the relationship; `r.name` over
-`Reference<T>` navigates to `e` when `name` is `e`'s role. The effective
+the end names. A relationship end is navigable from effective type `T` exactly
+when `T` conforms to the type of the end whose role `name` is, ownership of the
+relationship being irrelevant; `r.name` over `Reference<T>` navigates from that
+end to the destination end when `name` is the role of the end nearest `T` (the source end's role is the forward
+member and the target end's role the inverse member). The effective
 declaration of a Connection or Allocation, as returned by a binder request, is
 the effective member owned by the end-owner type of its source end. Every
 systems effective member is keyed by `(owner effective type, construct
 declaration key)`; a clause names the construct by its artifact id, never
 through its owner.
 
-A phase 3 extension that would revisit a type already on the current path
-closes a cycle. Each cycle is `refused { code: invalid_model_binding, cause:
-specialization-cycle }` exactly once, keyed by the set of its supertype edges:
-it is reported at the first extension, in `normalize.cycle-check` charge order,
-that closes it, and a later extension closing a cycle with the same edge set is
-charged but not reported again. The refusal lists the cycle's type keys in
-cycle order (path order from the revisited type), rotated to start at the least
-key. A redefinition whose target is not a member inherited by its owning type,
+Phase 3 charges and checks each direct supertype edge once, however many paths
+reach its target. A type that the topological pass above does not place lies on
+or below a cycle, and only those types are explored by path. A phase 3 extension
+of that exploration that would revisit a type already on the current path
+closes a cycle. A cycle is identified by the set of its supertype edges, so
+two directed cycles over the same nodes with different edges are two cycles.
+Every declaration on a cycle is `refused { code: invalid_model_binding, cause:
+specialization-cycle }` once per cycle it lies on, at its own declaration: a
+declaration on two cycles is refused twice, once listing each cycle. A cycle is
+detected at the first extension, in `normalize.cycle-check` charge order, that
+closes it, and a later extension closing a cycle with the same edge set is
+charged but not reported again. The refusals follow cycle detection order, and
+within one cycle declaration-key order. Each refusal lists the cycle's type
+keys in cycle order (path order from the revisited type), rotated to start at
+the least key. A redefinition whose target is not a member inherited by its owning type,
 or two members of one type that redefine one target, is
 `refused { code: invalid_model_binding, cause: redefinition-target }` listing
 every such redefining member. Two phase 4 redefinitions of one member reaching `T`

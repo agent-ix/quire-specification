@@ -17,6 +17,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-401
     type: references
+  - target: ix://agent-ix/quire-specification/FR-361
+    type: references
   - target: ix://agent-ix/quire-specification/FR-363
     type: references
   - target: ix://agent-ix/quire-specification/FR-368
@@ -78,10 +80,18 @@ closed computation that replay repeats.
 | Every depth up to the maximum completed with no violation | `inconclusive` | `unsettled` | `bound-reached` naming the depth |
 | The match was refused or incomplete at a reachable joint step | `inconclusive` | `unsettled` | `match-undetermined` |
 | A vacuous clause ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)) | `inconclusive` | `unsettled` | `vacuous-match` |
-| An undecided successor, no initial state, an induction step that does not close, replay disagreement or replay refusal | `inconclusive` | `unsettled` | `undecided-successor`, `no-initial-state`, `induction-not-closed`, `replay-parity` or `replay-refused` |
+| An undecided successor, no initial state, an item with zero instances, an induction step that does not close, replay disagreement or replay refusal | `inconclusive` | `unsettled` | `undecided-successor`, `no-initial-state`, `no-instance`, `induction-not-closed`, `replay-parity` or `replay-refused` |
 | A run limit, meter or time budget stopped the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `limit-reached{limit, value, setting}` |
 | The caller cancelled the run | `failed` with execution `resource-incomplete` | `unavailable` | FR-331 result `incomplete` with cause `cancelled{source}` |
 | HP-4, or a clause over `behaviours` under a profile other than infinite-trace | `unsupported` | `unavailable` | `unsupported_projection`/`unsupported-requested-capability` |
+
+An item has one instance per key of the universe of each population overlapping its parameter's type (FR-361), a key listed by several populations being one instance, so an
+item with no admitted key (FR-361) for any one of its parameters has no instance to
+evaluate ([FR-395](FR-395-analyze-hyperproperties-over-behaviours.md)). The
+analyzer SHALL settle it `inconclusive` with cause `no-instance` before it
+explores any state, as [FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md)
+does for other items, after the `requires-bound` classification: a parameter
+with an overlapping population that has no universe is `requires-bound`, never `no-instance`.
 
 An HP-5 item settles by [FR-396](FR-396-classify-hyperproperty-forms.md)'s
 single-existential rows.
@@ -148,6 +158,15 @@ and reruns.
 | `max_witness_set` | the members one HP-3 witness set may reach | `model_check.max_witness_set` |
 | `max_relation_tuples` | the tuples an HP-1 run may evaluate | `model_check.max_relation_tuples` |
 
+[FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md) defines the
+count the denied charge would have reached. When a run stops at
+`max_witness_set` or `max_relation_tuples`, the engine's stop record SHALL
+expose that count, the value plus 1, since the run stops at the first member or
+tuple that would pass the limit and counts that one. The stop records of the
+other model-check limits (`max_states`, `max_transitions`,
+`max_automaton_states` and the evaluation meter) expose no count. The settled
+`limit-reached` cause carries `limit`, `value` and `setting` only.
+
 The routed provider publishes each default, which applies when the request
 sets none. The model-subject
 limits on states, transitions and automaton states count product states, joint
@@ -159,14 +178,15 @@ steps and automaton states for hyper items.
 | --- | --- | --- |
 | FR-399-AC-1 | Each outcome row settles exactly its listed FR-360 label, FR-243 basis and cause, a stopped run `incomplete` with `limit-reached` and a cancelled run `incomplete` with `cancelled{source}`, and each label matches exactly one FR-360 member with its FR-241, FR-242 and FR-243 combination. | Test (TC-338, TC-339, TC-340, TC-342) |
 | FR-399-AC-2 | An HP-3 clause is refuted exactly when a fair universal tuple reaches an empty witness set; on the leaky vault `X_1` is empty, and on the secure vault every `X` is a singleton and the clause is proved. | Test (TC-339) |
-| FR-399-AC-3 | An HP-3 run whose witness set reaches `max_witness_set` stops and settles `incomplete` with cause `limit-reached` naming `max_witness_set`, its value and its setting; a request that sets none runs under the provider's published default. | Test (TC-339) |
-| FR-399-AC-4 | An HP-1 run that reaches `max_relation_tuples` stops and settles `incomplete` with cause `limit-reached` naming the limit, its value and its setting; a request that sets none runs under the provider's published default. | Test (TC-343) |
+| FR-399-AC-3 | An HP-3 run whose witness set reaches `max_witness_set` stops and settles `incomplete` with cause `limit-reached` naming `max_witness_set`, its value and its setting, the engine's stop record exposing the count reached, one past the value; a request that sets none runs under the provider's published default. | Test (TC-339) |
+| FR-399-AC-4 | An HP-1 run that reaches `max_relation_tuples` stops and settles `incomplete` with cause `limit-reached` naming the limit, its value and its setting, the engine's stop record exposing the count reached, one past the value; a request that sets none runs under the provider's published default. | Test (TC-343) |
 | FR-399-AC-5 | A match refused at a reachable joint step settles `inconclusive` with `match-undetermined`, and a vacuous clause with `vacuous-match`; neither settles `proved`. | Test (TC-340) |
 | FR-399-AC-6 | A run that completes every depth up to the maximum with no violation settles `inconclusive` with `bound-reached` naming the depth, never `proved`. | Test (TC-338) |
 | FR-399-AC-7 | A refutation settles only after its counterexample replays; a counterexample that fails replay settles `inconclusive` with `replay-parity` or `replay-refused`. | Test (TC-345) |
 | FR-399-AC-8 | A body that evaluates undefined at a reachable joint step settles `refuted`, basis `decisive-counterexample`, cause `undefined-evaluation` whose `where` names the variable tuple, the joint position, each component's state-key digest and the expression's locus and whose `cause` names the catalogued reason, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
 | FR-399-AC-9 | With a violation and an undefined evaluation both reachable, the reported refutation is the first in canonical order: the first false or undefined tuple in the product of canonical edge orders for HP-1, and the first violating or undefined product state in canonical breadth-first order for HP-2, HP-3 and HP-6. | Test (TC-348) |
 | FR-399-AC-10 | A guard, the `terminal when` predicate or a state constraint of a component's subject that evaluates undefined at a component state of a reachable joint step settles the item `refuted`, `decisive-counterexample`, cause `undefined-evaluation` whose `where` names that component's variable and alias, the joint position, its state-key digest and the expression's locus, plus the FR-181 transition identity for a guard, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
+| FR-399-AC-11 | A hyperproperty item with no admitted key for its object parameter (no overlapping population has a key that a member record of an initial state admits) settles `inconclusive`, basis `unsettled`, cause `no-instance` before any state is explored, and never `proved` or `refuted`; a two-alias item (HB-02's `(d: S::Device, e: N::Device)`) with no admitted key for one parameter and admitted keys for the other settles the same way, so the product rule does not read only the first parameter; the same item with an overlapping population that has no universe returns `requires-bound`, not `no-instance`. | Test (TC-340) |
 
 ## Dependencies
 

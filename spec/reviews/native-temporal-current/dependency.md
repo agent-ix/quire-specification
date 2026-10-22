@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "FR-090 through FR-095 dependencies across A, B, D, E, F, contract IR and TL"
 review_set: all
-evaluated_revision: "2f347b8"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-095, type: reviews }

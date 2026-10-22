@@ -5,7 +5,6 @@ type: SpecReview
 analysis: code-review
 scope: "Cargo.toml, Cargo.lock, tests/shared_reference.rs and amendment fixtures"
 review_set: subset
-evaluated_revision: "395acaea412257deed63f128fbb522433c1fd5b7"
 review_date: "2026-09-08"
 ---
 

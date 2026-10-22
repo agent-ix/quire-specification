@@ -36,8 +36,7 @@ relationships:
 
 - [x] **NFR-060**: checked aggregate bounds, no partial success and repeatable
   bytes/identity.
-- [x] **NFR-061**: Rust-only first-party paths, optional downstream observers
-  and exact dependency/version/rights inventory.
+- [x] **NFR-061**: Rust-only first-party paths and optional downstream observers.
 
 ## Dependency Graph
 
@@ -47,8 +46,7 @@ relationships:
 - `Task-001 -> Task-002`
   Reason: all target profiles consume one loss, identity and package boundary.
 - `Task-001 + Task-002 -> Task-003 -> qcir #55/#56/#57`
-  Reason: executable exporters must bind to accepted target profiles and may
-  promote TM-008 only with real Rust evidence.
+  Reason: executable exporters must bind to accepted target profiles.
 
 Qcir #55, #56 and #57 are independent implementation lanes after the shared
 boundary. No target mapper depends on another target mapper. Agent B's TL-* lane
@@ -58,7 +56,7 @@ is untouched; FRETish structural output is not the FR-095 native/TL bridge.
 
 This plan accepts QSpec contracts, bounded correspondences and portable
 controls. It changes no Rust, Cargo, workflow, schema, executable fixture,
-historical native-v1 resource or release tag. TM-008 and IT-060 remain Planned.
+historical native-v1 resource or release tag. IT-060 remains Planned.
 
 ## Test Plan
 
@@ -120,12 +118,12 @@ The common QSpec boundary is the integration point, not shared target code.
 | --- | --- | --- | --- | --- |
 | Task-001 | A | AD-004, FR-120/121/125, FR-269, FR-297–299 | TC-150, TC-154, TC-155 | done |
 | Task-002 | B | FR-122–124, NFR-060/061 | TC-151–155 | done |
-| Task-003 | C | TM-008, IT-060 and tracker handoff | Quire validation, SR-552–SR-558 | done |
+| Task-003 | C | IT-060 and tracker handoff | Quire validation, SR-552–SR-558 | done |
 
 ## Coordination Rules
 
 - Never infer preservation from plausible text or parser/tool acceptance.
-- Do not mark TM-008 or IT-060 passed from specification-only controls.
+- Do not mark IT-060 passed from specification-only controls.
 - Do not close qcir #55/#56/#57 through FS06.
 - After merge, close FS06 #7 and immediately update QS #1, ledger #9 and each
   qcir implementation ticket with the exact accepted merge revision.

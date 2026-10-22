@@ -5,7 +5,6 @@ type: SpecReview
 analysis: failure-domain
 scope: "Identity confusion, absence handling, order soundness and traversal edge cases for FR-047 and FR-207 at a9368c1"
 review_set: subset
-evaluated_revision: "a9368c1"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-047, type: reviews }

@@ -19,6 +19,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-416
     type: references
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: references
 ---
 ## Description
 
@@ -63,6 +65,12 @@ defines the checked infinite-trace subject and its sound-provider result
 vocabulary; FR-048 and AD-012 define the unbounded temporal operator grammar
 it admits. The event-position false-extension, fixed-sample and
 timestamped-event profiles admit no unbounded operator.
+
+When the infinite-trace profile governs a refinement declaration
+([FR-375](../analysis/FR-375-declare-model-refinement.md)), it requires
+`quire.value.complete/v1` and `quire.model.complete/v1` for the refinement's
+rows ([FR-250](../../objects/temporal/FR-250-temporal-semantic-profile.md)); the
+rows are admitted under exactly those layers and their `requires` closure.
 
 Over a model subject ([FR-361](FR-361-read-model-behaviours-as-temporal-traces.md)),
 the authoritative sequence is the subject's step sequence: one tick is one
@@ -110,6 +118,7 @@ definition identity; old profile bytes and results remain historical subjects.
 | FR-090-AC-7 | Selecting `quire.temporal.infinite-trace/v1` or `quire.temporal.timed/v1` admits the unbounded temporal operator grammar edition, and `quire.temporal.infinite-trace/v1` also admits interval operators nested with unbounded ones; selecting the event-position false-extension, fixed-sample or timestamped-event profile admits no unbounded operator. | Test (TC-238, TC-368) |
 | FR-090-AC-8 | Over a model subject, a clause under the event-position false-extension or infinite-trace profile binds its clock role to the subject's step sequence with one tick per step, and a clause under the fixed-sample or timestamped-event profile settles `unsupported`. | Test (TC-290) |
 | FR-090-AC-9 | Selecting `quire.temporal.timed/v1` reads intervals as exact rational time bounds with open or closed ends between time-stamped positions; the same numeric interval under the timed profile and under a step-counting profile retains two distinct meanings. | Test (TC-368) |
+| FR-090-AC-10 | A refinement governed by `quire.temporal.infinite-trace/v1` admits `mod` and `Reference` comparison in its rows under the layers the profile requires, whatever the unit's other declarations select, and a Boolean field row `ready = protocol Fill` naming a protocol declared in the unit refuses `unsupported_construct`/`expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks; a plain temporal clause under the profile, outside any refinement, does not newly require `quire.value.complete/v1` and is admitted in a unit that selects no value layer. | Test (TC-310) |
 
 ## Dependencies
 

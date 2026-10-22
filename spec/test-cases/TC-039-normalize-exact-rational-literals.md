@@ -9,7 +9,7 @@ relationships:
 ## Description
 
 Accepted portable controls for [FR-039](../functional/foundation/FR-039-normalize-exact-rational-literals.md).
-The matrix remains Planned; these expected cases have not been implemented or
+These expected cases have not been implemented or
 executed as this standard's conformance evidence.
 
 ## Test Procedure

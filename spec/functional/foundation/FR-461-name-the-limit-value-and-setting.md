@@ -45,12 +45,20 @@ setting.
      charge would have reached.
    - Its setting: the name by which a caller raises it.
 
-   The locus is the one FR-272 retains for the cause.
+   The locus is the one FR-272 retains for the cause. This requirement
+   defines the count; an engine's stop record exposes it where the owning
+   requirement says so (FR-399 for the model checker's hyper limits), and the
+   settled `limit-reached` cause names the limit, its value and its setting.
 2. **One setting name per limit.** Every configurable stage limit has one
    stable dotted name: the stage, a dot and the counter, for example
    `s1.tokens`, `s3.nodes`, `s3.work_units` or `intake.input_bytes`. The
    counter names a resource (bytes, tokens, nodes, edges, occurrences,
-   diagnostics or work units), never a depth (FR-460).
+   diagnostics, work units or rational bits), never a depth (FR-460).
+   A byte-emitting lifecycle operation names its output-byte budget with the
+   operation name and the `output_bytes` counter, for example
+   `format.output_bytes`. The budget counts every byte the operation would
+   return, including formatting whitespace, comments and a terminating
+   newline where the operation emits one.
 3. **One name at every entry point.** The same name raises the same limit:
    - in the library, through the limits type's setter for that limit
      (FR-300);
@@ -91,6 +99,7 @@ setting.
 | FR-461-AC-4 | An unknown setting name, or a setting name naming a depth, given to `--limit` or to a replay request's `stage_limits` refuses before any stage runs and names the argument. | Test (TC-426) |
 | FR-461-AC-5 | An `incomplete` execution outcome names its `quire.value.accounting/v1` counter, and raising that counter through each entry point lets the same run complete. | Test (TC-426) |
 | FR-461-AC-6 | An engine item stopped at an engine limit, such as the model checker's state count, settles `incomplete` naming the limit, its value and its dotted setting name, such as `model_check.max_states`, and raising that setting through the library setter, the replay request and `--limit` lets the same item finish. | Test (TC-426) |
+| FR-461-AC-7 | A byte-emitting lifecycle operation with an `output_bytes` limit reports the operation's `*.output_bytes` setting when the next emitted byte would exceed the configured bound, returns no partial output, succeeds at the exact output length including its terminating newline, and accepts the same bound through its typed limits field and the CLI settings operation. | Test (TC-930) |
 
 ## Dependencies
 
@@ -102,6 +111,9 @@ setting.
   [FR-301](../tooling/FR-301-expose-complete-cli.md) and
   [FR-323](../../objects/interfaces/FR-323-native-runtime-envelope.md) own the
   three entry points.
+
+- QSL-673 specifies the formatter instance of this contract as
+  `format.output_bytes` and its typed `FormatLimits.output_bytes` field.
 
 ## References
 

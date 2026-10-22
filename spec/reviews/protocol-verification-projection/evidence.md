@@ -5,7 +5,6 @@ type: SpecReview
 analysis: evidence
 scope: "FR-061-AC-1..AC-9, FR-062-AC-1..AC-4, TC-061, TC-064 and TM-004"
 review_set: all
-evaluated_revision: "07da6927202719c81a348b7c0e09677d8810f1a2"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-061, type: reviews }

@@ -1,89 +1,159 @@
 # quire-specification
 
-Private specification and qualification repository. The Rust tests qualify
-authored interchange shapes and existing canonicalizer correspondence; no native
-compiler, strict shared reader or released standard is implemented here.
+quire-specification is the written standard for the Quire language. It holds
+the semantics of the language, the profiles that select parts of it, the
+interchange formats programs use to hand each other checked results, and the
+test cases an implementation has to pass.
 
-## Charter
+The compiler ([quire-spec-language](https://github.com/agent-ix/quire-spec-language)),
+the proof and code-generation backends and the verification tools read the same
+requirements, JSON schemas and vectors from this repository. Implementers and
+tool authors use it as the shared reference.
 
-The open language standard: normative semantics, profiles, versioned interchange and required conformance material.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.svg">
+  <img alt="The standard is authored as requirements, test cases, schemas with vectors, and definition bytes. Today the qualification tests check the schemas, vectors and definition bytes and report each vector admitted or refused. Compiler acceptance of the test cases by quire-spec-language and the backends is planned." src="docs/images/hero-light.svg">
+</picture>
 
-Native Quire V1 includes the complete
-[atomic capability inventory](docs/v1-capability-inventory.md) under one
-editable language and its typed runtime, analysis, proof, mapping and tooling
-consumers. The existing finite-state work is a development profile. The
-[historical V1 design](proposals/quire-v1/README.md) remains evidence for the
-initial state, temporal and protocol/choreography expansion; the atomic
-inventory supersedes its deferred scope decisions. Complete architecture, specification and review
-precede resumed delivery.
+> **Status: prerelease, private repository.** There is no released standard.
+> The grammar, profiles and formats are drafts and are still changing, and no
+> draft becomes normative until it has been reviewed. The Rust tests here check
+> the authored schemas, vectors and canonical identities; they do not run a
+> compiler. Compiler acceptance of the written test cases is planned and lives in
+> quire-spec-language.
 
-## First work
+## Contents
 
-The owner-approved [language research and capability assessment](proposals/quire-v1/README.md)
-defines the expanded v1 roadmap. It preserves the first state profile as a
-development foundation; it does not adopt unreviewed grammar or claim runtime
-support for the newly selected capabilities.
+| Path | What it holds |
+| --- | --- |
+| `spec/` | The requirements and everything that hangs off them, as Markdown artifacts. See the chart below. |
+| `proposals/` | Draft grammar, profiles, JSON schemas and the vector and fixture files that pin them down. One folder per proposal. |
+| `docs/` | [The atomic V1 capability inventory](docs/v1-capability-inventory.md), which is the binding statement of scope, and [the complete architecture](docs/v1-complete-architecture.md). |
+| `plan/`, `reviews/` | Delivery plans and review records for the work above. |
+| `src/lib.rs` | A dependency-free Rust library that exposes three authored documents as constants: the value definition lock, its selection vectors and the native diagnostics catalog. |
+| `tests/` | The qualification tests. |
 
-Define scope and non-goals; distinguish language, profile, wire and implementation versions; state that spec artifacts declare the domain model; outline grammar/static/dynamic semantics; select open licenses for prose and reusable normative artifacts; define first positive/negative conformance cases. No unreviewed draft becomes normative.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/corpus-dark.svg">
+  <img alt="The spec/ tree holds 719 authored artifacts in 9 kinds: assurance 16, decisions 6, functional 200, integration 19, non-functional 16, objects 149, stakeholder 2, test-cases 300, usecase 11." src="docs/images/corpus-light.svg">
+</picture>
 
-## Boundaries
+Every chart number is counted from the tree by `docs/images/figures.py`.
 
-No duplicate evidence store, hidden normative dependency, or unqualified backend promise. Existing Quire/Quoin/Filament interfaces must be inspected before replacement or extraction. Research and private issue links must not enter a public release packet.
+The proposals are:
 
-## Licence
+| Proposal | What it defines |
+| --- | --- |
+| [`quire-v1`](proposals/quire-v1/README.md) | The V1 language research, capability assessment and the versioned definition documents (edition, value and model packages, diagnostics, state, temporal, protocol and observation profiles). |
+| [`state-core`](proposals/state-core/README.md) | The finite-state profile: grammar, snapshots, identity-preserving references and the fixture cases. |
+| [`native-source-1-draft`](proposals/native-source-1-draft/README.md) | The native source ruling, with the superseded state-finite candidate kept as history. |
+| [`shared-reference-2-draft`](proposals/shared-reference-2-draft/README.md) | The artifact roles and canonical identity (JCS plus SHA-256) that verification records use. |
+| [`checked-package-v2`](proposals/checked-package-v2/README.md) | The checked-package schema and its identity, model and operation vectors. |
+| [`backend-provider-v1`](proposals/backend-provider-v1/README.md) | The schema and vectors for how a backend advertises what it can check. |
 
-This repository is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE). Publication requires a fresh review; do not flip private history public.
+## Example conformance case
 
-## Native profile packets
+A case is an input and the answer an implementation must give. The state-core
+proposal ships a rule and a set of snapshots to run it on. The rule is
+`proposals/state-core/fixtures/parent-order.native`:
 
-The [native-source ruling amendment](proposals/native-source-1-draft/README.md)
-preserves the superseded `state-finite/1-draft` candidate, its carried-forward
-admission rules and historical rationale. FS01's accepted
-[language charter](spec/assurance/AD-003-native-quire-language-charter.md) selects
-the composed profile hierarchy instead. Neither artifact claims broader
-implementation or qualification from historical tests.
+```
+language "ix:native" edition "0-draft";
+profile "state-finite/0-draft";
+model M = "example/config" digest "unresolved-model-package";
+invariant ParentPrecedes on M::ConfigVersion at current {
+  present(self.parent) implies deref(value(self.parent)).versionNumber < self.versionNumber
+}
+```
 
-The [requirements index](spec/spec.md) covers FS01/FS02/FS03/FS05 through discrete
-Quoin catalog artifacts.
+`proposals/state-core/fixtures/state-cases.json` lists the snapshots and what
+each must produce. The cases from that file:
 
-[Atomic V1 capability inventory](docs/v1-capability-inventory.md) is the binding
-scope authority.
+| Case | Expected |
+| --- | --- |
+| `healthy-parent-order` | completed, true |
+| `violating-parent-order` | completed, false |
+| `absent-parent-guard` | completed, true |
+| `equal-valued-distinct-identities` | completed, false |
+| `cycle-reachability`, `self-loop` | completed, true |
+| `dangling-parent` | refused, `dangling_reference` |
+| `duplicate-object` | refused, `duplicate_object` |
+| `incomplete-population` | incomplete, `incomplete_population` |
 
-[Native state-core proposal](proposals/state-core/README.md) contains draft
-grammar, identity/snapshot boundaries and serialized fixture expectations.
-[Agent A's review record](reviews/agent-a-fs01.md) records inspected evidence,
-owner decisions and remaining implementation gates. These are review artifacts,
-not a released standard or a working compiler.
+The file's status is `manually-authored-expectations-not-evaluator-output`, and
+the fixture's model digest is unresolved. These are the draft's authored
+expectations; no program has produced them as results yet.
 
-## Verification reference amendment and local checks
+## Rust library
 
-[The versioned amendment](proposals/shared-reference-2-draft/README.md) adds B's
-six artifact roles and selected JCS canonical identity as versions separate from
-the state-core schema. [Fixture notes](proposals/shared-reference-2-draft/fixtures/README.md)
-state which observations are qualified and which require B's strict reader.
+The library crate is named `quire_specification`. A consumer reads the
+documents by reference. From
+`tests/checked_package_v2.rs`:
 
-Run these commands from this repository:
+```rust
+use quire_specification::{
+    COMPLETE_VALUE_LOCK, COMPLETE_VALUE_SELECTION_VECTORS, NATIVE_DIAGNOSTICS,
+};
+```
+
+The same file's test checks that each constant holds exactly the bytes of the
+file under `proposals/quire-v1/definitions/`. The crate does no parsing.
+
+## Tests
+
+| Test file | What it checks |
+| --- | --- |
+| `tests/backend_provider_v1.rs` | Every positive backend-provider vector is admitted by the schema, every adverse one is refused, and the request carries exactly the checked package its identifier names. |
+| `tests/checked_package_v2.rs` | The checked-package and complete-value vectors, and the definition constants against their files. |
+| `tests/checked_package_model.rs` | The model definition lock and the effective-declaration vectors. |
+| `tests/model_member_types.rs` | Model-owned member vectors: owner recovery, member resolution and member type derivation. |
+| `tests/record_conformance.rs` | Record conformance and event-equality vectors, against the shared operation catalog. |
+| `tests/shared_reference.rs` | The producer structure of the verification-reference fixtures, and that Quire's canonicalizer gives the same identities. |
+
+These are producer checks. They do not show that an independent reader accepts
+the same data. They do not discharge the written test cases under
+`spec/test-cases/`, which describe compiler acceptance and are planned.
+
+## The Quire ecosystem
+
+This repository is the language standard. It starts the main chain, ahead of
+the compiler and the backends that implement and consume it.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/ecosystem-dark.svg">
+  <img alt="The Quire repositories. The main chain runs from the standard, quire-specification, to the compiler, quire-spec-language, then quire-contract-ir, quire-contract-codegen and quire-contract-runtime. quire-spec-language also feeds quire-protocol, and quire-contract-ir feeds quire-analyze. quire-observation feeds quire-protocol and quire-mltl. Above the chain, quire-driver runs it, quire-integration tests it and quire-verification plans verification. Below it, shared libraries used throughout: quire-exact, quire-semantic-value, quire-walk, quire-canonical and quire-verification-contracts." src="docs/images/ecosystem-light.svg">
+</picture>
+
+Its dependencies are for the tests only: the public
+[quire-verification-contracts](https://github.com/agent-ix/quire-verification-contracts)
+crate (canonical JSON identity and the operation catalog) and ix-trace-rs, which
+ties each test to the criterion it verifies. The library itself has no
+dependencies. The compiler that implements the standard is
+[quire-spec-language](https://github.com/agent-ix/quire-spec-language).
+
+## Building and testing
+
+There is no hosted workflow; every check runs locally.
 
 ```sh
-cargo test --locked --target-dir target-codex-backends
+cargo test --locked
 cargo fmt --all -- --check
-cargo clippy --offline --locked --target-dir target-codex-backends --all-targets --all-features -- -D warnings
+cargo clippy --locked --all-targets --all-features -- -D warnings
 quire validate --scope . 'spec/**/*.md' 'plan/**/*.md' 'reviews/2026-*.md' --summary
 ```
 
-The first Cargo run may fetch the exact private B dependency; subsequent runs
-can add --offline. All tests must execute locally; no hosted workflow exists.
-The crate's only library API is `quire_specification`: dependency-free
-constants carrying the authored bytes of `complete-value-lock.json`,
-`complete-value-selection-vectors.json` and `native-diagnostics.md`, so consumers read them by reference. The
-qualification tests' dev-dependencies and their licence grants are recorded
-in [Dependency rights](docs/qualification-dependencies.md). TC completion and independent
-consumer adoption remain separate from the five producer qualification tests.
+The first Cargo run fetches the git dependencies; later runs can add
+`--offline`. The dated review glob selects the typed review artifacts. The older review note
+has no type frontmatter, and an unrestricted glob reports that structural error.
 
-The dated review glob selects the typed SpecReview artifacts. The two historical
-agent-a review notes predate the artifact workflow and have no type frontmatter;
-an unrestricted reviews glob reports those two existing structural errors.
+To regenerate the figures, run the docs-figures skill from
+[dev-tools](https://github.com/agent-ix/dev-tools) on `docs/images/figures.py`.
 
-## Required language
+## Contributing and license
 
-Executable implementation, including production and qualification tools/tests, is Rust. New TypeScript choices require explicit owner approval; surface all other executable languages. Quoin remains in its current implementation for now: contain its spread through versioned structured interfaces, do not rewrite it wholesale. Filament changes are excluded. See AGENTS.md and the language gate on the owning issue. Normative prose/schema need not be executable Rust.
+Every contribution needs a signed contributor agreement: read
+[CONTRIBUTING.md](CONTRIBUTING.md) and [CLA.md](CLA.md) first. Executable code
+here is Rust; see [AGENTS.md](AGENTS.md) for the language and review rules.
+Research and private issue links must not enter a public release. This
+repository is licensed under `AGPL-3.0-or-later`; see [LICENSE](LICENSE).
+Publishing it needs a fresh review.

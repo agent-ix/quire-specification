@@ -18,21 +18,26 @@ When a protocol declaration completes static checking, the producer SHALL use th
 
 ## Properties
 
-- `contract_version` — exactly `quire.checked-protocol/v1`.
 - `definition` — package-qualified protocol declaration identity.
 - `roles` — definitions and runtime-binding requirements.
 - `messages_channels` — typed messages, channel/queue policies and cardinality premises.
-- `control_graph` — typed nodes and authored acyclic causal edges.
+- `control_graph` — typed control nodes; the acyclic causal edges are derived from them, not carried.
 - `guards_obligations` — source-bound expressions, captures, anchors and origin keys.
 - `compensations` — registration, retry, commit and recovery definitions.
-- `bounds` — participant, queue, loop, attempt, population and analysis bounds.
+- `bounds` — participant, queue, loop, attempt, population and analysis bounds: a replicated role's `max`, a queue's capacity, a `repeat`'s `maximum`, a template's `attempts.maximum` and the symbolic bounds a queue names. Analysis bounds are request members, not package content.
 
-## Identity and validation
+## Carriage
 
-The key is (`contract_version`, `definition`, canonical checked content). Occurrence identities and runtime observations are excluded.
-A document whose `contract_version` is not that identifier, missing required
-properties, duplicate keys, out-of-domain values and non-canonical encodings
-refuse before consumption.
+The value is carried by the `protocol` nodes of a `quire.checked-semantic-graph/v2`
+checked package ([FR-464](FR-464-checked-package-protocol-node-bodies.md),
+[FR-465](FR-465-checked-package-protocol-declaration-bodies.md),
+[FR-466](FR-466-checked-package-protocol-control-bodies.md)) and by nothing
+else: no separate `quire.checked-protocol/v1` document is emitted or read. The
+`definition` is the `protocol_clause` node; `roles`, `messages_channels`,
+`control_graph`, `guards_obligations` and `compensations` are its role,
+channel, queue, control, obligation and compensation nodes, and `bounds` the
+bound members of those nodes. Occurrence
+identities and runtime observations are excluded from node keys.
 
 ## Acceptance Criteria
 

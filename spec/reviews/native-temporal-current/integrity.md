@@ -5,7 +5,6 @@ type: SpecReview
 analysis: integrity
 scope: "E temporal requirements, matrix, cases, integration tests and selected definition seams"
 review_set: all
-evaluated_revision: "2f347b8"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-095, type: reviews }

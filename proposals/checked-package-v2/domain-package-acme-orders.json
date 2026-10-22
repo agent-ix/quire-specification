@@ -1,4 +1,8 @@
 {
+  "canonicalization": {
+    "algorithm": "rfc8785-v1",
+    "digest": "sha256-jcs"
+  },
   "constructs": [
     {
       "construct": {
@@ -6,6 +10,7 @@
         "meaning": "quire.meaning.model.object-type/v1",
         "members": {
           "fields": "optional",
+          "identityFields": "required",
           "operations": "optional",
           "relationships": "optional",
           "supertypes": "optional"
@@ -21,7 +26,7 @@
     },
     {
       "construct": {
-        "identity": "identified",
+        "identity": "none",
         "meaning": "quire.meaning.systems.interface/v1",
         "members": {
           "fields": "optional",
@@ -75,6 +80,9 @@
       "extensions": [],
       "fields": [],
       "identity": "ix://acme/orders/Both",
+      "identityFields": [
+        "ix://acme/orders/Coded/code"
+      ],
       "kind": {
         "module": "acme/orders",
         "name": "entity"
@@ -198,6 +206,9 @@
         }
       ],
       "identity": "ix://acme/orders/Coded",
+      "identityFields": [
+        "ix://acme/orders/Coded/code"
+      ],
       "kind": {
         "module": "acme/orders",
         "name": "entity"
@@ -416,8 +427,34 @@
       "constraints": [],
       "displayName": "Invoice",
       "extensions": [],
-      "fields": [],
+      "fields": [
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Invoice/number",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "number",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Invoice.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Integer"
+        }
+      ],
       "identity": "ix://acme/orders/Invoice",
+      "identityFields": [
+        "ix://acme/orders/Invoice/number"
+      ],
       "kind": {
         "module": "acme/orders",
         "name": "entity"
@@ -645,7 +682,7 @@
               "identity": "ix://acme/orders/constraint/Order-floor-min",
               "keyword": "min",
               "operands": {
-                "value": 0
+                "value": "0"
               },
               "origin": {
                 "source": {
@@ -855,6 +892,9 @@
         }
       ],
       "identity": "ix://acme/orders/Order",
+      "identityFields": [
+        "ix://acme/orders/Order/sku"
+      ],
       "kind": {
         "module": "acme/orders",
         "name": "entity"
@@ -1102,7 +1142,7 @@
           "identity": "ix://acme/orders/constraint/Order-total-min",
           "keyword": "min",
           "operands": {
-            "value": 0
+            "value": "0"
           },
           "origin": {
             "source": {
@@ -1119,7 +1159,7 @@
           "identity": "ix://acme/orders/constraint/Order-total-max",
           "keyword": "max",
           "operands": {
-            "value": 9
+            "value": "9"
           },
           "origin": {
             "source": {
@@ -1174,6 +1214,9 @@
       ],
       "fields": [],
       "identity": "ix://acme/orders/Sub",
+      "identityFields": [
+        "ix://acme/orders/Order/sku"
+      ],
       "kind": {
         "module": "acme/orders",
         "name": "entity"
@@ -1288,6 +1331,9 @@
       ],
       "fields": [],
       "identity": "ix://acme/orders/SubSub",
+      "identityFields": [
+        "ix://acme/orders/Order/sku"
+      ],
       "kind": {
         "module": "acme/orders",
         "name": "entity"
@@ -1363,6 +1409,9 @@
         }
       ],
       "identity": "ix://acme/orders/Tagged",
+      "identityFields": [
+        "ix://acme/orders/Tagged/code"
+      ],
       "kind": {
         "module": "acme/orders",
         "name": "entity"

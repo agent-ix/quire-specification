@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "Changed normative statements for quire-specification #28"
 review_set: subset
-evaluated_revision: "task/28 working tree based on 6a50ab6"
 review_date: "2026-09-13"
 ---
 # EARS review of FS02 protocol identity rulings

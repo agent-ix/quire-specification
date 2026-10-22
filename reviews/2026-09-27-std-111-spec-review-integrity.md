@@ -3,7 +3,7 @@ id: SR-726
 title: "Spec review (integrity) — STD-111 state clause, operation anchor, frame and reaches_field"
 type: SpecReview
 analysis: integrity
-scope: "agent-ix/quire-specification@7160d58dcf7a7182ca64c6f61c5aa10df336869d; PR #163 diff against origin/main: FR-322, FR-340, FR-341 (new), FR-342 (new), interface_004, spec.md, TC-233, TC-280, TC-281, spec/complete-v1/tests.md, proposals/checked-package-v2/README.md, schema.json, node-identity-preimage.schema.json; cross-checked against FR-208, FR-013, AD-016, docs/qualification-dependencies.md"
+scope: "agent-ix/quire-specification; PR #163 diff against origin/main: FR-322, FR-340, FR-341 (new), FR-342 (new), interface_004, spec.md, TC-233, TC-280, TC-281, spec/complete-v1/tests.md, proposals/checked-package-v2/README.md, schema.json, node-identity-preimage.schema.json; cross-checked against FR-208, FR-013, AD-016, docs/qualification-dependencies.md"
 review_set: subset
 ---
 # Spec review (integrity) — STD-111 state clause, operation anchor, frame and reaches_field

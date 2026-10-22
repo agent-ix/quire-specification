@@ -89,7 +89,7 @@ with `target` `{"type":"operation","name":"<qualified-name>"}`,
 `{"type":"attempt-node","node":"<node>"}`,
 `{"type":"thread-target","node":"<node>"|null,"branch":"<label>"|null}` (both
 null for the root) or `{"type":"template","name":"<qualified-name>"}`, or the
-target a memory model gives. The set is ordered by the JCS bytes of its
+target a memory model gives (a `tso` flush is `weak` and `each`; the `ra` visibility member is `strong` and `whole`, FR-437). The set is ordered by the JCS bytes of its
 members.
 
 ### Machine closure

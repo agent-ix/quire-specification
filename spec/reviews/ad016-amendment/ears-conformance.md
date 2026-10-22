@@ -5,7 +5,6 @@ type: SpecReview
 analysis: ears-conformance
 scope: "quire-specification task/ad016-amendment diff 55d2fcc..5bd933f; FR-197 Description and Replay source SHALL statements; FR-197-AC-6..AC-10; AD-016 (no SHALL statements)"
 review_set: all
-evaluated_revision: "5bd933f"
 review_date: "2026-09-19"
 relationships:
   - { target: ix://agent-ix/quire-specification/AD-016, type: references }

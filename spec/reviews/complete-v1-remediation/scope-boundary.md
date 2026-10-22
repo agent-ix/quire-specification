@@ -5,7 +5,6 @@ type: SpecReview
 analysis: scope-boundary
 scope: "docs/v1-capability-inventory.md against the owning requirements named in TM-009"
 review_set: subset
-evaluated_revision: "fc5434b on task/63-full-v1-specification"
 review_date: "2026-09-17"
 ---
 

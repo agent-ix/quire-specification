@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "quire-specification #29 authority and consumer dependency graph"
 review_set: subset
-evaluated_revision: "task/29 working tree based on cc6cb90"
 review_date: "2026-09-13"
 ---
 # Dependency review of FS02 vocabulary closure

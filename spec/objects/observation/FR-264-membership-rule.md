@@ -58,11 +58,11 @@ FR-112 Behavior requires that members be "exactly listed/digested", and that
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-264-AC-1 | Two membership rules differing in identity or digest compare unequal and yield different assessment subjects. | Test |
-| FR-264-AC-2 | An absent membership rule or digest compares only to absence and receives no ambient default. | Test |
-| FR-264-AC-3 | Two rules with equal digest bytes selected under different identity domains compare unequal. | Test |
-| FR-264-AC-4 | Changing the required member set changes the rule identity; changing only the observed subset leaves the rule key unchanged and affects completeness instead. | Test |
-| FR-264-AC-5 | Duplicate, unsorted on-wire, unbounded, unknown-contract or same-identity/unequal-member rules refuse without a partial population. | Test |
+| FR-264-AC-1 | Two membership rules differing in identity or digest compare unequal and yield different assessment subjects. | Test (TC-142) |
+| FR-264-AC-2 | An absent membership rule or digest compares only to absence and receives no ambient default. | Test (TC-142) |
+| FR-264-AC-3 | Two rules with equal digest bytes selected under different identity domains compare unequal. | Test (TC-142) |
+| FR-264-AC-4 | Changing the required member set changes the rule identity; changing only the observed subset leaves the rule key unchanged and affects completeness instead. | Test (TC-142) |
+| FR-264-AC-5 | Duplicate, unsorted on-wire, unbounded, unknown-contract or same-identity/unequal-member rules refuse without a partial population. | Test (TC-142) |
 
 ## Dependencies
 

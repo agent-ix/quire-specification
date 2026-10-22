@@ -83,8 +83,11 @@ whose joins below do not hold with the refusal this requirement names, in
   `quire.op.control.case` with operator class `case`, operands `["union"]`, rest `binder`, result
   form `arm_body`, no laws, no mode, no member kind, no leaf source and the
   one constraint `{kind: "union_arms", operands: [0]}`. The `arm_body` result
-  form derives the type every arm body has; the application's `result_type`
-  must be that type node. The `union_arms` constraint holds when the rest
+  form derives the case result type; the application's `result_type` must be
+  that type node, and each arm body's type is that type node or, when it is a
+  record type node, a record type node that conforms to it
+  ([FR-322](FR-322-checked-package-artifact.md) "Record conformance"; a
+  `K<child>` type is not a `K<parent>` type). The `union_arms` constraint holds when the rest
   arguments are exactly one arm per member of operand 0's union, in member
   declaration order, each named by its member, each binder aggregate holding
   as many references as that member's payload arity, and each binder's
@@ -113,6 +116,15 @@ whose joins below do not hold with the refusal this requirement names, in
   so `quire.op.structural.eq` over two values of
   `union List { Cons(Integer, List), Nil }` is admitted with empty
   `leaves`.
+- **Declaration-wide leaf identity** — every declared member participates
+  in the walk, including members inactive in both compared values. The
+  exact member identifier and zero-based payload position are separate
+  segments; a path carries no union node key or member ordinal. The
+  enclosing operand/result type binds union identity. FR-322's "Union
+  text-leaf vectors" U1–U7 fix profiles, nested wrappers, recursion and
+  mutual record/union recursion. Its catalog leaf-source rules also apply
+  when a union is a collection element; selecting that element starts the
+  path at the empty array.
 - **Published schema** — the published V2 package schema enumerates
   `union` among `CompositeTypeNode` forms, `union_value` among `ValueNode`
   forms and `case` among `ExpressionNode` forms, and binds the three bodies
@@ -181,7 +193,10 @@ node-id digest order, each node at its place in that order:
 3. **Union value.** The `semantic_type` of a `union_value` node is a union
    type node, its binding names a member of that union, its payload count
    equals that member's payload arity, and each payload term's type is the
-   member's payload type at its position; otherwise the node refuses
+   member's payload type at its position, or, for a record-typed payload, a
+   record type that conforms to it
+   ([FR-322](FR-322-checked-package-artifact.md) "Record conformance");
+   otherwise the node refuses
    `ill_typed`/`type-mismatch`, as FR-143 refuses the same construction at
    type checking.
 4. **Case.** The `case` application's operand family, its `union_arms`
@@ -202,11 +217,14 @@ id and no `package_id`.
 | FR-440-AC-1 | `union Shape { Circle(Integer), Rect(Integer, Integer), Empty }` is a `composite_type`/`union` node carrying `declaration`, whose body is an `aggregate` of the bindings `Circle`, `Rect` and `Empty` in that order, holding one, two and zero `reference` terms to the `Integer` node; a duplicated member name refuses `invalid_package`/`duplicate-member` and a payload reference to a non-type node `ill_typed`/`operator-ineligible`, each at the union node. | Test (TC-395) |
 | FR-440-AC-2 | `Shape::Rect(2, 3)` is a `value`/`union_value` node whose `semantic_type` is the `Shape` node and whose body is one binding `Rect` over the two payload terms in order, and `Shape::Empty` is one binding `Empty` over the empty `aggregate`; a binding naming `Triangle`, a `Rect` binding with one payload term and a `Circle` binding whose payload term is `Text` each refuse `ill_typed`/`type-mismatch` at the node. | Test (TC-395) |
 | FR-440-AC-3 | `case s { Empty: 0; Rect(w, h): w * h; Circle(r): r }` is an `expression`/`case` node whose body is a `quire.op.control.case` application over the scrutinee and the arms `Circle`, `Rect` and `Empty` in member declaration order, each arm an `aggregate` of its binder aggregate and its body, with the binders `r`, `w` and `h` as `value`/`parameter` nodes typed `Integer`; the same `case` with its source arms in another order has the same node id. | Test (TC-395) |
-| FR-440-AC-4 | A `case` application whose arms are out of member order, omit or repeat a member, carry a binder aggregate whose count differs from the member's payload arity, type a binder other than its payload position, or carry an arm body of a type other than the `result_type` refuses `ill_typed`/`operator-ineligible` at the `case` node. | Test (TC-395) |
+| FR-440-AC-4 | A `case` application whose arms are out of member order, omit or repeat a member, carry a binder aggregate whose count differs from the member's payload arity, type a binder other than its payload position, or carry an arm body whose type is neither the `result_type` nor, for a record `result_type`, a record type that conforms to it, refuses `ill_typed`/`operator-ineligible` at the `case` node. | Test (TC-395) |
 | FR-440-AC-5 | In the "Binder levels" worked vector, `t`, `w`, `h`, `r` and `x` carry the levels `3`, `4`, `5`, `4` and `5`; with `let t = k in` removed (and `t` replaced by `k`), `w`, `h`, `r` and `x` carry `3`, `4`, `3` and `4`. | Test (TC-395) |
 | FR-440-AC-6 | `quire.op.structural.eq` over two `Shape` values is admitted, and over a `Shape` value and a value of another union refuses `ill_typed`/`operator-ineligible` by its `same_type` constraint. | Test (TC-395) |
 | FR-440-AC-7 | A `quire.op.control.case` application as the body root of a `function` node refuses `ill_typed`/`operator-ineligible` at that node, and the same `case` as an `expression`/`case` node referenced from the function body is admitted; the same `case` application nested in another application's arguments refuses `ill_typed`/`operator-ineligible` at that nested application's `operator` member, not `malformed_wire`. | Test (TC-395) |
 | FR-440-AC-8 | `quire.op.structural.eq` over two `Label` values carries the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` and none for `Empty`; over two `List` values of `union List { Cons(Integer, List), Nil }` it is admitted with empty `leaves`; and over two `Chain` values of `union Chain { Link(Text[0,8;nfc], Chain), End }` it is admitted with the leaves `["member:Link", "position:0"]` and `["member:Link", "position:1", "recursion:0"]`. | Test (TC-395) |
+| FR-440-AC-9 | Structural equality and inequality over each FR-322 Union text-leaf vector U1–U7 require exactly that vector's complete ordered list, independent of active values. U2's member rename, member reorder, payload swap and source arm reorder have exactly the effects stated with those vectors. | Test |
+| FR-440-AC-10 | Fixed `record_value` and `tuple_value` inputs whose bodies contain no application retain their existing `quire.structural-node/v1` preimage bytes and keys. Reordering the source arms of AC-3's `case` retains its declared-order body, node id and package id. | Test (TC-395) |
+| FR-440-AC-11 | For fixed union and payload node ids, nullary `Shape::Empty` and `Shape::Rect` with two reference payloads each select `quire.application-node/v1` with the exact aggregate body, `declaration: null`, no `owner` and `recursion: null` outside a recursion group. The producer and strict reader independently match fixed RFC 8785 preimage bytes and canonical node keys; retaining the structural-preimage key refuses `invalid_package`/`stale-node-key` at the application-node key stage. | Test |
 
 ## Dependencies
 

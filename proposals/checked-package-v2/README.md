@@ -26,9 +26,19 @@ structures, but any external consumer receives only the contract.
   same package carries an invariant and a precondition as
   `state`/`state_clause` nodes whose `quire.op.state.clause` applications
   carry a `state_clause` member and no law, the precondition's
-  `state`/`operation_anchor` node, its `state`/`frame` node with a field
-  entry, and the `value`/`parameter` node for `self` (FR-340, FR-341,
-  FR-342).
+  `state`/`operation_anchor` node, its `state`/`frame` node with a scoped
+  field entry and the four frame members, and the `value`/`parameter` node
+  for `self` (FR-340, FR-341, FR-342).
+- `model-owner-form-vectors.json` supplies a domain package projection that
+  also declares processes, state machines and a persistence interface, with
+  the owner-join, frame-field, anchor, clause-signature and receiver-frame
+  cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
+  FR-342-AC-7 to AC-9). Its model declaration node keys are recomputed by the
+  tests from each preimage.
+- `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-17` of
+  FR-322's refinement step occurrences: a refinement owner's `declaration` and
+  `generated` `source_map` entries against its step rows, its `steps` order and
+  whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). The refinement members of the cases are illustrative, since no refinement body exists in `schema.json` or in a published package; a real entry is compared by node key.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.
@@ -44,7 +54,7 @@ structures, but any external consumer receives only the contract.
   `modifies`/`creates`/`deletes` in place: each `dependencies`, `creates`
   and `deletes` entry is a bare digest string, and each `modifies` entry is
   a `FrameModifiesEntry` (`{kind: "relationship", declaration}` or
-  `{kind: "field", declaration, name}`) whose `declaration` is a bare digest
+  `{kind: "field", declaration, name, scope}`) whose `declaration` is a bare digest
   string; every bare digest is substituted into the node as the `NodeRef`
   `{domain: "quire.checked-semantic-node/v1", digest}` (`schema.json`'s
   `NodeId`). One vector additionally carries a
@@ -65,6 +75,26 @@ structures, but any external consumer receives only the contract.
   order (where UTF-16 order differs) are admitted, a repeated identity
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
+  The members its top-level `schema_only` lists (`dependency_selections`,
+  `entry_mutations`, `model_selections`, `model_entry_mutations`,
+  `order_vectors` and `supply_vectors`) carry placeholder `package_id` or
+  digest values, or symbolic supply states, that name no admitted package:
+  they exercise the schema, the order rule and the supply order only, and a
+  reader that requires every entry's package to be supplied refuses them
+  `missing_import`/`missing-selection` at entry 0 by design. Only
+  `closure_vectors`, whose digests are recomputed from real packages, name
+  packages a reader can be supplied. Each `supply_vectors` entry lists the
+  direct entries in lock order with a symbolic `supply` state (`bound`,
+  `stale` for a supplied package whose recomputed `package_id` differs, or
+  `absent`) and the outcome FR-322-AC-84 requires.
+  Its `closure_vectors` contain `direct_dependencies` of the importer and
+  `dependency_locks` for those direct packages; each dependency lock names a
+  fixture `base` and its own `dependency_selections`. The diamond vector
+  carries two importer-rooted selection-path JSON-pointer `loci` and a
+  conflicting-definition `outcome`. The transitive-only vector carries a
+  `dependency_reference` and its call `use`, with an expected missing-selection
+  `outcome`. The reader outcomes remain planned; QSpec checks the recorded
+  package IDs and the producer-side closure relationships.
 - Both schemas carry the `dependency_reference` term
   `{term: "dependency_reference", package, node}` (FR-322): `package` is a
   `PackageId` naming a `dependency_selections` entry and `node` a `NodeId`
@@ -78,8 +108,8 @@ structures, but any external consumer receives only the contract.
   not claim them complete.
 - `model-effective-declaration.schema.json` and
   `model-effective-declaration-vectors.json` define the QSL-derived
-  `quire.model.effective-declaration/v1`, `quire.model.effective-view/v1` and
-  `quire.model.object-universe/v1` preimages selected by
+  `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2` and
+  `quire.model.object-universe/v2` preimages selected by
   `quire.model.complete/v1`, with JCS SHA-256 vectors, the reference key order
   and invalid mutations. They add no CheckedPackage V2 wire member.
 - `model-member-type-vectors.json` carries a domain package as a projection
@@ -93,6 +123,29 @@ structures, but any external consumer receives only the contract.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.
+- A protocol reference is a `protocol`/`protocol_reference` node in that graph,
+  with one closed `{term: "reference", target: NodeRef}` body and one or more
+  `expression` occurrences, one per source reference to the target. FR-322 binds its
+  target to a local protocol node by exact typed key; no extra graph collection
+  or dependency-package target lookup is defined.
+- The structural type forms used by QSL's StateModel lowering are settled by
+  FR-322: a source type alias forwards to the node of its resolved type and
+  creates no `alias` node; `Reference<T>` is an anonymous
+  `composite_type`/`reference`; `Population<T>[N]` is an anonymous
+  `bounded_domain`/`model_population`; and a formed compound quantity unit is
+  an anonymous `scalar_type`/`compound_unit`. Their bodies and refusal rules
+  are specified by FR-322's derived type forms section.
+- A population a domain package declares and a state clause names (`M::P`) is
+  a `relation`/`population` model declaration node (FR-322 "Population
+  references"): self-typed, with an empty body and a `ModelOwner` that is the
+  population's declaration key, keyed like every model declaration node by the
+  closed `ModelDeclarationNode` preimage of `node-identity-preimage.schema.json`.
+  It is operand 0 of `quire.op.model.all_instances` and `quire.op.model.lookup`
+  and carries no member type or maximum. `fixtures/adverse.json`'s
+  `population_reference_cases` read it through the full reader against the FCD populations of its `selected_document_populations`, and
+  `model-owner-form-vectors.json` carries the `populations` list of its
+  `acme/runs` projection, the node vectors `P7` and `P8` and the owner cases
+  `PR-01` to `PR-06`.
 
 ## Identity rules
 
@@ -298,3 +351,4 @@ part of the node identity. On a nominal node it equals the nominal
 `qualified_declaration` (else `declaration-nominal-mismatch`, `invalid_package`),
 and two nodes declaring one name refuse as `ambiguous-name`
 (`ambiguous_declaration`). Library exports resolve only through this member.
+- `fixtures/positive-integer-literal-references.json` is the reference form of the `three` application of `positive-two-owners-a.json` (its integer literal operands are references to `value`/`literal` nodes); the reader admits it under a node identity different from the inline form's.

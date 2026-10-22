@@ -28,7 +28,6 @@ task; there is no wall-clock delivery guarantee.
 
 ## Test Plan
 
-[TM-001](../../spec/verification-reference/tests.md) is the single test inventory.
 IT-003-SC-01/02/04 can be observed now; SC-03 belongs to B's future qualification.
 No source tags or matrix completion may equate those partial stages with full
 consumer acceptance. Preserve the existing adopted state-core bytes exactly.

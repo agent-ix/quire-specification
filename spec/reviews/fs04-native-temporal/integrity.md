@@ -5,7 +5,6 @@ type: SpecReview
 analysis: integrity
 scope: "FR-091, FR-093, FR-094 and temporal-common"
 review_set: all
-evaluated_revision: "b78fccb"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-091, type: reviews }

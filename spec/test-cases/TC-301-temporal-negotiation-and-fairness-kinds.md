@@ -35,6 +35,7 @@ Submit the TC-299 claim under `strong each`, the TC-293 step 2 claim under
    search with horizon `max_depth` 2.
 3. With only `B` registered, submit the weak item and the bounded item.
 4. With none registered, submit the weak item.
+5. Register a temporal descriptor with `fairness_kinds` absent, `"weak"`, `null`, [`weak`, `fair`], [`weak`, 1], [`weak`, `null`], [`weak`, `weak`], [`weak`, `strong`] and []; one with an unknown and a repeated label; and a `value-validity` descriptor with `fairness_kinds` [`fair`].
 
 ## Expected Results
 
@@ -52,3 +53,4 @@ Submit the TC-299 claim under `strong each`, the TC-293 step 2 claim under
 4. `unsupported`, `unsupported-requested-capability`, with a warning naming
    `temporal-satisfaction`; it never holds or blocks (FR-368-AC-5,
    FR-161-AC-7).
+5. Absent is refused `invalid-fairness-kinds` retaining `absent`; `"weak"` and `null` retain `not-a-list`; [`weak`, `fair`], [`weak`, 1] and [`weak`, `null`] retain `unknown-label` naming the element; [`weak`, `weak`] retains `duplicate-label` naming `weak`; the doubly defective one reports `unknown-label` first; [`weak`, `strong`] and [] are admitted, and so is the `value-validity` descriptor (FR-368-AC-8, FR-368-AC-9).

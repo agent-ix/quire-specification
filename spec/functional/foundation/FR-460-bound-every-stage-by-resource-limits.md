@@ -28,8 +28,8 @@ host stack.
 
 An input of any nesting depth (source text, a semantic graph, a value, a JSON
 document or a wire artifact) and the caller's resource limits for the stage:
-input bytes, node and edge counts, occurrence and diagnostic counts, work
-units and time.
+input bytes, node and edge counts, occurrence and diagnostic counts, rational
+bits, work units and time.
 
 ## Outputs
 
@@ -44,7 +44,7 @@ format reader and writer.
 
 1. **Depth is not a limit.** Nesting depth is bounded only by the caller's
    resource limits: input bytes, node and edge counts, occurrence and
-   diagnostic counts, work units and time. No stage has a depth limit kind,
+   diagnostic counts, rational bits, work units and time. No stage has a depth limit kind,
    a caller depth setting, a compile-time depth ceiling or a constant sized
    to a stack. An input that fits the stage's resource limits is admitted or
    refused on its content, whatever its depth.

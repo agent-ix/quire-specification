@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "FS01 native-source profile packet and dependency record"
 review_set: subset
-evaluated_revision: "66e032e"
 review_date: "2026-09-07"
 ---
 
@@ -38,11 +37,11 @@ or dependency closure. The original language/core assignment remains active.
 
 | Repository | Inspected revision and current finding |
 |---|---|
-| quire-research | `15e317a9a6dd4156d53808f82eaa65b7e4c473de`, also remote main; maintained docs and JSON task/issue maps inspected; no shared planning edits |
-| quire-specification | `66e032e`, private shell; no preexisting implementation or open PR at claim |
-| quire-spec-language | `509197f`, private shell; AGPL direction but exact SPDX not selected; no open PR at claim |
-| quire-contract-ir | `decc99a430a0894de489102dbab04e83d1fb804f`, also remote main; FR-023 and `src/binding.rs` implement `BoundPackage::from_json_bytes`; #50 is still open |
-| quire-rs | `8b8020e665c61a11bc74f3f23b84617c80c0c442`, also remote main; #388 closed; `src/semantic/clauses.rs` preserves bodies, classifies namespaced tags unchecked, and reports fence line/column spans |
+| quire-research | Maintained docs and JSON task/issue maps inspected; no shared planning edits |
+| quire-specification | Private shell; no preexisting implementation or open PR at claim |
+| quire-spec-language | Private shell; AGPL direction but exact SPDX not selected; no open PR at claim |
+| quire-contract-ir | FR-023 and `src/binding.rs` implement `BoundPackage::from_json_bytes`; #50 is still open |
+| quire-rs | #388 closed; `src/semantic/clauses.rs` preserves bodies, classifies namespaced tags unchecked, and reports fence line/column spans |
 
 Live FS01 has parent specification#1 and no blocked-by edges; board20 and board21
 are private. FS02, FS03, FS05, LC01–LC05, E01, E04 and CO01 were open with no

@@ -1,0 +1,1024 @@
+{
+  "anchor_cases": [
+    {
+      "context": "P1",
+      "expected": {
+        "resolves": "ix://acme/runs/Counter/bump"
+      },
+      "name": "AP-01",
+      "operation": "bump"
+    },
+    {
+      "context": "P2",
+      "expected": {
+        "resolves": "ix://acme/runs/Flow/go"
+      },
+      "name": "AP-02",
+      "operation": "go"
+    },
+    {
+      "context": "P3",
+      "expected": {
+        "refused": {
+          "cause": "malformed-declaration",
+          "code": "invalid_model_binding"
+        }
+      },
+      "name": "AP-03",
+      "operation": "go"
+    },
+    {
+      "context": "P2",
+      "expected": {
+        "refused": {
+          "cause": "missing-name",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "AP-04",
+      "operation": "missing"
+    },
+    {
+      "context": "P2",
+      "expected": {
+        "refused": {
+          "cause": "missing-name",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "AP-05",
+      "operation": "n"
+    },
+    {
+      "context": "P4",
+      "expected": {
+        "resolves": "ix://acme/runs/Gate/toggle"
+      },
+      "name": "AP-06",
+      "operation": "toggle"
+    },
+    {
+      "context": "P4",
+      "expected": {
+        "refused": {
+          "cause": "missing-name",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "AP-07",
+      "operation": "open"
+    },
+    {
+      "context": "P5",
+      "expected": {
+        "refused": {
+          "cause": "malformed-declaration",
+          "code": "invalid_model_binding"
+        }
+      },
+      "name": "AP-08",
+      "operation": "save"
+    },
+    {
+      "context": "P6",
+      "expected": {
+        "refused": {
+          "cause": "malformed-declaration",
+          "code": "invalid_model_binding"
+        }
+      },
+      "name": "AP-09",
+      "operation": "rate"
+    }
+  ],
+  "clause_signature_cases": [
+    {
+      "clause": "invariant",
+      "context": "P2",
+      "expected": {
+        "admitted": true
+      },
+      "name": "CP-01",
+      "operation": null,
+      "parameters": [
+        {
+          "reference": "P2"
+        }
+      ]
+    },
+    {
+      "clause": "precondition",
+      "context": "P2",
+      "expected": {
+        "admitted": true
+      },
+      "name": "CP-02",
+      "operation": "go",
+      "parameters": [
+        {
+          "reference": "P2"
+        },
+        {
+          "type": "Integer"
+        }
+      ]
+    },
+    {
+      "clause": "postcondition",
+      "context": "P2",
+      "expected": {
+        "admitted": true
+      },
+      "name": "CP-03",
+      "operation": "go",
+      "parameters": [
+        {
+          "reference": "P2"
+        },
+        {
+          "type": "Integer"
+        },
+        {
+          "type": "Integer"
+        }
+      ]
+    },
+    {
+      "clause": "postcondition",
+      "context": "P2",
+      "expected": {
+        "refused": {
+          "cause": "operator-ineligible",
+          "code": "ill_typed"
+        }
+      },
+      "name": "CP-04",
+      "operation": "go",
+      "parameters": [
+        {
+          "reference": "P2"
+        },
+        {
+          "type": "Integer"
+        }
+      ]
+    },
+    {
+      "clause": "precondition",
+      "context": "P2",
+      "expected": {
+        "refused": {
+          "cause": "operator-ineligible",
+          "code": "ill_typed"
+        }
+      },
+      "name": "CP-05",
+      "operation": "go",
+      "parameters": [
+        {
+          "reference": "P1"
+        },
+        {
+          "type": "Integer"
+        }
+      ]
+    },
+    {
+      "clause": "invariant",
+      "context": "P4",
+      "expected": {
+        "admitted": true
+      },
+      "name": "CP-06",
+      "operation": null,
+      "parameters": [
+        {
+          "reference": "P4"
+        }
+      ]
+    },
+    {
+      "clause": "postcondition",
+      "context": "P4",
+      "expected": {
+        "admitted": true
+      },
+      "name": "CP-07",
+      "operation": "check",
+      "parameters": [
+        {
+          "reference": "P4"
+        },
+        {
+          "type": "Boolean"
+        }
+      ]
+    },
+    {
+      "clause": "precondition",
+      "context": "P4",
+      "expected": {
+        "admitted": true
+      },
+      "name": "CP-08",
+      "operation": "toggle",
+      "parameters": [
+        {
+          "reference": "P4"
+        }
+      ]
+    },
+    {
+      "clause": "precondition",
+      "context": "P4",
+      "expected": {
+        "refused": {
+          "cause": "operator-ineligible",
+          "code": "ill_typed"
+        }
+      },
+      "name": "CP-09",
+      "operation": "toggle",
+      "parameters": [
+        {
+          "reference": "P2"
+        }
+      ]
+    },
+    {
+      "clause": "invariant",
+      "context": "P2",
+      "expected": {
+        "refused": {
+          "cause": "operator-ineligible",
+          "code": "ill_typed"
+        }
+      },
+      "name": "CP-10",
+      "operation": null,
+      "parameters": [
+        {
+          "reference": "P2"
+        },
+        {
+          "type": "Integer"
+        }
+      ]
+    }
+  ],
+  "domain_package": {
+    "identity": "acme/runs",
+    "object_types": [
+      {
+        "fields": [
+          {
+            "multiplicity": {
+              "lower": "1",
+              "ordered": false,
+              "unique": true,
+              "upper": "1"
+            },
+            "name": "value",
+            "presence": "required",
+            "redefines": null,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        ],
+        "interfaceFeatures": null,
+        "node": "ix://acme/runs/Counter",
+        "operations": [
+          {
+            "name": "bump",
+            "parameters": [],
+            "redefines": null,
+            "result": null
+          }
+        ],
+        "supertypes": []
+      },
+      {
+        "fields": [],
+        "interfaceFeatures": [],
+        "node": "ix://acme/runs/Plug",
+        "operations": [
+          {
+            "name": "rate",
+            "parameters": [],
+            "redefines": null,
+            "result": {
+              "multiplicity": {
+                "lower": "1",
+                "ordered": false,
+                "unique": true,
+                "upper": "1"
+              },
+              "typeRef": "ix://quire/native/Integer"
+            }
+          }
+        ],
+        "supertypes": []
+      }
+    ],
+    "persistence_interfaces": [
+      {
+        "fields": [],
+        "node": "ix://acme/runs/Store",
+        "operations": [
+          {
+            "name": "save",
+            "parameters": [],
+            "redefines": null,
+            "result": null
+          }
+        ],
+        "supertypes": []
+      }
+    ],
+    "populations": [
+      {
+        "displayName": "counters",
+        "extent": "closed",
+        "identity": "ix://acme/runs/counters",
+        "kind": {
+          "module": "acme/runs",
+          "name": "population"
+        },
+        "members": [
+          "ix://acme/runs/Counter"
+        ],
+        "origin": {
+          "source": {
+            "path": "runs/counters.md",
+            "sourceIdentity": "ix://acme/runs/spec",
+            "startColumn": 1,
+            "startLine": 1
+          }
+        }
+      },
+      {
+        "displayName": "archive",
+        "extent": "closed",
+        "identity": "ix://acme/runs/archive",
+        "kind": {
+          "module": "acme/runs",
+          "name": "population"
+        },
+        "members": [
+          "ix://acme/runs/Counter"
+        ],
+        "origin": {
+          "source": {
+            "path": "runs/archive.md",
+            "sourceIdentity": "ix://acme/runs/spec",
+            "startColumn": 1,
+            "startLine": 1
+          }
+        }
+      }
+    ],
+    "processes": [
+      {
+        "fields": [
+          {
+            "multiplicity": {
+              "lower": "1",
+              "ordered": false,
+              "unique": true,
+              "upper": "1"
+            },
+            "name": "n",
+            "presence": "required",
+            "redefines": null,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        ],
+        "node": "ix://acme/runs/Flow",
+        "operations": [
+          {
+            "name": "go",
+            "parameters": [
+              {
+                "multiplicity": {
+                  "lower": "1",
+                  "ordered": false,
+                  "unique": true,
+                  "upper": "1"
+                },
+                "name": "step",
+                "typeRef": "ix://quire/native/Integer"
+              }
+            ],
+            "redefines": null,
+            "result": {
+              "multiplicity": {
+                "lower": "1",
+                "ordered": false,
+                "unique": true,
+                "upper": "1"
+              },
+              "typeRef": "ix://quire/native/Integer"
+            }
+          }
+        ],
+        "supertypes": []
+      },
+      {
+        "fields": [
+          {
+            "multiplicity": {
+              "lower": "1",
+              "ordered": false,
+              "unique": true,
+              "upper": "1"
+            },
+            "name": "m",
+            "presence": "required",
+            "redefines": null,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        ],
+        "node": "ix://acme/runs/SubFlow",
+        "operations": [],
+        "supertypes": [
+          "ix://acme/runs/Flow"
+        ]
+      }
+    ],
+    "relationships": [],
+    "state_machines": [
+      {
+        "fields": [
+          {
+            "multiplicity": {
+              "lower": "1",
+              "ordered": false,
+              "unique": true,
+              "upper": "1"
+            },
+            "name": "open",
+            "presence": "required",
+            "redefines": null,
+            "typeRef": "ix://quire/native/Boolean"
+          }
+        ],
+        "node": "ix://acme/runs/Gate",
+        "operations": [
+          {
+            "name": "toggle",
+            "parameters": [],
+            "redefines": null,
+            "result": null
+          },
+          {
+            "name": "check",
+            "parameters": [],
+            "redefines": null,
+            "result": {
+              "multiplicity": {
+                "lower": "1",
+                "ordered": false,
+                "unique": true,
+                "upper": "1"
+              },
+              "typeRef": "ix://quire/native/Boolean"
+            }
+          }
+        ],
+        "supertypes": []
+      }
+    ],
+    "value_types": [],
+    "version": "1.0.0"
+  },
+  "frame_field_cases": [
+    {
+      "declaration": "P2",
+      "expected": {
+        "resolves": "ix://acme/runs/Flow/n"
+      },
+      "field": "n",
+      "name": "FP-01"
+    },
+    {
+      "declaration": "P3",
+      "expected": {
+        "resolves": "ix://acme/runs/Flow/n"
+      },
+      "field": "n",
+      "name": "FP-02"
+    },
+    {
+      "declaration": "P4",
+      "expected": {
+        "resolves": "ix://acme/runs/Gate/open"
+      },
+      "field": "open",
+      "name": "FP-03"
+    },
+    {
+      "declaration": "P2",
+      "expected": {
+        "refused": {
+          "cause": "missing-name",
+          "code": "missing_declaration"
+        }
+      },
+      "field": "go",
+      "name": "FP-04"
+    },
+    {
+      "declaration": "P2",
+      "expected": {
+        "refused": {
+          "cause": "missing-name",
+          "code": "missing_declaration"
+        }
+      },
+      "field": "missing",
+      "name": "FP-05"
+    },
+    {
+      "declaration": "P5",
+      "expected": {
+        "refused": {
+          "cause": "malformed-declaration",
+          "code": "invalid_model_binding"
+        }
+      },
+      "field": "x",
+      "name": "FP-06"
+    },
+    {
+      "declaration": "P6",
+      "expected": {
+        "refused": {
+          "cause": "malformed-declaration",
+          "code": "invalid_model_binding"
+        }
+      },
+      "field": "x",
+      "name": "FP-07"
+    }
+  ],
+  "model_declaration_nodes": [
+    {
+      "name": "P1",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "model",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/Counter"
+        },
+        "recursion": null,
+        "semantic_form": "object_type",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "97cd6336a0aa59330c19c1b464a09d24d33bcbd3405df02f0c5f65ec01f5e4c0"
+    },
+    {
+      "name": "P2",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "model",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/Flow"
+        },
+        "recursion": null,
+        "semantic_form": "process",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "d45b9b6afd5f650bbc01586f5432cf56c49045df73a7b1f86f28852e5de86044"
+    },
+    {
+      "name": "P3",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "model",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/SubFlow"
+        },
+        "recursion": null,
+        "semantic_form": "process",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "a41cb4325779916d7f4ce7f10035174b0801b2f52464acdab5650199798d50a5"
+    },
+    {
+      "name": "P4",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "model",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/Gate"
+        },
+        "recursion": null,
+        "semantic_form": "state_machine",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "b06ac3fd86832c0be6bbbb2ec5f4cc7978e65852aab18aaba77b5aa1c2ce73e1"
+    },
+    {
+      "name": "P5",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "model",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/Store"
+        },
+        "recursion": null,
+        "semantic_form": "persistence_interface",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "f6ff449a3500730bbd2c742cef8ea3b65eafc8250abe80ca84f9d7292f3d8170"
+    },
+    {
+      "name": "P6",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "model",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/Plug"
+        },
+        "recursion": null,
+        "semantic_form": "systems_interface",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "8cea4f1407b1390d4f91bf7a880a6f80486fcb9627aa4a87e9bc182be6fc9102"
+    },
+    {
+      "name": "P7",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "relation",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/counters"
+        },
+        "recursion": null,
+        "semantic_form": "population",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "15ed74b124665e2fb9375dc02e715243dce2eb0d7d63d1f36c52f5fa1241a91a"
+    },
+    {
+      "name": "P8",
+      "preimage": {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "declaration": null,
+        "node_tag": "relation",
+        "owner": {
+          "identity": "acme/runs",
+          "kind": "model",
+          "node": "ix://acme/runs/archive"
+        },
+        "recursion": null,
+        "semantic_form": "population",
+        "semantic_type": null,
+        "version": "quire.structural-node/v1"
+      },
+      "sha256": "cc575f3d64f43a4bf787f5febdc73fbc9f2212617393877fa00371611204be24"
+    }
+  ],
+  "owner_cases": [
+    {
+      "expected": {
+        "recovers": "ix://acme/runs/Flow"
+      },
+      "name": "OF-01",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/Flow",
+      "semantic_form": "process"
+    },
+    {
+      "expected": {
+        "recovers": "ix://acme/runs/Gate"
+      },
+      "name": "OF-02",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/Gate",
+      "semantic_form": "state_machine"
+    },
+    {
+      "expected": {
+        "recovers": "ix://acme/runs/Store"
+      },
+      "name": "OF-03",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/Store",
+      "semantic_form": "persistence_interface"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "OF-04",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/Counter",
+      "semantic_form": "process"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "OF-05",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/Flow",
+      "semantic_form": "state_machine"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "OF-06",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/Flow",
+      "semantic_form": "object_type"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "OF-07",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/Nope",
+      "semantic_form": "process"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "OF-08",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/Gate",
+      "semantic_form": "persistence_interface"
+    },
+    {
+      "expected": {
+        "recovers": "ix://acme/runs/counters"
+      },
+      "name": "PR-01",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/counters",
+      "semantic_form": "population"
+    },
+    {
+      "expected": {
+        "recovers": "ix://acme/runs/archive"
+      },
+      "name": "PR-02",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/archive",
+      "semantic_form": "population"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "PR-03",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/Counter",
+      "semantic_form": "population"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "PR-04",
+      "node_tag": "model",
+      "owner_node": "ix://acme/runs/counters",
+      "semantic_form": "object_type"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "PR-05",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/Nope",
+      "semantic_form": "population"
+    },
+    {
+      "expected": {
+        "refused": {
+          "cause": "missing-selection",
+          "code": "missing_declaration"
+        }
+      },
+      "name": "PR-06",
+      "node_tag": "relation",
+      "owner_node": "ix://acme/runs/counters",
+      "semantic_form": "relationship"
+    }
+  ],
+  "receiver_frame_cases": [
+    {
+      "entry": {
+        "kind": "field",
+        "scope": "receiver"
+      },
+      "expected": {
+        "admitted": true
+      },
+      "member": "modifies",
+      "name": "RF-01",
+      "owner_form": "object_type"
+    },
+    {
+      "entry": {
+        "kind": "receiver"
+      },
+      "expected": {
+        "admitted": true
+      },
+      "member": "deletes_scoped",
+      "name": "RF-02",
+      "owner_form": "object_type"
+    },
+    {
+      "entry": {
+        "kind": "field",
+        "scope": "receiver"
+      },
+      "expected": {
+        "refused": {
+          "cause": "malformed-declaration",
+          "code": "invalid_model_binding",
+          "locus": "declaration"
+        }
+      },
+      "member": "modifies",
+      "name": "RF-03",
+      "owner_form": "process"
+    },
+    {
+      "entry": {
+        "kind": "receiver"
+      },
+      "expected": {
+        "refused": {
+          "cause": "malformed-declaration",
+          "code": "invalid_model_binding",
+          "locus": "frame"
+        }
+      },
+      "member": "deletes_scoped",
+      "name": "RF-04",
+      "owner_form": "process"
+    },
+    {
+      "entry": {
+        "kind": "field",
+        "scope": "receiver"
+      },
+      "expected": {
+        "refused": {
+          "cause": "malformed-declaration",
+          "code": "invalid_model_binding",
+          "locus": "declaration"
+        }
+      },
+      "member": "modifies",
+      "name": "RF-05",
+      "owner_form": "state_machine"
+    },
+    {
+      "entry": {
+        "kind": "receiver"
+      },
+      "expected": {
+        "refused": {
+          "cause": "malformed-declaration",
+          "code": "invalid_model_binding",
+          "locus": "frame"
+        }
+      },
+      "member": "deletes_scoped",
+      "name": "RF-06",
+      "owner_form": "state_machine"
+    },
+    {
+      "entry": {
+        "kind": "field",
+        "scope": "every-object"
+      },
+      "expected": {
+        "admitted": true
+      },
+      "member": "modifies",
+      "name": "RF-07",
+      "owner_form": "process"
+    },
+    {
+      "entry": {
+        "kind": "field",
+        "scope": "every-object"
+      },
+      "expected": {
+        "admitted": true
+      },
+      "member": "modifies",
+      "name": "RF-08",
+      "owner_form": "state_machine"
+    },
+    {
+      "entry": {
+        "kind": "parameter",
+        "name": "a"
+      },
+      "expected": {
+        "admitted": true
+      },
+      "member": "deletes_scoped",
+      "name": "RF-09",
+      "owner_form": "process"
+    },
+    {
+      "entry": {
+        "kind": "parameter",
+        "name": "a"
+      },
+      "expected": {
+        "admitted": true
+      },
+      "member": "deletes_scoped",
+      "name": "RF-10",
+      "owner_form": "state_machine"
+    }
+  ],
+  "version": "quire.model-owner-form-vectors/v1"
+}

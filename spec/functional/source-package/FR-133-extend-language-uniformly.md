@@ -9,6 +9,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-131
     type: references
+  - target: ix://agent-ix/quire-specification/FR-467
+    type: references
 ---
 
 # FR-133: Extend declarations and semantic families uniformly
@@ -29,6 +31,8 @@ An explicitly selectable extension or a cycle, collision or weakening refusal.
 
 ## Behavior
 
+A declaration form's extension carries a grammar schema and a typed-node
+schema as [FR-467](FR-467-define-extension-definition-members.md) defines them.
 An extension cannot steal syntax, reinterpret the meaning of existing
 definitions, weaken inherited rules, mutate another family AST or gain
 permission from an installed backend. Selecting an extension leaves the results
@@ -48,6 +52,8 @@ capability.
 
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns every
   source form used by this requirement.
+- [FR-467](FR-467-define-extension-definition-members.md) defines the grammar
+  and typed-node schema members of an extension definition and their refusals.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
   typed producer/consumer boundary and dependency direction.
 - Every requirement linked in frontmatter is a normative prerequisite.

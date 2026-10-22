@@ -23,6 +23,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-434
     type: references
+  - target: ix://agent-ix/quire-specification/FR-050
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-466
+    type: references
 ---
 
 # FR-425: Define protocol subjects and their state keys
@@ -94,7 +98,16 @@ role's population universe. An unbounded root returns the FR-181
   no live sibling of the same node and key prefix holds. So a `parallel`
   inside a `repeat` whose earlier instance still runs under `outstanding
   continue` gets a second instance with its own paths, and the ordinal is
-  reused once that instance is removed.
+  reused once that instance is removed and no thread below it is live.
+- A fork **holds** its ordinal while its parallel instance is live and, after
+  the instance is removed, while any live thread's path extends one of the
+  instance's branch paths, as a thread forked by an inner `parallel` under an
+  `outstanding continue` join can. A **sibling** of a fork is another holder of
+  an ordinal of the same `parallel` node under the same parent thread.
+- A compensation thread holds its ordinal while it is live. A sibling of a
+  compensation thread is a live compensation thread of the same template in the
+  same instance, and the thread an activation creates takes the smallest
+  ordinal no such sibling holds.
 
 `parallel` controls nest to any depth. Thread, instance and registration
 counts have no limit of their own; the run's resource limits and the instance
@@ -104,7 +117,7 @@ budget of FR-428 bound a run.
 
 Each live thread has one **rest point**: an event node, a `parallel` waiting
 to fork, the join of a `parallel` it forked, an `await`, a `check` whose value
-is false, the `finish` node (root thread only), a compensation attempt or
+is false, a `fence`, the `finish` node (root thread only), a compensation attempt or
 compensation retry point (compensation threads only), or **end**. Each live
 thread has a **disposition**: `running`, `completed` or `cancelled`. A thread
 is live while it is `running`, or while its parallel instance's join has not
@@ -118,9 +131,43 @@ removed once its join has settled and every branch thread has left
 ### Binders, counters, queues and roles
 
 - An event step binds its binder to the event's record. A binder value is
-  immutable. It is kept while a rest point of a live thread can still reach a
-  node that reads it under the protocol's scope rules, and is removed in the
-  step that makes it unreachable.
+  immutable. A `send` binds its binder to the sent payload, of the
+  channel's `carries` type; the send record is the step's recorded result and
+  not a binder value ([FR-426](FR-426-apply-protocol-steps.md)).
+- Each live thread has a **binder environment**: a map from each binder node
+  the thread may read to the bound value, keyed in `observations` by (binder
+  node, the thread's path) and not in the thread's `control` entry. A thread
+  reads a node's binder as its own environment's value.
+  - An event step adds its binder to its thread's environment, replacing an
+    earlier entry for the node.
+  - A `fork` copies the parent's environment into each new branch thread.
+  - A `join` with policy `all` adds to the joining thread's environment the
+    entries in each joined branch's `Out`
+    ([FR-466](../../objects/interfaces/FR-466-checked-package-protocol-control-bodies.md)'s
+    `Out` of an `all`-joined `parallel`): the binders the branch itself bound
+    after the fork and, recursively, those of an inner `parallel` joined by
+    `all`. So a branch binder stays readable after an `all` join. An entry
+    bound below an inner join of any other policy, inside a `choice` case, an
+    `await` match outside its `then` path, or a `repeat` body is not in `Out`
+    and is not added, even where the reach rule below would otherwise keep it.
+  - A compensation thread starts with an empty environment
+    ([FR-427](FR-427-check-protocol-compensation.md)).
+  - Each thread holds its own copy of a value, so a rebinding, a re-fork or an
+    ordinal's reuse never changes what another thread reads.
+- A thread keeps an environment entry while it **reaches** a reader of the
+  node, and drops the entry in the step after which it reaches none. A thread
+  reaches the tree-order interval from its rest point to the end of its scope
+  (the nearest enclosing `branch`, or the whole `run` and `finish` for a root
+  thread), nested branch bodies included. The interval is empty for a rest at
+  or before the node's binding node, and a `repeat`'s back edge widens it to the
+  whole body of the enclosing `repeat`. A branch thread of an `all` join also
+  reaches on into everything its joiner reaches, for the entries in its
+  branch's `Out`, so an entry of a branch of an inner `all`-joined
+  `parallel` is kept through the enclosing branch and up to the outermost
+  joiner; and a joining thread keeps an entry through a later fork whose
+  branches read it, because that fork copies it. So a branch of a later
+  `parallel` reads the binder of an earlier `all`-joined `parallel` through the
+  environment its forking thread copied to it.
 - A `repeat` with an authored maximum keeps one counter per (repeat node,
   thread path) while the thread is inside it. A `repeat` with no maximum keeps
   none. Every cycle of a repeat's body graph passes through a step node
@@ -129,7 +176,12 @@ removed once its join has settled and every branch thread has left
 - Each channel has one queue per protocol instance: a sequence in delivery
   order per FIFO key for `fifo` ordering, and a bag for `unordered`. An entry
   is (send node, sending thread path, payload). A queue is bounded only by the
-  channel's authored capacity.
+  channel's authored capacity. A channel is named by its **qualified name**, the
+  declaring protocol's qualified name, `::` and the channel's handle, as
+  [FR-429](FR-429-report-protocol-deadlocks.md) defines it over the
+  [FR-050](FR-050-bind-protocol-instances.md) identity, so two protocols that
+  each declare a channel `Pay` have different channels, queues, transition
+  identities and wait causes.
 
 ### State and key
 
@@ -142,10 +194,11 @@ FR-181 simulator state key with these member contents:
 | --- | --- | --- |
 | `semantic` | — | the model state's population map, as for a model subject |
 | `control` | `{"type":"protocol-instance","ordinal":"<decimal>"}` | `{"type":"instance-state","finished":true\|false}` |
-| `control` | a thread path | `{"type":"thread-state","rest":<rest>,"disposition":"running"\|"completed"\|"cancelled"}` |
+| `control` | a thread path | `{"type":"thread-state","rest":<rest>,"disposition":"running"\|"completed"\|"cancelled"}`; for a compensation thread also `"registration":<registration key>`, the `control` key of the registration it compensates |
 | `control` | `{"type":"parallel-instance","parent":<thread path>,"node":"<node>","ordinal":"<decimal>"}` | `{"type":"parallel-state","settled":true\|false,"dispositions":<map from branch label text to disposition text>}` |
 | `control` | `{"type":"registration","template":"<qualified-name>","thread":<thread path>,"ordinal":"<decimal>"}` | `{"type":"registration-state","status":<status>,"captures":<record>}` (FR-427) |
-| `observations` | `{"type":"binder","node":"<node>","thread":<thread path>}` | the binder's record |
+| `control` | `{"type":"commit","instance":"<decimal>","node":"<node>"}` | `{"type":"commit-state","occurred":true}`, present from the step of that commit node until the instance is removed |
+| `observations` | `{"type":"binder","node":"<node>","thread":<thread path>}` | the binder's record, one entry for each (binder node, thread whose environment holds it), each environment pruned by the reach rule |
 | `bounds` | `{"type":"repeat-counter","node":"<node>","thread":<thread path>}` | the counter, an integer |
 | `bounds` | `{"type":"attempt-count","thread":<thread path>}` | a compensation thread's attempt count, an integer |
 | `queues` | `{"type":"queue","instance":"<decimal>","channel":"<qualified-name>","fifo_key":<encoded>\|null}` | `sequence` (`fifo`) or `bag` (`unordered`) of `{"type":"queue-entry","send":"<node>","thread":<thread path>,"payload":<encoded>}` |
@@ -180,9 +233,16 @@ state holds the model state and no instance.
 | --- | --- | --- |
 | FR-425-AC-1 | Two behaviours that reach the same model state, rest points, dispositions, binders, counters, queues and role instances by different interleavings produce byte-identical state keys and are coalesced into one state; states that differ in any one of those members have distinct keys. | Test (TC-375) |
 | FR-425-AC-2 | A `parallel` nested three deep inside a `repeat` with `outstanding continue` gives a second live parallel instance ordinal 1 while ordinal 0 still runs, and reuses ordinal 0 after the first instance is removed, so the loop's reachable state set is finite. | Test (TC-375) |
-| FR-425-AC-3 | A binder no reachable node reads is absent from `observations` in the post-state of the step that binds it; a branch binder read after an `all` join stays present until the reading node's step. | Test (TC-375) |
+| FR-425-AC-3 | A binder no reachable node reads is absent from `observations` in the post-state of the step that binds it; a branch binder read after an `all` join stays present, under the branch's path until the join and under the joiner's after it, until the reading node's step. | Test (TC-375) |
 | FR-425-AC-4 | The protocol clause outside its `memory` clauses, its bindings, its `terminal` and `scheduling` members and the resolved memory models each change the obligation identity when changed, a source `memory` clause changes it only through the resolved model, and the `on origin` subject has exactly one instance per initial model state. | Test (TC-375) |
 | FR-425-AC-5 | A subject whose replicated role population or binder record type is unbounded returns `requires-bound` before any expansion, naming the root. | Test (TC-375) |
+| FR-425-AC-6 | With `maximum 3` and instances 0 and 1 of a `parallel` both live under `outstanding continue`, when instance 0 ends and is removed while instance 1 still runs, the third fork takes ordinal 0, not 2. When the first instance's branch has forked an inner `parallel` whose branch is still `running` after the first instance's join settled, the second fork takes ordinal 1, because that thread's path extends the first instance's branch path, and takes ordinal 0 once that thread completes. | Test (TC-375) |
+| FR-425-AC-7 | A template with two registrations, whose first activates while its compensation thread is live: the second compensation thread takes ordinal 1; when `cend` has removed the first thread before the second activates, it takes ordinal 0. | Test (TC-375) |
+| FR-425-AC-8 | In a `repeat` of maximum 2, `parallel P` with an `all` join binds `a` in a branch, then `parallel Q` with branches `u` (`attempt U1`, then a `check` reading `a`) and `v`, `join any … outstanding continue`: after `join(P)` the forking thread's environment holds `a`, and `fork(Q)` copies it into `u` and `v`. In iteration 2, with `Q`'s first instance still live, `fork(Q)` takes ordinal 1 and gives its `u` an environment holding iteration 2's `a`; iteration 1's `u` still evaluates its `check` over iteration 1's `a`, no state refuses, and when iteration 1's `u` completes its entry is dropped from `observations`. | Test (TC-375) |
+| FR-425-AC-9 | An entry bound in a branch of an inner `all`-joined `parallel` and read after the outermost join is held by the inner branch, then by the enclosing branch, then by the outermost joiner, and is absent from `observations` in the step after the reading node's step. A joining thread whose entry is read only by branches of a later `parallel` keeps it through that fork, which copies it into each branch; a thread resting at or before the node's binding node holds no entry for it. | Test (TC-375) |
+| FR-425-AC-10 | Two protocol definitions of one package that each declare `channel Pay` give subjects whose `queues` entries and `duplicate` and `lose` identities hold channel names in each protocol's own qualified name; no key or identity of one names the other's channel. | Test (TC-375) |
+| FR-425-AC-11 | Inside a `repeat`, a `parallel Outer` with an `all` join has a branch holding an inner `parallel Inner` joined `any` whose branch binds `x`, and a reader of `x` after the binding, in the same branch of `Inner` as the binding node and inside the loop body. After `join(Outer)` the joiner's environment holds no entry for `x`, and `observations` holds none under the joiner's path, although the `repeat` back edge widens the joiner's reach to the whole body; the same with `Inner` joined `all` holds `x` after `join(Outer)` for as long as the reach rule keeps it. | Test (TC-375) |
+| FR-425-AC-12 | Template `Refund` with `attempts 1` and `commit Committed`, whose forward `effect` node is reached twice in a `repeat` of maximum 2, giving registrations `r1` and `r2` that differ in a registration capture `id`, whose activation guard compares `id` with the `id` of the trigger record, and a `parallel Triggers` of two sibling branches each binding a trigger record with one of the two ids, followed by `commit Committed`, each compensation thread taking its `cattempt` and `cend` before the step of `Committed`. The state after `r1`'s trigger and then `r2`'s and the state after `r2`'s and then `r1`'s have different keys, because each compensation thread's `thread-state` names its registration: thread `(0, Refund, 0)` names `r1` in the first and `r2` in the second. The state after the step of `Committed` holds the `commit` entry for that node under its instance and the state before the step does not, so the two have different keys, and the entry is absent once the instance is removed. | Test (TC-375) |
 
 ## Dependencies
 

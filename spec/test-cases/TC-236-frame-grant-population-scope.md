@@ -64,6 +64,21 @@ limited to 3, expect `incomplete { limit_kind: work_units, limit: 3,
 consumed: 3, next_charge: 1, charge_point: frame.redefines-link }` and no
 frame verdict.
 
+Vector 6 (`modifies` naming a relationship): over a model with the relationship
+`Pump/housing` between `Pump` and `Tank`, an operation whose frame `modifies`
+that relationship, `creates` `Pump` and `deletes` `Pump`, and pre and post
+snapshots that both list `Pump/housing` complete. Rehome `p1` from `t1` to
+`t2`: expect the changed links permitted, the removed `p1`-`t1` and the added
+`p1`-`t2`. Run the same invocation under a frame that modifies no relationship:
+expect `frame_violation` for the first changed link. Under a frame that `creates`
+`Pump` but does not modify the relationship, create `p3` with the link
+`p3`-`t1`: expect `frame_violation` for the added `p3`-`t1`, and under the frame
+that modifies the relationship expect it permitted. Delete `p2` and drop `p2`-`t1`
+under a frame that `deletes` `Pump` and does not modify the relationship: expect it
+permitted, the link going with its deleted object. Leave the pre snapshot's
+`Pump/housing` unlisted, and separately listed incomplete, with a changed link
+under a frame that does not modify it: expect no `frame_violation`.
+
 ## Expected Results
 
 A `modifies` grant's write permission and a `creates`/`deletes` grant's
@@ -76,4 +91,8 @@ no diagnostic, and a write or identity change outside that population
 receives exactly `frame_violation`. Each field write charges one
 `frame.write` and one `frame.redefines-link` per `redefines` link followed,
 so Vector 5 consumes exactly four work units and stops at its third
-`frame.redefines-link` under a limit of three (FR-013-AC-7).
+`frame.redefines-link` under a limit of three (FR-013-AC-7). A `modifies` entry naming
+a relationship permits every added or removed link of it, including a link with an end
+at a created object, which `creates` alone does not permit; a link with an end at a
+deleted object, and a relationship not listed complete in both snapshots, are not
+compared (FR-013-AC-10).

@@ -3,7 +3,7 @@ id: SR-717
 title: "Code review (rust lane) — STD-110 TC-233 1-draft.8 tests"
 type: SpecReview
 analysis: code-review
-scope: "agent-ix/quire-specification@05f6e31144250e4d2ca5898b2f1284075ced297f; tests/checked_package_v2.rs (tc_233_revision_1_draft_8_cause_sets_are_closed, tc_233_native_diagnostics_header_pins_current_revision)"
+scope: "agent-ix/quire-specification; tests/checked_package_v2.rs (tc_233_revision_1_draft_8_cause_sets_are_closed, tc_233_native_diagnostics_header_pins_current_revision)"
 review_set: subset
 ---
 # Code review (rust lane) — STD-110 TC-233 1-draft.8 tests

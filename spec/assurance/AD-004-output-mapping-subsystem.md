@@ -78,7 +78,7 @@ whole-request check or exhausted reservation exposes no partial package.
 | Structural observer after assembly | Foreign parser/tool in the semantic path | Pure Rust generation is reproducible without a foreign runtime. |
 | Complete per-obligation records | Best-effort text plus warnings | Unsupported meaning remains machine-readable and cannot disappear. |
 | Lossless CST is distinct from checked AST | Reconstruct formatting from semantic nodes | Trivia, invalid-source recovery and exact source edits remain available without changing meaning. |
-| Versioned Rust providers, no ambient extension | Load arbitrary callbacks or dynamic-library ABI | Capabilities, effects, rights and provenance are explicit and testable. |
+| Versioned Rust providers, no ambient extension | Load arbitrary callbacks or dynamic-library ABI | Capabilities, effects and rights are explicit and testable. |
 
 ## Failure containment
 

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "Branch objects/closure-axes-vocabulary at 7a050c9: the FR-061 amendment, the new FR-284 object artifact, the FR-240 and FR-258 gap closures, the FR-210 non-member declaration, the FR-271 scope declaration, and the FR-200, spec/spec.md and acceptance-matrix registrations"
 review_set: subset
-evaluated_revision: "7a050c9"
 review_date: "2026-09-12"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-061, type: reviews }

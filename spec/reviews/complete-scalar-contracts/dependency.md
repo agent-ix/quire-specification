@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "QSpec #68 semantic-definition, producer/consumer and delivery dependencies"
 review_set: all
-evaluated_revision: "cd4c0a0 plus QSpec #68 working-tree remediation"
 review_date: "2026-09-15"
 relationships:
   - target: ix://agent-ix/quire-specification/issues/68

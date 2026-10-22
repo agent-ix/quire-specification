@@ -681,9 +681,17 @@ fn application_terms(term: &Value) -> Vec<&Value> {
     found
 }
 
+/// Nodes with an application-node identity under FR-322: every node whose
+/// body contains an application, plus every `value`/`union_value` node,
+/// including a nullary aggregate construction.
+fn is_application_node(node: &Value) -> bool {
+    !application_terms(&node["body"]).is_empty()
+        || (node["node_tag"] == "value" && node["semantic_form"] == "union_value")
+}
+
 /// Exact dependency list of an application-bearing node: every reference
-/// target and every operation member declaration of its body, unique and
-/// ascending by digest.
+/// target, every operation member declaration and every `reaches` member
+/// `population` node of its body, unique and ascending by digest.
 fn application_dependencies(term: &Value) -> Vec<Value> {
     let mut targets = BTreeMap::new();
     let mut pending = vec![term];
@@ -695,9 +703,11 @@ fn application_dependencies(term: &Value) -> Vec<Value> {
                 }
             }
             Some("application") => {
-                let declaration = &current["operation"]["member"]["declaration"];
-                if let Some(digest) = declaration["digest"].as_str() {
-                    targets.insert(digest, declaration);
+                let member = &current["operation"]["member"];
+                for link in [&member["declaration"], &member["population"]] {
+                    if let Some(digest) = link["digest"].as_str() {
+                        targets.insert(digest, link);
+                    }
                 }
                 pending.extend(current["arguments"].as_array().into_iter().flatten());
             }
@@ -731,6 +741,9 @@ enum OperationRefusal {
     /// `ambiguous_declaration`/`ambiguous-name`: a `relationship_end` member
     /// names a role both ends of its relationship carry.
     AmbiguousName,
+    /// `invalid_package`/`invalid-value`: a `string`, `uuid` or `timestamp`
+    /// literal whose `value` is not the canonical payload spelling.
+    InvalidValue,
 }
 
 impl OperationRefusal {
@@ -759,6 +772,7 @@ impl OperationRefusal {
             Self::OperatorIneligible => "operator-ineligible",
             Self::MissingName => "missing-name",
             Self::AmbiguousName => "ambiguous-name",
+            Self::InvalidValue => "invalid-value",
         }
     }
 
@@ -774,14 +788,15 @@ impl OperationRefusal {
             | Self::LawUnselected
             | Self::ModeMismatch
             | Self::MemberMismatch
-            | Self::ModeTypeMismatch => "invalid_package",
+            | Self::ModeTypeMismatch
+            | Self::InvalidValue => "invalid_package",
         }
     }
 
     fn from_cause(cause: &str) -> Option<Self> {
         // `MissingName` and `AmbiguousName` are the relationship-end refusals, outside the nine
         // operation causes whose pairing and mutations the tests enumerate.
-        for outside in [Self::MissingName, Self::AmbiguousName] {
+        for outside in [Self::MissingName, Self::AmbiguousName, Self::InvalidValue] {
             if cause == outside.cause() {
                 return Some(outside);
             }
@@ -883,6 +898,55 @@ impl ExpectedLeaf {
     }
 }
 
+/// Whether a `string`, `uuid` or `timestamp` literal's `value` is its canonical
+/// payload spelling (FR-322 "Scalar literal values"): a UUID as 32 lowercase
+/// hexadecimal digits grouped `8-4-4-4-12`, a Timestamp as the canonical decimal
+/// text of a signed 128-bit nanosecond count, a String as any scalar sequence.
+/// Every other literal kind is outside this rule.
+fn literal_value_is_canonical(literal: &Value) -> bool {
+    let value = literal["value"].as_str();
+    match literal["value_kind"].as_str() {
+        Some("string") => value.is_some(),
+        Some("uuid") => value.is_some_and(|text| {
+            text.len() == 36
+                && text.bytes().enumerate().all(|(index, byte)| match index {
+                    8 | 13 | 18 | 23 => byte == b'-',
+                    _ => byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte),
+                })
+        }),
+        Some("timestamp") => value.is_some_and(|text| {
+            text.parse::<i128>()
+                .is_ok_and(|count| count.to_string() == text)
+        }),
+        Some("quantity") => value.is_some_and(quantity_magnitude_is_canonical),
+        _ => true,
+    }
+}
+
+/// Whether a `quantity` literal's `value` is the canonical spelling of its
+/// exact rational magnitude (FR-322 "Scalar literal values"): the canonical
+/// decimal integer when the denominator is 1, otherwise `numerator/denominator`
+/// in lowest terms with a denominator above 1 and a sign only on the numerator.
+fn quantity_magnitude_is_canonical(text: &str) -> bool {
+    fn gcd(a: u128, b: u128) -> u128 {
+        if b == 0 { a } else { gcd(b, a % b) }
+    }
+    let integer = |part: &str| part.parse::<i128>().is_ok_and(|n| n.to_string() == part);
+    match text.split_once('/') {
+        None => integer(text),
+        Some((numerator, denominator)) => {
+            let (Ok(n), Ok(d)) = (numerator.parse::<i128>(), denominator.parse::<u128>()) else {
+                return false;
+            };
+            integer(numerator)
+                && d.to_string() == denominator
+                && d > 1
+                && n != 0
+                && gcd(n.unsigned_abs(), d) == 1
+        }
+    }
+}
+
 /// Independent reader oracle over the operation catalog, a package lock and
 /// its graph. Nothing is read from outside the package and catalog.
 struct OperationOracle<'a> {
@@ -970,6 +1034,9 @@ impl<'a> OperationOracle<'a> {
                 ("scalar_type", "float32") => "float32",
                 ("scalar_type", "float64") => "float64",
                 ("scalar_type", "text") => "text",
+                ("scalar_type", "string") => "string",
+                ("scalar_type", "uuid") => "uuid",
+                ("scalar_type", "timestamp") => "timestamp",
                 ("scalar_type", "unit") => "quantity",
                 ("scalar_type", "enum") => {
                     if node["nominal_identity_preimage"]["ordered"].as_bool() == Some(true) {
@@ -987,7 +1054,9 @@ impl<'a> OperationOracle<'a> {
                 ("composite_type", "bag") => "bag",
                 ("composite_type", "ordered_set") => "ordered_set",
                 ("composite_type", "reference") => "reference",
-                ("model", "object_type" | "systems_interface") => "object",
+                ("model", "object_type" | "process" | "state_machine" | "systems_interface") => {
+                    "object"
+                }
                 ("bounded_domain", "model_population") => "population",
                 _ => return None,
             },
@@ -1055,8 +1124,12 @@ impl<'a> OperationOracle<'a> {
                     "float32_bits" => &["float32"],
                     "float64_bits" => &["float64"],
                     "text" => &["text"],
+                    "string" => &["string"],
+                    "uuid" => &["uuid"],
+                    "timestamp" => &["timestamp"],
                     "enum" => &["enum", "ordered_enum"],
                     "none" => &["option"],
+                    "quantity" => &["quantity"],
                     _ => return None,
                 };
                 admitted.contains(&typed.family.as_str()).then_some(typed)
@@ -1069,7 +1142,7 @@ impl<'a> OperationOracle<'a> {
                         ty: Some(target["semantic_type"].clone()),
                         bound: None,
                     }),
-                    "relation" => Some(Descriptor {
+                    "relation" if target["semantic_form"] == "population" => Some(Descriptor {
                         family: "population".to_owned(),
                         ty: Some(target["node_id"].clone()),
                         bound: None,
@@ -1111,6 +1184,12 @@ impl<'a> OperationOracle<'a> {
                         bound: Some(Box::new(bound)),
                     }))
             }
+            // The literal's family is decided first; the value spelling is read
+            // only for a literal whose type its kind admits.
+            Some("literal") => match self.descriptor(term) {
+                Some(_) if !literal_value_is_canonical(term) => Err(OperationRefusal::InvalidValue),
+                descriptor => Ok(descriptor),
+            },
             _ => Ok(self.descriptor(term)),
         }
     }
@@ -1152,6 +1231,45 @@ impl<'a> OperationOracle<'a> {
             1 => None,
             _ => Some(OperationRefusal::AmbiguousName),
         }
+    }
+
+    /// FR-322 "Population link of a `reaches`": whether a `relationship_end`
+    /// member's optional `population` is admissible. An absent key is. A present
+    /// one is only on a `reaches` application and names a
+    /// `bounded_domain`/`model_population` node over `Set<Reference<T>>` whose
+    /// model declaration `T` is the type of the end the member's role names.
+    fn population_link_holds(&self, entry: &Value, member: &Value) -> bool {
+        let Some(population) = member.get("population") else {
+            return true;
+        };
+        let model_declared = |id: &Value, tag: &str, form: &str| {
+            self.node(id)
+                .filter(|node| node["node_tag"] == tag && node["semantic_form"] == form)
+        };
+        let first_target = |node: &'a Value| node["body"]["members"][0]["target"].clone();
+        let object_type = || {
+            let population = model_declared(population, "bounded_domain", "model_population")?;
+            let set = model_declared(&population["semantic_type"], "composite_type", "set")?;
+            let reference = model_declared(&first_target(set), "composite_type", "reference")?;
+            self.node(&first_target(reference))
+        };
+        let near_end_type = || {
+            let relationship = self.node(&member["declaration"])?;
+            let declared = self.model_relationship(relationship)?;
+            let name = member["name"].as_str()?;
+            declared["ends"]
+                .as_array()?
+                .iter()
+                .find(|end| end["role"] == name)
+                .map(|end| end["type"].clone())
+        };
+        entry["operator"] == "reaches"
+            && member["kind"] == "relationship_end"
+            && matches!(
+                (object_type(), near_end_type()),
+                (Some(object), Some(end))
+                    if is_model_declaration(object) && object["owner"]["node"] == end
+            )
     }
 
     /// Result descriptor of a member selection, resolved against its declaration.
@@ -1797,6 +1915,7 @@ impl<'a> OperationOracle<'a> {
             || entry["member"] == "temporal_interval"
             || entry["member"] == "fairness"
             || self.member_descriptor(member).is_some();
+        let population_links = self.population_link_holds(entry, member);
         let constraints_hold = entry["constraints"]
             .as_array()
             .expect("catalog constraints are an array")
@@ -1826,10 +1945,11 @@ impl<'a> OperationOracle<'a> {
                 compared.and_then(|id| self.expected_leaves(&id))
             }
         };
-        let (true, true, true, true, Some(expected)) = (
+        let (true, true, true, true, true, Some(expected)) = (
             arity_fits,
             families_fit,
             member_resolves,
+            population_links,
             constraints_hold,
             expected_leaves,
         ) else {
@@ -2100,10 +2220,9 @@ fn preimage_term(term: &Value, group: &[&Value]) -> Value {
     }
 }
 
-/// The `quire.application-node/v1` preimage of any node whose body contains
-/// an application.
+/// The `quire.application-node/v1` preimage of every FR-322 application node.
 fn application_node_preimage(node: &Value, nodes: &[Value]) -> Option<Value> {
-    if application_terms(&node["body"]).is_empty() {
+    if !is_application_node(node) {
         return None;
     }
     let group = node.get("recursion_group").map_or_else(Vec::new, |label| {
@@ -2139,7 +2258,7 @@ fn application_node_shape_is_valid(node: &Value) -> bool {
             .as_str()
             .and_then(expression_form_for_class)
             == node["semantic_form"].as_str();
-    !application_terms(body).is_empty()
+    is_application_node(node)
         && form_fits
         && node["dependencies"]
             .as_array()
@@ -2160,7 +2279,7 @@ fn application_node_key_is_current(node: &Value, nodes: &[Value]) -> bool {
 fn structural_node_preimage(node: &Value) -> Option<Value> {
     if node.get("nominal_identity_preimage").is_some()
         || node.get("recursion_group").is_some()
-        || !application_terms(&node["body"]).is_empty()
+        || is_application_node(node)
     {
         return None;
     }
@@ -2193,8 +2312,9 @@ fn structural_node_key_is_current(node: &Value) -> bool {
 }
 
 /// The undeclared builtin and anonymous type shapes a reader re-derives from
-/// the node's own body: boolean and integer scalars, the reference, option
-/// and collection composites, and the integer and collection-bound ranges.
+/// the node's own body: boolean and integer scalars, the reference, option,
+/// collection and model-derived composites, and the integer, collection-bound
+/// and population ranges.
 fn is_derived_shape(node: &Value) -> bool {
     node.get("declaration").is_none()
         && node.get("recursion_group").is_none()
@@ -2207,8 +2327,9 @@ fn is_derived_shape(node: &Value) -> bool {
                 )
                 | (
                     Some("bounded_domain"),
-                    Some("integer_range" | "collection_bounds")
+                    Some("integer_range" | "collection_bounds" | "model_population")
                 )
+                | (Some("scalar_type"), Some("compound_unit"))
         )
 }
 
@@ -2216,20 +2337,142 @@ fn is_derived_shape(node: &Value) -> bool {
 /// scalar or composite node is its own `semantic_type`, which the preimage
 /// records as `null`.
 fn derived_shape_key_is_current(node: &Value) -> bool {
-    let self_typed =
-        node["node_tag"] == "bounded_domain" || node["semantic_type"] == node["node_id"];
+    let self_typed = node["node_tag"] == "bounded_domain"
+        || node["semantic_form"] == "compound_unit"
+        || node["semantic_type"] == node["node_id"];
     self_typed && structural_node_key_is_current(node)
 }
 
+/// Semantic checks owned by the derived-shape reader after key freshness.
+/// These wire checks cover model-reference targets, population bounds and
+/// compound-unit term order. QSL lowering owns richer domain checks.
+fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
+    let find = |id: &Value| nodes.iter().find(|node| node["node_id"] == *id);
+    nodes.iter().find(
+        |node| match (node["node_tag"].as_str(), node["semantic_form"].as_str()) {
+            (Some("composite_type"), Some("reference")) => {
+                let Some(target) = node["body"]["members"]
+                    .as_array()
+                    .and_then(|members| members.first())
+                    .and_then(|member| member["target"].as_object())
+                    .map(|target| Value::Object(target.clone()))
+                    .and_then(|target| find(&target))
+                else {
+                    return true;
+                };
+                // A derived Reference<O> names a model declaration. A record,
+                // scalar, function or value is not a declaration target.
+                !is_model_reference_target(target)
+            }
+            (Some("bounded_domain"), Some("model_population")) => {
+                let set_shaped = node["semantic_type"]
+                    .as_object()
+                    .and_then(|id| find(&Value::Object(id.clone())))
+                    .is_some_and(|semantic_type| {
+                        semantic_type["node_tag"] == "composite_type"
+                            && semantic_type["semantic_form"] == "set"
+                            && semantic_type["body"]["members"]
+                                .as_array()
+                                .and_then(|members| members.first())
+                                .and_then(|member| member["target"].as_object())
+                                .and_then(|target| find(&Value::Object(target.clone())))
+                                .is_some_and(|element| {
+                                    element["node_tag"] == "composite_type"
+                                        && element["semantic_form"] == "reference"
+                                })
+                    });
+                let Some(members) = node["body"]["members"].as_array() else {
+                    return true;
+                };
+                // FR-322 "Derived type forms and forwarding": a population with
+                // no `max` member is the unbounded population; a bounded one
+                // carries exactly one canonical nonnegative integer `max`.
+                let valid_max = |member: &Value| {
+                    member["name"] == "max"
+                        && member["term"] == "binding"
+                        && member["value"]["term"] == "literal"
+                        && member["value"]["value_kind"] == "integer"
+                        && integer(&member["value"]["value"])
+                            .is_some_and(|value| value >= BigInt::from(0))
+                };
+                let valid_body = match members.as_slice() {
+                    [] => true,
+                    [member] => valid_max(member),
+                    _ => false,
+                };
+                !set_shaped || !valid_body
+            }
+            (Some("scalar_type"), Some("compound_unit")) => {
+                if node["semantic_type"] != node["node_id"] {
+                    return true;
+                }
+                let Some(terms) = node["body"]["members"].as_array() else {
+                    return true;
+                };
+                let mut previous = None;
+                terms.iter().any(|term| {
+                    let Some(members) = term["members"].as_array() else {
+                        return true;
+                    };
+                    let unit = members.iter().find(|member| member["name"] == "unit");
+                    let exponent = members.iter().find(|member| member["name"] == "exponent");
+                    let Some(unit_target) = unit
+                        .and_then(|member| member["value"]["target"].as_object())
+                        .map(|target| Value::Object(target.clone()))
+                        .and_then(|target| find(&target))
+                    else {
+                        return true;
+                    };
+                    let Some(unit_digest) = unit_target["node_id"]["digest"].as_str() else {
+                        return true;
+                    };
+                    let nominal_root =
+                        unit_target
+                            .get("nominal_identity_preimage")
+                            .is_some_and(|preimage| {
+                                preimage["version"] == "quire.unit-node/v1"
+                                    && preimage["target_unit_node_id"].is_null()
+                                    && unit_target["body"]
+                                        == json!({"term": "aggregate", "members": []})
+                                    && unit_target["semantic_type"] == preimage["dimension_node_id"]
+                            });
+                    let valid_root = unit_target["node_tag"] == "scalar_type"
+                        && unit_target["semantic_form"] == "unit"
+                        && (unit_target["semantic_type"] == unit_target["node_id"] || nominal_root);
+                    let valid_exponent = exponent.is_some_and(|member| {
+                        member["value"]["term"] == "literal"
+                            && member["value"]["value_kind"] == "integer"
+                            && integer(&member["value"]["value"])
+                                .is_some_and(|value| value != BigInt::from(0))
+                    });
+                    let ordered = previous.is_none_or(|last: &str| last < unit_digest);
+                    previous = Some(unit_digest);
+                    !valid_root || !valid_exponent || !ordered
+                })
+            }
+            _ => false,
+        },
+    )
+}
+
 /// A model declaration node (QSL FR-094): no `declaration`, the form of an
-/// object type, a systems interface or a relationship.
+/// object type, a process, a state machine, a persistence interface, a
+/// systems interface, a relationship or a population.
 fn is_model_declaration(node: &Value) -> bool {
     node.get("declaration").is_none()
         && node.get("nominal_identity_preimage").is_none()
         && matches!(
             (node["node_tag"].as_str(), node["semantic_form"].as_str()),
-            (Some("model"), Some("object_type" | "systems_interface"))
-                | (Some("relation"), Some("relationship"))
+            (
+                Some("model"),
+                Some(
+                    "object_type"
+                        | "process"
+                        | "state_machine"
+                        | "persistence_interface"
+                        | "systems_interface"
+                )
+            ) | (Some("relation"), Some("relationship" | "population"))
         )
 }
 
@@ -2252,7 +2495,7 @@ fn is_rekeyed_structural_node(node: &Value) -> bool {
     let abstraction_relation =
         node["node_tag"] == "correspondence" && node["semantic_form"] == "abstraction_relation";
     node.get("nominal_identity_preimage").is_none()
-        && application_terms(&node["body"]).is_empty()
+        && !is_application_node(node)
         && !abstraction_relation
 }
 
@@ -2328,7 +2571,7 @@ fn recursion_group_digest(nodes: &[Value], group: &[&Value]) -> Option<String> {
         .iter()
         .enumerate()
         .map(|(member, node)| {
-            if application_terms(&node["body"]).is_empty() {
+            if !is_application_node(node) {
                 group_local_structural_preimage(group, member)
             } else {
                 application_node_preimage(node, nodes)
@@ -2447,11 +2690,27 @@ fn clause_kind(node: &Value) -> Option<&str> {
 
 /// Whether `document` declares the model-owned node `owner_node` as the kind
 /// the wire node stands for: on a model declaration node, an object type
-/// (`object_type`, no `interfaceFeatures`), an interface (`systems_interface`)
-/// or a relationship; on a clause function, an operation member of an object
-/// type, or an object type itself for an invariant clause.
+/// (`object_type`, no `interfaceFeatures`), an interface (`systems_interface`),
+/// a process, a state machine, a persistence interface or a relationship; on a
+/// clause function, an operation member of an object type, or an object type
+/// itself for an invariant clause.
 fn document_declares_owner(document: &Value, node: &Value, owner_node: &str) -> bool {
     let object_types = document["object_types"].as_array().into_iter().flatten();
+    let declares_in = |list: &str| {
+        document[list]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .any(|declared| declared["node"] == owner_node)
+    };
+    // A population is declared by its FCD record, keyed by `identity`.
+    let declares_population = || {
+        document["populations"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .any(|population| population["identity"] == owner_node)
+    };
     let declares_object_type = |interface: bool| {
         object_types.clone().any(|object| {
             object["node"] == owner_node && object["interfaceFeatures"].is_null() != interface
@@ -2460,11 +2719,15 @@ fn document_declares_owner(document: &Value, node: &Value, owner_node: &str) -> 
     match (node["node_tag"].as_str(), node["semantic_form"].as_str()) {
         (Some("model"), Some("object_type")) => declares_object_type(false),
         (Some("model"), Some("systems_interface")) => declares_object_type(true),
+        (Some("model"), Some("process")) => declares_in("processes"),
+        (Some("model"), Some("state_machine")) => declares_in("state_machines"),
+        (Some("model"), Some("persistence_interface")) => declares_in("persistence_interfaces"),
         (Some("relation"), Some("relationship")) => document["relationships"]
             .as_array()
             .into_iter()
             .flatten()
             .any(|relationship| relationship["node"] == owner_node),
+        (Some("relation"), Some("population")) => declares_population(),
         (Some("function"), _) => match clause_kind(node) {
             // An invariant clause is owned by its object type.
             Some("invariant") => object_types.clone().any(|object| {
@@ -2488,6 +2751,21 @@ fn document_declares_owner(document: &Value, node: &Value, owner_node: &str) -> 
         },
         _ => false,
     }
+}
+
+/// A derived `Reference<O>` target (QSL FR-322): a declared model form,
+/// whether source-declared in this package or resolved through a `ModelOwner`.
+fn is_model_reference_target(node: &Value) -> bool {
+    node.get("nominal_identity_preimage").is_none()
+        && matches!(
+            (node["node_tag"].as_str(), node["semantic_form"].as_str()),
+            (
+                Some("model"),
+                Some("object_type" | "process" | "state_machine" | "systems_interface")
+            ) | (Some("relation"), Some("relationship"))
+        )
+        && ((node.get("declaration").is_some() && node["owner"]["kind"] == "source")
+            || (node.get("declaration").is_none() && node["owner"]["kind"] == "model"))
 }
 
 /// FR-322's derived-shape key stage, owner join: every owner-bearing node,
@@ -2580,6 +2858,10 @@ fn application_node_is_valid(node: &Value, nodes: &[Value]) -> bool {
 #[derive(Clone, Debug, PartialEq)]
 enum ReadRefusal {
     GraphShape(Value),
+    /// `invalid_model_binding`/`malformed-declaration` at `package_read`: a
+    /// `populations` entry of the selected document that is no FCD population.
+    /// The locus is the selection row (`/lock/model_selections/<i>`).
+    PopulationRecord(String),
     /// `missing_declaration`/`missing-selection` at a node whose `owner` the
     /// lock does not select or whose selected document does not declare it.
     OwnerSelection(Value),
@@ -2625,12 +2907,31 @@ fn package_cause_code(cause: &str) -> Option<&'static str> {
 }
 
 fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRefusal> {
+    // FR-322 "Model-owned members" step 1 reads the selected document before
+    // graph admission; an entry that is no FCD population refuses it.
+    if package
+        .pointer("/model_bindings/domain_package/populations")
+        .and_then(Value::as_array)
+        .is_some_and(|populations| {
+            populations.iter().any(|population| {
+                !population["identity"].is_string() || population.get("node").is_some()
+            })
+        })
+    {
+        let row = package["lock"]["model_selections"]
+            .as_array()
+            .and_then(|rows| rows.iter().position(|row| row["identity"] == "acme/orders"))
+            .expect("the selection row of the read document");
+        return Err(ReadRefusal::PopulationRecord(format!(
+            "/lock/model_selections/{row}"
+        )));
+    }
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("package nodes are an array");
     let mut ordered = nodes
         .iter()
-        .filter(|node| !application_terms(&node["body"]).is_empty())
+        .filter(|node| is_application_node(node))
         .collect::<Vec<_>>();
     ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
     if let Some(node) = ordered
@@ -2648,6 +2949,9 @@ fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRe
     owner_join_refusal(package, nodes)?;
     if let Some(node) = stale_derived_shape_node(nodes) {
         return Err(ReadRefusal::StaleNodeKey(node["node_id"].clone()));
+    }
+    if let Some(node) = derived_shape_semantic_refusal(nodes) {
+        return Err(ReadRefusal::GraphShape(node["node_id"].clone()));
     }
     package_declaration_refusal(package)
         .map_err(|(refusal, node)| ReadRefusal::Declaration(refusal, node))?;
@@ -2770,9 +3074,17 @@ fn package_declaration_refusal(package: &Value) -> Result<(), (DeclarationRefusa
     }
     let mut seen = BTreeSet::new();
     for node in nodes {
+        // FR-322 "declaration": a name is unique within its namespace, and
+        // dimensions, units and every other declared type are three namespaces.
+        let namespace = match (node["node_tag"].as_str(), node["semantic_form"].as_str()) {
+            (Some("scalar_type"), Some("dimension")) => "dimension",
+            (Some("scalar_type"), Some("unit")) => "unit",
+            _ => "type",
+        };
         if let Some(name) = node
             .get("declaration")
-            .map(|d| d["qualified_name"].to_string())
+            .filter(|declaration| !declaration.is_null())
+            .map(|d| format!("{namespace}:{}", d["qualified_name"]))
             && !seen.insert(name)
         {
             return Err((DeclarationRefusal::AmbiguousName, node["node_id"].clone()));
@@ -2792,6 +3104,7 @@ enum FrameGroup {
     Modifies,
     Creates,
     Deletes,
+    DeletesScoped,
 }
 
 impl FrameGroup {
@@ -2803,6 +3116,7 @@ impl FrameGroup {
             Self::Modifies => "modifies",
             Self::Creates => "creates",
             Self::Deletes => "deletes",
+            Self::DeletesScoped => "deletes_scoped",
         }
     }
 }
@@ -2821,8 +3135,8 @@ enum FrameEntryKind {
 /// Whether the declaring node an entry names carries the meaning its kind
 /// needs, read from the node's tag and form alone. A relationship entry
 /// names a `relation`/`relationship` node; a field entry names the
-/// `model`/`object_type` or `model`/`record_value_type` node declaring the
-/// field; a `creates`/`deletes` entry names a `model`/`object_type` or
+/// `model`/`object_type`, `model`/`record_value_type`, `model`/`process` or
+/// `model`/`state_machine` node declaring the field; a `creates`/`deletes` entry names a `model`/`object_type` or
 /// `model`/`process` node. Every other node, including a `value` literal and
 /// every systems-model form, has no frame meaning.
 fn frame_entry_admits(kind: FrameEntryKind, node: &Value) -> bool {
@@ -2839,7 +3153,7 @@ fn frame_entry_admits(kind: FrameEntryKind, node: &Value) -> bool {
         ) | (
             FrameEntryKind::Field,
             Some("model"),
-            Some("object_type" | "record_value_type")
+            Some("object_type" | "record_value_type" | "process" | "state_machine")
         ) | (
             FrameEntryKind::Instance,
             Some("model"),
@@ -2850,7 +3164,10 @@ fn frame_entry_admits(kind: FrameEntryKind, node: &Value) -> bool {
 
 /// The entries of one frame member as (declaring node digest, field name,
 /// kind); a relationship or `creates`/`deletes` entry has the empty name.
-fn frame_entries(frame_node: &Value, group: FrameGroup) -> Vec<(String, String, FrameEntryKind)> {
+fn frame_entries(
+    frame_node: &Value,
+    group: FrameGroup,
+) -> Vec<(String, String, FrameEntryKind, u8)> {
     frame_node["body"][group.key()]
         .as_array()
         .into_iter()
@@ -2859,12 +3176,16 @@ fn frame_entries(frame_node: &Value, group: FrameGroup) -> Vec<(String, String, 
             FrameGroup::Modifies => {
                 let digest = entry["declaration"]["digest"].as_str()?.to_owned();
                 match entry["kind"].as_str()? {
+                    // The scope enters the order key, `every-object` first.
                     "field" => Some((
                         digest,
                         entry["name"].as_str()?.to_owned(),
                         FrameEntryKind::Field,
+                        u8::from(entry["scope"] == "receiver"),
                     )),
-                    "relationship" => Some((digest, String::new(), FrameEntryKind::Relationship)),
+                    "relationship" => {
+                        Some((digest, String::new(), FrameEntryKind::Relationship, 0))
+                    }
                     _ => None,
                 }
             }
@@ -2872,6 +3193,7 @@ fn frame_entries(frame_node: &Value, group: FrameGroup) -> Vec<(String, String, 
                 entry["digest"].as_str()?.to_owned(),
                 String::new(),
                 FrameEntryKind::Instance,
+                0,
             )),
         })
         .collect()
@@ -2908,6 +3230,13 @@ enum FrameDefect {
         digest: String,
         name: String,
         cause: FrameJoinCause,
+    },
+    /// Two field entries of one declaration and name with different scopes
+    /// (`conflicting-binding`): a meaning-join defect that ranks after every
+    /// other one and before any canonical-order defect, by its place here.
+    ConflictingBinding {
+        digest: String,
+        name: String,
     },
     CanonicalOrder {
         group: FrameGroup,
@@ -2949,17 +3278,18 @@ fn mm_owner_node<'a>(declaration_nodes: &'a [Value], digest: &str) -> Option<&'a
 }
 
 /// FR-322 step 3 (own members only; no inheritance or redefinition) for one
-/// object type's `list` ("fields" or "operations") member named `name`.
+/// object type's, process's or state machine's `list` ("fields" or "operations") member named `name`.
 fn mm_declared_member<'a>(
     domain_package: &'a Value,
     node: &str,
     list: &str,
     name: &str,
 ) -> Option<&'a Value> {
-    domain_package["object_types"]
-        .as_array()?
-        .iter()
-        .find(|object_type| object_type["node"] == node)?[list]
+    ["object_types", "processes", "state_machines"]
+        .into_iter()
+        .filter_map(|kind| domain_package[kind].as_array())
+        .flatten()
+        .find(|declared| declared["node"] == node)?[list]
         .as_array()?
         .iter()
         .find(|member| member["name"] == name)
@@ -2988,9 +3318,13 @@ fn frame_body_defects(
         .as_str()
         .unwrap_or_default();
     let declaring_type = node_by_digest(nodes, semantic_type);
-    if !declaring_type
-        .is_some_and(|node| node["node_tag"] == "model" && node["semantic_form"] == "object_type")
-    {
+    if !declaring_type.is_some_and(|node| {
+        node["node_tag"] == "model"
+            && matches!(
+                node["semantic_form"].as_str(),
+                Some("object_type" | "process" | "state_machine")
+            )
+    }) {
         defects.push(FrameDefect::MeaningJoin {
             group: FrameGroup::SemanticType,
             digest: semantic_type.to_owned(),
@@ -3002,18 +3336,75 @@ fn frame_body_defects(
             },
         });
     }
+    // FR-340 "Frames of a process or a state machine": the receiver of such an
+    // operation is a run or a machine context, so the frame holds no
+    // receiver-scoped member.
+    if declaring_type.is_some_and(|node| {
+        node["node_tag"] == "model"
+            && matches!(
+                node["semantic_form"].as_str(),
+                Some("process" | "state_machine")
+            )
+    }) {
+        for entry in frame_node["body"]["modifies"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter(|entry| entry["kind"] == "field" && entry["scope"] == "receiver")
+        {
+            defects.push(FrameDefect::MeaningJoin {
+                group: FrameGroup::Modifies,
+                digest: entry["declaration"]["digest"]
+                    .as_str()
+                    .unwrap_or_default()
+                    .to_owned(),
+                name: entry["name"].as_str().unwrap_or_default().to_owned(),
+                cause: FrameJoinCause::MalformedDeclaration,
+            });
+        }
+        if frame_node["body"]["deletes_scoped"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .any(|entry| entry["kind"] == "receiver")
+        {
+            defects.push(FrameDefect::MeaningJoin {
+                group: FrameGroup::DeletesScoped,
+                digest: frame_node["node_id"]["digest"]
+                    .as_str()
+                    .unwrap_or_default()
+                    .to_owned(),
+                name: String::new(),
+                cause: FrameJoinCause::MalformedDeclaration,
+            });
+        }
+    }
     for group in FrameGroup::MEMBERS {
         let entries = frame_entries(frame_node, group);
         let keys = entries
             .iter()
-            .map(|(digest, name, _)| (digest.clone(), name.clone()))
+            .map(|(digest, name, _, scope)| (digest.clone(), name.clone(), *scope))
             .collect::<Vec<_>>();
+        let mut scopes = BTreeMap::<(String, String), BTreeSet<u8>>::new();
+        for (digest, name, kind, scope) in &entries {
+            if *kind == FrameEntryKind::Field {
+                scopes
+                    .entry((digest.clone(), name.clone()))
+                    .or_default()
+                    .insert(*scope);
+            }
+        }
+        for ((digest, name), kinds) in scopes {
+            if kinds.len() > 1 {
+                defects.push(FrameDefect::ConflictingBinding { digest, name });
+            }
+        }
         let mut ascending = keys.clone();
         ascending.sort();
         if ascending != keys {
             defects.push(FrameDefect::CanonicalOrder { group });
         }
-        for (digest, name, kind) in entries {
+        for (digest, name, kind, _) in entries {
             let resolved = node_by_digest(nodes, &digest);
             let is_dependency = dependencies.contains(digest.as_str());
             let meaning_ok = resolved.is_some_and(|node| frame_entry_admits(kind, node));
@@ -3054,6 +3445,26 @@ fn frame_body_defects(
             });
         }
     }
+    // `deletes_scoped` is ordered `receiver` first, then `parameter` entries by
+    // name as UTF-8 bytes (FR-340-AC-17).
+    let scoped = frame_node["body"]["deletes_scoped"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .map(|entry| {
+            (
+                u8::from(entry["kind"] == "parameter"),
+                entry["name"].as_str().unwrap_or_default().to_owned(),
+            )
+        })
+        .collect::<Vec<_>>();
+    let mut ordered = scoped.clone();
+    ordered.sort();
+    if ordered != scoped {
+        defects.push(FrameDefect::CanonicalOrder {
+            group: FrameGroup::DeletesScoped,
+        });
+    }
     defects
 }
 
@@ -3078,18 +3489,24 @@ fn reported_frame_defect(
 enum FrameRefusal {
     MissingName,
     MalformedDeclaration,
+    ConflictingBinding,
     CanonicalOrder,
 }
 
 impl FrameRefusal {
     /// The two wire-paired causes; `CanonicalOrder` is deliberately excluded,
     /// as it is not a `Diagnostic.cause_tag`/`code` pair.
-    const ALL: [Self; 2] = [Self::MissingName, Self::MalformedDeclaration];
+    const ALL: [Self; 3] = [
+        Self::MissingName,
+        Self::MalformedDeclaration,
+        Self::ConflictingBinding,
+    ];
 
     fn cause(self) -> &'static str {
         match self {
             Self::MissingName => "missing-name",
             Self::MalformedDeclaration => "malformed-declaration",
+            Self::ConflictingBinding => "conflicting-binding",
             // `invalid_semantic_graph` is one of FR-322's bare v2 refusal
             // codes: of the sixteen codes the v2 refusal vocabulary names,
             // only `invalid_package`, `ill_typed`, `ambiguous_declaration`,
@@ -3107,7 +3524,7 @@ impl FrameRefusal {
     fn code(self) -> &'static str {
         match self {
             Self::MissingName => "missing_declaration",
-            Self::MalformedDeclaration => "invalid_model_binding",
+            Self::MalformedDeclaration | Self::ConflictingBinding => "invalid_model_binding",
             Self::CanonicalOrder => "invalid_semantic_graph",
         }
     }
@@ -3124,6 +3541,7 @@ impl From<FrameDefect> for FrameRefusal {
                 cause: FrameJoinCause::MalformedDeclaration,
                 ..
             } => Self::MalformedDeclaration,
+            FrameDefect::ConflictingBinding { .. } => Self::ConflictingBinding,
             FrameDefect::CanonicalOrder { .. } => Self::CanonicalOrder,
         }
     }
@@ -3151,7 +3569,8 @@ fn package_frame_refusal(package: &Value) -> Result<(), (FrameRefusal, Value)> {
     for frame in frames {
         if let Some(defect) = reported_frame_defect(frame, nodes, model.as_ref()) {
             let locus = match &defect {
-                FrameDefect::MeaningJoin { digest, .. } => json!({
+                FrameDefect::MeaningJoin { digest, .. }
+                | FrameDefect::ConflictingBinding { digest, .. } => json!({
                     "domain": "quire.checked-semantic-node/v1",
                     "digest": digest,
                 }),
@@ -3218,6 +3637,14 @@ fn join_state_reference<'a>(
         .ok_or((StateRefusal::MalformedDeclaration, target.clone()))
 }
 
+/// The `model` nodes an anchor's `context` and an invariant's anchor may be:
+/// an object type, a process or a state machine (FR-342, FR-341).
+const ANCHOR_CONTEXTS: [(&str, &str); 3] = [
+    ("model", "object_type"),
+    ("model", "process"),
+    ("model", "state_machine"),
+];
+
 /// The named binding's value in an `operation_anchor` body.
 fn anchor_binding<'a>(anchor: &'a Value, name: &str) -> &'a Value {
     anchor["body"]["members"]
@@ -3235,7 +3662,7 @@ fn anchor_refusal(
     model: Option<&ModelIndex<'_>>,
 ) -> Result<(), (StateRefusal, Value)> {
     let context = &anchor_binding(anchor, "context")["target"];
-    join_state_reference(anchor, context, nodes, &[("model", "object_type")])?;
+    join_state_reference(anchor, context, nodes, &ANCHOR_CONTEXTS)?;
     let frame = join_state_reference(
         anchor,
         &anchor_binding(anchor, "frame")["target"],
@@ -3262,6 +3689,38 @@ fn anchor_refusal(
         if !resolves {
             return Err((StateRefusal::MissingName, anchor["node_id"].clone()));
         }
+        // Check 5 (FR-340-AC-17): every `parameter` entry of the frame's
+        // `deletes_scoped` names a reference parameter of the resolved
+        // operation; the locus is the frame node.
+        let reference_parameter = |name: &str| {
+            owner_node
+                .and_then(|node| {
+                    mm_declared_member(model.domain_package, node, "operations", operation)
+                        .filter(|_| !node.is_empty())
+                })
+                .and_then(|record| record["parameters"].as_array())
+                .into_iter()
+                .flatten()
+                .any(|parameter| {
+                    parameter["name"] == name
+                        && ["object_types", "processes"]
+                            .into_iter()
+                            .filter_map(|list| model.domain_package[list].as_array())
+                            .flatten()
+                            .any(|declared| declared["node"] == parameter["typeRef"])
+                })
+        };
+        for entry in frame["body"]["deletes_scoped"]
+            .as_array()
+            .into_iter()
+            .flatten()
+        {
+            if entry["kind"] == "parameter"
+                && !reference_parameter(entry["name"].as_str().unwrap_or_default())
+            {
+                return Err((StateRefusal::MissingName, frame["node_id"].clone()));
+            }
+        }
     }
     Ok(())
 }
@@ -3281,7 +3740,7 @@ fn clause_refusal(
         .as_str()
         .unwrap_or_default();
     let admitted_anchor: &[(&str, &str)] = if kind == "invariant" {
-        &[("model", "object_type")]
+        &ANCHOR_CONTEXTS
     } else {
         &[("state", "operation_anchor")]
     };
@@ -3385,15 +3844,14 @@ fn package_state_refusal(package: &Value) -> Result<(), (StateRefusal, Value)> {
     Ok(())
 }
 
-/// FR-342: one `operation_anchor` node and one `frame` node stand for one
-/// (declaring object type, operation name); no two anchors share a
-/// `context`/`operation` pair, and no `frame` target is bound by two
-/// different anchors. Checked only once every anchor's own joins already
-/// hold (`anchor_refusal`), in ascending anchor node-id digest order; the
-/// second anchor to claim a pair or a frame is the offending node.
+/// FR-342: one `operation_anchor` node stands for one (declaring object type,
+/// operation name); no two anchors share a `context`/`operation` pair. Two
+/// anchors of one context may reference one `frame` node. Checked only once
+/// every anchor's own joins already hold (`anchor_refusal`), in ascending
+/// anchor node-id digest order; the second anchor to claim a pair is the
+/// offending node.
 fn anchor_uniqueness_refusal(anchors: &[&Value]) -> Result<(), (StateRefusal, Value)> {
     let mut pairs = BTreeSet::new();
-    let mut frames = BTreeSet::new();
     for anchor in anchors {
         let context = anchor_binding(anchor, "context")["target"]["digest"]
             .as_str()
@@ -3403,11 +3861,7 @@ fn anchor_uniqueness_refusal(anchors: &[&Value]) -> Result<(), (StateRefusal, Va
             .as_str()
             .unwrap_or_default()
             .to_owned();
-        let frame = anchor_binding(anchor, "frame")["target"]["digest"]
-            .as_str()
-            .unwrap_or_default()
-            .to_owned();
-        if !pairs.insert((context, operation)) || !frames.insert(frame) {
+        if !pairs.insert((context, operation)) {
             return Err((
                 StateRefusal::AmbiguousDeclaration,
                 anchor["node_id"].clone(),
@@ -3459,6 +3913,7 @@ fn all_families_digest(role: &str) -> String {
         "account" => ("model", "object_type", Some("Account")),
         "process" => ("model", "process", None),
         "address" => ("model", "record_value_type", None),
+        "event" => ("model", "event_type", None),
         "literal" => ("value", "literal", Some("enabled")),
         "frame" => ("state", "frame", None),
         other => panic!("unknown all-families role {other}"),
@@ -3504,7 +3959,12 @@ fn relationship_entry(digest: &str) -> Value {
 /// A `modifies` entry granting writes to field `name` of the declaring node
 /// `digest` names.
 fn field_entry(digest: &str, name: &str) -> Value {
-    json!({"kind": "field", "declaration": node_ref_digest(digest), "name": name})
+    json!({
+        "kind": "field",
+        "declaration": node_ref_digest(digest),
+        "name": name,
+        "scope": "every-object",
+    })
 }
 
 /// A hand-authored `state`/`frame` node: real `node_id` shape, the
@@ -3531,6 +3991,7 @@ fn authored_frame_node(
             "modifies": modifies,
             "creates": creates.iter().map(|d| node_ref_digest(d)).collect::<Vec<_>>(),
             "deletes": deletes.iter().map(|d| node_ref_digest(d)).collect::<Vec<_>>(),
+            "deletes_scoped": [],
         },
     })
 }
@@ -3626,19 +4087,28 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
         )]
     );
 
-    // A field entry on a process, and a relationship entry naming an object
-    // type: each names a real declaration of the wrong meaning for its kind.
+    // A field entry on a process is admitted (FR-340-AC-19), a field entry on an
+    // event type is not, and a relationship entry naming an object type: each
+    // names a real declaration of the wrong meaning for its kind.
     let process_field = authored_frame_node(
         &[&process_node],
         &[field_entry(&process_node, "stage")],
         &[],
         &[],
     );
+    assert_eq!(frame_body_defects(&process_field, &nodes, None), Vec::new());
+    let event_node = all_families_digest("event");
+    let event_field = authored_frame_node(
+        &[&event_node],
+        &[field_entry(&event_node, "stage")],
+        &[],
+        &[],
+    );
     assert_eq!(
-        frame_body_defects(&process_field, &nodes, None),
+        frame_body_defects(&event_field, &nodes, None),
         vec![FrameDefect::MeaningJoin {
             group: FrameGroup::Modifies,
-            digest: process_node.clone(),
+            digest: event_node.clone(),
             name: "stage".to_owned(),
             cause: FrameJoinCause::MalformedDeclaration,
         }]
@@ -3669,13 +4139,54 @@ fn tc_233_frame_entries_join_a_declared_node_of_the_required_meaning() {
         )]
     );
 
-    // A frame whose semantic_type is not a model/object_type node.
+    // A frame whose semantic_type is none of an object type, a process and a
+    // state machine.
     let mut wrong_type = authored_frame_node(&[], &[], &[], &[]);
-    wrong_type["semantic_type"] = node_ref_digest(&process_node);
+    wrong_type["semantic_type"] = node_ref_digest(&event_node);
     assert_eq!(
         frame_body_defects(&wrong_type, &nodes, None),
         vec![join_defect(
             FrameGroup::SemanticType,
+            &event_node,
+            FrameJoinCause::MalformedDeclaration
+        )]
+    );
+    let mut process_type = authored_frame_node(&[], &[], &[], &[]);
+    process_type["semantic_type"] = node_ref_digest(&process_node);
+    assert_eq!(frame_body_defects(&process_type, &nodes, None), Vec::new());
+
+    // A state machine declares fields but has no object universe, so it is a
+    // field entry's declaring node and never a `creates` or `deletes` entry.
+    let mut machine_nodes = nodes.clone();
+    for node in &mut machine_nodes {
+        if node["node_id"]["digest"] == process_node.as_str() {
+            node["semantic_form"] = json!("state_machine");
+        }
+    }
+    let machine_field = authored_frame_node(
+        &[&process_node],
+        &[field_entry(&process_node, "stage")],
+        &[],
+        &[],
+    );
+    assert_eq!(
+        frame_body_defects(&machine_field, &machine_nodes, None),
+        Vec::new()
+    );
+    let machine_creates = authored_frame_node(&[&process_node], &[], &[&process_node], &[]);
+    assert_eq!(
+        frame_body_defects(&machine_creates, &machine_nodes, None),
+        vec![join_defect(
+            FrameGroup::Creates,
+            &process_node,
+            FrameJoinCause::MalformedDeclaration
+        )]
+    );
+    let machine_deletes = authored_frame_node(&[&process_node], &[], &[], &[&process_node]);
+    assert_eq!(
+        frame_body_defects(&machine_deletes, &machine_nodes, None),
+        vec![join_defect(
+            FrameGroup::Deletes,
             &process_node,
             FrameJoinCause::MalformedDeclaration
         )]
@@ -4004,15 +4515,20 @@ fn tc_233_a_frame_meaning_join_defect_outranks_a_canonical_order_defect() {
 }
 
 /// FR-340-AC-7: the frame body's stated Outputs (checked `modifies`,
-/// `creates` and `deletes` membership, no other member) are exactly what
-/// the schema admits; a body missing a stated member fails the schema, and
-/// `package_frame_refusal` reports every published fixture's frame as
-/// defect-free through the same reader path `read_package_semantics` uses.
+/// `creates`, `deletes` and `deletes_scoped` membership, no other member) are
+/// exactly what the schema admits; a body missing a stated member, or a field
+/// entry with no `scope`, fails the schema, and `package_frame_refusal`
+/// reports every published fixture's frame as defect-free through the same
+/// reader path `read_package_semantics` uses.
 #[trace("TC-233", "FR-340-AC-7")]
 #[test]
 fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
-    for missing in ["modifies", "creates", "deletes"] {
+    assert!(
+        schema.is_valid(&parsed_fixture(POSITIVE_ALL_FAMILIES)),
+        "the published all-families fixture carries all four frame members and a scope on every field entry"
+    );
+    for missing in ["modifies", "creates", "deletes", "deletes_scoped"] {
         let mut candidate = parsed_fixture(POSITIVE_ALL_FAMILIES);
         let frame_index = candidate["semantic_graph"]["nodes"]
             .as_array()
@@ -4029,6 +4545,21 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
             "a frame body missing `{missing}` must fail the schema"
         );
     }
+    let mut unscoped = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let frame_index = unscoped["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| node["node_tag"] == "state" && node["semantic_form"] == "frame")
+        .expect("a frame node is published");
+    unscoped["semantic_graph"]["nodes"][frame_index]["body"]["modifies"][1]
+        .as_object_mut()
+        .expect("the published field entry is an object")
+        .remove("scope");
+    assert!(
+        !schema.is_valid(&unscoped),
+        "a field entry with no scope must fail the schema"
+    );
     for (label, package) in published_v2_packages() {
         assert_eq!(
             package_frame_refusal(&package),
@@ -4079,6 +4610,8 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
 #[trace("TC-233", "FR-340-AC-6")]
 #[trace("TC-233", "FR-340-AC-8")]
 #[trace("TC-233", "FR-340-AC-9")]
+#[trace("TC-233", "FR-340-AC-16")]
+#[trace("TC-233", "FR-340-AC-17")]
 #[test]
 fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cause() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
@@ -4088,8 +4621,8 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
         .expect("frame_mutations is an array");
     assert_eq!(
         mutations.len(),
-        30,
-        "frame_mutations covers all thirty authored vectors"
+        37,
+        "frame_mutations covers all thirty-seven authored vectors"
     );
 
     let causes = mutations
@@ -4164,6 +4697,9 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
             .collect();
         frame["body"]["creates"] = json!(digests(mutation, "creates"));
         frame["body"]["deletes"] = json!(digests(mutation, "deletes"));
+        if let Some(scoped) = mutation.get("deletes_scoped") {
+            frame["body"]["deletes_scoped"] = scoped.clone();
+        }
 
         // A vector's `second_frame`, when present, is a complete
         // `state`/`frame` node object -- every member a real
@@ -4311,7 +4847,7 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
             if node.get("recursion_group").is_some() {
                 return None;
             }
-            let derived = if application_terms(&node["body"]).is_empty() {
+            let derived = if !is_application_node(node) {
                 is_rekeyed_structural_node(node)
                     .then(|| structural_node_preimage(node))
                     .flatten()
@@ -4351,6 +4887,76 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
         renames.entry(old).or_insert(new);
     }
     panic!("rekeying does not settle within {limit} renames");
+}
+
+/// The operation fixture predates the derived `Reference<O>` rule and points
+/// its generic reference at a record. Rebind that fixture to its published
+/// model declaration before semantic-reader tests, then rekey the complete
+/// dependency closure so the resulting package is an ordinary valid vector.
+fn modelize_legacy_record_reference(package: &mut Value) -> BTreeMap<String, String> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("fixture nodes are an array");
+    let index = nodes
+        .iter()
+        .position(|node| {
+            node["node_tag"] == "composite_type"
+                && node["semantic_form"] == "reference"
+                && nodes.iter().any(|target| {
+                    target["node_id"] == node["body"]["members"][0]["target"]
+                        && target["node_tag"] == "composite_type"
+                        && target["semantic_form"] == "record"
+                })
+        })
+        .expect("legacy generic record reference");
+    let model_id = nodes
+        .iter()
+        .find(|node| is_model_declaration(node))
+        .expect("fixture model declaration")["node_id"]
+        .clone();
+    replace_node_field_in_graph_and_projection(
+        package,
+        index,
+        "/body/members/0/target",
+        model_id.clone(),
+    );
+    replace_node_field_in_graph_and_projection(package, index, "/dependencies", json!([model_id]));
+    rekey_stale_nodes(package)
+}
+
+/// Append a structural node to a fixture and bind its current key and package
+/// projection. The caller supplies the complete wire body and cross-fields;
+/// this helper is used only by reader qualification vectors.
+fn append_rekeyed_structural_node(package: &mut Value, mut node: Value) {
+    let self_typed = node["semantic_type"] == node["node_id"]
+        || matches!(
+            node["semantic_form"].as_str(),
+            Some("compound_unit" | "unit")
+        );
+    if self_typed {
+        node["semantic_type"] = node["node_id"].clone();
+    }
+    let preimage = structural_node_preimage(&node).expect("fixture node is structural");
+    let digest = unqualified_jcs_sha256(&preimage);
+    node["node_id"]["digest"] = json!(digest);
+    if self_typed {
+        node["semantic_type"] = node["node_id"].clone();
+    }
+    let mut projection = node.clone();
+    projection
+        .as_object_mut()
+        .expect("structural node is an object")
+        .remove("occurrences");
+    package["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .expect("fixture nodes are an array")
+        .push(node);
+    package["identity_preimage"]["identity_projection"]
+        .as_array_mut()
+        .expect("fixture projections are an array")
+        .push(projection);
+    package["identity_preimage"] = derive_identity_preimage(package);
+    refresh_package_id(package);
 }
 
 /// `locus` under `renames`: the node id its digest names after rekeying.
@@ -4785,8 +5391,94 @@ fn with_dependency_selections(entries: &Value) -> Value {
     package
 }
 
-#[trace("TC-233", "FR-322-AC-35")]
 #[test]
+#[trace("TC-233", "FR-322-AC-76")]
+fn tc_233_closure_vectors_bind_real_dependency_identities() {
+    let vectors = parsed_fixture(DEPENDENCY_SELECTION_VECTORS);
+    let closure_vectors = vectors["closure_vectors"]
+        .as_array()
+        .expect("closure vectors are an array");
+    assert_eq!(closure_vectors.len(), 2);
+
+    for vector in closure_vectors {
+        let direct = vector["direct_dependencies"]
+            .as_array()
+            .expect("direct dependencies are an array");
+        let locks = vector["dependency_locks"]
+            .as_array()
+            .expect("dependency locks are an array");
+        assert_eq!(direct.len(), locks.len());
+        for (entry, lock) in direct.iter().zip(locks) {
+            assert_eq!(entry["identity"], lock["identity"]);
+            let base = match lock["base"].as_str().expect("base path is a string") {
+                "fixtures/positive-all-families.json" => parsed_fixture(POSITIVE_ALL_FAMILIES),
+                "fixtures/positive-clause-operations.json" => {
+                    parsed_fixture(POSITIVE_CLAUSE_OPERATIONS)
+                }
+                other => panic!("unknown closure vector base: {other}"),
+            };
+            let selections = lock["dependency_selections"]
+                .as_array()
+                .expect("dependency selections are an array");
+            for selected in selections {
+                assert_eq!(
+                    selected["package_id"]["digest"],
+                    unqualified_jcs_sha256(&base["identity_preimage"]),
+                    "the selected leaf id is the real base package id"
+                );
+            }
+            let mut preimage = base["identity_preimage"].clone();
+            preimage["dependency_selections"] = lock["dependency_selections"].clone();
+            assert_eq!(
+                entry["package_id"]["digest"],
+                unqualified_jcs_sha256(&preimage),
+                "a direct dependency id binds its own direct lock entries"
+            );
+        }
+    }
+
+    let diamond = &closure_vectors[0];
+    assert_eq!(diamond["id"], "diamond-conflict-across-dependency-locks");
+    assert_eq!(
+        diamond["dependency_locks"][0]["dependency_selections"][0]["identity"],
+        diamond["dependency_locks"][1]["dependency_selections"][0]["identity"]
+    );
+    assert_ne!(
+        diamond["dependency_locks"][0]["dependency_selections"][0]["package_id"],
+        diamond["dependency_locks"][1]["dependency_selections"][0]["package_id"]
+    );
+    assert_eq!(
+        diamond["loci"],
+        json!([
+            "/lock/dependency_selections/0/lock/dependency_selections/0",
+            "/lock/dependency_selections/1/lock/dependency_selections/0"
+        ])
+    );
+
+    let reference = &closure_vectors[1];
+    assert_eq!(reference["id"], "transitive-only-dependency-reference");
+    let referenced_id = &reference["dependency_reference"]["package"];
+    assert!(
+        reference["dependency_locks"]
+            .as_array()
+            .expect("dependency locks are an array")
+            .iter()
+            .flat_map(|lock| lock["dependency_selections"]
+                .as_array()
+                .expect("selections are an array"))
+            .any(|selected| &selected["package_id"] == referenced_id)
+    );
+    assert!(
+        reference["direct_dependencies"]
+            .as_array()
+            .expect("direct dependencies are an array")
+            .iter()
+            .all(|direct| &direct["package_id"] != referenced_id)
+    );
+}
+
+#[test]
+#[trace("TC-233", "FR-322-AC-35")]
 fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     let vectors = parsed_fixture(DEPENDENCY_SELECTION_VECTORS);
@@ -5821,6 +6513,12 @@ fn canonical_payload_names() -> BTreeSet<String> {
 /// name written `key`: after its cause list (the rest of the second cell after
 /// its first `;`, and every later cell), whether or not it is canonical.
 fn diagnostic_row_payload_keys(document: &str, code: &str) -> BTreeSet<String> {
+    payload_keys_in(&diagnostic_row_payload_text(document, code))
+}
+
+/// The payload text of the `code` row: the rest of its second cell after the
+/// first `;`, and every later cell.
+fn diagnostic_row_payload_text(document: &str, code: &str) -> String {
     let cells = diagnostic_row(document, code)
         .split('|')
         .skip(2)
@@ -5832,6 +6530,11 @@ fn diagnostic_row_payload_keys(document: &str, code: &str) -> BTreeSet<String> {
     for cell in &cells[1..] {
         payload.push_str(cell);
     }
+    payload
+}
+
+/// Every backticked name in `payload` written `key`:.
+fn payload_keys_in(payload: &str) -> BTreeSet<String> {
     let pieces = payload.split('`').collect::<Vec<_>>();
     pieces
         .iter()
@@ -5845,6 +6548,30 @@ fn diagnostic_row_payload_keys(document: &str, code: &str) -> BTreeSet<String> {
         })
         .map(|(_, name)| (*name).to_owned())
         .collect()
+}
+
+/// The payload keys the `code` row names for one `cause`: the stretch of its
+/// payload text from `or `cause`,` (as in "For `cause`, ...") to the next
+/// cause's; a row of one cause has the whole payload text.
+fn diagnostic_row_cause_payload_keys(
+    document: &str,
+    code: &str,
+    cause: &str,
+    causes: &[&str],
+) -> BTreeSet<String> {
+    let payload = diagnostic_row_payload_text(document, code);
+    if causes.len() == 1 {
+        return payload_keys_in(&payload);
+    }
+    let start_of = |name: &str| payload.find(&format!("or `{name}`,"));
+    let start = start_of(cause).unwrap_or_else(|| panic!("`{code}` payload introduces `{cause}`"));
+    let end = causes
+        .iter()
+        .filter_map(|other| start_of(other))
+        .filter(|at| *at > start)
+        .min()
+        .unwrap_or(payload.len());
+    payload_keys_in(&payload[start..end])
 }
 
 /// `text` with every run of whitespace, line breaks included, made one space.
@@ -6340,10 +7067,7 @@ fn tc_233_operation_vectors_key_every_application_node_of_the_published_packages
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("package nodes are an array");
-    for node in nodes
-        .iter()
-        .filter(|node| !application_terms(&node["body"]).is_empty())
-    {
+    for node in nodes.iter().filter(|node| is_application_node(node)) {
         assert!(
             application_node_is_valid(node, nodes),
             "{} is keyed by its application-node preimage",
@@ -6491,14 +7215,9 @@ fn tc_233_operation_vectors_key_every_application_node_of_the_published_packages
         .expect("nodes");
     let call = family_nodes
         .iter()
-        .position(|node| {
-            node["node_tag"] == "function" && !application_terms(&node["body"]).is_empty()
-        })
+        .position(|node| node["node_tag"] == "function" && is_application_node(node))
         .expect("all-families publishes a function whose body is a call");
-    for node in family_nodes
-        .iter()
-        .filter(|node| !application_terms(&node["body"]).is_empty())
-    {
+    for node in family_nodes.iter().filter(|node| is_application_node(node)) {
         assert!(
             application_node_is_valid(node, family_nodes),
             "all-families application nodes are keyed"
@@ -6729,7 +7448,8 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
     let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
     let mutations = &vectors["operation_mutations"];
-    let package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let mut package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let renames = modelize_legacy_record_reference(&mut package);
     let causes = mutations
         .as_array()
         .expect("mutations are an array")
@@ -6753,11 +7473,20 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
         let base = mutation["base"]
             .as_str()
             .expect("mutation base is a string");
-        let index = operation_vector_node(&package, &vectors, base);
+        let base_digest = operation_vector(&vectors, base)["sha256"]
+            .as_str()
+            .expect("base vector digest is a string");
         assert_eq!(
-            package["semantic_graph"]["nodes"][index]["node_id"]["digest"],
-            mutation["retained_sha256"],
-            "{name} retains exactly its base key"
+            Some(base_digest),
+            mutation["retained_sha256"].as_str(),
+            "{name} records exactly its base vector key"
+        );
+        let current_base_digest = renames.get(base_digest).map_or(base_digest, String::as_str);
+        let index = node_index_by_digest(&package, current_base_digest)
+            .unwrap_or_else(|| panic!("{name} base vector remains in the modelized package"));
+        assert_eq!(
+            package["semantic_graph"]["nodes"][index]["node_id"]["digest"], current_base_digest,
+            "{name} starts from the current key of its base vector"
         );
         let mut node = package["semantic_graph"]["nodes"][index].clone();
         for patch in mutation["patch"]
@@ -6888,6 +7617,30 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
                 );
             }
             Some("semantic") => {
+                if let Some(rekeyed_sha256) = mutation["rekeyed_sha256"].as_str() {
+                    let nodes = candidate["semantic_graph"]["nodes"]
+                        .as_array()
+                        .expect("candidate nodes are an array");
+                    let preimage = application_node_preimage(candidate_node, nodes)
+                        .unwrap_or_else(|| panic!("{name} has an application-node preimage"));
+                    assert_eq!(
+                        preimage, mutation["rekeyed_preimage"],
+                        "{name} rekeys from the exact expected application-node preimage"
+                    );
+                    assert_eq!(
+                        unqualified_jcs_sha256(&preimage),
+                        rekeyed_sha256,
+                        "{name} expected preimage has its recorded JCS digest"
+                    );
+                    assert_eq!(
+                        candidate_node["node_id"]["digest"], rekeyed_sha256,
+                        "{name} rekeys to exactly its expected identity digest"
+                    );
+                    assert_ne!(
+                        candidate["package_id"], package["package_id"],
+                        "{name} changes the package id"
+                    );
+                }
                 let expected = OperationRefusal::from_cause(
                     mutation["expected_cause"].as_str().expect("expected cause"),
                 )
@@ -7053,11 +7806,10 @@ fn tc_233_operation_and_declaration_causes_pair_with_one_catalogued_code() {
 }
 
 fn published_v2_packages() -> [(&'static str, Value); 6] {
+    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    modelize_legacy_record_reference(&mut operation);
     [
-        (
-            "operation-identities",
-            parsed_fixture(POSITIVE_OPERATION_IDENTITIES),
-        ),
+        ("operation-identities", operation),
         ("all-families", parsed_fixture(POSITIVE_ALL_FAMILIES)),
         (
             "clause-operations",
@@ -7357,6 +8109,45 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
     }
 }
 
+/// FR-322-AC-81: a name is unique within its namespace. A unit, a dimension
+/// and a record that carry one name coexist; two units of one name refuse
+/// `ambiguous_declaration`/`ambiguous-name` at the later node.
+#[trace("TC-233", "FR-322-AC-81")]
+#[test]
+fn tc_233_declaration_names_are_unique_per_namespace() {
+    let node = |id: &str, tag: &str, form: &str| {
+        json!({
+            "node_id": walk_id(id),
+            "node_tag": tag,
+            "semantic_form": form,
+            "declaration": {"qualified_name": ["ms"]}
+        })
+    };
+    let package = |nodes: Vec<Value>| json!({"semantic_graph": {"nodes": nodes}});
+    let coexisting = package(vec![
+        node("a", "scalar_type", "unit"),
+        node("b", "composite_type", "record"),
+        node("c", "scalar_type", "dimension"),
+    ]);
+    assert_eq!(package_declaration_refusal(&coexisting), Ok(()));
+    let twice = package(vec![
+        node("a", "scalar_type", "unit"),
+        node("b", "scalar_type", "unit"),
+    ]);
+    assert_eq!(
+        package_declaration_refusal(&twice),
+        Err((DeclarationRefusal::AmbiguousName, walk_id("b")))
+    );
+    let two_types = package(vec![
+        node("a", "composite_type", "record"),
+        node("b", "scalar_type", "enum"),
+    ]);
+    assert_eq!(
+        package_declaration_refusal(&two_types),
+        Err((DeclarationRefusal::AmbiguousName, walk_id("b")))
+    );
+}
+
 /// Index of the node whose root application names `identity`.
 fn node_with_operation(package: &Value, identity: &str) -> usize {
     package["semantic_graph"]["nodes"]
@@ -7627,10 +8418,7 @@ fn tc_233_a_stale_node_key_precedes_declaration_refusals() {
     ));
     let other = nodes
         .iter()
-        .position(|node| {
-            node["node_id"] != nodes[call]["node_id"]
-                && !application_terms(&node["body"]).is_empty()
-        })
+        .position(|node| node["node_id"] != nodes[call]["node_id"] && is_application_node(node))
         .expect("a second application-bearing node is published");
     assert_ne!(other, call);
     ambiguous["semantic_graph"]["nodes"][other]["semantic_type"]["digest"] = json!("a0".repeat(32));
@@ -7681,6 +8469,7 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
                 "occurrence-count-exceeded",
                 "diagnostic-count-exceeded",
                 "work-budget-exceeded",
+                "rational-bits-exceeded",
             ],
         ),
         ("duplicate_selection", &["duplicate-identity"]),
@@ -7706,8 +8495,168 @@ fn tc_233_stage_limit_and_duplicate_selection_cause_sets_are_closed() {
         (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
     ] {
         assert!(
-            diagnostic_row_payload_keys(document, "stage_limit_exceeded").contains("setting"),
-            "{label} `stage_limit_exceeded` row names the `setting` payload key"
+            ["kind", "bound", "actual", "setting"]
+                .iter()
+                .all(
+                    |key| diagnostic_row_payload_keys(document, "stage_limit_exceeded")
+                        .contains(*key)
+                ),
+            "{label} `stage_limit_exceeded` row names `kind`, `bound`, `actual` and `setting`"
+        );
+    }
+}
+
+/// The `resource_exhausted`, `cancelled` and `conflicting_declaration` rows of
+/// native-diagnostics and FR-272 list exactly the same closed causes, and each
+/// cause names exactly its payload keys in both, every key a canonical FR-272
+/// payload name (FR-272-AC-16, FR-272-AC-17).
+#[trace("TC-233", "FR-272-AC-16", "FR-272-AC-17")]
+#[test]
+fn tc_233_resource_exhausted_and_cancelled_rows_agree() {
+    type CauseKeys = (&'static str, &'static [&'static str]);
+    let expected: [(&str, &[CauseKeys]); 3] = [
+        (
+            "conflicting_declaration",
+            &[("duplicate-declaration", &["subject", "related"])],
+        ),
+        (
+            "resource_exhausted",
+            &[
+                (
+                    "insufficient-next-charge",
+                    &[
+                        "stage",
+                        "accounting_contract",
+                        "limit_kind",
+                        "limit",
+                        "consumed",
+                        "next_charge",
+                        "charge_point",
+                    ],
+                ),
+                ("allocation-failed", &["requested"]),
+                ("reservation-size-overflow", &["upstream"]),
+                (
+                    "intake-limit-exceeded",
+                    &["kind", "bound", "actual", "setting"],
+                ),
+                (
+                    "input-bytes-exceeded",
+                    &["kind", "bound", "actual", "setting"],
+                ),
+            ],
+        ),
+        (
+            "cancelled",
+            &[(
+                "caller-cancelled",
+                &[
+                    "stage",
+                    "accounting_contract",
+                    "consumed",
+                    "charge_point",
+                    "related",
+                ],
+            )],
+        ),
+    ];
+    diagnostic_row(DIAGNOSTIC_CODE_VOCABULARY, "conflicting_declaration");
+    let canonical = canonical_payload_names();
+    for (code, per_cause) in expected {
+        let names = per_cause.iter().map(|(c, _)| *c).collect::<Vec<_>>();
+        let causes = names
+            .iter()
+            .map(|c| (*c).to_owned())
+            .collect::<BTreeSet<_>>();
+        for (document, label) in [
+            (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+            (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+        ] {
+            assert_eq!(
+                diagnostic_row_causes(document, code),
+                causes,
+                "{label} `{code}` row lists exactly its causes"
+            );
+            for (cause, keys) in per_cause {
+                let keys = keys
+                    .iter()
+                    .map(|k| (*k).to_owned())
+                    .collect::<BTreeSet<_>>();
+                assert_eq!(
+                    diagnostic_row_cause_payload_keys(document, code, cause, &names),
+                    keys,
+                    "{label} `{code}` row names exactly the payload keys of `{cause}`"
+                );
+                assert!(
+                    keys.is_subset(&canonical),
+                    "`{cause}` payload keys are canonical FR-272 payload names"
+                );
+            }
+        }
+    }
+}
+
+/// The `runtime_invariant` rows of native-diagnostics and FR-272 list exactly
+/// `established-invariant-broken` and name `kind`, `bound` and `required` for
+/// the `identity-byte-bound-reached` invariant (FR-272-AC-18); the `stage`
+/// rule names a label per limits type in the `resource_exhausted` and
+/// `cancelled` rows and in value-accounting (FR-272-AC-19).
+#[trace("TC-233", "FR-272-AC-18", "FR-272-AC-19")]
+#[test]
+fn tc_233_runtime_invariant_payload_and_stage_rule() {
+    let canonical = canonical_payload_names();
+    for (document, label) in [
+        (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+        (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+    ] {
+        assert_eq!(
+            diagnostic_row_causes(document, "runtime_invariant"),
+            BTreeSet::from(["established-invariant-broken".to_owned()]),
+            "{label} `runtime_invariant` row lists exactly its cause"
+        );
+        let keys = diagnostic_row_payload_keys(document, "runtime_invariant");
+        let expected = ["kind", "bound", "required"]
+            .iter()
+            .map(|k| (*k).to_owned())
+            .collect::<BTreeSet<_>>();
+        assert_eq!(
+            keys, expected,
+            "{label} row names exactly the identity payload keys"
+        );
+        assert!(
+            keys.is_subset(&canonical),
+            "the keys are canonical payload names"
+        );
+        let invariant_text = diagnostic_row_payload_text(document, "runtime_invariant");
+        for kind in ["`canonical-bytes`", "`input-bytes`", "`object-bytes`"] {
+            assert!(
+                invariant_text.contains(kind),
+                "{label} lists the encoder limit kind {kind}"
+            );
+        }
+        assert!(
+            diagnostic_row_payload_text(document, "runtime_invariant")
+                .contains("`identity-byte-bound-reached`"),
+            "{label} ties the keys to the `identity-byte-bound-reached` invariant"
+        );
+        for code in ["resource_exhausted", "cancelled"] {
+            let payload = diagnostic_row_payload_text(document, code);
+            assert!(
+                payload.contains("limits type assigns"),
+                "{label} `{code}` row takes `stage` from the limits type"
+            );
+        }
+        let payload = diagnostic_row_payload_text(document, "resource_exhausted");
+        for label_value in ["`model-normalization`", "`population-admission`"] {
+            assert!(payload.contains(label_value), "{label} names {label_value}");
+        }
+    }
+    let accounting = one_line(VALUE_ACCOUNTING);
+    for label_value in ["`model-normalization`", "`population-admission`"] {
+        assert!(
+            accounting.contains(&format!("{label_value} for every"))
+                || accounting.contains(&format!("and {label_value} for every")),
+            "value-accounting assigns {label_value} to a limits type"
         );
     }
 }
@@ -7803,6 +8752,63 @@ const DIAGNOSTIC_CODE_VOCABULARY: &str =
 fn tc_233_code_vocabulary_follows_the_catalog() {
     for (code, _, _) in VALUE_REFUSAL_ROWS {
         diagnostic_row(DIAGNOSTIC_CODE_VOCABULARY, code);
+    }
+}
+
+/// The FR-322 reader codes that FR-271-AC-7 and FR-272-AC-22 catalogue.
+const READER_CODES: [&str; 8] = [
+    "unknown_contract_version",
+    "malformed_wire",
+    "duplicate_member",
+    "unknown_member",
+    "digest_domain_mismatch",
+    "unknown_required_capability",
+    "invalid_semantic_graph",
+    "unsupported_node_tag",
+];
+
+/// FR-271-AC-7: the values table has exactly one row for each reader code.
+#[trace("TC-233", "FR-271-AC-7")]
+#[test]
+fn tc_233_reader_codes_have_one_vocabulary_row_each() {
+    for code in READER_CODES {
+        diagnostic_row(DIAGNOSTIC_CODE_VOCABULARY, code);
+    }
+}
+
+/// FR-272-AC-22: the native-diagnostics row and the FR-272 row of each reader
+/// code list no cause variant and name `locus` and `document_pointer`;
+/// `unknown_contract_version` also names `contract_version`; `locus` and
+/// `contract_version` are canonical payload names.
+#[trace("TC-233", "FR-272-AC-22")]
+#[test]
+fn tc_233_reader_code_rows_list_no_cause_and_name_their_payload() {
+    let payload_names = canonical_payload_names();
+    assert!(payload_names.contains("locus"), "`locus` is canonical");
+    assert!(
+        payload_names.contains("contract_version"),
+        "`contract_version` is canonical"
+    );
+    for code in READER_CODES {
+        for (document, name) in [
+            (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+            (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+        ] {
+            assert!(
+                diagnostic_row_causes(document, code).is_empty(),
+                "{name} `{code}` row lists no cause variant"
+            );
+            let row = diagnostic_row(document, code);
+            assert!(
+                row.contains("`locus`") && row.contains("`document_pointer`"),
+                "{name} `{code}` row names `locus` and `document_pointer`"
+            );
+            assert_eq!(
+                row.contains("`contract_version`"),
+                code == "unknown_contract_version",
+                "{name} `{code}` row names `contract_version` only for unknown_contract_version"
+            );
+        }
     }
 }
 
@@ -8625,13 +9631,12 @@ fn tc_233_the_full_reader_resolves_frame_anchor_and_clause_member_names() {
     );
 }
 
-/// FR-342: one `operation_anchor` node and one `frame` node stand for one
-/// (declaring object type, operation name) (FR-342-AC-6); a duplicate
-/// anchor for the same pair, and a frame bound by two different anchors,
-/// are refused, not admitted.
+/// FR-342-AC-6: a duplicate anchor for the same (declaring object type,
+/// operation name) pair is refused; two anchors of one context whose declared
+/// operations have equal frames reference one frame node and are admitted.
 #[trace("TC-233", "FR-342-AC-6")]
 #[test]
-fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
+fn tc_233_duplicate_anchors_are_refused_and_a_shared_frame_is_admitted() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
     let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
     assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
@@ -8654,7 +9659,17 @@ fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
         "a second anchor for the same (context, operation) pair is refused, not admitted"
     );
 
+    // A second operation of the same context, declared by the model, with an
+    // anchor that references the same frame node: admitted.
     let mut shared_frame = package.clone();
+    let mut bindings = clause_model_bindings(0);
+    let operations = bindings["domain_package"]["object_types"][0]["operations"]
+        .as_array_mut()
+        .expect("operations");
+    let mut other = operations[0].clone();
+    other["name"] = json!("otherAttempt");
+    operations.push(other);
+    shared_frame["model_bindings"] = bindings;
     let mut second_anchor = shared_frame["semantic_graph"]["nodes"][anchor_index].clone();
     second_anchor["node_id"] = node_ref_digest(&repeated_digest("b7"));
     second_anchor["body"]["members"][1]["value"]["value"] = json!("otherAttempt");
@@ -8662,22 +9677,11 @@ fn tc_233_duplicate_anchors_and_shared_frames_are_refused() {
         .as_array_mut()
         .expect("nodes")
         .push(second_anchor);
-    let renames = rekey_stale_nodes(&mut shared_frame);
-    // The second anchor in node-id order is refused.
-    let later_anchor = [
-        anchor_id,
-        renamed_locus(&renames, &node_ref_digest(&repeated_digest("b7"))),
-    ]
-    .into_iter()
-    .max_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()))
-    .expect("two anchors");
+    rekey_stale_nodes(&mut shared_frame);
     assert_eq!(
         read_package_semantics(&shared_frame, &catalog),
-        Err(ReadRefusal::State(
-            StateRefusal::AmbiguousDeclaration,
-            later_anchor
-        )),
-        "a frame node bound by two different anchors is refused, not admitted"
+        Ok(()),
+        "two anchors of one context that reference one frame node are admitted"
     );
 }
 
@@ -8845,10 +9849,7 @@ fn tc_395_union_nodes_fixture_is_a_closed_v2_package_with_member_ordered_arms() 
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("semantic graph nodes are an array");
-    for node in nodes
-        .iter()
-        .filter(|node| !application_terms(&node["body"]).is_empty())
-    {
+    for node in nodes.iter().filter(|node| is_application_node(node)) {
         assert!(
             application_node_is_valid(node, nodes),
             "{} keys its application preimage and lists exactly its references",
@@ -8890,6 +9891,72 @@ fn tc_395_union_nodes_fixture_is_a_closed_v2_package_with_member_ordered_arms() 
         arms, shape,
         "a case's arms follow the union's member declaration order and payload arities"
     );
+}
+
+#[trace("TC-395")]
+#[test]
+fn tc_395_value_and_nullary_union_values_use_application_node_keys() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_UNION_NODES);
+    let indexes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("semantic graph nodes are an array")
+        .iter()
+        .enumerate()
+        .filter_map(|(index, node)| {
+            (node["node_tag"] == "value" && node["semantic_form"] == "union_value").then_some(index)
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(
+        indexes.len(),
+        2,
+        "the authentic fixture has payload and nullary union values"
+    );
+
+    let mut current = package.clone();
+    for &index in &indexes {
+        rekey_application_node(&mut current, index);
+    }
+    assert_eq!(
+        read_package_semantics(&current, &catalog),
+        Ok(()),
+        "payload and nullary union values are admitted after graph/projection rekey"
+    );
+    for &index in &indexes {
+        let current_digest = current["semantic_graph"]["nodes"][index]["node_id"]["digest"]
+            .as_str()
+            .expect("current node key is a digest");
+        let stale_digest =
+            match current["semantic_graph"]["nodes"][index]["body"]["members"][0]["name"]
+                .as_str()
+                .expect("union member name is a string")
+            {
+                "Rect" => "e50bf8e0e17f7cf14ce559bdfe07c5a6f7baafb0820b0b2fdc2db02ed34c385f",
+                "Empty" => "d09135f93f7eaef2b22d256039978e7dcff7133bc85710b2bdceba5777bb9a60",
+                member => panic!("unexpected union member {member}"),
+            };
+        assert_ne!(
+            current_digest, stale_digest,
+            "the prior fixture key is stale under FR-322"
+        );
+        let mut stale = serde_json::from_str::<Value>(
+            &serde_json::to_string(&current)
+                .expect("current package serializes")
+                .replace(current_digest, stale_digest),
+        )
+        .expect("stale package parses");
+        refresh_package_id(&mut stale);
+        let expected = stale["semantic_graph"]["nodes"][index]["node_id"].clone();
+        assert_eq!(
+            stale["identity_preimage"]["identity_projection"][index]["node_id"], expected,
+            "the stale candidate also rekeys its identity projection"
+        );
+        assert_eq!(
+            read_package_semantics(&stale, &catalog),
+            Err(ReadRefusal::StaleNodeKey(expected)),
+            "a stale payload or nullary union value key is refused with stale-node-key"
+        );
+    }
 }
 
 #[trace("TC-395", "FR-440-AC-1")]
@@ -9477,7 +10544,7 @@ fn tc_395_cycles_through_records_tuples_and_unions_are_recursion_leaves() {
 }
 
 /// The V2 Diagnostic schema admits each #181 cause only with its codes.
-#[trace("TC-233", "FR-322-AC-47")]
+#[trace("TC-233", "FR-322-AC-47", "FR-322-AC-78")]
 #[test]
 fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes() {
     let schema = parsed_fixture(SCHEMA);
@@ -9486,7 +10553,7 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
         &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
         "diagnostic codes",
     );
-    let pairings: [(&str, &[&str]); 4] = [
+    let pairings: [(&str, &[&str]); 6] = [
         ("type-mismatch", &["ill_typed"]),
         (
             "missing-selection",
@@ -9500,6 +10567,8 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
             "wrong-selection-role",
             &["unknown_language", "unknown_edition", "unknown_profile"],
         ),
+        ("unsupported-wire", &["unknown_wire"]),
+        ("unsupported-feature", &["unknown_required_feature"]),
     ];
     for (cause, admitted) in pairings {
         for code in &codes {
@@ -9510,6 +10579,42 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
                 "the Diagnostic schema pairs {cause} with `{code}` exactly when FR-322 lists it"
             );
         }
+    }
+}
+
+/// FR-322-AC-78: `unsupported-wire` and `unsupported-feature` appear in the
+/// FR-272 row of `unknown_wire` and `unknown_required_feature` respectively and
+/// in no other FR-272 row, and `unknown_contract_version` and
+/// `unknown_required_capability` list no cause. The schema half of the pairing
+/// is checked by the FR-322-AC-47 test above.
+#[trace("TC-233", "FR-322-AC-78")]
+#[test]
+fn tc_233_unsupported_wire_and_feature_causes_appear_in_their_owner_row_only() {
+    let codes: Vec<String> = TYPED_DIAGNOSTIC_CAUSE
+        .lines()
+        .filter_map(|line| line.split('|').nth(1))
+        .map(str::trim)
+        .filter(|cell| cell.starts_with('`') && cell.ends_with('`') && cell.len() > 2)
+        .map(|cell| cell.trim_matches('`').to_owned())
+        .collect();
+    for (cause, owner) in [
+        ("unsupported-wire", "unknown_wire"),
+        ("unsupported-feature", "unknown_required_feature"),
+    ] {
+        for code in &codes {
+            let lists = diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, code).contains(cause);
+            assert_eq!(
+                lists,
+                code == owner,
+                "the FR-272 `{code}` row lists {cause} only when it is `{owner}`"
+            );
+        }
+    }
+    for reader in ["unknown_contract_version", "unknown_required_capability"] {
+        assert!(
+            diagnostic_row_causes(TYPED_DIAGNOSTIC_CAUSE, reader).is_empty(),
+            "the FR-272 `{reader}` row lists no cause"
+        );
     }
 }
 
@@ -10431,15 +11536,14 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
     let mutations = adverse["derived_shape_key_mutations"]
         .as_array()
         .expect("derived-shape mutations are an array");
+    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    modelize_legacy_record_reference(&mut operation);
     let bases = BTreeMap::from([
         (
             "positive-all-families",
             parsed_fixture(POSITIVE_ALL_FAMILIES),
         ),
-        (
-            "positive-operation-identities",
-            parsed_fixture(POSITIVE_OPERATION_IDENTITIES),
-        ),
+        ("positive-operation-identities", operation),
         (
             "positive-recursive-records",
             parsed_fixture(POSITIVE_RECURSIVE_RECORDS),
@@ -10531,6 +11635,559 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
     }
 }
 
+/// FR-322-AC-62's three named derived-form mutations.  Each candidate stays
+/// schema-valid and changes only the semantic preimage.  Retaining the old
+/// key therefore names a stale node; replacing it with the recomputed digest
+/// makes the key current; this test does not claim admission of a malformed
+/// recomputed form.  Full-package retained-key refusals for `reference` are
+/// exercised by `tc_233_tampered_derived_shape_nodes_refuse_stale_node_key`;
+/// this test sends the `model_population` and `compound_unit` cases through
+/// that reader as well.
+#[trace("FR-322-AC-62", "TC-233")]
+#[test]
+fn tc_322_derived_form_key_mutations() {
+    type KeyMutation = (&'static str, &'static str, fn(&mut Value));
+
+    let schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let package_schema =
+        jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let cases: [KeyMutation; 3] = [
+        (
+            "RM-REF-TARGET",
+            r#"{"body":{"members":[{"target":{"digest":"6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b","domain":"quire.checked-semantic-node/v1"},"term":"reference"}],"term":"aggregate"},"declaration":null,"node_tag":"composite_type","recursion":null,"semantic_form":"reference","semantic_type":null,"version":"quire.structural-node/v1"}"#,
+            |candidate: &mut Value| {
+                candidate["body"]["members"][0]["target"]["digest"] =
+                    json!("6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596c");
+                candidate["body"]["members"][0]["target"]["domain"] =
+                    json!("quire.checked-semantic-node/v1");
+                candidate["body"]["members"][0]["target"]["digest"] =
+                    json!("b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5");
+            },
+        ),
+        (
+            "RM-POP-MAX",
+            r#"{"body":{"members":[{"name":"max","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"3","value_kind":"integer"}}],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#,
+            |candidate: &mut Value| {
+                candidate["body"]["members"][0]["value"]["value"] = json!("5");
+            },
+        ),
+        (
+            "RM-CU-ORDER",
+            r#"{"body":{"members":[{"members":[{"name":"unit","term":"binding","value":{"target":{"digest":"79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4","domain":"quire.checked-semantic-node/v1"},"term":"reference"}},{"name":"exponent","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"1","value_kind":"integer"}}],"term":"aggregate"},{"members":[{"name":"unit","term":"binding","value":{"target":{"digest":"d0f0c5d24d6accb2f1d9afff7c6cdda3143df382e50af4bda0704d48c67ed998","domain":"quire.checked-semantic-node/v1"},"term":"reference"}},{"name":"exponent","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"-1","value_kind":"integer"}}],"term":"aggregate"}],"term":"aggregate"},"declaration":null,"node_tag":"scalar_type","recursion":null,"semantic_form":"compound_unit","semantic_type":null,"version":"quire.structural-node/v1"}"#,
+            |candidate: &mut Value| {
+                candidate["body"]["members"]
+                    .as_array_mut()
+                    .unwrap()
+                    .reverse();
+            },
+        ),
+    ];
+    for (name, source, mutate) in cases {
+        let base = parsed_fixture(source);
+        let base_key = unqualified_jcs_sha256(&base);
+        let wire_node = |preimage: &Value, key: &str| {
+            let node_id = json!({
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": key
+            });
+            json!({
+                "node_id": node_id,
+                "schema_version": "quire.checked-semantic-graph/v2",
+                "node_tag": preimage["node_tag"],
+                "semantic_form": preimage["semantic_form"],
+                "semantic_type": if preimage["semantic_type"].is_null() {
+                    node_id
+                } else {
+                    preimage["semantic_type"].clone()
+                },
+                "dependencies": [],
+                "occurrences": [{"role": "type", "ordinal": 0}],
+                "body": preimage["body"]
+            })
+        };
+        assert!(
+            schema.is_valid(&wire_node(&base, &base_key)),
+            "{name}: base wire node schema"
+        );
+        let mut mutated = base.clone();
+        mutate(&mut mutated);
+        let mutated_key = unqualified_jcs_sha256(&mutated);
+        assert!(
+            schema.is_valid(&wire_node(&mutated, &mutated_key)),
+            "{name}: mutated wire node schema"
+        );
+        assert_ne!(base_key, mutated_key, "{name}: mutation changes the key");
+        assert_eq!(
+            base_key,
+            unqualified_jcs_sha256(&base),
+            "{name}: retained key"
+        );
+        assert_eq!(
+            mutated_key,
+            unqualified_jcs_sha256(&mutated),
+            "{name}: recomputed key"
+        );
+
+        if matches!(name, "RM-POP-MAX" | "RM-CU-ORDER") {
+            let mut package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+            assert_eq!(
+                read_package_semantics(&package, &catalog),
+                Ok(()),
+                "{name}: reader admits the unmodified package"
+            );
+            append_rekeyed_structural_node(&mut package, wire_node(&mutated, &mutated_key));
+            let node_index = package["semantic_graph"]["nodes"]
+                .as_array()
+                .expect("reader fixture nodes are an array")
+                .len()
+                - 1;
+            replace_node_field_in_graph_and_projection(
+                &mut package,
+                node_index,
+                "/node_id/digest",
+                json!(base_key),
+            );
+            package["identity_preimage"] = derive_identity_preimage(&package);
+            refresh_package_id(&mut package);
+
+            let retained_node_id =
+                package["semantic_graph"]["nodes"][node_index]["node_id"].clone();
+            assert!(
+                package_schema.is_valid(&package),
+                "{name}: retained-key package remains schema-valid"
+            );
+            assert_eq!(
+                read_package_semantics(&package, &catalog),
+                Err(ReadRefusal::StaleNodeKey(retained_node_id)),
+                "{name}: the package reader refuses the retained key"
+            );
+        }
+    }
+}
+
+#[trace("FR-322-AC-62", "TC-233")]
+#[test]
+fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let mut base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    modelize_legacy_record_reference(&mut base);
+
+    let mut wrong_reference = base.clone();
+    let reference_index = wrong_reference["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .position(|node| {
+            node["node_tag"] == "composite_type" && node["semantic_form"] == "reference"
+        })
+        .unwrap();
+    let integer_id = wrong_reference["semantic_graph"]["nodes"][16]["node_id"].clone();
+    replace_node_field_in_graph_and_projection(
+        &mut wrong_reference,
+        reference_index,
+        "/body/members/0/target",
+        integer_id.clone(),
+    );
+    replace_node_field_in_graph_and_projection(
+        &mut wrong_reference,
+        reference_index,
+        "/dependencies",
+        json!([integer_id]),
+    );
+    rekey_stale_nodes(&mut wrong_reference);
+    assert_eq!(
+        read_package_semantics(&wrong_reference, &catalog),
+        Err(ReadRefusal::GraphShape(
+            wrong_reference["semantic_graph"]["nodes"][reference_index]["node_id"].clone()
+        )),
+        "recomputed reference target is rejected"
+    );
+
+    for (label, replacement_index) in [("function target", 11_usize), ("value target", 27)] {
+        let mut candidate = base.clone();
+        let index = candidate["semantic_graph"]["nodes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .position(|node| {
+                node["node_tag"] == "composite_type" && node["semantic_form"] == "reference"
+            })
+            .unwrap();
+        let target = candidate["semantic_graph"]["nodes"][replacement_index]["node_id"].clone();
+        replace_node_field_in_graph_and_projection(
+            &mut candidate,
+            index,
+            "/body/members/0/target",
+            target.clone(),
+        );
+        replace_node_field_in_graph_and_projection(
+            &mut candidate,
+            index,
+            "/dependencies",
+            json!([target]),
+        );
+        rekey_stale_nodes(&mut candidate);
+        assert_eq!(
+            read_package_semantics(&candidate, &catalog),
+            Err(ReadRefusal::GraphShape(
+                candidate["semantic_graph"]["nodes"][index]["node_id"].clone()
+            )),
+            "recomputed {label} is rejected"
+        );
+    }
+
+    let mut wrong_population = base.clone();
+    let mut population_reference = wrong_population["semantic_graph"]["nodes"][43].clone();
+    population_reference["body"]["members"][0]["target"] =
+        wrong_population["semantic_graph"]["nodes"][58]["node_id"].clone();
+    population_reference["dependencies"] =
+        json!([wrong_population["semantic_graph"]["nodes"][58]["node_id"]]);
+    append_rekeyed_structural_node(&mut wrong_population, population_reference);
+    let population_reference_id = wrong_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
+    let mut population_set = wrong_population["semantic_graph"]["nodes"][42].clone();
+    population_set["body"]["members"][0]["target"] = population_reference_id.clone();
+    population_set["dependencies"] = json!([population_reference_id]);
+    append_rekeyed_structural_node(&mut wrong_population, population_set);
+    let population_set_id = wrong_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
+    let mut population = wrong_population["semantic_graph"]["nodes"][51].clone();
+    population["semantic_form"] = json!("model_population");
+    population["semantic_type"] = population_set_id.clone();
+    population["body"] = json!({
+        "term": "aggregate",
+        "members": [{
+            "name": "max",
+            "term": "binding",
+            "value": {
+                "term": "literal",
+                "type": wrong_population["semantic_graph"]["nodes"][16]["node_id"],
+                "value": "-1",
+                "value_kind": "integer"
+            }
+        }]
+    });
+    population["dependencies"] = json!([
+        wrong_population["semantic_graph"]["nodes"][16]["node_id"],
+        population_set_id
+    ]);
+    append_rekeyed_structural_node(&mut wrong_population, population);
+    let population_id = wrong_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
+    assert_eq!(
+        read_package_semantics(&wrong_population, &catalog),
+        Err(ReadRefusal::GraphShape(population_id)),
+        "recomputed negative population bound is rejected"
+    );
+
+    let mut positive_population = wrong_population.clone();
+    let positive_index = positive_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    positive_population["semantic_graph"]["nodes"][positive_index]["body"]["members"][0]["value"]
+        ["value"] = json!("3");
+    positive_population["identity_preimage"]["identity_projection"][positive_index]["body"]["members"]
+        [0]["value"]["value"] = json!("3");
+    let positive_preimage =
+        structural_node_preimage(&positive_population["semantic_graph"]["nodes"][positive_index])
+            .unwrap();
+    let positive_digest = unqualified_jcs_sha256(&positive_preimage);
+    positive_population["semantic_graph"]["nodes"][positive_index]["node_id"]["digest"] =
+        json!(positive_digest);
+    positive_population["identity_preimage"]["identity_projection"][positive_index]["node_id"]["digest"] =
+        json!(positive_digest);
+    positive_population["identity_preimage"] = derive_identity_preimage(&positive_population);
+    refresh_package_id(&mut positive_population);
+    assert_eq!(
+        read_package_semantics(&positive_population, &catalog),
+        Ok(()),
+        "Set<Reference<Model>> population with nonnegative max is admitted"
+    );
+
+    let mut arbitrary_set_population = wrong_population.clone();
+    let population_index = arbitrary_set_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    arbitrary_set_population["semantic_graph"]["nodes"][population_index]["body"]["members"][0]["value"]
+        ["value"] = json!("3");
+    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["body"]
+        ["members"][0]["value"]["value"] = json!("3");
+    let integer_set = arbitrary_set_population["semantic_graph"]["nodes"][42].clone();
+    let integer_id = arbitrary_set_population["semantic_graph"]["nodes"][16]["node_id"].clone();
+    let mut integer_set = integer_set;
+    integer_set["body"]["members"][0]["target"] = integer_id.clone();
+    integer_set["dependencies"] = json!([integer_id.clone()]);
+    append_rekeyed_structural_node(&mut arbitrary_set_population, integer_set);
+    let integer_set_id = arbitrary_set_population["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
+    arbitrary_set_population["semantic_graph"]["nodes"][population_index]["semantic_type"] =
+        integer_set_id.clone();
+    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["semantic_type"] =
+        integer_set_id;
+    arbitrary_set_population["semantic_graph"]["nodes"][population_index]["dependencies"] =
+        json!([integer_id]);
+    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["dependencies"] =
+        arbitrary_set_population["semantic_graph"]["nodes"][population_index]["dependencies"]
+            .clone();
+    let population_preimage = structural_node_preimage(
+        &arbitrary_set_population["semantic_graph"]["nodes"][population_index],
+    )
+    .unwrap();
+    let population_digest = unqualified_jcs_sha256(&population_preimage);
+    arbitrary_set_population["semantic_graph"]["nodes"][population_index]["node_id"]["digest"] =
+        json!(population_digest);
+    arbitrary_set_population["identity_preimage"]["identity_projection"][population_index]["node_id"]
+        ["digest"] = json!(population_digest);
+    arbitrary_set_population["identity_preimage"] =
+        derive_identity_preimage(&arbitrary_set_population);
+    refresh_package_id(&mut arbitrary_set_population);
+    assert_eq!(
+        read_package_semantics(&arbitrary_set_population, &catalog),
+        Err(ReadRefusal::GraphShape(
+            arbitrary_set_population["semantic_graph"]["nodes"][population_index]["node_id"]
+                .clone()
+        )),
+        "population over an arbitrary set is rejected"
+    );
+
+    // Use the published nominal roots and the exact FR-094 U2 body. Nominal
+    // roots are targetless and carry their dimension key as semantic_type;
+    // they are not self-typed structural unit fixtures.
+    let mut actual_u2 = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
+    let metre = actual_u2["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|node| {
+            node["node_id"]["digest"]
+                == "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
+        })
+        .expect("published unit-metre root")
+        .clone();
+    let mut second = metre.clone();
+    second["node_id"]["digest"] =
+        json!("d0f0c5d24d6accb2f1d9afff7c6cdda3143df382e50af4bda0704d48c67ed998");
+    second["semantic_type"]["digest"] =
+        json!("628777f8df3c2700593d56dc20fb110640214dd09bc6cb961d802fdb9b7f6077");
+    second["declaration"]["qualified_name"] = json!(["Example", "second"]);
+    second["nominal_identity_preimage"]["qualified_declaration"] = json!(["Example", "second"]);
+    second["nominal_identity_preimage"]["dimension_node_id"]["digest"] =
+        json!("628777f8df3c2700593d56dc20fb110640214dd09bc6cb961d802fdb9b7f6077");
+    second["dependencies"] = json!([second["semantic_type"].clone()]);
+    let mut second_projection = second.clone();
+    second_projection
+        .as_object_mut()
+        .unwrap()
+        .remove("occurrences");
+    actual_u2["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(second.clone());
+    actual_u2["identity_preimage"]["identity_projection"]
+        .as_array_mut()
+        .unwrap()
+        .push(second_projection);
+    let metre_source_map = actual_u2["source_map"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["node_id"] == metre["node_id"])
+        .expect("metre declaration has a source-map row")
+        .clone();
+    let mut second_source_map = metre_source_map.clone();
+    second_source_map["node_id"] = second["node_id"].clone();
+    actual_u2["source_map"]
+        .as_array_mut()
+        .unwrap()
+        .push(second_source_map);
+    actual_u2["identity_preimage"] = derive_identity_preimage(&actual_u2);
+    refresh_package_id(&mut actual_u2);
+
+    let metre_id = metre["node_id"].clone();
+    let second_id = json!({"domain": "quire.checked-semantic-node/v1", "digest": "d0f0c5d24d6accb2f1d9afff7c6cdda3143df382e50af4bda0704d48c67ed998"});
+    let compound = json!({
+        "node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "0000000000000000000000000000000000000000000000000000000000000000"},
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "scalar_type",
+        "semantic_form": "compound_unit",
+        "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "0000000000000000000000000000000000000000000000000000000000000000"},
+        "dependencies": [metre_id, second_id],
+        "occurrences": [{"role": "type", "ordinal": 0}],
+        "body": {"term": "aggregate", "members": [
+            {"term": "aggregate", "members": [
+                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": metre["node_id"]}},
+                {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"}, "value": "1", "value_kind": "integer"}}
+            ]},
+            {"term": "aggregate", "members": [
+                {"name": "unit", "term": "binding", "value": {"term": "reference", "target": second_id}},
+                {"name": "exponent", "term": "binding", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"}, "value": "-1", "value_kind": "integer"}}
+            ]}
+        ]},
+    });
+    append_rekeyed_structural_node(&mut actual_u2, compound);
+    let actual_u2_id = actual_u2["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .last()
+        .unwrap()["node_id"]
+        .clone();
+    let mut compound_source_map = metre_source_map;
+    compound_source_map["node_id"] = actual_u2_id.clone();
+    compound_source_map["role"] = json!("type");
+    actual_u2["source_map"]
+        .as_array_mut()
+        .unwrap()
+        .push(compound_source_map);
+    for node in actual_u2["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .rev()
+        .take(2)
+    {
+        let occurrence = &node["occurrences"][0];
+        assert!(
+            actual_u2["source_map"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|entry| {
+                    entry["node_id"] == node["node_id"]
+                        && entry["role"] == occurrence["role"]
+                        && entry["ordinal"] == occurrence["ordinal"]
+                }),
+            "every added nominal U2 occurrence has an exact source-map entry"
+        );
+    }
+    assert_eq!(
+        actual_u2_id["digest"], "bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7",
+        "U2 uses the published vector"
+    );
+    jsonschema::validator_for(&parsed_fixture(SCHEMA))
+        .expect("V2 schema is valid")
+        .validate(&actual_u2)
+        .unwrap_or_else(|error| {
+            panic!("nominal-root U2 package fails the full public schema: {error}")
+        });
+    assert_eq!(
+        read_package_semantics(&actual_u2, &catalog),
+        Ok(()),
+        "canonical U2 is admitted"
+    );
+
+    let mut wrong_compound = actual_u2.clone();
+    let compound_index = wrong_compound["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    wrong_compound["semantic_graph"]["nodes"][compound_index]["body"]["members"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    wrong_compound["identity_preimage"]["identity_projection"][compound_index]["body"] =
+        wrong_compound["semantic_graph"]["nodes"][compound_index]["body"].clone();
+    let preimage =
+        structural_node_preimage(&wrong_compound["semantic_graph"]["nodes"][compound_index])
+            .unwrap();
+    let digest = unqualified_jcs_sha256(&preimage);
+    wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"]["digest"] = json!(digest);
+    let compound_id = wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"].clone();
+    wrong_compound["semantic_graph"]["nodes"][compound_index]["semantic_type"] =
+        compound_id.clone();
+    wrong_compound["identity_preimage"]["identity_projection"][compound_index]["node_id"]["digest"] =
+        json!(digest);
+    wrong_compound["identity_preimage"]["identity_projection"][compound_index]["semantic_type"] =
+        compound_id;
+    wrong_compound["identity_preimage"] = derive_identity_preimage(&wrong_compound);
+    refresh_package_id(&mut wrong_compound);
+    let compound_id = wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"].clone();
+    assert_eq!(
+        read_package_semantics(&wrong_compound, &catalog),
+        Err(ReadRefusal::GraphShape(compound_id)),
+        "recomputed noncanonical compound-unit order is rejected"
+    );
+
+    let mut non_self_typed = wrong_compound.clone();
+    let compound_index = non_self_typed["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    let integer_type = non_self_typed["semantic_graph"]["nodes"][16]["node_id"].clone();
+    non_self_typed["semantic_graph"]["nodes"][compound_index]["semantic_type"] =
+        integer_type.clone();
+    non_self_typed["identity_preimage"]["identity_projection"][compound_index]["semantic_type"] =
+        integer_type;
+    let preimage =
+        structural_node_preimage(&non_self_typed["semantic_graph"]["nodes"][compound_index])
+            .unwrap();
+    let digest = unqualified_jcs_sha256(&preimage);
+    non_self_typed["semantic_graph"]["nodes"][compound_index]["node_id"]["digest"] = json!(digest);
+    non_self_typed["identity_preimage"]["identity_projection"][compound_index]["node_id"]["digest"] =
+        json!(digest);
+    non_self_typed["identity_preimage"] = derive_identity_preimage(&non_self_typed);
+    refresh_package_id(&mut non_self_typed);
+    assert_eq!(
+        read_package_semantics(&non_self_typed, &catalog),
+        Err(ReadRefusal::GraphShape(
+            non_self_typed["semantic_graph"]["nodes"][compound_index]["node_id"].clone()
+        )),
+        "a non-self-typed compound unit is rejected"
+    );
+
+    let mut non_root = wrong_compound.clone();
+    let non_root_index = non_root["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .len()
+        - 1;
+    non_root["semantic_graph"]["nodes"][non_root_index]["body"]["members"][0]["members"][0]["value"]
+        ["target"] = non_root["semantic_graph"]["nodes"][16]["node_id"].clone();
+    non_root["identity_preimage"]["identity_projection"][non_root_index]["body"] =
+        non_root["semantic_graph"]["nodes"][non_root_index]["body"].clone();
+    let preimage =
+        structural_node_preimage(&non_root["semantic_graph"]["nodes"][non_root_index]).unwrap();
+    let digest = unqualified_jcs_sha256(&preimage);
+    non_root["semantic_graph"]["nodes"][non_root_index]["node_id"]["digest"] = json!(digest);
+    let non_root_id = non_root["semantic_graph"]["nodes"][non_root_index]["node_id"].clone();
+    non_root["semantic_graph"]["nodes"][non_root_index]["semantic_type"] = non_root_id.clone();
+    non_root["identity_preimage"]["identity_projection"][non_root_index]["node_id"]["digest"] =
+        json!(digest);
+    non_root["identity_preimage"]["identity_projection"][non_root_index]["semantic_type"] =
+        non_root_id;
+    non_root["identity_preimage"] = derive_identity_preimage(&non_root);
+    refresh_package_id(&mut non_root);
+    assert_eq!(
+        read_package_semantics(&non_root, &catalog),
+        Err(ReadRefusal::GraphShape(
+            non_root["semantic_graph"]["nodes"][non_root_index]["node_id"].clone()
+        )),
+        "a compound term naming a non-unit root is rejected"
+    );
+}
+
 /// The recursive-record fixture (`record List { next?: List; }` through an
 /// `Option` field and `record Tree { kids: Sequence<Tree>[0, 3]; }` through a
 /// bounded collection), as QSL's emitter writes it, is schema-valid, binds its
@@ -10598,7 +12255,7 @@ fn tc_233_recursive_record_fixture_carries_derived_group_keys() {
         .filter(|node| node.get("recursion_group").is_none())
     {
         assert!(
-            application_terms(&node["body"]).is_empty() && structural_node_key_is_current(node),
+            !is_application_node(node) && structural_node_key_is_current(node),
             "{} {} is keyed outside every group",
             node["node_tag"],
             node["semantic_form"]
@@ -10683,6 +12340,8 @@ const POSITIVE_TWO_OWNERS_B: &str =
 
 /// Every published positive fixture, by name.
 fn positive_fixtures() -> [(&'static str, Value); 9] {
+    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    modelize_legacy_record_reference(&mut operation);
     [
         (
             "positive-nominal-identities",
@@ -10700,10 +12359,7 @@ fn positive_fixtures() -> [(&'static str, Value); 9] {
             "positive-control-operations",
             parsed_fixture(POSITIVE_CONTROL_OPERATIONS),
         ),
-        (
-            "positive-operation-identities",
-            parsed_fixture(POSITIVE_OPERATION_IDENTITIES),
-        ),
+        ("positive-operation-identities", operation),
         ("positive-union-nodes", parsed_fixture(POSITIVE_UNION_NODES)),
         (
             "positive-recursive-records",
@@ -11362,6 +13018,226 @@ fn tc_233_published_model_selections_name_the_domain_document_by_its_jcs_digest(
     assert_eq!(selecting, 4, "two published packages select it, twice each");
 }
 
+/// FR-322-AC-82 and FR-322-AC-83: the published `population_reference_cases`.
+/// A `relation`/`population` node owned by a population the selected document
+/// declares is the operand of `quire.op.model.all_instances` and
+/// `quire.op.model.lookup`; two populations key and read differently; a
+/// population owned by anything else is refused at the owner join, one without
+/// an owner fails the V2 schema, and the node is no `collection_kind` operand.
+/// The published fixture's operand 0 is a `Population<Order>[2]` binding, which
+/// the full reader admits.
+#[trace("TC-233", "FR-322-AC-82")]
+#[trace("TC-233", "FR-322-AC-83")]
+#[test]
+fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let preimage_schema = jsonschema::validator_for(&json!({
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$ref": "#/$defs/ModelDeclarationNode",
+        "$defs": parsed_fixture(NODE_PREIMAGE_SCHEMA)["$defs"],
+    }))
+    .expect("ModelDeclarationNode is a valid schema definition");
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["population_reference_cases"]
+        .as_array()
+        .expect("cases");
+    assert_eq!(cases.len(), 15);
+    let mut admitted = BTreeMap::<String, (Value, Value, Value)>::new();
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let mut candidate = positive_fixtures()
+            .into_iter()
+            .find(|(name, _)| *name == case["base"].as_str().expect("base"))
+            .expect("a published base")
+            .1;
+        let operation = case["operation"].as_str().expect("operation");
+        let mut population_id = Value::Null;
+        if operation != "published" {
+            let mut document = parsed_fixture(MODEL_MEMBER_TYPE_VECTORS)["domain_package"].clone();
+            document["populations"] = adverse["selected_document_populations"].clone();
+            // Each malformed shape alone: a `node` member and no `identity`
+            // (the old shape), a `node` member beside an `identity`, an entry
+            // with only its `identity` removed.
+            match case["document_populations"].as_str() {
+                Some("node-only") => {
+                    document["populations"] = json!([
+                        {"node": "ix://acme/orders/counters"},
+                        {"node": "ix://acme/orders/archive"}
+                    ]);
+                }
+                Some("with-node-member") => {
+                    document["populations"][0]["node"] = json!("ix://acme/orders/counters");
+                }
+                Some("without-identity") => {
+                    document["populations"][0]
+                        .as_object_mut()
+                        .expect("a population")
+                        .remove("identity");
+                }
+                _ => {}
+            }
+            let selection = json!([{
+                "identity": "acme/orders",
+                "digest_domain": "sha256-jcs",
+                "digest": unqualified_jcs_sha256(&document),
+            }]);
+            candidate["model_bindings"] = json!({"domain_package": document});
+            replace_selection_consistently(&mut candidate, "/model_selections", selection);
+            let placeholder =
+                json!({"domain": "quire.checked-semantic-node/v1", "digest": "0".repeat(64)});
+            let mut node = json!({
+                "node_id": placeholder,
+                "schema_version": "quire.checked-semantic-graph/v2",
+                "node_tag": "relation",
+                "semantic_form": "population",
+                "semantic_type": placeholder,
+                "dependencies": [],
+                "occurrences": [{"ordinal": 0, "role": "generated"}],
+                "body": {"term": "aggregate", "members": []},
+            });
+            if let Some(owner_node) = case["owner_node"].as_str() {
+                node["owner"] =
+                    json!({"kind": "model", "identity": "acme/orders", "node": owner_node});
+            }
+            append_rekeyed_structural_node(&mut candidate, node);
+            population_id = candidate["semantic_graph"]["nodes"]
+                .as_array()
+                .and_then(|nodes| nodes.last())
+                .expect("appended")["node_id"]
+                .clone();
+            let application = node_index_where(&candidate, |node| {
+                node["body"]["operation"]["identity"] == format!("quire.op.{operation}").as_str()
+            });
+            let as_declaration = case["member_declaration"] == true;
+            let as_link = case["member_population"] == true;
+            edit_node_and_projection(&mut candidate, application, |node| {
+                if as_declaration {
+                    node["body"]["operation"]["member"]["declaration"] = population_id.clone();
+                } else if as_link {
+                    node["body"]["operation"]["member"]["population"] = population_id.clone();
+                } else {
+                    node["body"]["arguments"][0]["target"] = population_id.clone();
+                }
+                node["dependencies"] = json!(application_dependencies(&node["body"]));
+            });
+            if let Some(also) = case["also"].as_str() {
+                let second = node_index_where(&candidate, |node| {
+                    node["body"]["operation"]["identity"] == format!("quire.op.{also}").as_str()
+                });
+                edit_node_and_projection(&mut candidate, second, |node| {
+                    node["body"]["arguments"][0]["target"] = population_id.clone();
+                    node["dependencies"] = json!(application_dependencies(&node["body"]));
+                });
+            }
+            rekey_stale_nodes(&mut candidate);
+        }
+        // `model_bindings` is a test-only field outside the closed wire shape.
+        let mut wire = candidate.clone();
+        wire.as_object_mut()
+            .expect("a package")
+            .remove("model_bindings");
+        if case["expected_code"] == "malformed_wire" {
+            assert!(!v2.is_valid(&wire), "{id}: the node needs its owner");
+            continue;
+        }
+        assert!(v2.is_valid(&wire), "{id}: validates against the V2 schema");
+        let outcome = read_package_semantics(&candidate, &catalog);
+        if case["outcome"] == "admitted" {
+            assert_eq!(outcome, Ok(()), "{id}");
+            if operation == "published" {
+                continue;
+            }
+            let population = &candidate["semantic_graph"]["nodes"]
+                [node_index_where(&candidate, |node| node["node_id"] == population_id)];
+            assert_eq!(population["semantic_type"], population["node_id"], "{id}");
+            let owner = &population["owner"];
+            let preimage = json!({
+                "version": "quire.structural-node/v1",
+                "node_tag": "relation",
+                "semantic_form": "population",
+                "semantic_type": null,
+                "declaration": null,
+                "recursion": null,
+                "owner": owner,
+                "body": {"term": "aggregate", "members": []},
+            });
+            assert!(preimage_schema.is_valid(&preimage), "{id}: closed preimage");
+            assert_eq!(
+                population["node_id"]["digest"],
+                unqualified_jcs_sha256(&preimage).as_str(),
+                "{id}: the key is the digest of the declaration-key preimage"
+            );
+            let application =
+                &candidate["semantic_graph"]["nodes"][node_index_where(&candidate, |node| {
+                    node["body"]["operation"]["identity"]
+                        == format!("quire.op.{operation}").as_str()
+                })];
+            assert!(
+                application["dependencies"]
+                    .as_array()
+                    .is_some_and(|dependencies| dependencies.contains(&population_id)),
+                "{id}: the application depends on the population node"
+            );
+            if let Some(also) = case["also"].as_str() {
+                // One package where both operations read the one population.
+                let reading = candidate["semantic_graph"]["nodes"]
+                    .as_array()
+                    .expect("nodes")
+                    .iter()
+                    .filter(|node| {
+                        node["body"]["arguments"][0]["target"] == population_id
+                            && [operation, also].iter().any(|name| {
+                                node["body"]["operation"]["identity"]
+                                    == format!("quire.op.{name}").as_str()
+                            })
+                    })
+                    .count();
+                assert_eq!(reading, 2, "{id}: both operations read the one node");
+                let population_nodes = candidate["semantic_graph"]["nodes"]
+                    .as_array()
+                    .expect("nodes")
+                    .iter()
+                    .filter(|node| node["semantic_form"] == "population")
+                    .count();
+                assert_eq!(population_nodes, 1, "{id}: one population is one node");
+            }
+            admitted.insert(
+                format!(
+                    "{}/{operation}",
+                    case["population"].as_str().expect("population")
+                ),
+                (
+                    population_id.clone(),
+                    application["node_id"].clone(),
+                    candidate["package_id"].clone(),
+                ),
+            );
+        } else {
+            let (code, cause) = match outcome {
+                Err(ReadRefusal::OwnerSelection(node)) => {
+                    assert_eq!(node, population_id, "{id}: refused at the population node");
+                    ("missing_declaration", "missing-selection")
+                }
+                Err(ReadRefusal::Operation(refusal)) => (refusal.code(), refusal.cause()),
+                // FR-154 step 1 refuses the document before any graph check.
+                Err(ReadRefusal::PopulationRecord(locus)) => {
+                    assert_eq!(locus, "/lock/model_selections/0", "{id}: the selection row");
+                    ("invalid_model_binding", "malformed-declaration")
+                }
+                other => panic!("{id}: unexpected {other:?}"),
+            };
+            assert_eq!(case["expected_code"], code, "{id}");
+            assert_eq!(case["expected_cause"], cause, "{id}");
+        }
+    }
+    let counters = &admitted["counters/model.all_instances"];
+    let archive = &admitted["archive/model.all_instances"];
+    assert_ne!(counters.0, archive.0, "two populations key differently");
+    assert_ne!(counters.1, archive.1, "so do the reads of them");
+    assert_ne!(counters.2, archive.2, "and the packages that hold them");
+}
+
 /// FR-322-AC-56 (relationship ends): the published `relationship_end_cases`.
 /// A relationship the document declares without a `targetEnd.role` names one
 /// end, its `sourceEnd.role`; a `relationship_end` naming it is admitted by the
@@ -11415,4 +13291,1507 @@ fn tc_233_a_relationship_end_names_only_the_ends_its_relationship_declares() {
             }
         }
     }
+}
+
+/// Append the nodes of `Population<T>[max]` for the model declaration node
+/// `object`: its `Reference<T>`, `Set<Reference<T>>` and the
+/// `bounded_domain`/`model_population` node, each cloned from a node of the
+/// package and rekeyed. Returns the population node's id.
+fn append_population_chain(package: &mut Value, object: &Value, max: Option<&str>) -> Value {
+    let template = |tag: &str, form: &str| {
+        let index = node_index_where(package, |node| {
+            node["node_tag"] == tag && node["semantic_form"] == form
+        });
+        package["semantic_graph"]["nodes"][index].clone()
+    };
+    let integer = template("scalar_type", "integer")["node_id"].clone();
+    let mut reference = template("composite_type", "reference");
+    let mut set = template("composite_type", "set");
+    let mut population = template("bounded_domain", "integer_range");
+    reference["body"]["members"][0]["target"] = object.clone();
+    reference["dependencies"] = json!([object]);
+    let last_id = |package: &Value| {
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .and_then(|nodes| nodes.last())
+            .expect("package nodes are not empty")["node_id"]
+            .clone()
+    };
+    append_rekeyed_structural_node(package, reference);
+    let reference_id = last_id(package);
+    set["body"]["members"][0]["target"] = reference_id.clone();
+    set["dependencies"] = json!([reference_id]);
+    append_rekeyed_structural_node(package, set);
+    let set_id = last_id(package);
+    population["semantic_form"] = json!("model_population");
+    population["semantic_type"] = set_id.clone();
+    let members = max.map_or_else(Vec::new, |max| {
+        vec![json!({
+            "name": "max",
+            "term": "binding",
+            "value": {
+                "term": "literal",
+                "type": integer,
+                "value": max,
+                "value_kind": "integer"
+            }
+        })]
+    });
+    population["body"] = json!({"term": "aggregate", "members": members});
+    let mut dependencies = vec![set_id];
+    if max.is_some() {
+        dependencies.push(integer);
+    }
+    dependencies.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+    population["dependencies"] = json!(dependencies);
+    append_rekeyed_structural_node(package, population);
+    last_id(package)
+}
+
+/// FR-322-AC-74 (unbounded population node): the published
+/// `unbounded_population_cases`. A `model_population` node with no `max`
+/// member is the unbounded population and is admitted by the full reader, and
+/// the bounded node with `max` `3` is unchanged; a `max` that is negative or
+/// not an integer, and a node with a second member beside `max`, are still
+/// refused. Each node is reached as the `population` of the `Order-order-Order`
+/// `reaches` application, which the reader walks as in AC-73.
+#[trace("TC-233", "FR-322-AC-74")]
+#[test]
+fn tc_233_a_model_population_with_no_max_is_the_unbounded_population() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["unbounded_population_cases"]
+        .as_array()
+        .expect("cases");
+    assert_eq!(cases.len(), 5);
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let mut candidate = positive_fixtures()
+            .into_iter()
+            .find(|(name, _)| *name == case["base"].as_str().expect("base"))
+            .expect("a published base")
+            .1;
+        let application = node_index_where(&candidate, |node| {
+            node["body"]["operation"]["member"]["kind"] == "relationship_end"
+                && node["body"]["operation"]["identity"] == "quire.op.model.reaches"
+        });
+        let order = node_index_where(&candidate, |node| {
+            node["node_tag"] == "model" && node["owner"]["node"] == "ix://acme/orders/Order"
+        });
+        let object = candidate["semantic_graph"]["nodes"][order]["node_id"].clone();
+        let link = append_population_chain(&mut candidate, &object, case["max"].as_str());
+        if case["extra_member"] == true {
+            let index = node_index_where(&candidate, |node| node["node_id"] == link);
+            let extra = json!({
+                "name": "min",
+                "term": "binding",
+                "value": {
+                    "term": "literal",
+                    "type": candidate["semantic_graph"]["nodes"][index]["body"]["members"][0]
+                        ["value"]["type"],
+                    "value": "0",
+                    "value_kind": "integer"
+                }
+            });
+            edit_node_and_projection(&mut candidate, index, |node| {
+                node["body"]["members"]
+                    .as_array_mut()
+                    .expect("members")
+                    .push(extra.clone());
+            });
+        }
+        edit_node_and_projection(&mut candidate, application, |node| {
+            node["body"]["operation"]["member"]["population"] = link.clone();
+            node["dependencies"] = json!(application_dependencies(&node["body"]));
+        });
+        rekey_stale_nodes(&mut candidate);
+        assert!(
+            v2.is_valid(&candidate),
+            "{id}: validates against the V2 schema"
+        );
+        // The fixture's own `Population<Order>[2]` binding type precedes the
+        // appended chain, whose population node is the last one.
+        let population = candidate["semantic_graph"]["nodes"]
+            .as_array()
+            .and_then(|nodes| {
+                nodes
+                    .iter()
+                    .rfind(|node| node["semantic_form"] == "model_population")
+            })
+            .expect("the appended population node");
+        assert_eq!(
+            population["body"]["members"].as_array().map(Vec::len),
+            Some(usize::from(case["max"].is_string()) + usize::from(case["extra_member"] == true)),
+            "{id}: the node carries exactly the members the case names"
+        );
+        let outcome = read_package_semantics(&candidate, &catalog);
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ => {
+                // The derived-shape refusal is `GraphShape` at the node it names.
+                assert_eq!(
+                    (
+                        case["expected_code"].as_str(),
+                        case["expected_cause"].as_str()
+                    ),
+                    (Some("invalid_package"), Some("invalid-derived-shape")),
+                    "{id}: the fixture records the derived-shape code and cause"
+                );
+                assert_eq!(
+                    outcome,
+                    Err(ReadRefusal::GraphShape(population["node_id"].clone())),
+                    "{id}: refused at the population node"
+                );
+            }
+        }
+    }
+}
+
+/// FR-322-AC-74: the hand-written RFC 8785 preimages of the bounded population
+/// PO1 and the unbounded population PO0 recompute to the published keys. PO0
+/// is PO1's preimage with the `max` member removed.
+#[trace("TC-233", "FR-322-AC-74")]
+#[test]
+fn tc_233_unbounded_population_preimage_vectors() {
+    const PO1: &str = r#"{"body":{"members":[{"name":"max","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"3","value_kind":"integer"}}],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#;
+    const PO_MAX_0: &str = r#"{"body":{"members":[{"name":"max","term":"binding","value":{"term":"literal","type":{"digest":"07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32","domain":"quire.checked-semantic-node/v1"},"value":"0","value_kind":"integer"}}],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#;
+    const PO0: &str = r#"{"body":{"members":[],"term":"aggregate"},"declaration":null,"node_tag":"bounded_domain","recursion":null,"semantic_form":"model_population","semantic_type":{"digest":"b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5","domain":"quire.checked-semantic-node/v1"},"version":"quire.structural-node/v1"}"#;
+    let schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let mut keys = Vec::new();
+    for (name, source, key) in [
+        (
+            "PO1",
+            PO1,
+            "859d6b01a132a14711a8a4568e24a7ab54e3255b78bbcc62b14e4293dbf71f9a",
+        ),
+        (
+            "PO0",
+            PO0,
+            "f65a8239f4fbc1b6e75bfeed4a578e1c219a27f155a82ddfb7aeeb22657c3b8b",
+        ),
+        (
+            "PO_MAX_0",
+            PO_MAX_0,
+            "0ade8ed9baf129e82dee28096d64f5a0deabca6f3aa06874a4a7e76bb9688e34",
+        ),
+    ] {
+        let preimage = parsed_fixture(source);
+        assert_eq!(unqualified_jcs_sha256(&preimage), key, "{name}: key");
+        let node_id = json!({"domain": "quire.checked-semantic-node/v1", "digest": key});
+        let wire = json!({
+            "node_id": node_id,
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "node_tag": preimage["node_tag"],
+            "semantic_form": preimage["semantic_form"],
+            "semantic_type": preimage["semantic_type"],
+            "dependencies": [],
+            "occurrences": [{"role": "type", "ordinal": 0}],
+            "body": preimage["body"]
+        });
+        assert!(schema.is_valid(&wire), "{name}: wire node schema");
+        keys.push(key);
+    }
+    assert_ne!(keys[0], keys[1], "bounded and unbounded keys differ");
+    assert_ne!(
+        keys[1], keys[2],
+        "the unbounded population is not the population with max 0"
+    );
+    assert_ne!(
+        keys[1], "b8a0b4c1fcbcb8672f21a16c2373abed9ba6469cc9fff3288408349f288dbed5",
+        "the unbounded population is not its Set<Reference<Order>>"
+    );
+}
+
+/// FR-322-AC-73 (population link of a `reaches`): the published
+/// `reaches_population_cases`. A `quire.op.model.reaches` application whose
+/// `relationship_end` member names a `model_population` node over the type of
+/// its role's end is admitted, for a `max` of `3` and of `0`; the key is part
+/// of the application's key and its dependencies; a `population` that is an
+/// `integer_range` node, an absent node or a population over another model
+/// declaration refuses `ill_typed`/`operator-ineligible`; a dependencies list
+/// without the population node is `invalid_semantic_graph`. The application
+/// without the key keeps the member, and the node id, of the published fixture.
+#[trace("TC-233", "FR-322-AC-73")]
+#[test]
+fn tc_233_a_reaches_population_link_names_a_population_over_its_role_end_type() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let adverse = parsed_fixture(ADVERSE);
+    let cases = adverse["reaches_population_cases"]
+        .as_array()
+        .expect("cases");
+    assert_eq!(cases.len(), 7);
+    for case in cases {
+        let id = case["id"].as_str().expect("id");
+        let mut candidate = positive_fixtures()
+            .into_iter()
+            .find(|(name, _)| *name == case["base"].as_str().expect("base"))
+            .expect("a published base")
+            .1;
+        let published = candidate.clone();
+        let application = node_index_where(&candidate, |node| {
+            node["body"]["operation"]["member"]["kind"] == "relationship_end"
+                && node["body"]["operation"]["identity"] == "quire.op.model.reaches"
+        });
+        let population = &case["population"];
+        let link = if population.is_null() {
+            None
+        } else if population["absent"] == true {
+            Some(json!({"domain": "quire.checked-semantic-node/v1", "digest": "f".repeat(64)}))
+        } else if let Some(owner_node) = population["model_population_over"].as_str() {
+            let order = node_index_where(&candidate, |node| {
+                node["node_tag"] == "model" && node["owner"]["node"] == "ix://acme/orders/Order"
+            });
+            let object = if owner_node == "ix://acme/orders/Order" {
+                candidate["semantic_graph"]["nodes"][order]["node_id"].clone()
+            } else {
+                let mut other = candidate["semantic_graph"]["nodes"][order].clone();
+                other["owner"]["node"] = json!(owner_node);
+                append_rekeyed_structural_node(&mut candidate, other);
+                candidate["semantic_graph"]["nodes"]
+                    .as_array()
+                    .and_then(|nodes| nodes.last())
+                    .expect("appended")["node_id"]
+                    .clone()
+            };
+            Some(append_population_chain(
+                &mut candidate,
+                &object,
+                Some(population["max"].as_str().expect("max")),
+            ))
+        } else {
+            let target = node_index_where(&candidate, |node| {
+                node["node_tag"] == population["node_tag"]
+                    && node["semantic_form"] == population["semantic_form"]
+            });
+            Some(candidate["semantic_graph"]["nodes"][target]["node_id"].clone())
+        };
+        if let Some(link) = &link {
+            let without_dependency = case["dependencies"] == "without-population";
+            edit_node_and_projection(&mut candidate, application, |node| {
+                node["body"]["operation"]["member"]["population"] = link.clone();
+                node["dependencies"] = json!(application_dependencies(&node["body"]));
+            });
+            rekey_stale_nodes(&mut candidate);
+            let member =
+                &candidate["semantic_graph"]["nodes"][application]["body"]["operation"]["member"];
+            assert!(member["population"].is_object(), "{id}");
+            assert!(
+                v2.is_valid(&candidate),
+                "{id}: the member with a population validates against the V2 schema"
+            );
+            if without_dependency {
+                let kept = application_dependencies(
+                    &published["semantic_graph"]["nodes"][application]["body"],
+                );
+                edit_node_and_projection(&mut candidate, application, |node| {
+                    node["dependencies"] = json!(kept);
+                });
+            }
+        } else {
+            assert_eq!(
+                published["semantic_graph"]["nodes"][application]["body"]["operation"]["member"]
+                    .as_object()
+                    .map(|member| member.keys().cloned().collect::<BTreeSet<_>>()),
+                Some(BTreeSet::from([
+                    "declaration".to_owned(),
+                    "kind".to_owned(),
+                    "name".to_owned()
+                ])),
+                "{id}: the published member names exactly kind, declaration and name"
+            );
+        }
+        let outcome = read_package_semantics(&candidate, &catalog);
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ if case["expected_code"] == "invalid_semantic_graph" => assert!(
+                matches!(outcome, Err(ReadRefusal::GraphShape(_))),
+                "{id}: {outcome:?}"
+            ),
+            _ => {
+                let refusal =
+                    OperationRefusal::from_cause(case["expected_cause"].as_str().expect("cause"))
+                        .expect("a published operation cause");
+                assert_eq!(case["expected_code"], refusal.code(), "{id}");
+                assert_eq!(outcome, Err(ReadRefusal::Operation(refusal)), "{id}");
+            }
+        }
+    }
+}
+
+/// A package of the native scalar types, two operand values of each, and
+/// a Boolean result type, whose lock selects the text law.
+fn scalar_equality_package(catalog: &Value) -> Value {
+    let mut types = vec![
+        walk_scalar("String", "string"),
+        walk_scalar("UUID", "uuid"),
+        walk_scalar("Timestamp", "timestamp"),
+        walk_scalar("Integer", "integer"),
+        walk_text("Short", "nfc"),
+        walk_scalar("Bool", "boolean"),
+    ];
+    for (prefix, ty) in [
+        ("s", "String"),
+        ("u", "UUID"),
+        ("t", "Timestamp"),
+        ("x", "Short"),
+    ] {
+        for side in ["1", "2"] {
+            types.push(json!({
+                "node_id": walk_id(&format!("{prefix}{side}")),
+                "node_tag": "value",
+                "semantic_form": "parameter",
+                "semantic_type": walk_id(ty),
+                "body": {"term": "aggregate", "members": []}
+            }));
+        }
+    }
+    json!({
+        "lock": {"profile_selections": [], "definition_selections": [walk_text_law(catalog)]},
+        "semantic_graph": {"nodes": types}
+    })
+}
+
+fn scalar_application(identity: &str, laws: Value, mode: Value, left: &str, right: &str) -> Value {
+    json!({
+        "term": "application",
+        "operator": "binary",
+        "operation": {"identity": identity, "laws": laws, "mode": mode, "member": null, "leaves": []},
+        "result_type": walk_id("Bool"),
+        "arguments": [walk_ref(left), walk_ref(right)]
+    })
+}
+
+fn scalar_literal(kind: &str, ty: &str, value: &str) -> Value {
+    json!({"term": "literal", "type": walk_id(ty), "value_kind": kind, "value": value})
+}
+
+fn collect_value_kind_enums<'a>(schema: &'a Value, found: &mut Vec<&'a Value>) {
+    match schema {
+        Value::Object(map) => {
+            for (key, child) in map {
+                if key == "value_kind" && child.get("enum").is_some() {
+                    found.push(&child["enum"]);
+                } else {
+                    collect_value_kind_enums(child, found);
+                }
+            }
+        }
+        Value::Array(items) => items
+            .iter()
+            .for_each(|child| collect_value_kind_enums(child, found)),
+        _ => {}
+    }
+}
+
+/// SE-01 to SE-06 and SE-09: both schemas enumerate the six identities and the
+/// three literal kinds, the catalog defines each identity as a plain binary
+/// boolean comparison, and each identity over two operands of its family is admitted.
+#[trace("FR-322-AC-67", "TC-233")]
+#[test]
+fn tc_233_scalar_equality_identities_and_literal_kinds_are_enumerated_and_admitted() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = scalar_equality_package(&catalog);
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    for (family, prefix) in [("string", "s"), ("uuid", "u"), ("timestamp", "t")] {
+        for operation in ["eq", "ne"] {
+            let identity = format!("quire.op.{family}.{operation}");
+            for schema in [parsed_fixture(SCHEMA), parsed_fixture(NODE_PREIMAGE_SCHEMA)] {
+                assert!(
+                    string_set(&schema["$defs"]["OperationIdentity"]["enum"], "identities")
+                        .contains(identity.as_str()),
+                    "{identity} is enumerated"
+                );
+            }
+            let entry = catalog["operations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|entry| entry["identity"] == identity.as_str())
+                .unwrap_or_else(|| panic!("{identity} is catalogued"));
+            assert_eq!(entry["operands"], json!([family, family]));
+            assert_eq!(entry["result"], "boolean");
+            assert_eq!(entry["laws"], json!([]));
+            assert_eq!(entry["mode"], Value::Null);
+            assert_eq!(
+                oracle
+                    .classify(&scalar_application(
+                        &identity,
+                        json!([]),
+                        Value::Null,
+                        &format!("{prefix}1"),
+                        &format!("{prefix}2"),
+                    ))
+                    .map(|result| result.family),
+                Ok("boolean".to_owned()),
+                "{identity} over two {family} operands is admitted"
+            );
+        }
+    }
+    for schema in [parsed_fixture(SCHEMA), parsed_fixture(NODE_PREIMAGE_SCHEMA)] {
+        let mut enums = vec![];
+        collect_value_kind_enums(&schema, &mut enums);
+        assert!(!enums.is_empty());
+        for kinds in enums {
+            let kinds = string_set(kinds, "value kinds");
+            for kind in ["string", "uuid", "timestamp"] {
+                assert!(kinds.contains(kind), "{kind} is a literal value_kind");
+            }
+        }
+    }
+    for (kind, ty, value) in [
+        ("string", "String", "a\u{e9}"),
+        ("uuid", "UUID", "00112233-4455-6677-8899-aabbccddeeff"),
+        ("timestamp", "Timestamp", "-1"),
+    ] {
+        let literal = scalar_literal(kind, ty, value);
+        assert!(
+            oracle
+                .argument_descriptor(&literal)
+                .is_ok_and(|d| d.is_some()),
+            "a {kind} literal typed by its own family is admitted"
+        );
+    }
+}
+
+/// QL-01 to QL-04 (FR-322-AC-79): a `quantity` literal typed by a unit node is
+/// admitted, both schemas enumerate the kind, and a literal typed by another
+/// family or carrying a non-canonical magnitude is refused by exactly its step.
+#[trace("FR-322-AC-79", "TC-233")]
+#[test]
+fn tc_233_quantity_literals_are_typed_by_a_unit_node_and_spell_canonical_magnitudes() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let mut package = scalar_equality_package(&catalog);
+    package["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(walk_scalar("Ms", "unit"));
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    for schema in [parsed_fixture(SCHEMA), parsed_fixture(NODE_PREIMAGE_SCHEMA)] {
+        let mut enums = vec![];
+        collect_value_kind_enums(&schema, &mut enums);
+        assert!(!enums.is_empty());
+        for kinds in enums {
+            assert!(string_set(kinds, "value kinds").contains("quantity"));
+        }
+    }
+    for value in ["3", "0", "-5", "1/1000", "-7/2"] {
+        let literal = scalar_literal("quantity", "Ms", value);
+        assert!(
+            oracle.argument_descriptor(&literal).is_ok_and(|d| d.is_some_and(|d| d.family == "quantity")),
+            "QL: a quantity literal {value} typed by a unit node is admitted"
+        );
+    }
+    for value in ["03", "+3", "2/4", "4/2", "1/0", "0/5", "3/1", "1/-2", " 3", "2.5", ""] {
+        assert_eq!(
+            oracle.argument_descriptor(&scalar_literal("quantity", "Ms", value)).err(),
+            Some(OperationRefusal::InvalidValue),
+            "QL: the magnitude {value:?} is not canonical"
+        );
+    }
+    for ty in ["Integer", "String", "Bool"] {
+        assert!(
+            oracle
+                .argument_descriptor(&scalar_literal("quantity", ty, "3"))
+                .is_ok_and(|d| d.is_none()),
+            "QL: a quantity literal typed by {ty} is outside the kind's family"
+        );
+    }
+    assert!(
+        oracle
+            .argument_descriptor(&scalar_literal("integer", "Ms", "3"))
+            .is_ok_and(|d| d.is_none()),
+        "QL: an integer literal typed by a unit node is outside the kind's family"
+    );
+}
+
+/// SE-07, SE-08 and SE-11 to SE-13: a cross-family operand pair, an
+/// ordering or arithmetic identity over these families, a stray `text_profile`
+/// law and a stray `text_profile` mode are each refused by exactly their step.
+#[trace("FR-322-AC-67", "TC-233")]
+#[test]
+fn tc_233_scalar_equality_refuses_cross_family_laws_modes_ordering_and_arithmetic() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = scalar_equality_package(&catalog);
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    let refusal = |identity: &str, laws: Value, mode: Value, left: &str, right: &str| {
+        oracle
+            .classify(&scalar_application(identity, laws, mode, left, right))
+            .err()
+    };
+    for (identity, left, right) in [
+        ("quire.op.string.eq", "s1", "x1"),
+        ("quire.op.uuid.eq", "u1", "s1"),
+        ("quire.op.string.ne", "s1", "u1"),
+        ("quire.op.timestamp.eq", "t1", "u1"),
+        ("quire.op.integer.lt", "u1", "u2"),
+        ("quire.op.integer.add", "u1", "u2"),
+        ("quire.op.integer.lt", "t1", "t2"),
+        ("quire.op.integer.add", "s1", "s2"),
+    ] {
+        assert_eq!(
+            refusal(identity, json!([]), Value::Null, left, right),
+            Some(OperationRefusal::OperatorIneligible),
+            "{identity} over {left} and {right} refuses ill_typed/operator-ineligible"
+        );
+    }
+    assert_eq!(
+        refusal(
+            "quire.op.text.eq",
+            json!([{"role": "text_profile", "definition": walk_text_law(&catalog)}]),
+            json!({"kind": "text_profile", "value": "nfc"}),
+            "s1",
+            "s2"
+        ),
+        Some(OperationRefusal::ModeTypeMismatch),
+        "a string operand of quire.op.text.eq pins no text profile and refuses operation-mode-type-mismatch"
+    );
+    assert_eq!(
+        refusal(
+            "quire.op.string.eq",
+            json!([{"role": "text_profile", "definition": walk_text_law(&catalog)}]),
+            Value::Null,
+            "s1",
+            "s2"
+        ),
+        Some(OperationRefusal::LawMismatch),
+        "a text_profile law on string equality refuses operation-law-mismatch"
+    );
+    assert_eq!(
+        refusal(
+            "quire.op.uuid.eq",
+            json!([]),
+            json!({"kind": "text_profile", "value": "nfc"}),
+            "u1",
+            "u2"
+        ),
+        Some(OperationRefusal::ModeMismatch),
+        "a text_profile mode on uuid equality refuses operation-mode-mismatch"
+    );
+    assert_eq!(OperationRefusal::LawMismatch.code(), "invalid_package");
+    assert_eq!(OperationRefusal::ModeMismatch.code(), "invalid_package");
+    assert_eq!(OperationRefusal::OperatorIneligible.code(), "ill_typed");
+}
+
+/// SE-10 and SE-14 to SE-18: a literal whose type is not its kind's family
+/// refuses `operator-ineligible`, and a non-canonical `uuid`, `timestamp` or
+/// `string` value refuses `invalid_package`/`invalid-value`.
+#[trace("FR-322-AC-67", "TC-233")]
+#[test]
+fn tc_233_scalar_literals_need_their_family_and_canonical_value() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = scalar_equality_package(&catalog);
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    let uuid = "00112233-4455-6677-8899-aabbccddeeff";
+    let literal_refusal = |kind: &str, ty: &str, value: &str| {
+        oracle
+            .argument_descriptor(&scalar_literal(kind, ty, value))
+            .map(|descriptor| descriptor.is_some())
+    };
+    for (kind, ty, value) in [
+        ("uuid", "String", uuid),
+        ("string", "UUID", "abc"),
+        ("string", "Short", "abc"),
+        ("timestamp", "Integer", "0"),
+        ("timestamp", "UUID", "0"),
+        ("uuid", "Timestamp", uuid),
+    ] {
+        assert_eq!(
+            literal_refusal(kind, ty, value),
+            Ok(false),
+            "a {kind} literal typed {ty} is not admitted by the literal rule"
+        );
+    }
+    // A literal failing both checks reports the family refusal first.
+    for (kind, ty, value) in [
+        ("uuid", "String", "00112233-4455-6677-8899-AABBCCDDEEFF"),
+        ("timestamp", "Integer", "01"),
+    ] {
+        assert_eq!(
+            literal_refusal(kind, ty, value),
+            Ok(false),
+            "a {kind} literal typed {ty} with a non-canonical value reports the family refusal"
+        );
+    }
+    // A string literal whose value is not a JSON string is not canonical.
+    for value in [json!(7), json!(null), json!(["a"])] {
+        let literal = json!({"term": "literal", "type": walk_id("String"), "value_kind": "string", "value": value});
+        assert_eq!(
+            oracle.argument_descriptor(&literal).map(|d| d.is_some()),
+            Err(OperationRefusal::InvalidValue),
+            "string literal value {value} is not a JSON string"
+        );
+    }
+    for (kind, ty, value) in [
+        ("uuid", "UUID", "00112233-4455-6677-8899-AABBCCDDEEFF"),
+        ("uuid", "UUID", "00112233445566778899aabbccddeeff"),
+        ("uuid", "UUID", "00112233-4455-6677-8899-aabbccddeef"),
+        ("timestamp", "Timestamp", "-0"),
+        ("timestamp", "Timestamp", "+1"),
+        ("timestamp", "Timestamp", "01"),
+        ("timestamp", "Timestamp", ""),
+        (
+            "timestamp",
+            "Timestamp",
+            "170141183460469231731687303715884105728",
+        ),
+    ] {
+        assert_eq!(
+            literal_refusal(kind, ty, value),
+            Err(OperationRefusal::InvalidValue),
+            "{kind} value {value:?} is not canonical"
+        );
+    }
+    for (kind, ty, value) in [
+        ("uuid", "UUID", uuid),
+        ("timestamp", "Timestamp", "0"),
+        (
+            "timestamp",
+            "Timestamp",
+            "-170141183460469231731687303715884105728",
+        ),
+        (
+            "timestamp",
+            "Timestamp",
+            "170141183460469231731687303715884105727",
+        ),
+        ("string", "String", ""),
+        ("string", "String", "Caf\u{e9} and cafe\u{301}"),
+    ] {
+        assert_eq!(
+            literal_refusal(kind, ty, value),
+            Ok(true),
+            "{kind} value {value:?} is canonical"
+        );
+    }
+    assert_eq!(OperationRefusal::InvalidValue.code(), "invalid_package");
+    assert_eq!(OperationRefusal::InvalidValue.cause(), "invalid-value");
+}
+
+/// VT-01 to VT-04 (FR-322-AC-71): a `model`/`variant_type` node is a model
+/// declaration node, as an `event_type` node is. With a `ModelOwner` and no
+/// `declaration` the V2 schema admits it; with no `owner`, or with a
+/// `SourceOwner` and no `declaration`, it fails the schema. The closed
+/// `ModelDeclarationNode` preimage admits the form too.
+#[trace("TC-940", "FR-322-AC-71")]
+#[test]
+fn tc_940_variant_type_is_a_model_declaration_node_with_a_model_owner() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let base = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let index = node_index_where(&base, |node| {
+        node["node_tag"] == "model" && node["semantic_form"] == "record_value_type"
+    });
+    let model_owner =
+        json!({"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Tier"});
+    let with = |edit: &dyn Fn(&mut Value)| {
+        let mut candidate = base.clone();
+        edit_node_and_projection(&mut candidate, index, |node| {
+            node["semantic_form"] = json!("variant_type");
+            node.as_object_mut().expect("node").remove("declaration");
+            if node.get("occurrences").is_some() {
+                node["occurrences"] = json!([{"ordinal": 0, "role": "generated"}]);
+            }
+            node["semantic_type"] = node["node_id"].clone();
+            node["owner"] = model_owner.clone();
+            edit(node);
+        });
+        candidate
+    };
+
+    assert!(
+        schema.is_valid(&with(&|_| {})),
+        "VT-01: a model-owned variant_type node is a V2 node"
+    );
+    for (name, edit) in [
+        (
+            "VT-02",
+            (&|node: &mut Value| {
+                node.as_object_mut().expect("node").remove("owner");
+            }) as &dyn Fn(&mut Value),
+        ),
+        ("VT-03", &|node: &mut Value| {
+            node["owner"] =
+                json!({"kind": "source", "authority": "agent-ix", "identity": "example"});
+        }),
+    ] {
+        assert!(
+            !schema.is_valid(&with(edit)),
+            "{name}: the V2 schema refuses it"
+        );
+    }
+
+    let preimage_schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node-identity preimage schema is valid");
+    let preimage = json!({
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "variant_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": model_owner,
+        "body": {"term": "aggregate", "members": []}
+    });
+    assert!(
+        preimage_schema.is_valid(&preimage),
+        "VT-04: the ModelDeclarationNode preimage admits variant_type"
+    );
+}
+
+/// ET-01 to ET-04 (FR-322-AC-68): a `model`/`event_type` node is a model
+/// declaration node. With a `ModelOwner` and no `declaration` the V2 schema
+/// admits it; with no `owner`, with a `SourceOwner` and no `declaration`, or
+/// with a `declaration` beside a `ModelOwner` it fails the schema. The closed
+/// `ModelDeclarationNode` preimage admits the form too.
+#[trace("TC-233", "FR-322-AC-68")]
+#[test]
+fn tc_233_event_type_is_a_model_declaration_node_with_a_model_owner() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let base = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let index = node_index_where(&base, |node| {
+        node["node_tag"] == "model" && node["semantic_form"] == "record_value_type"
+    });
+    let model_owner =
+        json!({"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/OrderPlaced"});
+    let with = |edit: &dyn Fn(&mut Value)| {
+        let mut candidate = base.clone();
+        edit_node_and_projection(&mut candidate, index, |node| {
+            node["semantic_form"] = json!("event_type");
+            node.as_object_mut().expect("node").remove("declaration");
+            // The graph node carries occurrences; its projection entry does not.
+            if node.get("occurrences").is_some() {
+                node["occurrences"] = json!([{"ordinal": 0, "role": "generated"}]);
+            }
+            node["semantic_type"] = node["node_id"].clone();
+            node["owner"] = model_owner.clone();
+            edit(node);
+        });
+        candidate
+    };
+
+    let admitted = with(&|_| {});
+    assert!(
+        schema.is_valid(&admitted),
+        "ET-01: a model-owned event_type node is a V2 node"
+    );
+    for (name, edit) in [
+        (
+            "ET-02",
+            (&|node: &mut Value| {
+                node.as_object_mut().expect("node").remove("owner");
+            }) as &dyn Fn(&mut Value),
+        ),
+        ("ET-03", &|node: &mut Value| {
+            node["owner"] =
+                json!({"kind": "source", "authority": "agent-ix", "identity": "example"});
+        }),
+        ("ET-04", &|node: &mut Value| {
+            node["declaration"] = json!({"qualified_name": ["Example", "OrderPlaced"]});
+        }),
+    ] {
+        assert!(
+            !schema.is_valid(&with(edit)),
+            "{name}: the V2 schema refuses it"
+        );
+    }
+
+    let preimage_schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
+        .expect("node-identity preimage schema is valid");
+    for form in ["record_value_type", "event_type"] {
+        let preimage = json!({
+            "version": "quire.structural-node/v1",
+            "node_tag": "model",
+            "semantic_form": form,
+            "semantic_type": null,
+            "declaration": null,
+            "recursion": null,
+            "owner": model_owner,
+            "body": {"term": "aggregate", "members": []}
+        });
+        assert!(
+            preimage_schema.is_valid(&preimage),
+            "the ModelDeclarationNode preimage admits {form}"
+        );
+    }
+}
+
+const MODEL_OWNER_FORM_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/model-owner-form-vectors.json");
+
+/// Rekey every `correspondence`/`abstraction_relation` node (FR-451), which
+/// `rekey_stale_nodes` leaves alone: its key is the digest of
+/// `{version, body}` and its `dependencies` are the digest-ascending targets
+/// of its body.
+fn rekey_abstraction_nodes(package: &mut Value) {
+    let count = package["semantic_graph"]["nodes"]
+        .as_array()
+        .map_or(0, Vec::len);
+    for index in 0..count {
+        let node = package["semantic_graph"]["nodes"][index].clone();
+        if node["node_tag"] != "correspondence" || node["semantic_form"] != "abstraction_relation" {
+            continue;
+        }
+        let body = &node["body"];
+        let mut dependencies = [
+            ("objects", "type"),
+            ("populations", "population"),
+            ("frames", "context"),
+        ]
+        .into_iter()
+        .flat_map(|(list, member)| {
+            body[list]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .map(move |entry| entry[member].clone())
+        })
+        .collect::<Vec<_>>();
+        dependencies.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+        dependencies.dedup();
+        package["semantic_graph"]["nodes"][index]["dependencies"] = json!(dependencies);
+        let key = unqualified_jcs_sha256(&json!({
+            "version": "quire.abstraction-relation-node/v1",
+            "body": body,
+        }));
+        let old = node["node_id"]["digest"]
+            .as_str()
+            .expect("digest")
+            .to_owned();
+        let text = serde_json::to_string(package)
+            .expect("package serializes")
+            .replace(&old, &key);
+        *package = serde_json::from_str(&text).expect("rekeyed package parses");
+    }
+    package["identity_preimage"] = derive_identity_preimage(package);
+    refresh_package_id(package);
+}
+
+/// The clause-operations fixture with the form of its declaring type's node
+/// changed from `object_type` to `form`, and every key that depends on it
+/// rekeyed. Returns the package and each original digest's final digest.
+fn clause_package_owned_by(form: &str) -> (Value, BTreeMap<String, String>) {
+    let mut package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    let index = node_index(&package, &clause_digest("object_type"));
+    package["semantic_graph"]["nodes"][index]["semantic_form"] = json!(form);
+    let renames = rekey_stale_nodes(&mut package);
+    rekey_abstraction_nodes(&mut package);
+    (package, renames)
+}
+
+/// FR-340-AC-12, FR-341-AC-11, FR-342-AC-7 and FR-342-AC-8: the declaring type
+/// of the published clause package's operation is an object type, a process or
+/// a state machine in turn, and each package is admitted by the full reader;
+/// the frame and the anchor are typed by the declaring node, the invariant is
+/// anchored at it, and `self` is the reference over it.
+#[trace("TC-233", "FR-340-AC-12")]
+#[trace("TC-233", "FR-341-AC-11")]
+#[trace("TC-233", "FR-342-AC-7")]
+#[trace("TC-233", "FR-342-AC-8")]
+#[test]
+fn tc_233_a_process_or_state_machine_declares_the_anchor_frame_and_clauses_of_its_operations() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    for form in ["object_type", "process", "state_machine"] {
+        let (package, renames) = clause_package_owned_by(form);
+        assert_eq!(
+            read_package_semantics(&package, &catalog),
+            Ok(()),
+            "a {form} owner is admitted by the full reader"
+        );
+        let declaring = renamed_locus(&renames, &node_ref_digest(&clause_digest("object_type")));
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes");
+        let of_form = |semantic_form: &str| {
+            nodes
+                .iter()
+                .find(|node| node["node_tag"] == "state" && node["semantic_form"] == semantic_form)
+                .unwrap_or_else(|| panic!("a {semantic_form} node is published"))
+        };
+        assert_eq!(
+            of_form("frame")["semantic_type"],
+            declaring,
+            "{form}: frame"
+        );
+        let anchor = of_form("operation_anchor");
+        assert_eq!(anchor["semantic_type"], declaring, "{form}: anchor");
+        assert_eq!(anchor_binding(anchor, "context")["target"], declaring);
+        let invariant = &nodes[clause_node_index(&package, "invariant")];
+        assert_eq!(
+            invariant["body"]["arguments"][1]["target"], declaring,
+            "{form}: the invariant is anchored at the declaring node"
+        );
+        let parameter = node_by_digest(
+            nodes,
+            invariant["body"]["arguments"][0]["members"][0]["target"]["digest"]
+                .as_str()
+                .expect("self is a reference"),
+        )
+        .expect("the self parameter is published");
+        let self_type = node_by_digest(
+            nodes,
+            parameter["semantic_type"]["digest"]
+                .as_str()
+                .expect("self is typed"),
+        )
+        .expect("the type of self is published");
+        assert_eq!(self_type["semantic_form"], "reference");
+        assert_eq!(self_type["body"]["members"][0]["target"], declaring);
+    }
+}
+
+/// FR-342-AC-9 and FR-340-AC-12: a declaring node that is a record value type,
+/// an event type, a persistence interface or a systems interface is no context.
+/// As a frame's `semantic_type` it refuses at the frame step, and as the
+/// `context` of an anchor over a valid process frame it refuses at the anchor
+/// step, `invalid_model_binding`/`malformed-declaration` at the target.
+#[trace("TC-233", "FR-340-AC-12")]
+#[trace("TC-233", "FR-342-AC-9")]
+#[test]
+fn tc_233_a_declaring_node_that_is_none_of_the_three_is_no_context() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    for form in [
+        "record_value_type",
+        "event_type",
+        "persistence_interface",
+        "systems_interface",
+    ] {
+        // As a frame's `semantic_type`: a node of that form is appended to the
+        // all-families package and the published frame is typed by it.
+        let mut frame_owned = parsed_fixture(POSITIVE_ALL_FAMILIES);
+        let mut declaring = frame_owned["semantic_graph"]["nodes"]
+            [node_index(&frame_owned, &all_families_digest("process"))]
+        .clone();
+        declaring["semantic_form"] = json!(form);
+        declaring["declaration"]["qualified_name"] = json!(["Example", "NotAContext"]);
+        append_rekeyed_structural_node(&mut frame_owned, declaring);
+        let declaring_id = frame_owned["semantic_graph"]["nodes"]
+            .as_array()
+            .and_then(|nodes| nodes.last())
+            .expect("the appended node")["node_id"]
+            .clone();
+        let frame = node_index_where(&frame_owned, |node| node["semantic_form"] == "frame");
+        let frame_node = &mut frame_owned["semantic_graph"]["nodes"][frame];
+        frame_node["semantic_type"] = declaring_id.clone();
+        frame_node["body"]["modifies"] = json!([]);
+        frame_node["body"]["creates"] = json!([]);
+        frame_node["body"]["deletes"] = json!([]);
+        frame_node["dependencies"] = json!([]);
+        rekey_stale_nodes(&mut frame_owned);
+        assert_eq!(
+            read_package_semantics(&frame_owned, &catalog),
+            Err(ReadRefusal::Frame(
+                FrameRefusal::MalformedDeclaration,
+                declaring_id
+            )),
+            "a frame typed by a {form} refuses at the frame step"
+        );
+
+        let (mut package, _) = clause_package_owned_by("process");
+        let mut other = package["semantic_graph"]["nodes"]
+            [node_index_where(&package, |node| node["semantic_form"] == "process")]
+        .clone();
+        other["semantic_form"] = json!(form);
+        other["declaration"]["qualified_name"] = json!(["Config", "NotAContext"]);
+        append_rekeyed_structural_node(&mut package, other);
+        let other_id = package["semantic_graph"]["nodes"]
+            .as_array()
+            .and_then(|nodes| nodes.last())
+            .expect("the appended node")["node_id"]
+            .clone();
+        let anchor = node_index_where(&package, |node| node["semantic_form"] == "operation_anchor");
+        let node = &mut package["semantic_graph"]["nodes"][anchor];
+        node["body"]["members"][0]["value"]["target"] = other_id.clone();
+        let mut dependencies = vec![
+            other_id.clone(),
+            node["body"]["members"][2]["value"]["target"].clone(),
+        ];
+        dependencies.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+        node["dependencies"] = json!(dependencies);
+        rekey_stale_nodes(&mut package);
+        assert_eq!(
+            read_package_semantics(&package, &catalog),
+            Err(ReadRefusal::State(
+                StateRefusal::MalformedDeclaration,
+                other_id
+            )),
+            "an anchor whose context is a {form} refuses at the anchor step"
+        );
+    }
+}
+
+/// FR-340-AC-19 and FR-340-AC-20 over `receiver_frame_cases`: the frame of an
+/// operation of an object type admits the receiver forms, the frame of a
+/// process or a state machine refuses each with the locus the vector names
+/// (the entry's declaring node for a field entry, the frame node for a
+/// `deletes_scoped` entry) and admits the other scoped forms.
+#[trace("TC-233", "FR-340-AC-19")]
+#[trace("TC-233", "FR-340-AC-20")]
+#[test]
+fn tc_233_a_process_or_state_machine_frame_holds_no_receiver_scoped_member() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let vectors = parsed_fixture(MODEL_OWNER_FORM_VECTORS);
+    let cases = vectors["receiver_frame_cases"].as_array().expect("cases");
+    assert!(
+        cases.len() >= 10,
+        "the vectors cover every owner form and entry"
+    );
+    for case in cases {
+        let name = case["name"].as_str().expect("case name");
+        let mut package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+        let owner_form = case["owner_form"].as_str().expect("owner form");
+        let owner_digest = match owner_form {
+            "object_type" => all_families_digest("account"),
+            _ => all_families_digest("process"),
+        };
+        if owner_form == "state_machine" {
+            let index = node_index(&package, &owner_digest);
+            package["semantic_graph"]["nodes"][index]["semantic_form"] = json!("state_machine");
+        }
+        let frame = node_index_where(&package, |node| node["semantic_form"] == "frame");
+        let frame_id = package["semantic_graph"]["nodes"][frame]["node_id"].clone();
+        let owner = node_ref_digest(&owner_digest);
+        let body = &mut package["semantic_graph"]["nodes"][frame]["body"];
+        let entry = &case["entry"];
+        body["modifies"] = json!([]);
+        body["creates"] = json!([]);
+        body["deletes"] = json!([]);
+        body["deletes_scoped"] = json!([]);
+        match case["member"].as_str().expect("member") {
+            "modifies" => {
+                body["modifies"] = json!([{
+                    "kind": "field",
+                    "declaration": owner,
+                    "name": "balance",
+                    "scope": entry["scope"],
+                }]);
+            }
+            "deletes_scoped" => body["deletes_scoped"] = json!([entry]),
+            other => panic!("{name}: unknown member {other}"),
+        }
+        package["semantic_graph"]["nodes"][frame]["semantic_type"] = owner.clone();
+        package["semantic_graph"]["nodes"][frame]["dependencies"] = json!([owner]);
+        let renames = rekey_stale_nodes(&mut package);
+        let decided = match read_package_semantics(&package, &catalog) {
+            Ok(()) => json!({"admitted": true}),
+            Err(ReadRefusal::Frame(refusal, locus)) => {
+                let named = renamed_locus(&renames, &owner);
+                let framed = renamed_locus(&renames, &frame_id);
+                let at = if locus == named {
+                    "declaration"
+                } else if locus["digest"]
+                    == package["semantic_graph"]["nodes"][frame]["node_id"]["digest"]
+                    || locus == framed
+                {
+                    "frame"
+                } else {
+                    "elsewhere"
+                };
+                json!({"refused": {"code": refusal.code(), "cause": refusal.cause(), "locus": at}})
+            }
+            other => panic!("{name}: unexpected {other:?}"),
+        };
+        assert_eq!(decided, case["expected"], "{name}");
+    }
+}
+
+/// FR-340-AC-17 state step: every `parameter` entry of a frame's
+/// `deletes_scoped` names a reference parameter of the operation its anchor
+/// resolves, else `missing_declaration`/`missing-name` at the frame node; a
+/// `receiver` entry needs no parameter.
+#[trace("TC-233", "FR-340-AC-17")]
+#[test]
+fn tc_233_deletes_scoped_parameter_entries_name_a_reference_parameter() {
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let cases = vectors["deletes_scoped_parameter_cases"]
+        .as_array()
+        .expect("cases");
+    assert!(cases.len() >= 5, "the vectors cover each outcome");
+    for case in cases {
+        let name = case["name"].as_str().expect("case name");
+        let mut package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+        let mut bindings = clause_model_bindings(0);
+        bindings["domain_package"]["object_types"][0]["operations"][0]["parameters"] = json!([{
+            "name": case["parameter"]["name"],
+            "typeRef": case["parameter"]["typeRef"],
+            "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+        }]);
+        package["model_bindings"] = bindings;
+        let frame = node_index(&package, &clause_digest("frame"));
+        package["semantic_graph"]["nodes"][frame]["body"]["deletes_scoped"] =
+            case["entries"].clone();
+        let renames = rekey_stale_nodes(&mut package);
+        let frame_id = renamed_locus(&renames, &node_ref_digest(&clause_digest("frame")));
+        // The frame step admits the body; the anchor join then decides the
+        // parameter entries. The precondition clause is not read here: the
+        // test operation gains a parameter that the published clause does not
+        // bind.
+        assert_eq!(
+            package_frame_refusal(&package),
+            Ok(()),
+            "{name}: frame step"
+        );
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes");
+        let anchor = nodes
+            .iter()
+            .find(|node| node["node_tag"] == "state" && node["semantic_form"] == "operation_anchor")
+            .expect("an anchor is published");
+        let decided = match anchor_refusal(anchor, nodes, model_index(&package).as_ref()) {
+            Ok(()) => json!({"admitted": true}),
+            Err((refusal, locus)) => {
+                assert_eq!(locus, frame_id, "{name}: locus is the frame node");
+                json!({"refused": {"code": refusal.code(), "cause": refusal.cause(), "locus": "frame"}})
+            }
+        };
+        assert_eq!(decided, case["expected"], "{name}");
+    }
+}
+
+/// FR-322-AC-84: supply is checked entry by entry in lock order, presence
+/// then binding, and the first failing entry is the only one reported.
+#[trace("TC-233", "FR-322-AC-84")]
+#[test]
+fn tc_233_supply_refuses_the_first_failing_entry_in_lock_order() {
+    let vectors = parsed_fixture(DEPENDENCY_SELECTION_VECTORS);
+    for vector in vectors["supply_vectors"].as_array().expect("supply vectors") {
+        let id = vector["id"].as_str().expect("id");
+        let mut outcome = "admitted".to_owned();
+        for (index, entry) in vector["entries"]
+            .as_array()
+            .expect("entries")
+            .iter()
+            .enumerate()
+        {
+            let refusal = match entry["supply"].as_str().expect("supply") {
+                "absent" => Some("missing_import/missing-selection"),
+                "stale" => Some("stale_dependency/content-mismatch"),
+                _ => None,
+            };
+            if let Some(refusal) = refusal {
+                outcome = format!("refused:{refusal}@/lock/dependency_selections/{index}");
+                break;
+            }
+        }
+        let expected = match vector["outcome"].as_str().expect("outcome") {
+            "admitted" => "admitted".to_owned(),
+            refused => format!("{refused}@{}", vector["locus"].as_str().expect("locus")),
+        };
+        assert_eq!(outcome, expected, "{id}");
+    }
+}
+
+/// FR-370-AC-13: argument 1 (`over`) of a clause application is always
+/// present as a reference; removing it or replacing it by `null` fails the
+/// published schema.
+#[trace("TC-303", "FR-370-AC-13")]
+#[test]
+fn tc_303_a_clause_application_has_no_absent_or_null_over_argument() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("schema is valid");
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    assert!(
+        schema.is_valid(&package),
+        "the published clause package is admitted"
+    );
+    let index = node_with_operation(&package, "quire.op.temporal.clause");
+    let arguments = format!("/semantic_graph/nodes/{index}/body/arguments");
+    let mut removed = package.clone();
+    removed
+        .pointer_mut(&arguments)
+        .and_then(Value::as_array_mut)
+        .expect("arguments")
+        .remove(0);
+    assert!(!schema.is_valid(&removed), "an absent over argument fails");
+    let mut nulled = package.clone();
+    *nulled.pointer_mut(&format!("{arguments}/0")).expect("over") = Value::Null;
+    assert!(!schema.is_valid(&nulled), "a null over argument fails");
+    // A non-reference term in argument 1 (the clause's own clock text literal)
+    // fails the schema: it is the one change that leaves the argument count and
+    // every other argument intact, so only the argument-1 shape rejects it.
+    let mut clock = package.clone();
+    let literal = clock
+        .pointer(&format!("{arguments}/1"))
+        .expect("clock")
+        .clone();
+    *clock.pointer_mut(&format!("{arguments}/0")).expect("over") = literal;
+    assert!(
+        !schema.is_valid(&clock),
+        "a non-reference over argument fails"
+    );
+}
+
+const REFINEMENT_STEP_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/refinement-step-occurrence-vectors.json");
+
+/// FR-322 "Refinement step occurrences": the refusal pointer over a
+/// refinement owner's `source_map` entries, or `None` when admitted.
+fn refinement_step_refusal(case: &Value) -> Option<String> {
+    let refinement = &case["refinement"];
+    let owner = &refinement["node_id"];
+    // A hidden field: an abstract field of the entry's object type with no field row.
+    let hidden = refinement["objects"]
+        .as_array()
+        .expect("objects")
+        .iter()
+        .any(|entry| {
+            let rows = entry["fields"].as_array().expect("field rows");
+            refinement["abstract_fields"][entry["abstract_type"].as_str().expect("type")]
+                .as_array()
+                .expect("abstract fields")
+                .iter()
+                .any(|field| !rows.contains(field))
+        });
+    let eligible = !hidden && refinement["histories"] == 0 && refinement["any_row"] == false;
+    // The region of the row at each `steps` position, whatever the written order.
+    let steps: Vec<&Value> = refinement["steps"]
+        .as_array()
+        .expect("steps")
+        .iter()
+        .map(|name| {
+            &refinement["rows"]
+                .as_array()
+                .expect("rows")
+                .iter()
+                .find(|row| row["name"] == *name)
+                .expect("a named row")["region"]
+        })
+        .collect();
+    let mut seen = std::collections::BTreeSet::new();
+    for (index, entry) in case["source_map"].as_array().expect("source map").iter().enumerate() {
+        if entry["node_id"] != *owner {
+            continue;
+        }
+        let role = entry["role"].as_str().expect("role");
+        let ordinal = entry["ordinal"].as_u64().expect("ordinal") as usize;
+        let at = format!("/source_map/{index}");
+        if !seen.insert((role.to_owned(), ordinal)) {
+            return Some(at);
+        }
+        let required = match (role, ordinal) {
+            ("declaration", 0) => Some(&refinement["declaration"]),
+            ("generated", 0) if eligible => Some(&refinement["declaration"]),
+            ("generated", n) if eligible && (1..=steps.len()).contains(&n) => Some(steps[n - 1]),
+            _ => None,
+        };
+        match required {
+            Some(region) if entry["regions"] == json!([region]) => {}
+            _ => return Some(at),
+        }
+    }
+    let required = std::iter::once(("declaration".to_owned(), 0)).chain(
+        (0..=steps.len())
+            .filter(|_| eligible)
+            .map(|ordinal| ("generated".to_owned(), ordinal)),
+    );
+    required
+        .into_iter()
+        .any(|key| !seen.contains(&key))
+        .then(|| "/source_map".to_owned())
+}
+
+#[trace("TC-233", "FR-322-AC-88", "FR-322-AC-89", "FR-322-AC-90", "FR-322-AC-91")]
+#[test]
+fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligation() {
+    let vectors = parsed_fixture(REFINEMENT_STEP_VECTORS);
+    let cases = vectors["cases"].as_array().expect("cases");
+    assert_eq!(cases.len(), 17);
+    for case in cases {
+        let name = case["name"].as_str().expect("name");
+        let refusal = refinement_step_refusal(case);
+        match (&case["expected"], refusal) {
+            (Value::String(admitted), None) => assert_eq!(admitted, "admitted", "{name}"),
+            (expected, Some(at)) => {
+                let refused = &expected["refused"];
+                assert_eq!(refused["code"], "invalid_package", "{name}");
+                assert_eq!(refused["cause"], "invalid-value", "{name}");
+                assert_eq!(refused["at"], at.as_str(), "{name}");
+            }
+            (expected, outcome) => panic!("{name}: expected {expected}, got {outcome:?}"),
+        }
+    }
+}
+
+/// The operator identities FR-322 "Integer literal operands" lists, read from
+/// the requirement text.
+fn integer_literal_operand_operators() -> Vec<String> {
+    let text = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
+    let start = text
+        .find("**Integer literal operands.**")
+        .expect("FR-322 states the rule");
+    let paragraph = &text[start..start + text[start..].find("\n\n").expect("paragraph end")];
+    let mut operators = Vec::new();
+    let mut rest = paragraph;
+    while let Some(at) = rest.find("`quire.op.integer.") {
+        let tail = &rest[at + 1..];
+        let end = tail.find('`').expect("closing backtick");
+        operators.push(tail[..end].to_owned());
+        rest = &tail[end..];
+    }
+    operators
+}
+
+/// FR-322 "Integer literal operands": the integer operators' integer literal
+/// operands, typed at the builtin Integer node, are inline `literal` terms in
+/// every published producer-output package (`positive_fixtures()`, which omits
+/// the reader-admission fixture `positive-integer-literal-references.json`), and each listed operator has a recorded inline
+/// application vector.
+#[trace("TC-233", "FR-322-AC-92")]
+#[test]
+fn tc_233_integer_operator_literal_operands_are_inline_in_the_published_packages() {
+    let operators = integer_literal_operand_operators();
+    assert_eq!(operators.len(), 6, "{operators:?}");
+    let mut inline = BTreeMap::<String, usize>::new();
+    for (name, package) in positive_fixtures() {
+        let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+        let integer = nodes
+            .iter()
+            .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == "integer")
+            .map(|node| node["node_id"].clone());
+        for node in nodes.iter().filter(|node| is_application_node(node)) {
+            let operation = node["body"]["operation"]["identity"].as_str().unwrap_or_default();
+            if !operators.iter().any(|listed| listed == operation) {
+                continue;
+            }
+            for operand in node["body"]["arguments"].as_array().expect("arguments") {
+                if operand["term"] == "literal" {
+                    assert_eq!(operand["value_kind"], "integer", "{name}");
+                    assert_eq!(Some(&operand["type"]), integer.as_ref(), "{name}");
+                    *inline.entry(name.to_owned()).or_default() += 1;
+                    if node["declaration"]["qualified_name"] == json!(["three"]) {
+                        assert_eq!(node["dependencies"], json!([]), "{name}: no operand node");
+                    }
+                } else if operand["term"] == "reference" {
+                    let target = nodes
+                        .iter()
+                        .find(|candidate| candidate["node_id"] == operand["target"])
+                        .expect("a reference names a node");
+                    let integer_literal = target["node_tag"] == "value"
+                        && target["semantic_form"] == "literal"
+                        && target["body"]["value_kind"] == "integer";
+                    assert!(!integer_literal, "{name}: {operation} references an integer literal node");
+                }
+            }
+        }
+    }
+    assert_eq!(inline["positive-two-owners-a"], 2);
+    assert_eq!(inline["positive-two-owners-b"], 2);
+    assert_eq!(inline["positive-operation-identities"], 4);
+    // The literal nodes for 7 and -2 stay for the operands that reference them.
+    let operation_package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    for value in ["7", "-2"] {
+        assert!(
+            operation_package["semantic_graph"]["nodes"]
+                .as_array()
+                .expect("nodes")
+                .iter()
+                .any(|node| node["semantic_form"] == "literal"
+                    && node["body"]["value_kind"] == "integer"
+                    && node["body"]["value"] == value),
+            "the {value} literal node is present"
+        );
+    }
+    // One recorded inline application per listed operator, and none beyond.
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let application_schema =
+        schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "ApplicationNode");
+    let cases = vectors["inline_literal_cases"].as_array().expect("cases");
+    let recorded: BTreeSet<&str> = cases
+        .iter()
+        .map(|case| case["operation"].as_str().expect("operation"))
+        .collect();
+    let listed: BTreeSet<&str> = operators.iter().map(String::as_str).collect();
+    assert_eq!(recorded, listed, "one case per listed operator");
+    for case in cases {
+        let name = case["name"].as_str().expect("name");
+        application_schema
+            .validate(&case["preimage"])
+            .unwrap_or_else(|error| panic!("{name} preimage is closed: {error}"));
+        assert_eq!(
+            unqualified_jcs_sha256(&case["preimage"]),
+            case["sha256"].as_str().expect("digest"),
+            "{name}"
+        );
+        assert_eq!(
+            case["preimage"]["body"]["operation"]["identity"], case["operation"],
+            "{name}: the case names its preimage's operation"
+        );
+        // The reference form of the same application: each inline operand
+        // replaced by a reference to the published literal node of its value.
+        let integer = operation_package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == "integer")
+            .expect("the Integer node")["node_id"]
+            .clone();
+        let mut by_reference = case["preimage"].clone();
+        for operand in by_reference["body"]["arguments"]
+            .as_array_mut()
+            .expect("arguments")
+        {
+            assert_eq!(operand["term"], "literal", "{name}: operands are inline");
+            assert_eq!(operand["value_kind"], "integer", "{name}");
+            assert_eq!(operand["type"], integer, "{name}: typed at the Integer node");
+            let node = operation_package["semantic_graph"]["nodes"]
+                .as_array()
+                .expect("nodes")
+                .iter()
+                .find(|node| {
+                    node["semantic_form"] == "literal"
+                        && node["body"]["value_kind"] == "integer"
+                        && node["body"]["value"] == operand["value"]
+                })
+                .unwrap_or_else(|| panic!("{name}: a published literal node of the value"));
+            *operand = json!({"term": "reference", "target": node["node_id"]});
+        }
+        assert_eq!(
+            unqualified_jcs_sha256(&by_reference),
+            case["reference_form_sha256"].as_str().expect("digest"),
+            "{name}: the reference form's recorded key"
+        );
+        assert_ne!(case["sha256"], case["reference_form_sha256"], "{name}");
+    }
+}
+
+const POSITIVE_INTEGER_LITERAL_REFERENCES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-integer-literal-references.json");
+
+/// FR-322 "Integer literal operands": the rule binds the producer. A package
+/// whose `quire.op.integer.add` application references literal nodes is
+/// admitted by the reader, under its own node identity.
+#[trace("TC-233", "FR-322-AC-93")]
+#[test]
+fn tc_233_a_reader_admits_the_reference_form_of_an_integer_literal_operand() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let references = parsed_fixture(POSITIVE_INTEGER_LITERAL_REFERENCES);
+    v2.validate(&references)
+        .unwrap_or_else(|error| panic!("the reference form has the closed V2 shape: {error}"));
+    assert_eq!(read_package_semantics(&references, &catalog), Ok(()));
+    let application = |package: &Value| {
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| node["declaration"]["qualified_name"] == json!(["three"]))
+            .expect("the `three` application")
+            .clone()
+    };
+    let referenced = application(&references);
+    assert_eq!(referenced["body"]["operation"]["identity"], "quire.op.integer.add");
+    assert!(
+        referenced["body"]["arguments"]
+            .as_array()
+            .expect("arguments")
+            .iter()
+            .all(|operand| operand["term"] == "reference"),
+        "the published operands are references"
+    );
+    let inline = application(&parsed_fixture(POSITIVE_TWO_OWNERS_A));
+    assert_ne!(
+        referenced["node_id"], inline["node_id"],
+        "the reference form has a different node identity"
+    );
+    assert_ne!(references["package_id"], parsed_fixture(POSITIVE_TWO_OWNERS_A)["package_id"]);
 }

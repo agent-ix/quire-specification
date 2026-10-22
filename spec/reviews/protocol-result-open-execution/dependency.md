@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "FR-061 relationships and A/E/F/Engineering Assurance result seams"
 review_set: all
-evaluated_revision: "cb2748d"
 review_date: "2026-09-10"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-061, type: reviews }

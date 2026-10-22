@@ -105,9 +105,43 @@ not unique), `peers` (`Order` `[0, 3]`, unordered, unique) and `trail`
 | RE-14 | Two `Reference<Both>`, field `code` of M6 | `ambiguous_declaration`/`ambiguous-name` | FR-322-AC-38 |
 | RE-15 | `Reference<Order>` and an `Order` object operand | `ill_typed`/`operator-ineligible`: family `object` | FR-322-AC-38 |
 
+## Record conformance and event vectors
+
+These vectors apply FR-322 "Record conformance" and event equality
+(FR-322-AC-68, FR-322-AC-69, FR-322-AC-31) with the published catalog's
+`quire.op.record.project`, `quire.op.structural.eq`, `quire.op.structural.ne`,
+`quire.op.collection.contains`, `quire.op.collection.set`,
+`quire.op.collection.sequence` and `quire.op.function.call` entries. The
+selected document for them declares the record value types `Money`,
+`TaxedMoney` (supertype `Money`), `GiftTaxedMoney` (supertype `TaxedMoney`) and
+`Other`, the event types `OrderPlaced` and `ExpressOrderPlaced` (supertype
+`OrderPlaced`) and the object type `Order`. `TaxedMoney` adds `tax_minor` and a
+text field `note`; `Money` declares `amount_minor`. These vectors are a reference oracle: `tests/record_conformance.rs` applies the prose rules over inline data, and the vectors are not yet published as a data file.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| EV-01 | A `model`/`event_type` node owned by `OrderPlaced` | Passes the owner join | FR-322-AC-68 |
+| EV-02 | A `model`/`event_type` node owned by `Money` (a record value type), by `Order` (an object type) or by an undeclared node | `missing_declaration`/`missing-selection` | FR-322-AC-68 |
+| EV-03 | `record.project` of `amount_minor` with `declaration` `OrderPlaced` over an `OrderPlaced` operand, where `OrderPlaced` declares it | Admitted: family `record` | FR-322-AC-68 |
+| EV-04 | `structural.eq` and `structural.ne` over two `OrderPlaced` operands | `ill_typed`/`operator-ineligible` | FR-322-AC-68 |
+| EV-05 | `structural.eq` over two `Option<OrderPlaced>`, two tuples holding `OrderPlaced` and two `Set<OrderPlaced>` operands | `ill_typed`/`operator-ineligible` | FR-322-AC-68 |
+| EV-06 | `structural.eq` and `structural.ne` over two `Money` operands, and over two `Option<Money>` operands | Admitted | FR-322-AC-68 |
+| RCF-01 | `record.project` of `amount_minor` with `declaration` `Money` over `Money`, `TaxedMoney` and `GiftTaxedMoney` operands | Admitted; type is the one `Money` gives the field | FR-322-AC-69 |
+| RCF-02 | `record.project` with `declaration` `GiftTaxedMoney` over a `TaxedMoney` operand; with `declaration` `TaxedMoney` over a `Money` operand; with `declaration` `Other` over a `Money` operand | `ill_typed`/`operator-ineligible`: `member_of` fails | FR-322-AC-69 |
+| RCF-03 | `function.call` over a function whose body `parameters` binding references one `Money` parameter node, and `dispatch_call` of an operation with a `Money` parameter, each with a `TaxedMoney` argument, then a `GiftTaxedMoney` argument | Admitted | FR-322-AC-31, FR-322-AC-69 |
+| RCF-04 | The same calls with a `TaxedMoney` parameter and a `Money` argument; with a `Money` parameter and an `Other` argument; with two arguments for one parameter; `function.call` over a function with no `parameters` binding and one argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31, FR-322-AC-69 |
+| RCF-05 | The same calls with a `Sequence<Money>` parameter and a `Sequence<TaxedMoney>` argument; with `Option<Money>` and `Option<TaxedMoney>` | `ill_typed`/`operator-ineligible`: a `K<child>` type is not a `K<parent>` type | FR-322-AC-69 |
+| RCF-07 | `collection.contains` over a `Set<Money>` and a `TaxedMoney` operand; over a `Set<TaxedMoney>` and a `Money` operand | Admitted; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
+| RCF-08 | `collection.set` and `collection.sequence` with `result_type` `Set<Money>` and `Sequence<Money>` and rest arguments `Money` and `TaxedMoney`; with a `Set<TaxedMoney>` result and a `Money` rest argument | Admitted; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
+| RCF-09 | A union value of a member with a `Money` payload and a `TaxedMoney` term; with a `Money` term at a `TaxedMoney` payload | Admitted; `ill_typed`/`type-mismatch` | FR-322-AC-69 |
+| RCF-10 | `structural.eq` and `structural.ne` over two `Money` operands with the leaves of `Money`, where the values are `TaxedMoney` values whose `note` has no listed leaf | Admitted: the leaf check reads `Money`'s walk only | FR-322-AC-69 |
+| RCF-11 | A `function` typed `Money` whose body root is an application typed `TaxedMoney`; a `function` typed `TaxedMoney` whose body is typed `Money` | Admitted; `ill_typed`/`type-mismatch` at the function node | FR-322-AC-69 |
+| RCF-13 | A `function` typed `Money` whose `body` binding references a root expression typed `TaxedMoney`; typed `Money` with a `Voucher`-typed root (an unrelated record); typed `TaxedMoney` with a `Money` root | Admitted; `ill_typed`/`type-mismatch`; `ill_typed`/`type-mismatch` (locus: the function node) | FR-322-AC-69 |
+| RCF-12 | A `case` with result type `Money` whose arm bodies are typed `Money` and `TaxedMoney`; with arm bodies `TaxedMoney` and `Other` | Admitted; `ill_typed`/`operator-ineligible` | FR-322-AC-69 |
+
 ## Expected Results
 
-Every reference equality, projection and reaches case gives exactly its
+Every reference equality, projection, reaches, record conformance and event case gives exactly its
 recorded result.
 
 ## Relationship ends
@@ -136,5 +170,13 @@ multiplicity edits the selected document before it is read.
 | RN-15 | `reaches` `order` on M4, operands M1, M1 | Admitted | FR-322-AC-57 |
 | RN-16 | `reaches` `order` on M4, operands M1, M3 | `ill_typed`/`operator-ineligible` at `arguments/1` | FR-322-AC-57 |
 | RN-17 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched | Admitted | FR-322-AC-57 |
-| RN-18 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched | `ill_typed`/`operator-ineligible` at `member.name` | FR-322-AC-57 |
+| RN-18 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched to `{0,3}` unique | Admitted | FR-322-AC-57 |
 | RN-19 | `reaches` `invoiced` on M10, operands M1, M1 | `ill_typed`/`operator-ineligible` at `member.name` | FR-322-AC-57 |
+| RN-20 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched to `{0,3}` and `unique` false | Admitted: a `Bag`-shaped destination | FR-322-AC-57 |
+| RN-21 | `reaches` `order` on M4, operands M1, M5, with the end multiplicity patched to `{0,3}` | Admitted: a subtype operand | FR-322-AC-57 |
+| RN-22 | `reaches` `order` on M4, operands M1, M3, with the end multiplicity patched to `{0,3}` | `ill_typed`/`operator-ineligible` at `arguments/1` | FR-322-AC-57 |
+| RN-23 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched to `{0,unbounded}` | `unsupported_construct`/`expression-form` at `member.name` | FR-322-AC-57 |
+| RN-24 | `reaches` `order` on M4, operands M1, M1, with the end multiplicity patched to `{0,3}` and `ordered` true | `unsupported_construct`/`expression-form` at `member.name` | FR-322-AC-57 |
+| RN-25 | `reaches` `invoiced` on M10, operands M1, M1, with the end multiplicity upper bound patched to 3 | `ill_typed`/`operator-ineligible` at `member.name`: a multi-valued destination of another type | FR-322-AC-57 |
+| RN-26 | `reaches` `invoiced` on M10, operands M1, M1, with the end multiplicity patched to `{0,unbounded}` | `unsupported_construct`/`expression-form` at `member.name`: multiplicity is decided before type | FR-322-AC-57 |
+| RN-27 | `reaches` `followedBy` on M11, operands M1, M1, with the end multiplicity patched to `{0,unbounded}` | `ill_typed`/`operator-ineligible` at `member.name`: direction is decided before multiplicity | FR-322-AC-57 |

@@ -85,4 +85,4 @@ the two former gaps for FS06 without changing either adequacy vocabulary.
 ## Status
 
 Accepted by FS06 as the closed common mapping-loss vocabulary. Executable
-coverage remains Planned in TM-008 and the qcir target tickets.
+coverage remains Planned in the qcir target tickets.

@@ -11,8 +11,7 @@ relationships:
 ## Description
 
 Accepted portable contract and negative controls for FR-017-AC-2–5. The
-negative controls isolate structural validity from intended-role matching.
-TM-001 remains Planned; this artifact does not claim executed portfolio coverage.
+negative controls isolate structural validity from intended-role matching. This artifact does not claim executed portfolio coverage.
 
 ## Test Procedure
 

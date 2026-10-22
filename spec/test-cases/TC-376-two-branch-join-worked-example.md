@@ -30,11 +30,11 @@ protocol Fill using p over (k: M::Cell) on origin {
   role w on M;
   run sequence Main {
     parallel Both {
-      branch left  attempt A by w on M::Cell::inc    contracts [IncPre, IncPost] as (a) { true };
-      branch right attempt B by w on M::Cell::setTwo contracts [TwoPre, TwoPost] as (b) { true };
+      branch left  attempt A by w on M::Cell::inc    contracts [IncPre, IncPost] as (a: M::Cell) { true };
+      branch right attempt B by w on M::Cell::setTwo contracts [TwoPre, TwoPost] as (b: M::Cell) { true };
     } join all [left, right];
   }
-  finish Done as (d) { true };
+  finish Done as (d: M::Cell) { true };
 }
 ```
 
@@ -42,6 +42,8 @@ Bind `k` to `c`. Explore exhaustively under `sc` through the real local Rust
 boundary, recording every state, enabled step and transition identity. Check
 the deadlock-freedom item, the claim `eventually holds(k.v = 3)` under
 infinite-trace, and the same with `TwoPre: self.v <= 1`.
+
+Parse the protocol text above at S1 under the `quire.value.complete/v1` profile and require it admissible with no diagnostic.
 
 ## Vectors
 
@@ -55,6 +57,8 @@ infinite-trace, and the same with `TwoPre: self.v <= 1`.
 | FL-06 | Repeat and check moves | A variant with a `repeat` of `inc` at `max 2` and a guard that stays true enters `exhausted` at the counter's maximum without a step; a variant with `check C using p { false }` before `A` leaves `left` waiting at `C` with no enabled step |
 | FL-07 | Repeat with no maximum | A variant whose `run` is `repeat R by w visible() while { true } attempt F by w on M::Cell::flip …`, with `flip` precondition `self.v <= 1` and postcondition `self.v = 1 - pre(self.v)`, reaches exactly two states (`v 0` and `v 1`, the root at `F`) and two transitions, the second closing the cycle; no state's `bounds` member holds a counter; no state is terminal; `always eventually holds(k.v = 1)` settles `proved` under the default scheduler constraints |
 | FL-08 | Undefined constraint | A variant with an empty population `extras` of `Cell` whose attempt `A` has the constraint `{ lookup<M::Cell>(extras, k) absent undefined .v >= 0 }` settles every item, including the deadlock-freedom item, `refuted`, cause `undefined-evaluation`, with the prefix s0, s1 and `where` naming the constraint's locus and reason `absent-key`; `attempt(A)` is not reported as a disabled step |
+| FL-09 | Fence step | A variant whose `left` begins with `fence F ordering seq_cst;` has one `fence` step for `left`, which changes no model state and moves `left` to `A`; it is enabled in every state under `sc`; under `tso` the `seq_cst` fence is enabled exactly while `left`'s store buffer is empty and an `acquire` fence is enabled in every state, and in a state with a non-empty buffer the `seq_cst` fence has no enabled step while `left`'s `flush` is enabled, so `left` waits at the fence and that state is no deadlock; the variant with a fence in each branch reaches no deadlock that `Fill` without fences does not reach under `sc` |
+| FL-10 | `run sequence Main { parallel P { branch left attempt A as (a); branch right attempt B } join all; effect E of Main::P::left::A as (e) { true } }` | After `join(P)`, `event(E)` is enabled and the root thread's environment holds `A`'s binder (FR-426-AC-16) |
 
 ## Expected Results
 

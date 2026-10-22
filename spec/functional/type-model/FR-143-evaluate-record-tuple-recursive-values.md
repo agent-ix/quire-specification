@@ -42,7 +42,11 @@ A typed finite value/equality result, refusal or incomplete traversal outcome.
 
 Record fields use declaration-owned identities; tuple positions are ordered.
 Structural equality recursively compares the same declared value type and does
-not compare object-reference targets structurally. Recursive definitions are
+not compare object-reference targets structurally. When two record operands
+have one static type but different most-specific declarations, because one holds
+a record subtype value at an ancestor-typed slot (FR-208), they are unequal and
+the comparison is the Boolean `false`; it is not a refusal, and no field is
+compared. Recursive definitions are
 allowed, but each runtime value must be finite and cycles require explicit
 object identity rather than value containment.
 
@@ -93,13 +97,23 @@ package. Equal qualified names, owners, field/member names, field/member
 types or shapes never make two keys equal, and one declaration has exactly one
 key. An imported declaration has the key that the importing package's graph
 assigns to the resolved FR-307 export, so every dependency path that resolves
-one export yields one key. No composite key is stable across checked packages.
+one export yields one key. No source-declared composite key is stable across checked packages. A model
+record value type or event type (FR-208) is the exception: its declaration key
+is its `model`/`record_value_type` or `model`/`event_type` node key
+([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
+"Model-owned members" step 2), a function of the selected document's identity
+and the node alone. It is not derived from the selecting unit's source owner or
+from the alias a unit gives the model, so two units that select one model under
+different aliases agree on every such key, and the key is recomputable and
+equal across checked packages that select that document. FR-144's key order
+and FR-149's equality of a subtype value use this key.
 Mixing is impossible at check time, because every type named in one checked
 package, imported ones included, resolves to that package's own keys, so no
 source expression can denote a composite type of another package. Values meet
 evaluation only through runtime inputs and snapshots validated against the
-evaluating package. A supplied composite value whose declaration key is not a
-key of that package's graph is
+evaluating package. A supplied composite value whose declaration key is neither a
+key of that package's graph nor, for a model record value type or event type, a
+declaration key of the evaluating package's selected document is
 `refused { code: invalid_runtime_input, cause: wrong-value-kind }` during input
 validation, before any evaluation or charge. A supplied union value names its
 union by declaration key, its active member by that member's
@@ -218,7 +232,7 @@ also arrive through a parameter, `let` binding or composite field that carries
 such a value. Its identity is the snapshot-supplied FR-009/FR-204 triple
 (universe, object-type declaration identity, declared object identity). Under
 the selected `quire.model.complete/v1` definition the universe is the
-`quire.model.object-universe/v1` identity, the type is the effective
+`quire.model.object-universe/v2` identity, the type is the effective
 declaration identity of the object's most-specific type, never the static `T`,
 and `Reference<S>` converts to `Reference<T>` only by the FR-149 upcast row. Its retained observation is
 not part of identity. `Reference<T>` is terminal in containment, construction
@@ -232,11 +246,11 @@ and equality.
 | FR-143-AC-2 | Equal field shapes from different declared types do not become interchangeable. | Test (TC-188) |
 | FR-143-AC-3 | Cyclic value containment refuses, while bounded recursive construction and object-reference cycles remain distinct. | Test (TC-188) |
 | FR-143-AC-4 | Missing/extra record fields, wrong tuple arity and absence/null substitution each refuse at the originating component. | Test (TC-188) |
-| FR-143-AC-5 | Canonical field ordering does not make equal-shaped values of different declared record types equal. | Test (TC-188) |
-| FR-143-AC-6 | Declaration identity is the producer-assigned record/tuple/union node key compared only within one checked package. | Test (TC-188) |
+| FR-143-AC-5 | Canonical field ordering does not make equal-shaped values of different declared record types equal. Two operands of one static record type whose most-specific declarations differ, such as a `TaxedMoney` and a `Money` with equal shared fields at `Money`, are unequal: `=` is `false` and `!=` is `true`, in either operand order, and neither is a refusal. | Test (TC-188) |
+| FR-143-AC-6 | Declaration identity is the producer-assigned record/tuple/union node key compared only within one checked package; a model record value type or event type is identified by its model node key instead. | Test (TC-188) |
 | FR-143-AC-7 | The recursion rule admits exactly the declaration graphs whose unnamed-edge and non-escaping-edge subgraphs are both acyclic, and names each refused cycle. | Test (TC-188) |
 | FR-143-AC-8 | Record fields are evaluated in declaration order, the first stopped field propagates its outcome with no later field evaluated or charged, and a completed construction charges `composite.result-retain`. | Test (TC-188) |
-| FR-143-AC-9 | `Reference<T>` admits only a model object type, and a runtime composite value from another checked package is `invalid_runtime_input` before evaluation. | Test (TC-188) |
+| FR-143-AC-9 | `Reference<T>` admits only a model object type, and a runtime composite value from another checked package is `invalid_runtime_input` before evaluation, except a model record value type or event type value, whose key is its model node key and is admitted when it is a declaration key of the evaluating package's selected document. | Test (TC-188) |
 | FR-143-AC-10 | A `?` field projection is admitted only under `present` or `value`, an unguarded `value` is `undefined_expression` with cause `unproved-presence`, and any other use is `ill_typed` with cause `type-mismatch`. | Test (TC-188) |
 | FR-143-AC-11 | Under `quire.model.complete/v1`, a reference obtained by navigation, lookup or `allInstances` carries the object's most-specific effective type, and no other source creates a reference. | Test (TC-198) |
 | FR-143-AC-12 | A `union-decl` construction admits exactly one declared member with its declared payload arity, two union values compare equal exactly when their active member and payload positions match, and equal member shapes from different declared unions never become interchangeable. | Test (TC-262) |
@@ -244,6 +258,7 @@ and equality.
 | FR-143-AC-14 | `Shape::Rect(2, 3)` evaluates `2` then `3`, then charges one `composite.result-retain` with `value_occurrences = 3` and `result_units += 3`; `Shape::Empty` charges one `composite.result-retain` with `value_occurrences = 1` and evaluates nothing; a stopped first payload argument propagates its outcome with the second argument neither evaluated nor charged and no `composite.result-retain`. | Test (TC-399) |
 | FR-143-AC-15 | A supplied `Shape` argument is refused `invalid_runtime_input`/`wrong-value-kind` before any evaluation or charge when its member key is a member key of another union, when its member key is no member's key, when it carries one payload value for `Rect`, and when its `Circle` payload is a `Text` value; a well-formed supplied `Shape::Rect(2, 3)` is admitted. | Test (TC-400) |
 | FR-143-AC-16 | A package selecting `quire.value.complete/v1` with exactly the always-selected definitions and no trigger admits a union declaration, its construction and a `case` over it, and its selection equals that of the same package with the union replaced by a record. | Test (TC-400) |
+| FR-143-AC-17 | Two units that select one model under different aliases (`model M = ...` and `model N = ...`) give `Money` and `TaxedMoney` the same declaration keys, each equal to the record's model node key; a `TaxedMoney` built in one unit equals the same value built in the other, and a `Set<Money>` holding a `Money` and a `TaxedMoney` orders its two members identically in both. | Test (TC-188) |
 
 ## Dependencies
 

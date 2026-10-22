@@ -43,7 +43,8 @@ profile, seed/enumeration mode and bounds.
 ## Outputs
 
 Typed execution traces/results with coverage and replay provenance, or
-requires-bound/incomplete/refused outcomes.
+requires-bound/incomplete/refused outcomes, or an `unsupported` result with its
+typed cause.
 
 ## Behavior
 
@@ -104,6 +105,35 @@ object, `{"type": <tag>, ...}`:
 - union — `{"type":"union","name":"<qualified-name>","member":"<member-ident>","components":[<encoded>, ...]}`,
   an empty array for a nullary member.
 - `Reference<T>` — the reference triple defined above.
+
+The `sequence`, `set`, `bag` and `ordered-set` forms are also the wire value
+form of a supplied snapshot or input collection value, each element being the
+typed canonical form of the element type; its admission (bounds, duplicate
+refusal, element order and refusal causes on input) is
+[FR-144](../type-model/FR-144-preserve-complete-collection-algebra.md)
+"Supplied collection values". A bag is always repeated elements, never
+element-count pairs.
+
+### Canonical element encoding
+
+Equal values of a type encode identically only where that type's form below is
+canonical. The element of a `Set` or `Bag` is written in its canonical encoding
+before the elements are ordered by encoded bytes, recursively through nested
+options, collections, records, tuples and unions. Integer, boolean,
+rational (FR-205 normalized), enum, union member, record, tuple, option,
+reference and `Float32`/`Float64` bits are canonical as defined above. Two
+kinds are not canonical as defined above and are canonical here:
+
+- decimal, and a quantity over a decimal: the FR-140 normalized coefficient and
+  scale (trailing decimal zeros removed while `scale > 0`; every zero is
+  coefficient `0`, scale `0`), never the retained coefficient and scale. This
+  applies only to the element of a set or bag, so the retained representation
+  elsewhere is unchanged.
+- text under a profile that normalizes (`nfc`, `nfd`, `nfkc`, `nfkd`): the
+  FR-141 compared form. Text under `unicode-scalars` or `binary-utf8` is
+  canonical as written.
+
+A reader accepts any encoding of a set or bag element and normalizes it.
 
 An alias encodes as its target type. A domain-object value is held in state
 as `Reference<T>`. A unit-bearing quantity encodes as its underlying exact
@@ -233,6 +263,8 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-10 | Sample `i` of test `j` among `m` tests uses trace index `i · m + j`. | Test (TC-354) |
 | FR-181-AC-11 | Timed replay checks each delay's admissibility, the guard at the delayed state, the post-state digest over the discrete state and exact clock valuation, and the target's time invariants in exact rationals; a violated delay or guard refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-369) |
 | FR-181-AC-12 | Under `time tick O period p` a position's time stamp is `p` times the number of `O` steps up to it. | Test (TC-369) |
+| FR-181-AC-14 | A sampled choice whose integer total `n` exceeds `2^256` stops the whole sampling run before any draw and settles `unsupported` with cause `total-above-draw-range{total}`, `total` being `n`; no digest is computed and the sampler does not loop. | Test (TC-354) |
+| FR-181-AC-15 | A sampled choice whose integer total is exactly `2^256` accepts the draw-0 digest and selects the least index `i` with `v mod n < w_0 + … + w_i`. | Test (TC-354) |
 
 ## Dependencies
 

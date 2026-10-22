@@ -1,7 +1,7 @@
 # ADR-0053 producer amendment handoff
 
 Completed FS01 producer handoff. Contract-IR PR #72 applied this disposition and
-accepted ADR-0053 at `7d4901526bf2ec64c3c546c1781d364fdc4c3054`.
+accepted ADR-0053.
 This file preserves the reviewed handoff and decision correspondence; the owning
 ADR is now authoritative.
 

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "quire-specification #134 diff 818f555..5d3aa25: FR-290, FR-331, interface_013, FR-270/271/272 and native-diagnostics 1-draft.5, FR-060/061/240/291/292, FR-349/355, AD-016, TC-266/270/271, test matrices"
 review_set: all
-evaluated_revision: "5d3aa25+wt"
 review_date: "2026-09-19"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-290, type: references }

@@ -193,7 +193,20 @@
         "node": "ix://acme/orders/Invoice",
         "interfaceFeatures": null,
         "supertypes": [],
-        "fields": [],
+        "fields": [
+          {
+            "name": "number",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          }
+        ],
         "operations": []
       },
       {
@@ -360,6 +373,31 @@
       {"node": "ix://acme/orders/relationship/Order-twin-Order", "direction": "bidirectional", "ends": [{"role": "twin", "type": "ix://acme/orders/Order", "end": "source"}, {"role": "twin", "type": "ix://acme/orders/Order", "end": "target"}]}
     ]
   },
+  "timing_package": {
+    "identity": "acme/timing",
+    "version": "1.0.0",
+    "object_types": [
+      {
+        "node": "ix://acme/timing/Timer",
+        "interfaceFeatures": null,
+        "supertypes": [],
+        "fields": [
+          {"name": "window", "typeRef": "ix://quire/unit/ms", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "waits", "typeRef": "ix://quire/unit/ms", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "ghost", "typeRef": "ix://quire/unit/ghost", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
+        ],
+        "operations": [
+          {"name": "wait", "parameters": [{"name": "d", "typeRef": "ix://quire/unit/ms", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}], "result": {"typeRef": "ix://quire/native/Integer", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}, "redefines": null}
+        ]
+      }
+    ],
+    "value_types": [],
+    "relationships": []
+  },
+  "checked_units": [["ms"], ["s"]],
+  "timing_declaration_nodes": [
+    {"name": "T1", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/timing", "kind": "model", "node": "ix://acme/timing/Timer"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "b732da5a25ec6b3b0c495b725e4eecd33a99d215a9744ca34802c5628b4e2f0d"}
+  ],
   "model_declaration_nodes": [
     {"name": "M1", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Order"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"},
     {"name": "M2", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/billing", "kind": "model", "node": "ix://acme/billing/Order"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "d4940a1a4f70ced5672eaaec2b62fe2b97c7c0b1c886777d85043cdbbcd5abc7"},
@@ -405,6 +443,12 @@
     {"name": "MT-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "sku"}, "expected": {"resolves": "ix://acme/orders/Order/sku", "member_type": {"type": "Text", "min": "0", "max": "64", "profile": "nfc"}}},
     {"name": "MA-14", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "alias"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "MA-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "slug"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MU-01", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "field", "declaration": "T1", "name": "window"}, "expected": {"resolves": "ix://acme/timing/Timer/window", "member_type": {"type": "Quantity", "unit": "ms"}}},
+    {"name": "MU-02", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "field", "declaration": "T1", "name": "waits"}, "expected": {"resolves": "ix://acme/timing/Timer/waits", "member_type": {"type": "Set", "element": {"type": "Quantity", "unit": "ms"}}}},
+    {"name": "MU-03", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "operation", "declaration": "T1", "name": "wait", "receiver": {"type": "Reference", "target": "b732da5a25ec6b3b0c495b725e4eecd33a99d215a9744ca34802c5628b4e2f0d"}, "arguments": [{"type": "Quantity", "unit": "ms"}]}, "expected": {"resolves": "ix://acme/timing/Timer/wait", "member_type": {"type": "Integer"}}},
+    {"name": "MU-04", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "field", "declaration": "T1", "name": "ghost"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
+    {"name": "MU-05", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "operation", "declaration": "T1", "name": "wait", "receiver": {"type": "Reference", "target": "b732da5a25ec6b3b0c495b725e4eecd33a99d215a9744ca34802c5628b4e2f0d"}, "arguments": [{"type": "Quantity", "unit": "s"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
+    {"name": "MU-06", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "operation", "declaration": "T1", "name": "wait", "receiver": {"type": "Reference", "target": "b732da5a25ec6b3b0c495b725e4eecd33a99d215a9744ca34802c5628b4e2f0d"}, "arguments": [{"type": "Integer"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
     {"name": "RE-ends-1", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M4", "name": "order"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-order-Order", "role": "order"}}},
     {"name": "RE-ends-2", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M4", "name": "next"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-order-Order", "role": "next"}}},
     {"name": "RE-ends-3", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M10", "name": "invoiced"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-invoiced-Invoice", "role": "invoiced"}}},
@@ -442,7 +486,7 @@
   "selection_cases": [
     {"name": "MS-01", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"admission": "passed"}},
     {"name": "MS-02", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [], "expected": {"refused": {"code": "missing_import", "cause": "missing-selection"}}},
-    {"name": "MS-03", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": [{"path": "/types/5/constraints/1/operands/value", "value": 8}]}], "expected": {"refused": {"code": "stale_dependency", "cause": "content-mismatch"}}},
+    {"name": "MS-03", "selection": {"identity": "acme/orders", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": [{"path": "/types/8/constraints/1/operands/value", "value": "8"}]}], "expected": {"admission": "passed"}},
     {"name": "MS-05", "selection": {"identity": "acme/orders", "digest_domain": "sha256", "digest": "$document"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "stale_dependency", "cause": "digest-domain-mismatch"}}},
     {"name": "MS-06", "selection": {"identity": "acme/invoices", "digest": "$document", "digest_domain": "sha256-jcs"}, "supplied": [{"under": "$document", "patch": []}], "expected": {"refused": {"code": "invalid_model_binding", "cause": "wrong-model-selection"}}}
   ],
@@ -537,7 +581,15 @@
     {"name": "RN-15", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "expected": {"admitted": true}},
     {"name": "RN-16", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M3"], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "arguments/1"}}},
     {"name": "RN-17", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"admitted": true}},
-    {"name": "RN-18", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}},
-    {"name": "RN-19", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M10", "role": "invoiced", "operands": ["M1", "M1"], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}}
+    {"name": "RN-18", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"admitted": true}},
+    {"name": "RN-19", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M10", "role": "invoiced", "operands": ["M1", "M1"], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}},
+    {"name": "RN-20", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/unique", "value": false}], "expected": {"admitted": true}},
+    {"name": "RN-21", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M5"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"admitted": true}},
+    {"name": "RN-22", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M3"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "arguments/1"}}},
+    {"name": "RN-23", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}, {"op": "remove", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper"}], "expected": {"refused": {"code": "unsupported_construct", "cause": "expression-form", "at": "member.name"}}},
+    {"name": "RN-24", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/ordered", "value": true}], "expected": {"refused": {"code": "unsupported_construct", "cause": "expression-form", "at": "member.name"}}},
+    {"name": "RN-25", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M10", "role": "invoiced", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-invoiced-Invoice/targetEnd/multiplicity/upper", "value": 3}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}},
+    {"name": "RN-26", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M10", "role": "invoiced", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-invoiced-Invoice/targetEnd/multiplicity/lower", "value": 0}, {"op": "remove", "path": "/types/@Order/relationships/@Order-invoiced-Invoice/targetEnd/multiplicity/upper"}], "expected": {"refused": {"code": "unsupported_construct", "cause": "expression-form", "at": "member.name"}}},
+    {"name": "RN-27", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M11", "role": "followedBy", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-follows-Order/sourceEnd/multiplicity/lower", "value": 0}, {"op": "remove", "path": "/types/@Order/relationships/@Order-follows-Order/sourceEnd/multiplicity/upper"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}}
   ]
 }

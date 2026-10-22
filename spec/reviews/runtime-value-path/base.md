@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "Branch objects/runtime-value-path at a9368c1: the FR-047 amendment, the new FR-207 object artifact, the FR-274 open-gap narrowing, and the FR-200, spec/spec.md and acceptance-matrix registrations"
 review_set: subset
-evaluated_revision: "a9368c1"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-047, type: reviews }

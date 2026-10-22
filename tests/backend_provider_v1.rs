@@ -442,6 +442,8 @@ fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
 #[trace("TC-431", "FR-331-AC-23")]
 #[trace("TC-431", "FR-331-AC-24")]
 #[trace("TC-431", "FR-331-AC-25")]
+#[trace("TC-431", "FR-331-AC-28")]
+#[trace("TC-431", "FR-364-AC-10")]
 #[test]
 fn tc_431_positive_vectors_are_admitted_with_owned_members() {
     let validator = validator();
@@ -454,6 +456,30 @@ fn tc_431_positive_vectors_are_admitted_with_owned_members() {
             Vec::<String>::new(),
             "{name} is admitted"
         );
+        // FR-331: exactly one disposition and one accounting record per item.
+        if let (Some(dispositions), Some(accounting)) = (
+            document["dispositions"].as_array(),
+            document["accounting"].as_array(),
+        ) {
+            if !dispositions.is_empty() && !accounting.is_empty() {
+                let indices = |records: &[Value]| -> Vec<u64> {
+                    let mut found: Vec<u64> = records
+                        .iter()
+                        .map(|record| record["request_index"].as_u64().expect("request index"))
+                        .collect();
+                    found.sort_unstable();
+                    found
+                };
+                let (dispositions, accounting) = (indices(dispositions), indices(accounting));
+                let mut unique = accounting.clone();
+                unique.dedup();
+                assert_eq!(unique, accounting, "{name}: one accounting record per item");
+                assert_eq!(
+                    accounting, dispositions,
+                    "{name}: accounting covers exactly the dispositions' items"
+                );
+            }
+        }
         let owners = vector["owners"].as_object().expect("owners map");
         assert!(!owners.is_empty(), "{name} names member owners");
         for (pointer, fr) in owners {
@@ -488,6 +514,9 @@ fn located_at_patch(error: &str, patched: &str) -> bool {
 #[trace("TC-431", "FR-331-AC-23")]
 #[trace("TC-431", "FR-331-AC-24")]
 #[trace("TC-431", "FR-331-AC-25")]
+#[trace("TC-431", "FR-331-AC-28")]
+#[trace("TC-431", "FR-368-AC-10")]
+#[trace("TC-431", "FR-364-AC-10")]
 #[test]
 fn tc_431_adverse_vectors_are_refused() {
     let whole = validator();
@@ -1252,4 +1281,207 @@ fn tc_431_proof_step_index_admits_exactly_the_u64_range() {
         !pattern.is_valid(&Value::String("18446744073709551616".into())),
         "u64::MAX + 1"
     );
+}
+
+/// FR-331-AC-30: `memory_models` is a nonempty, duplicate-free subset of
+/// `sc`, `tso` and `ra`, carried only by a `temporal-satisfaction` descriptor.
+#[trace("TC-431", "FR-331-AC-30")]
+#[test]
+fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
+    let descriptor = definition("BackendDescriptor");
+    let base = serde_json::json!({
+        "backend": "qsl-model-check",
+        "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
+        "fairness_kinds": ["weak"]
+    });
+    let with = |models: Value| {
+        let mut entry = base.clone();
+        entry["memory_models"] = models;
+        entry
+    };
+    assert!(descriptor.is_valid(&base), "memory_models may be omitted");
+    assert!(descriptor.is_valid(&with(serde_json::json!(["sc", "tso", "ra"]))));
+    assert!(descriptor.is_valid(&with(serde_json::json!(["ra"]))));
+    assert!(!descriptor.is_valid(&with(serde_json::json!([]))), "empty");
+    assert!(
+        !descriptor.is_valid(&with(serde_json::json!(["sc", "sc"]))),
+        "repeated"
+    );
+    assert!(
+        !descriptor.is_valid(&with(serde_json::json!(["arm"]))),
+        "unknown"
+    );
+    let mut other = serde_json::json!({
+        "backend": "smt",
+        "advertises": [{"kind": "operation-contract", "mode": "unbounded"}]
+    });
+    assert!(
+        descriptor.is_valid(&other),
+        "an operation-contract descriptor is valid without memory_models"
+    );
+    other["memory_models"] = serde_json::json!(["sc"]);
+    assert!(
+        !descriptor.is_valid(&other),
+        "not a temporal-satisfaction descriptor"
+    );
+    let mut mixed = other.clone();
+    mixed["advertises"] = serde_json::json!([
+        {"kind": "operation-contract", "mode": "unbounded"},
+        {"kind": "temporal-satisfaction", "mode": "unbounded"}
+    ]);
+    mixed["fairness_kinds"] = serde_json::json!(["weak"]);
+    assert!(
+        descriptor.is_valid(&mixed),
+        "a descriptor that also advertises temporal-satisfaction may carry it"
+    );
+}
+
+/// FR-331-AC-32: a temporal item's subject may carry a population bound while
+/// its extent stays unbounded; the bound moves nothing into the extent.
+#[trace("TC-431", "FR-331-AC-32")]
+#[test]
+fn tc_431_a_subject_bound_leaves_the_extent_unbounded() {
+    let validator = validator();
+    let vector = positive("temporal-request");
+    let document = composed(&vector);
+    let item = &document["request"]["items"][0];
+    assert_eq!(item["extent"]["classification"], "unbounded");
+    assert_eq!(item["extent"]["domains"][0]["kind"], "infinite-trace");
+    assert_eq!(item["extent"]["finite_bound_available"], false);
+    assert!(item["extent"].get("bounds").is_none());
+    let bounds = item["temporal"]["subject"]["proof_bounds"]
+        .as_array()
+        .expect("subject proof bounds");
+    assert!(
+        bounds
+            .iter()
+            .any(|bound| bound["kind"] == "population" && bound["bound"]["type"] == "cardinality")
+    );
+    assert_eq!(errors(&validator, &document), Vec::<String>::new());
+    let mut emptied = document.clone();
+    emptied["request"]["items"][0]["temporal"]["subject"]["proof_bounds"] = serde_json::json!([]);
+    assert_eq!(errors(&validator, &emptied), Vec::<String>::new());
+}
+
+/// FR-331-AC-31: the `memory.load-buffering-shape` warning carries a `load`
+/// and a `store` transition identity and nothing else.
+#[trace("TC-431", "FR-331-AC-31")]
+#[test]
+fn tc_431_load_buffering_warning_carries_two_transition_identities() {
+    let warning = definition("Warning");
+    let identity = |operation: &str| {
+        serde_json::json!({
+            "type": "transition",
+            "operation": operation,
+            "receiver": null,
+            "arguments": []
+        })
+    };
+    let good = serde_json::json!({
+        "code": "memory.load-buffering-shape",
+        "load": identity("Reader::read"),
+        "store": identity("Writer::write")
+    });
+    assert!(warning.is_valid(&good), "a well-formed warning is admitted");
+    let mut missing = good.clone();
+    missing.as_object_mut().unwrap().remove("store");
+    assert!(!warning.is_valid(&missing), "store is required");
+    let mut extra = good.clone();
+    extra["site"] = serde_json::json!("x");
+    assert!(!warning.is_valid(&extra), "no extra member");
+    let mut bad = good.clone();
+    bad["load"] = serde_json::json!("Reader::read");
+    assert!(!warning.is_valid(&bad), "load is a transition identity");
+}
+
+/// FR-361-AC-13: a universe provision is the RFC 8785 array of keys in list
+/// order, each exactly `universe` (64 lowercase hex) and `identity` (lowercase
+/// hex), named by its `sha256-jcs` digest.
+#[trace("TC-290", "FR-361-AC-13")]
+#[test]
+fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
+    let is_hex = |text: &str| {
+        text.bytes()
+            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+    };
+    let vectors = parsed(VECTORS);
+    let cases = vectors["universe_provision_vectors"]
+        .as_array()
+        .expect("universe provision vectors");
+    let mut digests = BTreeSet::new();
+    for case in cases {
+        let name = case["name"].as_str().expect("name");
+        let keys = &case["keys"];
+        for key in keys.as_array().expect("keys") {
+            let members: BTreeSet<&str> = key
+                .as_object()
+                .expect("a key is an object")
+                .keys()
+                .map(String::as_str)
+                .collect();
+            assert_eq!(members, BTreeSet::from(["identity", "universe"]), "{name}");
+            let universe = key["universe"].as_str().expect("universe");
+            let identity = key["identity"].as_str().expect("identity");
+            assert!(universe.len() == 64 && is_hex(universe), "{name}: universe");
+            assert!(
+                !identity.is_empty() && identity.len() % 2 == 0 && is_hex(identity),
+                "{name}: identity"
+            );
+        }
+        let canonical = jcs_canonicalize(keys).expect("canonical keys");
+        assert_eq!(
+            canonical,
+            case["jcs"].as_str().expect("jcs").as_bytes(),
+            "{name}"
+        );
+        let digest = jcs_sha256(keys).expect("digest");
+        assert_eq!(
+            digest.strip_prefix("sha256-jcs:").unwrap_or(&digest),
+            case["digest"].as_str().expect("digest"),
+            "{name}"
+        );
+        digests.insert(digest);
+    }
+    assert_eq!(digests.len(), cases.len(), "list order changes the digest");
+}
+
+/// FR-364-AC-10: the observed-arm positive and the coupling adverse vectors
+/// exist, by name, so deleting any of them fails this test; their admission
+/// and refusal are checked by the positive and adverse vector tests.
+#[trace("TC-431", "FR-364-AC-10")]
+#[test]
+fn tc_431_the_arm_coupling_vectors_are_present() {
+    let vectors = parsed(VECTORS);
+    let names = |section: &str| -> BTreeSet<String> {
+        vectors[section]
+            .as_array()
+            .expect(section)
+            .iter()
+            .map(|vector| vector["name"].as_str().expect("name").to_owned())
+            .collect()
+    };
+    let positive = names("positive");
+    let adverse = names("adverse");
+    for name in [
+        "observed-counterexample-outcome",
+        "observed-undefined-evaluation-outcome",
+    ] {
+        assert!(positive.contains(name), "positive vector {name}");
+    }
+    for name in [
+        "observed-counterexample-names-an-initial-state",
+        "observed-counterexample-with-a-model-step-in-the-prefix",
+        "observed-counterexample-with-a-model-step-in-the-loop",
+        "observed-counterexample-deadlock-kind",
+        "observed-counterexample-time-lock-with-final-delay",
+        "observed-counterexample-over-binding",
+        "observed-undefined-evaluation-with-a-state-key",
+        "model-counterexample-with-a-document-step-in-the-prefix",
+        "model-counterexample-with-a-document-step-in-the-loop",
+        "model-counterexample-without-an-initial-state",
+        "model-undefined-evaluation-with-a-document",
+        "observed-undefined-evaluation-with-state-keys",
+    ] {
+        assert!(adverse.contains(name), "adverse vector {name}");
+    }
 }

@@ -51,7 +51,7 @@ registration remain independent qualification/publication work.
 
 This plan accepts exact standard meanings and portable controls. It changes no
 Rust, Cargo, schema, historical fixture, released tag or executable evidence
-status. TM-001 and TM-003 rows remain Planned.
+status.
 
 ## Test Plan
 
@@ -94,8 +94,6 @@ continues owning TL-* libraries; no implementation lane is delegated here.
 
 ## Coordination Rules
 
-- Do not mark TM-001/TM-003 passed from partial or external implementation
-  evidence; portable semantic controls and execution status are separate.
 - Do not close protocol #11, IT-002/003 or public-registration work through FS05.
 - After merge, close FS05 #6 and immediately update QS #1, ledger #9 and qcir
   #69 with the accepted revision and exact remaining boundaries.

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: integrity
 scope: "Internal consistency of FR-047, FR-207 and FR-274 at a9368c1: grounding of every normative clause, agreement between the amendment and the extraction, and registration completeness"
 review_set: subset
-evaluated_revision: "a9368c1"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-047, type: reviews }

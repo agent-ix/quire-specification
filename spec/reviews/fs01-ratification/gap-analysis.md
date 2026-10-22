@@ -5,7 +5,6 @@ type: SpecReview
 analysis: gap-analysis
 scope: "quire-specification #2 FS01 completion diff"
 review_set: subset
-evaluated_revision: "task/2 working tree based on 96fc29d"
 review_date: "2026-09-13"
 ---
 # Gap analysis of FS01 language charter ratification

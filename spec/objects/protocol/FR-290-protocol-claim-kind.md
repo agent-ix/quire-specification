@@ -238,8 +238,8 @@ kind for the other: an item naming `exact` with no candidate advertising
 `statistical` candidate exists, and the converse holds as well. A
 `statistical` candidate's negotiation arm settles `unsupported` an item whose
 claim states no confidence parameters (`missing-confidence`), whose scheduler
-clause is `under every scheduler` (`every-scheduler`), or whose form is an
-exact-only form (`exact-only-form`) (FR-408). One claim may be
+clause is `under every scheduler` (`every-scheduler`), whose form is an
+exact-only form (`exact-only-form`), or whose regenerative method has no quantile bound for its confidence (`confidence-beyond-precision`) (FR-408). One claim may be
 requested twice, once per evidence kind; the two items have separate terminal
 records.
 
@@ -312,7 +312,7 @@ The item-level causes (`absent-kind`, `unknown-kind`, `absent-extent`,
 `unknown-backend`, `inconsistent-candidates`, `ambiguous-backend`) settle only
 their own item. `unknown-vocabulary` refuses its whole carrier.
 Registration causes `absent-kind`, `unknown-kind`, `unknown-mode`,
-`unknown-evidence-kind` and `invalid-domains` refuse only that registration. `duplicate-backend` refuses every registration of its
+`unknown-evidence-kind`, `invalid-domains` and `invalid-fairness-kinds` (FR-368) refuse only that registration. `duplicate-backend` refuses every registration of its
 identity and no other. Registration refusals are reported ordered bytewise by
 backend identity, then by the manifest's RFC 8785 bytes.
 

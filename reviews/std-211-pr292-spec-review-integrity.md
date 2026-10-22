@@ -1,0 +1,77 @@
+---
+id: SR-13373
+title: "Integrity review of QSpec PR #292 (STD-211): failure precedence across a refinement step"
+type: SpecReview
+analysis: integrity
+scope: "agent-ix/quire-specification@e78332c; spec/functional/analysis/FR-377-decide-model-refinement.md, spec/test-cases/TC-315-refinement-undetermined-and-replay.md; ticket STD-211"
+review_set: subset
+relationships:
+  - target: ix://agent-ix/quire-specification/FR-377
+    type: reviews
+  - target: ix://agent-ix/quire-specification/TC-315
+    type: reviews
+---
+
+## Summary
+
+Ticket: STD-211. PR: quire-specification#292 at e78332c (e78332ce731d91e077cc66b834bbee948eda0926), scoped to `git diff refs/remotes/origin/main...e78332ce7` (origin/main d053fb2). The diff is spec-only, over two files: FR-377 gains "Failure precedence across a step" and the budget paragraph, FR-377-AC-12/13 are added, and TC-315 gains step 9 with cases (a) to (h) and verifies edges to AC-12/13. Integrity review: I checked cross-spec consistency between the new FR-377 rules and FR-377-AC-9 (one-state precedence), the FR-379 settlement table (including the incomplete/limit-reached row), FR-378 (history failures), FR-383 (fault = failed) and FR-375 (step rows), and against QSL main 9567ed6 (FR-141 check_step read order and AC-9/10/11, FR-142, FR-144 and FR-145). The ticket brief's "FR-143" has no refinement content in QSpec (QSpec FR-143 is record values), so I checked the out-of-type history and unmapped-type undetermined reads against QSpec FR-378 and FR-377, and against QSL FR-140 (`OutOfType`, `UnmappedType`) and FR-141. Both agree that the two reads are undetermined. Gates: `cargo test --test checked_package_v2 --test backend_provider_v1` passes on the head (9 and 108). `quire validate --scope .` (quire 0.36.2, engine 0.50.2; the rollout note names 0.36.1/0.50.1, so the binary is newer, not older) exits 0 on FR-377 and on TC-315, with only the duplicate-archetype, duplicate-inverse-edge and inline-schema warnings, the same as on main. A whole-tree `quire validate --scope . 'spec/**/*.md'`, with paths normalised, is byte-identical between the head and main (134 failing documents, all already on main). `quire matrix` lists FR-377-AC-12/13 `untagged`, as AC-1..11 are on main too, because QSpec tags no Rust test for FR-377 and its implementation tests live in QSL. Method `code-review` was not run, because no code or test file changed; the Cargo gates stand in for it.
+
+## Scope
+
+| Unit | Path | Role |
+| --- | --- | --- |
+| FR-377-failure-precedence-across-a-step | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
+| FR-377-step-budget-paragraph | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
+| FR-377-AC-12 | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
+| FR-377-AC-13 | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
+| FR-377-AC-9 | spec/functional/analysis/FR-377-decide-model-refinement.md | examined |
+| FR-379-mapping-undetermined | spec/functional/analysis/FR-379-report-and-replay-refinement-counterexamples.md | examined |
+| FR-379-verdict-table | spec/functional/analysis/FR-379-report-and-replay-refinement-counterexamples.md | examined |
+| FR-378-history-failures | spec/functional/analysis/FR-378-check-refinement-auxiliary-state.md | examined |
+| FR-383-read-footprint-fault | spec/functional/analysis/FR-383-explore-under-state-space-reduction.md | examined |
+| QSL-FR-141-check_step-read-order | quire-spec-language:spec/functional/FR-141-decide-one-concrete-step-against-the-abstract-model.md | examined |
+| QSL-FR-141-AC-11 | quire-spec-language:spec/functional/FR-141-decide-one-concrete-step-against-the-abstract-model.md | context_only |
+| QSL-FR-142/FR-144/FR-145 | quire-spec-language:spec/functional/FR-142..FR-145 | examined |
+| FR-375-step-rows | spec/functional/analysis/FR-375-declare-model-refinement.md | context_only |
+
+## Findings
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-001 | medium | FR-377 now treats the receiver and an unmapped-type read as their own reads, but FR-379 was not updated to match, although STD-211 asked for the order to be stated in "FR-377/FR-379". FR-379's verdict rows, its `undefined-evaluation` `where`, its `mapping-undetermined` definition and its `Undefined` counterexample `row` each list only "a field row, a step-row argument or a history update". FR-375 keeps the receiver apart from the arguments ("one receiver expression and one argument per abstract parameter"). As a result, the settlement of an undefined or incomplete receiver, and what `row` and `where` name for it, are left to inference. FR-379's `mapping-undetermined` definition also leaves out the unmapped-type cause, which case (e) expects. Add the receiver and unmapped-type reads to FR-379's rows and cause definition, or say in FR-377 that the receiver counts as a step-row argument for FR-379. | spec/functional/analysis/FR-377-decide-model-refinement.md:103-118 |
+| FND-002 | low | AC-12 is narrower than the body. The body says that an undefined read refutes "even when an earlier read is refused, incomplete, out of its declared type or of an unmapped type". AC-12 drops "refused" from that list, while AC-9 keeps it for one-state rows, and step 9 has no refused read. Add "refused" to AC-12, or say why a step read cannot be refused. | spec/functional/analysis/FR-377-decide-model-refinement.md:218 |
+| FND-003 | low | Once this lands, QSL FR-141's closing sentence is stale. It calls the cross-step order "QSL's extension" of a precedence "which QSpec FR-377 states for the rows of one map(s, h) only", but FR-377 now states the cross-step order itself. STD-211 says "then QSL cites it", so QSL FR-141 needs a follow-up edit that cites FR-377-AC-12/13. The order, fault, undefined-over-undetermined, budget-stop and incomplete-row rules otherwise agree with QSL FR-141, FR-142, FR-144 and FR-145. | quire-spec-language:spec/functional/FR-141-decide-one-concrete-step-against-the-abstract-model.md:167-169 |
+| FND-004 | low | "A failed read outranks it" uses "failed" for any read that did not return a value. The same paragraph, FR-383 and AC-12/13 use `failed` for the settlement of an internal fault. Write "a read that returned no value (fault, undefined or undetermined) outranks it", so that "failed" keeps one meaning. | spec/functional/analysis/FR-377-decide-model-refinement.md:120-125 |
+
+## Verdict
+
+Not mergeable on this method alone: one medium finding (FR-379 was not updated for the receiver read and the unmapped-type read), plus three low. Consistent: the post-state rows use AC-9's one-state order; a fault settles `failed` and takes no part in the order, as FR-383 and QSL FR-141/142/144 have it; undefined outranks undetermined, as in AC-9 and QSL FR-141; out-of-type history is undetermined, as in FR-378, FR-379 and QSL FR-140; an unmapped type is undetermined, as in FR-377-AC-11 and QSL FR-140; the budget stop settles the FR-379 incomplete/limit-reached row, as QSL FR-141-AC-9/FR-142/FR-144 do, and "never `failed`" holds at the FR-331 result level; and replay parity of the reported read matches QSL FR-145.
+
+## New findings (disposition pass 1)
+
+Against head 7a78721 (7a787210427712f969a0ef1f88f9aa133156ba22). `cargo test --test checked_package_v2 --test backend_provider_v1`: 9 and 108 pass. `quire validate --scope .` on FR-377, FR-379 and TC-315 exits 0, with output identical to main once the known warnings are filtered out. The whole-tree `quire validate --scope . 'spec/**/*.md'` is byte-identical to main after path normalisation. `quire matrix` lists FR-377-AC-12/13 and FR-379-AC-1..7 as `untagged`, the same as main, because the implementation tests live in QSL. Mirroring `Reads` in the QSL engine was not feasible: QSL main 9567ed6 does not implement `check_step` (FR-141) yet, since no `check_step` symbol exists under crates/ or tests/. So I type-checked the fixture by hand against FR-375: one receiver plus two arguments for `set(x, y)` has the right count; `r(self)` gives `Reference<Impl::Reg>`, which is lifted to `Reference<Spec::Reg>`; `a1`/`a2` give `Int[0, 3]`; the history row is bounded, with a literal initial value. I re-derived every case by hand (results below). Integrity: FR-379's verdict rows, undefined-evaluation, mapping-undetermined definition and Undefined kind now name the receiver and the unmapped type; AC-12 restores refused; the failed-read wording is gone.
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | The new reconciliation sets the abstract side's "run's evaluation meter" against the "fresh meter of its own" that a concrete read gets. QSL, which this text cites, does not draw that line. QSL FR-120 gives each clause evaluation a fresh `Meter` of the one evaluation-meter budget. FR-141-AC-9 stops on the abstract postcondition exceeding "the per-evaluation meter budget B". FR-141-AC-7 makes the receiver `self.ring` undetermined under "a per-evaluation meter budget of zero". So in QSL both sides are metered per evaluation, and the outcome depends on which side ran out, not on the meter's scope. Read literally, "the run's evaluation meter" is a cumulative meter. An engine built to it would stop at a different point than QSL, or never stop when every single abstract evaluation fits in B. Restate it: each evaluation, on either side, gets a fresh meter of the request's evaluation-meter budget. Exhaustion while the abstract subject decides the step is a budget stop. Exhaustion in a concrete row, argument or history update makes that read incomplete. | spec/functional/analysis/FR-377-decide-model-refinement.md:121-137 |
+| FND-006 | low | "The `EvaluationMeter` limit of the model-checking request, FR-126" and `limit-reached{EvaluationMeter, value, setting}` use QSL names. QSpec has no FR-126, so the bare id resolves to nothing in this repo and is not linked. `EvaluationMeter` is QSL's Rust variant, not a QSpec limit name. QSpec's wire convention is FR-461's `limit` and the dotted `model_check.<counter>` setting, as in TC-323's `limit-reached{limit: max_states, value: 3, setting}`. Name the limit in QSpec's terms, or cite "QSL FR-126" explicitly. Do the same in AC-13 and TC-315 (g). | spec/functional/analysis/FR-377-decide-model-refinement.md:123-127 |
+
+## Dispositions
+
+Round 1, against head 7a78721.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | deferred | QSL FR-141:167-169 lives in quire-spec-language and cannot change in this QSpec PR. STD-211 sequences it as "then QSL cites it", so the QSL edit citing FR-377-AC-12/13 is the post-merge follow-up, owned on the QSL side. |
+| FND-004 | fixed | - |
+
+Round 2, against head 377969c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | - |
+| FND-006 | fixed | - |
+
+Against head 377969c (377969c91bdc4b945f723d5de8649a1309f17439). Main's SR-13322/13323 files are byte-identical to origin/main again. The diff against main adds only the two `std-211-pr292-*` review files, and they equal the round-1 reviewer copies. `cargo test --test checked_package_v2 --test backend_provider_v1`: 9 and 108 pass. `quire validate --scope .` exits 0 on FR-377, FR-379, TC-315 and both review files, with no errors once the known warnings are filtered out. The whole-tree validate is byte-identical to main after path normalisation. `quire matrix` lists FR-377-AC-12/13 as untagged, the same as main. Type rules, checked by hand against FR-375 and FR-149: the `v` row is now the only row; its `if` has arms `0` and `<post>`, an integer expression over `Int[0, 3]`, which is admitted as TC-315 case 1's `2 div self.tmpA` is. `h + 3` is decided at run time, since FR-149's static unproved-range rule covers only `=`/`!=` operands and FR-375 decides statically only for literals, so it leaves `Int[0, 2]` at run time. The step row has one receiver and two arguments for `set(x, y)`. With `v` starting at 0 and `store` setting it to 1, `P` takes its `0` arm at the pre-state and `<post>` only at the post-state. Every one of the fifteen cases holds by hand: (a) `A1`; (b) `P`; (c) `A1`; (d) `H`, `mapping-undetermined`; (e) the `Extra` object row, `mapping-undetermined`, since `Extra` exists only in (e) and every read is defined; (f) `failed`; (g) `limit-reached{limit, M, setting}`, since nothing else fails; (h) `A1`; (i) `A1`, `mapping-undetermined`; (j) `failed`; (k) `R`; (l) `A1`; (m) `A1`, `mapping-undetermined`; (n) `H` (`1 div pre(h)` at `h = 0`) before `P` (`1 div 0` at `v = 1`); (o) `undecided-successor`, with a cheap postcondition and the precondition incomplete without meter exhaustion. The budget paragraph now gives every clause evaluation of either subject a fresh meter of one budget and decides the outcome by which side ran out, which matches QSL FR-120 and FR-141-AC-7/9. The limit is named in QSpec terms (`limit-reached{limit, value, setting}`, an FR-461 `model_check.*` setting), and no setting name is invented.

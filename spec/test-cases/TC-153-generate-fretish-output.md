@@ -8,7 +8,7 @@ relationships:
 ---
 ## Description
 
-Accepted FS06 portable FRETish profile controls. TM-008 remains Planned.
+Accepted FS06 portable FRETish profile controls.
 
 ## Test Procedure
 

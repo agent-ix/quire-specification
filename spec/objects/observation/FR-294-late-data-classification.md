@@ -40,9 +40,9 @@ does not infer a cutoff from ingestion order or wall-clock time.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-294-AC-1 | Exactly `on-time` and `late` are admitted, with exact spelling. | Test |
-| FR-294-AC-2 | A missing or unknown classification is refused rather than defaulted. | Test |
-| FR-294-AC-3 | A `late` classification never mutates an already selected result and never substitutes for FR-295 completeness. | Test |
+| FR-294-AC-1 | Exactly `on-time` and `late` are admitted, with exact spelling. | Test (TC-143) |
+| FR-294-AC-2 | A missing or unknown classification is refused rather than defaulted. | Test (TC-143) |
+| FR-294-AC-3 | A `late` classification never mutates an already selected result and never substitutes for FR-295 completeness. | Test (TC-143) |
 
 ## Dependencies
 

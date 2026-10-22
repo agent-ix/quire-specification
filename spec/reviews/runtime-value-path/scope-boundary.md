@@ -5,7 +5,6 @@ type: SpecReview
 analysis: scope-boundary
 scope: "Whether the change stays inside its brief: the requirement amended, the findings deliberately left open, and the boundary between specification and implementation at a9368c1"
 review_set: subset
-evaluated_revision: "a9368c1"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-047, type: reviews }

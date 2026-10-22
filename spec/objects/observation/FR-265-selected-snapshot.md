@@ -51,11 +51,11 @@ between a selected snapshot and a selected event-time window."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-265-AC-1 | A selected snapshot and a selected event-time window compare unequal and are not substitutable for one another. | Test |
-| FR-265-AC-2 | Changing the selected snapshot yields a different assessment subject. | Test |
-| FR-265-AC-3 | A missing selected snapshot identity compares only to absence and receives no ambient default. | Test |
-| FR-265-AC-4 | Independent derivation over the exact preimage yields the snapshot identity; every key mutation changes it and presentation permutation does not. | Test |
-| FR-265-AC-5 | Timestamp or ingestion order cannot replace the capture assertion or supply an order over snapshots. | Test |
+| FR-265-AC-1 | A selected snapshot and a selected event-time window compare unequal and are not substitutable for one another. | Test (TC-142) |
+| FR-265-AC-2 | Changing the selected snapshot yields a different assessment subject. | Test (TC-142) |
+| FR-265-AC-3 | A missing selected snapshot identity compares only to absence and receives no ambient default. | Test (TC-142) |
+| FR-265-AC-4 | Independent derivation over the exact preimage yields the snapshot identity; every key mutation changes it and presentation permutation does not. | Test (TC-142) |
+| FR-265-AC-5 | Timestamp or ingestion order cannot replace the capture assertion or supply an order over snapshots. | Test (TC-142) |
 
 ## Dependencies
 

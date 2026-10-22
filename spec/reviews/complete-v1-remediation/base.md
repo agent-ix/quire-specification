@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "the 176-row complete V1 capability set, its owning requirements, TM-009 and the family test matrices"
 review_set: subset
-evaluated_revision: "fc5434b on task/63-full-v1-specification"
 review_date: "2026-09-17"
 ---
 

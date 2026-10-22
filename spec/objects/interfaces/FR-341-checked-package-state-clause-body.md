@@ -40,7 +40,8 @@ refusal in the order below.
      clause binds, in binder-level order: `self` at level 0, then `result`
      when present, then the operation's parameters in declared order;
   2. **the anchor** — a `reference` to the node the clause is anchored at:
-     the context's `model`/`object_type` node for an invariant, and the
+     the context's node for an invariant (a `model`/`object_type`,
+     `model`/`process` or `model`/`state_machine` node), and the
      operation's `state`/`operation_anchor` node
      ([FR-342](FR-342-checked-package-operation-anchor-body.md)) for a
      precondition or postcondition;
@@ -61,9 +62,19 @@ anchors, aliases and captures" table:
 
 | Clause | `self` | `result` | Operation parameters |
 | --- | --- | --- | --- |
-| `invariant` | `Reference<C>`, `C` the anchor object type | absent | none |
+| `invariant` | `Reference<C>`, `C` the anchor type | absent | none |
 | `precondition` | `Reference<C>`, `C` the anchor's `context` | absent | the resolved operation's parameters, in order |
 | `postcondition` | `Reference<C>`, `C` the anchor's `context` | the resolved operation's result type, present exactly when the operation has a result | the resolved operation's parameters, in order |
+
+`C` is an object type, a process or a state machine, and `self` is spelled
+`Reference<C>` for each, the `composite_type`/`reference` node over `C`'s
+model declaration node ([FR-322](FR-322-checked-package-artifact.md) "Derived
+type forms and forwarding"). It stands for the object of an object type, for
+the run of a process at the run's declared object identity, and for the one
+context of a state machine
+([FR-208](../foundation/FR-208-quire-meaning-vocabulary.md)). A clause on a
+process or state machine binds its `result` and parameters from its operation
+exactly as an object type's clause does.
 
 A parameter's type is the `semantic_type` of its `value`/`parameter` node.
 A result and parameter type is the type
@@ -88,9 +99,10 @@ families, groups and constraints"):
 | constraints | none |
 | leaves | none |
 
-The anchor fits the `object` position: an object type's node has family
-`object`, and an `operation_anchor` node's `semantic_type` is its context
-object type (FR-342), so a reference to it has family `object` too. The
+The anchor fits the `object` position: the node of an object type, a process
+or a state machine has family `object`, and an `operation_anchor` node's
+`semantic_type` is its context node (FR-342), so a reference to it has family
+`object` too. The
 clause kind is the only difference between the three clauses' spellings, so
 the kind member decides which clause an application is.
 
@@ -140,9 +152,10 @@ this order and the first failing check is its defect:
 
 1. **Anchor.** The anchor's target is a declared dependency of the clause
    node, else `missing_declaration`/`missing-name`; for an invariant it is a
-   `model`/`object_type` node and for a precondition or postcondition a
-   `state`/`operation_anchor` node, else `invalid_model_binding`/
-   `malformed-declaration`. The locus is the anchor's target.
+   `model`/`object_type`, `model`/`process` or `model`/`state_machine` node and
+   for a precondition or postcondition a `state`/`operation_anchor` node, else
+   `invalid_model_binding`/`malformed-declaration`. The locus is the anchor's
+   target.
 2. **Parameters.** Each parameter reference, in aggregate order, targets a
    declared dependency, else `missing_declaration`/`missing-name`, that is
    a `value`/`parameter` node, else `invalid_model_binding`/
@@ -163,14 +176,16 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 | --- | --- | --- |
 | FR-341-AC-1 | A `state`/`state_clause` node's body is a `quire.op.state.clause` application with operator class `state_clause`, a `{kind: "state_clause", clause}` member whose `clause` is `invariant`, `precondition` or `postcondition`, and three arguments: an `aggregate` of one or more `reference` terms, a `reference`, and the condition. A body that is another clause application, names another identity or operator class, carries another member kind or clause value, or whose first or second argument has another term shape fails the published schema. | Test (TC-233) |
 | FR-341-AC-2 | Every occurrence of a `state`/`state_clause` node has role `claim`; an occurrence of another role fails the published schema. | Test (TC-233) |
-| FR-341-AC-3 | The anchor of an invariant is a declared `model`/`object_type` dependency and the anchor of a precondition or postcondition a declared `state`/`operation_anchor` dependency; an invariant anchored at an operation anchor and a precondition anchored at an object type refuse `invalid_model_binding`/`malformed-declaration` at the anchor's target. | Test (TC-233) |
-| FR-341-AC-4 | Each parameter reference targets a declared `value`/`parameter` dependency, else it refuses `invalid_model_binding`/`malformed-declaration` at its target; `self` has type `Reference<C>` for the clause's context `C`, and an invariant binds `self` alone; a `self` of another type and an invariant binding a second parameter refuse `ill_typed`/`operator-ineligible` at the clause node. | Test (TC-233) |
+| FR-341-AC-3 | The anchor of an invariant is a declared `model`/`object_type`, `model`/`process` or `model`/`state_machine` dependency and the anchor of a precondition or postcondition a declared `state`/`operation_anchor` dependency; an invariant anchored at an operation anchor and a precondition anchored at an object type refuse `invalid_model_binding`/`malformed-declaration` at the anchor's target. | Test (TC-233) |
+| FR-341-AC-4 | Each parameter reference targets a declared `value`/`parameter` dependency, else it refuses `invalid_model_binding`/`malformed-declaration` at its target; `self` has type `Reference<C>` for the clause's context `C` (an object type, a process or a state machine), and an invariant binds `self` alone; a `self` of another type and an invariant binding a second parameter refuse `ill_typed`/`operator-ineligible` at the clause node. | Test (TC-233) |
 | FR-341-AC-5 | A precondition binds `self` and then the resolved operation's parameters; a postcondition binds `self`, then the operation's result when it has one, then its parameters; for `Order.scaled(n: Integer): Integer`, `[Reference<Order>, Integer]` is the precondition's list and `[Reference<Order>, Integer, Integer]` the postcondition's, and `Order.reset()` with no result gives `[Reference<Order>]`. A missing parameter, a missing result, a `self` of another object type and a parameter of another type each refuse `ill_typed`/`operator-ineligible`. | Test (TC-280) |
 | FR-341-AC-6 | A `quire.op.state.clause` application at the body root of a node other than a `state`/`state_clause` node refuses `ill_typed`/`operator-ineligible` at that node; a `quire.op.state.clause` application nested inside a node body or inside another term fails the V2 schema and refuses `malformed_wire` at the nested application. | Test (TC-233) |
 | FR-341-AC-7 | The published clause package's invariant and precondition are admitted by the state step; the state step reports anchor defects before clause defects, and runs after the frame step and before the operation step. | Test (TC-233) |
 | FR-341-AC-8 | A `state`/`transition` node's body root is a `quire.op.state.transition` application; a `state`/`transition` node whose body root is another clause application fails the published schema. | Test (TC-233) |
 | FR-341-AC-9 | The operation catalog holds `quire.op.state.clause` with operator class `state_clause`, operands `aggregate`, `object`, `boolean`, result `clause`, no laws, no mode and the `state_clause` member kind, and both V2 schemas enumerate the identity, the operator class and the member kind; each published state clause application is admitted by the operation step. | Test (TC-233) |
 | FR-341-AC-10 | A `value`/`parameter` node's body is an `aggregate` of exactly two bindings, `name` (a `text` literal) and `level` (an `integer` literal), in that order, and every occurrence has role `expression`; a body with the bindings reordered, a non-text `name`, a non-integer `level`, a missing binding and an occurrence of another role each fail the published schema. | Test (TC-233) |
+| FR-341-AC-11 | A process `Flow` with field `n` and operation `go(): Integer` admits an invariant anchored at the `model`/`process` node binding `[Reference<Flow>]`, a precondition of `go` binding `[Reference<Flow>]` and a postcondition of `go` binding `[Reference<Flow>, Integer]`, whose anchor is the `go` operation anchor of context `Flow`; a state machine `Gate` with operation `toggle()` admits an invariant anchored at the `model`/`state_machine` node binding `[Reference<Gate>]` and a postcondition of `toggle` binding `[Reference<Gate>]`; the `Reference<Flow>` and `Reference<Gate>` nodes are `composite_type`/`reference` nodes over the process and state-machine declaration nodes. | Test (TC-233, TC-280) |
+| FR-341-AC-12 | A clause on a process or a state machine refuses as one on an object type does: an invariant anchored at an operation anchor, and a precondition anchored at the process node, refuse `invalid_model_binding`/`malformed-declaration` at the anchor's target; a `self` of `Reference<Other>` for another declaring type, a missing operation parameter and a missing result each refuse `ill_typed`/`operator-ineligible` at the clause node; an invariant anchored at a record value type, an event type, a persistence interface or a systems interface refuses `invalid_model_binding`/`malformed-declaration` at the anchor's target. | Test (TC-233, TC-280) |
 
 ## Dependencies
 

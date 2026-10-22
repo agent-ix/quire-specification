@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "cross-repository dependencies on quire-spec-language, quire-contract-ir, quire-contract-codegen and filament-core-data"
 review_set: subset
-evaluated_revision: "fc5434b on task/63-full-v1-specification"
 review_date: "2026-09-17"
 ---
 

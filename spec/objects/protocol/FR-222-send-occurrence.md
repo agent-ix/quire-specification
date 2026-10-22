@@ -27,7 +27,7 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
   effect and compensation references.
 - **channel** ([FR-215](FR-215-protocol-channel.md)) — the declared channel the
   send is made on. FR-054 binds the channel's sender, receiver, message types,
-  ordering policy, delivery cardinality and duplication premises as explicit
+  ordering policy and delivery policy premises as explicit
   conformance assumptions, held as the channel's premise set
   ([FR-216](FR-216-channel-premise.md)).
 - **message** — the authored typed communication obligation the send carries.
@@ -37,11 +37,10 @@ When a communication is bound to a protocol instance, the protocol binder SHALL 
   effect from a send, receive, successful transport status, repeated delivery,
   trace identifier or equal payload alone".
 
-A send is the per-send unit that channel delivery cardinality is stated against:
-FR-054 binds "delivery cardinality" as a channel premise, and the
+A send is the per-send unit that deliveries are counted against:
+FR-054 binds the delivery policy as a channel premise, and the
 [choreography surface](../../../proposals/quire-v1/choreography-surface.md)
-states that "Channel `delivery [a,b]` declares inclusive per-send delivery
-cardinality".
+states the channel's delivery policy.
 
 ## Identity and comparison
 

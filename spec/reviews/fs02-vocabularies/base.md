@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "quire-specification #29; FR-047, FR-061, FR-062, FR-091, FR-092, FR-115, FR-240, FR-242, FR-243, FR-249, FR-271, FR-273, FR-283, FR-285 and FR-286"
 review_set: subset
-evaluated_revision: "task/29 working tree based on cc6cb90"
 review_date: "2026-09-13"
 ---
 # Base review of FS02 vocabulary closure

@@ -5,7 +5,6 @@ type: SpecReview
 analysis: evidence
 scope: "quire-specification diff 55d2fcc..5bd933f; FR-197-AC-6 to FR-197-AC-10; TC-272; AD-016 Replay source; spec/complete-v1/tests.md"
 review_set: all
-evaluated_revision: "5bd933f"
 review_date: "2026-09-19"
 relationships:
   - { target: ix://agent-ix/quire-specification/AD-016, type: references }

@@ -121,7 +121,7 @@ new IR reference construct remain later design choices, neither assumed here.
 ## Retained delivery boundaries
 
 [FR-019](../../spec/functional/foundation/FR-019-admit-native-source-profile.md) specifies
-observable admission outcomes. Its [planned tests](../../spec/native-source/tests.md)
+observable admission outcomes. Its planned tests
 remain obligations for the composed compiler reconciliation, not executed
 conformance. Existing tests may be reused only after checking that they exercise
 the selected composed rule.

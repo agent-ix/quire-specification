@@ -5,7 +5,6 @@ type: SpecReview
 analysis: base
 scope: "FR-200..FR-283, the 73 object artifacts under spec/objects/ and the 38 behavioral FRs they cite"
 review_set: subset
-evaluated_revision: "d6e19a5"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-200, type: reviews }

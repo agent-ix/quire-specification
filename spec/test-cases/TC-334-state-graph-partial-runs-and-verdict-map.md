@@ -34,7 +34,8 @@ Run each vector through the real local Rust boundary with the explicit-state eng
 | PR-09 | a `unique path` claim with an admitted symmetry selected | `inconclusive`, `reduction-not-preserving`, before expansion |
 | PR-10 | TC-331 PV-01 under an admitted symmetry over `{a, b}`, and under partial-order reduction with `versionNumber` writes visible | `proved`, `decisive-witness`, sources named, no reduction named; the witness carries no canonical state |
 | PR-12 | PR-02 with the caller cancelling the run before exploration completes | `incomplete`, cause `cancelled`; FR-360 `failed`, execution `resource-incomplete`, basis `unavailable` |
-| PR-11 | every result of PR-01 to PR-10 and PR-12 | each label carries exactly the FR-241, FR-242 and FR-243 combination FR-360 names |
+| PR-13 | a `possible` claim `over (c: Config::ConfigVersion)` on a subject whose universe is empty | `inconclusive`, `no-instance`, before expansion |
+| PR-11 | every result of PR-01 to PR-10, PR-12 and PR-13 | each label carries exactly the FR-241, FR-242 and FR-243 combination FR-360 names |
 
 ## Expected Results
 

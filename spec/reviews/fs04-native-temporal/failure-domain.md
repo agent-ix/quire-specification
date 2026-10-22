@@ -5,7 +5,6 @@ type: SpecReview
 analysis: failure-domain
 scope: "FR-091, FR-093, FR-094, TC-111, TC-114 and TC-116"
 review_set: all
-evaluated_revision: "b78fccb"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-091, type: reviews }

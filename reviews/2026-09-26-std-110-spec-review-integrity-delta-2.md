@@ -3,7 +3,7 @@ id: SR-723
 title: "Spec review (integrity, delta 2) — STD-110 catalog 1-draft.8 fix round 2"
 type: SpecReview
 analysis: integrity
-scope: "agent-ix/quire-specification@b894ba82eb2e9d99452ed05da79d342d861e0a85; PR #162 delta 6389506c..b894ba82"
+scope: "agent-ix/quire-specification; PR #162 delta 6389506c..b894ba82"
 review_set: subset
 ---
 # Spec review (integrity, delta 2) — STD-110 catalog 1-draft.8 fix round 2
@@ -22,7 +22,7 @@ Delta review of fix round 2 (`6389506c..b894ba82`). The coder adds `reviews/2026
 
 ## Reviewer comment (verbatim)
 
-<!-- reviewer repo=agent-ix/quire-specification visibility=private quoin=0.24.1 module=spec-artifacts-process@v0.26.0 id=SR-723 method=spec-review/integrity lang=spec pr=quire-specification#162 reviewed=b894ba82eb2e9d99452ed05da79d342d861e0a85 date=2026-09-26 -->
+<!-- reviewer repo=agent-ix/quire-specification visibility=private quoin=0.24.1 module=spec-artifacts-process@v0.26.0 id=SR-723 method=spec-review/integrity lang=spec pr=quire-specification#162 date=2026-09-26 -->
 
 Delta review of fix round 2 (`6389506c..b894ba82`). The coder adds `reviews/2026-09-26-std-110-spec-review-integrity-delta-2.md` with id SR-723 in the next commit that touches the branch.
 

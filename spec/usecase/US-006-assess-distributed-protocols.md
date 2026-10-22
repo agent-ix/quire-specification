@@ -46,8 +46,7 @@ that keeps those distinctions visible across replay and later monitoring.
 
 The conformance engine may use a qualified protocol library or an owned bounded
 algorithm. A later projection engine may consume the same representation. The
-choice remains open until E03 records exact algorithms, versions, rights and
-negative-case behavior.
+choice remains open.
 
 ## Constraints (Contextual)
 

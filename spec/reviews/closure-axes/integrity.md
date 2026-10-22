@@ -5,7 +5,6 @@ type: SpecReview
 analysis: integrity
 scope: "Branch objects/closure-axes-vocabulary at 7a050c9: whether every normative clause added to FR-061 is grounded, and whether FR-284 asserts anything FR-061 does not declare"
 review_set: subset
-evaluated_revision: "7a050c9"
 review_date: "2026-09-12"
 relationships:
   - { target: ix://agent-ix/quire-specification/FR-061, type: reviews }

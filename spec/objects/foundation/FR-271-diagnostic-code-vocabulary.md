@@ -35,7 +35,7 @@ catalog).
 | Value | Description |
 | --- | --- |
 | `invalid_syntax` | Ungrammatical source. "An ungrammatical index/slice is not a recognized profile extension." |
-| `unsupported_construct` | A recognized form prohibited by the exact selected profile. "Presence in unreachable syntax does not erase the refusal." |
+| `unsupported_construct` | A recognized form prohibited by the exact selected profile, or (cause `not-yet-implemented`) a valid complete-V1 source form or declaration input that the producer's support set does not build; the source is not wrong, which FR-452 classes as an implementation gap. A source form or declaration input is refused this way; `unimplemented_capability` is for a valid complete-V1 meaning that is not a source form or declaration input (a capability of the selected producer). "Presence in unreachable syntax does not erase the refusal." |
 | `unknown_language` | An unrecognized or wrongly-roled language selection. |
 | `unknown_edition` | An unrecognized or wrongly-roled edition selection. |
 | `unknown_profile` | An unrecognized or wrongly-roled profile selection. "A known package/diagnostic interpretation used as a clause profile" is a wrong selection role. |
@@ -57,7 +57,7 @@ catalog).
 | `dangling_reference` | A reference absent from a population admitted as complete. "Without that complete population, use the incomplete-population outcome instead." |
 | `population_delta_mismatch` | A declared delta disagreeing with the observed pre/post change. |
 | `frame_violation` | A change to an object, field or State root not permitted by the declared frame. |
-| `resource_exhausted` | A work item that could not proceed under the effective limit and accounting contract. "A semantic maximum is not a caller work budget." |
+| `resource_exhausted` | A work item that could not proceed under the effective limit and accounting contract. "A maximum fixed by the language is not a caller work budget." |
 | `cancelled` | A work item stopped by a caller cancellation source. |
 | `unsupported_projection` | A requested capability kind with an empty candidate set (no registrant advertises it, or the named backend does not), an obligation form the one candidate's negotiation arm does not discharge, or an unbounded extent on a bounded-only advertisement with no finite bound or a routed backend whose tool is unavailable. "It cannot reclassify a valid source as malformed." |
 | `projection_binding` | An upstream refusal carried with its originating structured IR/mapping cause. |
@@ -73,15 +73,24 @@ catalog).
 | `invalid_quire_context` | A lifecycle request supplied an incompatible package, stage or semantic context. |
 | `invalid_source_identity` | A required source label (authority or identity) is empty or only whitespace, or the source path is empty. Its causes are `blank-label` and `empty-path`. |
 | `invalid_source_map` | A source map was non-monotone, out of bounds or split a UTF-8 scalar. |
-| `cardinality_out_of_bound` | A constructed or converted collection whose occurrence or member count lies outside its type's inclusive cardinality bound (FR-144). |
+| `cardinality_out_of_bound` | A constructed, converted or supplied collection whose occurrence or member count lies outside its type's inclusive cardinality bound (FR-144). |
 | `foreign_reference` | A supplied identity belongs to a different authority, universe, model or subject domain than the position requires. Its causes are `foreign-universe`, `foreign-model-selection` and `foreign-type`. |
 | `ambiguous_dispatch` | A dispatched operation call for which some closed subtype of the receiver's static type has no applicable method or several undominated methods. No source or registration order resolves it. |
-| `unimplemented_capability` | Valid complete-V1 meaning is not implemented by the selected producer; distinct from prohibited source and unsupported backend projection. |
+| `unimplemented_capability` | Valid complete-V1 meaning that is not a source form or declaration input is not implemented by the selected producer; distinct from prohibited source, unsupported backend projection and `unsupported_construct`/`not-yet-implemented`. |
 | `parity_failure` | Two implementations required to agree produced different typed verdicts or values for the same subject/input. |
 | `invalid_capability` | A requested or advertised capability selection that names no FR-290 kind, an unknown kind or mode, an unsupported vocabulary identity, a duplicate registered backend, no extent classification, an unregistered or arm-less backend, candidates inconsistent with the manifest or named backend, or several candidate backends with none named. |
 | `duplicate_selection` | A second domain-package model selection of an already-selected identity. A package selects at most one version of a domain-package identity. |
-| `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, a family `check`, `replay` or `route` reached one of its own stage limits. "A semantic maximum is not a caller work budget": this is distinct from `resource_exhausted`. |
+| `conflicting_declaration` | Two declarations at the S3 compile or link that must be unique resolving to one identity: two `operation-body` declarations resolving to one operation identity (FR-151), or two tasks with one name. |
+| `stage_limit_exceeded` | A compiler stage S1-S4, the I2 reader, the FR-330 ContractPackage reader, a family `check`, `replay` or `route` reached one of its own stage limits. Its limits are caller-configured FR-461 settings carried by the stage limits (FR-323) (the FR-330 ContractPackage reader's are the members of its own limits argument, FR-330), not the work-budget meter of `resource_exhausted`; the two are distinct. |
 | `noncanonical_wire` | A JSON wire document that its RFC 8785 encoding does not carry as written: a number whose exact value that encoding loses, with cause `inexact-integer` or `inexact-number` at its `document_pointer`, or, for a reader that requires canonical bytes as the checked-package V2 reader does (FR-322), any other bytes, as a refusal about the byte stream. |
+| `unknown_contract_version` | A document whose contract version is not the exact version the reader admits; the document is not a package of that contract. |
+| `malformed_wire` | A wire whose JSON syntax or closed structure the reader's schema refuses, including a nested shape outside its closed grammar. |
+| `duplicate_member` | A JSON member name repeated in one object of the wire. |
+| `unknown_member` | A member outside the closed member set of the object that holds it. |
+| `digest_domain_mismatch` | A supplied package identity whose digest domain differs from the domain its position requires. |
+| `unknown_required_capability` | A package that requires a capability the reader does not know. |
+| `invalid_semantic_graph` | A semantic graph that breaks the reader's graph rules: a dependency, key, owner or term order the artifact refuses. |
+| `unsupported_node_tag` | A node whose `node_tag` is outside the closed tag set (QSL ADR-013 O-14, QC-19). |
 | `inexact_decimal` | Strict `exact` met a decimal rounding step: a nonzero digit would be discarded. |
 | `decimal_out_of_domain` | A decimal result outside its target `Decimal[..]` domain. |
 | `division_out_of_domain` | A `div` quotient or a `rem` remainder outside the bounded consumer's domain. Only the member the operator exposes is checked; the refused member is not exposed. |
@@ -160,6 +169,7 @@ settling unselected native literals or treating spelling as a global convention.
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
 | FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
 | FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the ten evaluator value-refusal codes: `inexact_decimal`, `decimal_out_of_domain`, `division_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
+| FR-271-AC-7 | The values table has exactly one row for each of `unknown_contract_version`, `malformed_wire`, `duplicate_member`, `unknown_member`, `digest_domain_mismatch`, `unknown_required_capability`, `invalid_semantic_graph` and `unsupported_node_tag`, the codes of the FR-322 reader vocabulary that no other row holds. | Test (TC-233) |
 
 ## Resolved catalog namespaces
 

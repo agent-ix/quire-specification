@@ -424,8 +424,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-003
     type: contains
-  - target: ix://agent-ix/quire-specification/NFR-004
-    type: contains
   - target: ix://agent-ix/quire-specification/IT-002
     type: contains
   - target: ix://agent-ix/quire-specification/AD-005
@@ -690,6 +688,14 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-453
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-464
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-465
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-466
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-467
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-390
     type: contains
   - target: ix://agent-ix/quire-specification/FR-391
@@ -762,6 +768,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-379
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-468
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-380
     type: contains
   - target: ix://agent-ix/quire-specification/FR-381
@@ -773,8 +781,6 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-384
     type: contains
   - target: ix://agent-ix/quire-specification/FR-385
-    type: contains
-  - target: ix://agent-ix/quire-specification/TM-009
     type: contains
   - target: ix://agent-ix/quire-specification/FR-434
     type: contains
@@ -972,8 +978,8 @@ The requirement artifacts are indexed below.
 | [ADR-005](decisions/ADR-005-kani-generation-ownership.md) | ADR | Proposed; open question: ownership of Kani harness generation |
 | [ADR-006](decisions/ADR-006-protocol-bounded-control-profile.md) | ADR | Decided: one protocol profile; a repeat needs only a progress edge, with an optional maximum and optional invariant and variant |
 | [Complete-V1 subsystem index](subsystems/index.md) | Architecture index | Ten subsystems and I01–I21 interface ownership |
-| [TM-009](complete-v1/tests.md) | Test Matrix | Every atomic capability and complete-V1 qualification case |
 | [FR-339](functional/source-package/FR-339-define-complete-native-grammar.md) | FR | Normative complete native V1 lexical and syntactic contract |
+| [FR-322](objects/interfaces/FR-322-checked-package-artifact.md) | FR (value_object) | Checked-package V2 boundary, including model-owned record value type fields |
 | [FR-340](objects/interfaces/FR-340-checked-package-frame-location.md) | FR | Checked-package `state`/`frame` body: relationship and (declaring node, field name) entries |
 | [FR-341](objects/interfaces/FR-341-checked-package-state-clause-body.md) | FR | Checked-package `state`/`state_clause` body: `quire.op.state.clause` application and state node body roots |
 | [FR-342](objects/interfaces/FR-342-checked-package-operation-anchor-body.md) | FR | Checked-package `state`/`operation_anchor` body: context, operation and frame bindings |
@@ -981,6 +987,10 @@ The requirement artifacts are indexed below.
 | [FR-451](objects/interfaces/FR-451-checked-package-abstraction-relation-body.md) | FR | Checked-package `correspondence`/`abstraction_relation` body, keys and reader order |
 | [FR-452](functional/tooling/FR-452-preserve-admission-across-specification-revisions.md) | FR | Spec-versioning refinement gate: a superseding revision admits what its prior admitted |
 | [FR-453](functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md) | FR | Profile-layering refinement gate: the five AD-003 layering edges, refusal preservation and per-layer user subsets |
+| [FR-464](objects/interfaces/FR-464-checked-package-protocol-node-bodies.md) | FR | Checked-package `protocol` node family: operation, operator catalog, keys, clause body, binders, causal relation and reader order |
+| [FR-465](objects/interfaces/FR-465-checked-package-protocol-declaration-bodies.md) | FR | Checked-package protocol `role`, `channel`, `queue` and `obligation` (`finish`, `terminal`) bodies |
+| [FR-466](objects/interfaces/FR-466-checked-package-protocol-control-bodies.md) | FR | Checked-package protocol `control` (thirteen operators) and `compensation` bodies, binder scope and decision facts |
+| [FR-467](functional/source-package/FR-467-define-extension-definition-members.md) | FR | Extension definition members: grammar schema, typed-node schema, and their keyword, node-kind and cycle refusals |
 | [FR-405](functional/analysis/FR-405-declare-probabilistic-models.md) | FR | Declare random parameters, workloads and rewards |
 | [FR-406](functional/analysis/FR-406-interpret-probabilistic-models.md) | FR | Interpret probabilistic models under a workload or every scheduler |
 | [FR-407](functional/analysis/FR-407-state-probabilistic-claims.md) | FR | State probabilistic claims over events and measures |
@@ -998,7 +1008,7 @@ The requirement artifacts are indexed below.
 | [FR-419](functional/analysis/FR-419-analyze-task-set-schedulability.md) | FR | Analyze task-set schedulability |
 | [FR-420](functional/analysis/FR-420-sample-stochastic-timed-models.md) | FR | Interpret and sample stochastic timed models |
 | [FR-421](functional/temporal/FR-421-check-probabilistic-timed-claims-exactly.md) | FR | Check probabilistic timed claims exactly through digital clocks |
-| [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package `composite_type`/`union`, `value`/`union_value` and `expression`/`case` nodes and the `quire.op.control.case` catalog entry |
+| [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package union, union-value and case nodes, explicit union-value application-preimage selection, and the `quire.op.control.case` catalog entry |
 | [FR-441](objects/interfaces/FR-441-union-member-key.md) | FR | Union member key: the `quire.union-member-node/v1` preimage |
 | [FR-390](functional/analysis/FR-390-analyze-state-graph-claims.md) | FR | State-graph claims `possible`, `always possible` and `unique path` over a model subject: forms, graph semantics and admission |
 | [FR-391](functional/analysis/FR-391-settle-state-graph-claims.md) | FR | Settlement of state-graph claims from decisive evidence on open and closed nodes; verdicts, settlement method and reduction rows |
@@ -1113,7 +1123,6 @@ The requirement artifacts are indexed below.
 | [StR-001](stakeholder/StR-001-native-assessment-trust.md) | StR | Draft |
 | [NFR-002](non-functional/NFR-002-classify-resource-incompleteness.md) | NFR | Accepted by FS05 for interchange work limits |
 | [NFR-003](non-functional/NFR-003-qualify-reference-bindings.md) | NFR | Accepted by FS05 for strict reference binding |
-| [NFR-004](non-functional/NFR-004-retain-review-and-rights.md) | NFR | Draft |
 | [IT-002](integration/IT-002-independent-reference-consumer.md) | IT | Draft |
 | [IT-003](integration/IT-003-verification-reference-amendment.md) | IT | Planned |
 | [IT-010](integration/IT-010-bind-linked-package-assessments.md) | IT | Planned composed package/binding boundary |
@@ -1228,6 +1237,7 @@ The requirement artifacts are indexed below.
 | [FR-377](functional/analysis/FR-377-decide-model-refinement.md) | FR | Draft; Refinement between two model subjects: step rules, abstract progress, terminal states |
 | [FR-378](functional/analysis/FR-378-check-refinement-auxiliary-state.md) | FR | Draft; Refinement history fields and hidden abstract fields |
 | [FR-379](functional/analysis/FR-379-report-and-replay-refinement-counterexamples.md) | FR | Draft; Refinement verdicts, counterexample wire and replay |
+| [FR-468](functional/analysis/FR-468-certify-per-step-refinement-obligations.md) | FR | Per-step refinement queries: initial and step queries and the base-and-step certificate |
 | [FR-380](functional/analysis/FR-380-transfer-claims-through-refinement.md) | FR | Draft; Claim transfer through a refinement (vertical composition) |
 | [FR-381](functional/analysis/FR-381-check-symmetric-populations.md) | FR | Draft; Symmetric population annotation and identity transparency |
 | [FR-382](functional/analysis/FR-382-select-state-space-reductions.md) | FR | Draft; Reduction request members, admission, identity and negotiation |

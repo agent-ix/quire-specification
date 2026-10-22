@@ -5,7 +5,6 @@ type: SpecReview
 analysis: dependency
 scope: "quire-specification task/ad016-amendment diff 55d2fcc..5bd933f; AD-016; FR-197; TC-272; spec/complete-v1/tests.md; context FR-201, FR-312, FR-323, FR-331, FR-349, FR-351, FR-352, FR-355, AD-010, IT-075; QSL ADR-013 at 31b6054; IR src/kani at 954c2f2"
 review_set: all
-evaluated_revision: "5bd933f"
 review_date: "2026-09-19"
 relationships:
   - { target: ix://agent-ix/quire-specification/AD-016, type: references }

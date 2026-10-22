@@ -77,10 +77,10 @@ through that boundary."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-266-AC-1 | A member at `start` is inside the selected window and a member at `end` is outside it. | Test |
-| FR-266-AC-2 | A member excluded at `end` is admitted only by a separately selected later window and is not counted twice. | Test |
-| FR-266-AC-3 | The order over window bounds is used only to compare windows and is never cited as a causal edge between them. | Test |
-| FR-266-AC-4 | A selected event-time window and a selected snapshot compare unequal. | Test |
+| FR-266-AC-1 | A member at `start` is inside the selected window and a member at `end` is outside it. | Test (TC-142) |
+| FR-266-AC-2 | A member excluded at `end` is admitted only by a separately selected later window and is not counted twice. | Test (TC-142) |
+| FR-266-AC-3 | The order over window bounds is used only to compare windows and is never cited as a causal edge between them. | Test (TC-142) |
+| FR-266-AC-4 | A selected event-time window and a selected snapshot compare unequal. | Test (TC-142) |
 
 ## Dependencies
 

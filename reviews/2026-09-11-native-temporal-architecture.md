@@ -5,7 +5,6 @@ type: SpecReview
 analysis: architecture-evaluation
 scope: "AD-001, AD-002, Plan-002, quire-spec-language compiled-protocol and temporal runtime boundaries"
 review_set: all
-evaluated_revision: "e770bcf"
 review_date: "2026-09-11"
 relationships:
   - { target: ix://agent-ix/quire-specification/AD-002, type: reviews }

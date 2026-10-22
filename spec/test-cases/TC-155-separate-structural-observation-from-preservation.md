@@ -17,7 +17,6 @@ relationships:
 ## Description
 
 Accepted FS06 portable determinism, source-authority and observer controls.
-TM-008 remains Planned.
 
 ## Test Procedure
 

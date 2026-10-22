@@ -27,6 +27,11 @@ const OPERATION_CATALOG: &str = CHECKED_OPERATION_CATALOG_V1;
 /// FR-154 intake reads, derived from it by `project_document`.
 const DOCUMENT: &str =
     include_str!("../proposals/checked-package-v2/domain-package-acme-orders.json");
+/// The owner-form vectors: a projection that also declares processes, state
+/// machines and a persistence interface, with the owner, member, anchor,
+/// clause-signature and receiver-frame cases over them.
+const OWNER_FORMS: &str =
+    include_str!("../proposals/checked-package-v2/model-owner-form-vectors.json");
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
 const SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
 const NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
@@ -117,7 +122,35 @@ fn declarations(package: &Value) -> Vec<Declared<'_>> {
             node: text(relationship, "node"),
             object_type: None,
         });
-    objects.chain(relationships).collect()
+    let owned = [
+        ("processes", "process"),
+        ("state_machines", "state_machine"),
+        ("persistence_interfaces", "persistence_interface"),
+    ]
+    .into_iter()
+    .flat_map(|(list, form)| {
+        array_or_empty(package, list)
+            .iter()
+            .map(move |declared| Declared {
+                tag: "model",
+                form,
+                node: text(declared, "node"),
+                object_type: Some(declared),
+            })
+    });
+    let populations = array_or_empty(package, "populations")
+        .iter()
+        .map(|population| Declared {
+            tag: "relation",
+            form: "population",
+            node: text(population, "identity"),
+            object_type: None,
+        });
+    objects
+        .chain(relationships)
+        .chain(owned)
+        .chain(populations)
+        .collect()
 }
 
 fn declaration_key(package: &Value, declared: &Declared<'_>) -> String {
@@ -137,10 +170,19 @@ fn recover<'a>(package: &'a Value, key: &str, tag: &str, form: &str) -> Option<D
     })
 }
 
+/// The declaration of an object type, process, state machine or persistence
+/// interface with this node identity: the kinds that declare fields,
+/// operations and supertypes.
 fn object_type<'a>(package: &'a Value, node: &str) -> Option<&'a Value> {
-    array(package, "object_types")
-        .iter()
-        .find(|object_type| text(object_type, "node") == node)
+    [
+        "object_types",
+        "processes",
+        "state_machines",
+        "persistence_interfaces",
+    ]
+    .into_iter()
+    .flat_map(|list| array_or_empty(package, list))
+    .find(|object_type| text(object_type, "node") == node)
 }
 
 /// The proper ancestors of `declared` along its declared supertypes.
@@ -242,10 +284,39 @@ fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
             _ => None,
         };
     }
+    if let Some(name) = type_ref.strip_prefix("ix://quire/unit/") {
+        return unit_element_type(package, name);
+    }
     let target = declarations(package)
         .into_iter()
         .find(|declared| declared.form == "object_type" && declared.node == type_ref)?;
     Some(json!({"type": "Reference", "target": declaration_key(package, &target)}))
+}
+
+/// FR-322 step 4's unit row: a `typeRef` of the form `ix://quire/unit/<name>`
+/// names the `scalar_type`/`unit` node of the checked package whose qualified
+/// declaration name is the `/`-joined `<name>`. The vectors list the checked
+/// package's units as `checked_units`, which the test carries on the package
+/// value it passes down. A name that matches no unit is
+/// `missing_declaration`/`missing-name`, so it has no element type here.
+fn unit_element_type(package: &Value, name: &str) -> Option<Value> {
+    array(package, "checked_units")
+        .iter()
+        .any(|unit| {
+            unit.as_array().is_some_and(|segments| {
+                segments.iter().filter_map(Value::as_str).collect::<Vec<_>>().join("/") == name
+            })
+        })
+        .then(|| json!({"type": "Quantity", "unit": name}))
+}
+
+/// The refusal for a declared type whose unit `typeRef` names no unit of the
+/// checked package, or `None` for any other declared type.
+fn unresolved_unit(package: &Value, declared: &Value) -> Option<Value> {
+    let name = text(declared, "typeRef").strip_prefix("ix://quire/unit/")?;
+    unit_element_type(package, name)
+        .is_none()
+        .then(|| refused("missing_declaration", "missing-name"))
 }
 
 /// FR-322 step 4's multiplicity rule.
@@ -361,6 +432,12 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
         if member["receiver"] != receiver {
             return ineligible();
         }
+        if let Some(missing) = array(record, "parameters")
+            .iter()
+            .find_map(|parameter| unresolved_unit(package, parameter))
+        {
+            return missing;
+        }
         let parameters: Option<Vec<Value>> = array(record, "parameters")
             .iter()
             .map(|parameter| declared_type_of(package, parameter))
@@ -373,6 +450,9 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
         }
         &record["result"]
     };
+    if let Some(missing) = unresolved_unit(package, declared_type) {
+        return missing;
+    }
     let member_type = declared_type_of(package, declared_type).map(|value| {
         if record["presence"] == "optional" {
             json!({"type": "Option", "inner": value})
@@ -400,9 +480,19 @@ fn owner_declares(package: &Value, node: &Value, owner_node: &str) -> bool {
     match (text(node, "node_tag"), text(node, "semantic_form")) {
         ("model", "object_type") => object_type(false),
         ("model", "systems_interface") => object_type(true),
+        ("model", "process") => declares_in(package, "processes", owner_node),
+        ("model", "state_machine") => declares_in(package, "state_machines", owner_node),
+        ("model", "persistence_interface") => {
+            declares_in(package, "persistence_interfaces", owner_node)
+        }
         ("relation", "relationship") => array(package, "relationships")
             .iter()
             .any(|relationship| relationship["node"] == owner_node),
+        // A population is declared by its raw `PopulationRecord`, keyed by
+        // `identity`; the reader reads no `node` member of it (FR-322 owner join).
+        ("relation", "population") => array_or_empty(package, "populations")
+            .iter()
+            .any(|population| population["identity"] == owner_node),
         ("function", _) => match clause_kind(node) {
             // An invariant clause is owned by its object type; a
             // precondition or body clause by an operation member of an
@@ -420,6 +510,13 @@ fn owner_declares(package: &Value, node: &Value, owner_node: &str) -> bool {
         },
         _ => false,
     }
+}
+
+/// Whether the projection's `list` declares the node identity `owner_node`.
+fn declares_in(package: &Value, list: &str, owner_node: &str) -> bool {
+    array_or_empty(package, list)
+        .iter()
+        .any(|declared| declared["node"] == owner_node)
 }
 
 /// A clause function's clause kind: the text literal of the one `clause`
@@ -522,9 +619,6 @@ fn select(package: &Value, case: &Value) -> Value {
     let Some(document) = supplied.get(&selected) else {
         return refused("missing_import", "missing-selection");
     };
-    if digest(document) != selected {
-        return refused("stale_dependency", "content-mismatch");
-    }
     if document["package"]["identity"] != selection["identity"] {
         return refused("invalid_model_binding", "wrong-model-selection");
     }
@@ -541,11 +635,27 @@ fn cases_for<'a>(vectors: &'a Value, criterion: &str) -> Vec<&'a Value> {
     cases
 }
 
+/// The domain package value with the checked package's units attached, the
+/// context FR-322 step 4's unit row resolves a unit `typeRef` against. The
+/// unit-typed members live in the `acme/timing` package, which no checked
+/// package fixture selects.
+fn with_checked_units(vectors: &Value, case: &Value) -> (Value, Value) {
+    if case["package"] != "timing" {
+        return (
+            vectors["domain_package"].clone(),
+            vectors["model_declaration_nodes"].clone(),
+        );
+    }
+    let mut package = vectors["timing_package"].clone();
+    package["checked_units"] = vectors["checked_units"].clone();
+    (package, vectors["timing_declaration_nodes"].clone())
+}
+
 fn assert_member_cases(vectors: &Value, criterion: &str) {
-    let nodes = array(vectors, "model_declaration_nodes");
     for case in cases_for(vectors, criterion) {
+        let (package, nodes) = with_checked_units(vectors, case);
         assert_eq!(
-            derive(&vectors["domain_package"], nodes, &case["member"]),
+            derive(&package, nodes.as_array().unwrap(), &case["member"]),
             case["expected"],
             "{}",
             text(case, "name")
@@ -624,6 +734,12 @@ fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
     assert_member_cases(&parsed(VECTORS), "FR-322-AC-31");
 }
 
+#[trace("TC-280", "FR-322-AC-80")]
+#[test]
+fn tc_280_unit_type_references_resolve_against_the_checked_packages_units() {
+    assert_member_cases(&parsed(VECTORS), "FR-322-AC-80");
+}
+
 #[trace("TC-280", "FR-322-AC-44")]
 #[test]
 fn tc_280_text_value_type_members_carry_their_bounds_and_profile() {
@@ -632,7 +748,7 @@ fn tc_280_text_value_type_members_carry_their_bounds_and_profile() {
 
 #[trace("TC-280", "FR-322-AC-32")]
 #[test]
-fn tc_280_selected_domain_package_documents_are_admitted_by_content_and_identity() {
+fn tc_280_selected_domain_package_documents_are_admitted_by_digest_key_and_identity() {
     let vectors = parsed(VECTORS);
     let cases = array(&vectors, "selection_cases");
     let causes: BTreeSet<_> = cases
@@ -644,7 +760,6 @@ fn tc_280_selected_domain_package_documents_are_admitted_by_content_and_identity
         BTreeSet::from([
             "digest-domain-mismatch",
             "missing-selection",
-            "content-mismatch",
             "wrong-model-selection"
         ])
     );
@@ -656,26 +771,6 @@ fn tc_280_selected_domain_package_documents_are_admitted_by_content_and_identity
             text(case, "name")
         );
     }
-}
-
-#[trace("TC-280", "FR-322-AC-43")]
-#[test]
-fn tc_280_an_altered_document_under_the_selected_digest_is_refused() {
-    let vectors = parsed(VECTORS);
-    let case = |name: &str| {
-        array(&vectors, "selection_cases")
-            .iter()
-            .find(|case| case["name"] == name)
-            .unwrap_or_else(|| panic!("{name} is recorded"))
-    };
-    assert_eq!(
-        select(&parsed(DOCUMENT), case("MS-03")),
-        refused("stale_dependency", "content-mismatch")
-    );
-    assert_eq!(
-        select(&parsed(DOCUMENT), case("MS-01")),
-        json!({"admission": "passed"})
-    );
 }
 
 /// A catalog entry by identity.
@@ -730,7 +825,10 @@ impl<'a> Operand<'a> {
             Self::Object(name) => {
                 let preimage = &node_vector(nodes, name)["preimage"];
                 match (text(preimage, "node_tag"), text(preimage, "semantic_form")) {
-                    ("model", "object_type" | "systems_interface") => Some("object"),
+                    (
+                        "model",
+                        "object_type" | "process" | "state_machine" | "systems_interface",
+                    ) => Some("object"),
                     _ => None,
                 }
             }
@@ -1112,12 +1210,12 @@ fn tc_280_frame_field_entries_resolve_among_exposed_fields() {
     }
 }
 
-/// FR-342-AC-4 over one anchor case: the context is an object type, and
-/// the operation resolves among its exposed operation members to one the
+/// FR-342-AC-4 over one anchor case: the context is an object type, a process
+/// or a state machine, and the operation resolves among its exposed operation members to one the
 /// context itself declares.
 fn anchor_operation(package: &Value, nodes: &[Value], context: &str, operation: &str) -> Value {
     let form = text(&node_vector(nodes, context)["preimage"], "semantic_form");
-    if form != "object_type" {
+    if !matches!(form, "object_type" | "process" | "state_machine") {
         return refused("invalid_model_binding", "malformed-declaration");
     }
     let resolved = resolve_member(
@@ -1187,6 +1285,25 @@ fn clause_signature(package: &Value, nodes: &[Value], case: &Value) -> Option<Ve
     Some(signature)
 }
 
+/// The decision of one clause signature case: admitted exactly when the
+/// supplied parameter list is the one FR-341 derives.
+fn clause_decision(package: &Value, nodes: &[Value], case: &Value) -> Value {
+    let supplied: Vec<Value> = array(case, "parameters")
+        .iter()
+        .map(|parameter| match parameter["reference"].as_str() {
+            Some(name) => {
+                json!({"type": "Reference", "target": node_vector(nodes, name)["sha256"]})
+            }
+            None => parameter.clone(),
+        })
+        .collect();
+    if clause_signature(package, nodes, case).as_ref() == Some(&supplied) {
+        json!({"admitted": true})
+    } else {
+        ineligible()
+    }
+}
+
 #[trace("TC-280", "FR-341-AC-5")]
 #[test]
 fn tc_280_a_clause_binds_self_result_and_parameters_of_its_operation() {
@@ -1194,21 +1311,12 @@ fn tc_280_a_clause_binds_self_result_and_parameters_of_its_operation() {
     let package = &vectors["domain_package"];
     let nodes = array(&vectors, "model_declaration_nodes");
     for case in array(&vectors, "clause_signature_cases") {
-        let supplied: Vec<Value> = array(case, "parameters")
-            .iter()
-            .map(|parameter| match parameter["reference"].as_str() {
-                Some(name) => {
-                    json!({"type": "Reference", "target": node_vector(nodes, name)["sha256"]})
-                }
-                None => parameter.clone(),
-            })
-            .collect();
-        let decided = if clause_signature(package, nodes, case).as_ref() == Some(&supplied) {
-            json!({"admitted": true})
-        } else {
-            ineligible()
-        };
-        assert_eq!(decided, case["expected"], "{}", text(case, "name"));
+        assert_eq!(
+            clause_decision(package, nodes, case),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
     }
 }
 
@@ -1779,6 +1887,99 @@ fn tc_280_relationship_declarations_refuse_each_defect_at_the_selection_row() {
     }
 }
 
+/// FR-154 operation parameter names at domain selection. Within one operation
+/// the repeated-identity check runs first and suppresses the name check of both
+/// colliding parameters (a collision is reported alone); then the name check of every parameter, in
+/// `params` order. A collision names the shared parameter identity, a name
+/// refusal the operation identity; both name the member path.
+fn read_parameter_names(
+    document: &Value,
+) -> Result<(), (&'static str, &'static str, String, String)> {
+    let member_name = |name: &str| {
+        let mut chars = name.chars();
+        chars
+            .next()
+            .is_some_and(|first| first.is_ascii_alphabetic())
+            && chars.all(|c| c.is_ascii_alphanumeric() || c == '_')
+    };
+    let mut types: Vec<&Value> = array(document, "types").iter().collect();
+    types.sort_by_key(|declared| declared["identity"].as_str().map(str::to_owned));
+    for owner in types {
+        for (k, operation) in array_or_empty(owner, "operations").iter().enumerate() {
+            let operation_identity = text(operation, "identity");
+            let params = array_or_empty(operation, "params");
+            let path = |s: usize, member: &str| {
+                format!("TypeDefinition.operations[{k}].params[{s}]{member}")
+            };
+            let mut first_seen: BTreeMap<&str, usize> = BTreeMap::new();
+            let mut collision = None;
+            for (s, param) in params.iter().enumerate() {
+                let identity = text(param, "identity");
+                match first_seen.get(identity) {
+                    Some(_) => {
+                        collision.get_or_insert((identity.to_owned(), s));
+                    }
+                    None => {
+                        first_seen.insert(identity, s);
+                    }
+                }
+            }
+            if let Some((identity, s)) = collision {
+                return Err((
+                    "invalid_model_binding",
+                    "conflicting-binding",
+                    identity,
+                    path(s, ""),
+                ));
+            }
+            for (s, param) in params.iter().enumerate() {
+                let identity = text(param, "identity");
+                let valid = param["name"].as_str().is_some_and(|name| {
+                    member_name(name) && identity == format!("{operation_identity}/{name}")
+                });
+                if !valid {
+                    return Err((
+                        MALFORMED.0,
+                        MALFORMED.1,
+                        operation_identity.to_owned(),
+                        path(s, ".name"),
+                    ));
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+/// FR-154-AC-14: each `parameter_name_cases` entry patches the selected
+/// document and the reader reports the recorded refusal at the selection row.
+#[trace("TC-280", "FR-154-AC-14")]
+#[test]
+fn tc_280_parameter_names_refuse_each_defect_at_the_selection_row() {
+    let adverse = parsed(ADVERSE);
+    let cases = array(&adverse, "parameter_name_cases");
+    for case in cases {
+        let id = text(case, "id");
+        let outcome = read_parameter_names(&patched_document(Some(&case["patch"])));
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ => {
+                assert_eq!(text(case, "expected_locus"), "selection_row", "{id}");
+                assert_eq!(
+                    outcome,
+                    Err((
+                        text(case, "expected_code"),
+                        text(case, "expected_cause"),
+                        text(case, "expected_identity").to_owned(),
+                        text(case, "expected_path").to_owned(),
+                    )),
+                    "{id}"
+                );
+            }
+        }
+    }
+}
+
 /// The mapping `derive`'s wire cases name: a model declaration vector's
 /// declared node identity.
 fn vector_node<'a>(nodes: &'a [Value], name: &str) -> &'a str {
@@ -1876,8 +2077,10 @@ fn relationship_navigation(projection: &Value, nodes: &[Value], case: &Value) ->
         Err(refusal) => return refusal,
     };
     if text(case, "operation") == "reaches" {
-        let edge = ["Reference", "Option"].contains(&text(&derived, "kind"));
-        if !edge || destination != endpoint {
+        // Any finite destination multiplicity of the endpoint's own type
+        // is reachable; the `Reference`, `Option`, `Set` and `Bag` result
+        // shapes all admit.
+        if destination != endpoint {
             return refused_at("ill_typed", "operator-ineligible", "member.name");
         }
     } else if derived != case["result"] {
@@ -1895,7 +2098,7 @@ fn tc_281_relationship_ends_navigate_by_role_receiver_direction_and_destination(
     let vectors = parsed(VECTORS);
     let nodes = array(&vectors, "model_declaration_nodes");
     let cases = array(&vectors, "relationship_navigation_cases");
-    assert_eq!(cases.len(), 19);
+    assert_eq!(cases.len(), 27);
     for case in cases {
         assert_eq!(
             relationship_navigation(&vectors["domain_package"], nodes, case),
@@ -1935,4 +2138,289 @@ fn tc_280_a_declaration_refusal_retains_the_nodes_origin_verbatim() {
     }])));
     let (_, _, _, origin) = read_relationships_retaining(&document).expect_err("a missing origin");
     assert_eq!(origin, None);
+}
+
+/// A `model` wire node of `form` owned by `owner_node` of the selected
+/// package, keyed by its own preimage as QSL FR-094 keys a model declaration
+/// node.
+fn owner_form_node(package: &Value, case: &Value) -> Value {
+    let id = |digest: &str| json!({"domain": NODE_DOMAIN, "digest": digest});
+    let mut node = json!({
+        "node_id": id(""),
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": case["node_tag"],
+        "semantic_form": case["semantic_form"],
+        "semantic_type": id(""),
+        "dependencies": [],
+        "occurrences": [{"role": "generated", "ordinal": 0}],
+        "body": {"term": "aggregate", "members": []},
+        "owner": {
+            "kind": "model",
+            "identity": package["identity"],
+            "node": case["owner_node"],
+        },
+    });
+    let key = wire_key(&node);
+    node["node_id"] = id(&key);
+    node["semantic_type"] = id(&key);
+    node
+}
+
+/// FR-322-AC-72: a process, a state machine and a persistence interface are
+/// model declaration nodes. Each preimage validates against the closed
+/// `ModelDeclarationNode` schema and recovers its declaration, and the owner
+/// join admits a node exactly when the selected document declares its owner as
+/// the node's own kind.
+#[trace("TC-280", "FR-322-AC-72")]
+#[test]
+fn tc_280_process_state_machine_and_persistence_owners_join_the_selected_document() {
+    let vectors = parsed(OWNER_FORMS);
+    let schema =
+        jsonschema::validator_for(&parsed(PREIMAGE_SCHEMA)).expect("node preimage schema is valid");
+    let package = &vectors["domain_package"];
+    for vector in array(&vectors, "model_declaration_nodes") {
+        let name = text(vector, "name");
+        let preimage = &vector["preimage"];
+        schema
+            .validate(preimage)
+            .unwrap_or_else(|error| panic!("{name} validates: {error}"));
+        assert_eq!(digest(preimage), text(vector, "sha256"), "{name} digest");
+        assert!(
+            recover(
+                package,
+                text(vector, "sha256"),
+                text(preimage, "node_tag"),
+                text(preimage, "semantic_form"),
+            )
+            .is_some(),
+            "{name} recovers its declaration"
+        );
+    }
+    for case in array(&vectors, "owner_cases") {
+        assert_eq!(
+            read_wire(package, &owner_form_node(package, case)),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+/// FR-322-AC-82: a declared population is a self-typed `relation`/`population`
+/// model declaration node whose `ModelOwner` is the population's declaration
+/// key (package, then node). Two populations of one package key differently,
+/// the closed preimage refuses every other form and shape, the owner join
+/// admits the node exactly when the selected document declares the owner as a
+/// population, and an ownerless node fails the V2 schema.
+#[trace("TC-280", "FR-322-AC-82")]
+#[test]
+fn tc_280_a_population_reference_node_is_keyed_by_its_declaration_key_alone() {
+    let vectors = parsed(OWNER_FORMS);
+    let schema =
+        jsonschema::validator_for(&parsed(PREIMAGE_SCHEMA)).expect("node preimage schema is valid");
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    let counters = node_vector(nodes, "P7");
+    let archive = node_vector(nodes, "P8");
+    for vector in [counters, archive] {
+        assert_eq!(vector["preimage"]["node_tag"], "relation");
+        assert_eq!(vector["preimage"]["semantic_form"], "population");
+        assert!(
+            schema.is_valid(&vector["preimage"]),
+            "{}",
+            text(vector, "name")
+        );
+    }
+    assert_ne!(
+        text(counters, "sha256"),
+        text(archive, "sha256"),
+        "two populations of one package carry different declaration keys and so different node keys"
+    );
+    let mut other_package = counters["preimage"].clone();
+    other_package["owner"]["identity"] = json!("acme/other");
+    assert_ne!(digest(&other_package), text(counters, "sha256"));
+    for (mutation, change) in [
+        ("a model-tagged population", ("node_tag", json!("model"))),
+        (
+            "a relation-tagged object type",
+            ("semantic_form", json!("object_type")),
+        ),
+        (
+            "a typed population",
+            (
+                "semantic_type",
+                json!({"domain": NODE_DOMAIN, "digest": "0".repeat(64)}),
+            ),
+        ),
+        (
+            "a declared population",
+            ("declaration", json!({"qualified_name": ["counters"]})),
+        ),
+        (
+            "a population with a body",
+            (
+                "body",
+                json!({"term": "aggregate", "members": [{"term": "reference"}]}),
+            ),
+        ),
+    ] {
+        let mut candidate = counters["preimage"].clone();
+        candidate[change.0] = change.1;
+        assert!(
+            !schema.is_valid(&candidate),
+            "{mutation} fails the closed preimage"
+        );
+    }
+    let mut ownerless = owner_form_node(
+        package,
+        &json!({
+            "node_tag": "relation", "semantic_form": "population", "owner_node": "ix://acme/runs/counters"
+        }),
+    );
+    assert_eq!(
+        read_wire(package, &ownerless),
+        json!({"recovers": "ix://acme/runs/counters"})
+    );
+    ownerless.as_object_mut().expect("a node").remove("owner");
+    assert_eq!(
+        read_wire(package, &ownerless),
+        json!({"refused": {"code": "malformed_wire"}}),
+        "a population node without its owner fails the V2 schema"
+    );
+    for case in array(&vectors, "owner_cases")
+        .iter()
+        .filter(|case| text(case, "name").starts_with("PR-"))
+    {
+        assert_eq!(
+            read_wire(package, &owner_form_node(package, case)),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+    // Each projected population is an FCD semantic IR 2.0.0 population: the six
+    // required members and the optional `symmetric`, and nothing else.
+    for population in array(package, "populations") {
+        let members: std::collections::BTreeSet<&str> = population
+            .as_object()
+            .expect("a population is an object")
+            .keys()
+            .map(String::as_str)
+            .collect();
+        let required = [
+            "displayName",
+            "extent",
+            "identity",
+            "kind",
+            "members",
+            "origin",
+        ];
+        assert!(
+            required.iter().all(|member| members.contains(member)),
+            "a population carries {required:?}"
+        );
+        assert!(
+            members
+                .iter()
+                .all(|member| required.contains(member) || *member == "symmetric"),
+            "a population carries no member beyond the six and `symmetric`: {members:?}"
+        );
+        assert!(text(population, "identity").starts_with("ix://"));
+        assert!(matches!(text(population, "extent"), "closed" | "open"));
+        text(&population["kind"], "module");
+        text(&population["kind"], "name");
+        assert!(array(population, "members").iter().all(Value::is_string));
+        let origin = population["origin"].as_object().expect("an origin object");
+        assert_eq!(
+            origin
+                .keys()
+                .filter(|key| *key == "source" || *key == "generated")
+                .count(),
+            1,
+            "an origin is exactly one of `source` or `generated`"
+        );
+    }
+}
+
+/// FR-340-AC-19: a frame field entry resolves among the exposed fields of a
+/// process or a state machine, own and inherited; a persistence interface and
+/// a systems interface are not field-declaring frame entries.
+#[trace("TC-280", "FR-340-AC-19")]
+#[test]
+fn tc_280_frame_field_entries_resolve_among_the_fields_of_a_process_or_state_machine() {
+    let vectors = parsed(OWNER_FORMS);
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "frame_field_cases") {
+        let declaration = text(case, "declaration");
+        let form = text(
+            &node_vector(nodes, declaration)["preimage"],
+            "semantic_form",
+        );
+        let decided = if matches!(
+            form,
+            "object_type" | "record_value_type" | "process" | "state_machine"
+        ) {
+            match resolve_member(
+                package,
+                nodes,
+                declaration,
+                "fields",
+                text(case, "field"),
+                refused("missing_declaration", "missing-name"),
+            ) {
+                Ok((_, identity, _)) => json!({"resolves": identity}),
+                Err(refusal) => refusal,
+            }
+        } else {
+            refused("invalid_model_binding", "malformed-declaration")
+        };
+        assert_eq!(decided, case["expected"], "{}", text(case, "name"));
+    }
+}
+
+/// FR-342-AC-7 to FR-342-AC-9: an anchor's operation resolves among the
+/// operations its object type, process or state machine declares itself; a
+/// persistence interface and a systems interface are not contexts.
+#[trace("TC-280", "FR-342-AC-7")]
+#[trace("TC-280", "FR-342-AC-8")]
+#[trace("TC-280", "FR-342-AC-9")]
+#[test]
+fn tc_280_an_anchor_context_is_an_object_type_a_process_or_a_state_machine() {
+    let vectors = parsed(OWNER_FORMS);
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "anchor_cases") {
+        assert_eq!(
+            anchor_operation(
+                package,
+                nodes,
+                text(case, "context"),
+                text(case, "operation")
+            ),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+}
+
+/// FR-341-AC-11 and FR-341-AC-12: `self` is `Reference<C>` for a process and a
+/// state machine as for an object type, and the clause binds the operation's
+/// result and parameters in the same order.
+#[trace("TC-280", "FR-341-AC-11")]
+#[trace("TC-280", "FR-341-AC-12")]
+#[test]
+fn tc_280_a_clause_on_a_process_or_state_machine_binds_self_result_and_parameters() {
+    let vectors = parsed(OWNER_FORMS);
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    for case in array(&vectors, "clause_signature_cases") {
+        assert_eq!(
+            clause_decision(package, nodes, case),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
 }

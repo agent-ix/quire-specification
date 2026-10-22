@@ -9,12 +9,11 @@ relationships:
 ## Description
 
 Accepted FS04 portable static control for
-[NFR-052](../non-functional/NFR-052-contain-observation-executables.md). TM-007
-remains Planned; implementation-specific execution and evidence stay separate.
+[NFR-052](../non-functional/NFR-052-contain-observation-executables.md). Implementation-specific execution and evidence stay separate.
 
 ## Test Procedure
 
-Inventory every owned source, generated executable, test, build definition,
+Inspect every owned source, generated executable, test, build definition,
 workflow, CLI, adapter, reader, loss reporter, and fixture-audit path for the
 selected observation scope. Record its language and purpose. Independently
 introduce a forbidden foreign runtime reference into fixture controls.
