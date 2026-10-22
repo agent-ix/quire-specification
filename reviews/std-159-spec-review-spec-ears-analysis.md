@@ -44,8 +44,11 @@ Round 1, head 4cb925e17 (fix commit 4cb925e on b8cbeabdd).
 | FND | outcome | reason |
 | --- | --- | --- |
 | FND-001 | fixed | 4cb925e: "job `q` of that busy period (0 when `D_i <= T_i`, whose busy period ends with the first job unless that job misses) iterates". The second clause is now a consequence, not a second condition. |
+| FND-002 | fixed | Round 2, f9ed36c: FR-419-AC-9 now reads "`Ctl`'s `response T3 on Ctl.t3 <= 11 ms under fixed_priority` (`t3` the third task) settles `refuted` with the third task, job 0 and iterates 5, 9, 12". The claim is in FR-419's own `response N on S.τ <= d under fixed_priority` grammar, so its task, bound and policy are stated in the FR. |
 
 The new behaviour sentences (busy-period open condition, response bound, task-set refusals) and FR-419-AC-8 and AC-9 each name an input and an exact observable result, and carry no changelog, status or review language.
+
+Round 2, head f9ed36c23. The changed text this round (the stop-rule sentence, AC-5's clash clause, AC-9) is declarative, names one trigger and one observable result each, and carries no changelog, status or review language.
 
 ## New findings (disposition pass 1)
 
