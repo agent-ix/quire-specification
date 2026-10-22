@@ -32,7 +32,7 @@ admits.
   `quire.op.reference.eq`, `quire.op.reference.ne`, `quire.op.model.deref`
   and `quire.op.record.project` entries: their operand positions, groups,
   result form and constraints are read from the catalog.
-- The lock selects `acme/orders` `1.0.0` only. In that package `Sub` (M5)
+- The lock selects the identity `acme/orders` only. In that package `Sub` (M5)
   declares supertype `Order` (M1), `SubSub` (M7) declares supertype `Sub`,
   `Both` (M6) declares supertypes `Tagged` (M9) and `Coded`, `Flow` (M8) is
   a systems interface with no declared supertype, and `Invoice` (M3) and
@@ -73,7 +73,7 @@ not unique), `peers` (`Order` `[0, 3]`, unordered, unique) and `trail`
 | RC-06 | `reference.eq` over `Reference<Order>` and `Reference<Invoice>` | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
 | RC-07 | `reference.ne` over `Reference<Sub>` and `Reference<Both>` | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
 | RC-08 | `reference.eq` over `Reference<Order>` and a reference to the relationship `Order-order-Order` (M4) | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
-| RC-09 | `reference.eq` over a reference to M2 (`Order` keyed under the unselected version `2.0.0`) and `Reference<Order>` | `missing_declaration`/`missing-selection` | FR-322-AC-33 |
+| RC-09 | `reference.eq` over a reference to M2 (`Order` owned by the unselected identity `acme/billing`) and `Reference<Order>` | `missing_declaration`/`missing-selection` | FR-322-AC-33 |
 | RC-10 | `reference.eq` over an `Order` object operand and `Reference<Order>` | `ill_typed`/`operator-ineligible`: family `object` is not `reference` | FR-322-AC-33 |
 | RC-11 | `reference.eq` over two references to the relationship `Order-order-Order` (M4) | `ill_typed`/`operator-ineligible` | FR-322-AC-33 |
 | RC-12 | `reference.eq` over two references to M2 | `missing_declaration`/`missing-selection` | FR-322-AC-33 |
