@@ -161,7 +161,7 @@ locus; require a `quire.op.state.clause` application nested in another
 clause's condition to fail the schema and refuse `malformed_wire` at the
 nested application;
 and parse the native-diagnostics rows to require each cause in
-exactly its code's row and the Diagnostic schema pairing. Require the Diagnostic schema to admit each of `declaration-form`, `expression-form` and `not-yet-implemented` with `unsupported_construct` and with no other code (FR-322-AC-47). Parse the
+exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
 and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse the FR-272 rows of `unknown_wire`, `unknown_required_feature`, `unknown_contract_version` and `unknown_required_capability` and the `Diagnostic` schema's pairing of `unsupported-wire` and `unsupported-feature`, and require FR-322-AC-78's one pairing. Parse the rows of the eight FR-322 reader codes in both and require FR-272-AC-22's causes and payload names, and FR-271 to hold one row for each (FR-271-AC-7). Parse
 the `resource_exhausted` and `cancelled` rows of both and require each to list
@@ -188,7 +188,8 @@ decimal, unit-target and integer-target membership sentences of
 `quire.value.accounting/v1` to carry the same `sum` carve-out on
 `decimal_out_of_domain` and the unit target refusals (FR-140-AC-5).
 Validate a Diagnostic entry carrying each of `type-mismatch`,
-`missing-selection`, `unsupported-selection` and `wrong-selection-role` with
+`missing-selection`, `unsupported-selection`, `wrong-selection-role`,
+`declaration-form`, `expression-form` and `not-yet-implemented` with
 every code of the schema's code enum (FR-322-AC-47).
 Recompute the QSL FR-092 key of every structural node, grouped or not, of
 every published positive fixture, and the recursive-records
@@ -441,7 +442,8 @@ or prefix one outcome in every family. The Diagnostic schema admits
 `type-mismatch` only with `ill_typed`, `missing-selection` only with
 `missing_import` and `missing_declaration`, and `unsupported-selection` and
 `wrong-selection-role` only with `unknown_language`, `unknown_edition` and
-`unknown_profile`.
+`unknown_profile`, and `declaration-form`, `expression-form` and
+`not-yet-implemented` only with `unsupported_construct`.
 Every structural node, grouped or not, of every published positive fixture
 carries the key QSL's FR-092 key function mints, the recursive-records
 group labels are their group digests, and the full reader admits every

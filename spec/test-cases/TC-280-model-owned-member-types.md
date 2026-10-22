@@ -75,7 +75,7 @@ the member type from the resolved record.
   owner, frame field, anchor and clause signature cases below are read
   against this projection, and the receiver frame cases against the published
   packages (FR-340-AC-19, FR-340-AC-20).
-- The lock selects the identity `acme/orders` only.
+- For the `acme/orders` projection the lock selects the identity `acme/orders` only; for the `acme/runs` projection it selects the identity `acme/runs` only.
 - `node-identity-preimage.schema.json` defines the closed
   `ModelDeclarationNode` preimage.
 
