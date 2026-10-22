@@ -61,3 +61,10 @@ This matches IR-275's direction: Fix 5 says "derive the projection at read time"
 ## Verdict
 
 Two low findings. The contract change is consistent, deterministic and identity-preserving.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at f8be235. The paragraph now says "Add `R` to `semantic_graph.nodes` and its occurrences to the source map (in ascending ordinal, which is not a requirement), then recompute `package_id` over the identity projection the reader derives from the new graph". |
+| FND-002 | fixed | Round 1 at f8be235. FR-322-AC-14 now covers only the identity recomputation. The shipped-projection refusal is the new FR-322-AC-100, which is unique across open PRs (#374 takes AC-98 and #376 takes AC-99). The Properties text, TC-233 and the test trace now cite AC-100. quire validate reports 86 failure lines. |
