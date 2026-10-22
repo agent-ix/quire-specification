@@ -1,0 +1,47 @@
+{
+  "definitions": "extension-definitions.json",
+  "vectors": [
+    {
+      "id": "XD-01",
+      "fixture": "fixtures/positive-extension-nodes.json",
+      "withheld": [],
+      "expected": {"result": "admitted"}
+    },
+    {
+      "id": "XD-02",
+      "fixture": "fixtures/positive-extension-nodes.json",
+      "withheld": [{"authority": "example", "identity": "retention"}],
+      "expected": {
+        "result": "refused",
+        "code": "unknown_required_capability",
+        "cause": null,
+        "locus": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "7aa76a0f7633d621a548cdca00ddd91513fdb0aebdc4e9aae9fd43c2d92b1832"
+        },
+        "document_pointer": "/semantic_graph/nodes/5/body/definition"
+      }
+    },
+    {
+      "id": "XD-03",
+      "fixture": "fixtures/positive-all-families.json",
+      "withheld": [],
+      "expected": {"result": "admitted"}
+    },
+    {
+      "id": "XD-04",
+      "fixture": "fixtures/positive-all-families.json",
+      "withheld": [{"authority": "example", "identity": "retention"}],
+      "expected": {
+        "result": "refused",
+        "code": "unknown_required_capability",
+        "cause": null,
+        "locus": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "7aa76a0f7633d621a548cdca00ddd91513fdb0aebdc4e9aae9fd43c2d92b1832"
+        },
+        "document_pointer": "/semantic_graph/nodes/34/body/definition"
+      }
+    }
+  ]
+}

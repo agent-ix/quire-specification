@@ -29,6 +29,22 @@ structures, but any external consumer receives only the contract.
   `state`/`operation_anchor` node, its `state`/`frame` node with a scoped
   field entry and the four frame members, and the `value`/`parameter` node
   for `self` (FR-340, FR-341, FR-342).
+- `fixtures/positive-extension-nodes.json` is a V2 package carrying the
+  `retention Audit { subject: "audit", days: 30 }` form of a selected
+  extension as one `extension`/`extension_form` node, its two clause subnodes
+  and the `retention` entry of `lock.definition_selections` (FR-469,
+  TC-951); `fixtures/positive-all-families.json` carries the same form as its
+  fourteenth node tag. `node-identity-preimage.schema.json` defines the
+  `ExtensionFormNode` preimage that keys it.
+- `extension-definitions.json` publishes the FR-467 extension definitions
+  (`policy`, `quota`, `retention`) a reader holds when it reads these
+  fixtures, each as `{reference, definition}` with `definition` exactly the
+  `{grammar_schema, typed_node_schema}` members, closed by
+  `extension-definitions.schema.json`. A reader holds the published
+  definition of each `lock.definition_selections` entry of the fixture it
+  reads. `extension-definition-vectors.json` lists the withheld-definition
+  controls: a fixture read with `retention` withheld refuses
+  `unknown_required_capability` at the extension node (FR-469, TC-951).
 - `model-owner-form-vectors.json` supplies a domain package projection that
   also declares processes, state machines and a persistence interface, with
   the owner-join, frame-field, anchor, clause-signature and receiver-frame
