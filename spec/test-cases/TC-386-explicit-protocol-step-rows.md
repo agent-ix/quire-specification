@@ -18,7 +18,7 @@ from the rows, and decides visible and internal steps as FR-432 states.
 ## Test Procedure
 
 Every vector uses the header `abstract Spec::Req`, with `Spec` the abstract
-model alias, except where SR-09 says otherwise. Abstract side: protocol `Req` with a single attempt `Ask` on operation
+model alias, except where SR-09, BR-01 and BR-02 say otherwise. Abstract side: protocol `Req` with a single attempt `Ask` on operation
 `ask()` and a `finish`. Concrete side: protocol `Impl` with `parallel P {
 branch a send S via h …; branch b receive R via h of P::a::S …; } join all
 [a, b];`, then attempt `Do` on operation `do()`, then `finish`. Write the
@@ -45,8 +45,8 @@ local Rust boundary.
 | IL-05 | IL-01 with the abstract alias `Spec` renamed to `spec` throughout (header `abstract spec::Full`) and the value naming `Full`'s `fin` and `lose` of `ch` under the new alias; then the same under the original alias | the resolved list is `Full::fin` then `lose Full::ch` under both (alias-free: the alias-including spellings `spec::Full::fin` and `lose spec::Full::ch` would order the other way), with equal node ids (FR-432-AC-11) |
 | IL-06 | IL-01 headed `abstract Spec` with the value `[{"refinement": "R", "internal": ["Spec::Full::fin"]}]` | only the model-subject row or the not-yet-built refusal is reported, no `missing-name` (FR-432-AC-12) |
 | IL-07 | IL-01 with the rows `step Impl::Do -> node Spec::Full::to;`, `-> node Spec::Full::fe;`, `-> node Spec::Full::par;`, `-> node Spec::Full::Ghost;` one at a time, then `-> node Spec::Full::a1(self);` | each of the first four refuses `missing_declaration`/`missing-name` at the node; the last is admitted (FR-432-AC-13) |
-| BR-01 | An abstract protocol `A` with attempt `a1` on `twice(x: Int[0, 9])`, attempt `a2` on `quad(x: Int[0, 9])` returning `Int[0, 99]`, event `ev as (e: M::Evt)` with `Evt{p: Boolean, q: Int[0, 9]}` and event `eb as (b: Boolean)`; rows `-> node A::a1(self, 1)`, `-> node A::a2(self, 1, _)`, `-> node A::ev(true, 3)`, `-> node A::eb(true)` and `-> node A::a1` one at a time | each is admitted; the binder record is (receiver, x), (receiver, x, result), (p, q) and (b) (FR-432-AC-14) |
-| BR-02 | BR-01 with the rows `-> node A::a1(self, 1, 2)`, `-> node A::a1(self)`, `-> node A::ev(true)`, `-> node A::eb(true, false)`, `-> node A::eb(1)` and `-> node A::ev(true, true)` one at a time | the first four refuse `ill_typed`/`operator-ineligible` at the node retaining `expected` and `actual`; the last two refuse `ill_typed`/`type-mismatch` at the argument retaining `expected` and `actual` (FR-432-AC-15) |
+| BR-01 | Abstract model `Spec`, header `abstract Spec::A`, abstract protocol `A` with attempt `a1` on `twice(x: Int[0, 9])`, attempt `a2` on `quad(x: Int[0, 9])` returning `Int[0, 99]`, event `ev as (e: Spec::Evt)` with `Evt{p: Boolean, q: Int[0, 9]}` and event `eb as (b: Boolean)`; rows `-> node Spec::A::a1(self, 1)`, `-> node Spec::A::a2(self, 1, _)`, `-> node Spec::A::ev(true, 3)`, `-> node Spec::A::eb(true)` and `-> node Spec::A::a1` one at a time | each is admitted; the binder record is (receiver, x), (receiver, x, result), (p, q) and (b) (FR-432-AC-14) |
+| BR-02 | BR-01 with the rows `-> node Spec::A::a1(self, 1, 2)`, `-> node Spec::A::a1(self)`, `-> node Spec::A::ev(true)`, `-> node Spec::A::eb(true, false)`, `-> node Spec::A::eb(1)` and `-> node Spec::A::ev(true, true)` one at a time | the first four refuse `ill_typed`/`operator-ineligible` at the node retaining `expected` and `actual` as 2 and 3, 2 and 1, 2 and 1, 1 and 2; `eb(1)` refuses `ill_typed`/`type-mismatch` at the argument with `expected` `Boolean` and `actual` the type of `1`, and `ev(true, true)` with `expected` `Int[0, 9]` and `actual` `Boolean` (FR-432-AC-15) |
 
 ## Expected Results
 
