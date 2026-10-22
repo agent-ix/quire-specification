@@ -65,13 +65,23 @@ orders are behaviours.
 
 | Kind | Owner | Enabled when | Effect |
 | --- | --- | --- | --- |
-| `cattempt` | the compensation thread of the registration | the thread rests at its compensation attempt or retry point; its attempt count is below the template's authored `attempts n`; no step of the template's commit node has occurred in its instance; for a retry, the template's retry relation holds over (previous attempt record, this record); and the FR-426 `attempt` conditions hold for an application of the template's operation by its role, with the template's attempt type as the record | as FR-426 `attempt`; the attempt count advances; the thread rests at its retry point |
+| `cattempt` | the compensation thread of the registration | the thread rests at its compensation attempt or retry point; its attempt count is below the template's authored `attempts n`; no step of the template's commit node has occurred in its instance; the FR-426 `attempt` precondition, post-state and gate conditions hold for an application of the template's operation by its role; and the step's record, a record of the template's attempt type, satisfies the retry relation at a retry, with `earlier` bound to the thread's attempt record and `later` to the step's record; at the first attempt the retry relation is not evaluated | as FR-426 `attempt`; the step's record becomes the thread's attempt record; the attempt count advances; the thread rests at its retry point. One step per (application, post-state, result, record), the record ranging over the attempt type's finite record domain as an `event` step's record ranges over its type's |
 | `cend` | the compensation thread at its retry point | always | the thread ends and is removed; the recovery predicate is evaluated over the registration and activation captures; a predicate that reads its recovery binder settles the item `unsupported` with cause `recovery-view{predicate}`, because no rule derives a recovery view from a model state; the status becomes `recovered` when it is true and `unrecovered` when it is false; an undefined value settles by the undefined-protocol-expression rule ([FR-426](FR-426-apply-protocol-steps.md)) |
 
 The retry relation constrains a retry and never forces one
 ([FR-058](FR-058-preserve-retry-and-partial-recovery.md)): `cend` stays
 enabled at every retry point. Each `cattempt` is one application of the
 template's operation with the same atomicity as an attempt.
+
+No rule derives a `cattempt`'s record from the operation's result, so each
+record of the attempt type that the retry relation admits is a behaviour.
+The record is the step's `record` member
+([FR-426](FR-426-apply-protocol-steps.md)). The thread keeps it as its
+attempt record exactly while a later `cattempt` of the thread can read it
+([FR-425](FR-425-define-protocol-subjects-and-state-keys.md)): under
+`attempts 1`, under a retry relation that does not read `earlier`, after the
+`cattempt` whose count reaches `attempts n`, from a step of the commit node
+on, and after `cend`, the thread holds none.
 
 ### Commit and ending
 
@@ -99,6 +109,7 @@ activated.
 | FR-427-AC-4 | Two eligible triggers in sibling branches give two behaviours, each activating the registration once at the first trigger taken; a later trigger reactivates nothing. | Test (TC-380) |
 | FR-427-AC-5 | A recovery predicate that evaluates undefined at `cend` settles every item over the subject `refuted` with cause `undefined-evaluation`, never status `unrecovered`; an activation guard that evaluates undefined over a trigger record does the same, and never leaves the registration `registered`. | Test (TC-380) |
 | FR-427-AC-6 | A recovery predicate that reads its recovery binder, as `r.bal = 0` does for `recover (r: M::Recovery)`, settles the item `unsupported` with cause `recovery-view{predicate}`, before any state is explored; the same protocol with the predicate `triggered`, over an activation capture, is admitted. | Test (TC-380) |
+| FR-427-AC-7 | A variant of the `Pay` protocol with `attempts 2 of M::RefundAttempt`, `RefundAttempt` with one field `ok: Boolean`, `refund()` with precondition `true`, and the retry relation `not e.ok` over (`e`, `l`): at t4 two `cattempt` steps are enabled, whose transition identities differ only in `record`, one with `ok` true and one with `ok` false. At the retry point after the `ok` false attempt, two retry `cattempt` steps, one per record, and `cend` are enabled; after the `ok` true attempt only `cend` is. With the retry relation `l.ok`, the retry point after either first attempt enables one retry `cattempt`, whose record has `ok` true, and `cend`. | Test (TC-380) |
 
 ## Dependencies
 
