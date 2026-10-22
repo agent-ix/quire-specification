@@ -36,7 +36,7 @@ name.
 | MK-07 | SB-02 routed to a candidate advertising `sc` and `tso` | routed and checked under `tso` |
 | MK-08 | a `tso` behaviour with a `flush` step | the `flush` position carries the `memory` anchor and does not advance interval distance |
 | MK-09 | TC-390 SB-05 under `ra`, the memory member after `Sx` | `sc-graph` holds the one write event `{"thread":<left>,"kind":"write","ordinal":"0","location":<x>,"write":"0"}`, no edge, no `owed` entry, no summary; `left`'s `cur` view has `at` mapping `x` and `y` to `"0"` and `frontier` mapping `left` to `"1"`; `right`'s `frontier` is empty (FR-437-AC-14) |
-| MK-10 | the `ra` counterexample of TC-390 SB-05's protocol to the claim `always holds(not (c1.r = 1 and c2.r = 1))`, unmodified; then with one carried view's `frontier` count altered; then with one carried `sc-graph` edge removed; then with one `owed` entry added | it replays; each altered form refuses `stale_dependency`/`revision-mismatch` (FR-439-AC-10) |
+| MK-10 | the `ra` counterexample of TC-390 SB-05's protocol to the claim `always holds(not (c1.r = 1 and c2.r = 1))`, unmodified; then with one carried view's `frontier` count altered; then with one carried `sc-graph` edge removed; then with one `owed` entry added | it replays; each altered form is refused as a memory component that differs from the carried one, with the refusal FR-439's replay rule names (FR-439-AC-10) |
 
 ## Expected Results
 

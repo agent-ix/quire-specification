@@ -200,7 +200,8 @@ location keeps one message.
   fences twice with no store between holds the second fence, not the first, in
   every view after the second fence.
 - **Key.** `P`, `F`, the frontiers and the `owed` sets are part of the state
-  key, with events named by thread and message depth.
+  key, with events named by thread, kind, ordinal and message depth (the typed
+  form below).
 
 ### Visibility fairness
 
@@ -252,7 +253,7 @@ RC11 excludes.
 | FR-437-AC-11 | TC-391 LT-16 does not reach its weak outcome under `ra`: a thread that read the last message of `L` with a `relaxed` load and executed an acquire fence has a view that covers the collected SC event it synchronised with, though the message its next `seq_cst` load of `L` reads does not; the load takes the predecessors held in the view, so its thread's `X := 2` is not offered the slot before `X := 1` in modification order. | Test (TC-391) |
 | FR-437-AC-12 | TC-391 LT-17 does not reach its weak outcome under `ra` in any interleaving, including those in which the fence's thread fences a second time before the other thread loads the flag: the first fence stays in `P` while the flag's message view covers it and not the second. | Test (TC-391) |
 | FR-437-AC-13 | A thread that fences twice with `seq_cst` and stores no flag between has, after its second fence, the first fence absent from the SC event graph; with a `release` flag stored between the fences, the first fence remains while the flag's message is live and its view covers the first fence and not the second. | Test (TC-393) |
-| FR-437-AC-14 | With every store and load `seq_cst` (TC-390 SB-05), after `Sx` under `ra`, the `sc-graph` entry holds one event `{"thread":<left>,"kind":"write","ordinal":"0","location":<x>,"write":"0"}`, no edge, no `owed` entry and no summary; `left`'s `cur` view has `at` mapping `x` to depth `"0"` and `y` to depth `"0"` and `frontier` mapping `left` to `"1"`, and `right`'s has an empty `frontier`; replay refuses a carried view whose `frontier` count, or a carried `sc-graph` whose edge set, differs from the recomputed one. | Test (TC-394) |
+| FR-437-AC-14 | With every store and load `seq_cst` (TC-390 SB-05), after `Sx` under `ra`, the `sc-graph` entry holds one event `{"thread":<left>,"kind":"write","ordinal":"0","location":<x>,"write":"0"}`, no edge, no `owed` entry and no summary; `left`'s `cur` view has `at` mapping `x` to depth `"0"` and `y` to depth `"0"` and `frontier` mapping `left` to `"1"`, and `right`'s has an empty `frontier`. | Test (TC-394) |
 
 ## Dependencies
 
