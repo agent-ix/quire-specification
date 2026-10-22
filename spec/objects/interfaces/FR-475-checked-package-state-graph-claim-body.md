@@ -51,12 +51,13 @@ below.
     node of `X`. For `possible`, the empty aggregate;
   - `target` — a `reference` to the predicate node of `P` for `possible`
     and `always possible`, and of `Y` for `unique path`.
-- **predicate nodes** — each `from` and `target` target is a node whose
-  `semantic_type` is the `scalar_type`/`boolean` node, other than a
-  `value`/`parameter` node: the `expression` node of a predicate's Boolean
-  term, or the Boolean `value`/`literal` node of a constant predicate such as
-  `true`, as [FR-322](FR-322-checked-package-artifact.md)'s body grammar
-  encodes it. That a predicate reads no operation anchor, result or
+- **predicate nodes** — each `from` and `target` target is exactly one of
+  two node forms, with `semantic_type` the `scalar_type`/`boolean` node: an
+  `expression` node, the predicate's Boolean term, or a `value`/`literal`
+  node, a constant predicate such as `true`, as
+  [FR-322](FR-322-checked-package-artifact.md)'s body grammar encodes it. No
+  other node form is a predicate, a Boolean-typed `temporal`, `state` or
+  `claim` node or a `function` node included. That a predicate reads no operation anchor, result or
   pre-state is the checker's admission rule (FR-390 "Admission"); the reader
   does not check it again.
 - **semantic_type** — the `scalar_type`/`boolean` node.
@@ -116,9 +117,10 @@ defect:
 4. **Targets**, in body order (`over`, `from`, `target`): an `over` target
    that is not a `value`/`parameter` node refuses `invalid_model_binding`/
    `malformed-declaration`, as [FR-370](FR-370-checked-package-temporal-clause-body.md)
-   refuses a temporal clause's `over`; a `from` or `target` target that is a
-   `value`/`parameter` node, or whose `semantic_type` is not the
-   `scalar_type`/`boolean` node, refuses `ill_typed`/`operator-ineligible`.
+   refuses a temporal clause's `over`; a `from` or `target` target that is
+   neither an `expression` node nor a `value`/`literal` node, or whose
+   `semantic_type` is not the `scalar_type`/`boolean` node, refuses
+   `ill_typed`/`operator-ineligible`.
    The locus is the target.
 
 A `dependencies` list that differs from the body's targets is FR-322's
@@ -132,7 +134,7 @@ which precedes this step.
 | FR-475-AC-1 | A `possible`, an `always possible` and a `unique path` claim each produce one `claim`/`state_graph` node whose body has exactly the bindings `kind`, `over`, `from` and `target` in that order, with `kind` `possible`, `always-possible` and `unique-path` respectively, `from` the empty aggregate for `possible` only, `semantic_type` the `scalar_type`/`boolean` node, no `declaration` and no `owner`, every occurrence of role `claim`, and `dependencies` exactly the body's targets in digest order. | Test (TC-960) |
 | FR-475-AC-2 | A claim written without `over` encodes `over` as the empty aggregate; `possible Anything using v { true }` references the Boolean `value`/`literal` node of `true` as its `target` and is admitted; an `always possible` claim written without `from` and the same claim written `from (true)` have one node id, `from` referencing the `true` literal node; two declarations of one claim with different names share one node and carry two `claim` occurrences with ordinals 0 and 1. | Test (TC-960) |
 | FR-475-AC-3 | `possible P` and `always possible P` over one `P` have different node ids and different obligation identities; two instances of one `over` claim with different universe keys have different obligation identities; one claim requested over two subjects with different initial states keeps one node id and has two obligation identities; a claim that differs only in whitespace and comments has the same node id and obligation identity. | Test (TC-960) |
-| FR-475-AC-4 | A body with `from` and `target` swapped in order refuses `invalid_semantic_graph`; `kind` `eventually-possible` refuses `invalid_package`/`invalid-value` at `/semantic_graph/nodes/{n}/body/members/0`; a `possible` node whose `from` is a reference, a `unique-path` node whose `from` is the empty aggregate, and an `over` that is a text literal each refuse `invalid_semantic_graph`; with `dependencies` rewritten to the body's targets, a `target` naming a `value`/`parameter` node refuses `ill_typed`/`operator-ineligible` at the target; a node whose `dependencies` omit its `target` refuses `invalid_semantic_graph` at `/dependencies`. | Test (TC-960) |
+| FR-475-AC-4 | A body with `from` and `target` swapped in order refuses `invalid_semantic_graph`; `kind` `eventually-possible` refuses `invalid_package`/`invalid-value` at `/semantic_graph/nodes/{n}/body/members/0`; a `possible` node whose `from` is a reference, a `unique-path` node whose `from` is the empty aggregate, and an `over` that is a text literal each refuse `invalid_semantic_graph`; with `dependencies` rewritten to the body's targets, a `target` naming a `value`/`parameter` node, and a `target` naming a `temporal`/`temporal_clause` node, each refuse `ill_typed`/`operator-ineligible` at the target; a node whose `dependencies` omit its `target` refuses `invalid_semantic_graph` at `/dependencies`. | Test (TC-960) |
 
 ## Published artifacts
 

@@ -89,3 +89,26 @@ QSL half must follow. The subject-free body, the `from (true)` identity
 rule, predicates as references, the schema enum change, id uniqueness and
 both gates are clean. The QSL conformance run is not required for this
 PR.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-010 | medium | [major] The fix for FND-002 swaps the allow-list for a deny-list. A predicate target may now be any node whose `semantic_type` is `scalar_type`/`boolean` other than `value`/`parameter`. Every `temporal`/`temporal_clause`, `state`/`state_clause` and `claim` node (this node form included) has that type, and so does a `function` node with a Boolean result, because a function's `semantic_type` is its result type (FR-322). SN-01 with `target` pointed at a temporal clause node of the same package, `dependencies` rewritten, passes step 4. No later step refuses it: the temporal step's placement check covers only `temporal`/`formula` and `temporal`/`fairness` references. That admits a temporal clause as a state predicate, which FR-390 forbids. Fix: allow exactly an `expression` node, or a `value`/`literal` node, of `semantic_type` `scalar_type`/`boolean`, and add a vector with a `temporal_clause` target. | spec/objects/interfaces/FR-475-checked-package-state-graph-claim-body.md:54-60, :116-122 | wrong-requirement |
+| FND-011 | low | [minor] SN-16 names "§7.1's subject", but no §7.1 exists in QSpec; the section is QSL ADR-022 §7.1. Name the source, or name it through TC-331's fixture. | spec/test-cases/TC-960-checked-package-state-graph-claim-node.md:47 | correct-requirement-no-evidence |
+
+## Dispositions
+
+Round 1, reviewed at agent-ix/quire-specification@afe6d822 (fix commit 12b011fc plus the merge of main c1033008). Gates at the head: `quire validate` 86 failure lines (baseline); `cargo test --test checked_package_v2 --test backend_provider_v1` 23 + 119 passed. origin/main is an ancestor.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 12b011fc |
+| FND-002 | fixed | 12b011fc (the replacement rule is too wide; see FND-010) |
+| FND-003 | fixed | 12b011fc |
+| FND-004 | fixed | 12b011fc |
+| FND-005 | fixed | 12b011fc |
+| FND-006 | fixed | 12b011fc |
+| FND-007 | fixed | 12b011fc |
+| FND-008 | fixed | 12b011fc |
+| FND-009 | fixed | 12b011fc |
