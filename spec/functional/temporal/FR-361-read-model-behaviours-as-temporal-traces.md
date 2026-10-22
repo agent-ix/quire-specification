@@ -50,7 +50,10 @@ item with zero instances.
 ### Model subject
 
 A **model subject** is the tuple (checked package, ordered list of initial
-states, universe of each population, substituted proof bounds). Its successor
+states, universe of each population, substituted proof bounds). Its initial
+states are listed in FR-181's canonical initial-state order, ascending by
+state-key bytes with equal keys coalesced, whatever order the request supplies
+them in. Its successor
 relation is the successor rule of
 [FR-181](../runtime/FR-181-simulate-finite-executions.md): an operation applied
 to a receiver and an argument vector from the operation's finite declared
