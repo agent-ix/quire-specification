@@ -26,7 +26,7 @@ Compile each source vector through the real local Rust boundary under the comple
 | Vector | Input | Expected result |
 | --- | --- | --- |
 | HB-01 | `hyper NonInterference using inf over behaviours (v: V::Vault) forall trace a of V forall trace b of V match { a.step.op = b.step.op and a.step.Vault::step.i = b.step.Vault::step.i } { always holds(v.l @ a = v.l @ b) }` | admitted; two variables over alias `V`; one instance, key `v` |
-| HB-02 | a clause over aliases `S` and `N` with parameters `(d: S::Device, e: N::Device)` and universes of 2 and 3 keys | admitted; 6 instances over the product of universes |
+| HB-02 | a clause over aliases `S` and `N` with parameters `(d: S::Device, e: N::Device)` and universes of 2 and 3 keys, each key admitted by a member record of an initial state | admitted; 6 instances over the product of the admitted keys |
 | HB-03 | HB-01 with `forall trace a` (no `of`) | `unsupported_construct`/`expression-form` at the quantifier |
 | HB-04 | `hyper H using inf over t in Q bounded 4 forall trace a of V { true }` | `unsupported_construct`/`expression-form` at the quantifier |
 | HB-05 | a body read `v.l` with no `@` | `ill_typed` at the read |
@@ -37,6 +37,7 @@ Compile each source vector through the real local Rust boundary under the comple
 | HB-10 | an `align skip` clause whose variable carries `fair weak V::Vault::step;` | `unsupported_construct`/`expression-form` at the constraint |
 | HB-11 | `relation Det using v over (x: V::Vault::step, y: V::Vault::step) { (pre(x.self.l) = pre(y.self.l) and x.i = y.i) implies x.self.l = y.self.l }` | admitted; two executions of `V::Vault::step` |
 | HB-12 | a relation whose execution bindings name a declared trace population | FR-191's finite reading |
+| HB-13 | HB-02 with one key of each universe admitted by no member record of any initial state | admitted; 2 × 2 = 4 instances over the product of the admitted keys; the two unadmitted keys are excluded keys of the item |
 
 ## Expected Results
 

@@ -149,7 +149,7 @@ the subject admits, which fixes the key's type up front. A key only an operation
 could create is not an instance; that is the stated limitation of this rule.
 The item's **excluded keys** are the universe keys of the populations that
 overlap `T` that no member record of any initial state admits, in instance
-order. A verdict over the item covers its instances only: a `proved` item over
+order, a key in several overlapping universes being listed once. A verdict over the item covers its instances only: a `proved` item over
 a model whose operation creates an object under an excluded key has not
 checked that object, and a `refuted` item never names an excluded key. The
 excluded keys are a function of the subject the verdict carries (its

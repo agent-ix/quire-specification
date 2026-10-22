@@ -68,7 +68,7 @@ One result per clause instance, classified by
   that key in every trace of that alias: objects are correlated across traces
   by universe key, never by local name. A clause over two aliases names one
   parameter per alias it reads, and its instances range over the product of
-  their universes. A clause one of whose parameters has no admitted key
+  their admitted keys. A clause one of whose parameters has no admitted key
   (no population overlaps its type, every overlapping population has an empty
   universe, or no initial member record admits a key of their universes), which
   FR-361 states as zero instances, has an
