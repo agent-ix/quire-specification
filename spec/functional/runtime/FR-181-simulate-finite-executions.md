@@ -88,6 +88,14 @@ object, `{"type": <tag>, ...}`:
   its retained (pre-normalization) coefficient and scale (FR-140), each an
   exact decimal string.
 - text — `{"type":"text","value":"<string>"}`.
+- UUID — `{"type":"uuid","value":"<uuid>"}`, the K2 canonical UUID payload
+  (QSL FR-056): 32 lowercase hexadecimal digits in groups `8-4-4-4-12`
+  joined by four hyphens.
+- Timestamp — `{"type":"timestamp","nanoseconds":"<decimal>"}`, the K2
+  canonical Timestamp payload (QSL FR-056): the exact signed count of
+  nanoseconds since `1970-01-01T00:00:00Z` on the POSIX scale, within the
+  signed 128-bit domain, as a decimal string. No zone, calendar text or
+  precision selector is part of the form.
 - `Option<T>` — `{"type":"option","value":<encoded-value>|null}`.
 - `Set<T>`/`Bag<T>` — `{"type":"set"|"bag","elements":[<encoded-value>, ...]}`,
   sorted by each element's JCS UTF-8 bytes, ascending unsigned-lexicographic;
@@ -121,7 +129,8 @@ canonical. The element of a `Set` or `Bag` is written in its canonical encoding
 before the elements are ordered by encoded bytes, recursively through nested
 options, collections, records, tuples and unions. Integer, boolean,
 rational (FR-205 normalized), enum, union member, record, tuple, option,
-reference and `Float32`/`Float64` bits are canonical as defined above. Two
+reference, UUID, Timestamp and `Float32`/`Float64` bits are canonical as
+defined above. Two
 kinds are not canonical as defined above and are canonical here:
 
 - decimal, and a quantity over a decimal: the FR-140 normalized coefficient and
@@ -136,7 +145,9 @@ kinds are not canonical as defined above and are canonical here:
 A reader accepts any encoding of a set or bag element and normalizes it.
 
 An alias encodes as its target type. A domain-object value is held in state
-as `Reference<T>`. A unit-bearing quantity encodes as its underlying exact
+as `Reference<T>`. A population is not a value: a state member that holds
+objects of a population is typed `Set<Reference<T>>` and encodes as a `set`
+of references, and a type that is a population has no typed canonical form. A unit-bearing quantity encodes as its underlying exact
 rational or decimal value with an added `"unit":"<qualified-name>"` naming
 the declared unit identity from its FR-142 dimension/unit conversion graph.
 
@@ -286,6 +297,9 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-16 | Two successors of one parent with equal transition identities and different post-states are visited in ascending order of their post-states' state-key bytes, whatever order the successor relation yields them in; two with equal transition identities and equal post-state keys are one successor. | Test (TC-210) |
 | FR-181-AC-17 | Initial states are visited and indexed in ascending order of their state-key bytes, with equal keys coalesced into one: supplying the same initial states in reversed order, or one of them twice, gives the same initial-state list, the same exploration and the same initial-state indices. | Test (TC-210) |
 | FR-181-AC-18 | With `k` initial states and no requirement naming the start, sampled trace `t` starts at the initial state with index `t mod k` and makes no draw to select it; with one initial state every trace starts there, and the draws of a trace are exactly those of its trace index. | Test (TC-210) |
+| FR-181-AC-19 | Each family encodes to these JCS bytes: UUID `{"type":"uuid","value":"00112233-4455-6677-8899-aabbccddeeff"}`; Timestamp `-1` `{"nanoseconds":"-1","type":"timestamp"}`; decimal `1.50` `{"coefficient":"150","scale":"2","type":"decimal"}`; quantity `1.50` in unit `Units::metre` `{"coefficient":"150","scale":"2","type":"decimal","unit":"Units::metre"}`; enum `{"member":"red","name":"Shop::Color","type":"enum"}`; record `Shop::Item{sku: 7, note: absent}` `{"fields":[{"name":"sku","value":{"type":"integer","value":"7"}},{"name":"note","value":null}],"name":"Shop::Item","type":"record"}`; tuple `Shop::Pair(true, -3)` `{"components":[{"type":"boolean","value":true},{"type":"integer","value":"-3"}],"name":"Shop::Pair","type":"tuple"}`; nullary union member `{"components":[],"member":"none","name":"Shop::Shape","type":"union"}`. | Test (TC-210) |
+| FR-181-AC-20 | As the element of a `Set`, decimal `1.50` encodes as `{"coefficient":"15","scale":"1","type":"decimal"}` and the quantity `1.50` in `Units::metre` as `{"coefficient":"15","scale":"1","type":"decimal","unit":"Units::metre"}`, while the same values in a record field keep coefficient `150` and scale `2`; a `Set<Timestamp>` of `2` and `10` encodes as `{"elements":[{"nanoseconds":"10","type":"timestamp"},{"nanoseconds":"2","type":"timestamp"}],"type":"set"}`, ordered by encoded bytes. | Test (TC-210) |
+| FR-181-AC-21 | A state member holding the objects of a population encodes as a `set` of reference triples ordered by encoded bytes, and two states that differ only in the order their population objects were created have equal state keys; a UUID payload with uppercase hex and a Timestamp payload `+1` or `01` are outside the form. | Test (TC-210) |
 
 ## Dependencies
 

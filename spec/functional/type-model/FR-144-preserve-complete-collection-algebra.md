@@ -119,6 +119,7 @@ when they are FR-149 equal.
 | Quantity of one unit | exact value in that unit, ascending |
 | `Text[..]` | the FR-141 compared form under the type's profile (the normalized scalar sequence, or the UTF-8 bytes for `binary-utf8`), ordered lexicographically by scalar value or byte |
 | enumeration | declaration position for an `ordered enum`; otherwise the case identifier's ASCII bytes, lexicographically, never its declaration position; for an enumeration declared by a `model`/`variant_type` node, the UTF-8 bytes of the case name, lexicographically, which may be any non-empty string (FR-141) |
+| `UUID`, `Timestamp` | the canonical payload's ASCII bytes, unsigned bytewise, a proper prefix first (FR-149) |
 | `Reference<T>` | the FR-204 identity triple (universe identity, object-type declaration identity, object identity), compared component by component, each component lexicographically by its canonical identity bytes; under `quire.model.complete/v1` the universe and type bytes are the UTF-8 domain string followed by the 32 digest bytes, and the object bytes are the exact producer UTF-8 object identity, all compared unsigned bytewise with a proper prefix first |
 | `Option<T>` | `none` before a present value, then the key of the payload |
 | record, tuple | for two records of distinct declarations, the ascending byte order of their 32-byte declaration node keys, compared before any slot; otherwise lexicographic over fields in declaration order or positions in order; a slot orders `absent` before `null` before a present value, and present values by key |
@@ -191,13 +192,15 @@ object and for every element, refuses with these causes:
 | a member has the wrong JSON kind (for a collection, `elements` not an array) | `invalid_runtime_input`/`wrong-value-kind` |
 | a member is outside its FR-181 grammar or the declared type's domain, such as a non-decimal integer string | `invalid_runtime_input`/`invalid-value` |
 
-FR-181 has no form for `uuid`, `timestamp` or `string`, which FR-322 names in
-its value vocabulary. A collection of such an element type remains legal in
-construction. A supplied collection whose element type is, or contains at any
-depth, a type with no FR-181 form is
+FR-181 has no form for `string` or for a population, though FR-322 names
+`string` in its value vocabulary. A collection of such an element type remains
+legal in construction. A supplied collection whose element type is, or contains
+at any depth, a type with no FR-181 form is
 `refused { code: unknown_required_feature, cause: unsupported-feature }`
 naming the element type as the feature and the supplied collection as the scope,
-before any element is read. QSL-831 lifts this by adding the wire forms.
+before any element is read. A supplied collection of `UUID` or `Timestamp` is
+read by FR-181's `uuid` and `timestamp` forms; a payload outside that form is
+`invalid_runtime_input`/`invalid-value`.
 
 Admission is a validation of data, not a construction expression, and it runs
 before any evaluation or charge in this order:
@@ -308,7 +311,7 @@ FR-146 and FR-307; otherwise it is
 | FR-144-AC-19 | Two supplied sets, or two supplied bags, whose elements differ only in array order are equal; two supplied ordered sets or sequences that differ in array order are unequal. | Test (TC-189) |
 | FR-144-AC-20 | A supplied collection's elements are all read before any duplicate is decided: a `Set<Integer>[0,3]` supplied with elements `1`, `1` and an invalid integer is `invalid-value` at the invalid element's path, not `duplicate-member`. | Test (TC-189) |
 | FR-144-AC-21 | A producer writes each set or bag element in its canonical encoding before ordering by encoded bytes, and a reader accepts non-canonical encodings, normalizes them and decides duplicates by FR-149 equality: a `Bag<Decimal>` supplied `1.0` and `1.00` is one member of multiplicity 2 written as two identical canonical elements, and a `Set<Decimal>` supplied `1.0` and `1.00` is `duplicate-member`. | Test (TC-189) |
-| FR-144-AC-22 | A supplied `Set<UUID>`, `Set<Timestamp>` or collection of `string` is `unknown_required_feature`/`unsupported-feature` naming the element type, never `wrong-value-kind` or `invalid-value`, while the same type constructed by `set[...]` is unchanged; lifted by QSL-831. | Test (TC-189) |
+| FR-144-AC-22 | A supplied collection of `string` is `unknown_required_feature`/`unsupported-feature` naming the element type, never `wrong-value-kind` or `invalid-value`, while the same type constructed by `set[...]` is unchanged. A supplied `Set<UUID>` of `{"type":"uuid","value":"00112233-4455-6677-8899-aabbccddeeff"}` and `Set<Timestamp>` of `{"type":"timestamp","nanoseconds":"0"}` and `{"type":"timestamp","nanoseconds":"1"}` are admitted; an element `{"type":"uuid","value":"00112233-4455-6677-8899-AABBCCDDEEFF"}` or `{"type":"timestamp","nanoseconds":"01"}` is `invalid_runtime_input`/`invalid-value`. | Test (TC-189) |
 
 ## Dependencies
 
