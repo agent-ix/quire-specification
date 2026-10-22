@@ -23,8 +23,8 @@ population `M::Counters`), read the `temporal`/`terminal` node, and compare
 node ids, `package_id`s and the deadlock-freedom item's obligation identity.
 For MT-07 to MT-16, edit the node of MT-01 or MT-02 as stated, adding to the
 graph any node the edit references; then set the node's `dependencies` to the
-body's targets, recompute its node key, rewrite its `identity_projection`
-entry and recompute the `package_id`, as TC-233 does for its patched
+body's targets, recompute its node key and recompute the `package_id` over
+the derived identity projection, as TC-233 does for its patched
 vectors, and feed the package to the reader.
 
 ## Vectors

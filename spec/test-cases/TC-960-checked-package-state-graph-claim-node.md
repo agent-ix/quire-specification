@@ -21,8 +21,8 @@ Compile each vector through the real local Rust boundary, read the
 `claim`/`state_graph` node, and compute each item's obligation identity;
 compare node ids and identities pairwise. For SN-08 to SN-14 and SN-17, edit the node
 of SN-01, SN-02 or SN-03 as stated; except in SN-12, set its `dependencies`
-to the body's targets; then recompute its node key, rewrite its
-`identity_projection` entry and recompute the `package_id`, as TC-233 does
+to the body's targets; then recompute its node key and recompute the
+`package_id` over the derived identity projection, as TC-233 does
 for its patched vectors, and feed the package to the reader.
 
 ## Vectors
