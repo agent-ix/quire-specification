@@ -2647,7 +2647,8 @@
         "/results/1/counterexample": "FR-393",
         "/counterexamples/0/counterexample": "FR-393",
         "/counterexamples/1/counterexample": "FR-400",
-        "/results/3/evidence": "FR-391"
+        "/results/3/evidence": "FR-391",
+        "/results/4/cause": "FR-331"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -2667,6 +2668,10 @@
           },
           {
             "request_index": 3,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 4,
             "disposition": "supported"
           }
         ],
@@ -2731,6 +2736,25 @@
                   }
                 }
               ]
+            }
+          },
+          {
+            "request_index": 4,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "stale-dependency",
+              "requested": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "recompiled": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+              }
             }
           }
         ],
@@ -2817,6 +2841,11 @@
             "reached": [
               "max_states"
             ]
+          },
+          {
+            "request_index": 4,
+            "settled_by": "result",
+            "method": "exploration"
           }
         ]
       }
@@ -4959,6 +4988,17 @@
         {
           "op": "remove",
           "path": "/results/3/cause/limit"
+        }
+      ]
+    },
+    {
+      "name": "stale-dependency-without-recompiled",
+      "base": "state-graph-and-hyper-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/4/cause/recompiled"
         }
       ]
     },
