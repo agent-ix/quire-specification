@@ -54,6 +54,9 @@ capability.
   source form used by this requirement.
 - [FR-467](FR-467-define-extension-definition-members.md) defines the grammar
   and typed-node schema members of an extension definition and their refusals.
+- [FR-469](../../objects/interfaces/FR-469-checked-package-extension-nodes.md)
+  defines the checked-package node of an extension form and the reader
+  refusal for an extension the reader does not hold.
 - [Subsystem and interface index](../../subsystems/index.md) identifies the
   typed producer/consumer boundary and dependency direction.
 - Every requirement linked in frontmatter is a normative prerequisite.

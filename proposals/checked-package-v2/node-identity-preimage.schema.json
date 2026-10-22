@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:quire:checked-semantic-node-preimage:v1",
-  "title": "Complete-V1 admitted nominal, application-bearing, model declaration and abstraction relation semantic node identity preimages",
+  "title": "Complete-V1 admitted nominal, application-bearing, model declaration, abstraction relation and extension form semantic node identity preimages",
   "oneOf": [
     {"$ref": "#/$defs/EnumDeclaration"},
     {"$ref": "#/$defs/EnumMember"},
@@ -10,7 +10,8 @@
     {"$ref": "#/$defs/Unit"},
     {"$ref": "#/$defs/ApplicationNode"},
     {"$ref": "#/$defs/ModelDeclarationNode"},
-    {"$ref": "#/$defs/AbstractionRelationNode"}
+    {"$ref": "#/$defs/AbstractionRelationNode"},
+    {"$ref": "#/$defs/ExtensionFormNode"}
   ],
   "$defs": {
     "Nonempty": {"type": "string", "minLength": 1},
@@ -87,6 +88,8 @@
     "AbstractionFrameEntry": {"type": "object", "required": ["context", "operation", "function", "receiver", "parameters"], "properties": {"context": {"$ref": "#/$defs/NodeRef"}, "operation": {"$ref": "#/$defs/Identifier"}, "function": {"$ref": "#/$defs/RustPath"}, "receiver": {"$ref": "#/$defs/RustReceiver"}, "parameters": {"type": "array", "items": {"type": "object", "required": ["name", "rust_parameter"], "properties": {"name": {"$ref": "#/$defs/Identifier"}, "rust_parameter": {"$ref": "#/$defs/RustIdentifier"}}, "additionalProperties": false}}}, "additionalProperties": false},
     "AbstractionRelationBody": {"type": "object", "required": ["term", "objects", "populations", "frames"], "properties": {"term": {"const": "abstraction_relation"}, "objects": {"type": "array", "items": {"$ref": "#/$defs/AbstractionObjectEntry"}}, "populations": {"type": "array", "items": {"$ref": "#/$defs/AbstractionPopulationEntry"}}, "frames": {"type": "array", "items": {"$ref": "#/$defs/AbstractionFrameEntry"}}}, "additionalProperties": false},
     "AbstractionRelationNode": {"type": "object", "required": ["version", "body"], "properties": {"version": {"const": "quire.abstraction-relation-node/v1"}, "body": {"$ref": "#/$defs/AbstractionRelationBody"}}, "additionalProperties": false},
+    "ExtensionFormBody": {"type": "object", "required": ["term", "definition", "node_kind", "clauses"], "properties": {"term": {"const": "extension_form"}, "definition": {"$ref": "#/$defs/DefinitionRef"}, "node_kind": {"$ref": "#/$defs/Identifier"}, "clauses": {"type": "array", "items": {"type": "object", "required": ["term", "name", "value"], "properties": {"term": {"const": "binding"}, "name": {"$ref": "#/$defs/Identifier"}, "value": {"type": "object", "required": ["term", "target"], "properties": {"term": {"const": "reference"}, "target": {"$ref": "#/$defs/NodeRef"}}, "additionalProperties": false}}, "additionalProperties": false}}}, "additionalProperties": false},
+    "ExtensionFormNode": {"type": "object", "required": ["version", "node_tag", "semantic_form", "semantic_type", "declaration", "recursion", "owner", "body"], "properties": {"version": {"const": "quire.structural-node/v1"}, "node_tag": {"const": "extension"}, "semantic_form": {"const": "extension_form"}, "semantic_type": {"type": "null"}, "declaration": {"$ref": "#/$defs/Declaration"}, "recursion": {"type": "null"}, "owner": {"$ref": "#/$defs/SourceOwner"}, "body": {"$ref": "#/$defs/ExtensionFormBody"}}, "additionalProperties": false},
     "ModelDeclarationNode": {"type": "object", "required": ["version", "node_tag", "semantic_form", "semantic_type", "declaration", "recursion", "owner", "body"], "properties": {"version": {"const": "quire.structural-node/v1"}, "node_tag": {"enum": ["model", "relation"]}, "semantic_form": {"enum": ["object_type", "record_value_type", "event_type", "variant_type", "state_machine", "process", "persistence_interface", "systems_interface", "relationship", "population"]}, "semantic_type": {"type": "null"}, "declaration": {"type": "null"}, "recursion": {"type": "null"}, "owner": {"$ref": "#/$defs/ModelOwner"}, "body": {"type": "object", "required": ["term", "members"], "properties": {"term": {"const": "aggregate"}, "members": {"type": "array", "maxItems": 0}}, "additionalProperties": false}}, "additionalProperties": false, "if": {"properties": {"node_tag": {"const": "relation"}}}, "then": {"properties": {"semantic_form": {"enum": ["relationship", "population"]}}}, "else": {"properties": {"semantic_form": {"enum": ["object_type", "record_value_type", "event_type", "variant_type", "state_machine", "process", "persistence_interface", "systems_interface"]}}}},
     "EnumDeclaration": {"type": "object", "required": ["version", "owner", "qualified_declaration", "ordered", "members"], "properties": {"version": {"const": "quire.enum-declaration-node/v1"}, "owner": {"$ref": "#/$defs/Owner"}, "qualified_declaration": {"$ref": "#/$defs/QualifiedName"}, "ordered": {"type": "boolean"}, "members": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/Identifier"}}}, "additionalProperties": false},
     "UnionMemberPreimage": {"type": "object", "required": ["version", "declaration_node_id", "member"], "properties": {"version": {"const": "quire.union-member-node/v1"}, "declaration_node_id": {"$ref": "#/$defs/NodeId"}, "member": {"$ref": "#/$defs/Identifier"}}, "additionalProperties": false},
