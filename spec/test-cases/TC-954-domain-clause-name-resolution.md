@@ -1,5 +1,5 @@
 ---
-id: TC-953
+id: TC-954
 title: "Domain clause name resolution"
 type: TC
 relationships:
@@ -7,7 +7,7 @@ relationships:
     type: verifies
 ---
 
-# TC-953: Domain clause name resolution
+# TC-954: Domain clause name resolution
 
 ## Description
 
@@ -26,12 +26,16 @@ Fixtures:
 
 - **B1** (artifact bundle, package identity `test/orders`, version `1`):
   - the `domain` artifact with id `OrderManagement` and title `OrderContext`,
-    members `Order` and `OrderStatus`;
+    members `Order`, `OrderStatus` and `Fulfilment`;
   - the `enumeration` artifact with id `OrderStatus`, cases `Draft` and
     `Placed`;
   - the `aggregate_root` artifact with id `Order`, fields `status` typed
     `OrderStatus` (required, `1..1`) and `placed_at` typed `Timestamp`
     (optional, `0..1`), and operation `place()` with `Modifies: status`;
+  - the `state_machine` artifact with id `Fulfilment`, field `status` typed
+    `OrderStatus` (required, `1..1`), operation `ship()` with `Modifies: status`,
+    states `Open` and `Closed`, and one transition from `Open` to `Closed`
+    triggered by `ship` with guard clause `GuardOpen`;
   - the `entity` artifact with id `Audit`, field `entries` typed `Integer`
     (required, `1..1`), listed by no namespace.
 - **K1**: the domain package that quire-rs extraction and the FCD
@@ -51,13 +55,15 @@ K1, and updates both units' digests.
 | R05 | `Order` invariant `ByTitle`: `self.status = OrderContext::OrderStatus::Draft` | exactly one `refused { code: missing_declaration, cause: missing-name }` at `OrderContext`, naming `ix://test/orders/Order/ByTitle` and its `origin` (FR-470-AC-4) |
 | R06 | `Audit` invariant `NoAlias`: `OrderManagement::OrderStatus::Draft = OrderManagement::OrderStatus::Draft`; `Audit` invariant `NonNegative`: `self.entries >= 0` | `NoAlias` gives two `refused { code: missing_declaration, cause: missing-name }` at `OrderManagement`, in source order, naming `ix://test/orders/Audit/NoAlias`; `NonNegative` checks with no refusal (FR-470-AC-5) |
 | R07 | B1 plus the `domain` artifact with id `Billing`, members `Invoice`, and the `entity` artifact with id `Invoice`, field `status` typed `OrderStatus`; `Invoice` invariant `OwnAlias`: `self.status = Billing::OrderStatus::Draft`; `Invoice` invariant `OtherAlias`: `self.status = OrderManagement::OrderStatus::Draft` | `OwnAlias` checks with no refusal and its name resolves to the R01 `Draft` key; `OtherAlias` is exactly one `refused { code: missing_declaration, cause: missing-name }` at `OrderManagement`, naming `ix://test/orders/Invoice/OtherAlias` (FR-470-AC-6) |
-| R08 | `Order` invariant `Absent`: `self.status = OrderManagement::OrderStatus::Shipped`; then `Order` invariant `TwoAbsent`: `self.status = OrderManagement::OrderStatus::Shipped or self.status = OrderManagement::OrderStatus::Lost` | `Absent` is one `refused { code: missing_declaration, cause: missing-name }` naming absent node `ix://test/orders/variant/OrderStatus-Shipped`; `TwoAbsent` is two such refusals, `...OrderStatus-Shipped` then `...OrderStatus-Lost` (FR-470-AC-7) |
+| R08 | `Order` invariant `Absent`: `self.status = OrderManagement::OrderStatus::Shipped`; `Order` invariant `TwoAbsent`: `self.status = OrderManagement::OrderStatus::Shipped or self.status = OrderManagement::OrderStatus::Lost`; `Order` invariant `NoType`: `self.status = OrderManagement::Nope::Draft` | `Absent` is one `refused { code: ill_typed, cause: type-mismatch }` at the name, naming `OrderStatus` and `Shipped`; `TwoAbsent` is two such refusals, naming `OrderStatus` and `Shipped`, then `OrderStatus` and `Lost`; `NoType` is one `refused { code: missing_declaration, cause: missing-name }` naming absent node `ix://test/orders/Nope` (FR-470-AC-7) |
 | R09 | Four `Order` invariants whose text begins, in turn, with `model M = "test/orders" digest "<K1 digest>";`, `import`, `profile` and the `quire` header, each followed by `self.status = OrderManagement::OrderStatus::Draft` | each is exactly one `refused { code: invalid_syntax, cause: unexpected-token }` at its first token, and no name of that clause is resolved (FR-470-AC-8) |
+| R10 | `Order/place` given `post` entry `self.status = OrderManagement::OrderStatus::Placed`, checked under U1; then `Order/place` given `post` entry `self.status = M::OrderStatus::Placed`, checked under U1 | the first checks with no refusal and the name resolves to `(test/orders, ix://test/orders/variant/OrderStatus-Placed)`; the second is exactly one `refused { code: missing_declaration, cause: missing-name }` at `M`, naming the operation's identity with the `post` entry and its position (FR-470-AC-9) |
+| R11 | `Fulfilment` guard clause `GuardOpen`: `self.status = OrderManagement::OrderStatus::Draft`, checked under U1 and under U2; then `GuardOpen`: `self.status = M::OrderStatus::Draft`, checked under U1 | the first checks with no refusal, the name resolves to the R01 `Draft` key through `Fulfilment`'s self alias, and the keys and results are byte-equal between U1 and U2; the second is exactly one `refused { code: missing_declaration, cause: missing-name }` at `M`, naming `ix://test/orders/Fulfilment/GuardOpen` and its `origin` (FR-470-AC-10) |
 
 ## Expected Results
 
 Every name in a domain clause resolves through its owner's self alias to one
 key of the clause's own domain package, identically under U1 and U2. Each
-unit alias, namespace title, foreign namespace id, absent name and leading
+unit alias, namespace title, foreign namespace id, absent type name, undeclared case and leading
 header form refuses with the exact code, cause, segment, clause identity and
 `origin` the vector states, and no refusal changes another clause's result.

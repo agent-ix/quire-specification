@@ -24,6 +24,9 @@ clause's owner, independently of the unit that imports the package.
 A **domain clause** is clause text that a domain package itself carries: a
 `Clause` with `language: quire` of a type definition (an invariant or a
 transition guard, FR-208) and each `pre` and `post` entry of an `Operation`.
+A transition guard of a state machine resolves through the state machine's own
+self alias, and a `post` entry through the self alias of the type that declares
+the operation.
 In a spec artifact each is one `quire` fence under its own heading, with no
 header and no import. The **owner** of a domain clause is the type definition
 that declares it; for an operation's `pre` or `post` entry it is the type that
@@ -95,9 +98,13 @@ operation entry, the operation's identity with the entry's kind and position),
 the unresolved segment or the absent node identity, and the clause's FCD
 `origin`, as FR-272 states for a `missing-name` during model intake. A
 qualified name whose segments after the self alias name no node of the package
-refuses `missing_declaration`/`missing-name` with the absent node identity,
-for example `ix://test/orders/variant/OrderStatus-Shipped`. Each refused name
-is reported once, in source order within the clause.
+refuses exactly as a unit's name does after its model alias (FR-208 "Naming a
+variant type and its cases", model-complete): a variant type name that resolves
+to no type of the package is `missing_declaration`/`missing-name` with the
+absent node identity, for example `ix://test/orders/Nope`; once the type
+resolves, a case the variant type does not declare is `ill_typed`/`type-mismatch`
+at the name, naming the type and the case. Each occurrence of a refused
+qualified name is reported separately, in source order within the clause.
 
 ## Acceptance Criteria
 
@@ -109,8 +116,10 @@ is reported once, in source order within the clause.
 | FR-470-AC-4 | A domain clause naming `OrderContext::OrderStatus::Draft`, where `OrderContext` is the title and `OrderManagement` the id of the namespace, refuses `missing_declaration`/`missing-name` at `OrderContext`. | Test |
 | FR-470-AC-5 | An invariant of `Audit`, which no namespace lists, naming `OrderManagement::OrderStatus::Draft` refuses `missing_declaration`/`missing-name` at `OrderManagement`, while its invariant `self.entries >= 0` checks with no refusal. | Test |
 | FR-470-AC-6 | With a second namespace `Billing` listing `Invoice`, an invariant of `Invoice` naming `Billing::OrderStatus::Draft` resolves to the case key of AC-1, and one naming `OrderManagement::OrderStatus::Draft` refuses `missing_declaration`/`missing-name` at `OrderManagement`. | Test |
-| FR-470-AC-7 | A domain clause naming `OrderManagement::OrderStatus::Shipped`, a case the variant type does not declare, refuses `missing_declaration`/`missing-name` naming the absent node `ix://test/orders/variant/OrderStatus-Shipped`; two such names in one clause give two refusals in source order. | Test |
+| FR-470-AC-7 | A domain clause naming `OrderManagement::OrderStatus::Shipped`, a case the variant type `OrderStatus` does not declare, refuses `ill_typed`/`type-mismatch` at the name, naming `OrderStatus` and `Shipped`; two such names in one clause give two refusals in source order. A name `OrderManagement::Nope::Draft`, whose type resolves to nothing, refuses `missing_declaration`/`missing-name` naming the absent node `ix://test/orders/Nope`. | Test |
 | FR-470-AC-8 | A domain clause whose text begins with `model M = "test/orders" digest "…";`, with `import`, with `profile` or with a `quire` header refuses `invalid_syntax`/`unexpected-token` at that first token, and no name in the clause is resolved. | Test |
+| FR-470-AC-9 | A `post` entry of operation `Order/place` naming `OrderManagement::OrderStatus::Placed` resolves to `(test/orders, ix://test/orders/variant/OrderStatus-Placed)` through the self alias of `Order`, and the same entry naming `M::OrderStatus::Placed` refuses `missing_declaration`/`missing-name` at `M`. | Test |
+| FR-470-AC-10 | The guard clause `GuardOpen` of a transition of state machine `Fulfilment`, a member of namespace `OrderManagement`, naming `OrderManagement::OrderStatus::Draft` resolves to the case key of AC-1 through the self alias of `Fulfilment`, byte-equal under both importing units of AC-3; the same guard naming `M::OrderStatus::Draft` refuses `missing_declaration`/`missing-name` at `M`. | Test |
 
 ## Dependencies
 
@@ -120,5 +129,5 @@ is reported once, in source order within the clause.
   namespace membership, invariants and guards;
   [AD-006](../../assurance/AD-006-model-graph-state-contracts.md) places
   clauses in spec artifacts.
-- **Downstream**: [TC-953](../../test-cases/TC-953-domain-clause-name-resolution.md)
+- **Downstream**: [TC-954](../../test-cases/TC-954-domain-clause-name-resolution.md)
   verifies every criterion.

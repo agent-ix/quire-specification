@@ -1008,7 +1008,7 @@ share its name with a dimension or with a type. Ambiguous cross-unit
 declarations refuse. A bare `type-ref` looks up the type namespace only, and
 `Quantity<u>` is the one `type-ref` that looks up the unit namespace. A unit
 containing only model-independent Boolean predicates needs no dummy model import.
-Any referenced model declaration still requires an exact explicit import. Predicate
+Any referenced model declaration still requires an exact explicit import, except that a domain package's own clauses name its declarations through the self alias of their owner and need no import (FR-470). Predicate
 parameters and lexical binders are unique in their enclosing declaration and
 cannot shadow aliases, native declarations or another visible binding. Separate
 predicate declarations may reuse a parameter name. A `let` binding is visible

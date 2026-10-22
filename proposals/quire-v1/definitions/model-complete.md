@@ -50,9 +50,9 @@ The import is a ModelSelection (FR-321):
 `{identity, digest_domain: "sha256-jcs", digest}`. It is part of the
 package identity. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
-declaration. Clauses name a declaration by qualified name: the model alias,
+declaration. Clauses of a unit name a declaration by qualified name: the model alias,
 then the segments of its IR node identity after the package identity, such as
-`Orders::Order` for IR node `ix://acme/orders/Order`. One form is an
+`Orders::Order` for IR node `ix://acme/orders/Order`. A clause that a domain package itself carries replaces the model alias with the self alias of its owner and needs no import (FR-470). One form is an
 exception: a case of a variant type is named `Alias::Tier::Gold`, the alias, the
 variant type's artifact id and the case name matched byte for byte, and not by
 its IR identity `variant/Tier-Gold`. In a type position `Alias::Tier` names the
