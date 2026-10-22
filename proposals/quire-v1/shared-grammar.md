@@ -196,12 +196,13 @@ ordering     = 'unordered'
              | 'fifo', 'by', '(', parameter, ')', block ;
 protocol-requirement = 'requires', 'temporal', ident, ';' ;
 node-ref     = ident, { '::', ident } ;
+attempt-type = type-name ;
 compensation = 'compensate', ident, 'for', node-ref,
                'as', '(', parameter, ')', 'by', ident,
                'on', operation-name, 'using', ident, 'clock', string, '{',
                { capture }, 'activate', 'first', '(', parameter, ')',
                'when', block, '{', { capture }, '}',
-               'within', interval, ';', 'attempts', uint, 'of', type-name, ';',
+               'within', interval, ';', 'attempts', uint, 'of', attempt-type, ';',
                'retry', '(', parameter, ',', parameter, ')', block, ';',
                'commit', (node-ref | 'never'), ';',
                'recover', '(', parameter, ')', block, ';', '}' ;
@@ -635,7 +636,17 @@ verification-step = 'check', ident, 'claim', qualified-name,
                     'domain', qualified-name,
                     [ 'depends', '[', ident, { ',', ident }, ']' ],
                     [ 'bound', uint ], ';' ;
+attempt-type  = type-ref ;
 ```
+
+The attempt type after `attempts N of` is a `type-ref` here, replacing the
+bounded `attempt-type = type-name`, so the grammar admits an inline type form
+(`Set<M::Total>[0, 3]`), a bare `Integer` and a model-owned name (a variant
+type) as well as a record or event type name. Which of these the attempt type
+may be is a checker rule, not a grammar rule: the checker admits only a record
+or event type and refuses every other `type-ref`, including
+`attempts 2 of Integer`, with `invalid_model_binding`/`malformed-declaration`
+at the type (FR-239-AC-8).
 
 
 
