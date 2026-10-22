@@ -21,7 +21,7 @@ Compile each vector through the real local Rust boundary over FR-366's
 counter model `M` (one object type `C` with field `value` and its one
 population `M::Counters`), read the `temporal`/`terminal` node, and compare
 node ids, `package_id`s and the deadlock-freedom item's obligation identity.
-For MT-07 to MT-15, edit the node of MT-01 or MT-02 as stated, adding to the
+For MT-07 to MT-16, edit the node of MT-01 or MT-02 as stated, adding to the
 graph any node the edit references; then set the node's `dependencies` to the
 body's targets, recompute its node key, rewrite its `identity_projection`
 entry and recompute the `package_id`, as TC-233 does for its patched
@@ -46,7 +46,7 @@ vectors, and feed the package to the reader.
 | MT-13 | MT-01 with `parameters` holding the `self` node twice | `invalid_semantic_graph` at the `parameters` binding |
 | MT-14 | MT-02 with `parameters` holding MT-01's `self` node and `condition` a reference to the added node of `self.value = 3` | `invalid_semantic_graph` at the `parameters` binding |
 | MT-15 | MT-01 with its `self` entry replaced by an added parameter node named `result` at level 1; then by an added `self` node typed `Reference<M::D>` for a second object type `D` of `M` that no population covers, so `C` stays FR-366's `T` | `ill_typed`/`operator-ineligible` at the target, each |
-| MT-16 | one unit declaring MT-01 twice for `M` | one node with two `claim` occurrences; `ambiguous_declaration`/`ambiguous-name` at that node, naming both occurrences |
+| MT-16 | MT-01's node with a second `claim` occurrence (ordinal 1) added, with its own `source_map` entry; the checker never produces this, since it refuses a second `terminal` declaration per alias (FR-366-AC-6) | `ambiguous_declaration`/`ambiguous-name` at that node, naming both occurrences |
 
 ## Expected Results
 

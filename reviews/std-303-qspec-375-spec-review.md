@@ -59,3 +59,18 @@ Round 1, reviewed at 06cb0bdc88354ddfe860de207a6ddc7f3ee84175 (fix commit 6ca9dc
 | FND-008 | low | The node's occurrences have role `declaration`, but the node carries no `declaration`. FR-322's rules for a "declared node's `declaration` occurrence" (owner and source agreement) do not apply to it. The other undeclared clause nodes use role `claim` (FR-341, FR-370). Use `claim`, or state why a `declaration` occurrence on an undeclared node is admitted. | spec/objects/interfaces/FR-476-checked-package-model-terminal-declaration-body.md:58-60 |
 | FND-009 | low | The second MT-15 case types `self` `Reference<M::D>` "for a second object type `D` of `M`". If `D` has a population, FR-366 binds no `self` for `M` at all (several covered types), so the expected refusal and its cause are unclear. State that `D` is covered by no population. | spec/test-cases/TC-961-checked-package-model-terminal-node.md:48 |
 | FND-010 | low | The new FR-366 bullet refuses `self` with `ambiguous_declaration`/`ambiguous-name` when two populations cover `T`, but FR-366-AC-9 and TC-297 step 9 test only the two-object-type `missing-name` branch. Add the two-population case. | spec/functional/temporal/FR-366-check-deadlock-freedom.md:136 |
+
+Round 2, reviewed at 76bda9f43a8b1def1cc4b411ff63c5254309fa83 (FND-001 to FND-006 stay fixed from round 1).
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-007 | fixed | The "Body steps" paragraph now names the steps without links (FR-475, FR-370, FR-451, FR-476, FR-477, FR-464), so nothing dangles, and it is byte-identical in #370 (f326f663) and #377 (1fd2750c), so it merges cleanly in any order. |
+| FND-008 | fixed | The occurrences have role `claim`, as FR-341 and FR-370 use, and FR-476-AC-1 and MT-01 say so. |
+| FND-009 | fixed | MT-15's `D` is now covered by no population, so `C` stays FR-366's `T`. |
+| FND-010 | fixed | FR-366-AC-9 and TC-297 step 9 now include the two-populations-of-`Job` case, refused `ambiguous_declaration`/`ambiguous-name` at `self` and naming both. |
+
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-011 | medium | MT-16 ("one unit declaring MT-01 twice for `M`") is compiled through the Rust boundary, because the procedure's edit range is MT-07 to MT-15. The checker refuses a second `terminal` declaration for one alias (FR-366-AC-6), so no package and no node exist, and its expected "one node with two `claim` occurrences" never happens. The reader rule of FR-476 step 5 is never exercised. Make MT-16 a reader mutation (MT-01's package with a second `claim` occurrence added to the node and the `source_map`, with `package_id` recomputed) and extend the edit range to MT-16. | spec/test-cases/TC-961-checked-package-model-terminal-node.md:24; :49 |
