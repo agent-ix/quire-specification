@@ -48,3 +48,11 @@ Checks:
 ## Verdict
 
 Mergeable. One minor wording finding. Option (b) is sound, and the decode order, pointers and resolution agree with QSL FR-122 (#1211) and with FR-070, FR-071 and FR-098 (#1212).
+
+## Dispositions
+
+Round 1, reviewed QSpec #364 at 415f9dd0e.
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | fixed at 415f9dd0e |
