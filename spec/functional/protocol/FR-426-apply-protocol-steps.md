@@ -189,11 +189,12 @@ members not listed for a kind being absent:
 | `receiver` | `attempt`, `cattempt` | the receiver reference |
 | `arguments` | `attempt`, `cattempt` | the argument vector, in parameter order |
 | `record` | `event`, `send`, `receive`, `finish`, `activate` | the bound record or payload |
-| `actor` | a step by a replicated role | the acting instance's object reference |
+| `actor` | a step taken by an instance of a replicated role, `send` and `receive` it owns included | the acting instance's object reference |
 | `channel` | `duplicate`, `lose` | the channel's qualified name and instance ordinal |
 | `entry` | `duplicate`, `lose` | the queue entry |
 | `template`, `registration` | `cattempt`, `cend` | the template's qualified name and the registration key |
 | `role`, `object` | `spawn`, `retire` | the role and the object reference |
+| `instance` | `spawn`, `retire` | the ordinal of the protocol instance the step acts in, because a role instance belongs to one protocol instance |
 | `ordering` | `fence`, and an access with an ordering | the ordering |
 | `memory_choice` | an access whose memory model chooses a message or slot | the choice its memory model names |
 | `memory_step` | `memory` | the identity its memory model gives |
@@ -220,6 +221,7 @@ JCS bytes of the identity, as FR-181 states for model transition identities.
 | FR-426-AC-12 | A thread at `fence F ordering seq_cst;` has one `fence` step, which changes no model state and moves the thread to its next sibling. Under `sc` it is enabled in every state. Under `tso` the `seq_cst` fence is enabled exactly when its thread's buffer is empty and waits otherwise, and an `acquire` fence is enabled in every state. Two branches that each hold a fence reach no deadlock under `sc` that the same protocol without the fences does not reach. | Test (TC-376) |
 | FR-426-AC-13 | `parallel Outer { branch a attempt Fast; branch b sequence { parallel Inner { branch x attempt X1; branch y attempt Y1 } join any [x, y] outstanding continue; attempt After } } join any [a] outstanding cancel`, every attempt always enabled: in a state where `a` has completed, `b` rests at `Inner`'s join and `x` and `y` are `running`, the `join(Outer)` step makes `b`, `x` and `y` `cancelled`, settles and removes `Inner`'s instance, and none of them takes a step in any later state; `Y1` and `After` are enabled in no state after that join. | Test (TC-377) |
 | FR-426-AC-14 | A `block` send at capacity has no enabled step and waits, and a deadlock at it reports `full-queue` ([FR-429](FR-429-report-protocol-deadlocks.md)); a thread at a `fence` whose memory model's rule is false (a `seq_cst` fence under `tso` with a non-empty buffer) has no enabled step while its `flush` step is enabled; a `cancelled` thread never takes a step. | Test (TC-378, TC-376, TC-377) |
+| FR-426-AC-15 | In a protocol with `activation on each` and a replicated role `r`, `spawn(r, o)` of one object `o` in protocol instance 0 and in protocol instance 1 have different transition identities that differ in the `instance` member, and so do `retire(r, o)` in the two instances; a `spawn` or `retire` identity holds the members `step`, `role`, `object` and `instance`, and no `thread`. | Test (TC-382) |
 | FR-426-AC-16 | `run sequence Main { parallel P { branch left attempt A as (a); branch right attempt B } join all; effect E of Main::P::left::A as (e) { true } }`, with `A` and `B` always enabled: at the state after `join(P)`, `event(E)` is enabled and the root thread's environment holds `A`'s binder, added by the join. | Test (TC-376) |
 
 ## Dependencies
