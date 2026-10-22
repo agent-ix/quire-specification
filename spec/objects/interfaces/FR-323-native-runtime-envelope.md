@@ -167,9 +167,11 @@ that applies:
    pointer of the last member present in the order `function`,
    `frame_operation`, `state_clause` (`/replay/frame_operation` for a request
    with `function` and `frame_operation`, `/replay/state_clause` for any request
-   carrying `state_clause` with one or both other members); and a frame or a state-clause request that carries
+   carrying `state_clause` with one or both other members); a frame or a state-clause request that carries
    `arguments` or an occurrence key, `invalid_runtime_input`/`unknown-member`
-   at `/replay/arguments` or at `/replay/occurrence_key`;
+   at `/replay/arguments` or at `/replay/occurrence_key`; and a `function`
+   request with no `occurrence_key`, `invalid_runtime_input`/`missing-member`
+   at `/replay/occurrence_key`;
 2. the resolution of the replay target against the recompiled package, after
    dependency rule 5's `package_id` check.
 
@@ -530,6 +532,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-19 | A replay request with none of `function`, `frame_operation` and `state_clause` refuses `invalid_runtime_input`/`missing-member` at `/replay`; one with `function` and `frame_operation` refuses `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation`, and one with `state_clause` and either other member, or with all three members, at `/replay/state_clause`; and a frame or a state-clause request carrying `arguments` or an occurrence key refuses `invalid_runtime_input`/`unknown-member` at `/replay/arguments` or `/replay/occurrence_key`; each at decode before the byte-provision rule and any recompile, so a request with two members and a missing provision entry reports the member refusal. | Test (TC-278) |
 | FR-323-AC-20 | A `frame_operation` is resolved after dependency rule 5: with a stale proved `package_id` the rule 5 refusal is reported; with a current one, an undeclared operation or an operation with no frame node refuses `missing_declaration`/`missing-name`, an `object` naming a record value type and an operation that `object` only inherits refuse `invalid_model_binding`/`malformed-declaration`, and a name two supertypes expose refuses `ambiguous_declaration`/`ambiguous-name`, each naming the target. | Test (TC-278) |
 | FR-323-AC-21 | A `state_clause` is resolved after dependency rule 5: with a stale proved `package_id` the rule 5 refusal is reported; with a current one, a `state_clause` naming a declared invariant, precondition or postcondition resolves to that clause, and one naming no declaration or naming a function refuses `missing_declaration`/`missing-name` naming the target. | Test (TC-278) |
+| FR-323-AC-22 | A `function` replay request with no `occurrence_key` refuses `invalid_runtime_input`/`missing-member` at `/replay/occurrence_key` at decode, before the byte-provision rule and any recompile, so the same request with a byte-provision entry removed reports the same refusal. The occurrence key selects the claim the replay decides (QSL FR-098). | Test (TC-278) |
 
 ## Dependencies
 
