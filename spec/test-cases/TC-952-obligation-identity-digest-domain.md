@@ -52,7 +52,7 @@ obligation identity and compare it with its fixture's.
 | OI-06 | `O1` with another parameter node id; then with the declared domain `Int[0, 8]` | Each a different digest | FR-201-AC-10 |
 | OI-07 | `O1`'s digest bytes labelled `quire.checked-semantic-node/v1`, then `sha256-jcs` | Each compares unequal to `O1`'s identity | FR-201-AC-10 |
 | OI-08 | `O1` with each of these changed in turn: the resource ceilings, an embedded oracle, the harness symbol, the contract symbol, the subject path, the results, the solver, `unwind`, one option | Each an equal digest | FR-201-AC-10 |
-| OI-09 | `A1` with its occurrence `ordinal` 1, the second occurrence of one application node; then with a changed result bound in `arguments` | Each a different digest | FR-201-AC-10 |
+| OI-09 | `A1` with its occurrence `ordinal` 1, the second occurrence of one application node; then with one argument's declared domain changed | Each a different digest | FR-201-AC-10 |
 | OI-10 | `F1` with another function node id; then with the occurrence role `claim` in place of `declaration`; then with a changed run configuration member as in OI-08 | The first two a different digest, the last an equal digest | FR-201-AC-10 |
 | OI-11 | `P1` with the literal `2` at position 1; then with the operands swapped; then with the domain of position 0 `Int[0, 8]` | Each a different digest | FR-201-AC-10 |
 | OI-12 | `S1` with one hypothesis removed; then with another occurrence key; then with its `source_span` moved | The first a different digest, the last two an equal digest | FR-201-AC-10 |
