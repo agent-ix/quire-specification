@@ -1139,8 +1139,8 @@ constraints ("Reference conformance" below).
    `quire.dimension-node/v1` or `quire.unit-node/v1` preimage (FR-142) carries
    that `owner` and `qualified_declaration` `[<name>]`, the last segment of
    its FCD identity (`["ms"]` for `ix://acme/rpc/unit/ms`), which the V2
-   schema's one-identifier-or-more rule for `qualified_declaration` admits, so
-   no schema or fixture changes. The node carries no `declaration`, under
+   schema's one-identifier-or-more rule for `qualified_declaration` admits.
+   The node carries no `declaration`, under
    the `ModelOwner` exception of the `declaration` rule. Its key stays
    distinct from a source unit `ms`'s, whose preimage carries the same
    `qualified_declaration` under a `SourceOwner`; a dimension's `terms` are

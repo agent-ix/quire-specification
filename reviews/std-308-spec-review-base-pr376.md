@@ -63,6 +63,12 @@ CHANGES REQUESTED: three major findings (package-unit naming contradicts FR-322'
 | --- | --- | --- | --- |
 | FND-005 | high | The fix gives package dimension and unit nodes `qualified_declaration: null` in their quire.dimension-node/v1 and quire.unit-node/v1 preimages, but the V2 schema this PR does not change (proposals/checked-package-v2/schema.json, DimensionPreimage and UnitPreimage) requires `qualified_declaration` as a QualifiedName, an array of at least one Identifier, and NominalBindingRules require that preimage on every scalar_type/dimension and scalar_type/unit node. FR-142's preimage text (lines ~216-220) also gives no null form, and FR-322's rule that a node's `declaration` equals its preimage's `qualified_declaration` (else declaration-nominal-mismatch) is not excepted for a node with a preimage and no declaration. As written, every package unit node (MU-07, AC-99, U34) fails the V2 schema. Either change the schema and FR-142 for a null (or [name]) qualified_declaration, with the QSL conformance run a fixture change needs, or choose a non-null value the schema admits and except the declaration-equality rule for model-owned dimension/unit nodes. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1129-1141 |
 
+## New findings (disposition pass 2)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-006 | low | FR-322 step 4 says the [<name>] value 'the V2 schema's one-identifier-or-more rule for qualified_declaration admits, so no schema or fixture changes'. That clause records this PR's change, not system behaviour; spec text describes the system only. Drop 'so no schema or fixture changes' (the schema reference alone can stay). Non-blocking. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1140-1143 |
+
 ## Dispositions
 
 Round 1 at aea3033.
@@ -75,3 +81,11 @@ Round 1 at aea3033.
 | FND-004 | fixed | - |
 
 Round 1 verdict: NOT MERGEABLE: round-0 findings FND-001..004 are fixed at aea3033, but the fix adds major FND-005: `qualified_declaration: null` fails the unchanged V2 schema (QualifiedName, minItems 1) and FR-142's preimage. The rest of the fix checks: no declaration on package nodes, a ModelOwner {kind, identity, node} owner (schema-valid), dependencies and semantic_type as stated, the `<p>/<name>` typeRef split with an ambiguous-name refusal when both a source and a package unit match, M::name resolution in the widened declaration rule, the value-position-only clock refusal, the Rate fixtures, and package nodes in FR-142's turn list located at the selection row (U34 run 4 checks by hand). Gates at aea3033: quire validate 86, same set as main; cargo 119 + 23 pass; main c103300 is an ancestor. Owner decision recorded: two packages both declaring Time are never admitted together. STD-327 (hyphenated identities in unit typeRefs) stays an owner decision.
+
+Round 2 at 8d9a70f.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-005 | fixed | - |
+
+Round 2 verdict: MERGEABLE: FND-001..005 are fixed at 8d9a70f. Package dimension/unit preimages carry qualified_declaration [<name>], which the V2 schema admits (Identifier ^[A-Za-z_][A-Za-z0-9_]*$ covers FCD's name pattern), FR-322's declaration-equality rule has an explicit ModelOwner exception, keys stay distinct from source units by owner, and FR-142, AC-99, MU-07 and U34 agree. No schema or fixture changed, so no QSL conformance run is needed. New FND-006 is a low wording nit (change-log clause in FR-322) the lead may fix in the same PR or accept. Gates at 8d9a70f: quire validate 86, same set as main 867e128; cargo 119 + 23 pass. Main 867e128 (#378) is not an ancestor but merges cleanly; merge it before landing. STD-327 remains the open owner decision.
