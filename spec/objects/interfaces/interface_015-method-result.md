@@ -9,6 +9,12 @@ relationships:
 
 # [interface_015] I15 verification method result
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| validate_result | operation |
+
 ## Contract
 
 ```yaml
