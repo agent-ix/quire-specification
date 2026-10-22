@@ -951,6 +951,12 @@ A `confidence` clause states each of `alpha`, `beta` and `indifference`
 exactly once; a clause that omits or repeats one refuses with
 `invalid_probabilistic_model`/`partial-confidence`
 ([FR-407](../../spec/functional/analysis/FR-407-state-probabilistic-claims.md)).
+A `scheduler-clause` of the form `under ident` takes no `fairness-item`:
+fairness items follow only `under every scheduler`, so `under W fair weak Op`
+is `invalid_syntax`/`unexpected-token` at `fair`. A dimensionless threshold
+after a `measure`'s `bound-op` is an `expr`, so it is written
+`rational(n, d)` or `decimal(n, s)`, as in
+`fraction holds(v.up) over [0, 10000] >= rational(999, 1000)`.
 A `temporal-clause` with no `clock` member binds the profile's default clock
 ([FR-252](../../spec/objects/temporal/FR-252-temporal-clock-binding.md)).
 A `window` takes `uint` positions under the event-position false-extension
