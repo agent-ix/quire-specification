@@ -37,7 +37,7 @@ Compile each source vector through the real local Rust boundary under the comple
 | HB-10 | an `align skip` clause whose variable carries `fair weak V::Vault::step;` | `unsupported_construct`/`expression-form` at the constraint |
 | HB-11 | `relation Det using v over (x: V::Vault::step, y: V::Vault::step) { (pre(x.self.l) = pre(y.self.l) and x.i = y.i) implies x.self.l = y.self.l }` | admitted; two executions of `V::Vault::step` |
 | HB-12 | a relation whose execution bindings name a declared trace population | FR-191's finite reading |
-| HB-13 | HB-02 with one key of each universe admitted by no member record of any initial state | admitted; 2 × 2 = 4 instances over the product of the admitted keys; the two unadmitted keys are excluded keys of the item |
+| HB-13 | HB-02 with one key of the 3-key universe (parameter `e`) admitted by no member record of any initial state, every key of the 2-key universe (parameter `d`) admitted | admitted; 2 × 2 = 4 instances over the product of the admitted keys; the excluded keys, taken per parameter as FR-361 defines them, are none for `d` and the one unadmitted key for `e` |
 
 ## Expected Results
 

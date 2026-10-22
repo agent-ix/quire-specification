@@ -58,8 +58,31 @@ Faithful to the ticket's three items, and step 9 is buildable. One
 contradicting leftover remains in the FR-395 paragraph this PR edits
 (FND-001). FND-002 and FND-003 are wording fixes.
 
-## Resolution
+## Dispositions
 
-FND-001: the FR-395 "Object parameters" paragraph says a two-alias clause's instances range over the product of their admitted keys.
-FND-002: FR-363 "Scope" restricts the excluded key to a universe key of a population overlapping the parameter's type.
-FND-003: FR-361 states that a key in several overlapping universes is listed once among the excluded keys.
+Round 1, reviewed at c76569d355a84c98005f0a07f720651303570fea (contains
+origin/main). Gates: `quire validate --scope . spec/**/*.md` reports 134
+failing documents (baseline 134), with no diagnostics on FR-395, FR-399,
+FR-361, FR-363, TC-290 or TC-337. `cargo test --test checked_package_v2
+--test backend_provider_v1` passes, 117 + 14. No other occurrence of
+"product of their universes" remains in spec/ or proposals/.
+
+| FND | outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | c76569d |
+| FND-002 | fixed | c76569d |
+| FND-003 | fixed | c76569d |
+
+After excerpts:
+
+- FND-001 (FR-395 "Object parameters"): "A clause over two aliases names one
+  parameter per alias it reads, and its instances range over the product of
+  their admitted keys."
+- FND-002 (FR-363 "Scope"): "Over an `over` parameter it holds for the item's
+  instances only: a universe key of a population overlapping the parameter's
+  type that no member record of an initial state admits, including one only an
+  operation could create, is an excluded key of the item"
+- FND-003 (FR-361): "The item's **excluded keys** are the universe keys of the
+  populations that overlap `T` that no member record of any initial state
+  admits, in instance order, a key in several overlapping universes being
+  listed once."
