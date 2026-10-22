@@ -47,6 +47,22 @@ The explicit refusal/non-conclusive mutations include:
 - A caller cancellation mid-exploration returns `incomplete` with cause
   `cancelled`/`caller-cancelled` and carries the unexplored frontier.
 
+## Successor and initial-state order vectors
+
+- A parent with one transition identity `t` and two post-states `s1` and
+  `s2` whose state-key bytes order `s1` before `s2` visits `s1` before
+  `s2`, whichever order the successor relation yields them in; an equal
+  third post-state with the key of `s1` is not a further successor
+  (FR-181-AC-16).
+- A subject supplied with initial states `[b, a]`, where `a`'s state-key bytes
+  order before `b`'s, explores and indexes them as `[a, b]`, exactly as when
+  supplied as `[a, b]`; supplied as `[a, b, a]` it has two initial states,
+  `a` at index 0 and `b` at index 1 (FR-181-AC-17).
+- Over that two-initial-state subject with no requirement naming the start,
+  sampled traces 0, 1, 2 and 3 start at `a`, `b`, `a` and `b`; no draw selects
+  the start, so each trace's first draw is the step-0 draw of its own trace
+  index (FR-181-AC-18).
+
 ## Sampler index-sequence vector
 
 For seed `424242`, trace `0`, choice `0` and enabled-successor-set size
