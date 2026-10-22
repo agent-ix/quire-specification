@@ -111,7 +111,7 @@ is a claim of its own, as the table below states.
 | --- | --- |
 | Boolean clause over pure expressions, including function application | `value-validity` |
 | Clause containing a `case` expression over a sum type | `value-validity` |
-| Scalar operation application in a function body ([FR-146](../../functional/expressions/FR-146-check-total-pure-functions.md)): the application is defined and its result lies in its result bound, for every argument assignment under which its path condition holds | `value-validity`, one claim per occurrence |
+| Scalar operation application in a function body ([FR-146](../../functional/expressions/FR-146-check-total-pure-functions.md)): the application is defined and its result lies in its result bound, for every argument assignment under which its path condition holds (the guards it is nested under: the condition of an enclosing `if`, required true in the `then` branch and false in the `else` branch, and, for the right operand of an enclosing `and`, `or` or `implies`, its left operand, as FR-146's propagation rule carries guard facts) | `value-validity`, one claim per occurrence |
 | Range narrowing (`quire.op.numeric.narrow`) in a function body | none. When its operand is a scalar operation application, its target range is that application's result bound; otherwise its FR-146 range obligation discharges it |
 | FR-146 `case` exhaustiveness obligation | none; it is discharged during language admission, and an unproved obligation refuses as `undefined_expression`/`unproved-exhaustiveness` |
 | Operation precondition, postcondition or invariant ([FR-196](../../functional/ir-proof/FR-196-generate-kani-contracts.md)) | `operation-contract` |
@@ -134,12 +134,16 @@ is a claim of its own, as the table below states.
 | Hybrid-model claim ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)) | `temporal-satisfaction` |
 
 A scalar operation application is an application in a function body whose
-operation is an integer (FR-044, FR-147), rational (FR-149), decimal (FR-140),
-IEEE (FR-148), quantity (FR-142), numeric conversion, or text or enumeration
-(FR-141) operation, other than a range narrowing
+operation identity has one of the prefixes `quire.op.integer` (FR-044,
+FR-147), `quire.op.rational` (FR-149, including `quire.op.rational.narrow`),
+`quire.op.decimal` (FR-140), `quire.op.ieee` (FR-148), `quire.op.quantity`
+(FR-142, including `quire.op.quantity.convert`), `quire.op.numeric`,
+`quire.op.text` and `quire.op.enum` (FR-141), other than the range narrowing
 (`quire.op.numeric.narrow`). Every other application in a body (`let`, `if`,
 a Boolean connective, Boolean, structural or reference equality, a projection, an option read, a call, a
-dispatch, a collection or model operation) is not a claim of its own. The
+dispatch, a collection or model operation, and an operation whose prefix is not
+listed, such as `quire.op.string`, `quire.op.uuid` and `quire.op.timestamp`)
+is not a claim of its own. The
 application's result bound is the target range of the range narrowing whose
 operand it is, when there is one, and otherwise its own result type. Each
 occurrence of a scalar operation application in the body is one claim, so an
