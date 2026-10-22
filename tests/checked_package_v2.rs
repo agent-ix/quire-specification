@@ -44,6 +44,12 @@ const MODEL_MEMBER_TYPE_VECTORS: &str =
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
 const DEPENDENCY_SELECTION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/dependency-selection-vectors.json");
+const DEPENDENCY_CALL_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/dependency-call-vectors.json");
+const POSITIVE_DEPENDENCY_LIBRARY: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-dependency-library.json");
+const POSITIVE_DEPENDENCY_CALL: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-dependency-call.json");
 const REQUIRED_NODE_TAGS: [&str; 13] = [
     "scalar_type",
     "composite_type",
@@ -948,18 +954,31 @@ fn quantity_magnitude_is_canonical(text: &str) -> bool {
 }
 
 /// Independent reader oracle over the operation catalog, a package lock and
-/// its graph. Nothing is read from outside the package and catalog.
+/// its graph. Nothing is read from outside the package and catalog, except
+/// the admitted dependency packages a reader is supplied for its
+/// `dependency_selections`, which a `dependency_reference` callee resolves in.
 struct OperationOracle<'a> {
     catalog: &'a Value,
     lock: &'a Value,
     nodes: &'a [Value],
     /// The admitted document of each `model_selections` row.
     documents: Vec<Value>,
+    /// The supplied admitted package bound to each `dependency_selections` entry.
+    dependencies: &'a [(String, Value)],
 }
 
 impl<'a> OperationOracle<'a> {
     fn for_package(catalog: &'a Value, package: &'a Value) -> Self {
+        Self::for_package_with(catalog, package, &[])
+    }
+
+    fn for_package_with(
+        catalog: &'a Value,
+        package: &'a Value,
+        dependencies: &'a [(String, Value)],
+    ) -> Self {
         Self {
+            dependencies,
             catalog,
             lock: &package["lock"],
             nodes: package["semantic_graph"]["nodes"]
@@ -1157,6 +1176,17 @@ impl<'a> OperationOracle<'a> {
                     }
                     _ => self.typed(&target["semantic_type"]),
                 }
+            }
+            // FR-322: a `dependency_reference` callee has family `function`
+            // and the named dependency function's result type, which the
+            // importing graph carries under the same id.
+            "dependency_reference" => {
+                let target = dependency_reference_target(self.dependencies, term)?;
+                (target["node_tag"] == "function").then(|| Descriptor {
+                    family: "function".to_owned(),
+                    ty: Some(target["semantic_type"].clone()),
+                    bound: None,
+                })
             }
             "application" => self.classify(term).ok(),
             "binding" => Some(Descriptor {
@@ -2173,7 +2203,15 @@ fn exact_bounds_conversion(from: &NumericBounds, to: &NumericBounds) -> bool {
 /// The first refusal of a package's applications: nodes ascending by node-id
 /// digest, then each node's applications in pre-order.
 fn package_operations_refusal(package: &Value, catalog: &Value) -> Result<(), OperationRefusal> {
-    let oracle = OperationOracle::for_package(catalog, package);
+    package_operations_refusal_with(package, catalog, &[])
+}
+
+fn package_operations_refusal_with(
+    package: &Value,
+    catalog: &Value,
+    dependencies: &[(String, Value)],
+) -> Result<(), OperationRefusal> {
+    let oracle = OperationOracle::for_package_with(catalog, package, dependencies);
     let mut nodes = oracle.nodes.iter().collect::<Vec<_>>();
     nodes.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
     nodes.into_iter().try_for_each(|node| {
@@ -2877,6 +2915,9 @@ enum ReadRefusal {
     /// `invalid_semantic_graph` at an `abstraction_relation` node whose
     /// identity step (FR-451, step 1) fails.
     Abstraction(Value),
+    /// A `dependency_selections` supply or `dependency_reference` refusal
+    /// (FR-322): its code, cause and JSON-pointer locus.
+    Dependency(&'static str, &'static str, String),
     Operation(OperationRefusal),
 }
 
@@ -2907,6 +2948,17 @@ fn package_cause_code(cause: &str) -> Option<&'static str> {
 }
 
 fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRefusal> {
+    read_package_semantics_with(package, catalog, &[])
+}
+
+/// `read_package_semantics` for a reader supplied the admitted packages of a
+/// package's `dependency_selections`, as `(identity, package)` pairs.
+fn read_package_semantics_with(
+    package: &Value,
+    catalog: &Value,
+    supplied: &[(String, Value)],
+) -> Result<(), ReadRefusal> {
+    let dependencies = dependency_supply_refusal(package, supplied)?;
     // FR-322 "Model-owned members" step 1 reads the selected document before
     // graph admission; an entry that is no FCD population refuses it.
     if package
@@ -2960,7 +3012,216 @@ fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRe
     package_state_refusal(package)
         .map_err(|(refusal, locus)| ReadRefusal::State(refusal, locus))?;
     abstraction_identity_refusal(nodes).map_err(ReadRefusal::Abstraction)?;
-    package_operations_refusal(package, catalog).map_err(ReadRefusal::Operation)
+    dependency_reference_refusal(package, &dependencies)?;
+    package_operations_refusal_with(package, catalog, &dependencies).map_err(ReadRefusal::Operation)
+}
+
+/// FR-322 supply order: each `dependency_selections` entry in lock order is
+/// supplied (`missing_import`/`missing-selection`) and then binds, its
+/// supplied package recomputing the entry's `package_id`
+/// (`stale_dependency`/`content-mismatch`), each at the entry's pointer.
+/// Returns the bound packages, in lock order.
+fn dependency_supply_refusal(
+    package: &Value,
+    supplied: &[(String, Value)],
+) -> Result<Vec<(String, Value)>, ReadRefusal> {
+    let mut bound = Vec::new();
+    for (index, entry) in package["lock"]["dependency_selections"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .enumerate()
+    {
+        let locus = format!("/lock/dependency_selections/{index}");
+        let Some((identity, dependency)) = supplied
+            .iter()
+            .find(|(identity, _)| entry["identity"] == identity.as_str())
+        else {
+            return Err(ReadRefusal::Dependency(
+                "missing_import",
+                "missing-selection",
+                locus,
+            ));
+        };
+        if entry["package_id"]["digest"] != unqualified_jcs_sha256(&dependency["identity_preimage"])
+        {
+            return Err(ReadRefusal::Dependency(
+                "stale_dependency",
+                "content-mismatch",
+                locus,
+            ));
+        }
+        bound.push((identity.clone(), dependency.clone()));
+    }
+    Ok(bound)
+}
+
+/// The node a `dependency_reference` names in the bound dependency package
+/// whose `package_id` is the term's `package`, when there is one.
+fn dependency_reference_target<'a>(
+    dependencies: &'a [(String, Value)],
+    term: &Value,
+) -> Option<&'a Value> {
+    dependencies
+        .iter()
+        .find(|(_, dependency)| dependency["package_id"] == term["package"])?
+        .1["semantic_graph"]["nodes"]
+        .as_array()?
+        .iter()
+        .find(|node| node["node_id"] == term["node"])
+}
+
+/// Whether a dependency `function`'s parameter and result types are
+/// package-independent (FR-322): no node in the transitive `dependencies`
+/// closure of its signature type nodes -- each `parameters` binding
+/// target's `semantic_type` and its own `semantic_type` -- carries a
+/// `declaration` or a `ModelOwner`.
+fn dependency_signature_is_package_independent(function: &Value, nodes: &[Value]) -> bool {
+    let find = |id: &Value| nodes.iter().find(|node| node["node_id"] == *id);
+    let parameters = function["body"]["members"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .find(|member| member["term"] == "binding" && member["name"] == "parameters");
+    let mut pending = vec![function["semantic_type"].clone()];
+    for parameter in parameters
+        .and_then(|binding| binding["value"]["members"].as_array())
+        .into_iter()
+        .flatten()
+    {
+        match find(&parameter["target"]) {
+            Some(node) => pending.push(node["semantic_type"].clone()),
+            None => return false,
+        }
+    }
+    let mut seen = BTreeSet::new();
+    while let Some(id) = pending.pop() {
+        if !seen.insert(id.to_string()) {
+            continue;
+        }
+        let Some(node) = find(&id) else {
+            return false;
+        };
+        if node.get("declaration").is_some() || node["owner"]["kind"] == "model" {
+            return false;
+        }
+        pending.extend(
+            node["dependencies"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .cloned(),
+        );
+    }
+    true
+}
+
+/// FR-322's `dependency_reference` check over every node, ascending by
+/// node-id digest, at each term's place in its node's pre-order term walk:
+/// a `package` absent from the direct `dependency_selections`
+/// (`missing_declaration`/`missing-selection` at the term's `package`), then a
+/// `node` carrying no `declaration` in that dependency
+/// (`missing_declaration`/`missing-name` at its `node`), then a target that
+/// is no package-independent `function` or a term that is not the callee of a
+/// `quire.op.function.call` (`ill_typed`/`operator-ineligible` at the term).
+fn dependency_reference_refusal(
+    package: &Value,
+    dependencies: &[(String, Value)],
+) -> Result<(), ReadRefusal> {
+    fn walk<'t>(
+        term: &'t Value,
+        pointer: String,
+        callee: bool,
+        out: &mut Vec<(String, &'t Value, bool)>,
+    ) {
+        match term["term"].as_str() {
+            Some("dependency_reference") => out.push((pointer, term, callee)),
+            Some("application") => {
+                let call = term["operation"]["identity"] == "quire.op.function.call";
+                for (index, argument) in term["arguments"]
+                    .as_array()
+                    .into_iter()
+                    .flatten()
+                    .enumerate()
+                {
+                    walk(
+                        argument,
+                        format!("{pointer}/arguments/{index}"),
+                        call && index == 0,
+                        out,
+                    );
+                }
+            }
+            Some("aggregate") => {
+                for (index, member) in term["members"].as_array().into_iter().flatten().enumerate()
+                {
+                    walk(member, format!("{pointer}/members/{index}"), false, out);
+                }
+            }
+            Some("binding") => walk(&term["value"], format!("{pointer}/value"), false, out),
+            _ => {}
+        }
+    }
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("package nodes are an array");
+    let mut ordered = nodes.iter().enumerate().collect::<Vec<_>>();
+    ordered.sort_by_key(|(_, node)| node["node_id"]["digest"].as_str().unwrap_or_default());
+    let selections = package["lock"]["dependency_selections"]
+        .as_array()
+        .map(Vec::as_slice)
+        .unwrap_or_default();
+    for (index, node) in ordered {
+        let mut terms = Vec::new();
+        walk(
+            &node["body"],
+            format!("/semantic_graph/nodes/{index}/body"),
+            false,
+            &mut terms,
+        );
+        for (pointer, term, callee) in terms {
+            if !selections
+                .iter()
+                .any(|entry| entry["package_id"] == term["package"])
+            {
+                return Err(ReadRefusal::Dependency(
+                    "missing_declaration",
+                    "missing-selection",
+                    format!("{pointer}/package"),
+                ));
+            }
+            let library = dependencies
+                .iter()
+                .find(|(_, dependency)| dependency["package_id"] == term["package"])
+                .map(|(_, dependency)| {
+                    dependency["semantic_graph"]["nodes"]
+                        .as_array()
+                        .map(Vec::as_slice)
+                        .unwrap_or_default()
+                })
+                .unwrap_or_default();
+            let Some(target) = dependency_reference_target(dependencies, term)
+                .filter(|target| target.get("declaration").is_some())
+            else {
+                return Err(ReadRefusal::Dependency(
+                    "missing_declaration",
+                    "missing-name",
+                    format!("{pointer}/node"),
+                ));
+            };
+            if !callee
+                || target["node_tag"] != "function"
+                || !dependency_signature_is_package_independent(target, library)
+            {
+                return Err(ReadRefusal::Dependency(
+                    "ill_typed",
+                    "operator-ineligible",
+                    pointer,
+                ));
+            }
+        }
+    }
+    Ok(())
 }
 
 /// FR-451's abstraction step 1 (Identity) over every
@@ -5715,6 +5976,141 @@ fn tc_233_a_dependency_reference_enters_the_referencing_node_id() {
     );
     assert_ne!(renoded_id, id, "the referenced node id enters the node id");
     assert_ne!(renoded_id, repackaged_id, "the two changes key apart");
+}
+
+/// The outcome and locus of a dependency-call read, in the vectors' spelling.
+fn dependency_call_outcome(package: &Value, result: Result<(), ReadRefusal>) -> (String, Value) {
+    match result {
+        Ok(()) => ("admitted".to_owned(), Value::Null),
+        Err(ReadRefusal::Dependency(code, cause, locus)) => {
+            (format!("refused:{code}/{cause}"), json!(locus))
+        }
+        Err(ReadRefusal::GraphShape(id)) => {
+            let index = node_index_where(package, |node| node["node_id"] == id);
+            (
+                "refused:invalid_semantic_graph".to_owned(),
+                json!(format!("/semantic_graph/nodes/{index}/dependencies")),
+            )
+        }
+        Err(other) => (format!("refused:{other:?}"), Value::Null),
+    }
+}
+
+/// FR-322-AC-37 and FR-322-AC-85: the published dependency library is an
+/// admitted package whose recorded `package_id` recomputes; the importer
+/// selects it by that id, calls its `Int[0, 9] -> Boolean` function through a
+/// `dependency_reference` callee with the Boolean node as `result_type` and no
+/// `dependencies` entry for the target, and is admitted when the library is
+/// supplied. Each published mutation, applied and rekeyed, keeps the V2
+/// schema and is refused with exactly its recorded code, cause and locus.
+#[trace("TC-233", "FR-322-AC-37", "FR-322-AC-85")]
+#[test]
+fn tc_233_a_dependency_call_is_admitted_and_its_mutations_refuse_at_their_loci() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let vectors = parsed_fixture(DEPENDENCY_CALL_VECTORS);
+    assert_eq!(
+        vectors["library"]["package"],
+        "fixtures/positive-dependency-library.json"
+    );
+    assert_eq!(vectors["base"], "fixtures/positive-dependency-call.json");
+    let library = parsed_fixture(POSITIVE_DEPENDENCY_LIBRARY);
+    let base = parsed_fixture(POSITIVE_DEPENDENCY_CALL);
+    let identity = vectors["library"]["identity"]
+        .as_str()
+        .expect("library identity")
+        .to_owned();
+
+    assert!(v2.is_valid(&library), "the library is a V2 package");
+    assert_eq!(
+        derive_identity_preimage(&library),
+        library["identity_preimage"]
+    );
+    assert_eq!(
+        library["package_id"]["digest"],
+        unqualified_jcs_sha256(&library["identity_preimage"]),
+        "the library's recorded package_id recomputes"
+    );
+    assert_eq!(read_package_semantics(&library, &catalog), Ok(()));
+
+    let library_nodes = library["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("library nodes");
+    let function = &library_nodes[declared_index(&library, &["Lib", "is_small"])];
+    assert_eq!(
+        vectors["library"]["function"],
+        function["declaration"]["qualified_name"]
+    );
+    assert!(dependency_signature_is_package_independent(
+        function,
+        library_nodes
+    ));
+
+    assert!(v2.is_valid(&base), "the importer is a V2 package");
+    assert_eq!(derive_identity_preimage(&base), base["identity_preimage"]);
+    assert_eq!(
+        base["package_id"]["digest"],
+        unqualified_jcs_sha256(&base["identity_preimage"]),
+        "the importer's recorded package_id recomputes"
+    );
+    assert_eq!(
+        base["lock"]["dependency_selections"],
+        json!([{"identity": identity, "package_id": library["package_id"]}]),
+        "the importer selects the library by its recomputed package_id"
+    );
+    let call = &base["semantic_graph"]["nodes"][declared_index(&base, &["App", "check"])];
+    assert_eq!(vectors["call"], call["declaration"]["qualified_name"]);
+    let callee = &call["body"]["arguments"][0];
+    assert_eq!(callee["term"], "dependency_reference");
+    assert_eq!(callee["package"], library["package_id"]);
+    assert_eq!(callee["node"], function["node_id"]);
+    assert_eq!(call["body"]["result_type"], function["semantic_type"]);
+    assert_eq!(
+        call["dependencies"],
+        json!([]),
+        "the target is no dependency"
+    );
+    assert!(
+        base["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("importer nodes")
+            .iter()
+            .any(|node| node["node_id"] == function["semantic_type"]),
+        "the importer carries the result type node under the library's id"
+    );
+    let supplied = vec![(identity.clone(), library.clone())];
+    assert_eq!(
+        read_package_semantics_with(&base, &catalog, &supplied),
+        Ok(()),
+        "the dependency call is admitted with its library supplied"
+    );
+
+    let mutations = vectors["mutations"].as_array().expect("mutations");
+    assert_eq!(mutations.len(), 11);
+    for mutation in mutations {
+        let id = mutation["id"].as_str().expect("mutation id");
+        let mut candidate = base.clone();
+        for patch in mutation["patch"].as_array().expect("patch") {
+            apply_authored_patch(&mut candidate, patch);
+        }
+        rekey_stale_nodes(&mut candidate);
+        let errors: Vec<String> = v2
+            .iter_errors(&candidate)
+            .map(|error| format!("{error} at {}", error.instance_path()))
+            .collect();
+        assert!(errors.is_empty(), "{id} keeps the V2 schema: {errors:?}");
+        let supply = if mutation["supplied"] == false {
+            &[][..]
+        } else {
+            &supplied[..]
+        };
+        let (outcome, locus) = dependency_call_outcome(
+            &candidate,
+            read_package_semantics_with(&candidate, &catalog, supply),
+        );
+        assert_eq!(outcome, mutation["outcome"], "{id} outcome");
+        assert_eq!(locus, mutation["locus"], "{id} locus");
+    }
 }
 
 /// FR-322's `dependency_selections` order rule: the first entry whose
@@ -12339,7 +12735,7 @@ const POSITIVE_TWO_OWNERS_B: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-two-owners-b.json");
 
 /// Every published positive fixture, by name.
-fn positive_fixtures() -> [(&'static str, Value); 9] {
+fn positive_fixtures() -> [(&'static str, Value); 10] {
     let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     modelize_legacy_record_reference(&mut operation);
     [
@@ -12372,6 +12768,10 @@ fn positive_fixtures() -> [(&'static str, Value); 9] {
         (
             "positive-two-owners-b",
             parsed_fixture(POSITIVE_TWO_OWNERS_B),
+        ),
+        (
+            "positive-dependency-library",
+            parsed_fixture(POSITIVE_DEPENDENCY_LIBRARY),
         ),
     ]
 }
@@ -13015,7 +13415,10 @@ fn tc_233_published_model_selections_name_the_domain_document_by_its_jcs_digest(
             }
         }
     }
-    assert_eq!(selecting, 4, "two published packages select it, twice each");
+    assert_eq!(
+        selecting, 6,
+        "three published packages select it, twice each"
+    );
 }
 
 /// FR-322-AC-82 and FR-322-AC-83: the published `population_reference_cases`.

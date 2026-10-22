@@ -82,11 +82,14 @@ diamond reaches one identity at distinct real IDs, and that the reference's
 package is in the derived closure but absent from the importer's direct entries.
 With one direct dependency, name its transitive-only selection in a
 `dependency_reference` and require `missing_declaration`/`missing-selection`,
-even though the named package is in the derived closure. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Read
-a package whose function calls a dependency `function` returning `Boolean`
-through a `dependency_reference` callee, with its dependency package supplied,
-and then its FR-322-AC-37 mutations: no dependency package supplied, a
-`package` absent from `dependency_selections`, a `node` with no
+even though the named package is in the derived closure. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Validate
+`fixtures/positive-dependency-library.json` and recompute its `package_id`,
+then read `fixtures/positive-dependency-call.json`, whose function calls the
+library's `Int[0, 9] -> Boolean` function through a `dependency_reference`
+callee, with the library supplied under its identity, and then apply each
+FR-322-AC-37 mutation `dependency-call-vectors.json` publishes, recomputing
+node keys and the `package_id` after the patch: no dependency package
+supplied, a `package` absent from `dependency_selections`, a `node` with no
 `declaration`, a `node` naming a declared record or a function returning one,
 a function over `Set<R>` and one over a tuple holding `R` for a declared
 record `R`, a function over `Reference<M::T>` for a model type `M::T`,
@@ -397,10 +400,15 @@ recorded outcome and loci. The new closure vectors record the diamond's two
 dependency paths and its `invalid_package`/`conflicting-definition` refusal,
 and the transitive-only reference's `missing_declaration`/`missing-selection`
 refusal. Their reader outcomes remain planned until the IR implementation
-lands. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency call package is admitted, and its
-mutations refuse `missing_import`/`missing-selection`,
-`missing_declaration`/`missing-selection`, `missing_declaration`/`missing-name`,
-`ill_typed`/`operator-ineligible` (seven times) and `invalid_semantic_graph`. Every catalog entry names an authored
+lands. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency library is admitted with its recorded `package_id`,
+and the dependency call package that selects it by that id is admitted with it
+supplied. Each published mutation passes the V2 schema and refuses
+`missing_import`/`missing-selection` at the selection entry,
+`missing_declaration`/`missing-selection` at the term's `package`,
+`missing_declaration`/`missing-name` at its `node`,
+`ill_typed`/`operator-ineligible` (seven times) at the term, and
+`invalid_semantic_graph` at the node's `dependencies`, each exactly as its
+vector records. Every catalog entry names an authored
 artifact, and every selection vector is admitted or refused with exactly
 its recorded selection code. The published fixture's frame node is admitted
 with no defect; every frame-entry meaning-join and canonical-order mutation
