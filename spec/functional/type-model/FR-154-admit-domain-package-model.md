@@ -153,8 +153,11 @@ one IR node identity: the inherited member that it redefines
 (`quire.model.complete/v1` Redefines row). Intake SHALL read a field's
 redefinition only from `Field.redefines` and an operation's only from
 `Operation.redefines`. An extension payload of the owning type declares no
-redefinition, whatever its identity or its `required` flag, so an operation
-whose redefinition appears only in an extension redefines nothing, and an
+redefinition to intake, whatever its identity or its `required` flag, so an
+operation whose redefinition appears only in an extension redefines nothing,
+and a consumer that does not admit a `required` extension refuses the
+document before intake reads it
+([FR-133-AC-3](../source-package/FR-133-extend-language-uniformly.md)). An
 operation that shares a supertype operation's name stays a second member of
 that name (FR-322 "Model-owned members" step 3). An `Operation.redefines` that
 names no node of the package refuses `missing_declaration`/`missing-name` at
@@ -284,7 +287,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-12 | A clause, state, transition and step identity is exactly `<owner identity>/<member name>`: `ix://test/orders/OrderLifecycle/NotYetPlaced`, `.../OrderLifecycle/Draft`, `.../OrderLifecycle/<transition member name>` and `.../Fulfilment/receive_order` are admitted, a clause, state or step whose `clauseId` or `name` differs from the member name of its identity refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.clauses[i].clauseId`, `TypeDefinition.states[i].name` and `TypeDefinition.steps[i].identity`, a state of `OrderLifecycle` with the identity `.../Fulfilment/Draft` (the wrong owner) refuses `malformed-declaration` at `TypeDefinition.states[i].identity`, a state, clause, step or transition whose member name is also a field or operation of its owner (state `cancel` beside operation `cancel`) refuses `invalid_model_binding`/`conflicting-binding`, and the global-slot spellings `clause/<Name>-<clauseId>`, `state/<Name>-<state>`, `transition/<Name>-<from>-<to>-<trigger>` and `step/<Name>-<step>` each refuse `invalid_model_binding`/`malformed-declaration` at the member's `identity`. Two transitions of one machine whose slugged global spellings would be equal (`a_b → c` and `a → b_c` on one trigger) are two distinct nodes with distinct keys. | Test (TC-235) |
 | FR-154-AC-13 | Two fields of one owner, two operations of one owner, a field and an operation of one owner, two parameters of one operation and two variant cases of one type that share one identity each refuse once, `invalid_model_binding`/`conflicting-binding`, naming the shared identity at the later member's path: `TypeDefinition.fields[j]`, `TypeDefinition.operations[k]` (the operation, for a field and an operation), `TypeDefinition.operations[k].params[s]` and `TypeDefinition.variants[i]`; the refusal carries the code, cause, shared identity and path only, and the collision suppresses the identity, origin and payload checks of both colliding cases (FR-154-AC-11 and FR-208-AC-15 apply to a case not already refused by a collision), so exactly one refusal is reported whichever of the two cases carries the correctly minted identity, and no declaration of the package is admitted. The same members with distinct identities are admitted, and one member name used in two different owners is two distinct identities and no collision. | Test (TC-235) |
 | FR-154-AC-14 | An operation parameter whose `name` is absent, not a string, null, empty, begins with a digit, contains a separator or differs from the last segment of its identity, and which is not one of two parameters sharing an identity, refuses `invalid_model_binding`/`malformed-declaration` at the selection row, naming the operation's identity and `TypeDefinition.operations[k].params[s].name`; two parameters of one operation with one identity refuse once, `invalid_model_binding`/`conflicting-binding`, naming the shared parameter identity at the later parameter's `TypeDefinition.operations[k].params[s]`, and that collision suppresses the name check of both, so a malformed name on either colliding parameter is not reported; distinct valid names, including names differing only in letter case, are admitted and no relationship declaration outcome changes. | Test (TC-280) |
-| FR-154-AC-16 | An operation whose `Operation.redefines` names a supertype's operation (`Sub/size` naming `Order/size`) is admitted with that redefinition. The same operation with its `redefines` member removed redefines nothing, and so does one whose redefinition is listed only in an extension payload of its owning type, `required` true or false. An `Operation.redefines` naming no node of the package refuses `missing_declaration`/`missing-name` at the operation node and `Operation.redefines`. | Test (TC-280) |
+| FR-154-AC-16 | An operation whose `Operation.redefines` names a supertype's operation (`Sub/size` naming `Order/size`) is admitted with that redefinition. The same operation with its `redefines` member removed redefines nothing, and so does one whose redefinition is listed only in an extension payload of its owning type, `required` true or false when the consumer admits the extension; a consumer that does not admit a `required` extension refuses the document before intake. An `Operation.redefines` naming no node of the package refuses `missing_declaration`/`missing-name` at the operation node and `Operation.redefines`. | Test (TC-280) |
 
 ## Dependencies
 
@@ -292,6 +295,10 @@ Admission checks are decided before the first charge.
   model intake design.
 - [FR-208](../../objects/foundation/FR-208-quire-meaning-vocabulary.md) owns
   the Quire meaning ids intake binds.
+- The filament-core-data Semantic IR contract owns the `operation` member
+  set. Intake reads `Operation.redefines` from the IR `operation` member of
+  that name, so a producer's contract has to carry it for a document to
+  declare an operation redefinition.
 - [Complete model definition](../../../proposals/quire-v1/definitions/model-complete.md)
   owns the intake and feature rules.
 - [Complete-V1 grammar](../../../proposals/quire-v1/shared-grammar.md) owns the

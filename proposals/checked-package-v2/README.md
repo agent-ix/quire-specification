@@ -115,7 +115,8 @@ structures, but any external consumer receives only the contract.
 - `model-member-type-vectors.json` carries a domain package as a projection
   of the declaration records FR-154 intake reads from it, the model declaration node vectors
   that recover a declaring node's `ModelOwner`, the member and selection
-  cases for FR-322's "Model-owned members", and the reference equality and
+  cases for FR-322's "Model-owned members", the operation redefinition cases of
+  FR-154-AC-16, and the reference equality and
   field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
   of its `domain_package` member stands for the document's `sha256-jcs`

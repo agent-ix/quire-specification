@@ -50,8 +50,9 @@ the member type from the resolved record.
   value types with the `Int[lo, hi]` they are bound as (TC-196, TC-197) and with
   the `Text[min, max; profile]` they are bound as, presence, multiplicity, supertypes
   and redefinitions), the model declaration node vectors M1 to M12, the member
-  cases, each recorded with its criterion, the wire cases and the selection
-  cases. The selection cases patch and digest the document, not the projection.
+  cases, each recorded with its criterion, the `operation_redefinition_cases`
+  (MA-16 to MA-18, each a patch of the document with its expected result),
+  the wire cases and the selection cases. The selection cases patch and digest the document, not the projection.
   The value type `OrderTotal` is the alias FR-095 mints for `Order`'s
   constrained field `total` (`<Name><Field>`), with its constraints under
   `constraint/Order-total-min` and `-max`.
@@ -146,9 +147,6 @@ process or state machine.
 | MA-07 | `field` `backlog`, `[1, unbounded]` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-08 | `operation` `reset`, with no result | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-09 | `field` `code` on M6 (`Both`), declared by both supertypes `Tagged` and `Coded` | `ambiguous_declaration`/`ambiguous-name` | FR-322-AC-30 |
-| MA-16 | `operation` `size` on M5, over the document with `Sub/size`'s `Operation.redefines` removed | `ambiguous_declaration`/`ambiguous-name`: `Order/size` and `Sub/size` are both exposed | FR-322-AC-30, FR-154-AC-16 |
-| MA-17 | `operation` `size` on M5, over the document whose `Sub/size` carries no `Operation.redefines` and whose `Sub` lists the pair `Sub/size`, `Order/size` only in an extension payload, once with `required` false and once with `required` true | `ambiguous_declaration`/`ambiguous-name` both times: an extension declares no redefinition | FR-154-AC-16 |
-| MA-18 | The document with `Sub/size`'s `Operation.redefines` set to `ix://acme/orders/Order/missing` | Selection refused `missing_declaration`/`missing-name` at `Sub/size` and `Operation.redefines` | FR-154-AC-16 |
 | MA-10 | `operation` `scaled` on M1 with no argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-11 | `operation` `scaled` on M1 with a `Boolean` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-12 | `operation` `rate` on M8 (`Flow`, a `systems_interface`) | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
@@ -156,6 +154,9 @@ process or state machine.
 | MT-15 | `field` `sku` on M1, typed value type `Code`, `Text` bound to `[0, 64; nfc]` | Resolves `Order/sku`; type `Text[0, 64; nfc]` | FR-322-AC-44 |
 | MA-14 | `field` `alias`, typed value type `Inverted`, `Text` bound to `[5, 2; nfc]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
 | MA-15 | `field` `slug`, typed value type `Folded`, `Text` bound to `[0, 64; casefold]` | `ill_typed`/`operator-ineligible` | FR-322-AC-44 |
+| MA-16 | `operation` `size` on M5, over the document with `Sub/size`'s `Operation.redefines` removed | `ambiguous_declaration`/`ambiguous-name`: `Order/size` and `Sub/size` are both exposed | FR-322-AC-30, FR-154-AC-16 |
+| MA-17 | `operation` `size` on M5, over the document whose `Sub/size` carries no `Operation.redefines` and whose `Sub` lists the pair `Sub/size`, `Order/size` only in an extension payload, once with `required` false (MA-17a) and once with `required` true (MA-17b), the consumer admitting the extension | `ambiguous_declaration`/`ambiguous-name` both times: an extension declares no redefinition to intake | FR-154-AC-16 |
+| MA-18 | The document with `Sub/size`'s `Operation.redefines` set to `ix://acme/orders/Order/missing` | Selection refused `missing_declaration`/`missing-name` at `Sub/size` and `Operation.redefines` | FR-154-AC-16 |
 | MU-01 | `field` `window` on T1 (`Timer` of the `acme/timing` domain package, which no checked-package fixture selects), `typeRef` `ix://quire/unit/ms`, checked units `ms` and `s` | Resolves `Timer/window`; type `Quantity<ms>` | FR-322-AC-80 |
 | MU-02 | `field` `waits` on T1, the same `typeRef`, `[0, unbounded]`, unordered, unique | `Set<Quantity<ms>>` | FR-322-AC-80 |
 | MU-03 | `operation` `wait` on T1 with a `Quantity<ms>` argument | Resolves `Timer/wait`; result `Integer` | FR-322-AC-80 |
