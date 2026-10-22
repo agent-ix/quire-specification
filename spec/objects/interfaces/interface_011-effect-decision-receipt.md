@@ -9,6 +9,13 @@ relationships:
 
 # [interface_011] I11 effect decision and receipt
 
+## Features
+
+| Feature | Kind |
+| --- | --- |
+| authorize | operation |
+| reconcile | operation |
+
 ## Contract
 
 ```yaml
