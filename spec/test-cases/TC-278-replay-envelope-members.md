@@ -107,6 +107,7 @@ and additional spend must be observed, not inferred from equal Booleans.
 | RE-39 | RE-37's request with a `function` member added; then with a `frame_operation` member added instead; then with both `function` and `frame_operation` added (all three members); then the second with a byte-provision entry removed | `invalid_runtime_input`/`invalid-value` at `/replay/state_clause` for each, the fourth not the provision refusal | FR-323-AC-19 |
 | RE-40 | RE-37's request with `arguments` added; then with an occurrence key added | `invalid_runtime_input`/`unknown-member` at `/replay/arguments`; at `/replay/occurrence_key` | FR-323-AC-19 |
 | RE-41 | RE-37's request with a stale proved `package_id` and `state_clause` naming an undeclared clause; then with a current `package_id` and `state_clause` naming an undeclared clause; then naming a function of the package; then naming an invariant and, separately, a precondition | `stale_dependency`/`content-mismatch` (rule 5), not `missing-name`; `missing_declaration`/`missing-name`; `missing_declaration`/`missing-name`; admitted, resolving to that invariant and that precondition | FR-323-AC-21 |
+| RE-42 | RE-01's request with its occurrence key removed; then also with a byte-provision entry removed | `invalid_runtime_input`/`missing-member` at `/replay/occurrence_key` for each, the second not the provision refusal | FR-323-AC-22 |
 
 ## Expected Results
 
