@@ -73,7 +73,9 @@ A form and a compiler-detected copy-swap symmetry are functions of the checked
 clause, so they add no identity member.
 
 The model claim of a step relation binds every subject, the execution
-variables in order with their operations, and the body. Its code claim binds
+variables in order with their operations, and the body; its node is the
+[FR-477](FR-477-checked-package-step-relation-claim-body.md)
+`claim`/`step_relation` node. Its code claim binds
 the same members plus each operation's implementation binding, and differs
 from the model claim by its capability kind, so the two never share an
 identity.
