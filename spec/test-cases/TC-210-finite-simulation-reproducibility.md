@@ -63,6 +63,19 @@ The explicit refusal/non-conclusive mutations include:
   the start, so each trace's first draw is the step-0 draw of its own trace
   index (FR-181-AC-18).
 
+## Typed canonical form vectors
+
+- Encode each value FR-181-AC-19 lists and compare the JCS bytes exactly
+  (FR-181-AC-19).
+- Encode decimal `1.50`, the quantity `1.50` in `Units::metre` and a
+  `Set<Timestamp>` of `2` and `10` as set elements and as a record field, and
+  compare the bytes FR-181-AC-20 states (FR-181-AC-20).
+- Encode two states whose population member holds the same reference
+  identities, inserted into the set in two different orders, and compare the
+  state keys; read the uppercase UUID, the `+1` and `01` Timestamp payloads,
+  the Timestamp payloads 2^127 and -2^127 - 1, and 2^127 - 1 against the
+  form (FR-181-AC-21).
+
 ## Sampler index-sequence vector
 
 For seed `424242`, trace `0`, choice `0` and enabled-successor-set size
