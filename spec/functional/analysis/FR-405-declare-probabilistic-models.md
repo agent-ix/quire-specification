@@ -82,8 +82,10 @@ argument vector in the operation's domains; the frontend checks this over the
 finite domains and refuses a negative value with
 `invalid_probabilistic_model`/`negative-reward`,
 naming the operation, the reward and the argument vector. Reward names
-are unique per operation; one reward name declared on several operations has
-one type across them. A transition carries the reward values of its operation
+are unique per operation: a second reward of one name on one operation refuses
+with `invalid_probabilistic_model`/`duplicate-reward` at the second
+declaration, naming the operation and the reward. One reward name declared on
+several operations has one type across them. A transition carries the reward values of its operation
 under its arguments.
 
 ### Workloads
@@ -127,6 +129,7 @@ obligation that reads it.
 | FR-405-AC-6 | A `delay` member is admitted on an operation of a `time dense` model and refuses `invalid_probabilistic_model`/`delay-on-untimed-model` on an untimed or digital model; an operation with no `delay` member has a nondeterministic delay. | Test (TC-350) |
 | FR-405-AC-7 | Changing one weight, support value or reward expression changes the identity of every obligation that reads it. | Test (TC-350) |
 | FR-405-AC-8 | A second `random` declaration of one operation parameter refuses `invalid_probabilistic_model`/`duplicate-distribution` at the second declaration's locus, naming the operation and the parameter. | Test (TC-350) |
+| FR-405-AC-9 | A second `reward duration on Server::attempt = d;` after the first refuses `invalid_probabilistic_model`/`duplicate-reward` at the second declaration's locus, naming `Server::attempt` and `duration`; `reward duration` on `Server::attempt` and on `Server::request` with one value type is admitted. | Test (TC-350) |
 
 ## Dependencies
 

@@ -28,11 +28,12 @@ Run each vector through the real local Rust boundary of the frontend or provider
 | PD-03 | A distribution repeating `1 ms`; a weight `0`; a value `true` for a `Quantity<ms>` parameter | `repeated-support-value`, `invalid-weight`, `value-outside-type` respectively, each at the value's locus |
 | PD-04 | `reward refund on Shop::buy = n - 3` with `n: Int[0, 5]` | `invalid_probabilistic_model`/`negative-reward` naming `Shop::buy`, `refund` and `n = 0` |
 | PD-05 | A reward reading `self.balance`; a reward of type `Boolean` | `state-read-in-reward` at the read; `reward-type` |
-| PD-06 | `workload Steady on Service` weighting `request` and `attempt` but not `reset`; one weighting `reset` twice; one naming `Other::op`; one with weight `-1` | `incomplete-workload`, `duplicate-weight`, `unknown-operation`, `invalid-weight` under `invalid_probabilistic_model` |
+| PD-06 | `workload Steady on Service` weighting `request` and `attempt` but not `reset`; one weighting `reset` twice; one naming `Other::op`; one with weight `0` (a weight `-1` is no `exact-value` and is `invalid_syntax`) | `incomplete-workload`, `duplicate-weight`, `unknown-operation`, `invalid-weight` under `invalid_probabilistic_model` |
 | PD-07 | `delay Call::reply ~ discrete { 1 ms: 90, 3 ms: 10 };` on a `time dense` model, and the same on an untimed model | Admitted on the dense model; `invalid_probabilistic_model`/`delay-on-untimed-model` on the untimed one |
 | PD-08 | An operation of a dense model with no `delay` member | Admitted; its delay is nondeterministic (FR-420) |
 | PD-09 | Two packages differing in one workload weight, one support value, or one reward expression | Every obligation reading the changed element has a different identity; other obligations keep theirs |
 | PD-10 | `random Server::attempt(d) ~ { 1 ms: 1 };` followed by `random Server::attempt(d) ~ { 3 ms: 1 };` | `invalid_probabilistic_model`/`duplicate-distribution` at the second declaration, naming `Server::attempt` and `d` |
+| PD-11 | `reward duration on Server::attempt = d;` followed by a second `reward duration on Server::attempt = d;`; then `reward duration` on `Server::attempt` and on `Server::request`, both `Quantity<ms>` | `invalid_probabilistic_model`/`duplicate-reward` at the second declaration, naming `Server::attempt` and `duration`; admitted |
 
 ## Expected Results
 
