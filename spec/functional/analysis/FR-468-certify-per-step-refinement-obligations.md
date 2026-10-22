@@ -48,6 +48,43 @@ Each query also requires every mapping row, receiver and argument it reads to be
 
 Each query is one `operation-contract` item ([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)) and is settled on its own. Each hypothesis (invariant clause) has its own `operation-contract` items, its initial-state item and its preservation item, which are *hypothesis items*; they are not part of the refinement's certificate.
 
+### Claim extent
+
+Each query item carries the [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md)
+`extent` that the boundedness architecture (QSL ADR-014 §4) classifies over
+the query's roots, as it classifies every other `operation-contract` item.
+
+- A step query's roots are the concrete operation's receiver (`self`),
+  result and parameter types; the parameter domain of each `_` argument of
+  its abstract operation; the *context population*, the one population of the
+  concrete model that covers the receiver's type; and each population a
+  `reaches` in the operation's contract clauses or in the refinement's state
+  mapping walks.
+- The initial query's roots are the populations that cover the concrete
+  object types the state mapping maps.
+- A population of the concrete model that none of these names adds no
+  domain. An abstract population adds no domain of its own, since its
+  universe is the concrete universe of its source population (FR-377 Inputs).
+- A query with no unbounded root is `bounded`. Any other is `unbounded`,
+  naming each unbounded domain: a population with no maximum is one
+  `population` domain boundable by `cardinality`, and a population a proof
+  bound bounds adds none.
+
+When the receiver's type conforms to a member type of two or more
+populations of the concrete model, no context population exists: the checker
+SHALL refuse `ambiguous_declaration`/`ambiguous-name` at the step row that
+names the concrete operation, naming those populations in ascending
+declaration-key order, and states no query for the refinement.
+
+A query item is negotiated like every `operation-contract` item
+([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)): its
+candidates are chosen by kind alone, and its extent meets the candidate's
+advertised mode only at the single candidate's arm. An `unbounded` query
+item SHALL settle `requires-bound` under a candidate that advertises
+`operation-contract` only in `bounded` mode when a finite bound is available,
+and is decided only by a candidate that advertises `operation-contract` in
+`unbounded` mode.
+
 ### Certificate
 
 The certificate of the safety half carries one *base* part, the refutation of the initial query, and one *step* part per step row, in the `steps` order, each the refutation of that row's step query. A part is a solver refutation in a checkable proof format, bound to the query it refutes. The checker SHALL check the certificate as FR-354 does, so a certificate that arrives without its base part, without a row's step part, with a step part in the base position, or with a part whose carried query differs from the core's encoding, settles `inconclusive`, cause `certificate-rejected{rule, at}` with `at` naming the part (FR-354's shape and query mismatch cases). A proof that arrives with no certificate at all, and a part using a rule outside the checked set with no failed check, are not rejected: the corresponding query settles `proved` with certification `uncertified`.
@@ -75,6 +112,7 @@ When the declaration's `F_A` is non-empty, the liveness half is decided by the e
 | FR-468-AC-5 | A concrete invariant clause is a hypothesis of every step query and of the initial query, so the initial query's identity differs with and without the clause, and an invariant of the abstract model is not a hypothesis. | Test (TC-950) |
 | FR-468-AC-6 | A concrete model with the invariant `self.value < 0`, whose hypothesis items are not proved, settles the half `inconclusive`, `hypotheses-not-established`, even though every step query is refuted with a verified certificate. | Test (TC-950) |
 | FR-468-AC-7 | A query whose backend returns `unknown`, a timeout, a missing solver or a fault takes the FR-331 result for that outcome and the half takes the first such query's result, whatever the other queries returned. | Test (TC-950) |
+| FR-468-AC-8 | Over the compare-and-set counter refinement with seven step rows, whose concrete population `counters` has no maximum, each of the eight query items carries extent `unbounded` with one domain, the `counters` population of kind `population`, boundable by `cardinality`, and the abstract population adds none; with a proof bound of 2 on `counters` each is `bounded`. An unbounded population `audits` of another object type that no contract clause or state mapping reads adds no domain. A concrete operation `peek` taking `n: Integer` (no range), and one returning `Integer`, each give `peek`'s step query a second unbounded `integer` domain, the other seven unchanged. With a finite bound available, under a candidate advertising `operation-contract` only in `bounded` mode with `domains` [`population`], each of the eight `unbounded` query items settles `requires-bound`; with no finite bound available, each settles `unsupported`, `unsupported_projection`/`unbounded-extent`; under a bounded-only candidate whose `domains` lack `population`, each settles `unsupported`, `unsupported_projection`/`unsupported-requested-capability` naming `population`. In each `peek` variant, `peek`'s step query under the bounded-only candidate with `domains` [`population`] settles `unsupported-requested-capability` naming `integer`, and with `domains` [`population`, `integer`] and a finite bound available settles `requires-bound`. Under a candidate advertising `unbounded` mode every query item is decided. A second population `spare` of the receiver's type refuses `ambiguous_declaration`/`ambiguous-name` at each step row, naming `counters` and `spare` in ascending declaration-key order, with no query stated. | Test (TC-950) |
 
 ## Dependencies
 
@@ -83,4 +121,5 @@ When the declaration's `F_A` is non-empty, the liveness half is decided by the e
 - [FR-375](FR-375-declare-model-refinement.md) owns the `steps` order the certificate follows.
 - [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) owns the `operation-contract` kind.
 - [FR-354](../ir-proof/FR-354-record-proof-trust-basis.md) owns the checker outcome to certification table.
-- [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) owns the closed `certification` values and the causes this requirement uses.
+- [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) owns the closed `certification` values, the `extent` wire form and the causes this requirement uses.
+- QSL FR-146 (Claim extent) states the same roots and classification for the QSL request writer.

@@ -3628,6 +3628,217 @@
       }
     },
     {
+      "name": "weak-access-shape-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause": "FR-439",
+        "/results/1/cause": "FR-439",
+        "/results/2/cause": "FR-439",
+        "/results/3/cause": "FR-439",
+        "/results/4/cause": "FR-439"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 3,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 4,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "unsupported",
+            "cause": {
+              "type": "weak-access-shape",
+              "site": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "transition": {
+                "type": "transition",
+                "operation": "SB::Cell::store",
+                "receiver": null,
+                "arguments": []
+              },
+              "shape": {
+                "type": "join-policy"
+              }
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "unsupported",
+            "cause": {
+              "type": "weak-access-shape",
+              "site": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "transition": {
+                "type": "transition",
+                "operation": "SB::Cell::store",
+                "receiver": null,
+                "arguments": []
+              },
+              "shape": {
+                "type": "ordering-mismatch",
+                "access": "load",
+                "ordering": "release"
+              }
+            }
+          },
+          {
+            "request_index": 2,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "unsupported",
+            "cause": {
+              "type": "weak-access-shape",
+              "site": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "transition": {
+                "type": "transition",
+                "operation": "SB::Cell::store",
+                "receiver": null,
+                "arguments": []
+              },
+              "shape": {
+                "type": "ordering-mismatch",
+                "access": "store",
+                "ordering": "acq_rel"
+              }
+            }
+          },
+          {
+            "request_index": 3,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "unsupported",
+            "cause": {
+              "type": "weak-access-shape",
+              "site": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "transition": {
+                "type": "transition",
+                "operation": "SB::Cell::store",
+                "receiver": null,
+                "arguments": []
+              },
+              "shape": {
+                "type": "ordering-mismatch",
+                "access": "rmw",
+                "ordering": null
+              }
+            }
+          },
+          {
+            "request_index": 4,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "unsupported",
+            "cause": {
+              "type": "weak-access-shape",
+              "site": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "transition": {
+                "type": "transition",
+                "operation": "SB::Cell::store",
+                "receiver": null,
+                "arguments": []
+              },
+              "shape": {
+                "type": "ordering-mismatch",
+                "access": "local",
+                "ordering": "release"
+              }
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 3,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 4,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
       "name": "certificate-stale-dependency-outcome",
       "stage": "outcome",
       "owners": {
@@ -5820,6 +6031,53 @@
           "op": "add",
           "path": "/results/0/cause/trace/verified",
           "value": true
+        }
+      ]
+    },
+    {
+      "name": "ordering-mismatch-unlisted-access",
+      "base": "weak-access-shape-outcome",
+      "owner": "FR-439",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/1/cause/shape/access",
+          "value": "atomic"
+        }
+      ]
+    },
+    {
+      "name": "ordering-mismatch-without-ordering",
+      "base": "weak-access-shape-outcome",
+      "owner": "FR-439",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/3/cause/shape/ordering"
+        }
+      ]
+    },
+    {
+      "name": "ordering-mismatch-extra-member",
+      "base": "weak-access-shape-outcome",
+      "owner": "FR-439",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/4/cause/shape/locations",
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "ordering-mismatch-unlisted-ordering",
+      "base": "weak-access-shape-outcome",
+      "owner": "FR-439",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/2/cause/shape/ordering",
+          "value": "consume"
         }
       ]
     },
