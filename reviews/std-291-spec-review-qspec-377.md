@@ -65,3 +65,5 @@ Head 2ea9d5a7e (`origin/main` is an ancestor). Re-derived HB-11 with the fix: `x
 | FND-003 | fixed | Properties carry `owner`, the SourceOwner that enters the key. |
 | FND-004 | fixed | RN-01: `step` takes `i` and has no result; `x` is at levels 0 and 1, `y` at 2 and 3. |
 | FND-005 | fixed | FR-477 now follows the FR-464 to FR-466 range. |
+| FND-006 | accepted-no-change | Head 1fd2750c8. The FR-475 and FR-476 entries stay on purpose. The PR body requires the merge order #370, then #375, then #377, so both requirements are on main before #377 lands. The lead has to check that order at merge. Note: #370 (f326f663) and #375 (76bda9f4) do not yet carry the "Body steps" paragraph, so the PR body's "word for word the same text as #370 and #375" does not hold at those heads, and #377 needs the usual union rebase after them. |
+| FND-007 | fixed | FR-341's `value`/`parameter` body section now says a step relation's execution binders are the one exception to the table's levels: they take FR-477's continuing levels, so a later execution's `self` has a level above 0. |
