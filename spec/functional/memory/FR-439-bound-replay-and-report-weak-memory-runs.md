@@ -80,9 +80,15 @@ settles `unsupported`, cause `weak-access-shape`, carrying `site`,
 `transition` and `shape`; so does an item in which a reader
 ([FR-435](FR-435-classify-memory-accesses-and-orderings.md)) reads a shared
 location, with shape `multi-location` naming the reader as the site and the
-shared locations it reads. The `shape` is one of
-`{"type":"multi-location","locations":[<location>, ...]}` and
-`{"type":"join-policy"}`.
+shared locations it reads; so does an item with an instantiated attempt
+whose class does not take its ordering (FR-435 Admitted orderings), with
+shape `ordering-mismatch`. The `shape` is one of
+`{"type":"multi-location","locations":[<location>, ...]}`,
+`{"type":"join-policy"}` and
+`{"type":"ordering-mismatch","access":<access>,"ordering":<ordering>}`, where
+`access` is one of `load`, `store`, `rmw` and `local`, and `ordering` is one
+of `relaxed`, `acquire`, `release`, `acq_rel` and `seq_cst`, or `null` when
+the attempt carries none.
 An item whose resolved model no candidate advertises settles `unsupported`,
 `unsupported_projection`/`unsupported-requested-capability`. A candidate
 advertises the memory models it decides, by the names `sc`, `tso` and `ra`,
@@ -158,6 +164,7 @@ race` ([FR-438](FR-438-report-data-races.md)).
 | FR-439-AC-8 | A claim whose atom reads `lookup<T>(p, r) absent undefined` at an absent key at a reachable state, in a run that also reaches bound-limited states, settles `refuted`, cause `undefined-evaluation`, not `inconclusive` with `memory-bound-reached`, and its counterexample carries the memory component and replays. | Test (TC-393) |
 | FR-439-AC-9 | An item over the load-buffering litmus (TC-391 LT-06) resolved to `ra` has the terminal record `warnings` hold two `memory.load-buffering-shape{load, store}` warnings, one per branch's distinct (load, store) shape, with the result, counterexample and obligation identity equal to the settlement without it; the same item resolved to `sc` or `tso` carries none; a candidate whose descriptor has no `memory_models` receives `SB` (TC-390) resolved to `sc` and not `SB` resolved to `tso` or `ra`. | Test (TC-393) |
 | FR-439-AC-10 | The `ra` counterexample of TC-390 SB-05's protocol (every store and load `seq_cst`) to the claim `always holds(not (c1.r = 1 and c2.r = 1))` replays; altering one carried view's `frontier` count, removing one carried `sc-graph` edge, or adding one `owed` entry is each refused `stale_dependency`/`content-mismatch`, as a memory component that differs from the carried one. | Test (TC-394) |
+| FR-439-AC-11 | A `weak-access-shape` cause with shape `{"type":"ordering-mismatch","access":"rmw","ordering":null}`, one with `{"type":"ordering-mismatch","access":"load","ordering":"release"}` and one with `{"type":"ordering-mismatch","access":"local","ordering":"release"}` are admitted; a shape whose `access` is outside `load`, `store`, `rmw` and `local`, whose `ordering` member is missing, or that carries an extra member is refused. | Test (TC-389, TC-431) |
 
 ## Dependencies
 
