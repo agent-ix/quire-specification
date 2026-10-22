@@ -59,11 +59,11 @@ chain is:
    each declaration.
 
 The package input maps each `sha256-jcs` digest to package bytes. Intake looks
-up the bytes by the selected digest, recomputes the canonical `sha256-jcs`
-digest of the supplied document, compares it with the selected digest, and
-then compares the package's own identity with the selection. The selected
-digest is the key of that lookup and the content identity member of the
-ModelSelection (FR-321).
+up the bytes by the selected digest and compares the package's own identity
+with the selection. Intake does not recompute the supplied document's digest or
+compare it with the selected digest: the selected digest is the key of that
+lookup and the content identity member of the ModelSelection (FR-321), and the
+document supplied under it is taken as the document that digest names.
 
 Admission refusals, in order:
 
@@ -71,7 +71,6 @@ Admission refusals, in order:
 | --- | --- |
 | The digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` |
 | The package input supplies bytes under the selected digest | `missing_import`/`missing-selection` |
-| The canonical `sha256-jcs` digest of the supplied document equals the selected digest | `stale_dependency`/`content-mismatch` with the selected and the recomputed digest |
 | The package's own identity equals the selection's | `invalid_model_binding`/`wrong-model-selection` |
 
 Declaration refusals:
@@ -259,7 +258,7 @@ Admission checks are decided before the first charge.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-154-AC-1 | An artifact bundle whose extraction and lift yield a valid domain package is admitted, and intake builds exactly one original declaration per IR node, keyed by package identity and IR node identity. | Test (TC-234) |
-| FR-154-AC-2 | A wrong digest domain, a missing package, a document whose recomputed canonical digest differs from the selected digest and a package whose identity differs each refuse with its named cause before any declaration is built, and a package supplied under the selected digest with the selection's identity is admitted. | Test (TC-234) |
+| FR-154-AC-2 | A wrong digest domain, a missing package and a package whose identity differs each refuse with its named cause before any declaration is built, a package supplied under the selected digest with the selection's identity is admitted, and a supplied document is admitted whatever its own canonical digest is. | Test (TC-234) |
 | FR-154-AC-3 | A malformed IR node or a dangling reference refuses with the IR node identity and its `origin`, and every such refusal is reported in node order. | Test (TC-234) |
 | FR-154-AC-4 | Publishing a domain package document with equal nodes and a different digest leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |

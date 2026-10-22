@@ -65,14 +65,12 @@ the rule.
 
 Rule `quire.model.normalize.intake/v1` admits one domain package. The package
 input is a map from `sha256-jcs` digest to package bytes. Intake looks up the
-bytes by the selected digest, recomputes their canonical `sha256-jcs` digest,
-and then reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
+bytes by the selected digest and then reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
 
 | Check | Refusal |
 | --- | --- |
 | The selection's digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` with the expected and actual domain |
 | The package input supplies bytes under the selected digest | `missing_import`/`missing-selection` with the ModelSelection |
-| SHA-256 over the supplied document's RFC 8785 JCS bytes equals the selected digest | `stale_dependency`/`content-mismatch` with the selected and the recomputed digest |
 | The package's own identity equals the selection's | `invalid_model_binding`/`wrong-model-selection` with both |
 
 Intake then reads each IR node and builds one original declaration per node.
