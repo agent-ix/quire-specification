@@ -38,3 +38,11 @@ Units examined:
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | Two existing sentences still define zero instances to include 'no member record of an initial state admits a key' and settle it `no-instance` with a SHALL; an empty list of initial states meets that wording, so it now conflicts with the new paragraph's SHALL `no-initial-state` until the reader applies the order paragraph. The rationale paragraph at line 202 also still says FR-361-AC-8 settles that case `no-instance`. Qualify both with 'of a non-empty list of initial states', as the Outputs sentence now does. | spec/functional/temporal/FR-361-read-model-behaviours-as-temporal-traces.md:67-78, spec/functional/temporal/FR-361-read-model-behaviours-as-temporal-traces.md:202 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | see after_excerpt |
+
+Disposition pass 1 verdict (head ae946d0a): **MERGEABLE.** FND-001 fixed in ae946d0a; both sentences now say 'of a non-empty list of initial states'. Merges cleanly onto current main 6f24ddd4.
