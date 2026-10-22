@@ -47,3 +47,12 @@ Units examined:
 | --- | --- | --- | --- |
 | FND-001 | medium | 'Data place' is not a QSpec term: FR-435 defines locations, shared and branch-local (a register of its thread), and no QSpec file uses 'data place' on main. The check-time rule 'any ordering on an attempt that touches no data place' is load-bearing: FR-435-AC-9's `local`/`release` vector (an attempt that writes only a branch-local register) must pass the check-time rule to reach the pre-check, which holds only if a register counts as a data place. A reader who takes 'data place' to mean a shared location refuses that attempt at check time and the vector cannot reach `ordering-mismatch`. Say 'touches no location, shared or branch-local' (or define the term). | spec/functional/memory/FR-435-classify-memory-accesses-and-orderings.md:95-108 |
 | FND-002 | low | STD-324 asks for FR-220's References to stop claiming the QSpec state; the PR body says QSL needs no further edit. QSL FR-220 References still reads 'QSpec owes the matching change (Linear STD-305): FR-439 gains the ordering-mismatch shape, and FR-435's check-time ... refusal ... becomes this pre-check outcome'. Once this PR merges that sentence is stale and names the wrong ticket (the QSpec half is STD-324). It needs a one-line QSL follow-up (behaviour-only: 'QSpec FR-435 and FR-439 state the same rule and shape'), which this QSpec PR cannot carry. | agent-ix/quire-spec-language:spec/functional/FR-220-check-access-orderings-fences-and-access-classification.md:217-222 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | see after_excerpt |
+| FND-002 | deferred | QSL agent-ix/quire-spec-language#1283 (head 0eea6c62, reviewed as SR-16193) replaces the stale FR-220 References sentence with 'QSpec FR-435 and FR-439 state the same check-time rules, pre-check outcome and ordering-mismatch shape (FR-435-AC-2, FR-435-AC-9, FR-439-AC-11)'; it merges with or after this PR, so the fix lives in QSL, not in this QSpec diff. |
+
+Disposition pass 1 verdict (head 7df84d72): **MERGEABLE after a rebase.** FND-001 fixed in 7df84d72 ('touches no location, shared or branch-local' in the rule, AC-2 and TC-389 AC-02); FND-002 deferred to QSL #1283. Main now holds #384 (6f24ddd4), and this head conflicts with it in vectors.json and TC-431: rebase as main plus this PR's BP-31 rows, then merge before #387.
