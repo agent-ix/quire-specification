@@ -34,3 +34,11 @@ Units examined:
 ## Verdict
 
 One minor finding and no major findings. The published JSON deserializes into IR's `CheckedArtifactRef`/`CheckedExtensionDefinition` (`deny_unknown_fields`, `type` renamed to `type_ref`), and its values equal IR's conformance `retention_definition`/`quota_definition`/`policy_definition`. A QSL loader can therefore deserialize each entry with serde from QSPEC_DIR at run time, with no vendored copy. The schema is stricter than IR on `minItems` and non-empty text, and FR-467 Members supports that. XD-02/XD-04 locus and pointers match the fixtures (node 5 and node 34, digest 7aa76a0f...1832). Tests: `cargo test --test checked_package_v2 --test backend_provider_v1` passes with 23 and 128 tests.
+
+## Dispositions
+
+Round 1, reviewed at 345c3426a68a36982cfd9fbe23ab35f7052a0988. Gates: quire validate gives 86, and cargo `checked_package_v2` (23 passed) and `backend_provider_v1` (129 passed) pass.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 345c342: `published_extensions()` maps every `definitions` entry of the file through `held_entry`, and `tc_951_withholding_a_published_definition_refuses_its_fixture` holds `let all = published_extensions();`. |
