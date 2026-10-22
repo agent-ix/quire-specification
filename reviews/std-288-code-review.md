@@ -47,3 +47,9 @@ Independent checks, by a Python script that does not use the harness:
 ## Verdict
 
 One low finding, and the change is otherwise correct. The derivation is implemented in one helper and used at every place that formerly hashed `identity_preimage`. No main-side reader of `identity_projection` remains in either test file. The two fixture helpers that patched both the graph and the projection now patch only the graph. The removed projection-owner refusal has no remaining caller.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at f8be235. The test now checks three things that can fail. First, the shipped preimage differs from the lock-only derivation. Second, the package id rebuilt from the lock and graph (`derive_package_id_preimage`) equals the published one. Third, `expected_locus` is checked against the document: it names a member of the candidate and none of the base, and removing it gives back the base, which the schema admits. The trace moves to FR-322-AC-100. Gates: 119 + 23 passed. |
