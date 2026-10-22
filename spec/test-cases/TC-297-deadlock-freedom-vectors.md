@@ -38,6 +38,10 @@ successor-free.
 6. Add a second `terminal` declaration for the same model alias.
 7. Change the step 3 predicate to hold at `running` and `done`.
 8. Replay a deadlock counterexample whose last state is `running`.
+9. With universe `{j, k}`, declare `terminal Finished using v on M when {
+   self.status = done }`; classify the terminal state with both objects
+   `done` and the one with `j` `done` and `k` `stuck`; repeat with universe
+   `{}`; then add a second object type with its own population to `M`.
 
 ## Expected Results
 
@@ -60,3 +64,6 @@ successor-free.
    deadlock; the item still settles `refuted` at `stuck` (FR-366-AC-7).
 8. `inconclusive`, cause `replay-parity`: `finish` and `fail` are enabled at
    `running` (FR-364-AC-6).
+9. Both `done`: intended; `j` `done`, `k` `stuck`: deadlocked; universe
+   `{}`: the initial terminal state is intended; two object types: `self`
+   refuses `missing_declaration`/`missing-name` at `self` (FR-366-AC-9).

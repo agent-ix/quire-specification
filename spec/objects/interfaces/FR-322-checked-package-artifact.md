@@ -420,6 +420,18 @@ boundary.
   [FR-341](FR-341-checked-package-state-clause-body.md)'s `state_clause`
   joins) is reported after every frame refusal and before any operation
   refusal, in the order FR-341's "Reader order" fixes.
+  **Body steps.** After every state refusal and before any operation
+  refusal, the reader runs the body steps in this one order, each over its
+  own node forms and each reporting before the next starts: the state-graph
+  step ([FR-475](FR-475-checked-package-state-graph-claim-body.md)), the
+  temporal step ([FR-370](FR-370-checked-package-temporal-clause-body.md)),
+  the abstraction step
+  ([FR-451](FR-451-checked-package-abstraction-relation-body.md)), the
+  terminal step
+  ([FR-476](FR-476-checked-package-model-terminal-declaration-body.md)) and
+  the protocol step ([FR-464](FR-464-checked-package-protocol-node-bodies.md)).
+  Each body artifact's "Reader order" fixes the checks inside its step; its
+  place among the steps is this list's.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
   re-derives by QSL FR-092's `quire.structural-node/v1` preimage the key of
@@ -551,9 +563,9 @@ boundary.
   [FR-402](FR-402-hyperproperty-obligation-identity.md),
   [FR-440](FR-440-checked-package-union-and-case-nodes.md),
   [FR-451](FR-451-checked-package-abstraction-relation-body.md),
-  [FR-476](FR-476-checked-package-model-terminal-declaration-body.md) and
   [FR-464](FR-464-checked-package-protocol-node-bodies.md) to
-  [FR-466](FR-466-checked-package-protocol-control-bodies.md). For example:
+  [FR-466](FR-466-checked-package-protocol-control-bodies.md) and
+  [FR-476](FR-476-checked-package-model-terminal-declaration-body.md). For example:
 
   | Node | `dependencies` |
   | --- | --- |
