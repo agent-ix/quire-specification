@@ -131,9 +131,8 @@ derivation paths and exposes no effective member for either. A redefinition
 whose target is not an inherited member is refused
 `invalid_model_binding`/`redefinition-target`. A supertype cycle is refused
 `invalid_model_binding`/`specialization-cycle`. A ModelSelection whose digest
-domain is not `sha256-jcs` is refused `stale_dependency`/`digest-domain-mismatch`,
-and a supplied document whose recomputed canonical digest differs from the
-selected digest is refused `stale_dependency`/`content-mismatch`. A model `variant` type
+domain is not `sha256-jcs` is refused `stale_dependency`/`digest-domain-mismatch`; model intake does not
+recompute the digest of a supplied document. A model `variant` type
 referenced by source is admitted (FR-208). Canonical ordering
 affects identity bytes only; it never changes a declaration key or resolves
 semantic ambiguity.
@@ -156,7 +155,7 @@ reports a refusal ends checking. Exhaustion ends checking as
 | --- | --- | --- |
 | FR-150-AC-1 | An inherited/redefined member links its normalized identity to every contributing original declaration and rule. | Test (TC-195) |
 | FR-150-AC-2 | Two equal effective shapes from distinct original identities remain distinguishable. | Test (TC-195) |
-| FR-150-AC-3 | A wrong digest domain, a stale package digest or a conflicting phase 4 derivation refuses normalization with its named cause. | Test (TC-195) |
+| FR-150-AC-3 | A wrong digest domain or a conflicting phase 4 derivation refuses normalization with its named cause, and a supplied document whose own canonical digest differs from the selected digest is admitted. | Test (TC-195) |
 | FR-150-AC-4 | Replaying the ordered derivation from the same domain package reproduces the `quire.model.effective-view/v2` identity, independent of IR node order. | Test (TC-195) |
 | FR-150-AC-5 | Conflicting derivations report both rule paths and expose no chosen effective member. | Test (TC-195) |
 | FR-150-AC-6 | Diamond paths reaching one original declaration collapse to one effective member with one inherit fact per direct parent, whose expansion lists every path, and each effective identity equals its published vector. | Test (TC-195) |
