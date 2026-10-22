@@ -145,7 +145,11 @@ following hold: its body is `acc OP t` or `t OP acc`; `acc` does not occur in
 `Int`, `Rational`, `Decimal` or quantity accumulator, is
 `refused { code: ill_typed, cause: operator-ineligible }` and names the failed
 commutativity and associativity obligation. A bounded accumulator is refused because
-intermediate membership would depend on visit order.
+intermediate membership would depend on visit order. In a clause that
+[FR-381](../analysis/FR-381-check-symmetric-populations.md) checks, when the
+fold's or reduction's source type contains a reference into a `symmetric` population,
+the same refusal is reported as `ill_typed`/`identity-observing-form` naming
+that population instead (FR-381 "Precedence over FR-145").
 
 This syntactic catalog is the only way a step's commutativity and associativity
 is established. A called function, a library export, a comment or any
@@ -165,7 +169,10 @@ element type must be identical, and element conversion is
 of the `K1` properties minus the `K2` properties, listed in the order `order`,
 `uniqueness`, `multiplicity`. It is recorded even when no duplicate actually
 occurs. Converting a set or bag to a sequence or an ordered set uses ascending
-canonical-key order. The authored target bound is checked after coalescing and before
+canonical-key order; in a clause that
+[FR-381](../analysis/FR-381-check-symmetric-populations.md) checks, such a
+conversion of a collection of references into a `symmetric` population is refused
+by FR-381. The authored target bound is checked after coalescing and before
 materialization.
 
 ## Accounting
