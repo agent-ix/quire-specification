@@ -9,6 +9,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-154
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-340
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-341
@@ -38,6 +40,9 @@ the member type from the resolved record.
   `ix://acme/orders/<Id>`, members `<type>/<member>`, relationships
   `ix://acme/orders/relationship/<Name>-<verb>-<Target>`). Its `sha256-jcs`
   digest is the digest every published selection of `acme/orders` carries.
+  Each operation redefinition is the redefining operation's
+  `Operation.redefines` member (FR-154): `Sub/size` and `SubSub/size` name
+  `Order/size`, and `Sub/scaled` names `Order/scaled`.
 - `proposals/checked-package-v2/model-member-type-vectors.json` carries the
   `domain_package` member, the projection of the document's declarations
   that FR-154 intake reads, derived from the document (a test derives it and
@@ -122,7 +127,7 @@ process or state machine.
 | MT-05 | `field` `history`, `Integer` `[0, 5]`, ordered, not unique | `Sequence<Integer>[0, 5]` | FR-322-AC-31 |
 | MT-06 | `field` `invoice`, typed object type `Invoice` | `Reference<Invoice>` over M3 | FR-322-AC-31 |
 | MT-07 | `operation` `size` on M1, receiver `Reference<Order>` | Resolves `Order/size`; type `Integer` | FR-322-AC-31 |
-| MT-08 | `operation` `size` on M5, which `Sub/size` redefines | Resolves `Sub/size`; type `Integer` | FR-322-AC-30 |
+| MT-08 | `operation` `size` on M5, which `Sub/size` redefines | Resolves `Sub/size`; type `Integer` | FR-322-AC-30, FR-154-AC-16 |
 | MT-09 | `operation` `scaled` on M5, redefined with a renamed parameter, called with an `Integer` argument | Resolves `Sub/scaled`; type `Integer` | FR-322-AC-30 |
 | MT-10 | `operation` `size` on M7 (`SubSub`, under `Sub`), which both `Sub/size` and `SubSub/size` redefine | Resolves the most derived `SubSub/size`; type `Integer` | FR-322-AC-30 |
 | MT-11 | `operation` `scaled` on M1 with an `Integer` argument | Resolves `Order/scaled`; type `Integer` | FR-322-AC-31 |
@@ -141,6 +146,9 @@ process or state machine.
 | MA-07 | `field` `backlog`, `[1, unbounded]` | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-08 | `operation` `reset`, with no result | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-09 | `field` `code` on M6 (`Both`), declared by both supertypes `Tagged` and `Coded` | `ambiguous_declaration`/`ambiguous-name` | FR-322-AC-30 |
+| MA-16 | `operation` `size` on M5, over the document with `Sub/size`'s `Operation.redefines` removed | `ambiguous_declaration`/`ambiguous-name`: `Order/size` and `Sub/size` are both exposed | FR-322-AC-30, FR-154-AC-16 |
+| MA-17 | `operation` `size` on M5, over the document whose `Sub/size` carries no `Operation.redefines` and whose `Sub` lists the pair `Sub/size`, `Order/size` only in an extension payload, once with `required` false and once with `required` true | `ambiguous_declaration`/`ambiguous-name` both times: an extension declares no redefinition | FR-154-AC-16 |
+| MA-18 | The document with `Sub/size`'s `Operation.redefines` set to `ix://acme/orders/Order/missing` | Selection refused `missing_declaration`/`missing-name` at `Sub/size` and `Operation.redefines` | FR-154-AC-16 |
 | MA-10 | `operation` `scaled` on M1 with no argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-11 | `operation` `scaled` on M1 with a `Boolean` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-31 |
 | MA-12 | `operation` `rate` on M8 (`Flow`, a `systems_interface`) | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
