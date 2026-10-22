@@ -110,18 +110,10 @@ receiver's `cur` and `acq`. `ra` has no gate and no memory step.
 value. Branch-local locations hold their thread's value.
 
 **Garbage collection.** After every step, every message of `ℓ` earlier in mo
-than the earliest message that any running thread's current view points to at
-`ℓ` is removed. A thread is **running** unless it is waiting at a `join`; a
-branch that has finished and is not yet joined is running. Only the current
-views of running threads pin a message. A thread waiting at a `join` pins
-nothing, since the `join` replaces its views with the join of its branches'
-views. An acquire view, a release view, a message view, a view a `send`
-carries and `S` pin nothing: a pointer below every running thread's current
-view joins into a current view as nothing, and a view that points at a removed
-message reads as, and is encoded in the state key as, pointing at the earliest
-live message of its location. No step can read a removed message. After an
-outermost `join all` only the parent's views remain and each location keeps
-one message.
+than the earliest message any view points to at `ℓ` (every thread's three
+views, every message view, and `S`) is removed. No step can read a removed
+message. After an outermost `join all` only the parent's views remain and each
+location keeps one message.
 
 ### RC11 `seq_cst` accesses: the SC event graph
 
@@ -211,7 +203,7 @@ one message.
   every view after the second fence.
 - **Key.** `P`, `F`, the frontiers and the `owed` sets are part of the state
   key, with events named by thread, kind, ordinal and message depth (the typed
-  form below).
+  form above).
 
 ### Visibility fairness
 
@@ -253,7 +245,7 @@ RC11 excludes.
 | FR-437-AC-1 | The store-buffering protocol under `ra` reaches exactly 14 states inside the `parallel` and 4 joined states, and the claim settles `refuted` with the counterexample whose last load reads `x` at depth 1. | Test (TC-390) |
 | FR-437-AC-2 | Each `ra` row of the litmus table (TC-391) gives its stated outcome: SB, MP with relaxed flags, IRIW with release/acquire and 2+2W with release stores allowed; SB with `seq_cst` fences, SB with `seq_cst` accesses, MP with release/acquire, LB, IRIW all `seq_cst` and CoRR forbidden. | Test (TC-391) |
 | FR-437-AC-3 | With every store and load `seq_cst`, the store-buffering outcome is excluded because the second load's old-message choice would close the cycle `Sx → Ly → Sy → Lx → Sx` in `P`, and the claim settles `proved`. | Test (TC-390) |
-| FR-437-AC-4 | Once every running thread's current view points at or after a message of a location, every earlier message of that location is removed in the same step, whatever its acquire, release and message views and `S` point at; after an outermost `join all` each location keeps one message; and two histories that admit the same futures share one state key. | Test (TC-393) |
+| FR-437-AC-4 | Once every view points at or after a location's mo-last message, every earlier message of that location is removed in the same step; after an outermost `join all` each location keeps one message; and two histories that admit the same futures share one state key. | Test (TC-393) |
 | FR-437-AC-5 | A lasso on which a thread keeps loading a stale message of a location without ever loading its mo-last message is rejected by visibility fairness. | Test (TC-391) |
 | FR-437-AC-6 | The litmus vectors' outcomes under `ra` include every outcome that an independent RC11 execution-graph checker allows on the same tests, and differ from the checker's only on LT-12 and LT-13, which the checker forbids and `ra` allows. | Test (TC-391) |
 | FR-437-AC-7 | On an accepting SCC with states `p`, `q`, `r` and the edges `p → q`, `q → p` and `r → q` (thread `a`, which loads nothing), and `q → r` (thread `b` loads `ℓ` from a message that is not mo-last), with `p` the only accepting state, visibility fairness removes the edge `q → r`, decomposes the SCC into `{r}` and `{p, q}`, and passes `{p, q}`, whose loop `p q p q …` is visibility-fair. | Test (TC-391) |

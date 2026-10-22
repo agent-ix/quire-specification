@@ -22,7 +22,7 @@ relationships:
 When a refinement declaration's concrete or abstract side is a protocol
 subject, the checker SHALL decide every concrete protocol step class by exactly one
 explicit deciding `step` row, refuse a class that no row decides or that two
-rows of one kind decide, and read each step's visibility and observation
+rows of one kind decide, type each node row's arguments against the node's binder record, and read each step's visibility and observation
 label from its deciding row alone.
 
 ## Inputs
@@ -66,10 +66,10 @@ decides every attempt node of that operation that has no node row, and a
 node row and an operation row for the same node are not a conflict. A
 `cattempt` class is decided the same way, by its template row or else its
 operation row. Every other class is decided by its own row. Each right side is written out, by `protocol-step-target`: an abstract operation application; an abstract protocol step,
-`node <A>::<protocol>::<node>(…)`, whose arguments are the abstract binder
-record's fields in declaration order, `_` leaving one open; `stutter`; or
+`node <A>::<protocol>::<node>(…)`, whose arguments are the node's binder
+record as stated in "The binder record of an abstract node"; `stutter`; or
 `any`. A right side naming an abstract protocol node resolves to an `attempt`,
-`event`, `send`, `receive` or `finish` node of the selected abstract protocol;
+`effect`, `event`, `commit`, `send`, `receive` or `finish` node of the selected abstract protocol;
 a `timeout`, `fence`, `parallel` or other node, or a name that is no node of that
 protocol, refuses `missing_declaration`/`missing-name` at the node. No right
 side can therefore name an abstract `timeout`, `fence` or `parallel` node: those
@@ -81,6 +81,33 @@ role, trigger or memory step kind; two node rows for one node, two template
 rows for one template, two operation rows for one operation, or two rows for
 any other class refuse `invalid_model_binding`/`conflicting-binding`, naming
 both.
+
+### The binder record of an abstract node
+
+The arguments of `node <A>::<protocol>::<node>(…)` are one expression per
+field of the node's **binder record**, in the order below, `_` leaving a field
+open. A row with no argument list leaves every field open. The grammar admits no empty list `()`. The fields by node
+kind are:
+
+| Node kind | Fields, in order | Field types |
+| --- | --- | --- |
+| `attempt` | `receiver`; one field per parameter of the node's operation, in declaration order; `result`, present only when the operation declares a result | the reference type of the type the attempt's operation name names (`on M::Cell::inc` names `M::Cell`, even when a supertype declares the operation); each parameter's declared type; the declared result type |
+| `effect`, `event`, `commit`, `finish` | when the node's binder type `T` is a record type, one field per field of `T`, in declaration order; otherwise exactly one field | each field's declared type; otherwise `T` |
+| `send`, `receive` | as `event`, over the channel's `carries` type | as `event` |
+
+So a binder of a scalar, enumeration, variant or object type is one field of
+that type, and no node kind is refused as a right side for its binder's type.
+Each argument expression is typed against its field's type after reference
+lifting, over the scope FR-375 gives the arguments of an abstract-operation
+target: the concrete receiver as `self`, the concrete operation's arguments by
+parameter name and the concrete pre-state. An argument list
+whose length differs from the field count refuses
+`ill_typed`/`operator-ineligible` at the node, retaining `expected`, the field count, and
+`actual`, the written argument count, as an operation application with the wrong number of
+arguments does. An argument whose type is not its field's type refuses
+`ill_typed`/`type-mismatch` at the argument, retaining `expected`, the field's type, and `actual`, the argument's type.
+The observation label of the visible step holds the field values the row gives
+and leaves an open field unconstrained.
 
 ### A protocol on the abstract side
 
@@ -208,6 +235,8 @@ FR-177 over the same product.
 | FR-432-AC-11 | Renaming the abstract alias `Spec` to `spec` with the list's entries renamed to match gives the same resolved list in the same order and the same node id: the alias-free order puts `Full::fin` before `lose Full::ch`, while the alias-including spellings `spec::Full::fin` and `lose spec::Full::ch` order the other way, so the rename discriminates the two orders. | Test (TC-386) |
 | FR-432-AC-12 | A refinement headed `abstract Spec` with a non-empty list reports only the last defect row (or only the not-yet-built refusal), never `missing_declaration`/`missing-name` for an entry naming a protocol. | Test (TC-386) |
 | FR-432-AC-13 | Over the abstract protocol `Full` of TC-386 IL-01, a step row whose right side is `node Spec::Full::to` (a `timeout`), `node Spec::Full::fe` (a `fence`), `node Spec::Full::par` (a `parallel`) or `node Spec::Full::Ghost` (no node) refuses `missing_declaration`/`missing-name` at the node; the same row naming an attempt, event, send, receive or finish node is admitted. | Test (TC-386) |
+| FR-432-AC-14 | Over the abstract protocol `A` of the abstract model `Spec`, headed `abstract Spec::A`, with attempt `a1` on `twice(x: Int[0, 9])` (no result), attempt `a2` on `quad(x: Int[0, 9])` with result `Int[0, 99]`, event `ev as (e: Spec::Evt)` with `Evt{p: Boolean, q: Int[0, 9]}` and event `eb as (b: Boolean)`, the binder record of `a1` is (`receiver`, `x`), of `a2` is (`receiver`, `x`, `result`), of `ev` is (`p`, `q`) and of `eb` is the one field `b`; the rows `node Spec::A::a1(self, 1)`, `node Spec::A::a2(self, 1, _)`, `node Spec::A::ev(true, 3)`, `node Spec::A::eb(true)` and `node Spec::A::a1` with no argument list are admitted. | Test (TC-386) |
+| FR-432-AC-15 | In the protocol of FR-432-AC-14, each refusal is `ill_typed`/`operator-ineligible` at the node retaining `expected` (the field count) and `actual` (the argument count): `node Spec::A::a1(self, 1, 2)` with 2 and 3, `node Spec::A::a1(self)` with 2 and 1, `node Spec::A::ev(true)` with 2 and 1, and `node Spec::A::eb(true, false)` with 1 and 2; `node Spec::A::a1(self, true)` refuses `ill_typed`/`type-mismatch` at the argument `true` with `expected` `Int[0, 9]` and `actual` `Boolean`, and `node Spec::A::ev(true, true)` does the same at its second argument with `expected` `Int[0, 9]` and `actual` `Boolean`. | Test (TC-386) |
 
 ## Dependencies
 
