@@ -181,8 +181,7 @@ tuple SHALL preserve QSL FR-163's complete `HyperTransitionTuple`, not
 project it onto `states`. FR-412 state failures SHALL preserve the complete
 probabilistic product key in every keyed certificate member and rejection.
 For a zero-universal HP-3 claim, every supplied witness tuple has at least
-two existential state keys (`n = 0`, `n + m >= 2`, ADR-023 HC-2). The
-When the universal and existential tuple arities, variable bindings or
+two existential state keys (`n = 0`, `n + m >= 2`, ADR-023 HC-2). When the universal and existential tuple arities, variable bindings or
 HP-3 witness set differ from those of the originating checked claim, the
 reader SHALL refuse the rejection before consumption; matching this global
 shape does not authorize another form.
@@ -215,7 +214,7 @@ FR-196 / ADR-028 PR-4's RFC 8785 UTF-8 octets of
 All five members are required. `model` retains the full typed canonical
 simulation state (including digital clock, deadline and tail control when
 applicable), not its digest. The remaining members retain their actual
-FR-196 closed forms, including activation, both unreduced fraction sums,
+FR-196 closed forms, including activation, the accumulator,
 actual units, and the complete scheduled identity and declaration-ordered
 drawn vector. Actual None is JSON null in that canonical body, not an
 omitted member or an invented empty/default component. A formula monitor
@@ -230,19 +229,6 @@ and model derive under QSL FR-196 PR-4, or has an absent, extra or
 inadmissible component, the reader SHALL refuse the certificate or rejection
 before consumption. Equality and sorting use complete decoded unsigned octets,
 never the base64url text's order, a local index or a digest projection.
-
-Each policy `choice` SHALL carry QSL FR-202's closed WitnessEntry:
-`{type: "choice", choice}` or `{type: "randomized", choices}`, where
-`choice` is unpadded base64url of the RFC 8785 octets of the actual FR-202
-canonical choice body, and each randomized row is `{choice, probability}`.
-An Action body is exactly FR-196's ProductAction body (including a parsed
-complete target product key for `post-state`); FreeDelays is exactly
-FR-202's conditioned support/racing-identity body. No ordinary transition
-identity or action None stands for delay, idle control or observation.
-Randomized rows SHALL be distinct, enabled and in unsigned canonical
-choice-octet order, with positive reduced probabilities summing to one.
-The actual mode, support, admissible continuation, fairness and TS-5
-progress checks remain QSL FR-201/202 obligations, not schema admission.
 
 Base64url only transports these owner-defined bytes and does not create a
 digest domain. Padded/aliased transport, non-JCS bodies, unknown tags,
@@ -572,7 +558,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-24 | A `certificate-rejected` cause is admitted with each locus form of the Certification table: each query part, `unrolling`, `base`, `step` and `step/<r>` with `r` `"2"`, `"6"` or `"18446744073709551615"`; a proof step `{part, index}` with index `"0"`, `"41"` or `"18446744073709551615"`, and one whose part is `step/4`; a product state; a hyper product state with and without its automaton key and with a witness set; a state, and under `malformed` a state record in another FR-201 domain such as `package-fingerprint`; a state-graph entry; each simulation-step form, with `null` `edge` and `verdict`, with an `edge` and `null` `verdict`, and `step-fails` carrying each verdict kind; a zone node, edge and component; and a certificate member. An `at` that is an unknown part, an empty string or an empty object; a query part `step/`, `step/02`, `step/18446744073709551616`, `unrolling/2` or `base/0`; a proof step with an unknown part, a part `step/-1`, without `part` or `index`, with another member, or whose `index` is a JSON number, `"-1"`, `"18446744073709551616"` or `"041"`; a product state whose automaton key is padded or whose model state is a bare `state` member; a hyper product state with no states; a state whose `digest` is not a `StateKey`, whose `domain` is absent or empty, or that is a bare `state` member; a state record in another domain under any rule but `malformed`; an entry whose index is a JSON number; a simulation step without its `null` `edge` or `verdict`, a `post-differs` with a `null` `edge` and a `step-fails` with a `null` `verdict`; a negative zone node; an unknown member; and a `step-fails` verdict that is another inconclusive cause, a `type`-tagged cause, a JSON-number position, an `Undefined` failure, an `Undetermined` verdict with another cause spelling or an incomplete evaluation without `limit`, or an undefined evaluation without `state_key`, are each refused. Across every digit position of `18446744073709551615`, and lengths up to 21 digits, an `index` is admitted exactly when it is the canonical decimal spelling of an unsigned 64-bit integer. | Test (TC-431) |
 | FR-331-AC-25 | A `certificate-rejected` cause is admitted with each rule at a locus listed with it, `not-refutation` and `malformed` at a query part included. An independent finite inventory enumerates all 24 owned rule spellings and equals both the schema's rule set and the positive-vector rule set; removing a rule from both fails that comparison. A rule outside the closed set, such as `state-missing`; a rule written as its variant name, `QueryMismatch`; and a rule at a locus not listed with it are each refused: `query-mismatch` at a proof step, `proof-step-invalid` at a query part, `bad-state` at a hyper product state, `witness-fails` at a state, `rank-broken` at a zone node, `bad-state` at a zone component, `rank-missing` at a certificate member, `bad-state` at a state-graph entry, `initial-mismatch` with an `edge`, `post-differs` without an `edge`, and `step-fails` without a `verdict`. | Test (TC-431) |
 | FR-331-AC-26 | A reader consuming a `certificate-rejected` cause binds it to the request's admitted checked claim and the checker that claim's classified form resolves, and refuses before consumption a rejection whose rule and locus do not belong to that checker, such as an `inequality-fails` cause on an EN-1 temporal claim or a model-only `successor-missing` for the FR-338 product-state checker, and one whose request, claim or checker context is absent, conflicting or ambiguous. A rejection whose rule and locus belong to the resolved checker is consumed as that certificate rejection and keeps its rule and locus. The global schema admits each such pair on its shape alone, so the schema run does not discharge this criterion. | Inspection (TC-431) |
-| FR-331-AC-27 | The schema keeps the identities the checkers name distinct: an HP-3 key for zero universal variables carries a present empty `states` tuple with both empty and nonempty witness sets, and absent `states` or an absent HP-3 `witness_set` is refused; an HP-1 failing transition tuple carries every edge's pre-state, transition identity, post-state and result in binding order, and a missing edge member, a protocol transition and a state-only projection are refused; an FR-412 rejection and each keyed certificate member carry the complete probabilistic product key, so two product states with equal model states and different monitor, accumulator or pending components stay distinct; and a policy choice that is open, empty or an ordinary transition identity is refused. | Test (TC-431, TC-363) |
+| FR-331-AC-27 | The schema keeps the identities the checkers name distinct: an HP-3 key for zero universal variables carries a present empty `states` tuple with both empty and nonempty witness sets, and absent `states` or an absent HP-3 `witness_set` is refused; an HP-1 failing transition tuple carries every edge's pre-state, transition identity, post-state and result in binding order, and a missing edge member, a protocol transition and a state-only projection are refused; an FR-412 rejection and each keyed certificate member carry the complete probabilistic product key, so two product states with equal model states and different monitor, accumulator or pending components stay distinct. | Test (TC-431, TC-363) |
 | FR-331-AC-28 | A model-subject item with no initial state, and one with zero instances, each record `inconclusive` with the cause `no-initial-state` and `no-instance` respectively, spelled exactly so; the temporal-outcome vector carries a result entry of each, and a `no-instances` spelling is refused. | Test (TC-431) |
 | FR-331-AC-29 | A hybrid item's solver that exhausts `hybrid.limits.max_solver_steps` records `incomplete` with `limit-reached` whose `limit` is `max_solver_steps` and whose `setting` is `hybrid.max_solver_steps`; one that exhausts `max_solver_time` records `incomplete` with `timed-out`; a `limit-reached{limit: max_solver_time}` or a `time-limit` cause on a hybrid item is refused `invalid_result`/`unknown-cause`; a fractional `max_solver_time`, a zero budget, an unknown `hybrid.limits` member and an empty `hybrid` or `limits` are refused before consumption; two requests differing only in `max_solver_time` have equal request identity. | Test (TC-373) |
 | FR-331-AC-30 | The descriptor schema admits `memory_models` as a nonempty duplicate-free subset of `sc`, `tso` and `ra` on a descriptor that advertises `temporal-satisfaction`, and refuses an empty `memory_models`, a repeated or unknown model, and `memory_models` on a descriptor that does not advertise `temporal-satisfaction`. | Test (TC-431) |
