@@ -58,6 +58,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-spec-language/FR-120
     type: references
+  - target: ix://agent-ix/quire-spec-language/FR-280
+    type: references
+  - target: ix://agent-ix/quire-spec-language/FR-185
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-300
+    type: references
   - target: ix://agent-ix/quire-spec-language/FR-179
     type: references
   - target: ix://agent-ix/quire-spec-language/FR-169
@@ -312,6 +318,30 @@ FR-364 and FR-368 read: each document with its `sha256-jcs` digest, ordered
 by digest, each digest once. `request.deadline_ms` is the provider deadline
 in milliseconds (FR-462).
 
+### In-process providers
+
+An in-process provider is one whose engine runs in the producer's own
+process over the producer's checked package, such as a QSL `analyze` engine
+that `prove` routes to (QSL FR-280). The producer SHALL hand an in-process
+provider the request's `manifest`, `deadline_ms` and items as typed values,
+together with its checked package, and no `package`, `package_id`,
+`dependencies` or `provision` member: the checked package and its resolved
+dependencies are already in that process. Such a request is never written as
+a request frame, so the "Package bytes" rules do not apply to it, and a
+request frame that lacks `package` or `package_id` still refuses before
+consumption (FR-331-AC-18).
+
+The in-process form exists because some checked packages have no v2 bytes:
+the `package` operation refuses a package that declares a random parameter,
+a workload, a reward or a probabilistic claim (QSL FR-185) while its checked
+package remains, and a statistical engine decides the probabilistic claim
+over that checked package. An in-process provider's results, dispositions,
+counterexamples and accounting are the members this envelope defines for any
+provider.
+
+An in-process request carries no `package` member, so it has no request
+identity and its result SHALL not be reused for another request.
+
 ### Items
 
 - `request_index` is the item's zero-based position. Dispositions, results,
@@ -564,6 +594,7 @@ out-of-domain values and non-canonical encodings refuse before consumption. A `c
 | FR-331-AC-30 | The descriptor schema admits `memory_models` as a nonempty duplicate-free subset of `sc`, `tso` and `ra` on a descriptor that advertises `temporal-satisfaction`, and refuses an empty `memory_models`, a repeated or unknown model, and `memory_models` on a descriptor that does not advertise `temporal-satisfaction`. | Test (TC-431) |
 | FR-331-AC-31 | An accounting record whose `warnings` hold `{code: memory.load-buffering-shape, load, store}` with `load` and `store` transition identities is admitted; one missing `store`, one with an extra member and one with a `load` that is not a transition identity are refused. | Test (TC-431) |
 | FR-331-AC-32 | A temporal request item whose `extent` is `unbounded` with an `infinite-trace` domain, `finite_bound_available` false and no `bounds`, and whose `subject.proof_bounds` holds a `population` `cardinality` bound, is admitted by the request schema; the same item with `subject.proof_bounds` empty is also admitted. That the bound moves nothing into `extent.bounds` and changes neither the classification nor `finite_bound_available` is an obligation of the request's producer, which this wire criterion does not check. | Test (TC-431) |
+| FR-331-AC-33 | An in-process request carries the manifest, `deadline_ms` and items with the producer's checked package and no `package`, `package_id`, `dependencies` or `provision` member; its results carry the members a process provider's do; its result is not reused for a second request of the same items; and a request frame of the same items without `package` and `package_id` refuses before consumption. | Test (TC-220) |
 
 ## Dependencies
 

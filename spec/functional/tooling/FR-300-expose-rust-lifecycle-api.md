@@ -11,6 +11,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-461
     type: references
+  - target: ix://agent-ix/quire-specification/FR-331
+    type: references
+  - target: ix://agent-ix/quire-spec-language/FR-280
+    type: references
 ---
 
 # FR-300: Expose a stable typed Rust lifecycle API
@@ -54,7 +58,7 @@ a clock, or silently performs a later stage.
 | `analyze` | Decide claims over every behaviour with an in-process engine | the checked package, claim items, the subject binding, engine limits | one FR-331 terminal record per item |
 | `lower` | Read the emitted package into target-neutral IR | the emitted package and its expected `package_id` | IR nodes or a typed refusal |
 | `generate` | Emit backend artifacts from IR | IR nodes, the routed backend per item, the generation target | FR-331 `artifacts` with source maps; an unsupported item emits nothing |
-| `prove` | Negotiate, generate, run, replay and settle | the emitted package from the same run's `check`, claim items, the provider registry, provider limits | one FR-331 terminal record per item |
+| `prove` | Negotiate, generate, run, replay and settle | the checked package from the same run's `check` and, when `package` emits it, the emitted package; claim items, the provider registry, provider limits | one FR-331 terminal record per item |
 | `replay` | Re-execute a counterexample | a replay request with its byte provision (FR-323) | the replay result |
 | `inspect` | Build a typed view of a package, node, outcome, counterexample, trace or state graph | the subject and a view selector | the view |
 | `render` | Turn an outcome or view into text or Graphviz DOT | the outcome or view and the source byte provision | bytes |
@@ -67,6 +71,14 @@ diagnostics and, on success, the stage artifact. Artifacts are immutable,
 thread-safe values, and each operation requires its exact predecessor type,
 so a wrong-stage input fails to compile. Every operation is a function of its
 request except for cancellation.
+
+`prove` hands a process provider the emitted package and an in-process
+provider the checked package (FR-331, "In-process providers"). An item routed
+to an in-process engine is therefore served over a checked package that
+`package` refuses to emit, such as one that declares a probabilistic claim
+(QSL FR-185); an item routed to a process provider over such a package has
+no package bytes to send and settles `unsupported`, naming its capability
+kind and backend.
 
 Each serialized outcome or view carries a `format` identity that names its
 document type, for example `quire-outcome/1`. A reader accepts exactly the
@@ -91,6 +103,7 @@ inside `prove` or `analyze` settles FR-331 `incomplete` with its cause kept.
 | FR-300-AC-3 | The same request through the library and through the CLI gives byte-equal JSON outcome documents. | Test (TC-220) |
 | FR-300-AC-4 | Cancelling a running `check`, `execute`, `analyze` or `prove` stops it within one charge; `check` and `execute` return the typed `cancelled` failure with cause `requested` and emit no partial artifact, and each open `analyze` or `prove` item settles `incomplete` with the cancellation cause. | Test (TC-220) |
 | FR-300-AC-5 | A serialized outcome carries its `format` identity, and a reader given a document with any other format identity refuses it. | Test (TC-220) |
+| FR-300-AC-6 | For a checked package that declares a `statistical` probabilistic claim and that `package` refuses to emit, `prove` routing the claim's item to the in-process statistical engine returns one `measured` terminal record equal to the one `analyze` returns for that item, checked package, binding and limits; the same item with a process provider named as its backend settles `unsupported`, naming `probabilistic-satisfaction` and that backend, and no request frame is written. | Test (TC-220) |
 
 ## Dependencies
 
