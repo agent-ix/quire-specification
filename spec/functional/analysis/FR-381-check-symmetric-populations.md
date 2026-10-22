@@ -73,6 +73,11 @@ population:
   FR-145 admits no other proof of order independence. A `fold` or `reduce`
   whose step is in the catalog is not a breaking form and is checked as
   FR-145 checks it;
+- a `convert` of a `Set` or `Bag` whose element type contains such a
+  reference to a `Sequence` or an ordered set, because
+  [FR-145](../expressions/FR-145-convert-and-query-collections.md) orders the
+  result by ascending canonical key, which for references is identity order,
+  so every later traversal of the result depends on identity;
 - a conversion of such a reference to a value of another type, including
   text;
 - a reference literal naming a key of the population.
@@ -90,15 +95,19 @@ naming the form and the population. Over a population that is not annotated,
 each form is checked by the rules that apply without the annotation, and no
 form is refused as `identity-observing-form`.
 
-**Precedence over FR-145.** A `fold` or `reduce` over a `Set` or `Bag` whose
-step is outside FR-145's catalog is refused in every unit, so it is reported
-once, with one cause decided per fold from the fold's source type: when the
-source's static type contains a reference into an annotated population, the
-refusal is `ill_typed`/`identity-observing-form` naming that population;
-otherwise it is FR-145's `ill_typed`/`operator-ineligible`. A unit that reads
-an annotated and an unannotated population therefore reports each fold by
-its own source. The identity-observing cause takes precedence because it
-names the population the author can unannotate or restructure.
+**Precedence over FR-145.** When a clause the check covers contains a `fold`
+or `reduce` over a `Set` or `Bag` whose step is outside FR-145's catalog and
+whose source's static type contains a reference into an annotated population,
+the checker SHALL report `ill_typed`/`identity-observing-form` naming that
+population, and SHALL NOT also report FR-145's `operator-ineligible` for that
+fold. When the source's static type contains no reference into an annotated
+population, the checker SHALL report FR-145's `ill_typed`/`operator-ineligible`.
+The cause is decided per fold from the fold's source type, so a unit that
+reads an annotated and an unannotated population reports each fold by its own
+source. The identity-observing cause takes precedence because it names the
+population the author can unannotate or restructure. A `fold` or `reduce`
+outside the clauses listed under the scope of the check, such as in a function
+body, is checked by FR-145 alone and reports `operator-ineligible`.
 
 ## Acceptance Criteria
 
@@ -109,6 +118,7 @@ names the population the author can unannotate or restructure.
 | FR-381-AC-3 | A reference literal naming a key of a symmetric population, and a conversion of such a reference to text, each refuse `ill_typed`/`identity-observing-form` at their node, naming the population, in a precondition, a postcondition, an invariant, a temporal atom, a `terminal when` predicate, a state constraint and a refinement row. | Test (TC-320) |
 | FR-381-AC-4 | Reference equality, field read, `deref`, `reaches`, membership, `count`, `exists`, `forall` and `size` over a symmetric population are admitted. | Test (TC-320) |
 | FR-381-AC-5 | In one unit that reads the symmetric population `config_history` and a second population `drafts` that is not annotated, the same element-choosing `fold` over a `Set<Reference<ConfigVersion>>` field refuses `ill_typed`/`identity-observing-form` naming `config_history`, and over a `Set<Reference<Draft>>` field refuses `ill_typed`/`operator-ineligible`, each at its own `fold` node. | Test (TC-320) |
+| FR-381-AC-6 | A `convert` of a `Set<Reference<ConfigVersion>>` field of a symmetric population to a `Sequence` or to an ordered set refuses `ill_typed`/`identity-observing-form` at the `convert` node, naming the population, including when the converted value is folded with an element-choosing step; a `convert` of that field to a `Bag`, and a `convert` of a `Set<Reference<Draft>>` field of an unannotated population to a `Sequence`, are admitted. | Test (TC-320) |
 
 ## Dependencies
 

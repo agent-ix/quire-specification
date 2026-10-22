@@ -145,12 +145,11 @@ following hold: its body is `acc OP t` or `t OP acc`; `acc` does not occur in
 `Int`, `Rational`, `Decimal` or quantity accumulator, is
 `refused { code: ill_typed, cause: operator-ineligible }` and names the failed
 commutativity and associativity obligation. A bounded accumulator is refused because
-intermediate membership would depend on visit order. When the fold's or
-reduction's source type contains a reference into a `symmetric` population,
+intermediate membership would depend on visit order. In a clause that
+[FR-381](../analysis/FR-381-check-symmetric-populations.md) checks, when the
+fold's or reduction's source type contains a reference into a `symmetric` population,
 the same refusal is reported as `ill_typed`/`identity-observing-form` naming
-that population instead
-([FR-381](../analysis/FR-381-check-symmetric-populations.md) "Precedence over
-FR-145").
+that population instead (FR-381 "Precedence over FR-145").
 
 This syntactic catalog is the only way a step's commutativity and associativity
 is established. A called function, a library export, a comment or any

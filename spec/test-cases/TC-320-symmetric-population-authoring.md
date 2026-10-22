@@ -45,6 +45,11 @@ of `ConfigVersion` objects (`versionNumber: Int[0, 2]`,
    not annotated, a field `others: Set<Reference<Draft>>`, and a second
    postcondition choosing an element by the same `fold` step over
    `self.others`, beside case 2's `fold` over `self.peers`.
+7. With the annotation, add a postcondition that folds, with an
+   element-choosing step, over `convert<Sequence<Reference<ConfigVersion>>[0,3]>(self.peers)`;
+   then one with `convert<OrderedSet<Reference<ConfigVersion>>[0,3]>(self.peers)`;
+   then one with `convert<Bag<Reference<ConfigVersion>>[0,3]>(self.peers)`;
+   then one with `convert<Sequence<Reference<Draft>>[0,3]>(self.others)`.
 
 ## Expected Results
 
@@ -60,4 +65,7 @@ Case 4 is admitted (FR-381-AC-4). Case 5 refuses the request
 `invalid_runtime_input`/`invalid-value`, naming the declaration
 (FR-382-AC-3). Case 6 refuses `ill_typed`/`identity-observing-form` naming
 `config_history` at the `self.peers` fold and `ill_typed`/`operator-ineligible`
-at the `self.others` fold (FR-381-AC-5).
+at the `self.others` fold (FR-381-AC-5). Case 7 refuses the first two
+`ill_typed`/`identity-observing-form` at the `convert` node naming
+`config_history`, and admits the `Bag` conversion and the `Draft` sequence
+conversion (FR-381-AC-6).
