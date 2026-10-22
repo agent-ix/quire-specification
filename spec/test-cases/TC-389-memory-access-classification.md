@@ -15,7 +15,7 @@ relationships:
 
 Check shared and branch-local locations, access classes, admitted orderings,
 the one-location rule at check time and at the pre-check, the shared-guard
-rule, access application over the thread observation, and fences.
+rule, the reader rule, access application over the thread observation, and fences.
 
 ## Test Procedure
 
@@ -38,6 +38,7 @@ item's settlement.
 | AC-09 | under `tso`, an RMW `cas(0, 1)` on `x` whose post-state leaves `x` unchanged because `x = 1` | a load with the read part of its ordering: no locked write occurs |
 | AC-10 | `fence F ordering relaxed;` | `refused { code: invalid_syntax, cause: unexpected-token }` at `relaxed` |
 | AC-11 | `fence F ordering seq_cst;` | a `fence` step with transition identity members `thread`, `node` and `ordering`, uncounted for intervals |
+| AC-12 | under a `tso` selection, a branch holding an `event` whose constraint reads `x.v` beside the branch whose attempt stores `x.v`; the same under `sc`; an `event` reading a field no other branch accesses; a `finish` reading `x.v` after the join | the first settles `unsupported`, cause `weak-access-shape`, shape `multi-location` naming the event and `(x, v)`; the other three are admitted |
 
 ## Expected Results
 
