@@ -188,7 +188,8 @@ decimal, unit-target and integer-target membership sentences of
 `quire.value.accounting/v1` to carry the same `sum` carve-out on
 `decimal_out_of_domain` and the unit target refusals (FR-140-AC-5).
 Validate a Diagnostic entry carrying each of `type-mismatch`,
-`missing-selection`, `unsupported-selection` and `wrong-selection-role` with
+`missing-selection`, `unsupported-selection`, `wrong-selection-role`,
+`declaration-form`, `expression-form` and `not-yet-implemented` with
 every code of the schema's code enum (FR-322-AC-47).
 Recompute the QSL FR-092 key of every structural node, grouped or not, of
 every published positive fixture, and the recursive-records
@@ -371,6 +372,20 @@ The owner join, projection and equality behaviour of an event type (FR-322-AC-68
 | ET-03 | ET-01 with a `SourceOwner` and no `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 | ET-04 | ET-01 with a `declaration` and a `ModelOwner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 
+### Node dependency vectors
+
+Rebuild each node's `dependencies` by FR-322's `dependencies` rules 1 to 4 (the body artifact's own list for a form that states one) and compare it with the list as written. Each mutation patches the node's projection entry and recomputes `package_id` before reading.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| DP-01 | Every node of every published positive fixture | The written list equals the rebuilt list; each fixture's `package_id` recomputes | FR-322-AC-96 |
+| DP-02 | `positive-all-families.json`'s `expression`/`reference` node `7916…` and `correspondence`/`source_locus` node `eda3…` | Each lists `8a2a…`, its body target | FR-322-AC-96 |
+| DP-03 | `positive-all-families.json`'s `bounded_domain`/`integer_range` node `652c…`; `positive-operation-identities.json`'s `bounded_domain`/`model_population` node `1ffe…` | `652c…` lists `07f6…`, its `semantic_type`; `1ffe…` lists `0ec8…` alone | FR-322-AC-96 |
+| DP-04 | DP-02's `expression`/`reference` node with `dependencies: []` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
+| DP-05 | DP-03's `integer_range` node with `dependencies: []` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
+| DP-06 | DP-03's `model_population` node with the Integer node `07f6…` added | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
+| DP-07 | a `value`/`parameter` node of `positive-all-families.json` listing its `semantic_type` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
+
 Add the lock's `refinement_internals` member to the all-families package: one
 object for `R` with two spellings in canonical order, and the package with the
 member absent; then the mutations `[]`, `null`, an object with `"internal": []`,
@@ -382,6 +397,17 @@ Check a compiler-derived node: a refinement owner with step rows `R0` and `R1` f
 Scan every published producer-output package (every published positive package except the reader-admission fixture `positive-integer-literal-references.json`) for the applications of `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` and `ne`: require each integer literal operand typed at the builtin Integer node to be an inline `literal` term and no such operand to reference a `value`/`literal` node, and require the `three` application of the two-owner packages and the `integer.mul` and `integer.add` applications of the operation package to hold their operands inline, and the `7` and `-2` literal nodes to be present (FR-322-AC-92). For each operator the rule lists in FR-322 "Integer literal operands", require an `inline_literal_cases` entry whose preimage is closed under the application-node schema, whose JCS SHA-256 is recorded and differs from `reference_form_sha256`, and no entry for an operator the rule omits. Read `positive-integer-literal-references.json`, the reference form of the `three` application, through the reader: it is admitted, and its `three` node identity and `package_id` differ from the inline form's (FR-322-AC-93).
 
 Check the refinement step occurrences of `refinement-step-occurrence-vectors.json`: `RS-01` (admitted, with an entry of another node ignored) and `RS-02` (rows written in the order `R1`, `R0` against the `steps` order `R0`, `R1`) are admitted with ordinal 0 at the `declaration` region and ordinal `i + 1` at the region of the row at `steps` position `i` (FR-322-AC-88, FR-322-AC-89); `RS-03` (ordinal 3), `RS-04` (a repeated key), `RS-05` (ordinal 1 with the other row's region), `RS-06` (an `expression` occurrence at ordinal 1) and `RS-07` (a `declaration` occurrence at ordinal 1) are each refused `invalid_package`/`invalid-value` at the offending `source_map` entry, and `RS-08` (ordinal 2 omitted), `RS-09` (the `declaration` occurrence omitted) and `RS-10` and `RS-11` (`generated` ordinals 0 and 1 omitted) at `/source_map` (FR-322-AC-90); `RS-12` (a history field, `declaration` alone) and `RS-16` (the `Counter` rows `value` and `total` written in the other order) are admitted, and `RS-13` (an `any` row), `RS-14` (a hidden field: the abstract `Counter` has fields `total` and `value` and the `objects` entry has a row for `value` alone), `RS-15` (a history field with a `generated` entry) and `RS-17` (two `objects` entries of which only the second has a hidden field) are each refused at their first `generated` entry (FR-322-AC-91).
+
+### Graph order vectors
+
+Graph order is the producer's order of `semantic_graph.nodes`; the reader does not sort it, and it enters `package_id` through the identity projection (FR-322 `semantic_graph`). Each vector rebuilds the identity projection in the new graph order and recomputes `package_id` before reading.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| GO-01 | Each published positive fixture with no `recursion_group`, as published | Admitted by the full reader; every such fixture except `positive-nominal-identities.json` lists its nodes out of ascending node-id digest order | FR-322-AC-95 |
+| GO-02 | GO-01's fixtures with `semantic_graph.nodes` reversed | Admitted; `package_id` differs from the published one | FR-322-AC-95 |
+| GO-03 | GO-01's fixtures with `semantic_graph.nodes` sorted ascending by node-id digest | Admitted; `package_id` differs from the published one exactly when the sort changes the node sequence | FR-322-AC-95 |
+| GO-04 | `positive-all-families.json` with its `identity_projection` reversed and the graph kept | The rebuilt projection differs from the recorded one and the recorded `package_id` does not recompute | FR-322-AC-95 |
 
 ## Expected Results
 
@@ -430,7 +456,8 @@ or prefix one outcome in every family. The Diagnostic schema admits
 `type-mismatch` only with `ill_typed`, `missing-selection` only with
 `missing_import` and `missing_declaration`, and `unsupported-selection` and
 `wrong-selection-role` only with `unknown_language`, `unknown_edition` and
-`unknown_profile`.
+`unknown_profile`, and `declaration-form`, `expression-form` and
+`not-yet-implemented` only with `unsupported_construct`.
 Every structural node, grouped or not, of every published positive fixture
 carries the key QSL's FR-092 key function mints, the recursive-records
 group labels are their group digests, and the full reader admits every
