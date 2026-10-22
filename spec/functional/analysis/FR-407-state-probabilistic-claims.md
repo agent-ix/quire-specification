@@ -69,9 +69,8 @@ at the parameter's name. Its scheduler clause is exactly one of
 constraints ([FR-406](FR-406-interpret-probabilistic-models.md)). The shared
 grammar's `under W` takes no fairness items, so source text that writes
 `under W fair weak Op` refuses `invalid_syntax`/`unexpected-token` at the
-first `fair`. A claim that reaches the frontend by any other route with a
-workload and a fairness set refuses with
-`invalid_probabilistic_model`/`fairness-under-workload`.
+first `fair`; no other input carries a workload together with a fairness
+set.
 A clause naming a workload of another model refuses with
 `invalid_probabilistic_model`/`foreign-workload`.
 
@@ -90,10 +89,18 @@ decides. It is one of:
 - a comparison `M <= c` or `M >= c` of a bounded measure `M` with a threshold
   `c` of `M`'s type.
 
-A formula event whose operators are not all interval operators with a closed
-interval, or whose profile is not a bounded profile, refuses with
+A formula event whose operators are not all interval operators with an
+interval bounded above, or whose profile is neither a bounded profile nor the
+timed profile, refuses with
 `invalid_probabilistic_model`/`unbounded-event`, and the diagnostic states
-that a probabilistic event needs a finite window. The one exception is the
+that a probabilistic event needs a finite window. A bounded-window formula
+under the timed profile is an admitted event; a strict timed interval is
+admitted by the frontend and settles `unsupported`,
+`strict-clock-constraint` ([FR-421](../temporal/FR-421-check-probabilistic-timed-claims-exactly.md)).
+An interval-less operator under a profile other than the infinite-trace
+profile never reaches this check: the temporal frontend refuses it first with
+`unsupported_construct` ([FR-048](../foundation/FR-048-bind-native-temporal-syntax.md),
+FR-048-AC-9). The one exception to `unbounded-event` for the infinite-trace profile is the
 reachability forms of the forms table: under the infinite-trace profile an
 event whose root is one `eventually`, `until` or `always` with no interval is
 read as that form, and every other event under that profile, such as
@@ -197,16 +204,16 @@ request settings and are outside the obligation identity.
 | FR-407-AC-3 | `quantile q of M <= c` and `probability >= q [M <= c]` conditioned on activation give the same verdict on every vector; the `P95` distribution of TC-351 gives `Pr(M <= 5 ms) = 24233/25000`. | Test (TC-353) |
 | FR-407-AC-4 | A probability, quantile, mean-of-fraction or long-run threshold of 0 or 1 refuses `invalid_probabilistic_model`/`qualitative-threshold`; a reward threshold in another unit of the same dimension converts exactly. | Test (TC-353) |
 | FR-407-AC-5 | A claim with all three confidence parameters is admitted with them in its obligation identity; a partial set refuses `invalid_probabilistic_model`/`partial-confidence`; two confidences of one property are two obligation identities. | Test (TC-353) |
-| FR-407-AC-6 | Changing the workload or the fairness set changes the obligation identity, and a fairness set under a workload refuses `invalid_probabilistic_model`/`fairness-under-workload`; changing the evidence kind, method or a budget does not. | Test (TC-353) |
+| FR-407-AC-6 | Changing the workload or the fairness set changes the obligation identity, changing the evidence kind, method or a budget does not. | Test (TC-353) |
 | FR-407-AC-7 | A weighted long-run fraction and a `weighted by delay` fraction are admitted and evaluate as the weighted ratio. | Test (TC-353, TC-374) |
 | FR-407-AC-8 | `quantile q of M >= c` reduces to the strict bound `Pr(M < c | activated) < q`: with `M` equal to 1 or 3 with probability `1/2` each, `quantile 0.5 of M >= 3` is false (the quantile is 1, and `Pr(M < 3) = 1/2` is not below `1/2`), and `quantile 0.5 of M >= 1` is true. | Test (TC-353, TC-360) |
 | FR-407-AC-9 | A quantile claim, in either form, over a subject whose activation has probability 0 holds, under a workload and under every scheduler. | Test (TC-353) |
 | FR-407-AC-10 | A claim whose subject is a trace subject refuses `invalid_probabilistic_model`/`trace-subject` naming window aggregates; one whose `using` alias selects a profile that is not a temporal profile refuses `not-temporal-profile` naming it; and an `over` parameter of a scalar type, or of an object type no population of the model admits, refuses `over-not-object-type` at the parameter's name, while `over (m: Node)` over `Health` is admitted. | Test (TC-353) |
-| FR-407-AC-11 | Under the event-position false-extension profile, an event `always holds(n.healthy)` with no interval refuses `invalid_probabilistic_model`/`unbounded-event`; under the infinite-trace profile `[eventually holds(P)]` is admitted as a reachability form while `[eventually[0, 5] holds(P)]` refuses `unbounded-event` and `[eventually eventually holds(P)]` and `[eventually true]` refuse `not-state-predicate` at the operand. | Test (TC-353) |
+| FR-407-AC-11 | Under the event-position false-extension profile, an event `always holds(n.healthy)` with no interval refuses `unsupported_construct` at the temporal frontend (FR-048-AC-9) and never reaches the claim check; under the timed profile a bounded-window event `eventually[0 ms, 4 ms] holds(P)` is admitted; under the infinite-trace profile `[eventually holds(P)]` is admitted as a reachability form while `[eventually[0, 5] holds(P)]` and `[eventually[2, *] holds(P)]` refuse `invalid_probabilistic_model`/`unbounded-event` and `[eventually eventually holds(P)]` and `[eventually true]` refuse `not-state-predicate` at the operand. | Test (TC-353) |
 | FR-407-AC-12 | `Monthly` with the event `fraction holds(v.up) over [0, 10000] >= rational(999, 1000)` is admitted; the same event with threshold `0`, `1` or `rational(3, 2)` refuses `invalid_probabilistic_model`/`fraction-bound-out-of-range` naming the bound, never `qualitative-threshold`. | Test (TC-353) |
 | FR-407-AC-13 | A `quantile 0.95 of (fraction holds(v.up) over [0, 10]) <= rational(1, 2)` claim refuses `invalid_probabilistic_model`/`quantile-over-fraction`. | Test (TC-353) |
 | FR-407-AC-14 | `NoFault` with `indifference 0.002` (`θ + ι = 1.001`) refuses `invalid_probabilistic_model`/`invalid-confidence` naming `indifference`, and with `alpha 1` it refuses `invalid-confidence` naming `alpha`. | Test (TC-353) |
-| FR-407-AC-15 | The source text `under Steady fair weak Server::tick` refuses `invalid_syntax`/`unexpected-token` at `fair`, and `under every scheduler fair weak Server::tick` is admitted with the fairness set in its obligation identity. | Test (TC-353) |
+| FR-407-AC-15 | `LongRun` with its scheduler clause written `under Steady fair weak Server::tick` refuses `invalid_syntax`/`unexpected-token` at `fair`, and with it written `under every scheduler fair weak Server::tick` it is admitted with the fairness set in its obligation identity. | Test (TC-353) |
 
 ## Dependencies
 

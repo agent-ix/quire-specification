@@ -33,7 +33,7 @@ Run each vector through the real local Rust boundary of the frontend or provider
 | PD-08 | An operation of a dense model with no `delay` member | Admitted; its delay is nondeterministic (FR-420) |
 | PD-09 | Two packages differing in one workload weight, one support value, or one reward expression | Every obligation reading the changed element has a different identity; other obligations keep theirs |
 | PD-10 | `random Server::attempt(d) ~ { 1 ms: 1 };` followed by `random Server::attempt(d) ~ { 3 ms: 1 };` | `invalid_probabilistic_model`/`duplicate-distribution` at the second declaration, naming `Server::attempt` and `d` |
-| PD-11 | `reward duration on Server::attempt = d;` followed by a second `reward duration on Server::attempt = d;`; then `reward duration` on `Server::attempt` and on `Server::request`, both `Quantity<ms>` | `invalid_probabilistic_model`/`duplicate-reward` at the second declaration, naming `Server::attempt` and `duration`; admitted |
+| PD-11 | `reward duration on Server::attempt = d;` followed by a second `reward duration on Server::attempt = d;`; then `reward duration on Server::attempt = d;` followed by `reward duration on Server::request = 0 ms;`, both `Quantity<ms>` | `invalid_probabilistic_model`/`duplicate-reward` at the second declaration, naming `Server::attempt` and `duration`; admitted |
 
 ## Expected Results
 
