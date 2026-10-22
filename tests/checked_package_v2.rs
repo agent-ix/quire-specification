@@ -8248,7 +8248,7 @@ fn published_v2_packages() -> [(&'static str, Value); 6] {
     ]
 }
 
-#[trace("TC-233", "interface-004-AC-1")]
+#[trace("TC-233", "interface_004-AC-1")]
 #[test]
 fn tc_233_every_v2_application_names_exactly_one_catalogued_operation_identity() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
@@ -8291,7 +8291,7 @@ fn tc_233_every_v2_application_names_exactly_one_catalogued_operation_identity()
     }
 }
 
-#[trace("TC-233", "interface-004-AC-2")]
+#[trace("TC-233", "interface_004-AC-2")]
 #[test]
 fn tc_233_operation_identity_law_and_mode_bind_node_and_package_ids() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
