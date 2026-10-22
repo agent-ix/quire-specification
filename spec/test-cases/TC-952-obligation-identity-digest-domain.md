@@ -29,9 +29,12 @@ of CG's obligation record, `source_span` and the run configuration included.
   (`node_id`, `expression`, 0), one obligation kind and one argument.
 - `F1`: a function, its `declaration` occurrence key (function node id,
   `declaration`, 0), one obligation kind and one argument.
-- `P1`: a parity claim, the application node and its `expression` occurrence
-  key, with operands `x: Int[0, 9]` at position 0 (`graph_child`) and the
-  unwrapped integer literal `1` at position 1 (`inline_literal`, range (1, 1)).
+- `P1`: a parity claim on the integer addition `p + 1`, where `p` is an
+  Integer-typed parameter with declared domain `Int[0, 9]`: the application
+  node and its `expression` occurrence key, with operands `p` at position 0
+  (`graph_child`) and the integer literal `1` at position 1 (`inline_literal`,
+  range (1, 1)). Addition is not an equality against a bounded peer, so the
+  literal stays unwrapped.
 - `S1`: a per-step protocol record, `subject_kind`
   `protocol-refinement-step` and a canonical `StepSimulationRecord` with two
   hypotheses, carried with an occurrence key.
