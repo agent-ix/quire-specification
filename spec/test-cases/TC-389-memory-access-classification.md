@@ -29,7 +29,7 @@ item's settlement.
 | Vector | Protocol | Expected result |
 | --- | --- | --- |
 | AC-01 | `SB` of TC-390 | `Sx`, `Sy` atomic stores; `Ly`, `Lx` atomic loads; `(x, v)` and `(y, v)` shared; `(c1, r)` and `(c2, r)` branch-local |
-| AC-02 | an attempt that touches no data place with `ordering relaxed`; an attempt that only writes with `ordering acquire`; an attempt that only reads with `ordering release`; an RMW `incr` with no ordering; a `release` attempt that reads `x.v` and writes the register `r` | the first three refuse `ill_typed`/`operator-ineligible` at check time naming the attempt and ordering; the last two are admitted at check time (FR-435-AC-2) |
+| AC-02 | an attempt that touches no location, shared or branch-local, with `ordering relaxed`; an attempt that only writes with `ordering acquire`; an attempt that only reads with `ordering release`; an RMW `incr` with no ordering; a `release` attempt that reads `x.v` and writes the register `r` | the first three refuse `ill_typed`/`operator-ineligible` at check time naming the attempt and ordering; the last two are admitted at check time (FR-435-AC-2) |
 | AC-03 | each class with each admitted ordering, and a local attempt with none | admitted |
 | AC-04 | `parallel memory tso` with an attempt writing two shared fields of its receiver | refuses `unsupported_construct`/`declaration-form` naming both locations |
 | AC-05 | the AC-04 attempt under source `sc`, request selecting `tso` | settles `unsupported`, cause `weak-access-shape` with its site, transition and shape `multi-location` naming both locations |

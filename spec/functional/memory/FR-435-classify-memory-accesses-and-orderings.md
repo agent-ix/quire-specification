@@ -98,12 +98,12 @@ instantiates the footprint. At check time the checker SHALL refuse an
 ordering only when no class the footprint leaves possible takes it, with
 `ill_typed`/`operator-ineligible` naming the attempt and the ordering:
 
-- any ordering on an attempt that touches no data place;
+- any ordering on an attempt that touches no location, shared or branch-local;
 - `release` or `acq_rel` on an attempt that writes nothing;
 - `acquire` or `acq_rel` on an attempt that reads nothing.
 
 The checker SHALL admit every other ordering, and an absent ordering, on an
-attempt that touches a data place: an RMW with no ordering and a `release`
+attempt that touches a location, shared or branch-local: an RMW with no ordering and a `release`
 attempt that reads a field and also writes a register field are admitted at
 check time.
 
@@ -174,7 +174,7 @@ current-view message.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-435-AC-1 | In the store-buffering protocol, `Sx` and `Sy` classify as atomic stores, `Ly` and `Lx` as atomic loads, `(x, v)` and `(y, v)` as shared and `(c1, r)` and `(c2, r)` as branch-local. | Test (TC-389) |
-| FR-435-AC-2 | At check time, an ordering on an attempt that touches no data place, `release` on an attempt that only reads and `acquire` on an attempt that only writes each refuse `ill_typed`/`operator-ineligible` naming the attempt and the ordering; an RMW with no ordering and a `release` attempt that reads a field and writes a branch-local register are admitted at check time; each class with each admitted ordering is admitted. | Test (TC-389) |
+| FR-435-AC-2 | At check time, an ordering on an attempt that touches no location, shared or branch-local, `release` on an attempt that only reads and `acquire` on an attempt that only writes each refuse `ill_typed`/`operator-ineligible` naming the attempt and the ordering; an RMW with no ordering and a `release` attempt that reads a field and writes a branch-local register are admitted at check time; each class with each admitted ordering is admitted. | Test (TC-389) |
 | FR-435-AC-3 | An attempt writing two shared fields of its receiver under a weak default refuses `unsupported_construct`/`declaration-form` naming both locations; the same attempt under a `tso` selection settles `unsupported`, cause `weak-access-shape`, shape `multi-location`; under `sc` it is admitted. | Test (TC-389) |
 | FR-435-AC-4 | A choice guard that reads a model field refuses `ill_typed`/`operator-ineligible` at the read, under `sc`, `tso` and `ra` alike; the same guard over the binder of a load attempt of that field is admitted. | Test (TC-389) |
 | FR-435-AC-5 | A load whose precondition requires the value 1 is enabled under `tso` only when its thread observation of the location is 1, and an RMW whose post-state leaves the location unchanged takes no write step. | Test (TC-389) |
