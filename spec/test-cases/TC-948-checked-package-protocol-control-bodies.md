@@ -87,7 +87,7 @@ FR-466-AC-15.
 | PA9 | `predicate` naming a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | PA10 | `join any [east]` and read `eastRes` after `Shipments` | `missing_declaration`/`missing-name` (no branch binder escapes a join that is not `all`) |
 | PA11 | a branch body held by `east` also held by `west` | `invalid_semantic_graph` (held twice) |
-| PA14 | `Shipments` joined `predicate` over `[east, west]`, its `function` node with two `boolean` parameters and a `boolean` result | admitted; the first parameter receives `east`'s disposition |
+| PA14 | `Shipments` joined `predicate` over `[east, west]`, its `function` node with two `boolean` parameters and a `boolean` result | admitted |
 | PA15 | PA14 with a function of one parameter, then of three | `ill_typed`/`type-mismatch` at `predicate`, retaining expected and actual |
 | PA16 | PA14 with the second parameter typed by an integer node | `ill_typed`/`type-mismatch` at `predicate` |
 | PA17 | PA14 with an integer result type | `ill_typed`/`type-mismatch` at `predicate` |
