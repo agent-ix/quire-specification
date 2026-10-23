@@ -23,6 +23,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-331
     type: references
+  - target: ix://agent-ix/quire-specification/FR-290
+    type: references
   - target: ix://agent-ix/quire-specification/FR-461
     type: references
   - target: ix://agent-ix/quire-specification/FR-481
@@ -78,12 +80,90 @@ transitions with guards and resets. Continuous variables whose rate is the
 numeric literal `1` in every mode are clocks and belong to timed models
 ([FR-415](../temporal/FR-415-declare-clocks-and-timed-models.md)); every
 variable with another rate, and every flow, is analyzed under this
-requirement by an external solver selected by negotiation. With no candidate
-the item settles `unsupported`. A rate written any other way, such as
+requirement by an external solver selected by negotiation ("Routing a
+hybrid item"). With no candidate the item settles `unsupported`. A rate written any other way, such as
 `2 - 1` or `rational(2, 2)`, is not the literal `1`, so its variable is
 hybrid dynamics and goes to a solver. A `hybrid-decl` whose every continuous
 variable has the rate literal `1` in every mode refuses with `invalid_timed_model`/`rate-one-hybrid`, naming
 the timed model form that declares it.
+
+## Routing a hybrid item
+
+A hybrid claim is requested as an FR-331 item of kind
+`temporal-satisfaction` that carries the *hybrid-dynamics requirement*: the
+item member `requirements` with the one label `hybrid-dynamics`. The
+requirement, not the kind, tells a hybrid item from a temporal item over a
+model without hybrid dynamics, which has the same kind.
+
+- The request writer SHALL write `"requirements": ["hybrid-dynamics"]` on
+  the item of every hybrid claim, since every hybrid model has a variable
+  with hybrid dynamics ("Source form and the clock line"), and SHALL write
+  no `requirements` member on any other item.
+- `requirements` SHALL be a nonempty set of labels without repeats, each
+  from the closed vocabulary {`hybrid-dynamics`}, carried only by an item of
+  kind `temporal-satisfaction`; an item that carries `hybrid` (its solver
+  budgets) SHALL carry `requirements` holding `hybrid-dynamics`. The FR-331
+  schema refuses an item that breaks either rule before consumption.
+- A backend descriptor that advertises `temporal-satisfaction` MAY carry
+  `dynamics`, the dynamics its backend decides: a nonempty set without
+  repeats drawn from `discrete`, temporal items whose subject has no hybrid
+  dynamics, and `hybrid`, items that carry the hybrid-dynamics requirement.
+  A descriptor with no `dynamics` decides `discrete` only, and a descriptor
+  that advertises no `temporal-satisfaction` carries no `dynamics`.
+- A descriptor whose `dynamics` holds `hybrid` SHALL carry, in `bounds`,
+  the published defaults of both solver budgets, `max_solver_steps` and
+  `max_solver_time` ("Solver budgets"), so an unset budget always has a
+  value.
+- Candidates (FR-290): a backend SHALL be a candidate for a
+  `temporal-satisfaction` item only when it advertises the kind and its
+  `dynamics` holds `hybrid` for an item carrying the hybrid-dynamics
+  requirement, and `discrete` for an item carrying none. A backend whose
+  descriptor has no `dynamics` is therefore never a candidate for a hybrid
+  item, a backend with `["hybrid"]` is never a candidate for a temporal item
+  without hybrid dynamics, and a backend with `["discrete", "hybrid"]` is a
+  candidate for both. A named backend that fails this rule gives the empty
+  set, and a `candidates` member listing such a backend is
+  `inconsistent-candidates` (FR-290).
+- A hybrid item with no candidate SHALL settle `unsupported`,
+  `unsupported_projection`/`unsupported-requested-capability`, the warning
+  naming `temporal-satisfaction` and the requirement `hybrid-dynamics`.
+- `requirements` SHALL be part of the request identity and the cache key
+  (FR-306); `dynamics` is part of the descriptor, and so of its manifest
+  digest.
+- A registration that advertises `temporal-satisfaction` SHALL be refused
+  `invalid_capability`/`invalid-dynamics`, keyed by backend identity, when
+  its `dynamics` is present and is not a list (`not-a-list`, retaining the
+  member as supplied), is empty (`empty`), holds a value that is not exactly
+  `discrete` or `hybrid` (`unknown-label`, retaining the element), repeats a
+  label (`duplicate-label`, retaining the label), or holds `hybrid` while
+  its `bounds` lack `max_solver_steps` or `max_solver_time`
+  (`missing-bounds`, retaining the first absent limit name in that order).
+  The registry SHALL report the first defect in that order, and within
+  `unknown-label` or `duplicate-label` the first offending element in member
+  order. It SHALL judge `dynamics` after every advertised pair, `domains`,
+  `fairness_kinds` and the evidence kinds, so a registration with an
+  earlier defect is refused with that earlier cause, and it SHALL NOT read
+  the `dynamics` of a registration that advertises no
+  `temporal-satisfaction`. The refusal removes only that registration. The
+  FR-331 schema refuses each such `dynamics` on the wire, and a `dynamics`
+  on a descriptor that advertises no `temporal-satisfaction`, before
+  consumption.
+
+A hybrid item and the descriptor of a backend that decides it, in their
+FR-331 wire form (`claim`, `tool` and `domains` elided):
+
+```json
+{"request_index": 0, "kind": "temporal-satisfaction", "claim": {…},
+ "extent": {"classification": "bounded", "bounds": []},
+ "candidates": {"type": "set", "backends": ["dreal"]},
+ "requirements": ["hybrid-dynamics"],
+ "hybrid": {"limits": {"max_solver_steps": 1000}}}
+
+{"backend": "dreal", "tool": {…},
+ "advertises": [{"kind": "temporal-satisfaction", "mode": "bounded"}],
+ "domains": […], "fairness_kinds": ["weak"], "dynamics": ["hybrid"],
+ "bounds": {"max_solver_steps": 1000000, "max_solver_time": 60}}
+```
 
 ## Initial states
 
@@ -272,13 +352,84 @@ a `hybrid-decl`. In its body `h.x` reads the continuous variable `x`.
 
 | Solver result | FR-331 value | Proof basis or cause |
 | --- | --- | --- |
-| A result the solver's method makes sound for the claim, such as an `unsat` from a δ-complete solver for bounded unreachability, or a flowpipe enclosure computed with outward rounding that satisfies the property | `proved`, basis `closed-scope` | `bounded-solver{method, horizon, jumps}`; the proof holds for the claim within that time horizon and jump bound |
-| `δ-sat`, a flowpipe meeting the unsafe set, `unknown`, or a method without sound rounding | `inconclusive` | `solver-inconclusive{trace}`, retaining any reported trace as unverified evidence ("Hybrid trace" below) |
+| An outcome its method is sound for ("Solver methods"), whose proof covers the claim ("Proof coverage"), from a bounded method: an `unsat` from a δ-complete solver, or a flowpipe enclosure computed with outward rounding that is disjoint from the violating states | `proved`, basis `closed-scope` | `bounded-solver{method, horizon, jumps}`; the proof holds for the claim within that time horizon and jump bound |
+| An outcome its method is sound for, from an inductive method: an outward-rounded inductive enclosure disjoint from the violating states | `proved`, basis `closed-scope` | `inductive-solver{method}`; the proof holds for the claim at every time and after any number of jumps |
+| An outcome its method is sound for, from a bounded method, whose proof does not cover the claim | `inconclusive` | `insufficient-horizon{horizon, jumps}`, the proof's own horizon and jump bound |
+| `δ-sat`, a flowpipe meeting the unsafe set, `unknown`, or an outcome its method is not sound for | `inconclusive` | `solver-inconclusive{trace}`, retaining any reported trace as unverified evidence ("Hybrid trace" below) |
 | A solver stopped by its step budget | `incomplete`, execution `resource-incomplete` | `limit-reached{limit: max_solver_steps, value, setting: hybrid.max_solver_steps}` |
 | A solver that exhausts `max_solver_time`, or a provider that overruns the provider deadline `deadline_ms` (FR-462) | `incomplete`, execution `resource-incomplete` | `timed-out`, the backend's own wall-clock limit |
 | A run the caller's frontend ends at the caller's own deadline (a frontend-owned timer that cancels the run, QSL FR-276) | `incomplete`, execution `resource-incomplete` | `cancelled{source: deadline}`, never `timed-out` |
 | No registered candidate | `unsupported` | `unsupported_projection`/`unsupported-requested-capability` |
 | A trace the reader replays exactly to a violation ("Trace replay") | `refuted` | a `HybridCounterexample` in `counterexamples`; the cause `undefined-evaluation{where, cause}` when the violation is an expression with no value |
+
+### Solver methods
+
+A solver's *method kind* SHALL be one of this closed table. The kind, not
+anything a provider says about itself, decides which outcomes are sound and
+which proof basis a proof takes. A provider whose method fits no other row
+reports its kind as `unclassified`.
+
+| Method kind | Spelling | Proof basis | Outcome the kind is sound for |
+| --- | --- | --- | --- |
+| A δ-complete decision procedure (dReal, dReach), deciding the bounded reachability of a violating state up to its `δ` | `delta-complete` | `bounded-solver` | `unsat`: no violating state is reachable within the horizon and the jump bound |
+| A flowpipe computed in outward-rounded interval or Taylor-model arithmetic (Flow*, CORA, JuliaReach, SpaceEx) | `flowpipe-outward-rounded` | `bounded-solver` | an enclosure disjoint from the violating states within the horizon and the jump bound |
+| A flowpipe computed without outward rounding | `flowpipe-unrounded` | `bounded-solver` | none |
+| An outward-rounded enclosure that contains every initial state and is closed under every mode's flow, for every dwell length, and under every transition's reset | `inductive-enclosure` | `inductive-solver` | an enclosure disjoint from the violating states |
+| Any other method, such as simulation or sampling | `unclassified` | `bounded-solver` | none |
+
+- An outcome SHALL be sound for a result only when its row names that
+  outcome; every other pair of method kind and outcome, an `unsat` from a
+  flowpipe method and an enclosure from a δ-complete solver included, SHALL
+  settle `inconclusive`, `solver-inconclusive`.
+- A proof SHALL carry its method kind's spelling as `method` and the proof
+  basis its row names. A `bounded-solver` basis SHALL carry `delta-complete`,
+  `flowpipe-outward-rounded`, `flowpipe-unrounded` or `unclassified`, and an
+  `inductive-solver` basis `inductive-enclosure`; the FR-331 schema refuses
+  any other `method` before consumption.
+- A first-party provider SHALL write `proved` only for a row's sound
+  outcome, so its `bounded-solver` proof carries `delta-complete` or
+  `flowpipe-outward-rounded`. A reader SHALL refuse a first-party (`uncertified`)
+  `proved` entry whose `method` is `flowpipe-unrounded` or `unclassified`
+  with `invalid_result`/`invalid-value` at `/basis/method`. A plugin's
+  `proved` entry is `trusted` (FR-331 "Certification") and is read with
+  any `method` its basis admits.
+
+### Proof coverage
+
+A claim's *horizon* is the reach of its formula after its activation
+position, as QSL FR-447 defines it and FR-481 derives it from the claim
+node: seconds under `model-time`, positions under `model-steps`, and none
+for an `on each` activation or an unbounded reach. A proof *covers* the
+claim when it reads every state the claim reads:
+
+- An `inductive-solver` proof SHALL cover every claim over its model.
+- A `bounded-solver` proof covers the behaviour prefixes of at most `jumps`
+  jumps up to time `horizon`. Under `model-time`, it SHALL cover a claim of
+  horizon `r` seconds when `horizon >= r`, and it holds for the behaviours
+  that take at most `jumps` jumps by time `r`. Under `model-steps`, it SHALL
+  cover a claim of horizon `n` positions when `jumps >= n`, since position
+  `k` is the state the `k`-th jump reaches; a position count is never
+  converted to seconds, and the proof holds for the behaviours whose first
+  `n` jumps occur by time `horizon`.
+- A `bounded-solver` proof SHALL NOT cover a claim with no horizon.
+- A proof that does not cover its claim SHALL settle the item
+  `inconclusive`, `insufficient-horizon{horizon, jumps}`, the proof's own
+  `horizon` and `jumps`, never `proved`. Coverage reads the entry's
+  `horizon` and `jumps` and the claim, not the method's soundness, so the
+  reader that holds the claim SHALL check it for every `bounded-solver`
+  proof it reads, a plugin's included, and settle a proof that does not
+  cover as this cause.
+
+Over `Braking`, for an `on origin` claim: `always [0, 10] holds(h.v < 30)`
+has horizon 10 s, so a `delta-complete` `unsat` with `horizon` 10 and
+`jumps` 3, or with `horizon` 21/2, settles `proved`, `bounded-solver`, and
+with `horizon` 1 settles `inconclusive`, `insufficient-horizon{horizon: 1,
+jumps: 3}`; `always [0, 10] eventually [0, 5] holds(h.v < 30)` has horizon
+15 s, which `horizon` 10 does not cover. Under `clock "model-steps"`,
+`eventually [0, 1] holds(h.v = 0)` has horizon 1 position: `jumps` 1 with
+`horizon` 10 covers it, and `jumps` 0 does not, whatever the `horizon`.
+`always holds(h.v < 30)` and an `on each` claim have no horizon, so only an
+`inductive-solver` proof settles them `proved`.
 
 ### Solver budgets
 
@@ -303,10 +454,10 @@ defaulting a limit apply to both. Their setting names are
   refuses any out-of-domain value.
 - When the caller sets no value for a budget, the request writer SHALL omit the
   member and the provider SHALL apply its descriptor `bounds` (FR-331,
-  FR-461); a value present in the request SHALL always apply. QSL's 60
-  seconds and 1,000,000 steps (QSL FR-250) are the descriptor bounds of its
-  own built-in hybrid solver, owned by QSL; this requirement states no
-  number.
+  FR-461), which every descriptor whose `dynamics` holds `hybrid` carries
+  for both budgets ("Routing a hybrid item"); a value present in the
+  request SHALL always apply. Each provider publishes its own defaults, and
+  this requirement states no number.
 - `max_solver_time` is a wall-clock setting. The request identity and the
   cache key SHALL exclude it, no member of a stored record SHALL record wall
   time, and a result it limits (`timed-out`) SHALL NOT be cached or stored
@@ -324,17 +475,23 @@ entry, and that entry is the wire form of the solver result.
 - The producer of a result entry decides, before it writes the entry,
   whether the result is a proof: a first-party provider, one the producer
   runs as its own engine, applies the verdict map to its solver's method and
-  outcome and writes `proved` only for a method sound for that outcome (QSL
-  FR-250). The entry carries no outcome member, and a reader SHALL NOT
-  decide soundness again from the entry.
+  outcome and writes `proved` only for a method sound for that outcome
+  ("Solver methods", QSL FR-250) and a proof that covers the claim ("Proof
+  coverage"). The entry carries no outcome member, and a reader SHALL NOT
+  decide soundness again from the entry; it checks only the closed method
+  rule of "Solver methods" and the coverage of "Proof coverage".
 - A proof SHALL be a `proved` entry with the basis
-  `bounded-solver{method, horizon, jumps}`, `method` a non-empty spelling of
-  the solver's method kind, `horizon` an FR-331 `Rational` number of seconds
-  and `jumps` a count. Its `certification` SHALL follow FR-331
+  `bounded-solver{method, horizon, jumps}`, `method` the spelling of a
+  bounded method kind, `horizon` an FR-331 `Rational` number of seconds and
+  `jumps` a count, or with the basis `inductive-solver{method}`, `method`
+  `inductive-enclosure`. Its `certification` SHALL follow FR-331
   "Certification": `uncertified` from a first-party provider and `trusted`
-  from a provider loaded as a plugin. This requirement names no closed
-  method vocabulary, and a reader refuses a `method` outside its own types
-  as FR-331 refuses any proof basis outside the reader's types.
+  from a provider loaded as a plugin. A `method` outside the spellings its
+  basis admits is refused by the schema, and a reader that holds the entry
+  as a value refuses it `invalid_result`/`invalid-value` at `/basis/method`.
+- A sound bounded proof that does not cover its claim SHALL be an
+  `inconclusive` entry with the cause `insufficient-horizon{horizon,
+  jumps}`, `horizon` a `Rational` and `jumps` a count, with no trace.
 - A `δ-sat`, a flowpipe meeting the unsafe set, an `unknown`, and a result
   from a method not sound for its outcome SHALL each be an `inconclusive`
   entry with the cause `solver-inconclusive`. When the solver reports a path
@@ -524,7 +681,7 @@ when exact replay reproduces it.
 | FR-193-AC-3 | Unsupported equations, failed convergence or insufficient horizon returns inconclusive/unsupported. | Test (TC-215) |
 | FR-193-AC-4 | Every flow and reset encloses all admitted continuous states and records accumulated error bounds. | Test (TC-215) |
 | FR-193-AC-5 | A point estimate or enclosure intersecting both satisfying and violating regions cannot establish satisfaction. | Test (TC-215) |
-| FR-193-AC-6 | Each row of the verdict map settles its listed value and basis or cause; a sound solver result settles `proved` with `bounded-solver{method, horizon, jumps}`, and no solver result settles `refuted`. | Test (TC-373) |
+| FR-193-AC-6 | Each row of the verdict map settles its listed value and basis or cause; a sound solver result whose proof covers the claim settles `proved` with `bounded-solver{method, horizon, jumps}` or `inductive-solver{method}`, and no solver result settles `refuted`. | Test (TC-373) |
 | FR-193-AC-7 | A `hybrid-decl` whose every continuous variable has the rate literal `1` in every mode refuses `invalid_timed_model`/`rate-one-hybrid`; a hybrid item with no registered candidate settles `unsupported`. A `hybrid-decl` whose only variable `t` has the rate `2 - 1` in every mode is not refused and its `t` is hybrid dynamics. | Test (TC-373) |
 | FR-193-AC-8 | A solver stopped after 1,000 steps by a `max_solver_steps` of 1,000 settles `incomplete`, execution `resource-incomplete`, `limit-reached{limit: max_solver_steps, value: 1000, setting: hybrid.max_solver_steps}`, in steps and unconverted; a solver that exhausts `max_solver_time`, and a plugin provider that overruns `deadline_ms`, each settle `incomplete`, `resource-incomplete`, `timed-out`; a run the caller's frontend ends at the caller's own deadline settles `incomplete`, `cancelled{source: deadline}`, so no event has two causes. | Test (TC-373) |
 | FR-193-AC-9 | A caller's `max_solver_time` of 1.5 s is written as the wire integer 2, 2 s as 2 and 0.2 s as 1, and a wire value of 1.5 is refused before consumption; two requests that differ only in `max_solver_time` have equal request identity and cache key bytes, two that differ only in `max_solver_steps` differ, and a `timed-out` result is stored by neither request and holds no wall-time member. | Test (TC-373) |
@@ -536,6 +693,10 @@ when exact replay reproduces it.
 | FR-193-AC-15 | `on each (q: Braking) when (q.v > 10)` with `capture v0: Rational = q.v;` and body `eventually [0, 10] holds(h.v < v0)` creates one obligation at every instant where `v > 10`, each reading its own `v0`; `on each (q: Other)` refuses `ill_typed`/`type-mismatch`; `fair Moving;` and `fair strong each Moving::Stopped;` resolve to `Moving`'s transitions and to those targeting `Stopped`, and `fair Moving::Halted;` refuses `missing_declaration`/`missing-name`. | Test (TC-373) |
 | FR-193-AC-16 | Static replay of a trace whose `start` box meets no initial entry reports `inconsistent{at: /start, check: 1}`; one whose `before` box misses the guard by less than its `delta` 1/100 is `consistent`, and with no `delta` is `inconsistent` at check 4; neither outcome changes the `inconclusive` value. | Test (TC-373, TC-431) |
 | FR-193-AC-17 | Over `Braking`, the point trace starting at `(Moving, v = 20, a = 2, t = 0)` with `before` `(time 10, v = 0, a = 2, t = 10)` and one jump by transition 0 to `(Stopped, time 10, v = 0, a = 2, t = 10)` replays exactly; against the claim `always [0, 12] holds(h.v > 0)` it reproduces and settles `refuted` with the trace as a `HybridCounterexample` of kind `formula`; the same trace with `before` `v = 1` settles `not-reproduced` at check 2, the item staying `inconclusive`, and as a provider's `refuted` entry `inconclusive`, `replay-parity`; a point trace through a mode with the flow `v' = v`, and the AC-17 trace against a claim whose atom calls a recursive function, are replayed statically only and do not refute; against `always [0, 12] holds(1 / (h.v - 5) != 0)` the AC-17 trace settles `refuted` of kind `undefined-evaluation` at time 15/2, and against `always [0, 12] holds(1 / (h.v - 5) < 100)`, false from time 1499/200 before the undefined instant, of kind `formula`; a stored record carries the static outcome as `replay`, and a provider entry carrying `replay` is refused `invalid_result`/`unknown-member` at `/cause/replay`; a `loop` naming the last state is refused `invalid_result`/`invalid-value` at `/loop`. | Test (TC-373, TC-431) |
+| FR-193-AC-18 | With two registered backends advertising `temporal-satisfaction`, `qsl-model-check` with no `dynamics` and `dreal` with `dynamics` `["hybrid"]` and `bounds` `{max_solver_steps: 1000000, max_solver_time: 60}`, the item of `always [0, 10] holds(h.v < 30)` over `Braking`, carrying `"requirements": ["hybrid-dynamics"]` has the one candidate `dreal`, and a temporal item over a model without hybrid dynamics, carrying no `requirements`, has the one candidate `qsl-model-check`, neither `ambiguous-backend`; with `dreal`'s `dynamics` `["discrete", "hybrid"]` the second item has both candidates and settles `ambiguous-backend`; with only `qsl-model-check` registered the hybrid item settles `unsupported`, `unsupported-requested-capability`, its warning naming `temporal-satisfaction` and `hybrid-dynamics`; a hybrid item naming `qsl-model-check` has the empty set, and one whose `candidates` lists `qsl-model-check` settles `inconsistent-candidates`. Two requests differing only in an item's `requirements` have different request identities. | Test (TC-373) |
+| FR-193-AC-19 | The schema refuses before consumption an item carrying `requirements` `[]`, `["hybrid-dynamics", "hybrid-dynamics"]` or `["stochastic-dynamics"]`, an item of kind `value-validity` carrying `requirements`, an item carrying `hybrid` without `requirements`, a temporal descriptor with `dynamics` `[]`, `["hybrid", "hybrid"]` or `["continuous"]`, a `dynamics` on a descriptor advertising only `operation-contract`, and a descriptor with `dynamics` `["hybrid"]` whose `bounds` lack `max_solver_time`; a registration not on the wire with each of these `dynamics` defects is refused `invalid_capability`/`invalid-dynamics` retaining `empty`, `duplicate-label` naming `hybrid`, `unknown-label` naming `continuous` and `missing-bounds` naming `max_solver_time`, and one with `dynamics` `"hybrid"` retaining `not-a-list`; a registration with both an unknown label and `missing-bounds` reports `unknown-label`, and one that also has a `fairness_kinds` defect reports `invalid-fairness-kinds`. | Test (TC-373, TC-431) |
+| FR-193-AC-20 | The method table settles each pair as stated: `delta-complete` with `unsat` and `flowpipe-outward-rounded` with a disjoint enclosure, each covering, settle `proved`, `bounded-solver` carrying that spelling; `inductive-enclosure` with a disjoint enclosure settles `proved`, `inductive-solver{method: inductive-enclosure}`; `flowpipe-unrounded` and `unclassified` with any outcome, `delta-complete` with a disjoint enclosure and `flowpipe-outward-rounded` with `unsat` each settle `inconclusive`, `solver-inconclusive`. The schema refuses a `bounded-solver` with `method` `dreal` or `inductive-enclosure` and an `inductive-solver` with `method` `delta-complete`; a reader refuses an `uncertified` `bounded-solver` proof with `method` `flowpipe-unrounded` `invalid_result`/`invalid-value` at `/basis/method`, and admits the same proof as a plugin's `trusted` entry. | Test (TC-373, TC-431) |
+| FR-193-AC-21 | Over `Braking`, against `always [0, 10] holds(h.v < 30)`, a `delta-complete` `unsat` with `horizon` 10 and `jumps` 3 and one with `horizon` 21/2 settle `proved`, `bounded-solver`, and one with `horizon` 1 settles `inconclusive`, `insufficient-horizon{horizon: 1, jumps: 3}`; against `always [0, 10] eventually [0, 5] holds(h.v < 30)` the `horizon` 10 proof settles `insufficient-horizon`; under `clock "model-steps"`, against `eventually [0, 1] holds(h.v = 0)`, `jumps` 1 with `horizon` 10 settles `proved` and `jumps` 0 with `horizon` 100 settles `insufficient-horizon{horizon: 100, jumps: 0}`; against `always holds(h.v < 30)` and against FR-193-AC-15's `on each (q: Braking) when (q.v > 10)` claim, every `bounded-solver` proof settles `insufficient-horizon` and an `inductive-solver` proof settles `proved`; a plugin's `trusted` `bounded-solver` entry with `horizon` 1 against the first claim settles `insufficient-horizon` at the reader. | Test (TC-373) |
 
 ## Dependencies
 
