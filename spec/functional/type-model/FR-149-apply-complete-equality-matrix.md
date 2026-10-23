@@ -236,7 +236,11 @@ alone, first match wins, and the checked package records it as one
 | range narrowing | any other conversion from `Integer` or `Int[..]`, from a decimal to a `Rational[..]` or `Decimal[..]`, from a bounded `Rational[..]` to an integer type or (with denominator bound 1) a `Decimal[..]`, or from a `Decimal[c1,c2;0,0;m]` to an integer type | `quire.op.numeric.narrow` | A checked obligation that the converted value is a member of `T` (FR-146 range obligation, `unproved-range`). |
 
 Every other exact-numeric pair has no conversion and is
-`refused { code: ill_typed, cause: operator-ineligible }`. Narrowing is never
+`refused { code: ill_typed, cause: operator-ineligible }`. A `convert<T>(e)`
+whose `S` is a `Text[..]` type and whose `T` is an integer or decimal type is
+not an exact-numeric conversion and has none of these classes: it is
+[FR-478](FR-478-convert-text-to-an-exact-number.md)'s text-to-number
+conversion, `quire.op.text.to_integer` or `quire.op.text.to_decimal`. Narrowing is never
 rounding: a narrowing obligation that is not proved refuses with
 `refused { code: undefined_expression, cause: unproved-range }`, and a value
 outside `T` is never rounded, clamped, wrapped or widened. Rounding happens only
