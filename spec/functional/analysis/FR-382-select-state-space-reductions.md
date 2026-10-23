@@ -52,7 +52,11 @@ state-clause = … | 'constraint', ident, 'using', ident, 'on', type-name,
 
 It is checked like an invariant body: a `Boolean` expression over the
 current state with `self` ranging over the objects of the named type, and it
-holds at a state when it holds for every object of that type.
+holds at a state when it holds for every object of that type. A checked
+constraint is a `state`/`state_clause` node whose clause member is
+`constraint`, anchored at its type's node and binding `self` alone
+([FR-341](../../objects/interfaces/FR-341-checked-package-state-clause-body.md));
+it is a method parameter of a model-check request, not a claim of its own.
 
 ## Behavior
 
@@ -65,7 +69,10 @@ three members:
   sorted by key bytes and the classes sorted by their first key. A key in no
   class, or in a class of one, is fixed.
 - `partial_order` — absent, or `{"proviso": "breadth-first-revisit"}`.
-- `constraint` — absent, or the node key of one checked `constraint` clause.
+- `constraint` — absent, or the node key of one checked `constraint` clause:
+  the key of a `state`/`state_clause` node of clause `constraint` in the
+  item's checked package. A key that names no such node refuses the request
+  `invalid_runtime_input`/`invalid-value`, naming the key.
 
 **Identity.** The symmetry declarations and the partial-order selection enter
 the item's obligation identity beside the subject; a reduced and an unreduced

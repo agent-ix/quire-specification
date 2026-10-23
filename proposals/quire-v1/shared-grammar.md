@@ -118,8 +118,8 @@ predicate    = 'predicate', ident, 'using', ident,
                '(', [ parameter, { ',', parameter } ], ')',
                ':', 'Boolean', block ;
 parameter    = ident, ':', parameter-type ;
-state-clause = 'invariant', ident, 'using', ident, 'on', type-name,
-               'at', 'current', block
+state-clause = ('invariant' | 'constraint'), ident, 'using', ident, 'on',
+               type-name, 'at', 'current', block
              | ('pre' | 'post'), ident, 'using', ident, 'on',
                operation-name, block ;
 block        = '{', expr, '}' ;
