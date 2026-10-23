@@ -13,7 +13,8 @@
     {"$ref": "#/$defs/ModelDeclarationNode"},
     {"$ref": "#/$defs/AbstractionRelationNode"},
     {"$ref": "#/$defs/ExtensionFormNode"},
-    {"$ref": "#/$defs/HybridNode"}
+    {"$ref": "#/$defs/HybridNode"},
+    {"$ref": "#/$defs/TimedModelNode"}
   ],
   "$defs": {
     "Nonempty": {"type": "string", "minLength": 1},
@@ -100,6 +101,7 @@
     "EnumMember": {"type": "object", "required": ["version", "declaration_node_id", "case"], "properties": {"version": {"const": "quire.enum-member-node/v1"}, "declaration_node_id": {"$ref": "#/$defs/NodeId"}, "case": {"type": "string", "minLength": 1}}, "additionalProperties": false},
     "Dimension": {"type": "object", "required": ["version", "owner", "qualified_declaration", "terms"], "properties": {"version": {"const": "quire.dimension-node/v1"}, "owner": {"$ref": "#/$defs/Owner"}, "qualified_declaration": {"$ref": "#/$defs/QualifiedName"}, "terms": {"type": "array", "items": {"$ref": "#/$defs/DimensionTerm"}}}, "additionalProperties": false},
     "DimensionEquivalence": {"type": "object", "required": ["version", "owner", "dimension_node_ids", "root_scale"], "properties": {"version": {"const": "quire.dimension-equivalence-node/v1"}, "owner": {"$ref": "#/$defs/SourceOwner"}, "dimension_node_ids": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/NodeId"}}, "root_scale": {"$ref": "#/$defs/PositiveRational"}}, "additionalProperties": false},
-    "Unit": {"type": "object", "required": ["version", "owner", "qualified_declaration", "dimension_node_id", "target_unit_node_id", "scale", "offset"], "properties": {"version": {"const": "quire.unit-node/v1"}, "owner": {"$ref": "#/$defs/Owner"}, "qualified_declaration": {"$ref": "#/$defs/QualifiedName"}, "dimension_node_id": {"$ref": "#/$defs/NodeId"}, "target_unit_node_id": {"oneOf": [{"$ref": "#/$defs/NodeId"}, {"type": "null"}]}, "scale": {"$ref": "#/$defs/Rational"}, "offset": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}
+    "Unit": {"type": "object", "required": ["version", "owner", "qualified_declaration", "dimension_node_id", "target_unit_node_id", "scale", "offset"], "properties": {"version": {"const": "quire.unit-node/v1"}, "owner": {"$ref": "#/$defs/Owner"}, "qualified_declaration": {"$ref": "#/$defs/QualifiedName"}, "dimension_node_id": {"$ref": "#/$defs/NodeId"}, "target_unit_node_id": {"oneOf": [{"$ref": "#/$defs/NodeId"}, {"type": "null"}]}, "scale": {"$ref": "#/$defs/Rational"}, "offset": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false},
+    "TimedModelNode": {"type":"object","required":["version","node_tag","semantic_form","semantic_type","declaration","recursion","owner","body"],"properties":{"version":{"const":"quire.structural-node/v1"},"node_tag":{"const":"timed_model"},"semantic_form":{"enum":["timed_model","time_source","clock_place","clock_reset","clock_guard","time_invariant","urgency","clock_constraint"]},"semantic_type":{"type":"null"},"declaration":{"oneOf":[{"$ref":"#/$defs/Declaration"},{"type":"null"}]},"recursion":{"type":"null"},"owner":{"$ref":"#/$defs/SourceOwner"},"body":{"type":"object","required":["term","members"],"properties":{"term":{"const":"aggregate"},"members":{"type":"array"}},"additionalProperties":false}},"additionalProperties":false,"if":{"properties":{"semantic_form":{"enum":["timed_model","time_source","clock_place","clock_reset","clock_guard","time_invariant","urgency","clock_constraint"]}}},"then":{"properties":{"declaration":{"oneOf":[{"$ref":"#/$defs/Declaration"},{"type":"null"}]}}}}
   }
 }

@@ -11355,7 +11355,7 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
         &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
         "diagnostic codes",
     );
-    let pairings: [(&str, &[&str]); 7] = [
+    let pairings: [(&str, &[&str]); 12] = [
         ("type-mismatch", &["ill_typed"]),
         ("non-boolean-root", &["ill_typed"]),
         (
@@ -11372,6 +11372,11 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
         ),
         ("unsupported-wire", &["unknown_wire"]),
         ("unsupported-feature", &["unknown_required_feature"]),
+        ("missing-timed-model", &["invalid_package"]),
+        ("timed-node-reference", &["invalid_package"]),
+        ("duplicate-clock-place", &["invalid_package"]),
+        ("malformed-clock-place", &["invalid_package"]),
+        ("invalid-time-quantity", &["ill_typed"]),
     ];
     for (cause, admitted) in pairings {
         for code in &codes {
@@ -17693,4 +17698,63 @@ fn tc_966_restored_hybrid_shapes_meet_or_fail_the_published_schema() {
     open["body"]["operation"]["member"]["interval"]["upper"] = Value::Null;
     open["body"]["operation"]["member"]["interval"]["upper_end"] = json!("open");
     assert!(node_schema.is_valid(&open), "a timed `[q, *]` meets the schema");
+}
+
+#[trace("TC-367", "FR-415-AC-17", "FR-322-AC-120")]
+#[test]
+fn tc_367_timed_model_node_tag_and_preimage_are_catalogued() {
+    let schema = parsed_fixture(SCHEMA);
+    let tags = &schema["$defs"]["NodeBase"]["properties"]["node_tag"]["enum"];
+    assert!(tags.as_array().unwrap().contains(&json!("timed_model")));
+    let forms = schema["$defs"]["TimedModelNode"]["allOf"][1]["properties"]["semantic_form"]["enum"]
+        .as_array()
+        .unwrap();
+    for form in ["timed_model", "time_source", "clock_place", "clock_reset", "clock_guard", "time_invariant", "urgency", "clock_constraint"] {
+        assert!(forms.contains(&json!(form)), "{form} is a timed node form");
+    }
+    let preimages = parsed_fixture(NODE_PREIMAGE_SCHEMA);
+    let timed = schema_for_def(&preimages, "TimedModelNode");
+    let preimage = json!({
+        "version": "quire.structural-node/v1",
+        "node_tag": "timed_model",
+        "semantic_form": "time_source",
+        "semantic_type": null,
+        "declaration": {"qualified_name": ["Rpc"]},
+        "recursion": null,
+        "owner": {"kind": "source", "authority": "test", "identity": "rpc"},
+        "body": {"term": "aggregate", "members": []}
+    });
+    assert!(timed.is_valid(&preimage), "timed source identity preimage is closed and admissible");
+    let mut adverse = preimage;
+    adverse["body"]["unexpected"] = json!(true);
+    assert!(!timed.is_valid(&adverse), "timed node preimages reject unknown members");
+}
+
+#[trace("TC-367", "FR-322-AC-120")]
+#[test]
+fn tc_367_timed_model_causes_are_catalogued_and_paired() {
+    let schema = parsed_fixture(SCHEMA);
+    let diagnostic = schema_for_def(&schema, "Diagnostic");
+    for (code, cause) in [
+        ("invalid_package", "missing-timed-model"),
+        ("invalid_package", "timed-node-reference"),
+        ("invalid_package", "duplicate-clock-place"),
+        ("invalid_package", "malformed-clock-place"),
+        ("ill_typed", "invalid-time-quantity"),
+    ] {
+        let entry = json!({"stage":"package_read", "code":code, "cause_tag":cause, "details":[], "loci":[]});
+        assert!(diagnostic.is_valid(&entry), "{cause} pairs with {code}");
+    }
+    let invalid_package = NATIVE_DIAGNOSTICS
+        .lines()
+        .find(|line| line.split('|').nth(1).is_some_and(|cell| backticked(cell).contains("invalid_package")))
+        .expect("native invalid_package row");
+    let ill_typed = NATIVE_DIAGNOSTICS
+        .lines()
+        .find(|line| line.split('|').nth(1).is_some_and(|cell| backticked(cell).contains("ill_typed")))
+        .expect("native ill_typed row");
+    for cause in ["missing-timed-model", "timed-node-reference", "duplicate-clock-place", "malformed-clock-place"] {
+        assert!(backticked(invalid_package).contains(cause), "native invalid_package catalogs {cause}");
+    }
+    assert!(backticked(ill_typed).contains("invalid-time-quantity"));
 }
