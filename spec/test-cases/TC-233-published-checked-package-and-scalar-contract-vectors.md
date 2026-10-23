@@ -379,6 +379,19 @@ body changed, canonical order and `dependencies` kept, its node id kept and
 | FB-03 | literal of `value_kind` `float64_bits` with value `3FE0000000000000`, `0x3fe0000000000000`, `3fe000000000000`, `3fe00000000000000`, `0.5` or the JSON number `4602678819172646912` | `invalid_package`/`invalid-value` | FR-322-AC-108 |
 | FB-04 | literal of `value_kind` `float32_bits` typed by a `float64` type with value `3F000000`; literal of `value_kind` `float64_bits` typed by a `string` type with value `0.5` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-108 |
 
+### IEEE negate and float leaf vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| NF-01 | `quire.op.ieee.float64.negate` over one `Float64[nearest-even]` operand, `result_type` that operand's type node, the `ieee_profile` law, mode `null`; the same with `quire.op.ieee.float32.negate` over `Float32[toward-zero]` | Identities enumerated by both schemas; application admitted | FR-322-AC-111 |
+| NF-02 | `quire.op.ieee.float64.negate` over a `float32` operand; `quire.op.ieee.float32.negate` over a `float64` operand; over an `integer` operand; over two operands | `ill_typed`/`operator-ineligible` | FR-322-AC-111 |
+| NF-03 | NF-01's `float64` application with `result_type` `Float64[toward-zero]` | `ill_typed`/`operator-ineligible` | FR-322-AC-111 |
+| NF-04 | NF-01's application with a `rounding` mode, with no law, and in a lock without the `ieee_profile` selection | `invalid_package`/`operation-mode-mismatch`; `operation-law-missing`; `operation-law-unselected` | FR-322-AC-111 |
+| NF-05 | `quire.op.ieee.float64.eq`, `quire.op.ieee.float64.ne` and `quire.op.ieee.float64.lt` | `invalid_package`/`unknown-operation` | FR-322-AC-111 |
+| NF-06 | `quire.op.structural.eq` over `record R { x: Float64[nearest-even]; t: Text[0,8;nfc]; }` | Admitted with the leaves `["field:x"]` (`ieee_profile`, mode `null`) then `["field:t"]` (the `nfc` law and mode) | FR-322-AC-112 |
+| NF-07 | `quire.op.structural.ne` over `Option<Float64[nearest-even]>`, `union U { V(Float32[exact]), N }` and `Sequence<Float64[nearest-even]>` | Admitted with the leaves `["inner"]`, `["member:V", "position:0"]` and `["inner"]` | FR-322-AC-112 |
+| NF-08 | NF-06's application with the `field:x` leaf omitted, with a `text_profile` law on it, and with a mode on it | The first failing leaf check refuses as for a text leaf | FR-322-AC-112 |
+
 ### Structural node preimage vectors
 
 Build each preimage exactly as FR-322 "Structural node preimage" spells it and hash its RFC 8785 bytes.

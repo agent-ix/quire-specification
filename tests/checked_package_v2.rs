@@ -7263,8 +7263,8 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
             );
             let last = operation.rsplit('.').next().unwrap_or(operation);
             assert!(
-                !["eq", "ne", "lt", "le", "gt", "ge", "negate"].contains(&last),
-                "{identity}: IEEE equality, ordering and negation are not catalogued (FR-148)"
+                !["eq", "ne", "lt", "le", "gt", "ge"].contains(&last),
+                "{identity}: IEEE equality and ordering are the numeric_equal, total_order and bit_identical identities (FR-148)"
             );
         }
         if family == "text" {
