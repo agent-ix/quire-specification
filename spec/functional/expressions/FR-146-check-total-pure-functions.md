@@ -188,17 +188,32 @@ and `p` the caller's element parameter at position `i`. Position `i` is *equal* 
 exactly `p`. It is *strictly smaller* when:
 
 - for an integer element, `a` is `p - k` for an integer literal `k >= 1`;
-- for a cardinality element, `a` is a *removal filter* of `p`: one of
-  `filter(x in p: x != e)`, `filter(x in p: e != x)` or
-  `filter(x in p: not (x = e))`, where `e` is a stable path in which the binder
-  `x` does not occur and the membership fact `contains(p, e)` holds at that
-  call site; or such a removal filter as the operand of a same-kind
-  `convert<K<T>[min,max]>(...)` or `convert<K<T>>(...)`, whose `K` and `T` are
-  `p`'s kind and element type. The filter drops every occurrence equal to `e`
-  under FR-149 `=`, and the membership fact proves at least one exists, so the
-  result's bound count is at most `size(p) - 1`; a same-kind conversion has
+- for a cardinality element, `a` is a *removal filter* of `p`, or a removal
+  filter as the operand of a same-kind `convert<K<T>[min,max]>(...)` or
+  `convert<K<T>>(...)` whose `K` and `T` are `p`'s kind and element type. A
+  removal filter is `filter(x in p: q)` with a stable path `e` in which the
+  binder `x` does not occur, the membership fact `contains(p, e)` at that call
+  site, and a predicate `q` of one of these shapes:
+  - `x != e`, `e != x` or `not (x = e)`, when `p`'s element type admits FR-149
+    `=` and contains no `Float32` or `Float64` leaf, so that `=` is exactly
+    the FR-144 collection membership relation;
+  - `not quire::value::ieee::bitIdentical(x, e)` or
+    `not quire::value::ieee::bitIdentical(e, x)`, when `p`'s element type is
+    `Float32` or `Float64`, whose membership relation is FR-148 bit identity;
+  - `not contains(d, x)`, for any element type, where `d` is a stable
+    collection path whose element type is `p`'s and the membership fact
+    `contains(d, e)` also holds at that call site.
+
+  Each shape is false exactly for the occurrences of `p` that are members
+  equal to `e` under the FR-144 collection membership relation (for the last
+  shape, at least those), so the filter drops every such occurrence, and the
+  membership fact `contains(p, e)` proves at least one exists. The result's
+  bound count is therefore at most `size(p) - 1`. A same-kind conversion has
   empty loss and keeps that count, and its target bound is checked at run time
-  as FR-145 states;
+  as FR-145 states. A predicate `x != e` over an element type with a float
+  leaf is not a removal filter, because its FR-148 `numericEqual` reading
+  differs from bit identity at NaN and signed zero, so it does not prove that
+  the member equal to `e` is dropped;
 - for a structural element, `a` is a nonempty projection path from `p`, whose
   each step is a field projection `.f`, or `value(q)` of an `Option` path `q`
   whose `present(q)` is a guard fact at that call site; for example
@@ -379,7 +394,7 @@ counter, and no call depth turns into an outcome (FR-460).
 | FR-146-AC-12 | A `case` that is the body of a function declared `: Int[0..100]`, with arms `0` and a parameter `w: Int[0..9]`, has result type `Int[0..100]`; under an unannotated `let`, arms `r: Int[0..9]` and `w: Int[0..99]` infer `Integer`, and arms that are both `Text` parameters infer that `Text` type; arms `0` and `"none"` refuse `ill_typed`/`type-mismatch` at the `"none"` arm body, and arms `"none"` and `0` at the `0` arm body; and an arm body `sequence[]` with no expected type refuses `ill_typed`/`ambiguous-literal`. | Test (TC-398) |
 | FR-146-AC-13 | A `case` charges its scrutinee's charges and then only its selected arm body's charges, with no charge for arm selection or payload binding; an undefined scrutinee is the `case`'s outcome with no arm evaluated or charged; and a work limit equal to the scrutinee's and selected arm body's work units admits the `case` while one unit less returns `incomplete { limit_kind: work_units }`. | Test (TC-399) |
 | FR-146-AC-14 | A `case` whose scrutinee is an `Integer` and whose arms name unknown members is refused `ill_typed`/`type-mismatch` at the scrutinee only; a `case` with an ill-typed body in a resolved arm and a missing arm is refused `ill_typed`/`type-mismatch` at that body only; and a `case` whose `unknown-member` arm has an ill-typed body, or whose `arm-arity` arm's body uses an unbound identifier, is refused `undefined_expression`/`unproved-exhaustiveness` with that obligation only. | Test (TC-398) |
-| FR-146-AC-15 | A recursive function measured by `decreases(size(s))` over a `Sequence`, `Set`, `Bag` or `OrderedSet` parameter `s` is admitted when each recursive call passes a removal filter of `s` (`x != e`, `e != x` or `not (x = e)` for a stable path `e`) under a `contains(s, e)` guard fact, or that filter inside a same-kind `convert`, and evaluates its declared result; passing `s` unchanged, a removal filter without the membership fact, a filter of any other predicate shape, or a removal of a non-stable `e` refuses `undefined_expression`/`unproved-decrease` with obligation `decrease`; `size` of a non-parameter operand, and one measure position holding a cardinality element in one function and an integer element in another of its component, refuse with obligation `measure-kind`; and a lexicographic tuple mixing cardinality and integer positions decreases by the earlier-equal rule. | Test (TC-191) |
+| FR-146-AC-15 | A recursive function measured by `decreases(size(s))` over a `Sequence`, `Set`, `Bag` or `OrderedSet` parameter `s` is admitted when each recursive call passes a removal filter of `s` (`x != e`, `e != x` or `not (x = e)` over an element type without a float leaf, `not quire::value::ieee::bitIdentical(x, e)` over a `Float32` or `Float64` element type, or `not contains(d, x)` under a further `contains(d, e)` fact, for a stable path `e`) under a `contains(s, e)` guard fact, or that filter inside a same-kind `convert`, and evaluates its declared result; passing `s` unchanged, a removal filter without the membership fact, a filter of any other predicate shape, or a removal of a non-stable `e` refuses `undefined_expression`/`unproved-decrease` with obligation `decrease`; `size` of a non-parameter operand, and one measure position holding a cardinality element in one function and an integer element in another of its component, refuse with obligation `measure-kind`; and a lexicographic tuple mixing cardinality and integer positions decreases by the earlier-equal rule. | Test (TC-191) |
 
 ## Dependencies
 
