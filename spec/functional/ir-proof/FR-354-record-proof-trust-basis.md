@@ -62,7 +62,8 @@ nothing from the solver but the certificate.
 
 The checker is part of the qualified core, so every SMT certificate that
 arrives is checked. Z3's independent cross-check (FR-349) is a parity signal
-recorded alongside the certification; it never changes the certification.
+recorded alongside the certification, as the result's FR-331 `cross_check`
+member; it never changes the certification.
 
 A plugin's `proved` result cannot be replayed and has no in-core certificate
 checker (FR-305 "Trusted proofs"). Its settlement stays `proved`, carries the
@@ -78,7 +79,7 @@ results alone, and a plugin's result carries `trusted` alone.
 | FR-354-AC-2 | A certificate whose every query equals the core's encoding and whose every proof refutes its query with checked rules settles `proved`, `certified`. | Test (TC-269) |
 | FR-354-AC-3 | A `proved` result with no certificate, and one whose certificate uses a rule outside the checked set and fails no check, settles `proved`, `uncertified`. | Test (TC-269) |
 | FR-354-AC-4 | A certificate whose carried query differs from the core's encoding, including one whose proof is internally valid, settles `inconclusive` with cause `certificate-rejected{rule, at}` naming the query; so does one with an invalid step, a proof that ends short of the empty clause, or a certificate whose shape does not match the proof basis, each naming its rule and where it failed. None settles `proved`. | Test (TC-269) |
-| FR-354-AC-5 | The Z3 cross-check result is recorded alongside the certification as an independent parity signal and never changes it. | Test (TC-269) |
+| FR-354-AC-5 | The Z3 cross-check result is recorded alongside the certification, as the FR-331 `cross_check` member of the `proved` result, as an independent parity signal and never changes it: TB-01's certified proof with an agreeing and with a disagreeing cross-check settles `proved`, `certified` both times, with `cross_check` verdict `proved` and `refuted`. | Test (TC-269) |
 | FR-354-AC-6 | A plugin's `proved` result settles `proved` with the certification `trusted` and the plugin's backend identity, the rendered outcome shows `trusted` beside the verdict, and an SMT backend's `proved` result carries `certified` or `uncertified`. | Test (TC-269) |
 
 ## Dependencies
