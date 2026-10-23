@@ -51,9 +51,3 @@ Round 1, at 270faa4c.
 | --- | --- | --- |
 | FND-001 | fixed | \| FR-001-AC-5 \| For each of the six layers, ... |
 | FND-002 | fixed | clock places and clock collections as FR-415 "Clock places" and "Clock collections" define them ... clock reads and resets over clock collections: element and slot selection ... forall/exists ... reset by selection |
-
-Round 2.
-
-| FND | outcome | reason |
-| --- | --- | --- |
-| FND-003 | fixed | temporal-complete.md admitted forms now list `Reference<Clock>`, `Option<Reference<Clock>>`, `ref`, `deref` and package clock `max` constraints (with `min` refused `time-invariant-shape`), tied to FR-415 "Clock places" and FR-154-AC-18 |
