@@ -66,6 +66,73 @@ non-negative rational constant: `self.x = 0` or `self.x = c`. A clock in the
 frame that is not reset keeps its value. Reset is the one write to a clock;
 any other write refuses with `invalid_timed_model`/`clock-write`.
 
+### Clock places
+
+A type is **clock-bearing** when it is `Clock`, an alias of a clock-bearing
+type, `Option` of one, or a record, tuple or union with a field, element or
+case payload of a clock-bearing type. A value of a clock-bearing type is not a
+data value: it denotes **clock places**, the clocks it contains, and a place
+is the pair of an object of a universe and the path of fields, tuple indexes
+and union cases from the object's field to a `Clock`. The clocks of a timed
+model are exactly the places of its objects, so their number is fixed by the
+universe and the declared types and no state changes it.
+
+- A place under an `Option` or `?` field or a union case is **guarded**: it is
+  present at a discrete state exactly when the value on its path holds that
+  case (`present(p)` for an optional place `p`), and its clock has a value
+  only while it is present. A place that is not guarded is present in every
+  state. A guarded place is read in a clock constraint as `value(p)`, which
+  carries FR-146's presence obligation: a `value(p)` without `present(p)`
+  established by the guard or by the time invariant's predicate refuses
+  `undefined_expression`/`unproved-presence` at the read.
+- Every present clock is 0 in every initial state. A guarded clock that becomes
+  present takes the constant its write gives it (below), and one that becomes
+  absent is dropped: only present clocks advance with time.
+- A `Clock` parameter is bound by place: the argument of a call is a place, not
+  a copy of a value, and the callee reads or resets that same clock. A `Clock`
+  result is a place, and a function that returns one returns the place its
+  body names.
+- A place path that crosses a reference or an `if`/`match` denotes one place
+  for each object or branch it can reach, each guarded by the data condition
+  that selects it, so a clock constraint over it is the disjunction of those
+  guarded constraints.
+- A record, tuple or union literal that contains a `Clock` component is a
+  write: it is admitted only as the right side of a reset (`self.t =
+  Timer { x: 0 ms, n: 3 }`), each of its clock components an exact
+  non-negative rational time constant. A write of a constant to a guarded
+  place makes it present with that clock, and a write of `absent`, or of
+  another union case, drops it.
+  Elsewhere it refuses `invalid_timed_model`/`clock-write`.
+- A clock-bearing value that is read whole, as an operand of `=`, a function
+  argument of data type, an assignment to a data field or a conversion, reads
+  its clocks, and refuses `invalid_timed_model`/`clock-read-outside-constraint`.
+  The data fields of a clock-bearing record are data values and are read as
+  usual.
+- A function or predicate with a `Clock` parameter or result, or a parameter or
+  result of a clock-bearing type, is a **clock-reading declaration**. Its body
+  reads a clock only as the clock operand of an atomic clock constraint or
+  passes it to another clock-reading declaration, and a call to it stands only
+  where a clock constraint stands (a precondition, a time invariant body or
+  the body of another clock-reading declaration); a call anywhere else refuses
+  `invalid_timed_model`/`clock-read-outside-constraint`. A clock-reading
+  declaration writes no clock: a reset belongs to a postcondition.
+- A bound of an atomic clock constraint in a clock-reading declaration is a
+  time quantity literal or a quantity parameter whose every call supplies an
+  exact non-negative time constant; any other bound refuses
+  `invalid_timed_model`/`clock-bound-not-constant`.
+- An operation's `Clock` parameter ranges over the clock places of the model,
+  as an object parameter ranges over its universe. When the operation's
+  postcondition resets the parameter, it ranges over the places of the clock
+  fields the operation's frame names; a reset of a clock the frame does not
+  name refuses `invalid_timed_model`/`clock-write`.
+- A collection (a `Set`, `Bag`, `Sequence`, `OrderedSet`, a map or a field of
+  multiplicity other than `[1, 1]`) of a clock-bearing type refuses
+  `invalid_timed_model`/`clock-in-collection`, because the number of clocks
+  would vary with the state.
+- A clock place under `time tick` or in an untimed model refuses
+  `invalid_timed_model`/`clock-without-dense-time` at the object field that
+  holds it.
+
 ### Clock constraints and guards
 
 An atomic clock constraint is `x ~ c`, with `~` one of `<`, `<=`, `=`, `>=`,
@@ -113,6 +180,9 @@ its value and the request setting that raises it.
 | FR-415-AC-3 | Strict and non-strict atomic clock constraints are admitted with exact conversion to `u`; a clock read outside a constraint, a two-clock comparison and a negative constant refuse with their typed causes. | Test (TC-367) |
 | FR-415-AC-4 | A time invariant with upper bounds is admitted; a lower bound or equality in its body refuses `invalid_timed_model`/`time-invariant-shape`. | Test (TC-367) |
 | FR-415-AC-5 | `urgent when P` is admitted; `urgent O` is admitted only when `O`'s guard reads no clock. | Test (TC-367) |
+| FR-415-AC-6 | A record `Timer { x: Clock, n: Int }` held by object field `t`, a `Clock` parameter, a `Clock` result and `type Alias = Clock` each admit the clock rules of the sections above: `t.x`, the argument of a call and the result of a call are read only in atomic clock constraints and reset only by a postcondition reset, `Alias` is `Clock`, and a model with `k` objects and the record field `t` has `k` clocks `t.x`. Reading `t` whole (`self.u = self.t`) refuses `clock-read-outside-constraint`; a record literal with a clock component outside a reset refuses `clock-write`. | Test (TC-367) |
+| FR-415-AC-7 | A field `w: Option<Clock>` is a guarded place: it is absent in an initial state whose `w` is absent, `self.w = 0 ms` makes it present with clock 0, writing `absent` drops it, the guard `present(self.w) and value(self.w) >= 1 ms` is false while `w` is absent, the time invariant `when present(self.w) { value(self.w) <= 3 ms }` places no bound while `w` is absent, and `value(self.w) >= 1 ms` with no `present(self.w)` refuses `undefined_expression`/`unproved-presence`. | Test (TC-367) |
+| FR-415-AC-8 | Each refuses with its cause: a `Set<Clock>` field and a `Sequence<Timer>` field (`clock-in-collection`); an operation that resets its `Clock` parameter with a frame naming no clock field (`clock-write`); a clock-reading predicate with a bound parameter called with a non-constant argument (`clock-bound-not-constant`); a call to a clock-reading predicate in an `invariant` clause (`clock-read-outside-constraint`); a clock-bearing field under `time tick` (`clock-without-dense-time`). | Test (TC-367) |
 
 ## Dependencies
 

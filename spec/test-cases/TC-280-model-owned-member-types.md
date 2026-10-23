@@ -11,6 +11,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-99
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-106
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-107
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-154
@@ -173,6 +177,8 @@ process or state machine.
 | MU-08 | `field` `limit` on T2, `typeRef` `ix://quire/unit/ms` | Resolves `Call/limit`; type `Quantity<ms>` over the source unit's node, distinct from MU-07's | FR-322-AC-99 |
 | MU-09 | `field` `stale` on T2, `typeRef` `ix://quire/unit/rpc/ms` | `missing_declaration`/`missing-name` | FR-322-AC-99 |
 | MU-10 | `field` `x` on T2, `typeRef` `ix://quire/native/Clock` with FR-154's clock field shape, resolved as a `field` member; then a `field` application over `x` used as a value; then `x` as the clock operand of the atomic clock constraint `self.x >= 1 ms` in a guard | The member resolves to the clock type with no checked-package node; the value application refuses `invalid_timed_model`/`clock-read-outside-constraint`; the clock-constraint operand raises no such refusal | FR-322-AC-99 |
+| MU-16 | The document of FR-322-AC-106: `Call` with clock field `x` and optional clock field `w`, `Timer` with clock field `x` and data field `n` held by field `t`, operation `reset` with a `Clock` parameter `c`, operation `clk` with a `Clock` result; `field` members `x`, `t`, `w` resolved, then a `field` application over `x`, over `t.x` and over `w` used as a value, then the `Timer` record node read | The members resolve; `w` is `Option<Clock>`; each value-position application `invalid_timed_model`/`clock-read-outside-constraint`; the `Timer` node lists `n` only and no node stands for `x`, `t.x`, `w`, `c` or the result of `clk` | FR-322-AC-106 |
+| MU-17 | T2's package with alias `D` (`target` `ix://quire/unit/acme/rpc/ms`), a sequence type with that `items`, a map type with that `values`, and a field `d` typed `D` | `d` is `Quantity<M::ms>`; the sequence `Sequence<Quantity<M::ms>>`; the map `Map<Text, Quantity<M::ms>>`; one `scalar_type`/`unit` node for `ms` and no node for `D`, the sequence or the map | FR-322-AC-107 |
 | RE-ends-1 | `relationship_end` `order` on M4, the relationship `Order-order-Order` | Resolves the end `order` | FR-322-AC-56 |
 | RE-ends-2 | `relationship_end` `next` on M4 | Resolves the end `next` (`targetEnd.role`) | FR-322-AC-56 |
 | RE-ends-3 | `relationship_end` `invoiced` on M10, the relationship `Order-invoiced-Invoice` with no `targetEnd.role` | Resolves the end `invoiced` | FR-322-AC-56 |

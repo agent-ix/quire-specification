@@ -244,7 +244,10 @@ open, and every other explored state is closed
 
 Over a timed subject ([FR-415](../temporal/FR-415-declare-clocks-and-timed-models.md))
 a state is a **timed state** `(s, v)`: `s` the discrete state (every non-clock
-field) and `v` the clock valuation, every clock 0 initially.
+field, the presence of every guarded clock place included) and `v` the clock
+valuation of the present clocks, every present clock 0 initially. A clock that
+a step makes present takes the constant of its write, and one that a step makes
+absent leaves `v` (FR-415 "Clock places").
 
 - A **delay** by real `d >= 0` takes `(s, v)` to `(s, v + d)`. It is admissible
   when `d = 0`, or when `s` is not urgent and every time invariant whose
