@@ -345,7 +345,7 @@ boundary.
   `fairness` members are
   [FR-370](FR-370-checked-package-temporal-clause-body.md)'s,
   or for `quire.op.state.clause` the `{kind: "state_clause", clause}` member
-  naming the clause kind (`invariant`, `precondition` or `postcondition`,
+  naming the clause kind (`invariant`, `constraint`, `precondition` or `postcondition`,
   [FR-341](FR-341-checked-package-state-clause-body.md)). A state clause
   carries no law.
   An `operation` member's declaring node is a `model` node whose own
@@ -447,7 +447,8 @@ boundary.
   own node forms and each reporting before the next starts: the state-graph
   step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
   the terminal step (FR-476), the step-relation step (FR-477), the hybrid
-  step (FR-481) and the protocol step (FR-464). Each body artifact's "Reader order" fixes the
+  step (FR-481), the protocol step (FR-464) and the schedulability step
+  (FR-482). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
@@ -585,8 +586,9 @@ boundary.
   [FR-469](FR-469-checked-package-extension-nodes.md),
   [FR-475](FR-475-checked-package-state-graph-claim-body.md),
   [FR-476](FR-476-checked-package-model-terminal-declaration-body.md),
-  [FR-477](FR-477-checked-package-step-relation-claim-body.md) and
-  [FR-481](FR-481-checked-package-hybrid-model-nodes.md). For example:
+  [FR-477](FR-477-checked-package-step-relation-claim-body.md),
+  [FR-481](FR-481-checked-package-hybrid-model-nodes.md) and
+  [FR-482](FR-482-checked-package-schedulability-claim-body.md). For example:
 
   | Node | `dependencies` |
   | --- | --- |
@@ -856,7 +858,7 @@ nothing).
 The remaining (code, cause) pairs a V2 reader reports are each the pairing
 [FR-272](../foundation/FR-272-typed-diagnostic-cause.md) lists, and the V2
 `Diagnostic` schema admits each cause only with its code:
-`ill_typed`/`type-mismatch` (FR-440's union value join);
+`ill_typed`/`type-mismatch` (FR-440's union value join, and FR-481's rate, reset and call terms); `ill_typed`/`non-boolean-root` (a Boolean root that is not Boolean: FR-464 to FR-466, FR-476, FR-477 and FR-481's invariants, guards, initial conditions and activation guards);
 `missing_import`/`missing-selection` and `missing_declaration`/`missing-selection`;
 and `unknown_profile`/`unsupported-selection` and
 `unknown_profile`/`wrong-selection-role`
@@ -1140,6 +1142,8 @@ constraints ("Reference conformance" below).
    | `ix://quire/native/String` | `String`, a native with no text profile; it is not `Text` and has no `Text` bounds, profile or leaf | `scalar_type`/`string` |
    | `ix://quire/native/UUID` | `UUID`, compared by its canonical payload under FR-149's UUID row; no ordering | `scalar_type`/`uuid` |
    | `ix://quire/native/Timestamp` | `Timestamp`, compared by its canonical payload under FR-149's Timestamp row; no ordering and no arithmetic | `scalar_type`/`timestamp` |
+   | `ix://quire/native/Float32` | `Float32`, an IEEE binary32 value (FR-148); a field names no rounding mode, so the type is strict `exact`; a field value is compared by its bits in a collection (FR-144) and by no `=` | `scalar_type`/`float32` |
+   | `ix://quire/native/Float64` | `Float64`, an IEEE binary64 value (FR-148), with the same rules as `Float32` | `scalar_type`/`float64` |
    | `ix://quire/native/Clock`, on a field with FR-154's clock field shape | `Clock`, the clock type of FR-415: the field is one clock per object of its owning type, holds no data value, is read only as the clock operand of an atomic clock constraint (in a guard or a time invariant) and is written only by a reset (FR-415) | none: no node stands for a clock. This artifact carries no clock constraint, reset or timed-model member; the checker reads a clock operand there by (declaring node, field name) and records the timed model (FR-415, QSL FR-230). A `field` application whose member resolves to a clock field in any other position, a value position, refuses `invalid_timed_model`/`clock-read-outside-constraint` |
    | a value type (FR-208 `quire.meaning.model.value-type/v1`) of the same domain package bound as `Int[lo, hi]`, `lo <= hi`, as TC-196's `Count` and `Small` and TC-197's `Count` are | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over the `Integer` node |
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
@@ -1807,7 +1811,7 @@ is declared `boolean`. An `expression` or `function` whose body root is the
 application has `semantic_type` equal to that `result_type`. A `literal` term's
 `type` must have a family its `value_kind` admits (`boolean`, `integer`,
 `rational`, `decimal`, `float32_bits`→`float32`, `float64_bits`→`float64`,
-`text`, `string`, `uuid`, `timestamp`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`). Any failure is
+`text`, `string`, `uuid`, `timestamp`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`, `reference`→`reference`). Any failure is
 `operator-ineligible`.
 
 The fit rule has one exception besides record conformance ("Record
@@ -1836,7 +1840,12 @@ with no normalization or case folding. `string` is not `text`: it has no text
 profile, so a `text_profile` law or mode on a `string` identity refuses at
 the law and mode steps of the reader order above, and a `string` operand of a
 `quire.op.text.*` identity pins no text profile and refuses
-`invalid_package`/`operation-mode-type-mismatch`. These families have no
+`invalid_package`/`operation-mode-type-mismatch`. `string` also has the six
+text-to-number conversions `quire.op.string.to_integer`, `to_decimal`,
+`to_rational`, `to_float32`, `to_float64` and `to_quantity`, catalogued as
+FR-478 states beside their `quire.op.text.to_*` counterparts; a
+text-to-number conversion is a `convert`, so its `rounding` mode, when its
+target has one, is pinned by the result type alone. These families have no
 ordering, no arithmetic and no other operation identity: an ordering or
 arithmetic identity over them refuses `ill_typed`/`operator-ineligible`
 (FR-149-AC-16 for UUID and Timestamp).
@@ -1872,9 +1881,24 @@ JSON string) refuses `invalid_package`/`invalid-value` at the literal's
 unit (family `quantity`) and its `value` is the exact rational magnitude: the
 canonical decimal integer when the denominator is 1, otherwise
 `numerator/denominator` in lowest terms with a denominator above 1 and a sign
-only on the numerator (`3`, `-5`, `1/1000`; not `03`, `+3`, `2/4`, `3/1`, `2.5`). The spelling is read after the literal's family check, so a literal
+only on the numerator (`3`, `-5`, `1/1000`; not `03`, `+3`, `2/4`, `3/1`, `2.5`). A `rational` literal's `type` is a `scalar_type`/`rational` node and
+its `value` is its exact value in the same canonical magnitude spelling
+(`0`, `1`, `-3`, `1/2`), so one rational has one spelling: `2/2`, `1/1`,
+`02`, `+1`, `2/4` and `1/0` refuse `invalid_package`/`invalid-value` at the
+literal's `value`. The spelling is read after the literal's family check, so a literal
 whose `type` is not its kind's family refuses `ill_typed`/`operator-ineligible`
 even when its value is also non-canonical.
+
+**Reference literal values.** A `reference` literal is a reference literal
+([FR-480](../../functional/type-model/FR-480-check-and-resolve-reference-literals.md)).
+Its `type` is the `composite_type`/`reference` node over a `model`/`object_type`
+declaration node, and its `value` is the object identity as lowercase
+hexadecimal, two digits per byte, at least one byte. A `value` with an
+uppercase digit, an odd number of digits, a non-hexadecimal character or no
+digit refuses `invalid_package`/`invalid-value` at the literal's `value`. A
+`reference` literal typed by a reference node over any other declaration kind
+refuses `ill_typed`/`operator-ineligible`. The literal carries no universe and
+no object type component: a subject binding fixes both (FR-480).
 
 | Constraint | Decision rule |
 | --- | --- |
@@ -1892,7 +1916,7 @@ even when its value is also non-canonical.
 | `exact_conversion` | FR-149 classifies operand 0's type to the member type as exact. |
 | `range_narrowing` | FR-149 classifies it as range narrowing: a checked obligation that the value lies in the target range (`unproved-range` when not proved), never rounding; `mode` is `null`. |
 | `rational_narrowing` | FR-149 classifies a rational-to-rational conversion as rational narrowing: a checked obligation that the reduced numerator and denominator lie in the target bounds (`unproved-range`); `mode` is `null`. |
-| `scale_reduction` | FR-149 classifies it as scale reduction to a decimal; this is the only conversion that rounds, and it requires a `rounding` mode. |
+| `scale_reduction` | FR-149 classifies it as scale reduction to a decimal; among exact-numeric conversions this is the only one that rounds, and it requires a `rounding` mode. An FR-478 `quire.op.text.to_decimal` or `quire.op.string.to_decimal` conversion also rounds, under its target's non-`exact` mode. |
 | `promotes_exact` | Every named operand is in `rational_promotable` and is promoted exactly to its rational value before the operation. |
 | `uniform_rest` | Every rest argument has the same family. |
 | `union_arms` | The rest arguments are exactly one arm per member of operand 0's union, in member declaration order, each with as many binders as that member's payload arity, each binder typed by its payload position ([FR-440](FR-440-checked-package-union-and-case-nodes.md)). |
@@ -1997,7 +2021,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-8 | Two conformers derive the same package id from the specified JCS identity preimage; changing an excluded raw artifact/source-map/presentation or reader-limit member does not change it, while changing any named preimage member does. | Test (TC-217) |
 | FR-322-AC-9 | The reader result is exactly admitted, refused or incomplete; malformed input and the first exhausted measured limit remain distinguishable and carry their specified typed provenance/accounting. | Test (TC-217) |
 | FR-322-AC-10 | Enum, dimension and declared-unit node keys match the closed JCS preimage vectors; stale-body keys, non-normalized rationals, invalid owner joins and every other noncanonical member or term order this artifact refuses -- including an application node's `dependencies` list -- refuse as `invalid_semantic_graph`, except a `state`/`frame` node's own `modifies`/`creates`/`deletes` canonical order, which [FR-340-AC-4](FR-340-checked-package-frame-location.md) owns. | Test |
-| FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 14 closed node tags with an exact source-map entry for every occurrence, and refuses each authored document-type, digest-domain and node mutation. | Test |
+| FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 15 closed node tags with an exact source-map entry for every occurrence, and refuses each authored document-type, digest-domain and node mutation. | Test |
 | FR-322-AC-14 | Each published V2 package fixture's `identity_preimage` equals the selection object rebuilt from its lock alone and carries no `identity_projection`, and its `package_id` equals the RFC 8785 JCS SHA-256 of the package-id preimage, that object with the `identity_projection` the reader derives from its semantic graph, every node in graph order without `occurrences`; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
 | FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef` names a complete-value lock definition by authority and identity; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne`, ordering or `negate` identity, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
@@ -2013,7 +2037,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-28 | A `ModelOwner` node-identity preimage carries the declaring domain package's `identity` beside `node` and no version label, so a node id depends only on content; the published `ModelOwner` vectors validate against the closed preimage schema and recompute their recorded JCS SHA-256, and a `ModelOwner` preimage that carries a `version` member is refused by the closed preimage schema. | Test |
 | FR-322-AC-29 | Each published model declaration node vector validates against the closed `ModelDeclarationNode` preimage schema and recomputes its recorded JCS SHA-256. A model declaration node carrying `Order`'s `ModelOwner` and keyed by its preimage resolves to `Order`. A node whose owner identity is not lock-selected refuses `missing_declaration`/`missing-selection` in the derived-shape key stage, and a current `model`/`object_type` node whose owner names the relationship `Order-order-Order` refuses `missing_declaration`/`missing-selection` in the owner join. A node whose key was computed under another tag (the relationship's id on a `model` node whose owner names an object type; one whose owner names the relationship is refused by the owner join first, as the second refusal above), whose `semantic_type` is not its own id, that carries a `recursion_group`, or whose body has members refuses `invalid_package`/`stale-node-key` (MW-02, MW-04, MW-05, MW-15: the relationship's id on a `model`/`object_type` node owned by `Order`). A model declaration node that carries a `declaration` beside its `ModelOwner`, or carries no `owner`, fails the V2 schema and refuses `malformed_wire`. | Test |
 | FR-322-AC-30 | A model-owned `field` or `operation` member resolves among the declaring type's exposed effective members, own and inherited. A field declared by a supertype resolves on the subtype's node, and an operation redefined through `Operation.redefines` (FR-154) resolves to the most derived redefinition. An operation on a `systems_interface` node refuses `ill_typed`/`operator-ineligible`. Two exposed fields of one name refuse `ambiguous_declaration`/`ambiguous-name`, and so do a supertype's operation and a subtype's operation of one name when the subtype's operation has no `redefines` naming it. An undeclared name, a name of the other member kind and a relationship declaring node each refuse `ill_typed`/`operator-ineligible`. | Test |
-| FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `String`, `UUID` and `Timestamp` from their native declared types (`String` distinct from `Text`), `Reference<Invoice>` and an operation's `Integer` result. A bare `Text` field (no `Text[min, max; profile]` value type), a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number from the operation's parameters or in type node from them, unless a record argument conforms to its record parameter ("Record conformance"). | Test |
+| FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `String`, `UUID`, `Timestamp`, `Float32` and `Float64` from their native declared types (`String` distinct from `Text`), `Reference<Invoice>` and an operation's `Integer` result. A bare `Text` field (no `Text[min, max; profile]` value type), a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number from the operation's parameters or in type node from them, unless a record argument conforms to its record parameter ("Record conformance"). | Test |
 | FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity passes the selection admission checks whatever its own canonical digest is, while a digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`, no document refuses `missing_import`/`missing-selection` and a document whose identity differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test |
 | FR-322-AC-33 | `quire.op.reference.eq` and `quire.op.reference.ne` admit two references to selected object types of which one conforms to the other along declared supertypes: two of one type, a subtype and its supertype in either operand order, a subtype two levels down, and a type with two supertypes against either. A systems interface with no declared supertype against an unrelated object type, two unrelated object types, a reference to a relationship, even compared with itself, and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand whose owner is not selected refuses `missing_declaration`/`missing-selection`, even compared with itself. | Test |
 | FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, a `deref` result of a relationship, and a projection whose `result_type` is not the field's member type refuse `ill_typed`/`operator-ineligible`. | Test |
@@ -2028,7 +2052,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-44 | A field typed by a value type bound as `Text[min, max; profile]` has type `Text[min, max; profile]` over a `text_bounds` node; a value type bound as `Text` with `min > max` or with a profile outside FR-141's six (a negative `min` is not a document: `minLength` is a non-negative integer) gives the member no type and refuses `ill_typed`/`operator-ineligible`. | Test |
 | FR-322-AC-45 | `quire.op.structural.eq` over two `Label` values of `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }` carries exactly the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` in that order, each with the `nfc` text law and mode, and none for `Empty`; both V2 schemas admit the `member:<Ident>` segment. | Test |
 | FR-322-AC-46 | `quire.op.structural.eq` over two values of `union List { Cons(Integer, List), Nil }`, whose cycle names one `recursion_group`, is admitted with empty `leaves`, and a record whose field's type cycles back to the record through a union is likewise admitted; neither refuses `operator-ineligible`. Over `Node`, `Cell`, `Chain` and `Option<Chain>` of the "Structural leaf walk" examples it is admitted with exactly the listed leaves in that order, each recursion leaf with `laws` `[]` and `mode` `null`; both V2 schemas admit the `recursion:<d>` segment. | Test |
-| FR-322-AC-47 | The V2 `Diagnostic` schema admits `type-mismatch` only with `ill_typed`, `missing-selection` only with `missing_import` or `missing_declaration`, `unsupported-selection` and `wrong-selection-role` only with `unknown_language`, `unknown_edition` or `unknown_profile`, and `declaration-form`, `expression-form` and `not-yet-implemented` only with `unsupported_construct`. | Test (TC-233) |
+| FR-322-AC-47 | The V2 `Diagnostic` schema admits `type-mismatch` and `non-boolean-root` only with `ill_typed`, `missing-selection` only with `missing_import` or `missing_declaration`, `unsupported-selection` and `wrong-selection-role` only with `unknown_language`, `unknown_edition` or `unknown_profile`, and `declaration-form`, `expression-form` and `not-yet-implemented` only with `unsupported_construct`. | Test (TC-233) |
 | FR-322-AC-48 | A published package whose ungrouped structural node is tampered, with its `node_id` kept and its `package_id` recomputed, is schema-valid and identity-consistent and refuses `invalid_package`/`stale-node-key` at that node's `node_id`: an `integer_range` `max` narrowed to `2` and widened to `5000`, its `min` raised to `1` and its bounds swapped, a `reference` target re-pointed at the `Integer` node, a `set` element re-pointed at the `Integer` node, and the declared record `Example::Point`'s field `x` re-pointed from the `Integer` node at the `Int[0, 9]` node. The untampered package is admitted. | Test |
 | FR-322-AC-49 | The recursive-records package (`record List { next?: List; }` and `record Tree { kids: Sequence<Tree>[0, 3]; }`, each one recursion group keyed by QSL FR-092) is admitted. With one in-group node tampered, its `node_id` kept and its `package_id` recomputed, it refuses `invalid_package`/`stale-node-key` at that node's `node_id`: `Tree`'s `collection_bounds` `max` widened from `3` to `1000` and its `min` raised to `1`, `Tree`'s `Sequence` element re-pointed from the record at the `collection_bounds` node, and `List`'s `Option` re-pointed at the `Integer` node. The `Tree` group relabelled with a label that is not its group digest, each member rekeyed under that label and every reference rewritten, refuses `invalid_package`/`stale-node-key` at the group member with the lowest node-id digest. | Test |
 | FR-322-AC-50 | Every structural node of every published positive fixture, grouped or not, model declaration nodes included, carries the key QSL's FR-092 key function (FR-094's for a model-owned node) mints for it from its own members, its `owner` included, and no placeholder key; the recursive-records fixture's group labels are its groups' digests; and the full reader admits every published positive fixture. | Test |
@@ -2082,6 +2106,8 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 | FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
+| FR-322-AC-101 | A `literal` of `value_kind` `reference` typed by the `composite_type`/`reference` node over a `model`/`object_type` node, with `value` `7331`, is admitted with family `reference`, and both V2 schemas enumerate `reference` as a literal `value_kind`. The same literal with `value` `7G31`, `733`, `73A1` or empty text refuses `invalid_package`/`invalid-value` at `value`; typed by the reference node over a `model`/`process` node, or by an integer node, it refuses `ill_typed`/`operator-ineligible`. | Test (TC-965) |
+| FR-322-AC-114 | A `rational` literal typed by a `scalar_type`/`rational` node with value `0`, `1`, `-3`, `1/2` or `-7/2` is admitted with family `rational`, and one with value `2/2`, `1/1`, `02`, `+1`, `2/4`, `1/0`, `0/5`, `1/-2`, `2.5` or empty text refuses `invalid_package`/`invalid-value`. | Test (TC-233) |
 
 ## Dependencies
 

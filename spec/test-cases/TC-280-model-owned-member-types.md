@@ -143,6 +143,7 @@ process or state machine.
 | MT-16 | `field` `code`, native `String` | `String` over `scalar_type`/`string`, distinct from `Text` | FR-322-AC-31 |
 | MT-17 | `field` `ref`, native `UUID` | `UUID` over `scalar_type`/`uuid` | FR-322-AC-31 |
 | MT-18 | `field` `at`, native `Timestamp` | `Timestamp` over `scalar_type`/`timestamp` | FR-322-AC-31 |
+| MT-19 | `field` `gain`, native `Float64`; `field` `coarse`, native `Float32`; `field` `levels`, native `Float64` `[0, 3]`, unordered, unique | `Float64` over `scalar_type`/`float64`; `Float32` over `scalar_type`/`float32`; `Set<Float64>[0, 3]` | FR-322-AC-31 |
 | MA-01 | `field` `missing` on M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-02 | `field` `size`, an operation name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-03 | `operation` `total`, a field name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |

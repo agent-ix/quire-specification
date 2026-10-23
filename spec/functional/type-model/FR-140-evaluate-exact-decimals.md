@@ -77,7 +77,10 @@ scale of a result is `smax`.
 
 Each operand's retained representation is its literal coefficient/scale as
 written or, for a computed result, (`v × 10^T`, `T`) at that result's target
-scale `T`; operations and accounting use retained representations, never a
+scale `T`. An FR-478 text-to-decimal conversion is the one computed result
+retained as spelled, like a literal: a spelled scale at most `T` keeps its
+spelled coefficient/scale, so `1.5` into `Decimal[0,1000;0,2]` retains
+(`15`, `1`), and only a spelled scale above `T` is retained at `T`; operations and accounting use retained representations, never a
 normalized form. Addition/subtraction align to the greater operand scale using exact powers of
 ten. Multiplication multiplies coefficients and adds scales. Unary negation
 negates the coefficient. Division by a divisor whose normalized coefficient is
@@ -114,7 +117,8 @@ denominator bound is one converts exactly as the integer `n`. The rounding
 conversion is lossy, so FR-149 never admits it as an equality conversion. FR-149
 classifies it, and every decimal-to-decimal conversion to a smaller maximum
 scale, as a scale reduction (`quire.op.numeric.convert_rounding`), the only
-conversion that rounds. A conversion that changes only the admitted range, such
+exact-numeric conversion that rounds; an FR-478 text-to-decimal conversion
+rounds by this same rounding step under a non-`exact` target mode. A conversion that changes only the admitted range, such
 as `Int[0,300]` into `Decimal[0,20000;2,2]`, is an FR-149 range narrowing
 (`quire.op.numeric.narrow`): its membership is an FR-146 obligation, and it
 never rounds or clamps.

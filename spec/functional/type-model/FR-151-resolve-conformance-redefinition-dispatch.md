@@ -187,8 +187,8 @@ Rule `quire.model.dispatch.single/v1`. A dispatched call is
 effective operation `o` of the receiver's static type `T`; its arguments are
 type-checked statically against `o`'s signature with reference upcasts only.
 Only query operations, whose result is present and whose effect set is empty,
-may be called, and only inside invariant, precondition and postcondition
-blocks; a call in a function or operation body is `ill_typed`/`operator-ineligible`.
+may be called, and only inside invariant, state constraint (FR-382),
+precondition and postcondition blocks; a call in a function or operation body is `ill_typed`/`operator-ineligible`.
 A body is supplied by an `operation-body` declaration.
 Across all source units linked into one package, at most one
 `operation-body` declaration SHALL resolve to a given operation identity.
@@ -219,7 +219,8 @@ admitted domain package. Every ambiguity is therefore a link-time refusal.
 
 Dispatch edges are call-graph edges. For each dispatched call, the FR-146
 call graph has an edge from the declaration containing the call (a function,
-an invariant, precondition or postcondition clause, or an operation body) to
+an invariant, state constraint, precondition or postcondition clause, or an
+operation body) to
 every candidate's `operation-body` and to every precondition clause of every
 candidate's effective precondition, which the call evaluates. Operation bodies
 and contract clauses have no `decreases` form, so a cycle containing a dispatch

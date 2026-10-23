@@ -43,7 +43,7 @@ It is not a claim about executed paths, backend support or release conformance.
 | Feature | Included exactly when |
 | --- | --- |
 | `declaration.predicate` | At least one named predicate is declared. |
-| `family.state` | At least one invariant, precondition or postcondition is declared. |
+| `family.state` | At least one invariant, state constraint, precondition or postcondition is declared. |
 | `family.temporal` | At least one temporal clause is declared. |
 | `family.protocol` | At least one protocol clause is declared. |
 

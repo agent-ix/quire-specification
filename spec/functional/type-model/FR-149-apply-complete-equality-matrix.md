@@ -63,6 +63,7 @@ retypes that operand and creates no common type.
 | Integer, rational and decimal | exact mathematical value; operands of different numeric types first require an admitted [equality conversion](#equality-conversions), or the [arithmetic operand exception](#arithmetic-operand-against-a-bounded-integer) |
 | Quantity | identical unit and exact value equality; a top-level quantity equality expression uses the FR-142 root-value comparison schedule, while a quantity leaf inside a composite equality plan compares by exact value in its identical unit and charges only its `equality.pair`; distinct units require an explicit prior FR-142 conversion |
 | Text | the FR-141 relation under the same pinned profile: normalized scalar sequence for scalar profiles and original UTF-8 bytes for `binary-utf8` |
+| String | identical Unicode scalar sequence (QSL FR-056's native `String`): no normalization, case folding or trimming, so a composed and a decomposed spelling of one character are unequal; a distinct native type, not `Text` |
 | Enumeration | the same qualified enumeration declaration and identical case; different declarations have no implicit common type |
 | Presence, absence and null | same declared type and state; two absent values are equal, two explicit null values are equal, and two present values recursively compare their payload; absent and explicit null are distinct |
 | Record and tuple | same FR-143 declaration key and recursively equal fields in declaration order or positions in order; two records of one static type whose most-specific declaration keys differ (a record subtype value and an ancestor value, FR-208) are unequal, and `=` is `false`, not a refusal |
@@ -72,7 +73,7 @@ retypes that operand and creates no common type.
 | Bag | equal occurrence count and recursively equal members with equal multiplicity |
 | Ordered set | recursively equal unique values in the same occurrence order |
 | Object reference | identical FR-143 identity triple (universe, object-type declaration, object identity); referenced state and observation are not inspected; different universes return `refused { code: foreign_reference, cause: foreign-universe }` |
-| IEEE binary32/binary64 | the explicitly selected FR-148 `numericEqual`, `totalOrder` equivalence or `bitIdentical` intrinsic; the grammar's `=` and `!=` select none of them and are `ill_typed` for any operand type containing `Float32` or `Float64` at any depth |
+| IEEE binary32/binary64 | the explicitly selected FR-148 `numericEqual`, `totalOrder` equivalence or `bitIdentical` intrinsic; the grammar's `=` and `!=` select none of them and are `ill_typed` for any operand type containing `Float32` or `Float64` at any depth; the one other relation over floats is the collection membership relation of [FR-144](FR-144-preserve-complete-collection-algebra.md), which `=` never selects |
 
 Operands of different types are comparable only after an explicit conversion
 declares a common type, except that a binary `+`, `-` or `*` operand takes the
@@ -109,6 +110,16 @@ The same holds for ordering. The grammar's `<`, `<=`, `>` and `>=` with a
 no signaling or quiet IEEE comparison is selected. Floats are ordered only by
 the explicitly called FR-148 `quire::value::ieee::totalOrder` intrinsic
 (operation `quire.op.ieee.total_order`).
+
+A `Set`, `Bag` or `OrderedSet` decides whether two members are one member by
+FR-144's collection membership relation, not by `=`. That relation is this
+matrix with exactly one change: a `Float32` or `Float64` leaf, at any depth
+inside the member, is compared by FR-148 `bitIdentical`. A float member is
+therefore admitted, `+0` and `-0` are two members, and two NaNs are one member
+exactly when their bits are identical. The relation exists for every
+type except an event type and a type containing one. The relation is not an equality conversion and does not
+make `=` or `!=` eligible: `=` over a set, a record or a union containing a
+float remains `ill_typed`/`operator-ineligible`.
 
 ## Selected schedules
 
@@ -236,11 +247,18 @@ alone, first match wins, and the checked package records it as one
 | range narrowing | any other conversion from `Integer` or `Int[..]`, from a decimal to a `Rational[..]` or `Decimal[..]`, from a bounded `Rational[..]` to an integer type or (with denominator bound 1) a `Decimal[..]`, or from a `Decimal[c1,c2;0,0;m]` to an integer type | `quire.op.numeric.narrow` | A checked obligation that the converted value is a member of `T` (FR-146 range obligation, `unproved-range`). |
 
 Every other exact-numeric pair has no conversion and is
-`refused { code: ill_typed, cause: operator-ineligible }`. Narrowing is never
+`refused { code: ill_typed, cause: operator-ineligible }`. A `convert<T>(e)`
+whose `S` is a `Text[..]` type or `String` and whose `T` is an integer,
+decimal, rational, IEEE or quantity type is not an exact-numeric conversion
+and has none of these classes. It is
+[FR-478](FR-478-convert-text-to-a-number.md)'s text-to-number conversion, one
+of the `quire.op.text.to_*` or `quire.op.string.to_*` identities, and
+FR-478 alone decides its value, rounding and refusals. Narrowing is never
 rounding: a narrowing obligation that is not proved refuses with
 `refused { code: undefined_expression, cause: unproved-range }`, and a value
-outside `T` is never rounded, clamped, wrapped or widened. Rounding happens only
-in a scale reduction, and only there does a `rounding` mode appear.
+outside `T` is never rounded, clamped, wrapped or widened. Among exact-numeric
+conversions, rounding happens only in a scale reduction, and only there does a
+`rounding` mode appear.
 
 A rational `/` whose operands are `Integer`, `Int[..]` or `Rational[..]` and
 whose expected type is `Rational[..]` is `quire.op.rational.div`: each integer
@@ -332,6 +350,7 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-19 | With `tally` of `Int[0,3]` and the guard `earlier.tally < 3`, the relation `earlier.tally < 3 and later.tally = earlier.tally + 1` checks: the sum's interval `[1,3]` lies inside `Int[0,3]`, the sum is typed `Int[0,3]` by the expected-type rule, and the relation charges the sum's own integer-arithmetic schedule plus the equality's one-pair schedule. | Test (TC-194) |
 | FR-149-AC-20 | With the guard removed, `later.tally = earlier.tally + 1` over `tally` of `Int[0,3]` refuses `undefined_expression`/`unproved-range` at `earlier.tally + 1`, because the sum's interval `[1,4]` exceeds `Int[0,3]`; `recovered.tally = recovered.tally + 1` refuses the same way at its sum. No Boolean is produced and the value is not clamped. | Test (TC-194) |
 | FR-149-AC-21 | The rule applies only to a binary `+`, `-` or `*` operand of `=` or `!=` against an `Int[..]` operand, on either side and parenthesized: an `Integer` path, a call, `div`, `rem`, `count`, an unannotated `let`-bound name or unary `-` against `Int[0,3]` is `ill_typed`/`type-mismatch` without `convert`, an arithmetic operand against a `Rational[..]` or `Decimal[..]` operand is `ill_typed`, and `<`, `<=`, `>` and `>=` over the same operands supply no expected type and are accepted, so `n + 1 <= later.tally` for `n` of `Integer` and `earlier.tally + 1 <= later.tally` are well typed. | Test (TC-194) |
+| FR-149-AC-22 | The `String` values `é` (U+00E9) and U+0065 U+0301 compare unequal under `=`, two `String` values of identical scalars compare equal, a `String` and a `Text` operand are `ill_typed`/`operator-ineligible`, and `=` over a `Set<Float64>`, over a record holding a `Float32` and over a union with a `Float64` payload remain `ill_typed`/`operator-ineligible` before any charge while the same types are admitted as set element types under FR-144's membership relation. | Test (TC-194) |
 
 ## Dependencies
 
