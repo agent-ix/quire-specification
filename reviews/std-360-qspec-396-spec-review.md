@@ -93,12 +93,24 @@ ordering rule for RMWs plus a vector, and FND-002 needs an `ra` channel
 variant. The same RMW ordering appears in QSL ADR-025 DR-3 and FR-224
 (#1328), so fix both halves together.
 
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-004 | high | [soundness] FR-438-AC-8 and DR-13 expect `proved` for the `acquire` RMW. The vector is racy, so `proved` is wrong under `acquire` too. `b`'s `fetch_add` is enabled from the initial state, so it can read `x`'s initial value instead of `a`'s store. On the path `a` loads `x`, then `b`'s RMW reads the initial value, the RMW's write and `a`'s non-atomic load are unordered: nothing synchronises `a` with `b`. That is a real C11 data race, and the summary reports it at the RMW (`a`'s read Boolean in `cur_b` is false; there is no join, because the initial message carries no release from `a`). On the path where the RMW runs first and `a` then loads, the race completes at `a`'s load. Both races are at depth 2, so the `acquire` variant settles `refuted`, not `proved`. In the `relaxed` variant, which of the two depth-2 races is canonical (and so which access is `earlier`) depends on the canonical breadth-first order, and the vector does not fix it. Fix: make the RMW unable to read the initial value. Give it the precondition `x = 1`, which FR-435-AC-5 makes enabled only when it reads 1. The only remaining path is then load, release store, RMW reading that store: `acquire` is `proved` through the new join, and `relaxed` is `refuted` with `earlier` `a`'s load and `later` the RMW, uniquely. | spec/functional/memory/FR-438-report-data-races.md:193; spec/test-cases/TC-392-race-freedom-item.md:47 | wrong-requirement |
+
 ## Dispositions
 
-Round 1. `quire validate --scope . 'spec/**/*.md'` gives 86 failure lines, the same as main. `cargo test --test checked_package_v2 --test backend_provider_v1` passes.
+Round 1, at head 09822872 (fix diff checked against the original review head).
 
 | FND | outcome | reason |
 | --- | --- | --- |
-| FND-001 | fixed | FR-438 "Updates" now says that an RMW whose read part is `acquire` or `seq_cst` joins the race map it reads into `cur_b` before it decides its write part. Otherwise the write part is decided against the pre-state. This covers both models. New FR-438-AC-8 and TC-392 DR-13: `a` loads `x` non-atomically and then stores it `release`, and `b` runs `fetch_add` on `x`. The `acquire` RMW is `proved` under both models; the `relaxed` RMW is `refuted` with `earlier` `a`'s load. |
-| FND-002 | fixed | FR-438-AC-6 and DR-11 gain the `ra` channel variant: the queue entry's `view` is the writer's `cur` with `data` `write` true, the reader's `cur` has `write` true after the `receive`, and the item is `proved`. New FR-437-AC-15 and TC-393 MB-13 give two states that differ only in the in-flight view's `at` and therefore get different keys. |
-| FND-003 | fixed | DR-12 now names its three `tso` variants explicitly, all over the message-passing shape: `release`/`acquire`, `relaxed`, and the flag passed by `send`/`receive`. This matches FR-438-AC-7; DR-08's shape is no longer used. |
+| FND-001 | fixed | fixed; after: An RMW decides its read part so; when that part is `acquire` or `seq_cst`, it then joins the race map of the message (`ra`) or memory value (`tso`) it reads into `cur_b`, and decides its write part against that joined `cur_b`, since what happens before the store it reads happens before its write. Ot… |
+| FND-002 | fixed | fixed; after:  reads that message, the reader's `cur` maps `data` to `"write":true` and its data load completes no race; with `relaxed` flags, the data load after a flag load that read 1 completes a race. With the flag passed instead by a `send` after `data := 1` and a `receive` before the data load, the queue en… |
+| FND-003 | fixed | fixed; after: \| DR-12 \| under `tso`: the message-passing shape with a `release` flag store and `acquire` flag load, the same with `relaxed` flag accesses, and the message-passing shape with the flag passed by a `send` after `data := 1` and a `receive` before `LD`; read the state key after the writer's `data := … |
+
+Round 2 (author).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | The RMW now has the precondition `x.v = 1`, so it is enabled only when it reads `a`'s store (QSpec FR-435-AC-5) and no path reads the initial value. With `acquire` the item is `proved` under both models. With `relaxed`, the RMW against `a`'s load is the only race, with `earlier` set to `a`'s load and `later` set to the RMW. QSpec FR-438-AC-8 and DR-13 and QSL FR-224-AC-7 and TC-669 step 7 all say the same. |
