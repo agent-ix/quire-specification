@@ -60,9 +60,13 @@ retypes that operand and creates no common type.
 | Boolean | identical truth value |
 | UUID | identical canonical UUID payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not text |
 | Timestamp | identical canonical Timestamp payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not `Int` |
+| Bytes | identical octet sequences: equal length and equal octet at every index, equivalently identical canonical payload (lowercase hexadecimal, two digits per octet); a distinct native type, not `String`, `Text` or `JsonObject` |
+| JsonObject | identical canonical payload, the RFC 8785 (JCS) serialization of the value, so two values are equal exactly when they have the same kind and, for objects, the same member names and recursively equal member values, independent of member order and insertion spelling; arrays compare by position, strings by their code points, numbers by their IEEE binary64 value, and `null`, `true` and `false` by kind; a distinct native type |
 | Integer, rational and decimal | exact mathematical value; operands of different numeric types first require an admitted [equality conversion](#equality-conversions), or the [arithmetic operand exception](#arithmetic-operand-against-a-bounded-integer) |
+| Duration | the Quantity relation over `Quantity<s>` (FR-322 "Model-owned members"): a `Duration` is a quantity in the unit `s`, so two durations are equal exactly when their exact rational seconds are equal |
 | Quantity | identical unit and exact value equality; a top-level quantity equality expression uses the FR-142 root-value comparison schedule, while a quantity leaf inside a composite equality plan compares by exact value in its identical unit and charges only its `equality.pair`; distinct units require an explicit prior FR-142 conversion |
 | Text | the FR-141 relation under the same pinned profile: normalized scalar sequence for scalar profiles and original UTF-8 bytes for `binary-utf8` |
+| String | identical Unicode scalar sequence (QSL FR-056's native `String`): no normalization, case folding or trimming, so a composed and a decomposed spelling of one character are unequal; a distinct native type, not `Text` |
 | Enumeration | the same qualified enumeration declaration and identical case; different declarations have no implicit common type |
 | Presence, absence and null | same declared type and state; two absent values are equal, two explicit null values are equal, and two present values recursively compare their payload; absent and explicit null are distinct |
 | Record and tuple | same FR-143 declaration key and recursively equal fields in declaration order or positions in order; two records of one static type whose most-specific declaration keys differ (a record subtype value and an ancestor value, FR-208) are unequal, and `=` is `false`, not a refusal |
@@ -72,7 +76,7 @@ retypes that operand and creates no common type.
 | Bag | equal occurrence count and recursively equal members with equal multiplicity |
 | Ordered set | recursively equal unique values in the same occurrence order |
 | Object reference | identical FR-143 identity triple (universe, object-type declaration, object identity); referenced state and observation are not inspected; different universes return `refused { code: foreign_reference, cause: foreign-universe }` |
-| IEEE binary32/binary64 | the explicitly selected FR-148 `numericEqual`, `totalOrder` equivalence or `bitIdentical` intrinsic; the grammar's `=` and `!=` select none of them and are `ill_typed` for any operand type containing `Float32` or `Float64` at any depth |
+| IEEE binary32/binary64 | the grammar's `=` and `!=` over two operands of one float type select FR-148 `numericEqual` and its Boolean negation (false for a NaN operand, true for `+0` against `-0`); `totalOrder` and `bitIdentical` are selected only by their explicit intrinsic calls; see [IEEE relations](#ieee-relations) |
 
 Operands of different types are comparable only after an explicit conversion
 declares a common type, except that a binary `+`, `-` or `*` operand takes the
@@ -92,8 +96,10 @@ are equivalent to equality within that kind. This extends
 invariant for these two K2 natives. No enclosing JSON object-member order
 or JSON string escape spelling enters the key.
 
-UUID and Timestamp have no common equality type with each other or with
-`Int`, `Integer`, `Text`, `String` or `Boolean`; there is no equality
+Bytes and JsonObject follow the same rule: each admits reflexive equality with itself, its key is its canonical payload string compared unsigned ASCII bytewise with a proper prefix first, and equal keys are equivalent to equality within the kind.
+
+UUID, Timestamp, Bytes and JsonObject have no common equality type with each other or with
+`Int`, `Integer`, `Text`, `String`, `Boolean` or `Quantity`; there is no equality
 conversion between these kinds. Such comparisons SHALL refuse at type
 checking with `ill_typed`/`type-mismatch` before any equality charge, never
 return Boolean `false`. A direct kernel call that violates the checked
@@ -103,12 +109,54 @@ representation order, not `<`, `<=`, `>` or `>=`; those operators SHALL refuse
 `ill_typed`/`operator-ineligible` before any charge. No timestamp arithmetic,
 timezone, calendar conversion or precision operation is selected here.
 
-The same holds for ordering. The grammar's `<`, `<=`, `>` and `>=` with a
-`Float32` or `Float64` operand select no IEEE predicate and are
-`refused { code: ill_typed, cause: operator-ineligible }` before any charge;
-no signaling or quiet IEEE comparison is selected. Floats are ordered only by
-the explicitly called FR-148 `quire::value::ieee::totalOrder` intrinsic
-(operation `quire.op.ieee.total_order`).
+## IEEE relations
+
+The grammar's `=` and `!=` over two operands of one float type (one width and
+one rounding mode) are FR-148 `numericEqual` and its negation, and `<`, `<=`,
+`>` and `>=` are the IEEE quiet comparisons FR-148 defines by composition from
+`numericEqual`, `totalOrder` and the Boolean connectives. None of them uses
+`bitIdentical`, and none sets a flag. Operands of unlike width or rounding mode,
+and a float against an exact type, are `ill_typed` before any charge (FR-148).
+`totalOrder` and `bitIdentical` are also called by their qualified intrinsic
+spelling when a source needs the total order or bit identity.
+
+`=` and `!=` also apply to a type that holds a float at any depth. The
+relation of a float leaf is `numericEqual`, so the result is exactly what the
+FR-149 matrix gives for the same shape with the float leaves compared by
+`numericEqual`:
+
+- an option, record, tuple, union payload and sequence element holding a float
+  compares that leaf by `numericEqual`, so `+0` and `-0` are equal and a value
+  holding a NaN is unequal to every value, itself included. Equality over a
+  float-bearing structure is therefore not reflexive, exactly as `=` over a bare
+  float is not, and `!=` over such a value is true when any compared float leaf
+  is a NaN and nothing else differs;
+- a `Set`, `Bag` or `OrderedSet` holds members identified by FR-144's
+  collection membership relation, which compares a float leaf by `bitIdentical`.
+  `=` over two such collections matches their members by that same relation,
+  with the occurrence counts and order the matrix states: a set is the set of
+  its members, so `+0` and `-0` are two members and two NaNs are one member
+  exactly when their bits are identical. `set[x] = set[x]` is therefore true for
+  a NaN `x`, while `x = x` over the bare float is false, and `set[+0] = set[-0]`
+  is false while `+0 = -0` is true. A float read out of a collection
+  (`contains`, `map`, an element projection) is a bare float and compares by
+  `numericEqual`.
+
+The two relations never mix inside one comparison: `numericEqual` compares a
+float leaf reached through records, tuples, options, unions and sequences,
+and the membership relation compares the members of a set, bag or ordered set
+and everything inside them, because the collection defines which of its members
+are one member.
+
+
+A `Set`, `Bag` or `OrderedSet` decides whether two members are one member by
+FR-144's collection membership relation. That relation is this matrix with
+exactly one change: a `Float32` or `Float64` leaf, at any depth inside the
+member, is compared by FR-148 `bitIdentical`. A float member is therefore
+admitted, and the relation exists for every type except an event type and a
+type containing one. The relation is selected by the collection kind and is not
+an equality conversion; `=` over the collection uses it for the collection's
+members as the second bullet above states.
 
 ## Selected schedules
 
@@ -117,10 +165,14 @@ operands' common type, after any
 admitted conversion; `!=` uses the same schedule and retains the negated
 Boolean. A top-level text operand pair uses the FR-141 text schedule, an
 enumeration pair `enum.*` and a quantity pair the FR-142 top-level comparison
-schedule. Every other common type (Boolean, `Integer`, `Int[..]`, `Rational[..]`,
+schedule. A top-level pair of two floats is `numericEqual` and charges as FR-148
+states for it (`ieee.operands`, `ieee.result-retain`). Every other common type (Boolean, `Integer`, `Int[..]`, `Rational[..]`,
 `Decimal[..]`, `UUID`, `Timestamp`, `Reference<T>`, `Option<T>`, record, tuple and every collection
 kind) uses the equality schedule `equality.plan-form`, `equality.plan`, one
-`equality.pair` per planned pair and `equality.result-retain`.
+`equality.pair` per planned pair and `equality.result-retain`; a float leaf of a
+composite plan is one planned pair, compared by `numericEqual` (or by
+`bitIdentical` inside a set, bag or ordered set), charging one `equality.pair`
+like any other leaf and no `ieee.*` point.
 `equality.plan-form` charges `occ(left) + occ(right)` work units before plan
 formation walks either operand. A top-level Boolean, numeric or reference
 comparison is therefore a one-pair plan: two plan-formation work units, then
@@ -323,7 +375,7 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-10 | Exactly the tabled equality conversions are admitted from declared bounds, every other conversion operand of `=` or `!=` is `ill_typed` before any charge even when the value fits, and admitted decimal and rational conversions charge their decimal schedule. | Test (TC-194) |
 | FR-149-AC-11 | Plan pair counts follow the structural-mismatch, keyed-rank and cardinality short-circuit rules exactly, every plan walk is charged by `equality.plan-form` before it happens, and a foreign-universe reference pair refuses after that charge and before `equality.plan`. | Test (TC-194) |
 | FR-149-AC-12 | Under `quire.model.complete/v1`, `Reference<Sub>` compares with `Reference<Super>` through the upcast row with no charge and unchanged identity, and a non-conforming reference pair is `ill_typed`. | Test (TC-198) |
-| FR-149-AC-13 | `<`, `<=`, `>` and `>=` with a `Float32` or `Float64` operand are `ill_typed` with cause `operator-ineligible` before any charge, while `totalOrder` orders the same operands. | Test (TC-194) |
+| FR-149-AC-13 | `<`, `<=`, `>` and `>=` over two operands of one float type are the IEEE quiet comparisons of FR-148 (false when either operand is a NaN, `-0 < +0` false, `-0 <= +0` true) and, over unlike widths, unlike rounding modes or a float and an exact type, are `ill_typed` before any charge, while `totalOrder` orders the same operands by the total order. | Test (TC-194) |
 | FR-149-AC-14 | Independently admitted UUID values with payload `00112233-4455-6677-8899-aabbccddeeff` compare equal and have equal keys; changing the final digit to `e` compares unequal. Independently admitted Timestamp values with payload `0` compare equal and have equal keys; `0` versus `1` compares unequal. Each comparison is one terminal pair under the existing equality schedule. | Test |
 | FR-149-AC-15 | UUID versus Timestamp, either kind versus `Int`, `Integer`, `Text`, `String` or `Boolean`, and any attempted equality conversion between these kinds refuse `ill_typed`/`type-mismatch` before an equality charge and produce no Boolean. Direct kernel mixed-kind comparisons return the typed checked-invariant refusal and key comparison returns no key relation. | Test |
 | FR-149-AC-16 | Same-kind keys compare canonical payload content unsigned ASCII bytewise with a proper prefix first: Timestamp `10` orders before `2`, and `-1` before `-2`, while equal payloads have equal keys. The four ordering operators on either native refuse `ill_typed`/`operator-ineligible` before any charge; key availability creates no ordering or arithmetic capability. | Test |
@@ -332,6 +384,11 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-19 | With `tally` of `Int[0,3]` and the guard `earlier.tally < 3`, the relation `earlier.tally < 3 and later.tally = earlier.tally + 1` checks: the sum's interval `[1,3]` lies inside `Int[0,3]`, the sum is typed `Int[0,3]` by the expected-type rule, and the relation charges the sum's own integer-arithmetic schedule plus the equality's one-pair schedule. | Test (TC-194) |
 | FR-149-AC-20 | With the guard removed, `later.tally = earlier.tally + 1` over `tally` of `Int[0,3]` refuses `undefined_expression`/`unproved-range` at `earlier.tally + 1`, because the sum's interval `[1,4]` exceeds `Int[0,3]`; `recovered.tally = recovered.tally + 1` refuses the same way at its sum. No Boolean is produced and the value is not clamped. | Test (TC-194) |
 | FR-149-AC-21 | The rule applies only to a binary `+`, `-` or `*` operand of `=` or `!=` against an `Int[..]` operand, on either side and parenthesized: an `Integer` path, a call, `div`, `rem`, `count`, an unannotated `let`-bound name or unary `-` against `Int[0,3]` is `ill_typed`/`type-mismatch` without `convert`, an arithmetic operand against a `Rational[..]` or `Decimal[..]` operand is `ill_typed`, and `<`, `<=`, `>` and `>=` over the same operands supply no expected type and are accepted, so `n + 1 <= later.tally` for `n` of `Integer` and `earlier.tally + 1 <= later.tally` are well typed. | Test (TC-194) |
+| FR-149-AC-22 | The `String` values `é` (U+00E9) and U+0065 U+0301 compare unequal under `=`, two `String` values of identical scalars compare equal, a `String` and a `Text` operand are `ill_typed`/`operator-ineligible`, and the types `Set<Float64>`, `record F { x: Float32; }` and `union U { V(Float64), N }` are admitted both as set element types under FR-144's membership relation and as `=` operands (FR-149-AC-25 and FR-149-AC-26). | Test (TC-194) |
+| FR-149-AC-23 | Independently admitted Bytes values with payload `00ff` compare equal and have equal keys; `00ff` versus `00fe`, `00ff` versus `00ff00` and the empty payload versus `00` compare unequal. Independently admitted JsonObject values with payload `{"a":1,"b":[true,null]}` compare equal; `{"a":1,"b":[true,null]}` versus `{"a":1,"b":[null,true]}`, versus `{"a":2,"b":[true,null]}`, versus `{"a":1}` and versus `{"a":1,"b":[true,null],"c":{}}` compare unequal; `{}` equals `{}`. Two Durations of `3/2` seconds compare equal and `3/2` versus `2` compares unequal; a Duration of `3/2` compares equal to the quantity `3/2 s` and to `1500 ms` only after the explicit conversion to `s`. Each comparison is one terminal pair under the existing equality schedule. | Test (TC-280) |
+| FR-149-AC-24 | Bytes versus JsonObject, Bytes versus `String`, `Text` or `Integer`, JsonObject versus `String`, `Text` or `Boolean`, and UUID versus Bytes refuse `ill_typed`/`type-mismatch` before an equality charge and produce no Boolean. The four ordering operators on Bytes or JsonObject, and `+` on either, refuse `ill_typed`/`operator-ineligible` before any charge; a Bytes key and a JsonObject key create no ordering or arithmetic capability. Same-kind keys compare canonical payload content unsigned ASCII bytewise with a proper prefix first: Bytes `10` orders before `2`, and equal payloads have equal keys. | Test (TC-280) |
+| FR-149-AC-25 | In FR-149-AC-25 and FR-149-AC-26, `+0`, `-0`, `one`, `qnan` and `qnan2` are the float values of bits `0x0000000000000000`, `0x8000000000000000`, `0x3ff0000000000000`, `0x7ff8000000000000` and `0x7ff8000000000001`, supplied as parameters. `=` and `!=` over two `Float64` parameters follow `numericEqual`: `+0` and `-0` are equal, `qnan = qnan` is false and `qnan != qnan` is true. Over `record F { x: Float64; y: Integer; }`, `Option<Float64>`, a tuple holding a `Float32`, `union U { V(Float64), N }` and `Sequence<Float64>[0,2]` the float leaf compares by `numericEqual`: `F { x: +0, y: 1 } = F { x: -0, y: 1 }` is true, `F { x: qnan, y: 1 } = F { x: qnan, y: 1 }` is false and `!=` of it true, `F { x: +0, y: 1 } = F { x: +0, y: 2 }` is false, `U::V(+0) = U::V(-0)` is true, `U::V(+0) = U::N` is false, the present `qnan` against itself is false, `none = none` is true, and `sequence[+0, one] = sequence[-0, one]` is true. A float read out of the structure (`r.x`) compares as a bare float. | Test (TC-194) |
+| FR-149-AC-26 | Over `Set<Float64>[0,2]` parameters, `set[qnan] = set[qnan]` is true (one NaN member, identical bits), `set[+0] = set[-0]` is false and `set[+0] != set[-0]` is true, `set[+0, -0] = set[-0, +0]` is true, `set[qnan] = set[qnan2]` for two NaNs of different payload is false, and `bag[+0, +0] = bag[+0]` is false; `contains(set[+0], -0)` is false while `+0 = -0` is true; `F` of `record F { x: Float32; }` in `Set<F>[0,2]` compares its members by bit identity under `=`. A `Sequence<Float64>[0,1]` of `qnan` compares unequal to itself under `=`, because a sequence is not a set. | Test (TC-194) |
 
 ## Dependencies
 

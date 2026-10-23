@@ -914,6 +914,10 @@ fn literal_value_is_canonical(literal: &Value) -> bool {
         }),
         Some("quantity") => value.is_some_and(quantity_magnitude_is_canonical),
         Some("decimal") => value.is_some_and(decimal_literal_is_canonical),
+        Some(kind @ ("float32_bits" | "float64_bits")) => value.is_some_and(|text| {
+            let digits = if kind == "float32_bits" { 8 } else { 16 };
+            text.len() == digits && text.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+        }),
         _ => true,
     }
 }
@@ -7285,8 +7289,8 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
             );
             let last = operation.rsplit('.').next().unwrap_or(operation);
             assert!(
-                !["eq", "ne", "lt", "le", "gt", "ge", "negate"].contains(&last),
-                "{identity}: IEEE equality, ordering and negation are not catalogued (FR-148)"
+                !["eq", "ne", "lt", "le", "gt", "ge"].contains(&last),
+                "{identity}: IEEE equality and ordering are the numeric_equal, total_order and bit_identical identities (FR-148)"
             );
         }
         if family == "text" {
@@ -14142,6 +14146,8 @@ fn scalar_equality_package(catalog: &Value) -> Value {
         walk_scalar("UUID", "uuid"),
         walk_scalar("Timestamp", "timestamp"),
         walk_scalar("Integer", "integer"),
+        walk_scalar("F32", "float32"),
+        walk_scalar("F64", "float64"),
         walk_text("Short", "nfc"),
         walk_scalar("Bool", "boolean"),
     ];
@@ -14481,6 +14487,83 @@ fn tc_233_scalar_literals_need_their_family_and_canonical_value() {
     }
     assert_eq!(OperationRefusal::InvalidValue.code(), "invalid_package");
     assert_eq!(OperationRefusal::InvalidValue.cause(), "invalid-value");
+}
+
+/// FB-01 to FB-04 (FR-322-AC-108): a `float32_bits` literal spells 8 and a
+/// `float64_bits` literal 16 lowercase hexadecimal digits with no prefix; any
+/// other spelling refuses `invalid-value` after the family check.
+#[trace("FR-322-AC-108", "TC-233")]
+#[test]
+fn tc_233_float_bits_literals_spell_fixed_width_lowercase_hex() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = scalar_equality_package(&catalog);
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    let literal_refusal = |kind: &str, ty: &str, value: &Value| {
+        oracle
+            .argument_descriptor(&json!({"term": "literal", "type": walk_id(ty), "value_kind": kind, "value": value}))
+            .map(|descriptor| descriptor.is_some())
+    };
+    for (kind, ty, values) in [
+        ("float32_bits", "F32", ["3f000000", "00000000", "80000000", "7fc00000"]),
+        ("float64_bits", "F64", ["3fe0000000000000", "0000000000000000", "8000000000000000", "7ff8000000000001"]),
+    ] {
+        for value in values {
+            assert_eq!(literal_refusal(kind, ty, &json!(value)), Ok(true), "FB-01: {kind} {value}");
+        }
+    }
+    for (kind, ty, values) in [
+        (
+            "float32_bits",
+            "F32",
+            vec![json!("3F000000"), json!("0x3f000000"), json!("3f00000"), json!("3f0000000"), json!("0.5"), json!(1056964608)],
+        ),
+        (
+            "float64_bits",
+            "F64",
+            vec![
+                json!("3FE0000000000000"),
+                json!("0x3fe0000000000000"),
+                json!("3fe000000000000"),
+                json!("3fe00000000000000"),
+                json!("0.5"),
+                json!(4602678819172646912u64),
+            ],
+        ),
+    ] {
+        for value in values {
+            assert_eq!(
+                literal_refusal(kind, ty, &value),
+                Err(OperationRefusal::InvalidValue),
+                "FB-02/FB-03: {kind} value {value} is not canonical"
+            );
+        }
+    }
+    for (kind, ty, value) in [("float32_bits", "F64", "3F000000"), ("float64_bits", "String", "0.5")] {
+        assert_eq!(
+            literal_refusal(kind, ty, &json!(value)),
+            Ok(false),
+            "FB-04: a {kind} literal typed {ty} reports the family refusal first"
+        );
+    }
+    let mut spelled = 0;
+    for name in std::fs::read_dir("proposals/checked-package-v2/fixtures").unwrap() {
+        let fixture: Value = serde_json::from_str(&std::fs::read_to_string(name.unwrap().path()).unwrap()).unwrap();
+        let mut stack = vec![&fixture];
+        while let Some(value) = stack.pop() {
+            match value {
+                Value::Object(map) => {
+                    if map.get("term") == Some(&json!("literal")) && map["value_kind"].as_str().is_some_and(|k| k.starts_with("float")) {
+                        assert!(literal_value_is_canonical(value), "fixture float literal {value}");
+                        spelled += 1;
+                    }
+                    stack.extend(map.values());
+                }
+                Value::Array(items) => stack.extend(items),
+                _ => {}
+            }
+        }
+    }
+    assert!(spelled > 0, "the fixtures carry float bit literals");
 }
 
 /// VT-01 to VT-04 (FR-322-AC-71): a `model`/`variant_type` node is a model

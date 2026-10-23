@@ -427,7 +427,7 @@ removing the QSL -dev→ CG → QSL loop.
 | Typestate | `SemanticIrBytes` → FCD decide → `IntakeRecords` → admit (FR-154 table) → `DomainPackage` |
 | Output types | `DomainPackageRef` (FR-321), `DeclarationKey`, `Extent`, `ValueType::Population(u64)`; FCD `Locus` → `LocatedSpan` |
 | Native type reference | `enum ValueTypeRef { Native(NativeValueType), Package(DeclarationKey) }` |
-| `NativeValueType` set | The closed set `Boolean`, `Integer`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `String`, `UUID`, `Timestamp`, named `ix://quire/native/<Name>` (FR-154); a `typeRef` carries no parameters, and a name outside the set is `invalid_model_binding`/`malformed-declaration`. |
+| `NativeValueType` set | The closed set `Boolean`, `Integer`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `String`, `UUID`, `Timestamp`, `Bytes`, `Duration`, `JsonObject`, named `ix://quire/native/<Name>` (FR-154); a `typeRef` carries no parameters, and a name outside the set is `invalid_model_binding`/`malformed-declaration`. |
 | Multiplicity | Always carries `ordered` and `unique`; both `false` when upper ≤ 1 |
 | Unresolved native refs | Refused; FCD emits native refs before intake |
 
