@@ -47,10 +47,4 @@ Round 1, at 6a985696. Hand-derived: 3/2 / (3/1000) = 500, 1/2 / 1/2 = 1, 3/2 / 3
 | --- | --- | --- |
 | FND-001 | fixed | (19) `d / 3 ms` ... admitted, the divisor `3 ms` taken as `3/1000 s`, and with `d` = `3/2 m` it returns `500 m/s`; (20) `d / 0.5 s` ... returns `1 m/s`; (21) `d / 1.50 s` ... `1 m/s`; (22) `d / 0.0 s` `unproved-nonzero`; (24) `d / rational(-3,1) ms` returns `-500 m/s` |
 | FND-002 | fixed | A quantity is typed `Quantity<u>` (FR-142 "Quantity type reference"), an exact rational magnitude in unit `u` with no bound on the magnitude, so the quotient has an exact rational magnitude over the whole rational domain and the division carries no range obligation |
-| FND-003 | fixed | `-1 s` is the unary `-` applied to the literal `1 s`, a quantity negation and never a literal (FR-146); the negation of a nonzero literal is itself a nonzero fact, so `d / -1 s` is admitted (see FND-004) |
-
-Round 2. Hand-derived: -(2 m) + 1 m = -1 m; (3/2 m) / -(3 ms) = (3/2) / (-3/1000) = -500 m/s; (1/2 m) / -(1 s) = -1/2 m/s.
-
-| FND | outcome | reason |
-| --- | --- | --- |
-| FND-004 | fixed | Quantity negation is specified, not refused: FR-142 "Quantity negation" makes unary `-q` over a non-affine `Quantity<u>` exact and unit-preserving (result `Quantity<u>`, the negated exact rational), refused `ill_typed` only for an affine unit as other quantity arithmetic is; FR-142-AC-25; FR-146 admits `-(n u)` with `n` nonzero as a nonzero fact (`d / -(0 s)` and `d / -t` stay `unproved-nonzero`); FR-322 names `quire.op.quantity.negate` (unary, one quantity operand, result `operand:0`, no law, mode or constraint), FR-322-AC-119, and both V2 schemas enumerate it after `quire.op.quantity.sub`; vectors TC-191 P12 (23), (25) to (29) and TC-187 U39. No STD ticket is needed since the capability is specified here; the catalog entry is in quire-verification-contracts PR 21 |
+| FND-003 | fixed | A unary minus is not part of a quantity literal: `-1 s` is the unary `-` applied to the quantity `1 s`, which refuses `ill_typed` with cause `operator-ineligible` at the `-` |
