@@ -23,9 +23,9 @@ package bytes.
 declaration and `SlowEnough` claim, and as `restored_nodes` those of
 `Braking2`, `Slows` and `Recent`. HN-01 to HN-14 read that file, and HN-15
 `positive-all-families.json`, in the QSpec harness
-(`tests/checked_package_v2.rs`). HY-01 to HY-23 compile the
+(`tests/checked_package_v2.rs`). HY-01 to HY-21 and HY-23 compile the
 vectors through the real local Rust boundary; for HY-03 to HY-14, HY-17 to
-HY-19, HY-22 and HY-23 edit the
+HY-19 and HY-23 edit the
 node of HY-01 as stated, adding to the graph any node the edit references,
 then set each edited node's `dependencies` to its body's targets, recompute
 its key and every key that references it, and recompute the `package_id`
@@ -56,8 +56,8 @@ vectors, and feed the package to the reader.
 | HY-10 | `Stopped`'s rate of `t` the node of `2 - 1` with `t` classed `clock`; every variable classed `clock`; a one-mode model `Timer` whose only variable `t` is classed `clock`, with rate `1` and invariant `t <= 5` | `invalid_package`/`invalid-value` at `t`'s class literal; at `v`'s class literal; at `Timer`'s `variables` |
 | HY-11 | a second mode node declared `[Braking, Moving]` in `modes` | `ambiguous_declaration`/`ambiguous-name` |
 | HY-12 | an added transition node no mode references | `invalid_semantic_graph` at that node |
-| HY-13 | `SlowEnough` with clock `model-steps`; with an `each` activation | `invalid_package`/`invalid-value` at `/body/arguments/1`; at `/body/arguments/2` |
-| HY-14 | `SlowEnough`'s formula `once [0, 2] holds(v = 0)`; a `holds` operand reading `h` | `ill_typed`/`operator-ineligible` at the formula node; `missing_declaration`/`missing-name` at the `holds` node |
+| HY-13 | `SlowEnough` with clock `model-steps` and its interval in the integer form; with an `each` activation over a `q` parameter node at level 1 typed by `Braking`'s model node | admitted; admitted (FR-481 "Hybrid claims") |
+| HY-14 | `SlowEnough`'s formula `once [0, 2] holds(v = 0)`; a `holds` operand reading `h` | admitted; `missing_declaration`/`missing-name` at the `holds` node |
 | HY-15 | HY-01's v2 bytes handed to a process fixture provider for `SlowEnough`'s item | the provider reads the model and claim from the nodes, derives horizon 10, and the item's extent is `bounded` |
 | HY-16 | the process fixture provider's `solver-inconclusive` traces over HY-01, read by the host: `Moving` then `Stopped` by `transition` 0; mode `Halted` | the first kept on the `inconclusive` record; the second refused by the host `invalid_result`/`invalid-value` at its `mode` |
 | HY-17 | `Braking2`, `Slows` and `Recent` of QSL FR-447, compiled and emitted; then `Braking` with the written default `initial`; an initial `mode` 2; an initial condition referencing the literal `20` | the HN-11 and HN-12 nodes, the reader admitting the package; `invalid_semantic_graph` at `initial`; `missing_declaration`/`missing-name`; `ill_typed`/`non-boolean-root` |
@@ -65,8 +65,7 @@ vectors, and feed the package to the reader.
 | HY-19 | `Slows`'s fairness member naming `Halted`; a `holds` operand reading a parameter `v` at level 4 | `missing_declaration`/`missing-name` at the member; at the `holds` node |
 | HY-20 | a timed interval with `upper` `null` in `Slows` under `quire.temporal.timed/v1`; the same interval in a temporal clause over a state model; `[2, *]` in a hybrid claim under `quire.temporal.infinite-trace/v1` in the integer form, then in the timed form | admitted; refused as FR-370 refuses an interval its profile does not admit; admitted; `invalid_package`/`operation-member-mismatch` at the application |
 | HY-21 | `SlowEnough` under a `quire.temporal.timed/v1` profile alias, its interval in the timed form `[0, 10]` with both ends closed | admitted, its law `timed/v1` |
-| HY-22 | `SlowEnough` with one capture binding over `v`; with one fairness reference naming `Moving` | admitted, a hybrid claim carrying captures and hybrid fairness (FR-481 "Hybrid claims"); admitted |
-| HY-23 | `SlowEnough` with clock `wall`; with an `each` activation whose `trigger` is typed by the `scalar_type`/`rational` node; with the formula `once [0, 2] holds(v = 0)` | `invalid_package`/`invalid-value` at `/body/arguments/1`; `ill_typed`/`type-mismatch` at the trigger; admitted |
+| HY-23 | `SlowEnough` with clock `wall`; with an `each` activation whose `trigger` is typed by the `scalar_type`/`rational` node; with the formula `once [0, 2] holds(v = 0)`; with one capture binding over `v`; with one fairness reference naming `Moving` | `invalid_package`/`invalid-value` at `/body/arguments/1`; `ill_typed`/`type-mismatch` at the trigger; admitted; admitted; admitted |
 
 ## Expected Results
 

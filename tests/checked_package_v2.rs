@@ -14244,10 +14244,10 @@ fn tc_233_scalar_equality_identities_and_literal_kinds_are_enumerated_and_admitt
     }
 }
 
-/// FR-322 "Scalar literal values" (FR-322-AC-102): a `rational` literal's
+/// FR-322 "Scalar literal values" (FR-322-AC-114): a `rational` literal's
 /// `value` is its exact value in the canonical magnitude spelling, and any
 /// other spelling of the same value is refused `invalid-value`.
-#[trace("FR-322-AC-102", "TC-233")]
+#[trace("FR-322-AC-114", "TC-233")]
 #[test]
 fn tc_233_rational_literals_spell_one_canonical_magnitude() {
     let catalog = parsed_fixture(OPERATION_CATALOG);

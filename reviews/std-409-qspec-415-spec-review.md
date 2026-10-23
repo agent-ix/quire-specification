@@ -92,3 +92,34 @@ collisions and a direct semantic contradiction. The restored semantics
 themselves are complete for the tickets' scope, and the hand-derived replay,
 reset, level and unit-conversion vectors are correct. No scope deferral was
 found.
+
+## New findings (disposition pass 1)
+
+Re-checked at 073c4fc6, which merges #414 (e55b847b) and origin/main;
+origin/main is an ancestor. `quire validate` gives 86 `fail` lines and 116
+structurally failing documents, both equal to main. `cargo test --test
+checked_package_v2 --test backend_provider_v1` passes, 138 and 24 tests.
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-010 | high | The #414 merge left two stale TC-966 rows that contradict the restored forms. HY-13 still expects `SlowEnough` with clock `model-steps`, and with an `each` activation, to be refused `invalid_package`/`invalid-value`. HY-14 still expects `once [0, 2] holds(v = 0)` to be refused `ill_typed`/`operator-ineligible`. FR-481-AC-12 admits `model-steps`, reader step 7 admits `each`, the reader no longer has an operator-eligibility step, and HY-23 in the same table expects the same `once` formula to be admitted. Fix: delete HY-13 and HY-14's refusals, or restate them as the admissions HY-22 and HY-23 already cover. | spec/test-cases/TC-966-checked-package-hybrid-model-nodes.md:59-60,68-69 | wrong-requirement |
+| FND-011 | medium | BP-36's `hybrid-inconclusive-replay-record` stores the wrong static outcome for its own trace. The record gives `replay.static` `inconsistent` at `/jumps/0/before`, check 4, for the `Bounce` lasso: `(Up, x = 0)` at time 0, `before` `x = 1` at time 1, `(Down, x = 1)`, `before` `x = 0` at time 2, `(Up, x = 0)`, `delta` 1/100, `loop` 0. Replayed by hand against QSL FR-450-AC-6's `Bounce`, check 4 at `/jumps/0/before` holds: the guard `x = 1` holds over `[1, 1]` and reset `true` keeps `[1, 1]`, which meets the reached `[1, 1]`. Checks 1 to 3 and 5 hold too, so the outcome is `consistent`. (`exact` `not-exact` is right, since `delta` is not 0.) Fix: record `{static: {outcome: consistent}, exact: {outcome: not-exact}}`, or use a trace whose `before` misses the guard, such as `x` in `[1/2, 1/2]`, so that check 4 does fail. | proposals/backend-provider-v1/vectors.json (hybrid-inconclusive-replay-record /results/1/cause/replay); spec/test-cases/TC-431-backend-provider-wire-vectors.md:59 | wrong-requirement |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The FR-469 entry is back at two-space indentation, and the frontmatter parses with `type: FR`. The `modes` and `resets` bullets are at list level. The structural count is back to 116, equal to main. |
+| FND-002 | fixed | FR-331 "Result entries" admits a plugin `hybrid-counterexample` on a hybrid item's entry, settling it only after exact replay, and refuses it `invalid-value` on any other item. The `invalid-value` row, AC-34 and BP-25 carry both cases. |
+| FND-003 | fixed | `restored_nodes` are regenerated from QSL's source. The initial conditions are `and(and(and(eq(v,20),ge(a,1)),le(a,2)),eq(t,0))` and `and(eq(v,0),eq(t,0))`, and `v0` is typed by the `bounded_domain`/`rational_range` node of `Rational[0, 20; 1, 1]`. AC-8 and AC-9 say so. |
+| FND-004 | fixed | Intervals take the one form FR-370's profile fit admits: integer under integer profiles, timed under `timed/v1`. `[2, *]` under infinite-trace is `{lower: "2", upper: null}`, and the timed spelling is refused `operation-member-mismatch` (FR-481-AC-11, HY-20). |
+| FND-005 | fixed | The point-trace condition now also requires that no invariant, guard, reset, initial condition, activation condition, capture or claim atom that replay evaluates calls a recursive function; otherwise the trace is static-only. |
+| FND-006 | fixed | FR-193 defines the decisive instant: the earliest instant of a bad prefix or of an undefined value. The kind comes from that instant, `where` names it, and a loop trace gets its own rule. |
+| FND-007 | fixed | The stored record's `solver-inconclusive` cause carries `replay` `{static, exact?}` with closed spellings and RFC 6901 pointers. A provider entry carrying `replay` is refused `unknown-member` at `/cause/replay`. BP-36 has the record vector and a check-9 adverse vector. Its content is FND-011. |
+| FND-008 | fixed | #414 is merged in. Its ids are kept (FR-481-AC-12/13, HN-15, HY-21/22), the restored ids FR-481-AC-8..11, HN-11..14, HY-17..20 and HY-23 are unique, the profile pin and the `model-steps`/`each` refusals are replaced by the restored admissions, layout defects are `malformed_wire`, and bare-variable terms are kept. Two stale rows remain (FND-010). |
+| FND-009 | fixed | The BP-36 positive is a `Bounce` lasso with `loop` 0, and FR-193 now refuses a `loop` that names the last state or beyond, `invalid-value` at `/loop`. |
+| FND-010 | still-open | New in this pass. |
+| FND-011 | still-open | New in this pass. |
+
+Verdict after disposition pass 1: FND-001 to FND-009 are fixed. Not
+mergeable until FND-010 (high) and FND-011 are fixed.
