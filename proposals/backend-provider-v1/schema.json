@@ -313,7 +313,7 @@
       "additionalProperties": false
     },
     "TemporalLimits": {
-      "description": "FR-368 limits (max_states, max_transitions, max_automaton_states), FR-392 max_walk_steps, FR-399 max_witness_set and max_relation_tuples, FR-439 max_store_buffer and max_messages, FR-428 max_live_instances; each absent member takes the routed provider's published default.",
+      "description": "FR-368 limits (max_states, max_transitions, max_automaton_states), FR-392 max_walk_steps, FR-399 max_witness_set and max_relation_tuples, FR-439 max_store_buffer and max_messages, FR-428 max_live_instances, FR-368 SMT solver budgets max_solver_steps and max_solver_time (whole seconds, outside request identity); each absent member takes the routed provider's published default.",
       "type": "object",
       "minProperties": 1,
       "properties": {
@@ -325,7 +325,9 @@
         "max_relation_tuples": {"$ref": "#/$defs/PositiveCount"},
         "max_store_buffer": {"$ref": "#/$defs/PositiveCount"},
         "max_messages": {"$ref": "#/$defs/PositiveCount"},
-        "max_live_instances": {"$ref": "#/$defs/PositiveCount"}
+        "max_live_instances": {"$ref": "#/$defs/PositiveCount"},
+        "max_solver_steps": {"$ref": "#/$defs/PositiveCount"},
+        "max_solver_time": {"$ref": "#/$defs/PositiveCount"}
       },
       "additionalProperties": false
     },

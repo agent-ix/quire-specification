@@ -102,7 +102,8 @@ emits nothing (FR-331-AC-2).
   `incomplete`); the provider's backend identity; and, for
   `generate`, the generation target and its options.
 - **Outside the key.** Paths, timestamps, wall-clock deadlines and budgets (a
-  hybrid solver's `max_solver_time`, FR-193), application
+  hybrid solver's `max_solver_time`, FR-193, and a temporal item's SMT
+  `max_solver_time`, FR-368), application
   version strings and the execution backend that ran. A wall-clock budget can
   change a result, but every result it limits is time-limited and never
   stored ("Never stored" below), so the key never has to bind it.
@@ -117,7 +118,8 @@ emits nothing (FR-331-AC-2).
   two writers of one key write identical bytes. Eviction keeps the store
   under the caller's size limit.
 - **Never stored.** A result whose category is internal failure, a cancelled
-  or deadline result, a time-limited `incomplete`, any member recording wall
+  or deadline result, a time-limited `incomplete` (a `timed-out` result, and
+  a `limit-reached` naming a temporal item's `max_solver_time`), any member recording wall
   time, and every result a plugin produced (FR-305).
 
 ## Acceptance Criteria
