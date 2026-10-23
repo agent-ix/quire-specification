@@ -256,8 +256,8 @@ guard facts and section 6 interval discharge, closed as follows. A producer
 admits nothing that these rules do not prove and refuses nothing that they do.
 
 A *stable path* is a parameter or `let` name, or `self` inside a
-`quire.model.complete/v1` invariant, precondition, postcondition or
-`operation-body` block, followed by zero or more field projections and proved
+`quire.model.complete/v1` invariant, state constraint (FR-382), precondition,
+postcondition or `operation-body` block, followed by zero or more field projections and proved
 `value(q)` steps. When discharging an FR-151 refinement obligation, a projection
 `self.f` onto a redefining field or the field it redefines has the declared
 facts of the redefined parent member being refined, not the redefining type. The facts are:

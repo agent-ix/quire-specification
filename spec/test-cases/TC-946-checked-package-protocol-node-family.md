@@ -17,8 +17,8 @@ Schema and reader vectors for the `protocol` node family of
 `quire.checked-semantic-graph/v2`: the shared `quire.op.protocol.control`
 body, the operator catalog, node keys, declaration paths, the clause body,
 membership and containment, binders and their scope, the derived causal
-relation and progress, placement, profile fit and the reader order. Scope:
-FR-464-AC-1 to FR-464-AC-12.
+relation and progress, placement, profile fit, the reader order and the
+activation relation. Scope: FR-464-AC-1 to FR-464-AC-13.
 
 ## Base package
 
@@ -70,8 +70,8 @@ node and the `value`/`parameter` binder nodes. The binders have levels
    the source, after adding a comment, and with a second `protocol
    Example::OrderFlow` reference in a user expression (K1).
 2. Apply each vector of "Placement and operators", "Keys and declarations",
-   "Clause body", "Membership", "Binders and scope" and "Causal relation and
-   progress" to the base package and run the full reader; recompute node and
+   "Clause body", "Membership", "Binders and scope", "Causal relation and
+   progress" and "Activation relation" to the base package and run the full reader; recompute node and
    package identities after each edit unless the vector says the stale key is
    the point.
 3. Feed a package with a state-step defect and a protocol defect, and one with
@@ -230,3 +230,20 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 8. O1 to O9 report the first defect in the reader order of FR-464
    (FR-464-AC-12).
 Assertions compare typed fields, causes and pointers, never message text.
+
+## Activation relation
+
+Each vector derives the activation relation from the admitted package
+(FR-464 "Activation relation") after the edit.
+
+| Vector | Edit to the base | Expected |
+| --- | --- | --- |
+| A1 | none | one row: the `Example::OrderFlow` clause key, `each` with `opened`'s node key, and `OrderClosureBounded`'s node key |
+| A2 | `activation on origin` (C2) | one row: the clause key, `origin` with no trigger, and `OrderClosureBounded`'s node key |
+| A3 | the protocol requires no temporal clause (C3) | no row |
+| A4 | a second `requires temporal OrderClosureBounded` | one `requirements` entry and one row, equal to A1's |
+| A5 | a second temporal clause `OrderPaidBounded` and `requires temporal OrderPaidBounded` | two rows, in ascending node-id digest order of the two temporal clause nodes |
+| A6 | a temporal clause `RefundBounded` on the clock `refund-clock`, which `Refund` reads, not required by the protocol | the relation equals A1's: no row for `RefundBounded` |
+| A7 | K1's reformatting, comment and second protocol reference | the relation equals A1's |
+| A8 | the `requirements` entry names a `temporal_clause` node absent from the clause's `dependencies` | `missing_declaration`/`missing-name` at the target; no relation |
+| A9 | the `each` `trigger` names a `value`/`parameter` node absent from the clause's `dependencies` | `missing_declaration`/`missing-name` at the target; no relation |

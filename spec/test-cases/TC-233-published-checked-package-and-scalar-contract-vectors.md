@@ -486,6 +486,16 @@ Graph order is the producer's order of `semantic_graph.nodes`; the reader does n
 | GO-03 | GO-01's fixtures with `semantic_graph.nodes` sorted ascending by node-id digest | Admitted; `package_id` differs from the published one exactly when the sort changes the node sequence | FR-322-AC-95 |
 | GO-04 | `positive-all-families.json` with `semantic_graph.nodes` reversed and the recorded `package_id` kept | The projection derived in the new order differs from the published order's and the recorded `package_id` does not recompute | FR-322-AC-95 |
 
+### State constraint clause vectors
+
+Each vector edits the published clause-operations package and rekeys the edited node before reading, so the read reaches the state step.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| CN-01 | The invariant node's kind member `clause` rewritten to `constraint` | Valid against both V2 schemas; admitted by the state step; its node id differs from the invariant's | FR-341-AC-13 |
+| CN-02 | CN-01's constraint with its anchor argument referencing the operation anchor | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-13 |
+| CN-03 | CN-01's constraint with a second parameter reference in its aggregate | `ill_typed`/`operator-ineligible` at the clause node | FR-341-AC-13 |
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.

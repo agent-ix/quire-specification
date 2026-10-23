@@ -345,7 +345,7 @@ boundary.
   `fairness` members are
   [FR-370](FR-370-checked-package-temporal-clause-body.md)'s,
   or for `quire.op.state.clause` the `{kind: "state_clause", clause}` member
-  naming the clause kind (`invariant`, `precondition` or `postcondition`,
+  naming the clause kind (`invariant`, `constraint`, `precondition` or `postcondition`,
   [FR-341](FR-341-checked-package-state-clause-body.md)). A state clause
   carries no law.
   An `operation` member's declaring node is a `model` node whose own
@@ -465,7 +465,8 @@ boundary.
   own node forms and each reporting before the next starts: the state-graph
   step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
   the terminal step (FR-476), the step-relation step (FR-477), the hybrid
-  step (FR-481) and the protocol step (FR-464). Each body artifact's "Reader order" fixes the
+  step (FR-481), the protocol step (FR-464) and the schedulability step
+  (FR-482). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
@@ -603,8 +604,9 @@ boundary.
   [FR-469](FR-469-checked-package-extension-nodes.md),
   [FR-475](FR-475-checked-package-state-graph-claim-body.md),
   [FR-476](FR-476-checked-package-model-terminal-declaration-body.md),
-  [FR-477](FR-477-checked-package-step-relation-claim-body.md) and
-  [FR-481](FR-481-checked-package-hybrid-model-nodes.md). For example:
+  [FR-477](FR-477-checked-package-step-relation-claim-body.md),
+  [FR-481](FR-481-checked-package-hybrid-model-nodes.md) and
+  [FR-482](FR-482-checked-package-schedulability-claim-body.md). For example:
 
   | Node | `dependencies` |
   | --- | --- |
