@@ -42,3 +42,11 @@ Examined, clean:
 Mergeable: no defect that blocks the PR.
 
 Conflicts with main: none (clean merge-tree). Conflicts with open #398 (spec/spec.md) and #417 (shared-grammar.md), both textual list/section edits; resolve as main plus both changes. Clean with the other open heads touching schema.json, FR-322 and the grammar.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fix 006819eb. Both FR-142 links in FR-482 now read `../../functional/type-model/FR-142-evaluate-quantities-and-units.md`, which resolves to the existing file. |
+
+Round 1 verdict at 006819eb: Mergeable: the only change since fcbf602c is the two links (plus the SR file); `quire validate` still gives 86 failure lines and merge-tree with main is clean. The cargo and QSL conformance runs (23 + 132, 46 of 46 at fcbf602c) were not rerun because no vector or schema changed.
