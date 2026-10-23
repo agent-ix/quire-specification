@@ -113,5 +113,4 @@ discriminators/steps refuse. These wire values never alias display paths.
 
 ## Status
 
-Accepted complete-V1 diagnostic-location contract. Implementation and
-qualification remain tracked separately.
+Accepted complete-V1 diagnostic-location contract.

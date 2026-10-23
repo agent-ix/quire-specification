@@ -53,6 +53,14 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
    one that overruns the request's `deadline_ms`; then one the caller
    cancels; then one the caller's own deadline ends; then one whose solver
    answers `unknown` while the caller's deadline also ends the run.
+10. Over step 9's claim and the same injected-outcome form, settle a
+    k-induction outcome at depth 2 whose solver stops a base query at
+    `temporal.limits.max_solver_steps` 1000; then one stopped at
+    `max_solver_time` 5; then the step-budget stop while the caller's own
+    deadline also ends the run; then the step-budget stop while the
+    backend's own wall clock also expires; then one whose request carries
+    `smt_encoding` `{max_constants: 7}` (FR-368) and whose encoder stops at
+    that limit.
 
 ## Expected Results
 
@@ -81,6 +89,13 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
    `cancelled{source}` with `source` `requested` and `deadline`; the tenth
    settles `cancelled{source: deadline}`, never `induction-not-closed`
    (FR-363-AC-10).
+10. `incomplete`, `limit-reached{limit: max_solver_steps, value: 1000,
+    setting: smt.max_solver_steps}`; `incomplete`, `limit-reached{limit:
+    max_solver_time, value: 5, setting: smt.max_solver_time}`, never
+    `timed-out`; `cancelled{source: deadline}`; `timed-out`; `incomplete`,
+    `limit-reached{limit: max_constants, value: 7, setting:
+    smt_encoding.max_constants}`; none of them `induction-not-closed`
+    (FR-363-AC-11).
 
 No row carries a proof basis, and each row's label, basis and result equal the
 FR-363 verdict table (FR-363-AC-1).
