@@ -54,8 +54,18 @@ A state model declares at most one `time` member:
 - `time M tick O period p unit u` — digital time counted by occurrences of
   operation `O` of the model, each occurrence advancing time by `p`.
 
-`u` is a unit of FR-142's time dimension and `p` a positive exact rational
-quantity of it. A model with a `time` member is a **timed model**, and its
+For a checked tick source, `O` is represented by a `state`/`operation_anchor`
+node. Its `context` is the tick source's explicit `model` reference and equals
+the timed root's `model` reference. The anchor's operation name resolves to an
+operation declared by that model. A function node or an operation anchor for a
+different model is not a tick operation.
+
+`u` is a unit of the base dimension declared `Time`; its exact nominal
+`dimension_node_id` is copied to the checked timed-model root's explicit
+`time_dimension` binding. Readers resolve the unit first and follow its
+`dimension_node_id`; they do not guess which same-named dimension is meant or
+use declaration order to select a node. `p` is a positive exact rational
+quantity of `u`. A model with a `time` member is a **timed model**, and its
 model subject is a **timed subject**. A second `time` member refuses with
 `invalid_timed_model`/`duplicate-time-source`.
 
@@ -74,6 +84,14 @@ frame that is not reset keeps its value. Reset is the one write to a clock;
 any other write refuses with `invalid_timed_model`/`clock-write`.
 
 ### Clock places
+
+In the checked package, FR-322's `clock_place.resolved_path` table is the
+authoritative resolution record. Each row names the declaring object or record,
+member identity and declared member type; collection rows also carry collection
+kind and bounds; the terminal row marks `Clock`. The reader joins each row to
+the corresponding path step and selected model declaration. This table is
+carried in checked-package nodes, so timed readers do not reopen source text or
+infer clock members from a spelling.
 
 A type is **clock-bearing** when it is `Clock`, an alias of a clock-bearing
 type, `Option` of one, a `Set`, `Bag`, `Sequence`, `OrderedSet` or `Map` whose

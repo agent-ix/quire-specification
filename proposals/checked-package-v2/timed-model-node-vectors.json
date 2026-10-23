@@ -62,5 +62,124 @@
       "locus": "/semantic_graph/nodes/clock_place/body/members/1/members",
       "mutate": "empty-path"
     }
+  ],
+  "operation_anchor_index": 53,
+  "authority_vectors": [
+    {
+      "id": "TM-06",
+      "kind": "explicit-time-dimension",
+      "model": "Example/Account",
+      "dimension_node_index": 42,
+      "unit_node_index": 43,
+      "expected": "unit semantic_type and unit nominal dimension equal the root time_dimension target"
+    },
+    {
+      "id": "TM-07",
+      "kind": "clock-resolved-path",
+      "place_node_index": 45,
+      "path_step_count": 3,
+      "expected": "one typed owner/member row per path step; sequence timer bounds are 0..3 and terminal member type is native Clock"
+    },
+    {
+      "id": "TM-08",
+      "kind": "tick-operation-anchor",
+      "source_node_index": 44,
+      "model_node_index": 13,
+      "operation_anchor_index": 53,
+      "expected": "operation_anchor.context equals source.model and timed_model.model; operation anchor is not a function node"
+    }
+  ],
+  "semantic_refusals": [
+    {
+      "id": "TM-09",
+      "mutation": "remove-timed-root",
+      "expected_code": "invalid_package",
+      "expected_cause": "missing-timed-model",
+      "locus": "/semantic_graph/nodes"
+    },
+    {
+      "id": "TM-10",
+      "mutation": "dangling-tick-operation",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/44/body/members/3/value/target"
+    },
+    {
+      "id": "TM-11",
+      "mutation": "function-as-tick-operation",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/44/body/members/3/value/target"
+    },
+    {
+      "id": "TM-12",
+      "mutation": "duplicate-clock-place",
+      "expected_code": "invalid_package",
+      "expected_cause": "duplicate-clock-place",
+      "locus": "/semantic_graph/nodes/52/body/members/3/value/members/1"
+    },
+    {
+      "id": "TM-13",
+      "mutation": "noncanonical-place-path",
+      "expected_code": "invalid_package",
+      "expected_cause": "malformed-clock-place",
+      "locus": "/semantic_graph/nodes/45/body/members/1"
+    },
+    {
+      "id": "TM-14",
+      "mutation": "zero-tick-period",
+      "expected_code": "ill_typed",
+      "expected_cause": "invalid-time-quantity",
+      "locus": "/semantic_graph/nodes/44/body/members/4/value/value"
+    },
+    {
+      "id": "TM-15",
+      "mutation": "missing-clock-resolution-row",
+      "expected_code": "invalid_package",
+      "expected_cause": "malformed-clock-place",
+      "locus": "/semantic_graph/nodes/45/body/members/2/value/members"
+    },
+    {
+      "id": "TM-16",
+      "mutation": "mismatched-clock-path-step",
+      "expected_code": "invalid_package",
+      "expected_cause": "malformed-clock-place",
+      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
+    },
+    {
+      "id": "TM-17",
+      "mutation": "wrong-clock-collection-bound",
+      "expected_code": "invalid_package",
+      "expected_cause": "malformed-clock-place",
+      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
+    },
+    {
+      "id": "TM-18",
+      "mutation": "undeclared-clock-member",
+      "expected_code": "invalid_package",
+      "expected_cause": "malformed-clock-place",
+      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/2"
+    },
+    {
+      "id": "TM-19",
+      "mutation": "wrong-terminal-clock-type",
+      "expected_code": "invalid_package",
+      "expected_cause": "malformed-clock-place",
+      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/2"
+    },
+    {
+      "id": "TM-20",
+      "mutation": "tick-model-context-mismatch",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/44/body/members/2/value/target"
+    },
+    {
+      "id": "TM-21",
+      "mutation": "unresolved-tick-operation",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/53/body/members/1/value/value"
+    }
   ]
 }

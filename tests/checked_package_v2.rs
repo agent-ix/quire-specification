@@ -18006,6 +18006,162 @@ fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
     }
 }
 
+#[trace("TC-367", "FR-322-AC-123", "FR-322-AC-124", "FR-322-AC-125")]
+#[test]
+fn tc_367_timed_model_authority_bindings_are_explicit_and_joined() {
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let id = |node: &Value| node["node_id"]["digest"].as_str().unwrap().to_owned();
+    let target = |node: &Value, member: usize| {
+        node["body"]["members"][member]["value"]["target"]["digest"]
+            .as_str()
+            .unwrap()
+            .to_owned()
+    };
+    let root = &nodes[52];
+    let dimension_id = target(root, 1);
+    let dimension = nodes.iter().find(|node| id(node) == dimension_id).unwrap();
+    assert_eq!(dimension["semantic_form"], "dimension");
+    assert_eq!(nodes[43]["semantic_type"]["digest"], dimension_id);
+
+    let source = &nodes[44];
+    assert_eq!(target(source, 2), target(root, 0));
+    let operation_id = target(source, 3);
+    let operation = nodes.iter().find(|node| id(node) == operation_id).unwrap();
+    assert_eq!(operation["node_tag"], "state");
+    assert_eq!(operation["semantic_form"], "operation_anchor");
+    assert_eq!(target(operation, 0), target(source, 2));
+    assert_eq!(operation["body"]["members"][1]["value"]["value"], "advance");
+    assert!(structural_node_key_is_current(operation));
+
+    let place = &nodes[45];
+    let path = place["body"]["members"][1]["value"]["members"].as_array().unwrap();
+    let resolved = place["body"]["members"][2]["value"]["members"].as_array().unwrap();
+    assert_eq!(path.len(), 3);
+    assert_eq!(resolved.len(), path.len());
+    assert_eq!(resolved[0]["members"][3]["value"]["value"], "Sequence<Example/Timer>");
+    assert_eq!(resolved[0]["members"][4]["value"]["value"], "sequence");
+    assert_eq!(resolved[0]["members"][5]["value"]["value"], "0");
+    assert_eq!(resolved[0]["members"][6]["value"]["value"], "3");
+    assert_eq!(resolved[2]["members"][3]["value"]["value"], "ix://quire/native/Clock");
+}
+
+#[trace("TC-367", "FR-322-AC-120")]
+#[test]
+fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
+    let positive: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
+    let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).unwrap();
+    let schema = parsed_fixture(SCHEMA);
+    let validator = jsonschema::validator_for(&schema).unwrap();
+    let rows = vectors["semantic_refusals"].as_array().unwrap();
+    assert_eq!(rows.len(), 13);
+    let all_ids = ["schema_refusals", "authority_vectors", "semantic_refusals"]
+        .into_iter()
+        .flat_map(|section| vectors[section].as_array().unwrap())
+        .map(|row| row["id"].as_str().unwrap())
+        .collect::<BTreeSet<_>>();
+    let expected_count = ["schema_refusals", "authority_vectors", "semantic_refusals"]
+        .into_iter()
+        .map(|section| vectors[section].as_array().unwrap().len())
+        .sum::<usize>();
+    assert_eq!(all_ids.len(), expected_count, "all timed vector ids are unique");
+    for row in rows {
+        let mut adverse = positive.clone();
+        match row["mutation"].as_str().unwrap() {
+            "remove-timed-root" => {
+                adverse["semantic_graph"]["nodes"].as_array_mut().unwrap().remove(52);
+            }
+            "dangling-tick-operation" => {
+                adverse["semantic_graph"]["nodes"][44]["body"]["members"][3]["value"]["target"]["digest"] =
+                    json!("0000000000000000000000000000000000000000000000000000000000000000");
+            }
+            "function-as-tick-operation" => {
+                adverse["semantic_graph"]["nodes"][44]["body"]["members"][3]["value"]["target"] =
+                    adverse["semantic_graph"]["nodes"][5]["node_id"].clone();
+            }
+            "duplicate-clock-place" => {
+                let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"]
+                    .as_array_mut().unwrap();
+                let duplicate = places[0].clone();
+                places.push(duplicate);
+            }
+            "noncanonical-place-path" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][1]["value"]["members"]
+                    .as_array_mut().unwrap().swap(0, 1);
+            }
+            "zero-tick-period" => {
+                adverse["semantic_graph"]["nodes"][44]["body"]["members"][4]["value"]["value"] = json!("0");
+            }
+            "missing-clock-resolution-row" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"]
+                    .as_array_mut().unwrap().remove(1);
+            }
+            "mismatched-clock-path-step" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"][0]["members"][0]["value"]["value"] = json!(1);
+            }
+            "wrong-clock-collection-bound" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"][0]["members"][6]["value"]["value"] = json!("4");
+            }
+            "undeclared-clock-member" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"][2]["members"][2]["value"]["value"] = json!("Example/Timer/unknown");
+            }
+            "wrong-terminal-clock-type" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"][2]["members"][3]["value"]["value"] = json!("Integer");
+            }
+            "tick-model-context-mismatch" => {
+                adverse["semantic_graph"]["nodes"][44]["body"]["members"][2]["value"]["target"] =
+                    adverse["semantic_graph"]["nodes"][14]["node_id"].clone();
+            }
+            "unresolved-tick-operation" => {
+                adverse["semantic_graph"]["nodes"][53]["body"]["members"][1]["value"]["value"] = json!("missing");
+            }
+            other => panic!("unhandled semantic timed-model vector {other}"),
+        }
+        rekey_stale_nodes(&mut adverse);
+        assert!(validator.is_valid(&adverse), "{} is a schema-valid semantic control", row["id"]);
+        assert_eq!(
+            adverse["package_id"]["digest"],
+            unqualified_jcs_sha256(&package_id_preimage(&adverse)),
+            "{} retains the recomputed package id",
+            row["id"]
+        );
+        let expected = match row["mutation"].as_str().unwrap() {
+            "remove-timed-root" => ("invalid_package", "missing-timed-model", "/semantic_graph/nodes"),
+            "dangling-tick-operation" | "function-as-tick-operation" => (
+                "invalid_package", "timed-node-reference", "/semantic_graph/nodes/44/body/members/3/value/target",
+            ),
+            "duplicate-clock-place" => (
+                "invalid_package", "duplicate-clock-place", "/semantic_graph/nodes/52/body/members/3/value/members/1",
+            ),
+            "noncanonical-place-path" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/1",
+            ),
+            "zero-tick-period" => (
+                "ill_typed", "invalid-time-quantity", "/semantic_graph/nodes/44/body/members/4/value/value",
+            ),
+            "missing-clock-resolution-row" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members",
+            ),
+            "mismatched-clock-path-step" | "wrong-clock-collection-bound" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members/0",
+            ),
+            "undeclared-clock-member" | "wrong-terminal-clock-type" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members/2",
+            ),
+            "tick-model-context-mismatch" => (
+                "invalid_package", "timed-node-reference", "/semantic_graph/nodes/44/body/members/2/value/target",
+            ),
+            "unresolved-tick-operation" => (
+                "invalid_package", "timed-node-reference", "/semantic_graph/nodes/53/body/members/1/value/value",
+            ),
+            other => panic!("unhandled expected diagnostic for {other}"),
+        };
+        assert_eq!(row["expected_code"], expected.0);
+        assert_eq!(row["expected_cause"], expected.1);
+        assert_eq!(row["locus"], expected.2);
+    }
+}
+
 #[trace("TC-233", "FR-322-AC-121")]
 #[test]
 fn tc_233_body_steps_pin_timed_model_between_hybrid_and_protocol() {
