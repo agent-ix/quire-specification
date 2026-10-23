@@ -13,6 +13,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-272-AC-23
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-24
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-25
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-78
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-79
@@ -183,7 +187,7 @@ rows to list exactly FR-272-AC-17's cause and payload keys. Parse the
 `runtime_invariant` rows of both and require FR-272-AC-18's cause and
 population-identity payload keys. Parse the `invalid_result` rows of both and
 the first cells of FR-331's "Result entries" table, and require FR-272-AC-23's
-causes in all three and its payload keys in both rows, and require the `resource_exhausted` rows and
+causes in all three and its payload keys in both rows. Parse the `invalid_quire_context` rows of both and require FR-272-AC-24's one cause and its `view` and `form` payload keys, parse the `unimplemented_capability` rows of both and require FR-272-AC-25's three causes and its `backend`, `construct`, `construct_name`, `location` and `capability` payload keys, and require the `resource_exhausted` rows and
 `value-accounting.md` to state FR-272-AC-19's `stage` rule. Parse
 the rows of FR-272-AC-11's eleven codes in both documents and require each to
 list exactly that criterion's causes and payload keys, and require FR-272's

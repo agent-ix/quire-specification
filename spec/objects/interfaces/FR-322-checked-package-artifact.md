@@ -2118,8 +2118,7 @@ counters below 2^53 and string values, so no published key changes.
 
 ## Status
 
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 boundary value contract.
 
 ## References
 
