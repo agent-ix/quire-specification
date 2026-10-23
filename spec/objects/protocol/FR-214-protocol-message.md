@@ -86,5 +86,4 @@ and do not remove `message` from FR-210.
 
 ## Status
 
-Accepted complete-V1 message contract. Implementation and qualification remain
-tracked separately.
+Accepted complete-V1 message contract.

@@ -234,5 +234,4 @@ revision.
 
 ## Status
 
-Accepted complete-V1 typed-cause contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 typed-cause contract.
