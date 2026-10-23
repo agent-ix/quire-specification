@@ -50,7 +50,7 @@ Parse the protocol text above at S1 under the `quire.value.complete/v1` profile 
 | IB-04 | 1 and 2 | Both requests carry the same obligation identity |
 | IB-05 | 2, with `TakePre: true` and `take` writing nothing | Every instance finishes; no deadlock exists; the item settles `inconclusive`, cause `instance-bound-reached`, since states with two live instances are instance-limited |
 | IB-06 | 2, ordinal reuse | After the instance with ordinal 0 finishes while ordinal 1 still runs, the next `activate` creates ordinal 0 again |
-| IB-07 | 2, activation guard `when (lookup<M::Gate>(gates, t.gate) absent undefined .v = 0)` with `t.gate` absent | every item settles `refuted`, cause `undefined-evaluation`, with the one-state prefix and `where` naming the activation guard; `activate` is not treated as disabled |
+| IB-07 | 2, `Tick` with one field `n: Option<Int[0, 1]>`, activation guard `when (value(t.n) = 0)`, which reads the trigger record only and is undefined for the record whose `n` is absent | every item settles `refuted`, cause `undefined-evaluation`, with the one-state prefix and `where` naming the activation guard; `activate` is not treated as disabled |
 
 ## Expected Results
 
