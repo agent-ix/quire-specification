@@ -98,5 +98,4 @@ satisfy its closure premise but never substitutes for the declaration.
 
 ## Status
 
-Accepted complete-V1 control-construct contract. Implementation and
-qualification remain tracked separately.
+Accepted complete-V1 control-construct contract.

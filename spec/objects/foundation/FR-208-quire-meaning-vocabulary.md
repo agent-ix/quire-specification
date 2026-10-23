@@ -427,5 +427,4 @@ the names alone, never on the spelling of `Alias`.
 
 ## Status
 
-Accepted complete-V1 meaning vocabulary. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 meaning vocabulary.
