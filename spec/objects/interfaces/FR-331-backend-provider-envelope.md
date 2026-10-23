@@ -89,7 +89,7 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 - `contract_version` — exactly `quire.backend-provider/v1`.
 - `capability_vocabulary` — exactly `quire.capability-kind/v1`; it selects the FR-290 vocabulary for every kind in `manifest`, `request` and `results`.
 - `manifest` — one backend descriptor per registered backend in the registry snapshot: backend identity, advertised (FR-290 kind, mode) pairs, domains, options, bounds, where the backend declares one its obligation-form set (FR-349), the state-space reductions it applies, a subset of `symmetry`, `partial-order` and `constraint` (FR-382), and, for `probabilistic-satisfaction`, its advertised evidence kinds (FR-290). A backend that advertises `temporal-satisfaction` also carries its `fairness_kinds` ([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)). A backend that advertises `temporal-satisfaction` may also carry `memory_models`, the memory models it decides for items over a subject with a weak `parallel`, a nonempty set drawn from `sc`, `tso` and `ra` by the names of the `memory` clause ([FR-439](../../functional/memory/FR-439-bound-replay-and-report-weak-memory-runs.md) routes by it). A descriptor with no `memory_models` advertises `sc` only, so, of the items over a subject with a weak `parallel`, it receives only those resolved to `sc`; a descriptor that does not advertise `temporal-satisfaction` carries none. Every descriptor carries `tool` ("Backend tool" below). Backend identities are unique.
-- `request` — in the frame form sent to a process provider, the checked package as `package` and `package_id` ("Package bytes" below); in the in-process form ("In-process providers" below), the checked package as a typed value and no `package` or `package_id`; in both forms, the provider deadline `deadline_ms` and the requested items: each item's claim, its proof bounds (the substituted `ProofBound`s of its `extent`, and a temporal item's `subject.proof_bounds`), its `options` and its own limits (`temporal.limits`, `probabilistic.limits`, `hybrid.limits`); there is no request-level `domains` or `limits` member. For each item, its one required FR-290 kind, its extent and #222 extent classification (`bounded` or `unbounded`), the backend the caller names when it names one, its `candidates`, and for a model-check item its `reductions` selection (FR-382); for a `probabilistic-satisfaction` item, its evidence kind (`statistical` or `exact`) and, for `statistical`, its method (`okamoto`, `sprt` or `regenerative` with `min_cycles`), seed, `max_witnesses`, for a timed subject its grid exponent `q` and `max_sample_steps` (default `2^24`), and `StatisticalLimits{max_samples, max_draws, max_cycle_steps}` ([FR-408](../../functional/analysis/FR-408-settle-probabilistic-claims-statistically.md)), or, for `exact`, `ExactProbLimits` ([FR-411](../../functional/analysis/FR-411-settle-probabilistic-claims-exactly.md)). Every limit has the published default that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives it, and `max_sample_steps` defaults to `2^24`.
+- `request` — in the frame form sent to a process provider, the checked package as `package` and `package_id` ("Package bytes" below); in the in-process form ("In-process providers" below), the checked package as a typed value and no `package` or `package_id`; in both forms, the provider deadline `deadline_ms` and the requested items: each item's claim, its proof bounds (the substituted `ProofBound`s of its `extent`, and a temporal item's `subject.proof_bounds`), its `options` and its own limits (`temporal.limits`, `probabilistic.limits`, `hybrid.limits`); there is no request-level `domains` or `limits` member. For each item, its one required FR-290 kind, its extent and #222 extent classification (`bounded` or `unbounded`), the backend the caller names when it names one, its `candidates`, and for a model-check item its `reductions` selection (FR-382); for a `probabilistic-satisfaction` item, its evidence kind (`statistical` or `exact`) and, for `statistical`, its method (`okamoto`, `sprt`, `clopper-pearson` or `regenerative` with `min_cycles`), seed, `max_witnesses`, for a timed subject its grid exponent `q` and `max_sample_steps` (default `2^24`), and `StatisticalLimits{max_samples, max_draws, max_cycle_steps}` ([FR-408](../../functional/analysis/FR-408-settle-probabilistic-claims-statistically.md)), or, for `exact`, `ExactProbLimits` ([FR-411](../../functional/analysis/FR-411-settle-probabilistic-claims-exactly.md)). Every limit has the published default that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives it, and `max_sample_steps` defaults to `2^24`.
 - `temporal` (per `temporal-satisfaction` request item over a model subject) — the item's `subject` (initial-state references, universes, proof bounds), `item_kind` (`formula` or `deadlock-freedom`), resolved `fairness` set, `max_depth` for a bounded search and `limits`, as [FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md) states. `limits` also holds `max_clocks` for a timed model ([FR-415](../../functional/temporal/FR-415-declare-clocks-and-timed-models.md)), with the setting name `model_check.max_clocks`; a state with more live clocks than `max_clocks` records `incomplete` with `limit-reached` whose `limit` is `max_clocks`. For a state-graph, hyper or step-relation item, `limits` also holds `max_walk_steps` (the step count of one witness-sampling walk; [FR-392](../../functional/analysis/FR-392-sample-possible-witnesses.md)), `max_witness_set` and `max_relation_tuples` ([FR-399](../../functional/analysis/FR-399-settle-hyperproperty-results.md)), with the setting names `model_check.max_walk_steps`, `model_check.max_witness_set` and `model_check.max_relation_tuples` that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives them; the routed provider publishes each default, which applies when the request sets none. `temporal` also holds the sampling settings `witness_samples` and `seed`, which are method parameters with provider-published defaults.
 - `candidates` (per request item) — exactly one of: the set of candidate backend identities that the `quire-spec-language` registry computes under FR-290's candidate-set rule, ordered bytewise by identity; or the unknown-backend mark carrying the unregistered backend identity that the request named.
 - `dispositions` — supported, requires-bound, unsupported or invalid-request per item.
@@ -111,6 +111,23 @@ checked, unchecked or taken on trust:
 | `trusted` | A third-party plugin proved it, and the core runs no check of it | every plugin `proved` result ([FR-305](../../functional/tooling/FR-305-load-explicit-rust-plugins.md)) |
 
 Each value settles `proved`, and `certification` belongs to `proved` alone.
+A `proved` result of the SMT backend whose Z3 cross-check ran (FR-349) also
+carries `cross_check: {tool, verdict}` beside `certification`: `tool` the
+cross-check tool's name and `verdict` the result its run alone settles for
+the same query, `proved`, `refuted` or `inconclusive`. A `verdict` other than
+`proved` records a disagreement over a proof the core certified, which
+FR-349 keeps `proved`, `certified`; the cross-check never changes
+`certification` (FR-354). No other result carries `cross_check`. The reader
+SHALL refuse before consumption a `cross_check` on any result other than
+`proved`; on a `proved` result whose `basis` is not `bounded-complete` or
+`inductive`, the SMT backend's proof bases, or whose `certification` is
+`trusted`; and a `verdict` other than `proved` on a proof that is not
+`certified`, since FR-349 settles that disagreement `inconclusive`. A
+disagreement that FR-349 settles `inconclusive` is the cause
+`cross-check-disagreement{tool, primary, cross_check}`, `primary` the
+primary solver's result and `cross_check` the cross-check's, both result
+values. A cross-check that did not run is FR-349's `cross-check-absent{tool}`
+warning, never a `cross_check` member.
 A certificate a core checker rejects settles the item `inconclusive` with
 cause `certificate-rejected{rule, at}`: `rule` the check rule that failed and
 `at` where it failed, for every core checker.
@@ -265,7 +282,7 @@ for these items with `invalid_result`/`unknown-cause`.
 | `proved` (proof basis) | `exact-value{value, reductions}`, `value-bounds{lower, upper, method, reductions}` with `method` `backward-induction{precision_bits}` or `interval-iteration{precision_bits, sweeps}`, `zone-certified`, `exhaustive`, `closed-form{analysis}` with `analysis` `fixed-priority`, `edf` or `amc-rtb`, `bounded-solver{method, horizon, jumps}` |
 | `refuted` (cause) | `undefined-evaluation{where, cause}` |
 | `measured` (FR-409 cause) | `undefined-evaluation{where, cause}` for `rejected`; `indifference-region` and `undecided-successor` for `undecided` |
-| `inconclusive` (cause) | `certificate-rejected{rule, at}`, `replay-parity`, `undecided-successor`, `no-initial-state`, `no-instance`, `sufficient-test-failed`, `solver-inconclusive{trace}`, whose `trace` is the optional FR-193 `HybridTrace`, `lasso-not-concretized`, `no-admitted-behaviour`, `well-definedness-unchecked`, `stale-dependency{requested, recompiled}` |
+| `inconclusive` (cause) | `certificate-rejected{rule, at}`, `cross-check-disagreement{tool, primary, cross_check}` (FR-349), `replay-parity`, `undecided-successor`, `no-initial-state`, `no-instance`, `sufficient-test-failed`, `solver-inconclusive{trace}`, whose `trace` is the optional FR-193 `HybridTrace`, `lasso-not-concretized`, `no-admitted-behaviour`, `well-definedness-unchecked`, `stale-dependency{requested, recompiled}` |
 | `incomplete` (cause) | `limit-reached{limit, value, setting}`, naming the limit, its value and the request setting that raises it, the one limit-stop cause of every engine; `timed-out`, the backend's own wall-clock limit, as a hybrid solver's `max_solver_time` or a provider's overrun of `deadline_ms` ("Hybrid solver budgets" below); `precision-budget{lower, upper}`; `cancelled{source}` for a cancelled run, `source` the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run |
 | `unsupported` (cause) | `missing-confidence`, `every-scheduler`, `exact-only-form`, `confidence-beyond-precision`, `not-markov{state, transition, post_states}`, `not-stochastic{state, identity}`, `time-locked-sample{state}`, `total-above-draw-range{total}`, `zero-weight-component{component}`, `delay-distribution{operation}`, `strict-clock-constraint{locus}`, `zero-delay-cycle{states}`, `timed-form-shape{locus}`, `punctual-interval{locus}`, `stopwatch-required` |
 
@@ -524,6 +541,8 @@ names, FR-462), `kind` and `result`, and:
 
 - `certification` — on `proved` only, `certified`, `uncertified` or
   `trusted` ("Certification" above);
+- `cross_check` — on an SMT `proved` only, when its cross-check ran,
+  `{tool, verdict}` ("Certification" above);
 - `basis` — on `proved` only, the proof basis as an object whose `type` is
   the spelling and whose other members are its payload, for example
   `{"type": "value-bounds", "lower": …, "upper": …, "method": …, "reductions": []}`;
@@ -543,7 +562,7 @@ names, FR-462), `kind` and `result`, and:
 
 | Result | Carries |
 | --- | --- |
-| `proved` | `basis` and `certification`; no `cause` or `diagnostic` |
+| `proved` | `basis` and `certification`, and `cross_check` when FR-349's cross-check ran; no `cause` or `diagnostic` |
 | `refuted` | `counterexample`; `cause` only for `undefined-evaluation` |
 | `tested` | nothing further |
 | `measured` | `verdict`; no `basis`, `cause` or `diagnostic` (FR-409) |
@@ -551,7 +570,7 @@ names, FR-462), `kind` and `result`, and:
 | `unsupported` | exactly one of `cause` and `diagnostic` |
 | `declined` | `cause` (`refused`, `invalid-input` or `incomplete-input`) and `diagnostic` |
 | `incomplete` | `cause` (`limit-reached`, `precision-budget`, `cancelled{source}` or `timed-out`) |
-| `failed` | exactly one of `cause` (`tool-failure{defect}`, FR-462) and `diagnostic` |
+| `failed` | exactly one of `cause` (`tool-failure{defect}`, with `limit` and `value` for `frame-length` and `total-bytes`, FR-462) and `diagnostic` |
 
 The closed proof bases are those of FR-363 (`exhaustive`,
 `bounded-complete{depth}`, `inductive{depth}`), FR-385
@@ -689,7 +708,7 @@ or from a failure around the run:
 | `Cancelled` | `incomplete` | cause `cancelled{source}` |
 | `Inconclusive` | `inconclusive` | its typed cause, such as `replay-parity` (a replay disagreement at AD-016 arrow 7) |
 | a backend success that is not proof (AD-016: `tested` keeps its value) | `tested` | none; never proof evidence |
-| a plugin-wire failure (FR-462) | `failed` | cause `tool-failure{defect}` |
+| a plugin-wire failure (FR-462) | `failed` | cause `tool-failure{defect}`, with `limit` and `value` for `frame-length` and `total-bytes` |
 | the tool becomes unavailable after a passing probe (FR-290) | `failed` | diagnostic `unsupported_projection`/`tool-unavailable` naming `kind` and `backend` |
 | an IR invariant breaks while mapping (AD-016) | `failed` | diagnostic `runtime_invariant`/`established-invariant-broken` |
 
@@ -799,6 +818,8 @@ registry snapshot and the request are not. The backend identity, the
 | FR-331-AC-36 | The `temporal-satisfaction` entry of a safety item settled by a stale EN-1 closure certificate (QSL FR-338), and that of a TP-4 liveness item settled by a stale EN-1 component certificate (QSL FR-339), each `inconclusive` with cause `stale-dependency{requested, recompiled}`, two `quire.package.semantic/v2` `PackageId`s, are admitted; the same cause without `requested` is refused by the schema. The checkers' comparison before any other rule and the settlement are verified by QSL FR-338-AC-11, FR-339-AC-4, FR-282-AC-10 and FR-127-AC-13. | Test (TC-431) |
 | FR-331-AC-37 | The schema refuses a descriptor without `tool` at the manifest and request stages, including a linked Kani snapshot descriptor (`snapshot-kani-without-tool`) and a pure engine's snapshot descriptor (`snapshot-engine-without-tool`); refuses a `tool` without `name`, `version` or `build`, with an empty `name` or `version`, with another member, or that is a string or `null`; refuses a `build` in another domain, with another algorithm, with a digest that is not 64 lowercase hexadecimal digits, with another member, or that is a bare digest string; and admits a pure in-process engine's descriptor whose `tool` names its implementing crate, version and build. A request-stage snapshot carries the kani descriptor with the `tool` its `hello` gives. Two admitted descriptors that differ only in `tool.version`, or only in `tool.build` with the same `tool.version`, have different `ManifestDigest` records in `quire.tool-manifest.jcs/v1` and the same `BackendId`. | Test (TC-431) |
 | FR-331-AC-38 | A provider fronting an external tool reports, in the descriptor it builds at an invocation, the version the executable reports at that invocation. When the executable is replaced by another version after the descriptor is built and before an item's run, the item's FR-290 probe fails and the item settles `unsupported` with `unsupported_projection`/`tool-unavailable` naming the capability kind, the backend, the descriptor's version and the probed version, and no run starts. | Test (TC-226) |
+| FR-331-AC-39 | A `proved` result with `cross_check` `{"tool": "z3", "verdict": "proved"}` and one with `{"tool": "z3", "verdict": "refuted"}`, each `certified`, are admitted; `cross_check` on a `refuted`, `inconclusive` or `failed` result, a `cross_check` missing `tool` or `verdict`, with a `verdict` outside `proved`, `refuted` and `inconclusive`, or with another member, is refused before consumption. `cross_check` on a plugin's `trusted` `bounded-complete` proof (`cross-check-on-trusted`, refused by the `trusted` rule alone), on a certified `reduced` proof (`cross-check-on-non-smt-basis`), and verdict `refuted` on an `uncertified` `inductive` proof (`cross-check-disagreement-on-uncertified`) are each refused at `/results/<i>/cross_check`. An `inconclusive` result with cause `{"type": "cross-check-disagreement", "tool": "z3", "primary": "proved", "cross_check": "refuted"}` is admitted, so is one with `primary` `inconclusive`, and the cause missing `primary` is refused. | Test (TC-431) |
+| FR-331-AC-40 | A `failed` result with cause `{"type": "tool-failure", "defect": "frame-length", "limit": 1048576, "value": 1048577}` and one with `defect` `total-bytes`, `limit` 4194304 and `value` 4194305 are admitted; either defect without `limit` or `value` is refused, and `limit` or `value` on any other defect, such as `crash`, is refused, before consumption. | Test (TC-431) |
 
 ## Dependencies
 
