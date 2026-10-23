@@ -15,7 +15,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-461
     type: references
-  - target: ix://agent-ix/quire-specification/FR-478
+  - target: ix://agent-ix/quire-specification/FR-481
     type: references
 ---
 
@@ -185,7 +185,7 @@ each jump to a source transition:
   declaration is checked by the reader that holds the item's hybrid model:
   the producer serving the item in process, or a process provider reading
   the model's `hybrid` nodes from the package bytes
-  ([FR-478](../../objects/interfaces/FR-478-checked-package-hybrid-model-nodes.md)
+  ([FR-481](../../objects/interfaces/FR-481-checked-package-hybrid-model-nodes.md)
   "Hybrid trace correspondence"). That reader SHALL refuse with
   `invalid_result`/`invalid-value`, at the member's pointer, a trace whose
   `mode` names no mode of the declaration, whose `start` is not in the first

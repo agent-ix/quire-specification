@@ -51,7 +51,7 @@ structures, but any external consumer receives only the contract.
   node, the continuous variables' `value`/`parameter` nodes, the term nodes
   and the claim's `temporal_clause` and formula nodes, each keyed by its own
   preimage, with the `-(2 * a)` term nodes of an identity case and eight
-  schema refusals (FR-478, TC-964). `node-identity-preimage.schema.json`
+  schema refusals (FR-481, TC-966). `node-identity-preimage.schema.json`
   defines the `HybridNode` preimage that keys each `hybrid` node.
 - `model-owner-form-vectors.json` supplies a domain package projection that
   also declares processes, state machines and a persistence interface, with

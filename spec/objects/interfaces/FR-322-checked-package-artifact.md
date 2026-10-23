@@ -28,7 +28,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-466
     type: references
-  - target: ix://agent-ix/quire-specification/FR-478
+  - target: ix://agent-ix/quire-specification/FR-481
     type: references
   - target: ix://agent-ix/quire-specification/FR-440
     type: references
@@ -194,7 +194,7 @@ boundary.
   body data ([FR-469](FR-469-checked-package-extension-nodes.md)). A `hybrid`
   node, of the form `hybrid_model`, `hybrid_mode` or `hybrid_transition`,
   carries a checked hybrid model, one of its modes or one of its transitions
-  ([FR-478](FR-478-checked-package-hybrid-model-nodes.md)). A node key is
+  ([FR-481](FR-481-checked-package-hybrid-model-nodes.md)). A node key is
   (`node_id.domain`, `node_id.digest`); node identifiers are unique within the
   graph. **Graph order** is the order of the `semantic_graph.nodes` array,
   which the producer chooses. The `identity_projection` holds one entry per
@@ -289,7 +289,7 @@ boundary.
   binds (a function parameter; a `let`, query, `count` or `sum` binder; a
   `fold` or `reduce` accumulator or element binder; or the `self`, `result`
   and operation parameters of a state clause; or a continuous variable of a
-  hybrid model, [FR-478](FR-478-checked-package-hybrid-model-nodes.md)), and
+  hybrid model, [FR-481](FR-481-checked-package-hybrid-model-nodes.md)), and
   its `semantic_type` is the bound value's type. It carries no `declaration` and no `owner`, and its
   body is exactly `aggregate{[binding "name" = literal text, binding "level"
   = literal integer]}`, in that order: `name` is the binder's name as a
@@ -447,7 +447,7 @@ boundary.
   own node forms and each reporting before the next starts: the state-graph
   step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
   the terminal step (FR-476), the step-relation step (FR-477), the hybrid
-  step (FR-478) and the protocol step (FR-464). Each body artifact's "Reader order" fixes the
+  step (FR-481) and the protocol step (FR-464). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
@@ -586,7 +586,7 @@ boundary.
   [FR-475](FR-475-checked-package-state-graph-claim-body.md),
   [FR-476](FR-476-checked-package-model-terminal-declaration-body.md),
   [FR-477](FR-477-checked-package-step-relation-claim-body.md) and
-  [FR-478](FR-478-checked-package-hybrid-model-nodes.md). For example:
+  [FR-481](FR-481-checked-package-hybrid-model-nodes.md). For example:
 
   | Node | `dependencies` |
   | --- | --- |

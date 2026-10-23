@@ -16361,9 +16361,9 @@ fn rekey_hybrid_vector_node(node: &mut Value, nodes: &[Value]) {
     }
 }
 
-#[trace("TC-964", "FR-478-AC-1", "FR-478-AC-2", "FR-478-AC-6")]
+#[trace("TC-966", "FR-481-AC-1", "FR-481-AC-2", "FR-481-AC-6")]
 #[test]
-fn tc_964_hybrid_model_nodes_meet_the_schema_and_carry_their_own_keys() {
+fn tc_966_hybrid_model_nodes_meet_the_schema_and_carry_their_own_keys() {
     let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
     let nodes = vectors["nodes"].as_array().expect("nodes");
     let roles = &vectors["roles"];
@@ -16484,9 +16484,9 @@ fn tc_964_hybrid_model_nodes_meet_the_schema_and_carry_their_own_keys() {
     assert_eq!(claim["body"]["arguments"][1]["value"], "model-time");
 }
 
-#[trace("TC-964", "FR-478-AC-3")]
+#[trace("TC-966", "FR-481-AC-3")]
 #[test]
-fn tc_964_a_changed_rate_rekeys_its_mode_the_model_and_the_claim() {
+fn tc_966_a_changed_rate_rekeys_its_mode_the_model_and_the_claim() {
     let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
     let mut nodes = vectors["nodes"].as_array().expect("nodes").clone();
     let extra = vectors["extra_nodes"].as_array().expect("extra nodes");
@@ -16537,9 +16537,9 @@ fn tc_964_a_changed_rate_rekeys_its_mode_the_model_and_the_claim() {
     }
 }
 
-#[trace("TC-964", "FR-478-AC-5")]
+#[trace("TC-966", "FR-481-AC-5")]
 #[test]
-fn tc_964_malformed_hybrid_nodes_fail_the_published_schema() {
+fn tc_966_malformed_hybrid_nodes_fail_the_published_schema() {
     let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
     let nodes = vectors["nodes"].as_array().expect("nodes");
     let node_schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");

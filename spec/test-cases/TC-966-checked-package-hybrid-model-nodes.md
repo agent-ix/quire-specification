@@ -1,13 +1,13 @@
 ---
-id: TC-964
+id: TC-966
 title: "Checked-package hybrid model nodes and hybrid claims"
 type: TC
 relationships:
-  - target: ix://agent-ix/quire-specification/FR-478
+  - target: ix://agent-ix/quire-specification/FR-481
     type: verifies
 ---
 
-# TC-964: Checked-package hybrid model nodes and hybrid claims
+# TC-966: Checked-package hybrid model nodes and hybrid claims
 
 ## Description
 
@@ -33,7 +33,7 @@ vectors, and feed the package to the reader.
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| HN-01 | the published nodes | every node meets `SemanticNode` and holds the key of its own preimage; each `hybrid` node's preimage meets `HybridNode`, the node is its own `semantic_type` and its `dependencies` are its body's targets; FR-478-AC-1's model, modes, transition, variables and classes; the clock `t`'s rate is the rational literal one in both modes; `SlowEnough` is a `temporal_clause` over `h` typed by the model node, clock `model-time` |
+| HN-01 | the published nodes | every node meets `SemanticNode` and holds the key of its own preimage; each `hybrid` node's preimage meets `HybridNode`, the node is its own `semantic_type` and its `dependencies` are its body's targets; FR-481-AC-1's model, modes, transition, variables and classes; the clock `t`'s rate is the rational literal one in both modes; `SlowEnough` is a `temporal_clause` over `h` typed by the model node, clock `model-time` |
 | HN-02 | `Moving`'s rate of `v` replaced by `-(2 * a)`, then rekeyed up the references | new keys for `Moving`, `Braking`, `h` and `SlowEnough`; rekeying the unchanged nodes keeps every key |
 | HN-03 to HN-10 | the `schema_refusals` cases: a transition with a `declaration`; a mode occurrence of role `claim`; `modes` before `variables`; class `continuous`; a reference `target`; a mode with no rates; form `hybrid_flow`; a model without `owner` | each fails `SemanticNode` |
 | HY-01 | `Braking` and `SlowEnough` of QSL FR-447, compiled and emitted | the HN-01 nodes; the full reader admits the package |

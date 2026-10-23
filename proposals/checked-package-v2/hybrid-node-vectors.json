@@ -1836,7 +1836,7 @@
       }
     }
   ],
-  "note": "FR-478 hybrid model nodes for the Braking declaration and the SlowEnough claim of QSL FR-447's use case (TC-964). `nodes` is one graph; `extra_nodes` are the term nodes the HN-02 identity case rebinds Moving's rate of v to. Each `schema_refusals` case replaces one member of one node and fails the published SemanticNode schema.",
+  "note": "FR-481 hybrid model nodes for the Braking declaration and the SlowEnough claim of QSL FR-447's use case (TC-966). `nodes` is one graph; `extra_nodes` are the term nodes the HN-02 identity case rebinds Moving's rate of v to. Each `schema_refusals` case replaces one member of one node and fails the published SemanticNode schema.",
   "roles": {
     "claim": 29,
     "model": 23,
