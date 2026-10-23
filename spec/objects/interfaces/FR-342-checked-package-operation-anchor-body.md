@@ -145,5 +145,4 @@ Two anchors of one `context` that reference one `frame` node are admitted.
 ## Status
 
 Accepted complete-V1 boundary value contract for the
-`state`/`operation_anchor` node body. Implementation and qualification
-remain tracked separately.
+`state`/`operation_anchor` node body.

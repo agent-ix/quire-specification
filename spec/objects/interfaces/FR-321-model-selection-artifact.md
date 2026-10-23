@@ -52,5 +52,4 @@ Missing required properties, duplicate keys, out-of-domain values and non-canoni
 
 ## Status
 
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 boundary value contract.
