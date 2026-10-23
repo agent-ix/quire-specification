@@ -25,10 +25,10 @@ relationships:
 
 When a clause writes a reference literal `M::T#"k"`, the checker SHALL type it
 `Reference<M::T>`, and when a subject is bound the analyzer SHALL resolve it,
-once and before any evaluation, to the one object of the subject whose key has
-the identity `k` in `T`'s universe and whose type a member record of an initial
-state fixes. A reference literal is the only source form that names one object
-by its key.
+once and before any evaluation, to the key with identity `k` in `T`'s
+universe: a fixed object when an initial member record admits the key, and
+otherwise the object an operation creates under that key. A reference literal
+is the only source form that names one object by its key.
 
 ## Inputs
 
@@ -73,8 +73,8 @@ whose identity is the two bytes `s1`.
   `Reference<M::T>` type reference names, and SHALL admit it wherever an
   expression of that type is admitted. Its upcasts, equality and
   dereference are those of any `Reference<M::T>` value.
-- A reference literal is a constant of its bound subject. It is no
-  application of a model operation, so the slots that bar model state
+- A fixed reference literal (Resolution at subject binding) is a constant of
+  its bound subject. It is no application of a model operation, so the slots that bar model state
   ([FR-464](../../objects/interfaces/FR-464-checked-package-protocol-node-bodies.md))
   admit it, and it adds no location to a read footprint. A dereference or
   field read through it is a model-state read like any other.
@@ -97,23 +97,32 @@ term.
 - When a subject is bound, the analyzer SHALL resolve each reference literal
   of the checked package once, before any state is explored or any clause is
   evaluated. The universe component is `T`'s object universe
-  ([FR-204](../../objects/foundation/FR-204-declared-object-identity.md)). The
-  key is admitted when it occurs, with that universe and identity, in the
-  universe of a population that overlaps `T` and a member record of some
-  initial state of the subject admits it, as FR-361 admits an instance key.
-  The type component is the type that record fixes, and it SHALL conform to
-  `T`.
-- A literal whose key no member record admits, or whose admitting record's
-  type does not conform to `T`, SHALL refuse
-  `missing_declaration`/`missing-name` at the literal, naming `T` and the key
-  as its hexadecimal identity. Nothing over the subject is evaluated. A key
-  that only an operation could create cannot be named by a literal; this is
-  the limit FR-361 states for instance keys.
-- A resolved literal evaluates to the same FR-181 reference at every state of
-  every behaviour of the subject. When its object is not a member of the
-  state's population, the literal is still that reference: a dereference
-  or field read through it then follows the rules for an absent target, as
-  any stored reference to a deleted object does.
+  ([FR-204](../../objects/foundation/FR-204-declared-object-identity.md)), and
+  the key is the pair of that universe and the literal's identity.
+- A literal whose key occurs in the universe of no population that overlaps
+  `T` (FR-361) SHALL refuse `missing_declaration`/`missing-name` at the
+  literal, naming `T` and the key as its hexadecimal identity, and nothing over
+  the subject is evaluated.
+- When a member record of some initial state admits the key, as FR-361 admits
+  an instance key, the literal is **fixed**. Its type component is the type
+  that record fixes, which SHALL conform to `T`, else the same
+  `missing-name` refusal applies. A fixed literal evaluates to the same FR-181
+  reference at every state of every behaviour. When its object is not a
+  member of a state's population, a dereference or field read through it
+  follows the rules for an absent target, as any stored reference to a
+  deleted object does.
+- When the key occurs in an overlapping population's universe and no initial
+  member record admits it, so only an operation can create its object, the
+  literal is **created-object**. At each state it evaluates to the FR-181
+  reference of that state's member with that key, its type component being
+  the type the member's record fixes. It evaluates to the undefined value with
+  reason `absent-key` at a state with no such member, or with a member whose
+  type does not conform to `T`. A created-object literal reads the membership
+  of the populations that overlap `T`, so it is a model-state read: its read
+  footprint holds that membership. In a slot that bars model state it
+  SHALL refuse `ill_typed`/`operator-ineligible` at the literal when the
+  subject is bound, before any state is explored, as such a slot refuses a
+  `lookup`.
 
 ## Acceptance Criteria
 
@@ -122,8 +131,8 @@ term.
 | FR-480-AC-1 | `M::Server#"s1"` parses as one `reference-literal` node holding the qualified name and the string, and renders back byte for byte. `M::Server#s1`, `M::Server#` and `#"s1"` each fail at the parser with a located syntax diagnostic. | Test (TC-965) |
 | FR-480-AC-2 | `M::Server#"s1"` types `Reference<M::Server>`, with the same type node as a `Reference<M::Server>` parameter, and `self = M::Server#"s1"` in an invariant of `Server` checks. `M::Absent#"s1"` refuses `missing_declaration`/`missing-name` at `M::Absent`; `M::Point#"s1"`, `Point` a record type, refuses `ill_typed`/`type-mismatch` at `M::Point`, retaining expected `object type` and actual `record`; `M::Server#""` refuses `invalid_package`/`invalid-value` at the string. | Test (TC-965) |
 | FR-480-AC-3 | `M::Server#"s1"` lowers to a `literal` term of `value_kind` `reference`, `type` the `composite_type`/`reference` node over `Server`, and `value` `7331`. Two occurrences of it, one written through a second alias of the same package, share the term. | Test (TC-965) |
-| FR-480-AC-4 | Over a subject whose `servers` universe in `Server`'s object universe is `[s1, s2]` and whose initial state admits both as `Server` records, `M::Server#"s1"` resolves to the FR-181 reference with that universe, `Server`'s type identity and identity `7331`, and `self = M::Server#"s1"` holds for `s1` only. `M::Server#"s9"` refuses `missing_declaration`/`missing-name` at the literal, naming `Server` and `7339`, before any state is explored; a key of the universe that no initial member record admits refuses the same way. | Test (TC-965) |
-| FR-480-AC-5 | A choice guard that compares a `receive` record's reference field to `M::Server#"s1"` checks: the literal is not a model-state read. A guard that reads `deref(M::Server#"s1").load` refuses `ill_typed`/`operator-ineligible` at the dereference, as any model-state read there does. | Test (TC-965) |
+| FR-480-AC-4 | Over a subject whose `servers` universe in `Server`'s object universe is `[s1, s2, s3]`, whose initial state admits `s1` and `s2` as `Server` records and whose operation `spawn()` creates `s3` as a `Server`, `M::Server#"s1"` resolves to the FR-181 reference with that universe, `Server`'s type identity and identity `7331`, and `self = M::Server#"s1"` holds for `s1` only. `M::Server#"s9"`, whose key is in no universe, refuses `missing_declaration`/`missing-name` at the literal, naming `Server` and `7339`, before any state is explored. `M::Server#"s3"`, whose key is in the universe and admitted by no initial record, is created-object: it is undefined with reason `absent-key` at the initial state, and after an operation that creates `s3` as a `Server` it evaluates to `s3`'s reference. | Test (TC-965) |
+| FR-480-AC-5 | A choice guard that compares a `receive` record's reference field to `M::Server#"s1"` checks: the fixed literal is not a model-state read, while the same guard over the created-object `M::Server#"s3"` refuses `ill_typed`/`operator-ineligible` at the literal when the subject is bound. A guard that reads `deref(M::Server#"s1").load` refuses `ill_typed`/`operator-ineligible` at the dereference, as any model-state read there does. | Test (TC-965) |
 
 ## Dependencies
 
