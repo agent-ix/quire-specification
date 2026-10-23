@@ -366,10 +366,12 @@ primary       = 'true' | 'false' | 'null' | 'none' | 'self' | 'result'
               | 'allInstances', '<', type-ref, '>', '(', expr, ')'
               | collection-call
               | protocol-reference
+              | reference-literal
               | 'reaches', '(', expr, ',', expr, ',', qualified-name, ')'
               | 'lookup', '<', type-ref, '>', '(', expr, ',', expr, ')',
                 'absent', absence-mode ;
 protocol-reference = 'protocol', qualified-name ;
+reference-literal = qualified-name, '#', string ;
 absence-mode  = 'undefined' | 'empty' | 'refused' ;
 operation-body = 'body', ident, 'using', ident, 'on', qualified-name,
                  '(', [ ident, { ',', ident } ], ')', block ;
@@ -413,6 +415,12 @@ FR-140 owns their well-formedness and value-only membership. IEEE source is
 bit-level so signed zero and NaN payload identity survive parsing. Human decimal
 float conversion is an explicit library function under a selected rounding
 profile, not a literal shortcut.
+
+A `reference-literal` names one object by its key: the qualified name names
+an object type and the string is the key's object identity as UTF-8 bytes
+(`M::Server#"s1"`). `#` is a punctuation token of this production alone. Its
+typing, lowering and resolution are
+[FR-478](../../spec/functional/type-model/FR-478-check-and-resolve-reference-literals.md)'s.
 
 The one qualified reference/call production is syntactically canonical. Static
 resolution classifies a bare qualified reference as an enum member, a
