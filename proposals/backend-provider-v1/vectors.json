@@ -4561,6 +4561,18 @@
       ]
     },
     {
+      "name": "limit-reached-bare-accounting-counter",
+      "base": "kani-outcome-incomplete-and-failed",
+      "owner": "FR-461",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/setting",
+          "value": "work_units"
+        }
+      ]
+    },
+    {
       "name": "limit-reached-undotted-setting",
       "base": "kani-outcome-incomplete-and-failed",
       "owner": "FR-461",
