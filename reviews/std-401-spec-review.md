@@ -33,3 +33,12 @@ Examined, clean:
 ## Verdict
 
 Mergeable after FND-001, FND-002 (medium) are fixed or dispositioned by the lead.
+
+## Dispositions
+
+Round 1, at 2ef818ee. Hand-derived P14: walk(sequence[7,7,7],0) = 3 after 4 calls; contains-guarded walk(sequence[5,5],5) = 6 after 2 calls; w1(sequence[1,2]) = 0; drain(bag[1,1,2],1) = 2 after 3 calls; drain(sequence[1,2,1],1) = 2; Bag<Float64> {+0,+0,-0} with k = +0 gives 2 (bit identity); FR-145 bounds dropFirst [max(a-1,0),max(b-1,0)] and removeOne [max(a-1,0),b] match Q13/Q14. The three identities (sequence.drop_first, ordered_set.drop_first, collection.remove_one) are in both schemas.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | #403 is now based on spec/std-397-ieee-negate-equality (#419), which carries #409's float elements and #419's float `=`/`!=`, so P13 (13)-(15) type-check as written. |
+| FND-002 | fixed | A *one-occurrence removal* is `removeOne(p, e)` (FR-145) for a stable path `e` with the membership fact `contains(p, e)` ... A *tail* is `dropFirst(p)` (FR-145) for a `p` of `Sequence` or `OrderedSet` kind with a fact at that call site that `size(p) >= 1` |
