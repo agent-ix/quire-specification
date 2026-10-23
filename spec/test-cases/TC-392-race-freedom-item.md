@@ -43,6 +43,7 @@ their verdicts and the race counterexamples.
 | DR-09 | DR-02's counterexample with `earlier` changed to a position whose access happens before `later` | replay settles `inconclusive`, cause `replay-parity` |
 | DR-10 | the authored claim in DR-02 and in DR-02 with `data` accesses made `relaxed` | the same verdict |
 | DR-11 | DR-01 and DR-02, reading the state key after the writer's `data := 1`, after its flag store, and after the reader's flag load | the `data` race-summary entry and each view's `race` member are as FR-438-AC-6 states: after `data := 1`, `last_write` the writer, non-atomic, and `write` true only in the writer's `cur` and `acq`; the new `flag` message's view `write` true under DR-01 and false under DR-02; under DR-01 the reader's `cur` `write` true after a flag load that reads the new message, and the data load completes no race; under DR-02 the data load completes a race; DR-04 has no entry and no `race` member |
+| DR-12 | DR-01, DR-02 and DR-08 under `tso`, reading the state key after the writer's `data := 1`, after its flag store or `send`, after `flush(writer)`, and after the reader's flag load or `receive` | as FR-438-AC-7 states: the `data` entry and the writer's `race-summaries` after `data := 1`; the buffered `flag` element's and then `race-memory`'s `write` true for a `release` store and false for a `relaxed` one; the queue entry's `race` `write` true; the item `proved` for the `release`/`acquire` and channel variants and `refuted` on `data` with `relaxed` flags |
 
 ## Expected Results
 

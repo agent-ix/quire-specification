@@ -206,6 +206,11 @@ FR-181 simulator state key with these member contents:
 | `roles` | `{"type":"role","instance":"<decimal>","role":"<ident>"}` | a static role's binding, or a replicated role's instance map (FR-428) |
 | `memory` | the members its memory model names | empty under `sc` (FR-434) |
 
+- A queue entry whose `send` ran inside a weak `parallel` also carries its
+  memory model's member: under `ra` the view the `send` carries (`view`,
+  [FR-437](../memory/FR-437-explore-release-acquire-memory.md)), and under
+  `tso`, when the subject has a non-atomic shared location, the sender's
+  race map (`race`, [FR-438](../memory/FR-438-report-data-races.md)).
 - `<node>` is the node's static declaration path ([FR-221](../../objects/protocol/FR-221-protocol-node-occurrence.md)).
 - A thread path is `{"type":"thread-path","instance":"<decimal>","steps":[<step>, ...]}`,
   each step `{"node":"<node>","branch":"<label>","ordinal":"<decimal>"}` for a

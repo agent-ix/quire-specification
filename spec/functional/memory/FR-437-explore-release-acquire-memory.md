@@ -75,7 +75,9 @@ which are the earliest of them in program order, so the count names the
 frontier's latest covered event; a thread whose count is 0 has no entry.
 `owed` lists the view's pairs. When the subject has a shared location with a
 non-atomic access, a view also has the member `race`, which holds FR-438's
-race Booleans of the view; otherwise it has none.
+race Booleans of the view; otherwise it has none. A queue entry whose `send`
+ran inside an `ra` weak `parallel` has the member `view`, the view the `send`
+carries, until its `receive` joins it.
 
 An **event** is `{"thread":<thread path>,"kind":"read"|"write"|"rmw"|"fence","ordinal":"<decimal>","location":<location>,"read":"<depth>","write":"<depth>"}`.
 `ordinal` is the number of live SC events of the thread before it in program
