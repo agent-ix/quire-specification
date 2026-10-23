@@ -85,6 +85,13 @@ The explicit refusal/non-conclusive mutations include:
 - Compare the state keys of the state pairs FR-181-AC-24 lists: `+0` against
   `-0`, one float set inserted in two orders, composed against decomposed
   `é`, and `2/4` against `1/2` (FR-181-AC-24).
+- Encode the Bytes and JsonObject values FR-181-AC-26 lists and compare the JCS
+  bytes exactly, and read the odd-digit, uppercase and non-hexadecimal Bytes
+  payloads and the non-canonical JsonObject texts against the form
+  (FR-181-AC-26).
+- Encode the `Set<Bytes>` and `Set<JsonObject>` values FR-181-AC-27 lists and
+  compare the bytes and element order, and compare the state keys of the Bytes
+  and JsonObject state pairs it lists (FR-181-AC-27).
 
 ## Sampler index-sequence vector
 
