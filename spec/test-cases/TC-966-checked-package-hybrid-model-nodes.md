@@ -21,8 +21,8 @@ package bytes.
 
 `hybrid-node-vectors.json` holds the nodes of QSL FR-447's `Braking`
 declaration and `SlowEnough` claim, and as `restored_nodes` those of
-`Braking2`, `Slows` and `Recent`. HN-01 to HN-14 read that file, and HN-15
-`positive-all-families.json`, in the QSpec harness
+`Braking2`, `Slows` and `Recent`. HN-01 to HN-14 read that file, HN-15
+`positive-all-families.json` and HN-16 the FR-481 and FR-193 text, in the QSpec harness
 (`tests/checked_package_v2.rs`). HY-01 to HY-21 and HY-23 compile the
 vectors through the real local Rust boundary; for HY-03 to HY-14, HY-17 to
 HY-19 and HY-23 edit the
@@ -44,6 +44,7 @@ vectors, and feed the package to the reader.
 | HN-13 | `Braking2`'s model with an empty `initial`; an initial entry without `condition`; `T2`'s reset `relation` `approx`, then `eq` | each fails `SemanticNode`, so a reader refuses it `malformed_wire` |
 | HN-14 | `Slows`'s `eventually` interval with `upper` `null` and `upper_end` `open` | meets `SemanticNode` |
 | HN-15 | `positive-all-families.json`'s `Tank` | a `hybrid_model`, a `hybrid_mode` and a `hybrid_transition` node, each holding its own key; `x`'s rate and `x`'s reset value reference `y`'s variable node; `y`, classed `hybrid`, has the rate literal `1`; the full reader admits the package |
+| HN-16 | every `code`/`cause` pair FR-481 and FR-193 name, scanned from their text | each cause listed in its code's native-diagnostics row; each cause of a V2 `Diagnostic` code, `non-boolean-root` included, in the `cause_tag` enum and admitted by the schema with that code |
 | HY-01 | `Braking` and `SlowEnough` of QSL FR-447, compiled and emitted | the HN-01 nodes; the full reader admits the package |
 | HY-02 | HY-01 respelled with other whitespace and comments | one `package_id` with HY-01 |
 | HY-03 | `modes` listing `Moving` twice | `invalid_semantic_graph` at the second entry |

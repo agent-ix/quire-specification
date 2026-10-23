@@ -11069,8 +11069,9 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
         &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
         "diagnostic codes",
     );
-    let pairings: [(&str, &[&str]); 6] = [
+    let pairings: [(&str, &[&str]); 7] = [
         ("type-mismatch", &["ill_typed"]),
+        ("non-boolean-root", &["ill_typed"]),
         (
             "missing-selection",
             &["missing_import", "missing_declaration"],
@@ -11094,6 +11095,89 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
                 admitted.contains(code),
                 "the Diagnostic schema pairs {cause} with `{code}` exactly when FR-322 lists it"
             );
+        }
+    }
+}
+
+/// Every `code`/`cause` pair FR-481 names, in its node, reader and claim
+/// rules, and every one FR-193 names for hybrid claims and trace replay, is
+/// a catalogued pair: the native-diagnostics row of the code lists the cause,
+/// and when the code is a V2 `Diagnostic` code the schema's `cause_tag` enum
+/// holds the cause and the schema admits it with that code and no other.
+#[trace("TC-966", "FR-481-AC-4", "FR-322-AC-47")]
+#[test]
+fn tc_966_every_hybrid_cause_is_catalogued_and_paired() {
+    let schema = parsed_fixture(SCHEMA);
+    let diagnostic = schema_for_def(&schema, "Diagnostic");
+    let codes = string_list(
+        &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
+        "diagnostic codes",
+    );
+    let causes = string_list(
+        &schema["$defs"]["Diagnostic"]["properties"]["cause_tag"]["enum"],
+        "diagnostic causes",
+    );
+    let texts = [
+        include_str!("../spec/objects/interfaces/FR-481-checked-package-hybrid-model-nodes.md"),
+        include_str!("../spec/functional/analysis/FR-193-analyze-continuous-hybrid-models.md"),
+    ];
+    let mut pairs = BTreeSet::new();
+    for text in texts {
+        let spans = text.split('`').collect::<Vec<_>>();
+        for window in spans.windows(3) {
+            if window[1] == "/"
+                && window[0].chars().all(|c| c.is_ascii_lowercase() || c == '_')
+                && window[0].contains('_')
+                && window[2].chars().all(|c| c.is_ascii_lowercase() || c == '-')
+                && !window[2].is_empty()
+            {
+                pairs.insert((window[0].to_owned(), window[2].to_owned()));
+            }
+        }
+    }
+    assert!(
+        pairs.contains(&("ill_typed".to_owned(), "non-boolean-root".to_owned())),
+        "the scan finds FR-481's Boolean-root refusal"
+    );
+    let node_tags = string_list(
+        &schema["$defs"]["NodeBase"]["properties"]["node_tag"]["enum"],
+        "node tags",
+    );
+    // A row's first cell names one code, or several codes sharing one row.
+    let row_causes = |code: &str| {
+        NATIVE_DIAGNOSTICS
+            .lines()
+            .find(|line| {
+                line.split('|')
+                    .nth(1)
+                    .is_some_and(|cell| backticked(cell).contains(code))
+            })
+            .map(|line| {
+                backticked(
+                    line.split('|')
+                        .nth(2)
+                        .and_then(|cell| cell.split(';').next())
+                        .expect("cause cell"),
+                )
+            })
+            .unwrap_or_else(|| panic!("native diagnostics has a `{code}` row"))
+    };
+    for (code, cause) in &pairs {
+        if node_tags.contains(&code.as_str()) {
+            continue; // a node tag and form such as `scalar_type`/`boolean`
+        }
+        assert!(
+            row_causes(code).contains(cause),
+            "native diagnostics lists `{cause}` in the `{code}` row"
+        );
+        if codes.contains(&code.as_str()) {
+            assert!(causes.contains(&cause.as_str()), "`{cause}` is a Diagnostic cause_tag");
+            for other in &codes {
+                let entry = json!({"stage": "package_read", "code": other, "cause_tag": cause, "details": [], "loci": []});
+                if *other == code.as_str() {
+                    assert!(diagnostic.is_valid(&entry), "the schema pairs `{cause}` with `{code}`");
+                }
+            }
         }
     }
 }
