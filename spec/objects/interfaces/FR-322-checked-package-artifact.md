@@ -1903,7 +1903,7 @@ even when its value is also non-canonical.
 | `exact_conversion` | FR-149 classifies operand 0's type to the member type as exact. |
 | `range_narrowing` | FR-149 classifies it as range narrowing: a checked obligation that the value lies in the target range (`unproved-range` when not proved), never rounding; `mode` is `null`. |
 | `rational_narrowing` | FR-149 classifies a rational-to-rational conversion as rational narrowing: a checked obligation that the reduced numerator and denominator lie in the target bounds (`unproved-range`); `mode` is `null`. |
-| `scale_reduction` | FR-149 classifies it as scale reduction to a decimal; this is the only conversion that rounds, and it requires a `rounding` mode. |
+| `scale_reduction` | FR-149 classifies it as scale reduction to a decimal; among exact-numeric conversions this is the only one that rounds, and it requires a `rounding` mode. An FR-478 `quire.op.text.to_decimal` or `quire.op.string.to_decimal` conversion also rounds, under its target's non-`exact` mode. |
 | `promotes_exact` | Every named operand is in `rational_promotable` and is promoted exactly to its rational value before the operation. |
 | `uniform_rest` | Every rest argument has the same family. |
 | `union_arms` | The rest arguments are exactly one arm per member of operand 0's union, in member declaration order, each with as many binders as that member's payload arity, each binder typed by its payload position ([FR-440](FR-440-checked-package-union-and-case-nodes.md)). |

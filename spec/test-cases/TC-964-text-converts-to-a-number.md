@@ -41,7 +41,7 @@ Time = 1/1000 * s;`. IEEE results are written as bits and a flag set.
 | TN-01 | `convert<Integer>`: `0`, `42`, `-7`, `170141183460469231731687303715884105728` | `0`, `42`, `-7`, that exact integer |
 | TN-02 | `convert<Int[0, 99]>`: `42`; `100`; `-1` | `42`; `integer_out_of_domain`/`outside-domain`; the same |
 | TN-03 | `convert<Decimal>`: `1.50`; `-0.5`; `3` | coefficient `150` scale `2`; `-5` scale `1`; `3` scale `0` |
-| TN-04 | `convert<Decimal[0, 1000; 0, 2; exact]>`: `1.555`; `1.500`; `10.01` | `inexact_decimal`/`nonzero-discarded-digit` with no `decimal.rounding` charge; coefficient `150` scale `2`; `decimal_out_of_domain`/`outside-domain` |
+| TN-04 | `convert<Decimal[0, 1000; 0, 2; exact]>`: `1.555`; `1.500`; `1.5`; `10.01` | `inexact_decimal`/`nonzero-discarded-digit` with no `decimal.rounding` charge; coefficient `150` scale `2`; coefficient `15` scale `1` (retained as spelled, equal by value to `1.50`); `decimal_out_of_domain`/`outside-domain` |
 | TN-05 | `convert<Integer>`: empty, `+5`, `05`, `-0`, ` 5`, `5 `, `1,000`, `1e3`, `1.0`, `2/1`, U+0663, U+FF15 | undefined, no value |
 | TN-06 | `convert<Decimal>`: `.5`, `5.`, `-0.00`, `1.2.3`, `1,5`, `1e3`, `3/4` | undefined, no value |
 | TN-07 | `convert<Integer>` of U+FF15 under `nfkc`; under `nfc` | `5`; undefined |
