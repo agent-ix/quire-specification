@@ -503,4 +503,3 @@ operation step.
 ## Status
 
 Proposed complete-V1 boundary contract for the protocol node family.
-Implementation and qualification remain tracked separately.

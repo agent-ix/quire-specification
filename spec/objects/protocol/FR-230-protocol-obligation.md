@@ -98,5 +98,4 @@ created.
 
 ## Status
 
-Accepted complete-V1 obligation identity contract. Implementation and
-qualification remain tracked separately.
+Accepted complete-V1 obligation identity contract.
