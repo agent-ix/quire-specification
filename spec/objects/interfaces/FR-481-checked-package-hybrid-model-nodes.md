@@ -151,14 +151,17 @@ variable, so a transition into an earlier mode adds no graph cycle.
 - A **hybrid claim** is a `temporal`/`temporal_clause` node whose `over`
   argument references a `value`/`parameter` node whose `semantic_type` is a
   `hybrid`/`hybrid_model` node: the claim's **model**.
-- Its `temporal_profile` law is `quire.temporal.infinite-trace/v1`, its
-  clock argument is the text `model-time`, its activation is `origin`, and
-  its captures and fairness arguments are empty. Its formula is the FR-370
+- Its `temporal_profile` law is the profile the claim's `using` alias
+  selects, any profile FR-370 admits. Its clock argument is the text
+  `model-time`, its activation is `origin`, and its captures and fairness
+  arguments are empty. Its formula is the FR-370
   formula nodes of the claim's body; `true` and `false` are
   `quire.op.temporal.true` and `quire.op.temporal.false`, and every other
   `holds(e)` is `quire.op.temporal.holds` over `e`'s Boolean term node. An
-  interval bound counts seconds and takes FR-370's integer form, `null`,
-  `[a,*]` or `[a,b]`, the forms that profile admits.
+  interval bound counts seconds, and each interval takes the form FR-370
+  "Placement and profile fit" admits under the claim's profile: the integer
+  form under the integer profiles, and the timed form in exact rational
+  seconds under `quire.temporal.timed/v1`.
 - Each `holds` operand is a Boolean term node, and a claim's read `h.x` of
   the continuous variable `x` is a `reference` to `x`'s `value`/`parameter`
   node, the node the model's `variables` names.
@@ -252,16 +255,13 @@ refuses `invalid_semantic_graph` at that node, in ascending node-id digest
 order. Then the step visits every hybrid claim in ascending node-id digest
 order:
 
-6. **Claim form.** A `temporal_profile` law other than
-   `quire.temporal.infinite-trace/v1` refuses
-   `invalid_package`/`invalid-value` at `/body/operation/laws/0`; a clock
-   other than `model-time` refuses `invalid_package`/`invalid-value` at
+6. **Claim form.** A clock other than `model-time` refuses `invalid_package`/`invalid-value` at
    `/body/arguments/1`; an activation other than `origin` refuses
    `invalid_package`/`invalid-value` at `/body/arguments/2`; a non-empty
    captures or fairness argument refuses `invalid_semantic_graph` at that
-   argument. Under `quire.temporal.timed/v1` an integer-form interval has
-   already refused `invalid_package`/`operation-member-mismatch` at
-   FR-370's temporal step, which runs first.
+   argument. The claim's profile and the fit of each interval to it are
+   FR-370's temporal step's checks, which run first; this step adds no
+   profile check.
 7. **Operators.** A formula node the claim's formula reaches that applies
    an operator other than `holds`, `true`, `false`, `not`, `and`, `or`,
    `implies`, `always`, `eventually`, `until` and `release` refuses
@@ -300,7 +300,7 @@ own reading does not stand for the host's check.
 | FR-481-AC-5 | A transition node with a `declaration`, a mode node whose occurrence has role `claim`, a model body with `modes` before `variables`, a `class` `continuous`, a transition whose `target` is a reference, a mode with no rates, a `hybrid` node of form `hybrid_flow`, and a model node without its `owner` each fail the published `SemanticNode` schema, and a reader refuses each `malformed_wire` at strict wire validation, before the hybrid step. | Test (TC-966) |
 | FR-481-AC-6 | `SlowEnough` is one `temporal`/`temporal_clause` node whose `temporal_profile` law is `quire.temporal.infinite-trace/v1`, whose `over` references the `h` parameter node typed by `Braking`'s model node, with clock `model-time`, activation `origin`, empty captures and fairness, and a formula whose root is `quire.op.temporal.always` with interval `[0, 10]` over a `quire.op.temporal.holds` node whose operand is the node of `v < 30`, which reads `v`'s variable node. | Test (TC-966) |
 | FR-481-AC-7 | A process provider handed the v2 bytes of a package holding `Braking` and `SlowEnough` reads the model and the claim from those nodes alone and derives horizon 10. The host that reads its result entry checks the returned `HybridTrace` against `Braking`: a trace naming `Moving` then `Stopped` by `transition` 0 is kept on the `inconclusive` record, and one naming mode `Halted` is refused by the host `invalid_result`/`invalid-value` at its `mode`. | Test (TC-966) |
-| FR-481-AC-8 | The reader refuses `SlowEnough` with clock `model-steps` at `/body/arguments/1`, with an `each` activation at `/body/arguments/2`, and with the `temporal_profile` law `quire.temporal.event-position.false-extension/v1` at `/body/operation/laws/0`, each `invalid_package`/`invalid-value`; under `quire.temporal.timed/v1` its `[0, 10]` interval refuses `invalid_package`/`operation-member-mismatch` at FR-370's temporal step; a `once` formula node refuses `ill_typed`/`operator-ineligible`; and a `holds` operand reading `h` itself refuses `missing_declaration`/`missing-name`. | Test (TC-966) |
+| FR-481-AC-8 | `SlowEnough` written under a profile alias selecting `quire.temporal.timed/v1`, its interval in FR-370's timed form `[0, 10]` with both ends closed in exact rational seconds, is admitted with the `timed/v1` law, as it is under `quire.temporal.infinite-trace/v1` in the integer form; and a `holds` operand reading `h` itself refuses `missing_declaration`/`missing-name` at the `holds` node. | Test (TC-966) |
 | FR-481-AC-9 | `positive-all-families.json` carries the `hybrid` tag as the model `Tank` with variables `x` and `y`, both classed `hybrid`, and one mode `Filling` whose rate of `x` is a reference to `y`'s variable node, whose rate of `y` is the rational literal `1`, and whose one transition resets `x` to a reference to `y`'s variable node; the full reader admits the package, so a bare-variable rate and reset value and a `hybrid` variable whose every rate is the literal `1` are each admitted. | Test (TC-966) |
 
 ## Published artifacts

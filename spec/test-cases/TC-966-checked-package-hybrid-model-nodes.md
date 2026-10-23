@@ -50,8 +50,8 @@ vectors, and feed the package to the reader.
 | HY-10 | `Stopped`'s rate of `t` the node of `2 - 1` with `t` classed `clock`; every variable classed `clock`; a one-mode model `Timer` whose only variable `t` is classed `clock`, with rate `1` and invariant `t <= 5` | `invalid_package`/`invalid-value` at `t`'s class literal; at `v`'s class literal; at `Timer`'s `variables` |
 | HY-11 | a second mode node declared `[Braking, Moving]` in `modes` | `ambiguous_declaration`/`ambiguous-name` |
 | HY-12 | an added transition node no mode references | `invalid_semantic_graph` at that node |
-| HY-13 | `SlowEnough` with clock `model-steps`; with an `each` activation; with the law `quire.temporal.event-position.false-extension/v1`; with the law `quire.temporal.timed/v1` | `invalid_package`/`invalid-value` at `/body/arguments/1`; at `/body/arguments/2`; at `/body/operation/laws/0`; `invalid_package`/`operation-member-mismatch` at FR-370's temporal step |
-| HY-14 | `SlowEnough`'s formula `once [0, 2] holds(v = 0)`; a `holds` operand reading `h` | `ill_typed`/`operator-ineligible` at the formula node; `missing_declaration`/`missing-name` at the `holds` node |
+| HY-13 | `SlowEnough` under a `quire.temporal.timed/v1` profile alias, its interval in the timed form `[0, 10]` with both ends closed | admitted, its law `timed/v1` |
+| HY-14 | a `holds` operand of `SlowEnough` reading `h` | `missing_declaration`/`missing-name` at the `holds` node |
 | HY-15 | HY-01's v2 bytes handed to a process fixture provider for `SlowEnough`'s item | the provider reads the model and claim from the nodes, derives horizon 10, and the item's extent is `bounded` |
 | HY-16 | the process fixture provider's `solver-inconclusive` traces over HY-01, read by the host: `Moving` then `Stopped` by `transition` 0; mode `Halted` | the first kept on the `inconclusive` record; the second refused by the host `invalid_result`/`invalid-value` at its `mode` |
 

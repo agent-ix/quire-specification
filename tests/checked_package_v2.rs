@@ -16795,6 +16795,39 @@ fn tc_966_the_all_families_fixture_carries_a_hybrid_model_with_bare_variable_ter
         variables[1],
         "x is reset to y"
     );
+    // FR-481 checks 3.2 and 3.3: every invariant and guard is a Boolean term,
+    // every rate and reset value a rational term or one of the variables.
+    let form_of = |id: &Value| {
+        let ty = node_at(&node_at(id)["semantic_type"]);
+        (
+            ty["node_tag"].as_str().expect("tag").to_owned(),
+            ty["semantic_form"].as_str().expect("form").to_owned(),
+        )
+    };
+    let boolean = ("scalar_type".to_owned(), "boolean".to_owned());
+    let rational = ("scalar_type".to_owned(), "rational".to_owned());
+    let rational_term = |id: &Value| variables.contains(&id) || form_of(id) == rational;
+    assert_eq!(
+        form_of(&hybrid_binding(&mode["body"], "invariant")["target"]),
+        boolean
+    );
+    assert_eq!(
+        form_of(&hybrid_binding(&transition["body"], "guard")["target"]),
+        boolean
+    );
+    for target in [
+        &rates[0]["target"],
+        &rates[1]["target"],
+        &hybrid_binding(reset, "value")["target"],
+    ] {
+        assert!(
+            rational_term(target),
+            "a rate or reset value is a rational term"
+        );
+    }
+    for variable in &variables {
+        assert_eq!(form_of(variable), rational, "a variable is typed rational");
+    }
     let mapped = package["source_map"].as_array().expect("source map");
     for node in &hybrid {
         assert!(

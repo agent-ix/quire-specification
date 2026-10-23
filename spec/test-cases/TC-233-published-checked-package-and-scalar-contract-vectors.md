@@ -223,11 +223,14 @@ QSL's emitter, which replaces the non-emittable placeholders, among them
 `positive-all-families.json`'s declared boolean `Example::Flag` and the
 nodes typed at it, and `positive-operation-identities.json`'s undeclared
 record node and its placeholder function `double` and model `Counter`.
-Only a node of a kind QSL never writes (FR-093-AC-19), kept so that the
-all-families fixture carries all 15 node tags (FR-322-AC-13), and the
-fixture's `hybrid` nodes (FR-481) are hand authored, and it is keyed by FR-092/FR-094's rule: the
+Two sets of nodes are hand authored. The first is each node of a kind QSL
+never writes (FR-093-AC-19), kept so that the all-families fixture carries
+all 15 node tags (FR-322-AC-13); it is keyed by FR-092/FR-094's rule, the
 `quire.structural-node/v1` preimage FR-322's derived-shape key stage
-recomputes. The pass/fail oracle for every node, emitted or hand authored,
+recomputes. The second is the all-families fixture's `Tank` hybrid model,
+written by hand in the form QSL's S4 emits (FR-481); each of its `hybrid`
+nodes is keyed by the same `quire.structural-node/v1` preimage, and each of
+its term nodes by FR-322's preimage for its form. The pass/fail oracle for every node, emitted or hand authored,
 is this case's independent key recomputation and the full reader's
 acceptance, never the node's provenance. Regenerating the fixtures needs
 QSL's emitter to write `owner` (QSL FR-093-AC-21, agent-ix/quire-spec-language#648),

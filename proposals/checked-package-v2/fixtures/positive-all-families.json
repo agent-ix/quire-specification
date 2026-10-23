@@ -108,7 +108,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "0e1900eb152c5fc5d762d10ae5ebed7b78fbac10c354cb9991dd431d99010f7b",
+    "digest": "46947d6492d5f9a1574782cba92348cded81db44de620a4d4e97f3c433845553",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -1796,7 +1796,7 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "digest": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a",
+                  "digest": "8a2ac57983a71670bf50a5d9608834f92fa98b10be4b9af3ca53a35d777bca6f",
                   "domain": "quire.checked-semantic-node/v1"
                 },
                 "term": "reference"
@@ -1845,7 +1845,7 @@
         },
         "dependencies": [
           {
-            "digest": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a",
+            "digest": "8a2ac57983a71670bf50a5d9608834f92fa98b10be4b9af3ca53a35d777bca6f",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -1854,7 +1854,7 @@
           }
         ],
         "node_id": {
-          "digest": "82829c1ab527e39c677ff71a78734ef630391fc63fe4e02a9b4c4ea71ae50295",
+          "digest": "3b434ef355dfbc63f039041c4e66a183a0d27b64f729168044485e74e667838d",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "hybrid",
@@ -1867,7 +1867,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "hybrid_transition",
         "semantic_type": {
-          "digest": "82829c1ab527e39c677ff71a78734ef630391fc63fe4e02a9b4c4ea71ae50295",
+          "digest": "3b434ef355dfbc63f039041c4e66a183a0d27b64f729168044485e74e667838d",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -1879,7 +1879,7 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "digest": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a",
+                  "digest": "8a2ac57983a71670bf50a5d9608834f92fa98b10be4b9af3ca53a35d777bca6f",
                   "domain": "quire.checked-semantic-node/v1"
                 },
                 "term": "reference"
@@ -1915,7 +1915,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "82829c1ab527e39c677ff71a78734ef630391fc63fe4e02a9b4c4ea71ae50295",
+                      "digest": "3b434ef355dfbc63f039041c4e66a183a0d27b64f729168044485e74e667838d",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -1936,7 +1936,7 @@
         },
         "dependencies": [
           {
-            "digest": "82829c1ab527e39c677ff71a78734ef630391fc63fe4e02a9b4c4ea71ae50295",
+            "digest": "3b434ef355dfbc63f039041c4e66a183a0d27b64f729168044485e74e667838d",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -1944,7 +1944,7 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a",
+            "digest": "8a2ac57983a71670bf50a5d9608834f92fa98b10be4b9af3ca53a35d777bca6f",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -1953,7 +1953,7 @@
           }
         ],
         "node_id": {
-          "digest": "905165223dbd21f614a860bea101a3778c5878f25cb794232b3bf0a74ae176e4",
+          "digest": "98181eafd5d017fa9b6f51ffa2e7ac847963bd681c845622004ceead98352a1a",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "hybrid",
@@ -1971,7 +1971,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "hybrid_mode",
         "semantic_type": {
-          "digest": "905165223dbd21f614a860bea101a3778c5878f25cb794232b3bf0a74ae176e4",
+          "digest": "98181eafd5d017fa9b6f51ffa2e7ac847963bd681c845622004ceead98352a1a",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -2052,7 +2052,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "905165223dbd21f614a860bea101a3778c5878f25cb794232b3bf0a74ae176e4",
+                      "digest": "98181eafd5d017fa9b6f51ffa2e7ac847963bd681c845622004ceead98352a1a",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -2076,7 +2076,7 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "905165223dbd21f614a860bea101a3778c5878f25cb794232b3bf0a74ae176e4",
+            "digest": "98181eafd5d017fa9b6f51ffa2e7ac847963bd681c845622004ceead98352a1a",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -2085,7 +2085,7 @@
           }
         ],
         "node_id": {
-          "digest": "68ebbbbebbe17056b3b510cbd5354e087c36b6011820e49ab88c98b746043b4c",
+          "digest": "f02ca0d95b9cd32298aded723abe2ff1420ca6ef02a137986ce96f36467c8474",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "hybrid",
@@ -2103,7 +2103,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "hybrid_model",
         "semantic_type": {
-          "digest": "68ebbbbebbe17056b3b510cbd5354e087c36b6011820e49ab88c98b746043b4c",
+          "digest": "f02ca0d95b9cd32298aded723abe2ff1420ca6ef02a137986ce96f36467c8474",
           "domain": "quire.checked-semantic-node/v1"
         }
       }
@@ -2892,7 +2892,7 @@
     },
     {
       "node_id": {
-        "digest": "82829c1ab527e39c677ff71a78734ef630391fc63fe4e02a9b4c4ea71ae50295",
+        "digest": "3b434ef355dfbc63f039041c4e66a183a0d27b64f729168044485e74e667838d",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -2912,7 +2912,7 @@
     },
     {
       "node_id": {
-        "digest": "905165223dbd21f614a860bea101a3778c5878f25cb794232b3bf0a74ae176e4",
+        "digest": "98181eafd5d017fa9b6f51ffa2e7ac847963bd681c845622004ceead98352a1a",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -2932,7 +2932,7 @@
     },
     {
       "node_id": {
-        "digest": "68ebbbbebbe17056b3b510cbd5354e087c36b6011820e49ab88c98b746043b4c",
+        "digest": "f02ca0d95b9cd32298aded723abe2ff1420ca6ef02a137986ce96f36467c8474",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
