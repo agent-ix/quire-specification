@@ -49,6 +49,7 @@ taskset Ctl {
 | RT-12 | Tasks `a` (`C = 1`, `T = D = 4`, priority 1) and `b` (`C = 2`, `T = D = 6`, jitter 1, blocking 3, priority 2), fixed priority | `refuted` with task `b`, job 0 and iterates 5, 7 |
 | RT-13 | Tasks `a` (`C = 1`, `T = D = 2`, priority 1) and `b` (`C = 1`, `T = 3`, `D = 1`, blocking 1, priority 2), fixed priority; then evidence naming `b`'s job 2 with iterates 4, 6, 7, 8 | `refuted` with task `b`, job 0 and iterate 2; `inconclusive`, `replay-parity` (job 1's completion 6 does not exceed 6) |
 | RT-14 | `Ctl` with a non-positive deadline; a `LO` task with dual budgets; two tasks of equal priority, under `CtlFp`, under `CtlEdf`, under an `amc` claim and under `T3` | `invalid_timed_model`/`invalid-task-set` naming the task; the same; `invalid-task-set` naming both tasks under `CtlFp`, the `amc` claim and `T3`, admitted under `CtlEdf` |
+| RT-15 | `taskset Empty { }`; `Ctl` with `t1`'s `jitter -1 ms`, with `t2`'s `blocking -1 ms`, with `t3` written `lo wcet_hi 6 ms`; `Ctl` with `t1`'s `blocking 1 ms` and with `t2`'s `jitter 1 ms` under `CtlEdf`; `Ctl` with `t1`'s `deadline 5 ms` under an `amc` claim; `Ctl` with `t1`'s `jitter -1 ms` and `t2`'s `blocking -1 ms` under `CtlEdf` | each parses; `invalid_timed_model`/`invalid-task-set` naming `Empty`, `t1`, `t2`, `t3`, `t1`, `t2` and `t1`; for the last, four refusals in the order `t1`, `t2` (task set) then `t1`, `t2` (`edf`) |
 
 ## Expected Results
 
