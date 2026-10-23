@@ -300,11 +300,23 @@ path `x` records a nonzero fact for `x` on its true outcome, and `=` on its
 false outcome; no other rational comparison yields a fact.
 
 A `Decimal[..]` divisor satisfies the nonzero obligation only as a
-`decimal(c,s)` literal with `c != 0`. A quantity divisor has no admitted
-nonzero proof form: every FR-142 quantity division in a linked body is
+`decimal(c,s)` literal with `c != 0`. A quantity divisor satisfies it only as
+a quantity literal `n u` whose reduced magnitude `n` is nonzero, written as an
+integer, a decimal or a `rational(n,d)` magnitude, including a negative
+`rational(-n,d)`; the literal is a nonzero fact for that division, whatever
+the dividend. The quotient is FR-142's division: each operand is taken in the
+canonical root of its unit, the divisor's composed scale applied exactly, the
+dimension exponents subtract with zero exponents removed, and the result unit
+is the compound unit over those root units, the dimensionless unit when every
+exponent cancels. Its magnitude intervals are the rational `/` intervals above
+with the divisor as the point of its root value. Every other quantity divisor,
+including a parameter, a `let` name bound to a literal, a call, a conversion,
+or a product or quotient of quantities, has no nonzero proof form whatever
+guard encloses it, and a quantity literal divisor of zero magnitude (`0 s`,
+`rational(0,1) s`, `0.0 s`) fails the obligation; either division is
 `refused { code: undefined_expression, cause: unproved-nonzero }` at the
-division, whatever guard encloses it, and only direct kernel evaluation decides
-a zero quantity divisor, as the FR-142 undefined outcome.
+division. Only direct kernel evaluation decides a zero non-literal quantity
+divisor, as the FR-142 undefined outcome.
 
 The obligations are discharged as follows. A range obligation holds when the
 expression's interval lies inside the required type's interval. A nonzero
@@ -388,7 +400,7 @@ counter, and no call depth turns into an outcome (FR-460).
 | FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
 | FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
 | FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements (integer, cardinality and structural), guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking limit exceeded is `stage_limit_exceeded` naming the limit, its value and its setting. | Test (TC-191) |
-| FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, and every quantity division in a linked body is `unproved-nonzero`. | Test (TC-191) |
+| FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, a quantity division by a quantity literal of nonzero magnitude is admitted with FR-142's quotient unit and value, and every other quantity division in a linked body, including one by a zero-magnitude literal, is `unproved-nonzero`. | Test (TC-191) |
 | FR-146-AC-10 | A `case` expression's arm set is checked against its scrutinee's declared union in order — `duplicate-arm`, `unknown-member`, `arm-arity`, `missing-arm` — and the first violated obligation is `undefined_expression` with cause `unproved-exhaustiveness`, naming the union, the arm set and the failed obligation. | Test (TC-264) |
 | FR-146-AC-11 | An admitted `case` evaluates the arm matching the scrutinee's active member, binds its payload positionally to the arm's bound identifiers, and every arm's body is checked against the `case` expression's result type. | Test (TC-265) |
 | FR-146-AC-12 | A `case` that is the body of a function declared `: Int[0..100]`, with arms `0` and a parameter `w: Int[0..9]`, has result type `Int[0..100]`; under an unannotated `let`, arms `r: Int[0..9]` and `w: Int[0..99]` infer `Integer`, and arms that are both `Text` parameters infer that `Text` type; arms `0` and `"none"` refuse `ill_typed`/`type-mismatch` at the `"none"` arm body, and arms `"none"` and `0` at the `0` arm body; and an arm body `sequence[]` with no expected type refuses `ill_typed`/`ambiguous-literal`. | Test (TC-398) |
