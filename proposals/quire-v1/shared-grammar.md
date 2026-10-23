@@ -413,8 +413,9 @@ another kind. Decimal source is exact coefficient/scale syntax. In
 coefficient bound and the unsigned pair is the inclusive membership scale bound;
 FR-140 owns their well-formedness and value-only membership. IEEE source is
 bit-level so signed zero and NaN payload identity survive parsing. Human decimal
-float conversion is an explicit library function under a selected rounding
-profile, not a literal shortcut.
+float conversion is an explicit `convert<Float32[m]>(t)` or
+`convert<Float64[m]>(t)` of a text under the target's rounding mode (FR-478),
+not a literal shortcut.
 
 A `reference-literal` names one object by its key: the qualified name names
 an object type and the string is the key's object identity as UTF-8 bytes
@@ -923,7 +924,7 @@ aggregate-term = ( 'count' | 'sum' | 'min' | 'max'
                  | 'fraction', 'holds', '(', expr, ')'
                  | 'quantile', exact-value ),
                  [ 'of', expr ], [ 'where', 'holds', '(', expr, ')' ],
-                 'over', 'past', window, 'min_count', uint ;
+                 'over', 'past', window, [ 'min_count', uint ] ;
 window         = '[', horizon, ',', horizon, ']' ;
 temporal-primary =/ aggregate-atom ;
 
