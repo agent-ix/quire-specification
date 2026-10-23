@@ -173,6 +173,8 @@ and reruns.
 | --- | --- | --- |
 | `max_witness_set` | the members one HP-3 witness set may reach | `model_check.max_witness_set` |
 | `max_relation_tuples` | the tuples an HP-1 run may evaluate | `model_check.max_relation_tuples` |
+| `max_solver_steps` | the solver steps of each HP-2 SMT base, step or lasso query, as the solver counts them (FR-368 "SMT solver budgets") | `smt.max_solver_steps` |
+| `max_solver_time` | the whole seconds of wall-clock time of each HP-2 SMT query (FR-368) | `smt.max_solver_time` |
 
 [FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md) defines the
 count the denied charge would have reached. When a run stops at
@@ -180,7 +182,11 @@ count the denied charge would have reached. When a run stops at
 expose that count, the value plus 1, since the run stops at the first member or
 tuple that would pass the limit and counts that one. The stop records of the
 other model-check limits (`max_states`, `max_transitions`,
-`max_automaton_states` and the evaluation meter) expose no count. The settled
+`max_automaton_states` and the evaluation meter) and the SMT solver budgets
+expose no count. An HP-2 SMT run stopped by `max_solver_steps` or
+`max_solver_time` settles `limit-reached` naming it, in the order of FR-363
+"Undecided k-induction runs": after cancellation and the backend's own wall
+clock (`timed-out`), before `induction-not-closed`. The settled
 `limit-reached` cause carries `limit`, `value` and `setting` only.
 
 The routed provider publishes each default, which applies when the request
@@ -204,6 +210,7 @@ steps and automaton states for hyper items.
 | FR-399-AC-10 | A guard, the `terminal when` predicate or a state constraint of a component's subject that evaluates undefined at a component state of a reachable joint step settles the item `refuted`, `decisive-counterexample`, cause `undefined-evaluation` whose `where` names that component's variable and alias, the joint position, its state-key digest and the expression's locus, plus the FR-181 transition identity for a guard, after its `undefined` counterexample replays to the same undefined value. | Test (TC-348) |
 | FR-399-AC-11 | A hyperproperty item with no admitted key for its object parameter (no overlapping population has a key that a member record of an initial state admits) settles `inconclusive`, basis `unsettled`, cause `no-instance` before any state is explored, and never `proved` or `refuted`; a two-alias item (HB-02's `(d: S::Device, e: N::Device)`) with no admitted key for one parameter and admitted keys for the other settles the same way, so the product rule does not read only the first parameter; the same item with an overlapping population that has no universe returns `requires-bound`, not `no-instance`. | Test (TC-340) |
 | FR-399-AC-12 | An HP-2 k-induction outcome at depth 1 whose step query has a counterexample, one whose solver returns `unknown` at depth 1, and one whose solver stops for a resource internal to it that no request limit names each settle `inconclusive`, `unsettled`, cause `induction-not-closed{depth: 1}`, never `proved`; a run stopped by a limit the request names settles `failed` with execution `resource-incomplete`, FR-331 `incomplete`, `limit-reached` naming that limit, one ended by the caller's own deadline settles `incomplete`, `cancelled{source: deadline}`, and one whose backend overruns the request's `deadline_ms` settles `incomplete`, `timed-out`, each never `induction-not-closed` (the order of FR-363 "Undecided k-induction runs"). | Test (TC-340) |
+| FR-399-AC-13 | An HP-2 k-induction outcome at depth 1 whose solver stops at `max_solver_steps` 1000 settles `failed` with execution `resource-incomplete`, FR-331 `incomplete`, `limit-reached{limit: max_solver_steps, value: 1000, setting: smt.max_solver_steps}`; one stopped at `max_solver_time` 5 settles `limit-reached{limit: max_solver_time, value: 5, setting: smt.max_solver_time}`, never `timed-out`; neither is ever `induction-not-closed`. | Test (TC-340) |
 
 ## Dependencies
 
