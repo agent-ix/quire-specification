@@ -333,9 +333,14 @@ exactly (`promotes_exact`); `quire.op.numeric.narrow` and
 obligations with no mode, and only `quire.op.numeric.convert_rounding`, a
 decimal scale reduction, rounds.
 
-IEEE values have no `eq`, `ne`, ordering or `negate`: numeric equality, total
-order and bit identity are three distinct identities, and only
-`quire.op.ieee.total_order` orders floats.
+IEEE values have no `eq`, `ne` or ordering identity: numeric equality, total
+order and bit identity are three distinct identities, and the source `=` and
+`!=` over floats lower to `quire.op.ieee.numeric_equal` and its
+`quire.op.boolean.not`. `quire.op.ieee.float32.negate` and
+`quire.op.ieee.float64.negate` flip the sign bit of one float, with the
+`ieee_profile` law, no mode and the operand's type as result. A
+`quire.op.structural.eq` or `.ne` over a type holding a float lists that float
+leaf with the `ieee_profile` law.
 
 A reader reports the first refusal in the order owned by
 `quire.native.diagnostics/v1`: graph-shape refusals, then

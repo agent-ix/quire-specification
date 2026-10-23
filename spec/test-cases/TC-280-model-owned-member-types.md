@@ -11,9 +11,21 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-99
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-102
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-103
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-104
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-105
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-106
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-107
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-149-AC-23
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-149-AC-24
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
@@ -147,6 +159,7 @@ process or state machine.
 | MT-16 | `field` `code`, native `String` | `String` over `scalar_type`/`string`, distinct from `Text` | FR-322-AC-31 |
 | MT-17 | `field` `ref`, native `UUID` | `UUID` over `scalar_type`/`uuid` | FR-322-AC-31 |
 | MT-18 | `field` `at`, native `Timestamp` | `Timestamp` over `scalar_type`/`timestamp` | FR-322-AC-31 |
+| MT-19 | `field` `gain`, native `Float64`; `field` `coarse`, native `Float32`; `field` `levels`, native `Float64` `[0, 3]`, unordered, unique | `Float64` over `scalar_type`/`float64`; `Float32` over `scalar_type`/`float32`; `Set<Float64>[0, 3]` | FR-322-AC-31 |
 | MA-01 | `field` `missing` on M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-02 | `field` `size`, an operation name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-03 | `operation` `total`, a field name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
@@ -177,9 +190,25 @@ process or state machine.
 | MU-08 | `field` `limit` on T2, `typeRef` `ix://quire/unit/ms` | Resolves `Call/limit`; type `Quantity<ms>` over the source unit's node, distinct from MU-07's | FR-322-AC-99 |
 | MU-09 | `field` `stale` on T2, `typeRef` `ix://quire/unit/rpc/ms` | `missing_declaration`/`missing-name` | FR-322-AC-99 |
 | MU-10 | `field` `x` on T2, `typeRef` `ix://quire/native/Clock` with FR-154's clock field shape, resolved as a `field` member; then a `field` application over `x` used as a value; then `x` as the clock operand of the atomic clock constraint `self.x >= 1 ms` in a guard | The member resolves to the clock type with no checked-package node; the value application refuses `invalid_timed_model`/`clock-read-outside-constraint`; the clock-constraint operand raises no such refusal | FR-322-AC-99 |
+| MT-20 | `field` `blob`, native `Bytes`; `field` `blob2`, native `Bytes` carrying a `maxLength` constraint | Each: `Bytes` over one `scalar_type`/`bytes` node, distinct from `String` and `Text` | FR-322-AC-102 |
+| MT-21 | `field` `meta`, native `JsonObject` | `JsonObject` over `scalar_type`/`json_object` | FR-322-AC-102 |
+| MT-22 | `field` `blobs`, native `Bytes`, `[0, unbounded]`, unordered, unique | `Set<Bytes>` | FR-322-AC-102 |
+| MT-23 | `field` `metas`, native `JsonObject`, `[0, 3]`, ordered, not unique | `Sequence<JsonObject>[0, 3]` | FR-322-AC-102 |
+| MA-20 | `quire.op.bytes.concat` over a `bytes` operand and a `json_object` operand; `quire.op.integer.lt` over two `bytes` operands | `ill_typed`/`operator-ineligible` each | FR-322-AC-103 |
+| MA-21 | `bytes` literal `value` `"00FF"`, `"0"`, `"0x00"`, `"00 ff"`; `json_object` literal `value` `"{\"b\":1,\"a\":1}"`, `"{\"a\": 1}"`, `"{\"a\":1.0}"`, `"{\"a\":9007199254740993}"`, `""`, `"{"`, `"{\"a\":1,\"a\":2}"` | `invalid_package`/`invalid-value` at the literal's `value`, each | FR-322-AC-103 |
+| MA-22 | `bytes` literal `value` `"00FF"` whose `type` is the `uuid` node | `ill_typed`/`operator-ineligible`, not `invalid-value` | FR-322-AC-103 |
+| MU-11 | The source declares `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;`; `field` `at` on T2, native `Duration`; then `field` `at2` on T2, `typeRef` `ix://quire/unit/s`; then `field` `d` on T2, native `Duration`, compared with a `Quantity<ms>` field `m` | `at` has type `Quantity<s>` over the node of `s`, the node of `at2`; the comparison of `d` and `m` refuses `ill_typed` (FR-142's identical-unit rule) until `m` is converted to `s`, and `1500 ms` converted to `s` equals the `Duration` `3/2` | FR-322-AC-104 |
+| MU-12 | `field` `at` on a type of the admitted domain package `acme/rpc` declaring base dimension `Time` and root unit `s`, native `Duration`, the source declaring no `s`; then the source also declaring `unit s : Time = 1`; then the package declaring `s` typed by a dimension `Length`; then neither declaring `s` | `Quantity<s>` over the package unit's node; `ambiguous_declaration`/`ambiguous-name`; `ill_typed`/`operator-ineligible`; `missing_declaration`/`missing-name` | FR-322-AC-104 |
+| MU-14 | the unit of compilation declaring `dimension Time; unit s : Time = 1; dimension Speed = R::Time ^ -1; unit tenth : R::Time = 1/10 * R::s;` with `acme/rpc` (alias `R`) and `acme/flow` (alias `F`) each declaring base dimension `Time` and root unit `s`; read the unit graph | Three `scalar_type`/`dimension` nodes named `Time` with pairwise distinct keys (one under a `SourceOwner`, two under the `ModelOwner`s `acme/rpc` and `acme/flow`, the package nodes carrying no `declaration` and a preimage `qualified_declaration` `["Time"]`); each package `s` depends on its own `Time`; `Speed` is self-typed with the `acme/rpc` `Time` key at exponent `-1` as its one term; `tenth` is typed by the `acme/rpc` `Time` and targets the `acme/rpc` `s`; no `ambiguous_declaration`; the package is admitted | FR-322-AC-105 |
+| MU-15 | `field` `a` on T2 typed `ix://quire/unit/acme/rpc/s` and `field` `b` typed `ix://quire/unit/acme/flow/s`, beside the source `s` of MU-14 | `Call/a` has type `Quantity<R::s>` over the `acme/rpc` unit node and `Call/b` has type `Quantity<F::s>` over the `acme/flow` unit node, two distinct `scalar_type`/`unit` nodes typed by two distinct dimension nodes; no `ambiguous_declaration` | FR-322-AC-105 |
 | MU-16 | The document of FR-322-AC-106: `Call` with clock field `x` and optional clock field `w`, `Timer` with clock field `x` and data field `n` held by field `t`, operation `reset` with a `Clock` parameter `c`, operation `clk` with a `Clock` result; `field` members `x`, `t`, `w` resolved, then a `field` application over `x`, over `t.x` and over `w` used as a value, then the `Timer` record node read | The members resolve; `w` is `Option<Clock>`; each value-position application `invalid_timed_model`/`clock-read-outside-constraint`; the `Timer` node lists `n` only and no node stands for `x`, `t.x`, `w`, `c` or the result of `clk` | FR-322-AC-106 |
-| MU-18 | The document of FR-322-AC-109: `Call` with `s` (`Clock`, `{0, 3, true, false}`), `b` (`Clock`, `{0, 3, false, false}`), `ts` (`Timer`, `{0, 3, true, false}`), a sequence type `CS` over `Clock` and a map type `CM` over `Clock`; `s`, `b`, `ts` read as members, then a `field` application over each in a value position, then a clock constraint over `ts`'s elements; the same document with `Timer` held at `{1, 1}` and at `{0, 3, false, true}`; the same document with the maximum of `s` changed to `4` | `s`, `b`, `CS`, `CM` have no node; `ts` is the `collection_bounds` node over the sequence node over the `Timer` node listing `n` only; each value-position application `invalid_timed_model`/`clock-read-outside-constraint` and the constraint none; the `Timer` node is the same node in all three runs; the maximum change gives a different package identity | FR-322-AC-109, FR-322-AC-110 |
 | MU-17 | T2's package with alias `D` (`target` `ix://quire/unit/acme/rpc/ms`), a sequence type with that `items`, a map type with that `values`, and a field `d` typed `D` | `d` is `Quantity<M::ms>`; the sequence `Sequence<Quantity<M::ms>>`; the map `Map<Text, Quantity<M::ms>>`; one `scalar_type`/`unit` node for `ms` and no node for `D`, the sequence or the map | FR-322-AC-107 |
+| MU-18 | The document of FR-322-AC-109: `Call` with `s` (`Clock`, `{0, 3, true, false}`), `b` (`Clock`, `{0, 3, false, false}`), `ts` (`Timer`, `{0, 3, true, false}`), a sequence type `CS` over `Clock` and a map type `CM` over `Clock`; `s`, `b`, `ts` read as members, then a `field` application over each in a value position, then a clock constraint over `ts`'s elements; the same document with `Timer` held at `{1, 1}` and at `{0, 3, false, true}`; the same document with the maximum of `s` changed to `4` | `s`, `b`, `CS`, `CM` have no node; `ts` is the `collection_bounds` node over the sequence node over the `Timer` node listing `n` only; each value-position application `invalid_timed_model`/`clock-read-outside-constraint` and the constraint none; the `Timer` node is the same node in all three runs; the maximum change gives a different package identity | FR-322-AC-109, FR-322-AC-110 |
+| KS-01 | Equality of two `Bytes` values `00ff` and `00ff`, then `00ff` and `00fe`, `00ff` and `00ff00`, `` (empty) and `00`; `quire.op.bytes.length` of `00ff00` and of the empty sequence; `quire.op.bytes.concat` of `00ff` and `01` | `true`, `false`, `false`, `false`; `3` and `0`; `00ff01` | FR-149-AC-23, FR-322-AC-103 |
+| KS-02 | Equality of `{"a":1,"b":[true,null]}` with itself, with `{"a":1,"b":[null,true]}`, with `{"a":2,"b":[true,null]}`, with `{"a":1}`, with `{"a":1,"b":[true,null],"c":{}}`; `{}` with `{}`; `[]` with `{}`; `3` with `3`; `null` with `{}` | `true`, `false`, `false`, `false`, `false`; `true`; `false`; `true`; `false` | FR-149-AC-23 |
+| KS-03 | `Duration` `3/2` against `Duration` `3/2`, against `Duration` `2`, against the quantity `3/2 s`, and against `1500 ms` unconverted and then converted to `s` | `true`, `false`, `true`; the unconverted comparison `ill_typed` (FR-142), the converted `true` | FR-149-AC-23, FR-322-AC-104 |
+| KS-04 | `Bytes` against `JsonObject`, `Bytes` against `String`, `JsonObject` against `Boolean`, `UUID` against `Bytes` in an equality | `ill_typed`/`type-mismatch` before an equality charge, no Boolean | FR-149-AC-24 |
+| KS-05 | The four ordering operators over `Bytes`, `+` over `Bytes`, and `+` over `JsonObject` | `ill_typed`/`operator-ineligible` before any charge | FR-149-AC-24 |
 | RE-ends-1 | `relationship_end` `order` on M4, the relationship `Order-order-Order` | Resolves the end `order` | FR-322-AC-56 |
 | RE-ends-2 | `relationship_end` `next` on M4 | Resolves the end `next` (`targetEnd.role`) | FR-322-AC-56 |
 | RE-ends-3 | `relationship_end` `invoiced` on M10, the relationship `Order-invoiced-Invoice` with no `targetEnd.role` | Resolves the end `invoiced` | FR-322-AC-56 |
