@@ -63,7 +63,8 @@ with its code, cause and locus:
   window.
 - `quantile q` with `q` outside `0 < q < 1`: `invalid_package`/`invalid-value`
   at the literal `q`.
-- `min_count 0`: `invalid_package`/`invalid-value` at the literal.
+- `min_count 0` on a `min`, `max`, `fraction` or `quantile` term:
+  `invalid_package`/`invalid-value` at the literal.
 - A threshold of another dimension than the aggregate's value:
   `ill_typed`/`unit-mismatch` at the threshold.
 
@@ -96,7 +97,12 @@ including explicit unit conversion within a dimension.
 
 ### Insufficient data
 
-An aggregate term has a `min_count >= 1`. The term may omit `min_count`, and a
+An aggregate term has a `min_count`. A `min`, `max`, `fraction` or `quantile`
+term has no value over an empty set, so its `min_count` is at least 1. A
+`count` or `sum` term may have `min_count 0`: over a window with no filtered
+value its value is 0 (for `sum`, 0 in the value's unit), so a claim can state
+that a window with no match is acceptable, as
+`count where holds(e is Error) over past[0, 9] min_count 0 <= 2`. The term may omit `min_count`, and a
 term that omits it has `min_count` 1: its checked term is the term written
 `min_count 1`, so the two spellings have one checked meaning, and two clauses
 that differ only in this spelling have one node id and one obligation identity. A window holding fewer filtered
@@ -156,9 +162,10 @@ consumes the derived signal unchanged.
 | FR-414-AC-6 | An aggregate atom over a model subject refuses `unsupported_construct`/`expression-form`; a holding monitor result is `tested`. | Test (TC-366) |
 | FR-414-AC-7 | The atom is `Undefined` with the cause of the first undefined window position oldest first, when the filter is undefined at a position or the value expression or `fraction` predicate is undefined at an admitted position; the clause result is `UndefinedEvaluation` in the O-16 category violation, never `undefined` and never a holding result; a position is never skipped, positions after it are not visited, and a guard filter that rejects the position keeps the atom defined. | Test (TC-366) |
 | FR-414-AC-8 | One evaluation charges one unit of clause work per window position visited, including positions the filter rejects, and up to and including the first undefined position. | Test (TC-366) |
-| FR-414-AC-9 | Each check-time refusal at its locus: `count over past[0, 9]` in a claim over a model subject, `unsupported_construct`/`expression-form` at the `count` term; `past[0, 300 s]` under event-position, `ill_typed`/`unit-mismatch` at `300 s`; `past[0, 9]` under timestamped-event, `ill_typed`/`unit-mismatch` at `0`; `past[5, 2]` under event-position, `invalid_package`/`invalid-value` at `past[5, 2]`; `quantile 1`, `quantile 0` and `quantile 3/2`, `invalid_package`/`invalid-value` at the `q` literal; `min_count 0`, `invalid_package`/`invalid-value` at `0`; a threshold `5 m` against a time value, `ill_typed`/`unit-mismatch` at `5 m`. A term with `quantile 1` and `min_count 0` reports both refusals, the quantile's first. | Test (TC-366) |
+| FR-414-AC-9 | Each check-time refusal at its locus: `count over past[0, 9]` in a claim over a model subject, `unsupported_construct`/`expression-form` at the `count` term; `past[0, 300 s]` under event-position, `ill_typed`/`unit-mismatch` at `300 s`; `past[0, 9]` under timestamped-event, `ill_typed`/`unit-mismatch` at `0`; `past[5, 2]` under event-position, `invalid_package`/`invalid-value` at `past[5, 2]`; `quantile 1`, `quantile 0` and `quantile 3/2`, `invalid_package`/`invalid-value` at the `q` literal; `max of e.v over past[0, 9] min_count 0 <= 1`, `invalid_package`/`invalid-value` at `0`; a threshold `5 m` against a time value, `ill_typed`/`unit-mismatch` at `5 m`. A term with `quantile 1` and `min_count 0` reports both refusals, the quantile's first. | Test (TC-366) |
 | FR-414-AC-10 | Under event-position, `count over past[5, 2 s] >= 1` reports exactly one refusal, `ill_typed`/`unit-mismatch` at `2 s`, and no `invalid-value`. Under event-position, `quantile 1 of e.latency over past[0, 9] <= 5 m` against a time value reports `invalid_package`/`invalid-value` at `1` and then `ill_typed`/`unit-mismatch` at `5 m`. In a claim over a model subject, `count over past[0, 300 s] >= 1` reports only `unsupported_construct`/`expression-form` at the `count` term, and `quantile 1 of x.v over past[5, 2] <= 1` reports `expression-form` at the term and then `invalid-value` at `1`, with no `a > b` refusal. | Test (TC-366) |
 | FR-414-AC-11 | Under event-position, `count over past[0, 9] >= 1` and `count over past[0, 9] min_count 1 >= 1` check to one checked term with `min_count` 1, and two clauses `always[0,0] (…)` over them have one node id; at position 0 of a one-event trace each atom is `true`. Over `x` values `1, 2` at positions 0 and 1, the atom `count where holds(e.x > 5) over past[0, 9] >= 1`, written without `min_count`, has no value at position 1, cause `insufficient-data{count: 0, min_count: 1}`; `count over past[0, 9] min_count 2 >= 1` has no value at position 0, cause `insufficient-data{count: 1, min_count: 2}`, and the value `true` at position 1. | Test (TC-366) |
+| FR-414-AC-12 | Under event-position over `x` values `1, 2` at positions 0 and 1, at position 1: `count where holds(e.x > 5) over past[0, 9] min_count 0 <= 2` is `true` (count 0), the same term `>= 1` is `false`, and `sum of e.x where holds(e.x > 5) over past[0, 9] min_count 0 = 0` is `true`, none of them `insufficient-data`; without `min_count` the `count` has no value, `insufficient-data{count: 0, min_count: 1}`. `min`, `max`, `fraction holds(e.x > 1)` and `quantile 1/2` of `e.x`, each with `min_count 0`, refuse `invalid_package`/`invalid-value` at `0`. | Test (TC-366) |
 
 ## Dependencies
 
