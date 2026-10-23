@@ -259,6 +259,31 @@ checks and result retention use the named points in
 the runtime undefined conditions, then every edge charge, then the rational
 events, then the target domain and result retention.
 
+## Dimensions of different owners
+
+Two dimension nodes are one dimension only when their node keys are equal, so
+the unit of compilation's `Time`, the `Time` of `acme/rpc` and the `Time` of
+`acme/flow` are three dimensions, each with its own units, and no equal name,
+scale or shape makes them one.
+
+- The checker SHALL type a unit by the dimension node it names, and SHALL
+  refuse `ill_typed` by the first-match order above when addition,
+  comparison, direct conversion or a `Quantity<u>` position meets units of
+  two different dimension nodes, whichever owners declare them.
+- The checker SHALL form the normalized dimension map of a multiplication,
+  division or integer power over base-dimension node keys, so the base
+  dimensions of two owners are two entries: `Quantity<R::s>` divided by
+  `Quantity<F::s>` has a map of `R::Time` with exponent 1 and `F::Time` with
+  exponent -1 and is not dimensionless, while `Quantity<R::s>` divided by
+  `Quantity<R::s>` is.
+- The checker SHALL admit a derived dimension whose terms name dimensions of
+  several owners (`dimension Speed = M::Length / Time;`), and the node of
+  such a derived dimension is its own node, distinct from each term's.
+- The checker SHALL admit no construct that declares two base dimensions of
+  different owners to be one dimension. A derived dimension whose normalized
+  map equals another dimension's map converts to it by the compound pivot of
+  the conversion rule above.
+
 ## Quantity type reference
 
 Complete-V1 source names the type of a quantity in a declared unit as
@@ -280,15 +305,26 @@ the `name`s of the units of that selection's document, and a domain package
 `typeRef` names it by its package identity and `name` (FR-322 "Model-owned
 members" step 4), so a unit `ms` the source declares (`Quantity<ms>`) and a
 unit `ms` the domain package `acme/rpc` declares (`Quantity<M::ms>`) are two
-units and never one ambiguous name. The dimension namespace holds the dimensions the unit of
-compilation declares and the dimensions of every admitted domain package,
-each by its single-segment name. A dimension name declared both by the unit
-of compilation and by an admitted domain package, or by two admitted domain
-packages, refuses `conflicting_declaration`/`duplicate-declaration` naming
-both declarations, at the source declaration's span when the unit of
-compilation declares it and otherwise at the later package's selection row
-`/lock/model_selections/<i>`. A source dimension term or unit dimension may
-name a package dimension. A bare `type-ref` looks up
+units and never one ambiguous name. A dimension's identity is its owner and its name. The dimension
+namespace therefore holds each owner's dimensions apart: the dimensions the
+unit of compilation declares, reached by their bare name, and, for each
+admitted domain package (FR-154), the dimensions of its selected document,
+reached as `M::Name`, where `M` is the model alias of a `model_selections` row
+and `Name` matches, byte for byte, the `name` of a dimension of that row's
+document (FCD identity `ix://<package identity>/dimension/<Name>`). No bare name
+reaches a package dimension, and no case folding, suffix match or search
+across packages applies. A dimension name declared by the unit of compilation
+and by an admitted domain package, or by two admitted domain packages, is not
+a conflict: the declarations are distinct dimensions and refuse nothing. A
+name that two dimensions of the unit of compilation declare refuses
+`ambiguous_declaration`/`ambiguous-name` (FR-091), and two dimensions of one
+domain package that carry one identity refuse at intake
+(`invalid_model_binding`/`conflicting-binding`, FR-154). A source dimension
+term or unit dimension may name a package dimension as `M::Name`. A bare name
+that no dimension of the unit of compilation declares, a qualified name whose
+first segment is no model alias, and a qualified name that no dimension of the
+row's document carries each refuse `missing_declaration`/`missing-name` at the
+name. A bare `type-ref` looks up
 the type namespace only, and `Quantity<...>` is the one `type-ref` that looks up
 the unit namespace. A source that writes a unit name where a type is required
 (`d: ms`) therefore refuses `missing_declaration`/`missing-name` at the name,
@@ -354,7 +390,9 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-16 | The base-dimension rule refuses `L` in U11g1, U11g2, U11g4 and U11z1 (an imported `L` reached only through the imported `Area` a local unit is typed by) and admits U11g3 (`N = L / L` with `unit one : N = 1;`); U11m fixes that the check runs at the base dimension's own turn: a unit cycle in the earlier-declared `Area` is reported first, and with the order reversed `L` is refused; U11y refuses an imported unitless base dimension named by a local dimension's term. | Test (TC-187) |
 | FR-142-AC-17 | A dimension's own terms are checked at its turn before its units: U11n (cycle of two), U11o (self-cycle) and U11p (unknown term) refuse as FR-142 states; U11w refuses the unknown term before the cycle; U11x refuses a transitive unknown term at the dimension that owns it, not at the dimension that reaches it, and U11z3 reports a dimension that only reaches a cycle by its own earlier unit defect before the cycle member's refusal. The order of two documents in the request fixes the first declaration (U11q). | Test (TC-187) |
 | FR-142-AC-18 | Local units typed by an imported dimension are checked at that node's turn with the imported units as admitted members: U11r admits a local unit targeting an imported root; U11s refuses a local cycle, U11t a second local root beside the imported root, and U11u a local zero scale; the imported dimension's own definition is not re-checked; U11z2 fixes the turn list: a dimension's mentioned nodes take their turn in mention order before the declaration, so `P.L` precedes `Q.T`. | Test (TC-187) |
-| FR-142-AC-19 | A unit of compilation that declares `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` beside the admitted domain package `acme/rpc` declaring base dimension `Rate`, root `us` of `Rate` and its own `ms` of `Rate` checks with no `ambiguous_declaration`: `Quantity<ms>` names the source unit and `Quantity<M::ms>` under `model M = "acme/rpc" …` names the package unit (FCD identity `ix://acme/rpc/unit/ms`), which carries no declaration name; a source `unit tick : Rate = 1/2 * M::us;` is admitted, typed by the package dimension; the same package also declaring a dimension `Time` refuses `conflicting_declaration`/`duplicate-declaration` at the source `dimension Time` span, naming both declarations; two admitted packages that each declare a dimension `Rate`, with no source `Rate`, refuse it at the later package's selection row; the package also declaring a base dimension `Length` with no unit, beside a source `dimension Area = Length ^ 2; unit m2 : Area = 1;`, refuses `missing_declaration`/`missing-name` by the base-dimension rule at `Length`'s turn, located at `/lock/model_selections/0` and naming `ix://acme/rpc/dimension/Length` and `m2`. | Test (TC-187) |
+| FR-142-AC-19 | A unit of compilation that declares `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` beside the admitted domain package `acme/rpc` declaring base dimension `Rate`, root `us` of `Rate` and its own `ms` of `Rate` checks with no `ambiguous_declaration`: `Quantity<ms>` names the source unit and `Quantity<M::ms>` under `model M = "acme/rpc" …` names the package unit (FCD identity `ix://acme/rpc/unit/ms`), which carries no declaration name; a source `unit tick : M::Rate = 1/2 * M::us;` is admitted, typed by the package dimension, and the same unit written `unit tick : Rate = 1/2 * M::us;` refuses `missing_declaration`/`missing-name` at `Rate`; the package also declaring a base dimension `Length` with no unit, beside a source `dimension Area = M::Length ^ 2; unit m2 : Area = 1;`, refuses `missing_declaration`/`missing-name` by the base-dimension rule at `Length`'s turn, located at `/lock/model_selections/0` and naming `ix://acme/rpc/dimension/Length` and `m2`. | Test (TC-187) |
+| FR-142-AC-20 | Dimensions of different owners compose: a unit of compilation declaring `dimension Time; unit s : Time = 1;` with `model R = "acme/rpc" …` and `model F = "acme/flow" …`, whose packages each declare base dimension `Time` and root unit `s` of it, checks with no refusal; bare `Time` names the source's dimension, `R::Time` the `acme/rpc` dimension (`ix://acme/rpc/dimension/Time`) and `F::Time` the `acme/flow` dimension, three distinct dimensions with `Quantity<s>`, `Quantity<R::s>` and `Quantity<F::s>` three distinct types; a source `unit tenth : R::Time = 1/10 * R::s;` is admitted and a source `dimension Speed = R::Time ^ -1 * F::Time;` is admitted; a source that declares no `Time` and writes `unit x : Time = 1;`, a source writing `Z::Time` with no model alias `Z`, and a source writing `R::Speed` where `acme/rpc` declares no `Speed` each refuse `missing_declaration`/`missing-name` at the name; a source declaring `dimension Time;` twice refuses `ambiguous_declaration`/`ambiguous-name`; a package whose document carries two dimensions of identity `ix://acme/rpc/dimension/Time` refuses `invalid_model_binding`/`conflicting-binding` at intake. | Test (TC-187) |
+| FR-142-AC-21 | Over the dimensions of FR-142-AC-20, `f(d: Quantity<R::s>)` called as `f(3 R::s)` is admitted and `f(3 F::s)` and `f(3 s)` refuse `ill_typed`/`type-mismatch` at the argument; `3 R::s + 3 F::s`, the comparison `3 R::s < 3 F::s` and `convert<Quantity<F::s>>(3 R::s)` refuse `ill_typed` by incompatible dimensions before any charge; `3 R::s / 3 F::s` has the normalized map `R::Time` 1 and `F::Time` -1 and is not the dimensionless unit, `3 R::s / 3 R::s` is, and `(3 R::s) * (2 F::s)` has a compound unit of the two root units, unequal to that of `(3 R::s) * (2 R::s)`; with the source derived dimension `dimension Dur = R::Time;` and `unit dsec : Dur = 1;`, `convert<Quantity<dsec>>(3 R::s)` refuses `ill_typed` directly and is admitted as the two-step pivot through the compound unit. | Test (TC-187) |
 
 ## Dependencies
 

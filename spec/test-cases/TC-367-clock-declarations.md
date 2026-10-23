@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-272
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-144
+    type: verifies
 ---
 
 # TC-367: Clock and timed model declarations
@@ -31,6 +33,18 @@ Run each vector through the real local Rust boundary of the frontend or provider
 | CK-06 | `time invariant Rpc when { self.inflight } { self.x <= 3 ms }`; one with body `self.x >= 1 ms` | Admitted; `time-invariant-shape` |
 | CK-07 | `urgent Rpc when { self.phase = Done };` `urgent Call::reset;` with `reset` reading no clock; `urgent Call::reply;` | Admitted; admitted; `urgent-guard-reads-clock` |
 | CK-08 | A constant `rational(1, 3) ms` with unit `us` | Converted exactly to `1000/3 us` |
+| CK-09 | `record Timer { x: Clock; n: Int }` held by object field `t`; guard `self.t.x >= 1 ms`; `post self.t = Timer { x: 0 ms, n: 3 }`; `post self.u = self.t` | Guard and reset admitted over the clock `t.x` of each object; the last `clock-read-outside-constraint` |
+| CK-10 | `predicate within(c: Clock, b: Quantity<ms>) { c <= b }` called in a precondition as `within(self.x, 3 ms)`, in a time invariant body, and in an `invariant` clause | The first two expand to the constraint `x <= 3 ms`; the third `clock-read-outside-constraint` |
+| CK-11 | `function pick(a: Clock, b: Clock, left: Boolean): Clock { if left then a else b }` used as `pick(self.x, self.y, self.l) >= 1 ms` | Admitted; the guard is the disjunction `(self.l and x >= 1 ms) or (not self.l and y >= 1 ms)` |
+| CK-12 | `type Alias = Clock;` and a field `w: Option<Clock>`; guards `present(self.w) and value(self.w) >= 1 ms` and `value(self.w) >= 1 ms`; `post self.w = 0 ms` | The first guard admitted; the second `undefined_expression`/`unproved-presence`; the write makes `w` present with clock 0 |
+| CK-13 | Fields `s: Set<Clock>`, `q: Sequence<Timer>`, `b: Bag<Clock>`, `m: Map<Text, Timer>`, `r: Option<Sequence<Clock>>` and `ts: Timer` with multiplicity `[0, 3]`; a field `k: Map<Timer, Int>` | All admitted, `s` holding at most one element and `b` one element for each occurrence; `k` `ill_typed`/`operator-ineligible` |
+| CK-14 | Operation `reset(c: Clock)` with `post c = 0` and a frame naming `Call.x`; the same with an empty frame; a predicate with bound parameter `b` called as `within(self.x, self.limit)` | The first admitted, `c` ranging over the places of `Call.x`; the second `clock-write`; the third `clock-bound-not-constant` |
+| CK-15 | A model with `ts: Sequence<Timer>[0, 3]` on each of two objects; the initial state, then a delay of `2 ms`, then `self.ts = sequence[Timer { x: 0 ms, n: 1 }]` | No live place initially; after the write the place `ts.0.x` of that object is live at `0`, and after a further `2 ms` delay it is `2` while the other object has no live place |
+| CK-16 | `self.ts = filter(e in self.ts: e.n > 1)` and `self.ts = flatten(sequence[sequence[Timer { x: 0 ms, n: 9 }], self.ts])` over three elements with clocks `1`, `2`, `3` ms and `n` of `1`, `2`, `3`; a set literal with two elements of equal `n` and clocks `0` and `5 ms`; an element with `x` copied from a clock | The filter leaves the clocks `2` and `3` at slots 0 and 1; the flatten gives a fresh slot 0 at `0` and moves the old clocks to slots 1 to 3; the set holds one element with clock `0`; the last `clock-write` |
+| CK-17 | `self.ts[1].x = 0 ms` with and without `1 < size(self.ts)` in the precondition; `self.m[k].x = 0 ms`; `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)` | Reset of slot 1; `undefined_expression`/`unproved-presence` at `1` without the precondition; reset by key; the quantified reset changes exactly the places with `n > 1` |
+| CK-18 | Guards `forall(e in self.ts: e.x <= 3 ms)` and `exists(e in self.ts: e.n = 2 and e.x >= 1 ms)` over the empty sequence and over two elements; the time invariant `forall(e in self.ts: e.x <= 3 ms)`; `count<Int>(e in self.ts: e.x >= 1 ms)` | The first guard true on the empty sequence and the conjunction over two places; the second false on the empty sequence and the disjunction over the places with `n = 2`; the invariant bounds each live place while live; the count `clock-read-outside-constraint` |
+| CK-19 | `self.a = self.b` and `self.a != self.b` with `a` and `b` of type `Sequence<Timer>` | `clock-read-outside-constraint` for each; the state key of the two states differing only in clock values is equal |
+| CK-20 | `o: Option<Timer>`, `q: Sequence<Option<Clock>>`; `value(self.o).x >= 1 ms` with and without `present(self.o)`; `self.o = Timer { x: 0 ms, n: 1 }`, `self.o = absent`; `arm(c: Option<Clock>)` with `c = 0 ms`; `maybe(o: Timer): Option<Clock>` | Guard admitted with `present(self.o)` and `unproved-presence` without; the write makes `o.x` present at `0` and the second drops it; one instance of `arm` for each guarded place; `maybe` a place expression |
 | CK-21 | CK-01's declarations in a unit whose `profile` declaration names `quire.temporal.complete/v1`, then in a unit whose declaration names `quire.model.complete/v1`, then in a unit with no `profile` declaration | Admitted in the first; in the others each `time` member and each `Clock` type refuses `unsupported_construct` naming the unit's selected layers and the required layer `quire.temporal.complete/v1` |
 
 ## Expected Results

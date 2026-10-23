@@ -89,8 +89,8 @@ Declaration refusals:
 | An IR node is not valid for its construct's meaning, including a reference that names a node of the wrong meaning and a `supertypes` entry that names a node of another meaning (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An operation parameter's `name` is absent, is not a string, is empty, does not match `^[A-Za-z][A-Za-z0-9_]*$`, or differs from the last segment of the parameter's identity `<operation identity>/<param>`, on a parameter not refused as a repeated identity of its operation (checked after that row and before the frame entries) | `invalid_model_binding`/`malformed-declaration` |
 | A field's or an operation's `name` is absent, is not a string, is empty, does not match `^[A-Za-z][A-Za-z0-9_]*$`, or differs from the last segment of its identity `<owner identity>/<member name>`, on a member not refused as a repeated identity of its owner (checked after the "Two nodes share one identity" row below) | `invalid_model_binding`/`malformed-declaration` |
-| A field, parameter or result `typeRef` that is none of `ix://quire/native/<Name>` with `<Name>` a native value type name, `ix://quire/unit/<name>` with a non-empty `<name>`, and `ix://<package identity>/<artifact id>` | `invalid_model_binding`/`malformed-declaration` |
-| `ix://quire/native/Clock` in any type position other than a field `typeRef` (an operation parameter or result `typeRef`, an alias or reference `target`, a sequence `items`, a map `values`, a variant case `payloadType` or a constraint `appliesTo`), or a clock field (a field typed `ix://quire/native/Clock`) that breaks the clock field shape below | `invalid_model_binding`/`malformed-declaration` |
+| A field, parameter, result, alias `target`, sequence `items`, map `values` or variant case `payloadType` that is none of `ix://quire/native/<Name>` with `<Name>` a native value type name, `ix://quire/unit/<name>` with a non-empty `<name>`, and `ix://<package identity>/<artifact id>` | `invalid_model_binding`/`malformed-declaration` |
+| `ix://quire/native/Clock` as a reference `target`, a sequence `items`, a map `values` or a constraint `appliesTo`, `ix://quire/unit/<name>` as a reference `target` or a constraint `appliesTo`, or a clock member (a field or parameter typed `ix://quire/native/Clock`, or a result of that type) that breaks the clock member shape below | `invalid_model_binding`/`malformed-declaration` |
 | A dimension or unit node with a malformed member or a unit-graph defect: a `name` outside `^[A-Za-z][A-Za-z0-9_]*$`, a non-boolean `base`, an `identity` that is not `ix://<package identity>/dimension/<name>` or `ix://<package identity>/unit/<name>`, a base dimension with terms, a term exponent that is not a canonical integer string, `0` or outside `i128`, terms out of order or repeated, a term cycle, a `scale` or `offset` that is not a canonical rational string or is outside `i128`, a zero `scale`, a `target` in another dimension, a second root of one dimension, a root whose `scale` is not `1` or `offset` not `0`, a target cycle, a `dimension` or `target` that is not an identity, or a missing or malformed `origin` | `invalid_model_binding`/`malformed-declaration` |
 | A dimension term's `dimension`, a unit's `dimension` or a unit's `target` names no dimension or unit node of the package | `missing_declaration`/`missing-name` |
 | A supertype, field type, subsets, redefines, relationship end, frame entry, population member, `occurrenceField`, transition `from`, `to`, `trigger`, `guard` or `emits` entry, step `consumes` or `emits` entry, `persists` entry or namespace `members` entry names no node or member of the package | `missing_declaration`/`missing-name` |
@@ -155,10 +155,11 @@ A field `typeRef`, an operation parameter's `typeRef` and an operation result's
 `typeRef` each take one of three forms, and no other form is read. A native
 value type is named `ix://quire/native/<Name>`, where `<Name>` is exactly one
 of `Boolean`, `Integer`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`,
-`String`, `UUID`, `Timestamp` and `Clock`, compared byte for byte. These are the
-value-type keywords of the shared grammar's `type-ref` production together with
-`String`, `UUID` and `Timestamp`, whose member types FR-322 states, and `Clock`,
-the clock type of FR-415, which names no value type. A unit of
+`String`, `UUID`, `Timestamp`, `Bytes`, `Duration`, `JsonObject` and `Clock`,
+compared byte for byte. These are the value-type keywords of the shared
+grammar's `type-ref` production together with `String`, `UUID`, `Timestamp`,
+`Bytes`, `Duration` and `JsonObject`, whose member types FR-322 states, and
+`Clock`, the clock type of FR-415, which names no value type. A unit of
 the checked package is named `ix://quire/unit/<name>`; intake admits it without
 resolving it, and FR-322 "Model-owned members" resolves it (FR-208 "Field
 types"). A type of the package is named `ix://<package identity>/<artifact
@@ -168,23 +169,48 @@ two never collide. A `typeRef` that begins `ix://quire/native/` and whose
 `<Name>` is outside the set, and a `typeRef` of any other form, refuses
 `invalid_model_binding`/`malformed-declaration`.
 
-`ix://quire/native/Clock` is admitted only as a field `typeRef`
-(filament-core-data FR-146 "Clock fields"). A clock field has the clock field
-shape: multiplicity `{lower: 1, upper: 1, ordered: false, unique: false}`,
-presence `required`, `nullable` `false`, `defaultKind` `none`, an empty or
-absent `constraints`, and no `unit`, `decimal`, `textProfile` or
-`defaultValue`. Each shape member a clock field breaks refuses once, naming the
-field node and its member path (`Field.multiplicity`, `Field.presence`,
+`ix://quire/native/Clock` is admitted as a field `typeRef`, an operation
+parameter `typeRef`, an operation result `typeRef`, a variant case
+`payloadType` and an alias `target` (filament-core-data FR-146 "Clock
+members"). A field or parameter typed by an alias whose `target` chain reaches
+`Clock` is a clock member as well, and an alias of `Clock` builds no type
+declaration. A **clock member** is a field, parameter or result of the clock
+type; it has the clock member shape: any multiplicity `{lower, upper, ordered,
+unique}` that the member rows of the package admit for any member (a multiplicity
+other than `{1, 1}` makes the member a clock collection, FR-415 "Clock
+collections", typed by FR-322 "Model-owned members"; a result `{0, 1,
+false, false}` is `Option<Clock>`), presence `required` or `optional`
+(`optional` is `Option<Clock>`, FR-415 "Clock places"), `nullable` `false`,
+`defaultKind` `none`, an empty or absent `constraints`, and no `unit`,
+`decimal`, `textProfile` or `defaultValue`. Each shape member a clock member
+breaks refuses once, naming the node and its member path (`Field.presence`,
 `Field.nullable`, `Field.defaultKind`, `Field.defaultValue`, `Field.unit`,
-`Field.decimal`, `Field.textProfile` or `Field.constraints`), and no other row
-reports at those members. `Clock` in another type position refuses at that
-member: `Operation.params[i].typeRef`, `Operation.returns.typeRef`,
-`TypeDefinition.target` (an alias or reference), `TypeDefinition.items` (a
-sequence), `TypeDefinition.values` (a map), `Variant.payloadType` (a variant
-case, refused here and never by the payload row, because a `Clock` payload
-does not resolve to a type) or `Constraint.appliesTo` (a constraint). Intake does not
-check which construct owns a clock field or whether the model declares a time
-source; QSL FR-230 and FR-415 check those where the field is used.
+`Field.decimal`, `Field.textProfile` or `Field.constraints`; a parameter's path
+is `Operation.params[i].<member>` and a result's `Operation.returns.nullable`),
+and no other row reports at those members; a multiplicity is read by the
+multiplicity rows as for any member, so `lower > upper` refuses
+`invalid_model_binding`/`unpreserved-model-meaning` at `Field.multiplicity`.
+`Clock` as a sequence `items` and a map `values` is admitted: the sequence or
+map is a clock collection of its kind (FR-415 "Clock collections"), a package map
+is keyed by `Text`, so no key is a clock. `Clock` as a
+`reference` `target` or a constraint `appliesTo` refuses at that member
+(`TypeDefinition.target` or `Constraint.appliesTo`): a reference names an
+object, and no constraint keyword applies to a clock. A variant case whose
+`payloadType` is `Clock` is read by the variant payload row of the construct
+validity table as any other payload is. Intake does not check which construct
+owns a clock member or whether the model declares a time source; QSL FR-230
+and FR-415 check those where the clock is used.
+
+`ix://quire/unit/<name>` is admitted at every position that takes a type:
+a field, parameter or result `typeRef`, an alias `target`, a sequence `items`,
+a map `values` and a variant case `payloadType` (a payload follows the same
+row as any other payload). A member of a unit type has the unit member shape:
+`defaultKind` `none`, an empty or absent `constraints`, and no `unit`,
+`decimal`, `textProfile` or `defaultValue`; its multiplicity, presence and
+nullability are any other member's. A unit reference as a `reference` `target`
+or a constraint `appliesTo` refuses `invalid_model_binding`/
+`malformed-declaration` at that member: a reference names an object, and a
+bounded quantity is not a type form (FR-142 "Quantity type reference").
 
 A domain package may carry top-level `dimensions` and `units` arrays
 (filament-core-data FR-146). A dimension node carries `identity`, `name`,
@@ -213,6 +239,21 @@ way in every package. The domain package identities `quire/native` and `quire/un
 identity beginning `quire/native/` or `quire/unit/`, are reserved: a selection
 that names one refuses before any other admission check, so no package can
 declare a node whose identity reads as a native or a unit reference.
+
+`Bytes`, `Duration` and `JsonObject` are the kernel scalars of filament-core-data
+FR-032 that a domain package may name. `ix://quire/native/Bytes` names an
+octet sequence of any length, `ix://quire/native/Duration` names an amount of
+elapsed time in seconds, and `ix://quire/native/JsonObject` names a JSON value of
+any kind (filament-core-data FR-032 gives it the unconstrained scalar `any`); FR-322 "Model-owned members" states each member type, its canonical
+spelling and its operations, and FR-149 states its equality. Intake admits each in
+every position a native name other than `Clock` is admitted in: a field
+`typeRef`, an operation parameter or result `typeRef`, an alias or reference
+`target`, a sequence `items`, a map `values` and a variant case `payloadType`. It
+builds no declaration for one, and a field typed by one carries any
+multiplicity, presence, `nullable`, `defaultKind` and `constraints` a field of
+another native type carries. Intake does not read a `Duration` as a quantity
+or look for the dimension `Time` and the unit `s`: FR-322 resolves a `Duration`
+member where the member is used.
 
 Intake admits a `typeRef` naming `Rational`, `Decimal` or `Text` as it admits
 any other native name: the name is a type that exists, and a `typeRef` carries
@@ -275,8 +316,8 @@ map it to the QSL refusal pair used by TC-235:
 | --- | --- | --- |
 | `UNRESOLVED_CONSTRUCT_REF` | `missing_declaration`/`missing-name` | A construct member reference names no declared node or member, including an occurrence field, transition state or trigger, or emitted/consumed type. |
 | `DANGLING_CLAUSE_REF` | `missing_declaration`/`missing-name` | A transition guard names no clause of its owning type. |
-| `CLOCK_OUTSIDE_FIELD` | `invalid_model_binding`/`malformed-declaration` | `ix://quire/native/Clock` in a type position other than a field `typeRef`, at the member the Clock row above names. |
-| `INVALID_CLOCK_FIELD` | `invalid_model_binding`/`malformed-declaration` | A clock field shape member, at its `Field.*` path. |
+| `CLOCK_POSITION_INVALID` | `invalid_model_binding`/`malformed-declaration` | `ix://quire/native/Clock` as a reference `target`, a sequence `items`, a map `values` or a constraint `appliesTo`, at the member the Clock row above names. |
+| `INVALID_CLOCK_MEMBER` | `invalid_model_binding`/`malformed-declaration` | A clock member shape member, at its `Field.*`, `Operation.params[i].*` or `Operation.returns.*` path. |
 | `INVALID_UNIT_GRAPH` | `invalid_model_binding`/`malformed-declaration` | A dimension or unit graph defect, at the member path of its FCD pointer. |
 | `INVALID_OPERAND`, `INTEGER_OUTSIDE_I128` | `invalid_model_binding`/`malformed-declaration` | A term `exponent`, or a unit `scale` or `offset`, at `Dimension.terms[t].exponent`, `Unit.scale` or `Unit.offset`. |
 | `UNRESOLVED_DIMENSION_REF` | `missing_declaration`/`missing-name` | A term's or unit's `dimension` names no dimension node, at `Dimension.terms[t].dimension` or `Unit.dimension`. |
@@ -402,10 +443,17 @@ Admission checks are decided before the first charge.
 | FR-154-AC-13 | Two fields of one owner, two operations of one owner, a field and an operation of one owner, two parameters of one operation and two variant cases of one type that share one identity each refuse once, `invalid_model_binding`/`conflicting-binding`, naming the shared identity at the later member's path: `TypeDefinition.fields[j]`, `TypeDefinition.operations[k]` (the operation, for a field and an operation), `TypeDefinition.operations[k].params[s]` and `TypeDefinition.variants[i]`; the refusal carries the code, cause, shared identity and path only, and the collision suppresses the identity, origin and payload checks of both colliding cases (FR-154-AC-11 and FR-208-AC-15 apply to a case not already refused by a collision), so exactly one refusal is reported whichever of the two cases carries the correctly minted identity, and no declaration of the package is admitted. The same members with distinct identities are admitted, and one member name used in two different owners is two distinct identities and no collision. | Test (TC-235) |
 | FR-154-AC-14 | An operation parameter whose `name` is absent, not a string, null, empty, begins with a digit, contains a separator or differs from the last segment of its identity, and which is not one of two parameters sharing an identity, refuses `invalid_model_binding`/`malformed-declaration` at the selection row, naming the operation's identity and `TypeDefinition.operations[k].params[s].name`; two parameters of one operation with one identity refuse once, `invalid_model_binding`/`conflicting-binding`, naming the shared parameter identity at the later parameter's `TypeDefinition.operations[k].params[s]`, and that collision suppresses the name check of both, so a malformed name on either colliding parameter is not reported; distinct valid names, including names differing only in letter case, are admitted and no relationship declaration outcome changes. | Test (TC-280) |
 | FR-154-AC-16 | An operation whose `Operation.redefines` names a supertype's operation (`Sub/size` naming `Order/size`) is admitted with that redefinition. The same operation with its `redefines` member removed redefines nothing, and so does one whose redefinition is listed only in an extension payload of its owning type, `required` true or false when the consumer admits the extension; a consumer that does not admit a `required` extension refuses the document before intake, `unknown_required_feature`/`unsupported-feature` at the owning type node and its `extensions` member. An `Operation.redefines` naming no node of the package refuses `missing_declaration`/`missing-name` at the operation node and `Operation.redefines`. | Test (TC-280) |
-| FR-154-AC-17 | A field typed `ix://quire/native/Integer`, a field typed `ix://quire/native/Timestamp`, a field typed `ix://quire/native/UUID`, a field typed `ix://quire/native/Text`, a field typed `ix://quire/native/Rational`, a field typed `ix://quire/native/Decimal` and a field typed `ix://quire/unit/ms` are admitted, each native resolving to that native value type and the unit one left unresolved by intake, with no declaration built for a native reference and no declaration key naming `quire/native`; a package type with artifact id `Integer` is admitted beside them and a field typed `ix://test/orders/Integer` resolves to that package type, not to the native `Integer`. A field typed `ix://quire/native/Int`, `ix://quire/native/integer`, `ix://quire/native/JsonObject` or `ix://quire/unit/`, or typed `Integer` with no URI, refuses `invalid_model_binding`/`malformed-declaration` at the field node and `Field.typeRef`; an operation parameter and an operation result typed `ix://quire/native/Int` refuse the same at the operation node and `Operation.params[i].typeRef` and `Operation.returns.typeRef`, while the same parameter and result typed `ix://quire/native/Text` are admitted; a selection naming the identity `quire/native` and a selection naming the identity `quire/unit` each refuse `invalid_model_binding`/`malformed-declaration` at the selection row before its digest domain or bytes are read, and build no declaration. | Test (TC-234) |
-| FR-154-AC-18 | A field typed `ix://quire/native/Clock` with multiplicity `{1, 1, false, false}`, presence `required`, `nullable` `false` and `defaultKind` `none` is admitted with no type declaration built for it and no declaration key naming `quire/native`. A clock field with multiplicity `{0, 1, false, false}`, presence `optional`, `nullable` `true`, `defaultKind` `semantic` with a `defaultValue`, `unit` `ms`, a `decimal` policy, a `textProfile` and a `min` constraint refuses `invalid_model_binding`/`malformed-declaration` once at each of `Field.constraints`, `Field.decimal`, `Field.defaultKind`, `Field.defaultValue`, `Field.multiplicity`, `Field.nullable`, `Field.presence`, `Field.textProfile` and `Field.unit`, in that member-path order, and raises no other refusal at those members; `ix://quire/native/Clock` as an operation parameter type, an operation result type, an alias target, a reference target, a sequence `items`, a map `values`, a variant case `payloadType` and a constraint `appliesTo` each refuse `invalid_model_binding`/`malformed-declaration` at `Operation.params[i].typeRef`, `Operation.returns.typeRef`, `TypeDefinition.target`, `TypeDefinition.target`, `TypeDefinition.items`, `TypeDefinition.values`, `Variant.payloadType` and `Constraint.appliesTo`, the payload never `unsupported_construct`; `ix://quire/native/clock` refuses at `Field.typeRef`. | Test (TC-234) |
+| FR-154-AC-17 | A field typed `ix://quire/native/Integer`, a field typed `ix://quire/native/Timestamp`, a field typed `ix://quire/native/UUID`, a field typed `ix://quire/native/Text`, a field typed `ix://quire/native/Rational`, a field typed `ix://quire/native/Decimal` and a field typed `ix://quire/unit/ms` are admitted, each native resolving to that native value type and the unit one left unresolved by intake, with no declaration built for a native reference and no declaration key naming `quire/native`; a package type with artifact id `Integer` is admitted beside them and a field typed `ix://test/orders/Integer` resolves to that package type, not to the native `Integer`. A field typed `ix://quire/native/Int`, `ix://quire/native/integer`, `ix://quire/native/Any` or `ix://quire/unit/`, or typed `Integer` with no URI, refuses `invalid_model_binding`/`malformed-declaration` at the field node and `Field.typeRef`; an operation parameter and an operation result typed `ix://quire/native/Int` refuse the same at the operation node and `Operation.params[i].typeRef` and `Operation.returns.typeRef`, while the same parameter and result typed `ix://quire/native/Text` are admitted; a selection naming the identity `quire/native` and a selection naming the identity `quire/unit` each refuse `invalid_model_binding`/`malformed-declaration` at the selection row before its digest domain or bytes are read, and build no declaration. | Test (TC-234) |
+| FR-154-AC-18 | A field typed `ix://quire/native/Clock` with multiplicity `{1, 1, false, false}`, presence `required`, `nullable` `false` and `defaultKind` `none` is admitted with no type declaration built for it and no declaration key naming `quire/native`. A clock field with multiplicity `{0, 1, false, false}`, presence `optional`, `nullable` `true`, `defaultKind` `semantic` with a `defaultValue`, `unit` `ms`, a `decimal` policy, a `textProfile` and a `min` constraint refuses `invalid_model_binding`/`malformed-declaration` once at each of `Field.constraints`, `Field.decimal`, `Field.defaultKind`, `Field.defaultValue`, `Field.nullable`, `Field.textProfile` and `Field.unit`, in that member-path order, and raises no other refusal at those members (presence `optional` and the multiplicity are admitted); `ix://quire/native/Clock` as a reference target and a constraint `appliesTo` each refuse `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.target` and `Constraint.appliesTo`; `ix://quire/native/clock` refuses at `Field.typeRef`. | Test (TC-234) |
 | FR-154-AC-19 | A package carrying base dimension `Time` (`ix://test/orders/dimension/Time`), derived dimension `Rate` (terms `[{Time, "-1"}]`), root unit `s` and unit `ms` (`target` `s`, `scale` `1/1000`) is admitted with one original declaration per dimension and unit node, keyed `(test/orders, ix://test/orders/dimension/Time)`, `(test/orders, ix://test/orders/dimension/Rate)`, `(test/orders, ix://test/orders/unit/s)` and `(test/orders, ix://test/orders/unit/ms)`, each charged `normalize.record`. Each of these single defects refuses exactly one `invalid_model_binding`/`malformed-declaration`: a unit with `scale` `0` at `Unit.scale`, the derived `Rate` marked `base` `true` (a base dimension with a term) at `Dimension.terms`, a unit whose identity is `ix://test/orders/unit/msec` for name `ms` at `Unit.identity`, a unit named `m-s` at `Unit.name`, a dimension whose `base` is the string `"true"` at `Dimension.base`, a unit with no `origin` at `Unit.origin`, and a two-unit target cycle at the least-index unit's `Unit.target`; a unit whose `dimension` names no dimension node and a unit whose `target` names no unit node refuse `missing_declaration`/`missing-name` at `Unit.dimension` and `Unit.target`; two units named `ms` with one identity refuse once, `invalid_model_binding`/`conflicting-binding`, at the later unit's `Unit.identity`; a dimension `Time` with no unit is admitted. | Test (TC-234) |
 | FR-154-AC-20 | A field `created_at` of an owner `O` with identity `ix://test/orders/O/created_at`, an operation `reset_all` with identity `.../O/reset_all` and its parameter `created_at` with identity `.../O/reset_all/created_at` are admitted, each keyed by that verbatim identity; the same field with identity `.../O/created-at` refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.fields[j].name`, the same operation with identity `.../O/reset-all` at `TypeDefinition.operations[k].name`, and the same parameter with identity `.../O/reset_all/created-at` at `TypeDefinition.operations[k].params[s].name`; a field `created_at` beside a state `created_at` of one state machine, both with identity `.../O/created_at`, refuses once, `invalid_model_binding`/`conflicting-binding`, at `TypeDefinition.states[i]`; a field whose `name` is absent, is the number `42`, is empty, or is `_tmp` with identity `.../O/_tmp`, and an operation whose `name` is `_tmp` with identity `.../O/_tmp`, each refuse `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.fields[j].name` or `TypeDefinition.operations[k].name`. | Test (TC-235) |
+| FR-154-AC-21 | A field `A/b` typed `ix://quire/native/Bytes`, a field `A/g` typed `ix://quire/native/Duration` and a field `A/j` typed `ix://quire/native/JsonObject`, each presence `required` with multiplicity `{1, 1, false, true}`, an operation `A/op` of `A` whose parameter and result are typed `ix://quire/native/Bytes` and `ix://quire/native/JsonObject`, and an alias whose `target` is `ix://quire/native/Duration`, are admitted by a package that declares no `dimensions` and no `units`, with no declaration built for a native reference, no declaration key naming `quire/native`, and `A/g` neither refused nor resolved by intake. A sequence `items` typed `ix://quire/native/Bytes` is admitted. | Test (TC-234) |
+| FR-154-AC-22 | A field typed `ix://quire/native/bytes`, `ix://quire/native/duration`, `ix://quire/native/JSONObject`, `ix://quire/native/Json` or `ix://quire/native/BytesList`, and an operation parameter typed `ix://quire/native/bytes`, each refuse `invalid_model_binding`/`malformed-declaration` at the field node and `Field.typeRef` (the parameter at `Operation.params[0].typeRef`), comparing the name byte for byte; the same fields typed `ix://quire/native/Bytes`, `ix://quire/native/Duration` and `ix://quire/native/JsonObject` are admitted, and a package type with artifact id `Bytes` beside them is a different type from `ix://quire/native/Bytes` (a field typed `ix://test/orders/Bytes` resolves to that package type). | Test (TC-234) |
+| FR-154-AC-23 | `ix://quire/native/Clock` is admitted, with no declaration built for it, as an operation parameter `typeRef`, an operation result `typeRef`, an alias `target` (alias `Timer`) and as the `typeRef` of a field of that alias; a field typed `Clock` with presence `optional` is admitted as `Option<Clock>`; an operation result `Clock` with multiplicity `{0, 1}` is admitted as `Option<Clock>`. A clock parameter carrying `unit` `ms`, `defaultKind` `semantic`, a `min` constraint or `nullable` `true`, and a clock result with `nullable` `true`, each refuse `invalid_model_binding`/`malformed-declaration` at the member path of the broken shape member (`Operation.params[i].unit`, `Operation.params[i].defaultKind`, `Operation.params[i].constraints`, `Operation.params[i].nullable`, `Operation.returns.nullable`). | Test (TC-234) |
+| FR-154-AC-24 | `ix://quire/unit/ms` is admitted, left unresolved by intake, as a field, an operation parameter, an operation result, an alias `target`, a sequence `items` and a map `values`; a unit-typed member carrying `unit`, a `min` constraint, a `decimal` policy or a semantic default refuses `invalid_model_binding`/`malformed-declaration` once at each broken member path; `ix://quire/unit/ms` as a reference `target` and as a constraint `appliesTo` each refuse `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.target` and `Constraint.appliesTo`. | Test (TC-234) |
+| FR-154-AC-25 | A variant case whose `payloadType` is `ix://quire/native/Clock` or `ix://quire/unit/ms` is read by the variant payload row as any payload type is, `unsupported_construct`/`declaration-form` at `Variant.payloadType`, and never `malformed-declaration`. | Test (TC-234) |
+| FR-154-AC-26 | A field typed `ix://quire/native/Clock` with multiplicity `{0, 3, true, false}` is a `Sequence<Clock>[0, 3]` clock member, with `{0, 3, false, true}` a `Set<Clock>[0, 3]`, with `{0, 3, false, false}` a `Bag<Clock>[0, 3]`, with `{0, 3, true, true}` an `OrderedSet<Clock>[0, 3]` and with an unbounded upper bound, ordered and not unique, a `Sequence<Clock>`; an operation parameter and an operation result typed `Clock` with multiplicity `{0, 2, true, false}` are admitted the same way; each is admitted with no declaration built and no refusal at `Field.multiplicity`; a clock field with multiplicity `{3, 1, true, false}` refuses `invalid_model_binding`/`unpreserved-model-meaning` at `Field.multiplicity`. | Test (TC-234) |
+| FR-154-AC-27 | A sequence `items` and a map `values` typed `ix://quire/native/Clock`, and the same typed by an alias of `Clock`, are admitted with no declaration built for the clock and read as `Sequence<Clock>` and `Map<Text, Clock>`; a field typed by such a sequence with multiplicity `{0, 2, true, false}` is a `Sequence<Sequence<Clock>>[0, 2]`; a record value type with a clock field, held by a field of multiplicity `{0, 2, true, false}`, is a `Sequence<Timer>[0, 2]` clock collection. | Test (TC-234) |
 
 ## Dependencies
 
