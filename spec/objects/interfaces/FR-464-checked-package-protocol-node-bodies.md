@@ -183,6 +183,37 @@ protocol through a `protocol_reference` carrier closes a dependency cycle
 (clause, temporal clause, carrier, clause), which FR-322 refuses like every
 ungrouped cycle.
 
+## Activation relation
+
+The control-to-temporal activation relation of a protocol states which
+activation of the protocol requires which temporal clause. A consumer SHALL
+derive it from the protocol's admitted `protocol_clause` node, from its
+`activation` and `requirements` arguments and from nothing else:
+
+- The relation holds one row for each `temporal`/`temporal_clause` node in
+  the `requirements` set, in that set's order (ascending node-id digest).
+  A row is the clause node's key, the activation (`origin`, or `each` with
+  the key of its `trigger` node) and the temporal clause node's key.
+- A protocol whose `requirements` set is empty has no row. A temporal
+  clause named by two `requires temporal` members is one `requirements`
+  entry and so one row.
+- No separate artifact, document or table carries the relation. A control
+  position, a temporal clause position, a name, a matching profile or clock,
+  a timestamp or an observation adds, removes or substitutes no row, and a
+  temporal clause the protocol does not require gives no row whatever it
+  shares with the protocol.
+- Two admitted packages with equal `package_id` give equal relations; a
+  change that leaves the clause node's key unchanged leaves the relation
+  unchanged.
+- The relation exists only for an admitted package. A `requirements` entry
+  or an `each` `trigger` whose target is absent from the clause's
+  `dependencies` refuses `missing_declaration`/`missing-name` at the target
+  ("Membership and containment" and AC-6), and the reader grants no relation,
+  partial or whole, for a package it refuses.
+- The relation selects no truth and changes no temporal clause: the required
+  clause keeps its own body, activation and evaluation
+  ([FR-370](FR-370-checked-package-temporal-clause-body.md)).
+
 ## Membership and containment
 
 Every protocol member node belongs to exactly one clause.
@@ -427,6 +458,7 @@ operation step.
 | FR-464-AC-10 | A `repeat` whose body is only a `check`, or a `choice` with a step in one case and an empty `sequence` in the other, or a nested `repeat` in one case, refuses `unsupported_construct`/`declaration-form` at the `repeat`; a `repeat` whose body is a step, a `parallel` or an `await` is admitted with a maximum, with a loop proof, with both and with neither. | Test (TC-946) |
 | FR-464-AC-11 | An operator the profile does not define refuses `operation-member-mismatch`; a protocol application with the law missing, of the temporal role or not the lock's row refuses as FR-322-AC-22 states; an `await` or `compensate` in a package whose lock selects no `temporal_profile` refuses `missing_declaration`/`missing-selection`. | Test (TC-946) |
 | FR-464-AC-12 | The protocol step runs after the state, temporal and abstraction steps and before the operation step and reports, in order, placement, operator, declaration, member, membership and clause defects; within a clause the cycle and progress defects precede the slot checks, and within a slot the `over`/model-state refusal precedes the binder-scope refusal, which precedes the decision-fact refusal; a state-step defect and a protocol defect in one package report the state-step defect. | Test (TC-946) |
+| FR-464-AC-13 | The activation relation of an admitted protocol is derived from its clause node's `activation` and `requirements` alone: `activation on each (opened)` with `requires temporal OrderClosureBounded` gives exactly one row, the clause key, `each` with `opened`'s node key and `OrderClosureBounded`'s node key; under `activation on origin` the one row carries `origin` and no trigger; a protocol with no requirement has no row; a second `requires temporal OrderClosureBounded` leaves one row; a second required temporal clause gives two rows in ascending node-id digest order; a temporal clause that shares the protocol's clock but is not required gives no row; a `requirements` entry or an `each` trigger absent from the clause's `dependencies` refuses `missing_declaration`/`missing-name` at the target with no relation. | Test (TC-946) |
 
 ## Published artifacts and the operation catalog
 
