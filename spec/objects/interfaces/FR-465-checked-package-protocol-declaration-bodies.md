@@ -53,10 +53,11 @@ A `protocol`/`role` node (operator `role`) has two arguments, in this order:
 A static role is one responsibility with one role-instance binding per
 assessed workflow. A **role on a whole model** is the form of `role w on M`
 where `M` is a model alias: its `model` argument is the text `identity` of the
-`model_selections` row the alias selects, not a reference. The alias is the
-one that declares the clause's `over` type: a role on a whole model is played
-against the model the protocol subject is over, so a clause has one whole
-model its roles may name. A whole model has
+`model_selections` row the alias selects, not a reference. The alias may be
+any model alias of the package: the protocol subject's model subject is the
+whole checked package with every selection (FR-361), so a clause may hold
+roles on several whole models and a clause over any `over` type may hold
+one. A whole model has
 no `model` node: every model declaration node is keyed by a `ModelOwner`
 naming a declaration of the selected document (FR-322 "Model-owned members"
 step 2), and the document declares no node for itself. The text makes the
@@ -84,14 +85,8 @@ The reader checks, for one role, in this order:
 
 1. **Model.** A text `model` equals the `identity` of a `model_selections`
    row of the lock, else `missing_declaration`/`missing-selection` at the
-   role node, retaining the text. It equals the clause's **over selection**,
-   else `invalid_model_binding`/`wrong-model-selection` at the role node,
-   retaining the text and the over selection. The over selection is the
-   `owner.identity` of the model declaration node that the `semantic_type`
-   of the clause's `over` parameter is, or that its `composite_type`/
-   `reference` type references; an `over` parameter of any other type has
-   none, and every text `model` of its clause refuses
-   `wrong-model-selection`. Its `replication` Group is empty, else
+   role node, retaining the text. Any row of the lock is admitted, whatever
+   the clause's `over` type. Its `replication` Group is empty, else
    `invalid_model_binding`/`malformed-declaration` at the role node. A
    `model` that is neither a reference nor a text violates the layout
    (`malformed_wire`). A reference `model` target is a declared dependency, else
@@ -298,7 +293,7 @@ runtime dimension of the control's key and are not a member of any node.
 | FR-465-AC-6 | A `finish` node is admitted with a closing-record binder and a Boolean constraint that reads the binders readable after the root control; a non-Boolean constraint refuses `ill_typed`/`non-boolean-root` and a read of a binder of an unjoined branch `missing_declaration`/`missing-name`; a clause's `finish` argument naming a `terminal` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `finish` node the clause does not name refuses `invalid_semantic_graph`. | Test (TC-947) |
 | FR-465-AC-7 | A `terminal` node is admitted as `when` with a condition and as `any` with none; a `when` without a condition and an `any` with one refuse `malformed_wire`; a second `terminal` node of one clause refuses `ambiguous_declaration`/`ambiguous-name`. | Test (TC-947) |
 | FR-465-AC-8 | The package carries no instance, ordinal, delivery, observation or internality member: the runtime subject kinds of the "Runtime subjects" table are a function of the operators, an added `internal`/`external` member refuses `malformed_wire`, and the package compiles with no workflow instance, delivery or clock observation. | Test (TC-947) |
-| FR-465-AC-9 | A static role whose `model` is the text `identity` of the `model_selections` row that declares its clause's `over` type is admitted as a role on a whole model, with no `model` dependency; two such roles of clauses whose `over` types two selections declare, each naming its own selection, and a role on a whole model and a role on a model type of the same selection, have different node keys. A text naming no `model_selections` row refuses `missing_declaration`/`missing-selection` at the role node, and so does such a text with a non-empty `replication` Group (RL25); a text naming a `model_selections` row other than the clause's over selection, as `role w on M` beside `role u on N` in one clause over an `M` type does at `u`, refuses `invalid_model_binding`/`wrong-model-selection` at the role node; a text `model` with a non-empty `replication` Group refuses `invalid_model_binding`/`malformed-declaration` at the role node; a `model` that is an integer, a Boolean or a Group refuses `malformed_wire`. | Test (TC-947) |
+| FR-465-AC-9 | A static role whose `model` is the text `identity` of a `model_selections` row of the lock is admitted as a role on a whole model, with no `model` dependency, whatever the clause's `over` type (a model type, a reference, a scalar, a record or a `Set<M::Cell>`); one clause holding `role w on M` and `role u on N` for two selections is admitted, and the two roles, and a role on a whole model and a role on a model type of the same selection, have different node keys. A text naming no `model_selections` row refuses `missing_declaration`/`missing-selection` at the role node, and so does such a text with a non-empty `replication` Group (RL25); a text `model` with a non-empty `replication` Group refuses `invalid_model_binding`/`malformed-declaration` at the role node; a `model` that is an integer, a Boolean or a Group refuses `malformed_wire`. | Test (TC-947) |
 
 ## Dependencies
 

@@ -98,3 +98,17 @@ implemented or tested as written. FND-002 is small and can go in the same
 round. The representation, the static-only rule, binding by construction and
 the `roles` entry shape are lead defaults, not owner answers, and the PR
 body says so.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-003 | high | [scope-deferral] The fix for FND-001 narrows the feature. FR-465 step 1 now refuses `invalid_model_binding`/`wrong-model-selection` for every whole-model role that names a selection other than the clause's over selection. It also refuses every whole-model role of a clause whose `over` parameter's type is not a model declaration node or a reference to one (a scalar, a record, or a collection such as `Set<M::Cell>`). That is a permanent refusal that removes a capability: `role w on M` beside `role u on N` in one clause, and a whole-model role in a clause over a non-model type, can never be written. FND-001 suggested this rule, but the standing rule (no drop, narrowing or deferral) overrides that suggestion. A version that does not narrow exists. FR-361's model subject is the whole checked package, every selection included, so a whole-model role on any `model_selections` row can be bound by construction to the subject, keyed by its selection's identity, with no selection-match refusal at all. That removes the undefined runtime refusal FND-001 raised without removing any form. Fix: admit a text `model` naming any lock `model_selections` row, drop `wrong-model-selection` and RL26, state in FR-425 that the binding is the subject for every named selection, and add a TC-375 vector with roles on two selections in one clause. | spec/objects/interfaces/FR-465-checked-package-protocol-declaration-bodies.md:56-59, :87-94, :301; spec/test-cases/TC-947-checked-package-protocol-declaration-bodies.md:62 |
+| FND-004 | high | [scope-deferral] The PR body's "Follow-ups" section hands the QSL side (FR-218 admits the role, FR-383-AC-22 emits it, FR-205's binding changes) to "STD-274's emission half", but STD-274 is Done. No open STD ticket owns that QSL spec work. QSL-914, which is in Backlog, is the engine ticket, not a spec ticket. Under the standing rule, work needed outside the ticket gets a new STD ticket that the PR names. Fix: file an STD ticket for the QSL FR-218, FR-383 and FR-205 changes, and cite it in the PR body in place of STD-274. | PR #389 body, "Follow-ups" |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | At 3433c86b, FR-425 has no runtime selection-match refusal. Its binding paragraph says the analyzer takes the binding from the subject, and FR-425-AC-13 and TC-375 PK-17 drop the "another selection" case. The selection rule is now a reader rule in FR-465 step 1, stated over the `over` parameter's `semantic_type` owner identity, which the package carries. This raises FND-003. |
+| FND-002 | fixed | TC-947 RL25 has a text naming no row together with a non-empty `replication` and expects `missing_declaration`/`missing-selection`. FR-465-AC-9 names RL25, and Expected Results step 7 lists it. |
