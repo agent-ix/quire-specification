@@ -356,7 +356,7 @@ The frame step runs before the state step of
 ## Status
 
 Accepted complete-V1 boundary value contract for the `state`/`frame` node
-body. Implementation and qualification remain tracked separately.
+body.
 
 ## References
 

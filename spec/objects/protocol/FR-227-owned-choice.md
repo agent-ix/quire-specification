@@ -97,5 +97,4 @@ messages do not discharge visibility.
 
 ## Status
 
-Accepted complete-V1 owned-choice contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 owned-choice contract.

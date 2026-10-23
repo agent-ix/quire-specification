@@ -60,9 +60,23 @@ forms it discharges; its negotiation arm settles an item whose obligation form
 is outside the declared set `unsupported` with a warning naming the form, cause
 `unsupported_projection`/`unsupported-requested-capability`. Z3 is the cross-check inside the one SMT descriptor: it advertises no FR-290
 pairs of its own and is never a candidate. Z3 runs as an independent
-cross-check of cvc5's verdict on the same query; a cvc5/Z3 verdict disagreement settles the claim `inconclusive` and is
-retained as an explicit parity failure naming both verdicts, rather than
-silently preferring either solver. When Z3 is not configured in the SMT descriptor, no cross-check
+cross-check of cvc5's verdict on the same query, and its result is recorded
+on a `proved` result as FR-331's `cross_check{tool, verdict}`. Each pair of
+cvc5's result (after the core's certificate check, FR-354) and Z3's verdict
+on the same query settles as follows, so no disagreement is silently
+resolved to either solver:
+
+| cvc5 | Z3 | Settlement |
+| --- | --- | --- |
+| `proved`, `certified` | `proved`, `refuted` or `inconclusive` | `proved`, `certified`, `cross_check` naming Z3's verdict: the core checker, not either solver, stands behind the proof |
+| `proved`, `uncertified` | `proved` | `proved`, `uncertified`, `cross_check` verdict `proved` |
+| `proved`, `uncertified` | `refuted` or `inconclusive` | `inconclusive`, `cross-check-disagreement{tool, primary: proved, cross_check}` |
+| `refuted`, its counterexample replayed | `refuted` | `refuted`, with no `cross_check` member (FR-331 gives it to `proved` alone) |
+| `refuted` | `proved` or `inconclusive` | `inconclusive`, `cross-check-disagreement{tool, primary: refuted, cross_check}` |
+| `inconclusive` | `proved` or `refuted` | `inconclusive`, `cross-check-disagreement{tool, primary: inconclusive, cross_check}`: Z3 alone never settles a claim |
+| `inconclusive` | `inconclusive` | cvc5's `inconclusive` with its own cause, with no `cross_check` member |
+
+When Z3 is not configured in the SMT descriptor, no cross-check
 runs: cvc5's verdict settles the claim on its own, and the settlement carries
 a warning naming the absent cross-check; this is a warned outcome, never a
 hold on cvc5's settlement. A configured Z3 whose tool probe finds it
@@ -82,7 +96,7 @@ capability kinds.
 | --- | --- | --- |
 | FR-349-AC-1 | The SMT backend registers under the same exact provider contract as Kani, with no second contract shape. | Test (TC-266) |
 | FR-349-AC-2 | Registration advertises exact FR-290 (capability kind, mode) pairs and a declared obligation-form set; an item whose kind is unadvertised is not a candidate for it, and an item whose obligation form is outside the declared set settles `unsupported` at its negotiation arm with a warning naming the form and cause `unsupported_projection`/`unsupported-requested-capability`. | Test (TC-266) |
-| FR-349-AC-3 | A cvc5/Z3 verdict disagreement on the same query settles the claim `inconclusive`, is retained as an explicit parity failure naming both verdicts, and is never resolved to either solver's verdict alone. | Test (TC-266) |
+| FR-349-AC-3 | Each row of the cross-check table settles as stated: a certified `proved` with Z3 `proved`, `refuted` and `inconclusive` settles `proved`, `certified` with `cross_check` verdict `proved`, `refuted` and `inconclusive`; an uncertified `proved` with Z3 `proved` settles `proved`, `uncertified`, `cross_check` verdict `proved`, and with Z3 `refuted` or `inconclusive` settles `inconclusive`, `cross-check-disagreement{tool, primary: proved, cross_check}`; a replayed counterexample with Z3 `refuted` settles `refuted` with no `cross_check`, and with Z3 `proved` or `inconclusive` settles `inconclusive` with `primary: refuted`; a cvc5 `inconclusive` with Z3 `proved` or `refuted` settles `inconclusive` with `primary: inconclusive`, and with Z3 `inconclusive` keeps cvc5's cause with no `cross_check`. No disagreement is resolved to either solver's verdict alone. | Test (TC-266) |
 | FR-349-AC-4 | A proved or refuted result retains a replayable witness or counterexample carrying its original FR-036 source spans. | Test (TC-266) |
 | FR-349-AC-5 | A claim whose required capability kind no registered backend advertises settles `unsupported` with a warning naming the required capability kind. | Test (TC-266) |
 | FR-349-AC-6 | Z3's absence from the SMT descriptor, or a missing Z3 tool at probe, does not block, hold or turn `unsupported` cvc5's settlement of a claim within its advertised (capability kind, mode) pairs; the settlement carries a warning naming the absent cross-check. | Test (TC-266) |
