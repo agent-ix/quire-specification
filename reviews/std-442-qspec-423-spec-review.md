@@ -48,3 +48,20 @@ Gates at 002fbf96: `quire validate --scope . 'spec/**/*.md'` gives 86 failure li
 ## Verdict
 
 Not mergeable. FND-001 (high) blocks the PR, and FND-002 (a duplicate row id) must be fixed with it. FND-003 to FND-005 should be fixed in the same round. Routing, the method table, the schema and the hand-derived vectors are otherwise correct and consistent with QSL #1385.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-006 | medium | The new worked example and FR-193-AC-21 rest on a false premise: "Over `Braking`, `v` falls from 20 ... so the one jump ... occurs at a time between 10 and 20". `Braking` (QSL FR-447) has no `initial` clause, so by "Initial states" and FR-193-AC-11 its initial states are all of `Moving`'s invariant: `v` in [0, 20] and `a` in [1, 2]. The jump time `v0 / a` therefore ranges over [0, 20], and `v0 = 0` jumps at time 0. The verdicts stated still follow from the rule, but the rationale "a behaviour may jump at time 10" and the AC's premise are wrong, and an implementer building the fixture from them would derive wrong `exhaustive` values. Fix: say the one jump occurs at a time between 0 and 20 (`v0 / a`, with `v0 <= 20` and `a >= 1`), and that the `jumps` 0 proof misses every behaviour that jumps by time 10. | spec/functional/analysis/FR-193-analyze-continuous-hybrid-models.md:443-457,730 | wrong-requirement |
+| FND-007 | low | Two HY-20 / FR-193-AC-21 fixture results claim `exhaustive` dimensions that are false for `Braking`, which FR-193 forbids ("a provider SHALL list a dimension only when its solver established it"). `horizon` 10, `jumps` 3 with `["jumps"]` is false, since the first jump can occur at time 20, after 10. `horizon` 100, `jumps` 0 with `["time"]` is false, since every behaviour jumps by time 20. The verdicts still follow from the coverage rule. Fix: use values that hold, for example `horizon` 20, `jumps` 3, `["jumps"]` against the model-time claim (still `insufficient-horizon`, since model-time needs `time`), and `horizon` 100, `jumps` 0, `["jumps"]` (vacuously true). | spec/test-cases/TC-373-hybrid-verdict-map.md:47 | correct-requirement-no-evidence |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
+| FND-002 | fixed | - |
+| FND-003 | fixed | - |
+| FND-004 | fixed | - |
+| FND-005 | fixed | - |

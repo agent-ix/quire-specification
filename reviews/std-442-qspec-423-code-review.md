@@ -35,3 +35,9 @@ Examined, clean:
 ## Verdict
 
 Mergeable on code-review grounds, with one low finding to fix in the PR's fix round. The PR as a whole is blocked by the spec-review (SR-16305).
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | - |
