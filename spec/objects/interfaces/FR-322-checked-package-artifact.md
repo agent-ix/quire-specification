@@ -387,16 +387,22 @@ boundary.
   and `operation-member-mismatch` respectively.
   `leaves` is empty unless the entry names a leaf source; it then lists,
   in the order of the "Structural leaf walk" below, one `{path, laws, mode}`
-  entry for every text leaf of the compared type (`operand:0`, `inner:0`)
-  or, for `result_inner`, of the element type of a `set`, `bag` or
-  `ordered_set` result (`field:<name>`, `member:<name>`, `position:<n>` and
-  `inner` segments), with the text profile law and the mode that leaf's
-  type pins, and one `{path, laws: [], mode: null}` entry for every
+  entry for every text leaf and every float leaf of the compared type
+  (`operand:0`, `inner:0`) or, for `result_inner`, of the element type of a
+  `set`, `bag` or `ordered_set` result (`field:<name>`, `member:<name>`,
+  `position:<n>` and `inner` segments), a text leaf with the text profile law
+  and the mode that leaf's type pins and a float leaf with the `ieee_profile`
+  law and mode `null`, and one `{path, laws: [], mode: null}` entry for every
   recursion leaf, whose path ends in a `recursion:<d>` segment. IEEE values have no
-  `eq`, `ne`, ordering or `negate` operation: `quire.op.ieee.numeric_equal`,
+  `eq`, `ne` or ordering operation: `quire.op.ieee.numeric_equal`,
   `quire.op.ieee.total_order` and `quire.op.ieee.bit_identical` are three
-  distinct identities, and a structural comparison reaching a float leaf is
-  ineligible. A V2 reader refuses the first failing check in the order owned by
+  distinct identities, and `quire.op.ieee.float32.negate` and
+  `quire.op.ieee.float64.negate` are the sign-bit flip of one float of their
+  width, with the law `ieee_profile` and mode `null` (the operation rounds
+  nothing). A comparison reaching a float leaf is admitted: `=` over a bare
+  float is `quire.op.ieee.numeric_equal` and `!=` is `quire.op.boolean.not`
+  over it, and `quire.op.structural.eq` and `.ne` over a type holding a float
+  at any depth list that float leaf (FR-149 "IEEE relations"). A V2 reader refuses the first failing check in the order owned by
   `quire.native.diagnostics/v1`: `unknown-operation`,
   `operation-class-mismatch`, `operation-law-missing`,
   `operation-law-mismatch`, `operation-law-unselected`,
@@ -1140,6 +1146,11 @@ constraints ("Reference conformance" below).
    | `ix://quire/native/String` | `String`, a native with no text profile; it is not `Text` and has no `Text` bounds, profile or leaf | `scalar_type`/`string` |
    | `ix://quire/native/UUID` | `UUID`, compared by its canonical payload under FR-149's UUID row; no ordering | `scalar_type`/`uuid` |
    | `ix://quire/native/Timestamp` | `Timestamp`, compared by its canonical payload under FR-149's Timestamp row; no ordering and no arithmetic | `scalar_type`/`timestamp` |
+   | `ix://quire/native/Bytes` | `Bytes`, an octet sequence of any length (the empty sequence included), compared by its canonical payload under FR-149's Bytes row; operations `length` and `concat`, no ordering and no other arithmetic | `scalar_type`/`bytes` |
+   | `ix://quire/native/JsonObject` | `JsonObject`, a JSON value of any kind (object, array, string, number, boolean or `null`), compared by its canonical payload under FR-149's JsonObject row; opaque: equality only, no member access, no ordering and no arithmetic | `scalar_type`/`json_object` |
+   | `ix://quire/native/Duration` | `Duration`, an amount of elapsed time: the type `Quantity<s>` where `s` is the unit named `s` that the member can see, one of the unit `s` the unit of compilation declares and the unit `s` of the selection that declares the member (a source unit named by `ix://quire/unit/s`, a package unit by `ix://quire/unit/<p>/s` with `<p>` that selection's identity), and `s` is typed by a base dimension whose declared name is `Time`. A `Duration` member and a `Quantity<s>` member have one type, with the exact rational magnitude in seconds that "Scalar literal values" spells; a quantity in another unit of `Time` reaches `Duration` only through FR-142's explicit conversion to `s`. If neither declares `s` the member refuses `missing_declaration`/`missing-name`, and if both do it refuses `ambiguous_declaration`/`ambiguous-name`; if the unit is typed by a dimension that is not a base dimension named `Time`, the member has no type and the application refuses `ill_typed`/`operator-ineligible` | the `scalar_type`/`unit` node of `s` (family `quantity`); no node is introduced |
+   | `ix://quire/native/Float32` | `Float32`, an IEEE binary32 value (FR-148); a field names no rounding mode, so the type is strict `exact`; a field value is compared by `=` under numeric equality (FR-149) and by its bits in a collection (FR-144) | `scalar_type`/`float32` |
+   | `ix://quire/native/Float64` | `Float64`, an IEEE binary64 value (FR-148), with the same rules as `Float32` | `scalar_type`/`float64` |
    | `ix://quire/native/Clock`, on a field with FR-154's clock field shape | `Clock`, the clock type of FR-415: the field is one clock per object of its owning type, holds no data value, is read only as the clock operand of an atomic clock constraint (in a guard or a time invariant) and is written only by a reset (FR-415) | none: no node stands for a clock. This artifact carries no clock constraint, reset or timed-model member; the checker reads a clock operand there by (declaring node, field name) and records the timed model (FR-415, QSL FR-230). A `field` application whose member resolves to a clock field in any other position, a value position, refuses `invalid_timed_model`/`clock-read-outside-constraint` |
    | a value type (FR-208 `quire.meaning.model.value-type/v1`) of the same domain package bound as `Int[lo, hi]`, `lo <= hi`, as TC-196's `Count` and `Small` and TC-197's `Count` are | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over the `Integer` node |
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
@@ -1650,8 +1661,11 @@ and visits types in declaration pre-order:
   member with no payload contributes no leaf.
 - An `option`, `sequence`, `set`, `bag` or `ordered_set` visits its element
   type under `inner`.
-- Every other type contributes no leaf; a float type makes the comparison
-  ineligible, as stated above.
+- A float type (`float32`, `float64`) is a **leaf**: it lists one entry at the
+  current path, with the law `ieee_profile` (the selected IEEE definition) and
+  mode `null`. The walk lists a float leaf for every leaf source, so a set,
+  bag or ordered set result whose element type holds a float lists it as well.
+- Every other type contributes no leaf.
 
 The walk SHALL visit every declared union member independently of the
 active member of any operand value. `member:<identifier>` contains the
@@ -1791,7 +1805,7 @@ or `temporal`/`fairness` node has the family of its body's root application
 | `any_term` | `any_value` plus `function`, `population`, `aggregate`, `binder`, `clause`, `temporal` ([FR-370](FR-370-checked-package-temporal-clause-body.md)) | Used only as the rest position of clause and call operations. |
 | `exact_numeric` | `integer`, `rational`, `decimal` | Exact numeric operands of conversions. |
 | `rational_promotable` | `integer`, `rational` | Operands promoted exactly by `n ↦ n/1` (FR-146, FR-149). |
-| `ieee_float` | `float32`, `float64` | IEEE operands; no `eq`, `ne`, ordering or `negate`. |
+| `ieee_float` | `float32`, `float64` | IEEE operands; `negate` per width, and no `eq`, `ne` or ordering identity. |
 | `collection_kind` | `sequence`, `set`, `bag`, `ordered_set` | Collection operands and `element` members. |
 | `structural_kind` | `option`, `record`, `tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set` | Structural comparison operands. |
 | `enum_kind` | `enum`, `ordered_enum` | Enum operands. |
@@ -1812,7 +1826,7 @@ is declared `boolean`. An `expression` or `function` whose body root is the
 application has `semantic_type` equal to that `result_type`. A `literal` term's
 `type` must have a family its `value_kind` admits (`boolean`, `integer`,
 `rational`, `decimal`, `float32_bits`→`float32`, `float64_bits`→`float64`,
-`text`, `string`, `uuid`, `timestamp`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`). Any failure is
+`text`, `string`, `uuid`, `timestamp`, `bytes`, `json_object`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`). Any failure is
 `operator-ineligible`.
 
 The fit rule has one exception besides record conformance ("Record
@@ -1846,15 +1860,35 @@ ordering, no arithmetic and no other operation identity: an ordering or
 arithmetic identity over them refuses `ill_typed`/`operator-ineligible`
 (FR-149-AC-16 for UUID and Timestamp).
 
+The native scalar families `bytes` and `json_object` have the identities
+`quire.op.bytes.eq`, `quire.op.bytes.ne`, `quire.op.json_object.eq` and
+`quire.op.json_object.ne`, each with two operands of its own family, result
+`boolean`, no law, no mode, no member and no leaves, deciding equality by the
+canonical payload, so equality is reflexive, symmetric and transitive and `ne`
+is its negation. The family `bytes` also has `quire.op.bytes.length`, one
+`bytes` operand and result `integer`, the number of octets of the operand, and
+`quire.op.bytes.concat`, two `bytes` operands and result `bytes`, the octets of
+operand 0 followed by those of operand 1, so that
+`length(concat(a, b)) = length(a) + length(b)` and `concat` is associative with
+the empty sequence as identity. `json_object` has no operation identity beyond
+`eq` and `ne`, and `bytes` none beyond these four: an ordering, arithmetic,
+member-access or any other identity over either family refuses
+`ill_typed`/`operator-ineligible`. A `bytes` operand of a `quire.op.string.*` or
+`quire.op.text.*` identity, and a `string` or `text` operand of a
+`quire.op.bytes.*` identity, refuses the same, because there is no conversion
+between the families. `Duration` introduces no family and no identity: its
+operations are the quantity identities of FR-142 over `Quantity<s>`.
+
 **Equality-stable types.** A type is *equality-stable* when an equality
 application is admitted over two operands of it: a type of family `boolean`,
 `integer`, `rational`, `decimal`, `text`, `string`, `uuid`, `timestamp`,
-`enum`, `ordered_enum`, `quantity` or `reference` (each through its own
-`eq` identity), and a type of a `structural_kind` family through
-`quire.op.structural.eq` when no leaf at any depth is `float32`, `float64`
-or a `model`/`event_type` node. IEEE values have no `eq`
-(`quire.op.ieee.numeric_equal`, `total_order` and `bit_identical` are three
-distinct identities), and a `function`, `population`, `object` or
+`bytes`, `json_object`, `enum`, `ordered_enum`, `quantity` or `reference` (each through its own
+`eq` identity), a type of family `float32` or `float64` (through
+`quire.op.ieee.numeric_equal`, with `!=` its `quire.op.boolean.not`), and a
+type of a `structural_kind` family through `quire.op.structural.eq` when no
+leaf at any depth is a `model`/`event_type` node. IEEE values have no `eq`
+or `ne` identity (`quire.op.ieee.numeric_equal`, `total_order` and
+`bit_identical` are three distinct identities), and a `function`, `population`, `object` or
 `aggregate` term is not a value type. A requirement that a key, a comparison
 or a map position needs a type "over which `=` is admitted" (the FIFO key of
 [FR-465](FR-465-checked-package-protocol-declaration-bodies.md)) means
@@ -1873,13 +1907,57 @@ scalar sequence as a JSON string, with no normalization. A `value` in any other
 spelling (a `uuid` with uppercase digits or no hyphens, a `timestamp` of `-0`,
 `+1`, `01`, empty text or outside the range, a `string` whose `value` is not a
 JSON string) refuses `invalid_package`/`invalid-value` at the literal's
-`value`. A `quantity` literal's `type` is the `scalar_type`/`unit` node of its
+`value`. A `bytes` literal's `value` is a JSON string of lowercase ASCII
+hexadecimal digits, two per octet in sequence order, the empty string for the
+empty sequence (`""`, `00ff`; not `00FF`, `0`, `0x00` or `00 ff`). A
+`json_object` literal's `value` is a JSON string holding the RFC 8785 (JCS)
+serialization of one JSON value whose text is already canonical: the string
+parses as a JSON value with no repeated member name at any depth, and
+serializing the parsed value under JCS (members sorted by UTF-16 code unit
+order of their names, no insignificant whitespace, strings and numbers as
+ECMAScript serializes them) gives the string again, so a number is written as
+the shortest ECMAScript spelling of its IEEE binary64 value (`{"a":1,"b":[true,null]}`;
+not `{"b":[true,null],"a":1}`, `{"a": 1}`, `{"a":1.0}`, `{"a":1e2}`, a number
+that is not the shortest spelling of the binary64 it rounds to such as
+`9007199254740993`, text that is not one JSON value, or a repeated name; `[]`, `3`,
+`"x"` and `null` are admitted).
+A `bytes` or `json_object` `value` in any other spelling refuses
+`invalid_package`/`invalid-value` at the literal's `value`. A `Duration` literal is a
+`quantity` literal over the `scalar_type`/`unit` node of `s`, its `value` the exact
+rational number of seconds, spelled as any quantity magnitude is. A `quantity` literal's `type` is the `scalar_type`/`unit` node of its
 unit (family `quantity`) and its `value` is the exact rational magnitude: the
 canonical decimal integer when the denominator is 1, otherwise
 `numerator/denominator` in lowest terms with a denominator above 1 and a sign
 only on the numerator (`3`, `-5`, `1/1000`; not `03`, `+3`, `2/4`, `3/1`, `2.5`). The spelling is read after the literal's family check, so a literal
 whose `type` is not its kind's family refuses `ill_typed`/`operator-ineligible`
 even when its value is also non-canonical.
+
+A `decimal` literal's `type` is a `scalar_type`/`decimal` node or a
+`bounded_domain`/`decimal_range` node (family `decimal`) and its `value` is the
+decimal string of its coefficient `c` and scale `s` as written, keeping the
+scale: the digits of `|c|` with the decimal point placed `s` digits from the
+right, padded on the left with zeros so that at least one digit precedes the
+point, no point when `s` is `0`, and `-` only before a nonzero `c`
+(`1.25` for `(125, 2)`, `0.05`, `10`, `0.00`, `-0.5`; not `.5`, `1.`, `+1.5`,
+`01.5`, `-0.0`, `1e2` or `1/4`). Two literals of one type with one magnitude
+and different scales (`1.0` and `1.00`) are two values and two nodes. For a
+`decimal_range` type the literal's coefficient lies in the type's coefficient
+bounds and its scale in the type's scale bounds; a `value` outside them, like a
+`value` in any other spelling, refuses `invalid_package`/`invalid-value` at the
+literal's `value`, after the family check.
+
+A `float32_bits` literal's `value` is the IEEE 754 binary32 bit pattern of its
+value and a `float64_bits` literal's `value` the binary64 bit pattern, each as a
+JSON string of lowercase ASCII hexadecimal digits with no `0x` prefix and no
+separators: 8 digits for `float32_bits` and 16 for `float64_bits`, the most
+significant octet first and leading zeros kept (`3f000000`, `00000000`;
+`3fe0000000000000`, `8000000000000000`). Every such string is a bit pattern, so
+the infinities, signed zeros and every NaN payload are distinct values with
+distinct spellings. A `value` in any other spelling (an uppercase digit, a `0x`
+prefix, 7 or 9 digits for `float32_bits`, 15 or 17 for `float64_bits`, a
+decimal numeral such as `0.5`, or a value that is not a JSON string) refuses
+`invalid_package`/`invalid-value` at the literal's `value`, after the family
+check as for every scalar literal.
 
 | Constraint | Decision rule |
 | --- | --- |
@@ -2005,7 +2083,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 14 closed node tags with an exact source-map entry for every occurrence, and refuses each authored document-type, digest-domain and node mutation. | Test |
 | FR-322-AC-14 | Each published V2 package fixture's `identity_preimage` equals the selection object rebuilt from its lock alone and carries no `identity_projection`, and its `package_id` equals the RFC 8785 JCS SHA-256 of the package-id preimage, that object with the `identity_projection` the reader derives from its semantic graph, every node in graph order without `occurrences`; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
-| FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef` names a complete-value lock definition by authority and identity; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne`, ordering or `negate` identity, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
+| FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef` names a complete-value lock definition by authority and identity; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne` or ordering identity, and `negate` per width takes one float and returns the operand's type, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
 | FR-322-AC-18 | Each published operation vector validates against the closed node-preimage schema, recomputes its recorded JCS SHA-256 and is distinct from every other vector; every application node of the published operation package is keyed by its application-node preimage and is a published vector, and a vector outside the package refuses as `operation-law-unselected` when placed in it; floor-to-Euclidean division changes the node and package ids; a retained key refuses as `stale-node-key`; a contradictory form, missing member-declaration dependency, stray recursion group or extra dependency is refused; an application without an operation fails the V2 schema; and the all-families function body calls a published function, changes its node id when rewritten as `dispatch_call` and then refuses as `operation-member-mismatch`. | Test (TC-233) |
 | FR-322-AC-19 | Each published operation mutation never keeps its stale key and either rekeys to exactly its named counterpart vector and is admitted exactly when its laws are lock-selected, refuses as `operation-law-unselected` until the lock also selects its law and again under the stale selection, or is refused by exactly its named schema or semantic check with its recorded cause and that cause's code; together the mutations exercise every operation refusal cause. | Test (TC-233) |
 | FR-322-AC-21 | Every node of each published V2 package carries a `declaration` member exactly when it declares; the schema refuses a declaring node without it and an expression with it; the member enters the application-node preimage and package id; a name duplicated on two nodes refuses as `ambiguous-name` at the node later in node-id digest order; and a nominal node whose declaration differs from its `qualified_declaration` refuses as `declaration-nominal-mismatch` before any ambiguity. | Test (TC-233) |
@@ -2018,7 +2096,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-28 | A `ModelOwner` node-identity preimage carries the declaring domain package's `identity` beside `node` and no version label, so a node id depends only on content; the published `ModelOwner` vectors validate against the closed preimage schema and recompute their recorded JCS SHA-256, and a `ModelOwner` preimage that carries a `version` member is refused by the closed preimage schema. | Test |
 | FR-322-AC-29 | Each published model declaration node vector validates against the closed `ModelDeclarationNode` preimage schema and recomputes its recorded JCS SHA-256. A model declaration node carrying `Order`'s `ModelOwner` and keyed by its preimage resolves to `Order`. A node whose owner identity is not lock-selected refuses `missing_declaration`/`missing-selection` in the derived-shape key stage, and a current `model`/`object_type` node whose owner names the relationship `Order-order-Order` refuses `missing_declaration`/`missing-selection` in the owner join. A node whose key was computed under another tag (the relationship's id on a `model` node whose owner names an object type; one whose owner names the relationship is refused by the owner join first, as the second refusal above), whose `semantic_type` is not its own id, that carries a `recursion_group`, or whose body has members refuses `invalid_package`/`stale-node-key` (MW-02, MW-04, MW-05, MW-15: the relationship's id on a `model`/`object_type` node owned by `Order`). A model declaration node that carries a `declaration` beside its `ModelOwner`, or carries no `owner`, fails the V2 schema and refuses `malformed_wire`. | Test |
 | FR-322-AC-30 | A model-owned `field` or `operation` member resolves among the declaring type's exposed effective members, own and inherited. A field declared by a supertype resolves on the subtype's node, and an operation redefined through `Operation.redefines` (FR-154) resolves to the most derived redefinition. An operation on a `systems_interface` node refuses `ill_typed`/`operator-ineligible`. Two exposed fields of one name refuse `ambiguous_declaration`/`ambiguous-name`, and so do a supertype's operation and a subtype's operation of one name when the subtype's operation has no `redefines` naming it. An undeclared name, a name of the other member kind and a relationship declaring node each refuse `ill_typed`/`operator-ineligible`. | Test |
-| FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `String`, `UUID` and `Timestamp` from their native declared types (`String` distinct from `Text`), `Reference<Invoice>` and an operation's `Integer` result. A bare `Text` field (no `Text[min, max; profile]` value type), a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number from the operation's parameters or in type node from them, unless a record argument conforms to its record parameter ("Record conformance"). | Test |
+| FR-322-AC-31 | A resolved model member's type follows the declared-type, multiplicity and presence tables. The derived types are `Int[0, 9]` from an integer value type, `Integer` from a constrained native `Integer`, `Option<Boolean>`, `Set<Integer>[0, 3]`, `Sequence<Integer>[0, 5]`, `Set<Integer>[0, 1]`, `Set<Integer>` for `[0, unbounded]`, `String`, `UUID`, `Timestamp`, `Float32` and `Float64` from their native declared types (`String` distinct from `Text`), `Reference<Invoice>` and an operation's `Integer` result. A bare `Text` field (no `Text[min, max; profile]` value type), a `[1, unbounded]` field and an operation with no result each refuse `ill_typed`/`operator-ineligible`. So does a call whose receiver is not a reference to the declaring node, or whose arguments differ in number from the operation's parameters or in type node from them, unless a record argument conforms to its record parameter ("Record conformance"). | Test |
 | FR-322-AC-32 | A lock-selected domain package document is checked as evidence before graph admission: a document supplied under the selected digest with matching identity passes the selection admission checks whatever its own canonical digest is, while a digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`, no document refuses `missing_import`/`missing-selection` and a document whose identity differs from the selection `invalid_model_binding`/`wrong-model-selection`. | Test |
 | FR-322-AC-33 | `quire.op.reference.eq` and `quire.op.reference.ne` admit two references to selected object types of which one conforms to the other along declared supertypes: two of one type, a subtype and its supertype in either operand order, a subtype two levels down, and a type with two supertypes against either. A systems interface with no declared supertype against an unrelated object type, two unrelated object types, a reference to a relationship, even compared with itself, and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand whose owner is not selected refuses `missing_declaration`/`missing-selection`, even compared with itself. | Test |
 | FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, a `deref` result of a relationship, and a projection whose `result_type` is not the field's member type refuse `ill_typed`/`operator-ineligible`. | Test |
@@ -2088,6 +2166,13 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 | FR-322-AC-105 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; dimension Speed = R::Time ^ -1; unit tenth : R::Time = 1/10 * R::s;` and the admitted domain packages `acme/rpc` (alias `R`) and `acme/flow` (alias `F`) each declaring base dimension `Time` and root unit `s` of it, the unit graph holds three `scalar_type`/`dimension` nodes named `Time` with pairwise distinct keys: the source node under a `SourceOwner`, and two package nodes with no `declaration`, `owner` `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/dimension/Time"}` and `{kind: "model", identity: "acme/flow", node: "ix://acme/flow/dimension/Time"}`, each preimage `qualified_declaration` `["Time"]`, with no `ambiguous_declaration` among them; each package root `s` depends on exactly its own package `Time` node; the source `Speed` node is self-typed and its `terms` hold the `acme/rpc` `Time` key with exponent `-1` and depend on exactly that node; `tenth` has `dimension_node_id` the `acme/rpc` `Time` key and `target_unit_node_id` the `acme/rpc` `s` key; the strict reader admits the package. | Test (TC-280) |
 | FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
+| FR-322-AC-102 | A field typed `ix://quire/native/Bytes` has the type `Bytes` over a `scalar_type`/`bytes` node, a field typed `ix://quire/native/JsonObject` has the type `JsonObject` over a `scalar_type`/`json_object` node, and a field with a `maxLength` constraint typed `Bytes` has the type `Bytes`; with multiplicity `[0, unbounded]` and unordered unique they give `Set<Bytes>`. Two fields typed `Bytes` name one node. `Bytes` and `JsonObject` are equality-stable types, and a `Bytes` is distinct from a `String` and from a `Text`. | Test (TC-280) |
+| FR-322-AC-103 | An application of `quire.op.bytes.eq`, `quire.op.bytes.ne`, `quire.op.json_object.eq` or `quire.op.json_object.ne` over two operands of its own family has result `boolean` with no law, mode or member; `quire.op.bytes.length` over one `bytes` operand has result `integer`; `quire.op.bytes.concat` over two `bytes` operands has result `bytes`. A `bytes` against a `string`, `text` or `json_object` operand, `quire.op.bytes.concat` over a `json_object` operand, an ordering identity (`quire.op.integer.lt`) over `bytes`, and any `quire.op.integer.add` or member-access identity over `json_object` each refuse `ill_typed`/`operator-ineligible`. A literal of `value_kind` `bytes` with `value` `""`, `"00ff"` or `"deadbeef"` is admitted, and with `value` `"00FF"`, `"0"`, `"0x00"` or `"00 ff"` refuses `invalid_package`/`invalid-value`; a literal of `value_kind` `json_object` with `value` `"{}"`, `"[]"`, `"3"`, `"null"` and `"{\"a\":1,\"b\":[true,null]}"` is admitted, and with `value` `"{\"b\":1,\"a\":1}"`, `"{\"a\": 1}"`, `"{\"a\":1.0}"`, `"{\"a\":9007199254740993}"`, `""`, `"{"` or `"{\"a\":1,\"a\":2}"` refuses `invalid_package`/`invalid-value`. A `bytes` or `json_object` literal whose `type` is not its own family refuses `ill_typed`/`operator-ineligible` even when its `value` is also non-canonical. | Test (TC-280) |
+| FR-322-AC-104 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and no selected package declaring `s`, a field typed `ix://quire/native/Duration` has the type `Quantity<s>` over the node of `s`, the same node as a field typed `ix://quire/unit/s`, and `Duration` against `Quantity<s>` is one type; a `Duration` against a `Quantity<ms>` compares only after FR-142's explicit conversion, and `1500 ms` converted to `s` equals the `Duration` `3/2`. A `Duration` field of an object type of an admitted domain package `acme/rpc` that declares base dimension `Time` and root unit `s`, with a unit of compilation declaring no `s`, has the type `Quantity<s>` over that package unit's node. With neither declaring `s` the field refuses `missing_declaration`/`missing-name`; with both declaring `s` it refuses `ambiguous_declaration`/`ambiguous-name`; with `unit s : Length = 1` and no dimension `Time`, or with `s` typed by a derived dimension named `Time`, the member has no type and the application refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
+| FR-322-AC-108 | A literal of `value_kind` `float32_bits` typed by a `float32` type with `value` `3f000000`, `00000000`, `80000000` or `7fc00000` and a literal of `value_kind` `float64_bits` typed by a `float64` type with `value` `3fe0000000000000`, `0000000000000000`, `8000000000000000` or `7ff8000000000001` is admitted; a `float32_bits` literal with `value` `3F000000`, `0x3f000000`, `3f00000`, `3f0000000`, `0.5` or the JSON number `1056964608`, and a `float64_bits` literal with `value` `3FE0000000000000`, `0x3fe0000000000000`, `3fe000000000000`, `3fe00000000000000`, `0.5` or the JSON number `4602678819172646912`, each refuses `invalid_package`/`invalid-value` at the literal's `value`; a `float32_bits` literal typed by a `float64` type and a `float64_bits` literal typed by a `string` type refuse `ill_typed`/`operator-ineligible` even when the `value` is also non-canonical. The `value` of every `float32_bits` and `float64_bits` literal in `positive-operation-identities.json` is in this spelling. | Test (TC-233) |
+| FR-322-AC-111 | `quire.op.ieee.float64.negate` over one `float64` operand typed `Float64[nearest-even]` has `result_type` the operand's type node, the law `ieee_profile` selecting the lock's IEEE definition, mode `null`, no member and no leaves; the same over `float32` with `quire.op.ieee.float32.negate`. A `float32` operand of the `float64` identity, a `float64` operand of the `float32` identity, two operands, a `result_type` of another type node (`Float64[toward-zero]` over a `Float64[nearest-even]` operand), an `integer` or `decimal` operand, a `rounding` mode on the node and a missing `ieee_profile` law refuse as the reader order states (`operator-ineligible` for the operand, arity and result, `operation-mode-mismatch` for the mode, `operation-law-missing` for the law); a lock that selects no `ieee_profile` refuses `operation-law-unselected`. The identities `quire.op.ieee.float64.eq`, `quire.op.ieee.float64.ne` and `quire.op.ieee.float64.lt` refuse `unknown-operation`. | Test (TC-233) |
+| FR-322-AC-112 | `quire.op.structural.eq` and `.ne` over `record R { x: Float64[nearest-even]; t: Text[0,8;nfc]; }` are admitted with the leaves `["field:x"]` (laws `[ieee_profile]`, mode `null`) and `["field:t"]` (the `nfc` law and mode) in field order; over `Option<Float64[nearest-even]>` with the leaf `["inner"]`; over `union U { V(Float32[exact]), N }` with `["member:V", "position:0"]`; over `Sequence<Float64[nearest-even]>` with `["inner"]`; over a record holding no float and no text, none. A `quire.op.collection.set` whose result is `Set<Float64[nearest-even]>` lists the leaf with no path segment under `result_inner`. A float leaf missing from `leaves`, one listing no law, one listing the text profile law or a mode, and a lock without the `ieee_profile` selection refuse as a text leaf does. The occurrences `quire.op.ieee.numeric_equal` over two `float64` operands, and `quire.op.boolean.not` over it, are admitted as the lowering of `=` and `!=`. | Test (TC-233) |
+| FR-322-AC-113 | A literal of `value_kind` `decimal` typed by `Decimal[0, 1000; 0, 2; nearest-even]` with `value` `"1.25"`, `"0.05"`, `"10"`, `"0.00"`, `"1000"` and `"0.5"` is admitted, and with `value` `".5"`, `"1."`, `"+1.5"`, `"01.5"`, `"-0.0"`, `"1e2"`, `"1/4"`, `""`, `"1.255"` (scale 3), `"1001"` (coefficient out of bounds) and `"-1"` refuses `invalid_package`/`invalid-value`; `"1.0"` and `"1.00"` are two literals with two node keys. Typed by `Decimal[-1000, 1000; 1, 2; nearest-even]`, `"-0.5"` is admitted and `"5"` refuses `invalid-value` because its scale 0 is below the scale bound. A `decimal` literal typed by an `integer` or `string` node refuses `ill_typed`/`operator-ineligible` even when its value is also malformed. | Test (TC-233) |
 
 ## Dependencies
 
