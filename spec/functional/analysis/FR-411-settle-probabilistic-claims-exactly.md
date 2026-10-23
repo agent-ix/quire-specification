@@ -244,7 +244,10 @@ the proof basis records the reduction.
 `max_precision_bits`, `max_rational_bits`, `max_policy_iterations` and
 `max_witness_paths`, plus time and the clause meter. Each is set by the
 request, with the published default FR-461 gives it, and each is outside the
-obligation identity. A caller cancellation stops the run with `incomplete`,
+obligation identity. Each is a positive count except `max_witness_paths`,
+which may be 0: FR-413 emits a path set only when at most `max_witness_paths`
+paths reach the bound, so 0 emits none and the item settles with no path-set
+evidence. A caller cancellation stops the run with `incomplete`,
 `cancelled{source}`, whose `source` is the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run, and records no value. The evidence kind is a request member and is outside the claim's
 obligation identity; the confidence parameters a claim states are inside it
 and are not read.
@@ -268,6 +271,7 @@ and are not read.
 | FR-411-AC-13 | `quantile 0.5 of M >= 3` with `M` equal to 1 or 3 with probability `1/2` each settles `refuted`, the exact value `Pr(M < 3) = 1/2` equal to `q` failing the strict bound, both under a workload and, through the zero-maximum second pass, over every scheduler; `quantile 0.5 of M >= 1` settles `proved`. | Test (TC-360) |
 | FR-411-AC-14 | A quantile claim whose activation probability is 0 settles `proved` in both forms, under a workload and over every scheduler. | Test (TC-360) |
 | FR-411-AC-15 | A caller cancellation of an exact run stops it with `incomplete`, `cancelled{source}` with `source` `requested`, not `limit-reached`, and records no value. | Test (TC-365) |
+| FR-411-AC-16 | A request whose `ExactProbLimits.max_witness_paths` is 0 validates against the backend-provider schema; a `<= θ` claim refuted on a fully explored model under it settles the verdict it settles under the default and carries no path set, and a `max_witness_paths` of -1 fails the schema. | Test (TC-365) |
 
 ## Dependencies
 
