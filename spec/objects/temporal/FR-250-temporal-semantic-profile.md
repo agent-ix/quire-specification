@@ -119,5 +119,4 @@ time-stamped positions.
 
 ## Status
 
-Accepted complete-V1 temporal-profile identity contract. Implementation and
-qualification remain tracked separately.
+Accepted complete-V1 temporal-profile identity contract.
