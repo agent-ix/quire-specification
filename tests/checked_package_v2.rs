@@ -216,8 +216,138 @@ fn semantic_preimage_is_valid(preimage: &Value, vectors: &[Value]) -> bool {
                 })
         }
         Some("quire.unit-node/v1") => unit_chain_reaches_root(preimage, vectors),
+        Some("quire.dimension-equivalence-node/v1") => {
+            let Some(ids) = preimage["dimension_node_ids"].as_array() else {
+                return false;
+            };
+            let digests = ids
+                .iter()
+                .map(|id| id["digest"].as_str())
+                .collect::<Vec<_>>();
+            digests.len() == 2
+                && digests[0].is_some()
+                && digests[0] < digests[1]
+                && digests.iter().all(|wanted| {
+                    wanted.is_some_and(|wanted| {
+                        vector_for_digest(vectors, wanted).is_some_and(|vector| {
+                            vector["preimage"]["version"].as_str()
+                                == Some("quire.dimension-node/v1")
+                        })
+                    })
+                })
+        }
         _ => false,
     }
+}
+
+/// The base classes of the dimension-equivalence vectors: the least digest of each
+/// connected component of the pairs whose two nodes are both base dimensions, by node.
+fn base_class_representatives(vectors: &[Value]) -> BTreeMap<String, String> {
+    let is_base = |digest: &str| {
+        vector_for_digest(vectors, digest).is_some_and(|vector| {
+            vector["preimage"]["terms"]
+                .as_array()
+                .is_some_and(Vec::is_empty)
+        })
+    };
+    let mut classes: BTreeMap<String, String> = BTreeMap::new();
+    let pairs = vectors
+        .iter()
+        .filter(|vector| {
+            vector["preimage"]["version"].as_str() == Some("quire.dimension-equivalence-node/v1")
+        })
+        .map(|vector| {
+            let ids = vector["preimage"]["dimension_node_ids"]
+                .as_array()
+                .expect("equivalence ids are an array");
+            (
+                ids[0]["digest"].as_str().unwrap_or_default().to_string(),
+                ids[1]["digest"].as_str().unwrap_or_default().to_string(),
+            )
+        })
+        .filter(|(left, right)| is_base(left) && is_base(right))
+        .collect::<Vec<_>>();
+    for (left, right) in &pairs {
+        for node in [left, right] {
+            classes.entry(node.clone()).or_insert_with(|| node.clone());
+        }
+    }
+    loop {
+        let mut changed = false;
+        for (left, right) in &pairs {
+            let least = classes[left].clone().min(classes[right].clone());
+            for node in [left, right] {
+                if classes[node] != least {
+                    classes.insert(node.clone(), least.clone());
+                    changed = true;
+                }
+            }
+        }
+        if !changed {
+            return classes;
+        }
+    }
+}
+
+/// The normalized map of a dimension vector over base class representatives.
+fn class_normalized_map(
+    digest: &str,
+    vectors: &[Value],
+    classes: &BTreeMap<String, String>,
+) -> BTreeMap<String, BigInt> {
+    let mut map = BTreeMap::new();
+    let preimage = &vector_for_digest(vectors, digest).expect("dimension vector exists")["preimage"];
+    let terms = preimage["terms"].as_array().expect("terms are an array");
+    if terms.is_empty() {
+        let representative = classes.get(digest).cloned().unwrap_or(digest.to_string());
+        map.insert(representative, BigInt::from(1));
+        return map;
+    }
+    for term in terms {
+        let inner = class_normalized_map(
+            term["dimension_node_id"]["digest"].as_str().unwrap_or_default(),
+            vectors,
+            classes,
+        );
+        let exponent = integer(&term["exponent"]).expect("exponent is an integer");
+        for (base, power) in inner {
+            *map.entry(base).or_insert_with(|| BigInt::from(0)) += power * &exponent;
+        }
+    }
+    map.retain(|_, power| *power != BigInt::from(0));
+    map
+}
+
+/// FR-142 "Dimension equivalence" steps 2 to 4 over the equivalence vectors: no pair of
+/// one node, no repeated pair, and for a pair that is not two base dimensions equal
+/// normalized maps under the base classes.
+fn dimension_equivalence_pairs_are_admissible(vectors: &[Value]) -> bool {
+    let classes = base_class_representatives(vectors);
+    let mut seen = BTreeSet::new();
+    vectors
+        .iter()
+        .filter(|vector| {
+            vector["preimage"]["version"].as_str() == Some("quire.dimension-equivalence-node/v1")
+        })
+        .all(|vector| {
+            let ids = vector["preimage"]["dimension_node_ids"]
+                .as_array()
+                .expect("equivalence ids are an array");
+            let left = ids[0]["digest"].as_str().unwrap_or_default();
+            let right = ids[1]["digest"].as_str().unwrap_or_default();
+            let base = |digest: &str| {
+                vector_for_digest(vectors, digest).is_some_and(|vector| {
+                    vector["preimage"]["terms"]
+                        .as_array()
+                        .is_some_and(Vec::is_empty)
+                })
+            };
+            left != right
+                && seen.insert((left.to_string(), right.to_string()))
+                && ((base(left) && base(right))
+                    || class_normalized_map(left, vectors, &classes)
+                        == class_normalized_map(right, vectors, &classes))
+        })
 }
 
 fn compound_unit_preimage_is_valid(preimage: &Value, node_vectors: &[Value]) -> bool {
@@ -311,6 +441,15 @@ fn nominal_node_cross_fields_are_valid(node: &Value) -> bool {
                 expected.push(&preimage["target_unit_node_id"]);
             }
             node["semantic_type"] == *dimension && node_dependencies_match(node, &expected)
+        }
+        Some("quire.dimension-equivalence-node/v1") => {
+            let Some(ids) = preimage["dimension_node_ids"].as_array() else {
+                return false;
+            };
+            let expected = ids.iter().collect::<Vec<_>>();
+            node["semantic_type"] == node["node_id"]
+                && node.get("declaration").is_none()
+                && node_dependencies_match(node, &expected)
         }
         _ => false,
     }
@@ -16750,4 +16889,86 @@ fn decimal_literal_values_are_canonical_spellings() {
     ] {
         assert!(!decimal_literal_is_canonical(refused), "{refused}");
     }
+}
+
+#[trace("TC-233", "FR-322-AC-118")]
+#[test]
+fn tc_233_dimension_equivalence_node_is_a_self_typed_pair_of_dimension_keys() {
+    let fixture = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let vectors = fixture["vectors"]
+        .as_array()
+        .expect("node identity vectors are an array");
+    let equivalence = vectors
+        .iter()
+        .find(|vector| vector["name"].as_str() == Some("dimension-equivalence-rpc-flow-time"))
+        .expect("the equivalence vector exists");
+    assert!(dimension_equivalence_pairs_are_admissible(vectors));
+
+    let node_id = json!({"domain": "quire.checked-semantic-node/v1", "digest": equivalence["sha256"]});
+    let ids = equivalence["preimage"]["dimension_node_ids"].clone();
+    let node = json!({
+        "node_id": node_id,
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "scalar_type",
+        "semantic_form": "dimension_equivalence",
+        "semantic_type": node_id,
+        "dependencies": ids,
+        "occurrences": [{"role": "anchor", "ordinal": 0}],
+        "nominal_identity_preimage": equivalence["preimage"],
+        "body": {"term": "aggregate", "members": []}
+    });
+    let wire = schema_for_def(&parsed_fixture(SCHEMA), "ScalarTypeNode");
+    assert!(wire.is_valid(&node), "the wire schema admits the equivalence node");
+    let mut wire_declared = node.clone();
+    wire_declared["declaration"] = json!({"qualified_name": ["Time"]});
+    assert!(!wire.is_valid(&wire_declared), "a nameless node carries no declaration");
+    let mut wire_unpreimaged = node.clone();
+    wire_unpreimaged.as_object_mut().unwrap().remove("nominal_identity_preimage");
+    assert!(!wire.is_valid(&wire_unpreimaged), "the node carries its preimage");
+    assert!(nominal_node_cross_fields_are_valid(&node));
+    let mut typed_elsewhere = node.clone();
+    typed_elsewhere["semantic_type"] = ids[0].clone();
+    assert!(!nominal_node_cross_fields_are_valid(&typed_elsewhere));
+    let mut one_dependency = node.clone();
+    one_dependency["dependencies"] = json!([ids[0]]);
+    assert!(!nominal_node_cross_fields_are_valid(&one_dependency));
+    let mut declared = node.clone();
+    declared["declaration"] = json!({"qualified_name": ["Time"]});
+    assert!(!nominal_node_cross_fields_are_valid(&declared));
+
+    // A repeated pair is refused.
+    let mut repeated = vectors.to_vec();
+    repeated.push(equivalence.clone());
+    assert!(!dimension_equivalence_pairs_are_admissible(&repeated));
+
+    // Two derived dimensions are admissible only when their maps are equal under the
+    // base classes the base pairs make.
+    let base = |digest: &str| {
+        json!({"sha256": digest, "preimage": {"version": "quire.dimension-node/v1", "terms": []}})
+    };
+    let derived = |digest: &str, term: &str| {
+        json!({"sha256": digest, "preimage": {"version": "quire.dimension-node/v1", "terms": [
+            {"dimension_node_id": {"digest": term}, "exponent": "-1"}]}})
+    };
+    let pair = |digest: &str, left: &str, right: &str| {
+        json!({"sha256": digest, "preimage": {
+            "version": "quire.dimension-equivalence-node/v1",
+            "dimension_node_ids": [{"digest": left}, {"digest": right}]}})
+    };
+    let mut speeds = vec![
+        base("a1"),
+        base("b1"),
+        derived("a2", "a1"),
+        derived("b2", "b1"),
+        pair("e2", "a2", "b2"),
+    ];
+    assert!(
+        !dimension_equivalence_pairs_are_admissible(&speeds),
+        "derived dimensions over unrelated bases differ"
+    );
+    speeds.push(pair("e1", "a1", "b1"));
+    assert!(
+        dimension_equivalence_pairs_are_admissible(&speeds),
+        "the base pair makes the maps equal"
+    );
 }

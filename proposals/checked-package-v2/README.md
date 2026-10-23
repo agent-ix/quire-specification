@@ -9,7 +9,7 @@ structures, but any external consumer receives only the contract.
 
 - `schema.json` defines the closed `quire.checked-package/v2` wire shape.
 - `node-identity-preimage.schema.json` defines the closed RFC 8785 preimages for
-  complete-V1 enum, dimension and declared-unit node identities.
+  complete-V1 enum, dimension, dimension-equivalence and declared-unit node identities.
 - The closed `quire.checked-operation-catalog/v1` is not kept here. Its only copy is
   `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`,
   which the tests read through that crate. It holds
@@ -244,7 +244,12 @@ dimension keys. Cross-field joins are exact: an enum member's `semantic_type`
 and sole dependency equal its preimage declaration key and its enum literal
 body equals the preimage case; a dimension is self-typed and depends exactly on
 its term keys; a unit's `semantic_type` equals its dimension key and its
-dependencies are exactly that dimension plus its non-null target. Changing a
+dependencies are exactly that dimension plus its non-null target; a
+`scalar_type`/`dimension_equivalence` node (FR-142 "Dimension equivalence") is
+self-typed, carries no `declaration`, holds a `SourceOwner` and the keys of the
+two dimension nodes it relates, distinct and in ascending digest order, and
+depends on exactly those keys. Readers recompute the equivalence classes from
+these nodes, so no other member records one. Changing a
 body/type/dependency while retaining the nominal preimage therefore refuses.
 Runtime compound-unit values are evaluator-owned
 `quire.value.compound-unit/v1` identities defined with the complete-value

@@ -7,6 +7,7 @@
     {"$ref": "#/$defs/EnumMember"},
     {"$ref": "#/$defs/UnionMemberPreimage"},
     {"$ref": "#/$defs/Dimension"},
+    {"$ref": "#/$defs/DimensionEquivalence"},
     {"$ref": "#/$defs/Unit"},
     {"$ref": "#/$defs/ApplicationNode"},
     {"$ref": "#/$defs/ModelDeclarationNode"},
@@ -97,6 +98,7 @@
     "UnionMemberPreimage": {"type": "object", "required": ["version", "declaration_node_id", "member"], "properties": {"version": {"const": "quire.union-member-node/v1"}, "declaration_node_id": {"$ref": "#/$defs/NodeId"}, "member": {"$ref": "#/$defs/Identifier"}}, "additionalProperties": false},
     "EnumMember": {"type": "object", "required": ["version", "declaration_node_id", "case"], "properties": {"version": {"const": "quire.enum-member-node/v1"}, "declaration_node_id": {"$ref": "#/$defs/NodeId"}, "case": {"type": "string", "minLength": 1}}, "additionalProperties": false},
     "Dimension": {"type": "object", "required": ["version", "owner", "qualified_declaration", "terms"], "properties": {"version": {"const": "quire.dimension-node/v1"}, "owner": {"$ref": "#/$defs/Owner"}, "qualified_declaration": {"$ref": "#/$defs/QualifiedName"}, "terms": {"type": "array", "items": {"$ref": "#/$defs/DimensionTerm"}}}, "additionalProperties": false},
+    "DimensionEquivalence": {"type": "object", "required": ["version", "owner", "dimension_node_ids"], "properties": {"version": {"const": "quire.dimension-equivalence-node/v1"}, "owner": {"$ref": "#/$defs/SourceOwner"}, "dimension_node_ids": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/NodeId"}}}, "additionalProperties": false},
     "Unit": {"type": "object", "required": ["version", "owner", "qualified_declaration", "dimension_node_id", "target_unit_node_id", "scale", "offset"], "properties": {"version": {"const": "quire.unit-node/v1"}, "owner": {"$ref": "#/$defs/Owner"}, "qualified_declaration": {"$ref": "#/$defs/QualifiedName"}, "dimension_node_id": {"$ref": "#/$defs/NodeId"}, "target_unit_node_id": {"oneOf": [{"$ref": "#/$defs/NodeId"}, {"type": "null"}]}, "scale": {"$ref": "#/$defs/Rational"}, "offset": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}
   }
 }
