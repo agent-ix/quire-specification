@@ -65,15 +65,24 @@ below and `extraction` when the run's unit is an extracted Markdown clause
 body. Absent optional members are omitted, never `null`.
 
 The producer SHALL write `extraction` exactly when the clause run's unit is
-the body that QSL FR-030 extracted from an original Markdown document (QSL FR-031). It
-carries QSL FR-031's extraction record in QSL FR-267's closed encoding: the
-original document identity and digest, the body's native and formal
-identities, the authored clause binding, Quire's unchanged extraction
-outcome, the verified original-to-body map, and, for a refusal whose locus
-names a body span, the original-document regions that map gives for that
-span. QSL FR-031 owns its fields; this requirement adds none. The strict
-reader SHALL restore it without losing any member and SHALL refuse an
-`extraction` with an unknown, missing, duplicate or `null` member.
+the body that QSL FR-030 extracted from an original Markdown document (QSL
+FR-031). QSL FR-031 owns the meaning of the record it carries. `extraction`
+is a closed object with exactly these members, every string a JSON string
+and every offset an unsigned JSON integer:
+
+| Member | Value |
+| --- | --- |
+| `original` | closed object: `authority` and `identity`, the original document's identity labels; `path`, its authored path; `digest`, the raw-artifact digest of its bytes (FR-018) |
+| `body` | closed object: `authority` and `identity`, the body's native identity; `document`, its formal identity; `digest`, the raw-artifact digest of the extracted body's bytes |
+| `binding` | closed object: `clause`, the authored clause id (the Quire heading id); `package`, the authored package |
+| `outcome` | closed object: `availability`, `clauses`, `clause_text` and `diagnostics`, Quire's extraction outcome members in Quire's own encoding, unchanged; `clauses` is omitted when Quire reports no clause population |
+| `map` | closed object: `region`, the body's original region as `{start, end}` byte offsets; `segments`, a non-empty array of closed objects `{body_start, body_end, original_start, original_end}` in ascending `body_start` order |
+| `original_regions` | present exactly for a refusal whose locus names a body span: a non-empty array, in original-document order, of closed regions `{start, end}`, each endpoint a closed object `{byte, line, column}` |
+
+The strict reader SHALL restore it without losing any member and SHALL refuse
+an `extraction`, or a nested object of it, with an unknown, missing,
+duplicate or `null` member, with a value of another JSON type, or with an
+empty `segments` or `original_regions` array.
 
 `disposition` carries QSL FR-109's clause-run disposition without loss. Its
 `stage` and `category` are required; its applicable `truth` and refusal
@@ -201,7 +210,7 @@ each `trace-refused` variant and its payload included.
 | FR-352-AC-10 | Each of the ten `disposition.temporal` kinds is written at stage `evaluate` of a temporal selection with exactly its row's members, `category`, `truth`, `basis` and `outcome`, no top-level `witness` and no `refusal`, and reads back to an equal disposition; a `trace-refused` disposition with `variant` `empty-loop` and one with `variant` `tuple-arity`, `expected` 2 and `found` 1 each read back to the same variant and payload. | Test (TC-255) |
 | FR-352-AC-11 | A `pending` disposition reads with category `inconclusive`, no `truth` and `basis` `unsettled`; an `undefined` disposition reads with category `violation`, `truth` `false` and `basis` `closed-scope`; an `insufficient-data` disposition reads with `outcome` `{"kind": "undefined", "reason": "insufficient-data"}`; a `window-limit-reached` disposition reads with `outcome` `{"kind": "incomplete", "limit": "max_window_values"}`; the reason `insufficient-data` in an `undefined` disposition, the limit `max_window_values` in an `incomplete` disposition, and either on a non-temporal state clause run each refuse. | Test (TC-255) |
 | FR-352-AC-12 | Independently: a `temporal` on a stage `admit` disposition, on a non-temporal clause run, or beside a top-level `witness`, an `internal_fault` or a `refusal`; `kind` `held`; `variant` `empty-hoop`; a `violated` disposition without `counterexample`, with `position` `null`, or with an extra member; a `counterexample` whose `trace_position` differs from `position`; and a `pending` disposition with `basis` `unavailable` or with `truth` each refuse with a located wire diagnostic naming the member. | Test (TC-255) |
-| FR-352-AC-13 | A clause run over an extracted Markdown clause body (QSL FR-031) is written with an `extraction` member under QSL FR-267's encoding and reads back with every member equal; a clause run over a unit given as bytes carries no `extraction`. Independently, an `extraction` with an unknown member, with a missing member, and with a `null` member each refuse with a located wire diagnostic naming `extraction`. | Test |
+| FR-352-AC-13 | A clause run over an extracted Markdown clause body (QSL FR-031) is written with an `extraction` member under QSL FR-267's encoding and reads back with every member equal; a clause run over a unit given as bytes carries no `extraction`. Independently, an `extraction` with an unknown top-level member `source`, one with `map` missing, one with `binding` `null`, one whose `body.digest` is a number, and one whose `map.segments` is `[]` each refuse with a located wire diagnostic naming `extraction` and the member. | Test |
 
 ## Dependencies
 
@@ -217,8 +226,9 @@ each `trace-refused` variant and its payload included.
   replay/comparability need this wire serves.
 - QSL FR-115 owns the evaluated frame witness; QSL FR-267 owns its closed
   serialization inside the clause-run disposition.
-- QSL FR-031 owns the extraction record of an extracted clause run; QSL
-  FR-267 owns its closed serialization as the top-level `extraction` member.
+- QSL FR-031 owns the meaning of the extraction record of an extracted
+  clause run; this requirement fixes its member set and types, and QSL FR-267
+  writes and reads it as the top-level `extraction` member.
 - QSL FR-330 owns the temporal clause-run report, and QSL FR-267 the closed
   `disposition.temporal` encoding, its members and its `trace-refused`
   variants. [FR-364](../temporal/FR-364-replay-temporal-counterexamples.md)
