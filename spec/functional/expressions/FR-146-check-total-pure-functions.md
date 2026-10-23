@@ -206,8 +206,8 @@ guard facts and section 6 interval discharge, closed as follows. A producer
 admits nothing that these rules do not prove and refuses nothing that they do.
 
 A *stable path* is a parameter or `let` name, or `self` inside a
-`quire.model.complete/v1` invariant, precondition, postcondition or
-`operation-body` block, followed by zero or more field projections and proved
+`quire.model.complete/v1` invariant, state constraint (FR-382), precondition,
+postcondition or `operation-body` block, followed by zero or more field projections and proved
 `value(q)` steps. When discharging an FR-151 refinement obligation, a projection
 `self.f` onto a redefining field or the field it redefines has the declared
 facts of the redefined parent member being refined, not the redefining type. The facts are:
@@ -298,7 +298,15 @@ An FR-148 IEEE-to-`Rational[..]` conversion carries no body obligation. The
 FR-044 exception exempts it from static domain proof, and FR-148 decides it at
 evaluation: a NaN or infinite operand is undefined after `ieee.operands`, and a
 finite non-member is `refused { code: ieee_rational_out_of_domain, cause: outside-domain }`. Both are
-evaluation outcomes that propagate; neither refuses linking.
+evaluation outcomes that propagate; neither refuses linking. An FR-478
+text-to-number conversion likewise carries no body obligation. At evaluation,
+text that is not a number for its target is undefined. A number outside an
+integer, decimal or rational target is
+`refused { code: integer_out_of_domain | decimal_out_of_domain | rational_out_of_domain, cause: outside-domain }`.
+A decimal rounding step under strict `exact` is
+`refused { code: inexact_decimal, cause: nonzero-discarded-digit }`, and an
+IEEE rounding under strict `exact` is
+`refused { code: ieee_not_exact, cause: rounding-required }`.
 
 `deref(r)` is not a partial operation of a function body. It requires `r` to
 have type `Reference<T>`; an optional reference is first unwrapped with

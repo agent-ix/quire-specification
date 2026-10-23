@@ -345,7 +345,7 @@ boundary.
   `fairness` members are
   [FR-370](FR-370-checked-package-temporal-clause-body.md)'s,
   or for `quire.op.state.clause` the `{kind: "state_clause", clause}` member
-  naming the clause kind (`invariant`, `precondition` or `postcondition`,
+  naming the clause kind (`invariant`, `constraint`, `precondition` or `postcondition`,
   [FR-341](FR-341-checked-package-state-clause-body.md)). A state clause
   carries no law.
   An `operation` member's declaring node is a `model` node whose own
@@ -1811,7 +1811,7 @@ is declared `boolean`. An `expression` or `function` whose body root is the
 application has `semantic_type` equal to that `result_type`. A `literal` term's
 `type` must have a family its `value_kind` admits (`boolean`, `integer`,
 `rational`, `decimal`, `float32_bits`→`float32`, `float64_bits`→`float64`,
-`text`, `string`, `uuid`, `timestamp`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`). Any failure is
+`text`, `string`, `uuid`, `timestamp`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`, `reference`→`reference`). Any failure is
 `operator-ineligible`.
 
 The fit rule has one exception besides record conformance ("Record
@@ -1840,7 +1840,12 @@ with no normalization or case folding. `string` is not `text`: it has no text
 profile, so a `text_profile` law or mode on a `string` identity refuses at
 the law and mode steps of the reader order above, and a `string` operand of a
 `quire.op.text.*` identity pins no text profile and refuses
-`invalid_package`/`operation-mode-type-mismatch`. These families have no
+`invalid_package`/`operation-mode-type-mismatch`. `string` also has the six
+text-to-number conversions `quire.op.string.to_integer`, `to_decimal`,
+`to_rational`, `to_float32`, `to_float64` and `to_quantity`, catalogued as
+FR-478 states beside their `quire.op.text.to_*` counterparts; a
+text-to-number conversion is a `convert`, so its `rounding` mode, when its
+target has one, is pinned by the result type alone. These families have no
 ordering, no arithmetic and no other operation identity: an ordering or
 arithmetic identity over them refuses `ill_typed`/`operator-ineligible`
 (FR-149-AC-16 for UUID and Timestamp).
@@ -1884,6 +1889,17 @@ literal's `value`. The spelling is read after the literal's family check, so a l
 whose `type` is not its kind's family refuses `ill_typed`/`operator-ineligible`
 even when its value is also non-canonical.
 
+**Reference literal values.** A `reference` literal is a reference literal
+([FR-480](../../functional/type-model/FR-480-check-and-resolve-reference-literals.md)).
+Its `type` is the `composite_type`/`reference` node over a `model`/`object_type`
+declaration node, and its `value` is the object identity as lowercase
+hexadecimal, two digits per byte, at least one byte. A `value` with an
+uppercase digit, an odd number of digits, a non-hexadecimal character or no
+digit refuses `invalid_package`/`invalid-value` at the literal's `value`. A
+`reference` literal typed by a reference node over any other declaration kind
+refuses `ill_typed`/`operator-ineligible`. The literal carries no universe and
+no object type component: a subject binding fixes both (FR-480).
+
 | Constraint | Decision rule |
 | --- | --- |
 | `same_family` | The two named operands have equal families. |
@@ -1900,7 +1916,7 @@ even when its value is also non-canonical.
 | `exact_conversion` | FR-149 classifies operand 0's type to the member type as exact. |
 | `range_narrowing` | FR-149 classifies it as range narrowing: a checked obligation that the value lies in the target range (`unproved-range` when not proved), never rounding; `mode` is `null`. |
 | `rational_narrowing` | FR-149 classifies a rational-to-rational conversion as rational narrowing: a checked obligation that the reduced numerator and denominator lie in the target bounds (`unproved-range`); `mode` is `null`. |
-| `scale_reduction` | FR-149 classifies it as scale reduction to a decimal; this is the only conversion that rounds, and it requires a `rounding` mode. |
+| `scale_reduction` | FR-149 classifies it as scale reduction to a decimal; among exact-numeric conversions this is the only one that rounds, and it requires a `rounding` mode. An FR-478 `quire.op.text.to_decimal` or `quire.op.string.to_decimal` conversion also rounds, under its target's non-`exact` mode. |
 | `promotes_exact` | Every named operand is in `rational_promotable` and is promoted exactly to its rational value before the operation. |
 | `uniform_rest` | Every rest argument has the same family. |
 | `union_arms` | The rest arguments are exactly one arm per member of operand 0's union, in member declaration order, each with as many binders as that member's payload arity, each binder typed by its payload position ([FR-440](FR-440-checked-package-union-and-case-nodes.md)). |
@@ -2090,6 +2106,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 | FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
+| FR-322-AC-101 | A `literal` of `value_kind` `reference` typed by the `composite_type`/`reference` node over a `model`/`object_type` node, with `value` `7331`, is admitted with family `reference`, and both V2 schemas enumerate `reference` as a literal `value_kind`. The same literal with `value` `7G31`, `733`, `73A1` or empty text refuses `invalid_package`/`invalid-value` at `value`; typed by the reference node over a `model`/`process` node, or by an integer node, it refuses `ill_typed`/`operator-ineligible`. | Test (TC-965) |
 | FR-322-AC-114 | A `rational` literal typed by a `scalar_type`/`rational` node with value `0`, `1`, `-3`, `1/2` or `-7/2` is admitted with family `rational`, and one with value `2/2`, `1/1`, `02`, `+1`, `2/4`, `1/0`, `0/5`, `1/-2`, `2.5` or empty text refuses `invalid_package`/`invalid-value`. | Test (TC-233) |
 
 ## Dependencies
