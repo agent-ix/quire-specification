@@ -51,7 +51,11 @@ structures, but any external consumer receives only the contract.
   node, the continuous variables' `value`/`parameter` nodes, the term nodes
   and the claim's `temporal_clause` and formula nodes, each keyed by its own
   preimage, with the `-(2 * a)` term nodes of an identity case and eight
-  schema refusals (FR-481, TC-966). `node-identity-preimage.schema.json`
+  schema refusals, and as `restored_nodes` the `Braking2` model with two
+  initial entries and a reset relation, its `Slows` claim with an `each`
+  activation, a capture, hybrid fairness and a timed interval, and the
+  `model-steps` claim `Recent` reading `once` (FR-481, TC-966).
+  `node-identity-preimage.schema.json`
   defines the `HybridNode` preimage that keys each `hybrid` node.
 - `model-owner-form-vectors.json` supplies a domain package projection that
   also declares processes, state machines and a persistence interface, with

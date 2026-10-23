@@ -16575,3 +16575,128 @@ fn tc_966_malformed_hybrid_nodes_fail_the_published_schema() {
         assert!(!node_schema.is_valid(&node), "{name}: {}", case["why"]);
     }
 }
+
+#[trace("TC-966", "FR-481-AC-8", "FR-481-AC-9")]
+#[test]
+fn tc_966_restored_hybrid_forms_meet_the_schema_and_carry_their_own_keys() {
+    let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
+    let base = vectors["nodes"].as_array().expect("nodes");
+    let restored = vectors["restored_nodes"].as_array().expect("restored nodes");
+    let roles = &vectors["restored_roles"];
+    let all = base.iter().chain(restored).cloned().collect::<Vec<_>>();
+    let node_schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let preimage_schema = schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "HybridNode");
+    let ids = all
+        .iter()
+        .map(|node| node["node_id"]["digest"].as_str().expect("digest"))
+        .collect::<BTreeSet<_>>();
+    assert_eq!(ids.len(), all.len(), "every node id is unique");
+    for (index, node) in restored.iter().enumerate() {
+        assert!(node_schema.is_valid(node), "restored node {index} meets SemanticNode");
+        assert!(
+            hybrid_vector_key_is_current(node, &all),
+            "restored node {index} key is current"
+        );
+        if node["node_tag"] == "hybrid" {
+            let preimage = structural_node_preimage(node).expect("hybrid nodes are structural");
+            assert!(preimage_schema.is_valid(&preimage), "restored node {index} preimage");
+            assert_eq!(node["semantic_type"], node["node_id"], "restored node {index} is self-typed");
+            assert_eq!(node["dependencies"], json!(body_reference_targets(&node["body"])));
+        }
+    }
+    let at = |role: &Value| &restored[role.as_u64().expect("index") as usize];
+    let by_id = |id: &Value| all.iter().find(|node| node["node_id"] == *id).expect("node");
+    let model = at(&roles["model"]);
+    assert_eq!(model["declaration"], json!({"qualified_name": ["Braking2"]}));
+    let names = model["body"]["members"]
+        .as_array()
+        .expect("members")
+        .iter()
+        .map(|member| member["name"].clone())
+        .collect::<Vec<_>>();
+    assert_eq!(names, [json!("variables"), json!("modes"), json!("initial")]);
+    let initial = hybrid_binding(&model["body"], "initial")["members"]
+        .as_array()
+        .expect("initial entries");
+    let modes = initial
+        .iter()
+        .map(|entry| hybrid_binding(entry, "mode")["value"].clone())
+        .collect::<Vec<_>>();
+    assert_eq!(modes, [json!("0"), json!("1")], "two initial modes");
+    let first = by_id(&hybrid_binding(&initial[0], "condition")["target"]);
+    assert_eq!(first["body"]["operation"]["identity"], "quire.op.rational.eq");
+    // Braking keeps the default initial entry, so its model has no binding.
+    let braking = &base[vectors["roles"]["model"].as_u64().expect("model") as usize];
+    assert_eq!(braking["body"]["members"].as_array().expect("members").len(), 2);
+    let transition = at(&roles["transition"]);
+    let resets = hybrid_binding(&transition["body"], "resets")["members"]
+        .as_array()
+        .expect("resets");
+    assert_eq!(resets[0]["members"].as_array().expect("entry").len(), 2, "`=` has no relation");
+    assert_eq!(hybrid_binding(&resets[1], "relation")["value"], "ge");
+    // Slows: each activation, trigger at level 1, read at level 3, capture at level 6.
+    let slows = at(&roles["each_claim"]);
+    let arguments = &slows["body"]["arguments"];
+    assert_eq!(arguments[1]["value"], "model-time");
+    assert_eq!(hybrid_binding(&arguments[2], "kind")["value"], "each");
+    let trigger = at(&roles["trigger"]);
+    assert_eq!(hybrid_binding(&arguments[2], "trigger")["target"], trigger["node_id"]);
+    assert_eq!(trigger["semantic_type"], model["node_id"]);
+    assert_eq!(hybrid_binding(&trigger["body"], "level")["value"], "1");
+    let read = at(&roles["activation_read"]);
+    assert_eq!(hybrid_binding(&read["body"], "level")["value"], "3");
+    assert_eq!(hybrid_binding(&arguments[3], "v0")["target"], read["node_id"]);
+    let capture = at(&roles["capture"]);
+    assert_eq!(hybrid_binding(&capture["body"], "level")["value"], "6");
+    let fairness = by_id(&arguments[4]["members"][0]["target"]);
+    assert_eq!(fairness["node_id"], at(&roles["fairness"])["node_id"]);
+    let member = &fairness["body"]["operation"]["member"];
+    assert_eq!(member["declaration"], at(&roles["modes"][0])["node_id"]);
+    assert_eq!(member["name"], "Stopped");
+    let eventually = by_id(&arguments[5]["target"]);
+    assert_eq!(
+        eventually["body"]["operation"]["member"]["interval"]["upper"],
+        json!({"numerator": "21", "denominator": "2"})
+    );
+    let recent = at(&roles["steps_claim"]);
+    assert_eq!(recent["body"]["arguments"][1]["value"], "model-steps");
+    let once = by_id(&recent["body"]["arguments"][5]["target"]);
+    assert_eq!(once["body"]["operation"]["identity"], "quire.op.temporal.once");
+    assert_eq!(
+        once["body"]["operation"]["member"]["interval"],
+        json!({"lower": "0", "upper": "2"})
+    );
+}
+
+#[trace("TC-966", "FR-481-AC-11")]
+#[test]
+fn tc_966_restored_hybrid_shapes_meet_or_fail_the_published_schema() {
+    let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
+    let restored = vectors["restored_nodes"].as_array().expect("restored nodes");
+    let roles = &vectors["restored_roles"];
+    let node_schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let at = |role: &Value| restored[role.as_u64().expect("index") as usize].clone();
+    let mut empty_initial = at(&roles["model"]);
+    empty_initial["body"]["members"][2]["value"]["members"] = json!([]);
+    assert!(!node_schema.is_valid(&empty_initial), "an empty initial fails");
+    let mut no_condition = at(&roles["model"]);
+    no_condition["body"]["members"][2]["value"]["members"][0]["members"]
+        .as_array_mut()
+        .expect("entry")
+        .pop();
+    assert!(!node_schema.is_valid(&no_condition), "an entry without condition fails");
+    let mut approx = at(&roles["transition"]);
+    approx["body"]["members"][2]["value"]["members"][1]["members"][2]["value"]["value"] =
+        json!("approx");
+    assert!(!node_schema.is_valid(&approx), "an unknown relation fails");
+    let slows = at(&roles["each_claim"]);
+    let eventually_id = slows["body"]["arguments"][5]["target"].clone();
+    let mut open = restored
+        .iter()
+        .find(|node| node["node_id"] == eventually_id)
+        .expect("eventually")
+        .clone();
+    open["body"]["operation"]["member"]["interval"]["upper"] = Value::Null;
+    open["body"]["operation"]["member"]["interval"]["upper_end"] = json!("open");
+    assert!(node_schema.is_valid(&open), "a timed `[q, *]` meets the schema");
+}
