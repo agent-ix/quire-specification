@@ -23,6 +23,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-83
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-108
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-341
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-342
@@ -368,6 +370,10 @@ body changed, canonical order and `dependencies` kept, its node id kept and
 | NS-02 | two `scalar_type`/`unit` nodes of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | NS-03 | a `composite_type`/`record` and a `scalar_type`/`enum` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | SE-20 | literal of `value_kind` `uuid` typed by a `string` type with an uppercase value; literal of `value_kind` `timestamp` typed by an `integer` type with value `01` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-67 |
+| FB-01 | literal of `value_kind` `float32_bits` typed by a `float32` type, values `3f000000`, `00000000`, `80000000` and `7fc00000`; literal of `value_kind` `float64_bits` typed by a `float64` type, values `3fe0000000000000`, `0000000000000000`, `8000000000000000` and `7ff8000000000001` | Admitted with families `float32` and `float64` | FR-322-AC-108 |
+| FB-02 | literal of `value_kind` `float32_bits` with value `3F000000`, `0x3f000000`, `3f00000`, `3f0000000`, `0.5` or the JSON number `1056964608` | `invalid_package`/`invalid-value` | FR-322-AC-108 |
+| FB-03 | literal of `value_kind` `float64_bits` with value `3FE0000000000000`, `0x3fe0000000000000`, `3fe000000000000`, `3fe00000000000000`, `0.5` or the JSON number `4602678819172646912` | `invalid_package`/`invalid-value` | FR-322-AC-108 |
+| FB-04 | literal of `value_kind` `float32_bits` typed by a `float64` type with value `3F000000`; literal of `value_kind` `float64_bits` typed by a `string` type with value `0.5` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-108 |
 
 ### Structural node preimage vectors
 

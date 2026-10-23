@@ -1876,6 +1876,19 @@ only on the numerator (`3`, `-5`, `1/1000`; not `03`, `+3`, `2/4`, `3/1`, `2.5`)
 whose `type` is not its kind's family refuses `ill_typed`/`operator-ineligible`
 even when its value is also non-canonical.
 
+A `float32_bits` literal's `value` is the IEEE 754 binary32 bit pattern of its
+value and a `float64_bits` literal's `value` the binary64 bit pattern, each as a
+JSON string of lowercase ASCII hexadecimal digits with no `0x` prefix and no
+separators: 8 digits for `float32_bits` and 16 for `float64_bits`, the most
+significant octet first and leading zeros kept (`3f000000`, `00000000`;
+`3fe0000000000000`, `8000000000000000`). Every such string is a bit pattern, so
+the infinities, signed zeros and every NaN payload are distinct values with
+distinct spellings. A `value` in any other spelling (an uppercase digit, a `0x`
+prefix, 7 or 9 digits for `float32_bits`, 15 or 17 for `float64_bits`, a
+decimal numeral such as `0.5`, or a value that is not a JSON string) refuses
+`invalid_package`/`invalid-value` at the literal's `value`, after the family
+check as for every scalar literal.
+
 | Constraint | Decision rule |
 | --- | --- |
 | `same_family` | The two named operands have equal families. |
@@ -2082,6 +2095,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 | FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
+| FR-322-AC-108 | A literal of `value_kind` `float32_bits` typed by a `float32` type with `value` `3f000000`, `00000000`, `80000000` or `7fc00000` and a literal of `value_kind` `float64_bits` typed by a `float64` type with `value` `3fe0000000000000`, `0000000000000000`, `8000000000000000` or `7ff8000000000001` is admitted; a `float32_bits` literal with `value` `3F000000`, `0x3f000000`, `3f00000`, `3f0000000`, `0.5` or the JSON number `1056964608`, and a `float64_bits` literal with `value` `3FE0000000000000`, `0x3fe0000000000000`, `3fe000000000000`, `3fe00000000000000`, `0.5` or the JSON number `4602678819172646912`, each refuses `invalid_package`/`invalid-value` at the literal's `value`; a `float32_bits` literal typed by a `float64` type and a `float64_bits` literal typed by a `string` type refuse `ill_typed`/`operator-ineligible` even when the `value` is also non-canonical. The `value` of every `float32_bits` and `float64_bits` literal in `positive-operation-identities.json` is in this spelling. | Test (TC-233) |
 
 ## Dependencies
 
