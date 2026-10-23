@@ -66,14 +66,16 @@ request:
   `max_solver_steps` and `max_solver_time` ("SMT solver budgets" below),
   plus any resource budget another temporal requirement adds, each
   defaulting to the routed provider's published default when the request
-  omits it. `max_depth` is never a member of `limits`.
+  omits it. `max_depth` is never a member of `limits`;
+- `smt_encoding` — the SMT proof-query encoder's size limits ("SMT encoding
+  limits" below), present only when the caller sets one.
 
 The request identity and the item's obligation identity include `subject`,
 `item_kind` and `fairness`. Two items that differ in any of them are different
 obligations, and a verdict on one never settles the other.
 
-The request identity also includes `max_depth` and `limits`, except the
-wall-clock member `max_solver_time`. A different
+The request identity also includes `max_depth`, `limits`, except the
+wall-clock member `max_solver_time`, and `smt_encoding`. A different
 horizon or budget can produce a different result, so a result is reused only
 for a request with the same request identity, and a result produced under one
 `max_depth` or `limits` value is never reused for a request with another.
@@ -115,6 +117,41 @@ query of the item: a base, step, unrolling or search query.
   `bounds` (FR-331, FR-461). QSL's 100000000 steps and 60 seconds are the
   defaults of its own SMT settings (QSL FR-255); this requirement states no
   number. A provider that runs no solver reads neither member.
+- A record that a request reuses states the limit values of the run that
+  produced it. Two requests that differ only in `max_solver_time` share a
+  request identity, so a completed result reused for the second states the
+  first run's `max_solver_time`, never a value the second request set; a
+  reader compares the stated value with its own setting only to know which
+  budget bounded the producing run. A result that `max_solver_time` stopped
+  is never stored, so no reused record carries that stop.
+
+### SMT encoding limits
+
+An SMT backend that encodes its proof queries with QSL's encoder (QSL
+FR-315) bounds each query's size by the item's `smt_encoding`, a closed
+object whose members are `PositiveCount`s, each a limit under
+[FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md):
+
+| Member | Bounds | Setting |
+| --- | --- | --- |
+| `max_constants` | the `declare-const` commands of one query | `smt_encoding.max_constants` |
+| `max_applications` | the applications of one step | `smt_encoding.max_applications` |
+| `max_monitor_atoms` | the members of a monitor letter | `smt_encoding.max_monitor_atoms` |
+| `max_monitor_states` | the monitor states a tabulation reaches | `smt_encoding.max_monitor_states` |
+| `max_candidates` | the candidates of one expanded application | `smt_encoding.max_candidates` |
+| `max_script_bytes` | the bytes of one printed query | `smt_encoding.max_script_bytes` |
+
+- An absent `smt_encoding`, and an absent member, take the routed
+  provider's published default (its descriptor `bounds`); QSL FR-255
+  publishes QSL's. A present `smt_encoding` is never empty, and an unknown
+  member, a zero and a non-integer value refuse before consumption.
+- The values decide whether a query can be encoded at all, so they change
+  the result (`limit-reached` against a proof) and are part of the request
+  identity and the cache key ([FR-306](../tooling/FR-306-compile-and-cache-exactly.md)).
+- An encoder stop at a member settles FR-331 result `incomplete`,
+  `limit-reached{limit, value, setting}` naming the member, its value and
+  its setting (FR-363 "Undecided k-induction runs", rule 3). A provider
+  that does not use QSL's encoder reads no member.
 
 ### Extent
 
@@ -198,6 +235,7 @@ infinite-trace formula that no registered candidate decides.
 | FR-368-AC-9 | A registration holding both an unknown label and a repeated label reports `unknown-label`, naming the first unknown element in member order; a registration advertising only `value-validity` is admitted whatever its `fairness_kinds` holds, since the registry does not read it. | Test (TC-301) |
 | FR-368-AC-10 | A manifest descriptor on the wire whose temporal `fairness_kinds` is absent, not a list, holds an unknown label or repeats a label fails the FR-331 schema, and so does a `fairness_kinds` member on a descriptor advertising no `temporal-satisfaction`. | Test (TC-431) |
 | FR-368-AC-11 | A temporal item whose `limits` carry `max_solver_steps` 1000 and `max_solver_time` 5 is admitted, and its solver stops settle as FR-363-AC-11 states; two requests that differ only in `max_solver_time` have equal request identity and cache key bytes, two that differ only in `max_solver_steps` differ, and a result stopped by `max_solver_time` is stored by neither request; a `max_solver_time` of 1.5 on the wire, and either member at 0, is refused before consumption. | Test (TC-302) |
+| FR-368-AC-12 | A temporal item carrying `smt_encoding` `{max_constants: 7}` is admitted, and its encoder stop settles as FR-363-AC-11 states; two requests that differ only in `smt_encoding.max_constants` (7 and 8) have different request identities and cache keys, and a result recorded for one is not reused for the other; an empty `smt_encoding`, an unknown member, a `max_constants` of 0 and one of 1.5 are each refused before consumption. A completed result produced under `max_solver_time` 5 and reused for a request that sets 10 states 5. | Test (TC-302) |
 
 ## Dependencies
 

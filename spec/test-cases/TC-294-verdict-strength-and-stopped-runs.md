@@ -58,8 +58,9 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
     `temporal.limits.max_solver_steps` 1000; then one stopped at
     `max_solver_time` 5; then the step-budget stop while the caller's own
     deadline also ends the run; then the step-budget stop while the
-    backend's own wall clock also expires; then one whose encoder stops at
-    its `smt_encoding.max_constants` limit 7.
+    backend's own wall clock also expires; then one whose request carries
+    `smt_encoding` `{max_constants: 7}` (FR-368) and whose encoder stops at
+    that limit.
 
 ## Expected Results
 

@@ -34,7 +34,11 @@ omitted. Derive from `Q` a request whose `limits` add `max_solver_steps`
 `max_solver_time` (5 and 10) and two that differ only in `max_solver_steps`
 (1000 and 2000); settle a `max_solver_time` stop for one of them and offer
 the result to the cache. Submit the request with `max_solver_time` 1.5, with
-`max_solver_time` 0 and with `max_solver_steps` 0.
+`max_solver_time` 0 and with `max_solver_steps` 0. Reuse a completed result
+produced under `max_solver_time` 5 for the request that sets 10. Derive
+requests whose `smt_encoding` is `{max_constants: 7}` and `{max_constants:
+8}`, and submit `smt_encoding` empty, with an unknown member, with
+`max_constants` 0 and with `max_constants` 1.5.
 
 ## Expected Results
 
@@ -55,5 +59,10 @@ The request with the solver budgets is admitted. The two `max_solver_time`
 forms have equal request identity and cache key bytes, the two
 `max_solver_steps` forms different ones, and the `max_solver_time` stop is
 stored by neither request. The 1.5 and the two 0 values are refused before
-consumption (FR-368-AC-11; vectors `temporal-limits-solver-time-fractional`
-and `temporal-limits-solver-steps-zero`).
+consumption (FR-368-AC-11; vectors `temporal-limits-solver-time-fractional`,
+`temporal-limits-solver-time-zero` and `temporal-limits-solver-steps-zero`).
+The reused record states `max_solver_time` 5. The two `smt_encoding` forms
+have different request identities and cache keys and share no result; the
+empty object, the unknown member, the 0 and the 1.5 are refused before
+consumption (FR-368-AC-12; vectors `temporal-smt-encoding-empty`,
+`temporal-smt-encoding-unknown-member` and `temporal-smt-encoding-zero`).
