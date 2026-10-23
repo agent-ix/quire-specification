@@ -778,6 +778,7 @@
       "oneOf": [
         {"$ref": "#/$defs/CertificateRejected"},
         {"$ref": "#/$defs/SolverInconclusive"},
+        {"description": "FR-349: a cvc5/Z3 disagreement FR-349 settles inconclusive; primary and cross_check are each solver's result.", "properties": {"type": {"const": "cross-check-disagreement"}, "tool": {"$ref": "#/$defs/Nonempty"}, "primary": {"enum": ["proved", "refuted", "inconclusive"]}, "cross_check": {"enum": ["proved", "refuted", "inconclusive"]}}, "required": ["type", "tool", "primary", "cross_check"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["undecided-successor", "no-initial-state", "no-instance", "replay-parity", "replay-refused", "sufficient-test-failed", "lasso-not-concretized", "no-admitted-behaviour", "well-definedness-unchecked", "match-undetermined", "vacuous-match", "kani_vacuous_proof"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["bound-reached", "induction-not-closed"]}, "depth": {"$ref": "#/$defs/Count"}}, "required": ["type", "depth"], "additionalProperties": false},
         {"properties": {"type": {"const": "reduction-not-preserving"}, "reduction": {"enum": ["symmetry", "partial-order", "constraint"]}, "form": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "reduction", "form"], "additionalProperties": false},
@@ -827,14 +828,13 @@
     },
     "DeclinedCause": {"description": "FR-331 (defined): the typed refusal category of a declined Kani run (QSL ADR-013 O-16, QC-9; AD-016 kinds 3 to 5).", "type": "object", "required": ["type"], "properties": {"type": {"enum": ["refused", "invalid-input", "incomplete-input"]}}, "additionalProperties": false},
     "FailedCause": {
-      "description": "FR-331 (defined), FR-462, FR-305: the tool-failure cause and the wire defect that caused it.",
+      "description": "FR-331 (defined), FR-462, FR-305: the tool-failure cause and the wire defect that caused it; the two byte-limit defects also carry limit, the configured maximum in bytes, and value, the byte count that crossed it.",
       "type": "object",
       "required": ["type", "defect"],
-      "properties": {
-        "type": {"const": "tool-failure"},
-        "defect": {"enum": ["crash", "nonzero-exit", "malformed-frame", "noncanonical-frame", "frame-length", "total-bytes", "unknown-protocol", "unknown-frame-kind", "envelope-member", "unknown-request-id", "malformed-body", "unrouted-item", "unadvertised-kind", "missing-terminal-record"]}
-      },
-      "additionalProperties": false
+      "oneOf": [
+        {"properties": {"type": {"const": "tool-failure"}, "defect": {"enum": ["crash", "nonzero-exit", "malformed-frame", "noncanonical-frame", "unknown-protocol", "unknown-frame-kind", "envelope-member", "unknown-request-id", "malformed-body", "unrouted-item", "unadvertised-kind", "missing-terminal-record"]}}, "required": ["type", "defect"], "additionalProperties": false},
+        {"properties": {"type": {"const": "tool-failure"}, "defect": {"enum": ["frame-length", "total-bytes"]}, "limit": {"$ref": "#/$defs/Count"}, "value": {"$ref": "#/$defs/Count"}}, "required": ["type", "defect", "limit", "value"], "additionalProperties": false}
+      ]
     },
     "ResultValue": {"description": "FR-331: the closed result vocabulary.", "enum": ["proved", "refuted", "tested", "measured", "inconclusive", "unsupported", "declined", "incomplete", "failed"]},
 
@@ -997,6 +997,7 @@
         "result": {"$ref": "#/$defs/ResultValue"},
         "basis": {"$ref": "#/$defs/ProofBasis"},
         "certification": {"description": "FR-331 Certification: who stands behind a proved result.", "enum": ["certified", "uncertified", "trusted"]},
+        "cross_check": {"description": "FR-331, FR-349, FR-354: the SMT backend's Z3 cross-check, recorded beside certification on a proved result when it ran; verdict is the result the cross-check alone settles.", "type": "object", "required": ["tool", "verdict"], "properties": {"tool": {"$ref": "#/$defs/Nonempty"}, "verdict": {"enum": ["proved", "refuted", "inconclusive"]}}, "additionalProperties": false},
         "cause": {"type": "object", "required": ["type"]},
         "diagnostic": {"$ref": "#/$defs/DiagnosticCause"},
         "certificate": {"oneOf": [{"$ref": "#/$defs/ProbabilityCertificate"}, {"$ref": "#/$defs/ZoneCertificate"}]},
@@ -1005,7 +1006,10 @@
         "counterexample": {"description": "the zero-based position of the item's entry in counterexamples", "$ref": "#/$defs/Count"}
       },
       "allOf": [
-        {"if": {"properties": {"result": {"const": "proved"}}}, "then": {"required": ["basis", "certification"], "properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false}}, "else": {"properties": {"basis": false, "certification": false, "certificate": false}}},
+        {"if": {"properties": {"result": {"const": "proved"}}}, "then": {"required": ["basis", "certification"], "properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false}}, "else": {"properties": {"basis": false, "certification": false, "certificate": false, "cross_check": false}}},
+        {"description": "FR-331, FR-349: cross_check belongs to an SMT proof (basis bounded-complete or inductive), never to a trusted plugin proof.", "if": {"required": ["certification"], "properties": {"certification": {"const": "trusted"}}}, "then": {"properties": {"cross_check": false}}},
+        {"if": {"required": ["basis"], "properties": {"basis": {"properties": {"type": {"not": {"enum": ["bounded-complete", "inductive"]}}}, "required": ["type"]}}}, "then": {"properties": {"cross_check": false}}},
+        {"description": "FR-349: a disagreeing cross-check over an uncertified proof settles inconclusive, so an uncertified proof carries verdict proved only.", "if": {"required": ["certification"], "properties": {"certification": {"const": "uncertified"}}}, "then": {"properties": {"cross_check": {"properties": {"verdict": {"const": "proved"}}}}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["exact-value", "value-bounds"]}}}}, "required": ["basis"]}, "then": {"required": ["certificate"], "properties": {"certificate": {"$ref": "#/$defs/ProbabilityCertificate"}}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"const": "zone-certified"}}}}, "required": ["basis"]}, "then": {"required": ["certificate"], "properties": {"certificate": {"$ref": "#/$defs/ZoneCertificate"}}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"const": "closed-form"}}}}, "required": ["basis"]}, "then": {"required": ["evidence"]}},
