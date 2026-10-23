@@ -69,13 +69,19 @@ any other write refuses with `invalid_timed_model`/`clock-write`.
 ### Clock places
 
 A type is **clock-bearing** when it is `Clock`, an alias of a clock-bearing
-type, `Option` of one, or a record, tuple or union with a field, element or
-case payload of a clock-bearing type. A value of a clock-bearing type is not a
+type, `Option` of one, a `Set`, `Bag`, `Sequence`, `OrderedSet` or `Map` whose
+element (for a map, value) type is clock-bearing, or a record, tuple or union
+with a field, element or case payload of a clock-bearing type. A member of a
+clock-bearing type whose multiplicity is not `[1, 1]` is the collection of that
+type that FR-322 gives the multiplicity. A value of a clock-bearing type is not a
 data value: it denotes **clock places**, the clocks it contains, and a place
-is the pair of an object of a universe and the path of fields, tuple indexes
-and union cases from the object's field to a `Clock`. The clocks of a timed
-model are exactly the places of its objects, so their number is fixed by the
-universe and the declared types and no state changes it.
+is the pair of an object of a universe and the path of fields, tuple indexes,
+union cases and collection slots (below) from the object's field to a `Clock`.
+The clocks of a timed
+model are exactly the places of its objects. A place outside every collection
+exists in every state, so a model with no clock collection has a number of
+clocks fixed by the universe and the declared types; the places of a clock
+collection are live only while the collection holds the element (below).
 
 - A place under an `Option` or `?` field or a union case is **guarded**: it is
   present at a discrete state exactly when the value on its path holds that
@@ -85,6 +91,18 @@ universe and the declared types and no state changes it.
   carries FR-146's presence obligation: a `value(p)` without `present(p)`
   established by the guard or by the time invariant's predicate refuses
   `undefined_expression`/`unproved-presence` at the read.
+- A place under several guards (an `Option<Timer>` field, a `Sequence` slot of
+  `Option<Clock>`, a union case of an optional field) is present exactly when
+  every guard on its path holds, and `value(p)` carries the conjunction of
+  those presence tests as its obligation. `Option<Clock>` is a type like any
+  other clock-bearing type: a field, parameter, result, record or tuple
+  component, union payload, alias target and collection element may be
+  `Option<Clock>`. An operation with an `Option<Clock>` parameter has one
+  instance for each guarded place of its range, the instance reads `value(c)`
+  under the obligation of its place, and a reset of `c` to a constant makes
+  the place present. A function whose result is `Option<Clock>` returns the
+  guarded place its body names and `absent` where its body gives `absent`,
+  whose place is inactive.
 - Every present clock is 0 in every initial state. A guarded clock that becomes
   present takes the constant its write gives it (below), and one that becomes
   absent is dropped: only present clocks advance with time.
@@ -125,13 +143,105 @@ universe and the declared types and no state changes it.
   postcondition resets the parameter, it ranges over the places of the clock
   fields the operation's frame names; a reset of a clock the frame does not
   name refuses `invalid_timed_model`/`clock-write`.
-- A collection (a `Set`, `Bag`, `Sequence`, `OrderedSet`, a map or a field of
-  multiplicity other than `[1, 1]`) of a clock-bearing type refuses
-  `invalid_timed_model`/`clock-in-collection`, because the number of clocks
-  would vary with the state.
 - A clock place under `time tick` or in an untimed model refuses
   `invalid_timed_model`/`clock-without-dense-time` at the object field that
   holds it.
+
+### Clock collections
+
+A **clock collection** is a `Set`, `Bag`, `Sequence`, `OrderedSet` or `Map` of a
+clock-bearing element or value type, and a field, parameter or result of
+clock-bearing type whose multiplicity is not `[1, 1]` (FR-322 gives it
+`Set`, `Bag`, `Sequence` or `OrderedSet` with the multiplicity's bounds). A
+clock collection is admitted in every position a collection of its element type
+is admitted, with its clock rules below, including `Option` of a clock
+collection, a collection of `Option<Clock>`, a collection of collections and a
+record or union that holds one. A clock-bearing `Map` key refuses
+`ill_typed`/`operator-ineligible`, because a key is an immutable lookup value
+and a clock advances with time.
+
+- **Element places.** An element of a clock collection has one place for each
+  clock its element type contains. The place's path has a **slot** step: the
+  element's zero-based position in the collection's iteration order, which is
+  occurrence order for a `Sequence` and an `OrderedSet`, ascending key for a
+  `Map`, and ascending canonical key of the element's data part (FR-144) for a
+  `Set` and a `Bag`, copies of one data part in the order they were created.
+  The **data part** of a clock-bearing value is the value with every clock
+  component removed.
+- **Uniqueness.** A `Set`, `OrderedSet` or `Bag` of a clock-bearing element
+  type decides uniqueness and multiplicity by equality of data parts, so
+  `Set<Clock>` has at most one element, `Bag<Clock>` one element for each
+  occurrence and `Set<Timer>` one `Timer` for each distinct `n`. A clock
+  collection admits no `=` or `!=`, which would read its clocks: both refuse
+  `invalid_timed_model`/`clock-read-outside-constraint`, and the data parts of
+  its elements are read through the elements.
+- **Liveness.** An element place is a guarded place whose presence test is the
+  collection holding the slot: `slot < size` for an ordered kind, a `Set` or a
+  `Bag`, and the key being in the domain for a `Map`. A live place has a clock
+  value and an inactive place has none: it is unconstrained and takes no part
+  in any guard, invariant or delay. The live places of a state are determined
+  by its discrete state.
+- **Time progression.** A delay advances every live clock by the delay, the
+  clocks of element places included.
+- **Creation.** A collection value written by a postcondition holds, for each
+  occurrence, either an element that comes from a collection of the pre-state
+  (named by the expression: the collection itself, an element bound by a
+  traversal, and the results of `filter`, `flatten`, `convert`, concatenation,
+  slicing and reordering applied to those) or an element built by a literal.
+  An element from the pre-state **carries** its clocks and their values to the
+  slot it takes in the result, so inserting, removing or reordering other
+  elements moves a clock and does not reset it. An element built by a literal is
+  **fresh**: its clock components are exact non-negative rational constants and
+  its places are live with those constants at insertion. A map entry written
+  `self.m[k] = literal` is fresh, and `self.m[k]` for a key already present
+  replaces the entry. An element whose clock component is neither carried nor a
+  constant refuses `invalid_timed_model`/`clock-write` at the element.
+- **Coalescing.** When two occurrences of a `Set`, `OrderedSet` or `Map` result
+  are equal by data part (or by key), the result holds the first occurrence in
+  the order the expression visits them (FR-145: source order, outer before
+  inner, left operand before right), with that occurrence's clocks.
+- **Removal.** An element the written value does not hold has no slot in the
+  result; its places are inactive and their values are dropped.
+- **Reset by selection.** A postcondition conjunct resets element places by a
+  selection: `p[i].x = c` or `p[k].x = c` resets the place of the element at
+  index `i` or key `k` (a data term evaluated in the pre-state, with the
+  collection's index or key obligation: an `i` or `k` with no element refuses
+  `undefined_expression`/`unproved-presence` at the selector when the
+  precondition does not establish it), and `forall(e in p: P(e) implies e.x = c)`
+  resets the place of every live element whose data part satisfies the data
+  predicate `P` (with `P` absent, every live element). The selected collection field is named by the operation's
+  frame, and an element place not selected keeps its value.
+- **Reading.** A guard, a time invariant body and a clock-reading declaration
+  read element places by the same selectors and by `forall(e in p: B)`
+  and `exists(e in p: B)`, `B` a Boolean combination of atomic clock
+  constraints over `e`'s places and data predicates over its data part.
+  `forall` is the conjunction of `B` over the live elements and is true when
+  there are none; `exists` is the disjunction over them and is false when there
+  are none. Each live slot contributes the data predicate "the collection holds
+  the slot" to the convex part it appears in, and the data predicates of `B`
+  that read only `e`'s data part are evaluated at that slot's element. A time
+  invariant body `forall(e in p: e.x <= c)` bounds each live place of `p` only while it is live.
+  A query that turns clock values into data (`count`, `fold`, `reduce`, `sum`,
+  `map` or `filter` over a clock constraint) reads the clocks as values and
+  refuses `invalid_timed_model`/`clock-read-outside-constraint`.
+- **Cardinality bound.** The number of live places of a state is its element
+  places' collection sizes times the clocks each element holds, and the clock
+  dimension of a model is bounded by the sum, over its clock collections, of the
+  declared maximum cardinality (FR-144's bound `K<T>[a, b]`, a field's
+  multiplicity upper bound) times the clocks each element holds, taken over the
+  universe's objects. A clock collection with no declared maximum has no static
+  bound: its live places in a state are still the collection's size, and an
+  analysis that reaches a state whose live clocks exceed the model checker's
+  `max_clocks` limit (setting `model_check.max_clocks`, default 1024) stops
+  `incomplete` and names that limit, its value and its setting (FR-461).
+
+A timed state over clock collections is `(s, v)` with `s` the discrete state,
+whose live places it determines, and `v` the valuation of exactly those places.
+A step from `(s, v)` to `(s', v')` has `v'` defined on the live places of `s'`:
+a carried place takes the value of its source place, a fresh place the constant
+of its write, a reset place its constant, and every other live place of `s'` that
+`s` also made live at the same path and slot keeps its value. FR-181 states how
+the explored state and a timed trace step name these places.
 
 ### Clock constraints and guards
 
@@ -182,7 +292,12 @@ its value and the request setting that raises it.
 | FR-415-AC-5 | `urgent when P` is admitted; `urgent O` is admitted only when `O`'s guard reads no clock. | Test (TC-367) |
 | FR-415-AC-6 | A record `Timer { x: Clock, n: Int }` held by object field `t`, a `Clock` parameter, a `Clock` result and `type Alias = Clock` each admit the clock rules of the sections above: `t.x`, the argument of a call and the result of a call are read only in atomic clock constraints and reset only by a postcondition reset, `Alias` is `Clock`, and a model with `k` objects and the record field `t` has `k` clocks `t.x`. Reading `t` whole (`self.u = self.t`) refuses `clock-read-outside-constraint`; a record literal with a clock component outside a reset refuses `clock-write`. | Test (TC-367) |
 | FR-415-AC-7 | A field `w: Option<Clock>` is a guarded place: it is absent in an initial state whose `w` is absent, `self.w = 0 ms` makes it present with clock 0, writing `absent` drops it, the guard `present(self.w) and value(self.w) >= 1 ms` is false while `w` is absent, the time invariant `when present(self.w) { value(self.w) <= 3 ms }` places no bound while `w` is absent, and `value(self.w) >= 1 ms` with no `present(self.w)` refuses `undefined_expression`/`unproved-presence`. | Test (TC-367) |
-| FR-415-AC-8 | Each refuses with its cause: a `Set<Clock>` field and a `Sequence<Timer>` field (`clock-in-collection`); an operation that resets its `Clock` parameter with a frame naming no clock field (`clock-write`); a clock-reading predicate with a bound parameter called with a non-constant argument (`clock-bound-not-constant`); a call to a clock-reading predicate in an `invariant` clause (`clock-read-outside-constraint`); a clock-bearing field under `time tick` (`clock-without-dense-time`). | Test (TC-367) |
+| FR-415-AC-8 | Each refuses with its cause: an operation that resets its `Clock` parameter with a frame naming no clock field (`clock-write`); a clock-reading predicate with a bound parameter called with a non-constant argument (`clock-bound-not-constant`); a call to a clock-reading predicate in an `invariant` clause (`clock-read-outside-constraint`); a clock-bearing field under `time tick` (`clock-without-dense-time`). | Test (TC-367) |
+| FR-415-AC-10 | `Set<Clock>`, `Sequence<Timer>`, `Bag<Clock>`, `OrderedSet<Timer>`, `Map<Text, Timer>`, `Option<Sequence<Clock>>`, `Sequence<Option<Clock>>`, `Sequence<Sequence<Clock>>` and a field `ts: Timer` with multiplicity `[0, 3]` are admitted; the places of a three-element `Sequence<Timer>` held by one object are `ts.0.x`, `ts.1.x` and `ts.2.x`, live exactly while the sequence holds that slot; `Set<Clock>` holds at most one element and `Bag<Clock>` one element for each occurrence; a `Map<Timer, Int>` key refuses `ill_typed`/`operator-ineligible`; `self.a = self.b` and `self.a != self.b` over clock collections refuse `clock-read-outside-constraint`. | Test (TC-367) |
+| FR-415-AC-11 | Over a delay of `d`, every live place of a clock collection advances by `d` and an inactive place stays unconstrained. A postcondition `self.ts = sequence[Timer { x: 0 ms, n: 1 }]` makes slot 0 live at 0; `self.ts = filter(e in self.ts: e.n > 1)` drops the places of the removed elements and moves the survivors' clocks to their new slots with their values; `self.ts = flatten(sequence[sequence[Timer { x: 0 ms, n: 9 }], self.ts])` makes a fresh slot 0 at 0 and moves the old slot `j` to `j + 1` with its value; `self.ts = set[Timer { x: 0 ms, n: 1 }, Timer { x: 5 ms, n: 1 }]` holds one element, with the first occurrence's clock `0`; an element with a clock that is neither carried nor a constant refuses `clock-write`. | Test (TC-367) |
+| FR-415-AC-12 | `self.ts[i].x = 0 ms` resets the place of slot `i`, and refuses `undefined_expression`/`unproved-presence` at `i` when the precondition does not establish `i < size(self.ts)`; `self.m[k].x = 0 ms` resets by key; `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)` resets exactly the live places whose `n > 1` and leaves the others; the guard `forall(e in self.ts: e.x <= 3 ms)` is true on the empty sequence and, on `k` elements, the conjunction of `x <= 3` over the `k` live places; `exists(e in self.ts: e.n = 2 and e.x >= 1 ms)` is false on a sequence with no `n = 2` and otherwise the disjunction over those places; `forall(e in self.ts: e.x <= 3 ms)` as a time invariant body bounds each live place only while live; `count<Int>(e in self.ts: e.x >= 1 ms)` refuses `clock-read-outside-constraint`. | Test (TC-367) |
+| FR-415-AC-13 | A clock collection with declared maximum `3` and two clocks per element adds six to the model's clock dimension for each object that holds it, with no bound beyond the declared maximum; a clock collection with no declared maximum reaches a state whose live clocks exceed `model_check.max_clocks` and the analysis settles `incomplete` naming `max_clocks`, its value and `model_check.max_clocks`. | Test (TC-367) |
+| FR-415-AC-14 | With `o: Option<Timer>` (`Timer { x: Clock; n: Int }`), `present(self.o) and value(self.o).x >= 1 ms` is a guard on the place `o.x`, and `value(self.o).x >= 1 ms` alone refuses `undefined_expression`/`unproved-presence`; `self.o = Timer { x: 0 ms, n: 1 }` makes `o.x` present at 0 and `self.o = absent` drops it; a `Sequence<Option<Clock>>` slot `j` is present only while the sequence holds slot `j` and the element is present, and `value(self.q[j])` without both tests refuses `unproved-presence`; an operation `arm(c: Option<Clock>)` with `c = 0 ms` has one instance for each guarded place, each making its place present; a function `maybe(o: Timer): Option<Clock>` whose body is `o.x` is a place expression and whose body `absent` is an inactive place. | Test (TC-367) |
 
 ## Dependencies
 

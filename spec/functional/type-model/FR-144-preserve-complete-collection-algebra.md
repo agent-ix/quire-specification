@@ -108,6 +108,18 @@ type that contains `Float32` or `Float64`, or an event type (FR-149), at any dep
 collection type is `refused { code: ill_typed, cause: operator-ineligible }`.
 `Sequence<T>` admits every complete-V1 element type.
 
+An element type that is clock-bearing (FR-415 "Clock places") admits no FR-149
+`=`, because equality would read its clocks. A `Set`, `Bag` or `OrderedSet` of a
+clock-bearing element type is admitted all the same: uniqueness and
+multiplicity are decided by equality of the elements' data parts (the values
+with every clock component removed), which must admit `=`, and the canonical
+key of an element is the key of its data part. `Set<Clock>` therefore holds at
+most one element and `Bag<Clock>` one element for each occurrence. Collection
+equality, `contains` and `convert` that compare elements as values refuse
+`invalid_timed_model`/`clock-read-outside-constraint` over such a collection.
+A `Map` key type that is clock-bearing is `refused { code: ill_typed, cause:
+operator-ineligible }`.
+
 Every type that admits FR-149 `=` has a total canonical key, exactly as
 follows. Keys are compared as written, and two values have equal keys exactly
 when they are FR-149 equal.
@@ -312,6 +324,7 @@ FR-146 and FR-307; otherwise it is
 | FR-144-AC-20 | A supplied collection's elements are all read before any duplicate is decided: a `Set<Integer>[0,3]` supplied with elements `1`, `1` and an invalid integer is `invalid-value` at the invalid element's path, not `duplicate-member`. | Test (TC-189) |
 | FR-144-AC-21 | A producer writes each set or bag element in its canonical encoding before ordering by encoded bytes, and a reader accepts non-canonical encodings, normalizes them and decides duplicates by FR-149 equality: a `Bag<Decimal>` supplied `1.0` and `1.00` is one member of multiplicity 2 written as two identical canonical elements, and a `Set<Decimal>` supplied `1.0` and `1.00` is `duplicate-member`. | Test (TC-189) |
 | FR-144-AC-22 | A supplied collection of `string` is `unknown_required_feature`/`unsupported-feature` naming the element type, never `wrong-value-kind` or `invalid-value`, while the same type constructed by `set[...]` is unchanged. A supplied `Set<UUID>` of `{"type":"uuid","value":"00112233-4455-6677-8899-aabbccddeeff"}` and `Set<Timestamp>` of `{"type":"timestamp","nanoseconds":"0"}` and `{"type":"timestamp","nanoseconds":"1"}` are admitted; an element `{"type":"uuid","value":"00112233-4455-6677-8899-AABBCCDDEEFF"}`, `{"type":"timestamp","nanoseconds":"01"}` or `{"type":"timestamp","nanoseconds":"170141183460469231731687303715884105728"}` (2^127, outside the signed 128-bit domain) is `invalid_runtime_input`/`invalid-value`, while `{"type":"timestamp","nanoseconds":"170141183460469231731687303715884105727"}` is admitted. | Test (TC-189) |
+| FR-144-AC-26 | `Set<Timer>` over `record Timer { x: Clock; n: Int }` is admitted and holds one element for each distinct `n`; `Set<Clock>` holds at most one element; `Bag<Clock>` holds one element for each occurrence; `OrderedSet<Timer>` keeps the first occurrence of each `n`; the canonical key of a `Timer` element is the key of its `n`; `Set<Float64>` still refuses `ill_typed`/`operator-ineligible`; `=` between two `Set<Timer>` values refuses `invalid_timed_model`/`clock-read-outside-constraint`; `Map<Timer, Int>` refuses `ill_typed`/`operator-ineligible`. | Test (TC-367) |
 
 ## Dependencies
 
