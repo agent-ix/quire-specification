@@ -45,6 +45,10 @@ the model state's value of each shared location. The state key's `memory`
 member maps `{"type":"store-buffer","thread":<thread path>}` to
 `{"type":"sequence","elements":[{"location":<location>,"value":<encoded>}, ...]}`,
 oldest first, with an entry for each live thread of the weak `parallel`.
+When the subject has a shared location with a non-atomic access, each element
+also has the member `race`, the race map of the buffered store, and the
+`memory` member also holds the race summary and the `race-summaries` and
+`race-memory` entries ([FR-438](FR-438-report-data-races.md)).
 
 ### Rules
 

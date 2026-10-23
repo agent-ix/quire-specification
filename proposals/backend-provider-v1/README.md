@@ -46,6 +46,13 @@ One envelope has three stages, each a closed object carrying
 A request's `manifest` is the registry snapshot its candidates are checked
 against (FR-290).
 
+Every descriptor carries `tool` (FR-331 "Backend tool"), a `{name, version}`
+object: the executable a backend that fronts an external tool invokes, or the
+crate that implements a pure in-process engine, with `build`, the
+`quire.build-inputs/v1` digest record of the provider code's build inputs,
+which that code's own build computes. A registry snapshot carries each
+descriptor as its provider gave it.
+
 ## Package bytes
 
 `request.package` is the RFC 8785 byte string of the

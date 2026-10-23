@@ -106,5 +106,4 @@ FR-284's closed scope-progress-and-closure vocabulary.
 
 ## Status
 
-Accepted complete-V1 global-closure contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 global-closure contract.
