@@ -39,6 +39,7 @@ closed under filtering. Flatten defines source/element kind combinations and
 combines occurrence order/multiplicity without implicit deduplication. Fold and
 reduce over a set or bag admit only the closed step catalog below, fold takes
 its declared identity and reduce has no empty value. Conversions that lose order or duplicates report that loss.
+`dropFirst` and `removeOne` shrink a collection by exactly one occurrence.
 
 ## Operation matrix
 
@@ -48,6 +49,8 @@ its declared identity and reduce has no empty value. Conversions that lose order
 | `filter` | Preserve surviving occurrence order and multiplicity. | Preserve the set of surviving values. | Preserve the multiplicity of surviving values. | Preserve the order of surviving first occurrences. |
 | `flatten` | Concatenate nested semantic occurrences in outer then inner order. | Union nested values. | Sum nested multiplicities. | Preserve first occurrence while traversing outer then inner order. |
 | `count` | Count occurrences whose predicate is true. | Count members whose predicate is true, so each value contributes zero or one. | Evaluate the predicate once per occurrence and count true occurrences, so each value contributes zero or its multiplicity. | Count members whose predicate is true, so each value contributes zero or one. |
+| `dropFirst` | Drop the first occurrence and keep the rest in order. | Not admitted: a set has no first occurrence. | Not admitted: a bag has no first occurrence. | Drop the first member and keep the rest in order. |
+| `removeOne` | Drop the first occurrence equal to the value, if any, and keep the rest in order. | Drop the member equal to the value, if any. | Reduce the multiplicity of the member equal to the value by one, dropping the member at zero. | Drop the member equal to the value, if any, and keep the rest in order. |
 | `fold` | Traverse occurrence order from the declared identity. | Require a commutative and associative function. | Require a commutative and associative function and apply it once per occurrence. | Traverse declared order from the declared identity. |
 | `reduce` | Traverse occurrence order; empty input is undefined. | Require a commutative and associative function; empty input is undefined. | Require a commutative and associative function and apply it once per occurrence; empty input is undefined. | Traverse declared order; empty input is undefined. |
 
@@ -62,7 +65,7 @@ that is refused statically and where it is a located undefined outcome.
 ## Forms, result types and bounds
 
 The source forms are the grammar's `map`, `collect`, `filter`, `flatMap`,
-`flatten`, `fold<A>(acc, x in c: step, identity: i)`,
+`flatten`, `dropFirst(c)`, `removeOne(c, v)`, `fold<A>(acc, x in c: step, identity: i)`,
 `reduce<A>(acc, x in c: step)`, `forall`, `exists`, `count<N>`, `sum<N>`,
 `size`, `contains` and `convert<K<T>[min,max]>(c)`. A binder is evaluated once
 per visited occurrence. Sequences and ordered sets are visited in occurrence
@@ -73,7 +76,15 @@ once each) and stops at the first equal member, matching the
 [state contract](../../../proposals/quire-v1/state-contract.md)'s
 first-equality stop; an empty `c` is false. `size`
 returns the FR-144 bound count, and `count<N>` and `sum<N>` keep the
-`state-contract` result-domain rules for every kind. A `sum` over a set or bag
+`state-contract` result-domain rules for every kind. `dropFirst(c)` and
+`removeOne(c, v)` are total: `dropFirst` of an empty collection is the empty
+collection, and `removeOne` of a `c` that holds no member equal to `v` is `c`.
+`removeOne` compares `v` with the members under the same FR-144 membership
+relation as `contains` (bit identity for a float leaf), so a `v` equal to a
+member under that relation is exactly one that `contains(c, v)` finds; it
+removes one occurrence, where `filter` removes every occurrence. `size` of the
+result is `size(c) - 1` when `c` has an occurrence to drop (`size(c) >= 1` for
+`dropFirst`, `contains(c, v)` for `removeOne`) and `size(c)` otherwise. A `sum` over a set or bag
 must prove that every accumulated prefix lies inside the domain for every visit
 order, not only for the canonical order.
 
@@ -98,7 +109,15 @@ at that summand or addition; it makes no later charge and exposes no total.
 
 The static result type is derived from source `K<T>[a,b]`, as follows. `map`
 and `collect` over a sequence or bag return `[a,b]`, and over a set or ordered
-set return `[min(a,1),b]`. `filter` returns `[0,b]`. For `flatten` of an outer
+set return `[min(a,1),b]`. `filter` returns `[0,b]`. `dropFirst` over a sequence or
+ordered set `K<T>[a,b]` returns `K<T>[max(a-1,0),max(b-1,0)]`, an unbounded `b`
+staying unbounded, and over a set or bag is
+`refused { code: ill_typed, cause: operator-ineligible }`, because the operand
+has no occurrence order to name a first occurrence; `removeOne` over any kind
+returns `K<T>[max(a-1,0),b]`, and its second operand has the element type `T`
+exactly as the second operand of `contains` does (a record `v` conforming to a
+record `T` is admitted), any other type being
+`refused { code: ill_typed, cause: type-mismatch }`. For `flatten` of an outer
 `K1<K2<T>[c,d]>[a,b]`, the result kind is `K1`, and the bound is `[a*c,b*d]` for
 a sequence or bag, or `[min(a*c,1),b*d]` for a set or ordered set. `flatten`
 whose outer kind is a sequence or ordered set and whose inner kind is a set or
@@ -199,6 +218,8 @@ the accounting `integer-arithmetic` family, and Boolean `and` and `or` charge
 | `reduce` | a visit of the first occurrence, which initializes the accumulator; then a visit and step per later occurrence; then an accumulator retain; an empty source reached by direct kernel evaluation charges nothing |
 | `forall`, `exists`, `count` | a visit and predicate per occurrence until a short-circuit stops the query; then a scalar retain |
 | `sum<N>` | exactly the `quire.value.accounting/v1` [collection sum schedule](../../../proposals/quire-v1/definitions/value-accounting.md#collection-sum-schedule), including the per-family addition charges and the type-pinned rounding mode |
+| `dropFirst` | formation of the surviving occurrences only, with no visit and no membership comparison |
+| `removeOne(c, v)` | the `contains(c, v)` scan charges for every member in scan order up to and including the first equal one, or over all members when none is equal, without that scan's scalar retain; then formation of the result occurrences, with no membership comparison because the survivors are already distinct or grouped |
 | `size` | a scalar retain only |
 | `contains(c, v)` | for each member `m` in scan order until the first equal one: `collection.member-walk` (`occ(v) + occ(m)`), the FR-149 plan-formation checks, then `collection.member-test` (the planned pair count); then a scalar retain |
 | `convert` | a visit per source occurrence (for a bag to a set or ordered set, one visit per distinct member); then formation, with membership comparisons only when the source is a sequence and the target is a set, bag or ordered set |
@@ -221,6 +242,8 @@ named charge, an unbounded source can never evaluate unmetered.
 | FR-145-AC-7 | A kind conversion records exactly the static `CollectionLoss` property difference and refuses element conversion. | Test (TC-190) |
 | FR-145-AC-8 | Every query and conversion form charges exactly its tabled visits, membership comparisons, bound, arithmetic and retain charges in order, `contains` stops at the first equal member, and each denied charge returns incomplete with no partial result. | Test (TC-190) |
 | FR-145-AC-9 | A set or bag step outside the closed syntactic catalog is `ill_typed` even when it calls a function that declares or has commutative and associative behavior. | Test (TC-190) |
+| FR-145-AC-10 | `dropFirst(c)` over a `Sequence` or `OrderedSet` returns the same kind without its first occurrence in order, is the empty collection for an empty `c`, and has the static bound `[max(a-1,0),max(b-1,0)]`; over a `Set` or a `Bag` it refuses `ill_typed`/`operator-ineligible`; and it charges the formation of the survivors only. | Test (TC-190) |
+| FR-145-AC-11 | `removeOne(c, v)` over each collection kind drops exactly one occurrence equal to `v` under the FR-144 membership relation (the first in occurrence order for a sequence, the member for a set or ordered set, one multiplicity for a bag), returns `c` unchanged when no member equals `v`, has the static bound `[max(a-1,0),b]`, refuses a `v` of another type with `ill_typed`/`type-mismatch`, and charges the `contains` scan then the formation of the result. | Test (TC-190) |
 
 ## Dependencies
 

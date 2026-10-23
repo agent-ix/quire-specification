@@ -62,7 +62,9 @@ request:
   ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)); absent for
   an exhaustive search;
 - `limits` — the caller-configurable resource limits only: `max_states`,
-  `max_transitions` and `max_automaton_states`, plus any resource budget
+  `max_transitions`, `max_automaton_states` and `max_clocks` (the most live
+  clocks a state may hold, [FR-415](FR-415-declare-clocks-and-timed-models.md);
+  setting `model_check.max_clocks`, default 1024), plus any resource budget
   another temporal requirement adds, each defaulting to the routed provider's
   published default when the request omits it. `max_depth` is never a member
   of `limits`.

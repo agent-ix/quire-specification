@@ -74,7 +74,7 @@ The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `Integer`, `Int`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `Option`,
 `Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `Quantity`, `Population`, `null`, `none`, `decimal`,
 `float32`, `float64`, `bits`, `convert`, `allInstances`, `collect`, `flatMap`,
-`flatten`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
+`flatten`, `dropFirst`, `removeOne`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
 `toward-negative`, `nearest-even`, `nearest-away`, `unicode-scalars`, `nfc`,
 `nfd`, `nfkc`, `nfkd`, `binary-utf8`, `lifetime`, `workflow`, `scope`,
 `capacity`, `symbolic`, `overflow`, `reject`, `block`, `loss`, `at-most-once`,
@@ -300,7 +300,7 @@ complete-unit = header, profile, { profile }, { import-decl }, { model },
                 declaration, { declaration }, EOF ;
 import-decl   = 'import', string, [ 'as', ident ], ';' ;
 
-declaration   = dimension-decl | unit-decl | enum-decl | record-decl
+declaration   = dimension-decl | dimension-equivalence | unit-decl | enum-decl | record-decl
               | tuple-decl | union-decl | alias-decl | function | predicate
               | state-clause | temporal-clause | protocol-clause
               | relation-clause | hyper-clause | state-graph-clause
@@ -330,6 +330,7 @@ text-profile  = 'unicode-scalars' | 'nfc' | 'nfd' | 'nfkc' | 'nfkd'
 dimension-decl = 'dimension', ident,
                  [ '=', dimension-term, { ('*' | '/'), dimension-term } ], ';' ;
 dimension-term = qualified-name, [ '^', signed-int ] ;
+dimension-equivalence = 'dimension', qualified-name, '~', qualified-name, ';' ;
 unit-decl     = 'unit', ident, ':', qualified-name, '=', exact-number,
                 [ '*', qualified-name ], [ '+', exact-number ], ';' ;
 enum-decl     = [ 'ordered' ], 'enum', ident, '{', enum-member,
@@ -399,10 +400,18 @@ product       = unary, { ('*' | '/' | 'div' | 'rem' | 'mod'), unary } ;
 collection-call = ('map' | 'collect' | 'filter' | 'flatMap'),
                   '(', ident, 'in', expr, ':', expr, ')'
                 | 'flatten', '(', expr, ')'
+                | 'dropFirst', '(', expr, ')'
+                | 'removeOne', '(', expr, ',', expr, ')'
                 | ('fold' | 'reduce'), '<', qualified-name, '>',
                   '(', ident, ',', ident, 'in', expr, ':', expr,
                   [ ',', 'identity', ':', expr ], ')' ;
 ```
+
+A `dimension-equivalence` declares the two dimension nodes its names resolve to equivalent
+(FR-142 "Dimension equivalence"): the first name resolves in the dimension namespace and the
+second likewise, each a bare name of the unit of compilation or `M::Name` of a selected
+domain package. `~` is the token the `random-decl` and `delay-decl` productions already use,
+and the form is distinguished from a `dimension-decl` by the `~` after the first name.
 
 `null`, `none`, collection constructors, record constructors and bit-level
 float constructors are disjoint forms; no empty spelling aliases
