@@ -118,8 +118,8 @@ predicate    = 'predicate', ident, 'using', ident,
                '(', [ parameter, { ',', parameter } ], ')',
                ':', 'Boolean', block ;
 parameter    = ident, ':', parameter-type ;
-state-clause = 'invariant', ident, 'using', ident, 'on', type-name,
-               'at', 'current', block
+state-clause = ('invariant' | 'constraint'), ident, 'using', ident, 'on',
+               type-name, 'at', 'current', block
              | ('pre' | 'post'), ident, 'using', ident, 'on',
                operation-name, block ;
 block        = '{', expr, '}' ;
@@ -366,10 +366,12 @@ primary       = 'true' | 'false' | 'null' | 'none' | 'self' | 'result'
               | 'allInstances', '<', type-ref, '>', '(', expr, ')'
               | collection-call
               | protocol-reference
+              | reference-literal
               | 'reaches', '(', expr, ',', expr, ',', qualified-name, ')'
               | 'lookup', '<', type-ref, '>', '(', expr, ',', expr, ')',
                 'absent', absence-mode ;
 protocol-reference = 'protocol', qualified-name ;
+reference-literal = qualified-name, '#', string ;
 absence-mode  = 'undefined' | 'empty' | 'refused' ;
 operation-body = 'body', ident, 'using', ident, 'on', qualified-name,
                  '(', [ ident, { ',', ident } ], ')', block ;
@@ -411,8 +413,15 @@ another kind. Decimal source is exact coefficient/scale syntax. In
 coefficient bound and the unsigned pair is the inclusive membership scale bound;
 FR-140 owns their well-formedness and value-only membership. IEEE source is
 bit-level so signed zero and NaN payload identity survive parsing. Human decimal
-float conversion is an explicit library function under a selected rounding
-profile, not a literal shortcut.
+float conversion is an explicit `convert<Float32[m]>(t)` or
+`convert<Float64[m]>(t)` of a text under the target's rounding mode (FR-478),
+not a literal shortcut.
+
+A `reference-literal` names one object by its key: the qualified name names
+an object type and the string is the key's object identity as UTF-8 bytes
+(`M::Server#"s1"`). `#` is a punctuation token of this production alone. Its
+typing, lowering and resolution are
+[FR-480](../../spec/functional/type-model/FR-480-check-and-resolve-reference-literals.md)'s.
 
 The one qualified reference/call production is syntactically canonical. Static
 resolution classifies a bare qualified reference as an enum member, a
@@ -915,7 +924,7 @@ aggregate-term = ( 'count' | 'sum' | 'min' | 'max'
                  | 'fraction', 'holds', '(', expr, ')'
                  | 'quantile', exact-value ),
                  [ 'of', expr ], [ 'where', 'holds', '(', expr, ')' ],
-                 'over', 'past', window, 'min_count', uint ;
+                 'over', 'past', window, [ 'min_count', uint ] ;
 window         = '[', horizon, ',', horizon, ']' ;
 temporal-primary =/ aggregate-atom ;
 
