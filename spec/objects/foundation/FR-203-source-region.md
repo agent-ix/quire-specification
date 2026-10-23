@@ -89,5 +89,4 @@ no omitted byte changes token spelling or relative order.
 
 ## Status
 
-Accepted complete-V1 source-region contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 source-region contract.
