@@ -4263,7 +4263,8 @@
           }
         ]
       }
-    }
+    },
+    {"name": "limit-reached-accounting-setting", "stage": "outcome", "owners": {"/results/0/cause": "FR-461"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "incomplete", "cause": {"type": "limit-reached", "limit": "work_units", "value": 4096, "setting": "accounting.work_units"}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result", "limits": {"work_units": 4096}, "reached": ["work_units"]}]}}
   ],
   "adverse": [
     {"name": "probability-inequality-model-projection", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/21/cause/at", "value": {"domain": "quire.simulation.state-key/v1", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}}]},
@@ -4907,6 +4908,18 @@
         {
           "op": "remove",
           "path": "/results/0/cause/setting"
+        }
+      ]
+    },
+    {
+      "name": "limit-reached-bare-accounting-counter",
+      "base": "limit-reached-accounting-setting",
+      "owner": "FR-461",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/setting",
+          "value": "work_units"
         }
       ]
     },

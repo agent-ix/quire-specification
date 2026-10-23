@@ -374,7 +374,7 @@
         "max_precision_bits": {"$ref": "#/$defs/PositiveCount"},
         "max_rational_bits": {"$ref": "#/$defs/PositiveCount"},
         "max_policy_iterations": {"$ref": "#/$defs/PositiveCount"},
-        "max_witness_paths": {"$ref": "#/$defs/PositiveCount"}
+        "max_witness_paths": {"description": "FR-411, FR-413: 0 admits no path set, so the item carries no path-set evidence.", "$ref": "#/$defs/Count"}
       },
       "additionalProperties": false
     },
