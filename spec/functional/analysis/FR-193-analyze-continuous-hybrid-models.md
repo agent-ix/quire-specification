@@ -9,12 +9,6 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-415
     type: references
-  - target: ix://agent-ix/quire-specification/FR-306
-    type: references
-  - target: ix://agent-ix/quire-specification/FR-331
-    type: references
-  - target: ix://agent-ix/quire-specification/FR-461
-    type: references
   - target: ix://agent-ix/quire-specification/FR-252
     type: references
   - target: ix://agent-ix/quire-specification/FR-255
@@ -24,6 +18,12 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-364
     type: references
   - target: ix://agent-ix/quire-specification/FR-416
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-306
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-331
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-461
     type: references
 ---
 
