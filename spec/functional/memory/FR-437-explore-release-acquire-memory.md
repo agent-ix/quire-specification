@@ -65,7 +65,7 @@ The state key's `memory` member is an FR-181 map, empty outside a weak
 | `{"type":"views","thread":<thread path>}` | `{"cur":<view>,"acq":<view>,"rel":<map from location to view>}`, one entry per live thread |
 | `{"type":"sc-view"}` | the view `S` |
 | `{"type":"sc-graph"}` | `{"events":[<event>, ...],"edges":[[<event>,<event>], ...],"owed":<map from thread path to [<event>, ...]>,"summaries":<map from location to [<event>, ...]>}` |
-| `{"type":"race-summary","location":<location>}` | FR-438's race summary |
+| `{"type":"race-summary","location":<location>}` | FR-438's race-summary entry, one per shared location with a non-atomic access |
 
 A **view** is `{"type":"view","at":<map from location to message depth>,"frontier":<map from thread path to count>,"owed":[{"location":<location>,"event":<event>}, ...]}`.
 `at` holds every shared location; a pointer at a removed message encodes as the
@@ -73,7 +73,9 @@ depth of its location's earliest live message. `frontier` maps a thread to the
 number, as a decimal string, of that thread's live SC events the view covers,
 which are the earliest of them in program order, so the count names the
 frontier's latest covered event; a thread whose count is 0 has no entry.
-`owed` lists the view's pairs.
+`owed` lists the view's pairs. When the subject has a shared location with a
+non-atomic access, a view also has the member `race`, which holds FR-438's
+race Booleans of the view; otherwise it has none.
 
 An **event** is `{"thread":<thread path>,"kind":"read"|"write"|"rmw"|"fence","ordinal":"<decimal>","location":<location>,"read":"<depth>","write":"<depth>"}`.
 `ordinal` is the number of live SC events of the thread before it in program
