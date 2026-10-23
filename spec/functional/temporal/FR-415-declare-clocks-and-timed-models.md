@@ -128,8 +128,9 @@ collection are live only while the collection holds the element (below).
   usual.
 - A function or predicate with a `Clock` parameter or result, or a parameter or
   result of a clock-bearing type, is a **clock-reading declaration**. Its body
-  reads a clock only as the clock operand of an atomic clock constraint or
-  passes it to another clock-reading declaration, and a call to it stands only
+  reads a clock only as the clock operand of an atomic clock constraint,
+  passes it to another clock-reading declaration, or returns it as the
+  declaration's place result, and a call to it stands only
   where a clock constraint stands (a precondition, a time invariant body or
   the body of another clock-reading declaration); a call anywhere else refuses
   `invalid_timed_model`/`clock-read-outside-constraint`. A clock-reading
@@ -233,7 +234,11 @@ and a clock advances with time.
   bound: its live places in a state are still the collection's size, and an
   analysis that reaches a state whose live clocks exceed the model checker's
   `max_clocks` limit (setting `model_check.max_clocks`, default 1024) stops
-  `incomplete` and names that limit, its value and its setting (FR-461).
+  `incomplete` with the `limit-reached` cause (FR-331) whose `limit` is
+  `max_clocks`, whose `value` is the configured count and whose `setting` is
+  `model_check.max_clocks` (FR-461). `max_clocks` is a member of the
+  temporal item's `limits` (FR-368), a positive count that defaults to 1024
+  when the request omits it.
 
 A timed state over clock collections is `(s, v)` with `s` the discrete state,
 whose live places it determines, and `v` the valuation of exactly those places.
@@ -296,7 +301,7 @@ its value and the request setting that raises it.
 | FR-415-AC-10 | `Set<Clock>`, `Sequence<Timer>`, `Bag<Clock>`, `OrderedSet<Timer>`, `Map<Text, Timer>`, `Option<Sequence<Clock>>`, `Sequence<Option<Clock>>`, `Sequence<Sequence<Clock>>` and a field `ts: Timer` with multiplicity `[0, 3]` are admitted; the places of a three-element `Sequence<Timer>` held by one object are `ts.0.x`, `ts.1.x` and `ts.2.x`, live exactly while the sequence holds that slot; `Set<Clock>` holds at most one element and `Bag<Clock>` one element for each occurrence; a `Map<Timer, Int>` key refuses `ill_typed`/`operator-ineligible`; `self.a = self.b` and `self.a != self.b` over clock collections refuse `clock-read-outside-constraint`. | Test (TC-367) |
 | FR-415-AC-11 | Over a delay of `d`, every live place of a clock collection advances by `d` and an inactive place stays unconstrained. A postcondition `self.ts = sequence[Timer { x: 0 ms, n: 1 }]` makes slot 0 live at 0; `self.ts = filter(e in self.ts: e.n > 1)` drops the places of the removed elements and moves the survivors' clocks to their new slots with their values; `self.ts = flatten(sequence[sequence[Timer { x: 0 ms, n: 9 }], self.ts])` makes a fresh slot 0 at 0 and moves the old slot `j` to `j + 1` with its value; `self.ts = set[Timer { x: 0 ms, n: 1 }, Timer { x: 5 ms, n: 1 }]` holds one element, with the first occurrence's clock `0`; an element with a clock that is neither carried nor a constant refuses `clock-write`. | Test (TC-367) |
 | FR-415-AC-12 | `self.ts[i].x = 0 ms` resets the place of slot `i`, and refuses `undefined_expression`/`unproved-presence` at `i` when the precondition does not establish `i < size(self.ts)`; `self.m[k].x = 0 ms` resets by key; `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)` resets exactly the live places whose `n > 1` and leaves the others; the guard `forall(e in self.ts: e.x <= 3 ms)` is true on the empty sequence and, on `k` elements, the conjunction of `x <= 3` over the `k` live places; `exists(e in self.ts: e.n = 2 and e.x >= 1 ms)` is false on a sequence with no `n = 2` and otherwise the disjunction over those places; `forall(e in self.ts: e.x <= 3 ms)` as a time invariant body bounds each live place only while live; `count<Int>(e in self.ts: e.x >= 1 ms)` refuses `clock-read-outside-constraint`. | Test (TC-367) |
-| FR-415-AC-13 | A clock collection with declared maximum `3` and two clocks per element adds six to the model's clock dimension for each object that holds it, with no bound beyond the declared maximum; a clock collection with no declared maximum reaches a state whose live clocks exceed `model_check.max_clocks` and the analysis settles `incomplete` naming `max_clocks`, its value and `model_check.max_clocks`. | Test (TC-367) |
+| FR-415-AC-13 | A clock collection with declared maximum `3` and two clocks per element adds six to the model's clock dimension for each object that holds it, with no bound beyond the declared maximum; a clock collection with no declared maximum reaches a state whose live clocks exceed `model_check.max_clocks` and the analysis settles `incomplete` with `limit-reached` naming `max_clocks`, its value and `model_check.max_clocks`; a request that sets `limits.max_clocks` to `2048` raises the bound, and `0` is refused by the request schema. | Test (TC-367) |
 | FR-415-AC-14 | With `o: Option<Timer>` (`Timer { x: Clock; n: Int }`), `present(self.o) and value(self.o).x >= 1 ms` is a guard on the place `o.x`, and `value(self.o).x >= 1 ms` alone refuses `undefined_expression`/`unproved-presence`; `self.o = Timer { x: 0 ms, n: 1 }` makes `o.x` present at 0 and `self.o = absent` drops it; a `Sequence<Option<Clock>>` slot `j` is present only while the sequence holds slot `j` and the element is present, and `value(self.q[j])` without both tests refuses `unproved-presence`; an operation `arm(c: Option<Clock>)` with `c = 0 ms` has one instance for each guarded place, each making its place present; a function `maybe(o: Timer): Option<Clock>` whose body is `o.x` is a place expression and whose body `absent` is an inactive place. | Test (TC-367) |
 
 ## Dependencies
