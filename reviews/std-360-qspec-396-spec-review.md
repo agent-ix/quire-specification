@@ -108,9 +108,4 @@ Round 1, at head 09822872 (fix diff checked against the original review head).
 | FND-001 | fixed | fixed; after: An RMW decides its read part so; when that part is `acquire` or `seq_cst`, it then joins the race map of the message (`ra`) or memory value (`tso`) it reads into `cur_b`, and decides its write part against that joined `cur_b`, since what happens before the store it reads happens before its write. Ot… |
 | FND-002 | fixed | fixed; after:  reads that message, the reader's `cur` maps `data` to `"write":true` and its data load completes no race; with `relaxed` flags, the data load after a flag load that read 1 completes a race. With the flag passed instead by a `send` after `data := 1` and a `receive` before the data load, the queue en… |
 | FND-003 | fixed | fixed; after: \| DR-12 \| under `tso`: the message-passing shape with a `release` flag store and `acquire` flag load, the same with `relaxed` flag accesses, and the message-passing shape with the flag passed by a `send` after `data := 1` and a `receive` before `LD`; read the state key after the writer's `data := … |
-
-Round 2 (author).
-
-| FND | outcome | reason |
-| --- | --- | --- |
-| FND-004 | fixed | The RMW now has the precondition `x.v = 1`, so it is enabled only when it reads `a`'s store (QSpec FR-435-AC-5) and no path reads the initial value. With `acquire` the item is `proved` under both models. With `relaxed`, the RMW against `a`'s load is the only race, with `earlier` set to `a`'s load and `later` set to the RMW. QSpec FR-438-AC-8 and DR-13 and QSL FR-224-AC-7 and TC-669 step 7 all say the same. |
+| FND-004 | fixed | round 2 at 60e5798b; fixed; after: A protocol whose thread `a` loads `x` non-atomically and then stores `x := 1` with `release`, and whose thread `b` runs a `fetch_add(1)` on `x` with `ordering acquire` and the precondition `x.v = 1`, so that it is enabled only when it reads `a`'s store (FR-435-AC-5), settles its race-freedom item `p… |
