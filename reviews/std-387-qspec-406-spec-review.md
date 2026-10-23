@@ -36,3 +36,12 @@ Merge status: origin/main 0eef131f is not an ancestor, but `git merge-tree` agai
 ## Verdict
 
 **Mergeable after two medium findings are fixed or dispositioned**, and after main is merged (main moved; `git merge-tree` is clean). Gates on the head: `quire validate --scope . 'spec/**/*.md'` 86 failure lines (baseline); `cargo test --test checked_package_v2 --test backend_provider_v1` 133 + 23 passed. On the merge of main and the head: validate 86; cargo 140 + 24 passed; QSL conformance (`cargo test -p qsl-package --lib checked_v2`, QSL main, `QSPEC_DIR` the merge) 49 passed. Against the bare head, QSL main fails 2 hybrid-fixture tests (47 passed), which is skew from the head being behind QSpec main, not a #406 defect: the same QSL run against QSpec main passes 49. Ids FR-341-AC-13 and CN-01 to CN-03 are unique across 23 open heads. #398 conflicts with the head only in spec/spec.md, which #406 does not touch.
+
+## Dispositions
+
+| FND | Round | Outcome | Reason |
+| --- | --- | --- | --- |
+| FND-001 | 1 | fixed | Fixed in head 718559bd; the fix agrees with the finding and the vectors were derived by hand. |
+| FND-002 | 1 | fixed | Fixed in head 718559bd; the fix agrees with the finding and the vectors were derived by hand. |
+
+Round 1 verdict: Both findings fixed, no new defect; mergeable (merge-tree clean; validate 86; cargo 140+24; QSL conformance 49 and node_key 29 pass).
