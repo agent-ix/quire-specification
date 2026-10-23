@@ -15,7 +15,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-228
     type: references
-  - target: ix://agent-ix/quire-specification/FR-478
+  - target: ix://agent-ix/quire-specification/FR-479
     type: references
   - target: ix://agent-ix/quire-specification/FR-426
     type: references
@@ -68,7 +68,7 @@ temporal clause the protocol requires. A source-table coordinate, a matching
 profile, a clock, a display name or a runtime observation SHALL NOT add,
 remove or substitute a relation, and an obligation is bound to its temporal
 clause only through that relation
-([FR-478](../../objects/protocol/FR-478-obligation-activation-binding.md)).
+([FR-479](../../objects/protocol/FR-479-obligation-activation-binding.md)).
 
 ## Surface syntax
 
@@ -112,7 +112,7 @@ system ([FR-426](FR-426-apply-protocol-steps.md)):
 | FR-052-AC-4 | Changing any admitted semantic graph content—including a node/control kind, edge, guard or constraint value graph and dependency, event kind or binding, channel/FIFO rule, await rule, compensation reference, finish rule, branch, join, iteration maximum, loop invariant and variant, or a `parallel`'s source `memory` clause—requires a different qualified protocol-definition identity, which is package identity, while a check's obligation identity reads the resolved memory model ([FR-434](../memory/FR-434-select-memory-models-for-parallel.md)); source loci remain provenance rather than graph-key members. | Test (TC-052) |
 | FR-052-AC-5 | Reusing one qualified protocol-definition identity with different complete typed graph content is an identity contradiction and refuses admission rather than selecting either graph. | Test (TC-052) |
 | FR-052-AC-6 | For the split-shipment protocol with two branches of two events each and all constraints true, the event projections of the explored behaviours are exactly the six linear extensions of the causal edges; adding a precondition that disables one order removes exactly the extensions that need it, and reordering source text or timestamps changes none. | Test (TC-379) |
-| FR-052-AC-7 | Each protocol activation of the linked graph relates exactly the temporal clauses the protocol requires, one relation per required clause; a relation inferred from a shared clock, profile, name or position, or one naming a temporal clause the protocol does not require, is absent from the graph, and a binding that uses it refuses (FR-478-AC-4). | Test (TC-052) |
+| FR-052-AC-7 | Each protocol activation of the linked graph relates exactly the temporal clauses the protocol requires, one relation per required clause; a relation inferred from a shared clock, profile, name or position, or one naming a temporal clause the protocol does not require, is absent from the graph, and a binding that uses it refuses (FR-479-AC-4). | Test (TC-052) |
 
 ## Dependencies
 

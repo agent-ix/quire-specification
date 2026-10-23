@@ -4,7 +4,7 @@ title: "Protocol obligation instance"
 type: FR
 object: entity
 relationships:
-  - target: ix://agent-ix/quire-specification/FR-478
+  - target: ix://agent-ix/quire-specification/FR-479
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-055
     type: specifies
@@ -43,7 +43,7 @@ created.
   exact package, definition, workflow, control occurrence, clause subject and
   origin; it is not an independently authored label. An instance is
   constructed only from one complete
-  [FR-478](FR-478-obligation-activation-binding.md) activation binding, whose
+  [FR-479](FR-479-obligation-activation-binding.md) activation binding, whose
   activation relation row supplies the control occurrence.
 - **Key** — (`package`, `protocol definition`, `workflow instance`, `control
   occurrence`, `clause subject`, `origin kind`, `origin identity`). `origin
@@ -89,7 +89,7 @@ created.
   from truth.
 - [FR-093](../../functional/temporal/FR-093-bind-temporal-activation-and-captures.md)
   supplies the instance identity rule and the duplicate/distinct-trigger rules.
-- [FR-478](FR-478-obligation-activation-binding.md) supplies the binding from
+- [FR-479](FR-479-obligation-activation-binding.md) supplies the binding from
   which every instance is constructed.
 - [FR-051](../../functional/protocol/FR-051-preserve-communication-identities.md) supplies
   the distinctness of message, send, receive, delivery, attempt and effect.

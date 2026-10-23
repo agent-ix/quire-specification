@@ -1,5 +1,5 @@
 ---
-id: FR-478
+id: FR-479
 title: "Protocol-obligation activation binding"
 type: FR
 relationships:
@@ -20,7 +20,7 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-288
     type: references
 ---
-# FR-478: Protocol-obligation activation binding
+# FR-479: Protocol-obligation activation binding
 
 ## Description
 
@@ -108,11 +108,11 @@ A refused binding constructs no FR-230 instance.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-478-AC-1 | Two bindings with the same definition, row, workflow instance and clause subject but distinct admitted semantic trigger identities derive distinct FR-230 instances even when their captures compare equal. | Test (TC-114) |
-| FR-478-AC-2 | Replaying the same admitted trigger with agreeing canonical bytes produces no second binding and no second FR-230 instance; the same trigger identity on conflicting bytes refuses `invalid_runtime_input`/`conflicting-identity`. | Test (TC-114) |
-| FR-478-AC-3 | Replacing any one of the definition, row, workflow instance, clause subject, origin, checked activation result, capture or evaluation anchor changes the binding's key or refuses exactly as the Refusals table states; none is defaulted. | Test (TC-114) |
-| FR-478-AC-4 | A consumer cannot construct a binding or an FR-230 instance from a caller-supplied obligation label, a static binding coordinate, a timestamp, an arrival order, a display name, a span or a capture value: a binding whose row the admitted package's activation relation does not hold refuses `missing_declaration`/`missing-name`. | Test (TC-114) |
-| FR-478-AC-5 | A protocol activation consumes a required temporal clause only through its FR-464 activation relation row; omitting the row, cross-wiring it to another clause's or another temporal clause's row, or inferring it from a shared clock or name refuses rather than selecting an obligation; an `origin` row's binding carries the workflow execution identity and a `trigger_event` origin on it refuses `invalid_runtime_input`/`conflicting-identity`. | Test (TC-114) |
+| FR-479-AC-1 | Two bindings with the same definition, row, workflow instance and clause subject but distinct admitted semantic trigger identities derive distinct FR-230 instances even when their captures compare equal. | Test (TC-114) |
+| FR-479-AC-2 | Replaying the same admitted trigger with agreeing canonical bytes produces no second binding and no second FR-230 instance; the same trigger identity on conflicting bytes refuses `invalid_runtime_input`/`conflicting-identity`. | Test (TC-114) |
+| FR-479-AC-3 | Replacing any one of the definition, row, workflow instance, clause subject, origin, checked activation result, capture or evaluation anchor changes the binding's key or refuses exactly as the Refusals table states; none is defaulted. | Test (TC-114) |
+| FR-479-AC-4 | A consumer cannot construct a binding or an FR-230 instance from a caller-supplied obligation label, a static binding coordinate, a timestamp, an arrival order, a display name, a span or a capture value: a binding whose row the admitted package's activation relation does not hold refuses `missing_declaration`/`missing-name`. | Test (TC-114) |
+| FR-479-AC-5 | A protocol activation consumes a required temporal clause only through its FR-464 activation relation row; omitting the row, cross-wiring it to another clause's or another temporal clause's row, or inferring it from a shared clock or name refuses rather than selecting an obligation; an `origin` row's binding carries the workflow execution identity and a `trigger_event` origin on it refuses `invalid_runtime_input`/`conflicting-identity`. | Test (TC-114) |
 
 ## Dependencies
 

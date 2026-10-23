@@ -5,7 +5,7 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-093
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-478
+  - target: ix://agent-ix/quire-specification/FR-479
     type: verifies
 ---
 ## Description
@@ -38,7 +38,7 @@ stale or cross-instance inputs cannot activate or satisfy an obligation and
 produce no temporal Boolean. False guards create no instance, unestablished
 guards remain incomplete/refused, and conflicting same-trigger deliveries refuse
 without replacing any capture.
-Every accepted instance has exactly one complete FR-478 binding. A row the
+Every accepted instance has exactly one complete FR-479 binding. A row the
 relation does not hold refuses `missing_declaration`/`missing-name`; a
 mismatched origin kind and unequal content under one key refuse
 `invalid_runtime_input`/`conflicting-identity`; an absent component refuses
