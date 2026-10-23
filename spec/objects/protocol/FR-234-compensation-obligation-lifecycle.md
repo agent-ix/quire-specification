@@ -119,5 +119,4 @@ non-incomplete state and links the superseded result.
 
 ## Status
 
-Accepted complete-V1 compensation lifecycle contract. Implementation and
-qualification remain tracked separately.
+Accepted complete-V1 compensation lifecycle contract.

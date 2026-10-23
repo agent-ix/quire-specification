@@ -99,5 +99,4 @@ clause. Its key is (`catalog authority`, `catalog identity`).
 
 ## Status
 
-Accepted complete-V1 diagnostic-catalog contract. Implementation and
-qualification remain tracked separately.
+Accepted complete-V1 diagnostic-catalog contract.
