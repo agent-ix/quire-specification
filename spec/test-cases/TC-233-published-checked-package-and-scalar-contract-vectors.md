@@ -435,9 +435,9 @@ Each vector edits the published clause-operations package and rekeys the edited 
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
-| SC-01 | The invariant node's kind member `clause` rewritten to `constraint` | Valid against both V2 schemas; admitted by the state step; its node id differs from the invariant's | FR-341-AC-13 |
-| SC-02 | SC-01's constraint with its anchor argument referencing the operation anchor | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-13 |
-| SC-03 | SC-01's constraint with a second parameter reference in its aggregate | `ill_typed`/`operator-ineligible` at the clause node | FR-341-AC-13 |
+| CN-01 | The invariant node's kind member `clause` rewritten to `constraint` | Valid against both V2 schemas; admitted by the state step; its node id differs from the invariant's | FR-341-AC-13 |
+| CN-02 | CN-01's constraint with its anchor argument referencing the operation anchor | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-13 |
+| CN-03 | CN-01's constraint with a second parameter reference in its aggregate | `ill_typed`/`operator-ineligible` at the clause node | FR-341-AC-13 |
 
 ## Expected Results
 

@@ -9942,7 +9942,7 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
     }
 }
 
-/// FR-341-AC-13 (TC-233 SC-01 to SC-03): a state constraint is a
+/// FR-341-AC-13 (TC-233 CN-01 to CN-03): a state constraint is a
 /// `state`/`state_clause` node whose kind member's `clause` is `constraint`;
 /// it validates against the V2 schema, is anchored and bound as an
 /// invariant, and differs in node id from the invariant with its body.
@@ -9967,7 +9967,7 @@ fn tc_233_a_state_constraint_is_checked_as_an_invariant() {
         )
     };
 
-    // SC-01: admitted, with another node id than the invariant's.
+    // CN-01: admitted, with another node id than the invariant's.
     let constrained = edited_clause(&package, "invariant", to_constraint);
     let (admitted, _, rekeyed) = read(&constrained);
     assert!(
@@ -9986,7 +9986,7 @@ fn tc_233_a_state_constraint_is_checked_as_an_invariant() {
         "the kind member is part of the node's identity"
     );
 
-    // SC-02: a constraint anchors at its type's node, never an operation anchor.
+    // CN-02: a constraint anchors at its type's node, never an operation anchor.
     let wrong = edited_clause(&package, "invariant", |body| {
         to_constraint(body);
         body["arguments"][1] = reference("anchor");
@@ -10005,7 +10005,7 @@ fn tc_233_a_state_constraint_is_checked_as_an_invariant() {
         ),
     }
 
-    // SC-03: a constraint binds `self` alone.
+    // CN-03: a constraint binds `self` alone.
     let wrong = edited_clause(&package, "invariant", |body| {
         to_constraint(body);
         body["arguments"][0]["members"]
