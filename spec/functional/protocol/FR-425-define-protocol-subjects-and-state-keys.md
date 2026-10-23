@@ -73,12 +73,13 @@ clause is package content and enters the package identity.
 A static role on a whole model
 ([FR-465](../../objects/interfaces/FR-465-checked-package-protocol-declaration-bodies.md),
 `role w on M` with `M` a model alias) is bound by construction: its binding
-is the model subject itself, which the analyzer SHALL take from the subject
-when the model subject is over the domain model of the `model_selections`
-row the role names. The request supplies no binding for it. A request that
-supplies one, and a subject whose model subject is over another selection's
-model, SHALL refuse `invalid_runtime_input`/`wrong-role-mapping` before any
-expansion, naming the role. A static role on a model type is bound by the
+is the model subject itself, which the analyzer SHALL take from the subject.
+FR-465 admits such a role only when it names the clause's over selection, the
+`model_selections` row that declares the `over` type, so every role on a
+whole model of one clause names the same selection. The request supplies no
+binding for it. A request that supplies one SHALL refuse
+`invalid_runtime_input`/`wrong-role-mapping` before any expansion, naming the
+role. A static role on a model type is bound by the
 request, and one with no binding refuses the same way.
 
 A clause with activation `on origin` runs one **protocol instance**, ordinal
@@ -255,7 +256,7 @@ state holds the model state and no instance.
 | FR-425-AC-10 | Two protocol definitions of one package that each declare `channel Pay` give subjects whose `queues` entries and `duplicate` and `lose` identities hold channel names in each protocol's own qualified name; no key or identity of one names the other's channel. | Test (TC-375) |
 | FR-425-AC-11 | Inside a `repeat`, a `parallel Outer` with an `all` join has a branch holding an inner `parallel Inner` joined `any` whose branch binds `x`, and a reader of `x` after the binding, in the same branch of `Inner` as the binding node and inside the loop body. After `join(Outer)` the joiner's environment holds no entry for `x`, and `observations` holds none under the joiner's path, although the `repeat` back edge widens the joiner's reach to the whole body; the same with `Inner` joined `all` holds `x` after `join(Outer)` for as long as the reach rule keeps it. | Test (TC-375) |
 | FR-425-AC-12 | Template `Refund` with `attempts 1` and `commit Committed`, whose forward `effect` node is reached twice in a `repeat` of maximum 2, giving registrations `r1` and `r2` that differ in a registration capture `id`, whose activation guard compares `id` with the `id` of the trigger record, and a `parallel Triggers` of two sibling branches each binding a trigger record with one of the two ids, followed by `commit Committed`, each compensation thread taking its `cattempt` and `cend` before the step of `Committed`. The state after `r1`'s trigger and then `r2`'s and the state after `r2`'s and then `r1`'s have different keys, because each compensation thread's `thread-state` names its registration: thread `(0, Refund, 0)` names `r1` in the first and `r2` in the second. The state after the step of `Committed` holds the `commit` entry for that node under its instance and the state before the step does not, so the two have different keys, and the entry is absent once the instance is removed. In a variant with `attempts 2 of M::RefundAttempt`, `RefundAttempt` with one field `ok: Boolean`, a template operation whose precondition is `true`, and the retry relation `not e.ok` over (`e`, `l`): after thread `(0, Refund, 0)`'s first `cattempt` with record `ok` false, `observations` holds that thread's `attempt-record` entry with `ok` false and a retry `cattempt` is enabled; after its first `cattempt` with `ok` true, the entry holds `ok` true and only `cend` is enabled, so the two post-states have different keys. The entry is absent after the thread's second `cattempt`, whose count reaches 2, after its `cend`, and in the post-state of the step of `Committed` taken while the thread rests at its retry point holding one. With the retry relation `l.ok`, which does not read `e`, no state holds an `attempt-record` entry, and the two first `cattempt` steps, `ok` true and `ok` false, reach one state. | Test (TC-375) |
-| FR-425-AC-13 | A protocol with `role w on M`, `M` a model alias, builds its subject over `M`'s model subject with no binding supplied for `w`, and every state's `roles` entry for `w` is `{"type":"model-binding","selection":"<identity>"}` with `M`'s `model_selections` identity; supplying a binding for `w`, or building the subject over another selection's model, refuses `invalid_runtime_input`/`wrong-role-mapping` naming `w` before any expansion, and so does a static role on a model type with no binding. | Test (TC-375) |
+| FR-425-AC-13 | A protocol with `role w on M`, `M` the model alias that declares the clause's `over` type, builds its subject with no binding supplied for `w`, and every state's `roles` entry for `w` is `{"type":"model-binding","selection":"<identity>"}` with `M`'s `model_selections` identity; supplying a binding for `w` refuses `invalid_runtime_input`/`wrong-role-mapping` naming `w` before any expansion, and so does a static role on a model type with no binding. | Test (TC-375) |
 
 ## Dependencies
 
