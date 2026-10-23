@@ -8854,7 +8854,8 @@ fn tc_233_every_published_package_carries_only_current_application_node_keys() {
 
 /// The `unimplemented_capability` cause set is closed: the native-diagnostics
 /// row and the FR-272 row each list exactly its three causes and name the
-/// `backend`, `location` and `capability` payload keys.
+/// `backend`, `construct`, `construct_name`, `location` and `capability`
+/// payload keys.
 #[trace("TC-233", "FR-272-AC-25")]
 #[test]
 fn tc_233_unimplemented_capability_cause_set_is_closed() {
@@ -8872,7 +8873,7 @@ fn tc_233_unimplemented_capability_cause_set_is_closed() {
             "{label} `unimplemented_capability` row lists exactly its causes"
         );
         let keys = diagnostic_row_payload_keys(document, "unimplemented_capability");
-        for key in ["backend", "location", "capability"] {
+        for key in ["backend", "construct", "construct_name", "location", "capability"] {
             assert!(
                 keys.contains(key),
                 "{label} `unimplemented_capability` row names `{key}`"
