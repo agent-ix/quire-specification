@@ -153,6 +153,7 @@ process or state machine.
 | MT-16 | `field` `code`, native `String` | `String` over `scalar_type`/`string`, distinct from `Text` | FR-322-AC-31 |
 | MT-17 | `field` `ref`, native `UUID` | `UUID` over `scalar_type`/`uuid` | FR-322-AC-31 |
 | MT-18 | `field` `at`, native `Timestamp` | `Timestamp` over `scalar_type`/`timestamp` | FR-322-AC-31 |
+| MT-19 | `field` `gain`, native `Float64`; `field` `coarse`, native `Float32`; `field` `levels`, native `Float64` `[0, 3]`, unordered, unique | `Float64` over `scalar_type`/`float64`; `Float32` over `scalar_type`/`float32`; `Set<Float64>[0, 3]` | FR-322-AC-31 |
 | MA-01 | `field` `missing` on M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-02 | `field` `size`, an operation name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
 | MA-03 | `operation` `total`, a field name | `ill_typed`/`operator-ineligible` | FR-322-AC-30 |
@@ -183,10 +184,10 @@ process or state machine.
 | MU-08 | `field` `limit` on T2, `typeRef` `ix://quire/unit/ms` | Resolves `Call/limit`; type `Quantity<ms>` over the source unit's node, distinct from MU-07's | FR-322-AC-99 |
 | MU-09 | `field` `stale` on T2, `typeRef` `ix://quire/unit/rpc/ms` | `missing_declaration`/`missing-name` | FR-322-AC-99 |
 | MU-10 | `field` `x` on T2, `typeRef` `ix://quire/native/Clock` with FR-154's clock field shape, resolved as a `field` member; then a `field` application over `x` used as a value; then `x` as the clock operand of the atomic clock constraint `self.x >= 1 ms` in a guard | The member resolves to the clock type with no checked-package node; the value application refuses `invalid_timed_model`/`clock-read-outside-constraint`; the clock-constraint operand raises no such refusal | FR-322-AC-99 |
-| MT-19 | `field` `blob`, native `Bytes`; `field` `blob2`, native `Bytes` carrying a `maxLength` constraint | Each: `Bytes` over one `scalar_type`/`bytes` node, distinct from `String` and `Text` | FR-322-AC-102 |
-| MT-20 | `field` `meta`, native `JsonObject` | `JsonObject` over `scalar_type`/`json_object` | FR-322-AC-102 |
-| MT-21 | `field` `blobs`, native `Bytes`, `[0, unbounded]`, unordered, unique | `Set<Bytes>` | FR-322-AC-102 |
-| MT-22 | `field` `metas`, native `JsonObject`, `[0, 3]`, ordered, not unique | `Sequence<JsonObject>[0, 3]` | FR-322-AC-102 |
+| MT-20 | `field` `blob`, native `Bytes`; `field` `blob2`, native `Bytes` carrying a `maxLength` constraint | Each: `Bytes` over one `scalar_type`/`bytes` node, distinct from `String` and `Text` | FR-322-AC-102 |
+| MT-21 | `field` `meta`, native `JsonObject` | `JsonObject` over `scalar_type`/`json_object` | FR-322-AC-102 |
+| MT-22 | `field` `blobs`, native `Bytes`, `[0, unbounded]`, unordered, unique | `Set<Bytes>` | FR-322-AC-102 |
+| MT-23 | `field` `metas`, native `JsonObject`, `[0, 3]`, ordered, not unique | `Sequence<JsonObject>[0, 3]` | FR-322-AC-102 |
 | MA-20 | `quire.op.bytes.concat` over a `bytes` operand and a `json_object` operand; `quire.op.integer.lt` over two `bytes` operands | `ill_typed`/`operator-ineligible` each | FR-322-AC-103 |
 | MA-21 | `bytes` literal `value` `"00FF"`, `"0"`, `"0x00"`, `"00 ff"`; `json_object` literal `value` `"{\"b\":1,\"a\":1}"`, `"{\"a\": 1}"`, `"{\"a\":1.0}"`, `"{\"a\":9007199254740993}"`, `""`, `"{"`, `"{\"a\":1,\"a\":2}"` | `invalid_package`/`invalid-value` at the literal's `value`, each | FR-322-AC-103 |
 | MA-22 | `bytes` literal `value` `"00FF"` whose `type` is the `uuid` node | `ill_typed`/`operator-ineligible`, not `invalid-value` | FR-322-AC-103 |
