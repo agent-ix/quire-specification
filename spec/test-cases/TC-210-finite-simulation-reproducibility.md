@@ -75,6 +75,16 @@ The explicit refusal/non-conclusive mutations include:
   state keys; read the uppercase UUID, the `+1` and `01` Timestamp payloads,
   the Timestamp payloads 2^127 and -2^127 - 1, and 2^127 - 1 against the
   form (FR-181-AC-21).
+- Encode each string, rational, float and rational-quantity value
+  FR-181-AC-22 lists and compare the JCS bytes exactly, and read the
+  zero-denominator rational and the 7-digit, 9-digit and uppercase `bits`
+  strings against the form (FR-181-AC-22).
+- Encode the `Set<String>`, `Set<Rational>`, `Set<Float64>` and
+  `Set<Quantity<Units::metre>>` values FR-181-AC-23 lists and compare the
+  bytes and the element order exactly (FR-181-AC-23).
+- Compare the state keys of the state pairs FR-181-AC-24 lists: `+0` against
+  `-0`, one float set inserted in two orders, composed against decomposed
+  `é`, and `2/4` against `1/2` (FR-181-AC-24).
 
 ## Sampler index-sequence vector
 
