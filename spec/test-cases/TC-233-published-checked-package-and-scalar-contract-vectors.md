@@ -369,6 +369,16 @@ body changed, canonical order and `dependencies` kept, its node id kept and
 | NS-03 | a `composite_type`/`record` and a `scalar_type`/`enum` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | SE-20 | literal of `value_kind` `uuid` typed by a `string` type with an uppercase value; literal of `value_kind` `timestamp` typed by an `integer` type with value `01` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-67 |
 
+### Decimal literal vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| DL-01 | literal of `value_kind` `decimal` typed by `Decimal[0, 1000; 0, 2; nearest-even]` with values `1.25`, `0.05`, `10`, `0.00`, `1000` and `0.5` | Admitted by both schemas and the literal rule | FR-322-AC-113 |
+| DL-02 | the same type with values `.5`, `1.`, `+1.5`, `01.5`, `-0.0`, `1e2`, `1/4` and empty text | `invalid_package`/`invalid-value` | FR-322-AC-113 |
+| DL-03 | the same type with values `1.255`, `1001` and `-1` | `invalid_package`/`invalid-value` | FR-322-AC-113 |
+| DL-04 | values `1.0` and `1.00` typed by one decimal type | Two literals with two node keys | FR-322-AC-113 |
+| DL-05 | `decimal` literal typed by an `integer` or `string` node with value `.5` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-113 |
+
 ### Structural node preimage vectors
 
 Build each preimage exactly as FR-322 "Structural node preimage" spells it and hash its RFC 8785 bytes.

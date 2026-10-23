@@ -1876,6 +1876,20 @@ only on the numerator (`3`, `-5`, `1/1000`; not `03`, `+3`, `2/4`, `3/1`, `2.5`)
 whose `type` is not its kind's family refuses `ill_typed`/`operator-ineligible`
 even when its value is also non-canonical.
 
+A `decimal` literal's `type` is a `scalar_type`/`decimal` node or a
+`bounded_domain`/`decimal_range` node (family `decimal`) and its `value` is the
+decimal string of its coefficient `c` and scale `s` as written, keeping the
+scale: the digits of `|c|` with the decimal point placed `s` digits from the
+right, padded on the left with zeros so that at least one digit precedes the
+point, no point when `s` is `0`, and `-` only before a nonzero `c`
+(`1.25` for `(125, 2)`, `0.05`, `10`, `0.00`, `-0.5`; not `.5`, `1.`, `+1.5`,
+`01.5`, `-0.0`, `1e2` or `1/4`). Two literals of one type with one magnitude
+and different scales (`1.0` and `1.00`) are two values and two nodes. For a
+`decimal_range` type the literal's coefficient lies in the type's coefficient
+bounds and its scale in the type's scale bounds; a `value` outside them, like a
+`value` in any other spelling, refuses `invalid_package`/`invalid-value` at the
+literal's `value`, after the family check.
+
 | Constraint | Decision rule |
 | --- | --- |
 | `same_family` | The two named operands have equal families. |
@@ -2082,6 +2096,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 | FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
+| FR-322-AC-113 | A literal of `value_kind` `decimal` typed by `Decimal[0, 1000; 0, 2; nearest-even]` with `value` `"1.25"`, `"0.05"`, `"10"`, `"0.00"`, `"1000"` and `"0.5"` is admitted, and with `value` `".5"`, `"1."`, `"+1.5"`, `"01.5"`, `"-0.0"`, `"1e2"`, `"1/4"`, `""`, `"1.255"` (scale 3), `"1001"` (coefficient out of bounds) and `"-1"` refuses `invalid_package`/`invalid-value`; `"1.0"` and `"1.00"` are two literals with two node keys. Typed by `Decimal[-1000, 1000; 1, 2; nearest-even]`, `"-0.5"` is admitted and `"5"` refuses `invalid-value` because its scale 0 is below the scale bound. A `decimal` literal typed by an `integer` or `string` node refuses `ill_typed`/`operator-ineligible` even when its value is also malformed. | Test (TC-233) |
 
 ## Dependencies
 

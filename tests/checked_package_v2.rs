@@ -913,8 +913,34 @@ fn literal_value_is_canonical(literal: &Value) -> bool {
                 .is_ok_and(|count| count.to_string() == text)
         }),
         Some("quantity") => value.is_some_and(quantity_magnitude_is_canonical),
+        Some("decimal") => value.is_some_and(decimal_literal_is_canonical),
         _ => true,
     }
+}
+
+/// Whether a `decimal` literal's `value` is the canonical spelling of its
+/// coefficient and scale (FR-322 "Scalar literal values"): an optional `-` before
+/// a nonzero magnitude, the integer digits with no leading zero (one `0` when the
+/// integer part is zero), and, when present, a point followed by at least one
+/// fraction digit.
+fn decimal_literal_is_canonical(text: &str) -> bool {
+    let (negative, digits) = match text.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, text),
+    };
+    let (integer, fraction) = match digits.split_once('.') {
+        Some((integer, fraction)) => (integer, Some(fraction)),
+        None => (digits, None),
+    };
+    let all_digits = |part: &str| !part.is_empty() && part.bytes().all(|b| b.is_ascii_digit());
+    if !all_digits(integer) || (integer.len() > 1 && integer.starts_with('0')) {
+        return false;
+    }
+    if fraction.is_some_and(|part| !all_digits(part)) {
+        return false;
+    }
+    let zero = integer.bytes().chain(fraction.unwrap_or("").bytes()).all(|b| b == b'0');
+    !(negative && zero)
 }
 
 /// Whether a `quantity` literal's `value` is the canonical spelling of its
@@ -16573,5 +16599,18 @@ fn tc_966_malformed_hybrid_nodes_fail_the_published_schema() {
             (_, other) => panic!("{name}: unexpected parent {other}"),
         }
         assert!(!node_schema.is_valid(&node), "{name}: {}", case["why"]);
+    }
+}
+
+/// FR-322-AC-113: the canonical spelling of a `decimal` literal's `value`.
+#[test]
+fn decimal_literal_values_are_canonical_spellings() {
+    for admitted in ["1.25", "0.05", "10", "0.00", "1000", "0.5", "-0.5", "0"] {
+        assert!(decimal_literal_is_canonical(admitted), "{admitted}");
+    }
+    for refused in [
+        ".5", "1.", "+1.5", "01.5", "-0.0", "-0", "1e2", "1/4", "", "-", "1.2.3",
+    ] {
+        assert!(!decimal_literal_is_canonical(refused), "{refused}");
     }
 }
