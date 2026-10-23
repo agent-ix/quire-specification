@@ -48,5 +48,4 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Status
 
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 boundary value contract.
