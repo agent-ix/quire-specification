@@ -247,11 +247,18 @@ alone, first match wins, and the checked package records it as one
 | range narrowing | any other conversion from `Integer` or `Int[..]`, from a decimal to a `Rational[..]` or `Decimal[..]`, from a bounded `Rational[..]` to an integer type or (with denominator bound 1) a `Decimal[..]`, or from a `Decimal[c1,c2;0,0;m]` to an integer type | `quire.op.numeric.narrow` | A checked obligation that the converted value is a member of `T` (FR-146 range obligation, `unproved-range`). |
 
 Every other exact-numeric pair has no conversion and is
-`refused { code: ill_typed, cause: operator-ineligible }`. Narrowing is never
+`refused { code: ill_typed, cause: operator-ineligible }`. A `convert<T>(e)`
+whose `S` is a `Text[..]` type or `String` and whose `T` is an integer,
+decimal, rational, IEEE or quantity type is not an exact-numeric conversion
+and has none of these classes. It is
+[FR-478](FR-478-convert-text-to-a-number.md)'s text-to-number conversion, one
+of the `quire.op.text.to_*` or `quire.op.string.to_*` identities, and
+FR-478 alone decides its value, rounding and refusals. Narrowing is never
 rounding: a narrowing obligation that is not proved refuses with
 `refused { code: undefined_expression, cause: unproved-range }`, and a value
-outside `T` is never rounded, clamped, wrapped or widened. Rounding happens only
-in a scale reduction, and only there does a `rounding` mode appear.
+outside `T` is never rounded, clamped, wrapped or widened. Among exact-numeric
+conversions, rounding happens only in a scale reduction, and only there does a
+`rounding` mode appear.
 
 A rational `/` whose operands are `Integer`, `Int[..]` or `Rational[..]` and
 whose expected type is `Rational[..]` is `quire.op.rational.div`: each integer
