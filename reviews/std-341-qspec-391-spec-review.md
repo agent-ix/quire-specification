@@ -88,3 +88,20 @@ an unverified, undefined rule, so the PR does not yet guarantee the
 tool-only-upgrade miss the ticket asks for. FND-002 and FND-003 should be
 fixed in the same round; FND-004 and FND-005 are small. Before merge, close
 QSpec PR 207 with a pointer to this PR (it conflicts textually).
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-006 | low | The probe now fails on a version other than the descriptor's `tool.version` (FR-331 "Backend tool", FR-290 Tool absence), but two restatements of the probe outcome were not widened: FR-331's `results` bullet still records `unsupported` for "a supported, routed item whose tool probe finds the tool missing, errors or exceeds its limit", and FR-290-AC-8 still reads "a routed item whose tool is missing, or whose probe errors or exceeds its limit". A reader of either misses the version-mismatch case. FR-331-AC-38 carries the behaviour, so this is wording. Fix: add "or reports another version than the descriptor's `tool.version`" to both. | spec/objects/interfaces/FR-331-backend-provider-envelope.md:97; spec/objects/protocol/FR-290-protocol-claim-kind.md:396 | wrong-requirement |
+| FND-007 | low | FR-331-AC-38 is verified by "Test (TC-226)" and TC-226 EB-08 names FR-331-AC-38, but TC-226's frontmatter `relationships` verify only FR-306 and FR-201, so the graph has no TC-226 -> FR-331 edge. Fix: add `ix://agent-ix/quire-specification/FR-331` `verifies` to TC-226. | spec/test-cases/TC-226-aot-jit-native-and-cache-parity.md:5-9 | correct-requirement-no-evidence |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | At 09371106 every descriptor must carry `tool` (schema `required: ["backend", "tool", "advertises"]`, `oneOf` BackendTool or `producer`); FR-331 "Backend tool" defines "fronts an external tool" and "pure in-process engine"; FR-305 makes a plugin a third-party provider and a first-party provider (QSL engine, the Kani backend) not a plugin; FR-306 caches first-party providers' results only; FR-331-AC-37 refuses a snapshot descriptor without `tool` (`snapshot-kani-without-tool`). |
+| FND-002 | fixed | FR-331 "Backend tool": the provider queries the executable for `tool.version` each time it builds its descriptor, the registry is built afresh at each invocation, and the FR-290 probe compares the executable's version with the descriptor's and fails `tool-unavailable` naming both. FR-306 reads the cache only after the probe passes and never stores `tool-unavailable`. FR-306-AC-7, FR-331-AC-38 and TC-226 EB-08 replace the executable without editing any descriptor source. |
+| FND-003 | fixed | `kani-request` (and the other request positives) now carry the kani descriptor's `tool`; the test asserts `request["manifest"][0] == entry` from `kani-hello`, and `temporal-request`'s engine carries `producer`. |
+| FND-004 | fixed | FR-331 "Backend tool": "A process provider whose engine is its own code and that runs no other executable names its own executable and its version." |
+| FND-005 | fixed | The test validates the toolless and malformed descriptors inside the `kani-request` request stage with the whole-envelope validator and compares `manifest_digest` records `{domain: quire.tool-manifest.jcs/v1, algorithm: sha256, digest}`. |

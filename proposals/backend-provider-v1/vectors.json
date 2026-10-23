@@ -918,7 +918,10 @@
         "manifest": [
           {
             "backend": "qsl-model-check",
-            "tool": "producer",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.2.0"
+            },
             "advertises": [
               {
                 "kind": "temporal-satisfaction",
@@ -2879,7 +2882,10 @@
         "manifest": [
           {
             "backend": "qsl-prob",
-            "tool": "producer",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.2.0"
+            },
             "advertises": [
               {
                 "kind": "probabilistic-satisfaction",
@@ -3196,7 +3202,10 @@
         "manifest": [
           {
             "backend": "qsl-model-check",
-            "tool": "producer",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.2.0"
+            },
             "advertises": [
               {
                 "kind": "temporal-satisfaction",
@@ -4067,14 +4076,14 @@
       ]
     },
     {
-      "name": "hello-tool-producer",
+      "name": "hello-tool-string",
       "base": "kani-hello",
       "owner": "FR-331",
       "patch": [
         {
           "op": "replace",
           "path": "/manifest/0/tool",
-          "value": "producer"
+          "value": "kani 0.56.0"
         }
       ]
     },
@@ -4101,14 +4110,14 @@
       ]
     },
     {
-      "name": "snapshot-tool-unknown-marker",
+      "name": "snapshot-tool-string",
       "base": "temporal-request",
       "owner": "FR-331",
       "patch": [
         {
           "op": "replace",
           "path": "/manifest/0/tool",
-          "value": "in-process"
+          "value": "producer"
         }
       ]
     },

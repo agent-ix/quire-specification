@@ -863,7 +863,7 @@ fn tc_431_bounded_descriptors_carry_domains() {
     assert!(bounded > 0, "a bounded descriptor is exercised");
     let unbounded_only = serde_json::json!({
         "backend": "qsl-model-check",
-        "tool": "producer",
+        "tool": {"name": "qsl-analyze", "version": "0.2.0"},
         "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
         "fairness_kinds": ["weak"]
     });
@@ -1319,7 +1319,7 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     let descriptor = definition("BackendDescriptor");
     let base = serde_json::json!({
         "backend": "qsl-model-check",
-        "tool": "producer",
+        "tool": {"name": "qsl-analyze", "version": "0.2.0"},
         "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
         "fairness_kinds": ["weak"]
     });
@@ -1382,11 +1382,10 @@ fn manifest_digest(descriptor: &Value) -> Value {
     })
 }
 
-/// FR-331-AC-37: every descriptor carries `tool`, a `{name, version}` object
-/// for a backend that fronts an external tool and `producer` for a pure
-/// in-process engine; a `hello` descriptor never carries `producer`; the
-/// member is inside the `ManifestDigest` preimage and outside the
-/// `BackendId`.
+/// FR-331-AC-37: every descriptor carries `tool` `{name, version}`: the
+/// executable a backend that fronts an external tool invokes, or the crate
+/// that implements a pure in-process engine; the member is inside the
+/// `ManifestDigest` preimage and outside the `BackendId`.
 #[trace("TC-431", "FR-331-AC-37")]
 #[test]
 fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
@@ -1421,13 +1420,23 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
         .remove("tool");
     assert!(!whole.is_valid(&linked_without), "a snapshot descriptor requires tool");
 
-    // A pure in-process engine states `producer` in a snapshot, never in a hello.
+    // A pure in-process engine names its implementing crate and version; a
+    // release that changes that version moves the engine's ManifestDigest.
     let engine = composed(&positive("temporal-request"));
-    assert_eq!(engine["manifest"][0]["tool"], "producer");
+    let engine_entry = engine["manifest"][0].clone();
+    assert_eq!(
+        engine_entry["tool"],
+        serde_json::json!({"name": "qsl-analyze", "version": "0.2.0"})
+    );
     assert!(whole.is_valid(&engine), "a pure engine's snapshot descriptor is admitted");
-    let mut hello_producer = hello.clone();
-    hello_producer["manifest"][0]["tool"] = Value::String("producer".into());
-    assert!(!whole.is_valid(&hello_producer), "a hello descriptor is never producer");
+    let mut released = engine_entry.clone();
+    released["tool"]["version"] = Value::String("0.3.0".into());
+    assert_eq!(released["backend"], engine_entry["backend"]);
+    assert_ne!(
+        manifest_digest(&released),
+        manifest_digest(&engine_entry),
+        "an engine release moves the ManifestDigest"
+    );
 
     for malformed in [
         serde_json::json!({"name": "kani"}),
