@@ -332,7 +332,7 @@ dimension-decl = 'dimension', ident,
 dimension-term = qualified-name, [ '^', signed-int ] ;
 dimension-equivalence = 'dimension', qualified-name, '~', qualified-name,
                         'by', ratio-term, '=', ratio-term, ';' ;
-ratio-term    = exact-value, qualified-name ;
+ratio-term    = ( uint | exact-number ), qualified-name ;
 unit-decl     = 'unit', ident, ':', qualified-name, '=', exact-number,
                 [ '*', qualified-name ], [ '+', exact-number ], ';' ;
 enum-decl     = [ 'ordered' ], 'enum', ident, '{', enum-member,
@@ -417,9 +417,9 @@ the unit of compilation or `M::Name` of a selected domain package. In
 number and a unit name (a bare unit of the unit of compilation or `M::name` of a selected
 package); the first unit belongs to the first dimension and the second to the second, and
 `x U = y V` states that `x` of `U` and `y` of `V` are the same quantity. `~` is the token
-the `random-decl` and `delay-decl` productions already use, `by` is a keyword only in this
-position, and the form is distinguished from a `dimension-decl` by the `~` after the first
-name.
+the `random-decl` and `delay-decl` productions already use, `by` the token the `fifo` and
+`choice` productions already use, and the form is distinguished from a `dimension-decl`
+by the `~` after the first name.
 
 `null`, `none`, collection constructors, record constructors and bit-level
 float constructors are disjoint forms; no empty spelling aliases
