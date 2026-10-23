@@ -847,5 +847,4 @@ certificate row bindings above carry the QSL FR-196 forms.
 
 ## Status
 
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 boundary value contract.

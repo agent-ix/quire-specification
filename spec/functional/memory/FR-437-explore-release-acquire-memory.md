@@ -65,7 +65,7 @@ The state key's `memory` member is an FR-181 map, empty outside a weak
 | `{"type":"views","thread":<thread path>}` | `{"cur":<view>,"acq":<view>,"rel":<map from location to view>}`, one entry per live thread |
 | `{"type":"sc-view"}` | the view `S` |
 | `{"type":"sc-graph"}` | `{"events":[<event>, ...],"edges":[[<event>,<event>], ...],"owed":<map from thread path to [<event>, ...]>,"summaries":<map from location to [<event>, ...]>}` |
-| `{"type":"race-summary","location":<location>}` | FR-438's race summary |
+| `{"type":"race-summary","location":<location>}` | FR-438's race-summary entry, one per shared location with a non-atomic access |
 
 A **view** is `{"type":"view","at":<map from location to message depth>,"frontier":<map from thread path to count>,"owed":[{"location":<location>,"event":<event>}, ...]}`.
 `at` holds every shared location; a pointer at a removed message encodes as the
@@ -73,7 +73,11 @@ depth of its location's earliest live message. `frontier` maps a thread to the
 number, as a decimal string, of that thread's live SC events the view covers,
 which are the earliest of them in program order, so the count names the
 frontier's latest covered event; a thread whose count is 0 has no entry.
-`owed` lists the view's pairs.
+`owed` lists the view's pairs. When the subject has a shared location with a
+non-atomic access, a view also has the member `race`, which holds FR-438's
+race Booleans of the view; otherwise it has none. A queue entry whose `send`
+ran inside an `ra` weak `parallel` has the member `view`, the view the `send`
+carries, until its `receive` joins it.
 
 An **event** is `{"thread":<thread path>,"kind":"read"|"write"|"rmw"|"fence","ordinal":"<decimal>","location":<location>,"read":"<depth>","write":"<depth>"}`.
 `ordinal` is the number of live SC events of the thread before it in program
@@ -268,6 +272,7 @@ RC11 excludes.
 | FR-437-AC-12 | TC-391 LT-17 does not reach its weak outcome under `ra` in any interleaving, including those in which the fence's thread fences a second time before the other thread loads the flag: the first fence stays in `P` while the flag's message view covers it and not the second. | Test (TC-391) |
 | FR-437-AC-13 | A thread that fences twice with `seq_cst` and stores no flag between has, after its second fence, the first fence absent from the SC event graph; with a `release` flag stored between the fences, the first fence remains while the flag's message is live and its view covers the first fence and not the second. | Test (TC-393) |
 | FR-437-AC-14 | With every store and load `seq_cst` (TC-390 SB-05), after `Sx` under `ra`, the `sc-graph` entry holds one event `{"thread":<left>,"kind":"write","ordinal":"0","location":<x>,"write":"0"}`, no edge, no `owed` entry and no summary; `left`'s `cur` view has `at` mapping `x` to depth `"0"` and `y` to depth `"0"` and `frontier` mapping `left` to `"1"`, and `right`'s has an empty `frontier`. | Test (TC-394) |
+| FR-437-AC-15 | Under `ra`, while another branch's current view still points at `x`'s first message, a thread that runs a `relaxed` store `x := 1` and a `send` on a channel, in the two orders that a `choice` offers, reaches two states with equal model state, messages and thread views whose state keys differ, and differ only in the queue entry's `view` member: its `at` maps `x` to depth `"0"` when the store came first and to depth `"1"` when the `send` came first. | Test (TC-393) |
 
 ## Dependencies
 
