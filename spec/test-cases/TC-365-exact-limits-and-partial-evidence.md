@@ -27,7 +27,7 @@ The models below are defined here in full; the citation names the QSL design rec
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| XL-01 | A claim whose value is within `2^-80` of its threshold, `max_rational_bits` 64, `max_precision_bits` 64, `max_policy_iterations` 0 | `incomplete`, `precision-budget{lower, upper}` with the straddling interval |
+| XL-01 | A claim whose value is within `2^-80` of its threshold, `max_rational_bits` 64, `max_precision_bits` 64, `max_policy_iterations` 1 | `incomplete`, `precision-budget{lower, upper}` with the straddling interval |
 | XL-02 | `Monthly` with `max_states` 1000 | `incomplete`, `limit-reached` naming `max_states`, value 1000, and the request setting that raises it |
 | XL-03 | A `>= θ` claim whose lower certificate on the explored part already passes `θ` when `max_states` stops exploration | `proved` from the partial evidence |
 | XL-04 | A `<= θ` claim whose path set on the explored part already passes `θ` when a limit stops exploration | `refuted` from the partial evidence |

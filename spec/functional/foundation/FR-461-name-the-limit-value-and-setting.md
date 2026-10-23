@@ -82,10 +82,19 @@ setting.
    point.
 6. **Execution budgets name their counter.** An `incomplete` execution
    outcome names its `quire.value.accounting/v1` counter, for example
-   `work_units`, as its limit. Its setting is `accounting`, a dot and the
-   counter name, for example `accounting.work_units`, and that one name
-   raises the budget at every entry point. So every setting name, of a stage,
-   an engine or an execution budget, is dotted. The backend-provider
+   `work_units`, as its limit. A counter of the evaluation meter, one of the
+   ten `ScalarLimitsV1` counters (`integer_bits`, `decimal_digits`,
+   `scale_expansion`, `text_input_bytes`, `text_scalars`,
+   `normalized_scalars`, `unit_edges`, `value_occurrences`, `work_units` and
+   `result_units`), has the setting `accounting`, a dot and the counter name,
+   for example `accounting.work_units`, and that one name raises the budget
+   at every entry point. The counters of the other accounting limit objects
+   are stage limits and take their stage's dotted name under Behavior 2:
+   `PopulationAdmissionLimitsV1`'s as `admission.<counter>` and
+   `ModelNormalizationLimitsV1`'s as `model.<counter>`, for example
+   `admission.work_units` and `model.work_units`. So two independent counters
+   that share a counter name have two setting names, and every setting name,
+   of a stage, an engine or an execution budget, is dotted. The backend-provider
    `LimitReached` cause carries the counter as `limit` and the dotted name
    as `setting`, and its `SettingName` pattern admits no bare counter name.
 7. **Rendering.** A rendered limit diagnostic states the limit, the
@@ -102,7 +111,7 @@ setting.
 | FR-461-AC-2 | For each stage limit, an input that exceeds its default is rerun with that limit raised through the library setter, through the replay request's `stage_limits` entry and through `--limit <name>=<value>`, each under the setting name the outcome reported, and each rerun succeeds with the same result. | Test (TC-426) |
 | FR-461-AC-3 | A replay request whose `stage_limits` raises any stage limit runs that stage under the raised value, not under its default. | Test (TC-426) |
 | FR-461-AC-4 | An unknown setting name, or a setting name naming a depth, given to `--limit` or to a replay request's `stage_limits` refuses before any stage runs and names the argument. | Test (TC-426) |
-| FR-461-AC-5 | An `incomplete` execution outcome names its `quire.value.accounting/v1` counter as its limit and `accounting.<counter>` as its setting, such as `accounting.work_units`, and raising that setting through each entry point lets the same run complete. | Test (TC-426) |
+| FR-461-AC-5 | An `incomplete` execution outcome names its `quire.value.accounting/v1` counter as its limit and, for a `ScalarLimitsV1` counter, `accounting.<counter>` as its setting, such as `accounting.work_units`, and raising that setting through each entry point lets the same run complete; a request carrying both `ScalarLimitsV1` and `PopulationAdmissionLimitsV1` that exhausts population admission's `work_units` names the setting `admission.work_units`, and raising `accounting.work_units` does not let it complete. | Test (TC-426) |
 | FR-461-AC-6 | An engine item stopped at an engine limit, such as the model checker's state count, settles `incomplete` naming the limit, its value and its dotted setting name, such as `model_check.max_states`, and raising that setting through the library setter, the replay request and `--limit` lets the same item finish. | Test (TC-426) |
 | FR-461-AC-7 | A byte-emitting lifecycle operation with an `output_bytes` limit reports the operation's `*.output_bytes` setting when the next emitted byte would exceed the configured bound, returns no partial output, succeeds at the exact output length including its terminating newline, and accepts the same bound through its typed limits field and the CLI settings operation. | Test (TC-930) |
 | FR-461-AC-8 | A backend-provider `LimitReached` cause for an exhausted execution budget with `limit` `work_units` and `setting` `accounting.work_units` validates against the provider schema; the same cause with `setting` `work_units` fails it. | Test (TC-426) |
