@@ -102,6 +102,16 @@ bypass the operation's frame.
    branches, else `invalid_package`/`invalid-value` at `count`. `count` and
    `predicate` are present exactly for their policy, else the layout is violated
    (`malformed_wire`).
+   The `predicate` function has one parameter per `joined` text, the `k`-th
+   parameter receiving the disposition of the `k`-th text in that ascending
+   order, and each parameter type and the result type is the `boolean` type
+   node: a parameter is `true` when its branch thread is `completed` and
+   `false` when it is `running`, the only two dispositions a join step reads
+   ([FR-426](../../functional/protocol/FR-426-apply-protocol-steps.md)). A
+   parameter count that differs from the number of `joined` texts, a
+   parameter of another type, or a result of another type refuses
+   `ill_typed`/`type-mismatch` at `predicate`, retaining `expected` (the
+   required parameter and result types) and `actual` (the function's).
 5. **Types.** The binder of a `send` and of a `receive` has the `carries`
    node of its channel as `semantic_type`, else `ill_typed`/`type-mismatch`
    at the control, retaining `expected` and `actual`; a `receive` names the
@@ -318,6 +328,7 @@ checks at FR-464 step 6):
 | FR-466-AC-12 | Compensation scope, by the five stages: the trigger guard reads the trigger binder, the protocol captures and the registration captures and refuses the forward binder and the protocol activation binder (`missing_declaration`/`missing-name`) and `over` (`ill_typed`/`operator-ineligible`); an activation capture reads the trigger binder, `over`, the captures and earlier activation captures; the retry relation reads `earlier`, `later` and the captures and refuses the trigger binder (`missing-name`) and `over` (`operator-ineligible`); the recovery predicate reads its binder and the captures and refuses `earlier` (`missing-name`) and `over` (`operator-ineligible`); a registration capture reads the forward binder, `over` and the activation binder; each `missing-name` refusal is at the template retaining name, stage, owner and `read`. | Test (TC-948) |
 | FR-466-AC-13 | The worked protocol (roles, a channel and queue, a send and a receive, an attempt and an effect, a parallel of two branches joined `all`, a choice, a repeat, an await, a commit, a compensation and a finish) is admitted; its node keys are unchanged by reformatting and by a second reference, and change with any retargeted reference, renamed control, reordered child or changed literal. | Test (TC-948) |
 | FR-466-AC-14 | Decision facts: a `choice` owned by the `to` role of a channel decides on its `receive` record's Boolean field listed individually in `visible`; the other role's receive record, a `send`, `effect`, `commit` or finish binder, the protocol input binder, an unlisted fact and a fact reachable only inside a composite entry each refuse `wrong_snapshot`/`wrong-observation` with `reason` `other-role`, `ineligible-kind` or `unlisted`; an attempt or event binder is eligible for the role it is `by`; a repeat's `visible` and guard follow the same rule; a binder not readable at the node refuses as an out-of-scope read first. | Test (TC-948) |
+| FR-466-AC-15 | A `predicate` join over `joined` `[east, west]` whose `function` node has two `boolean` parameters and a `boolean` result is admitted; the same join with a one-parameter function, a three-parameter function, a second parameter of an integer type, or an integer result refuses `ill_typed`/`type-mismatch` at `predicate`, retaining expected and actual. | Test (TC-948) |
 
 ## Dependencies
 
