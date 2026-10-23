@@ -188,10 +188,28 @@ and `p` the caller's element parameter at position `i`. Position `i` is *equal* 
 exactly `p`. It is *strictly smaller* when:
 
 - for an integer element, `a` is `p - k` for an integer literal `k >= 1`;
-- for a cardinality element, `a` is a *removal filter* of `p`, or a removal
-  filter as the operand of a same-kind `convert<K<T>[min,max]>(...)` or
+- for a cardinality element, `a` is a *shrinking term* of `p`, or a shrinking
+  term as the operand of a same-kind `convert<K<T>[min,max]>(...)` or
   `convert<K<T>>(...)` whose `K` and `T` are `p`'s kind and element type. A
-  removal filter is `filter(x in p: q)` with a stable path `e` in which the
+  shrinking term is a removal filter, a one-occurrence removal or a tail of
+  `p`.
+
+  A *one-occurrence removal* is `removeOne(p, e)` (FR-145) for a stable path
+  `e` with the membership fact `contains(p, e)` at that call site, for a `p` of
+  any collection kind and any element type, including one with a float leaf,
+  because `removeOne` and `contains` compare under the same FR-144 membership
+  relation. By that fact `p` has an occurrence equal to `e`, `removeOne`
+  drops exactly one occurrence, and the result's bound count is `size(p) - 1`.
+
+  A *tail* is `dropFirst(p)` (FR-145) for a `p` of `Sequence` or `OrderedSet`
+  kind with a fact at that call site that `size(p) >= 1`: the `size(p)`
+  interval, from the declared bound, a comparison fact or the membership fact
+  `contains(p, v)`, excludes `0`. The first occurrence exists and is dropped,
+  so the result's bound count is `size(p) - 1`. A `dropFirst` without that
+  fact, or of a `Set` or `Bag`, is not a tail (the latter is an FR-145 typing
+  refusal).
+
+  A *removal filter* is `filter(x in p: q)` with a stable path `e` in which the
   binder `x` does not occur, the membership fact `contains(p, e)` at that call
   site, and a predicate `q` of one of these shapes:
   - `x != e`, `e != x` or `not (x = e)`, when `p`'s element type admits FR-149
@@ -208,7 +226,10 @@ exactly `p`. It is *strictly smaller* when:
   equal to `e` under the FR-144 collection membership relation (for the last
   shape, at least those), so the filter drops every such occurrence, and the
   membership fact `contains(p, e)` proves at least one exists. The result's
-  bound count is therefore at most `size(p) - 1`. A same-kind conversion has
+  bound count is therefore at most `size(p) - 1`. A removal filter drops every
+  occurrence equal to `e`, so a walk that must process each duplicate of a
+  `Sequence` or `Bag` one occurrence at a time uses `removeOne` or `dropFirst`,
+  which keep the other duplicates. A same-kind conversion has
   empty loss and keeps that count, and its target bound is checked at run time
   as FR-145 states. A predicate `x != e` over an element type with a float
   leaf is not a removal filter, because its FR-148 `numericEqual` reading
@@ -407,6 +428,7 @@ counter, and no call depth turns into an outcome (FR-460).
 | FR-146-AC-13 | A `case` charges its scrutinee's charges and then only its selected arm body's charges, with no charge for arm selection or payload binding; an undefined scrutinee is the `case`'s outcome with no arm evaluated or charged; and a work limit equal to the scrutinee's and selected arm body's work units admits the `case` while one unit less returns `incomplete { limit_kind: work_units }`. | Test (TC-399) |
 | FR-146-AC-14 | A `case` whose scrutinee is an `Integer` and whose arms name unknown members is refused `ill_typed`/`type-mismatch` at the scrutinee only; a `case` with an ill-typed body in a resolved arm and a missing arm is refused `ill_typed`/`type-mismatch` at that body only; and a `case` whose `unknown-member` arm has an ill-typed body, or whose `arm-arity` arm's body uses an unbound identifier, is refused `undefined_expression`/`unproved-exhaustiveness` with that obligation only. | Test (TC-398) |
 | FR-146-AC-15 | A recursive function measured by `decreases(size(s))` over a `Sequence`, `Set`, `Bag` or `OrderedSet` parameter `s` is admitted when each recursive call passes a removal filter of `s` (`x != e`, `e != x` or `not (x = e)` over an element type without a float leaf, `not quire::value::ieee::bitIdentical(x, e)` over a `Float32` or `Float64` element type, or `not contains(d, x)` under a further `contains(d, e)` fact, for a stable path `e`) under a `contains(s, e)` guard fact, or that filter inside a same-kind `convert`, and evaluates its declared result; passing `s` unchanged, a removal filter without the membership fact, a filter of any other predicate shape, or a removal of a non-stable `e` refuses `undefined_expression`/`unproved-decrease` with obligation `decrease`; `size` of a non-parameter operand, and one measure position holding a cardinality element in one function and an integer element in another of its component, refuse with obligation `measure-kind`; and a lexicographic tuple mixing cardinality and integer positions decreases by the earlier-equal rule. | Test (TC-191) |
+| FR-146-AC-16 | A recursive function measured by `decreases(size(s))` over a `Sequence`, `Set`, `Bag` or `OrderedSet` parameter `s` is admitted when each recursive call passes `removeOne(s, e)` for a stable path `e` under a `contains(s, e)` guard fact, including over an element type with a float leaf, or passes `dropFirst(s)` for a `Sequence` or `OrderedSet` `s` under a fact that `size(s) >= 1` (a `size(s) > 0` comparison, a `contains(s, v)` fact or a declared minimum of at least `1`), or either inside a same-kind `convert`, and evaluates its declared result, so a duplicate-holding `Sequence` or `Bag` is walked one occurrence at a time; `removeOne(s, e)` without the membership fact, with a non-stable `e`, and `dropFirst(s)` without the size fact, refuse `undefined_expression`/`unproved-decrease` with obligation `decrease`. | Test (TC-191) |
 
 ## Dependencies
 

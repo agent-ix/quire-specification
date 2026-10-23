@@ -402,7 +402,19 @@ boundary.
   nothing). A comparison reaching a float leaf is admitted: `=` over a bare
   float is `quire.op.ieee.numeric_equal` and `!=` is `quire.op.boolean.not`
   over it, and `quire.op.structural.eq` and `.ne` over a type holding a float
-  at any depth list that float leaf (FR-149 "IEEE relations"). A V2 reader refuses the first failing check in the order owned by
+  at any depth list that float leaf (FR-149 "IEEE relations"). The
+  one-occurrence collection forms of FR-145 have three identities:
+  `quire.op.collection.sequence.drop_first` and
+  `quire.op.collection.ordered_set.drop_first` take one operand of their own
+  family (a `set` or `bag` operand has no first occurrence and refuses
+  `operator-ineligible`) and have a `result_type` of that family, whose bound
+  is the FR-145 derived bound; and `quire.op.collection.remove_one` takes one
+  `collection_kind` operand and a value whose type node equals the operand's
+  element type node (or, for a record element, conforms to it, by the
+  `inner_type` constraint of `quire.op.collection.contains`), has a
+  `result_type` of the operand's family, whose bound is the FR-145 derived
+  bound, and lists the leaves of `inner:0` as `contains` does. None names a law, a mode
+  or a member. A V2 reader refuses the first failing check in the order owned by
   `quire.native.diagnostics/v1`: `unknown-operation`,
   `operation-class-mismatch`, `operation-law-missing`,
   `operation-law-mismatch`, `operation-law-unselected`,
@@ -2096,6 +2108,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
 | FR-322-AC-111 | `quire.op.ieee.float64.negate` over one `float64` operand typed `Float64[nearest-even]` has `result_type` the operand's type node, the law `ieee_profile` selecting the lock's IEEE definition, mode `null`, no member and no leaves; the same over `float32` with `quire.op.ieee.float32.negate`. A `float32` operand of the `float64` identity, a `float64` operand of the `float32` identity, two operands, a `result_type` of another type node (`Float64[toward-zero]` over a `Float64[nearest-even]` operand), an `integer` or `decimal` operand, a `rounding` mode on the node and a missing `ieee_profile` law refuse as the reader order states (`operator-ineligible` for the operand, arity and result, `operation-mode-mismatch` for the mode, `operation-law-missing` for the law); a lock that selects no `ieee_profile` refuses `operation-law-unselected`. The identities `quire.op.ieee.float64.eq`, `quire.op.ieee.float64.ne` and `quire.op.ieee.float64.lt` refuse `unknown-operation`. | Test (TC-233) |
 | FR-322-AC-112 | `quire.op.structural.eq` and `.ne` over `record R { x: Float64[nearest-even]; t: Text[0,8;nfc]; }` are admitted with the leaves `["field:x"]` (laws `[ieee_profile]`, mode `null`) and `["field:t"]` (the `nfc` law and mode) in field order; over `Option<Float64[nearest-even]>` with the leaf `["inner"]`; over `union U { V(Float32[exact]), N }` with `["member:V", "position:0"]`; over `Sequence<Float64[nearest-even]>` with `["inner"]`; over a record holding no float and no text, none. A `quire.op.collection.set` whose result is `Set<Float64[nearest-even]>` lists the leaf with no path segment under `result_inner`. A float leaf missing from `leaves`, one listing no law, one listing the text profile law or a mode, and a lock without the `ieee_profile` selection refuse as a text leaf does. The occurrences `quire.op.ieee.numeric_equal` over two `float64` operands, and `quire.op.boolean.not` over it, are admitted as the lowering of `=` and `!=`. | Test (TC-233) |
+| FR-322-AC-117 | `quire.op.collection.sequence.drop_first` over a `Sequence<Integer>[0,9]` operand and `quire.op.collection.ordered_set.drop_first` over an `OrderedSet<Integer>[0,9]` operand are admitted with a `result_type` of the operand's family (`Sequence<Integer>[0,8]` and `OrderedSet<Integer>[0,8]`), no law, no mode, no member and no leaves; `quire.op.collection.remove_one` over `Bag<Text[0,8;nfc]>[0,9]` and a `Text[0,8;nfc]` value is admitted with the one leaf of the empty path (`inner:0` adds no `inner` segment) carrying the `nfc` law and mode as `contains` lists it, over `Set<Float64[nearest-even]>[0,9]` and a `Float64[nearest-even]` value with the empty-path float leaf carrying `ieee_profile` and mode `null`, and over `Sequence<Integer>[0,9]` with no leaf. A `drop_first` identity over a `Set` or `Bag` operand, a `drop_first` whose family differs from its operand's, a `remove_one` whose value is not the element type, one operand, or a `result_type` of another family, and a `drop_first` or `remove_one` listing a law, a mode or a member refuse as the reader order states (`operator-ineligible` for the operand family, arity, constraint and result type; `operation-law-mismatch`, `operation-mode-mismatch` and `operation-member-mismatch` for the rest). | Test (TC-233) |
 
 ## Dependencies
 
