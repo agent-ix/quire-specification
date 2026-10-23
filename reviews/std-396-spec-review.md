@@ -33,3 +33,11 @@ Examined, clean:
 ## Verdict
 
 Not mergeable: FND-001 (high) block the PR.
+
+## Dispositions
+
+Round 1, at b59ad360. FR-181-AC-19/20 and TC-210 now use the rational form (1.50 = 3/2). No other decimal quantity encoding is left in proposals/, spec/ or tests/ apart from reader-input vectors.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | A unit-bearing quantity has exactly one canonical encoding in every position ... the FR-205 normalized rational ... the quantity `1.50` in `Units::metre` is always `{"denominator":"2","numerator":"3","type":"rational","unit":"Units::metre"}` |

@@ -923,6 +923,9 @@
         "/request/items/0/temporal/limits/max_states": "FR-368",
         "/request/items/0/temporal/limits/max_clocks": "FR-415",
         "/request/items/0/temporal/limits/max_walk_steps": "FR-392",
+        "/request/items/0/temporal/limits/max_solver_steps": "FR-368",
+        "/request/items/0/temporal/limits/max_solver_time": "FR-368",
+        "/request/items/0/temporal/smt_encoding/max_constants": "FR-368",
         "/request/items/0/temporal/witness_samples": "FR-392",
         "/request/items/0/temporal/seed": "FR-392",
         "/request/items/0/reductions": "FR-382",
@@ -1066,7 +1069,12 @@
                 "limits": {
                   "max_states": 250000,
                   "max_clocks": 1024,
-                  "max_walk_steps": 64
+                  "max_walk_steps": 64,
+                  "max_solver_steps": 1000,
+                  "max_solver_time": 5
+                },
+                "smt_encoding": {
+                  "max_constants": 1048576
                 },
                 "witness_samples": 4,
                 "seed": "42"
@@ -4510,6 +4518,90 @@
           "op": "add",
           "path": "/request/items/0/temporal/limits/max_depth",
           "value": 40
+        }
+      ]
+    },
+    {
+      "name": "temporal-limits-solver-time-fractional",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/limits/max_solver_time",
+          "value": 1.5
+        }
+      ]
+    },
+    {
+      "name": "temporal-limits-solver-time-zero",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/limits/max_solver_time",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "temporal-smt-encoding-empty",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/smt_encoding",
+          "value": {}
+        }
+      ]
+    },
+    {
+      "name": "temporal-smt-encoding-unknown-member",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/0/temporal/smt_encoding/max_queries",
+          "value": 4
+        }
+      ]
+    },
+    {
+      "name": "temporal-smt-encoding-fractional",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/smt_encoding/max_constants",
+          "value": 1.5
+        }
+      ]
+    },
+    {
+      "name": "temporal-smt-encoding-zero",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/smt_encoding/max_constants",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "temporal-limits-solver-steps-zero",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/limits/max_solver_steps",
+          "value": 0
         }
       ]
     },
