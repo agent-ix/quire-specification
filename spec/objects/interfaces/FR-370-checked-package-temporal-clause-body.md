@@ -199,11 +199,12 @@ argument fit the clause's `temporal_profile` law as this table states:
 | `quire.temporal.timed/v1` | `null`, timed `[a,b]` with either end open or closed | empty or non-empty |
 | `quire.temporal.event-position.false-extension/v1`, `quire.temporal.fixed-sample.false-extension/v1`, `quire.temporal.timestamped-event.finite-window/v1` | integer `[a,b]` | empty |
 
-A hybrid claim (FR-481) takes its intervals by FR-481 "Hybrid claims"
-instead of this table: the integer form or the timed form under
-`model-time` whatever its profile, the integer form under `model-steps`,
-and a timed or integer `[a,*]` where its profile admits `[a,*]`; its fairness
-argument fits this table. Under `quire.temporal.timed/v1` a lower-bounded
+A hybrid claim (FR-481) takes its intervals by FR-481 "Hybrid claims": the
+timed form only under `quire.temporal.timed/v1`, as this table states, with
+the timed `[q, *]` where that profile admits it; under any other profile
+the integer form where the bounds are whole and closed and the timed form in
+exact rational seconds otherwise; and the integer form under
+`model-steps`. Its fairness argument fits this table. Under `quire.temporal.timed/v1` a lower-bounded
 `[a,*]` interval and an integer-form interval are not admitted: a timed interval has a finite upper
 bound (FR-255) and its bounds are exact rationals. The timed form is
 admitted under no other profile.

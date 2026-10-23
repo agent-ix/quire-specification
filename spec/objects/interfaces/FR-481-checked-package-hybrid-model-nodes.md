@@ -13,7 +13,7 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-331
     type: references
-    - target: ix://agent-ix/quire-specification/FR-469
+  - target: ix://agent-ix/quire-specification/FR-469
     type: references
   - target: ix://agent-ix/quire-specification/FR-362
     type: references
@@ -89,7 +89,7 @@ process provider alike.
     binding("class", literal)]`: `parameter` references the variable's
     `value`/`parameter` node and `class` is a text literal, `clock` or
     `hybrid` (FR-193 "Source form and the clock line");
-    - `modes` — an aggregate of one `reference` per mode, in declared order,
+  - `modes` — an aggregate of one `reference` per mode, in declared order,
     to its `hybrid`/`hybrid_mode` node;
   - `initial` — an aggregate of one entry per initial entry (FR-193 "Initial
     states"), in source order, each the aggregate `[binding("mode", literal),
@@ -129,7 +129,7 @@ process provider alike.
   - `target` — an `integer` literal, the zero-based position of the target
     mode in its model's `modes`;
   - `guard` — a `reference` to the Boolean term node of the guard;
-    - `resets` — an aggregate of one entry per reset conjunct `x ~ e`
+  - `resets` — an aggregate of one entry per reset conjunct `x ~ e`
     (FR-193 "Resets"), in declared order, each the aggregate
     `[binding("variable", literal), binding("value", reference),
     binding("relation", literal)]`: `variable` is the zero-based position of
@@ -183,12 +183,21 @@ variable, so a transition into an earlier mode adds no graph cycle.
   `hybrid_mode` node of `S` and `name` the target mode's name for
   `fair S::T`.
 - Its formula is the FR-370 formula nodes of the claim's body, future and
-  past operators alike. Under `model-steps` every interval takes FR-370's
-  integer form, counting positions. Under `model-time` an interval whose
-  bounds are whole seconds with both ends closed takes the integer form, and
-  every other interval the timed form in exact rational seconds; a timed
-  form with `upper` `null` and `upper_end` `open` is the interval `[q, *]`,
-  admitted only in a hybrid claim whose profile admits `[a, *]`.
+  past operators alike. Each interval has exactly one encoding, chosen by
+  the clock and the clause's profile as FR-370 fixes the form per profile:
+  - under `model-steps`, the integer form, counting positions;
+  - under `model-time` with `quire.temporal.timed/v1`, the timed form in
+    exact rational seconds, always, `[q, *]` being the timed form with
+    `upper` `null` and `upper_end` `open`;
+  - under `model-time` with any other profile, the integer form when the
+    lower bound is a whole number of seconds with a closed end and the upper
+    bound is `*` or a whole number of seconds with a closed end, so `[2, *]`
+    and `[2 s, *]` are both `{lower: "2", upper: null}`, and the timed form in
+    exact rational seconds otherwise, `[q, *]` with `upper` `null` and
+    `upper_end` `open`.
+  An upper bound `*` is admitted only where the profile admits `[a, *]`, and
+  the reader refuses an interval whose encoding is not the one this rule
+  chooses (reader check 9).
 - Each `holds` operand, guard and capture initializer is a term node of
   "Hybrid terms". A read `h.x` of the `over` parameter is a `reference` to
   `x`'s variable node. With `n` continuous variables, a read `q.x` of the

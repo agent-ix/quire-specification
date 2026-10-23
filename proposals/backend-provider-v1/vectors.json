@@ -3490,6 +3490,154 @@
               "type": "solver-inconclusive",
               "trace": {
                 "start": {
+                  "mode": "Up",
+                  "time": {
+                    "lower": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    },
+                    "upper": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    }
+                  },
+                  "enclosure": {
+                    "x": {
+                      "lower": {
+                        "numerator": "0",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "0",
+                        "denominator": "1"
+                      }
+                    }
+                  }
+                },
+                "jumps": [
+                  {
+                    "transition": 0,
+                    "before": {
+                      "time": {
+                        "lower": {
+                          "numerator": "1",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "1",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "x": {
+                          "lower": {
+                            "numerator": "1",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "1",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    },
+                    "state": {
+                      "mode": "Down",
+                      "time": {
+                        "lower": {
+                          "numerator": "1",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "1",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "x": {
+                          "lower": {
+                            "numerator": "1",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "1",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "transition": 0,
+                    "before": {
+                      "time": {
+                        "lower": {
+                          "numerator": "2",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "2",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "x": {
+                          "lower": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    },
+                    "state": {
+                      "mode": "Up",
+                      "time": {
+                        "lower": {
+                          "numerator": "2",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "2",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "x": {
+                          "lower": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "delta": {
+                  "numerator": "1",
+                  "denominator": "100"
+                },
+                "loop": 0
+              }
+            }
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "dreal",
+            "counterexample": {
+              "type": "hybrid-counterexample",
+              "kind": "formula",
+              "trace": {
+                "start": {
                   "mode": "Moving",
                   "time": {
                     "lower": {
@@ -3504,7 +3652,7 @@
                   "enclosure": {
                     "a": {
                       "lower": {
-                        "numerator": "1",
+                        "numerator": "2",
                         "denominator": "1"
                       },
                       "upper": {
@@ -3524,7 +3672,7 @@
                     },
                     "v": {
                       "lower": {
-                        "numerator": "19",
+                        "numerator": "20",
                         "denominator": "1"
                       },
                       "upper": {
@@ -3540,18 +3688,18 @@
                     "before": {
                       "time": {
                         "lower": {
-                          "numerator": "9",
+                          "numerator": "10",
                           "denominator": "1"
                         },
                         "upper": {
-                          "numerator": "21",
-                          "denominator": "2"
+                          "numerator": "10",
+                          "denominator": "1"
                         }
                       },
                       "enclosure": {
                         "a": {
                           "lower": {
-                            "numerator": "1",
+                            "numerator": "2",
                             "denominator": "1"
                           },
                           "upper": {
@@ -3561,12 +3709,12 @@
                         },
                         "t": {
                           "lower": {
-                            "numerator": "9",
+                            "numerator": "10",
                             "denominator": "1"
                           },
                           "upper": {
-                            "numerator": "21",
-                            "denominator": "2"
+                            "numerator": "10",
+                            "denominator": "1"
                           }
                         },
                         "v": {
@@ -3575,8 +3723,8 @@
                             "denominator": "1"
                           },
                           "upper": {
-                            "numerator": "1",
-                            "denominator": "100"
+                            "numerator": "0",
+                            "denominator": "1"
                           }
                         }
                       }
@@ -3585,18 +3733,18 @@
                       "mode": "Stopped",
                       "time": {
                         "lower": {
-                          "numerator": "9",
+                          "numerator": "10",
                           "denominator": "1"
                         },
                         "upper": {
-                          "numerator": "21",
-                          "denominator": "2"
+                          "numerator": "10",
+                          "denominator": "1"
                         }
                       },
                       "enclosure": {
                         "a": {
                           "lower": {
-                            "numerator": "1",
+                            "numerator": "2",
                             "denominator": "1"
                           },
                           "upper": {
@@ -3606,12 +3754,12 @@
                         },
                         "t": {
                           "lower": {
-                            "numerator": "9",
+                            "numerator": "10",
                             "denominator": "1"
                           },
                           "upper": {
-                            "numerator": "21",
-                            "denominator": "2"
+                            "numerator": "10",
+                            "denominator": "1"
                           }
                         },
                         "v": {
@@ -3620,8 +3768,191 @@
                             "denominator": "1"
                           },
                           "upper": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "name": "hybrid-inconclusive-replay-record",
+      "stage": "outcome",
+      "owners": {
+        "/results/1/cause/replay": "FR-193"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "dreal",
+            "kind": "temporal-satisfaction",
+            "result": "refuted",
+            "counterexample": 0
+          },
+          {
+            "request_index": 1,
+            "backend": "dreal",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "solver-inconclusive",
+              "trace": {
+                "start": {
+                  "mode": "Up",
+                  "time": {
+                    "lower": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    },
+                    "upper": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    }
+                  },
+                  "enclosure": {
+                    "x": {
+                      "lower": {
+                        "numerator": "0",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "0",
+                        "denominator": "1"
+                      }
+                    }
+                  }
+                },
+                "jumps": [
+                  {
+                    "transition": 0,
+                    "before": {
+                      "time": {
+                        "lower": {
+                          "numerator": "1",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "1",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "x": {
+                          "lower": {
                             "numerator": "1",
-                            "denominator": "100"
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "1",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    },
+                    "state": {
+                      "mode": "Down",
+                      "time": {
+                        "lower": {
+                          "numerator": "1",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "1",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "x": {
+                          "lower": {
+                            "numerator": "1",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "1",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "transition": 0,
+                    "before": {
+                      "time": {
+                        "lower": {
+                          "numerator": "2",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "2",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "x": {
+                          "lower": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    },
+                    "state": {
+                      "mode": "Up",
+                      "time": {
+                        "lower": {
+                          "numerator": "2",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "2",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "x": {
+                          "lower": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "0",
+                            "denominator": "1"
                           }
                         }
                       }
@@ -3632,7 +3963,17 @@
                   "numerator": "1",
                   "denominator": "100"
                 },
-                "loop": 1
+                "loop": 0
+              },
+              "replay": {
+                "static": {
+                  "outcome": "inconsistent",
+                  "at": "/jumps/0/before",
+                  "check": 4
+                },
+                "exact": {
+                  "outcome": "not-exact"
+                }
               }
             }
           }
@@ -6418,6 +6759,18 @@
           "op": "add",
           "path": "/counterexamples/0/counterexample/trace/jumps/0/before/mode",
           "value": "Moving"
+        }
+      ]
+    },
+    {
+      "name": "hybrid-replay-check-out-of-range",
+      "base": "hybrid-inconclusive-replay-record",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/1/cause/replay/static/check",
+          "value": 9
         }
       ]
     },

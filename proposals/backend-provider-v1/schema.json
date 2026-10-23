@@ -855,7 +855,24 @@
       "required": ["type"],
       "properties": {
         "type": {"const": "solver-inconclusive"},
-        "trace": {"$ref": "#/$defs/HybridTrace"}
+        "trace": {"$ref": "#/$defs/HybridTrace"},
+        "replay": {"$ref": "#/$defs/HybridReplay"}
+      },
+      "additionalProperties": false
+    },
+    "HybridReplay": {
+      "description": "FR-193 Trace replay: the reader's replay outcome on a stored record; a provider entry carries none.",
+      "type": "object",
+      "required": ["static"],
+      "properties": {
+        "static": {"oneOf": [
+          {"type": "object", "required": ["outcome"], "properties": {"outcome": {"const": "consistent"}}, "additionalProperties": false},
+          {"type": "object", "required": ["outcome", "at", "check"], "properties": {"outcome": {"const": "inconsistent"}, "at": {"type": "string"}, "check": {"type": "integer", "minimum": 1, "maximum": 5}}, "additionalProperties": false}
+        ]},
+        "exact": {"oneOf": [
+          {"type": "object", "required": ["outcome"], "properties": {"outcome": {"const": "not-exact"}}, "additionalProperties": false},
+          {"type": "object", "required": ["outcome", "at", "check"], "properties": {"outcome": {"const": "not-reproduced"}, "at": {"type": "string"}, "check": {"type": "integer", "minimum": 1, "maximum": 5}}, "additionalProperties": false}
+        ]}
       },
       "additionalProperties": false
     },

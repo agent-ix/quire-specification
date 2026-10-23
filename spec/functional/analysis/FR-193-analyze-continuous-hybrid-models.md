@@ -381,8 +381,9 @@ each jump to a source transition:
   an absent `delta` is 0, and a negative `delta` SHALL refuse
   `invalid_result`/`invalid-value` at `/delta`. A trace MAY carry `loop`, a count naming the state
   that its last state returns to, 0 for `start` and `k` for the state of
-  `jumps[k - 1]`, so the trace denotes a lasso; a `loop` beyond the trace's
-  last state SHALL refuse with `invalid_result`/`invalid-value` at `/loop`.
+  `jumps[k - 1]`, so the trace denotes a lasso; `loop` SHALL name a state
+  before the last one, and a `loop` naming the last state or beyond SHALL
+  refuse with `invalid_result`/`invalid-value` at `/loop`.
 - The trace's last state SHALL be the state at which the solver reports the
   possible violation; in a `loop` trace it is the state that returns to the
   state `loop` names.
@@ -439,7 +440,15 @@ reads. The checks, in trace order:
 
 The outcome SHALL be `consistent`, or `inconsistent{at, check}` naming the
 pointer of the first failing check and its number. Static replay settles no
-value: the reader keeps the outcome with the trace.
+value: the reader keeps the outcome with the trace as the `replay` member of
+the item's `solver-inconclusive` cause on its stored record (FR-306):
+`{"static": s}` or `{"static": s, "exact": e}`, `s` `{"outcome":
+"consistent"}` or `{"outcome": "inconsistent", "at": p, "check": n}`, and `e`
+`{"outcome": "not-exact"}` or `{"outcome": "not-reproduced", "at": p,
+"check": n}`, `p` an RFC 6901 pointer into the trace and `n` the check's
+number. A provider writes no `replay`: a reader SHALL refuse a provider's
+entry that carries one with `invalid_result`/`unknown-member` at
+`/cause/replay`.
 
 **Exact replay.** A trace SHALL be replayed exactly when it is a *point
 trace*, `δ` 0, every jump carrying `before`, and every `time`,
@@ -447,7 +456,10 @@ trace*, `δ` 0, every jump carrying `before`, and every `time`,
 mode it dwells in has a *polynomial
 flow*: after `let` substitution and expansion of non-recursive calls, every
 rate is built from constants, variables, unary `-`, `+`, `-` and `*`, and the
-relation "`y` occurs in `x`'s rate" has no cycle. The solution of a
+relation "`y` occurs in `x`'s rate" has no cycle; and every invariant, guard,
+reset, initial condition, activation condition, capture and claim atom the
+replay evaluates calls no recursive function, so each expands to the
+`HybridTerm` forms other than `Call`. The solution of a
 polynomial flow from a point is then a vector of polynomials in time with
 exact rational coefficients, computed by integrating the rates in that
 relation's order, and exact replay SHALL decide each check over the reals
@@ -470,18 +482,28 @@ time whose sign on an interval is decidable:
    it, decided by the pointwise meaning with every position past the
    prefix's end unknown.
 
-When every check holds, the replay settles `reproduced-with-evaluated-witness`
-(FR-364) and the item `refuted` with the trace as its `HybridCounterexample`
-of kind `formula`. When an expression has no value at an instant of the
-replayed prefix, the item settles `refuted` with the counterexample of kind
-`undefined-evaluation{where, cause}`, `where` naming the state and its time
-stamp, and the cause `undefined-evaluation` (FR-331). Otherwise the exact
+The *decisive instant* of a reproduced trace SHALL be the earliest instant
+of the replayed behaviour at which either the prefix up to it is a bad
+prefix of the claim or an expression the replay evaluates has no value.
+When checks 1 to 4 hold and that instant exists, the replay settles
+`reproduced-with-evaluated-witness` (FR-364): if an expression has no value
+at the decisive instant, the item settles `refuted` with the counterexample
+of kind `undefined-evaluation{where, cause}`, `where` naming that instant's
+state, its time stamp and the expression's locus, and the cause
+`undefined-evaluation` (FR-331); otherwise the item settles `refuted` with
+the trace as its `HybridCounterexample` of kind `formula`. An expression
+with no value only after the decisive instant changes nothing. A `loop`
+trace has no bad prefix: when checks 1 to 4 hold, it reproduces with kind
+`undefined-evaluation` at the earliest instant of its periodic behaviour at
+which an expression has no value, and otherwise with kind `formula` when
+check 5 holds. Otherwise the exact
 replay outcome is `not-reproduced{at, check}`: a `solver-inconclusive` item
 stays `inconclusive` with its static outcome, and a provider's `refuted`
 item settles `inconclusive`, `replay-parity` (FR-364).
 
-A trace that is not a point trace, or that dwells in a mode without a
-polynomial flow, SHALL be replayed statically only, and its item SHALL NOT
+A trace that is not a point trace, that dwells in a mode without a
+polynomial flow, or whose replay would evaluate a recursive call, SHALL be
+replayed statically only, and its item SHALL NOT
 refute. The reader SHALL record a trace in the item's `counterexamples` only
 when exact replay reproduces it.
 
@@ -505,7 +527,7 @@ when exact replay reproduces it.
 | FR-193-AC-14 | Over `Braking`, `always [0, 10] holds(h.v < 30)` holds on every behaviour; `always [0, 10] (holds(h.v = 0) implies once [0, 2] holds(h.v <= 1))` and `holds(h.v > 0) since [0, 3] holds(h.v = 20)` are read pointwise over instants; `eventually [0 s, 1500 ms] holds(h.v < 19)` and `always (0.5 s, 2 s] holds(h.v <= 20)` read the intervals `[0, 3/2]` and `(1/2, 2]` in seconds; `[2 kg, 3 kg]` refuses `ill_typed`/`type-mismatch` and `(1 s, 1 s]` refuses `invalid_timed_model`/`invalid-interval`; under `clock "model-steps"`, `eventually [0, 1] holds(h.v = 0)` counts jumps. | Test (TC-373) |
 | FR-193-AC-15 | `on each (q: Braking) when (q.v > 10)` with `capture v0: Rational = q.v;` and body `eventually [0, 10] holds(h.v < v0)` creates one obligation at every instant where `v > 10`, each reading its own `v0`; `on each (q: Other)` refuses `ill_typed`/`type-mismatch`; `fair Moving;` and `fair strong each Moving::Stopped;` resolve to `Moving`'s transitions and to those targeting `Stopped`, and `fair Moving::Halted;` refuses `missing_declaration`/`missing-name`. | Test (TC-373) |
 | FR-193-AC-16 | Static replay of a trace whose `start` box meets no initial entry reports `inconsistent{at: /start, check: 1}`; one whose `before` box misses the guard by less than its `delta` 1/100 is `consistent`, and with no `delta` is `inconsistent` at check 4; neither outcome changes the `inconclusive` value. | Test (TC-373, TC-431) |
-| FR-193-AC-17 | Over `Braking`, the point trace starting at `(Moving, v = 20, a = 2, t = 0)` with `before` `(time 10, v = 0, a = 2, t = 10)` and one jump by transition 0 to `(Stopped, time 10, v = 0, a = 2, t = 10)` replays exactly; against the claim `always [0, 12] holds(h.v > 0)` it reproduces and settles `refuted` with the trace as a `HybridCounterexample` of kind `formula`; the same trace with `before` `v = 1` settles `not-reproduced` at check 2, the item staying `inconclusive`, and as a provider's `refuted` entry `inconclusive`, `replay-parity`; a point trace through a mode with the flow `v' = v` is replayed statically only and does not refute. | Test (TC-373, TC-431) |
+| FR-193-AC-17 | Over `Braking`, the point trace starting at `(Moving, v = 20, a = 2, t = 0)` with `before` `(time 10, v = 0, a = 2, t = 10)` and one jump by transition 0 to `(Stopped, time 10, v = 0, a = 2, t = 10)` replays exactly; against the claim `always [0, 12] holds(h.v > 0)` it reproduces and settles `refuted` with the trace as a `HybridCounterexample` of kind `formula`; the same trace with `before` `v = 1` settles `not-reproduced` at check 2, the item staying `inconclusive`, and as a provider's `refuted` entry `inconclusive`, `replay-parity`; a point trace through a mode with the flow `v' = v`, and the AC-17 trace against a claim whose atom calls a recursive function, are replayed statically only and do not refute; against `always [0, 12] holds(1 / (h.v - 5) != 0)` the AC-17 trace settles `refuted` of kind `undefined-evaluation` at time 15/2, and against `always [0, 12] holds(1 / (h.v - 5) < 100)`, false from time 1499/200 before the undefined instant, of kind `formula`; a stored record carries the static outcome as `replay`, and a provider entry carrying `replay` is refused `invalid_result`/`unknown-member` at `/cause/replay`; a `loop` naming the last state is refused `invalid_result`/`invalid-value` at `/loop`. | Test (TC-373, TC-431) |
 
 ## Dependencies
 
