@@ -37,3 +37,19 @@ Examined, clean:
 ## Verdict
 
 Not mergeable: FND-001 (high) block the PR; FND-002 (medium) should be fixed in the same round.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-003 | medium | QSpec now admits a magnitude bound on a unit-typed alias but never defines it. It does not say how the bound is typed or where it is checked (construction, a definedness obligation, or a runtime refusal code), and it defers the meaning to QSL FR-230. FR-142 "Quantity type reference" still says a bounded magnitude is not a complete-V1 type form, and #405's FR-146 now says a quantity has no magnitude bound, so a quotient carries no range obligation. Fix: state in FR-142 (or here) the bounded-quantity domain this constraint produces, its membership check and its refusal, and reconcile it with FR-142 and FR-146. | spec/functional/type-model/FR-154-admit-domain-package-model.md | wrong-requirement |
+
+## Dispositions
+
+Round 1, at da80beca. New since round 0: Reference<Clock> (ref/deref, place comparison, state key holds the place index), package clock `max` constraints as time invariants, and unit min/max constraints admitted at intake. AC-15/CK-23's four-place disjunction is correct for two calls with two clocks each. The remaining variant payloadType refusal is merged QSpec FR-154, so it is an owner question, not a finding.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | "max_clocks": {"description": "FR-415: the most live clocks a state of the explored graph may hold (setting model_check.max_clocks, default 1024).", "$ref": "#/$defs/PositiveCount"} in TemporalLimits; FR-368 and FR-331 list it; vectors limit-reached-max-clocks and temporal-limits-max-clocks-zero |
+| FND-002 | fixed | reads a clock only as the clock operand of an atomic clock constraint, passes it to another clock-reading declaration, or returns it as the declaration's place result |
+| FND-003 | fixed | FR-154 "Unit bounds": a value constraint (every member typed by the unit, magnitude >= min / <= max, equality satisfies), checked as an invariant over values: supplied values refuse `invalid_runtime_input`/`invalid-value`, a violating successor is recorded (FR-181); the member type stays `Quantity<u>` (FR-142 bullet), no range obligation or guard fact for FR-146, no FR-322 node; FR-154-AC-28/29, TC-234 I22/I23 |
