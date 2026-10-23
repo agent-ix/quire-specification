@@ -17,6 +17,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-253
     type: references
+  - target: ix://agent-ix/quire-specification/FR-478
+    type: references
 ---
 ## Description
 
@@ -64,6 +66,14 @@ activation-unknown with its exact incomplete completeness or refused
 assessment-execution disposition. This requirement does not define protocol
 choice/conformance or the observation transport schema.
 
+For a protocol obligation, the evaluator shall publish the complete
+[FR-478](../../objects/protocol/FR-478-obligation-activation-binding.md)
+activation binding: qualified linked definition, activation relation row,
+workflow instance, clause subject, origin, and checked activation result with
+captures and evaluation anchor. A downstream consumer shall receive that
+binding rather than reconstructing an obligation from a static control and
+unrelated runtime fragments.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -74,6 +84,7 @@ choice/conformance or the observation transport schema.
 | FR-093-AC-4 | Missing, nullable, wrong-type, stale or anchor-mismatched capture input reports incomplete/refused activation before temporal evaluation. | Test (TC-114) |
 | FR-093-AC-5 | A closed trigger scope with complete input and no trigger reports inactive; an open scope or missing/refused trigger evidence reports activation-unknown while completeness and execution retain their independently derived exact states, and neither case becomes temporal truth. | Test (TC-116) |
 | FR-093-AC-6 | False guards create no obligation, unestablished guards remain incomplete/refused, and conflicting payloads under one semantic trigger identity refuse without replacing retained captures. | Test (TC-114) |
+| FR-093-AC-7 | Every protocol obligation is published through one complete FR-478 activation binding; a missing, cross-definition, cross-row, cross-subject, cross-trigger or anchor-mismatched binding is incomplete or refused and never reconstructed by a consumer. | Test (TC-114) |
 
 ## Dependencies
 

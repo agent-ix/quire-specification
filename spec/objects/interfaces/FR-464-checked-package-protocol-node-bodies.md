@@ -213,6 +213,9 @@ derive it from the protocol's admitted `protocol_clause` node, from its
 - The relation selects no truth and changes no temporal clause: the required
   clause keeps its own body, activation and evaluation
   ([FR-370](FR-370-checked-package-temporal-clause-body.md)).
+- An obligation established through a row is bound to it only by an
+  [FR-478](../protocol/FR-478-obligation-activation-binding.md) activation
+  binding.
 
 ## Membership and containment
 
