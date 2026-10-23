@@ -41,3 +41,4 @@ Not mergeable: FND-001 (high, standing rule). Merge-tree against main is clean.
 | --- | --- | --- |
 | FND-001 | fixed | Round 1 at d92ea803: FR-478 specifies every numeric target for `Text[..]` and `String` operands, with grammar, outcomes, accounting, twelve identities and TC-964 vectors TN-01 to TN-22. |
 | FND-002 | still-open | At d92ea803 `spec/spec.md` still has no `contains` relationship and no index row for FR-478. |
+| FND-002 | fixed | Round 2 at b145943e: `spec/spec.md` has the FR-478 `contains` relationship and an index row. |
