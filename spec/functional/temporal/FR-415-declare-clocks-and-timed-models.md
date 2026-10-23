@@ -41,6 +41,13 @@ and urgency, or a located typed refusal under `invalid_timed_model`.
 
 ### Time source
 
+The timed forms of this requirement (`time`, `time invariant`, `urgent` and
+the `Clock` type) belong to the layer `quire.temporal.complete/v1`, which a
+`profile` declaration selects (FR-001, [temporal-complete.md](../../../proposals/quire-v1/definitions/temporal-complete.md)).
+A unit whose selected layers do not include it, and that writes one of these
+forms, refuses `unsupported_construct`, naming the unit's selected layers and
+the required layer.
+
 A state model declares at most one `time` member:
 
 - `time M dense unit u` — real-valued clocks in unit `u`;
@@ -113,6 +120,7 @@ its value and the request setting that raises it.
 | FR-415-AC-3 | Strict and non-strict atomic clock constraints are admitted with exact conversion to `u`; a clock read outside a constraint, a two-clock comparison and a negative constant refuse with their typed causes. | Test (TC-367) |
 | FR-415-AC-4 | A time invariant with upper bounds is admitted; a lower bound or equality in its body refuses `invalid_timed_model`/`time-invariant-shape`. | Test (TC-367) |
 | FR-415-AC-5 | `urgent when P` is admitted; `urgent O` is admitted only when `O`'s guard reads no clock. | Test (TC-367) |
+| FR-415-AC-9 | A unit whose `profile` declaration names `quire.temporal.complete/v1` admits the forms of AC-1 to AC-5; the same unit whose declaration names `quire.model.complete/v1`, or that has no `profile` declaration, refuses each `time` member, `time invariant`, `urgent` declaration and `Clock` in a type position `unsupported_construct`, naming the unit's selected layers and the required layer `quire.temporal.complete/v1`. | Test (TC-367) |
 
 ## Dependencies
 

@@ -1,0 +1,31 @@
+{
+  "lock_version": "quire.temporal.definition-lock/v1",
+  "language_edition": "1-draft",
+  "requires": [
+    {"role": "complete_model_lock", "artifact_path": "complete-model-lock.json", "definition": {"authority":"agent-ix","identity":"quire.model.definition-lock/v1"}}
+  ],
+  "trigger_vocabulary": [],
+  "selection_refusal_codes": ["selection_alternative_conflict", "selection_duplicate_role", "selection_duplicate_trigger", "selection_required_missing", "selection_trigger_unsatisfied", "selection_unknown_role", "selection_unknown_trigger", "selection_untriggered_profile"],
+  "qualification_catalog": [
+    {
+      "role": "root",
+      "artifact_path": "temporal-complete.md",
+      "definition": {"authority":"agent-ix","identity":"quire.temporal.complete/v1"}
+    },
+    {
+      "role": "rule_fr_415",
+      "artifact_path": "../../../spec/functional/temporal/FR-415-declare-clocks-and-timed-models.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-415/v1"}
+    },
+    {
+      "role": "rule_fr_205",
+      "artifact_path": "../../../spec/objects/foundation/FR-205-exact-rational-value.md",
+      "definition": {"authority":"agent-ix","identity":"quire.rule.fr-205/v1"}
+    }
+  ],
+  "package_selection": {
+    "always": ["root", "rule_fr_415", "rule_fr_205"],
+    "conditional": [],
+    "exactly_one": []
+  }
+}

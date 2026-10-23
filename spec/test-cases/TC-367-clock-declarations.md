@@ -31,6 +31,7 @@ Run each vector through the real local Rust boundary of the frontend or provider
 | CK-06 | `time invariant Rpc when { self.inflight } { self.x <= 3 ms }`; one with body `self.x >= 1 ms` | Admitted; `time-invariant-shape` |
 | CK-07 | `urgent Rpc when { self.phase = Done };` `urgent Call::reset;` with `reset` reading no clock; `urgent Call::reply;` | Admitted; admitted; `urgent-guard-reads-clock` |
 | CK-08 | A constant `rational(1, 3) ms` with unit `us` | Converted exactly to `1000/3 us` |
+| CK-21 | CK-01's declarations in a unit whose `profile` declaration names `quire.temporal.complete/v1`, then in a unit whose declaration names `quire.model.complete/v1`, then in a unit with no `profile` declaration | Admitted in the first; in the others each `time` member and each `Clock` type refuses `unsupported_construct` naming the unit's selected layers and the required layer `quire.temporal.complete/v1` |
 
 ## Expected Results
 

@@ -46,12 +46,14 @@ Other definition families remain editable candidates under their owning tickets.
 | `quire.model.effective-declaration.schema/v1` | [Effective declaration schema](../../checked-package-v2/model-effective-declaration.schema.json) |
 | `quire.model.effective-declaration.vectors/v1` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 | `quire.model.definition-lock/v1` | [Complete model lock](complete-model-lock.json) |
+| `quire.temporal.complete/v1` | [Complete temporal root](temporal-complete.md) |
+| `quire.temporal.definition-lock/v1` | [Complete temporal lock](complete-temporal-lock.json) |
 
 ## Header-selectable layers
 
 The `header_selectable_layers` rows of the
 [complete-value lock](complete-value-lock.json) are the one catalog of the
-AD-003 state and value/model layers a `profile` declaration selects
+AD-003 state, value, model and timed-model layers a `profile` declaration selects
 ([FR-001](../../../spec/functional/foundation/FR-001-select-native-profile.md)).
 Each row gives the layer's `identity`, the layers it `requires`, its
 `admitted_forms` definition file, a one-line statement of what it `admits`,

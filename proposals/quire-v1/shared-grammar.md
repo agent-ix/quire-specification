@@ -969,7 +969,10 @@ In `schedulability-clause`, the first `ident` names the claim and the second
 the task set. A clock read in `clock-bound` or in an operation's precondition
 compares a `Clock` field with a `quantity-literal` of the time dimension. In
 `task`, `wcet` is `C`, or `C(LO)` for a `hi` task whose `wcet_hi` is `C(HI)`.
-A form whose facet is not selected receives `unsupported_construct`.
+A form whose facet is not selected receives `unsupported_construct`. The
+facet of `time-decl`, `time-invariant`, `urgent-decl` and the `Clock` type is
+`quire.temporal.complete/v1`, which a `profile` declaration selects
+([temporal-complete.md](definitions/temporal-complete.md)).
 
 `Clock` in a `type-ref` is a keyword of the facet that admits the timed forms,
 not a `qualified-name`: an unqualified `Clock` in a type position is always read
