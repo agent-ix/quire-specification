@@ -16,6 +16,10 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-306
     type: references
+  - target: ix://agent-ix/quire-specification/FR-201
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-305
+    type: references
   - target: ix://agent-ix/quire-specification/FR-368
     type: references
   - target: ix://agent-ix/quire-specification/FR-439
@@ -84,13 +88,13 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 
 - `contract_version` — exactly `quire.backend-provider/v1`.
 - `capability_vocabulary` — exactly `quire.capability-kind/v1`; it selects the FR-290 vocabulary for every kind in `manifest`, `request` and `results`.
-- `manifest` — one backend descriptor per registered backend in the registry snapshot: backend identity, advertised (FR-290 kind, mode) pairs, domains, options, bounds, where the backend declares one its obligation-form set (FR-349), the state-space reductions it applies, a subset of `symmetry`, `partial-order` and `constraint` (FR-382), and, for `probabilistic-satisfaction`, its advertised evidence kinds (FR-290). A backend that advertises `temporal-satisfaction` also carries its `fairness_kinds` ([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)). A backend that advertises `temporal-satisfaction` may also carry `memory_models`, the memory models it decides for items over a subject with a weak `parallel`, a nonempty set drawn from `sc`, `tso` and `ra` by the names of the `memory` clause ([FR-439](../../functional/memory/FR-439-bound-replay-and-report-weak-memory-runs.md) routes by it). A descriptor with no `memory_models` advertises `sc` only, so, of the items over a subject with a weak `parallel`, it receives only those resolved to `sc`; a descriptor that does not advertise `temporal-satisfaction` carries none. Backend identities are unique.
+- `manifest` — one backend descriptor per registered backend in the registry snapshot: backend identity, advertised (FR-290 kind, mode) pairs, domains, options, bounds, where the backend declares one its obligation-form set (FR-349), the state-space reductions it applies, a subset of `symmetry`, `partial-order` and `constraint` (FR-382), and, for `probabilistic-satisfaction`, its advertised evidence kinds (FR-290). A backend that advertises `temporal-satisfaction` also carries its `fairness_kinds` ([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)). A backend that advertises `temporal-satisfaction` may also carry `memory_models`, the memory models it decides for items over a subject with a weak `parallel`, a nonempty set drawn from `sc`, `tso` and `ra` by the names of the `memory` clause ([FR-439](../../functional/memory/FR-439-bound-replay-and-report-weak-memory-runs.md) routes by it). A descriptor with no `memory_models` advertises `sc` only, so, of the items over a subject with a weak `parallel`, it receives only those resolved to `sc`; a descriptor that does not advertise `temporal-satisfaction` carries none. Every descriptor carries `tool` ("Backend tool" below). Backend identities are unique.
 - `request` — in the frame form sent to a process provider, the checked package as `package` and `package_id` ("Package bytes" below); in the in-process form ("In-process providers" below), the checked package as a typed value and no `package` or `package_id`; in both forms, the provider deadline `deadline_ms` and the requested items: each item's claim, its proof bounds (the substituted `ProofBound`s of its `extent`, and a temporal item's `subject.proof_bounds`), its `options` and its own limits (`temporal.limits`, `probabilistic.limits`, `hybrid.limits`); there is no request-level `domains` or `limits` member. For each item, its one required FR-290 kind, its extent and #222 extent classification (`bounded` or `unbounded`), the backend the caller names when it names one, its `candidates`, and for a model-check item its `reductions` selection (FR-382); for a `probabilistic-satisfaction` item, its evidence kind (`statistical` or `exact`) and, for `statistical`, its method (`okamoto`, `sprt` or `regenerative` with `min_cycles`), seed, `max_witnesses`, for a timed subject its grid exponent `q` and `max_sample_steps` (default `2^24`), and `StatisticalLimits{max_samples, max_draws, max_cycle_steps}` ([FR-408](../../functional/analysis/FR-408-settle-probabilistic-claims-statistically.md)), or, for `exact`, `ExactProbLimits` ([FR-411](../../functional/analysis/FR-411-settle-probabilistic-claims-exactly.md)). Every limit has the published default that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives it, and `max_sample_steps` defaults to `2^24`.
 - `temporal` (per `temporal-satisfaction` request item over a model subject) — the item's `subject` (initial-state references, universes, proof bounds), `item_kind` (`formula` or `deadlock-freedom`), resolved `fairness` set, `max_depth` for a bounded search and `limits`, as [FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md) states. For a state-graph, hyper or step-relation item, `limits` also holds `max_walk_steps` (the step count of one witness-sampling walk; [FR-392](../../functional/analysis/FR-392-sample-possible-witnesses.md)), `max_witness_set` and `max_relation_tuples` ([FR-399](../../functional/analysis/FR-399-settle-hyperproperty-results.md)), with the setting names `model_check.max_walk_steps`, `model_check.max_witness_set` and `model_check.max_relation_tuples` that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives them; the routed provider publishes each default, which applies when the request sets none. `temporal` also holds the sampling settings `witness_samples` and `seed`, which are method parameters with provider-published defaults.
 - `candidates` (per request item) — exactly one of: the set of candidate backend identities that the `quire-spec-language` registry computes under FR-290's candidate-set rule, ordered bytewise by identity; or the unknown-backend mark carrying the unregistered backend identity that the request named.
 - `dispositions` — supported, requires-bound, unsupported or invalid-request per item.
 - `artifacts` — immutable generated bytes with kind, identity and source map.
-- `results` — proved, refuted, tested, measured, inconclusive, unsupported, declined, incomplete or failed per item. `measured` is recorded only for a completed statistical run and carries the [FR-409](../protocol/FR-409-measured-decision.md) decision and the [FR-410](FR-410-statistical-verdict.md) `StatisticalVerdict`, with no truth and no settlement basis; it is never `proved`. A `proved` result carries its proof basis: `exact-value` or `value-bounds` with an [FR-412](FR-412-probability-certificate.md) certificate, `zone-certified` with an [FR-418](FR-418-zone-certificate.md) certificate, `closed-form{analysis}` with its recomputed evidence ([FR-419](../../functional/analysis/FR-419-analyze-task-set-schedulability.md)), each settled only after its certificate or evidence is checked; or `bounded-solver{method, horizon, jumps}` ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)), a solver's own result with neither, labelled `uncertified`. Every `proved` result also carries exactly one `certification`, which says who stands behind the proof ("Certification" below). `unsupported` is recorded for a supported, routed item whose tool probe finds the tool missing, errors or exceeds its limit, naming the capability kind and the backend; and, separately, for a supported item whose Kani run ends `Unavailable` (the solver or backend is absent after negotiation), naming the capability kind, the backend and the absent solver or backend identity. `declined` is recorded for a supported item whose Kani run ends `Refused`, `InvalidInput` or `IncompleteInput`, and names the typed refusal cause (QSL ADR-013 O-16 refusal category, QC-9); it keeps the item's `supported` disposition and is the item's one terminal accounting record, the same as a tool-absence `unsupported` result. A Kani proof run whose obligation has zero SUCCESS checks records `inconclusive` with a typed vacuity cause, never `proved`; this adds no result value (QSL ADR-013 FND-005, O-16 proof column). An item routed to a process provider over a checked package that `package` refuses to emit settles `unsupported` with a diagnostic ("In-process providers").
+- `results` — proved, refuted, tested, measured, inconclusive, unsupported, declined, incomplete or failed per item. `measured` is recorded only for a completed statistical run and carries the [FR-409](../protocol/FR-409-measured-decision.md) decision and the [FR-410](FR-410-statistical-verdict.md) `StatisticalVerdict`, with no truth and no settlement basis; it is never `proved`. A `proved` result carries its proof basis: `exact-value` or `value-bounds` with an [FR-412](FR-412-probability-certificate.md) certificate, `zone-certified` with an [FR-418](FR-418-zone-certificate.md) certificate, `closed-form{analysis}` with its recomputed evidence ([FR-419](../../functional/analysis/FR-419-analyze-task-set-schedulability.md)), each settled only after its certificate or evidence is checked; or `bounded-solver{method, horizon, jumps}` ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)), a solver's own result with neither, labelled `uncertified`. Every `proved` result also carries exactly one `certification`, which says who stands behind the proof ("Certification" below). `unsupported` is recorded for a supported, routed item whose tool probe finds the tool missing, finds a version other than the descriptor's `tool.version` ("Backend tool"), errors or exceeds its limit, naming the capability kind and the backend; and, separately, for a supported item whose Kani run ends `Unavailable` (the solver or backend is absent after negotiation), naming the capability kind, the backend and the absent solver or backend identity. `declined` is recorded for a supported item whose Kani run ends `Refused`, `InvalidInput` or `IncompleteInput`, and names the typed refusal cause (QSL ADR-013 O-16 refusal category, QC-9); it keeps the item's `supported` disposition and is the item's one terminal accounting record, the same as a tool-absence `unsupported` result. A Kani proof run whose obligation has zero SUCCESS checks records `inconclusive` with a typed vacuity cause, never `proved`; this adds no result value (QSL ADR-013 FND-005, O-16 proof column). An item routed to a process provider over a checked package that `package` refuses to emit settles `unsupported` with a diagnostic ("In-process providers").
 - `counterexamples` — canonical assignments/traces plus originating run identity. A hybrid solver's reported trace is not a counterexample: it is the `trace` member of the item's `solver-inconclusive` cause (FR-193 "Hybrid trace"). A temporal refutation over a model subject or a supplied trace is an [FR-364](../../functional/temporal/FR-364-replay-temporal-counterexamples.md) `TemporalCounterexample`; a timed trace's steps carry their `delay` and a time-lock counterexample carries `kind` `time-lock` and the member `final_delay`, the exact rational delay that reaches the time-locked state (FR-181, [FR-417](../../functional/temporal/FR-417-settle-time-lock-freedom.md)); a probabilistic refutation carries an [FR-413](FR-413-probabilistic-counterexample.md) `ProbabilisticCounterexample`. Each entry names exactly one of: the transcript's `artifacts` entry, whose assignments are its decode and are never separately stored, or the canonical assignments of a counterexample with no transcript; never both (QSL ADR-013 O-25, QC-6).
 - `accounting` — exactly one terminal record for every requested item. A temporal item's terminal record carries its [FR-363](../../functional/temporal/FR-363-settle-every-behaviour-temporal-verdicts.md) proof basis and depth or cause, and any [FR-369](../../functional/temporal/FR-369-name-excluding-strong-fairness.md) `fairness.strong-would-exclude` warnings. The terminal record of a state-graph, hyper or step-relation item also states its settlement method ([FR-391](../../functional/analysis/FR-391-settle-state-graph-claims.md), [FR-399](../../functional/analysis/FR-399-settle-hyperproperty-results.md)), its search horizon, and the seed and limits the run used.
 
@@ -113,7 +117,12 @@ cross-check tool's name and `verdict` the result its run alone settles for
 the same query, `proved`, `refuted` or `inconclusive`. A `verdict` other than
 `proved` records a disagreement over a proof the core certified, which
 FR-349 keeps `proved`, `certified`; the cross-check never changes
-`certification` (FR-354). No other result carries `cross_check`. A
+`certification` (FR-354). No other result carries `cross_check`. The reader
+SHALL refuse before consumption a `cross_check` on any result other than
+`proved`; on a `proved` result whose `basis` is not `bounded-complete` or
+`inductive`, the SMT backend's proof bases, or whose `certification` is
+`trusted`; and a `verdict` other than `proved` on a proof that is not
+`certified`, since FR-349 settles that disagreement `inconclusive`. A
 disagreement that FR-349 settles `inconclusive` is the cause
 `cross-check-disagreement{tool, primary, cross_check}`, `primary` the
 primary solver's result and `cross_check` the cross-check's, both result
@@ -316,6 +325,84 @@ refuses to emit has no package bytes to send. The producer SHALL settle it
 whose `detail` names the item's capability kind, the backend and that the
 package is not emitted, and SHALL write no request frame for it.
 
+## Backend tool
+
+Every backend descriptor SHALL carry `tool`, the closed object
+`{name, version, build}` that names the code which decides the backend's
+results: `name` and `version` are nonempty exact UTF-8 strings, and `build`
+is the content identity of the build inputs of the provider code that
+implements the backend.
+
+- A backend **fronts an external tool** when any result it gives depends on
+  an executable that is not part of the producer's build: a tool binary the
+  backend runs, such as Kani's `cargo kani` with the CBMC it ships, or an SMT
+  solver binary; and, for a process provider, the provider's own
+  executable. Its `name` is the executable the backend invokes and its
+  `version` the version that executable reports. A process provider whose
+  engine is its own code and that runs no other executable names its own
+  executable and its version.
+- A backend is a **pure in-process engine** when every result it gives is
+  computed by code linked into the producer's build, in the producer's
+  process, and it runs no executable; the QSL engines `qsl-model-check` and
+  `qsl-prob` are such engines. Its `name` is the crate that implements the
+  engine and its `version` that crate's package version in the producer's
+  build.
+
+`build` is a digest record `{domain, algorithm, digest}` (the FR-322
+`PackageId` shape) with `domain` `quire.build-inputs/v1`, `algorithm`
+`sha256` and `digest` 64 lowercase hexadecimal digits: SHA-256 over the
+RFC 8785 bytes of the build-input record of the provider code that
+implements the backend, that is, the pure engine's crate, a linked
+provider's adapter code, or a process provider's executable. The build that
+compiles that code SHALL compute it. Equal inputs give an equal `build`, a
+change of any input changes it, and a specification or repository holds no
+copy of any `build` value: each build derives its own.
+
+The build-input record is the closed object
+`{sources, dependencies, compiler, target, profile, options}`, every string
+exact UTF-8:
+
+| Member | Value |
+| --- | --- |
+| `sources` | One `{path, sha256}` per file the build reads as source of that code and of every package of its own workspace or project that it links: `path` relative to the workspace or project root with `/` separators, `sha256` 64 lowercase hexadecimal digits over the file's bytes. Ordered bytewise by `path`; each `path` once. Nonempty. |
+| `dependencies` | One `{name, version, source}` per third-party package the build resolves, as its lock file or package manager records them (`source` the registry, repository or path it comes from). Ordered bytewise by `name`, then `version`, then `source`; each triple once. Empty when the build resolves none. |
+| `compiler` | The compiler, or for interpreted code the interpreter, that builds or runs the code, with its version as it reports it, such as `rustc 1.98.0`. |
+| `target` | The platform the code is built for, such as a target triple. |
+| `profile` | The build profile or configuration name, such as `release`. |
+| `options` | A map from each build setting that can change the produced code (enabled features, optimisation level, code-generation flags) to its value, as strings. Empty when the build sets none. |
+
+A Cargo build fills the members from its workspace: the crate's and its
+workspace path dependencies' source files, the `Cargo.lock` packages, `rustc`,
+the target triple, the profile and the enabled features and code-generation
+settings. A build by any other toolchain fills the same members from its own
+inputs. A process provider whose build inputs are not available to it, such
+as one shipped only as a prebuilt executable, records that executable as its
+one `sources` entry, with the executable's file name as `path` and the
+digest of its bytes; `dependencies` and `options` are empty, `compiler` and
+`profile` are the string `prebuilt`, and `target` is the platform it runs
+on. A change to the executable's bytes then changes its `build`.
+A pure in-process engine's code change therefore changes its descriptor
+even when its crate version stays the same.
+
+The schema refuses a descriptor without `tool` at every stage, and a
+registry snapshot carries each descriptor exactly as its provider gave it,
+so its `tool` is the provider's.
+
+A provider that fronts an external tool SHALL obtain `tool.version` by
+querying the executable it will run, each time it builds its descriptor; a
+pure in-process engine's provider takes `version` and `build` from the
+producer's build. A
+producer builds its registry, and so every descriptor, afresh at each
+invocation; no external tool's `tool.version` is fixed at compile time or
+kept from one invocation to the next. The FR-290 tool probe of a backend
+that fronts an external tool, after routing and before each run, SHALL read
+the version of the executable it is about to run; when that version differs
+from the descriptor's `tool.version`, the probe fails and the item settles
+`unsupported` with `unsupported_projection`/`tool-unavailable`, whose
+`detail` names the capability kind, the backend, the descriptor's version and
+the probed version. The code that runs therefore always has the version the
+descriptor, its `ManifestDigest` and the FR-306 cache key carry.
+
 ## Wire schema
 
 The normative wire of this value is the closed JSON schema
@@ -335,7 +422,7 @@ One envelope has three stages. Each is a closed object carrying
 
 | Stage | Members | FR-462 frame |
 | --- | --- | --- |
-| manifest | `manifest`, with exactly one descriptor: the provider's own | `hello` body |
+| manifest | `manifest`, with exactly one descriptor: the provider's own, carrying `tool` | `hello` body |
 | request | `manifest` (the registry snapshot the candidates are checked against) and `request` | `request` body |
 | outcome | `dispositions`, `artifacts`, `results`, `counterexamples`, `accounting` | `result` body |
 
@@ -679,6 +766,17 @@ Request identity includes the capability vocabulary, manifest, package, each ite
 Unknown contract versions, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption; in a result entry or a `counterexamples` entry, a missing or unknown member and a value of the wrong kind or outside its domain refuse with the `invalid_result` causes of "Result entries". A `capability_vocabulary` other than `quire.capability-kind/v1`, or none, refuses the envelope as `invalid_capability`/`unknown-vocabulary`.
 
+A backend's manifest identity, its `ManifestDigest`, is the SHA-256 digest in
+the FR-201 domain `quire.tool-manifest.jcs/v1` over the RFC 8785 bytes of its
+complete admitted descriptor: for a process provider, the descriptor at
+`/manifest/0` of its `hello` body; for a linked or in-process provider, the
+descriptor its manifest gives. Every member the descriptor carries, `tool`
+included, is in that preimage, and the enclosing array, the stage, the
+registry snapshot and the request are not. The backend identity, the
+`BackendId`, is the `backend` member alone, so a change to any other member,
+`tool.version` included, changes the `ManifestDigest` and leaves the
+`BackendId` unchanged.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -718,7 +816,9 @@ out-of-domain values and non-canonical encodings refuse before consumption; in a
 | FR-331-AC-34 | A reader refuses each of these before consumption with the `invalid_result` cause given, naming the pointer given: `certification-missing`, `missing-member` at `/certification`; `certification-on-refuted`, `unknown-member` at `/certification`; `certification-other-value`, `invalid-value` at `/certification`; a `proved` entry whose `certification` is `7`, `wrong-value-kind` at `/certification`; `certification-reduced-certified`, `certification-bounded-solver-certified` and `certification-symmetry-certified`, `certification-mismatch` at `/certification` with `expected` `uncertified` and `actual` `certified`; a plugin's `proved` entry carrying `certified`, `certification-mismatch` with `expected` `trusted`, also when its basis is core-only; a `refuted` entry carrying `certification` `7`, `unknown-member` at `/certification`; a plugin's `proved` entry carrying `trusted` and a `closed-form` basis, `unknown-cause` at `/basis/type`; a plugin's `inconclusive` entry with cause `replay-parity`, `unknown-cause` at `/cause/type`; a plugin's `inconclusive` entry with cause `stale-dependency`, `unknown-cause` at `/cause/type`; a plugin's `counterexamples` entry whose `counterexample` is a `TemporalCounterexample`, `invalid-value` at `/counterexample/type`; and a plugin's `counterexamples` entry carrying canonical assignments and a `transcript`, `unknown-member` at `/transcript`. A first-party `exhaustive` proof carrying `uncertified` is admitted. A plugin's proof basis or inconclusive cause that a plugin may send but that is outside the reader's types is refused `unknown_required_feature`/`unsupported-feature`, not `invalid_result`. The schema refuses each vector on its shape alone, so the schema run does not discharge the cause. | Inspection (TC-431) |
 | FR-331-AC-35 | An `inconclusive` entry whose cause is `stale-dependency` with `requested` and `recompiled` two `quire.package.semantic/v2` `PackageId`s is admitted; the same cause without `recompiled` is refused by the schema. | Test (TC-431) |
 | FR-331-AC-36 | The `temporal-satisfaction` entry of a safety item settled by a stale EN-1 closure certificate (QSL FR-338), and that of a TP-4 liveness item settled by a stale EN-1 component certificate (QSL FR-339), each `inconclusive` with cause `stale-dependency{requested, recompiled}`, two `quire.package.semantic/v2` `PackageId`s, are admitted; the same cause without `requested` is refused by the schema. The checkers' comparison before any other rule and the settlement are verified by QSL FR-338-AC-11, FR-339-AC-4, FR-282-AC-10 and FR-127-AC-13. | Test (TC-431) |
-| FR-331-AC-39 | A `proved` result with `cross_check` `{"tool": "z3", "verdict": "proved"}` and one with `{"tool": "z3", "verdict": "refuted"}`, each `certified`, are admitted; `cross_check` on a `refuted`, `inconclusive` or `failed` result, a `cross_check` missing `tool` or `verdict`, with a `verdict` outside `proved`, `refuted` and `inconclusive`, or with another member, is refused before consumption. An `inconclusive` result with cause `{"type": "cross-check-disagreement", "tool": "z3", "primary": "proved", "cross_check": "refuted"}` is admitted, and the cause missing `primary` is refused. | Test (TC-431) |
+| FR-331-AC-37 | The schema refuses a descriptor without `tool` at the manifest and request stages, including a linked Kani snapshot descriptor (`snapshot-kani-without-tool`) and a pure engine's snapshot descriptor (`snapshot-engine-without-tool`); refuses a `tool` without `name`, `version` or `build`, with an empty `name` or `version`, with another member, or that is a string or `null`; refuses a `build` in another domain, with another algorithm, with a digest that is not 64 lowercase hexadecimal digits, with another member, or that is a bare digest string; and admits a pure in-process engine's descriptor whose `tool` names its implementing crate, version and build. A request-stage snapshot carries the kani descriptor with the `tool` its `hello` gives. Two admitted descriptors that differ only in `tool.version`, or only in `tool.build` with the same `tool.version`, have different `ManifestDigest` records in `quire.tool-manifest.jcs/v1` and the same `BackendId`. | Test (TC-431) |
+| FR-331-AC-38 | A provider fronting an external tool reports, in the descriptor it builds at an invocation, the version the executable reports at that invocation. When the executable is replaced by another version after the descriptor is built and before an item's run, the item's FR-290 probe fails and the item settles `unsupported` with `unsupported_projection`/`tool-unavailable` naming the capability kind, the backend, the descriptor's version and the probed version, and no run starts. | Test (TC-226) |
+| FR-331-AC-39 | A `proved` result with `cross_check` `{"tool": "z3", "verdict": "proved"}` and one with `{"tool": "z3", "verdict": "refuted"}`, each `certified`, are admitted; `cross_check` on a `refuted`, `inconclusive` or `failed` result, a `cross_check` missing `tool` or `verdict`, with a `verdict` outside `proved`, `refuted` and `inconclusive`, or with another member, is refused before consumption. `cross_check` on a plugin's `trusted` proof (`cross-check-on-trusted`), on a certified `reduced` proof (`cross-check-on-non-smt-basis`), and verdict `refuted` on an `uncertified` `inductive` proof (`cross-check-disagreement-on-uncertified`) are each refused at `/results/<i>/cross_check`. An `inconclusive` result with cause `{"type": "cross-check-disagreement", "tool": "z3", "primary": "proved", "cross_check": "refuted"}` is admitted, so is one with `primary` `inconclusive`, and the cause missing `primary` is refused. | Test (TC-431) |
 | FR-331-AC-40 | A `failed` result with cause `{"type": "tool-failure", "defect": "frame-length", "limit": 1048576, "value": 1048577}` and one with `defect` `total-bytes`, `limit` 4194304 and `value` 4194305 are admitted; either defect without `limit` or `value` is refused, and `limit` or `value` on any other defect, such as `crash`, is refused, before consumption. | Test (TC-431) |
 
 ## Dependencies
