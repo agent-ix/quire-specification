@@ -36,6 +36,7 @@ their dispositions.
 | JP-06 | `predicate(f)` with `f` true when `a` and `c` are completed, `outstanding cancel` | disabled at 0; enabled at 1 never; at 2 enabled only when the two are `a` and `c`; enabled at 3 | after a join with `b` running, `b` is `cancelled` |
 | JP-07 | `any`, `outstanding continue`, finish constraint `true` | after the join, `finish` is not enabled while either remaining branch is `running`, and is enabled once both have completed |
 | JP-08 | `parallel Outer { branch a attempt Fast; branch b sequence { parallel Inner { branch x attempt X1; branch y attempt Y1 } join any [x, y] outstanding continue; attempt After } } join any [a] outstanding cancel`, every attempt always enabled | In the state where `a` has completed, `b` rests at `Inner`'s join and `x` and `y` are `running`, `join(Outer)` makes `b`, `x` and `y` `cancelled`, settles and removes `Inner`'s instance; no later state enables a step of any of them, so `Y1` and `After` are enabled nowhere after the join |
+| JP-09 | `predicate(g)` over `[a, b, c]`, `g(p, q, r)` true exactly when `q` is true and `r` is false (`p` for `a`, `q` for `b`, `r` for `c`; `true` for `completed`, `false` for `running`), `outstanding cancel` | enabled at exactly the completed sets `{b}` and `{a, b}`; disabled at `{}`, `{a}`, `{c}`, `{a, c}`, `{b, c}` and `{a, b, c}` | after a join at `{b}`, `a` and `c` are `cancelled` in the join step |
 
 ## Expected Results
 
