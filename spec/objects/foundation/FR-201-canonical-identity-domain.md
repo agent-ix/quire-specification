@@ -135,5 +135,4 @@ digest bytes match. Neither may substitute for the other.
 
 ## Status
 
-Accepted complete-V1 identity-domain contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 identity-domain contract.
