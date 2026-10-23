@@ -299,9 +299,14 @@ FR-044 exception exempts it from static domain proof, and FR-148 decides it at
 evaluation: a NaN or infinite operand is undefined after `ieee.operands`, and a
 finite non-member is `refused { code: ieee_rational_out_of_domain, cause: outside-domain }`. Both are
 evaluation outcomes that propagate; neither refuses linking. An FR-478
-text-to-number conversion likewise carries no body obligation: text that is
-not a number is undefined at evaluation, and a number outside the target is
-`refused { code: integer_out_of_domain | decimal_out_of_domain, cause: outside-domain }`.
+text-to-number conversion likewise carries no body obligation. At evaluation,
+text that is not a number for its target is undefined. A number outside an
+integer, decimal or rational target is
+`refused { code: integer_out_of_domain | decimal_out_of_domain | rational_out_of_domain, cause: outside-domain }`.
+A decimal rounding step under strict `exact` is
+`refused { code: inexact_decimal, cause: nonzero-discarded-digit }`, and an
+IEEE rounding under strict `exact` is
+`refused { code: ieee_not_exact, cause: rounding-required }`.
 
 `deref(r)` is not a partial operation of a function body. It requires `r` to
 have type `Reference<T>`; an optional reference is first unwrapped with

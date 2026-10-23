@@ -1838,7 +1838,12 @@ with no normalization or case folding. `string` is not `text`: it has no text
 profile, so a `text_profile` law or mode on a `string` identity refuses at
 the law and mode steps of the reader order above, and a `string` operand of a
 `quire.op.text.*` identity pins no text profile and refuses
-`invalid_package`/`operation-mode-type-mismatch`. These families have no
+`invalid_package`/`operation-mode-type-mismatch`. `string` also has the six
+text-to-number conversions `quire.op.string.to_integer`, `to_decimal`,
+`to_rational`, `to_float32`, `to_float64` and `to_quantity`, catalogued as
+FR-478 states beside their `quire.op.text.to_*` counterparts; a
+text-to-number conversion is a `convert`, so its `rounding` mode, when its
+target has one, is pinned by the result type alone. These families have no
 ordering, no arithmetic and no other operation identity: an ordering or
 arithmetic identity over them refuses `ill_typed`/`operator-ineligible`
 (FR-149-AC-16 for UUID and Timestamp).

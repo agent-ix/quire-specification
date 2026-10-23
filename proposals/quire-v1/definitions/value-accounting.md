@@ -27,7 +27,7 @@ completed result. That record is closed; its members are defined under
 | --- | --- |
 | decimal | `decimal.operands`, `decimal.scale-expansion`, `decimal.arithmetic`, `decimal.rounding`, `decimal.result-retain` |
 | text | `text.input-bytes`, `text.decode-scalars`, `text.normalize-input`, one `text.normalize-output` before each emitted scalar, `text.result-retain` |
-| text to number | `text.input-bytes`, `text.decode-scalars`, under a normalizing profile `text.normalize-input` and one `text.normalize-output` before each normalized scalar, `text-number.value`, `text-number.result-retain` (FR-478) |
+| text to number | `text.input-bytes`, `text.decode-scalars`, for a `Text[..]` operand under a normalizing profile `text.normalize-input` and one `text.normalize-output` before each normalized scalar, `text-number.value`, then for a decimal target at a non-`exact` rounding step `decimal.rounding` and for a finite IEEE text `ieee.round`, then `text-number.result-retain` (FR-478) |
 | enum | `enum.identity-read`, `enum.result-retain` |
 | unit | `unit.identity-read`, one `unit.edge` before each source/target edge, `unit.rational-arithmetic`, `unit.target-domain`, `unit.result-retain` |
 | integer division | `integer-division.operands`, `integer-division.arithmetic`, `integer-division.domain`, `integer-division.result-retain` |
@@ -82,7 +82,7 @@ unmaterialized result.
 | `text.normalize-input` | no size-counter change |
 | kth `text.normalize-output` | `normalized_scalars=k` across all result-side normalized operand sequences |
 | `text.result-retain` | `result_units += 1` for a text or Boolean result |
-| `text-number.value` | for the converted integer `n`: `integer_bits=bits(n)`, `decimal_digits=digits(n)`; for the converted decimal of retained coefficient `c` and scale `s`: `integer_bits=bits(c)`, `decimal_digits=digits(c)`; `value_occurrences=1` |
+| `text-number.value` | sized from the spelled value before it is materialized, `value_occurrences=1` in every case: for a spelled integer `n` into an integer target, `integer_bits=bits(n)`, `decimal_digits=digits(n)`; for a spelled decimal of coefficient `c` and scale `s` into a decimal target, `integer_bits=bits(c)`, `decimal_digits=digits(c)`; for a rational or quantity target, `integer_bits=max(bits(n),bits(d))` of the spelled numerator `n` and denominator `d` before reduction, where a decimal spelling has `n=c` and `d=10^s` and an integer spelling has `d=1`; for a finite IEEE text of significand digits `c` and power `k` (value `c × 10^k`), `integer_bits=sbits(c,abs(k))`, `decimal_digits=sdigits(c,abs(k))`; for `inf`, `-inf` and `nan`, no size counter |
 | `text-number.result-retain` | `result_units += 1` |
 | each `enum.identity-read` | `value_occurrences=number of enum operands read so far` |
 | `enum.result-retain` | `result_units += 1` |
@@ -249,7 +249,15 @@ length-bound refusal of an admission follows the charge that measures the
 bounded length: after the last `text.normalize-output` for a normalizing profile, after
 `text.decode-scalars` for `unicode-scalars` and after `text.input-bytes` for
 `binary-utf8`; it always precedes `text.result-retain`, and an exhausted counter
-at an earlier charge returns incomplete instead. An
+at an earlier charge returns incomplete instead. A
+text-to-number conversion (FR-478) charges its operand's text points by the
+same profile rule; a `String` operand charges only `text.input-bytes` and
+`text.decode-scalars`. Its decimal rounding step charges `decimal.rounding`
+with `integer_bits=bits(c)` and `decimal_digits=digits(c)` of the spelled
+coefficient, and its finite IEEE rounding charges `ieee.round` with
+`integer_bits` = the target width; it charges no `decimal.operands`,
+`decimal.scale-expansion`, `decimal.arithmetic`, `decimal.result-retain`,
+`ieee.operands`, `ieee.exact-intermediate` or `ieee.result-retain` point. An
 unordered-enumeration ordering request or cross-declaration enum comparison is
 refused by type checking before any `enum.*` charge.
 
