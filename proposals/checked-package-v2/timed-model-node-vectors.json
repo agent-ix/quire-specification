@@ -31,35 +31,35 @@
       "id": "TM-01",
       "kind": "missing-member",
       "node": "time_source",
-      "locus": "/semantic_graph/nodes/time_source/body",
+      "locus": "/semantic_graph/nodes/44/body/members",
       "mutate": "remove-unit"
     },
     {
       "id": "TM-02",
       "kind": "extra-member",
       "node": "timed_model",
-      "locus": "/semantic_graph/nodes/timed_model/body/members",
+      "locus": "/semantic_graph/nodes/52/body/members",
       "mutate": "extra-binding"
     },
     {
       "id": "TM-03",
       "kind": "wrong-child-type",
       "node": "clock_place",
-      "locus": "/semantic_graph/nodes/clock_place/body/members",
+      "locus": "/semantic_graph/nodes/45/body/members/1/value/members/0/members",
       "mutate": "invalid-path-step-kind"
     },
     {
       "id": "TM-04",
       "kind": "wrong-order",
       "node": "timed_model",
-      "locus": "/semantic_graph/nodes/timed_model/body/members",
+      "locus": "/semantic_graph/nodes/52/body/members/0",
       "mutate": "swap-model-source"
     },
     {
       "id": "TM-05",
       "kind": "wrong-count",
       "node": "clock_place",
-      "locus": "/semantic_graph/nodes/clock_place/body/members/1/members",
+      "locus": "/semantic_graph/nodes/45/body/members/1/value/members",
       "mutate": "empty-path"
     }
   ],
