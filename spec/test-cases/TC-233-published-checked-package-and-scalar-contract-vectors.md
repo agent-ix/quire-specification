@@ -486,6 +486,12 @@ Graph order is the producer's order of `semantic_graph.nodes`; the reader does n
 | GO-03 | GO-01's fixtures with `semantic_graph.nodes` sorted ascending by node-id digest | Admitted; `package_id` differs from the published one exactly when the sort changes the node sequence | FR-322-AC-95 |
 | GO-04 | `positive-all-families.json` with `semantic_graph.nodes` reversed and the recorded `package_id` kept | The projection derived in the new order differs from the published order's and the recorded `package_id` does not recompute | FR-322-AC-95 |
 
+### Body-step precedence vector
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| BS-01 | Three otherwise schema-valid package variants with a valid state-graph, temporal, abstraction, terminal and step-relation graph: (a) timed-model defect plus protocol defect; (b) (a) with the timed-model defect repaired; (c) a hybrid defect added to (a) | (a) reports the timed-model step's refusal before protocol; (b) reports the protocol step's refusal; (c) reports the hybrid step's refusal before timed-model. This pins `hybrid < timed-model < protocol` and prevents either neighboring step from running first. | FR-322-AC-121 |
+
 ### State constraint clause vectors
 
 Each vector edits the published clause-operations package and rekeys the edited node before reading, so the read reaches the state step.

@@ -29,6 +29,12 @@ const COMPOUND_UNIT_VECTORS: &str =
     include_str!("../proposals/quire-v1/definitions/value-compound-unit-vectors.json");
 const POSITIVE_ALL_FAMILIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-all-families.json");
+const POSITIVE_TIMED_MODEL_NODES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-timed-model-nodes.json");
+const TIMED_MODEL_NODE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
+const FR322_BODY_STEPS: &str = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
+const TC233_BODY_STEP_VECTOR: &str = include_str!("../spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md");
 const POSITIVE_NOMINAL_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-nominal-identities.json");
 const POSITIVE_CLAUSE_OPERATIONS: &str =
@@ -17799,20 +17805,79 @@ fn tc_367_timed_model_node_tag_and_preimage_are_catalogued() {
     }
     let preimages = parsed_fixture(NODE_PREIMAGE_SCHEMA);
     let timed = schema_for_def(&preimages, "TimedModelNode");
-    let preimage = json!({
-        "version": "quire.structural-node/v1",
-        "node_tag": "timed_model",
-        "semantic_form": "time_source",
-        "semantic_type": null,
-        "declaration": {"qualified_name": ["Rpc"]},
-        "recursion": null,
-        "owner": {"kind": "source", "authority": "test", "identity": "rpc"},
-        "body": {"term": "aggregate", "members": []}
-    });
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("timed fixture JSON");
+    let source = package["semantic_graph"]["nodes"][44].clone();
+    let preimage = structural_node_preimage(&source).expect("timed source preimage");
     assert!(timed.is_valid(&preimage), "timed source identity preimage is closed and admissible");
     let mut adverse = preimage;
     adverse["body"]["unexpected"] = json!(true);
     assert!(!timed.is_valid(&adverse), "timed node preimages reject unknown members");
+}
+
+#[trace("TC-367", "FR-322-AC-120", "FR-322-AC-121")]
+#[test]
+fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("timed fixture JSON");
+    let schema = parsed_fixture(SCHEMA);
+    let package_validator = jsonschema::validator_for(&schema).expect("checked package schema");
+    assert!(package_validator.is_valid(&package), "all timed forms form a closed checked package: {:?}", package_validator.iter_errors(&package).map(|e| e.to_string()).collect::<Vec<_>>());
+    assert_eq!(package["identity_preimage"], derive_identity_preimage(&package));
+    assert_eq!(package["package_id"]["digest"], unqualified_jcs_sha256(&package_id_preimage(&package)));
+
+    let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).expect("timed vectors JSON");
+    let indexes = vectors["node_indexes"].as_object().expect("node indexes");
+    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let timed_schema = schema_for_def(&schema, "TimedModelNode");
+    for (name, index) in indexes {
+        let node = &nodes[index.as_u64().expect("index") as usize];
+        if node["node_tag"] != "timed_model" {
+            assert!(matches!(name.as_str(), "dimension" | "unit"), "only support nodes are not timed forms");
+            continue;
+        }
+        assert_eq!(node["node_tag"], "timed_model", "{name} has the timed node tag");
+        assert_eq!(node["semantic_type"], node["node_id"], "{name} uses its self type");
+        assert!(structural_node_key_is_current(node), "{name} key hashes its complete body");
+        let preimage = structural_node_preimage(node).expect("timed form has structural preimage");
+        assert!(schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "TimedModelNode").is_valid(&preimage), "{name} preimage matches its closed schema");
+        assert!(timed_schema.is_valid(node), "{name} node matches its closed schema");
+    }
+    let mut dense_source = nodes[indexes["time_source"].as_u64().unwrap() as usize].clone();
+    dense_source["body"]["members"][0]["value"]["value"] = json!("dense");
+    dense_source["body"]["members"].as_array_mut().unwrap().truncate(2);
+    assert!(timed_schema.is_valid(&dense_source), "the dense source variant has its exact two-binding layout");
+    for refusal in vectors["schema_refusals"].as_array().expect("refusal vectors") {
+        let index = indexes[refusal["node"].as_str().expect("node role")].as_u64().expect("node index") as usize;
+        let mut adverse = package.clone();
+        let node = &mut adverse["semantic_graph"]["nodes"][index];
+        match refusal["id"].as_str().expect("vector id") {
+            "TM-01" => { node["body"]["members"].as_array_mut().unwrap().remove(1); }
+            "TM-02" => { node["body"]["members"].as_array_mut().unwrap().push(json!({"term":"binding","name":"extra","value":{"term":"aggregate","members":[]}})); }
+            "TM-03" => { node["body"]["members"][1]["value"]["members"][1]["members"][2]["value"]["value_kind"] = json!("text"); }
+            "TM-04" => { node["body"]["members"].as_array_mut().unwrap().swap(0, 1); }
+            "TM-05" => { node["body"]["members"][1]["value"]["members"] = json!([]); }
+            other => panic!("unhandled schema refusal vector {other}"),
+        }
+        assert!(!package_validator.is_valid(&adverse), "{} mutation is refused", refusal["id"]);
+    }
+}
+
+#[trace("TC-233", "FR-322-AC-121")]
+#[test]
+fn tc_233_body_steps_pin_timed_model_between_hybrid_and_protocol() {
+    let body_steps = FR322_BODY_STEPS
+        .split("**Body steps.**")
+        .nth(1)
+        .expect("FR-322 Body steps section")
+        .split("- derived-shape key stage")
+        .next()
+        .expect("FR-322 body-step section end");
+    let positions = ["hybrid", "timed-model", "protocol"].map(|step| {
+        body_steps.find(step).unwrap_or_else(|| panic!("FR-322 body steps contain {step}"))
+    });
+    assert!(positions[0] < positions[1] && positions[1] < positions[2]);
+    assert!(TC233_BODY_STEP_VECTOR.contains("BS-01"));
+    assert!(TC233_BODY_STEP_VECTOR.contains("timed-model step's refusal before protocol"));
+    assert!(TC233_BODY_STEP_VECTOR.contains("hybrid < timed-model < protocol"));
 }
 
 #[trace("TC-367", "FR-322-AC-120")]

@@ -1,0 +1,66 @@
+{
+  "version": "quire.checked-timed-model-node-vectors/v1",
+  "fixture": "fixtures/positive-timed-model-nodes.json",
+  "node_indexes": {
+    "dimension": 42,
+    "unit": 43,
+    "time_source": 44,
+    "clock_place": 45,
+    "clock_reset": 46,
+    "clock_guard": 47,
+    "time_invariant": 48,
+    "urgency": 49,
+    "urgency_6": 50,
+    "clock_constraint": 51,
+    "urgency_when": 49,
+    "urgency_operation": 50,
+    "timed_model": 52
+  },
+  "forms": [
+    "timed_model",
+    "time_source",
+    "clock_place",
+    "clock_reset",
+    "clock_guard",
+    "time_invariant",
+    "urgency",
+    "clock_constraint"
+  ],
+  "schema_refusals": [
+    {
+      "id": "TM-01",
+      "kind": "missing-member",
+      "node": "time_source",
+      "locus": "/semantic_graph/nodes/time_source/body",
+      "mutate": "remove-unit"
+    },
+    {
+      "id": "TM-02",
+      "kind": "extra-member",
+      "node": "timed_model",
+      "locus": "/semantic_graph/nodes/timed_model/body/members",
+      "mutate": "extra-binding"
+    },
+    {
+      "id": "TM-03",
+      "kind": "wrong-child-type",
+      "node": "clock_place",
+      "locus": "/semantic_graph/nodes/clock_place/body/members",
+      "mutate": "bad-slot-selector"
+    },
+    {
+      "id": "TM-04",
+      "kind": "wrong-order",
+      "node": "timed_model",
+      "locus": "/semantic_graph/nodes/timed_model/body/members",
+      "mutate": "swap-model-source"
+    },
+    {
+      "id": "TM-05",
+      "kind": "wrong-count",
+      "node": "clock_place",
+      "locus": "/semantic_graph/nodes/clock_place/body/members/1/members",
+      "mutate": "empty-path"
+    }
+  ]
+}

@@ -465,8 +465,8 @@ boundary.
   own node forms and each reporting before the next starts: the state-graph
   step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
   the terminal step (FR-476), the step-relation step (FR-477), the hybrid
-  step (FR-481), the protocol step (FR-464) and the schedulability step
-  (FR-482). Each body artifact's "Reader order" fixes the
+  step (FR-481), the timed-model step (FR-230), the protocol step (FR-464)
+  and the schedulability step (FR-482). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
@@ -2160,13 +2160,27 @@ The node tag is `timed_model`; its closed structural forms are `timed_model`,
 declared state model and references, in canonical order, its one source and
 all places and timed clauses. A source carries dense/tick kind, the resolved
 unit node, and for tick the operation node and exact positive rational period.
-A place carries its owning model node, its ordered path of field names, tuple
-indexes, union cases and collection slots, and its presence predicates and
-collection bounds. Reset nodes carry the place reference and exact normalized
-nonnegative quantity. Guard and invariant nodes carry the canonical typed
-constraint terms; urgency carries either its data predicate or operation
-reference; each clock constraint carries its place, comparator, normalized
-quantity and unit reference. `Clock` is not a value or scalar type node, and
+A `timed_model` body has exactly the ordered bindings `model`, `source`,
+`clock_places`, `resets`, `guards`, `invariants`, `urgencies`, `constraints`;
+the five clause bindings are ordered reference aggregates. A `time_source`
+body is exactly `kind`, `unit` for `dense`, and exactly `kind`, `unit`,
+`operation`, `period` for `tick`. A `clock_place` body is exactly `model`,
+`path`, `guards`; its nonempty path has ordered `field(name)`,
+`tuple(index)`, `union(case)` or `slot(collection, selector, minimum,
+maximum)` entries, and guards is a reference aggregate. A `clock_reset` is
+exactly `place`, `value`; `clock_guard` and `time_invariant` are each exactly
+`predicate`. An `urgency` is exactly `kind`, `predicate` for `when`, or
+`kind`, `model`, `operation_name` for `operation`. A `clock_constraint` is
+exactly `place`, `comparison`, `bound`. Bindings, path entries and child
+collections have the counts and order fixed by the corresponding definitions
+in both schemas; all terms have their declared reference or literal type.
+These closed layouts reject omitted, extra, reordered, wrongly typed and
+wrong-count children before semantic graph checks. Reset nodes carry the place
+reference and exact normalized nonnegative quantity. Guard and invariant
+nodes carry the canonical typed constraint terms; urgency carries either its
+data predicate or operation reference; each clock constraint carries its
+place, comparator, normalized quantity and unit reference. `Clock` is not a
+value or scalar type node, and
 clock fields do not appear as data fields in record/model nodes.
 
 The `TimedModelNode` variant in `schema.json` fixes each node's closed outer
@@ -2307,6 +2321,8 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-118 | With the unit of compilation of FR-322-AC-105 and `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` (both packages' roots are `s`), the unit graph holds one `scalar_type`/`dimension_equivalence` node besides the three `Time` nodes: no `declaration`, self-typed, preimage `{version: quire.dimension-equivalence-node/v1, owner: SourceOwner, dimension_node_ids: [the two package Time keys in ascending digest order], root_scale: 1/1}` (key `bbf770ea312108434ee12d0ca4448c6d3d53a0004484b93b8ec577ff1ede00d4` in the TC-233 vector `dimension-equivalence-rpc-flow-time`), `dependencies` exactly those two keys, one occurrence of role `anchor` and ordinal 0; `dimension F::Time ~ R::Time by 1 F::s = 1 R::s;` in its place gives the same key; with `acme/clock` as a third package (root `ms`), `dimension R::Time ~ G::Time by 1 R::s = 1000 G::ms;` gives `root_scale` `1000/1` over `[acme/rpc Time, acme/clock Time]` (key `d707eb948ab055a64cf90b8009997ebc54c9bfe5361479afb6485c9c2df56c24`, vector `dimension-equivalence-rpc-clock-time`), the same declaration written `dimension G::Time ~ R::Time by 1000 G::ms = 1 R::s;` the same key, and `dimension F::Time ~ G::Time by 1 F::s = 1000 G::ms;` gives `1000/1` over `[acme/flow Time, acme/clock Time]` (key `584c6bbcb5056cf9dd5d10504339e49c5507348601530e5ef6d67bc5e351714b`, vector `dimension-equivalence-flow-clock-time`); the `acme/rpc`, `acme/flow` and `acme/clock` `Time` nodes keep their keys. The key is the SHA-256 of the JCS of the preimage, so changing `root_scale` rekeys the node. The strict reader admits the package and derives one class of the three. Refused `invalid_semantic_graph` at the node: its two ids in descending order, its two ids equal, a pair naming a unit node, a second node with the same pair, a pair of two derived dimensions whose normalized maps differ or whose `root_scale` differs from the ratio the base roots fix, a cycle of base pairs whose `root_scale` values do not multiply to exactly one (the three vectors above with the third `root_scale` changed to `1001/1`), a `root_scale` that is zero, negative, unreduced (`2000/2`) or missing, a `dependencies` list holding only one of the two keys, a `semantic_type` other than its own key, a `declaration` member, and an owner that does not join the lock; a changed pair or a changed `root_scale` under its retained key is refused as FR-322-AC-10 refuses a stale dimension key. | Test (TC-233, TC-280) |
 | FR-322-AC-119 | An `application` of `quire.op.quantity.negate` with one `quantity` operand typed by the unit node of `m` is admitted with result type the unit node of `m`, no laws, `mode` `null` and no member; a second operand or a non-`quantity` operand (an `integer`) refuses `ill_typed`/`operator-ineligible`, a `mode` value refuses `invalid_package`/`operation-mode-mismatch` and a `laws` entry refuses `invalid_package`/`operation-law-mismatch`; both V2 schemas enumerate `quire.op.quantity.negate` in `OperationIdentity` directly after `quire.op.quantity.sub`, and the catalog entry of `quire-verification-contracts` carries it. | Test (TC-187) |
 | FR-322-AC-120 | A timed state model has one owned `timed_model` root and one `timed_model`-tagged node per source, clock place, reset, guard, invariant, urgency and clock constraint; their references resolve to correctly typed nodes, their required data enter each node key and package identity, and the reader reconstructs the producer's checked timed model and normalized constraints. Missing/dangling/wrong-kind references, repeated or noncanonical place paths, unknown fields and malformed or non-time quantities refuse with the paired code and cause specified above, in ascending node-id order. | Test (TC-233, TC-367) |
+| FR-322-AC-121 | The reader runs body steps in the order state-graph, temporal, abstraction, terminal, step-relation, hybrid, timed-model, protocol, schedulability, after state checks and before operation checks; when a schema-valid package has a defect in its timed-model graph and protocol graph but no earlier defect, the timed-model step reports first, when that timed defect is repaired the protocol step reports, and when a hybrid defect is added the hybrid step reports before the timed-model step. | Test (TC-233) |
+| FR-322-AC-122 | A checked package containing each of the eight `timed_model` structural forms is admitted with each node's self `semantic_type` and key derived from its complete closed body; removing, adding, reordering or changing the type/count of any required child is refused by the published wire schema. | Test (TC-367; `proposals/checked-package-v2/fixtures/positive-timed-model-nodes.json`, `timed-model-node-vectors.json`) |
 
 ## Dependencies
 
