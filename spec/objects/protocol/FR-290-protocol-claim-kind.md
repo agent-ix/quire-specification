@@ -334,7 +334,7 @@ extent classification; then the candidate table below, top row first.
 | --- | --- |
 | unknown-backend mark, or a registered backend with no negotiation arm | `invalid-request`, `invalid_capability`/`unknown-backend`, naming the backend |
 | a candidate absent from the request's manifest, a candidate that does not match the item, or a set that disagrees with the named backend | `invalid-request`, `invalid_capability`/`inconsistent-candidates`, naming each offending candidate |
-| empty | `unsupported`, with a warning naming the item's kind and, when the request names one, the named backend; `unsupported_projection`/`unsupported-requested-capability` |
+| empty | `unsupported`, with a warning naming the item's kind, its `requirements` when it carries them (FR-193), and, when the request names one, the named backend; `unsupported_projection`/`unsupported-requested-capability` |
 | more than one, and the request names none | `invalid-request`, `invalid_capability`/`ambiguous-backend`, naming every candidate in candidate order |
 | exactly one | that candidate's negotiation arm settles `supported`, `requires-bound`, `unsupported` (warned) or `invalid-request` under the domain-kind check and then the advertised-mode rules |
 

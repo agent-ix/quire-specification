@@ -1419,7 +1419,10 @@
                 "numerator": "10",
                 "denominator": "1"
               },
-              "jumps": 3
+              "jumps": 3,
+              "exhaustive": [
+                "time"
+              ]
             }
           },
           {
@@ -3279,7 +3282,10 @@
                 "numerator": "1",
                 "denominator": "1"
               },
-              "jumps": 3
+              "jumps": 1,
+              "exhaustive": [
+                "time"
+              ]
             }
           },
           {
@@ -3295,7 +3301,10 @@
                 "numerator": "21",
                 "denominator": "2"
               },
-              "jumps": 3
+              "jumps": 1,
+              "exhaustive": [
+                "time"
+              ]
             }
           },
           {
@@ -3311,7 +3320,8 @@
                 "numerator": "10",
                 "denominator": "1"
               },
-              "jumps": 0
+              "jumps": 0,
+              "exhaustive": []
             }
           }
         ],
@@ -7308,8 +7318,8 @@
       "owner": "FR-193",
       "patch": [
         {
-          "op": "replace",
-          "path": "/request/items/0/requirements/0",
+          "op": "add",
+          "path": "/request/items/0/requirements/-",
           "value": "stochastic-dynamics"
         }
       ]
@@ -7469,6 +7479,72 @@
         {
           "op": "remove",
           "path": "/results/1/cause/jumps"
+        }
+      ]
+    },
+    {
+      "name": "requirements-empty-without-hybrid",
+      "base": "temporal-request",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/0/requirements",
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "requirements-unknown-label-without-hybrid",
+      "base": "temporal-request",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/0/requirements",
+          "value": [
+            "stochastic-dynamics"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bounded-solver-missing-exhaustive",
+      "base": "hybrid-coverage-outcome",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/2/basis/exhaustive"
+        }
+      ]
+    },
+    {
+      "name": "exhaustive-repeated",
+      "base": "hybrid-coverage-outcome",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/2/basis/exhaustive",
+          "value": [
+            "time",
+            "time"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "exhaustive-unknown-label",
+      "base": "hybrid-coverage-outcome",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/2/basis/exhaustive",
+          "value": [
+            "positions"
+          ]
         }
       ]
     },
