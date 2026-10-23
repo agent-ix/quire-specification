@@ -16385,3 +16385,278 @@ fn tc_951_withholding_a_published_definition_refuses_its_fixture() {
         }
     }
 }
+
+const HYBRID_NODE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/hybrid-node-vectors.json");
+
+/// The unique, digest-ascending `reference` targets of a body, at any depth.
+fn body_reference_targets(body: &Value) -> Vec<Value> {
+    let mut found = Vec::new();
+    let mut pending = vec![body];
+    while let Some(term) = pending.pop() {
+        match term {
+            Value::Object(members) => {
+                if members.get("term") == Some(&json!("reference")) {
+                    found.push(members["target"].clone());
+                }
+                pending.extend(members.values());
+            }
+            Value::Array(items) => pending.extend(items),
+            _ => {}
+        }
+    }
+    found.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+    found.dedup();
+    found
+}
+
+/// The binding of `name` in an aggregate body's members.
+fn hybrid_binding<'a>(body: &'a Value, name: &str) -> &'a Value {
+    &body["members"]
+        .as_array()
+        .expect("aggregate members")
+        .iter()
+        .find(|member| member["name"] == name)
+        .unwrap_or_else(|| panic!("binding {name}"))["value"]
+}
+
+/// Whether a node's key is the digest of its own preimage: the
+/// `quire.application-node/v1` preimage for an application-bearing node,
+/// else the `quire.structural-node/v1` preimage.
+fn hybrid_vector_key_is_current(node: &Value, nodes: &[Value]) -> bool {
+    if is_application_node(node) {
+        application_node_key_is_current(node, nodes)
+    } else {
+        structural_node_key_is_current(node)
+    }
+}
+
+/// Rekey `node` from its own members, keeping a self-typed node self-typed.
+fn rekey_hybrid_vector_node(node: &mut Value, nodes: &[Value]) {
+    let self_typed = node["semantic_type"] == node["node_id"];
+    node["dependencies"] = json!(body_reference_targets(&node["body"]));
+    let preimage = if is_application_node(node) {
+        application_node_preimage(node, nodes).expect("application preimage")
+    } else {
+        structural_node_preimage(node).expect("structural preimage")
+    };
+    node["node_id"]["digest"] = json!(unqualified_jcs_sha256(&preimage));
+    if self_typed {
+        node["semantic_type"] = node["node_id"].clone();
+    }
+}
+
+#[trace("TC-966", "FR-481-AC-1", "FR-481-AC-2", "FR-481-AC-6")]
+#[test]
+fn tc_966_hybrid_model_nodes_meet_the_schema_and_carry_their_own_keys() {
+    let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
+    let nodes = vectors["nodes"].as_array().expect("nodes");
+    let roles = &vectors["roles"];
+    let node_schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let preimage_schema = schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "HybridNode");
+    let ids = nodes
+        .iter()
+        .map(|node| node["node_id"]["digest"].as_str().expect("digest"))
+        .collect::<BTreeSet<_>>();
+    assert_eq!(ids.len(), nodes.len(), "every node id is unique");
+    for (index, node) in nodes.iter().enumerate() {
+        assert!(
+            node_schema.is_valid(node),
+            "node {index} meets SemanticNode"
+        );
+        assert!(
+            hybrid_vector_key_is_current(node, nodes),
+            "node {index} key is current"
+        );
+        if node["node_tag"] == "hybrid" {
+            let preimage = structural_node_preimage(node).expect("hybrid nodes are structural");
+            assert!(
+                preimage_schema.is_valid(&preimage),
+                "node {index} preimage meets HybridNode"
+            );
+            assert_eq!(
+                node["semantic_type"], node["node_id"],
+                "node {index} is self-typed"
+            );
+            assert_eq!(
+                node["dependencies"],
+                json!(body_reference_targets(&node["body"])),
+                "node {index} dependencies are its body's targets"
+            );
+        }
+    }
+    let at = |role: &Value| &nodes[role.as_u64().expect("index") as usize];
+    let model = at(&roles["model"]);
+    assert_eq!(model["semantic_form"], "hybrid_model");
+    assert_eq!(model["declaration"], json!({"qualified_name": ["Braking"]}));
+    assert_eq!(model["owner"]["kind"], "source");
+    let modes = roles["modes"].as_array().expect("modes");
+    for (mode, name) in modes.iter().zip(["Moving", "Stopped"]) {
+        let mode = at(mode);
+        assert_eq!(
+            mode["declaration"],
+            json!({"qualified_name": ["Braking", name]})
+        );
+        assert_eq!(mode["owner"], model["owner"]);
+    }
+    assert_eq!(
+        hybrid_binding(&model["body"], "modes")["members"],
+        json!(
+            modes
+                .iter()
+                .map(|mode| json!({"term": "reference", "target": at(mode)["node_id"]}))
+                .collect::<Vec<_>>()
+        ),
+        "the initial mode is the first"
+    );
+    for transition in roles["transitions"].as_array().expect("transitions") {
+        let transition = at(transition);
+        assert!(transition.get("declaration").is_none() && transition.get("owner").is_none());
+        assert_eq!(transition["occurrences"][0]["role"], "expression");
+    }
+    // Variables: v, a, t at levels 0, 1, 2, typed rational; t is the clock.
+    let rational = nodes
+        .iter()
+        .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == "rational")
+        .expect("rational");
+    let entries = hybrid_binding(&model["body"], "variables")["members"]
+        .as_array()
+        .expect("variables");
+    let classes = entries
+        .iter()
+        .map(|entry| {
+            hybrid_binding(entry, "class")["value"]
+                .as_str()
+                .expect("class")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(classes, ["hybrid", "hybrid", "clock"]);
+    for (level, (entry, variable)) in entries
+        .iter()
+        .zip(roles["variables"].as_array().expect("variables"))
+        .enumerate()
+    {
+        let variable = at(variable);
+        assert_eq!(
+            hybrid_binding(entry, "parameter")["target"],
+            variable["node_id"]
+        );
+        assert_eq!(variable["semantic_type"], rational["node_id"]);
+        assert_eq!(
+            hybrid_binding(&variable["body"], "level")["value"],
+            json!(level.to_string())
+        );
+    }
+    // The clock's rate is the rational literal one in every mode.
+    for mode in modes {
+        let rates = hybrid_binding(&at(mode)["body"], "rates")["members"]
+            .as_array()
+            .expect("rates");
+        assert_eq!(rates.len(), entries.len(), "one rate per variable");
+        let clock_rate = nodes
+            .iter()
+            .find(|node| node["node_id"] == rates[2]["target"])
+            .expect("clock rate node");
+        assert_eq!(clock_rate["semantic_form"], "literal");
+        assert_eq!(clock_rate["body"]["value"], "1");
+    }
+    // The claim is a temporal clause over a parameter typed by the model node.
+    let claim = at(&roles["claim"]);
+    let over = at(&roles["over"]);
+    assert_eq!(claim["semantic_form"], "temporal_clause");
+    assert_eq!(claim["body"]["arguments"][0]["target"], over["node_id"]);
+    assert_eq!(over["semantic_type"], model["node_id"]);
+    assert_eq!(claim["body"]["arguments"][1]["value"], "model-time");
+}
+
+#[trace("TC-966", "FR-481-AC-3")]
+#[test]
+fn tc_966_a_changed_rate_rekeys_its_mode_the_model_and_the_claim() {
+    let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
+    let mut nodes = vectors["nodes"].as_array().expect("nodes").clone();
+    let extra = vectors["extra_nodes"].as_array().expect("extra nodes");
+    let roles = &vectors["roles"];
+    let index = |role: &Value| role.as_u64().expect("index") as usize;
+    let moving = index(&roles["modes"][0]);
+    let model = index(&roles["model"]);
+    let over = index(&roles["over"]);
+    let claim = index(&roles["claim"]);
+    let before = [moving, model, over, claim].map(|at| nodes[at]["node_id"].clone());
+    let replacement = extra[index(&roles["replacement_rate_of_v"])]["node_id"].clone();
+    assert_eq!(
+        nodes[moving]["body"]["members"][1]["value"]["members"][0]["target"],
+        nodes[index(&roles["moving_rate_of_v"])]["node_id"]
+    );
+    nodes.extend(extra.iter().cloned());
+    nodes[moving]["body"]["members"][1]["value"]["members"][0]["target"] = replacement;
+    let snapshot = nodes.clone();
+    rekey_hybrid_vector_node(&mut nodes[moving], &snapshot);
+    let moving_id = nodes[moving]["node_id"].clone();
+    nodes[model]["body"]["members"][1]["value"]["members"][0]["target"] = moving_id;
+    let snapshot = nodes.clone();
+    rekey_hybrid_vector_node(&mut nodes[model], &snapshot);
+    nodes[over]["semantic_type"] = nodes[model]["node_id"].clone();
+    let snapshot = nodes.clone();
+    rekey_hybrid_vector_node(&mut nodes[over], &snapshot);
+    nodes[claim]["body"]["arguments"][0]["target"] = nodes[over]["node_id"].clone();
+    let snapshot = nodes.clone();
+    rekey_hybrid_vector_node(&mut nodes[claim], &snapshot);
+    for (at, old) in [moving, model, over, claim].into_iter().zip(before) {
+        assert_ne!(nodes[at]["node_id"], old, "node {at} is rekeyed");
+        assert!(
+            hybrid_vector_key_is_current(&nodes[at], &nodes),
+            "node {at} key is current"
+        );
+    }
+    // A respelled source with the same checked content keeps every key: the
+    // keys are a function of the nodes alone, so rekeying unchanged nodes is
+    // the identity.
+    let original = vectors["nodes"].as_array().expect("nodes").clone();
+    for at in [moving, model, over, claim] {
+        let mut copy = original[at].clone();
+        rekey_hybrid_vector_node(&mut copy, &original);
+        assert_eq!(
+            copy["node_id"], original[at]["node_id"],
+            "node {at} is stable"
+        );
+    }
+}
+
+#[trace("TC-966", "FR-481-AC-5")]
+#[test]
+fn tc_966_malformed_hybrid_nodes_fail_the_published_schema() {
+    let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
+    let nodes = vectors["nodes"].as_array().expect("nodes");
+    let node_schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let cases = vectors["schema_refusals"]
+        .as_array()
+        .expect("schema refusals");
+    assert_eq!(cases.len(), 8);
+    for case in cases {
+        let name = case["name"].as_str().expect("name");
+        let mut node = nodes[case["node"].as_u64().expect("node") as usize].clone();
+        assert!(
+            node_schema.is_valid(&node),
+            "{name}: the unedited node is valid"
+        );
+        let pointer = case["pointer"].as_str().expect("pointer");
+        let (parent, member) = pointer.rsplit_once('/').expect("member pointer");
+        let holder = node.pointer_mut(parent).expect("parent exists");
+        match (&case["value"], holder) {
+            (Value::Null, Value::Object(members)) => {
+                assert!(
+                    members.remove(member).is_some(),
+                    "{name}: removed member exists"
+                );
+            }
+            (value, Value::Object(members)) => {
+                members.insert(member.to_owned(), value.clone());
+            }
+            (value, Value::Array(items)) => {
+                items[member.parse::<usize>().expect("index")] = value.clone();
+            }
+            (_, other) => panic!("{name}: unexpected parent {other}"),
+        }
+        assert!(!node_schema.is_valid(&node), "{name}: {}", case["why"]);
+    }
+}
