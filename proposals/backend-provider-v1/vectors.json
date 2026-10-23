@@ -27,6 +27,7 @@
         "/contract_version": "FR-331",
         "/capability_vocabulary": "FR-290",
         "/manifest/0/backend": "FR-290",
+        "/manifest/0/tool": "FR-331",
         "/manifest/0/advertises": "FR-290",
         "/manifest/0/domains": "FR-290",
         "/manifest/0/bounds": "FR-461"
@@ -37,6 +38,10 @@
         "manifest": [
           {
             "backend": "kani",
+            "tool": {
+              "name": "kani",
+              "version": "0.56.0"
+            },
             "advertises": [
               {
                 "kind": "operation-contract",
@@ -3990,6 +3995,63 @@
           "op": "add",
           "path": "/request_id",
           "value": 1
+        }
+      ]
+    },
+    {
+      "name": "hello-descriptor-without-tool",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-without-version",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/version"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-without-name",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/name"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-empty-version",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/version",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-extra-member",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/manifest/0/tool/target",
+          "value": "x86_64-unknown-linux-gnu"
         }
       ]
     },

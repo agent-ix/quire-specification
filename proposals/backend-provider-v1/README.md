@@ -46,6 +46,10 @@ One envelope has three stages, each a closed object carrying
 A request's `manifest` is the registry snapshot its candidates are checked
 against (FR-290).
 
+The manifest stage's descriptor carries `tool`, the name and version of the
+external tool the provider runs; a registry-snapshot descriptor carries it
+exactly when its provider's does (FR-331).
+
 ## Package bytes
 
 `request.package` is the RFC 8785 byte string of the

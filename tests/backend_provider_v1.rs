@@ -1363,6 +1363,56 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     );
 }
 
+/// FR-331-AC-37: a process provider's `hello` descriptor carries `tool`
+/// `{name, version}`; a registry-snapshot descriptor may omit it; the member
+/// is inside the manifest digest preimage and outside the backend identity.
+#[trace("TC-431", "FR-331-AC-37")]
+#[test]
+fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
+    let hello = definition("ManifestStage");
+    let descriptor = definition("BackendDescriptor");
+    let base = positive("kani-hello")["document"].clone();
+    assert!(hello.is_valid(&base), "the hello with its tool is admitted");
+    let entry = base["manifest"][0].clone();
+    assert_eq!(entry["tool"], serde_json::json!({"name": "kani", "version": "0.56.0"}));
+
+    let mut upgraded = base.clone();
+    upgraded["manifest"][0]["tool"]["version"] = Value::String("0.57.0".into());
+    assert!(hello.is_valid(&upgraded), "the upgraded hello is admitted");
+    let upgraded_entry = &upgraded["manifest"][0];
+    assert_eq!(
+        upgraded_entry["backend"], entry["backend"],
+        "a tool-only change leaves the BackendId"
+    );
+    assert_ne!(
+        jcs_sha256(upgraded_entry).expect("descriptor canonicalizes"),
+        jcs_sha256(&entry).expect("descriptor canonicalizes"),
+        "a tool-only change moves the manifest digest"
+    );
+
+    let mut without = entry.clone();
+    without.as_object_mut().expect("descriptor").remove("tool");
+    assert!(
+        descriptor.is_valid(&without),
+        "a registry-snapshot descriptor of an in-process engine carries no tool"
+    );
+    let mut hello_without = base.clone();
+    hello_without["manifest"][0] = without;
+    assert!(!hello.is_valid(&hello_without), "a hello descriptor requires tool");
+    for malformed in [
+        serde_json::json!({"name": "kani"}),
+        serde_json::json!({"version": "0.56.0"}),
+        serde_json::json!({"name": "kani", "version": ""}),
+        serde_json::json!({"name": "", "version": "0.56.0"}),
+        serde_json::json!({"name": "kani", "version": "0.56.0", "target": "x"}),
+        serde_json::json!("kani 0.56.0"),
+    ] {
+        let mut bad = entry.clone();
+        bad["tool"] = malformed.clone();
+        assert!(!descriptor.is_valid(&bad), "tool {malformed} is refused");
+    }
+}
+
 /// FR-331-AC-32: a temporal item's subject may carry a population bound while
 /// its extent stays unbounded; the bound moves nothing into the extent.
 #[trace("TC-431", "FR-331-AC-32")]
