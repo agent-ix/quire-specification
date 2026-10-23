@@ -21,7 +21,7 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-79
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-322-AC-102
+  - target: ix://agent-ix/quire-specification/FR-322-AC-114
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-81
     type: verifies
@@ -373,8 +373,8 @@ body changed, canonical order and `dependencies` kept, its node id kept and
 | QL-02 | literal of `value_kind` `quantity` typed by `integer`, `string` or `boolean` | `ill_typed`/`operator-ineligible` | FR-322-AC-79 |
 | QL-03 | literal of `value_kind` `integer` typed by a unit node | `ill_typed`/`operator-ineligible` | FR-322-AC-79 |
 | QL-04 | literal of `value_kind` `quantity` with value `03`, `+3`, `2/4`, `3/1`, `0/5`, `1/0`, `2.5` or empty text | `invalid_package`/`invalid-value` | FR-322-AC-79 |
-| RL-01 | literal of `value_kind` `rational` typed by a `scalar_type`/`rational` node, values `0`, `1`, `-3`, `1/2` and `-7/2` | Admitted with family `rational` | FR-322-AC-102 |
-| RL-02 | literal of `value_kind` `rational` with value `2/2`, `1/1`, `02`, `+1`, `2/4`, `1/0`, `0/5`, `1/-2`, `2.5` or empty text | `invalid_package`/`invalid-value` | FR-322-AC-102 |
+| RL-01 | literal of `value_kind` `rational` typed by a `scalar_type`/`rational` node, values `0`, `1`, `-3`, `1/2` and `-7/2` | Admitted with family `rational` | FR-322-AC-114 |
+| RL-02 | literal of `value_kind` `rational` with value `2/2`, `1/1`, `02`, `+1`, `2/4`, `1/0`, `0/5`, `1/-2`, `2.5` or empty text | `invalid_package`/`invalid-value` | FR-322-AC-114 |
 | NS-01 | nodes of one `declaration` name `ms`: a `scalar_type`/`unit`, a `composite_type`/`record` and a `scalar_type`/`dimension` | Admitted | FR-322-AC-81 |
 | NS-02 | two `scalar_type`/`unit` nodes of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | NS-03 | a `composite_type`/`record` and a `scalar_type`/`enum` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |

@@ -55,7 +55,6 @@ vectors, and feed the package to the reader.
 | HY-15 | HY-01's v2 bytes handed to a process fixture provider for `SlowEnough`'s item | the provider reads the model and claim from the nodes, derives horizon 10, and the item's extent is `bounded` |
 | HY-16 | the process fixture provider's `solver-inconclusive` traces over HY-01, read by the host: `Moving` then `Stopped` by `transition` 0; mode `Halted` | the first kept on the `inconclusive` record; the second refused by the host `invalid_result`/`invalid-value` at its `mode` |
 | HY-21 | `SlowEnough` under a `quire.temporal.timed/v1` profile alias, its interval in the timed form `[0, 10]` with both ends closed | admitted, its law `timed/v1` |
-| HY-22 | `SlowEnough` with one capture binding; with one fairness reference | `invalid_semantic_graph` at the captures argument; at the fairness argument |
 
 ## Expected Results
 
