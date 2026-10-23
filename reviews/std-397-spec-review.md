@@ -38,3 +38,13 @@ Examined, clean:
 ## Verdict
 
 Not mergeable: FND-001 (high) block the PR.
+
+## Dispositions
+
+Round 1, at 078ace60. tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lock now fails, as expected: the schemas list identities the pinned QVC rev does not. It clears when QVC #21 merges and the owner moves the lock. That is a merge gate on the stack, not a finding.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Both checked-package-v2 OperationIdentity enums now list quire.op.ieee.float32.negate and quire.op.ieee.float64.negate (and, up the stack, the bytes/json_object and drop_first/remove_one identities). |
+| FND-002 | fixed | the same nine with the `Float32` patterns |
+| FND-003 | fixed | This departs from IEEE 754 on purpose: the standard's quiet predicates signal `invalid` on a signaling NaN, while here a signaling NaN is an ordinary NaN operand that compares unordered and sets no flag |

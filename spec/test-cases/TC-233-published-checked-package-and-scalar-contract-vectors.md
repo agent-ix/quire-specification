@@ -114,10 +114,12 @@ the term as a non-callee argument, the term as a node body root, and the target 
 every nominal node and compound-unit vector identity and apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
 including `-0` spellings and the `dimension-equivalence-` mutations (descending
-ids, one node twice, one id, a stale pair, an owner outside the lock), and
-require the semantic oracle itself to refuse `-0` and to refuse a repeated
-pair or a derived pair of unequal normalized maps among the equivalence
-vectors (FR-322-AC-118). Require every qualification-catalog entry of both definition locks to name
+ids, one node twice, one id, a stale pair, a stale `root_scale`, a zero, a
+negative, a missing and an unreduced `root_scale`, an owner outside the lock),
+and require the semantic oracle itself to refuse `-0` and to refuse a repeated
+pair, a derived pair of unequal normalized maps or of a ratio the base roots do
+not fix, and a cycle of the `dimension-equivalence-` vectors whose ratios do not
+multiply to one (FR-322-AC-118). Require every qualification-catalog entry of both definition locks to name
 an authored artifact under a unique role and identity, require each
 complete-value catalog role to occupy exactly one always, conditional or
 exactly-one slot and each complete-model role the always slot, and evaluate

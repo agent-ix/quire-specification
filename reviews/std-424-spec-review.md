@@ -33,3 +33,11 @@ Examined, clean:
 ## Verdict
 
 Not mergeable: FND-001 (high) block the PR.
+
+## Dispositions
+
+Round 1, at 78343aca. Hand-derived against FR-140: 1.25 gives c* 125, 1000.00 gives (1000,0), 1.250 gives (125,2), all members; 1.255 has s* 3 > 2; 1000.01 gives c* 100001; -1 is refused; under [-1000,1000;1,2], -0.5 gives c* -5, 5 gives c* 50 and 100 gives c* 1000, all members, while 1001 gives c* 10010 and is refused. The oracle decimal_literal_is_member does the same.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | membership of the literal is decided by its value under FR-140 ... `5` is therefore a member of `Decimal[-1000, 1000; 1, 2]` (`s* = 1`, `c* = 50`), and `1000.00` is a member of `Decimal[0, 1000; 0, 2]` |

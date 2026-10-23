@@ -39,7 +39,8 @@ Addition/comparison require compatible dimensions and an explicit common-unit
 conversion. Multiplication/division combine dimension exponents. Affine units
 use their selected offset rules and admit conversion/comparison only; complete
 V1 has no implicit point-versus-difference type, so arithmetic on a nonzero-
-offset quantity refuses. Conversion never occurs implicitly.
+offset quantity refuses. Negation of a non-affine quantity is exact and
+unit-preserving. Conversion never occurs implicitly.
 
 ## Dimension and conversion algebra
 
@@ -142,9 +143,10 @@ the base dimension's own turn the checker SHALL refuse it,
 `missing_declaration`/`missing-name`, retaining the base dimension and the
 first local unit, in source order, whose dimension has a nonzero exponent of it
 in its normalized map; a derived dimension without a unit is not refused,
-since only base dimensions anchor a compound result, and a base dimension
-whose base class (see "Dimension equivalence") has a member with a unit is
-not refused, since the class root anchors the result. For a nonempty dimension
+since only base dimensions anchor a compound result. Relating a base
+dimension to another exempts it from nothing: an equivalence names a unit of
+each member (see "Dimension equivalence"), so it never anchors a base
+dimension that has none. For a nonempty dimension
 no separate missing-root cause exists: a finite graph in which every unit
 names a known target within the dimension is cyclic, so such a dimension is
 refused by row 2, 3 or 6.
@@ -164,7 +166,7 @@ A unit is affine exactly when the offset of its composed mapping to the
 canonical root is nonzero; a declared edge offset alone does not decide it, so a
 zero-offset unit targeting an affine unit is affine and a unit whose nonzero
 edge offsets compose to zero is not. An affine unit may be converted or compared
-but cannot be added, subtracted, multiplied, divided or raised to a power; such
+but cannot be added, subtracted, negated, multiplied, divided or raised to a power; such
 arithmetic refuses as affine-unit arithmetic. A separately
 declared zero-offset difference unit supports arithmetic; complete V1 does not
 infer a point/difference kind from an operation. Conversion into an exact target
@@ -203,7 +205,8 @@ Conversion traverses the full source-to-root path and then the full
 root-to-target path, with no common-ancestor shortcut, and has no operation
 event of its own; a compound side contributes no edge. Addition and subtraction
 of the identical unit traverse no edge, and their operation event is computed
-in that unit. Multiplication, division and integer power traverse the left and
+in that unit. Negation traverses no edge, as addition does, and its operation event is
+computed in the operand's unit. Multiplication, division and integer power traverse the left and
 then the right operand's root path before their operation event. Top-level quantity equality and
 ordering expressions share one schedule: both operands are mapped along their root paths,
 left then right, and compared by exact root value, so an affine unit or a
@@ -235,6 +238,17 @@ stable across unrelated package edits. Dimension exponents are mathematical sign
 explicit operation limits; implementations cannot narrow them to a machine
 integer. A conversion publishes no partial quantity until canonicalization,
 target rounding and target-domain admission all succeed.
+
+**Quantity negation.** The unary minus `-q` over a non-affine quantity `q` of
+type `Quantity<u>` is exact and unit-preserving: the result has type
+`Quantity<u>`, in the same unit `u` and not a root-unit conversion of it, and its
+value is the exact rational negation of `q`'s value, so `-(2 m)` is `-2 m`,
+`-(3 ms)` is `-3 ms` and `-(0 m)` is `0 m`. A quantity of a compound unit that a
+multiplication or division produced is negated in that compound unit. Negation
+has no zero divisor, no undefined condition and no range obligation, because a
+quantity magnitude has no bound. The operand of an affine unit refuses
+`ill_typed` at type checking before any charge, as every other arithmetic on an
+affine unit does. The operation lowers to `quire.op.quantity.negate` (FR-322).
 
 Multiplication, division and integer power first convert every non-affine
 operand to its dimension's canonical root, perform exact value arithmetic and
@@ -286,68 +300,116 @@ its own units, and no equal name, scale or shape makes them one by itself.
 ## Dimension equivalence
 
 A dimension equivalence relates two dimension nodes that name one physical
-dimension under two owners, so that two domain packages that each declare
-`Time` exchange time quantities through the unit of compilation that admits
-both. The source form is the shared grammar's `dimension-equivalence`,
-`dimension R::Time ~ F::Time;`, whose two names resolve by the namespace rules
-below (a bare name reaches a dimension of the unit of compilation, `M::Name`
-a dimension of a selected domain package). Only a unit of compilation declares
-an equivalence: a domain package document names only its own dimensions, so
-it relates two of them by declaring one, and the unit of compilation relates
-any two nodes, including two of one package.
+dimension under two owners and states how large the canonical root unit of one
+is against the canonical root unit of the other, so that two domain packages
+that each declare `Time` exchange time quantities through the unit of
+compilation that admits both, whatever unit each chose as its root. The source
+form is the shared grammar's `dimension-equivalence`,
+`dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;`, whose two dimension
+names resolve by the namespace rules above (a bare name reaches a dimension of
+the unit of compilation, `M::Name` a dimension of a selected domain package).
+Only a unit of compilation declares an equivalence: a domain package document
+names only its own dimensions, so it relates two of them by declaring one, and
+the unit of compilation relates any two nodes, including two of one package.
+
+The `by` clause `by x U = y V` names a unit `U` of the first dimension and a
+unit `V` of the second, each by its unit name (a bare name reaches a unit of
+the unit of compilation, `M::name` a unit of a selected package), and two
+positive exact numbers: `x` of `U` is the same quantity as `y` of `V`. The
+checker reduces the statement to the **root ratio** of the pair. When `U` is
+`a` canonical roots of the first dimension and `V` is `b` canonical roots of
+the second (the composed scales of the units to their roots), one canonical
+root of the first dimension is `(y * b) / (x * a)` canonical roots of the
+second. In the example the root of `R::Time` is `s` (`a` is 1), so the ratio
+is `1000 * b`: 1 when `acme/flow` declares `s` as its root and `ms` as
+`1/1000 * s`, and 1000 when `acme/flow` declares `ms` as its root. Two roots
+of unequal size therefore never become one by writing the pair: the declaration
+carries the size of one root in the other.
 
 The checker SHALL decide each equivalence declaration in these steps, the
 first match winning, and each refusal is located at the declaration:
 
-1. A name that resolves to no dimension of the unit of compilation or of a
-   selected package's document refuses `missing_declaration`/`missing-name` at
-   the name; a package whose model alias the unit of compilation does not
-   declare is not visible, so `Z::Time` with no alias `Z` is this refusal.
-2. Two names that resolve to one node refuse `invalid_package`/`definition-cycle`
-   retaining the edge `node -> node`.
+1. A dimension name that resolves to no dimension of the unit of compilation
+   or of a selected package's document, and then a unit name that resolves to
+   no unit visible to the unit of compilation, each refuses
+   `missing_declaration`/`missing-name` at the name; a package whose model
+   alias the unit of compilation does not declare is not visible, so `Z::Time`
+   with no alias `Z` is this refusal.
+2. Two dimension names that resolve to one node refuse
+   `invalid_package`/`definition-cycle` retaining the edge `node -> node`.
 3. A declaration of a pair of nodes (in either order) that another
    equivalence declaration of the unit of compilation already names refuses
    `invalid_package`/`conflicting-definition`, retaining both declarations,
-   at the later one.
-4. A declaration whose two nodes are not both base dimensions (declared with
-   no terms) and whose normalized base-dimension maps differ refuses
-   `invalid_package`/`incompatible-definition`, retaining both nodes. The maps
-   are formed with the base classes below, so
-   `dimension R::Speed ~ F::Speed;` is admitted when
-   `R::Length ~ F::Length;` and `R::Time ~ F::Time;` are declared and the two
-   speeds are `Length / Time` of their package, and refuses when they differ.
+   at the later one, whether the two declarations state the same root ratio or
+   contradict each other.
+4. A first unit that is not a unit of the first dimension node, or a second
+   unit that is not a unit of the second, refuses
+   `invalid_package`/`incompatible-definition`, retaining the unit and the
+   dimension node it was named for.
+5. A unit that is affine (its composed offset to its canonical root is
+   nonzero) refuses `invalid_package`/`invalid-value`, retaining the unit and
+   its composed offset; a number `x` or `y` that is not positive refuses
+   `invalid_package`/`invalid-value`, retaining the declaration.
+6. A declaration whose two nodes are not both base dimensions (declared with
+   no terms) refuses `invalid_package`/`incompatible-definition`, retaining
+   both nodes, when their normalized base-dimension maps differ, and when its
+   root ratio differs from the ratio the base roots fix. The maps are formed
+   with the base classes below, so `dimension R::Speed ~ F::Speed by 1 R::mps =
+   1 F::mps;` is admitted when `R::Length ~ F::Length` and `R::Time ~
+   F::Time` are declared and the two speeds are `Length / Time` of their
+   package, and refuses when they differ. The root of a derived dimension is
+   the product of its base roots at their exponents (above), so its ratio is
+   fixed by the base pairs: each base dimension's root is a ratio of its class
+   representative's root (1 for a base dimension in no pair), and the ratio of
+   a derived pair is the product of those ratios over the first node's terms
+   divided by the product over the second node's.
 
 The relation is symmetric and transitive: declarations `A ~ B`, `B ~ C` and
-`C ~ A` are admitted together, because the third is implied by the first two
-and repeats no pair, and the equivalence classes are the connected
+`C ~ A` are admitted together exactly when the three root ratios, each taken
+as written, multiply to one. The equivalence classes are the connected
 components of the declared pairs. The base classes are the components of the
-pairs whose two nodes are both base dimensions. The checker SHALL decide the
-declarations of steps 1 to 3 for base pairs before the dimension turns, the
-step 4 check of every other pair after the last turn, and the pairs in source
-order within each phase.
+pairs whose two nodes are both base dimensions.
+
+7. **Consistency.** The root ratios of base pairs around every cycle of pairs
+   SHALL multiply to exactly one, a pair read against its written order
+   counting as its reciprocal. The first declaration, in source order, that
+   closes a cycle whose product is not one refuses
+   `invalid_package`/`conflicting-definition`, retaining the declarations of
+   that cycle in source order. Derived pairs need no cycle check: step 6 fixes
+   each from the base pairs.
+
+The checker SHALL decide steps 1 to 5 for base pairs and the step 7 check over
+the base pairs before the dimension turns, the step 6 check of every other
+pair after the last turn, and the pairs in source order within each phase.
 
 **Effect.** Every effect below is derived from the declared pairs, with no
 node rewritten:
 
-- The least node key, by ascending digest, of the base class's members that
-  have a canonical root unit is the base class's representative, and a
-  normalized dimension map holds the representative in place of each member
-  of its class. A base class none of whose members has a unit is subject to
-  the base-dimension rule unchanged; a base dimension whose class has a
-  member with a unit is not refused by that rule.
+- The least node key, by ascending digest, of the base class's members is the
+  base class's representative, and a normalized dimension map holds the
+  representative in place of each member of its class. Every member of a pair
+  has a unit (step 4 names one), so the base-dimension rule is decided by the
+  dimensions' own units: an equivalence never anchors a base dimension that
+  has none.
 - The units of the dimension nodes in one equivalence class form one unit
-  graph: the union of the members' graphs with the canonical root of the
-  member holding the least dimension node key that has a root as the class
-  root, and every other member's canonical root as a unit that targets the
-  class root with scale one and offset zero (the coherence of every declared
-  root with the product of its base roots, above, makes that edge exact). Rows
-  1 to 6 apply to each node's own graph, unchanged.
+  graph: the union of the members' graphs with the canonical root of the member
+  holding the least dimension node key as the class root, and every other
+  member's canonical root as a unit that targets the class root with offset
+  zero and with the scale equal to the product of the root ratios along the
+  declared pairs from that member to the class root (a pair taken from the
+  member's side toward the class root counts as written or as its reciprocal),
+  which step 7 makes the same along every path. The identification edge from
+  one root to another therefore carries the root ratio of the two. Rows 1 to 6
+  apply to each node's own graph, unchanged.
 - Direct conversion between two declared units is admitted when their
   dimension nodes are equal or in one equivalence class, and traverses the
   full source-to-root path and root-to-target path of the class graph, so
-  `convert<Quantity<F::s>>(3 R::s)` is `3 F::s` and charges the one
-  identification edge of the class graph, and a conversion across a class of
-  three roots charges two.
+  with `by 1 R::s = 1000 F::ms` over equal-sized roots `convert<Quantity<F::s>>(3 R::s)`
+  is `3 F::s` and charges the one identification edge of the class graph, and
+  a conversion across a class of three roots charges two. Over unequal roots
+  (`acme/clock` with root `ms` and `by 1 R::s = 1000 G::ms`) the same
+  conversion `convert<Quantity<G::ms>>(3 R::s)` is `3000 G::ms`, not
+  `3 G::ms`.
 - Addition, subtraction, equality and ordering still require the identical
   unit, as for any two units of one dimension (`1 m` and `100 cm`): `3 R::s +
   3 F::s` and `3 R::s = 3 F::s` refuse `ill_typed` as distinct units, and
@@ -355,11 +417,14 @@ node rewritten:
   position meets a `Quantity<F::s>` operand with the same explicit conversion.
 - Multiplication, division and integer power convert each operand to the
   canonical root of its class, so `3 R::s / 3 F::s` is dimensionless and
-  `(3 R::s) * (2 F::s)` has the compound unit of `(3 R::s) * (2 R::s)`.
+  `(3 R::s) * (2 F::s)` has the compound unit of `(3 R::s) * (2 R::s)`. The
+  compound value is the value in the class root, so over unequal roots
+  `3 R::s / 3 G::ms` is the dimensionless `1000`.
 - A derived dimension converts to another dimension whose normalized map
   equals its own by the compound pivot of the conversion rule above whether
   or not an equivalence relates them; an equivalence of two nodes with equal
-  maps additionally admits their units' direct conversion.
+  maps (and the ratio step 6 fixes) additionally admits their units' direct
+  conversion.
 
 **The pivot expression.** The two-step conversion of `3 R::s` into `dsec`,
 with `dimension Dur = R::Time; unit dsec : Dur = 1;` and no equivalence, is
@@ -445,7 +510,9 @@ the element of `Option` and of the collection types, and the target of
   a dimension name included, the checker SHALL refuse
   `missing_declaration`/`missing-name` at the name.
 - The checker SHALL admit under `Quantity<u>` every quantity of the unit and no
-  bound on the magnitude; a bounded magnitude is not a complete-V1 type form.
+  bound on the magnitude; a bounded magnitude is not a complete-V1 type form. A
+  domain package's `min` or `max` constraint on a unit is a value constraint on
+  members (FR-154 "Unit bounds") and leaves their type `Quantity<u>`.
 - The checker SHALL NOT admit `Quantity<D>` over a dimension `D` as a type
   form; a source that wants it declares a unit of `D` and writes `Quantity<u>`.
 - The checker SHALL lower a quantity literal to a checked-package `literal` term
@@ -479,9 +546,11 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-19 | A unit of compilation that declares `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` beside the admitted domain package `acme/rpc` declaring base dimension `Rate`, root `us` of `Rate` and its own `ms` of `Rate` checks with no `ambiguous_declaration`: `Quantity<ms>` names the source unit and `Quantity<M::ms>` under `model M = "acme/rpc" …` names the package unit (FCD identity `ix://acme/rpc/unit/ms`), which carries no declaration name; a source `unit tick : M::Rate = 1/2 * M::us;` is admitted, typed by the package dimension, and the same unit written `unit tick : Rate = 1/2 * M::us;` refuses `missing_declaration`/`missing-name` at `Rate`; the package also declaring a base dimension `Length` with no unit, beside a source `dimension Area = M::Length ^ 2; unit m2 : Area = 1;`, refuses `missing_declaration`/`missing-name` by the base-dimension rule at `Length`'s turn, located at `/lock/model_selections/0` and naming `ix://acme/rpc/dimension/Length` and `m2`. | Test (TC-187) |
 | FR-142-AC-20 | Dimensions of different owners compose: a unit of compilation declaring `dimension Time; unit s : Time = 1;` with `model R = "acme/rpc" …` and `model F = "acme/flow" …`, whose packages each declare base dimension `Time` and root unit `s` of it, checks with no refusal; bare `Time` names the source's dimension, `R::Time` the `acme/rpc` dimension (`ix://acme/rpc/dimension/Time`) and `F::Time` the `acme/flow` dimension, three distinct dimensions with `Quantity<s>`, `Quantity<R::s>` and `Quantity<F::s>` three distinct types; a source `unit tenth : R::Time = 1/10 * R::s;` is admitted and a source `dimension Speed = R::Time ^ -1 * F::Time;` is admitted; a source that declares no `Time` and writes `unit x : Time = 1;`, a source writing `Z::Time` with no model alias `Z`, and a source writing `R::Speed` where `acme/rpc` declares no `Speed` each refuse `missing_declaration`/`missing-name` at the name; a source declaring `dimension Time;` twice refuses `ambiguous_declaration`/`ambiguous-name`; a package whose document carries two dimensions of identity `ix://acme/rpc/dimension/Time` refuses `invalid_model_binding`/`conflicting-binding` at intake. | Test (TC-187) |
 | FR-142-AC-21 | Over the dimensions of FR-142-AC-20 with no dimension equivalence declared, `f(d: Quantity<R::s>)` called as `f(3 R::s)` is admitted and `f(3 F::s)` and `f(3 s)` refuse `ill_typed`/`type-mismatch` at the argument; `3 R::s + 3 F::s`, the comparison `3 R::s < 3 F::s` and `convert<Quantity<F::s>>(3 R::s)` refuse `ill_typed` by incompatible dimensions before any charge; `3 R::s / 3 F::s` has the normalized map `R::Time` 1 and `F::Time` -1 and is not the dimensionless unit, `3 R::s / 3 R::s` is, and `(3 R::s) * (2 F::s)` has a compound unit of the two root units, unequal to that of `(3 R::s) * (2 R::s)`; with the source derived dimension `dimension Dur = R::Time;` and `unit dsec : Dur = 1;`, `convert<Quantity<dsec>>(3 R::s)` refuses `ill_typed` for two unequal dimension nodes, while `let c = ((3 R::s) * (1 R::s)) / (1 R::s) in convert<Quantity<dsec>>(c)` is admitted (step 1 yields `3` of the compound unit with the one term `R::s` at exponent 1, step 2 meets the map `R::Time` 1 of `Dur` and yields `3 dsec`). | Test (TC-187) |
-| FR-142-AC-22 | A dimension equivalence is decided by FR-142 "Dimension equivalence" steps 1 to 4. Over the sources of FR-142-AC-20, `dimension R::Time ~ F::Time;`, `dimension R::Time ~ Time;` and, with the source `dimension Dur = R::Time;` after `R::Time ~ F::Time;`, `dimension Dur ~ F::Time;` are each admitted; `dimension R::Time ~ Z::Time;` with no model alias `Z`, `dimension R::Time ~ R::Speed;` where `acme/rpc` declares no `Speed`, and `dimension R::Time ~ Nothing;` each refuse `missing_declaration`/`missing-name` at the unresolved name; `dimension R::Time ~ R::Time;` refuses `invalid_package`/`definition-cycle` retaining the edge `R::Time -> R::Time`; a second declaration `dimension F::Time ~ R::Time;` after `dimension R::Time ~ F::Time;` refuses `invalid_package`/`conflicting-definition` at the later one, retaining both; `dimension R::Time ~ R::Area;` over the derived `Area = Length ^ 2` of `acme/rpc` refuses `invalid_package`/`incompatible-definition` retaining both nodes, and `dimension Dur ~ F::Time;` with no `R::Time ~ F::Time;` refuses `invalid_package`/`incompatible-definition` (map `R::Time` 1 against `F::Time` 1); `dimension R::Speed ~ F::Speed;` with both speeds `Length / Time` of their package is admitted after `R::Length ~ F::Length;` and `R::Time ~ F::Time;` and refused `incompatible-definition` without them; `A ~ B;`, `B ~ C;` and `C ~ A;` are admitted together; the decisions are the same in any source order of the declarations within a phase. | Test (TC-187) |
-| FR-142-AC-23 | With `dimension R::Time ~ F::Time;` over the dimensions of FR-142-AC-20 and `acme/flow` declaring `unit ms : Time = 1/1000 * s;`, `convert<Quantity<F::s>>(3 R::s)` is `3 F::s` with one identification edge charged, `convert<Quantity<F::ms>>(3 R::s)` is `3000 F::ms` with two edges charged, `convert<Quantity<R::s>>(1500 F::ms)` is `3/2 R::s`, and `convert<Quantity<R::s>>(3 F::s) = 3 R::s` is `true`; `3 R::s + 3 F::s` and `3 R::s = 3 F::s` refuse `ill_typed` as distinct units of one equivalence class, not as incompatible dimensions, `convert<Quantity<R::s>>(3 F::s) + 3 R::s` is `6 R::s`, `f(d: Quantity<R::s>)` called as `f(convert<Quantity<R::s>>(3 F::s))` is admitted and as `f(3 F::s)` refuses `ill_typed`/`type-mismatch`; `3 R::s / 3 F::s` is the dimensionless `1` and `(3 R::s) * (2 F::s)` is `6` of the compound unit of `(3 R::s) * (2 R::s)`; `convert<Quantity<R::m>>(3 F::s)` where `acme/rpc` declares an unrelated root unit `m` of base dimension `Length` refuses `ill_typed`. With the third declaration `dimension Time ~ F::Time;` a conversion between the two members that are not the class root charges two edges and one involving the class root charges one. | Test (TC-187) |
-| FR-142-AC-24 | A base class decides the base-dimension rule: with `acme/rpc` declaring base dimension `Mass` with root unit `kg` and `acme/flow` declaring base dimension `Mass` with no unit, `dimension Force = F::Mass; unit n : Force = 1;` refuses `missing_declaration`/`missing-name` naming `ix://acme/flow/dimension/Mass` and `n`, and is admitted after `dimension R::Mass ~ F::Mass;`. The normalized map of a product, quotient or power holds the base class representative: `(3 R::s) / (3 F::s)` and `(3 R::s) / (3 R::s)` are the same dimensionless unit and `Quantity<R::s>` squared and `Quantity<F::s>` squared have one compound unit. A derived dimension converts through the compound pivot with or without an equivalence, and `dimension Torque ~ Energy;` over two derived dimensions of equal map admits the direct conversion of `N_m` to `J`, which without the declaration refuses `ill_typed`. | Test (TC-187) |
+| FR-142-AC-22 | A dimension equivalence is decided by FR-142 "Dimension equivalence" steps 1 to 7. Over the sources of FR-142-AC-20, `dimension R::Time ~ F::Time by 1 R::s = 1 F::s;`, `dimension R::Time ~ Time by 1 R::s = 1 s;` and, with the source `dimension Dur = R::Time; unit dsec : Dur = 1;` after `R::Time ~ F::Time by 1 R::s = 1 F::s;`, `dimension Dur ~ F::Time by 1 dsec = 1 F::s;` are each admitted; `dimension R::Time ~ Z::Time by 1 R::s = 1 Z::s;` with no model alias `Z`, `dimension R::Time ~ R::Speed by 1 R::s = 1 R::mps;` where `acme/rpc` declares no `Speed`, `dimension R::Time ~ Nothing by 1 R::s = 1 s;`, and `dimension R::Time ~ F::Time by 1 R::s = 1 F::second;` where `acme/flow` declares no `second` each refuse `missing_declaration`/`missing-name` at the unresolved name; `dimension R::Time ~ R::Time by 1 R::s = 1 R::s;` refuses `invalid_package`/`definition-cycle` retaining the edge `R::Time -> R::Time`; a second declaration `dimension F::Time ~ R::Time by 1 F::s = 1 R::s;` after `dimension R::Time ~ F::Time by 1 R::s = 1 F::s;`, and `dimension F::Time ~ R::Time by 1 F::s = 2 R::s;` after it, each refuse `invalid_package`/`conflicting-definition` at the later declaration, retaining both; `dimension R::Time ~ F::Time by 1 R::m = 1 F::s;` where `R::m` is a unit of `acme/rpc`'s base dimension `Length`, and `dimension R::Time ~ F::Time by 1 F::s = 1 R::s;` (each unit named for the other dimension), refuse `invalid_package`/`incompatible-definition` retaining the unit and the dimension node; `dimension R::Time ~ F::Time by 0 R::s = 1 F::s;`, and the same with `rational(-1, 1)` in place of `0`, refuse `invalid_package`/`invalid-value`, and so does `dimension R::Time ~ F::Time by 1 R::s = 1 F::local;` where `acme/flow` declares `unit local : Time = 1 * s + 5;`, retaining `F::local` and its composed offset `5`; `dimension R::Time ~ R::Area by 1 R::s = 1 R::m2;` over the derived `Area = Length ^ 2` of `acme/rpc` refuses `invalid_package`/`incompatible-definition` retaining both nodes, and `dimension Dur ~ F::Time by 1 dsec = 1 F::s;` with no `R::Time ~ F::Time` refuses `invalid_package`/`incompatible-definition` (map `R::Time` 1 against `F::Time` 1); `dimension R::Speed ~ F::Speed by 1 R::mps = 1 F::mps;` with both speeds `Length / Time` of their package and each `mps` the root of its speed is admitted after `R::Length ~ F::Length by 1 R::m = 1 F::m;` and `R::Time ~ F::Time by 1 R::s = 1 F::s;`, refused `incompatible-definition` without them, and refused `incompatible-definition` as `by 1 R::mps = 2 F::mps` even after them, because the base roots fix the ratio 1; with three base dimensions `A`, `B` and `C` whose root units are `ua`, `ub` and `uc`, `A ~ B by 1 ua = 1 ub;`, `B ~ C by 1 ub = 1000 uc;` and `C ~ A by 1000 uc = 1 ua;` are admitted together, and `C ~ A by 1 uc = 1 ua;` in place of the third refuses `invalid_package`/`conflicting-definition` at the third declaration retaining all three in source order; the decisions are the same in any source order of the declarations within a phase. | Test (TC-187) |
+| FR-142-AC-23 | With `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` over the dimensions of FR-142-AC-20 and `acme/flow` declaring `unit ms : Time = 1/1000 * s;` (root ratio 1), `convert<Quantity<F::s>>(3 R::s)` is `3 F::s` with one identification edge charged, `convert<Quantity<F::ms>>(3 R::s)` is `3000 F::ms` with two edges charged, `convert<Quantity<R::s>>(1500 F::ms)` is `3/2 R::s`, and `convert<Quantity<R::s>>(3 F::s) = 3 R::s` is `true`; `3 R::s + 3 F::s` and `3 R::s = 3 F::s` refuse `ill_typed` as distinct units of one equivalence class, not as incompatible dimensions, `convert<Quantity<R::s>>(3 F::s) + 3 R::s` is `6 R::s`, `f(d: Quantity<R::s>)` called as `f(convert<Quantity<R::s>>(3 F::s))` is admitted and as `f(3 F::s)` refuses `ill_typed`/`type-mismatch`; `3 R::s / 3 F::s` is the dimensionless `1` and `(3 R::s) * (2 F::s)` is `6` of the compound unit of `(3 R::s) * (2 R::s)`; `convert<Quantity<R::m>>(3 F::s)` where `acme/rpc` declares an unrelated root unit `m` of base dimension `Length` refuses `ill_typed`. With the third declaration `dimension Time ~ F::Time by 1 s = 1 F::s;` a conversion between the two members that are not the class root charges two edges and one involving the class root charges one. | Test (TC-187) |
+| FR-142-AC-24 | An equivalence never anchors a base dimension: with `acme/rpc` declaring base dimension `Mass` with root unit `kg` and `acme/flow` declaring base dimension `Mass` with no unit, `dimension R::Mass ~ F::Mass by 1 R::kg = 1 F::kg;` refuses `missing_declaration`/`missing-name` at `F::kg`, and `dimension Force = F::Mass; unit n : Force = 1;` refuses `missing_declaration`/`missing-name` by the base-dimension rule naming `ix://acme/flow/dimension/Mass` and `n`. The normalized map of a product, quotient or power holds the base class representative: `(3 R::s) / (3 F::s)` and `(3 R::s) / (3 R::s)` are the same dimensionless unit and `Quantity<R::s>` squared and `Quantity<F::s>` squared have one compound unit. A derived dimension converts through the compound pivot with or without an equivalence, and `dimension Torque ~ Energy by 1 N_m = 1 J;` over two derived dimensions of equal map, `N_m` and `J` each the root of its dimension, admits the direct conversion of `N_m` to `J`, which without the declaration refuses `ill_typed`; `by 1 N_m = 2 J` refuses `invalid_package`/`incompatible-definition`, the base roots fixing the ratio 1. | Test (TC-187) |
+| FR-142-AC-25 | Unary minus over a non-affine quantity returns the exact negated value in the operand's own unit and type, including `-(2 m)` as `-2 m`, `-(3 ms)` as `-3 ms` in `ms`, `-(0 m)` as `0 m` and a compound-unit operand in its compound unit, with no edge charge; unary minus over an affine-unit quantity refuses `ill_typed` before any charge; `-(2 m) + 1 m` is `-1 m`. | Test (TC-187) |
+| FR-142-AC-26 | The root ratio carries the size of one package's canonical root in the other's. With `acme/rpc` (alias `R`, root `s`) and `acme/clock` (alias `G`, base dimension `Time`, root unit `ms`, and `unit s : Time = 1000 * ms;`), `dimension R::Time ~ G::Time by 1 R::s = 1000 G::ms;` and `dimension R::Time ~ G::Time by 1 R::s = 1 G::s;` state one root ratio, 1000 (`b` is 1000 for `G::s`), and `dimension G::Time ~ R::Time by 1000 G::ms = 1 R::s;` is the same equivalence written the other way; the class root is the root `R::s` of the member with the least key. `convert<Quantity<G::ms>>(3 R::s)` is `3000 G::ms` with one identification edge charged, `convert<Quantity<R::s>>(1500 G::ms)` is `3/2 R::s`, `convert<Quantity<G::s>>(3 R::s)` is `3 G::s` with two edges charged, `3 R::s / 3 G::ms` is the dimensionless `1000`, `(3 R::s) * (2 G::ms)` is `3/500` of the compound unit with the one term `R::s` at exponent 2, and `3 R::s + 3 G::ms` refuses `ill_typed` as distinct units. With `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` of FR-142-AC-23 (`acme/flow` root `s`) and the first of the declarations above declared, `dimension F::Time ~ G::Time by 1 F::s = 1000 G::ms;` is admitted and `dimension F::Time ~ G::Time by 1 F::s = 1001 G::ms;` refuses `invalid_package`/`conflicting-definition` at itself, retaining the three declarations in source order, because the ratios around the cycle multiply to 1.001. | Test (TC-187) |
 
 ## Dependencies
 

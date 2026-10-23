@@ -1169,7 +1169,7 @@ constraints ("Reference conformance" below).
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
    | a record value type `R` of the same domain package, admitted under FR-208 | `R`, a value with no object identity | the self-typed `model`/`record_value_type` declaration node owned by `R`; no `composite_type`/`reference` is introduced |
    | a variant type `V` of the same domain package, admitted under FR-208 | `V`, an unordered enumeration whose cases are the case names of `V` | the self-typed `model`/`variant_type` declaration node owned by `V`; no `composite_type`/`reference` and no unit-owned `scalar_type`/`enum` node is introduced |
-   | `ix://quire/unit/<name>`, naming either a unit the unit of compilation declares, by its qualified declaration name with its segments joined by `/` and never a dimension segment (`unit ms : Time` is `ix://quire/unit/ms`), or a unit an admitted domain package declares, by its FCD identity's package identity and `name` (`ms` in the `units` of `acme/rpc`, FCD identity `ix://acme/rpc/unit/ms`, is `ix://quire/unit/acme/rpc/ms`) | `Quantity<u>`, the type of a quantity in unit `u`, whether the unit of compilation or an admitted domain package declares `u` | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced |
+   | `ix://quire/unit/<name>`, naming either a unit the unit of compilation declares, by its qualified declaration name with its segments joined by `/` and never a dimension segment (`unit ms : Time` is `ix://quire/unit/ms`), or a unit an admitted domain package declares, by its FCD identity's package identity and `name` (`ms` in the `units` of `acme/rpc`, FCD identity `ix://acme/rpc/unit/ms`, is `ix://quire/unit/acme/rpc/ms`) | `Quantity<u>`, the type of a quantity in unit `u`, whether the unit of compilation or an admitted domain package declares `u` | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced, and a `min` or `max` constraint on the unit (FR-154 "Unit bounds") adds none: the member's type stays this node and the checker reads the bound from the admitted document |
    | a `reference` type whose `target` is `ix://quire/native/Clock` or an alias of it | `Reference<Clock>`, a data value naming one clock place (FR-415 "Clock places"); compared by place, never by clock value | none: no node stands for the clock or for the reference; the checker reads `ref` and `deref` over it and the state key holds the place index |
    | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
 
@@ -1221,15 +1221,21 @@ constraints ("Reference conformance" below).
    package.
 
    A dimension equivalence (FR-142 "Dimension equivalence", the source
-   declaration `dimension R::Time ~ F::Time;`) is one `scalar_type`/
+   declaration `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;`) is one `scalar_type`/
    `dimension_equivalence` node, appended to the unit graph beside the
    dimension nodes and never changing one: the nodes it relates keep their
    keys. It is self-typed and carries no `declaration`. Its
    `nominal_identity_preimage` is `{ version: quire.dimension-equivalence-node/v1,
-   owner, dimension_node_ids }`, where `owner` is the `SourceOwner` of the
-   source that declares it and `dimension_node_ids` lists the keys of the two
-   related dimension nodes, distinct and in ascending digest order, so
-   `R::Time ~ F::Time` and `F::Time ~ R::Time` write one preimage and one
+   owner, dimension_node_ids, root_scale }`, where `owner` is the `SourceOwner` of the
+   source that declares it, `dimension_node_ids` lists the keys of the two
+   related dimension nodes, distinct and in ascending digest order, and
+   `root_scale` is the exact positive rational (`numerator`, `denominator`
+   decimal strings, reduced, the numerator at least 1) for which one canonical
+   root of the first listed node equals `root_scale` canonical roots of the
+   second (the root ratio FR-142 "Dimension equivalence" reduces the `by`
+   clause to; a declaration written in the other node order stores the
+   reciprocal), so `R::Time ~ F::Time by 1 R::s = 1000 F::ms` and
+   `F::Time ~ R::Time by 1000 F::ms = 1 R::s` write one preimage and one
    key. It depends on exactly those two nodes, and its one occurrence has role
    `anchor` and the ordinal of the declaration among the equivalence
    declarations of its source in source order, with the declaration's region.
@@ -1240,10 +1246,14 @@ constraints ("Reference conformance" below).
    reads, so no package member records a class, a root or a conversion edge.
    Each pair is a pair of `scalar_type`/`dimension` nodes, else the reader
    refuses `invalid_semantic_graph`; a pair repeated by two nodes, a pair of one
-   node twice, and a pair of two nodes that are not both base dimensions and
-   whose normalized maps differ (under the base classes) refuse
+   node twice, a pair of two nodes that are not both base dimensions and
+   whose normalized maps differ (under the base classes) or whose `root_scale`
+   differs from the ratio the base roots fix, and a cycle of base pairs whose
+   `root_scale` values do not multiply to exactly one (a pair read against its
+   listed order counting as its reciprocal) refuse
    `invalid_semantic_graph` at the later node in node-id order, as FR-142
-   refuses the source declaration. A package holding no equivalence node
+   refuses the source declaration; a missing `root_scale`, one that is zero,
+   negative or unreduced, refuses at the node. A package holding no equivalence node
    reads as before. A unit `typeRef` that names no unit of the checked package refuses
    `missing_declaration`/`missing-name`. A declared type outside the table, an `unbounded`
    upper bound with a lower bound above `0` and an operation with no result
@@ -2057,6 +2067,12 @@ one value equal to `mode.value`, else `operation-mode-type-mismatch`. So
 and `quire.op.collection.convert` carry the text leaves of a keyed result's
 element type.
 
+`quire.op.quantity.negate` is the unary quantity negation of FR-142 "Quantity
+negation": one `quantity` operand, result `operand:0` (the operand's own unit
+type), and no law, mode, member, constraint or leaves. It takes no `rounding`
+mode, because negation is exact, and its operand is a non-affine unit's
+quantity.
+
 ## Identity and validation
 
 The key is (`contract_version`, `package_id`); runtime inputs, backend
@@ -2226,7 +2242,8 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-112 | `quire.op.structural.eq` and `.ne` over `record R { x: Float64[nearest-even]; t: Text[0,8;nfc]; }` are admitted with the leaves `["field:x"]` (laws `[ieee_profile]`, mode `null`) and `["field:t"]` (the `nfc` law and mode) in field order; over `Option<Float64[nearest-even]>` with the leaf `["inner"]`; over `union U { V(Float32[exact]), N }` with `["member:V", "position:0"]`; over `Sequence<Float64[nearest-even]>` with `["inner"]`; over a record holding no float and no text, none. A `quire.op.collection.set` whose result is `Set<Float64[nearest-even]>` lists the leaf with no path segment under `result_inner`. A float leaf missing from `leaves`, one listing no law, one listing the text profile law or a mode, and a lock without the `ieee_profile` selection refuse as a text leaf does. The occurrences `quire.op.ieee.numeric_equal` over two `float64` operands, and `quire.op.boolean.not` over it, are admitted as the lowering of `=` and `!=`. | Test (TC-233) |
 | FR-322-AC-113 | A literal of `value_kind` `decimal` typed by `Decimal[0, 1000; 0, 2; nearest-even]` with `value` `"1.25"`, `"0.05"`, `"10"`, `"0.00"`, `"1000"`, `"0.5"`, `"1000.00"` and `"1.250"` is admitted because each is a member by value, and with `value` `".5"`, `"1."`, `"+1.5"`, `"01.5"`, `"-0.0"`, `"1e2"`, `"1/4"` and `""` (not canonical spellings), and `"1.255"` (membership scale 3 above the scale bound), `"1001"`, `"1000.01"` (membership coefficient above the bound) and `"-1"` refuses `invalid_package`/`invalid-value`; `"1.0"` and `"1.00"` are two literals with two node keys. Typed by `Decimal[-1000, 1000; 1, 2; nearest-even]`, `"-0.5"`, `"5"` (membership scale 1, coefficient 50) and `"100"` are admitted and `"1001"` refuses `invalid-value`. A `decimal` literal typed by an `integer` or `string` node refuses `ill_typed`/`operator-ineligible` even when its value is also malformed. | Test (TC-233) |
 | FR-322-AC-117 | `quire.op.collection.sequence.drop_first` over a `Sequence<Integer>[0,9]` operand and `quire.op.collection.ordered_set.drop_first` over an `OrderedSet<Integer>[0,9]` operand are admitted with a `result_type` of the operand's family (`Sequence<Integer>[0,8]` and `OrderedSet<Integer>[0,8]`), no law, no mode, no member and no leaves; `quire.op.collection.remove_one` over `Bag<Text[0,8;nfc]>[0,9]` and a `Text[0,8;nfc]` value is admitted with the one leaf of the empty path (`inner:0` adds no `inner` segment) carrying the `nfc` law and mode as `contains` lists it, over `Set<Float64[nearest-even]>[0,9]` and a `Float64[nearest-even]` value with the empty-path float leaf carrying `ieee_profile` and mode `null`, and over `Sequence<Integer>[0,9]` with no leaf. A `drop_first` identity over a `Set` or `Bag` operand, a `drop_first` whose family differs from its operand's, a `remove_one` whose value is not the element type, one operand, or a `result_type` of another family, and a `drop_first` or `remove_one` listing a law, a mode or a member refuse as the reader order states (`operator-ineligible` for the operand family, arity, constraint and result type; `operation-law-mismatch`, `operation-mode-mismatch` and `operation-member-mismatch` for the rest). | Test (TC-233) |
-| FR-322-AC-118 | With the unit of compilation of FR-322-AC-105 and `dimension R::Time ~ F::Time;`, the unit graph holds one `scalar_type`/`dimension_equivalence` node besides the three `Time` nodes: no `declaration`, self-typed, preimage `{version: quire.dimension-equivalence-node/v1, owner: SourceOwner, dimension_node_ids: [the two package Time keys in ascending digest order]}`, `dependencies` exactly those two keys, one occurrence of role `anchor` and ordinal 0; `dimension F::Time ~ R::Time;` in its place gives the same key; the `acme/rpc` and `acme/flow` `Time` nodes keep the keys of FR-322-AC-105. The strict reader admits the package and derives one class of the two. Refused `invalid_semantic_graph` at the node: its two ids in descending order, its two ids equal, a pair naming a unit node, a second node with the same pair, a pair of two derived dimensions whose normalized maps differ, a `dependencies` list holding only one of the two keys, a `semantic_type` other than its own key, a `declaration` member, and an owner that does not join the lock; a changed pair under its retained key is refused as FR-322-AC-10 refuses a stale dimension key. | Test (TC-233, TC-280) |
+| FR-322-AC-118 | With the unit of compilation of FR-322-AC-105 and `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` (both packages' roots are `s`), the unit graph holds one `scalar_type`/`dimension_equivalence` node besides the three `Time` nodes: no `declaration`, self-typed, preimage `{version: quire.dimension-equivalence-node/v1, owner: SourceOwner, dimension_node_ids: [the two package Time keys in ascending digest order], root_scale: 1/1}` (key `bbf770ea312108434ee12d0ca4448c6d3d53a0004484b93b8ec577ff1ede00d4` in the TC-233 vector `dimension-equivalence-rpc-flow-time`), `dependencies` exactly those two keys, one occurrence of role `anchor` and ordinal 0; `dimension F::Time ~ R::Time by 1 F::s = 1 R::s;` in its place gives the same key; with `acme/clock` as a third package (root `ms`), `dimension R::Time ~ G::Time by 1 R::s = 1000 G::ms;` gives `root_scale` `1000/1` over `[acme/rpc Time, acme/clock Time]` (key `d707eb948ab055a64cf90b8009997ebc54c9bfe5361479afb6485c9c2df56c24`, vector `dimension-equivalence-rpc-clock-time`), the same declaration written `dimension G::Time ~ R::Time by 1000 G::ms = 1 R::s;` the same key, and `dimension F::Time ~ G::Time by 1 F::s = 1000 G::ms;` gives `1000/1` over `[acme/flow Time, acme/clock Time]` (key `584c6bbcb5056cf9dd5d10504339e49c5507348601530e5ef6d67bc5e351714b`, vector `dimension-equivalence-flow-clock-time`); the `acme/rpc`, `acme/flow` and `acme/clock` `Time` nodes keep their keys. The key is the SHA-256 of the JCS of the preimage, so changing `root_scale` rekeys the node. The strict reader admits the package and derives one class of the three. Refused `invalid_semantic_graph` at the node: its two ids in descending order, its two ids equal, a pair naming a unit node, a second node with the same pair, a pair of two derived dimensions whose normalized maps differ or whose `root_scale` differs from the ratio the base roots fix, a cycle of base pairs whose `root_scale` values do not multiply to exactly one (the three vectors above with the third `root_scale` changed to `1001/1`), a `root_scale` that is zero, negative, unreduced (`2000/2`) or missing, a `dependencies` list holding only one of the two keys, a `semantic_type` other than its own key, a `declaration` member, and an owner that does not join the lock; a changed pair or a changed `root_scale` under its retained key is refused as FR-322-AC-10 refuses a stale dimension key. | Test (TC-233, TC-280) |
+| FR-322-AC-119 | An `application` of `quire.op.quantity.negate` with one `quantity` operand typed by the unit node of `m` is admitted with result type the unit node of `m`, no laws, `mode` `null` and no member; a second operand or a non-`quantity` operand (an `integer`) refuses `ill_typed`/`operator-ineligible`, a `mode` value refuses `invalid_package`/`operation-mode-mismatch` and a `laws` entry refuses `invalid_package`/`operation-law-mismatch`; both V2 schemas enumerate `quire.op.quantity.negate` in `OperationIdentity` directly after `quire.op.quantity.sub`, and the catalog entry of `quire-verification-contracts` carries it. | Test (TC-187) |
 
 ## Dependencies
 
