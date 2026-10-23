@@ -65,3 +65,5 @@ Not mergeable. FND-001 (high) blocks the PR, and FND-002 (a duplicate row id) mu
 | FND-003 | fixed | - |
 | FND-004 | fixed | - |
 | FND-005 | fixed | - |
+| FND-006 | fixed | - |
+| FND-007 | fixed | - |
