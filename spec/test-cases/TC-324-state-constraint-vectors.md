@@ -42,6 +42,10 @@ named by the request.
    reachable state violates.
 6. Name a constraint `self.v <= 2 div (1 - self.v)`, undefined where some
    counter has `v = 1`, and check `always holds(x.v <= 3)`.
+7. Declare `invariant Wide using v on M::Counter at current { self.v <= 3 }`
+   beside `Low`, and submit `always holds(x.v <= 2)` with
+   `reductions.constraint` naming `Low`'s node key, then `Wide`'s node key,
+   then a key that names no node of the checked package.
 
 ## Expected Results
 
@@ -66,3 +70,7 @@ the terminal record's method (FR-385-AC-3).
 In case 6 the item settles `refuted`, cause `undefined-evaluation`, at the
 first reached state with a counter at 1, with a replaying counterexample
 ending there, and that state is not a boundary state (FR-383-AC-6).
+In case 7 the request naming `Low` is admitted and settles as case 2's
+constrained run of the same claim; the request naming `Wide` and the request
+naming the unknown key each refuse `invalid_runtime_input`/`invalid-value`
+naming the key, with no state expanded (FR-382-AC-8).

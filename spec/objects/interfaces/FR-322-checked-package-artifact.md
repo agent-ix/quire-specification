@@ -345,7 +345,7 @@ boundary.
   `fairness` members are
   [FR-370](FR-370-checked-package-temporal-clause-body.md)'s,
   or for `quire.op.state.clause` the `{kind: "state_clause", clause}` member
-  naming the clause kind (`invariant`, `precondition` or `postcondition`,
+  naming the clause kind (`invariant`, `constraint`, `precondition` or `postcondition`,
   [FR-341](FR-341-checked-package-state-clause-body.md)). A state clause
   carries no law.
   An `operation` member's declaring node is a `model` node whose own

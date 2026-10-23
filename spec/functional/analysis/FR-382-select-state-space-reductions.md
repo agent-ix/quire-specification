@@ -52,7 +52,11 @@ state-clause = … | 'constraint', ident, 'using', ident, 'on', type-name,
 
 It is checked like an invariant body: a `Boolean` expression over the
 current state with `self` ranging over the objects of the named type, and it
-holds at a state when it holds for every object of that type.
+holds at a state when it holds for every object of that type. A checked
+constraint is a `state`/`state_clause` node whose clause member is
+`constraint`, anchored at its type's node and binding `self` alone
+([FR-341](../../objects/interfaces/FR-341-checked-package-state-clause-body.md));
+it is a method parameter of a model-check request, not a claim of its own.
 
 ## Behavior
 
@@ -65,7 +69,10 @@ three members:
   sorted by key bytes and the classes sorted by their first key. A key in no
   class, or in a class of one, is fixed.
 - `partial_order` — absent, or `{"proviso": "breadth-first-revisit"}`.
-- `constraint` — absent, or the node key of one checked `constraint` clause.
+- `constraint` — absent, or the node key of one checked `constraint` clause:
+  the key of a `state`/`state_clause` node of clause `constraint` in the
+  item's checked package. A key that names no such node refuses the request
+  `invalid_runtime_input`/`invalid-value`, naming the key.
 
 **Identity.** The symmetry declarations and the partial-order selection enter
 the item's obligation identity beside the subject; a reduced and an unreduced
@@ -161,6 +168,7 @@ rules above unchanged.
 | FR-382-AC-5 | A `constraint` clause is checked like an invariant body and holds at a state when it holds for every object of its type; a non-Boolean body refuses `ill_typed`/`non-boolean-root`. | Test (TC-324) |
 | FR-382-AC-6 | An item selecting a reduction its single candidate does not advertise, or partial-order reduction over a transition system with no footprints, settles `unsupported` with `unsupported_projection`/`unsupported-requested-capability` naming the reduction, and no unreduced run happens. | Test (TC-327) |
 | FR-382-AC-7 | A `time dense` model with population `Timer` over universe `{t1, t2}` (each with `armed: Bool` and clock `x`; `arm` with precondition `not self.armed`, guard `x >= 1`, reset `x`; `disarm` with precondition `self.armed`, guard `x >= 1`, reset `x`): with symmetry `[[t1, t2]]` its deadlock-freedom item settles `proved` as with no reduction and stores fewer symbolic states, and `always holds(not (t1.armed and t2.armed))` settles `refuted` as with no reduction, its counterexample replaying; the symbolic state with `t1` armed, `t2` unarmed and zone `Z`, and its image with `t1` unarmed, `t2` armed and `Z` with the clocks of `t1` and `t2` swapped, canonicalise to equal states; the deadlock-freedom item selecting partial-order reduction, and the same item selecting a state constraint, each settle `unsupported`, `unsupported_projection`/`unsupported-requested-capability` at negotiation naming the reduction, with no state expanded; the same item selecting both partial-order reduction and a state constraint settles the same way naming partial-order reduction only. | Test (TC-963) |
+| FR-382-AC-8 | A request item whose `reductions.constraint` is the node key of a `state`/`state_clause` node of clause `constraint` in its checked package is admitted; one whose `constraint` is the key of an invariant node, or a key that names no node of that package, refuses the request `invalid_runtime_input`/`invalid-value` naming the key, with no state expanded. | Test (TC-324) |
 
 ## Dependencies
 
