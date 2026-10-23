@@ -8852,6 +8852,35 @@ fn tc_233_every_published_package_carries_only_current_application_node_keys() {
     }
 }
 
+/// The `unimplemented_capability` cause set is closed: the native-diagnostics
+/// row and the FR-272 row each list exactly its three causes and name the
+/// `backend`, `location` and `capability` payload keys.
+#[trace("TC-233", "FR-272-AC-25")]
+#[test]
+fn tc_233_unimplemented_capability_cause_set_is_closed() {
+    let causes = ["backend-not-supplied", "untranslatable-entry", "unimplemented-meaning"]
+        .iter()
+        .map(|cause| (*cause).to_owned())
+        .collect::<BTreeSet<_>>();
+    for (document, label) in [
+        (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+        (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+    ] {
+        assert_eq!(
+            diagnostic_row_causes(document, "unimplemented_capability"),
+            causes,
+            "{label} `unimplemented_capability` row lists exactly its causes"
+        );
+        let keys = diagnostic_row_payload_keys(document, "unimplemented_capability");
+        for key in ["backend", "location", "capability"] {
+            assert!(
+                keys.contains(key),
+                "{label} `unimplemented_capability` row names `{key}`"
+            );
+        }
+    }
+}
+
 /// The `invalid_quire_context` cause set is closed: the native-diagnostics row
 /// and the FR-272 row each list exactly `unsupported-render-form` and name the
 /// `view` and `form` payload keys.
