@@ -269,14 +269,23 @@ false outcome; no other rational comparison yields a fact.
 A `Decimal[..]` divisor satisfies the nonzero obligation only as a
 `decimal(c,s)` literal with `c != 0`. A quantity divisor satisfies it only as
 a quantity literal `n u` whose reduced magnitude `n` is nonzero, written as an
-integer, a decimal or a `rational(n,d)` magnitude, including a negative
-`rational(-n,d)`; the literal is a nonzero fact for that division, whatever
-the dividend. The quotient is FR-142's division: each operand is taken in the
-canonical root of its unit, the divisor's composed scale applied exactly, the
-dimension exponents subtract with zero exponents removed, and the result unit
-is the compound unit over those root units, the dimensionless unit when every
-exponent cancels. Its magnitude intervals are the rational `/` intervals above
-with the divisor as the point of its root value. Every other quantity divisor,
+integer, a decimal (`0.5 s`, `1.50 s`) or a `rational(n,d)` magnitude,
+including a negative `rational(-n,d)`; a decimal magnitude is its exact
+rational value, so `1.50` is `3/2` and `0.0` is zero. The literal is a nonzero
+fact for that division, whatever the dividend. A unary minus is not part of a
+quantity literal: `-1 s` is the unary `-` applied to the quantity `1 s`, which
+refuses `ill_typed` with cause `operator-ineligible` at the `-`, so a negative
+divisor is written `rational(-1,1) s` and `d / -1 s` is never a literal
+divisor. The quotient is FR-142's division: each operand is taken in the
+canonical root of its unit, the divisor's composed scale applied exactly (`3 ms`
+with `ms` of scale `1/1000` over `s` is `3/1000 s`), the dimension exponents
+subtract with zero exponents removed, and the result unit is the compound unit
+over those root units, the dimensionless unit when every exponent cancels. A
+quantity is typed `Quantity<u>` (FR-142 "Quantity type reference"), an exact
+rational magnitude in unit `u` with no bound on the magnitude, so the quotient
+has an exact rational magnitude over the whole rational domain and the division
+carries no range obligation: its only definedness obligation is the nonzero
+one. Every other quantity divisor,
 including a parameter, a `let` name bound to a literal, a call, a conversion,
 or a product or quotient of quantities, has no nonzero proof form whatever
 guard encloses it, and a quantity literal divisor of zero magnitude (`0 s`,
@@ -367,7 +376,7 @@ counter, and no call depth turns into an outcome (FR-460).
 | FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
 | FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
 | FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements (integer and structural; a `size(p)` measure position is `measure-kind`), guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking limit exceeded is `stage_limit_exceeded` naming the limit, its value and its setting. | Test (TC-191) |
-| FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, a quantity division by a quantity literal of nonzero magnitude is admitted with FR-142's quotient unit and value, and every other quantity division in a linked body, including one by a zero-magnitude literal, is `unproved-nonzero`. | Test (TC-191) |
+| FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, a quantity division by a quantity literal of nonzero magnitude (integer, decimal or `rational(n,d)`, never a unary-minus form) is admitted with FR-142's quotient unit and value and no range obligation, and every other quantity division in a linked body, including one by a zero-magnitude literal, is `unproved-nonzero`. | Test (TC-191) |
 | FR-146-AC-10 | A `case` expression's arm set is checked against its scrutinee's declared union in order — `duplicate-arm`, `unknown-member`, `arm-arity`, `missing-arm` — and the first violated obligation is `undefined_expression` with cause `unproved-exhaustiveness`, naming the union, the arm set and the failed obligation. | Test (TC-264) |
 | FR-146-AC-11 | An admitted `case` evaluates the arm matching the scrutinee's active member, binds its payload positionally to the arm's bound identifiers, and every arm's body is checked against the `case` expression's result type. | Test (TC-265) |
 | FR-146-AC-12 | A `case` that is the body of a function declared `: Int[0..100]`, with arms `0` and a parameter `w: Int[0..9]`, has result type `Int[0..100]`; under an unannotated `let`, arms `r: Int[0..9]` and `w: Int[0..99]` infer `Integer`, and arms that are both `Text` parameters infer that `Text` type; arms `0` and `"none"` refuse `ill_typed`/`type-mismatch` at the `"none"` arm body, and arms `"none"` and `0` at the `0` arm body; and an arm body `sequence[]` with no expected type refuses `ill_typed`/`ambiguous-literal`. | Test (TC-398) |
