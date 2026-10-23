@@ -431,8 +431,8 @@ reads. The checks, in trace order:
    over `before.enclosure` meets the reached state's interval of `x`; each
    other conjunct over both; and for a variable no conjunct names,
    `before`'s interval meets the reached state's.
-5. For a `loop` trace, the last state's intervals meet those of the state
-   `loop` names.
+5. For a `loop` trace, the last state's mode is that of the state `loop`
+   names and its enclosure meets that state's.
 
 The outcome SHALL be `consistent`, or `inconsistent{at, check}` naming the
 pointer of the first failing check and its number. Static replay settles no
@@ -458,8 +458,8 @@ time whose sign on an interval is decidable:
 3. The guard holds at `before`, the reached state's `time` equals
    `before.time`, the reached state satisfies the reset against `before`,
    and it satisfies the target mode's invariant.
-4. For a `loop` trace, the last state equals the state `loop` names and the
-   loop's total dwell is positive, so the trace denotes one time-divergent
+4. For a `loop` trace, the last state's mode and point equal those of the
+   state `loop` names and the loop's total dwell is positive, so the trace denotes one time-divergent
    periodic behaviour.
 5. The claim is false on the replayed behaviour: for a `loop` trace, on that
    periodic behaviour; otherwise on the finite prefix ending at the last
