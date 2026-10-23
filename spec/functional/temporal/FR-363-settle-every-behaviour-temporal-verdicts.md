@@ -203,7 +203,17 @@ the first of these that applies:
 3. A stop under a limit the request names (its state, transition or
    automaton-state limit, its work meter or its time budget) settles the
    Stopped row, FR-331 `incomplete`, cause `limit-reached{limit, value,
-   setting}` naming that limit.
+   setting}` naming that limit. The SMT run's own limits are two members of
+   the item's temporal `limits` ([FR-368](FR-368-negotiate-temporal-model-check-items.md)
+   "SMT solver budgets"): `max_solver_steps`, setting `smt.max_solver_steps`,
+   and the time budget `max_solver_time`, setting `smt.max_solver_time`,
+   each bounding every base, step and search query. A solver stopped by
+   either settles `limit-reached` naming it, never `timed-out`, which is
+   rule 2's backend wall clock, and never `induction-not-closed`. An SMT
+   backend whose query encoder stops at a member of the item's
+   `smt_encoding` (FR-368 "SMT encoding limits", settings
+   `smt_encoding.*`) settles the Stopped row, `limit-reached` naming that
+   member, its value and its setting, too.
 4. Otherwise the solver's own undecided answer (`unknown`) to a base, step or
    search query at `k`, including a resource stop internal to the solver that
    no request limit names, settles `inconclusive`, cause
@@ -232,6 +242,7 @@ step counterexample to it settles `induction-not-closed{depth: 1}`.
 | FR-363-AC-8 | A claim that evaluates undefined at a reachable position settles `refuted`, basis `decisive-counterexample`, FR-331 result `refuted`, cause `undefined-evaluation` whose `where` names the position, its state-key digest and the expression's locus and whose `cause` names the undefined value's catalogued reason; the same claim with the read defined at every reachable position settles by its truth values. | Test (TC-305) |
 | FR-363-AC-9 | A model whose operation guard evaluates undefined for a candidate transition at a reachable state settles every item over the subject `refuted`, cause `undefined-evaluation` whose `where` names that position, its state-key digest, the guard's locus and the transition identity, and never reads the transition as disabled; a model whose `terminal when` predicate evaluates undefined at a reachable state with no enabled transition settles `refuted` the same way, never reading the state as non-terminal; a state constraint that evaluates undefined at a reachable state settles `refuted` the same way, naming the constraint's locus; at a state where the claim is both false and undefined, the reported cause is `undefined-evaluation`. | Test (TC-305) |
 | FR-363-AC-10 | A k-induction run whose step case at depth 2 has a counterexample to induction, one whose solver returns `unknown` on the base query at depth 2, one on the step query, one on the search query, and one whose solver stops for a resource internal to it that no request limit names each settle `inconclusive`, basis `unsettled`, cause `induction-not-closed{depth: 2}`; a run stopped by the request's named time budget settles `incomplete`, `limit-reached` naming that limit; a run that overruns the request's `deadline_ms` settles `incomplete`, `timed-out`; a run cancelled by the caller, and one ended by the caller's own deadline, settle `incomplete`, `cancelled{source}` with `source` `requested` and `deadline`; none of these three stops is ever `induction-not-closed`, and a run where the solver answers `unknown` and the caller's deadline also ends it settles `cancelled{source: deadline}`. | Test (TC-294) |
+| FR-363-AC-11 | A k-induction run at depth 2 whose solver stops a base query at `temporal.limits.max_solver_steps` 1000 settles `incomplete`, `limit-reached{limit: max_solver_steps, value: 1000, setting: smt.max_solver_steps}`; one stopped at `max_solver_time` 5 settles `incomplete`, `limit-reached{limit: max_solver_time, value: 5, setting: smt.max_solver_time}`, never `timed-out`; neither is ever `induction-not-closed`. The same step-budget stop with the caller's deadline also ending the run settles `cancelled{source: deadline}`, and with the backend's own wall clock also expiring `timed-out` (rules 1 and 2 first). A run whose request carries `smt_encoding` `{max_constants: 7}` and whose encoder stops at that limit settles `incomplete`, `limit-reached{limit: max_constants, value: 7, setting: smt_encoding.max_constants}`. | Test (TC-294) |
 
 ## Dependencies
 

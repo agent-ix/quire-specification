@@ -57,5 +57,3 @@ request is admitted. BP-02 through BP-05, BP-07 through BP-09, BP-11 through
 BP-14, and BP-15's mutations find each incomplete, mismatched or stale
 provision refused with its named typed cause before any recompilation result
 is produced.
-BP-06's transitive source coverage remains planned until the QSL replay
-follow-up lands.
