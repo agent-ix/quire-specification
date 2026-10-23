@@ -18041,12 +18041,14 @@ fn tc_367_timed_model_authority_bindings_are_explicit_and_joined() {
     let place = &nodes[45];
     let path = place["body"]["members"][1]["value"]["members"].as_array().unwrap();
     let resolved = place["body"]["members"][2]["value"]["members"].as_array().unwrap();
-    assert_eq!(path.len(), 1);
+    assert_eq!(path.len(), 2, "the positive path selects a Map value");
     assert_eq!(resolved.len(), path.len());
     assert_eq!(resolved[0]["members"][1]["value"]["value"], "ix://acme/orders/Order");
     assert_eq!(resolved[0]["members"][2]["value"]["value"], "ix://acme/orders/Order/clock");
-    assert_eq!(resolved[0]["members"][3]["value"]["value"], "ix://quire/native/Clock");
-    assert_eq!(resolved[0]["members"][4]["value"]["value"], "none");
+    assert_eq!(resolved[0]["members"][3]["value"]["value"], "Map<Text, ix://quire/native/Clock>");
+    assert_eq!(resolved[0]["members"][4]["value"]["value"], "map");
+    assert_eq!(resolved[1]["members"][1]["value"]["value"], "Map<Text, ix://quire/native/Clock>");
+    assert_eq!(resolved[1]["members"][3]["value"]["value"], "ix://quire/native/Clock");
 }
 
 
@@ -18062,7 +18064,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
     let schema = parsed_fixture(SCHEMA);
     let validator = jsonschema::validator_for(&schema).unwrap();
     let rows = vectors["semantic_refusals"].as_array().unwrap();
-    assert_eq!(rows.len(), 13);
+    assert_eq!(rows.len(), 14);
     let all_ids = ["schema_refusals", "authority_vectors", "semantic_refusals"]
         .into_iter()
         .flat_map(|section| vectors[section].as_array().unwrap())
@@ -18117,6 +18119,15 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
             "wrong-terminal-clock-type" => {
                 adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"][0]["members"][3]["value"]["value"] = json!("ix://quire/native/Integer");
             }
+            "coherent-forged-selected-chain" => {
+                let place = &mut adverse["semantic_graph"]["nodes"][45]["body"]["members"];
+                place[1]["value"]["members"][1]["members"][1]["value"]["value"] = json!("sequence");
+                let rows = &mut place[2]["value"]["members"];
+                rows[0]["members"][3]["value"]["value"] = json!("Sequence<Evil>");
+                rows[0]["members"][4]["value"]["value"] = json!("sequence");
+                rows[1]["members"][1]["value"]["value"] = json!("Evil");
+                rows[1]["members"][2]["value"]["value"] = json!("Sequence<Evil>[slot]");
+            }
             "tick-model-context-mismatch" => {
                 adverse["semantic_graph"]["nodes"][44]["body"]["members"][2]["value"]["target"] =
                     adverse["semantic_graph"]["nodes"][14]["node_id"].clone();
@@ -18143,7 +18154,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 "invalid_package", "duplicate-clock-place", "/semantic_graph/nodes/52/body/members/3/value/members/1",
             ),
             "noncanonical-place-path" => (
-                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members/0",
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/1/value/members/0",
             ),
             "zero-tick-period" => (
                 "ill_typed", "invalid-time-quantity", "/semantic_graph/nodes/44/body/members/4/value/value",
@@ -18155,6 +18166,9 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members/0",
             ),
             "undeclared-clock-member" | "wrong-terminal-clock-type" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members/0",
+            ),
+            "coherent-forged-selected-chain" => (
                 "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members/0",
             ),
             "tick-model-context-mismatch" => (

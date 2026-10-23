@@ -30,7 +30,7 @@
     },
     "model_selections": [
       {
-        "digest": "46e5a32b2edc096debdc0e3c6916f4f3dafa7134039ec8226933f0b0810e05a3",
+        "digest": "5368187144c77c1ce20817acd6e4cd4c9eb484eb83acaeef565f5a983cb1faa2",
         "digest_domain": "sha256-jcs",
         "identity": "acme/orders"
       }
@@ -73,7 +73,7 @@
     },
     "model_selections": [
       {
-        "digest": "46e5a32b2edc096debdc0e3c6916f4f3dafa7134039ec8226933f0b0810e05a3",
+        "digest": "5368187144c77c1ce20817acd6e4cd4c9eb484eb83acaeef565f5a983cb1faa2",
         "digest_domain": "sha256-jcs",
         "identity": "acme/orders"
       }
@@ -108,7 +108,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "d01420748d78a113e2bf38f549823c1e2f2172cc308f661465b0bdc3d0d317f3",
+    "digest": "aa0c54367f4fd1257c6947f4994fa17cc6d77aca32166c882dca3364cfe11ba6",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -2356,6 +2356,74 @@
                       }
                     ],
                     "term": "aggregate"
+                  },
+                  {
+                    "members": [
+                      {
+                        "name": "kind",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": "slot",
+                          "value_kind": "text"
+                        }
+                      },
+                      {
+                        "name": "collection",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": "map",
+                          "value_kind": "text"
+                        }
+                      },
+                      {
+                        "name": "selector",
+                        "term": "binding",
+                        "value": {
+                          "target": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "term": "reference"
+                        }
+                      },
+                      {
+                        "name": "minimum",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": 0,
+                          "value_kind": "integer"
+                        }
+                      },
+                      {
+                        "name": "maximum",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": "unbounded",
+                          "value_kind": "text"
+                        }
+                      }
+                    ],
+                    "term": "aggregate"
                   }
                 ],
                 "term": "aggregate"
@@ -2404,6 +2472,102 @@
                             "domain": "quire.checked-semantic-node/v1"
                           },
                           "value": "ix://acme/orders/Order/clock",
+                          "value_kind": "text"
+                        }
+                      },
+                      {
+                        "name": "member_type",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": "Map<Text, ix://quire/native/Clock>",
+                          "value_kind": "text"
+                        }
+                      },
+                      {
+                        "name": "collection_kind",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": "map",
+                          "value_kind": "text"
+                        }
+                      },
+                      {
+                        "name": "minimum",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": "0",
+                          "value_kind": "text"
+                        }
+                      },
+                      {
+                        "name": "maximum",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": "unbounded",
+                          "value_kind": "text"
+                        }
+                      }
+                    ],
+                    "term": "aggregate"
+                  },
+                  {
+                    "members": [
+                      {
+                        "name": "path_step",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": 1,
+                          "value_kind": "integer"
+                        }
+                      },
+                      {
+                        "name": "declaring_type",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": "Map<Text, ix://quire/native/Clock>",
+                          "value_kind": "text"
+                        }
+                      },
+                      {
+                        "name": "member_identity",
+                        "term": "binding",
+                        "value": {
+                          "term": "literal",
+                          "type": {
+                            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                            "domain": "quire.checked-semantic-node/v1"
+                          },
+                          "value": "Map<Text, ix://quire/native/Clock>[slot]",
                           "value_kind": "text"
                         }
                       },
@@ -2487,6 +2651,10 @@
         },
         "dependencies": [
           {
+            "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
             "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
             "domain": "quire.checked-semantic-node/v1"
           },
@@ -2496,7 +2664,7 @@
           }
         ],
         "node_id": {
-          "digest": "e8a40e583f729dba7d601c45e6195d3f102ccf84682f08ade08de7ac5457bfab",
+          "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -2509,7 +2677,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "clock_place",
         "semantic_type": {
-          "digest": "e8a40e583f729dba7d601c45e6195d3f102ccf84682f08ade08de7ac5457bfab",
+          "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -2521,7 +2689,7 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "digest": "e8a40e583f729dba7d601c45e6195d3f102ccf84682f08ade08de7ac5457bfab",
+                  "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
                   "domain": "quire.checked-semantic-node/v1"
                 },
                 "term": "reference"
@@ -2545,12 +2713,12 @@
         },
         "dependencies": [
           {
-            "digest": "e8a40e583f729dba7d601c45e6195d3f102ccf84682f08ade08de7ac5457bfab",
+            "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
             "domain": "quire.checked-semantic-node/v1"
           }
         ],
         "node_id": {
-          "digest": "3545d666d6fcfde25ffb6bca13037d695ce1f0641986d8f8791dc7ffc05703fe",
+          "digest": "3613844e373c64859bc506616bf4f8e59f5dd8c41bcb89186c455e50af11e415",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -2563,7 +2731,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "clock_reset",
         "semantic_type": {
-          "digest": "3545d666d6fcfde25ffb6bca13037d695ce1f0641986d8f8791dc7ffc05703fe",
+          "digest": "3613844e373c64859bc506616bf4f8e59f5dd8c41bcb89186c455e50af11e415",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -2778,7 +2946,7 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "digest": "e8a40e583f729dba7d601c45e6195d3f102ccf84682f08ade08de7ac5457bfab",
+                  "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
                   "domain": "quire.checked-semantic-node/v1"
                 },
                 "term": "reference"
@@ -2815,12 +2983,12 @@
         },
         "dependencies": [
           {
-            "digest": "e8a40e583f729dba7d601c45e6195d3f102ccf84682f08ade08de7ac5457bfab",
+            "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
             "domain": "quire.checked-semantic-node/v1"
           }
         ],
         "node_id": {
-          "digest": "5115e573122b9cd9e1a9719fd80d94288c3d3c1fe3ffa49f272b784389f61ea8",
+          "digest": "b3b82d8e9218cf6c416cb1a4b3be115cdcd05f1555f9602693749ec1dca9009e",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -2833,7 +3001,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "clock_constraint",
         "semantic_type": {
-          "digest": "5115e573122b9cd9e1a9719fd80d94288c3d3c1fe3ffa49f272b784389f61ea8",
+          "digest": "b3b82d8e9218cf6c416cb1a4b3be115cdcd05f1555f9602693749ec1dca9009e",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -2880,7 +3048,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "e8a40e583f729dba7d601c45e6195d3f102ccf84682f08ade08de7ac5457bfab",
+                      "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -2896,7 +3064,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "3545d666d6fcfde25ffb6bca13037d695ce1f0641986d8f8791dc7ffc05703fe",
+                      "digest": "3613844e373c64859bc506616bf4f8e59f5dd8c41bcb89186c455e50af11e415",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -2967,7 +3135,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "5115e573122b9cd9e1a9719fd80d94288c3d3c1fe3ffa49f272b784389f61ea8",
+                      "digest": "b3b82d8e9218cf6c416cb1a4b3be115cdcd05f1555f9602693749ec1dca9009e",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -2995,11 +3163,11 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "3545d666d6fcfde25ffb6bca13037d695ce1f0641986d8f8791dc7ffc05703fe",
+            "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "5115e573122b9cd9e1a9719fd80d94288c3d3c1fe3ffa49f272b784389f61ea8",
+            "digest": "3613844e373c64859bc506616bf4f8e59f5dd8c41bcb89186c455e50af11e415",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -3015,11 +3183,11 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "da0a94a2041ec32e7e3d29544eb8cfee3b21c2ac106759aa1d876371da369e1c",
+            "digest": "b3b82d8e9218cf6c416cb1a4b3be115cdcd05f1555f9602693749ec1dca9009e",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "e8a40e583f729dba7d601c45e6195d3f102ccf84682f08ade08de7ac5457bfab",
+            "digest": "da0a94a2041ec32e7e3d29544eb8cfee3b21c2ac106759aa1d876371da369e1c",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -3028,7 +3196,7 @@
           }
         ],
         "node_id": {
-          "digest": "a9b48e18379c654d73619aca8e8717c8e3f1b8357f2989a26850366317740a8b",
+          "digest": "f09f8b7e9b40102597914b462c0a5ce078025265b1dc9e2015caea131a81fa54",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -3046,7 +3214,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "timed_model",
         "semantic_type": {
-          "digest": "a9b48e18379c654d73619aca8e8717c8e3f1b8357f2989a26850366317740a8b",
+          "digest": "f09f8b7e9b40102597914b462c0a5ce078025265b1dc9e2015caea131a81fa54",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -4080,7 +4248,7 @@
     },
     {
       "node_id": {
-        "digest": "e8a40e583f729dba7d601c45e6195d3f102ccf84682f08ade08de7ac5457bfab",
+        "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -4100,7 +4268,7 @@
     },
     {
       "node_id": {
-        "digest": "3545d666d6fcfde25ffb6bca13037d695ce1f0641986d8f8791dc7ffc05703fe",
+        "digest": "3613844e373c64859bc506616bf4f8e59f5dd8c41bcb89186c455e50af11e415",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -4200,7 +4368,7 @@
     },
     {
       "node_id": {
-        "digest": "5115e573122b9cd9e1a9719fd80d94288c3d3c1fe3ffa49f272b784389f61ea8",
+        "digest": "b3b82d8e9218cf6c416cb1a4b3be115cdcd05f1555f9602693749ec1dca9009e",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -4220,7 +4388,7 @@
     },
     {
       "node_id": {
-        "digest": "a9b48e18379c654d73619aca8e8717c8e3f1b8357f2989a26850366317740a8b",
+        "digest": "f09f8b7e9b40102597914b462c0a5ce078025265b1dc9e2015caea131a81fa54",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,

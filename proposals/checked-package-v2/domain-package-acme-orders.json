@@ -910,7 +910,7 @@
             }
           },
           "presence": "required",
-          "typeRef": "ix://quire/native/Clock"
+          "typeRef": "Map<Text, ix://quire/native/Clock>"
         }
       ],
       "identity": "ix://acme/orders/Order",

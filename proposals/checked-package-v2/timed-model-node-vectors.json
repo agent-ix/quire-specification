@@ -124,7 +124,7 @@
       "mutation": "noncanonical-place-path",
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
-      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
+      "locus": "/semantic_graph/nodes/45/body/members/1/value/members/0"
     },
     {
       "id": "TM-14",
@@ -181,6 +181,13 @@
       "expected_code": "missing_declaration",
       "expected_cause": "missing-name",
       "locus": "/semantic_graph/nodes/53/body/members/1"
+    },
+    {
+      "id": "TM-22",
+      "mutation": "coherent-forged-selected-chain",
+      "expected_code": "invalid_package",
+      "expected_cause": "malformed-clock-place",
+      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
     }
   ]
 }
