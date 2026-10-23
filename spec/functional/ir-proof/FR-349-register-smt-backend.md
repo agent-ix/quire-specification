@@ -74,7 +74,9 @@ resolved to either solver:
 | `refuted`, its counterexample replayed | `refuted` | `refuted`, with no `cross_check` member (FR-331 gives it to `proved` alone) |
 | `refuted` | `proved` or `inconclusive` | `inconclusive`, `cross-check-disagreement{tool, primary: refuted, cross_check}` |
 | `inconclusive` | `proved` or `refuted` | `inconclusive`, `cross-check-disagreement{tool, primary: inconclusive, cross_check}`: Z3 alone never settles a claim |
-| `inconclusive` | `inconclusive` | cvc5's `inconclusive` with its own cause, with no `cross_check` member | When Z3 is not configured in the SMT descriptor, no cross-check
+| `inconclusive` | `inconclusive` | cvc5's `inconclusive` with its own cause, with no `cross_check` member |
+
+When Z3 is not configured in the SMT descriptor, no cross-check
 runs: cvc5's verdict settles the claim on its own, and the settlement carries
 a warning naming the absent cross-check; this is a warned outcome, never a
 hold on cvc5's settlement. A configured Z3 whose tool probe finds it
