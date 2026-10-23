@@ -3451,6 +3451,356 @@
       }
     },
     {
+      "name": "hybrid-refuted-point-trace-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/counterexamples/0/counterexample": "FR-193",
+        "/counterexamples/0/counterexample/trace/jumps/0/before": "FR-193",
+        "/results/1/cause/trace/delta": "FR-193",
+        "/results/1/cause/trace/loop": "FR-193"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "dreal",
+            "kind": "temporal-satisfaction",
+            "result": "refuted",
+            "counterexample": 0
+          },
+          {
+            "request_index": 1,
+            "backend": "dreal",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "solver-inconclusive",
+              "trace": {
+                "start": {
+                  "mode": "Moving",
+                  "time": {
+                    "lower": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    },
+                    "upper": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    }
+                  },
+                  "enclosure": {
+                    "a": {
+                      "lower": {
+                        "numerator": "1",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "2",
+                        "denominator": "1"
+                      }
+                    },
+                    "t": {
+                      "lower": {
+                        "numerator": "0",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "0",
+                        "denominator": "1"
+                      }
+                    },
+                    "v": {
+                      "lower": {
+                        "numerator": "19",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "20",
+                        "denominator": "1"
+                      }
+                    }
+                  }
+                },
+                "jumps": [
+                  {
+                    "transition": 0,
+                    "before": {
+                      "time": {
+                        "lower": {
+                          "numerator": "9",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "21",
+                          "denominator": "2"
+                        }
+                      },
+                      "enclosure": {
+                        "a": {
+                          "lower": {
+                            "numerator": "1",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "2",
+                            "denominator": "1"
+                          }
+                        },
+                        "t": {
+                          "lower": {
+                            "numerator": "9",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "21",
+                            "denominator": "2"
+                          }
+                        },
+                        "v": {
+                          "lower": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "1",
+                            "denominator": "100"
+                          }
+                        }
+                      }
+                    },
+                    "state": {
+                      "mode": "Stopped",
+                      "time": {
+                        "lower": {
+                          "numerator": "9",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "21",
+                          "denominator": "2"
+                        }
+                      },
+                      "enclosure": {
+                        "a": {
+                          "lower": {
+                            "numerator": "1",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "2",
+                            "denominator": "1"
+                          }
+                        },
+                        "t": {
+                          "lower": {
+                            "numerator": "9",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "21",
+                            "denominator": "2"
+                          }
+                        },
+                        "v": {
+                          "lower": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "1",
+                            "denominator": "100"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "delta": {
+                  "numerator": "1",
+                  "denominator": "100"
+                },
+                "loop": 1
+              }
+            }
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "dreal",
+            "counterexample": {
+              "type": "hybrid-counterexample",
+              "kind": "formula",
+              "trace": {
+                "start": {
+                  "mode": "Moving",
+                  "time": {
+                    "lower": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    },
+                    "upper": {
+                      "numerator": "0",
+                      "denominator": "1"
+                    }
+                  },
+                  "enclosure": {
+                    "a": {
+                      "lower": {
+                        "numerator": "2",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "2",
+                        "denominator": "1"
+                      }
+                    },
+                    "t": {
+                      "lower": {
+                        "numerator": "0",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "0",
+                        "denominator": "1"
+                      }
+                    },
+                    "v": {
+                      "lower": {
+                        "numerator": "20",
+                        "denominator": "1"
+                      },
+                      "upper": {
+                        "numerator": "20",
+                        "denominator": "1"
+                      }
+                    }
+                  }
+                },
+                "jumps": [
+                  {
+                    "transition": 0,
+                    "before": {
+                      "time": {
+                        "lower": {
+                          "numerator": "10",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "10",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "a": {
+                          "lower": {
+                            "numerator": "2",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "2",
+                            "denominator": "1"
+                          }
+                        },
+                        "t": {
+                          "lower": {
+                            "numerator": "10",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "10",
+                            "denominator": "1"
+                          }
+                        },
+                        "v": {
+                          "lower": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    },
+                    "state": {
+                      "mode": "Stopped",
+                      "time": {
+                        "lower": {
+                          "numerator": "10",
+                          "denominator": "1"
+                        },
+                        "upper": {
+                          "numerator": "10",
+                          "denominator": "1"
+                        }
+                      },
+                      "enclosure": {
+                        "a": {
+                          "lower": {
+                            "numerator": "2",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "2",
+                            "denominator": "1"
+                          }
+                        },
+                        "t": {
+                          "lower": {
+                            "numerator": "10",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "10",
+                            "denominator": "1"
+                          }
+                        },
+                        "v": {
+                          "lower": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          },
+                          "upper": {
+                            "numerator": "0",
+                            "denominator": "1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
       "name": "refinement-hypotheses-outcome",
       "stage": "outcome",
       "owners": {
@@ -6031,6 +6381,42 @@
           "op": "add",
           "path": "/results/0/cause/trace/verified",
           "value": true
+        }
+      ]
+    },
+    {
+      "name": "hybrid-counterexample-unknown-kind",
+      "base": "hybrid-refuted-point-trace-outcome",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/counterexamples/0/counterexample/kind",
+          "value": "lasso"
+        }
+      ]
+    },
+    {
+      "name": "hybrid-trace-before-with-mode",
+      "base": "hybrid-refuted-point-trace-outcome",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/counterexamples/0/counterexample/trace/jumps/0/before/mode",
+          "value": "Moving"
+        }
+      ]
+    },
+    {
+      "name": "hybrid-trace-loop-not-a-count",
+      "base": "hybrid-refuted-point-trace-outcome",
+      "owner": "FR-193",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/1/cause/trace/loop",
+          "value": "1"
         }
       ]
     },

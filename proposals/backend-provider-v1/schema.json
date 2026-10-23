@@ -643,7 +643,8 @@
         {"$ref": "#/$defs/TemporalCounterexample"},
         {"$ref": "#/$defs/ProbabilisticCounterexample"},
         {"$ref": "#/$defs/GraphEvidence"},
-        {"$ref": "#/$defs/HyperCounterexample"}
+        {"$ref": "#/$defs/HyperCounterexample"},
+        {"$ref": "#/$defs/HybridCounterexample"}
       ]
     },
     "CounterexampleEntry": {
@@ -849,7 +850,7 @@
     "Estimate": {"description": "FR-410 estimate: the probability, mean or ratio its decision reads, and for a quantile claim the empirical nearest-rank quantile with the threshold's unit.", "type": "object", "required": ["value"], "properties": {"value": {"$ref": "#/$defs/Rational"}, "quantile": {"$ref": "#/$defs/Quantity"}}, "additionalProperties": false},
     "Interval": {"type": "object", "required": ["lower", "upper"], "properties": {"lower": {"$ref": "#/$defs/Rational"}, "upper": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false},
     "SolverInconclusive": {
-      "description": "FR-193, FR-331: a hybrid solver result that proves nothing; trace, when present, is the solver's reported path to a possible violation, kept as unverified evidence and never replayed.",
+      "description": "FR-193, FR-331: a hybrid solver result that proves nothing; trace, when present, is the solver's reported path to a possible violation, kept with its replay outcome and settling a value only by exact replay (FR-193 Trace replay).",
       "type": "object",
       "required": ["type"],
       "properties": {
@@ -858,8 +859,19 @@
       },
       "additionalProperties": false
     },
+    "HybridCounterexample": {
+      "description": "FR-193 Solver result on the wire, FR-331: a hybrid refutation; kind formula or the FR-364 undefined-evaluation envelope; trace the HybridTrace that exact replay reproduces (FR-193 Trace replay).",
+      "type": "object",
+      "required": ["type", "kind", "trace"],
+      "properties": {
+        "type": {"const": "hybrid-counterexample"},
+        "kind": {"oneOf": [{"const": "formula"}, {"$ref": "#/$defs/UndefinedEvaluation"}]},
+        "trace": {"$ref": "#/$defs/HybridTrace"}
+      },
+      "additionalProperties": false
+    },
     "HybridTrace": {
-      "description": "FR-193 Hybrid trace: the start state in the declaration's first mode and each jump, by the zero-based position of the transition taken among the previous state's mode's transitions, to the state it reaches.",
+      "description": "FR-193 Hybrid trace: the start state in an initial mode and each jump, by the zero-based position of the transition taken among the previous state's mode's transitions, to the state it reaches, with the optional state just before the jump; the optional delta tolerance and the optional loop state of a lasso.",
       "type": "object",
       "required": ["start", "jumps"],
       "properties": {
@@ -871,10 +883,28 @@
             "required": ["transition", "state"],
             "properties": {
               "transition": {"$ref": "#/$defs/Count"},
+              "before": {"$ref": "#/$defs/HybridTraceBefore"},
               "state": {"$ref": "#/$defs/HybridTraceState"}
             },
             "additionalProperties": false
           }
+        },
+        "delta": {"$ref": "#/$defs/Rational"},
+        "loop": {"$ref": "#/$defs/Count"}
+      },
+      "additionalProperties": false
+    },
+    "HybridTraceBefore": {
+      "description": "FR-193 Hybrid trace: the state just before a jump, in the previous state's mode: the enclosure of its time in exact rational seconds and one interval per continuous variable keyed by its name.",
+      "type": "object",
+      "required": ["time", "enclosure"],
+      "properties": {
+        "time": {"$ref": "#/$defs/Interval"},
+        "enclosure": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {"$ref": "#/$defs/Identifier"},
+          "additionalProperties": {"$ref": "#/$defs/Interval"}
         }
       },
       "additionalProperties": false
