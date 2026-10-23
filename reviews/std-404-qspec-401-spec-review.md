@@ -40,3 +40,12 @@ Examined, clean:
 Mergeable after FND-001 (medium) are fixed or dispositioned by the lead.
 
 Conflicts with main: none (clean merge-tree). No other open PR head touches FR-466, FR-426 or TC-948.
+
+## Dispositions (round 1)
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | Fix 5a6e0bd5. The unobservable "first parameter bound to east" claim is removed from FR-466-AC-15 and PA14. The FR-426 `join` clause now has an evaluation vector, FR-426-AC-17 and TC-377 JP-09. Hand-derived: with `g(p, q, r)` true iff `q` true and `r` false, i.e. `b` completed and `c` running, the join is enabled at {b} and {a, b}, and disabled at {}, {a}, {c}, {a, c}, {b, c} and {a, b, c}; a join at {b} cancels `a` and `c`. |
+| FND-002 | fixed | FR-171 now reads "true over one Boolean per joined label, in ascending label order, `true` for a `completed` branch and `false` for a `running` one", pointing to FR-466; the "branch-result map" wording is gone. |
+
+Round 1 verdict at 5a6e0bd5: Mergeable: both findings fixed, no new defect. FR-426-AC-17 and JP-09 are unique; merge-tree with main is clean. Gate: `quire validate` 86 failure lines; `cargo test checked_package_v2 backend_provider_v1` 24 + 139 passed; no test-parsed fixture changed.
