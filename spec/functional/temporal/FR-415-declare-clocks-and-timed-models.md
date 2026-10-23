@@ -147,6 +147,33 @@ collection are live only while the collection holds the element (below).
 - A clock place under `time tick` or in an untimed model refuses
   `invalid_timed_model`/`clock-without-dense-time` at the object field that
   holds it.
+- `Reference<Clock>` (a package `reference` whose `target` is `Clock` or an
+  alias of it) is a data value that names one clock place by object, field path
+  and slot. It holds no clock value, so a field, parameter, result, record
+  component or collection element may hold one, and `Option<Reference<Clock>>`
+  is absent or one place. `ref(p)` for a place expression `p` is the data value
+  naming the place `p` denotes, and `deref(r)` for a `Reference<Clock>` `r` is a
+  place expression that denotes each place the reference can name, each guarded
+  by the data condition `r = ref(place)`; a clock constraint over it is the
+  disjunction of those guarded constraints, and a reset `deref(r) = c` resets
+  each such place under the operation's frame. A `deref` of an
+  `Option<Reference<Clock>>` or of a reference to a slot place is admitted where
+  `present(r)` and the slot's presence are established, and otherwise refuses
+  `undefined_expression`/`unproved-presence` at the `deref`. `=` and `!=` over
+  two `Reference<Clock>` compare places, never clock values, and are data reads.
+  A reference to a slot place names the slot and keeps naming it when the
+  collection moves its element. The state key holds the place index of a
+  `Reference<Clock>` and no clock value.
+- A package constraint whose `appliesTo` is `Clock` or an alias of it is a
+  **clock constraint**. `max c`, `c` an exact non-negative rational number of
+  the model's time unit, is the time invariant `x <= c` on every clock place of
+  the typed places (the places typed by the alias, or every clock place for
+  `Clock` itself), guarded by the place's presence. `min c` refuses
+  `invalid_timed_model`/`time-invariant-shape`, because a lower bound on every
+  clock is not an upper-bound invariant. Any other keyword refuses
+  `invalid_model_binding`/`malformed-declaration` at the constraint, and a
+  clock constraint under `time tick` or in an untimed model refuses
+  `clock-without-dense-time`.
 
 ### Clock collections
 
@@ -303,6 +330,8 @@ its value and the request setting that raises it.
 | FR-415-AC-12 | `self.ts[i].x = 0 ms` resets the place of slot `i`, and refuses `undefined_expression`/`unproved-presence` at `i` when the precondition does not establish `i < size(self.ts)`; `self.m[k].x = 0 ms` resets by key; `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)` resets exactly the live places whose `n > 1` and leaves the others; the guard `forall(e in self.ts: e.x <= 3 ms)` is true on the empty sequence and, on `k` elements, the conjunction of `x <= 3` over the `k` live places; `exists(e in self.ts: e.n = 2 and e.x >= 1 ms)` is false on a sequence with no `n = 2` and otherwise the disjunction over those places; `forall(e in self.ts: e.x <= 3 ms)` as a time invariant body bounds each live place only while live; `count<Int>(e in self.ts: e.x >= 1 ms)` refuses `clock-read-outside-constraint`. | Test (TC-367) |
 | FR-415-AC-13 | A clock collection with declared maximum `3` and two clocks per element adds six to the model's clock dimension for each object that holds it, with no bound beyond the declared maximum; a clock collection with no declared maximum reaches a state whose live clocks exceed `model_check.max_clocks` and the analysis settles `incomplete` with `limit-reached` naming `max_clocks`, its value and `model_check.max_clocks`; a request that sets `limits.max_clocks` to `2048` raises the bound, and `0` is refused by the request schema. | Test (TC-367) |
 | FR-415-AC-14 | With `o: Option<Timer>` (`Timer { x: Clock; n: Int }`), `present(self.o) and value(self.o).x >= 1 ms` is a guard on the place `o.x`, and `value(self.o).x >= 1 ms` alone refuses `undefined_expression`/`unproved-presence`; `self.o = Timer { x: 0 ms, n: 1 }` makes `o.x` present at 0 and `self.o = absent` drops it; a `Sequence<Option<Clock>>` slot `j` is present only while the sequence holds slot `j` and the element is present, and `value(self.q[j])` without both tests refuses `unproved-presence`; an operation `arm(c: Option<Clock>)` with `c = 0 ms` has one instance for each guarded place, each making its place present; a function `maybe(o: Timer): Option<Clock>` whose body is `o.x` is a place expression and whose body `absent` is an inactive place. | Test (TC-367) |
+| FR-415-AC-15 | With object `Call` holding clocks `x` and `y` and a field `r: Reference<Clock>`, a universe of two calls and `time dense unit ms`, the precondition `deref(self.r) >= 1 ms` is the disjunction of the four guarded constraints on `Call1.x`, `Call1.y`, `Call2.x` and `Call2.y`, each with the condition `self.r = ref(place)`; `self.r = ref(self.x)` writes the place and resets no clock; `ref(self.x) = ref(other.x)` is a data comparison, false for two calls; `deref(self.r) = 0 ms` with a frame naming only `Call.x` refuses `invalid_timed_model`/`clock-write`; `deref(self.r)` over an `Option<Reference<Clock>>` refuses `undefined_expression`/`unproved-presence` without `present(self.r)`; two states that differ only in clock values have one state key and two that differ in `r` have different keys. | Test (TC-367) |
+| FR-415-AC-16 | A constraint `max "3"` whose `appliesTo` is the alias `Timeout` of `Clock` is the time invariant `x <= 3` on every place typed `Timeout` and on no other clock; with `appliesTo` `Clock` it bounds every clock place; `min "1"` refuses `invalid_timed_model`/`time-invariant-shape`; the keyword `minLength` refuses `invalid_model_binding`/`malformed-declaration`; the same constraint under `time tick` refuses `clock-without-dense-time`. | Test (TC-367) |
 
 ## Dependencies
 
