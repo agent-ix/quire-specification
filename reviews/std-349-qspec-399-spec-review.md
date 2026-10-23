@@ -35,3 +35,9 @@ Gates re-run by this reviewer at ee68a981:
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
 | FND-001 | low | The `unimplemented_capability` set is now closed to three causes. QSL main FR-286's existing use, "An engine the request names that the driver has not built (AOT or JIT, where only the interpreter exists) ... `unimplemented_capability`", could be `backend-not-supplied` or `unimplemented-meaning`, and no text says which. Two producers can emit different causes for the same failure. Name FR-286's case in the `backend-not-supplied` description, or add a QSL FR-286 line in #1316. | spec/objects/foundation/FR-272-typed-diagnostic-cause.md:109 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 4b1ac317: `backend-not-supplied` covers "the requested execution backend ... that is not available to the run, because the caller did not supply it or the producer has not built it", and QSL #1316 27d25878 maps FR-286's unbuilt engine to `backend-not-supplied` with `backend` (FR-286 Behavior, FR-286-AC-6). The same commit adds `construct` and `construct_name` to `untranslatable-entry` (FR-272-AC-25, TC-233, test), matching #1316. Re-run at 4b1ac317: 86 failure lines; `checked_package_v2` 134 and `backend_provider_v1` 23 passed; QSL conformance 46 passed. |
