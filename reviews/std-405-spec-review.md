@@ -32,3 +32,19 @@ Examined, clean:
 ## Verdict
 
 Mergeable after FND-001, FND-002 (medium) are fixed or dispositioned by the lead.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-004 | low | This states as a rule that a quantity cannot be negated. That is accurate today: the catalog has no `quire.op.quantity.negate`. But it records a missing capability (`-q` for a quantity `q`) as a permanent refusal. It is outside STD-405's scope, so file an STD ticket for quantity negation rather than keep the refusal as the stated behaviour. | spec/functional/expressions/FR-146-check-total-pure-functions.md | wrong-requirement |
+
+## Dispositions
+
+Round 1, at 6a985696. Hand-derived: 3/2 / (3/1000) = 500, 1/2 / 1/2 = 1, 3/2 / 3/2 = 1, 3/2 / (-3/1000) = -500. P12's header now says `with no magnitude bound`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | (19) `d / 3 ms` ... admitted, the divisor `3 ms` taken as `3/1000 s`, and with `d` = `3/2 m` it returns `500 m/s`; (20) `d / 0.5 s` ... returns `1 m/s`; (21) `d / 1.50 s` ... `1 m/s`; (22) `d / 0.0 s` `unproved-nonzero`; (24) `d / rational(-3,1) ms` returns `-500 m/s` |
+| FND-002 | fixed | A quantity is typed `Quantity<u>` (FR-142 "Quantity type reference"), an exact rational magnitude in unit `u` with no bound on the magnitude, so the quotient has an exact rational magnitude over the whole rational domain and the division carries no range obligation |
+| FND-003 | fixed | A unary minus is not part of a quantity literal: `-1 s` is the unary `-` applied to the quantity `1 s`, which refuses `ill_typed` with cause `operator-ineligible` at the `-` |

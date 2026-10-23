@@ -39,7 +39,8 @@ Addition/comparison require compatible dimensions and an explicit common-unit
 conversion. Multiplication/division combine dimension exponents. Affine units
 use their selected offset rules and admit conversion/comparison only; complete
 V1 has no implicit point-versus-difference type, so arithmetic on a nonzero-
-offset quantity refuses. Conversion never occurs implicitly.
+offset quantity refuses. Negation of a non-affine quantity is exact and
+unit-preserving. Conversion never occurs implicitly.
 
 ## Dimension and conversion algebra
 
@@ -162,7 +163,7 @@ A unit is affine exactly when the offset of its composed mapping to the
 canonical root is nonzero; a declared edge offset alone does not decide it, so a
 zero-offset unit targeting an affine unit is affine and a unit whose nonzero
 edge offsets compose to zero is not. An affine unit may be converted or compared
-but cannot be added, subtracted, multiplied, divided or raised to a power; such
+but cannot be added, subtracted, negated, multiplied, divided or raised to a power; such
 arithmetic refuses as affine-unit arithmetic. A separately
 declared zero-offset difference unit supports arithmetic; complete V1 does not
 infer a point/difference kind from an operation. Conversion into an exact target
@@ -201,7 +202,8 @@ Conversion traverses the full source-to-root path and then the full
 root-to-target path, with no common-ancestor shortcut, and has no operation
 event of its own; a compound side contributes no edge. Addition and subtraction
 of the identical unit traverse no edge, and their operation event is computed
-in that unit. Multiplication, division and integer power traverse the left and
+in that unit. Negation traverses no edge, as addition does, and its operation event is
+computed in the operand's unit. Multiplication, division and integer power traverse the left and
 then the right operand's root path before their operation event. Top-level quantity equality and
 ordering expressions share one schedule: both operands are mapped along their root paths,
 left then right, and compared by exact root value, so an affine unit or a
@@ -233,6 +235,17 @@ stable across unrelated package edits. Dimension exponents are mathematical sign
 explicit operation limits; implementations cannot narrow them to a machine
 integer. A conversion publishes no partial quantity until canonicalization,
 target rounding and target-domain admission all succeed.
+
+**Quantity negation.** The unary minus `-q` over a non-affine quantity `q` of
+type `Quantity<u>` is exact and unit-preserving: the result has type
+`Quantity<u>`, in the same unit `u` and not a root-unit conversion of it, and its
+value is the exact rational negation of `q`'s value, so `-(2 m)` is `-2 m`,
+`-(3 ms)` is `-3 ms` and `-(0 m)` is `0 m`. A quantity of a compound unit that a
+multiplication or division produced is negated in that compound unit. Negation
+has no zero divisor, no undefined condition and no range obligation, because a
+quantity magnitude has no bound. The operand of an affine unit refuses
+`ill_typed` at type checking before any charge, as every other arithmetic on an
+affine unit does. The operation lowers to `quire.op.quantity.negate` (FR-322).
 
 Multiplication, division and integer power first convert every non-affine
 operand to its dimension's canonical root, perform exact value arithmetic and
@@ -355,6 +368,7 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-17 | A dimension's own terms are checked at its turn before its units: U11n (cycle of two), U11o (self-cycle) and U11p (unknown term) refuse as FR-142 states; U11w refuses the unknown term before the cycle; U11x refuses a transitive unknown term at the dimension that owns it, not at the dimension that reaches it, and U11z3 reports a dimension that only reaches a cycle by its own earlier unit defect before the cycle member's refusal. The order of two documents in the request fixes the first declaration (U11q). | Test (TC-187) |
 | FR-142-AC-18 | Local units typed by an imported dimension are checked at that node's turn with the imported units as admitted members: U11r admits a local unit targeting an imported root; U11s refuses a local cycle, U11t a second local root beside the imported root, and U11u a local zero scale; the imported dimension's own definition is not re-checked; U11z2 fixes the turn list: a dimension's mentioned nodes take their turn in mention order before the declaration, so `P.L` precedes `Q.T`. | Test (TC-187) |
 | FR-142-AC-19 | A unit of compilation that declares `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` beside the admitted domain package `acme/rpc` declaring base dimension `Rate`, root `us` of `Rate` and its own `ms` of `Rate` checks with no `ambiguous_declaration`: `Quantity<ms>` names the source unit and `Quantity<M::ms>` under `model M = "acme/rpc" …` names the package unit (FCD identity `ix://acme/rpc/unit/ms`), which carries no declaration name; a source `unit tick : Rate = 1/2 * M::us;` is admitted, typed by the package dimension; the same package also declaring a dimension `Time` refuses `conflicting_declaration`/`duplicate-declaration` at the source `dimension Time` span, naming both declarations; two admitted packages that each declare a dimension `Rate`, with no source `Rate`, refuse it at the later package's selection row; the package also declaring a base dimension `Length` with no unit, beside a source `dimension Area = Length ^ 2; unit m2 : Area = 1;`, refuses `missing_declaration`/`missing-name` by the base-dimension rule at `Length`'s turn, located at `/lock/model_selections/0` and naming `ix://acme/rpc/dimension/Length` and `m2`. | Test (TC-187) |
+| FR-142-AC-25 | Unary minus over a non-affine quantity returns the exact negated value in the operand's own unit and type, including `-(2 m)` as `-2 m`, `-(3 ms)` as `-3 ms` in `ms`, `-(0 m)` as `0 m` and a compound-unit operand in its compound unit, with no edge charge; unary minus over an affine-unit quantity refuses `ill_typed` before any charge; `-(2 m) + 1 m` is `-1 m`. | Test (TC-187) |
 
 ## Dependencies
 
