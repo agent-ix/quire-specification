@@ -120,6 +120,20 @@ checked_package_v2 --test backend_provider_v1` passes, 138 and 24 tests.
 | FND-009 | fixed | The BP-36 positive is a `Bounce` lasso with `loop` 0, and FR-193 now refuses a `loop` that names the last state or beyond, `invalid-value` at `/loop`. |
 | FND-010 | still-open | New in this pass. |
 | FND-011 | still-open | New in this pass. |
+| FND-010 | fixed | Round 2 at 2a670920. TC-966 HY-13 now admits `model-steps` with an integer interval and an `each` activation over `q` at level 1, and HY-14 admits `once [0, 2]`. Both agree with HY-23, FR-481-AC-12 and reader step 7. |
+| FND-011 | fixed | Round 2 at 2a670920. `hybrid-inconclusive-replay-record` now stores `{static: {outcome: consistent}, exact: {outcome: not-exact}}`, which matches the hand replay of the Bounce lasso with `delta` 1/100. The check-9 adverse vector still patches `replay/static`. |
 
 Verdict after disposition pass 1: FND-001 to FND-009 are fixed. Not
 mergeable until FND-010 (high) and FND-011 are fixed.
+
+Verdict after disposition pass 2 (2a670920, which merges #414 d1fc3080 and
+origin/main; origin/main is an ancestor): every finding is fixed and the pass
+adds none. `quire validate` gives 86 `fail` lines and 116 structurally
+failing documents, equal to main. `cargo test --test checked_package_v2
+--test backend_provider_v1` passes, 138 and 24 tests. The PR's ids
+collide with no other open PR head; #420 and #411 touch FR-331 and the
+backend vectors but merge with no conflict. QSL conformance at this head has
+41 passed and the 6 expected `UnsupportedNodeTag` failures (node 39,
+`positive-all-families.json`'s `hybrid` node), which wait for the reader
+code. Mergeable on the spec content.
+
