@@ -58,7 +58,7 @@ const POSITIVE_DEPENDENCY_LIBRARY: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-dependency-library.json");
 const POSITIVE_DEPENDENCY_CALL: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-dependency-call.json");
-const REQUIRED_NODE_TAGS: [&str; 14] = [
+const REQUIRED_NODE_TAGS: [&str; 15] = [
     "scalar_type",
     "composite_type",
     "bounded_domain",
@@ -73,6 +73,7 @@ const REQUIRED_NODE_TAGS: [&str; 14] = [
     "claim",
     "correspondence",
     "extension",
+    "hybrid",
 ];
 
 fn parsed_fixture(bytes: &str) -> Value {
@@ -912,7 +913,7 @@ fn literal_value_is_canonical(literal: &Value) -> bool {
             text.parse::<i128>()
                 .is_ok_and(|count| count.to_string() == text)
         }),
-        Some("quantity") => value.is_some_and(quantity_magnitude_is_canonical),
+        Some("quantity" | "rational") => value.is_some_and(quantity_magnitude_is_canonical),
         _ => true,
     }
 }
@@ -3289,7 +3290,7 @@ fn node_declares(node: &Value) -> bool {
     let declarable = match node["node_tag"].as_str() {
         Some(
             "scalar_type" | "composite_type" | "bounded_domain" | "function" | "model" | "protocol"
-            | "claim" | "extension",
+            | "claim" | "extension" | "hybrid",
         ) => true,
         Some("value") => node["semantic_form"] != "enum_value",
         _ => false,
@@ -8852,6 +8853,60 @@ fn tc_233_every_published_package_carries_only_current_application_node_keys() {
     }
 }
 
+/// The `unimplemented_capability` cause set is closed: the native-diagnostics
+/// row and the FR-272 row each list exactly its three causes and name the
+/// `backend`, `construct`, `construct_name`, `location` and `capability`
+/// payload keys.
+#[trace("TC-233", "FR-272-AC-25")]
+#[test]
+fn tc_233_unimplemented_capability_cause_set_is_closed() {
+    let causes = ["backend-not-supplied", "untranslatable-entry", "unimplemented-meaning"]
+        .iter()
+        .map(|cause| (*cause).to_owned())
+        .collect::<BTreeSet<_>>();
+    for (document, label) in [
+        (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+        (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+    ] {
+        assert_eq!(
+            diagnostic_row_causes(document, "unimplemented_capability"),
+            causes,
+            "{label} `unimplemented_capability` row lists exactly its causes"
+        );
+        let keys = diagnostic_row_payload_keys(document, "unimplemented_capability");
+        for key in ["backend", "construct", "construct_name", "location", "capability"] {
+            assert!(
+                keys.contains(key),
+                "{label} `unimplemented_capability` row names `{key}`"
+            );
+        }
+    }
+}
+
+/// The `invalid_quire_context` cause set is closed: the native-diagnostics row
+/// and the FR-272 row each list exactly `unsupported-render-form` and name the
+/// `view` and `form` payload keys.
+#[trace("TC-233", "FR-272-AC-24")]
+#[test]
+fn tc_233_invalid_quire_context_cause_set_is_closed() {
+    let causes = BTreeSet::from(["unsupported-render-form".to_owned()]);
+    for (document, label) in [
+        (NATIVE_DIAGNOSTICS, "native-diagnostics"),
+        (TYPED_DIAGNOSTIC_CAUSE, "FR-272"),
+    ] {
+        assert_eq!(
+            diagnostic_row_causes(document, "invalid_quire_context"),
+            causes,
+            "{label} `invalid_quire_context` row lists exactly its causes"
+        );
+        let keys = diagnostic_row_payload_keys(document, "invalid_quire_context");
+        assert!(
+            keys.contains("view") && keys.contains("form"),
+            "{label} `invalid_quire_context` row names `view` and `form`"
+        );
+    }
+}
+
 /// The `stage_limit_exceeded` and `duplicate_selection` cause sets are closed:
 /// the native-diagnostics row and the FR-272 row of each code list exactly
 /// these causes, so neither document can add, drop or rename a cause without
@@ -11014,8 +11069,9 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
         &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
         "diagnostic codes",
     );
-    let pairings: [(&str, &[&str]); 6] = [
+    let pairings: [(&str, &[&str]); 7] = [
         ("type-mismatch", &["ill_typed"]),
+        ("non-boolean-root", &["ill_typed"]),
         (
             "missing-selection",
             &["missing_import", "missing_declaration"],
@@ -11039,6 +11095,89 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
                 admitted.contains(code),
                 "the Diagnostic schema pairs {cause} with `{code}` exactly when FR-322 lists it"
             );
+        }
+    }
+}
+
+/// Every `code`/`cause` pair FR-481 names, in its node, reader and claim
+/// rules, and every one FR-193 names for hybrid claims and trace replay, is
+/// a catalogued pair: the native-diagnostics row of the code lists the cause,
+/// and when the code is a V2 `Diagnostic` code the schema's `cause_tag` enum
+/// holds the cause and the schema admits it with that code and no other.
+#[trace("TC-966", "FR-481-AC-4", "FR-322-AC-47")]
+#[test]
+fn tc_966_every_hybrid_cause_is_catalogued_and_paired() {
+    let schema = parsed_fixture(SCHEMA);
+    let diagnostic = schema_for_def(&schema, "Diagnostic");
+    let codes = string_list(
+        &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
+        "diagnostic codes",
+    );
+    let causes = string_list(
+        &schema["$defs"]["Diagnostic"]["properties"]["cause_tag"]["enum"],
+        "diagnostic causes",
+    );
+    let texts = [
+        include_str!("../spec/objects/interfaces/FR-481-checked-package-hybrid-model-nodes.md"),
+        include_str!("../spec/functional/analysis/FR-193-analyze-continuous-hybrid-models.md"),
+    ];
+    let mut pairs = BTreeSet::new();
+    for text in texts {
+        let spans = text.split('`').collect::<Vec<_>>();
+        for window in spans.windows(3) {
+            if window[1] == "/"
+                && window[0].chars().all(|c| c.is_ascii_lowercase() || c == '_')
+                && window[0].contains('_')
+                && window[2].chars().all(|c| c.is_ascii_lowercase() || c == '-')
+                && !window[2].is_empty()
+            {
+                pairs.insert((window[0].to_owned(), window[2].to_owned()));
+            }
+        }
+    }
+    assert!(
+        pairs.contains(&("ill_typed".to_owned(), "non-boolean-root".to_owned())),
+        "the scan finds FR-481's Boolean-root refusal"
+    );
+    let node_tags = string_list(
+        &schema["$defs"]["NodeBase"]["properties"]["node_tag"]["enum"],
+        "node tags",
+    );
+    // A row's first cell names one code, or several codes sharing one row.
+    let row_causes = |code: &str| {
+        NATIVE_DIAGNOSTICS
+            .lines()
+            .find(|line| {
+                line.split('|')
+                    .nth(1)
+                    .is_some_and(|cell| backticked(cell).contains(code))
+            })
+            .map(|line| {
+                backticked(
+                    line.split('|')
+                        .nth(2)
+                        .and_then(|cell| cell.split(';').next())
+                        .expect("cause cell"),
+                )
+            })
+            .unwrap_or_else(|| panic!("native diagnostics has a `{code}` row"))
+    };
+    for (code, cause) in &pairs {
+        if node_tags.contains(&code.as_str()) {
+            continue; // a node tag and form such as `scalar_type`/`boolean`
+        }
+        assert!(
+            row_causes(code).contains(cause),
+            "native diagnostics lists `{cause}` in the `{code}` row"
+        );
+        if codes.contains(&code.as_str()) {
+            assert!(causes.contains(&cause.as_str()), "`{cause}` is a Diagnostic cause_tag");
+            for other in &codes {
+                let entry = json!({"stage": "package_read", "code": other, "cause_tag": cause, "details": [], "loci": []});
+                if *other == code.as_str() {
+                    assert!(diagnostic.is_valid(&entry), "the schema pairs `{cause}` with `{code}`");
+                }
+            }
         }
     }
 }
@@ -14189,6 +14328,38 @@ fn tc_233_scalar_equality_identities_and_literal_kinds_are_enumerated_and_admitt
     }
 }
 
+/// FR-322 "Scalar literal values" (FR-322-AC-114): a `rational` literal's
+/// `value` is its exact value in the canonical magnitude spelling, and any
+/// other spelling of the same value is refused `invalid-value`.
+#[trace("FR-322-AC-114", "TC-233")]
+#[test]
+fn tc_233_rational_literals_spell_one_canonical_magnitude() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let mut package = scalar_equality_package(&catalog);
+    package["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(walk_scalar("Ratio", "rational"));
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    for value in ["0", "1", "-3", "1/2", "-7/2"] {
+        assert!(
+            oracle
+                .argument_descriptor(&scalar_literal("rational", "Ratio", value))
+                .is_ok_and(|d| d.is_some_and(|d| d.family == "rational")),
+            "a rational literal {value} is admitted"
+        );
+    }
+    for value in ["2/2", "1/1", "02", "+1", "2/4", "1/0", "0/5", "1/-2", "2.5", ""] {
+        assert_eq!(
+            oracle
+                .argument_descriptor(&scalar_literal("rational", "Ratio", value))
+                .err(),
+            Some(OperationRefusal::InvalidValue),
+            "the rational spelling {value:?} is not canonical"
+        );
+    }
+}
+
 /// QL-01 to QL-04 (FR-322-AC-79): a `quantity` literal typed by a unit node is
 /// admitted, both schemas enumerate the kind, and a literal typed by another
 /// family or carrying a non-canonical magnitude is refused by exactly its step.
@@ -16482,6 +16653,102 @@ fn tc_966_hybrid_model_nodes_meet_the_schema_and_carry_their_own_keys() {
     assert_eq!(claim["body"]["arguments"][0]["target"], over["node_id"]);
     assert_eq!(over["semantic_type"], model["node_id"]);
     assert_eq!(claim["body"]["arguments"][1]["value"], "model-time");
+    assert_eq!(
+        claim["body"]["operation"]["laws"],
+        json!([{"role": "temporal_profile", "definition": {"authority": "agent-ix", "identity": "quire.temporal.infinite-trace/v1"}}])
+    );
+    assert_eq!(
+        claim["body"]["arguments"][2],
+        json!({"term": "aggregate", "members": [{"term": "binding", "name": "kind", "value": {"term": "literal", "type": nodes.iter().find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == "text").expect("text")["node_id"], "value_kind": "text", "value": "origin"}}]})
+    );
+    assert_eq!(
+        claim["body"]["arguments"][3]["members"],
+        json!([]),
+        "no captures"
+    );
+    assert_eq!(
+        claim["body"]["arguments"][4]["members"],
+        json!([]),
+        "no fairness"
+    );
+    let node_at = |id: &Value| {
+        nodes
+            .iter()
+            .find(|node| node["node_id"] == *id)
+            .expect("referenced node")
+    };
+    let always = node_at(&claim["body"]["arguments"][5]["target"]);
+    assert_eq!(
+        always["body"]["operation"]["identity"],
+        "quire.op.temporal.always"
+    );
+    assert_eq!(
+        always["body"]["operation"]["member"],
+        json!({"kind": "temporal_interval", "interval": {"lower": "0", "upper": "10"}})
+    );
+    let holds = node_at(&always["body"]["arguments"][0]["target"]);
+    assert_eq!(
+        holds["body"]["operation"]["identity"],
+        "quire.op.temporal.holds"
+    );
+    let below = node_at(&holds["body"]["arguments"][0]["target"]);
+    assert_eq!(
+        below["body"]["operation"]["identity"],
+        "quire.op.rational.lt"
+    );
+    let v = at(&roles["variables"][0]);
+    assert_eq!(
+        below["body"]["arguments"][0]["target"], v["node_id"],
+        "holds reads v"
+    );
+    let thirty = node_at(&below["body"]["arguments"][1]["target"]);
+    assert_eq!(thirty["body"]["value"], "30");
+    // Moving's rates are -a, 0 and 1; its transition is target 1, guard
+    // v = 0 and reset (0, 0).
+    let a = at(&roles["variables"][1]);
+    let moving = at(&modes[0]);
+    let rates = hybrid_binding(&moving["body"], "rates")["members"]
+        .as_array()
+        .expect("rates");
+    let negate = node_at(&rates[0]["target"]);
+    assert_eq!(
+        negate["body"]["operation"]["identity"],
+        "quire.op.rational.negate"
+    );
+    assert_eq!(negate["body"]["arguments"][0]["target"], a["node_id"]);
+    assert_eq!(node_at(&rates[1]["target"])["body"]["value"], "0");
+    assert_eq!(node_at(&rates[2]["target"])["body"]["value"], "1");
+    let transitions = hybrid_binding(&moving["body"], "transitions")["members"]
+        .as_array()
+        .expect("transitions");
+    assert_eq!(transitions.len(), 1);
+    let transition = node_at(&transitions[0]["target"]);
+    assert_eq!(hybrid_binding(&transition["body"], "target")["value"], "1");
+    let guard = node_at(&hybrid_binding(&transition["body"], "guard")["target"]);
+    assert_eq!(
+        guard["body"]["operation"]["identity"],
+        "quire.op.rational.eq"
+    );
+    assert_eq!(guard["body"]["arguments"][0]["target"], v["node_id"]);
+    assert_eq!(
+        node_at(&guard["body"]["arguments"][1]["target"])["body"]["value"],
+        "0"
+    );
+    let resets = hybrid_binding(&transition["body"], "resets")["members"]
+        .as_array()
+        .expect("resets");
+    assert_eq!(resets.len(), 1);
+    assert_eq!(hybrid_binding(&resets[0], "variable")["value"], "0");
+    assert_eq!(
+        node_at(&hybrid_binding(&resets[0], "value")["target"])["body"]["value"],
+        "0"
+    );
+    assert!(
+        hybrid_binding(&at(&modes[1])["body"], "transitions")["members"]
+            .as_array()
+            .expect("none")
+            .is_empty()
+    );
 }
 
 #[trace("TC-966", "FR-481-AC-3")]
@@ -16502,6 +16769,12 @@ fn tc_966_a_changed_rate_rekeys_its_mode_the_model_and_the_claim() {
         nodes[moving]["body"]["members"][1]["value"]["members"][0]["target"],
         nodes[index(&roles["moving_rate_of_v"])]["node_id"]
     );
+    for node in extra {
+        assert!(
+            hybrid_vector_key_is_current(node, &nodes),
+            "an added term node holds its own key"
+        );
+    }
     nodes.extend(extra.iter().cloned());
     nodes[moving]["body"]["members"][1]["value"]["members"][0]["target"] = replacement;
     let snapshot = nodes.clone();
@@ -16574,4 +16847,270 @@ fn tc_966_malformed_hybrid_nodes_fail_the_published_schema() {
         }
         assert!(!node_schema.is_valid(&node), "{name}: {}", case["why"]);
     }
+}
+
+#[trace("TC-966", "FR-481-AC-13", "FR-322-AC-13")]
+#[test]
+fn tc_966_the_all_families_fixture_carries_a_hybrid_model_with_bare_variable_terms() {
+    let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes");
+    let node_at = |id: &Value| {
+        nodes
+            .iter()
+            .find(|node| node["node_id"] == *id)
+            .expect("referenced node")
+    };
+    let hybrid = nodes
+        .iter()
+        .filter(|node| node["node_tag"] == "hybrid")
+        .collect::<Vec<_>>();
+    let forms = hybrid
+        .iter()
+        .map(|node| node["semantic_form"].as_str().expect("form"))
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        forms,
+        BTreeSet::from(["hybrid_model", "hybrid_mode", "hybrid_transition"])
+    );
+    for node in &hybrid {
+        assert!(
+            structural_node_key_is_current(node),
+            "a hybrid node holds its own key"
+        );
+        assert_eq!(
+            node["dependencies"],
+            json!(body_reference_targets(&node["body"]))
+        );
+    }
+    let model = hybrid
+        .iter()
+        .find(|node| node["semantic_form"] == "hybrid_model")
+        .expect("model");
+    assert_eq!(
+        model["declaration"],
+        json!({"qualified_name": ["Example", "Tank"]})
+    );
+    let entries = hybrid_binding(&model["body"], "variables")["members"]
+        .as_array()
+        .expect("variables");
+    let variables = entries
+        .iter()
+        .map(|entry| &hybrid_binding(entry, "parameter")["target"])
+        .collect::<Vec<_>>();
+    let classes = entries
+        .iter()
+        .map(|entry| {
+            hybrid_binding(entry, "class")["value"]
+                .as_str()
+                .expect("class")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(classes, ["hybrid", "hybrid"]);
+    let mode = node_at(&hybrid_binding(&model["body"], "modes")["members"][0]["target"]);
+    assert_eq!(
+        mode["declaration"],
+        json!({"qualified_name": ["Example", "Tank", "Filling"]})
+    );
+    let rates = hybrid_binding(&mode["body"], "rates")["members"]
+        .as_array()
+        .expect("rates");
+    assert_eq!(
+        &rates[0]["target"], variables[1],
+        "x' = y is a bare variable reference"
+    );
+    let one = node_at(&rates[1]["target"]);
+    assert_eq!(
+        (one["semantic_form"].as_str(), one["body"]["value"].as_str()),
+        (Some("literal"), Some("1"))
+    );
+    assert!(literal_value_is_canonical(&one["body"]));
+    let transition = node_at(&hybrid_binding(&mode["body"], "transitions")["members"][0]["target"]);
+    let reset = &hybrid_binding(&transition["body"], "resets")["members"][0];
+    assert_eq!(
+        &hybrid_binding(reset, "value")["target"],
+        variables[1],
+        "x is reset to y"
+    );
+    // FR-481 checks 3.2 and 3.3: every invariant and guard is a Boolean term,
+    // every rate and reset value a rational term or one of the variables.
+    let form_of = |id: &Value| {
+        let ty = node_at(&node_at(id)["semantic_type"]);
+        (
+            ty["node_tag"].as_str().expect("tag").to_owned(),
+            ty["semantic_form"].as_str().expect("form").to_owned(),
+        )
+    };
+    let boolean = ("scalar_type".to_owned(), "boolean".to_owned());
+    let rational = ("scalar_type".to_owned(), "rational".to_owned());
+    let rational_term = |id: &Value| variables.contains(&id) || form_of(id) == rational;
+    assert_eq!(
+        form_of(&hybrid_binding(&mode["body"], "invariant")["target"]),
+        boolean
+    );
+    assert_eq!(
+        form_of(&hybrid_binding(&transition["body"], "guard")["target"]),
+        boolean
+    );
+    for target in [
+        &rates[0]["target"],
+        &rates[1]["target"],
+        &hybrid_binding(reset, "value")["target"],
+    ] {
+        assert!(
+            rational_term(target),
+            "a rate or reset value is a rational term"
+        );
+    }
+    for variable in &variables {
+        assert_eq!(form_of(variable), rational, "a variable is typed rational");
+    }
+    let mapped = package["source_map"].as_array().expect("source map");
+    for node in &hybrid {
+        assert!(
+            mapped
+                .iter()
+                .any(|entry| entry["node_id"] == node["node_id"]),
+            "each hybrid node has a source-map entry"
+        );
+    }
+}
+
+#[trace("TC-966", "FR-481-AC-8", "FR-481-AC-9")]
+#[test]
+fn tc_966_restored_hybrid_forms_meet_the_schema_and_carry_their_own_keys() {
+    let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
+    let base = vectors["nodes"].as_array().expect("nodes");
+    let restored = vectors["restored_nodes"].as_array().expect("restored nodes");
+    let roles = &vectors["restored_roles"];
+    let all = base.iter().chain(restored).cloned().collect::<Vec<_>>();
+    let node_schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let preimage_schema = schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "HybridNode");
+    let ids = all
+        .iter()
+        .map(|node| node["node_id"]["digest"].as_str().expect("digest"))
+        .collect::<BTreeSet<_>>();
+    assert_eq!(ids.len(), all.len(), "every node id is unique");
+    for (index, node) in restored.iter().enumerate() {
+        assert!(node_schema.is_valid(node), "restored node {index} meets SemanticNode");
+        assert!(
+            hybrid_vector_key_is_current(node, &all),
+            "restored node {index} key is current"
+        );
+        if node["node_tag"] == "hybrid" {
+            let preimage = structural_node_preimage(node).expect("hybrid nodes are structural");
+            assert!(preimage_schema.is_valid(&preimage), "restored node {index} preimage");
+            assert_eq!(node["semantic_type"], node["node_id"], "restored node {index} is self-typed");
+            assert_eq!(node["dependencies"], json!(body_reference_targets(&node["body"])));
+        }
+    }
+    let at = |role: &Value| &restored[role.as_u64().expect("index") as usize];
+    let by_id = |id: &Value| all.iter().find(|node| node["node_id"] == *id).expect("node");
+    let model = at(&roles["model"]);
+    assert_eq!(model["declaration"], json!({"qualified_name": ["Braking2"]}));
+    let names = model["body"]["members"]
+        .as_array()
+        .expect("members")
+        .iter()
+        .map(|member| member["name"].clone())
+        .collect::<Vec<_>>();
+    assert_eq!(names, [json!("variables"), json!("modes"), json!("initial")]);
+    let initial = hybrid_binding(&model["body"], "initial")["members"]
+        .as_array()
+        .expect("initial entries");
+    let modes = initial
+        .iter()
+        .map(|entry| hybrid_binding(entry, "mode")["value"].clone())
+        .collect::<Vec<_>>();
+    assert_eq!(modes, [json!("0"), json!("1")], "two initial modes");
+    let conditions = roles["initial_conditions"].as_array().expect("conditions");
+    for (entry, role) in initial.iter().zip(conditions) {
+        assert_eq!(hybrid_binding(entry, "condition")["target"], at(role)["node_id"]);
+        assert_eq!(at(role)["body"]["operation"]["identity"], "quire.op.boolean.and");
+    }
+    // Braking keeps the default initial entry, so its model has no binding.
+    let braking = &base[vectors["roles"]["model"].as_u64().expect("model") as usize];
+    assert_eq!(braking["body"]["members"].as_array().expect("members").len(), 2);
+    let transition = at(&roles["transition"]);
+    let resets = hybrid_binding(&transition["body"], "resets")["members"]
+        .as_array()
+        .expect("resets");
+    assert_eq!(resets[0]["members"].as_array().expect("entry").len(), 2, "`=` has no relation");
+    assert_eq!(hybrid_binding(&resets[1], "relation")["value"], "ge");
+    // Slows: each activation, trigger at level 1, read at level 3, capture at level 6.
+    let slows = at(&roles["each_claim"]);
+    let arguments = &slows["body"]["arguments"];
+    assert_eq!(arguments[1]["value"], "model-time");
+    assert_eq!(hybrid_binding(&arguments[2], "kind")["value"], "each");
+    let trigger = at(&roles["trigger"]);
+    assert_eq!(hybrid_binding(&arguments[2], "trigger")["target"], trigger["node_id"]);
+    assert_eq!(trigger["semantic_type"], model["node_id"]);
+    assert_eq!(hybrid_binding(&trigger["body"], "level")["value"], "1");
+    let read = at(&roles["activation_read"]);
+    assert_eq!(hybrid_binding(&read["body"], "level")["value"], "3");
+    assert_eq!(hybrid_binding(&arguments[3], "v0")["target"], read["node_id"]);
+    let capture = at(&roles["capture"]);
+    assert_eq!(hybrid_binding(&capture["body"], "level")["value"], "6");
+    let capture_type = at(&roles["capture_type"]);
+    assert_eq!(capture["semantic_type"], capture_type["node_id"]);
+    assert_eq!(capture_type["semantic_form"], "rational_range");
+    assert_eq!(hybrid_binding(&capture_type["body"], "numerator_max")["value"], "20");
+    assert_eq!(
+        slows["body"]["operation"]["laws"][0]["definition"]["identity"],
+        "quire.temporal.timed/v1"
+    );
+    let fairness = by_id(&arguments[4]["members"][0]["target"]);
+    assert_eq!(fairness["node_id"], at(&roles["fairness"])["node_id"]);
+    let member = &fairness["body"]["operation"]["member"];
+    assert_eq!(member["declaration"], at(&roles["modes"][0])["node_id"]);
+    assert_eq!(member["name"], "Stopped");
+    let eventually = by_id(&arguments[5]["target"]);
+    assert_eq!(
+        eventually["body"]["operation"]["member"]["interval"]["upper"],
+        json!({"numerator": "21", "denominator": "2"})
+    );
+    let recent = at(&roles["steps_claim"]);
+    assert_eq!(recent["body"]["arguments"][1]["value"], "model-steps");
+    let once = by_id(&recent["body"]["arguments"][5]["target"]);
+    assert_eq!(once["body"]["operation"]["identity"], "quire.op.temporal.once");
+    assert_eq!(
+        once["body"]["operation"]["member"]["interval"],
+        json!({"lower": "0", "upper": "2"})
+    );
+}
+
+#[trace("TC-966", "FR-481-AC-11")]
+#[test]
+fn tc_966_restored_hybrid_shapes_meet_or_fail_the_published_schema() {
+    let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
+    let restored = vectors["restored_nodes"].as_array().expect("restored nodes");
+    let roles = &vectors["restored_roles"];
+    let node_schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
+    let at = |role: &Value| restored[role.as_u64().expect("index") as usize].clone();
+    let mut empty_initial = at(&roles["model"]);
+    empty_initial["body"]["members"][2]["value"]["members"] = json!([]);
+    assert!(!node_schema.is_valid(&empty_initial), "an empty initial fails");
+    let mut no_condition = at(&roles["model"]);
+    no_condition["body"]["members"][2]["value"]["members"][0]["members"]
+        .as_array_mut()
+        .expect("entry")
+        .pop();
+    assert!(!node_schema.is_valid(&no_condition), "an entry without condition fails");
+    let mut approx = at(&roles["transition"]);
+    approx["body"]["members"][2]["value"]["members"][1]["members"][2]["value"]["value"] =
+        json!("approx");
+    assert!(!node_schema.is_valid(&approx), "an unknown relation fails");
+    approx["body"]["members"][2]["value"]["members"][1]["members"][2]["value"]["value"] = json!("eq");
+    assert!(!node_schema.is_valid(&approx), "`=` is written with no relation");
+    let slows = at(&roles["each_claim"]);
+    let eventually_id = slows["body"]["arguments"][5]["target"].clone();
+    let mut open = restored
+        .iter()
+        .find(|node| node["node_id"] == eventually_id)
+        .expect("eventually")
+        .clone();
+    open["body"]["operation"]["member"]["interval"]["upper"] = Value::Null;
+    open["body"]["operation"]["member"]["interval"]["upper_end"] = json!("open");
+    assert!(node_schema.is_valid(&open), "a timed `[q, *]` meets the schema");
 }

@@ -618,8 +618,10 @@ graph-unary   = 'not', graph-unary
               | comparison
               | '(', graph-predicate, ')' ;
 graph-over    = 'over', '(', parameter, ')' ;
-hybrid-decl   = 'hybrid', ident, 'using', ident, '{', hybrid-mode,
-                { hybrid-mode }, '}' ;
+hybrid-decl   = 'hybrid', ident, 'using', ident, '{', [ hybrid-initial ],
+                hybrid-mode, { hybrid-mode }, '}' ;
+hybrid-initial = 'initial', '{', initial-entry, { initial-entry }, '}' ;
+initial-entry = 'mode', ident, 'when', block, ';' ;
 hybrid-mode   = 'mode', ident, 'invariant', block,
                 'flow', '{', equation, { equation }, '}',
                 { 'transition', 'to', ident, 'when', block,
@@ -638,6 +640,18 @@ verification-step = 'check', ident, 'claim', qualified-name,
                     [ 'bound', uint ], ';' ;
 attempt-type  = type-ref ;
 ```
+
+`initial` is matched as a keyword spelling only as the first word of a
+`hybrid-initial`, the optional first member of a `hybrid-decl` body, and
+remains an identifier elsewhere. A `hybrid-decl` with no `hybrid-initial`
+has the one initial entry `mode M when { true };`, `M` its first mode
+([FR-193](../../spec/functional/analysis/FR-193-analyze-continuous-hybrid-models.md)
+"Initial states"). In a `temporal-clause` whose `over` parameter is typed by a
+`hybrid-decl` (a hybrid claim), an interval-capable operator takes an
+`interval` or a `timed-interval`, whatever the selected profile, and a
+`timed-interval` there also admits the upper bound `'*'`, written
+`( '[' | '(' ), quantity-literal, ',', '*', ']'`, where the profile admits an
+interval `[a,*]` (FR-193 "Hybrid claims").
 
 The attempt type after `attempts N of` is a `type-ref` here, replacing the
 bounded `attempt-type = type-name`, so the grammar admits an inline type form

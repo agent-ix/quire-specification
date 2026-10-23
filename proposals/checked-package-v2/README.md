@@ -34,7 +34,10 @@ structures, but any external consumer receives only the contract.
   extension as one `extension`/`extension_form` node, its two clause subnodes
   and the `retention` entry of `lock.definition_selections` (FR-469,
   TC-951); `fixtures/positive-all-families.json` carries the same form as its
-  fourteenth node tag. `node-identity-preimage.schema.json` defines the
+  fourteenth node tag, and the `Tank` hybrid model (one `hybrid_model`, one
+  `hybrid_mode` and one `hybrid_transition` node, a rate and a reset value
+  that are bare variable references, and a `hybrid` variable whose rate is
+  the literal `1`) as its fifteenth (FR-481, TC-966). `node-identity-preimage.schema.json` defines the
   `ExtensionFormNode` preimage that keys it.
 - `extension-definitions.json` publishes the FR-467 extension definitions
   (`policy`, `quota`, `retention`) a reader holds when it reads these
@@ -51,7 +54,11 @@ structures, but any external consumer receives only the contract.
   node, the continuous variables' `value`/`parameter` nodes, the term nodes
   and the claim's `temporal_clause` and formula nodes, each keyed by its own
   preimage, with the `-(2 * a)` term nodes of an identity case and eight
-  schema refusals (FR-481, TC-966). `node-identity-preimage.schema.json`
+  schema refusals, and as `restored_nodes` the `Braking2` model with two
+  initial entries and a reset relation, its `Slows` claim with an `each`
+  activation, a capture, hybrid fairness and a timed interval, and the
+  `model-steps` claim `Recent` reading `once` (FR-481, TC-966).
+  `node-identity-preimage.schema.json`
   defines the `HybridNode` preimage that keys each `hybrid` node.
 - `model-owner-form-vectors.json` supplies a domain package projection that
   also declares processes, state machines and a persistence interface, with

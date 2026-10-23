@@ -93,5 +93,4 @@ typed result or typed missing/conflicting cause per occurrence.
 
 ## Status
 
-Accepted complete-V1 activation-capture contract. Implementation and
-qualification remain tracked separately.
+Accepted complete-V1 activation-capture contract.

@@ -233,5 +233,4 @@ for FR-146, the `unbounded-extent` and `tool-unavailable` causes of
 
 ## Status
 
-Accepted complete-V1 diagnostic-code contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 diagnostic-code contract.
