@@ -16,7 +16,7 @@ relationships:
 Schema and reader vectors for the thirteen `protocol`/`control` operators and
 the `protocol`/`compensation` node: argument layouts, labels, joins,
 progress, binder scope and the compensation checks. Scope: FR-466-AC-1 to
-FR-466-AC-14.
+FR-466-AC-15.
 
 ## Test Procedure
 
@@ -87,6 +87,10 @@ FR-466-AC-14.
 | PA9 | `predicate` naming a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | PA10 | `join any [east]` and read `eastRes` after `Shipments` | `missing_declaration`/`missing-name` (no branch binder escapes a join that is not `all`) |
 | PA11 | a branch body held by `east` also held by `west` | `invalid_semantic_graph` (held twice) |
+| PA14 | `Shipments` joined `predicate` over `[east, west]`, its `function` node with two `boolean` parameters and a `boolean` result | admitted |
+| PA15 | PA14 with a function of one parameter, then of three | `ill_typed`/`type-mismatch` at `predicate`, retaining expected and actual |
+| PA16 | PA14 with the second parameter typed by an integer node | `ill_typed`/`type-mismatch` at `predicate` |
+| PA17 | PA14 with an integer result type | `ill_typed`/`type-mismatch` at `predicate` |
 
 ## Repeat and await
 
@@ -242,4 +246,5 @@ FR-466-AC-14.
     and by a second reference to the protocol, and change with any retargeted
     reference, renamed control, reordered child or changed literal
     (FR-466-AC-13).
+12. PA14 to PA17 behave as listed (FR-466-AC-15).
 Assertions compare typed fields, causes and pointers, never message text.
