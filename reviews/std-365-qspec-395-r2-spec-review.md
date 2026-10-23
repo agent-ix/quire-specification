@@ -43,3 +43,10 @@ Examined, clean:
 ## Verdict
 
 Not mergeable yet. The scope finding from SR-16349 (FND-001) is fixed and all vectors are correct, but FND-001 and FND-002 (medium) should be fixed in this PR. SR-16349 FND-002 (`spec/spec.md` does not list FR-478) is still open. SR-16349 is not yet committed under `reviews/` in this repo.
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Round 1 at b145943e: FR-140 and the FR-322 `scale_reduction` row say "the only exact-numeric conversion that rounds" and name FR-478's text-to-decimal rounding. |
+| FND-002 | fixed | Round 1 at b145943e: FR-140 states the FR-478 spelled-retention exception, FR-478 states it with the `1.5` to (`15`, `1`) example, and FR-478-AC-6 and TC-964 TN-04 add the vector. |
