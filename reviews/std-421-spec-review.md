@@ -36,3 +36,24 @@ Examined, clean:
 ## Verdict
 
 Mergeable: no defects found in this PR's own delta; merge in stack order.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-003 | low | #410's later commit ffc1a2cb adds `Reference<Clock>` with `ref` and `deref`, plus package clock `max` constraints, to FR-415. The temporal-complete admitted-forms list does not name them: there is no mention of `Reference<Clock>` or `deref`. Add them so the layer's admitted forms match FR-415. | proposals/quire-v1/definitions/temporal-complete.md | wrong-requirement |
+
+## Dispositions
+
+Round 1, at 270faa4c.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | \| FR-001-AC-5 \| For each of the six layers, ... |
+| FND-002 | fixed | clock places and clock collections as FR-415 "Clock places" and "Clock collections" define them ... clock reads and resets over clock collections: element and slot selection ... forall/exists ... reset by selection |
+
+Round 2.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-003 | fixed | temporal-complete.md admitted forms now list `Reference<Clock>`, `Option<Reference<Clock>>`, `ref`, `deref` and package clock `max` constraints (with `min` refused `time-invariant-shape`), tied to FR-415 "Clock places" and FR-154-AC-18 |

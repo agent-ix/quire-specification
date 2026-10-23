@@ -44,6 +44,17 @@ the shared grammar's "Probabilistic, timed and real-time forms" section:
   (`self.ts[i].x`, `self.m[k].x`), `forall(e in p: B)` and `exists(e in p: B)`
   over atomic clock constraints, and reset by selection, `self.p[i].x = c` and
   `forall(e in p: P(e) implies e.x = c)`;
+- `Reference<Clock>` and its place operations as FR-415 defines them: a
+  `Reference<Clock>` or `Option<Reference<Clock>>` held by a field, parameter,
+  result, record component or collection element, `ref(p)` naming the clock
+  place `p`, and `deref(r)` as a place expression in a clock constraint or a
+  reset (admitted where `present(r)` is established), with `=` and `!=` over
+  two references as data comparisons;
+- a package clock constraint, a `max c` constraint whose `appliesTo` is `Clock`
+  or an alias of it, as the time invariant `x <= c` on every typed clock place
+  (FR-415 "Clock places"; FR-154-AC-18 for its intake); a `min` constraint on
+  `Clock` is admitted by intake and refused `invalid_timed_model`/
+  `time-invariant-shape` by FR-415;
 - `time invariant when P { ... }` (`time-invariant`);
 - `urgent when P;` and `urgent O;` (`urgent-decl`).
 
