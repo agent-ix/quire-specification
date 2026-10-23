@@ -159,4 +159,3 @@ no evaluation and is carried in the checked package as one node
 ## Status
 
 Proposed complete-V1 source contract for the abstraction relation.
-Implementation and qualification remain tracked separately.

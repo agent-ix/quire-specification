@@ -60,8 +60,10 @@ At negotiation, before any sample is drawn, the provider settles the item
 
 At negotiation the provider also settles `invalid-request` with
 `invalid_capability`/`not-statistical` a request that names the sequential
-method for a mean of a fraction (see "Sequential method"). No engine runs for
-that item, and the disposition is its one terminal accounting record.
+method for a mean of a fraction (see "Sequential method"), or the exact
+binomial method for a mean of a fraction or a long-run fraction (see "Exact
+binomial method"). No engine runs for that item, and the disposition is its
+one terminal accounting record.
 
 While sampling, the provider stops the run and settles the item `unsupported`
 with:
@@ -121,11 +123,50 @@ not Bernoulli, settles `invalid-request` with
 `invalid_capability`/`not-statistical` at negotiation, and the fixed-sample
 method decides that form.
 
+### Exact binomial method (Clopper–Pearson)
+
+The exact binomial method decides a probability bound or a quantile from the
+same fixed sample as the fixed-sample method: it draws Okamoto's
+`N = ⌈ln(1 / min(α', β')) / (2 ι²)⌉` counted samples, computed as above, and
+counts the `k` samples on which the event holds. With `X` a binomial count of
+`N` trials, write `G(k, p) = Pr(X >= k)` and `L(k, p) = Pr(X <= k)` at success
+probability `p`. For a `>= θ` bound the test:
+
+- **accepts** when `G(k, θ) <= β'`;
+- **rejects** when `L(k, θ) <= α'`;
+- is **undecided** when neither holds, or when both hold (possible only when
+  `α' + β' > 1`, because `G(k, θ) + L(k, θ) > 1`).
+
+A `<= θ` bound swaps the two tails: it accepts when `L(k, θ) <= β'` and
+rejects when `G(k, θ) <= α'`. For the strict reduced bound of
+`quantile q of M >= c` (FR-407) the test accepts only when `L(k, q) < β'`, and
+rejects when `G(k, q) <= α'`. Because `G(k, p)` rises and `L(k, p)` falls as
+`p` rises, a test of a `>= θ` bound accepts with probability at most `β'` for
+every `p < θ` and rejects with probability at most `α'` for every `p >= θ`,
+at every `p`, inside the indifference region as well. Its coverage is
+`finite-sample`.
+
+The reported interval is the Clopper–Pearson interval of `k` in `N` at the
+test's two levels. For a `>= θ` bound its lower end is the least `p` with
+`G(k, p) >= β'` and its upper end the greatest `p` with `L(k, p) >= α'`; a
+`<= θ` bound or a strict quantile bound swaps the levels (lower end at `α'`,
+upper end at `β'`). The lower end is 0 when `k = 0` and the upper end is 1
+when `k = N`. Each end is found by bisection over `[0, 1]` at dyadic
+midpoints, 64 halvings, keeping the end outward: the reported lower end is
+the bracket's lower end and the reported upper end its upper end, so the
+reported interval contains the exact one. The decision reads the two tails
+at `θ`, not the interval.
+
+The exact binomial method decides a probability bound or a quantile. A mean
+of a fraction, whose samples are not Bernoulli, and a long-run fraction,
+which has no fixed sample, settle `invalid-request` with
+`invalid_capability`/`not-statistical` at negotiation.
+
 ### Activation
 
 A quantile claim is conditioned on activation. A sample that is not activated
 is drawn and not counted: it advances the trace index and counts toward
-`max_draws`, never toward `N` or the SPRT sum. Sampling cannot observe that
+`max_draws`, never toward `N`, `k` or the SPRT sum. Sampling cannot observe that
 activation has probability 0, the case in which the claim holds vacuously
 (FR-407): such a run draws only non-activated samples until `max_draws` and
 settles `incomplete`, `limit-reached` naming `max_draws`. That is the expected
@@ -178,6 +219,14 @@ a decision that the true values would not make:
   least the true one. The run stops only when this upper bound is at most
   `ι`, and the interval uses it.
 
+- **Exact binomial.** Each tail `G(k, θ)` and `L(k, θ)` is replaced by a
+  lower and an upper bound as stated below. The test accepts or rejects only
+  when the tail's upper bound meets its condition (for the strict quantile
+  bound, when the upper bound of `L(k, q)` is below `β'`). During bisection a
+  midpoint moves the lower end up only when the upper bound of `G` at it is
+  below `β'`, and moves the upper end down only when the upper bound of `L`
+  at it is below `α'`.
+
 The bounds are computed as follows, all in integer arithmetic:
 
 - `ln x` for a rational `x > 0`: write `x = 2^k · y` with `1 <= y < 2`; then
@@ -208,6 +257,20 @@ The bounds are computed as follows, all in integer arithmetic:
   For `δ <= 1/2` the upper end is at least `z_{1−δ}` and within `2^-64` of it;
   for `δ > 1/2` the search returns an upper bound near 0, which is outward-safe
   and not within `2^-64` of the negative quantile.
+
+- a binomial tail at a rational `p` with `0 < p < 1`: each value is held as
+  a lower and an upper binary floating bound `m · 2^e`, `m` a non-negative
+  integer of at most `P = 96 + ⌈log2(N + 1)⌉` bits and `e` an unbounded
+  integer, and every operation rounds the lower bound down and the upper
+  bound up to `P` bits. The term `t_0 = (1 − p)^N` is computed by squaring
+  and multiplying, and `t_(i+1) = t_i · (N − i) · p / ((i + 1) · (1 − p))`;
+  `G(k, p)` is the sum of `t_k` to `t_N` and `L(k, p)` the sum of `t_0` to
+  `t_k`, added in index order. With at most `8(N + 1)` roundings of relative
+  size `2^(1 − P)`, each bound is within a relative `2^-90` of the true tail,
+  so neither bound underflows to 0 and their ratio stays near 1 for every
+  `N`. At `p = 0` and `p = 1` the tails are exact: `G(k, 0)` is 1 when
+  `k = 0` and 0 otherwise, `G(k, 1)` is 1, and symmetrically for `L`. Each
+  tail evaluation charges its `N + 1` terms to the clause meter.
 
 The decision is a function of the counts alone and is identical on every
 platform.
@@ -261,6 +324,8 @@ is a new, independent measurement of the same obligation.
 | FR-408-AC-10 | A request naming the sequential method for a mean of a fraction settles `invalid-request` at negotiation with `invalid_capability`/`not-statistical`, and no sample is drawn. | Test (TC-355) |
 | FR-408-AC-11 | A run in which the claim evaluates undefined on a drawn sample stops at that sample and settles `measured: rejected`, cause `undefined-evaluation` naming the test index, trace index, position, state-key digest, expression locus and catalogued reason, with that sample as its first sampled witness, which replays to the same undefined value. | Test (TC-359) |
 | FR-408-AC-12 | The regenerative half-width is the Chow–Robbins half-width `z · √(S² + 1/n) / (L̄ · √n)`, rounded outward, and is positive when the sample variance is 0: on a fixture whose every cycle is identical (length 1, `P` holding), the half-width is `z / n`, the run does not stop at `min_cycles` 1000, and with `z = z_{0.99} ≈ 2.3263478740` and `ι = 1/5000` it stops at exactly `n = 11632`, the least `n` with `z / n <= ι`. | Test (TC-356) |
+| FR-408-AC-13 | With `α = β = 1/100`, `m = 1`, `ι = 1/10` and `probability >= 0.9`, the exact binomial method draws `N = 231` counted samples, as Okamoto's method does. Of `k` holding samples, it accepts for `k >= 219` (`G(219, 9/10) ≈ 0.006343`, `G(218, 9/10) ≈ 0.012772`), rejects for `k <= 196` (`L(196, 9/10) ≈ 0.008772`, `L(197, 9/10) ≈ 0.014642`), and is undecided for `197 <= k <= 218`, while Okamoto's method on the same counts accepts only at `k = 231` and rejects only for `k <= 184`. At `k = 219` the exact Clopper–Pearson ends, each truncated after 20 digits, are `0.90351472792271070929…` (lower) and `0.97621175445884490995…` (upper); the reported lower end is at most the exact lower end and within `2^-64` of it, and the reported upper end is at least the exact upper end and within `2^-64` of it; the coverage is `finite-sample`. | Test (TC-355) |
+| FR-408-AC-14 | A request naming the exact binomial method for a mean of a fraction or a long-run fraction settles `invalid-request` at negotiation with `invalid_capability`/`not-statistical`, and no sample is drawn. Each binomial tail the method reads is a pair of binary floating bounds within a relative `2^-90` of the true tail, and a tail whose exact value lies below its level by less than the rounding error, so that its upper bound exceeds the level, gives undecided; two runs on different platforms give identical counts, tail bounds, interval ends and decisions. | Test (TC-355) |
 
 ## Dependencies
 

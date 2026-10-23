@@ -23,6 +23,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-342
     type: references
+  - target: ix://agent-ix/quire-specification/FR-481
+    type: references
 ---
 
 # FR-370: Checked-package temporal clause body and temporal operation identities
@@ -113,7 +115,10 @@ where `interval` is one of:
   rational is, and `lower_end` and `upper_end` are each `closed` or `open`,
   so `[a, b]`, `(a, b]`, `[a, b)` and `(a, b)` are four distinct members
   ([FR-255](../temporal/FR-255-bounded-temporal-interval.md)). The upper
-  bound is always present: a timed interval is finite. `lower <= upper`,
+  bound is present, a timed interval being finite, except in a hybrid claim
+  ([FR-481](FR-481-checked-package-hybrid-model-nodes.md) "Hybrid claims")
+  under `quire.temporal.timed/v1`, where `upper` `null` with `upper_end`
+  `open` is the interval `[q, *]`. `lower <= upper`,
   and `lower < upper` when either end is `open`.
 
 An unbounded operator carries `{kind: "temporal_interval", interval: null}`.
@@ -137,7 +142,9 @@ so `fair Op` and `fair weak whole Op` encode identically.
 
 ## Fairness resolution
 
-A fairness member's `name` resolves by [FR-322](FR-322-checked-package-artifact.md)
+A hybrid claim's fairness members name hybrid transitions and resolve by
+[FR-481](FR-481-checked-package-hybrid-model-nodes.md) "Hybrid claims"; every
+other fairness member's `name` resolves by [FR-322](FR-322-checked-package-artifact.md)
 "Model-owned members" steps 2 and 3 among the **effective** operation
 members of its `declaration` node, the set
 [FR-362](../../functional/temporal/FR-362-apply-fairness-constraints.md)
@@ -192,8 +199,10 @@ argument fit the clause's `temporal_profile` law as this table states:
 | `quire.temporal.timed/v1` | `null`, timed `[a,b]` with either end open or closed | empty or non-empty |
 | `quire.temporal.event-position.false-extension/v1`, `quire.temporal.fixed-sample.false-extension/v1`, `quire.temporal.timestamped-event.finite-window/v1` | integer `[a,b]` | empty |
 
-Under `quire.temporal.timed/v1` a lower-bounded `[a,*]` interval and an
-integer-form interval are not admitted: a timed interval has a finite upper
+A hybrid claim (FR-481) fits this table, with one addition: under
+`quire.temporal.timed/v1` it also admits the timed `[q, *]`, `upper` `null`
+with `upper_end` `open`. Under `quire.temporal.timed/v1` a lower-bounded
+`[a,*]` interval and an integer-form interval are not admitted: a timed interval has a finite upper
 bound (FR-255) and its bounds are exact rationals. The timed form is
 admitted under no other profile.
 

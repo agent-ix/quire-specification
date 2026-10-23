@@ -72,4 +72,3 @@ package.
 ## Status
 
 Accepted complete-V1 boundary value contract for the union member key.
-Implementation and qualification remain tracked separately.

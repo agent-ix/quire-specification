@@ -35,12 +35,15 @@ tool-failure or `incomplete` settlement of each affected item.
 
 ## Behavior
 
-A plugin is either a compile-time Rust implementation of the provider trait,
-linked into the binary, or an executable that runs as its own
+A plugin is a third-party provider: either a compile-time Rust
+implementation of the provider trait, linked into the binary, or an executable that runs as its own
 operating-system process and speaks the `quire.plugin-wire/v1` wire
 ([FR-462](FR-462-speak-the-plugin-wire.md)). The host loads no dynamic
 library. An installed plugin is a trusted program, like any program the user
-installs, and runs with the user's own authority.
+installs, and runs with the user's own authority. A first-party provider,
+one the producer runs as its own engine, such as a QSL engine or the Kani
+backend that `quire-contract-codegen` implements, registers through the same
+provider boundary, linked or as a process, and is not a plugin.
 
 ## Provider boundary
 
