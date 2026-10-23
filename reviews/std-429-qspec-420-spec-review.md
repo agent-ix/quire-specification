@@ -81,3 +81,4 @@ Round 1, against head e3bc134b. Gates at e3bc134b: `quire validate` exactly 86 f
 | FND-001 | fixed | - |
 | FND-002 | fixed | - |
 | FND-003 | fixed | - |
+| FND-004 | fixed | - |
