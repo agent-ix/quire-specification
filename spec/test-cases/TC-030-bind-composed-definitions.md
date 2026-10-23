@@ -57,7 +57,8 @@ payload wire and require unsupported-wire refusal before semantic admission.
 The outer feature set cannot count as evidence for implemented family support.
 
 A predicate-only package has `declaration.predicate` without `family.state`;
-a state-only package has `family.state` without `family.temporal`. Add the known
+a state-only package has `family.state` without `family.temporal`, and so
+does a package whose only state clause is a state constraint. Add the known
 but absent temporal feature to that state-only package: semantic feature-set
 validation must reject it even though it is not an unknown-feature spelling.
 

@@ -4274,7 +4274,9 @@ fn clause_refusal(
     let kind = body["operation"]["member"]["clause"]
         .as_str()
         .unwrap_or_default();
-    let admitted_anchor: &[(&str, &str)] = if kind == "invariant" {
+    // FR-341: a state constraint is anchored and bound as an invariant.
+    let context_anchored = matches!(kind, "invariant" | "constraint");
+    let admitted_anchor: &[(&str, &str)] = if context_anchored {
         &ANCHOR_CONTEXTS
     } else {
         &[("state", "operation_anchor")]
@@ -4285,7 +4287,7 @@ fn clause_refusal(
         nodes,
         admitted_anchor,
     )?;
-    let context = if kind == "invariant" {
+    let context = if context_anchored {
         anchor["node_id"].clone()
     } else {
         anchor_binding(anchor, "context")["target"].clone()
@@ -4314,12 +4316,10 @@ fn clause_refusal(
     {
         return Err(ineligible);
     }
-    if kind == "invariant" && joined.len() != 1 {
+    if context_anchored && joined.len() != 1 {
         return Err(ineligible);
     }
-    if kind != "invariant"
-        && let Some(model) = model
-    {
+    if !context_anchored && let Some(model) = model {
         let operation_name = anchor_binding(anchor, "operation")["value"]
             .as_str()
             .unwrap_or_default();
@@ -10283,6 +10283,91 @@ fn tc_233_state_step_joins_anchors_then_clauses_with_their_recorded_cause() {
     }
 }
 
+/// FR-341-AC-13 (TC-233 CN-01 to CN-03): a state constraint is a
+/// `state`/`state_clause` node whose kind member's `clause` is `constraint`;
+/// it validates against the V2 schema, is anchored and bound as an
+/// invariant, and differs in node id from the invariant with its body.
+#[trace("TC-233", "FR-341-AC-13")]
+#[test]
+fn tc_233_a_state_constraint_is_checked_as_an_invariant() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
+    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    let reference =
+        |b: &str| json!({"term": "reference", "target": node_ref_digest(&clause_digest(b))});
+    let to_constraint = |body: &mut Value| {
+        body["operation"]["member"]["clause"] = json!("constraint");
+    };
+    let read = |candidate: &Value| {
+        let mut candidate = candidate.clone();
+        let renames = rekey_stale_nodes(&mut candidate);
+        (
+            read_package_semantics(&candidate, &catalog),
+            renames,
+            candidate,
+        )
+    };
+
+    // CN-01: admitted, with another node id than the invariant's.
+    let constrained = edited_clause(&package, "invariant", to_constraint);
+    let (admitted, _, rekeyed) = read(&constrained);
+    assert!(
+        schema.is_valid(&rekeyed),
+        "a constraint clause validates against the V2 schema"
+    );
+    assert!(admitted.is_ok(), "a constraint is admitted: {admitted:?}");
+    let invariant_id = package["semantic_graph"]["nodes"][clause_node_index(&package, "invariant")]
+        ["node_id"]
+        .clone();
+    let constraint_id = rekeyed["semantic_graph"]["nodes"]
+        [clause_node_index(&rekeyed, "constraint")]["node_id"]
+        .clone();
+    assert_ne!(
+        invariant_id, constraint_id,
+        "the kind member is part of the node's identity"
+    );
+
+    // CN-02: a constraint anchors at its type's node, never an operation anchor.
+    let wrong = edited_clause(&package, "invariant", |body| {
+        to_constraint(body);
+        body["arguments"][1] = reference("anchor");
+    });
+    match read(&wrong) {
+        (Err(ReadRefusal::State(refusal, locus)), renames, _) => {
+            assert_eq!(refusal, StateRefusal::MalformedDeclaration);
+            assert_eq!(
+                locus,
+                renamed_locus(&renames, &node_ref_digest(&clause_digest("anchor")))
+            );
+        }
+        other => panic!(
+            "a constraint anchored at an operation anchor refuses: {:?}",
+            other.0
+        ),
+    }
+
+    // CN-03: a constraint binds `self` alone.
+    let wrong = edited_clause(&package, "invariant", |body| {
+        to_constraint(body);
+        body["arguments"][0]["members"]
+            .as_array_mut()
+            .expect("members")
+            .push(reference("parameter"));
+    });
+    match read(&wrong) {
+        (Err(ReadRefusal::State(refusal, locus)), _, rekeyed) => {
+            assert_eq!(refusal, StateRefusal::OperatorIneligible);
+            assert_eq!(
+                locus,
+                rekeyed["semantic_graph"]["nodes"][clause_node_index(&rekeyed, "constraint")]["node_id"]
+            );
+        }
+        other => panic!(
+            "a constraint binding a second parameter refuses: {:?}",
+            other.0
+        ),
+    }
+}
 /// A minimal test-only domain package and model-declaration-node mapping,
 /// keyed to the published clause package's own node digests (FR-322's
 /// "Model-owned members" steps 2/3 shape, the same one TC-280's standalone
