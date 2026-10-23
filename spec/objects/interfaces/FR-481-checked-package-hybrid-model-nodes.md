@@ -56,11 +56,13 @@ process provider alike.
 ### Hybrid terms
 
 - An invariant, a rate, a guard and a reset value is a term node: an
-  `expression` node whose body root is an application, or a `value`/`literal`
-  node. A numeric constant is a `value`/`literal` node typed
-  `scalar_type`/`rational`, `value_kind` `rational`, whose `value` is the
-  exact rational in the canonical magnitude spelling FR-322 "Scalar literal
-  values" gives a `quantity` (`0`, `-3`, `1/2`).
+  `expression` node whose body root is an application, a `value`/`literal`
+  node, or, for a rate, a reset value or an operand, one of the model's own
+  continuous variable `value`/`parameter` nodes, so `x' = v` and the reset
+  `x = v` reference `v`'s node directly. A numeric constant is a
+  `value`/`literal` node typed `scalar_type`/`rational`, `value_kind`
+  `rational`, whose `value` is spelled as FR-322 "Scalar literal values"
+  spells a `rational` (`0`, `-3`, `1/2`).
 - A term applies only the catalogued operations of the forms QSL FR-447
   admits: `quire.op.rational.negate`, `add`, `sub`, `mul` and `div`;
   `quire.op.rational.lt`, `le`, `eq`, `ge` and `gt`; and
@@ -79,7 +81,11 @@ process provider alike.
     variable order, each the aggregate `[binding("parameter", reference),
     binding("class", literal)]`: `parameter` references the variable's
     `value`/`parameter` node and `class` is a text literal, `clock` or
-    `hybrid` (FR-193 "Source form and the clock line");
+    `hybrid` (FR-193 "Source form and the clock line"). The class is the
+    producer's classification of the source rate spellings, carried because
+    the nodes cannot re-derive it: `t' = 1` and `t' = rational(2, 2)` lower
+    to the same literal node, a clock and hybrid dynamics respectively. It
+    enters the node key like every other member;
   - `modes` — an aggregate of one `reference` per mode, in declared order,
     to its `hybrid`/`hybrid_mode` node. The first is the initial mode.
 - **declaration** — `{qualified_name}`, the declaration's name.
@@ -145,10 +151,17 @@ variable, so a transition into an earlier mode adds no graph cycle.
 - A **hybrid claim** is a `temporal`/`temporal_clause` node whose `over`
   argument references a `value`/`parameter` node whose `semantic_type` is a
   `hybrid`/`hybrid_model` node: the claim's **model**.
-- Its clock argument is the text `model-time`, its activation is `origin`,
-  and its captures and fairness arguments are empty. Its formula is the
-  FR-370 formula nodes of the claim's body; an interval bound counts seconds
-  and takes FR-370's integer form.
+- Its `temporal_profile` law is the profile the claim's `using` alias
+  selects, any profile FR-370 admits. Its clock argument is the text
+  `model-time`, its activation is `origin`, and its captures and fairness
+  arguments are empty. Its formula is the FR-370
+  formula nodes of the claim's body; `true` and `false` are
+  `quire.op.temporal.true` and `quire.op.temporal.false`, and every other
+  `holds(e)` is `quire.op.temporal.holds` over `e`'s Boolean term node. An
+  interval bound counts seconds, and each interval takes the form FR-370
+  "Placement and profile fit" admits under the claim's profile: the integer
+  form under the integer profiles, and the timed form in exact rational
+  seconds under `quire.temporal.timed/v1`.
 - Each `holds` operand is a Boolean term node, and a claim's read `h.x` of
   the continuous variable `x` is a `reference` to `x`'s `value`/`parameter`
   node, the node the model's `variables` names.
@@ -176,6 +189,14 @@ key.
 
 ## Reader order
 
+Strict wire validation precedes every body step. The published schema fixes
+each `hybrid` body's layout: the binding names and their order, the members
+of each `variables` and `resets` entry, the literal kinds of `target`,
+`variable` and `class`, the class values `clock` and `hybrid`, at least one
+mode and one rate, and each form's occurrence roles. A node outside it
+refuses `malformed_wire` at the member's pointer, so no layout defect
+reaches this step.
+
 The hybrid step is a body step of
 [FR-322](FR-322-checked-package-artifact.md) "Body steps": it runs after the
 step-relation step and before the protocol step. Mode names are declared
@@ -185,52 +206,48 @@ every `hybrid`/`hybrid_model` node in ascending node-id digest order. For one
 model, the checks run in this order and the first failing check is its
 defect; the locus is the binding or target named:
 
-1. **Model shape.** The body is the aggregate of exactly `variables` and
-   `modes` in that order, each `variables` entry exactly `parameter` and
-   `class` in that order, and `modes` holds one or more references, each
-   to a distinct node. Else `invalid_semantic_graph` at the first binding that
-   breaks the layout.
+1. **Modes listed once.** A `modes` reference to a node an earlier entry
+   references refuses `invalid_semantic_graph` at the later entry.
 2. **Variables**, in variable order: a `parameter` target that is not a
    `value`/`parameter` node typed `scalar_type`/`rational` whose level is the
    entry's position, or whose name an earlier entry's target carries, refuses
-   `invalid_model_binding`/`malformed-declaration` at the target; a `class`
-   other than `clock` or `hybrid` refuses `invalid_package`/`invalid-value`
-   at the class literal.
+   `invalid_model_binding`/`malformed-declaration` at the target.
 3. **Modes**, in body order: a target that is not a `hybrid`/`hybrid_mode`
    node whose `qualified_name` is the model's with one segment appended
    refuses `invalid_model_binding`/`malformed-declaration` at the target.
    Then, for each mode in body order:
-   1. **Shape.** The body is the aggregate of exactly `invariant`, `rates`
-      and `transitions` in that order, else `invalid_semantic_graph` at the
-      first binding that breaks the layout; `rates` holding a number of
-      entries other than the model's number of variables refuses
+   1. **Rate count.** `rates` holding a number of entries other than the
+      model's number of variables refuses
       `invalid_model_binding`/`malformed-declaration` at `rates`.
    2. **Terms.** An `invariant` target that is not an `expression` or
       `value`/`literal` node typed `scalar_type`/`boolean` refuses
-      `ill_typed`/`non-boolean-root`; a rate target that is not one typed
-      `scalar_type`/`rational` refuses `ill_typed`/`type-mismatch`; a
-      `transitions` target that is not a `hybrid`/`hybrid_transition` node
-      refuses `invalid_model_binding`/`malformed-declaration`.
-   3. **Transitions**, in body order: the body is the aggregate of exactly
-      `target`, `guard` and `resets` in that order, each `resets` entry
-      exactly `variable` and `value`, else `invalid_semantic_graph`; a
-      `target` that is not less than the model's number of modes, or a reset
-      `variable` that is not less than its number of variables, refuses
-      `missing_declaration`/`missing-name`; a `guard` target that is not a
-      term node typed `scalar_type`/`boolean` refuses
-      `ill_typed`/`non-boolean-root`; a second reset entry for one variable
-      refuses `invalid_package`/`conflicting-definition`, naming both
-      entries; a reset `value` target that is not a term node typed
-      `scalar_type`/`rational` refuses `ill_typed`/`type-mismatch`.
-4. **Reads.** Every `value`/`parameter` node in the dependency closure of
-   an invariant, rate, guard or reset value is one of the model's variable
-   nodes, else `missing_declaration`/`missing-name` at the binding that
-   references that term node.
+      `ill_typed`/`non-boolean-root`; a rate target that is neither such a
+      node typed `scalar_type`/`rational` nor one of the model's variable
+      nodes refuses `ill_typed`/`type-mismatch`; a `transitions` target that
+      is not a `hybrid`/`hybrid_transition` node refuses
+      `invalid_model_binding`/`malformed-declaration`.
+   3. **Transitions**, in body order: a `target` that is not less than the
+      model's number of modes, or a reset `variable` that is not less than
+      its number of variables, refuses `missing_declaration`/`missing-name`;
+      a `guard` target that is not a term node typed `scalar_type`/`boolean`
+      refuses `ill_typed`/`non-boolean-root`; a second reset entry for one
+      variable refuses `invalid_package`/`conflicting-definition`, naming
+      both entries; a reset `value` target that is neither a term node typed
+      `scalar_type`/`rational` nor one of the model's variable nodes refuses
+      `ill_typed`/`type-mismatch`.
+4. **Reads.** Every `value`/`parameter` node that an invariant, rate, guard
+   or reset value is, or holds in its dependency closure, is one of the
+   model's variable nodes, else `missing_declaration`/`missing-name` at the
+   binding that references that term.
 5. **Classes.** A `clock` variable whose rate in some mode is not a
-   `value`/`literal` node of the rational one refuses
-   `invalid_package`/`invalid-value` at its class literal; a model with no
-   `hybrid` variable refuses `invalid_package`/`invalid-value` at
-   `variables` (FR-193-AC-7: such a declaration is a timed model).
+   `value`/`literal` node of value `1` refuses
+   `invalid_package`/`invalid-value` at its class literal, the first such
+   variable in variable order; then a model with no `hybrid` variable
+   refuses `invalid_package`/`invalid-value` at `variables`. The reader
+   checks no converse: a `hybrid` variable whose every rate is the literal
+   `1` is admitted, since its source rate may be `rational(2, 2)`. The class
+   is producer-attested, and the reader does not re-derive the clock line
+   of FR-193.
 
 Once every model's own checks hold, a `hybrid`/`hybrid_mode` node no model
 references, and a `hybrid`/`hybrid_transition` node no mode references,
@@ -238,19 +255,21 @@ refuses `invalid_semantic_graph` at that node, in ascending node-id digest
 order. Then the step visits every hybrid claim in ascending node-id digest
 order:
 
-6. **Claim form.** A clock other than `model-time` refuses
-   `invalid_package`/`invalid-value` at `/body/arguments/1`; an activation
-   other than `origin` refuses `invalid_package`/`invalid-value` at
-   `/body/arguments/2`; a non-empty captures or fairness argument refuses
-   `invalid_semantic_graph` at that argument.
+6. **Claim form.** A clock other than `model-time` refuses `invalid_package`/`invalid-value` at
+   `/body/arguments/1`; an activation other than `origin` refuses
+   `invalid_package`/`invalid-value` at `/body/arguments/2`; a non-empty
+   captures or fairness argument refuses `invalid_semantic_graph` at that
+   argument. The claim's profile and the fit of each interval to it are
+   FR-370's temporal step's checks, which run first; this step adds no
+   profile check.
 7. **Operators.** A formula node the claim's formula reaches that applies
    an operator other than `holds`, `true`, `false`, `not`, `and`, `or`,
-   `implies`, `always`, `eventually`, `until` and `release`, or whose
-   interval is not `null` or of the integer form, refuses
+   `implies`, `always`, `eventually`, `until` and `release` refuses
    `ill_typed`/`operator-ineligible` at that formula node.
-8. **Claim reads.** Every `value`/`parameter` node in the dependency
-   closure of a `holds` operand is a variable node of the claim's model,
-   else `missing_declaration`/`missing-name` at that `holds` formula node.
+8. **Claim reads.** Every `value`/`parameter` node that a `holds` operand
+   is, or holds in its dependency closure, is a variable node of the claim's
+   model, else `missing_declaration`/`missing-name` at that `holds` formula
+   node.
 
 A `dependencies` list that differs from the body's targets is FR-322's
 graph-shape refusal, `invalid_semantic_graph` at the node's `/dependencies`,
@@ -259,14 +278,16 @@ and a retained key that is not the digest of its preimage is FR-322's
 
 ## Hybrid trace correspondence
 
-A reader that holds a package's hybrid nodes checks a `HybridTrace`
-(FR-193 "Hybrid trace") against the claim's model: a trace `mode` names the
-last `qualified_name` segment of one of its `hybrid_mode` nodes, `start` is
-in the first mode, a jump's `transition` is a position in the previous
-state's mode's `transitions`, the mode a jump reaches is that transition's
-`target`, and the `enclosure` keys are the names of the model's variable
-nodes. That reader is the producer serving the item in process or a process
-provider serving it from the package bytes.
+The reader of a hybrid item's result entry, the host that requested the
+item and holds its checked model and these nodes, checks every `HybridTrace`
+(FR-193 "Hybrid trace") against the claim's model, whichever provider
+returned it, in process or in a process of its own: a trace `mode` names the
+last `qualified_name` segment of one of the model's `hybrid_mode` nodes,
+`start` is in the first mode, a jump's `transition` is a position in the
+previous state's mode's `transitions`, the mode a jump reaches is that
+transition's `target`, and the `enclosure` keys are the names of the model's
+variable nodes. A process provider reads these nodes to serve the item; its
+own reading does not stand for the host's check.
 
 ## Acceptance Criteria
 
@@ -275,10 +296,12 @@ provider serving it from the package bytes.
 | FR-481-AC-1 | QSL FR-447's `Braking` produces one `hybrid`/`hybrid_model` node with `declaration` `[Braking]`, its `SourceOwner` and one `declaration` occurrence, whose `variables` reference the `value`/`parameter` nodes of `v`, `a` and `t` at levels 0, 1 and 2, typed `scalar_type`/`rational`, classed `hybrid`, `hybrid` and `clock`, and whose `modes` reference `[Braking, Moving]` and `[Braking, Stopped]` in that order; `Moving`'s `rates` reference the nodes of `-a`, `0` and `1`, and its one transition node has `target` 1, a guard referencing the node of `v = 0` and one reset `(0, 0)`, no `declaration` and an `expression` occurrence; every `hybrid` node is its own `semantic_type` and its `dependencies` are exactly its body's targets. | Test (TC-966) |
 | FR-481-AC-2 | Each `hybrid` node's key is the digest of its `quire.structural-node/v1` preimage, which meets the published `HybridNode` preimage schema, and every term node's key is the digest of its own FR-322 preimage. | Test (TC-966) |
 | FR-481-AC-3 | Replacing `Moving`'s rate of `v` by `-(2 * a)` and rekeying changes the keys of `Moving`, `Braking`, the `over` parameter typed by `Braking` and `SlowEnough`'s clause node; rekeying unchanged nodes keeps every key. | Test (TC-966) |
-| FR-481-AC-4 | With `dependencies`, keys and `package_id` rebuilt after each edit, the reader refuses: `variables` and `modes` swapped, `invalid_semantic_graph`; a variable typed `scalar_type`/`integer` or at the wrong level, `invalid_model_binding`/`malformed-declaration`; a `class` `continuous`, `invalid_package`/`invalid-value`; `Moving` with two rates, `invalid_model_binding`/`malformed-declaration` at `rates`; an integer-typed invariant, `ill_typed`/`non-boolean-root`; a Boolean rate, `ill_typed`/`type-mismatch`; `target` 2, `missing_declaration`/`missing-name`; two resets of `v`, `invalid_package`/`conflicting-definition` naming both; a guard reading a parameter `w` that is no variable, `missing_declaration`/`missing-name`; `t` classed `clock` with rate `2 - 1` in `Stopped`, and every variable classed `clock`, `invalid_package`/`invalid-value`; a second mode node `[Braking, Moving]`, `ambiguous_declaration`/`ambiguous-name`; an unreferenced transition node, `invalid_semantic_graph`. | Test (TC-966) |
-| FR-481-AC-5 | A transition node with a `declaration`, a mode node whose occurrence has role `claim`, a model body with `modes` before `variables`, a `class` `continuous`, a transition whose `target` is a reference, a mode with no rates, a `hybrid` node of form `hybrid_flow`, and a model node without its `owner` each fail the published `SemanticNode` schema. | Test (TC-966) |
-| FR-481-AC-6 | `SlowEnough` is one `temporal`/`temporal_clause` node whose `over` references the `h` parameter node typed by `Braking`'s model node, with clock `model-time`, activation `origin` and a formula `always [0, 10] holds(v < 30)` whose `holds` operand reads `v`'s variable node; the reader refuses its clock `model-steps` and an `each` activation `invalid_package`/`invalid-value`, a `once` formula node `ill_typed`/`operator-ineligible`, and a `holds` operand reading `h` itself `missing_declaration`/`missing-name`. | Test (TC-966) |
-| FR-481-AC-7 | A process provider handed the v2 bytes of a package holding `Braking` and `SlowEnough` reads the model and the claim from those nodes alone, derives horizon 10, and checks a `HybridTrace` against them: a trace naming `Moving` then `Stopped` by `transition` 0 is kept, and one naming mode `Halted` refuses `invalid_result`/`invalid-value`. | Test (TC-966) |
+| FR-481-AC-4 | With `dependencies`, keys and `package_id` rebuilt after each edit, the reader refuses: a variable typed `scalar_type`/`integer` or at the wrong level, `invalid_model_binding`/`malformed-declaration`; `Moving` with a fourth rate, `invalid_model_binding`/`malformed-declaration` at `rates`; an integer-typed invariant, `ill_typed`/`non-boolean-root`; a Boolean rate, `ill_typed`/`type-mismatch`; `target` 2, `missing_declaration`/`missing-name`; two resets of `v`, `invalid_package`/`conflicting-definition` naming both; a guard reading a parameter `w` that is no variable, `missing_declaration`/`missing-name`; `t` classed `clock` with rate `2 - 1` in `Stopped`, `invalid_package`/`invalid-value` at `t`'s class literal; every variable classed `clock`, the same at `v`'s class literal, since `v`'s rate `-a` is not the literal `1`; a one-mode model `Timer` whose only variable `t` is classed `clock` with rate `1` and invariant `t <= 5`, the same at `variables`; `modes` listing `Moving` twice, `invalid_semantic_graph` at the second entry; a second mode node `[Braking, Moving]`, `ambiguous_declaration`/`ambiguous-name`; an unreferenced transition node, `invalid_semantic_graph`. | Test (TC-966) |
+| FR-481-AC-5 | A transition node with a `declaration`, a mode node whose occurrence has role `claim`, a model body with `modes` before `variables`, a `class` `continuous`, a transition whose `target` is a reference, a mode with no rates, a `hybrid` node of form `hybrid_flow`, and a model node without its `owner` each fail the published `SemanticNode` schema, and a reader refuses each `malformed_wire` at strict wire validation, before the hybrid step. | Test (TC-966) |
+| FR-481-AC-6 | `SlowEnough` is one `temporal`/`temporal_clause` node whose `temporal_profile` law is `quire.temporal.infinite-trace/v1`, whose `over` references the `h` parameter node typed by `Braking`'s model node, with clock `model-time`, activation `origin`, empty captures and fairness, and a formula whose root is `quire.op.temporal.always` with interval `[0, 10]` over a `quire.op.temporal.holds` node whose operand is the node of `v < 30`, which reads `v`'s variable node. | Test (TC-966) |
+| FR-481-AC-7 | A process provider handed the v2 bytes of a package holding `Braking` and `SlowEnough` reads the model and the claim from those nodes alone and derives horizon 10. The host that reads its result entry checks the returned `HybridTrace` against `Braking`: a trace naming `Moving` then `Stopped` by `transition` 0 is kept on the `inconclusive` record, and one naming mode `Halted` is refused by the host `invalid_result`/`invalid-value` at its `mode`. | Test (TC-966) |
+| FR-481-AC-12 | `SlowEnough` written under a profile alias selecting `quire.temporal.timed/v1`, its interval in FR-370's timed form `[0, 10]` with both ends closed in exact rational seconds, is admitted with the `timed/v1` law, as it is under `quire.temporal.infinite-trace/v1` in the integer form; and a `holds` operand reading `h` itself refuses `missing_declaration`/`missing-name` at the `holds` node. | Test (TC-966) |
+| FR-481-AC-13 | `positive-all-families.json` carries the `hybrid` tag as the model `Tank` with variables `x` and `y`, both classed `hybrid`, and one mode `Filling` whose invariant and transition guard are the Boolean literal `true`, whose rate of `x` is a reference to `y`'s variable node, whose rate of `y` is the rational literal `1`, and whose one transition resets `x` to a reference to `y`'s variable node; the full reader admits the package, so a bare-variable rate and reset value and a `hybrid` variable whose every rate is the literal `1` are each admitted. | Test (TC-966) |
 
 ## Published artifacts
 
@@ -286,7 +309,8 @@ provider serving it from the package bytes.
 the forms `hybrid_model`, `hybrid_mode` and `hybrid_transition` and their
 closed body shapes and occurrence roles; `node-identity-preimage.schema.json`
 defines the closed `HybridNode` preimage; `hybrid-node-vectors.json` holds
-the `Braking` and `SlowEnough` nodes and the schema refusals.
+the `Braking` and `SlowEnough` nodes and the schema refusals; and
+`fixtures/positive-all-families.json` carries the `Tank` model.
 
 ## Dependencies
 
