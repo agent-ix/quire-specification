@@ -440,8 +440,8 @@ boundary.
   refusal, the reader runs the body steps in this one order, each over its
   own node forms and each reporting before the next starts: the state-graph
   step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
-  the terminal step (FR-476), the step-relation step (FR-477) and the
-  protocol step (FR-464). Each body artifact's "Reader order" fixes the
+  the terminal step (FR-476), the step-relation step (FR-477), the
+  protocol step (FR-464) and the schedulability step (FR-482). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
 - derived-shape key stage — after the application-node key refusal above and
   before any declaration, frame, state or operation refusal, the reader
@@ -578,8 +578,9 @@ boundary.
   [FR-466](FR-466-checked-package-protocol-control-bodies.md),
   [FR-469](FR-469-checked-package-extension-nodes.md),
   [FR-475](FR-475-checked-package-state-graph-claim-body.md),
-  [FR-476](FR-476-checked-package-model-terminal-declaration-body.md) and
-  [FR-477](FR-477-checked-package-step-relation-claim-body.md). For example:
+  [FR-476](FR-476-checked-package-model-terminal-declaration-body.md),
+  [FR-477](FR-477-checked-package-step-relation-claim-body.md) and
+  [FR-482](FR-482-checked-package-schedulability-claim-body.md). For example:
 
   | Node | `dependencies` |
   | --- | --- |

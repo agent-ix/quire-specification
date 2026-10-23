@@ -915,12 +915,14 @@ urgent-decl    = 'urgent', ident, ( 'when', block | qualified-name ), ';' ;
 type-ref       =/ 'Clock' ;
 timed-interval = ( '[' | '(' ), quantity-literal, ',', quantity-literal, ( ']' | ')' ) ;
 
-taskset-decl   = 'taskset', ident, '{', task, { task }, '}' ;
-task           = 'task', ident, ( 'periodic' | 'sporadic' ), quantity-literal,
-                 'deadline', quantity-literal, 'wcet', quantity-literal,
-                 [ 'priority', uint ], [ 'jitter', quantity-literal ],
-                 [ 'blocking', quantity-literal ],
-                 ( 'lo' | 'hi', 'wcet_hi', quantity-literal ), ';' ;
+taskset-decl   = 'taskset', ident, '{', { task }, '}' ;
+task           = 'task', ident, ( 'periodic' | 'sporadic' ), signed-quantity,
+                 'deadline', signed-quantity, 'wcet', signed-quantity,
+                 [ 'priority', uint ], [ 'jitter', signed-quantity ],
+                 [ 'blocking', signed-quantity ],
+                 ( 'lo', [ 'wcet_hi', signed-quantity ]
+                 | 'hi', 'wcet_hi', signed-quantity ), ';' ;
+signed-quantity = [ '-' ], quantity-literal ;
 release-decl   = 'release', ident, '.', ident, 'on', qualified-name, ';' ;
 schedulability-clause
                = 'schedulable', ident, 'on', ident, 'under', policy, ';'
@@ -969,6 +971,10 @@ In `schedulability-clause`, the first `ident` names the claim and the second
 the task set. A clock read in `clock-bound` or in an operation's precondition
 compares a `Clock` field with a `quantity-literal` of the time dimension. In
 `task`, `wcet` is `C`, or `C(LO)` for a `hi` task whose `wcet_hi` is `C(HI)`.
+`taskset-decl` admits a body with no task, `signed-quantity` a negative time
+value and a `lo` task a `wcet_hi`, so the checker, not the recognizer, refuses
+such a task set with `invalid_timed_model`/`invalid-task-set`
+([FR-419](../../spec/functional/analysis/FR-419-analyze-task-set-schedulability.md)).
 A form whose facet is not selected receives `unsupported_construct`.
 
 `Clock` in a `type-ref` is a keyword of the facet that admits the timed forms,
