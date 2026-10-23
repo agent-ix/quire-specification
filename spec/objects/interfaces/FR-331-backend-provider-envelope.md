@@ -311,8 +311,10 @@ package is not emitted, and SHALL write no request frame for it.
 ## Backend tool
 
 Every backend descriptor SHALL carry `tool`, the closed object
-`{name, version}` of nonempty exact UTF-8 strings that names the code which
-decides the backend's results and that code's version.
+`{name, version, build}` that names the code which decides the backend's
+results: `name` and `version` are nonempty exact UTF-8 strings, and `build`
+is the content identity of the build inputs of the provider code that
+implements the backend.
 
 - A backend **fronts an external tool** when any result it gives depends on
   an executable that is not part of the producer's build: a tool binary the
@@ -327,7 +329,21 @@ decides the backend's results and that code's version.
   process, and it runs no executable; the QSL engines `qsl-model-check` and
   `qsl-prob` are such engines. Its `name` is the crate that implements the
   engine and its `version` that crate's package version in the producer's
-  build, so a release of the engine's code changes the descriptor.
+  build.
+
+`build` is a digest record `{domain, algorithm, digest}` (the FR-322
+`PackageId` shape) with `domain` `quire.build-inputs/v1`, `algorithm`
+`sha256` and `digest` 64 lowercase hexadecimal digits: SHA-256 over the
+RFC 8785 bytes of the build-input record of the provider code that
+implements the backend, that is, the pure engine's crate, a linked
+provider's adapter code, or a process provider's executable. The build that
+compiles that code SHALL compute it from the source bytes of the code and of
+every workspace crate it links, the resolved dependency versions of its lock
+file, the compiler version, the target and the build profile; equal inputs
+give an equal `build`, and a change of any input changes it. A specification
+or repository holds no copy of any `build` value: each build derives its own.
+A pure in-process engine's code change therefore changes its descriptor
+even when its crate version stays the same.
 
 The schema refuses a descriptor without `tool` at every stage, and a
 registry snapshot carries each descriptor exactly as its provider gave it,
@@ -335,7 +351,8 @@ so its `tool` is the provider's.
 
 A provider that fronts an external tool SHALL obtain `tool.version` by
 querying the executable it will run, each time it builds its descriptor; a
-pure in-process engine's provider takes it from the producer's build. A
+pure in-process engine's provider takes `version` and `build` from the
+producer's build. A
 producer builds its registry, and so every descriptor, afresh at each
 invocation; no external tool's `tool.version` is fixed at compile time or
 kept from one invocation to the next. The FR-290 tool probe of a backend
@@ -758,7 +775,7 @@ registry snapshot and the request are not. The backend identity, the
 | FR-331-AC-34 | A reader refuses each of these before consumption with the `invalid_result` cause given, naming the pointer given: `certification-missing`, `missing-member` at `/certification`; `certification-on-refuted`, `unknown-member` at `/certification`; `certification-other-value`, `invalid-value` at `/certification`; a `proved` entry whose `certification` is `7`, `wrong-value-kind` at `/certification`; `certification-reduced-certified`, `certification-bounded-solver-certified` and `certification-symmetry-certified`, `certification-mismatch` at `/certification` with `expected` `uncertified` and `actual` `certified`; a plugin's `proved` entry carrying `certified`, `certification-mismatch` with `expected` `trusted`, also when its basis is core-only; a `refuted` entry carrying `certification` `7`, `unknown-member` at `/certification`; a plugin's `proved` entry carrying `trusted` and a `closed-form` basis, `unknown-cause` at `/basis/type`; a plugin's `inconclusive` entry with cause `replay-parity`, `unknown-cause` at `/cause/type`; a plugin's `inconclusive` entry with cause `stale-dependency`, `unknown-cause` at `/cause/type`; a plugin's `counterexamples` entry whose `counterexample` is a `TemporalCounterexample`, `invalid-value` at `/counterexample/type`; and a plugin's `counterexamples` entry carrying canonical assignments and a `transcript`, `unknown-member` at `/transcript`. A first-party `exhaustive` proof carrying `uncertified` is admitted. A plugin's proof basis or inconclusive cause that a plugin may send but that is outside the reader's types is refused `unknown_required_feature`/`unsupported-feature`, not `invalid_result`. The schema refuses each vector on its shape alone, so the schema run does not discharge the cause. | Inspection (TC-431) |
 | FR-331-AC-35 | An `inconclusive` entry whose cause is `stale-dependency` with `requested` and `recompiled` two `quire.package.semantic/v2` `PackageId`s is admitted; the same cause without `recompiled` is refused by the schema. | Test (TC-431) |
 | FR-331-AC-36 | The `temporal-satisfaction` entry of a safety item settled by a stale EN-1 closure certificate (QSL FR-338), and that of a TP-4 liveness item settled by a stale EN-1 component certificate (QSL FR-339), each `inconclusive` with cause `stale-dependency{requested, recompiled}`, two `quire.package.semantic/v2` `PackageId`s, are admitted; the same cause without `requested` is refused by the schema. The checkers' comparison before any other rule and the settlement are verified by QSL FR-338-AC-11, FR-339-AC-4, FR-282-AC-10 and FR-127-AC-13. | Test (TC-431) |
-| FR-331-AC-37 | The schema refuses a descriptor without `tool` at the manifest and request stages, including a linked Kani snapshot descriptor (`snapshot-kani-without-tool`) and a pure engine's snapshot descriptor (`snapshot-engine-without-tool`); refuses a `tool` without `name` or `version`, with an empty `name` or `version`, with another member, or that is a string or `null`; and admits a pure in-process engine's descriptor whose `tool` names its implementing crate and version. A request-stage snapshot carries the kani descriptor with the `tool` its `hello` gives. Two admitted descriptors that differ only in `tool.version`, for an external tool or an engine crate, have different `ManifestDigest` records in `quire.tool-manifest.jcs/v1` and the same `BackendId`. | Test (TC-431) |
+| FR-331-AC-37 | The schema refuses a descriptor without `tool` at the manifest and request stages, including a linked Kani snapshot descriptor (`snapshot-kani-without-tool`) and a pure engine's snapshot descriptor (`snapshot-engine-without-tool`); refuses a `tool` without `name`, `version` or `build`, with an empty `name` or `version`, with another member, or that is a string or `null`; refuses a `build` in another domain, with another algorithm, with a digest that is not 64 lowercase hexadecimal digits, with another member, or that is a bare digest string; and admits a pure in-process engine's descriptor whose `tool` names its implementing crate, version and build. A request-stage snapshot carries the kani descriptor with the `tool` its `hello` gives. Two admitted descriptors that differ only in `tool.version`, or only in `tool.build` with the same `tool.version`, have different `ManifestDigest` records in `quire.tool-manifest.jcs/v1` and the same `BackendId`. | Test (TC-431) |
 | FR-331-AC-38 | A provider fronting an external tool reports, in the descriptor it builds at an invocation, the version the executable reports at that invocation. When the executable is replaced by another version after the descriptor is built and before an item's run, the item's FR-290 probe fails and the item settles `unsupported` with `unsupported_projection`/`tool-unavailable` naming the capability kind, the backend, the descriptor's version and the probed version, and no run starts. | Test (TC-226) |
 
 ## Dependencies

@@ -863,7 +863,7 @@ fn tc_431_bounded_descriptors_carry_domains() {
     assert!(bounded > 0, "a bounded descriptor is exercised");
     let unbounded_only = serde_json::json!({
         "backend": "qsl-model-check",
-        "tool": {"name": "qsl-analyze", "version": "0.2.0"},
+        "tool": {"name": "qsl-analyze", "version": "0.1.0", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}},
         "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
         "fairness_kinds": ["weak"]
     });
@@ -1319,7 +1319,7 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     let descriptor = definition("BackendDescriptor");
     let base = serde_json::json!({
         "backend": "qsl-model-check",
-        "tool": {"name": "qsl-analyze", "version": "0.2.0"},
+        "tool": {"name": "qsl-analyze", "version": "0.1.0", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}},
         "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
         "fairness_kinds": ["weak"]
     });
@@ -1342,7 +1342,7 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     );
     let mut other = serde_json::json!({
         "backend": "smt",
-        "tool": {"name": "z3", "version": "4.13.4"},
+        "tool": {"name": "z3", "version": "4.13.4", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1"}},
         "advertises": [{"kind": "operation-contract", "mode": "unbounded"}]
     });
     assert!(
@@ -1393,7 +1393,9 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
     let hello = positive("kani-hello")["document"].clone();
     assert!(whole.is_valid(&hello), "the hello with its tool is admitted");
     let entry = hello["manifest"][0].clone();
-    assert_eq!(entry["tool"], serde_json::json!({"name": "kani", "version": "0.56.0"}));
+    assert_eq!(entry["tool"]["name"], "kani");
+    assert_eq!(entry["tool"]["version"], "0.56.0");
+    assert_eq!(entry["tool"]["build"]["domain"], "quire.build-inputs/v1");
 
     // The registry snapshot carries the kani descriptor as its hello gave it.
     let request = composed(&positive("kani-request"));
@@ -1424,10 +1426,8 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
     // release that changes that version moves the engine's ManifestDigest.
     let engine = composed(&positive("temporal-request"));
     let engine_entry = engine["manifest"][0].clone();
-    assert_eq!(
-        engine_entry["tool"],
-        serde_json::json!({"name": "qsl-analyze", "version": "0.2.0"})
-    );
+    assert_eq!(engine_entry["tool"]["name"], "qsl-analyze");
+    assert_eq!(engine_entry["tool"]["version"], "0.1.0");
     assert!(whole.is_valid(&engine), "a pure engine's snapshot descriptor is admitted");
     let mut released = engine_entry.clone();
     released["tool"]["version"] = Value::String("0.3.0".into());
@@ -1437,6 +1437,36 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
         manifest_digest(&engine_entry),
         "an engine release moves the ManifestDigest"
     );
+    // Engine code changed while the crate version stayed: the build digest
+    // moves the ManifestDigest.
+    let mut rebuilt = engine_entry.clone();
+    rebuilt["tool"]["build"]["digest"] = Value::String("b6".repeat(32));
+    assert_eq!(rebuilt["tool"]["version"], engine_entry["tool"]["version"]);
+    let mut rebuilt_request = engine.clone();
+    rebuilt_request["manifest"][0] = rebuilt.clone();
+    assert!(whole.is_valid(&rebuilt_request), "the rebuilt engine is admitted");
+    assert_ne!(
+        manifest_digest(&rebuilt),
+        manifest_digest(&engine_entry),
+        "a code change with an unchanged version moves the ManifestDigest"
+    );
+    for build in [
+        Value::Null,
+        serde_json::json!("a5a5"),
+        serde_json::json!({"domain": "quire.build-inputs/v1", "algorithm": "sha256"}),
+        serde_json::json!({"domain": "quire.build-inputs/v1", "algorithm": "sha512", "digest": "a5".repeat(32)}),
+        serde_json::json!({"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": "a5".repeat(31)}),
+    ] {
+        let mut bad = engine.clone();
+        bad["manifest"][0]["tool"]["build"] = build.clone();
+        assert!(!whole.is_valid(&bad), "build {build} is refused");
+    }
+    let mut unbuilt = engine.clone();
+    unbuilt["manifest"][0]["tool"]
+        .as_object_mut()
+        .expect("tool")
+        .remove("build");
+    assert!(!whole.is_valid(&unbuilt), "an engine's tool requires build");
 
     for malformed in [
         serde_json::json!({"name": "kani"}),

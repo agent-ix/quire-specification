@@ -40,7 +40,12 @@
             "backend": "kani",
             "tool": {
               "name": "kani",
-              "version": "0.56.0"
+              "version": "0.56.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+              }
             },
             "advertises": [
               {
@@ -92,7 +97,12 @@
             "backend": "kani",
             "tool": {
               "name": "kani",
-              "version": "0.56.0"
+              "version": "0.56.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+              }
             },
             "advertises": [
               {
@@ -222,7 +232,12 @@
             "backend": "kani",
             "tool": {
               "name": "kani",
-              "version": "0.56.0"
+              "version": "0.56.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+              }
             },
             "advertises": [
               {
@@ -920,7 +935,12 @@
             "backend": "qsl-model-check",
             "tool": {
               "name": "qsl-analyze",
-              "version": "0.2.0"
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
             },
             "advertises": [
               {
@@ -2884,7 +2904,12 @@
             "backend": "qsl-prob",
             "tool": {
               "name": "qsl-analyze",
-              "version": "0.2.0"
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
             },
             "advertises": [
               {
@@ -3204,7 +3229,12 @@
             "backend": "qsl-model-check",
             "tool": {
               "name": "qsl-analyze",
-              "version": "0.2.0"
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
             },
             "advertises": [
               {
@@ -4123,6 +4153,76 @@
       ]
     },
     {
+      "name": "hello-tool-without-build",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/build"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-tool-without-build",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/build"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-other-domain",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/build/domain",
+          "value": "quire.tool-manifest.jcs/v1"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-uppercase-digest",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/build/digest",
+          "value": "A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-bare-digest",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/build",
+          "value": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-extra-member",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/manifest/0/tool/build/version",
+          "value": "1"
+        }
+      ]
+    },
+    {
       "name": "manifest-unknown-kind",
       "base": "kani-hello",
       "owner": "FR-290",
@@ -4158,7 +4258,12 @@
             "backend": "cbmc",
             "tool": {
               "name": "cbmc",
-              "version": "6.4.1"
+              "version": "6.4.1",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3"
+              }
             },
             "advertises": [
               {

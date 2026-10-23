@@ -115,8 +115,9 @@ emits nothing (FR-331-AC-2).
     `domain` `quire.tool-manifest.jcs/v1`, `algorithm` `sha256` and `digest`
     64 lowercase hexadecimal digits. Its preimage is the provider's complete
     descriptor, `tool` included (FR-331 "Backend tool"), so a tool upgrade
-    or an engine release that changes only
-    `tool.version` changes the key while `backend` stays the same;
+    or an engine release that changes only `tool.version`, and an engine
+    code change that changes only `tool.build`, change the key while
+    `backend` stays the same;
   - `target`: for `generate` only, the generation target and its options;
     the member is absent for `prove` and `analyze`.
 
@@ -126,9 +127,10 @@ emits nothing (FR-331-AC-2).
   version strings and the execution backend that ran. A provider's tool
   version is not an application version string: it is `tool.version` in
   the descriptor, inside the key through `manifest`, both for an external
-  tool and for the crate that implements a pure in-process engine, so a
-  release that changes an engine's crate version changes that engine's
-  keys. A wall-clock budget can
+  tool and for the crate that implements a pure in-process engine, and
+  the engine's `tool.build` binds its code, so a producer build that
+  changes an engine's code changes that engine's keys whether or not its
+  crate version changes. A wall-clock budget can
   change a result, but every result it limits is time-limited and never
   stored ("Never stored" below), so the key never has to bind it.
 - **Invalidation.** Any change to a key input changes the key, so a changed
@@ -164,6 +166,7 @@ emits nothing (FR-331-AC-2).
 | FR-306-AC-6 | After a `prove` result of a first-party linked provider fronting an external tool is stored, a read with the same inputs and a descriptor that differs only in `tool.version` computes a different key with the same `backend` member and misses, and never returns the stored result; a read with the unchanged descriptor hits. | Test (TC-226) |
 | FR-306-AC-7 | After a `prove` result of a first-party linked provider fronting an external tool is stored, the tool executable on the host is replaced by another version with no edit to any descriptor source: a run in the same invocation probes the new version, settles the item `unsupported` with `tool-unavailable` naming both versions, does not return the stored result and stores nothing; the next invocation builds the descriptor with the new `tool.version`, computes a different key with the same `backend` member, misses and runs the tool. | Test (TC-226) |
 | FR-306-AC-8 | After an `analyze` result of a pure in-process engine whose descriptor's `tool` is its implementing crate at one version is stored, a producer build whose engine crate has another version computes a different key with the same `backend` member for the same request, misses and runs the engine; the same build reads the entry it stored back as a hit. | Test (TC-226) |
+| FR-306-AC-9 | After an `analyze` result of a pure in-process engine is stored, a producer build whose engine code differs while the engine crate's version is unchanged computes a different `tool.build`, a different key with the same `backend` member and `tool.version` for the same request, misses and runs the engine; a second build from the same inputs computes the same `tool.build` and key and hits. | Test (TC-226) |
 
 ## Dependencies
 
