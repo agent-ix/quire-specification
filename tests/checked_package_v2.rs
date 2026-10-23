@@ -16765,7 +16765,7 @@ fn tc_966_malformed_hybrid_nodes_fail_the_published_schema() {
     }
 }
 
-#[trace("TC-966", "FR-481-AC-9", "FR-322-AC-13")]
+#[trace("TC-966", "FR-481-AC-13", "FR-322-AC-13")]
 #[test]
 fn tc_966_the_all_families_fixture_carries_a_hybrid_model_with_bare_variable_terms() {
     let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
@@ -16893,7 +16893,7 @@ fn tc_966_the_all_families_fixture_carries_a_hybrid_model_with_bare_variable_ter
     }
 }
 
-#[trace("TC-966", "FR-481-AC-10", "FR-481-AC-11")]
+#[trace("TC-966", "FR-481-AC-8", "FR-481-AC-9")]
 #[test]
 fn tc_966_restored_hybrid_forms_meet_the_schema_and_carry_their_own_keys() {
     let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
@@ -16996,7 +16996,7 @@ fn tc_966_restored_hybrid_forms_meet_the_schema_and_carry_their_own_keys() {
     );
 }
 
-#[trace("TC-966", "FR-481-AC-13")]
+#[trace("TC-966", "FR-481-AC-11")]
 #[test]
 fn tc_966_restored_hybrid_shapes_meet_or_fail_the_published_schema() {
     let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
