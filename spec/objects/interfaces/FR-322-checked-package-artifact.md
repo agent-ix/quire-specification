@@ -1133,6 +1133,9 @@ constraints ("Reference conformance" below).
    | `ix://quire/native/String` | `String`, a native with no text profile; it is not `Text` and has no `Text` bounds, profile or leaf | `scalar_type`/`string` |
    | `ix://quire/native/UUID` | `UUID`, compared by its canonical payload under FR-149's UUID row; no ordering | `scalar_type`/`uuid` |
    | `ix://quire/native/Timestamp` | `Timestamp`, compared by its canonical payload under FR-149's Timestamp row; no ordering and no arithmetic | `scalar_type`/`timestamp` |
+   | `ix://quire/native/Bytes` | `Bytes`, an octet sequence of any length (the empty sequence included), compared by its canonical payload under FR-149's Bytes row; operations `length` and `concat`, no ordering and no other arithmetic | `scalar_type`/`bytes` |
+   | `ix://quire/native/JsonObject` | `JsonObject`, a JSON value of any kind (object, array, string, number, boolean or `null`), compared by its canonical payload under FR-149's JsonObject row; opaque: equality only, no member access, no ordering and no arithmetic | `scalar_type`/`json_object` |
+   | `ix://quire/native/Duration` | `Duration`, an amount of elapsed time: the type `Quantity<s>` where `s` is the unit named `s` that the member can see, one of the unit `s` the unit of compilation declares and the unit `s` of the selection that declares the member (a source unit named by `ix://quire/unit/s`, a package unit by `ix://quire/unit/<p>/s` with `<p>` that selection's identity), and `s` is typed by a base dimension whose declared name is `Time`. A `Duration` member and a `Quantity<s>` member have one type, with the exact rational magnitude in seconds that "Scalar literal values" spells; a quantity in another unit of `Time` reaches `Duration` only through FR-142's explicit conversion to `s`. If neither declares `s` the member refuses `missing_declaration`/`missing-name`, and if both do it refuses `ambiguous_declaration`/`ambiguous-name`; if the unit is typed by a dimension that is not a base dimension named `Time`, the member has no type and the application refuses `ill_typed`/`operator-ineligible` | the `scalar_type`/`unit` node of `s` (family `quantity`); no node is introduced |
    | `ix://quire/native/Clock`, on a field with FR-154's clock field shape | `Clock`, the clock type of FR-415: the field is one clock per object of its owning type, holds no data value, is read only as the clock operand of an atomic clock constraint (in a guard or a time invariant) and is written only by a reset (FR-415) | none: no node stands for a clock. This artifact carries no clock constraint, reset or timed-model member; the checker reads a clock operand there by (declaring node, field name) and records the timed model (FR-415, QSL FR-230). A `field` application whose member resolves to a clock field in any other position, a value position, refuses `invalid_timed_model`/`clock-read-outside-constraint` |
    | a value type (FR-208 `quire.meaning.model.value-type/v1`) of the same domain package bound as `Int[lo, hi]`, `lo <= hi`, as TC-196's `Count` and `Small` and TC-197's `Count` are | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over the `Integer` node |
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
@@ -1800,7 +1803,7 @@ is declared `boolean`. An `expression` or `function` whose body root is the
 application has `semantic_type` equal to that `result_type`. A `literal` term's
 `type` must have a family its `value_kind` admits (`boolean`, `integer`,
 `rational`, `decimal`, `float32_bits`→`float32`, `float64_bits`→`float64`,
-`text`, `string`, `uuid`, `timestamp`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`). Any failure is
+`text`, `string`, `uuid`, `timestamp`, `bytes`, `json_object`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`). Any failure is
 `operator-ineligible`.
 
 The fit rule has one exception besides record conformance ("Record
@@ -1834,10 +1837,29 @@ ordering, no arithmetic and no other operation identity: an ordering or
 arithmetic identity over them refuses `ill_typed`/`operator-ineligible`
 (FR-149-AC-16 for UUID and Timestamp).
 
+The native scalar families `bytes` and `json_object` have the identities
+`quire.op.bytes.eq`, `quire.op.bytes.ne`, `quire.op.json_object.eq` and
+`quire.op.json_object.ne`, each with two operands of its own family, result
+`boolean`, no law, no mode, no member and no leaves, deciding equality by the
+canonical payload, so equality is reflexive, symmetric and transitive and `ne`
+is its negation. The family `bytes` also has `quire.op.bytes.length`, one
+`bytes` operand and result `integer`, the number of octets of the operand, and
+`quire.op.bytes.concat`, two `bytes` operands and result `bytes`, the octets of
+operand 0 followed by those of operand 1, so that
+`length(concat(a, b)) = length(a) + length(b)` and `concat` is associative with
+the empty sequence as identity. `json_object` has no operation identity beyond
+`eq` and `ne`, and `bytes` none beyond these four: an ordering, arithmetic,
+member-access or any other identity over either family refuses
+`ill_typed`/`operator-ineligible`. A `bytes` operand of a `quire.op.string.*` or
+`quire.op.text.*` identity, and a `string` or `text` operand of a
+`quire.op.bytes.*` identity, refuses the same, because there is no conversion
+between the families. `Duration` introduces no family and no identity: its
+operations are the quantity identities of FR-142 over `Quantity<s>`.
+
 **Equality-stable types.** A type is *equality-stable* when an equality
 application is admitted over two operands of it: a type of family `boolean`,
 `integer`, `rational`, `decimal`, `text`, `string`, `uuid`, `timestamp`,
-`enum`, `ordered_enum`, `quantity` or `reference` (each through its own
+`bytes`, `json_object`, `enum`, `ordered_enum`, `quantity` or `reference` (each through its own
 `eq` identity), and a type of a `structural_kind` family through
 `quire.op.structural.eq` when no leaf at any depth is `float32`, `float64`
 or a `model`/`event_type` node. IEEE values have no `eq`
@@ -1861,7 +1883,24 @@ scalar sequence as a JSON string, with no normalization. A `value` in any other
 spelling (a `uuid` with uppercase digits or no hyphens, a `timestamp` of `-0`,
 `+1`, `01`, empty text or outside the range, a `string` whose `value` is not a
 JSON string) refuses `invalid_package`/`invalid-value` at the literal's
-`value`. A `quantity` literal's `type` is the `scalar_type`/`unit` node of its
+`value`. A `bytes` literal's `value` is a JSON string of lowercase ASCII
+hexadecimal digits, two per octet in sequence order, the empty string for the
+empty sequence (`""`, `00ff`; not `00FF`, `0`, `0x00` or `00 ff`). A
+`json_object` literal's `value` is a JSON string holding the RFC 8785 (JCS)
+serialization of one JSON value whose text is already canonical: the string
+parses as a JSON value with no repeated member name at any depth, and
+serializing the parsed value under JCS (members sorted by UTF-16 code unit
+order of their names, no insignificant whitespace, strings and numbers as
+ECMAScript serializes them) gives the string again, so a number is written as
+the shortest ECMAScript spelling of its IEEE binary64 value (`{"a":1,"b":[true,null]}`;
+not `{"b":[true,null],"a":1}`, `{"a": 1}`, `{"a":1.0}`, `{"a":1e2}`, a number
+that is not the shortest spelling of the binary64 it rounds to such as
+`9007199254740993`, text that is not one JSON value, or a repeated name; `[]`, `3`,
+`"x"` and `null` are admitted).
+A `bytes` or `json_object` `value` in any other spelling refuses
+`invalid_package`/`invalid-value` at the literal's `value`. A `Duration` literal is a
+`quantity` literal over the `scalar_type`/`unit` node of `s`, its `value` the exact
+rational number of seconds, spelled as any quantity magnitude is. A `quantity` literal's `type` is the `scalar_type`/`unit` node of its
 unit (family `quantity`) and its `value` is the exact rational magnitude: the
 canonical decimal integer when the denominator is 1, otherwise
 `numerator/denominator` in lowest terms with a denominator above 1 and a sign
@@ -2075,6 +2114,9 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 | FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
+| FR-322-AC-102 | A field typed `ix://quire/native/Bytes` has the type `Bytes` over a `scalar_type`/`bytes` node, a field typed `ix://quire/native/JsonObject` has the type `JsonObject` over a `scalar_type`/`json_object` node, and a field with a `maxLength` constraint typed `Bytes` has the type `Bytes`; with multiplicity `[0, unbounded]` and unordered unique they give `Set<Bytes>`. Two fields typed `Bytes` name one node. `Bytes` and `JsonObject` are equality-stable types, and a `Bytes` is distinct from a `String` and from a `Text`. | Test (TC-280) |
+| FR-322-AC-103 | An application of `quire.op.bytes.eq`, `quire.op.bytes.ne`, `quire.op.json_object.eq` or `quire.op.json_object.ne` over two operands of its own family has result `boolean` with no law, mode or member; `quire.op.bytes.length` over one `bytes` operand has result `integer`; `quire.op.bytes.concat` over two `bytes` operands has result `bytes`. A `bytes` against a `string`, `text` or `json_object` operand, `quire.op.bytes.concat` over a `json_object` operand, an ordering identity (`quire.op.integer.lt`) over `bytes`, and any `quire.op.integer.add` or member-access identity over `json_object` each refuse `ill_typed`/`operator-ineligible`. A literal of `value_kind` `bytes` with `value` `""`, `"00ff"` or `"deadbeef"` is admitted, and with `value` `"00FF"`, `"0"`, `"0x00"` or `"00 ff"` refuses `invalid_package`/`invalid-value`; a literal of `value_kind` `json_object` with `value` `"{}"`, `"[]"`, `"3"`, `"null"` and `"{\"a\":1,\"b\":[true,null]}"` is admitted, and with `value` `"{\"b\":1,\"a\":1}"`, `"{\"a\": 1}"`, `"{\"a\":1.0}"`, `"{\"a\":9007199254740993}"`, `""`, `"{"` or `"{\"a\":1,\"a\":2}"` refuses `invalid_package`/`invalid-value`. A `bytes` or `json_object` literal whose `type` is not its own family refuses `ill_typed`/`operator-ineligible` even when its `value` is also non-canonical. | Test (TC-280) |
+| FR-322-AC-104 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and no selected package declaring `s`, a field typed `ix://quire/native/Duration` has the type `Quantity<s>` over the node of `s`, the same node as a field typed `ix://quire/unit/s`, and `Duration` against `Quantity<s>` is one type; a `Duration` against a `Quantity<ms>` compares only after FR-142's explicit conversion, and `1500 ms` converted to `s` equals the `Duration` `3/2`. A `Duration` field of an object type of an admitted domain package `acme/rpc` that declares base dimension `Time` and root unit `s`, with a unit of compilation declaring no `s`, has the type `Quantity<s>` over that package unit's node. With neither declaring `s` the field refuses `missing_declaration`/`missing-name`; with both declaring `s` it refuses `ambiguous_declaration`/`ambiguous-name`; with `unit s : Length = 1` and no dimension `Time`, or with `s` typed by a derived dimension named `Time`, the member has no type and the application refuses `ill_typed`/`operator-ineligible`. | Test (TC-280) |
 
 ## Dependencies
 

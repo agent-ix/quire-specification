@@ -60,7 +60,10 @@ retypes that operand and creates no common type.
 | Boolean | identical truth value |
 | UUID | identical canonical UUID payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not text |
 | Timestamp | identical canonical Timestamp payload content under QSL FR-056's K2 canonical native payload contract; a distinct native type, not `Int` |
+| Bytes | identical octet sequences: equal length and equal octet at every index, equivalently identical canonical payload (lowercase hexadecimal, two digits per octet); a distinct native type, not `String`, `Text` or `JsonObject` |
+| JsonObject | identical canonical payload, the RFC 8785 (JCS) serialization of the value, so two values are equal exactly when they have the same kind and, for objects, the same member names and recursively equal member values, independent of member order and insertion spelling; arrays compare by position, strings by their code points, numbers by their IEEE binary64 value, and `null`, `true` and `false` by kind; a distinct native type |
 | Integer, rational and decimal | exact mathematical value; operands of different numeric types first require an admitted [equality conversion](#equality-conversions), or the [arithmetic operand exception](#arithmetic-operand-against-a-bounded-integer) |
+| Duration | the Quantity relation over `Quantity<s>` (FR-322 "Model-owned members"): a `Duration` is a quantity in the unit `s`, so two durations are equal exactly when their exact rational seconds are equal |
 | Quantity | identical unit and exact value equality; a top-level quantity equality expression uses the FR-142 root-value comparison schedule, while a quantity leaf inside a composite equality plan compares by exact value in its identical unit and charges only its `equality.pair`; distinct units require an explicit prior FR-142 conversion |
 | Text | the FR-141 relation under the same pinned profile: normalized scalar sequence for scalar profiles and original UTF-8 bytes for `binary-utf8` |
 | Enumeration | the same qualified enumeration declaration and identical case; different declarations have no implicit common type |
@@ -92,8 +95,10 @@ are equivalent to equality within that kind. This extends
 invariant for these two K2 natives. No enclosing JSON object-member order
 or JSON string escape spelling enters the key.
 
-UUID and Timestamp have no common equality type with each other or with
-`Int`, `Integer`, `Text`, `String` or `Boolean`; there is no equality
+Bytes and JsonObject follow the same rule: each admits reflexive equality with itself, its key is its canonical payload string compared unsigned ASCII bytewise with a proper prefix first, and equal keys are equivalent to equality within the kind.
+
+UUID, Timestamp, Bytes and JsonObject have no common equality type with each other or with
+`Int`, `Integer`, `Text`, `String`, `Boolean` or `Quantity`; there is no equality
 conversion between these kinds. Such comparisons SHALL refuse at type
 checking with `ill_typed`/`type-mismatch` before any equality charge, never
 return Boolean `false`. A direct kernel call that violates the checked
@@ -332,6 +337,8 @@ collection and object-reference rows of this requirement.
 | FR-149-AC-19 | With `tally` of `Int[0,3]` and the guard `earlier.tally < 3`, the relation `earlier.tally < 3 and later.tally = earlier.tally + 1` checks: the sum's interval `[1,3]` lies inside `Int[0,3]`, the sum is typed `Int[0,3]` by the expected-type rule, and the relation charges the sum's own integer-arithmetic schedule plus the equality's one-pair schedule. | Test (TC-194) |
 | FR-149-AC-20 | With the guard removed, `later.tally = earlier.tally + 1` over `tally` of `Int[0,3]` refuses `undefined_expression`/`unproved-range` at `earlier.tally + 1`, because the sum's interval `[1,4]` exceeds `Int[0,3]`; `recovered.tally = recovered.tally + 1` refuses the same way at its sum. No Boolean is produced and the value is not clamped. | Test (TC-194) |
 | FR-149-AC-21 | The rule applies only to a binary `+`, `-` or `*` operand of `=` or `!=` against an `Int[..]` operand, on either side and parenthesized: an `Integer` path, a call, `div`, `rem`, `count`, an unannotated `let`-bound name or unary `-` against `Int[0,3]` is `ill_typed`/`type-mismatch` without `convert`, an arithmetic operand against a `Rational[..]` or `Decimal[..]` operand is `ill_typed`, and `<`, `<=`, `>` and `>=` over the same operands supply no expected type and are accepted, so `n + 1 <= later.tally` for `n` of `Integer` and `earlier.tally + 1 <= later.tally` are well typed. | Test (TC-194) |
+| FR-149-AC-23 | Independently admitted Bytes values with payload `00ff` compare equal and have equal keys; `00ff` versus `00fe`, `00ff` versus `00ff00` and the empty payload versus `00` compare unequal. Independently admitted JsonObject values with payload `{"a":1,"b":[true,null]}` compare equal; `{"a":1,"b":[true,null]}` versus `{"a":1,"b":[null,true]}`, versus `{"a":2,"b":[true,null]}`, versus `{"a":1}` and versus `{"a":1,"b":[true,null],"c":{}}` compare unequal; `{}` equals `{}`. Two Durations of `3/2` seconds compare equal and `3/2` versus `2` compares unequal; a Duration of `3/2` compares equal to the quantity `3/2 s` and to `1500 ms` only after the explicit conversion to `s`. Each comparison is one terminal pair under the existing equality schedule. | Test (TC-280) |
+| FR-149-AC-24 | Bytes versus JsonObject, Bytes versus `String`, `Text` or `Integer`, JsonObject versus `String`, `Text` or `Boolean`, and UUID versus Bytes refuse `ill_typed`/`type-mismatch` before an equality charge and produce no Boolean. The four ordering operators on Bytes or JsonObject, and `+` on either, refuse `ill_typed`/`operator-ineligible` before any charge; a Bytes key and a JsonObject key create no ordering or arithmetic capability. Same-kind keys compare canonical payload content unsigned ASCII bytewise with a proper prefix first: Bytes `10` orders before `2`, and equal payloads have equal keys. | Test (TC-280) |
 
 ## Dependencies
 
