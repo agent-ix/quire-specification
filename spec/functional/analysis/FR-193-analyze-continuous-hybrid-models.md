@@ -218,9 +218,17 @@ a `hybrid-decl`. In its body `h.x` reads the continuous variable `x`.
 - Under `model-time`, an `interval`'s `uint` bounds SHALL count seconds,
   and a `timed-interval`'s bounds SHALL be quantity literals of FR-142's
   time dimension, converted exactly to exact rational seconds, each end open
-  or closed as written; `[q, *]` has no upper bound and is admitted where the
-  profile admits `[a, *]`. A bound of another dimension SHALL refuse
-  `ill_typed`/`type-mismatch` at its span.
+  or closed as written; `[q, *]` has no upper bound. A bound of another
+  dimension SHALL refuse `ill_typed`/`type-mismatch` at its span.
+- The interval forms a claim admits follow its profile, as FR-370 "Placement
+  and profile fit" fixes them: under `quire.temporal.timed/v1`, every
+  rational bound, either end open or closed, and `[q, *]`; under an integer
+  profile, such as `quire.temporal.infinite-trace/v1`, whole-second bounds
+  with both ends closed, and `[a, *]` where that profile admits it. A bound
+  or end the profile does not admit SHALL refuse
+  `unsupported_construct`/`expression-form` at the interval's span, naming
+  the profile, so a claim with rational or open bounds selects the timed
+  profile.
 - Under `model-steps`, an interval's bounds SHALL count positions, and a
   `timed-interval` SHALL refuse `ill_typed`/`type-mismatch` at its span.
 - An interval whose lower bound exceeds its upper bound, or whose bounds are
@@ -388,9 +396,9 @@ each jump to a source transition:
   possible violation; in a `loop` trace it is the state that returns to the
   state `loop` names.
 - The schema checks a trace's shape only. Its correspondence to the
-  declaration is checked by the reader that holds the item's hybrid model:
-  the producer serving the item in process, or a process provider reading
-  the model's `hybrid` nodes from the package bytes
+  declaration is checked by the reader of the result entry: the host that
+  requested the item and holds its hybrid model, whichever provider, in
+  process or in a process of its own, returned the trace
   ([FR-481](../../objects/interfaces/FR-481-checked-package-hybrid-model-nodes.md)
   "Hybrid trace correspondence"). That reader SHALL refuse with
   `invalid_result`/`invalid-value`, at the member's pointer, a trace whose
@@ -524,7 +532,7 @@ when exact replay reproduces it.
 | FR-193-AC-11 | `Braking` with `initial { mode Moving when { v = 20 and a >= 1 and a <= 2 and t = 0 }; mode Stopped when { v = 0 and t = 0 }; }` has two initial modes and the initial states those entries and the modes' invariants give; with no `initial` clause its initial states are `Moving`'s invariant at time 0, equal to those of `initial { mode Moving when { true }; }`; `initial { mode Halted when { true }; }` refuses `missing_declaration`/`missing-name`; a model whose initial set is empty settles `inconclusive`, `no-initial-state`. | Test (TC-373) |
 | FR-193-AC-12 | In a declaration over `v`, `a` and `x`, a flow `v' = -a * v`, a guard `v * v >= 2`, a flow `x' = if v > 1 then -1 else 0`, a flow `v' = drag(v)` calling a pure function `drag(s: Rational[-100, 100; 1, 1]): Rational[-1000, 0; 1, 10]` whose body is `- s * s / 10`, so that `v = 3/2` passes and `v = 101` has no value, a `let` and a `!=` are admitted; `v' = v div 2` and a call passing `v` to an `Integer` parameter refuse `ill_typed`/`type-mismatch`; a reachable state at which `1 / v` has `v = 0` is a violating state, so no provider proves a claim over a model that reaches it. | Test (TC-373) |
 | FR-193-AC-13 | A reset `{ v = pre(v) / 2 and a >= 1 and a <= 2 }` halves `v` from its pre-jump value and sets `a` to any value in `[1, 2]`, keeping `t`; `{ v = v + 1 }` adds 1 to the pre-jump `v`; `{ v = 0 and v >= 0 }` refuses `conflicting_declaration`/`duplicate-declaration`; `{ v + a = 1 }` and `{ v = 0 or v = 1 }` refuse `invalid_model_binding`/`malformed-declaration`; a transition whose reset gives only states outside the target's invariant is never enabled. | Test (TC-373) |
-| FR-193-AC-14 | Over `Braking`, `always [0, 10] holds(h.v < 30)` holds on every behaviour; `always [0, 10] (holds(h.v = 0) implies once [0, 2] holds(h.v <= 1))` and `holds(h.v > 0) since [0, 3] holds(h.v = 20)` are read pointwise over instants; `eventually [0 s, 1500 ms] holds(h.v < 19)` and `always (0.5 s, 2 s] holds(h.v <= 20)` read the intervals `[0, 3/2]` and `(1/2, 2]` in seconds; `[2 kg, 3 kg]` refuses `ill_typed`/`type-mismatch` and `(1 s, 1 s]` refuses `invalid_timed_model`/`invalid-interval`; under `clock "model-steps"`, `eventually [0, 1] holds(h.v = 0)` counts jumps. | Test (TC-373) |
+| FR-193-AC-14 | Over `Braking`, `always [0, 10] holds(h.v < 30)` holds on every behaviour; `always [0, 10] (holds(h.v = 0) implies once [0, 2] holds(h.v <= 1))` and `holds(h.v > 0) since [0, 3] holds(h.v = 20)` are read pointwise over instants; `eventually [0 s, 1500 ms] holds(h.v < 19)` and `always (0.5 s, 2 s] holds(h.v <= 20)` read the intervals `[0, 3/2]` and `(1/2, 2]` in seconds under `quire.temporal.timed/v1`, and the same claims under `quire.temporal.infinite-trace/v1` refuse `unsupported_construct`/`expression-form` naming that profile, while `eventually [0 s, 2 s]` is admitted there as `[0, 2]`; `[2 kg, 3 kg]` refuses `ill_typed`/`type-mismatch` and `(1 s, 1 s]` refuses `invalid_timed_model`/`invalid-interval`; under `clock "model-steps"`, `eventually [0, 1] holds(h.v = 0)` counts jumps. | Test (TC-373) |
 | FR-193-AC-15 | `on each (q: Braking) when (q.v > 10)` with `capture v0: Rational = q.v;` and body `eventually [0, 10] holds(h.v < v0)` creates one obligation at every instant where `v > 10`, each reading its own `v0`; `on each (q: Other)` refuses `ill_typed`/`type-mismatch`; `fair Moving;` and `fair strong each Moving::Stopped;` resolve to `Moving`'s transitions and to those targeting `Stopped`, and `fair Moving::Halted;` refuses `missing_declaration`/`missing-name`. | Test (TC-373) |
 | FR-193-AC-16 | Static replay of a trace whose `start` box meets no initial entry reports `inconsistent{at: /start, check: 1}`; one whose `before` box misses the guard by less than its `delta` 1/100 is `consistent`, and with no `delta` is `inconsistent` at check 4; neither outcome changes the `inconclusive` value. | Test (TC-373, TC-431) |
 | FR-193-AC-17 | Over `Braking`, the point trace starting at `(Moving, v = 20, a = 2, t = 0)` with `before` `(time 10, v = 0, a = 2, t = 10)` and one jump by transition 0 to `(Stopped, time 10, v = 0, a = 2, t = 10)` replays exactly; against the claim `always [0, 12] holds(h.v > 0)` it reproduces and settles `refuted` with the trace as a `HybridCounterexample` of kind `formula`; the same trace with `before` `v = 1` settles `not-reproduced` at check 2, the item staying `inconclusive`, and as a provider's `refuted` entry `inconclusive`, `replay-parity`; a point trace through a mode with the flow `v' = v`, and the AC-17 trace against a claim whose atom calls a recursive function, are replayed statically only and do not refute; against `always [0, 12] holds(1 / (h.v - 5) != 0)` the AC-17 trace settles `refuted` of kind `undefined-evaluation` at time 15/2, and against `always [0, 12] holds(1 / (h.v - 5) < 100)`, false from time 1499/200 before the undefined instant, of kind `formula`; a stored record carries the static outcome as `replay`, and a provider entry carrying `replay` is refused `invalid_result`/`unknown-member` at `/cause/replay`; a `loop` naming the last state is refused `invalid_result`/`invalid-value` at `/loop`. | Test (TC-373, TC-431) |

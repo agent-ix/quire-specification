@@ -34,7 +34,10 @@ structures, but any external consumer receives only the contract.
   extension as one `extension`/`extension_form` node, its two clause subnodes
   and the `retention` entry of `lock.definition_selections` (FR-469,
   TC-951); `fixtures/positive-all-families.json` carries the same form as its
-  fourteenth node tag. `node-identity-preimage.schema.json` defines the
+  fourteenth node tag, and the `Tank` hybrid model (one `hybrid_model`, one
+  `hybrid_mode` and one `hybrid_transition` node, a rate and a reset value
+  that are bare variable references, and a `hybrid` variable whose rate is
+  the literal `1`) as its fifteenth (FR-481, TC-966). `node-identity-preimage.schema.json` defines the
   `ExtensionFormNode` preimage that keys it.
 - `extension-definitions.json` publishes the FR-467 extension definitions
   (`policy`, `quota`, `retention`) a reader holds when it reads these

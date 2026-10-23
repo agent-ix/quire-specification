@@ -363,8 +363,12 @@ backend identity, then by the manifest's RFC 8785 bytes.
   backend. Further backends register under the same contract.
 - **Tool absence** — the routed backend's adapter probes its tool after
   routing and before the run; the probe's placement and fault-injection
-  evidence belong to `quire-contract-codegen`. If the probe finds the tool
-  missing, errors, or exceeds its limit, then the adapter SHALL record the
+  evidence belong to `quire-contract-codegen`. The probe also reads the
+  version of the executable it is about to run, and a version other than
+  the descriptor's `tool.version` is a failed probe whose `detail` names
+  both versions ([FR-331](../interfaces/FR-331-backend-provider-envelope.md)
+  "Backend tool"). If the probe finds the tool
+  missing, finds another version, errors, or exceeds its limit, then the adapter SHALL record the
   FR-331 result `unsupported` for that item with a warning naming the
   capability kind and the backend, cause
   `unsupported_projection`/`tool-unavailable`. The item keeps its `supported`
@@ -389,7 +393,7 @@ backend identity, then by the manifest's RFC 8785 bytes.
 | FR-290-AC-5 | Each claim form in the claim-form assignment table requires exactly its listed kind; an expression nested in a clause adds no kind; a scalar operation application in a function body requires `value-validity` once per occurrence and a range narrowing requires none; a `case` exhaustiveness obligation and an FR-353 abstraction relation request no backend. | Test (TC-271, TC-330, TC-342, TC-343) |
 | FR-290-AC-6 | For each row of the advertised-mode table, negotiation settles the listed disposition; an unbounded extent on a bounded-only advertisement never settles `supported`; an item with no extent classification settles `invalid-request`. | Test (TC-271) |
 | FR-290-AC-7 | Each row of the candidate table settles its listed disposition and cause; an item with two or more candidates and no named backend settles `invalid-request` naming every candidate in candidate order, identically under every registration order; a malformed registration is refused and keyed by backend identity. | Test (TC-271) |
-| FR-290-AC-8 | A routed item whose tool is missing, or whose probe errors or exceeds its limit, records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind and backend; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that becomes unavailable after a passing probe records the FR-331 result `failed` with the same cause. | Test (TC-271) |
+| FR-290-AC-8 | A routed item whose tool is missing, or whose probe finds a version other than the descriptor's `tool.version`, errors or exceeds its limit, records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind and backend; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that becomes unavailable after a passing probe records the FR-331 result `failed` with the same cause. | Test (TC-271) |
 | FR-290-AC-9 | Two or more admitted registrations of one backend identity with equal manifests leave that identity registered once, with no refusal, and give the same snapshot and candidate sets as one registration. | Test (TC-282) |
 | FR-290-AC-10 | Admitted registrations of one backend identity with two or more differing manifests are all refused with `invalid_capability`/`duplicate-backend`, one refusal per distinct manifest, ordered by identity and then by the manifest's RFC 8785 bytes; the snapshot holds no registration of that identity, a request naming it receives the unknown-backend mark, and registrations of other identities stand; the snapshot, its refusals and every candidate set are identical under every registration order. | Test (TC-282) |
 | FR-290-AC-11 | A probabilistic claim requires `probabilistic-satisfaction`, a task-set claim `schedulability`, and a timed temporal claim and the time-lock-freedom item `temporal-satisfaction`. | Test (TC-353, TC-370, TC-372) |

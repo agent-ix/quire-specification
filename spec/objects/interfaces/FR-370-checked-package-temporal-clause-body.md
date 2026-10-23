@@ -117,8 +117,8 @@ where `interval` is one of:
   ([FR-255](../temporal/FR-255-bounded-temporal-interval.md)). The upper
   bound is present, a timed interval being finite, except in a hybrid claim
   ([FR-481](FR-481-checked-package-hybrid-model-nodes.md) "Hybrid claims")
-  whose profile admits `[a,*]`, where `upper` `null` with `upper_end` `open`
-  is the interval `[q, *]`. `lower <= upper`,
+  under `quire.temporal.timed/v1`, where `upper` `null` with `upper_end`
+  `open` is the interval `[q, *]`. `lower <= upper`,
   and `lower < upper` when either end is `open`.
 
 An unbounded operator carries `{kind: "temporal_interval", interval: null}`.
@@ -199,12 +199,9 @@ argument fit the clause's `temporal_profile` law as this table states:
 | `quire.temporal.timed/v1` | `null`, timed `[a,b]` with either end open or closed | empty or non-empty |
 | `quire.temporal.event-position.false-extension/v1`, `quire.temporal.fixed-sample.false-extension/v1`, `quire.temporal.timestamped-event.finite-window/v1` | integer `[a,b]` | empty |
 
-A hybrid claim (FR-481) takes its intervals by FR-481 "Hybrid claims": the
-timed form only under `quire.temporal.timed/v1`, as this table states, with
-the timed `[q, *]` where that profile admits it; under any other profile
-the integer form where the bounds are whole and closed and the timed form in
-exact rational seconds otherwise; and the integer form under
-`model-steps`. Its fairness argument fits this table. Under `quire.temporal.timed/v1` a lower-bounded
+A hybrid claim (FR-481) fits this table, with one addition: under
+`quire.temporal.timed/v1` it also admits the timed `[q, *]`, `upper` `null`
+with `upper_end` `open`. Under `quire.temporal.timed/v1` a lower-bounded
 `[a,*]` interval and an integer-form interval are not admitted: a timed interval has a finite upper
 bound (FR-255) and its bounds are exact rationals. The timed form is
 admitted under no other profile.

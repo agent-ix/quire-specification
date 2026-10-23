@@ -27,6 +27,7 @@
         "/contract_version": "FR-331",
         "/capability_vocabulary": "FR-290",
         "/manifest/0/backend": "FR-290",
+        "/manifest/0/tool": "FR-331",
         "/manifest/0/advertises": "FR-290",
         "/manifest/0/domains": "FR-290",
         "/manifest/0/bounds": "FR-461"
@@ -37,6 +38,15 @@
         "manifest": [
           {
             "backend": "kani",
+            "tool": {
+              "name": "kani",
+              "version": "0.56.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+              }
+            },
             "advertises": [
               {
                 "kind": "operation-contract",
@@ -85,6 +95,15 @@
         "manifest": [
           {
             "backend": "kani",
+            "tool": {
+              "name": "kani",
+              "version": "0.56.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+              }
+            },
             "advertises": [
               {
                 "kind": "operation-contract",
@@ -211,6 +230,15 @@
         "manifest": [
           {
             "backend": "kani",
+            "tool": {
+              "name": "kani",
+              "version": "0.56.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+              }
+            },
             "advertises": [
               {
                 "kind": "value-validity",
@@ -905,6 +933,15 @@
         "manifest": [
           {
             "backend": "qsl-model-check",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
+            },
             "advertises": [
               {
                 "kind": "temporal-satisfaction",
@@ -2865,6 +2902,15 @@
         "manifest": [
           {
             "backend": "qsl-prob",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
+            },
             "advertises": [
               {
                 "kind": "probabilistic-satisfaction",
@@ -3181,6 +3227,15 @@
         "manifest": [
           {
             "backend": "qsl-model-check",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
+            },
             "advertises": [
               {
                 "kind": "temporal-satisfaction",
@@ -4686,6 +4741,179 @@
       ]
     },
     {
+      "name": "hello-descriptor-without-tool",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-without-version",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/version"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-without-name",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/name"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-empty-version",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/version",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-extra-member",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/manifest/0/tool/target",
+          "value": "x86_64-unknown-linux-gnu"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-string",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool",
+          "value": "kani 0.56.0"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-kani-without-tool",
+      "base": "kani-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-without-tool",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-tool-string",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool",
+          "value": "producer"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-without-build",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/build"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-tool-without-build",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/build"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-other-domain",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/build/domain",
+          "value": "quire.tool-manifest.jcs/v1"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-uppercase-digest",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/build/digest",
+          "value": "A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-bare-digest",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/build",
+          "value": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-extra-member",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/manifest/0/tool/build/version",
+          "value": "1"
+        }
+      ]
+    },
+    {
       "name": "manifest-unknown-kind",
       "base": "kani-hello",
       "owner": "FR-290",
@@ -4719,6 +4947,15 @@
           "path": "/manifest/-",
           "value": {
             "backend": "cbmc",
+            "tool": {
+              "name": "cbmc",
+              "version": "6.4.1",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3"
+              }
+            },
             "advertises": [
               {
                 "kind": "value-validity",
