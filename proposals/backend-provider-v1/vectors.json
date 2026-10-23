@@ -27,6 +27,7 @@
         "/contract_version": "FR-331",
         "/capability_vocabulary": "FR-290",
         "/manifest/0/backend": "FR-290",
+        "/manifest/0/tool": "FR-331",
         "/manifest/0/advertises": "FR-290",
         "/manifest/0/domains": "FR-290",
         "/manifest/0/bounds": "FR-461"
@@ -37,6 +38,15 @@
         "manifest": [
           {
             "backend": "kani",
+            "tool": {
+              "name": "kani",
+              "version": "0.56.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+              }
+            },
             "advertises": [
               {
                 "kind": "operation-contract",
@@ -85,6 +95,15 @@
         "manifest": [
           {
             "backend": "kani",
+            "tool": {
+              "name": "kani",
+              "version": "0.56.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+              }
+            },
             "advertises": [
               {
                 "kind": "operation-contract",
@@ -211,6 +230,15 @@
         "manifest": [
           {
             "backend": "kani",
+            "tool": {
+              "name": "kani",
+              "version": "0.56.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
+              }
+            },
             "advertises": [
               {
                 "kind": "value-validity",
@@ -905,6 +933,15 @@
         "manifest": [
           {
             "backend": "qsl-model-check",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
+            },
             "advertises": [
               {
                 "kind": "temporal-satisfaction",
@@ -1482,6 +1519,7 @@
         ]
       }
     },
+    {"name": "cross-check-and-byte-limit-outcome", "stage": "outcome", "owners": {"/results/0/cross_check": "FR-354", "/results/1/cross_check": "FR-349", "/results/2/cause": "FR-349", "/results/3/cause": "FR-462", "/results/4/cause": "FR-462", "/results/5/cross_check": "FR-349", "/results/6/cross_check": "FR-349", "/results/7/cause": "FR-349", "/results/8/certification": "FR-305"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}, {"request_index": 1, "disposition": "supported"}, {"request_index": 2, "disposition": "supported"}, {"request_index": 3, "disposition": "supported"}, {"request_index": 4, "disposition": "supported"}, {"request_index": 5, "disposition": "supported"}, {"request_index": 6, "disposition": "supported"}, {"request_index": 7, "disposition": "supported"}, {"request_index": 8, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "proved", "certification": "certified", "basis": {"type": "bounded-complete", "depth": 3}, "cross_check": {"tool": "z3", "verdict": "proved"}}, {"request_index": 1, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "proved", "certification": "certified", "basis": {"type": "bounded-complete", "depth": 3}, "cross_check": {"tool": "z3", "verdict": "refuted"}}, {"request_index": 2, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "cross-check-disagreement", "tool": "z3", "primary": "proved", "cross_check": "refuted"}}, {"request_index": 3, "backend": "example-plugin", "kind": "temporal-satisfaction", "result": "failed", "cause": {"type": "tool-failure", "defect": "frame-length", "limit": 1048576, "value": 1048577}}, {"request_index": 4, "backend": "example-plugin", "kind": "temporal-satisfaction", "result": "failed", "cause": {"type": "tool-failure", "defect": "total-bytes", "limit": 4194304, "value": 4194305}}, {"request_index": 5, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "proved", "certification": "uncertified", "basis": {"type": "inductive", "depth": 1}, "cross_check": {"tool": "z3", "verdict": "proved"}}, {"request_index": 6, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "proved", "certification": "certified", "basis": {"type": "bounded-complete", "depth": 3}, "cross_check": {"tool": "z3", "verdict": "inconclusive"}}, {"request_index": 7, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "cross-check-disagreement", "tool": "z3", "primary": "inconclusive", "cross_check": "proved"}}, {"request_index": 8, "backend": "example-plugin", "kind": "temporal-satisfaction", "result": "proved", "certification": "trusted", "basis": {"type": "bounded-complete", "depth": 3}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result"}, {"request_index": 1, "settled_by": "result"}, {"request_index": 2, "settled_by": "result"}, {"request_index": 3, "settled_by": "result"}, {"request_index": 4, "settled_by": "result"}, {"request_index": 5, "settled_by": "result"}, {"request_index": 6, "settled_by": "result"}, {"request_index": 7, "settled_by": "result"}, {"request_index": 8, "settled_by": "result"}]}},
     {
       "name": "certificate-rejected-loci",
       "stage": "outcome",
@@ -2865,6 +2903,15 @@
         "manifest": [
           {
             "backend": "qsl-prob",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
+            },
             "advertises": [
               {
                 "kind": "probabilistic-satisfaction",
@@ -3181,6 +3228,15 @@
         "manifest": [
           {
             "backend": "qsl-model-check",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
+            },
             "advertises": [
               {
                 "kind": "temporal-satisfaction",
@@ -3923,6 +3979,18 @@
     {"name": "probability-product-key-missing", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/21/cause/at/product_key"}]},
     {"name": "probability-product-key-extra-member", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/21/cause/at/state", "value": "5555555555555555555555555555555555555555555555555555555555555555"}]},
     {"name": "query-part-step-row-leading-zero", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": "step/02"}]},
+    {"name": "cross-check-on-inconclusive", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/2/cross_check", "value": {"tool": "z3", "verdict": "proved"}}]},
+    {"name": "cross-check-missing-verdict", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/0/cross_check/verdict"}]},
+    {"name": "cross-check-missing-tool", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/0/cross_check/tool"}]},
+    {"name": "cross-check-unknown-verdict", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cross_check/verdict", "value": "agrees"}]},
+    {"name": "cross-check-extra-member", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/0/cross_check/certification", "value": "certified"}]},
+    {"name": "cross-check-disagreement-missing-primary", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-349", "patch": [{"op": "remove", "path": "/results/2/cause/primary"}]},
+    {"name": "cross-check-on-trusted", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/8/cross_check", "value": {"tool": "z3", "verdict": "proved"}}]},
+    {"name": "cross-check-on-non-smt-basis", "base": "certification-outcome", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/5/cross_check", "value": {"tool": "z3", "verdict": "proved"}}]},
+    {"name": "cross-check-disagreement-on-uncertified", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-349", "patch": [{"op": "replace", "path": "/results/5/cross_check/verdict", "value": "refuted"}]},
+    {"name": "tool-failure-frame-length-missing-limit", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-462", "patch": [{"op": "remove", "path": "/results/3/cause/limit"}]},
+    {"name": "tool-failure-total-bytes-missing-value", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-462", "patch": [{"op": "remove", "path": "/results/4/cause/value"}]},
+    {"name": "tool-failure-limit-on-crash", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-462", "patch": [{"op": "replace", "path": "/results/3/cause/defect", "value": "crash"}]},
     {"name": "query-part-step-row-empty", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": "step/"}]},
     {"name": "query-part-step-row-overflow", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": "step/18446744073709551616"}]},
     {"name": "query-part-unrolling-row", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": "unrolling/2"}]},
@@ -3995,6 +4063,179 @@
       ]
     },
     {
+      "name": "hello-descriptor-without-tool",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-without-version",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/version"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-without-name",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/name"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-empty-version",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/version",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-extra-member",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/manifest/0/tool/target",
+          "value": "x86_64-unknown-linux-gnu"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-string",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool",
+          "value": "kani 0.56.0"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-kani-without-tool",
+      "base": "kani-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-without-tool",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-tool-string",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool",
+          "value": "producer"
+        }
+      ]
+    },
+    {
+      "name": "hello-tool-without-build",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/build"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-tool-without-build",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool/build"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-other-domain",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/build/domain",
+          "value": "quire.tool-manifest.jcs/v1"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-uppercase-digest",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/build/digest",
+          "value": "A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-bare-digest",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool/build",
+          "value": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-build-extra-member",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/manifest/0/tool/build/version",
+          "value": "1"
+        }
+      ]
+    },
+    {
       "name": "manifest-unknown-kind",
       "base": "kani-hello",
       "owner": "FR-290",
@@ -4028,6 +4269,15 @@
           "path": "/manifest/-",
           "value": {
             "backend": "cbmc",
+            "tool": {
+              "name": "cbmc",
+              "version": "6.4.1",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3"
+              }
+            },
             "advertises": [
               {
                 "kind": "value-validity",

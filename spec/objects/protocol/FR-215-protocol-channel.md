@@ -101,5 +101,4 @@ ordered or exactly-once delivery.
 
 ## Status
 
-Accepted complete-V1 channel contract. Implementation and qualification remain
-tracked separately.
+Accepted complete-V1 channel contract.
