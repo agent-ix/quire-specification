@@ -58,7 +58,7 @@ const POSITIVE_DEPENDENCY_LIBRARY: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-dependency-library.json");
 const POSITIVE_DEPENDENCY_CALL: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-dependency-call.json");
-const REQUIRED_NODE_TAGS: [&str; 14] = [
+const REQUIRED_NODE_TAGS: [&str; 15] = [
     "scalar_type",
     "composite_type",
     "bounded_domain",
@@ -73,6 +73,7 @@ const REQUIRED_NODE_TAGS: [&str; 14] = [
     "claim",
     "correspondence",
     "extension",
+    "hybrid",
 ];
 
 fn parsed_fixture(bytes: &str) -> Value {
@@ -912,7 +913,7 @@ fn literal_value_is_canonical(literal: &Value) -> bool {
             text.parse::<i128>()
                 .is_ok_and(|count| count.to_string() == text)
         }),
-        Some("quantity") => value.is_some_and(quantity_magnitude_is_canonical),
+        Some("quantity" | "rational") => value.is_some_and(quantity_magnitude_is_canonical),
         _ => true,
     }
 }
@@ -3289,7 +3290,7 @@ fn node_declares(node: &Value) -> bool {
     let declarable = match node["node_tag"].as_str() {
         Some(
             "scalar_type" | "composite_type" | "bounded_domain" | "function" | "model" | "protocol"
-            | "claim" | "extension",
+            | "claim" | "extension" | "hybrid",
         ) => true,
         Some("value") => node["semantic_form"] != "enum_value",
         _ => false,
@@ -14243,6 +14244,38 @@ fn tc_233_scalar_equality_identities_and_literal_kinds_are_enumerated_and_admitt
     }
 }
 
+/// FR-322 "Scalar literal values" (FR-322-AC-114): a `rational` literal's
+/// `value` is its exact value in the canonical magnitude spelling, and any
+/// other spelling of the same value is refused `invalid-value`.
+#[trace("FR-322-AC-114", "TC-233")]
+#[test]
+fn tc_233_rational_literals_spell_one_canonical_magnitude() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let mut package = scalar_equality_package(&catalog);
+    package["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(walk_scalar("Ratio", "rational"));
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    for value in ["0", "1", "-3", "1/2", "-7/2"] {
+        assert!(
+            oracle
+                .argument_descriptor(&scalar_literal("rational", "Ratio", value))
+                .is_ok_and(|d| d.is_some_and(|d| d.family == "rational")),
+            "a rational literal {value} is admitted"
+        );
+    }
+    for value in ["2/2", "1/1", "02", "+1", "2/4", "1/0", "0/5", "1/-2", "2.5", ""] {
+        assert_eq!(
+            oracle
+                .argument_descriptor(&scalar_literal("rational", "Ratio", value))
+                .err(),
+            Some(OperationRefusal::InvalidValue),
+            "the rational spelling {value:?} is not canonical"
+        );
+    }
+}
+
 /// QL-01 to QL-04 (FR-322-AC-79): a `quantity` literal typed by a unit node is
 /// admitted, both schemas enumerate the kind, and a literal typed by another
 /// family or carrying a non-canonical magnitude is refused by exactly its step.
@@ -16536,6 +16569,102 @@ fn tc_966_hybrid_model_nodes_meet_the_schema_and_carry_their_own_keys() {
     assert_eq!(claim["body"]["arguments"][0]["target"], over["node_id"]);
     assert_eq!(over["semantic_type"], model["node_id"]);
     assert_eq!(claim["body"]["arguments"][1]["value"], "model-time");
+    assert_eq!(
+        claim["body"]["operation"]["laws"],
+        json!([{"role": "temporal_profile", "definition": {"authority": "agent-ix", "identity": "quire.temporal.infinite-trace/v1"}}])
+    );
+    assert_eq!(
+        claim["body"]["arguments"][2],
+        json!({"term": "aggregate", "members": [{"term": "binding", "name": "kind", "value": {"term": "literal", "type": nodes.iter().find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == "text").expect("text")["node_id"], "value_kind": "text", "value": "origin"}}]})
+    );
+    assert_eq!(
+        claim["body"]["arguments"][3]["members"],
+        json!([]),
+        "no captures"
+    );
+    assert_eq!(
+        claim["body"]["arguments"][4]["members"],
+        json!([]),
+        "no fairness"
+    );
+    let node_at = |id: &Value| {
+        nodes
+            .iter()
+            .find(|node| node["node_id"] == *id)
+            .expect("referenced node")
+    };
+    let always = node_at(&claim["body"]["arguments"][5]["target"]);
+    assert_eq!(
+        always["body"]["operation"]["identity"],
+        "quire.op.temporal.always"
+    );
+    assert_eq!(
+        always["body"]["operation"]["member"],
+        json!({"kind": "temporal_interval", "interval": {"lower": "0", "upper": "10"}})
+    );
+    let holds = node_at(&always["body"]["arguments"][0]["target"]);
+    assert_eq!(
+        holds["body"]["operation"]["identity"],
+        "quire.op.temporal.holds"
+    );
+    let below = node_at(&holds["body"]["arguments"][0]["target"]);
+    assert_eq!(
+        below["body"]["operation"]["identity"],
+        "quire.op.rational.lt"
+    );
+    let v = at(&roles["variables"][0]);
+    assert_eq!(
+        below["body"]["arguments"][0]["target"], v["node_id"],
+        "holds reads v"
+    );
+    let thirty = node_at(&below["body"]["arguments"][1]["target"]);
+    assert_eq!(thirty["body"]["value"], "30");
+    // Moving's rates are -a, 0 and 1; its transition is target 1, guard
+    // v = 0 and reset (0, 0).
+    let a = at(&roles["variables"][1]);
+    let moving = at(&modes[0]);
+    let rates = hybrid_binding(&moving["body"], "rates")["members"]
+        .as_array()
+        .expect("rates");
+    let negate = node_at(&rates[0]["target"]);
+    assert_eq!(
+        negate["body"]["operation"]["identity"],
+        "quire.op.rational.negate"
+    );
+    assert_eq!(negate["body"]["arguments"][0]["target"], a["node_id"]);
+    assert_eq!(node_at(&rates[1]["target"])["body"]["value"], "0");
+    assert_eq!(node_at(&rates[2]["target"])["body"]["value"], "1");
+    let transitions = hybrid_binding(&moving["body"], "transitions")["members"]
+        .as_array()
+        .expect("transitions");
+    assert_eq!(transitions.len(), 1);
+    let transition = node_at(&transitions[0]["target"]);
+    assert_eq!(hybrid_binding(&transition["body"], "target")["value"], "1");
+    let guard = node_at(&hybrid_binding(&transition["body"], "guard")["target"]);
+    assert_eq!(
+        guard["body"]["operation"]["identity"],
+        "quire.op.rational.eq"
+    );
+    assert_eq!(guard["body"]["arguments"][0]["target"], v["node_id"]);
+    assert_eq!(
+        node_at(&guard["body"]["arguments"][1]["target"])["body"]["value"],
+        "0"
+    );
+    let resets = hybrid_binding(&transition["body"], "resets")["members"]
+        .as_array()
+        .expect("resets");
+    assert_eq!(resets.len(), 1);
+    assert_eq!(hybrid_binding(&resets[0], "variable")["value"], "0");
+    assert_eq!(
+        node_at(&hybrid_binding(&resets[0], "value")["target"])["body"]["value"],
+        "0"
+    );
+    assert!(
+        hybrid_binding(&at(&modes[1])["body"], "transitions")["members"]
+            .as_array()
+            .expect("none")
+            .is_empty()
+    );
 }
 
 #[trace("TC-966", "FR-481-AC-3")]
@@ -16556,6 +16685,12 @@ fn tc_966_a_changed_rate_rekeys_its_mode_the_model_and_the_claim() {
         nodes[moving]["body"]["members"][1]["value"]["members"][0]["target"],
         nodes[index(&roles["moving_rate_of_v"])]["node_id"]
     );
+    for node in extra {
+        assert!(
+            hybrid_vector_key_is_current(node, &nodes),
+            "an added term node holds its own key"
+        );
+    }
     nodes.extend(extra.iter().cloned());
     nodes[moving]["body"]["members"][1]["value"]["members"][0]["target"] = replacement;
     let snapshot = nodes.clone();
@@ -16627,5 +16762,133 @@ fn tc_966_malformed_hybrid_nodes_fail_the_published_schema() {
             (_, other) => panic!("{name}: unexpected parent {other}"),
         }
         assert!(!node_schema.is_valid(&node), "{name}: {}", case["why"]);
+    }
+}
+
+#[trace("TC-966", "FR-481-AC-13", "FR-322-AC-13")]
+#[test]
+fn tc_966_the_all_families_fixture_carries_a_hybrid_model_with_bare_variable_terms() {
+    let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes");
+    let node_at = |id: &Value| {
+        nodes
+            .iter()
+            .find(|node| node["node_id"] == *id)
+            .expect("referenced node")
+    };
+    let hybrid = nodes
+        .iter()
+        .filter(|node| node["node_tag"] == "hybrid")
+        .collect::<Vec<_>>();
+    let forms = hybrid
+        .iter()
+        .map(|node| node["semantic_form"].as_str().expect("form"))
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        forms,
+        BTreeSet::from(["hybrid_model", "hybrid_mode", "hybrid_transition"])
+    );
+    for node in &hybrid {
+        assert!(
+            structural_node_key_is_current(node),
+            "a hybrid node holds its own key"
+        );
+        assert_eq!(
+            node["dependencies"],
+            json!(body_reference_targets(&node["body"]))
+        );
+    }
+    let model = hybrid
+        .iter()
+        .find(|node| node["semantic_form"] == "hybrid_model")
+        .expect("model");
+    assert_eq!(
+        model["declaration"],
+        json!({"qualified_name": ["Example", "Tank"]})
+    );
+    let entries = hybrid_binding(&model["body"], "variables")["members"]
+        .as_array()
+        .expect("variables");
+    let variables = entries
+        .iter()
+        .map(|entry| &hybrid_binding(entry, "parameter")["target"])
+        .collect::<Vec<_>>();
+    let classes = entries
+        .iter()
+        .map(|entry| {
+            hybrid_binding(entry, "class")["value"]
+                .as_str()
+                .expect("class")
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(classes, ["hybrid", "hybrid"]);
+    let mode = node_at(&hybrid_binding(&model["body"], "modes")["members"][0]["target"]);
+    assert_eq!(
+        mode["declaration"],
+        json!({"qualified_name": ["Example", "Tank", "Filling"]})
+    );
+    let rates = hybrid_binding(&mode["body"], "rates")["members"]
+        .as_array()
+        .expect("rates");
+    assert_eq!(
+        &rates[0]["target"], variables[1],
+        "x' = y is a bare variable reference"
+    );
+    let one = node_at(&rates[1]["target"]);
+    assert_eq!(
+        (one["semantic_form"].as_str(), one["body"]["value"].as_str()),
+        (Some("literal"), Some("1"))
+    );
+    assert!(literal_value_is_canonical(&one["body"]));
+    let transition = node_at(&hybrid_binding(&mode["body"], "transitions")["members"][0]["target"]);
+    let reset = &hybrid_binding(&transition["body"], "resets")["members"][0];
+    assert_eq!(
+        &hybrid_binding(reset, "value")["target"],
+        variables[1],
+        "x is reset to y"
+    );
+    // FR-481 checks 3.2 and 3.3: every invariant and guard is a Boolean term,
+    // every rate and reset value a rational term or one of the variables.
+    let form_of = |id: &Value| {
+        let ty = node_at(&node_at(id)["semantic_type"]);
+        (
+            ty["node_tag"].as_str().expect("tag").to_owned(),
+            ty["semantic_form"].as_str().expect("form").to_owned(),
+        )
+    };
+    let boolean = ("scalar_type".to_owned(), "boolean".to_owned());
+    let rational = ("scalar_type".to_owned(), "rational".to_owned());
+    let rational_term = |id: &Value| variables.contains(&id) || form_of(id) == rational;
+    assert_eq!(
+        form_of(&hybrid_binding(&mode["body"], "invariant")["target"]),
+        boolean
+    );
+    assert_eq!(
+        form_of(&hybrid_binding(&transition["body"], "guard")["target"]),
+        boolean
+    );
+    for target in [
+        &rates[0]["target"],
+        &rates[1]["target"],
+        &hybrid_binding(reset, "value")["target"],
+    ] {
+        assert!(
+            rational_term(target),
+            "a rate or reset value is a rational term"
+        );
+    }
+    for variable in &variables {
+        assert_eq!(form_of(variable), rational, "a variable is typed rational");
+    }
+    let mapped = package["source_map"].as_array().expect("source map");
+    for node in &hybrid {
+        assert!(
+            mapped
+                .iter()
+                .any(|entry| entry["node_id"] == node["node_id"]),
+            "each hybrid node has a source-map entry"
+        );
     }
 }

@@ -182,9 +182,9 @@ each jump to a source transition:
 - The trace's last state SHALL be the state at which the solver reports the
   possible violation.
 - The schema checks a trace's shape only. Its correspondence to the
-  declaration is checked by the reader that holds the item's hybrid model:
-  the producer serving the item in process, or a process provider reading
-  the model's `hybrid` nodes from the package bytes
+  declaration is checked by the reader of the result entry: the host that
+  requested the item and holds its hybrid model, whichever provider, in
+  process or in a process of its own, returned the trace
   ([FR-481](../../objects/interfaces/FR-481-checked-package-hybrid-model-nodes.md)
   "Hybrid trace correspondence"). That reader SHALL refuse with
   `invalid_result`/`invalid-value`, at the member's pointer, a trace whose
