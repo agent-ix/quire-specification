@@ -498,6 +498,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-470
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-478
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-160
     type: contains
   - target: ix://agent-ix/quire-specification/FR-161
@@ -729,6 +731,8 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-476
     type: contains
   - target: ix://agent-ix/quire-specification/FR-477
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-480
     type: contains
   - target: ix://agent-ix/quire-specification/FR-481
     type: contains
@@ -1022,6 +1026,7 @@ The requirement artifacts are indexed below.
 | [FR-421](functional/temporal/FR-421-check-probabilistic-timed-claims-exactly.md) | FR | Check probabilistic timed claims exactly through digital clocks |
 | [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package union, union-value and case nodes, explicit union-value application-preimage selection, and the `quire.op.control.case` catalog entry |
 | [FR-441](objects/interfaces/FR-441-union-member-key.md) | FR | Union member key: the `quire.union-member-node/v1` preimage |
+| [FR-478](functional/type-model/FR-478-convert-text-to-a-number.md) | FR | Text and String to a number: one locale-free grammar per integer, decimal, rational, IEEE and quantity target |
 | [FR-469](objects/interfaces/FR-469-checked-package-extension-nodes.md) | FR | Checked-package extension form node: one `extension`/`extension_form` tag with the node kind as body data, its structural key, and the reader joins for a held, selected extension definition |
 | [FR-390](functional/analysis/FR-390-analyze-state-graph-claims.md) | FR | State-graph claims `possible`, `always possible` and `unique path` over a model subject: forms, graph semantics and admission |
 | [FR-391](functional/analysis/FR-391-settle-state-graph-claims.md) | FR | Settlement of state-graph claims from decisive evidence on open and closed nodes; verdicts, settlement method and reduction rows |
@@ -1039,6 +1044,7 @@ The requirement artifacts are indexed below.
 | [FR-475](objects/interfaces/FR-475-checked-package-state-graph-claim-body.md) | FR | Checked-package `claim`/`state_graph` body and state-graph obligation identity |
 | [FR-476](objects/interfaces/FR-476-checked-package-model-terminal-declaration-body.md) | FR | Checked-package `temporal`/`terminal` body of a model `terminal` declaration |
 | [FR-477](objects/interfaces/FR-477-checked-package-step-relation-claim-body.md) | FR | Checked-package `claim`/`step_relation` body of a step relation and its code-claim premises |
+| [FR-480](functional/type-model/FR-480-check-and-resolve-reference-literals.md) | FR | Reference literal `M::T#"k"`: syntax, typing, `reference` literal term and resolution at subject binding |
 | [FR-481](objects/interfaces/FR-481-checked-package-hybrid-model-nodes.md) | FR | Checked-package `hybrid` nodes of a hybrid model, its modes and transitions, and its claims |
 | [FR-403](functional/analysis/FR-403-reduce-hyperproperty-state-spaces.md) | FR | Reduction preservation rows for hyper forms and compiler-verified copy-swap symmetry |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |

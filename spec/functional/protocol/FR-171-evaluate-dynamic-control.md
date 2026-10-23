@@ -40,7 +40,9 @@ discharged population bound.
 
 `all` settles after every branch settles; `any` settles after the first branch;
 `quorum(n)` settles after `n` distinct branches; and a predicate join settles
-only when its pure predicate is true over the immutable branch-result map. Each
+only when its pure predicate is true over one Boolean per joined label, in
+ascending label order, `true` for a `completed` branch and `false` for a
+`running` one ([FR-466](../../objects/interfaces/FR-466-checked-package-protocol-control-bodies.md)). Each
 join declares whether unsettled branches continue or receive cancellation.
 A loop invariant holds before the first iteration and after every body step; a
 lexicographic well-founded variant decreases on every back edge.

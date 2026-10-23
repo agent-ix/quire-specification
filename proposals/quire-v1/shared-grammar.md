@@ -369,10 +369,12 @@ primary       = 'true' | 'false' | 'null' | 'none' | 'self' | 'result'
               | 'allInstances', '<', type-ref, '>', '(', expr, ')'
               | collection-call
               | protocol-reference
+              | reference-literal
               | 'reaches', '(', expr, ',', expr, ',', qualified-name, ')'
               | 'lookup', '<', type-ref, '>', '(', expr, ',', expr, ')',
                 'absent', absence-mode ;
 protocol-reference = 'protocol', qualified-name ;
+reference-literal = qualified-name, '#', string ;
 absence-mode  = 'undefined' | 'empty' | 'refused' ;
 operation-body = 'body', ident, 'using', ident, 'on', qualified-name,
                  '(', [ ident, { ',', ident } ], ')', block ;
@@ -428,8 +430,15 @@ another kind. Decimal source is exact coefficient/scale syntax. In
 coefficient bound and the unsigned pair is the inclusive membership scale bound;
 FR-140 owns their well-formedness and value-only membership. IEEE source is
 bit-level so signed zero and NaN payload identity survive parsing. Human decimal
-float conversion is an explicit library function under a selected rounding
-profile, not a literal shortcut.
+float conversion is an explicit `convert<Float32[m]>(t)` or
+`convert<Float64[m]>(t)` of a text under the target's rounding mode (FR-478),
+not a literal shortcut.
+
+A `reference-literal` names one object by its key: the qualified name names
+an object type and the string is the key's object identity as UTF-8 bytes
+(`M::Server#"s1"`). `#` is a punctuation token of this production alone. Its
+typing, lowering and resolution are
+[FR-480](../../spec/functional/type-model/FR-480-check-and-resolve-reference-literals.md)'s.
 
 Over a `Float32` or `Float64`, unary `-` is IEEE `negate` (a sign-bit flip, FR-148),
 and `=`, `!=`, `<`, `<=`, `>` and `>=` are the IEEE quiet comparisons built from
@@ -640,8 +649,10 @@ graph-unary   = 'not', graph-unary
               | comparison
               | '(', graph-predicate, ')' ;
 graph-over    = 'over', '(', parameter, ')' ;
-hybrid-decl   = 'hybrid', ident, 'using', ident, '{', hybrid-mode,
-                { hybrid-mode }, '}' ;
+hybrid-decl   = 'hybrid', ident, 'using', ident, '{', [ hybrid-initial ],
+                hybrid-mode, { hybrid-mode }, '}' ;
+hybrid-initial = 'initial', '{', initial-entry, { initial-entry }, '}' ;
+initial-entry = 'mode', ident, 'when', block, ';' ;
 hybrid-mode   = 'mode', ident, 'invariant', block,
                 'flow', '{', equation, { equation }, '}',
                 { 'transition', 'to', ident, 'when', block,
@@ -660,6 +671,18 @@ verification-step = 'check', ident, 'claim', qualified-name,
                     [ 'bound', uint ], ';' ;
 attempt-type  = type-ref ;
 ```
+
+`initial` is matched as a keyword spelling only as the first word of a
+`hybrid-initial`, the optional first member of a `hybrid-decl` body, and
+remains an identifier elsewhere. A `hybrid-decl` with no `hybrid-initial`
+has the one initial entry `mode M when { true };`, `M` its first mode
+([FR-193](../../spec/functional/analysis/FR-193-analyze-continuous-hybrid-models.md)
+"Initial states"). In a `temporal-clause` whose `over` parameter is typed by a
+`hybrid-decl` (a hybrid claim), an interval-capable operator takes an
+`interval` or a `timed-interval`, whatever the selected profile, and a
+`timed-interval` there also admits the upper bound `'*'`, written
+`( '[' | '(' ), quantity-literal, ',', '*', ']'`, where the profile admits an
+interval `[a,*]` (FR-193 "Hybrid claims").
 
 The attempt type after `attempts N of` is a `type-ref` here, replacing the
 bounded `attempt-type = type-name`, so the grammar admits an inline type form
@@ -923,7 +946,7 @@ aggregate-term = ( 'count' | 'sum' | 'min' | 'max'
                  | 'fraction', 'holds', '(', expr, ')'
                  | 'quantile', exact-value ),
                  [ 'of', expr ], [ 'where', 'holds', '(', expr, ')' ],
-                 'over', 'past', window, 'min_count', uint ;
+                 'over', 'past', window, [ 'min_count', uint ] ;
 window         = '[', horizon, ',', horizon, ']' ;
 temporal-primary =/ aggregate-atom ;
 

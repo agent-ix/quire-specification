@@ -195,12 +195,15 @@
         "reductions": {"description": "FR-382: the state-space reductions the backend applies.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["symmetry", "partial-order", "constraint"]}},
         "evidence_kinds": {"description": "FR-290: evidence kinds of a probabilistic-satisfaction backend.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["statistical", "exact"]}},
         "fairness_kinds": {"description": "FR-368: fairness kinds a temporal-satisfaction backend decides.", "type": "array", "uniqueItems": true, "items": {"enum": ["weak", "strong"]}},
-        "memory_models": {"description": "FR-331, FR-439: memory models a temporal-satisfaction backend decides for items over a subject with a weak parallel, by the names of the memory clause; absent means sc only.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["sc", "tso", "ra"]}}
+        "memory_models": {"description": "FR-331, FR-439: memory models a temporal-satisfaction backend decides for items over a subject with a weak parallel, by the names of the memory clause; absent means sc only.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["sc", "tso", "ra"]}},
+        "dynamics": {"description": "FR-193 Routing a hybrid item, FR-290: the dynamics a temporal-satisfaction backend decides, discrete for items with no hybrid-dynamics requirement and hybrid for items carrying it; absent means discrete only.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["discrete", "hybrid"]}}
       },
       "allOf": [
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"const": "probabilistic-satisfaction"}}}}}}, "then": {"required": ["evidence_kinds"]}, "else": {"not": {"required": ["evidence_kinds"]}}},
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"const": "temporal-satisfaction"}}}}}}, "then": {"required": ["fairness_kinds"]}, "else": {"not": {"required": ["fairness_kinds"]}}},
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"const": "temporal-satisfaction"}}}}}}, "else": {"not": {"required": ["memory_models"]}}},
+        {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"const": "temporal-satisfaction"}}}}}}, "else": {"not": {"required": ["dynamics"]}}},
+        {"description": "FR-193 Routing a hybrid item: a backend that decides hybrid items publishes both hybrid solver budget defaults.", "if": {"required": ["dynamics"], "properties": {"dynamics": {"contains": {"const": "hybrid"}}}}, "then": {"required": ["bounds"], "properties": {"bounds": {"required": ["max_solver_steps", "max_solver_time"]}}}},
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"mode": {"const": "bounded"}}, "required": ["mode"]}}}}, "then": {"required": ["domains"]}}
       ],
       "additionalProperties": false
@@ -236,8 +239,13 @@
         "reductions": {"$ref": "#/$defs/Reductions"},
         "temporal": {"$ref": "#/$defs/Temporal"},
         "probabilistic": {"$ref": "#/$defs/Probabilistic"},
+        "requirements": {"description": "FR-193 Routing a hybrid item, FR-290: the item's routing requirements; hybrid-dynamics on the item of every hybrid claim. Part of request identity (FR-306).", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["hybrid-dynamics"]}},
         "hybrid": {"$ref": "#/$defs/Hybrid"}
       },
+      "allOf": [
+        {"description": "FR-193: requirements belong to a temporal-satisfaction item only.", "if": {"required": ["requirements"]}, "then": {"required": ["kind"], "properties": {"kind": {"const": "temporal-satisfaction"}}}},
+        {"description": "FR-193: an item carrying hybrid solver budgets carries the hybrid-dynamics requirement.", "if": {"required": ["hybrid"]}, "then": {"required": ["requirements"], "properties": {"requirements": {"contains": {"const": "hybrid-dynamics"}}}}}
+      ],
       "additionalProperties": false
     },
     "Candidates": {
@@ -664,7 +672,8 @@
         {"$ref": "#/$defs/TemporalCounterexample"},
         {"$ref": "#/$defs/ProbabilisticCounterexample"},
         {"$ref": "#/$defs/GraphEvidence"},
-        {"$ref": "#/$defs/HyperCounterexample"}
+        {"$ref": "#/$defs/HyperCounterexample"},
+        {"$ref": "#/$defs/HybridCounterexample"}
       ]
     },
     "CounterexampleEntry": {
@@ -706,7 +715,8 @@
           {"properties": {"type": {"const": "interval-iteration"}, "precision_bits": {"$ref": "#/$defs/PositiveCount"}, "sweeps": {"$ref": "#/$defs/Count"}}, "required": ["sweeps"], "additionalProperties": false}
         ]}, "reductions": {"$ref": "#/$defs/ReductionNames"}}, "required": ["type", "lower", "upper", "method", "reductions"], "additionalProperties": false},
         {"properties": {"type": {"const": "closed-form"}, "analysis": {"enum": ["fixed-priority", "edf", "amc-rtb"]}}, "required": ["type", "analysis"], "additionalProperties": false},
-        {"properties": {"type": {"const": "bounded-solver"}, "method": {"$ref": "#/$defs/Nonempty"}, "horizon": {"$ref": "#/$defs/Rational"}, "jumps": {"$ref": "#/$defs/Count"}}, "required": ["type", "method", "horizon", "jumps"], "additionalProperties": false},
+        {"description": "FR-193 Solver methods: the bounded method kinds.", "properties": {"type": {"const": "bounded-solver"}, "method": {"enum": ["delta-complete", "flowpipe-outward-rounded", "flowpipe-unrounded", "unclassified"]}, "horizon": {"$ref": "#/$defs/Rational"}, "jumps": {"$ref": "#/$defs/Count"}, "exhaustive": {"$ref": "#/$defs/ExhaustiveDimensions"}}, "required": ["type", "method", "horizon", "jumps", "exhaustive"], "additionalProperties": false},
+        {"description": "FR-193 Solver methods, Proof coverage: an inductive enclosure, covering every time and jump count.", "properties": {"type": {"const": "inductive-solver"}, "method": {"const": "inductive-enclosure"}}, "required": ["type", "method"], "additionalProperties": false},
         {"properties": {"type": {"const": "witnessed"}, "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/WitnessSource"}}}, "required": ["type", "sources"], "additionalProperties": false},
         {"properties": {"type": {"const": "bounded-proof"}, "checks": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "checks"], "additionalProperties": false}
       ]
@@ -796,6 +806,7 @@
       "oneOf": [
         {"$ref": "#/$defs/CertificateRejected"},
         {"$ref": "#/$defs/SolverInconclusive"},
+        {"description": "FR-193 Proof coverage: a sound bounded proof whose horizon or jump bound does not cover its claim; horizon and jumps are the proof's own.", "properties": {"type": {"const": "insufficient-horizon"}, "horizon": {"$ref": "#/$defs/Rational"}, "jumps": {"$ref": "#/$defs/Count"}, "exhaustive": {"$ref": "#/$defs/ExhaustiveDimensions"}}, "required": ["type", "horizon", "jumps", "exhaustive"], "additionalProperties": false},
         {"description": "FR-349: a cvc5/Z3 disagreement FR-349 settles inconclusive; primary and cross_check are each solver's result.", "properties": {"type": {"const": "cross-check-disagreement"}, "tool": {"$ref": "#/$defs/Nonempty"}, "primary": {"enum": ["proved", "refuted", "inconclusive"]}, "cross_check": {"enum": ["proved", "refuted", "inconclusive"]}}, "required": ["type", "tool", "primary", "cross_check"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["undecided-successor", "no-initial-state", "no-instance", "replay-parity", "replay-refused", "sufficient-test-failed", "lasso-not-concretized", "no-admitted-behaviour", "well-definedness-unchecked", "match-undetermined", "vacuous-match", "kani_vacuous_proof"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["bound-reached", "induction-not-closed"]}, "depth": {"$ref": "#/$defs/Count"}}, "required": ["type", "depth"], "additionalProperties": false},
@@ -869,18 +880,47 @@
     "Quantity": {"type": "object", "required": ["value"], "properties": {"value": {"$ref": "#/$defs/Rational"}, "unit": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
     "Estimate": {"description": "FR-410 estimate: the probability, mean or ratio its decision reads, and for a quantile claim the empirical nearest-rank quantile with the threshold's unit.", "type": "object", "required": ["value"], "properties": {"value": {"$ref": "#/$defs/Rational"}, "quantile": {"$ref": "#/$defs/Quantity"}}, "additionalProperties": false},
     "Interval": {"type": "object", "required": ["lower", "upper"], "properties": {"lower": {"$ref": "#/$defs/Rational"}, "upper": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false},
+    "ExhaustiveDimensions": {"description": "FR-193 Proof coverage: the dimensions in which a bounded solver established its proof region complete; time: no behaviour takes more than jumps jumps by horizon; jumps: no behaviour takes one of its first jumps jumps after horizon. Empty when neither.", "type": "array", "uniqueItems": true, "items": {"enum": ["time", "jumps"]}},
     "SolverInconclusive": {
-      "description": "FR-193, FR-331: a hybrid solver result that proves nothing; trace, when present, is the solver's reported path to a possible violation, kept as unverified evidence and never replayed.",
+      "description": "FR-193, FR-331: a hybrid solver result that proves nothing; trace, when present, is the solver's reported path to a possible violation, kept with its replay outcome and settling a value only by exact replay (FR-193 Trace replay).",
       "type": "object",
       "required": ["type"],
       "properties": {
         "type": {"const": "solver-inconclusive"},
+        "trace": {"$ref": "#/$defs/HybridTrace"},
+        "replay": {"$ref": "#/$defs/HybridReplay"}
+      },
+      "additionalProperties": false
+    },
+    "HybridReplay": {
+      "description": "FR-193 Trace replay: the reader's replay outcome on a stored record; a provider entry carries none.",
+      "type": "object",
+      "required": ["static"],
+      "properties": {
+        "static": {"oneOf": [
+          {"type": "object", "required": ["outcome"], "properties": {"outcome": {"const": "consistent"}}, "additionalProperties": false},
+          {"type": "object", "required": ["outcome", "at", "check"], "properties": {"outcome": {"const": "inconsistent"}, "at": {"type": "string"}, "check": {"type": "integer", "minimum": 1, "maximum": 5}}, "additionalProperties": false}
+        ]},
+        "exact": {"oneOf": [
+          {"type": "object", "required": ["outcome"], "properties": {"outcome": {"const": "not-exact"}}, "additionalProperties": false},
+          {"type": "object", "required": ["outcome", "at", "check"], "properties": {"outcome": {"const": "not-reproduced"}, "at": {"type": "string"}, "check": {"type": "integer", "minimum": 1, "maximum": 5}}, "additionalProperties": false}
+        ]}
+      },
+      "additionalProperties": false
+    },
+    "HybridCounterexample": {
+      "description": "FR-193 Solver result on the wire, FR-331: a hybrid refutation; kind formula or the FR-364 undefined-evaluation envelope; trace the HybridTrace that exact replay reproduces (FR-193 Trace replay).",
+      "type": "object",
+      "required": ["type", "kind", "trace"],
+      "properties": {
+        "type": {"const": "hybrid-counterexample"},
+        "kind": {"oneOf": [{"const": "formula"}, {"$ref": "#/$defs/UndefinedEvaluation"}]},
         "trace": {"$ref": "#/$defs/HybridTrace"}
       },
       "additionalProperties": false
     },
     "HybridTrace": {
-      "description": "FR-193 Hybrid trace: the start state in the declaration's first mode and each jump, by the zero-based position of the transition taken among the previous state's mode's transitions, to the state it reaches.",
+      "description": "FR-193 Hybrid trace: the start state in an initial mode and each jump, by the zero-based position of the transition taken among the previous state's mode's transitions, to the state it reaches, with the optional state just before the jump; the optional delta tolerance and the optional loop state of a lasso.",
       "type": "object",
       "required": ["start", "jumps"],
       "properties": {
@@ -892,10 +932,28 @@
             "required": ["transition", "state"],
             "properties": {
               "transition": {"$ref": "#/$defs/Count"},
+              "before": {"$ref": "#/$defs/HybridTraceBefore"},
               "state": {"$ref": "#/$defs/HybridTraceState"}
             },
             "additionalProperties": false
           }
+        },
+        "delta": {"$ref": "#/$defs/Rational"},
+        "loop": {"$ref": "#/$defs/Count"}
+      },
+      "additionalProperties": false
+    },
+    "HybridTraceBefore": {
+      "description": "FR-193 Hybrid trace: the state just before a jump, in the previous state's mode: the enclosure of its time in exact rational seconds and one interval per continuous variable keyed by its name.",
+      "type": "object",
+      "required": ["time", "enclosure"],
+      "properties": {
+        "time": {"$ref": "#/$defs/Interval"},
+        "enclosure": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {"$ref": "#/$defs/Identifier"},
+          "additionalProperties": {"$ref": "#/$defs/Interval"}
         }
       },
       "additionalProperties": false
@@ -1031,8 +1089,8 @@
         {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["exact-value", "value-bounds"]}}}}, "required": ["basis"]}, "then": {"required": ["certificate"], "properties": {"certificate": {"$ref": "#/$defs/ProbabilityCertificate"}}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"const": "zone-certified"}}}}, "required": ["basis"]}, "then": {"required": ["certificate"], "properties": {"certificate": {"$ref": "#/$defs/ZoneCertificate"}}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"const": "closed-form"}}}}, "required": ["basis"]}, "then": {"required": ["evidence"]}},
-        {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["exhaustive", "bounded-complete", "inductive", "reduced", "bounded-solver", "witnessed", "bounded-proof"]}}}}, "required": ["basis"]}, "then": {"properties": {"certificate": false, "evidence": false}}},
-        {"if": {"properties": {"basis": {"properties": {"type": {"const": "bounded-solver"}}}}, "required": ["basis"]}, "then": {"properties": {"certification": {"enum": ["uncertified", "trusted"]}}}},
+        {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["exhaustive", "bounded-complete", "inductive", "reduced", "bounded-solver", "inductive-solver", "witnessed", "bounded-proof"]}}}}, "required": ["basis"]}, "then": {"properties": {"certificate": false, "evidence": false}}},
+        {"if": {"properties": {"basis": {"properties": {"type": {"enum": ["bounded-solver", "inductive-solver"]}}}}, "required": ["basis"]}, "then": {"properties": {"certification": {"enum": ["uncertified", "trusted"]}}}},
         {"if": {"properties": {"basis": {"properties": {"type": {"const": "reduced"}, "reductions": {"contains": {"properties": {"reduction": {"enum": ["symmetry", "partial-order"]}}, "required": ["reduction"]}}}, "required": ["type", "reductions"]}}, "required": ["basis"]}, "then": {"properties": {"certification": {"enum": ["uncertified", "trusted"]}}}},
         {"if": {"properties": {"result": {"const": "refuted"}}}, "then": {"required": ["counterexample"], "properties": {"cause": {"$ref": "#/$defs/UndefinedEvaluation"}, "diagnostic": false, "verdict": false, "evidence": false}}},
         {"if": {"properties": {"result": {"const": "tested"}}}, "then": {"properties": {"cause": false, "diagnostic": false, "verdict": false, "counterexample": false, "evidence": false}}},

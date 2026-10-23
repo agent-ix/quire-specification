@@ -35,6 +35,11 @@ of CG's obligation record, `source_span` and the run configuration included.
   (`graph_child`) and the integer literal `1` at position 1 (`inline_literal`,
   range (1, 1)). Addition is not an equality against a bounded peer, so the
   literal stays unwrapped.
+- `V1`: a function-value parity claim on `function add using v(x: Int[0, 9],
+  y: Int[0, 9]): Integer pure { x + y }`: `subject_kind`
+  `function-value-parity`, the function node, its `declaration` occurrence
+  key (function node id, `declaration`, 0) and one argument per parameter,
+  each its parameter node id, position and declared type node.
 - `S1`: a per-step protocol record, `subject_kind`
   `protocol-refinement-step` and a canonical `StepSimulationRecord` with two
   hypotheses, carried with an occurrence key.
@@ -42,7 +47,7 @@ of CG's obligation record, `source_span` and the run configuration included.
 ## Test Procedure
 
 Build each vector's obligation through CG's Kani obligation identity boundary
-(the parity form through the QSL recomputation as well), compute its
+(the parity form through the QSL recomputation as well; the function-value parity form through QSL's `call_site` minting and its replay recomputation, QSL FR-484), compute its
 obligation identity and compare it with its fixture's.
 
 | Vector | Input | Expected result | Criteria |
@@ -59,6 +64,7 @@ obligation identity and compare it with its fixture's.
 | OI-10 | `F1` with another function node id; then with the occurrence role `claim` in place of `declaration`; then with a changed run configuration member as in OI-08 | The first two a different digest, the last an equal digest | FR-201-AC-10 |
 | OI-11 | `P1` with the literal `2` at position 1; then with the operands swapped; then with the domain of position 0 `Int[0, 8]` | Each a different digest | FR-201-AC-10 |
 | OI-12 | `S1` with one hypothesis removed; then with another occurrence key; then with its `source_span` moved | The first a different digest, the last two an equal digest | FR-201-AC-10 |
+| OI-13 | `V1` with `y`'s parameter node id changed; then with `x` and `y` declared in the other order; then with `x` declared `Int[0, 8]`; then with its `source_span` moved; then its preimage with `subject_kind` removed and an `obligation_kind` added | The first three a different digest, the fourth an equal digest, the last a different digest from `V1`'s | FR-201-AC-10 |
 
 ## Expected Results
 
