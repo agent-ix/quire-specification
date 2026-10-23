@@ -11,6 +11,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-99
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-105
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-154
@@ -173,6 +175,8 @@ process or state machine.
 | MU-08 | `field` `limit` on T2, `typeRef` `ix://quire/unit/ms` | Resolves `Call/limit`; type `Quantity<ms>` over the source unit's node, distinct from MU-07's | FR-322-AC-99 |
 | MU-09 | `field` `stale` on T2, `typeRef` `ix://quire/unit/rpc/ms` | `missing_declaration`/`missing-name` | FR-322-AC-99 |
 | MU-10 | `field` `x` on T2, `typeRef` `ix://quire/native/Clock` with FR-154's clock field shape, resolved as a `field` member; then a `field` application over `x` used as a value; then `x` as the clock operand of the atomic clock constraint `self.x >= 1 ms` in a guard | The member resolves to the clock type with no checked-package node; the value application refuses `invalid_timed_model`/`clock-read-outside-constraint`; the clock-constraint operand raises no such refusal | FR-322-AC-99 |
+| MU-14 | the unit of compilation declaring `dimension Time; unit s : Time = 1; dimension Speed = R::Time ^ -1; unit tenth : R::Time = 1/10 * R::s;` with `acme/rpc` (alias `R`) and `acme/flow` (alias `F`) each declaring base dimension `Time` and root unit `s`; read the unit graph | Three `scalar_type`/`dimension` nodes named `Time` with pairwise distinct keys (one under a `SourceOwner`, two under the `ModelOwner`s `acme/rpc` and `acme/flow`, the package nodes carrying no `declaration` and a preimage `qualified_declaration` `["Time"]`); each package `s` depends on its own `Time`; `Speed` is self-typed with the `acme/rpc` `Time` key at exponent `-1` as its one term; `tenth` is typed by the `acme/rpc` `Time` and targets the `acme/rpc` `s`; no `ambiguous_declaration`; the package is admitted | FR-322-AC-105 |
+| MU-15 | `field` `a` on T2 typed `ix://quire/unit/acme/rpc/s` and `field` `b` typed `ix://quire/unit/acme/flow/s`, beside the source `s` of MU-14 | `Call/a` has type `Quantity<R::s>` over the `acme/rpc` unit node and `Call/b` has type `Quantity<F::s>` over the `acme/flow` unit node, two distinct `scalar_type`/`unit` nodes typed by two distinct dimension nodes; no `ambiguous_declaration` | FR-322-AC-105 |
 | RE-ends-1 | `relationship_end` `order` on M4, the relationship `Order-order-Order` | Resolves the end `order` | FR-322-AC-56 |
 | RE-ends-2 | `relationship_end` `next` on M4 | Resolves the end `next` (`targetEnd.role`) | FR-322-AC-56 |
 | RE-ends-3 | `relationship_end` `invoiced` on M10, the relationship `Order-invoiced-Invoice` with no `targetEnd.role` | Resolves the end `invoiced` | FR-322-AC-56 |
