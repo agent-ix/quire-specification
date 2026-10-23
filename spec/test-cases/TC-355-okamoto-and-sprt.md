@@ -1,6 +1,6 @@
 ---
 id: TC-355
-title: "Okamoto and SPRT decisions"
+title: "Okamoto, SPRT and Clopper–Pearson decisions"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-408
@@ -9,11 +9,11 @@ relationships:
     type: verifies
 ---
 
-# TC-355: Okamoto and SPRT decisions
+# TC-355: Okamoto, SPRT and Clopper–Pearson decisions
 
 ## Description
 
-Decide probability bounds and quantiles with the fixed-sample and sequential methods at the claim's confidence parameters, with exact rational bounds.
+Decide probability bounds and quantiles with the fixed-sample, sequential and exact binomial methods at the claim's confidence parameters, with exact rational bounds.
 
 ## Test Procedure
 
@@ -39,6 +39,10 @@ The models below are defined here in full; the citation names the QSL design rec
 | SC-07 | Every logarithm, square root and normal quantile used by SC-01 to SC-04 | Each is a pair of rational bounds within `2^-64` of the true value; `N` uses the upper logarithm bound, the SPRT lower and upper sums use the increments' lower and upper bounds, the rejection threshold its upper bound and the acceptance threshold its lower bound; the decisions are identical on both platforms |
 | SC-08 | SC-03 rerun with the same seed; rerun with seed `20261002` | Identical samples and decision; a new, independent measurement with the same obligation identity |
 | SC-09 | An SPRT run, by a fixture whose counts put the true sum within `2^-70` of `ln(1/α')`, so that the lower sum is below the threshold's upper bound | The test does not reject at that sample and keeps sampling; it rejects only once the lower sum reaches the threshold's upper bound |
+| SC-10 | `P95`, `indifference 0.01`, Clopper–Pearson | `N = 23,026`, the same samples as SC-03; `G(k, 19/20)` at most `1/100`; `measured: accepted`, coverage `finite-sample`, with an interval whose lower end is above `0.95` and which is narrower than SC-03's `[p̂ − 0.01, p̂ + 0.01]` |
+| SC-11 | A fixture whose sampler returns `k` holding samples of `N = 231` for `probability >= 0.9`, `indifference 0.1`, Clopper–Pearson, at `k` = 231, 219, 218, 197, 196 and 184 | accepted at 231 and 219; undecided at 218 and 197; rejected at 196 and 184; at 219 (exact ends truncated after 20 digits) the reported lower end is at most `0.90351472792271070929…` and within `2^-64` of it, and the reported upper end at least `0.97621175445884490995…` and within `2^-64` of it; Okamoto on the same counts accepts only at 231 and rejects only at 184 (FR-408-AC-13) |
+| SC-12 | A `mean of` claim, and a long-run fraction claim, with method Clopper–Pearson | `invalid-request` at negotiation, `invalid_capability`/`not-statistical` naming the item and the method; no sample is drawn |
+| SC-13 | Every binomial tail SC-10 and SC-11 read | Each is a pair of binary floating bounds of `96 + ⌈log2(N + 1)⌉` bits within a relative `2^-90` of the true tail; a fixture whose exact `G(k, θ)` lies below `β'` by less than the upper bound's rounding error, so that the upper bound exceeds `β'`, is undecided, as SC-09 is for SPRT (a rule that decided on the lower bound or the midpoint would accept); the tails, interval ends and decisions are identical on both platforms |
 
 ## Expected Results
 
