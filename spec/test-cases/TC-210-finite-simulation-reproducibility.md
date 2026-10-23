@@ -67,14 +67,26 @@ The explicit refusal/non-conclusive mutations include:
 
 - Encode each value FR-181-AC-19 lists and compare the JCS bytes exactly
   (FR-181-AC-19).
-- Encode decimal `1.50`, the quantity `1.50` in `Units::metre` and a
-  `Set<Timestamp>` of `2` and `10` as set elements and as a record field, and
-  compare the bytes FR-181-AC-20 states (FR-181-AC-20).
+- Encode decimal `1.50` and a `Set<Timestamp>` of `2` and `10` as set elements
+  and as a record field, encode the quantity `1.50` in `Units::metre` in both
+  positions (the same rational bytes), read its decimal form and a set of the
+  rational `3/2` and that decimal form (one member), and compare the bytes
+  FR-181-AC-20 states (FR-181-AC-20).
 - Encode two states whose population member holds the same reference
   identities, inserted into the set in two different orders, and compare the
   state keys; read the uppercase UUID, the `+1` and `01` Timestamp payloads,
   the Timestamp payloads 2^127 and -2^127 - 1, and 2^127 - 1 against the
   form (FR-181-AC-21).
+- Encode each string, rational, float and rational-quantity value
+  FR-181-AC-22 lists and compare the JCS bytes exactly, and read the
+  zero-denominator rational and the 7-digit, 9-digit and uppercase `bits`
+  strings against the form (FR-181-AC-22).
+- Encode the `Set<String>`, `Set<Rational>`, `Set<Float64>` and
+  `Set<Quantity<Units::metre>>` values FR-181-AC-23 lists and compare the
+  bytes and the element order exactly (FR-181-AC-23).
+- Compare the state keys of the state pairs FR-181-AC-24 lists: `+0` against
+  `-0`, one float set inserted in two orders, composed against decomposed
+  `é`, and `2/4` against `1/2` (FR-181-AC-24).
 
 ## Sampler index-sequence vector
 

@@ -103,7 +103,7 @@
     "CountMap": {"description": "A nonempty map of counts keyed by limit name.", "type": "object", "minProperties": 1, "propertyNames": {"$ref": "#/$defs/LimitName"}, "additionalProperties": {"$ref": "#/$defs/Count"}},
 
     "TypedValue": {
-      "description": "FR-181: the typed canonical form of a value; a unit-bearing quantity adds unit to its rational or decimal (FR-142).",
+      "description": "FR-181: the typed canonical form of a value; a unit-bearing quantity is written as a rational with its unit; the decimal form with a unit is read and normalized to it (FR-142).",
       "type": "object",
       "required": ["type"],
       "oneOf": [
@@ -316,7 +316,7 @@
       "additionalProperties": false
     },
     "TemporalLimits": {
-      "description": "FR-368 limits (max_states, max_transitions, max_automaton_states), FR-392 max_walk_steps, FR-399 max_witness_set and max_relation_tuples, FR-439 max_store_buffer and max_messages, FR-428 max_live_instances; each absent member takes the routed provider's published default.",
+      "description": "FR-368 limits (max_states, max_transitions, max_automaton_states), FR-392 max_walk_steps, FR-399 max_witness_set and max_relation_tuples, FR-439 max_store_buffer and max_messages, FR-428 max_live_instances, FR-368 SMT solver budgets max_solver_steps and max_solver_time (whole seconds, outside request identity); each absent member takes the routed provider's published default.",
       "type": "object",
       "minProperties": 1,
       "properties": {
@@ -328,7 +328,23 @@
         "max_relation_tuples": {"$ref": "#/$defs/PositiveCount"},
         "max_store_buffer": {"$ref": "#/$defs/PositiveCount"},
         "max_messages": {"$ref": "#/$defs/PositiveCount"},
-        "max_live_instances": {"$ref": "#/$defs/PositiveCount"}
+        "max_live_instances": {"$ref": "#/$defs/PositiveCount"},
+        "max_solver_steps": {"$ref": "#/$defs/PositiveCount"},
+        "max_solver_time": {"$ref": "#/$defs/PositiveCount"}
+      },
+      "additionalProperties": false
+    },
+    "SmtEncodingLimits": {
+      "description": "FR-368 SMT encoding limits of QSL's proof-query encoder (settings smt_encoding.<member>); part of request identity; each absent member takes the routed provider's published default.",
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "max_constants": {"$ref": "#/$defs/PositiveCount"},
+        "max_applications": {"$ref": "#/$defs/PositiveCount"},
+        "max_monitor_atoms": {"$ref": "#/$defs/PositiveCount"},
+        "max_monitor_states": {"$ref": "#/$defs/PositiveCount"},
+        "max_candidates": {"$ref": "#/$defs/PositiveCount"},
+        "max_script_bytes": {"$ref": "#/$defs/PositiveCount"}
       },
       "additionalProperties": false
     },
@@ -352,6 +368,7 @@
         "fairness": {"description": "FR-368, FR-362: the resolved fairness set, empty for deadlock-freedom.", "type": "array", "items": {"$ref": "#/$defs/Fairness"}},
         "max_depth": {"description": "FR-368, FR-363: the bounded-search horizon; absent for an exhaustive search.", "$ref": "#/$defs/Count"},
         "limits": {"$ref": "#/$defs/TemporalLimits"},
+        "smt_encoding": {"$ref": "#/$defs/SmtEncodingLimits"},
         "witness_samples": {"description": "FR-392: absent takes the provider's published default; 0 turns sampling off.", "$ref": "#/$defs/Count"},
         "seed": {"description": "FR-392: absent takes the provider's published default.", "$ref": "#/$defs/Decimal"}
       },
@@ -386,7 +403,7 @@
       "type": "object",
       "required": ["type"],
       "oneOf": [
-        {"properties": {"type": {"enum": ["okamoto", "sprt"]}}, "required": ["type"], "additionalProperties": false},
+        {"properties": {"type": {"enum": ["okamoto", "sprt", "clopper-pearson"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"const": "regenerative"}, "min_cycles": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "min_cycles"], "additionalProperties": false}
       ]
     },
