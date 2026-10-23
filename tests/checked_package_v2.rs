@@ -16739,10 +16739,50 @@ fn tc_966_malformed_hybrid_nodes_fail_the_published_schema() {
     }
 }
 
-/// FR-322-AC-113: the canonical spelling of a `decimal` literal's `value`.
+/// Whether a `decimal` literal's `value` is a member of `Decimal[lo, hi; smin,
+/// smax]` by FR-140: the value is normalized, `s* = max(s, smin)` and the value
+/// is a member exactly when `s* <= smax` and `v x 10^s*` lies in `[lo, hi]`. The
+/// written coefficient and scale never decide it.
+fn decimal_literal_is_member(text: &str, lo: i128, hi: i128, smin: u32, smax: u32) -> bool {
+    let (negative, digits) = match text.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, text),
+    };
+    let (integer, fraction) = digits.split_once('.').unwrap_or((digits, ""));
+    let mut scale = fraction.len() as u32;
+    let Ok(mut coefficient) = format!("{integer}{fraction}").parse::<i128>() else {
+        return false;
+    };
+    while scale > 0 && coefficient % 10 == 0 {
+        coefficient /= 10;
+        scale -= 1;
+    }
+    if coefficient == 0 {
+        scale = 0;
+    }
+    if negative {
+        coefficient = -coefficient;
+    }
+    let membership_scale = scale.max(smin);
+    if membership_scale > smax {
+        return false;
+    }
+    let widened = 10i128
+        .checked_pow(membership_scale - scale)
+        .and_then(|factor| coefficient.checked_mul(factor));
+    match widened {
+        Some(c) => (lo..=hi).contains(&c),
+        None => false,
+    }
+}
+
+/// FR-322-AC-113: the canonical spelling and the FR-140 value membership of a
+/// `decimal` literal's `value`.
 #[test]
 fn decimal_literal_values_are_canonical_spellings() {
-    for admitted in ["1.25", "0.05", "10", "0.00", "1000", "0.5", "-0.5", "0"] {
+    for admitted in [
+        "1.25", "0.05", "10", "0.00", "1000", "0.5", "-0.5", "0", "1000.00", "1.250", "5",
+    ] {
         assert!(decimal_literal_is_canonical(admitted), "{admitted}");
     }
     for refused in [
@@ -16750,4 +16790,21 @@ fn decimal_literal_values_are_canonical_spellings() {
     ] {
         assert!(!decimal_literal_is_canonical(refused), "{refused}");
     }
+}
+
+/// FR-322-AC-113: membership is decided by value, not by the written spelling.
+#[test]
+fn decimal_literal_membership_is_decided_by_value() {
+    for member in [
+        "1.25", "0.05", "10", "0.00", "1000", "0.5", "1000.00", "1.250",
+    ] {
+        assert!(decimal_literal_is_member(member, 0, 1000, 0, 2), "{member}");
+    }
+    for refused in ["1.255", "1001", "1000.01", "-1"] {
+        assert!(!decimal_literal_is_member(refused, 0, 1000, 0, 2), "{refused}");
+    }
+    for member in ["-0.5", "5", "100"] {
+        assert!(decimal_literal_is_member(member, -1000, 1000, 1, 2), "{member}");
+    }
+    assert!(!decimal_literal_is_member("1001", -1000, 1000, 1, 2));
 }

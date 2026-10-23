@@ -396,11 +396,12 @@ body changed, canonical order and `dependencies` kept, its node id kept and
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
-| DL-01 | literal of `value_kind` `decimal` typed by `Decimal[0, 1000; 0, 2; nearest-even]` with values `1.25`, `0.05`, `10`, `0.00`, `1000` and `0.5` | Admitted by both schemas and the literal rule | FR-322-AC-113 |
+| DL-01 | literal of `value_kind` `decimal` typed by `Decimal[0, 1000; 0, 2; nearest-even]` with values `1.25`, `0.05`, `10`, `0.00`, `1000`, `0.5`, `1000.00` and `1.250` | Admitted by both schemas and the literal rule: each is a member by value (FR-140), whatever its written coefficient and scale | FR-322-AC-113 |
 | DL-02 | the same type with values `.5`, `1.`, `+1.5`, `01.5`, `-0.0`, `1e2`, `1/4` and empty text | `invalid_package`/`invalid-value` | FR-322-AC-113 |
-| DL-03 | the same type with values `1.255`, `1001` and `-1` | `invalid_package`/`invalid-value` | FR-322-AC-113 |
+| DL-03 | the same type with values `1.255` (membership scale 3), `1001`, `1000.01` and `-1` | `invalid_package`/`invalid-value` | FR-322-AC-113 |
 | DL-04 | values `1.0` and `1.00` typed by one decimal type | Two literals with two node keys | FR-322-AC-113 |
 | DL-05 | `decimal` literal typed by an `integer` or `string` node with value `.5` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-113 |
+| DL-06 | literals typed by `Decimal[-1000, 1000; 1, 2; nearest-even]` with values `-0.5`, `5` and `100`, then `1001` | The first three admitted (`5` has membership scale 1 and coefficient 50); `1001` is `invalid_package`/`invalid-value` | FR-322-AC-113 |
 
 ### Structural node preimage vectors
 
