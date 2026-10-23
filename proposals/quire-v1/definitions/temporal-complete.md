@@ -30,6 +30,20 @@ the shared grammar's "Probabilistic, timed and real-time forms" section:
 - an atomic clock constraint, `x ~ c` over a `Clock` and a time
   `quantity-literal`, in an operation precondition, a postcondition reset
   `self.x = c`, and the `clock-bound` of a time invariant;
+- clock places and clock collections as
+  [FR-415](../../../spec/functional/temporal/FR-415-declare-clocks-and-timed-models.md)
+  "Clock places" and "Clock collections" define them: a `Clock` held by a
+  record, tuple, union payload or object field; a collection (`Set`,
+  `Sequence`, `Bag`, `OrderedSet`, `Map`) of `Clock` or of a clock-bearing
+  type, including nested collections and a field with multiplicity above one;
+  `Option<Clock>` and `Option` of a clock-bearing type, with `present` and
+  `value` guards on the place; `Clock` parameters and results of operations,
+  functions and predicates, bound by place, and clock-reading predicates and
+  functions whose quantity parameter is a bound supplied by constant arguments;
+- clock reads and resets over clock collections: element and slot selection
+  (`self.ts[i].x`, `self.m[k].x`), `forall(e in p: B)` and `exists(e in p: B)`
+  over atomic clock constraints, and reset by selection, `self.p[i].x = c` and
+  `forall(e in p: P(e) implies e.x = c)`;
 - `time invariant when P { ... }` (`time-invariant`);
 - `urgent when P;` and `urgent O;` (`urgent-decl`).
 
