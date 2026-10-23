@@ -732,6 +732,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-477
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-480
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-481
     type: contains
   - target: ix://agent-ix/quire-specification/FR-403
@@ -1042,6 +1044,7 @@ The requirement artifacts are indexed below.
 | [FR-475](objects/interfaces/FR-475-checked-package-state-graph-claim-body.md) | FR | Checked-package `claim`/`state_graph` body and state-graph obligation identity |
 | [FR-476](objects/interfaces/FR-476-checked-package-model-terminal-declaration-body.md) | FR | Checked-package `temporal`/`terminal` body of a model `terminal` declaration |
 | [FR-477](objects/interfaces/FR-477-checked-package-step-relation-claim-body.md) | FR | Checked-package `claim`/`step_relation` body of a step relation and its code-claim premises |
+| [FR-480](functional/type-model/FR-480-check-and-resolve-reference-literals.md) | FR | Reference literal `M::T#"k"`: syntax, typing, `reference` literal term and resolution at subject binding |
 | [FR-481](objects/interfaces/FR-481-checked-package-hybrid-model-nodes.md) | FR | Checked-package `hybrid` nodes of a hybrid model, its modes and transitions, and its claims |
 | [FR-403](functional/analysis/FR-403-reduce-hyperproperty-state-spaces.md) | FR | Reduction preservation rows for hyper forms and compiler-verified copy-swap symmetry |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
