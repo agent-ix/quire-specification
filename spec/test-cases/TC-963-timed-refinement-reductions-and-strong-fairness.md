@@ -16,7 +16,8 @@ relationships:
 ## Description
 
 Check a refinement whose concrete model is timed, the refusals of a timed
-abstract model and of a mapping that reads a clock, symmetry that moves clocks
+abstract model and of a mapping that reads a clock, a liveness half refuted
+only by a loop of positive total delay, symmetry that moves clocks
 with their objects, partial-order reduction and a state constraint over a
 `time dense` subject settling `unsupported` at negotiation, and strong
 fairness read at every instant.
@@ -38,6 +39,7 @@ counterexample and refusal locus) with the expected result.
 | TR-05 | The `Timer` symbolic state with `t1` armed, `t2` unarmed and zone `Z`, and its image with the two objects and their clocks swapped | Equal canonicalised states |
 | TR-06 | `Timer`'s deadlock-freedom item selecting partial-order reduction; the same selecting a state constraint; the same selecting both | Each `unsupported`, `unsupported_projection`/`unsupported-requested-capability` at negotiation naming the reduction, no state expanded; the item selecting both names partial-order reduction only |
 | TR-07 | FR-416-AC-9's `Blink` with `eventually holds(b.fired)` under `fair { weak Blink::fire }`, then `fair { strong Blink::fire }` | `refuted` with a lasso of `tick` steps of loop delay 1; then `proved` with an accepted zone certificate |
+| TR-08 | FR-377-AC-16's `TReq` with `poll` refining `Req` under `ensure fair weak Req::send`, with `when not self.sent { x <= 0 }`; then without it | `proved` (the only `send`-unfair loop has total delay 0); then `refuted`, failure `Divergence` naming `send`, an empty stem and a one-`poll` loop of delay 1, which replays |
 
 ## Expected Results
 
