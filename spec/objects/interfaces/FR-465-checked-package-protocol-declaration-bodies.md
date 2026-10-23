@@ -47,11 +47,24 @@ A `protocol`/`role` node (operator `role`) has two arguments, in this order:
 
 | # | Binding | Value |
 | --- | --- | --- |
-| 1 | `model` | a reference to the `model` node the role is played against |
+| 1 | `model` | the model the role is played against: a reference to a `model` node (a role on a model type), or a text, the `identity` of a `model_selections` row (a role on a whole model) |
 | 2 | `replication` | a Group; empty for a static role |
 
 A static role is one responsibility with one role-instance binding per
-assessed workflow. A replicated role (`role r each T from pop max n lifetime L`)
+assessed workflow. A **role on a whole model** is the form of `role w on M`
+where `M` is a model alias: its `model` argument is the text `identity` of the
+`model_selections` row the alias selects, not a reference. The alias may be
+any model alias of the package: the protocol subject's model subject is the
+whole checked package with every selection (FR-361), so a clause may hold
+roles on several whole models and a clause over any `over` type may hold
+one. A whole model has
+no `model` node: every model declaration node is keyed by a `ModelOwner`
+naming a declaration of the selected document (FR-322 "Model-owned members"
+step 2), and the document declares no node for itself. The text makes the
+selection part of the role node's key, so roles on two different selections
+have different keys. A role on a whole model is static: a replicated role
+draws its instances from a population of a model type, so its `model` is a
+reference. A replicated role (`role r each T from pop max n lifetime L`)
 is a template of role instances, one per object of a population, and its
 `replication` Group has these bindings, in this order:
 
@@ -64,12 +77,19 @@ is a template of role instances, one per object of a population, and its
 | `until` | a Boolean term, present exactly when `lifetime` is `until` |
 
 - **semantic_type** — the Boolean node (FR-464).
-- **dependencies** — the `model` target, and the `binder` target and the
-  nodes the `until` term references for a replicated role.
+- **dependencies** — the `model` target of a role on a model type (a role on
+  a whole model has none), and the `binder` target and the nodes the `until`
+  term references for a replicated role.
 
 The reader checks, for one role, in this order:
 
-1. **Model.** The `model` target is a declared dependency, else
+1. **Model.** A text `model` equals the `identity` of a `model_selections`
+   row of the lock, else `missing_declaration`/`missing-selection` at the
+   role node, retaining the text. Any row of the lock is admitted, whatever
+   the clause's `over` type. Its `replication` Group is empty, else
+   `invalid_model_binding`/`malformed-declaration` at the role node. A
+   `model` that is neither a reference nor a text violates the layout
+   (`malformed_wire`). A reference `model` target is a declared dependency, else
    `missing_declaration`/`missing-name`, and a `model` node of form
    `object_type`, `process`, `state_machine`, `systems_interface` or
    `persistence_interface`, else `invalid_model_binding`/
@@ -273,6 +293,7 @@ runtime dimension of the control's key and are not a member of any node.
 | FR-465-AC-6 | A `finish` node is admitted with a closing-record binder and a Boolean constraint that reads the binders readable after the root control; a non-Boolean constraint refuses `ill_typed`/`non-boolean-root` and a read of a binder of an unjoined branch `missing_declaration`/`missing-name`; a clause's `finish` argument naming a `terminal` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `finish` node the clause does not name refuses `invalid_semantic_graph`. | Test (TC-947) |
 | FR-465-AC-7 | A `terminal` node is admitted as `when` with a condition and as `any` with none; a `when` without a condition and an `any` with one refuse `malformed_wire`; a second `terminal` node of one clause refuses `ambiguous_declaration`/`ambiguous-name`. | Test (TC-947) |
 | FR-465-AC-8 | The package carries no instance, ordinal, delivery, observation or internality member: the runtime subject kinds of the "Runtime subjects" table are a function of the operators, an added `internal`/`external` member refuses `malformed_wire`, and the package compiles with no workflow instance, delivery or clock observation. | Test (TC-947) |
+| FR-465-AC-9 | A static role whose `model` is the text `identity` of a `model_selections` row of the lock is admitted as a role on a whole model, with no `model` dependency, whatever the clause's `over` type (a model type, a reference, a scalar, a record or a `Set<M::Cell>`); one clause holding `role w on M` and `role u on N` for two selections is admitted, and the two roles, and a role on a whole model and a role on a model type of the same selection, have different node keys. A text naming no `model_selections` row refuses `missing_declaration`/`missing-selection` at the role node, and so does such a text with a non-empty `replication` Group (RL25); a text `model` with a non-empty `replication` Group refuses `invalid_model_binding`/`malformed-declaration` at the role node; a `model` that is an integer, a Boolean or a Group refuses `malformed_wire`. | Test (TC-947) |
 
 ## Dependencies
 
