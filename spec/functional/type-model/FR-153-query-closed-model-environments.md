@@ -122,8 +122,8 @@ query and is never inferred from the result type:
 | `refused` | `Reference<T>` | the member reference | `refused { code: invalid_runtime_input, cause: absent-key }` |
 
 A function names a population binding through a `Population<T>[N]` or
-`Population<T>` parameter. A state clause (an invariant, precondition or
-postcondition) has no parameters and names one by the qualified name `M::P`,
+`Population<T>` parameter. A state clause (an invariant, a state constraint
+(FR-382), a precondition or a postcondition) has no parameters and names one by the qualified name `M::P`,
 where `M` is a model alias of the unit and `P` is a population declared by
 `M`'s admitted domain package. The name is an ordinary `qualified-name`
 `primary`; it adds no production and no implicit `allInstances()`. Inside a

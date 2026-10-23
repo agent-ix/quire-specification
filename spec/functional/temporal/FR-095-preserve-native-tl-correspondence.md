@@ -24,9 +24,9 @@ native operator, predicate, clock, capture, history and closure meaning.
 
 ## Inputs
 
-An exact native temporal subject; total-Boolean predicate projections governed
-by [contract-IR issue
-#63](https://github.com/agent-ix/quire-contract-ir/issues/63); selected
+An exact native temporal subject; total-Boolean predicate projections, as QSL
+FR-045 ("Formula and valuation construction") builds them from the native
+`holds` leaves and the trace's explicit valuation cells; selected
 observation and clock bindings; and an exact bridge-definition identity naming
 the TL syntax and evaluator profiles it targets.
 
@@ -47,7 +47,8 @@ The initial correspondence shall use this support table:
 | Event-position false-extension, bounded future core, open prefix | `mltl.online-prefix/v1` | Supported when every bridge premise below holds |
 | Fixed-sample false-extension, bounded future core | The same TL profiles | Supported only with one total valuation per required sample and retained epoch/period/unit correspondence |
 | Timestamped-event finite-window | Current TL profiles | Unsupported; no index conversion is inferred |
-| Any bounded past operator with origin-complete history | `tl-syntax.past-operators/v1`, `mltl.origin-complete-history/v1`, and the selected position-history/past-evaluator contracts | Supported when every bridge premise below holds |
+| Bounded past operators and no future operator, with origin-complete history | `tl-syntax.past-operators/v1`, `mltl.origin-complete-history/v1`, and the selected position-history/past-evaluator contracts | Supported when every bridge premise below holds; a history-cutoff boundary is `incomplete` with cause `missing-history` (FR-092), not unsupported |
+| Bounded past and bounded future operators in one formula | No TL target | Unsupported on the mixed-direction dimension; the past-operator profile evaluates no future or mixed graph |
 | Finite-window future semantics | `mltl.closed-trace/v1` | Unsupported because TL extends atoms false beyond closure |
 | `quire.temporal.infinite-trace/v1` unbounded property (no interval bound) | No TL target | Unsupported; there is no bounded TL formula to generate. [FR-161](FR-161-analyze-infinite-trace-properties.md) analyzes the request natively instead of lowering it. |
 
@@ -97,7 +98,7 @@ correspondence.
 | --- | --- | --- |
 | FR-095-AC-1 | Independent native and TL evaluators emit equal truth/pending outcomes for every member of the declared finite exhaustive bounded-future formula/trace population in the event-position mapping domain. | Test (TC-117) |
 | FR-095-AC-2 | The one-position `always[0,1] p` vector rejects a finite-window-to-`mltl.closed-trace/v1` equivalence claim. | Test (TC-117) |
-| FR-095-AC-3 | Timestamped-event and past-time requests return typed unsupported mappings at current TL versions without emitting a substitute formula. | Test (TC-117) |
+| FR-095-AC-3 | Timestamped-event and mixed past-and-future requests return typed unsupported mappings without emitting a substitute formula; a past-only request with origin-complete history maps to `mltl.origin-complete-history/v1`, and with a history-cutoff boundary is `incomplete` with cause `missing-history`. | Test (TC-117) |
 | FR-095-AC-4 | Mutating any native/TL profile, source/span, model/predicate, clock, capture, interval, closure/history or bridge identity breaks correspondence and names that axis. | Test (TC-117) |
 | FR-095-AC-5 | A numeric, nullable, unavailable or pending native value cannot enter the TL proposition population. | Test (TC-117) |
 | FR-095-AC-6 | Fixed-sample lowering retains epoch/period/unit, reports an absent runtime sample as incomplete, and refuses a changed period or event-count reinterpretation even where the TL formula bytes match. | Test (TC-113) |
@@ -107,16 +108,16 @@ correspondence.
 
 ## Dependencies
 
-- [Contract-IR issue #63](https://github.com/agent-ix/quire-contract-ir/issues/63)
-  owns typed predicate projection.
-- Closed [Contract-IR issue #64 / PR #68](https://github.com/agent-ix/quire-contract-ir/pull/68)
-  owns the public bridge interface; open
-  [issue #71](https://github.com/agent-ix/quire-contract-ir/issues/71) owns its
-  executable temporal/result composition. This requirement supplies temporal
-  meaning without copying private planning into that repository.
+- QSL FR-045 implements this correspondence: its predicate projection,
+  formula and valuation construction, correspondence record and join. This
+  requirement supplies the temporal meaning.
+- tl-syntax FR-011 (past-operator semantics; FR-011-AC-4 admits no future or
+  mixed node under `tl-syntax.past-operators/v1`), FR-013 and FR-014 (the
+  formula editions), tl-mltl FR-018 (trace and history wire) and quire-mltl
+  FR-001 and FR-003 (request and result admission, result mapping).
 - TL syntax/evaluation retains its own semantic-profile and release authority.
 
 ## Status
 
-Accepted by FS04 as the exact native-to-TL correspondence contract. The
-Contract-IR bridge remains its independent implementation owner.
+Accepted by FS04 as the exact native-to-TL correspondence contract. QSL
+FR-045 is its implementation.

@@ -21,6 +21,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-79
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-114
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-81
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-82
@@ -234,11 +236,14 @@ QSL's emitter, which replaces the non-emittable placeholders, among them
 `positive-all-families.json`'s declared boolean `Example::Flag` and the
 nodes typed at it, and `positive-operation-identities.json`'s undeclared
 record node and its placeholder function `double` and model `Counter`.
-Only a node of a kind QSL never writes (FR-093-AC-19), kept so that the
-all-families fixture carries all 14 node tags (FR-322-AC-13), is hand
-authored, and it is keyed by FR-092/FR-094's rule: the
+Two sets of nodes are hand authored. The first is each node of a kind QSL
+never writes (FR-093-AC-19), kept so that the all-families fixture carries
+all 15 node tags (FR-322-AC-13); it is keyed by FR-092/FR-094's rule, the
 `quire.structural-node/v1` preimage FR-322's derived-shape key stage
-recomputes. The pass/fail oracle for every node, emitted or hand authored,
+recomputes. The second is the all-families fixture's `Tank` hybrid model,
+written by hand in the form QSL's S4 emits (FR-481); each of its `hybrid`
+nodes is keyed by the same `quire.structural-node/v1` preimage, and each of
+its term nodes by FR-322's preimage for its form. The pass/fail oracle for every node, emitted or hand authored,
 is this case's independent key recomputation and the full reader's
 acceptance, never the node's provenance. Regenerating the fixtures needs
 QSL's emitter to write `owner` (QSL FR-093-AC-21, agent-ix/quire-spec-language#648),
@@ -377,6 +382,8 @@ body changed, canonical order and `dependencies` kept, its node id kept and
 | QL-02 | literal of `value_kind` `quantity` typed by `integer`, `string` or `boolean` | `ill_typed`/`operator-ineligible` | FR-322-AC-79 |
 | QL-03 | literal of `value_kind` `integer` typed by a unit node | `ill_typed`/`operator-ineligible` | FR-322-AC-79 |
 | QL-04 | literal of `value_kind` `quantity` with value `03`, `+3`, `2/4`, `3/1`, `0/5`, `1/0`, `2.5` or empty text | `invalid_package`/`invalid-value` | FR-322-AC-79 |
+| RL-01 | literal of `value_kind` `rational` typed by a `scalar_type`/`rational` node, values `0`, `1`, `-3`, `1/2` and `-7/2` | Admitted with family `rational` | FR-322-AC-114 |
+| RL-02 | literal of `value_kind` `rational` with value `2/2`, `1/1`, `02`, `+1`, `2/4`, `1/0`, `0/5`, `1/-2`, `2.5` or empty text | `invalid_package`/`invalid-value` | FR-322-AC-114 |
 | NS-01 | nodes of one `declaration` name `ms`: a `scalar_type`/`unit`, a `composite_type`/`record` and a `scalar_type`/`dimension` | Admitted | FR-322-AC-81 |
 | NS-02 | two `scalar_type`/`unit` nodes of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | NS-03 | a `composite_type`/`record` and a `scalar_type`/`enum` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
@@ -478,6 +485,16 @@ Graph order is the producer's order of `semantic_graph.nodes`; the reader does n
 | GO-02 | GO-01's fixtures with `semantic_graph.nodes` reversed | Admitted; `package_id` differs from the published one | FR-322-AC-95 |
 | GO-03 | GO-01's fixtures with `semantic_graph.nodes` sorted ascending by node-id digest | Admitted; `package_id` differs from the published one exactly when the sort changes the node sequence | FR-322-AC-95 |
 | GO-04 | `positive-all-families.json` with `semantic_graph.nodes` reversed and the recorded `package_id` kept | The projection derived in the new order differs from the published order's and the recorded `package_id` does not recompute | FR-322-AC-95 |
+
+### State constraint clause vectors
+
+Each vector edits the published clause-operations package and rekeys the edited node before reading, so the read reaches the state step.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| CN-01 | The invariant node's kind member `clause` rewritten to `constraint` | Valid against both V2 schemas; admitted by the state step; its node id differs from the invariant's | FR-341-AC-13 |
+| CN-02 | CN-01's constraint with its anchor argument referencing the operation anchor | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-13 |
+| CN-03 | CN-01's constraint with a second parameter reference in its aggregate | `ill_typed`/`operator-ineligible` at the clause node | FR-341-AC-13 |
 
 ## Expected Results
 

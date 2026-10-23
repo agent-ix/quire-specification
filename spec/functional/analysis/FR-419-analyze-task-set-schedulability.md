@@ -49,14 +49,28 @@ with budgets `C(LO) <= C(HI)` for a `HI` task. Release jitter `J` and a
 blocking term `B` are optional members; a task that declares neither has
 `J = 0` and `B = 0`. Every value is an exact rational time
 quantity (FR-142). A `LO` task declares one budget `C`. A task set with a
-non-positive `T`, `D` or `C`, a `HI` task with `C(LO) > C(HI)`, or a `LO` task
-with dual budgets refuses with `invalid_timed_model`/`invalid-task-set`,
-naming the task. A `fixed_priority`, `amc` or `response` claim over a task set
+non-positive `T`, `D` or `C`, a negative `J` or `B`, a `HI` task with
+`C(LO) > C(HI)`, or a `LO` task with dual budgets refuses with
+`invalid_timed_model`/`invalid-task-set`, naming the task, and a task set
+that declares no task refuses the same way, naming the task set. The shared
+grammar admits each of these forms, so they refuse at check time, never as
+`invalid_syntax`. A `fixed_priority`, `amc` or `response` claim over a task set
 in which two tasks have equal priority refuses with
 `invalid_timed_model`/`invalid-task-set`, naming both tasks, and one over a task
 set in which a task declares no `priority` refuses with the same code, naming
 that task; an `edf` claim reads no priority, so equal or missing priorities do
-not refuse it.
+not refuse it. An `edf` claim over a task with a `J` or `B` other than zero,
+and an `amc` claim over a task with `D > T`, refuse with
+`invalid_timed_model`/`invalid-task-set`, naming the task, because the
+analysis does not read the term or does not cover that deadline. A task set
+with several of these defects reports each: the task set's own defects in
+source order, then each claim's claim-dependent defects, claims in source
+order.
+
+In a checked package each `schedulable` or `response` claim is one
+`claim`/`schedulability` node that holds the whole task set
+([FR-482](../../objects/interfaces/FR-482-checked-package-schedulability-claim-body.md)),
+and its obligation identity binds every premise.
 
 ### Premises
 
@@ -141,6 +155,7 @@ the other class settles `unsupported`, `stopwatch-required`.
 | FR-419-AC-7 | Tasks `a` (`C = 1`, `T = D = 4`, priority 1) and `b` (`C = 2`, `T = D = 6`, jitter 1, blocking 3, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterates 5, 7 (response time `7 + 1 = 8` above 6). | Test (TC-372) |
 | FR-419-AC-8 | Tasks `a` (`C = 1`, `T = D = 2`, priority 1) and `b` (`C = 1`, `T = 3`, `D = 1`, blocking 1, priority 2) under fixed priority settle `refuted` with task `b`, job 0 and iterate 2. Evidence naming `b`'s job 2 with iterates 4, 6, 7, 8 settles `inconclusive`, `replay-parity`, because job 1's completion 6 does not exceed `2 · 3`. | Test (TC-372) |
 | FR-419-AC-9 | `Ctl`'s `response T3 on Ctl.t3 <= 11 ms under fixed_priority` (`t3` the third task) settles `refuted` with the third task, job 0 and iterates 5, 9, 12 (the bound is the claim's `d`, 11); `<= 12 ms` settles `proved`. | Test (TC-372) |
+| FR-419-AC-10 | Each of these parses and refuses at check time with `invalid_timed_model`/`invalid-task-set`, never `invalid_syntax`: `taskset Empty { }` (naming `Empty`); a task with `jitter -1 ms`; a task with `blocking -1 ms`; a `lo` task with `wcet_hi 2 ms`; a task with `blocking 1 ms` under `edf`; a task with `jitter 1 ms` under `edf`; a task with `deadline 5 ms` and `periodic 4 ms` under `amc` (each naming the task). A task set with `t1`'s `jitter -1 ms` and `t2`'s `blocking -1 ms`, under `edf`, reports `t1`'s and `t2`'s task-set defects in that order, then the claim's two `edf` defects in the same order. | Test (TC-372) |
 
 ## Dependencies
 

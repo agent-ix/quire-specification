@@ -141,7 +141,9 @@ or integer target remains governed by FR-142 and is unaffected. Explicit
 conversion of any exact integer, rational or decimal value to an IEEE width
 rounds its exact value once under the selected policy, with strict `exact`
 refusing as for arithmetic; a decimal source is sized by its retained
-coefficient and scale, not by its reduced form.
+coefficient and scale, not by its reduced form. A decimal text converts to an
+IEEE width by this same single rounding, after FR-478 reads its exact value
+from the text.
 
 **Negation.** The grammar's unary `-` over a `Float32` or `Float64` is IEEE 754-2019
 `negate`: it flips the sign bit of the operand and nothing else. The result has
