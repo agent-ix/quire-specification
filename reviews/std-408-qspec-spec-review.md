@@ -69,3 +69,4 @@ The solver-budget half is sound, and its identity split is correct.
 | FND-001 | fixed | Fix commits 3b93dd53 and db088311 (head f3960d5d). `temporal.smt_encoding` is a closed `SmtEncodingLimits` object of `PositiveCount`s with `minProperties` 1. It is part of the request identity (FR-368, FR-331) and the cache key. FR-363 rule 3 and AC-11 now settle a stop at the carried member. New FR-368-AC-12 and adverse vectors. |
 | FND-002 | fixed | New vector `temporal-limits-solver-time-zero`. |
 | FND-003 | fixed | FR-368 states that a reused record gives the producing run's limit values, and AC-12 covers 5 reused for 10. |
+| FND-004 | fixed | Round 2, fix commit c29f2da3. Vector `temporal-smt-encoding-fractional` (`max_constants` 1.5) is added and TC-302 cites it. `cargo test --test backend_provider_v1` at c29f2da3 gives 24 passed and 0 failed. |
