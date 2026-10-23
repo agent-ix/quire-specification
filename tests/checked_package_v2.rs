@@ -16957,6 +16957,40 @@ fn body_reference_targets(body: &Value) -> Vec<Value> {
     found
 }
 
+/// Every checked-semantic NodeId-shaped reference in a positive vector must
+/// name a node in that vector's complete node document.
+fn assert_semantic_node_refs_resolve(nodes: &[Value], label: &str) {
+    let ids = nodes
+        .iter()
+        .map(|node| node["node_id"]["digest"].as_str().expect("node digest"))
+        .collect::<BTreeSet<_>>();
+    fn visit(value: &Value, path: &str, ids: &BTreeSet<&str>, label: &str) {
+        match value {
+            Value::Object(fields) => {
+                if fields.get("domain") == Some(&json!("quire.checked-semantic-node/v1")) {
+                    let digest = fields["digest"].as_str().expect("semantic NodeId digest");
+                    assert!(
+                        ids.contains(digest),
+                        "{label}{path} references absent node {digest}"
+                    );
+                }
+                for (name, child) in fields {
+                    visit(child, &format!("{path}/{name}"), ids, label);
+                }
+            }
+            Value::Array(children) => {
+                for (index, child) in children.iter().enumerate() {
+                    visit(child, &format!("{path}/{index}"), ids, label);
+                }
+            }
+            _ => {}
+        }
+    }
+    for (index, node) in nodes.iter().enumerate() {
+        visit(node, &format!("/{index}"), &ids, label);
+    }
+}
+
 /// The binding of `name` in an aggregate body's members.
 fn hybrid_binding<'a>(body: &'a Value, name: &str) -> &'a Value {
     &body["members"]
@@ -16998,6 +17032,22 @@ fn rekey_hybrid_vector_node(node: &mut Value, nodes: &[Value]) {
 fn tc_966_hybrid_model_nodes_meet_the_schema_and_carry_their_own_keys() {
     let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
     let nodes = vectors["nodes"].as_array().expect("nodes");
+    let mut positive_document = nodes.clone();
+    positive_document.extend(
+        vectors["extra_nodes"]
+            .as_array()
+            .expect("extra nodes")
+            .iter()
+            .cloned(),
+    );
+    positive_document.extend(
+        vectors["restored_nodes"]
+            .as_array()
+            .expect("restored nodes")
+            .iter()
+            .cloned(),
+    );
+    assert_semantic_node_refs_resolve(&positive_document, "hybrid positive vectors");
     let roles = &vectors["roles"];
     let node_schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
     let preimage_schema = schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "HybridNode");
@@ -17805,7 +17855,8 @@ fn tc_367_timed_model_node_tag_and_preimage_are_catalogued() {
     }
     let preimages = parsed_fixture(NODE_PREIMAGE_SCHEMA);
     let timed = schema_for_def(&preimages, "TimedModelNode");
-    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("timed fixture JSON");
+    let package: Value =
+        serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("timed fixture JSON");
     let source = package["semantic_graph"]["nodes"][44].clone();
     let preimage = structural_node_preimage(&source).expect("timed source preimage");
     assert!(timed.is_valid(&preimage), "timed source identity preimage is closed and admissible");
@@ -17817,47 +17868,141 @@ fn tc_367_timed_model_node_tag_and_preimage_are_catalogued() {
 #[trace("TC-367", "FR-322-AC-120", "FR-322-AC-121")]
 #[test]
 fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
-    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("timed fixture JSON");
+    let package: Value =
+        serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("timed fixture JSON");
     let schema = parsed_fixture(SCHEMA);
     let package_validator = jsonschema::validator_for(&schema).expect("checked package schema");
-    assert!(package_validator.is_valid(&package), "all timed forms form a closed checked package: {:?}", package_validator.iter_errors(&package).map(|e| e.to_string()).collect::<Vec<_>>());
-    assert_eq!(package["identity_preimage"], derive_identity_preimage(&package));
-    assert_eq!(package["package_id"]["digest"], unqualified_jcs_sha256(&package_id_preimage(&package)));
+    assert!(
+        package_validator.is_valid(&package),
+        "all timed forms form a closed checked package: {:?}",
+        package_validator
+            .iter_errors(&package)
+            .map(|error| error.to_string())
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(
+        package["identity_preimage"],
+        derive_identity_preimage(&package)
+    );
+    assert_eq!(
+        package["package_id"]["digest"],
+        unqualified_jcs_sha256(&package_id_preimage(&package))
+    );
 
-    let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).expect("timed vectors JSON");
+    let vectors: Value =
+        serde_json::from_str(TIMED_MODEL_NODE_VECTORS).expect("timed vectors JSON");
     let indexes = vectors["node_indexes"].as_object().expect("node indexes");
-    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes");
+    assert_semantic_node_refs_resolve(nodes, "timed checked-package fixture");
+    for (index, unit) in nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| node["node_tag"] == "scalar_type" && node["semantic_form"] == "unit")
+    {
+        let dimension = &unit["nominal_identity_preimage"]["dimension_node_id"];
+        assert_eq!(
+            unqualified_jcs_sha256(&unit["nominal_identity_preimage"]),
+            unit["node_id"]["digest"],
+            "unit node {index} retains its nominal key"
+        );
+        assert!(
+            nominal_node_cross_fields_are_valid(unit),
+            "unit node {index} is typed by its dimension and depends on its declared units"
+        );
+        assert_eq!(
+            unit["semantic_type"], *dimension,
+            "unit node {index} is typed by its dimension"
+        );
+        assert!(
+            nodes.iter().any(|node| node["node_id"] == *dimension
+                && node["node_tag"] == "scalar_type"
+                && node["semantic_form"] == "dimension"),
+            "unit node {index} points at a declared dimension"
+        );
+    }
     let timed_schema = schema_for_def(&schema, "TimedModelNode");
     for (name, index) in indexes {
         let node = &nodes[index.as_u64().expect("index") as usize];
         if node["node_tag"] != "timed_model" {
-            assert!(matches!(name.as_str(), "dimension" | "unit"), "only support nodes are not timed forms");
+            assert!(
+                matches!(name.as_str(), "dimension" | "unit"),
+                "only support nodes are not timed forms"
+            );
             continue;
         }
-        assert_eq!(node["node_tag"], "timed_model", "{name} has the timed node tag");
-        assert_eq!(node["semantic_type"], node["node_id"], "{name} uses its self type");
-        assert!(structural_node_key_is_current(node), "{name} key hashes its complete body");
+        assert_eq!(
+            node["node_tag"], "timed_model",
+            "{name} has the timed node tag"
+        );
+        assert_eq!(
+            node["semantic_type"], node["node_id"],
+            "{name} uses its self type"
+        );
+        assert!(
+            structural_node_key_is_current(node),
+            "{name} key hashes its complete body"
+        );
+        assert_eq!(
+            node["dependencies"],
+            json!(body_reference_targets(&node["body"])),
+            "{name} dependencies match its resolved body references"
+        );
         let preimage = structural_node_preimage(node).expect("timed form has structural preimage");
-        assert!(schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "TimedModelNode").is_valid(&preimage), "{name} preimage matches its closed schema");
-        assert!(timed_schema.is_valid(node), "{name} node matches its closed schema");
+        assert!(
+            schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "TimedModelNode")
+                .is_valid(&preimage),
+            "{name} preimage matches its closed schema"
+        );
+        assert!(
+            timed_schema.is_valid(node),
+            "{name} node matches its closed schema"
+        );
     }
     let mut dense_source = nodes[indexes["time_source"].as_u64().unwrap() as usize].clone();
     dense_source["body"]["members"][0]["value"]["value"] = json!("dense");
-    dense_source["body"]["members"].as_array_mut().unwrap().truncate(2);
-    assert!(timed_schema.is_valid(&dense_source), "the dense source variant has its exact two-binding layout");
-    for refusal in vectors["schema_refusals"].as_array().expect("refusal vectors") {
-        let index = indexes[refusal["node"].as_str().expect("node role")].as_u64().expect("node index") as usize;
+    dense_source["body"]["members"]
+        .as_array_mut()
+        .unwrap()
+        .truncate(2);
+    assert!(
+        timed_schema.is_valid(&dense_source),
+        "the dense source variant has its exact two-binding layout"
+    );
+    for refusal in vectors["schema_refusals"]
+        .as_array()
+        .expect("refusal vectors")
+    {
+        let index = indexes[refusal["node"].as_str().expect("node role")]
+            .as_u64()
+            .expect("node index") as usize;
         let mut adverse = package.clone();
         let node = &mut adverse["semantic_graph"]["nodes"][index];
         match refusal["id"].as_str().expect("vector id") {
-            "TM-01" => { node["body"]["members"].as_array_mut().unwrap().remove(1); }
-            "TM-02" => { node["body"]["members"].as_array_mut().unwrap().push(json!({"term":"binding","name":"extra","value":{"term":"aggregate","members":[]}})); }
-            "TM-03" => { node["body"]["members"][1]["value"]["members"][1]["members"][2]["value"]["value_kind"] = json!("text"); }
-            "TM-04" => { node["body"]["members"].as_array_mut().unwrap().swap(0, 1); }
-            "TM-05" => { node["body"]["members"][1]["value"]["members"] = json!([]); }
+            "TM-01" => {
+                node["body"]["members"].as_array_mut().unwrap().remove(1);
+            }
+            "TM-02" => {
+                node["body"]["members"].as_array_mut().unwrap().push(json!({"term":"binding","name":"extra","value":{"term":"aggregate","members":[]}}));
+            }
+            "TM-03" => {
+                node["body"]["members"][1]["value"]["members"][1]["members"][2]["value"]["value_kind"] =
+                    json!("text");
+            }
+            "TM-04" => {
+                node["body"]["members"].as_array_mut().unwrap().swap(0, 1);
+            }
+            "TM-05" => {
+                node["body"]["members"][1]["value"]["members"] = json!([]);
+            }
             other => panic!("unhandled schema refusal vector {other}"),
         }
-        assert!(!package_validator.is_valid(&adverse), "{} mutation is refused", refusal["id"]);
+        assert!(
+            !package_validator.is_valid(&adverse),
+            "{} mutation is refused",
+            refusal["id"]
+        );
     }
 }
 
