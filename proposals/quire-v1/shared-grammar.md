@@ -414,6 +414,11 @@ bit-level so signed zero and NaN payload identity survive parsing. Human decimal
 float conversion is an explicit library function under a selected rounding
 profile, not a literal shortcut.
 
+Over a `Float32` or `Float64`, unary `-` is IEEE `negate` (a sign-bit flip, FR-148),
+and `=`, `!=`, `<`, `<=`, `>` and `>=` are the IEEE quiet comparisons built from
+`numericEqual` and `totalOrder` (FR-148); `=` and `!=` also apply to a type that
+holds a float, which FR-149 "IEEE relations" states.
+
 The one qualified reference/call production is syntactically canonical. Static
 resolution classifies a bare qualified reference as an enum member, a
 domain-package population (inside a state clause, as the operand of

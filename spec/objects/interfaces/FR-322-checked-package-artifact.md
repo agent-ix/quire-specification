@@ -387,16 +387,22 @@ boundary.
   and `operation-member-mismatch` respectively.
   `leaves` is empty unless the entry names a leaf source; it then lists,
   in the order of the "Structural leaf walk" below, one `{path, laws, mode}`
-  entry for every text leaf of the compared type (`operand:0`, `inner:0`)
-  or, for `result_inner`, of the element type of a `set`, `bag` or
-  `ordered_set` result (`field:<name>`, `member:<name>`, `position:<n>` and
-  `inner` segments), with the text profile law and the mode that leaf's
-  type pins, and one `{path, laws: [], mode: null}` entry for every
+  entry for every text leaf and every float leaf of the compared type
+  (`operand:0`, `inner:0`) or, for `result_inner`, of the element type of a
+  `set`, `bag` or `ordered_set` result (`field:<name>`, `member:<name>`,
+  `position:<n>` and `inner` segments), a text leaf with the text profile law
+  and the mode that leaf's type pins and a float leaf with the `ieee_profile`
+  law and mode `null`, and one `{path, laws: [], mode: null}` entry for every
   recursion leaf, whose path ends in a `recursion:<d>` segment. IEEE values have no
-  `eq`, `ne`, ordering or `negate` operation: `quire.op.ieee.numeric_equal`,
+  `eq`, `ne` or ordering operation: `quire.op.ieee.numeric_equal`,
   `quire.op.ieee.total_order` and `quire.op.ieee.bit_identical` are three
-  distinct identities, and a structural comparison reaching a float leaf is
-  ineligible. A V2 reader refuses the first failing check in the order owned by
+  distinct identities, and `quire.op.ieee.float32.negate` and
+  `quire.op.ieee.float64.negate` are the sign-bit flip of one float of their
+  width, with the law `ieee_profile` and mode `null` (the operation rounds
+  nothing). A comparison reaching a float leaf is admitted: `=` over a bare
+  float is `quire.op.ieee.numeric_equal` and `!=` is `quire.op.boolean.not`
+  over it, and `quire.op.structural.eq` and `.ne` over a type holding a float
+  at any depth list that float leaf (FR-149 "IEEE relations"). A V2 reader refuses the first failing check in the order owned by
   `quire.native.diagnostics/v1`: `unknown-operation`,
   `operation-class-mismatch`, `operation-law-missing`,
   `operation-law-mismatch`, `operation-law-unselected`,
@@ -1140,7 +1146,7 @@ constraints ("Reference conformance" below).
    | `ix://quire/native/String` | `String`, a native with no text profile; it is not `Text` and has no `Text` bounds, profile or leaf | `scalar_type`/`string` |
    | `ix://quire/native/UUID` | `UUID`, compared by its canonical payload under FR-149's UUID row; no ordering | `scalar_type`/`uuid` |
    | `ix://quire/native/Timestamp` | `Timestamp`, compared by its canonical payload under FR-149's Timestamp row; no ordering and no arithmetic | `scalar_type`/`timestamp` |
-   | `ix://quire/native/Float32` | `Float32`, an IEEE binary32 value (FR-148); a field names no rounding mode, so the type is strict `exact`; a field value is compared by its bits in a collection (FR-144) and by no `=` | `scalar_type`/`float32` |
+   | `ix://quire/native/Float32` | `Float32`, an IEEE binary32 value (FR-148); a field names no rounding mode, so the type is strict `exact`; a field value is compared by `=` under numeric equality (FR-149) and by its bits in a collection (FR-144) | `scalar_type`/`float32` |
    | `ix://quire/native/Float64` | `Float64`, an IEEE binary64 value (FR-148), with the same rules as `Float32` | `scalar_type`/`float64` |
    | `ix://quire/native/Clock`, on a field with FR-154's clock field shape | `Clock`, the clock type of FR-415: the field is one clock per object of its owning type, holds no data value, is read only as the clock operand of an atomic clock constraint (in a guard or a time invariant) and is written only by a reset (FR-415) | none: no node stands for a clock. This artifact carries no clock constraint, reset or timed-model member; the checker reads a clock operand there by (declaring node, field name) and records the timed model (FR-415, QSL FR-230). A `field` application whose member resolves to a clock field in any other position, a value position, refuses `invalid_timed_model`/`clock-read-outside-constraint` |
    | a value type (FR-208 `quire.meaning.model.value-type/v1`) of the same domain package bound as `Int[lo, hi]`, `lo <= hi`, as TC-196's `Count` and `Small` and TC-197's `Count` are | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over the `Integer` node |
@@ -1647,8 +1653,11 @@ and visits types in declaration pre-order:
   member with no payload contributes no leaf.
 - An `option`, `sequence`, `set`, `bag` or `ordered_set` visits its element
   type under `inner`.
-- Every other type contributes no leaf; a float type makes the comparison
-  ineligible, as stated above.
+- A float type (`float32`, `float64`) is a **leaf**: it lists one entry at the
+  current path, with the law `ieee_profile` (the selected IEEE definition) and
+  mode `null`. The walk lists a float leaf for every leaf source, so a set,
+  bag or ordered set result whose element type holds a float lists it as well.
+- Every other type contributes no leaf.
 
 The walk SHALL visit every declared union member independently of the
 active member of any operand value. `member:<identifier>` contains the
@@ -1788,7 +1797,7 @@ or `temporal`/`fairness` node has the family of its body's root application
 | `any_term` | `any_value` plus `function`, `population`, `aggregate`, `binder`, `clause`, `temporal` ([FR-370](FR-370-checked-package-temporal-clause-body.md)) | Used only as the rest position of clause and call operations. |
 | `exact_numeric` | `integer`, `rational`, `decimal` | Exact numeric operands of conversions. |
 | `rational_promotable` | `integer`, `rational` | Operands promoted exactly by `n ↦ n/1` (FR-146, FR-149). |
-| `ieee_float` | `float32`, `float64` | IEEE operands; no `eq`, `ne`, ordering or `negate`. |
+| `ieee_float` | `float32`, `float64` | IEEE operands; `negate` per width, and no `eq`, `ne` or ordering identity. |
 | `collection_kind` | `sequence`, `set`, `bag`, `ordered_set` | Collection operands and `element` members. |
 | `structural_kind` | `option`, `record`, `tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set` | Structural comparison operands. |
 | `enum_kind` | `enum`, `ordered_enum` | Enum operands. |
@@ -1847,11 +1856,12 @@ arithmetic identity over them refuses `ill_typed`/`operator-ineligible`
 application is admitted over two operands of it: a type of family `boolean`,
 `integer`, `rational`, `decimal`, `text`, `string`, `uuid`, `timestamp`,
 `enum`, `ordered_enum`, `quantity` or `reference` (each through its own
-`eq` identity), and a type of a `structural_kind` family through
-`quire.op.structural.eq` when no leaf at any depth is `float32`, `float64`
-or a `model`/`event_type` node. IEEE values have no `eq`
-(`quire.op.ieee.numeric_equal`, `total_order` and `bit_identical` are three
-distinct identities), and a `function`, `population`, `object` or
+`eq` identity), a type of family `float32` or `float64` (through
+`quire.op.ieee.numeric_equal`, with `!=` its `quire.op.boolean.not`), and a
+type of a `structural_kind` family through `quire.op.structural.eq` when no
+leaf at any depth is a `model`/`event_type` node. IEEE values have no `eq`
+or `ne` identity (`quire.op.ieee.numeric_equal`, `total_order` and
+`bit_identical` are three distinct identities), and a `function`, `population`, `object` or
 `aggregate` term is not a value type. A requirement that a key, a comparison
 or a map position needs a type "over which `=` is admitted" (the FIFO key of
 [FR-465](FR-465-checked-package-protocol-declaration-bodies.md)) means
@@ -2002,7 +2012,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-13 | The published V2 checked-package schema admits its positive fixture carrying all 14 closed node tags with an exact source-map entry for every occurrence, and refuses each authored document-type, digest-domain and node mutation. | Test |
 | FR-322-AC-14 | Each published V2 package fixture's `identity_preimage` equals the selection object rebuilt from its lock alone and carries no `identity_projection`, and its `package_id` equals the RFC 8785 JCS SHA-256 of the package-id preimage, that object with the `identity_projection` the reader derives from its semantic graph, every node in graph order without `occurrences`; editing a source-map region, node source occurrence, raw source digest, capability disposition or diagnostic catalog leaves that id unchanged, while editing the edition, a profile/definition/model/dependency selection, a required feature, a node member or node order changes it. | Test |
 | FR-322-AC-15 | Each published enum, dimension and declared-unit node vector validates against the closed preimage schema and recomputes its recorded JCS SHA-256; each authored semantic mutation is refused by exactly its named schema or semantic check, an absent owner fails the package lock join, and inside the published nominal package a retained preimage with a changed body, type, dependency or unjoined owner is refused by the published cross-field or owner-join constraint. | Test (TC-233) |
-| FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef` names a complete-value lock definition by authority and identity; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne`, ordering or `negate` identity, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
+| FR-322-AC-17 | The published operation catalog is closed: both V2 schemas carry identical operation definitions and enumerate exactly its identities, law roles, mode kinds and values, member kinds and operator classes; every law-role `DefinitionRef` names a complete-value lock definition by authority and identity; every entry's operands, rest, result form, laws, mode, member, leaf source and constraints use only catalogued families, groups and kinds; integer `div`/`rem` require the integer-division law and `mod` none, IEEE operations require the IEEE profile and have no `eq`, `ne` or ordering identity, and `negate` per width takes one float and returns the operand's type, text operations require the text profile and text mode, `all_instances` takes one population, `lookup` requires an absence mode, `navigate` and `reaches` a relationship end, `reaches_field` a `field` member and the `reference_edge` constraint, `quire.op.state.clause` the `state_clause` member kind and no law, and the record, tuple and index projections, numeric/total-order/bit-identical IEEE comparisons, `deref` and `dispatch_call` are present. | Test (TC-233) |
 | FR-322-AC-18 | Each published operation vector validates against the closed node-preimage schema, recomputes its recorded JCS SHA-256 and is distinct from every other vector; every application node of the published operation package is keyed by its application-node preimage and is a published vector, and a vector outside the package refuses as `operation-law-unselected` when placed in it; floor-to-Euclidean division changes the node and package ids; a retained key refuses as `stale-node-key`; a contradictory form, missing member-declaration dependency, stray recursion group or extra dependency is refused; an application without an operation fails the V2 schema; and the all-families function body calls a published function, changes its node id when rewritten as `dispatch_call` and then refuses as `operation-member-mismatch`. | Test (TC-233) |
 | FR-322-AC-19 | Each published operation mutation never keeps its stale key and either rekeys to exactly its named counterpart vector and is admitted exactly when its laws are lock-selected, refuses as `operation-law-unselected` until the lock also selects its law and again under the stale selection, or is refused by exactly its named schema or semantic check with its recorded cause and that cause's code; together the mutations exercise every operation refusal cause. | Test (TC-233) |
 | FR-322-AC-21 | Every node of each published V2 package carries a `declaration` member exactly when it declares; the schema refuses a declaring node without it and an expression with it; the member enters the application-node preimage and package id; a name duplicated on two nodes refuses as `ambiguous-name` at the node later in node-id digest order; and a nominal node whose declaration differs from its `qualified_declaration` refuses as `declaration-nominal-mismatch` before any ambiguity. | Test (TC-233) |
@@ -2084,6 +2094,8 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 | FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
+| FR-322-AC-111 | `quire.op.ieee.float64.negate` over one `float64` operand typed `Float64[nearest-even]` has `result_type` the operand's type node, the law `ieee_profile` selecting the lock's IEEE definition, mode `null`, no member and no leaves; the same over `float32` with `quire.op.ieee.float32.negate`. A `float32` operand of the `float64` identity, a `float64` operand of the `float32` identity, two operands, a `result_type` of another type node (`Float64[toward-zero]` over a `Float64[nearest-even]` operand), an `integer` or `decimal` operand, a `rounding` mode on the node and a missing `ieee_profile` law refuse as the reader order states (`operator-ineligible` for the operand, arity and result, `operation-mode-mismatch` for the mode, `operation-law-missing` for the law); a lock that selects no `ieee_profile` refuses `operation-law-unselected`. The identities `quire.op.ieee.float64.eq`, `quire.op.ieee.float64.ne` and `quire.op.ieee.float64.lt` refuse `unknown-operation`. | Test (TC-233) |
+| FR-322-AC-112 | `quire.op.structural.eq` and `.ne` over `record R { x: Float64[nearest-even]; t: Text[0,8;nfc]; }` are admitted with the leaves `["field:x"]` (laws `[ieee_profile]`, mode `null`) and `["field:t"]` (the `nfc` law and mode) in field order; over `Option<Float64[nearest-even]>` with the leaf `["inner"]`; over `union U { V(Float32[exact]), N }` with `["member:V", "position:0"]`; over `Sequence<Float64[nearest-even]>` with `["inner"]`; over a record holding no float and no text, none. A `quire.op.collection.set` whose result is `Set<Float64[nearest-even]>` lists the leaf with no path segment under `result_inner`. A float leaf missing from `leaves`, one listing no law, one listing the text profile law or a mode, and a lock without the `ieee_profile` selection refuse as a text leaf does. The occurrences `quire.op.ieee.numeric_equal` over two `float64` operands, and `quire.op.boolean.not` over it, are admitted as the lowering of `=` and `!=`. | Test (TC-233) |
 
 ## Dependencies
 

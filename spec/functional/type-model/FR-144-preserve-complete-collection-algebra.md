@@ -112,8 +112,9 @@ compared by FR-148 `bitIdentical` (the same width and identical bits). So
 are identical, and a record, tuple, option or union holding a float is one
 member with another exactly when every field or payload is the same member. The
 relation is selected by the collection kind, never by an operator: `=` and `!=`
-over a type containing a float remain `refused { code: ill_typed, cause:
-operator-ineligible }` (FR-149), and so does `=` between two sets of floats.
+over a type containing a float compare a float leaf by `numericEqual`, and `=`
+between two sets, bags or ordered sets of floats matches their members by this
+relation (FR-149 "IEEE relations").
 Construction, FR-145 coalescing and `contains` all use this relation. An event
 type (FR-149), or a type containing one at any depth, admits no membership
 relation, so a `Set`, `Bag` or `OrderedSet` of it is
@@ -153,7 +154,7 @@ A recursive record or union type has a key because every finite value of it
 does. A union has a membership relation exactly when every payload type of
 every member has one, so a union with a `Float32` or `Float64` payload is an
 admitted element type whose key orders its payload floats by the row above, while
-its `=` stays ineligible (FR-143, FR-149). Because declaration position is
+its `=` compares that payload by `numericEqual` (FR-143, FR-149). Because declaration position is
 never used for a union, reordering its members changes no visiting order.
 References from different universes never meet in one collection, because
 their FR-149 comparison refuses construction. A universe is a model-level object
