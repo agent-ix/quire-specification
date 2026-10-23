@@ -39,3 +39,15 @@ Examined, clean:
 ## Verdict
 
 Not mergeable: FND-001, FND-002, FND-003 (high) block the PR; FND-004, FND-005 (medium) should be fixed in the same round.
+
+## Dispositions
+
+Round 1, at c8b026a1. Hand-derived: the JsonObject key order "x" (0x22) < 3 (0x33) < [] (0x5b) < null (0x6e) < {} (0x7b); "z" (0x7a) before "é" (0xc3); the Bytes key order empty, 00, 0000, 10, 2000; the FR-181-AC-27 wire order 00, 0000, 10, 2000 (`"` 0x22 < `0` 0x30); MU-20's composed scale 60 x 1/60 = 1 is admitted.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | \| `Bytes` \| the octet sequence, compared octet by octet as unsigned values, a proper prefix first ... \| `JsonObject` \| the UTF-8 bytes of the value's canonical RFC 8785 (JCS) text ... ; FR-181 forms {"type":"bytes","value":"<hex>"} and {"type":"json_object","value":"<jcs-text>"} |
+| FND-002 | fixed | A member declared by a selected package resolves the unit `s` that its own selection declares ... A source `s` and a package `s` are two distinct units (FR-142), so a unit of compilation and a package that both declare `s` never make a `Duration` ambiguous. |
+| FND-003 | fixed | Both V2 schemas enumerate these six identities in `OperationIdentity`, so a package that applies them validates. |
+| FND-004 | fixed | Bytes with payload `10` order before `2000`, `00` before `0000`, and the empty payload before `00`; JsonObject `[]` orders before `{}` |
+| FND-005 | fixed | SHALL have exact scale 1 and offset 0 to the root unit of that dimension: the root unit itself, or a unit whose composed edges to the root have scale 1 and offset 0 |
