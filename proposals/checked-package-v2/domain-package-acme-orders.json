@@ -889,6 +889,28 @@
           },
           "presence": "required",
           "typeRef": "ix://acme/orders/Folded"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/clock",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "clock",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Clock"
         }
       ],
       "identity": "ix://acme/orders/Order",

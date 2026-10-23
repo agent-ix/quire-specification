@@ -46,7 +46,7 @@
       "kind": "wrong-child-type",
       "node": "clock_place",
       "locus": "/semantic_graph/nodes/clock_place/body/members",
-      "mutate": "bad-slot-selector"
+      "mutate": "invalid-path-step-kind"
     },
     {
       "id": "TM-04",
@@ -77,16 +77,17 @@
       "id": "TM-07",
       "kind": "clock-resolved-path",
       "place_node_index": 45,
-      "path_step_count": 3,
-      "expected": "one typed owner/member row per path step; sequence timer bounds are 0..3 and terminal member type is native Clock"
+      "path_step_count": 1,
+      "expected": "the selected acme/orders Order model declaration supplies its clock field with native Clock type; the checked resolved-path row names that declaration and member identity explicitly"
     },
     {
       "id": "TM-08",
       "kind": "tick-operation-anchor",
       "source_node_index": 44,
-      "model_node_index": 13,
+      "model_node_index": 54,
+      "frame_node_index": 55,
       "operation_anchor_index": 53,
-      "expected": "operation_anchor.context equals source.model and timed_model.model; operation anchor is not a function node"
+      "expected": "source.model and timed_model.model both reference the explicit acme/orders Order declaration node; operation_anchor.context equals that model node, its frame has that same semantic_type, and operation size resolves in the selected domain package; operation anchor is not a function node"
     }
   ],
   "semantic_refusals": [
@@ -123,7 +124,7 @@
       "mutation": "noncanonical-place-path",
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
-      "locus": "/semantic_graph/nodes/45/body/members/1"
+      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
     },
     {
       "id": "TM-14",
@@ -148,7 +149,7 @@
     },
     {
       "id": "TM-17",
-      "mutation": "wrong-clock-collection-bound",
+      "mutation": "wrong-clock-collection-metadata",
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
       "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
@@ -158,14 +159,14 @@
       "mutation": "undeclared-clock-member",
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
-      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/2"
+      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
     },
     {
       "id": "TM-19",
       "mutation": "wrong-terminal-clock-type",
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
-      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/2"
+      "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
     },
     {
       "id": "TM-20",
@@ -177,9 +178,9 @@
     {
       "id": "TM-21",
       "mutation": "unresolved-tick-operation",
-      "expected_code": "invalid_package",
-      "expected_cause": "timed-node-reference",
-      "locus": "/semantic_graph/nodes/53/body/members/1/value/value"
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-name",
+      "locus": "/semantic_graph/nodes/53/body/members/1"
     }
   ]
 }
