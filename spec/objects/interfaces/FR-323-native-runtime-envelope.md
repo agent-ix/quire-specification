@@ -568,8 +568,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Status
 
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 boundary value contract.
 The QSL-681 supplied-phase amendment and AC-10..16 are PROPOSED,
 independently unreviewed and UNQUALIFIED. No implementation, typed native
 mapping, helper proof or acceptance execution is claimed.
