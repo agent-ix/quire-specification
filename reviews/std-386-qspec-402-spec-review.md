@@ -37,3 +37,11 @@ Merge status: origin/main 0eef131f is not an ancestor; `git merge-tree` is clean
 ## Verdict
 
 **Still needed, not stale: the QSpec half of STD-386 is not on main** (main's TC-381 IB-07 still has the `lookup<M::Gate>` activation guard that contradicts FR-464). The QSL half, #1324, merged. **Mergeable after FND-001 (medium) is fixed or dispositioned.** Gate `quire validate --scope . 'spec/**/*.md'`: 86 failure lines (baseline). No test or fixture parses TC-381 (searched tests/ and proposals/), so I did not run cargo. `git merge-tree` against main is clean (main is not an ancestor). Only #402 touches TC-381 among the open heads.
+
+## Dispositions
+
+| FND | Round | Outcome | Reason |
+| --- | --- | --- | --- |
+| FND-001 | 1 | fixed | Fixed in head 7d4612a2; the fix agrees with the finding and the vectors were derived by hand. |
+
+Round 1 verdict: Finding fixed, no new defect; mergeable (merge-tree clean; validate 86).
