@@ -74,7 +74,7 @@ The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `Integer`, `Int`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `Option`,
 `Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `Quantity`, `Population`, `null`, `none`, `decimal`,
 `float32`, `float64`, `bits`, `convert`, `allInstances`, `collect`, `flatMap`,
-`flatten`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
+`flatten`, `dropFirst`, `removeOne`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
 `toward-negative`, `nearest-even`, `nearest-away`, `unicode-scalars`, `nfc`,
 `nfd`, `nfkc`, `nfkd`, `binary-utf8`, `lifetime`, `workflow`, `scope`,
 `capacity`, `symbolic`, `overflow`, `reject`, `block`, `loss`, `at-most-once`,
@@ -400,6 +400,8 @@ product       = unary, { ('*' | '/' | 'div' | 'rem' | 'mod'), unary } ;
 collection-call = ('map' | 'collect' | 'filter' | 'flatMap'),
                   '(', ident, 'in', expr, ':', expr, ')'
                 | 'flatten', '(', expr, ')'
+                | 'dropFirst', '(', expr, ')'
+                | 'removeOne', '(', expr, ',', expr, ')'
                 | ('fold' | 'reduce'), '<', qualified-name, '>',
                   '(', ident, ',', ident, 'in', expr, ':', expr,
                   [ ',', 'identity', ':', expr ], ')' ;

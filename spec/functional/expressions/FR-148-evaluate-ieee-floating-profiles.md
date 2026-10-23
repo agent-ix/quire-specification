@@ -157,7 +157,7 @@ occurrence, one work unit) and `ieee.result-retain` (one work unit, one result
 unit).
 
 **Comparison operators.** The grammar's comparison operators over two operands
-of one float type are the IEEE quiet comparisons, built from the three distinct
+of one float type are the IEEE quiet comparisons (except for the signaling-NaN flag stated below), built from the three distinct
 operations above and from the Boolean connectives. Write `N(x)` for
 `numericEqual(x, x)`, which is false exactly when `x` is a NaN.
 
@@ -168,7 +168,11 @@ operations above and from the Boolean connectives. Write `N(x)` for
   both are false when either operand is a NaN, `-0 < +0` is false and
   `-0 <= +0` is true. `a > b` is `b < a` and `a >= b` is `b <= a`.
 - No comparison operator uses `bitIdentical`, and none sets a flag or consumes a
-  NaN. Operands of unlike width or rounding mode, or a float against an exact
+  NaN. This departs from IEEE 754 on purpose: the standard's quiet predicates
+  signal `invalid` on a signaling NaN, while here a signaling NaN is an
+  ordinary NaN operand that compares unordered and sets no flag, because a
+  comparison yields a Boolean and carries no flag channel, so a flag set by a
+  comparison would be lost state outside the result. Operands of unlike width or rounding mode, or a float against an exact
   type, are refused by type checking as stated above.
 
 The comparison operators are defined by these compositions, so their charges
