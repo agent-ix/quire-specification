@@ -1,22 +1,22 @@
 ---
-id: TC-964
+id: TC-965
 title: "Reference literals parse, type, lower and resolve against a subject"
 type: TC
 relationships:
-  - target: ix://agent-ix/quire-specification/FR-478
+  - target: ix://agent-ix/quire-specification/FR-480
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
 ---
 
-# TC-964: Reference literals parse, type, lower and resolve against a subject
+# TC-965: Reference literals parse, type, lower and resolve against a subject
 
 ## Description
 
 Check that a reference literal `M::T#"k"` parses as its own production, types
 `Reference<M::T>`, lowers to a `reference` literal term, resolves once at
 subject binding to an admitted key, and is refused at its name, its string or
-the literal for each stated cause. Scope: FR-478-AC-1 to FR-478-AC-5 and
+the literal for each stated cause. Scope: FR-480-AC-1 to FR-480-AC-5 and
 FR-322-AC-101.
 
 Fixture **S**: a domain package `M` with object type `Server` (field

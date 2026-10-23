@@ -420,7 +420,7 @@ A `reference-literal` names one object by its key: the qualified name names
 an object type and the string is the key's object identity as UTF-8 bytes
 (`M::Server#"s1"`). `#` is a punctuation token of this production alone. Its
 typing, lowering and resolution are
-[FR-478](../../spec/functional/type-model/FR-478-check-and-resolve-reference-literals.md)'s.
+[FR-480](../../spec/functional/type-model/FR-480-check-and-resolve-reference-literals.md)'s.
 
 The one qualified reference/call production is syntactically canonical. Static
 resolution classifies a bare qualified reference as an enum member, a

@@ -1,5 +1,5 @@
 ---
-id: FR-478
+id: FR-480
 title: "Check and resolve reference literals"
 type: FR
 relationships:
@@ -19,7 +19,7 @@ relationships:
     type: references
 ---
 
-# FR-478: Check and resolve reference literals
+# FR-480: Check and resolve reference literals
 
 ## Description
 
@@ -119,11 +119,11 @@ term.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-478-AC-1 | `M::Server#"s1"` parses as one `reference-literal` node holding the qualified name and the string, and renders back byte for byte. `M::Server#s1`, `M::Server#` and `#"s1"` each fail at the parser with a located syntax diagnostic. | Test (TC-964) |
-| FR-478-AC-2 | `M::Server#"s1"` types `Reference<M::Server>`, with the same type node as a `Reference<M::Server>` parameter, and `self = M::Server#"s1"` in an invariant of `Server` checks. `M::Absent#"s1"` refuses `missing_declaration`/`missing-name` at `M::Absent`; `M::Point#"s1"`, `Point` a record type, refuses `ill_typed`/`type-mismatch` at `M::Point`, retaining expected `object type` and actual `record`; `M::Server#""` refuses `invalid_package`/`invalid-value` at the string. | Test (TC-964) |
-| FR-478-AC-3 | `M::Server#"s1"` lowers to a `literal` term of `value_kind` `reference`, `type` the `composite_type`/`reference` node over `Server`, and `value` `7331`. Two occurrences of it, one written through a second alias of the same package, share the term. | Test (TC-964) |
-| FR-478-AC-4 | Over a subject whose `servers` universe in `Server`'s object universe is `[s1, s2]` and whose initial state admits both as `Server` records, `M::Server#"s1"` resolves to the FR-181 reference with that universe, `Server`'s type identity and identity `7331`, and `self = M::Server#"s1"` holds for `s1` only. `M::Server#"s9"` refuses `missing_declaration`/`missing-name` at the literal, naming `Server` and `7339`, before any state is explored; a key of the universe that no initial member record admits refuses the same way. | Test (TC-964) |
-| FR-478-AC-5 | A choice guard that compares a `receive` record's reference field to `M::Server#"s1"` checks: the literal is not a model-state read. A guard that reads `deref(M::Server#"s1").load` refuses `ill_typed`/`operator-ineligible` at the dereference, as any model-state read there does. | Test (TC-964) |
+| FR-480-AC-1 | `M::Server#"s1"` parses as one `reference-literal` node holding the qualified name and the string, and renders back byte for byte. `M::Server#s1`, `M::Server#` and `#"s1"` each fail at the parser with a located syntax diagnostic. | Test (TC-965) |
+| FR-480-AC-2 | `M::Server#"s1"` types `Reference<M::Server>`, with the same type node as a `Reference<M::Server>` parameter, and `self = M::Server#"s1"` in an invariant of `Server` checks. `M::Absent#"s1"` refuses `missing_declaration`/`missing-name` at `M::Absent`; `M::Point#"s1"`, `Point` a record type, refuses `ill_typed`/`type-mismatch` at `M::Point`, retaining expected `object type` and actual `record`; `M::Server#""` refuses `invalid_package`/`invalid-value` at the string. | Test (TC-965) |
+| FR-480-AC-3 | `M::Server#"s1"` lowers to a `literal` term of `value_kind` `reference`, `type` the `composite_type`/`reference` node over `Server`, and `value` `7331`. Two occurrences of it, one written through a second alias of the same package, share the term. | Test (TC-965) |
+| FR-480-AC-4 | Over a subject whose `servers` universe in `Server`'s object universe is `[s1, s2]` and whose initial state admits both as `Server` records, `M::Server#"s1"` resolves to the FR-181 reference with that universe, `Server`'s type identity and identity `7331`, and `self = M::Server#"s1"` holds for `s1` only. `M::Server#"s9"` refuses `missing_declaration`/`missing-name` at the literal, naming `Server` and `7339`, before any state is explored; a key of the universe that no initial member record admits refuses the same way. | Test (TC-965) |
+| FR-480-AC-5 | A choice guard that compares a `receive` record's reference field to `M::Server#"s1"` checks: the literal is not a model-state read. A guard that reads `deref(M::Server#"s1").load` refuses `ill_typed`/`operator-ineligible` at the dereference, as any model-state read there does. | Test (TC-965) |
 
 ## Dependencies
 

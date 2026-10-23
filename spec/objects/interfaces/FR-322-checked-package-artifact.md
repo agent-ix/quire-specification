@@ -1870,7 +1870,7 @@ whose `type` is not its kind's family refuses `ill_typed`/`operator-ineligible`
 even when its value is also non-canonical.
 
 **Reference literal values.** A `reference` literal is a reference literal
-([FR-478](../../functional/type-model/FR-478-check-and-resolve-reference-literals.md)).
+([FR-480](../../functional/type-model/FR-480-check-and-resolve-reference-literals.md)).
 Its `type` is the `composite_type`/`reference` node over a `model`/`object_type`
 declaration node, and its `value` is the object identity as lowercase
 hexadecimal, two digits per byte, at least one byte. A `value` with an
@@ -1878,7 +1878,7 @@ uppercase digit, an odd number of digits, a non-hexadecimal character or no
 digit refuses `invalid_package`/`invalid-value` at the literal's `value`. A
 `reference` literal typed by a reference node over any other declaration kind
 refuses `ill_typed`/`operator-ineligible`. The literal carries no universe and
-no object type component: a subject binding fixes both (FR-478).
+no object type component: a subject binding fixes both (FR-480).
 
 | Constraint | Decision rule |
 | --- | --- |
@@ -2086,7 +2086,7 @@ counters below 2^53 and string values, so no published key changes.
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
 | FR-322-AC-100 | Each `adverse.json` `shipped_projection_cases` entry, `positive-all-families.json` with an `identity_projection` member added to its `identity_preimage` (`identity-preimage-ships-derived-projection`, the occurrence-free graph, and `identity-preimage-ships-empty-projection`, `[]`), fails the V2 schema, and a reader refuses it `malformed_wire` at `/identity_preimage/identity_projection`; removing that member restores the admitted package, and the `package_id` rebuilt from the lock and graph alone is the published one, so the shipped copy never enters the package-id preimage. | Test (TC-233) |
-| FR-322-AC-101 | A `literal` of `value_kind` `reference` typed by the `composite_type`/`reference` node over a `model`/`object_type` node, with `value` `7331`, is admitted with family `reference`, and both V2 schemas enumerate `reference` as a literal `value_kind`. The same literal with `value` `7G31`, `733`, `73A1` or empty text refuses `invalid_package`/`invalid-value` at `value`; typed by the reference node over a `model`/`process` node, or by an integer node, it refuses `ill_typed`/`operator-ineligible`. | Test (TC-964) |
+| FR-322-AC-101 | A `literal` of `value_kind` `reference` typed by the `composite_type`/`reference` node over a `model`/`object_type` node, with `value` `7331`, is admitted with family `reference`, and both V2 schemas enumerate `reference` as a literal `value_kind`. The same literal with `value` `7G31`, `733`, `73A1` or empty text refuses `invalid_package`/`invalid-value` at `value`; typed by the reference node over a `model`/`process` node, or by an integer node, it refuses `ill_typed`/`operator-ineligible`. | Test (TC-965) |
 
 ## Dependencies
 
