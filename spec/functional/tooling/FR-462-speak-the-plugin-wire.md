@@ -124,7 +124,10 @@ and settles each open item `incomplete` with cause `timed-out`. Items routed
 to other providers are unaffected.
 
 The tool-failure cause is the FR-331 cause `tool-failure{defect}`, with
-`defect` naming the failure:
+`defect` naming the failure. The two byte-limit defects also carry `limit`,
+the caller's configured maximum in bytes, and `value`, the byte count that
+crossed it: the frame's length for `frame-length` and the run's running
+total for `total-bytes`. No other defect carries them.
 
 | Failure | `defect` |
 | --- | --- |
@@ -132,8 +135,8 @@ The tool-failure cause is the FR-331 cause `tool-failure{defect}`, with
 | non-zero exit | `nonzero-exit` |
 | frame that is not a length and that many bytes of JSON | `malformed-frame` |
 | value whose bytes differ from its RFC 8785 re-encoding | `noncanonical-frame` |
-| frame above the frame-length limit | `frame-length` |
-| frames above the total-byte limit | `total-bytes` |
+| frame above the frame-length limit | `frame-length`, with `limit` and `value` |
+| frames above the total-byte limit | `total-bytes`, with `limit` and `value` |
 | `protocol` other than `quire.plugin-wire/v1` | `unknown-protocol` |
 | unknown `kind` | `unknown-frame-kind` |
 | missing or extra envelope member | `envelope-member` |
@@ -156,6 +159,7 @@ The tool-failure cause is the FR-331 cause `tool-failure{defect}`, with
 | FR-462-AC-7 | A `request` body carries `package`, the unpadded base64url spelling of the package's RFC 8785 v2 bytes, which decodes to exactly those bytes, and that package's `package_id`; a plugin given a body whose `package` is padded, uses the standard alphabet or has nonzero trailing bits, or whose decoded package has another `package_id`, runs no item and settles every routed item `failed` with the refusal as its diagnostic. | Test (TC-428) |
 | FR-462-AC-8 | Each wire failure of the failure table settles every affected item `failed` with cause `tool-failure` and that row's `defect`. | Test (TC-428) |
 | FR-462-AC-9 | A `hello` whose only defects are FR-290 registration causes is refused as that registration, keyed by backend identity, and settles no item `failed`; a request naming that identity receives the unknown-backend mark. | Test (TC-428) |
+| FR-462-AC-10 | A frame one byte over a frame-length limit of 1048576 settles each affected item `failed` with `{"type": "tool-failure", "defect": "frame-length", "limit": 1048576, "value": 1048577}`, and frames whose running total first exceeds a total-byte limit of 4194304 at 4194305 bytes settle `{"type": "tool-failure", "defect": "total-bytes", "limit": 4194304, "value": 4194305}`; every other defect's cause carries neither member. | Test (TC-428) |
 
 ## Dependencies
 

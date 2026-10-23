@@ -218,5 +218,4 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 ## Status
 
 Accepted complete-V1 boundary value contract for the `state`/`state_clause`
-node body and the `value`/`parameter` node body above. Implementation and
-qualification remain tracked separately.
+node body and the `value`/`parameter` node body above.

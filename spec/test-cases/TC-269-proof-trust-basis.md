@@ -35,9 +35,12 @@ result and artifact accounting with the criterion.
 | TB-05 | TB-01's certificate with one step's premise replaced by a later step | `inconclusive`, `certificate-rejected{rule, at}` naming the invalid step |
 | TB-06 | TB-01's certificate with its last step removed, so the proof ends short of the empty clause | `inconclusive`, `certificate-rejected{rule, at}` naming the last step |
 | TB-07 | A bounded-complete certificate offered for an `inductive` proof | `inconclusive`, `certificate-rejected{rule, at}` naming the shape mismatch |
-| TB-08 | TB-01 run with the Z3 cross-check agreeing, then disagreeing | Both settle `proved`, `certified`; the cross-check result is recorded beside the certification and never changes it |
+| TB-08 | TB-01 run with the Z3 cross-check agreeing, then disagreeing | Both settle `proved`, `certified`; the cross-check result is recorded beside the certification as `cross_check` with verdict `proved`, then `refuted`, and never changes it (FR-349: a certified proof survives a disagreement) |
 | TB-09 | An inductive certificate whose `Step` proof has an invalid step | `inconclusive`, `certificate-rejected{rule, at}` naming `ProofStepInvalid` at that `Step` step |
 | TB-10 | TB-01's certificate with one step's rule replaced by `lia_generic` and no other defect | `proved`, `uncertified` |
+| TB-11 | TB-02's proof with no certificate, with the Z3 cross-check disagreeing | `inconclusive`, `cross-check-disagreement{tool: "z3", primary: "proved", cross_check: "refuted"}`, never `proved` (FR-349-AC-3) |
+| TB-12 | TB-01 run with the Z3 cross-check `inconclusive` | `proved`, `certified`, `cross_check` verdict `inconclusive`; the certification is unchanged |
+| TB-13 | A query cvc5 leaves `inconclusive`, with Z3 `proved`, then `refuted`, then `inconclusive` | `inconclusive`, `cross-check-disagreement{tool: "z3", primary: "inconclusive", cross_check}` with `proved`, then `refuted`; then cvc5's own `inconclusive` cause with no `cross_check`; Z3 alone never settles `proved` or `refuted` |
 
 ## Expected Results
 
