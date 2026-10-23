@@ -50,9 +50,3 @@ Round 1, at 12296a48. Standing-rule check: the equivalence is not restrictive. I
 | FND-001 | fixed | ## Dimension equivalence ... `dimension R::Time ~ F::Time;` ... Direct conversion between two declared units is admitted when their dimension nodes are equal or in one equivalence class |
 | FND-002 | fixed | the expression `let c = ((3 R::s) * (1 R::s)) / (1 R::s) in convert<Quantity<dsec>>(c)` |
 | FND-003 | fixed | FR-322-AC-105 now sits in numeric order after FR-322-AC-104. |
-
-Round 2. The declaration states the root ratio: `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` (shared grammar `dimension-equivalence`). Hand-derived: with `acme/rpc` root `s` and `acme/clock` root `ms`, `by 1 R::s = 1000 G::ms` has ratio 1000 (one `R::s` root is 1000 `G::ms` roots), so `convert<Quantity<G::ms>>(3 R::s)` is 3000 G::ms with one identification edge, 1500 G::ms is 3/2 R::s, and `3 R::s / 3 G::ms` is 1000. The same declaration over `acme/flow` (root `s`, `ms` = 1/1000 s) has ratio 1. The node key of the TC-233 vector `dimension-equivalence-rpc-clock-time` was recomputed over the preimage with `root_scale`.
-
-| FND | outcome | reason |
-| --- | --- | --- |
-| FND-004 | fixed | FR-142 "Dimension equivalence" steps 1 to 7: the `by x U = y V` clause is reduced to the root ratio `(y * b) / (x * a)`; units must belong to their dimensions (`incompatible-definition`), be non-affine and positive (`invalid-value`), ratios around base cycles multiply to exactly one and a derived pair carries the ratio its base roots fix (`conflicting-definition`/`incompatible-definition`); the identification edge from one root to the other carries the ratio (FR-142-AC-22, AC-23, AC-24, AC-26; TC-187 U37, U38, U40; FR-322-AC-118, TC-280 MU-22, MU-23). |
