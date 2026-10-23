@@ -337,11 +337,33 @@ implements the backend.
 RFC 8785 bytes of the build-input record of the provider code that
 implements the backend, that is, the pure engine's crate, a linked
 provider's adapter code, or a process provider's executable. The build that
-compiles that code SHALL compute it from the source bytes of the code and of
-every workspace crate it links, the resolved dependency versions of its lock
-file, the compiler version, the target and the build profile; equal inputs
-give an equal `build`, and a change of any input changes it. A specification
-or repository holds no copy of any `build` value: each build derives its own.
+compiles that code SHALL compute it. Equal inputs give an equal `build`, a
+change of any input changes it, and a specification or repository holds no
+copy of any `build` value: each build derives its own.
+
+The build-input record is the closed object
+`{sources, dependencies, compiler, target, profile, options}`, every string
+exact UTF-8:
+
+| Member | Value |
+| --- | --- |
+| `sources` | One `{path, sha256}` per file the build reads as source of that code and of every package of its own workspace or project that it links: `path` relative to the workspace or project root with `/` separators, `sha256` 64 lowercase hexadecimal digits over the file's bytes. Ordered bytewise by `path`; each `path` once. Nonempty. |
+| `dependencies` | One `{name, version, source}` per third-party package the build resolves, as its lock file or package manager records them (`source` the registry, repository or path it comes from). Ordered bytewise by `name`, then `version`, then `source`; each triple once. Empty when the build resolves none. |
+| `compiler` | The compiler, or for interpreted code the interpreter, that builds or runs the code, with its version as it reports it, such as `rustc 1.98.0`. |
+| `target` | The platform the code is built for, such as a target triple. |
+| `profile` | The build profile or configuration name, such as `release`. |
+| `options` | A map from each build setting that can change the produced code (enabled features, optimisation level, code-generation flags) to its value, as strings. Empty when the build sets none. |
+
+A Cargo build fills the members from its workspace: the crate's and its
+workspace path dependencies' source files, the `Cargo.lock` packages, `rustc`,
+the target triple, the profile and the enabled features and code-generation
+settings. A build by any other toolchain fills the same members from its own
+inputs. A process provider whose build inputs are not available to it, such
+as one shipped only as a prebuilt executable, records that executable as its
+one `sources` entry, with the executable's file name as `path` and the
+digest of its bytes; `dependencies` and `options` are empty, `compiler` and
+`profile` are the string `prebuilt`, and `target` is the platform it runs
+on. A change to the executable's bytes then changes its `build`.
 A pure in-process engine's code change therefore changes its descriptor
 even when its crate version stays the same.
 
