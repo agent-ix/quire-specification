@@ -103,7 +103,7 @@
     "CountMap": {"description": "A nonempty map of counts keyed by limit name.", "type": "object", "minProperties": 1, "propertyNames": {"$ref": "#/$defs/LimitName"}, "additionalProperties": {"$ref": "#/$defs/Count"}},
 
     "TypedValue": {
-      "description": "FR-181: the typed canonical form of a value; a unit-bearing quantity adds unit to its rational or decimal (FR-142).",
+      "description": "FR-181: the typed canonical form of a value; a unit-bearing quantity is written as a rational with its unit; the decimal form with a unit is read and normalized to it (FR-142).",
       "type": "object",
       "required": ["type"],
       "oneOf": [
