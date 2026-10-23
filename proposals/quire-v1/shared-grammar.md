@@ -915,7 +915,7 @@ aggregate-term = ( 'count' | 'sum' | 'min' | 'max'
                  | 'fraction', 'holds', '(', expr, ')'
                  | 'quantile', exact-value ),
                  [ 'of', expr ], [ 'where', 'holds', '(', expr, ')' ],
-                 'over', 'past', window, 'min_count', uint ;
+                 'over', 'past', window, [ 'min_count', uint ] ;
 window         = '[', horizon, ',', horizon, ']' ;
 temporal-primary =/ aggregate-atom ;
 
