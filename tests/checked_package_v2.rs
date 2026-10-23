@@ -17427,6 +17427,8 @@ fn decimal_literal_membership_is_decided_by_value() {
         assert!(decimal_literal_is_member(member, -1000, 1000, 1, 2), "{member}");
     }
     assert!(!decimal_literal_is_member("1001", -1000, 1000, 1, 2));
+}
+
 #[trace("TC-966", "FR-481-AC-13", "FR-322-AC-13")]
 #[test]
 fn tc_966_the_all_families_fixture_carries_a_hybrid_model_with_bare_variable_terms() {
