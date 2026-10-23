@@ -53,8 +53,8 @@ lookups are prohibited. Runtime fuel exhaustion remains incomplete.
 The checker constructs a declaration-identity call graph and checks each
 strongly connected component. An acyclic component needs no termination
 measure. Every recursive component declares one shared lexicographically
-ordered tuple whose elements are nonnegative mathematical integers or
-strict-subvalue depths. Each recursive edge must
+ordered tuple whose elements are nonnegative mathematical integers, finite
+collection cardinalities or strict-subvalue depths. Each recursive edge must
 prove that the substituted callee tuple is lexicographically smaller than the
 caller's tuple; this rule also applies across mutual recursion.
 
@@ -166,12 +166,14 @@ still type checked and imposes no obligation.
 `decreases(m)` supplies the measure. `m` is either one measure element or a call
 of a declared `tuple` whose arguments are measure elements, and a one-element
 measure is a one-tuple. A measure element is exactly one of: an *integer
-element*, a parameter of `Integer` or `Int[..]` type; or a *structural element*,
-a parameter of a recursive record type ordered by strict containment. Any other
-expression in a measure is a `measure-kind` failure, including `size(p)` for a
-collection parameter `p`: Complete V1 has no source form that yields a
-collection strictly smaller than `p`, so a collection's cardinality cannot
-decrease along a call edge and is not a measure element.
+element*, a parameter of `Integer` or `Int[..]` type; a *cardinality element*,
+`size(p)` for a parameter `p` of a `Sequence`, `Set`, `Bag` or `OrderedSet`
+type, bounded or unbounded, ordered by its FR-144 bound count (occurrences for
+a sequence or bag, members for a set or ordered set); or a *structural
+element*, a parameter of a recursive record type ordered by strict
+containment. Any other expression in a measure is a `measure-kind` failure,
+including `size(e)` whose operand `e` is not a parameter, such as a field
+projection `size(b.items)`.
 
 Every function in one strongly connected component declares a measure. The
 checker checks each component's obligations in this order and reports the first
@@ -179,12 +181,60 @@ failure: `missing-measure` (a function omits `decreases`); `measure-arity`
 (arities differ); `measure-kind` (a position is not a measure element or the
 element kinds at one position differ); `nonnegative` (an integer element's
 parameter type has a lower bound below zero, so `Integer` never qualifies);
-then `decrease` for each recursive call edge. For an edge, let `a` be the call
-argument bound to the callee's element parameter at position `i`, and `p` the
-caller's element parameter at position `i`. Position `i` is *equal* when `a` is
+then `decrease` for each recursive call edge. A cardinality element is a
+natural number, so it carries no `nonnegative` obligation. For an edge, let `a`
+be the call argument bound to the callee's element parameter at position `i`,
+and `p` the caller's element parameter at position `i`. Position `i` is *equal* when `a` is
 exactly `p`. It is *strictly smaller* when:
 
 - for an integer element, `a` is `p - k` for an integer literal `k >= 1`;
+- for a cardinality element, `a` is a *shrinking term* of `p`, or a shrinking
+  term as the operand of a same-kind `convert<K<T>[min,max]>(...)` or
+  `convert<K<T>>(...)` whose `K` and `T` are `p`'s kind and element type. A
+  shrinking term is a removal filter, a one-occurrence removal or a tail of
+  `p`.
+
+  A *one-occurrence removal* is `removeOne(p, e)` (FR-145) for a stable path
+  `e` with the membership fact `contains(p, e)` at that call site, for a `p` of
+  any collection kind and any element type, including one with a float leaf,
+  because `removeOne` and `contains` compare under the same FR-144 membership
+  relation. By that fact `p` has an occurrence equal to `e`, `removeOne`
+  drops exactly one occurrence, and the result's bound count is `size(p) - 1`.
+
+  A *tail* is `dropFirst(p)` (FR-145) for a `p` of `Sequence` or `OrderedSet`
+  kind with a fact at that call site that `size(p) >= 1`: the `size(p)`
+  interval, from the declared bound, a comparison fact or the membership fact
+  `contains(p, v)`, excludes `0`. The first occurrence exists and is dropped,
+  so the result's bound count is `size(p) - 1`. A `dropFirst` without that
+  fact, or of a `Set` or `Bag`, is not a tail (the latter is an FR-145 typing
+  refusal).
+
+  A *removal filter* is `filter(x in p: q)` with a stable path `e` in which the
+  binder `x` does not occur, the membership fact `contains(p, e)` at that call
+  site, and a predicate `q` of one of these shapes:
+  - `x != e`, `e != x` or `not (x = e)`, when `p`'s element type admits FR-149
+    `=` and contains no `Float32` or `Float64` leaf, so that `=` is exactly
+    the FR-144 collection membership relation;
+  - `not quire::value::ieee::bitIdentical(x, e)` or
+    `not quire::value::ieee::bitIdentical(e, x)`, when `p`'s element type is
+    `Float32` or `Float64`, whose membership relation is FR-148 bit identity;
+  - `not contains(d, x)`, for any element type, where `d` is a stable
+    collection path whose element type is `p`'s and the membership fact
+    `contains(d, e)` also holds at that call site.
+
+  Each shape is false exactly for the occurrences of `p` that are members
+  equal to `e` under the FR-144 collection membership relation (for the last
+  shape, at least those), so the filter drops every such occurrence, and the
+  membership fact `contains(p, e)` proves at least one exists. The result's
+  bound count is therefore at most `size(p) - 1`. A removal filter drops every
+  occurrence equal to `e`, so a walk that must process each duplicate of a
+  `Sequence` or `Bag` one occurrence at a time uses `removeOne` or `dropFirst`,
+  which keep the other duplicates. A same-kind conversion has
+  empty loss and keeps that count, and its target bound is checked at run time
+  as FR-145 states. A predicate `x != e` over an element type with a float
+  leaf is not a removal filter, because its FR-148 `numericEqual` reading
+  differs from bit identity at NaN and signed zero, so it does not prove that
+  the member equal to `e` is dropped;
 - for a structural element, `a` is a nonempty projection path from `p`, whose
   each step is a field projection `.f`, or `value(q)` of an `Option` path `q`
   whose `present(q)` is a guard fact at that call site; for example
@@ -223,7 +273,11 @@ facts of the redefined parent member being refined, not the redefining type. The
    `!=` removes `k` only when `k` is an endpoint of the interval, and `x != 0`
    also records a nonzero fact for `x`. A comparison of two non-literal
    operands yields no fact.
-4. **Propagation.** Facts flow into the `then` and `else` branches of `if`,
+4. **Membership facts.** `contains(c, v)`, where `c` is a stable collection
+   path and `v` is a stable path, yields the membership fact `contains(c, v)`
+   on its true outcome, and on that outcome intersects `size(c)`'s interval
+   with `[1, +inf)`. Its false outcome yields no fact.
+5. **Propagation.** Facts flow into the `then` and `else` branches of `if`,
    the right operand of `and`, `or` and `implies` by the state-semantics rules,
    through `not` by exchanging outcomes, and through `let` aliases. At a join
    only facts valid on every alternative remain.
@@ -267,11 +321,38 @@ path `x` records a nonzero fact for `x` on its true outcome, and `=` on its
 false outcome; no other rational comparison yields a fact.
 
 A `Decimal[..]` divisor satisfies the nonzero obligation only as a
-`decimal(c,s)` literal with `c != 0`. A quantity divisor has no admitted
-nonzero proof form: every FR-142 quantity division in a linked body is
+`decimal(c,s)` literal with `c != 0`. A quantity divisor satisfies it only as
+a quantity literal `n u` whose reduced magnitude `n` is nonzero, written as an
+integer, a decimal (`0.5 s`, `1.50 s`) or a `rational(n,d)` magnitude,
+including a negative `rational(-n,d)`; a decimal magnitude is its exact
+rational value, so `1.50` is `3/2` and `0.0` is zero. The literal is a nonzero
+fact for that division, whatever the dividend. A unary minus is not part of a
+quantity literal: `-1 s` is the unary `-` applied to the literal `1 s`, a
+quantity negation (FR-142 "Quantity negation"), never a literal. A negation of a
+nonzero quantity literal, `-(n u)` with `n` nonzero however the source spells the unary minus over the literal, and a negation of
+such a negation to any depth, is itself a nonzero fact for that division,
+because negation is exact and preserves zero-ness, so `d / -1 s` and
+`d / -(3 ms)` are admitted and `d / -(0 s)` is `unproved-nonzero`. A negation of
+any other quantity, including a parameter, a `let` name or a call, has no
+nonzero proof form. The negative divisor `-1 s` is the exact quantity `-1 s`,
+equal to `rational(-1,1) s`. The quotient is FR-142's division: each operand is taken in the
+canonical root of its unit, the divisor's composed scale applied exactly (`3 ms`
+with `ms` of scale `1/1000` over `s` is `3/1000 s`), the dimension exponents
+subtract with zero exponents removed, and the result unit is the compound unit
+over those root units, the dimensionless unit when every exponent cancels. A
+quantity is typed `Quantity<u>` (FR-142 "Quantity type reference"), an exact
+rational magnitude in unit `u` with no bound on the magnitude, so the quotient
+has an exact rational magnitude over the whole rational domain and the division
+carries no range obligation: its only definedness obligation is the nonzero
+one. A quantity negation is total and carries no obligation: it is exact and
+unit-preserving over the whole rational domain of the magnitude. Every other quantity divisor,
+including a parameter, a `let` name bound to a literal, a call, a conversion,
+or a product or quotient of quantities, has no nonzero proof form whatever
+guard encloses it, and a quantity literal divisor of zero magnitude (`0 s`,
+`rational(0,1) s`, `0.0 s`) fails the obligation; either division is
 `refused { code: undefined_expression, cause: unproved-nonzero }` at the
-division, whatever guard encloses it, and only direct kernel evaluation decides
-a zero quantity divisor, as the FR-142 undefined outcome.
+division. Only direct kernel evaluation decides a zero non-literal quantity
+divisor, as the FR-142 undefined outcome.
 
 The obligations are discharged as follows. A range obligation holds when the
 expression's interval lies inside the required type's interval. A nonzero
@@ -362,13 +443,15 @@ counter, and no call depth turns into an outcome (FR-460).
 | FR-146-AC-5 | Exhausting execution fuel for an admitted function returns incomplete without changing the function's totality verdict. | Test (TC-191) |
 | FR-146-AC-6 | Each call charges `function.call` after argument evaluation and before binding, and an unproved partial-operation precondition refuses as `undefined_expression` while runtime typed refusals propagate. | Test (TC-191) |
 | FR-146-AC-7 | A missing, mismatched or undecreasing measure in a recursive component is `undefined_expression` with cause `unproved-decrease`, a non-recursive function needs no measure, and a call to a non-function declaration or an undeclared name refuses with its named code. | Test (TC-191) |
-| FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements (integer and structural; a `size(p)` measure position is `measure-kind`), guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking limit exceeded is `stage_limit_exceeded` naming the limit, its value and its setting. | Test (TC-191) |
-| FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, and every quantity division in a linked body is `unproved-nonzero`. | Test (TC-191) |
+| FR-146-AC-8 | Definedness and decrease proofs admit exactly the closed measure elements (integer, cardinality and structural), guard facts, interval rules and decrease forms, `deref` and IEEE-to-`Rational` conversion have no body obligation, a duplicate function name is `ambiguous_declaration`, and a checking limit exceeded is `stage_limit_exceeded` naming the limit, its value and its setting. | Test (TC-191) |
+| FR-146-AC-9 | Rational `+`, `-`, `*`, `/` and unary `-` range proofs use exactly the numerator and denominator interval rules, a rational divisor whose numerator interval contains zero is `unproved-nonzero` without a nonzero fact, a quantity division by a quantity literal of nonzero magnitude (integer, decimal or `rational(n,d)`), or by the negation of such a literal, is admitted with FR-142's quotient unit and value and no range obligation, a quantity negation is admitted with no obligation, and every other quantity division in a linked body, including one by a zero-magnitude literal, is `unproved-nonzero`. | Test (TC-191) |
 | FR-146-AC-10 | A `case` expression's arm set is checked against its scrutinee's declared union in order — `duplicate-arm`, `unknown-member`, `arm-arity`, `missing-arm` — and the first violated obligation is `undefined_expression` with cause `unproved-exhaustiveness`, naming the union, the arm set and the failed obligation. | Test (TC-264) |
 | FR-146-AC-11 | An admitted `case` evaluates the arm matching the scrutinee's active member, binds its payload positionally to the arm's bound identifiers, and every arm's body is checked against the `case` expression's result type. | Test (TC-265) |
 | FR-146-AC-12 | A `case` that is the body of a function declared `: Int[0..100]`, with arms `0` and a parameter `w: Int[0..9]`, has result type `Int[0..100]`; under an unannotated `let`, arms `r: Int[0..9]` and `w: Int[0..99]` infer `Integer`, and arms that are both `Text` parameters infer that `Text` type; arms `0` and `"none"` refuse `ill_typed`/`type-mismatch` at the `"none"` arm body, and arms `"none"` and `0` at the `0` arm body; and an arm body `sequence[]` with no expected type refuses `ill_typed`/`ambiguous-literal`. | Test (TC-398) |
 | FR-146-AC-13 | A `case` charges its scrutinee's charges and then only its selected arm body's charges, with no charge for arm selection or payload binding; an undefined scrutinee is the `case`'s outcome with no arm evaluated or charged; and a work limit equal to the scrutinee's and selected arm body's work units admits the `case` while one unit less returns `incomplete { limit_kind: work_units }`. | Test (TC-399) |
 | FR-146-AC-14 | A `case` whose scrutinee is an `Integer` and whose arms name unknown members is refused `ill_typed`/`type-mismatch` at the scrutinee only; a `case` with an ill-typed body in a resolved arm and a missing arm is refused `ill_typed`/`type-mismatch` at that body only; and a `case` whose `unknown-member` arm has an ill-typed body, or whose `arm-arity` arm's body uses an unbound identifier, is refused `undefined_expression`/`unproved-exhaustiveness` with that obligation only. | Test (TC-398) |
+| FR-146-AC-15 | A recursive function measured by `decreases(size(s))` over a `Sequence`, `Set`, `Bag` or `OrderedSet` parameter `s` is admitted when each recursive call passes a removal filter of `s` (`x != e`, `e != x` or `not (x = e)` over an element type without a float leaf, `not quire::value::ieee::bitIdentical(x, e)` over a `Float32` or `Float64` element type, or `not contains(d, x)` under a further `contains(d, e)` fact, for a stable path `e`) under a `contains(s, e)` guard fact, or that filter inside a same-kind `convert`, and evaluates its declared result; passing `s` unchanged, a removal filter without the membership fact, a filter of any other predicate shape, or a removal of a non-stable `e` refuses `undefined_expression`/`unproved-decrease` with obligation `decrease`; `size` of a non-parameter operand, and one measure position holding a cardinality element in one function and an integer element in another of its component, refuse with obligation `measure-kind`; and a lexicographic tuple mixing cardinality and integer positions decreases by the earlier-equal rule. | Test (TC-191) |
+| FR-146-AC-16 | A recursive function measured by `decreases(size(s))` over a `Sequence`, `Set`, `Bag` or `OrderedSet` parameter `s` is admitted when each recursive call passes `removeOne(s, e)` for a stable path `e` under a `contains(s, e)` guard fact, including over an element type with a float leaf, or passes `dropFirst(s)` for a `Sequence` or `OrderedSet` `s` under a fact that `size(s) >= 1` (a `size(s) > 0` comparison, a `contains(s, v)` fact or a declared minimum of at least `1`), or either inside a same-kind `convert`, and evaluates its declared result, so a duplicate-holding `Sequence` or `Bag` is walked one occurrence at a time; `removeOne(s, e)` without the membership fact, with a non-stable `e`, and `dropFirst(s)` without the size fact, refuse `undefined_expression`/`unproved-decrease` with obligation `decrease`. | Test (TC-191) |
 
 ## Dependencies
 

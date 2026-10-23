@@ -105,6 +105,19 @@ object, `{"type": <tag>, ...}`:
   nanoseconds since `1970-01-01T00:00:00Z` on the POSIX scale, within the
   signed 128-bit domain, as a decimal string. No zone, calendar text or
   precision selector is part of the form.
+- Bytes — `{"type":"bytes","value":"<hex>"}`, the canonical payload of the
+  native `Bytes` type (FR-149, FR-322 "Scalar literal values"): the octets in
+  sequence order as lowercase hexadecimal digits, two per octet, the empty
+  string for the empty sequence. A reader refuses an odd digit count, an
+  uppercase digit or any other character as outside the form.
+- JsonObject — `{"type":"json_object","value":"<jcs-text>"}`, the canonical
+  payload of the native `JsonObject` type (FR-149, FR-322 "Scalar literal
+  values"): a JSON string holding the RFC 8785 (JCS) serialization of the
+  value, which is its own JCS serialization again (no repeated member name,
+  members in UTF-16 code unit order, no insignificant whitespace). The text is
+  a string inside the form, so its quotes and backslashes are escaped by the
+  enclosing JCS serialization. A reader refuses text that is not one JSON
+  value or is not already canonical as outside the form.
 - `Option<T>` — `{"type":"option","value":<encoded-value>|null}`.
 - `Set<T>`/`Bag<T>` — `{"type":"set"|"bag","elements":[<encoded-value>, ...]}`,
   sorted by each element's JCS UTF-8 bytes, ascending unsigned-lexicographic;
@@ -137,7 +150,8 @@ Equal values of a type encode identically only where that type's form below is
 canonical. The element of a `Set` or `Bag` is written in its canonical encoding
 before the elements are ordered by encoded bytes, recursively through nested
 options, collections, records, tuples and unions. Integer, boolean,
-rational (FR-205 normalized), string (the exact scalar sequence), enum,
+rational (FR-205 normalized), string (the exact scalar sequence), Bytes and
+JsonObject (their canonical payloads), enum,
 union member, record, tuple, option, reference, UUID, Timestamp and
 `Float32`/`Float64` bits are canonical as defined above, as is a quantity
 (the normalized rational with its unit; see the unit-bearing quantity rule
@@ -274,7 +288,29 @@ open, and every other explored state is closed
 
 Over a timed subject ([FR-415](../temporal/FR-415-declare-clocks-and-timed-models.md))
 a state is a **timed state** `(s, v)`: `s` the discrete state (every non-clock
-field) and `v` the clock valuation, every clock 0 initially.
+field, the presence of every guarded clock place included) and `v` the clock
+valuation of the present clocks, every present clock 0 initially. A clock that
+a step makes present takes the constant of its write, and one that a step makes
+absent leaves `v` (FR-415 "Clock places").
+
+A clock collection (FR-415 "Clock collections") has an element place for each
+clock of each element, named by object, field path and slot. The discrete
+state holds the collection's data parts only: its typed canonical form encodes
+each element as its data part, with no clock component, so two states that
+differ only in clock values have one state key, the size of a `Set<Clock>` or
+`Bag<Clock>` is part of that key, and the live places of a state are those its
+collection sizes and presence tests determine. The valuation `v` is defined on
+exactly those places, listed in object, field and slot order, and a step defines
+`v'` on the live places of its post-state by carry, fresh constant and reset as
+FR-415 states, so a clock moves with its element and an inserted or removed
+element changes the dimension of the valuation by the places it adds or drops.
+The explored symbolic state of a timed subject pairs a discrete state with a
+zone over the live places of that discrete state: a place that is not live is
+inactive and unconstrained, a transition projects out the places it drops, maps
+the places it carries to their new slots, and adds a fresh place as the equality
+to its constant, so the dimension of a zone is the number of live places of its
+discrete state and is bounded by the model's clock dimension (FR-415 "Cardinality
+bound").
 
 - A **delay** by real `d >= 0` takes `(s, v)` to `(s, v + d)`. It is admissible
   when `d = 0`, or when `s` is not urgent and every time invariant whose
@@ -324,6 +360,7 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-10 | Sample `i` of test `j` among `m` tests uses trace index `i · m + j`. | Test (TC-354) |
 | FR-181-AC-11 | Timed replay checks each delay's admissibility, the guard at the delayed state, the post-state digest over the discrete state and exact clock valuation, and the target's time invariants in exact rationals; a violated delay or guard refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-369) |
 | FR-181-AC-12 | Under `time tick O period p` a position's time stamp is `p` times the number of `O` steps up to it. | Test (TC-369) |
+| FR-181-AC-25 | Over a model with `ts: Sequence<Timer>[0, 3]` the discrete state key of a state ignores the clock values and holds the data parts of the elements, the size of a `Set<Clock>` field is in the key, the valuation of a state lists exactly the live places in object, field and slot order, a step that filters out the element at slot 0 moves the clock of the element at slot 1 to slot 0 with its value, a step that inserts a fresh element at the front gives it the literal's constant and moves the others up one slot, and the post-state digest changes with the valuation and the live places. | Test (TC-369) |
 | FR-181-AC-14 | A sampled choice whose integer total `n` exceeds `2^256` stops the whole sampling run before any draw and settles `unsupported` with cause `total-above-draw-range{total}`, `total` being `n`; no digest is computed and the sampler does not loop. | Test (TC-354) |
 | FR-181-AC-15 | A sampled choice whose integer total is exactly `2^256` accepts the draw-0 digest and selects the least index `i` with `v mod n < w_0 + … + w_i`. | Test (TC-354) |
 | FR-181-AC-16 | Two successors of one parent with equal transition identities and different post-states are visited in ascending order of their post-states' state-key bytes, whatever order the successor relation yields them in; two with equal transition identities and equal post-state keys are one successor. | Test (TC-210) |
@@ -335,6 +372,8 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-22 | Each family encodes to these JCS bytes: string `ready` `{"type":"string","value":"ready"}`; the empty string `{"type":"string","value":""}`; rational `-2/4` read and written `{"denominator":"2","numerator":"-1","type":"rational"}`; `float32` `1.0` `{"bits":"3f800000","type":"float32"}`; `float64` negative zero `{"bits":"8000000000000000","type":"float64"}`; the `float64` quiet NaN with payload 1 `{"bits":"7ff8000000000001","type":"float64"}`; the quantity `1/1000` in `Units::metre` `{"denominator":"1000","numerator":"1","type":"rational","unit":"Units::metre"}`. A rational with denominator `0`, a `float32` `bits` string of 7 or 9 hex digits, and a `bits` string with an uppercase digit are outside the form. | Test (TC-210) |
 | FR-181-AC-23 | As set elements, `Set<String>` of `b`, `a` and `é` (U+00E9) encodes as `{"elements":[{"type":"string","value":"a"},{"type":"string","value":"b"},{"type":"string","value":"é"}],"type":"set"}` and the composed `é` and the decomposed U+0065 U+0301 are two members; `Set<Rational>` of `2/4` and `1/3` encodes as `{"elements":[{"denominator":"2","numerator":"1","type":"rational"},{"denominator":"3","numerator":"1","type":"rational"}],"type":"set"}`; `Set<Float64>` of the bits `fff0000000000000`, `bff0000000000000`, `8000000000000000`, `0000000000000000`, `3ff0000000000000` and `7ff0000000000000` encodes with `elements` in the order `0000000000000000`, `3ff0000000000000`, `7ff0000000000000`, `8000000000000000`, `bff0000000000000`, `fff0000000000000`; and `Set<Quantity<Units::metre>>` of `1/2` and `2/4` is one member `{"denominator":"2","numerator":"1","type":"rational","unit":"Units::metre"}`. | Test (TC-210) |
 | FR-181-AC-24 | Two states whose `Set<Float64>` member holds `+0` and `-0` have distinct state keys; two whose `Set<Float64>` member holds the same bits inserted in two orders have equal state keys; two whose `Set<String>` member holds the composed and the decomposed spelling of `é` have distinct state keys; and two whose `Set<Rational>` member holds `2/4` and `1/2` have equal state keys. | Test (TC-210) |
+| FR-181-AC-26 | Each family encodes to these JCS bytes: Bytes `00ff` `{"type":"bytes","value":"00ff"}`; the empty Bytes `{"type":"bytes","value":""}`; JsonObject `{"a":1,"b":[true,null]}` `{"type":"json_object","value":"{\"a\":1,\"b\":[true,null]}"}`; JsonObject `"x"` `{"type":"json_object","value":"\"x\""}`; JsonObject `[]` `{"type":"json_object","value":"[]"}`. A reader refuses `{"type":"bytes","value":"0"}`, `"00FF"`, `"0g"` and `"0x00"`, and `{"type":"json_object","value":"{\"b\":1,\"a\":2}"}`, `"{\"a\": 1}"`, `"{\"a\":1.0}"`, `""` and `"{"` as `invalid_runtime_input`/`invalid-value`; a `bytes` form read as a `JsonObject`, or the reverse, and a `string` form read as `Bytes`, is `wrong-value-kind`. | Test (TC-210) |
+| FR-181-AC-27 | As set elements, `Set<Bytes>` of `2000`, `00`, `10` and `0000` encodes as `{"elements":[{"type":"bytes","value":"00"},{"type":"bytes","value":"0000"},{"type":"bytes","value":"10"},{"type":"bytes","value":"2000"}],"type":"set"}`, ordered by encoded bytes, and `Set<JsonObject>` of `{}` and `[]` encodes `[]` before `{}`. Two states whose `Set<Bytes>` member holds the same octets inserted in two orders have equal state keys; two whose `JsonObject` field holds the one value `{"a":1,"b":2}`, one built from the member order `b`, `a` and one from `a`, `b`, have equal state keys, both encoding the text `{"a":1,"b":2}`, and two whose field holds `[1,2]` and `[2,1]` have different state keys. | Test (TC-210) |
 
 ## Dependencies
 

@@ -145,6 +145,42 @@ coefficient and scale, not by its reduced form. A decimal text converts to an
 IEEE width by this same single rounding, after FR-478 reads its exact value
 from the text.
 
+**Negation.** The grammar's unary `-` over a `Float32` or `Float64` is IEEE 754-2019
+`negate`: it flips the sign bit of the operand and nothing else. The result has
+the operand's type, so the rounding mode is kept, and it is exact under every
+rounding mode, strict `exact` included, because no value is rounded. A zero
+changes sign (`-(+0)` is `-0`, `-(-0)` is `+0`), an infinity changes sign, and a
+NaN, quiet or signaling, keeps its payload and quiet bit and changes its sign,
+so a signaling NaN stays signaling. Negation sets no flag, consumes no NaN and
+never refuses, so `-(-x)` has the bits of `x` for every `x`. It is the
+operation `quire.op.ieee.float32.negate` or `quire.op.ieee.float64.negate`
+(FR-322) and charges `ieee.operands` (the width as `integer_bits`, one value
+occurrence, one work unit) and `ieee.result-retain` (one work unit, one result
+unit).
+
+**Comparison operators.** The grammar's comparison operators over two operands
+of one float type are the IEEE quiet comparisons (except for the signaling-NaN flag stated below), built from the three distinct
+operations above and from the Boolean connectives. Write `N(x)` for
+`numericEqual(x, x)`, which is false exactly when `x` is a NaN.
+
+- `a = b` is `numericEqual(a, b)`: false when either operand is a NaN, and true
+  for `+0` and `-0`. `a != b` is `not(numericEqual(a, b))`.
+- `a < b` is `N(a) and N(b) and totalOrder(a, b) and not numericEqual(a, b)`
+  and `a <= b` is `N(a) and N(b) and (totalOrder(a, b) or numericEqual(a, b))`;
+  both are false when either operand is a NaN, `-0 < +0` is false and
+  `-0 <= +0` is true. `a > b` is `b < a` and `a >= b` is `b <= a`.
+- No comparison operator uses `bitIdentical`, and none sets a flag or consumes a
+  NaN. This departs from IEEE 754 on purpose: the standard's quiet predicates
+  signal `invalid` on a signaling NaN, while here a signaling NaN is an
+  ordinary NaN operand that compares unordered and sets no flag, because a
+  comparison yields a Boolean and carries no flag channel, so a flag set by a
+  comparison would be lost state outside the result. Operands of unlike width or rounding mode, or a float against an exact
+  type, are refused by type checking as stated above.
+
+The comparison operators are defined by these compositions, so their charges
+are the charges of the operations composed. [FR-149](../type-model/FR-149-apply-complete-equality-matrix.md)
+extends `=` and `!=` to a structure that holds a float.
+
 Before decoding retained operands or constructing an exact-real intermediate,
 the evaluator charges only the named IEEE points and counters from
 `quire.value.accounting/v1`. An unavailable charge returns incomplete without a
@@ -168,6 +204,9 @@ host floating point.
 | FR-148-AC-8 | Mixed-width or IEEE-with-exact operations and comparisons refuse `ill_typed` before any charge; zero operands take the finite charge path with IEEE signed-zero results; strict `exact` refuses after `ieee.round` with `nearest-even` would-be flags and no bits. | Test (TC-193) |
 | FR-148-AC-9 | Width, IEEE-to-exact and exact-to-IEEE conversions charge the IEEE points at their stated sizes and positions; NaN width conversion keeps sign and payload, or refuses an unrepresentable payload after `ieee.operands` and before `ieee.result-retain` with no flags. | Test (TC-193) |
 | FR-148-AC-10 | A user declaration bound to a reserved qualified intrinsic identity returns `refused { code: invalid_package, cause: conflicting-definition }` at package admission. | Test (TC-193) |
+| FR-148-AC-11 | Negation of `0x3f800000` is `0xbf800000`, of `0x00000000` is `0x80000000`, of `0x80000000` is `0x00000000`, of `0x7f800000` is `0xff800000`, of the signaling NaN `0x7f800001` is `0xff800001` and of the quiet NaN `0xffc00005` is `0x7fc00005`, at binary64 the same patterns widened (`0x7ff0000000000001` is `0xfff0000000000001`); each under `nearest-even`, `toward-zero` and strict `exact` with no flag and no refusal, and `-(-x)` is `x` bit for bit for every listed pattern. | Test (TC-193) |
+| FR-148-AC-12 | With `p0` `0x0000000000000000`, `n0` `0x8000000000000000`, `one` `0x3ff0000000000000`, `pinf` `0x7ff0000000000000`, `qnan` `0x7ff8000000000000` and `snan` `0x7ff0000000000001`: `n0 = p0`, `n0 <= p0`, `p0 >= n0`, `one < pinf`, `pinf <= pinf`, `qnan != qnan` and `qnan != one` are true; `n0 < p0`, `p0 > n0`, `qnan = qnan`, `qnan < one`, `qnan <= one`, `one > qnan`, `one >= qnan`, `snan < one` and `snan = snan` are false, with no flag; the binary32 patterns `0x00000000`, `0x80000000`, `0x3f800000`, `0x7f800000`, `0x7fc00000` and `0x7f800001` give the same results. | Test (TC-193) |
+| FR-148-AC-13 | Negation under `ScalarLimitsV1 { integer_bits: 32, decimal_digits: 0, scale_expansion: 0, text_input_bytes: 0, text_scalars: 0, normalized_scalars: 0, unit_edges: 0, value_occurrences: 1, work_units: 2, result_units: 1 }` of binary32 `0x3f800000` is `0xbf800000` after exactly `ieee.operands` and `ieee.result-retain`; with `work_units: 1` it is `incomplete { limit_kind: work_units, limit: 1, consumed: 1, next_charge: 1, charge_point: ieee.result-retain }`, and denying `ieee.operands` is incomplete with no bits. | Test (TC-193) |
 
 ## Dependencies
 

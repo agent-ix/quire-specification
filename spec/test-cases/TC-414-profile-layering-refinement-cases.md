@@ -11,8 +11,8 @@ relationships:
 
 ## Description
 
-Run the profile-layering refinement gate over cases on all five AD-003
-`requires` edges E1 to E5, compiling each case's unit under both layers, and
+Run the profile-layering refinement gate over cases on all six AD-003
+`requires` edges E1 to E6, compiling each case's unit under both layers, and
 over each layer's witness unit and each edge's distinguishing unit. Confirm
 the case, layer and edge results, the verdict and the exit code.
 
@@ -30,18 +30,19 @@ code. Each expected result is a literal in the test.
 
 | Vector | Case | Expected result |
 | --- | --- | --- |
-| PL-01 | On each of E1 to E5, a unit both layers refuse with a typed refusal (a bounded-integer range proof that fails) | Holds on each edge, reporting both codes |
-| PL-02 | On each of E1 to E5, the edge's distinguishing unit run as a case | Not applicable on each edge |
-| PL-03 | PL-01's E1 to E5 cases, each with a test-only fault in the child side's compile that skips the failing range proof, so the child admits the unit | Regression on each edge naming the case, the edge and the parent's codes; verdict violation, exit 10 |
+| PL-01 | On each of E1 to E6, a unit both layers refuse with a typed refusal (a bounded-integer range proof that fails) | Holds on each edge, reporting both codes |
+| PL-02 | On each of E1 to E6, the edge's distinguishing unit run as a case | Not applicable on each edge |
+| PL-03 | PL-01's E1 to E6 cases, each with a test-only fault in the child side's compile that skips the failing range proof, so the child admits the unit | Regression on each edge naming the case, the edge and the parent's codes; verdict violation, exit 10 |
 | PL-04 | Two units that differ in one byte of a declaration body | Tool failure naming the case; exit 30 |
 | PL-05 | A case naming state core as parent and complete model as child | Tool failure naming the case; exit 30 |
-| PL-06 | Each layer's witness unit selected alone: a bounded-scalar monitor invariant (state core), a named-predicate query over a bounded log (state queries), a reachability invariant over a finite universe (state graph), a record validation function (complete value), a dispatched operation contract (complete model), each witness item requested by name from each candidate for its layer's `witness_request` (`operation-contract`/`bounded`, or `value-validity`/`bounded` for complete value) against a test registry holding one backend that advertises both kinds in `bounded` mode | Holds for each of the five layers, every witness item settling `supported`; verdict success, exit 0 |
+| PL-06 | Each layer's witness unit selected alone: a bounded-scalar monitor invariant (state core), a named-predicate query over a bounded log (state queries), a reachability invariant over a finite universe (state graph), a record validation function (complete value), a dispatched operation contract (complete model), a timed model with a clock field, a reset, a guard and a time invariant whose `invariant` clause is the witness item (complete temporal), each witness item requested by name from each candidate for its layer's `witness_request` (`operation-contract`/`bounded`, or `value-validity`/`bounded` for complete value) against a test registry holding one backend that advertises both kinds in `bounded` mode | Holds for each of the six layers, every witness item settling `supported`; verdict success, exit 0 |
 | PL-07 | PL-06's state-core witness with a test-only fault that makes state core refuse it | Regression naming state core and the refusal; verdict violation, exit 10 |
 | PL-07b | PL-06's state-core witness against a test registry whose one backend advertises only `value-validity` | Regression naming state core and the empty candidate set; verdict violation, exit 10 |
 | PL-07c | PL-06's state-core witness against a test registry of two backends advertising `operation-contract`/`bounded`, one whose negotiation arm settles the item `supported` and one that settles it `unsupported` | Holds; each candidate is requested by name and neither request settles `ambiguous-backend` |
 | PL-07d | PL-07c with both backends settling the item `unsupported` | Regression naming state core and both backend identities with disposition `unsupported`; verdict violation, exit 10 |
 | PL-08 | Each edge's distinguishing unit compiled under its parent and its child | Holds on each edge: the parent gives `unsupported_construct` naming the parent layer and the child admits |
 | PL-09 | E1's distinguishing unit with a test-only fault that makes state core admit named predicates | Regression naming E1; verdict violation, exit 10 |
+| PL-10 | E6's distinguishing unit, a state model that writes `time M dense unit ms;`, compiled under `quire.model.complete/v1` and under `quire.temporal.complete/v1` | The parent gives `unsupported_construct`/`declaration-form` naming `quire.model.complete/v1`; the child admits; E6 holds |
 
 ## Expected Results
 

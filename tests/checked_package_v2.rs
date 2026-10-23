@@ -217,8 +217,255 @@ fn semantic_preimage_is_valid(preimage: &Value, vectors: &[Value]) -> bool {
                 })
         }
         Some("quire.unit-node/v1") => unit_chain_reaches_root(preimage, vectors),
+        Some("quire.dimension-equivalence-node/v1") => {
+            let Some(ids) = preimage["dimension_node_ids"].as_array() else {
+                return false;
+            };
+            let digests = ids
+                .iter()
+                .map(|id| id["digest"].as_str())
+                .collect::<Vec<_>>();
+            digests.len() == 2
+                && digests[0].is_some()
+                && digests[0] < digests[1]
+                && root_scale(preimage).is_some()
+                && digests.iter().all(|wanted| {
+                    wanted.is_some_and(|wanted| {
+                        vector_for_digest(vectors, wanted).is_some_and(|vector| {
+                            vector["preimage"]["version"].as_str()
+                                == Some("quire.dimension-node/v1")
+                        })
+                    })
+                })
+        }
         _ => false,
     }
+}
+
+/// The base classes of the dimension-equivalence vectors: the least digest of each
+/// connected component of the pairs whose two nodes are both base dimensions, by node.
+fn base_class_representatives(vectors: &[Value]) -> BTreeMap<String, String> {
+    let is_base = |digest: &str| {
+        vector_for_digest(vectors, digest).is_some_and(|vector| {
+            vector["preimage"]["terms"]
+                .as_array()
+                .is_some_and(Vec::is_empty)
+        })
+    };
+    let mut classes: BTreeMap<String, String> = BTreeMap::new();
+    let pairs = vectors
+        .iter()
+        .filter(|vector| {
+            vector["preimage"]["version"].as_str() == Some("quire.dimension-equivalence-node/v1")
+        })
+        .map(|vector| {
+            let ids = vector["preimage"]["dimension_node_ids"]
+                .as_array()
+                .expect("equivalence ids are an array");
+            (
+                ids[0]["digest"].as_str().unwrap_or_default().to_string(),
+                ids[1]["digest"].as_str().unwrap_or_default().to_string(),
+            )
+        })
+        .filter(|(left, right)| is_base(left) && is_base(right))
+        .collect::<Vec<_>>();
+    for (left, right) in &pairs {
+        for node in [left, right] {
+            classes.entry(node.clone()).or_insert_with(|| node.clone());
+        }
+    }
+    loop {
+        let mut changed = false;
+        for (left, right) in &pairs {
+            let least = classes[left].clone().min(classes[right].clone());
+            for node in [left, right] {
+                if classes[node] != least {
+                    classes.insert(node.clone(), least.clone());
+                    changed = true;
+                }
+            }
+        }
+        if !changed {
+            return classes;
+        }
+    }
+}
+
+/// The normalized map of a dimension vector over base class representatives.
+fn class_normalized_map(
+    digest: &str,
+    vectors: &[Value],
+    classes: &BTreeMap<String, String>,
+) -> BTreeMap<String, BigInt> {
+    let mut map = BTreeMap::new();
+    let preimage = &vector_for_digest(vectors, digest).expect("dimension vector exists")["preimage"];
+    let terms = preimage["terms"].as_array().expect("terms are an array");
+    if terms.is_empty() {
+        let representative = classes.get(digest).cloned().unwrap_or(digest.to_string());
+        map.insert(representative, BigInt::from(1));
+        return map;
+    }
+    for term in terms {
+        let inner = class_normalized_map(
+            term["dimension_node_id"]["digest"].as_str().unwrap_or_default(),
+            vectors,
+            classes,
+        );
+        let exponent = integer(&term["exponent"]).expect("exponent is an integer");
+        for (base, power) in inner {
+            *map.entry(base).or_insert_with(|| BigInt::from(0)) += power * &exponent;
+        }
+    }
+    map.retain(|_, power| *power != BigInt::from(0));
+    map
+}
+
+/// An exact rational as a reduced numerator and a positive denominator.
+type Ratio = (BigInt, BigInt);
+
+fn ratio_new(numerator: BigInt, denominator: BigInt) -> Ratio {
+    let divisor = numerator.gcd(&denominator);
+    (numerator / &divisor, denominator / divisor)
+}
+
+fn ratio_mul(left: &Ratio, right: &Ratio) -> Ratio {
+    ratio_new(&left.0 * &right.0, &left.1 * &right.1)
+}
+
+fn ratio_inverse(value: &Ratio) -> Ratio {
+    (value.1.clone(), value.0.clone())
+}
+
+fn ratio_pow(value: &Ratio, exponent: i32) -> Ratio {
+    let base = if exponent < 0 { ratio_inverse(value) } else { value.clone() };
+    (0..exponent.unsigned_abs()).fold((BigInt::from(1), BigInt::from(1)), |acc, _| {
+        ratio_mul(&acc, &base)
+    })
+}
+
+/// The `root_scale` of an equivalence preimage: a canonical positive rational.
+fn root_scale(preimage: &Value) -> Option<Ratio> {
+    let scale = &preimage["root_scale"];
+    if !rational_is_canonical(scale) {
+        return None;
+    }
+    let (numerator, denominator) = (integer(&scale["numerator"])?, integer(&scale["denominator"])?);
+    (numerator > BigInt::from(0)).then_some((numerator, denominator))
+}
+
+/// The size of each base-pair member's canonical root against its component's first
+/// member, over the pairs whose two nodes are both base dimensions. A pair states that one
+/// root of its first node is `root_scale` roots of its second, so the first node's root is
+/// `root_scale` times as large. `None` when the ratios around some cycle do not multiply
+/// to exactly one.
+fn base_root_sizes(
+    pairs: &[(String, String, Ratio)],
+    is_base: &dyn Fn(&str) -> bool,
+) -> Option<BTreeMap<String, Ratio>> {
+    let base_pairs = pairs
+        .iter()
+        .filter(|(left, right, _)| is_base(left) && is_base(right))
+        .collect::<Vec<_>>();
+    let mut sizes: BTreeMap<String, Ratio> = BTreeMap::new();
+    for (start, _, _) in &base_pairs {
+        if sizes.contains_key(start) {
+            continue;
+        }
+        sizes.insert(start.clone(), (BigInt::from(1), BigInt::from(1)));
+        let mut changed = true;
+        while changed {
+            changed = false;
+            for (left, right, scale) in &base_pairs {
+                match (sizes.get(left).cloned(), sizes.get(right).cloned()) {
+                    (Some(known), None) => {
+                        sizes.insert(right.clone(), ratio_mul(&known, &ratio_inverse(scale)));
+                        changed = true;
+                    }
+                    (None, Some(known)) => {
+                        sizes.insert(left.clone(), ratio_mul(&known, scale));
+                        changed = true;
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+    base_pairs
+        .iter()
+        .all(|(left, right, scale)| sizes[left] == ratio_mul(scale, &sizes[right]))
+        .then_some(sizes)
+}
+
+/// The size of a dimension's canonical root over its base dimensions: the product of the
+/// sizes of its base terms at their exponents (a base dimension outside every pair is 1).
+fn expanded_root_size(
+    digest: &str,
+    vectors: &[Value],
+    sizes: &BTreeMap<String, Ratio>,
+) -> Ratio {
+    let preimage = &vector_for_digest(vectors, digest).expect("dimension vector exists")["preimage"];
+    let terms = preimage["terms"].as_array().expect("terms are an array");
+    if terms.is_empty() {
+        return sizes
+            .get(digest)
+            .cloned()
+            .unwrap_or((BigInt::from(1), BigInt::from(1)));
+    }
+    terms.iter().fold((BigInt::from(1), BigInt::from(1)), |acc, term| {
+        let inner = expanded_root_size(
+            term["dimension_node_id"]["digest"].as_str().unwrap_or_default(),
+            vectors,
+            sizes,
+        );
+        let exponent = integer(&term["exponent"])
+            .and_then(|exponent| exponent.to_string().parse::<i32>().ok())
+            .expect("exponent is a small integer");
+        ratio_mul(&acc, &ratio_pow(&inner, exponent))
+    })
+}
+
+/// FR-142 "Dimension equivalence" over the equivalence vectors: no pair of one node, no
+/// repeated pair, a canonical positive `root_scale` on every pair, ratios that multiply to
+/// one around every cycle of base pairs, and for a pair that is not two base dimensions
+/// equal normalized maps under the base classes and a `root_scale` equal to the ratio the
+/// base roots imply.
+fn dimension_equivalence_pairs_are_admissible(vectors: &[Value]) -> bool {
+    let classes = base_class_representatives(vectors);
+    let is_base = |digest: &str| {
+        vector_for_digest(vectors, digest).is_some_and(|vector| {
+            vector["preimage"]["terms"]
+                .as_array()
+                .is_some_and(Vec::is_empty)
+        })
+    };
+    let mut seen = BTreeSet::new();
+    let mut pairs = Vec::new();
+    for vector in vectors.iter().filter(|vector| {
+        vector["preimage"]["version"].as_str() == Some("quire.dimension-equivalence-node/v1")
+    }) {
+        let ids = vector["preimage"]["dimension_node_ids"]
+            .as_array()
+            .expect("equivalence ids are an array");
+        let left = ids[0]["digest"].as_str().unwrap_or_default();
+        let right = ids[1]["digest"].as_str().unwrap_or_default();
+        let Some(scale) = root_scale(&vector["preimage"]) else {
+            return false;
+        };
+        if left == right || !seen.insert((left.to_string(), right.to_string())) {
+            return false;
+        }
+        pairs.push((left.to_string(), right.to_string(), scale));
+    }
+    let Some(sizes) = base_root_sizes(&pairs, &is_base) else {
+        return false;
+    };
+    pairs.iter().all(|(left, right, scale)| {
+        (is_base(left) && is_base(right))
+            || (class_normalized_map(left, vectors, &classes)
+                == class_normalized_map(right, vectors, &classes)
+                && expanded_root_size(left, vectors, &sizes)
+                    == ratio_mul(scale, &expanded_root_size(right, vectors, &sizes)))
+    })
 }
 
 fn compound_unit_preimage_is_valid(preimage: &Value, node_vectors: &[Value]) -> bool {
@@ -312,6 +559,15 @@ fn nominal_node_cross_fields_are_valid(node: &Value) -> bool {
                 expected.push(&preimage["target_unit_node_id"]);
             }
             node["semantic_type"] == *dimension && node_dependencies_match(node, &expected)
+        }
+        Some("quire.dimension-equivalence-node/v1") => {
+            let Some(ids) = preimage["dimension_node_ids"].as_array() else {
+                return false;
+            };
+            let expected = ids.iter().collect::<Vec<_>>();
+            node["semantic_type"] == node["node_id"]
+                && node.get("declaration").is_none()
+                && node_dependencies_match(node, &expected)
         }
         _ => false,
     }
@@ -914,8 +1170,38 @@ fn literal_value_is_canonical(literal: &Value) -> bool {
                 .is_ok_and(|count| count.to_string() == text)
         }),
         Some("quantity" | "rational") => value.is_some_and(quantity_magnitude_is_canonical),
+        Some("decimal") => value.is_some_and(decimal_literal_is_canonical),
+        Some(kind @ ("float32_bits" | "float64_bits")) => value.is_some_and(|text| {
+            let digits = if kind == "float32_bits" { 8 } else { 16 };
+            text.len() == digits && text.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
+        }),
         _ => true,
     }
+}
+
+/// Whether a `decimal` literal's `value` is the canonical spelling of its
+/// coefficient and scale (FR-322 "Scalar literal values"): an optional `-` before
+/// a nonzero magnitude, the integer digits with no leading zero (one `0` when the
+/// integer part is zero), and, when present, a point followed by at least one
+/// fraction digit.
+fn decimal_literal_is_canonical(text: &str) -> bool {
+    let (negative, digits) = match text.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, text),
+    };
+    let (integer, fraction) = match digits.split_once('.') {
+        Some((integer, fraction)) => (integer, Some(fraction)),
+        None => (digits, None),
+    };
+    let all_digits = |part: &str| !part.is_empty() && part.bytes().all(|b| b.is_ascii_digit());
+    if !all_digits(integer) || (integer.len() > 1 && integer.starts_with('0')) {
+        return false;
+    }
+    if fraction.is_some_and(|part| !all_digits(part)) {
+        return false;
+    }
+    let zero = integer.bytes().chain(fraction.unwrap_or("").bytes()).all(|b| b == b'0');
+    !(negative && zero)
 }
 
 /// Whether a `quantity` literal's `value` is the canonical spelling of its
@@ -7260,8 +7546,8 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
             );
             let last = operation.rsplit('.').next().unwrap_or(operation);
             assert!(
-                !["eq", "ne", "lt", "le", "gt", "ge", "negate"].contains(&last),
-                "{identity}: IEEE equality, ordering and negation are not catalogued (FR-148)"
+                !["eq", "ne", "lt", "le", "gt", "ge"].contains(&last),
+                "{identity}: IEEE equality and ordering are the numeric_equal, total_order and bit_identical identities (FR-148)"
             );
         }
         if family == "text" {
@@ -14286,6 +14572,8 @@ fn scalar_equality_package(catalog: &Value) -> Value {
         walk_scalar("UUID", "uuid"),
         walk_scalar("Timestamp", "timestamp"),
         walk_scalar("Integer", "integer"),
+        walk_scalar("F32", "float32"),
+        walk_scalar("F64", "float64"),
         walk_text("Short", "nfc"),
         walk_scalar("Bool", "boolean"),
     ];
@@ -14657,6 +14945,83 @@ fn tc_233_scalar_literals_need_their_family_and_canonical_value() {
     }
     assert_eq!(OperationRefusal::InvalidValue.code(), "invalid_package");
     assert_eq!(OperationRefusal::InvalidValue.cause(), "invalid-value");
+}
+
+/// FB-01 to FB-04 (FR-322-AC-108): a `float32_bits` literal spells 8 and a
+/// `float64_bits` literal 16 lowercase hexadecimal digits with no prefix; any
+/// other spelling refuses `invalid-value` after the family check.
+#[trace("FR-322-AC-108", "TC-233")]
+#[test]
+fn tc_233_float_bits_literals_spell_fixed_width_lowercase_hex() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = scalar_equality_package(&catalog);
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    let literal_refusal = |kind: &str, ty: &str, value: &Value| {
+        oracle
+            .argument_descriptor(&json!({"term": "literal", "type": walk_id(ty), "value_kind": kind, "value": value}))
+            .map(|descriptor| descriptor.is_some())
+    };
+    for (kind, ty, values) in [
+        ("float32_bits", "F32", ["3f000000", "00000000", "80000000", "7fc00000"]),
+        ("float64_bits", "F64", ["3fe0000000000000", "0000000000000000", "8000000000000000", "7ff8000000000001"]),
+    ] {
+        for value in values {
+            assert_eq!(literal_refusal(kind, ty, &json!(value)), Ok(true), "FB-01: {kind} {value}");
+        }
+    }
+    for (kind, ty, values) in [
+        (
+            "float32_bits",
+            "F32",
+            vec![json!("3F000000"), json!("0x3f000000"), json!("3f00000"), json!("3f0000000"), json!("0.5"), json!(1056964608)],
+        ),
+        (
+            "float64_bits",
+            "F64",
+            vec![
+                json!("3FE0000000000000"),
+                json!("0x3fe0000000000000"),
+                json!("3fe000000000000"),
+                json!("3fe00000000000000"),
+                json!("0.5"),
+                json!(4602678819172646912u64),
+            ],
+        ),
+    ] {
+        for value in values {
+            assert_eq!(
+                literal_refusal(kind, ty, &value),
+                Err(OperationRefusal::InvalidValue),
+                "FB-02/FB-03: {kind} value {value} is not canonical"
+            );
+        }
+    }
+    for (kind, ty, value) in [("float32_bits", "F64", "3F000000"), ("float64_bits", "String", "0.5")] {
+        assert_eq!(
+            literal_refusal(kind, ty, &json!(value)),
+            Ok(false),
+            "FB-04: a {kind} literal typed {ty} reports the family refusal first"
+        );
+    }
+    let mut spelled = 0;
+    for name in std::fs::read_dir("proposals/checked-package-v2/fixtures").unwrap() {
+        let fixture: Value = serde_json::from_str(&std::fs::read_to_string(name.unwrap().path()).unwrap()).unwrap();
+        let mut stack = vec![&fixture];
+        while let Some(value) = stack.pop() {
+            match value {
+                Value::Object(map) => {
+                    if map.get("term") == Some(&json!("literal")) && map["value_kind"].as_str().is_some_and(|k| k.starts_with("float")) {
+                        assert!(literal_value_is_canonical(value), "fixture float literal {value}");
+                        spelled += 1;
+                    }
+                    stack.extend(map.values());
+                }
+                Value::Array(items) => stack.extend(items),
+                _ => {}
+            }
+        }
+    }
+    assert!(spelled > 0, "the fixtures carry float bit literals");
 }
 
 /// VT-01 to VT-04 (FR-322-AC-71): a `model`/`variant_type` node is a model
@@ -16932,6 +17297,221 @@ fn tc_966_malformed_hybrid_nodes_fail_the_published_schema() {
         }
         assert!(!node_schema.is_valid(&node), "{name}: {}", case["why"]);
     }
+}
+
+/// Whether a `decimal` literal's `value` is a member of `Decimal[lo, hi; smin,
+/// smax]` by FR-140: the value is normalized, `s* = max(s, smin)` and the value
+/// is a member exactly when `s* <= smax` and `v x 10^s*` lies in `[lo, hi]`. The
+/// written coefficient and scale never decide it.
+fn decimal_literal_is_member(text: &str, lo: i128, hi: i128, smin: u32, smax: u32) -> bool {
+    let (negative, digits) = match text.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, text),
+    };
+    let (integer, fraction) = digits.split_once('.').unwrap_or((digits, ""));
+    let mut scale = fraction.len() as u32;
+    let Ok(mut coefficient) = format!("{integer}{fraction}").parse::<i128>() else {
+        return false;
+    };
+    while scale > 0 && coefficient % 10 == 0 {
+        coefficient /= 10;
+        scale -= 1;
+    }
+    if coefficient == 0 {
+        scale = 0;
+    }
+    if negative {
+        coefficient = -coefficient;
+    }
+    let membership_scale = scale.max(smin);
+    if membership_scale > smax {
+        return false;
+    }
+    let widened = 10i128
+        .checked_pow(membership_scale - scale)
+        .and_then(|factor| coefficient.checked_mul(factor));
+    match widened {
+        Some(c) => (lo..=hi).contains(&c),
+        None => false,
+    }
+}
+
+/// FR-322-AC-113: the canonical spelling and the FR-140 value membership of a
+/// `decimal` literal's `value`.
+#[test]
+fn decimal_literal_values_are_canonical_spellings() {
+    for admitted in [
+        "1.25", "0.05", "10", "0.00", "1000", "0.5", "-0.5", "0", "1000.00", "1.250", "5",
+    ] {
+        assert!(decimal_literal_is_canonical(admitted), "{admitted}");
+    }
+    for refused in [
+        ".5", "1.", "+1.5", "01.5", "-0.0", "-0", "1e2", "1/4", "", "-", "1.2.3",
+    ] {
+        assert!(!decimal_literal_is_canonical(refused), "{refused}");
+    }
+}
+
+#[trace("TC-233", "FR-322-AC-118")]
+#[test]
+fn tc_233_dimension_equivalence_node_is_a_self_typed_pair_of_dimension_keys() {
+    let fixture = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let vectors = fixture["vectors"]
+        .as_array()
+        .expect("node identity vectors are an array");
+    let equivalence = vectors
+        .iter()
+        .find(|vector| vector["name"].as_str() == Some("dimension-equivalence-rpc-flow-time"))
+        .expect("the equivalence vector exists");
+    assert!(dimension_equivalence_pairs_are_admissible(vectors));
+
+    let node_id = json!({"domain": "quire.checked-semantic-node/v1", "digest": equivalence["sha256"]});
+    let ids = equivalence["preimage"]["dimension_node_ids"].clone();
+    let node = json!({
+        "node_id": node_id,
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "scalar_type",
+        "semantic_form": "dimension_equivalence",
+        "semantic_type": node_id,
+        "dependencies": ids,
+        "occurrences": [{"role": "anchor", "ordinal": 0}],
+        "nominal_identity_preimage": equivalence["preimage"],
+        "body": {"term": "aggregate", "members": []}
+    });
+    let wire = schema_for_def(&parsed_fixture(SCHEMA), "ScalarTypeNode");
+    assert!(wire.is_valid(&node), "the wire schema admits the equivalence node");
+    let mut wire_declared = node.clone();
+    wire_declared["declaration"] = json!({"qualified_name": ["Time"]});
+    assert!(!wire.is_valid(&wire_declared), "a nameless node carries no declaration");
+    let mut wire_unpreimaged = node.clone();
+    wire_unpreimaged.as_object_mut().unwrap().remove("nominal_identity_preimage");
+    assert!(!wire.is_valid(&wire_unpreimaged), "the node carries its preimage");
+    assert!(nominal_node_cross_fields_are_valid(&node));
+    let mut typed_elsewhere = node.clone();
+    typed_elsewhere["semantic_type"] = ids[0].clone();
+    assert!(!nominal_node_cross_fields_are_valid(&typed_elsewhere));
+    let mut one_dependency = node.clone();
+    one_dependency["dependencies"] = json!([ids[0]]);
+    assert!(!nominal_node_cross_fields_are_valid(&one_dependency));
+    let mut declared = node.clone();
+    declared["declaration"] = json!({"qualified_name": ["Time"]});
+    assert!(!nominal_node_cross_fields_are_valid(&declared));
+
+    // A repeated pair is refused.
+    let mut repeated = vectors.to_vec();
+    repeated.push(equivalence.clone());
+    assert!(!dimension_equivalence_pairs_are_admissible(&repeated));
+
+    // Two derived dimensions are admissible only when their maps are equal under the
+    // base classes the base pairs make.
+    let base = |digest: &str| {
+        json!({"sha256": digest, "preimage": {"version": "quire.dimension-node/v1", "terms": []}})
+    };
+    let derived = |digest: &str, term: &str| {
+        json!({"sha256": digest, "preimage": {"version": "quire.dimension-node/v1", "terms": [
+            {"dimension_node_id": {"digest": term}, "exponent": "-1"}]}})
+    };
+    let pair_scaled = |digest: &str, left: &str, right: &str, numerator: &str, denominator: &str| {
+        json!({"sha256": digest, "preimage": {
+            "version": "quire.dimension-equivalence-node/v1",
+            "dimension_node_ids": [{"digest": left}, {"digest": right}],
+            "root_scale": {"numerator": numerator, "denominator": denominator}}})
+    };
+    let pair = |digest: &str, left: &str, right: &str| pair_scaled(digest, left, right, "1", "1");
+    let mut speeds = vec![
+        base("a1"),
+        base("b1"),
+        derived("a2", "a1"),
+        derived("b2", "b1"),
+        pair("e2", "a2", "b2"),
+    ];
+    assert!(
+        !dimension_equivalence_pairs_are_admissible(&speeds),
+        "derived dimensions over unrelated bases differ"
+    );
+    speeds.push(pair("e1", "a1", "b1"));
+    assert!(
+        dimension_equivalence_pairs_are_admissible(&speeds),
+        "the base pair makes the maps equal"
+    );
+
+    // Unequal roots: with 1 root of a1 = 1000 roots of b1, the reciprocal dimensions carry
+    // the reciprocal ratio, and any other root ratio contradicts the base roots.
+    let mut scaled = vec![
+        base("a1"),
+        base("b1"),
+        derived("a2", "a1"),
+        derived("b2", "b1"),
+        pair_scaled("e1", "a1", "b1", "1000", "1"),
+        pair_scaled("e2", "a2", "b2", "1", "1000"),
+    ];
+    assert!(
+        dimension_equivalence_pairs_are_admissible(&scaled),
+        "the derived pair carries the ratio the base roots imply"
+    );
+    scaled[5] = pair_scaled("e2", "a2", "b2", "1", "1");
+    assert!(
+        !dimension_equivalence_pairs_are_admissible(&scaled),
+        "a derived pair contradicting the base roots is refused"
+    );
+
+    // The ratios around a cycle of base pairs multiply to exactly one.
+    let cycle = |closing_numerator: &str| {
+        vec![
+            base("c1"),
+            base("c2"),
+            base("c3"),
+            pair_scaled("f1", "c1", "c2", "1", "1"),
+            pair_scaled("f2", "c2", "c3", "1000", "1"),
+            pair_scaled("f3", "c1", "c3", closing_numerator, "1"),
+        ]
+    };
+    assert!(dimension_equivalence_pairs_are_admissible(&cycle("1000")));
+    assert!(
+        !dimension_equivalence_pairs_are_admissible(&cycle("1001")),
+        "a cycle whose ratios do not multiply to one is refused"
+    );
+
+    // The file vectors close the cycle rpc, flow, clock; changing one ratio breaks it.
+    let mut broken = vectors.to_vec();
+    for vector in &mut broken {
+        if vector["name"].as_str() == Some("dimension-equivalence-flow-clock-time") {
+            vector["preimage"]["root_scale"]["numerator"] = json!("1001");
+        }
+    }
+    assert!(
+        !dimension_equivalence_pairs_are_admissible(&broken),
+        "the vectors' cycle is consistent only with its authored ratio"
+    );
+
+    // A zero, negative or unreduced ratio is no root ratio.
+    for refused in [("0", "1"), ("-1", "1"), ("2", "2")] {
+        let mut bad = vectors.to_vec();
+        for vector in &mut bad {
+            if vector["name"].as_str() == Some("dimension-equivalence-rpc-flow-time") {
+                vector["preimage"]["root_scale"] =
+                    json!({"numerator": refused.0, "denominator": refused.1});
+            }
+        }
+        assert!(!dimension_equivalence_pairs_are_admissible(&bad), "{refused:?}");
+    }
+}
+
+/// FR-322-AC-113: membership is decided by value, not by the written spelling.
+#[test]
+fn decimal_literal_membership_is_decided_by_value() {
+    for member in [
+        "1.25", "0.05", "10", "0.00", "1000", "0.5", "1000.00", "1.250",
+    ] {
+        assert!(decimal_literal_is_member(member, 0, 1000, 0, 2), "{member}");
+    }
+    for refused in ["1.255", "1001", "1000.01", "-1"] {
+        assert!(!decimal_literal_is_member(refused, 0, 1000, 0, 2), "{refused}");
+    }
+    for member in ["-0.5", "5", "100"] {
+        assert!(decimal_literal_is_member(member, -1000, 1000, 1, 2), "{member}");
+    }
+    assert!(!decimal_literal_is_member("1001", -1000, 1000, 1, 2));
 }
 
 #[trace("TC-966", "FR-481-AC-13", "FR-322-AC-13")]

@@ -324,13 +324,14 @@
       "additionalProperties": false
     },
     "TemporalLimits": {
-      "description": "FR-368 limits (max_states, max_transitions, max_automaton_states), FR-392 max_walk_steps, FR-399 max_witness_set and max_relation_tuples, FR-439 max_store_buffer and max_messages, FR-428 max_live_instances, FR-368 SMT solver budgets max_solver_steps and max_solver_time (whole seconds, outside request identity); each absent member takes the routed provider's published default.",
+      "description": "FR-368 limits (max_states, max_transitions, max_automaton_states), FR-415 max_clocks, FR-392 max_walk_steps, FR-399 max_witness_set and max_relation_tuples, FR-439 max_store_buffer and max_messages, FR-428 max_live_instances, FR-368 SMT solver budgets max_solver_steps and max_solver_time (whole seconds, outside request identity); each absent member takes the routed provider's published default.",
       "type": "object",
       "minProperties": 1,
       "properties": {
         "max_states": {"$ref": "#/$defs/PositiveCount"},
         "max_transitions": {"$ref": "#/$defs/PositiveCount"},
         "max_automaton_states": {"$ref": "#/$defs/PositiveCount"},
+        "max_clocks": {"description": "FR-415: the most live clocks a state of the explored graph may hold (setting model_check.max_clocks, default 1024).", "$ref": "#/$defs/PositiveCount"},
         "max_walk_steps": {"$ref": "#/$defs/PositiveCount"},
         "max_witness_set": {"$ref": "#/$defs/PositiveCount"},
         "max_relation_tuples": {"$ref": "#/$defs/PositiveCount"},

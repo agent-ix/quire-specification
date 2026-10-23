@@ -921,6 +921,7 @@
         "/request/items/0/temporal/fairness": "FR-368",
         "/request/items/0/temporal/max_depth": "FR-368",
         "/request/items/0/temporal/limits/max_states": "FR-368",
+        "/request/items/0/temporal/limits/max_clocks": "FR-415",
         "/request/items/0/temporal/limits/max_walk_steps": "FR-392",
         "/request/items/0/temporal/limits/max_solver_steps": "FR-368",
         "/request/items/0/temporal/limits/max_solver_time": "FR-368",
@@ -1067,6 +1068,7 @@
                 "max_depth": 40,
                 "limits": {
                   "max_states": 250000,
+                  "max_clocks": 1024,
                   "max_walk_steps": 64,
                   "max_solver_steps": 1000,
                   "max_solver_time": 5
@@ -4834,9 +4836,11 @@
         ]
       }
     },
+    {"name": "limit-reached-max-clocks", "stage": "outcome", "owners": {"/results/0/cause": "FR-415"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "incomplete", "cause": {"type": "limit-reached", "limit": "max_clocks", "value": 1024, "setting": "model_check.max_clocks"}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result", "method": "exploration", "limits": {"max_clocks": 1024}, "reached": ["max_clocks"]}]}},
     {"name": "limit-reached-accounting-setting", "stage": "outcome", "owners": {"/results/0/cause": "FR-461"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "incomplete", "cause": {"type": "limit-reached", "limit": "work_units", "value": 4096, "setting": "accounting.work_units"}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result", "limits": {"work_units": 4096}, "reached": ["work_units"]}]}}
   ],
   "adverse": [
+    {"name": "temporal-limits-max-clocks-zero", "base": "temporal-request", "owner": "FR-415", "patch": [{"op": "replace", "path": "/request/items/0/temporal/limits/max_clocks", "value": 0}]},
     {"name": "probability-inequality-model-projection", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/21/cause/at", "value": {"domain": "quire.simulation.state-key/v1", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}}]},
     {"name": "probability-threshold-model-projection", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/22/cause/at", "value": {"domain": "quire.simulation.state-key/v1", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}}]},
     {"name": "probability-product-key-padded", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/21/cause/at/product_key", "value": "AQ=="}]},

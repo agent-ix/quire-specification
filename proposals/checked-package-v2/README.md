@@ -9,7 +9,7 @@ structures, but any external consumer receives only the contract.
 
 - `schema.json` defines the closed `quire.checked-package/v2` wire shape.
 - `node-identity-preimage.schema.json` defines the closed RFC 8785 preimages for
-  complete-V1 enum, dimension and declared-unit node identities.
+  complete-V1 enum, dimension, dimension-equivalence and declared-unit node identities.
 - The closed `quire.checked-operation-catalog/v1` is not kept here. Its only copy is
   `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`,
   which the tests read through that crate. It holds
@@ -251,7 +251,15 @@ dimension keys. Cross-field joins are exact: an enum member's `semantic_type`
 and sole dependency equal its preimage declaration key and its enum literal
 body equals the preimage case; a dimension is self-typed and depends exactly on
 its term keys; a unit's `semantic_type` equals its dimension key and its
-dependencies are exactly that dimension plus its non-null target. Changing a
+dependencies are exactly that dimension plus its non-null target; a
+`scalar_type`/`dimension_equivalence` node (FR-142 "Dimension equivalence") is
+self-typed, carries no `declaration`, holds a `SourceOwner` and the keys of the
+two dimension nodes it relates, distinct and in ascending digest order, and a
+`root_scale` (a positive reduced rational: one canonical root of the first node
+is `root_scale` canonical roots of the second), and depends on exactly those
+keys. The `root_scale` values of the base pairs multiply to one around every
+cycle, and a pair of two non-base nodes carries the ratio their base roots fix. Readers recompute the equivalence classes from
+these nodes, so no other member records one. Changing a
 body/type/dependency while retaining the nominal preimage therefore refuses.
 Runtime compound-unit values are evaluator-owned
 `quire.value.compound-unit/v1` identities defined with the complete-value
@@ -340,9 +348,14 @@ exactly (`promotes_exact`); `quire.op.numeric.narrow` and
 obligations with no mode, and only `quire.op.numeric.convert_rounding`, a
 decimal scale reduction, rounds.
 
-IEEE values have no `eq`, `ne`, ordering or `negate`: numeric equality, total
-order and bit identity are three distinct identities, and only
-`quire.op.ieee.total_order` orders floats.
+IEEE values have no `eq`, `ne` or ordering identity: numeric equality, total
+order and bit identity are three distinct identities, and the source `=` and
+`!=` over floats lower to `quire.op.ieee.numeric_equal` and its
+`quire.op.boolean.not`. `quire.op.ieee.float32.negate` and
+`quire.op.ieee.float64.negate` flip the sign bit of one float, with the
+`ieee_profile` law, no mode and the operand's type as result. A
+`quire.op.structural.eq` or `.ne` over a type holding a float lists that float
+leaf with the `ieee_profile` law.
 
 A reader reports the first refusal in the order owned by
 `quire.native.diagnostics/v1`: graph-shape refusals, then

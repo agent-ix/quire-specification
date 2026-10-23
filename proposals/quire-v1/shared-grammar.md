@@ -74,7 +74,7 @@ The complete-V1 facets additionally reserve `import`, `dimension`, `unit`,
 `Integer`, `Int`, `Rational`, `Decimal`, `Float32`, `Float64`, `Text`, `Option`,
 `Sequence`, `Set`, `Bag`, `OrderedSet`, `Reference`, `Quantity`, `Population`, `null`, `none`, `decimal`,
 `float32`, `float64`, `bits`, `convert`, `allInstances`, `collect`, `flatMap`,
-`flatten`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
+`flatten`, `dropFirst`, `removeOne`, `fold`, `reduce`, `identity`, `toward-zero`, `toward-positive`,
 `toward-negative`, `nearest-even`, `nearest-away`, `unicode-scalars`, `nfc`,
 `nfd`, `nfkc`, `nfkd`, `binary-utf8`, `lifetime`, `workflow`, `scope`,
 `capacity`, `symbolic`, `overflow`, `reject`, `block`, `loss`, `at-most-once`,
@@ -300,7 +300,7 @@ complete-unit = header, profile, { profile }, { import-decl }, { model },
                 declaration, { declaration }, EOF ;
 import-decl   = 'import', string, [ 'as', ident ], ';' ;
 
-declaration   = dimension-decl | unit-decl | enum-decl | record-decl
+declaration   = dimension-decl | dimension-equivalence | unit-decl | enum-decl | record-decl
               | tuple-decl | union-decl | alias-decl | function | predicate
               | state-clause | temporal-clause | protocol-clause
               | relation-clause | hyper-clause | state-graph-clause
@@ -330,6 +330,9 @@ text-profile  = 'unicode-scalars' | 'nfc' | 'nfd' | 'nfkc' | 'nfkd'
 dimension-decl = 'dimension', ident,
                  [ '=', dimension-term, { ('*' | '/'), dimension-term } ], ';' ;
 dimension-term = qualified-name, [ '^', signed-int ] ;
+dimension-equivalence = 'dimension', qualified-name, '~', qualified-name,
+                        'by', ratio-term, '=', ratio-term, ';' ;
+ratio-term    = ( uint | exact-number ), qualified-name ;
 unit-decl     = 'unit', ident, ':', qualified-name, '=', exact-number,
                 [ '*', qualified-name ], [ '+', exact-number ], ';' ;
 enum-decl     = [ 'ordered' ], 'enum', ident, '{', enum-member,
@@ -401,10 +404,24 @@ product       = unary, { ('*' | '/' | 'div' | 'rem' | 'mod'), unary } ;
 collection-call = ('map' | 'collect' | 'filter' | 'flatMap'),
                   '(', ident, 'in', expr, ':', expr, ')'
                 | 'flatten', '(', expr, ')'
+                | 'dropFirst', '(', expr, ')'
+                | 'removeOne', '(', expr, ',', expr, ')'
                 | ('fold' | 'reduce'), '<', qualified-name, '>',
                   '(', ident, ',', ident, 'in', expr, ':', expr,
                   [ ',', 'identity', ':', expr ], ')' ;
 ```
+
+A `dimension-equivalence` declares the two dimension nodes its names resolve to equivalent
+and states the ratio between their canonical roots (FR-142 "Dimension equivalence"): the
+first name resolves in the dimension namespace and the second likewise, each a bare name of
+the unit of compilation or `M::Name` of a selected domain package. In
+`dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` each `ratio-term` is a positive exact
+number and a unit name (a bare unit of the unit of compilation or `M::name` of a selected
+package); the first unit belongs to the first dimension and the second to the second, and
+`x U = y V` states that `x` of `U` and `y` of `V` are the same quantity. `~` is the token
+the `random-decl` and `delay-decl` productions already use, `by` the token the `fifo` and
+`choice` productions already use, and the form is distinguished from a `dimension-decl`
+by the `~` after the first name.
 
 `null`, `none`, collection constructors, record constructors and bit-level
 float constructors are disjoint forms; no empty spelling aliases
@@ -422,6 +439,11 @@ an object type and the string is the key's object identity as UTF-8 bytes
 (`M::Server#"s1"`). `#` is a punctuation token of this production alone. Its
 typing, lowering and resolution are
 [FR-480](../../spec/functional/type-model/FR-480-check-and-resolve-reference-literals.md)'s.
+
+Over a `Float32` or `Float64`, unary `-` is IEEE `negate` (a sign-bit flip, FR-148),
+and `=`, `!=`, `<`, `<=`, `>` and `>=` are the IEEE quiet comparisons built from
+`numericEqual` and `totalOrder` (FR-148); `=` and `!=` also apply to a type that
+holds a float, which FR-149 "IEEE relations" states.
 
 The one qualified reference/call production is syntactically canonical. Static
 resolution classifies a bare qualified reference as an enum member, a
@@ -998,7 +1020,10 @@ compares a `Clock` field with a `quantity-literal` of the time dimension. In
 value and a `lo` task a `wcet_hi`, so the checker, not the recognizer, refuses
 such a task set with `invalid_timed_model`/`invalid-task-set`
 ([FR-419](../../spec/functional/analysis/FR-419-analyze-task-set-schedulability.md)).
-A form whose facet is not selected receives `unsupported_construct`.
+A form whose facet is not selected receives `unsupported_construct`. The
+facet of `time-decl`, `time-invariant`, `urgent-decl` and the `Clock` type is
+`quire.temporal.complete/v1`, which a `profile` declaration selects
+([temporal-complete.md](definitions/temporal-complete.md)).
 
 `Clock` in a `type-ref` is a keyword of the facet that admits the timed forms,
 not a `qualified-name`: an unqualified `Clock` in a type position is always read

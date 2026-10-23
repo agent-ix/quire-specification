@@ -112,13 +112,27 @@ compared by FR-148 `bitIdentical` (the same width and identical bits). So
 are identical, and a record, tuple, option or union holding a float is one
 member with another exactly when every field or payload is the same member. The
 relation is selected by the collection kind, never by an operator: `=` and `!=`
-over a type containing a float remain `refused { code: ill_typed, cause:
-operator-ineligible }` (FR-149), and so does `=` between two sets of floats.
+over a type containing a float compare a float leaf by `numericEqual`, and `=`
+between two sets, bags or ordered sets of floats matches their members by this
+relation (FR-149 "IEEE relations").
 Construction, FR-145 coalescing and `contains` all use this relation. An event
 type (FR-149), or a type containing one at any depth, admits no membership
 relation, so a `Set`, `Bag` or `OrderedSet` of it is
 `refused { code: ill_typed, cause: operator-ineligible }`. `Sequence<T>` admits
 every complete-V1 element type.
+
+An element type that is clock-bearing (FR-415 "Clock places") admits no FR-149
+`=`, because equality would read its clocks. A `Set`, `Bag` or `OrderedSet` of a
+clock-bearing element type is admitted all the same: uniqueness and
+multiplicity are decided by the collection membership relation over the
+elements' data parts (the values with every clock component removed), which
+must admit that relation, and the canonical
+key of an element is the key of its data part. `Set<Clock>` therefore holds at
+most one element and `Bag<Clock>` one element for each occurrence. Collection
+equality, `contains` and `convert` that compare elements as values refuse
+`invalid_timed_model`/`clock-read-outside-constraint` over such a collection.
+A `Map` key type that is clock-bearing is `refused { code: ill_typed, cause:
+operator-ineligible }`.
 
 Every type that admits the membership relation has a total canonical key,
 exactly as follows. Keys are compared as written, and two values have equal
@@ -134,6 +148,8 @@ keys exactly when they are the same member under the relation.
 | `Text[..]` | the FR-141 compared form under the type's profile (the normalized scalar sequence, or the UTF-8 bytes for `binary-utf8`), ordered lexicographically by scalar value or byte |
 | enumeration | declaration position for an `ordered enum`; otherwise the case identifier's ASCII bytes, lexicographically, never its declaration position; for an enumeration declared by a `model`/`variant_type` node, the UTF-8 bytes of the case name, lexicographically, which may be any non-empty string (FR-141) |
 | `UUID`, `Timestamp` | the canonical payload's ASCII bytes, unsigned bytewise, a proper prefix first (FR-149) |
+| `Bytes` | the octet sequence, compared octet by octet as unsigned values, a proper prefix first, so the empty sequence is the least key; this is the order of the canonical lowercase hexadecimal payload's ASCII bytes (FR-149), because two digits encode each octet and `0`-`9` precede `a`-`f` |
+| `JsonObject` | the UTF-8 bytes of the value's canonical RFC 8785 (JCS) text, unsigned bytewise, a proper prefix first (FR-149); so `"x"` precedes `3`, `3` precedes `[]`, `[]` precedes `null` and `null` precedes `{}`, and a member-order or spelling variant of one value has the one key |
 | `Reference<T>` | the FR-204 identity triple (universe identity, object-type declaration identity, object identity), compared component by component, each component lexicographically by its canonical identity bytes; under `quire.model.complete/v1` the universe and type bytes are the UTF-8 domain string followed by the 32 digest bytes, and the object bytes are the exact producer UTF-8 object identity, all compared unsigned bytewise with a proper prefix first |
 | `Option<T>` | `none` before a present value, then the key of the payload |
 | record, tuple | for two records of distinct declarations, the ascending byte order of their 32-byte declaration node keys, compared before any slot; otherwise lexicographic over fields in declaration order or positions in order; a slot orders `absent` before `null` before a present value, and present values by key |
@@ -153,7 +169,7 @@ A recursive record or union type has a key because every finite value of it
 does. A union has a membership relation exactly when every payload type of
 every member has one, so a union with a `Float32` or `Float64` payload is an
 admitted element type whose key orders its payload floats by the row above, while
-its `=` stays ineligible (FR-143, FR-149). Because declaration position is
+its `=` compares that payload by `numericEqual` (FR-143, FR-149). Because declaration position is
 never used for a union, reordering its members changes no visiting order.
 References from different universes never meet in one collection, because
 their FR-149 comparison refuses construction. A universe is a model-level object
@@ -210,10 +226,12 @@ object and for every element, refuses with these causes:
 Every element type that has a canonical key has an FR-181 form, and a supplied
 collection of it is read by that form: `String` by `string`, `Rational[..]` by
 `rational`, `Float32` and `Float64` by `float32` and `float64`, `Quantity<u>` by
-`rational` (or `decimal`) with its `unit`, `UUID` by `uuid` and `Timestamp` by
-`timestamp`. A payload outside its form, such as a zero rational denominator, a
-`bits` string of the wrong length or with an uppercase digit, or a `uuid` or
-`timestamp` out of its domain, is `invalid_runtime_input`/`invalid-value`. A
+`rational` (or `decimal`) with its `unit`, `UUID` by `uuid`, `Timestamp` by
+`timestamp`, `Bytes` by `bytes` and `JsonObject` by `json_object`. A payload outside its form, such as a zero rational denominator, a
+`bits` string of the wrong length or with an uppercase digit, a `uuid` or
+`timestamp` out of its domain, a `bytes` `value` with an odd digit count, an uppercase
+digit or a non-hexadecimal character, or a `json_object` `value` that is not the
+canonical JCS text of one JSON value (FR-322 "Scalar literal values"), is `invalid_runtime_input`/`invalid-value`. A
 `Quantity<u>` element whose `unit` names another unit is
 `invalid_runtime_input`/`wrong-value-kind`, one with no `unit` is `missing-member`,
 and a `unit` member on an element of any other type is `unknown-member`. A
@@ -344,6 +362,9 @@ FR-146 and FR-307; otherwise it is
 | FR-144-AC-23 | A supplied `Set<String>` of `{"type":"string","value":"a"}` and `{"type":"string","value":""}` is admitted with the empty string ordered first; of `é` (U+00E9) and U+0065 U+0301 it holds two members; of `a` twice it is `duplicate-member` at the later element; a `Bag<String>` of `a` twice holds `a` with multiplicity 2; an element `{"type":"text","value":"a"}` is `wrong-value-kind` and `{"type":"string","value":1}` is `wrong-value-kind`; and a `String` collection built by `set[...]` is unchanged. | Test (TC-189) |
 | FR-144-AC-24 | A supplied `Set<Rational>` of `2/4` and `1/2` (`{"type":"rational","numerator":"2","denominator":"4"}` and `{"type":"rational","numerator":"1","denominator":"2"}`) is `duplicate-member` at the later element and a `Bag<Rational>` of the same two holds `1/2` with multiplicity 2; a rational with denominator `0` is `invalid-value`; a supplied `Set<Quantity<Units::metre>>` of `{"type":"rational","numerator":"1","denominator":"2","unit":"Units::metre"}` and the `decimal` form with coefficient `5`, scale `0` and the same unit is admitted as two members, an element with `"unit":"Units::second"` is `wrong-value-kind`, an element with no `unit` is `missing-member`, and the key order of `1/3`, `1/2` and `-1` in a `Set<Rational>` is `-1`, `1/3`, `1/2`. | Test (TC-189) |
 | FR-144-AC-25 | A supplied `Set<Float64>` of the `bits` `0000000000000000` and `8000000000000000` holds two members; of `7ff8000000000001` twice it is `duplicate-member` at the later element; of `7ff8000000000001` and `7ff8000000000002` it holds two members; a `Bag<Float32>` of `3f800000` twice holds one member of multiplicity 2; a `Set<Float64>` of the `bits` `fff0000000000000`, `bff0000000000000`, `8000000000000000`, `0000000000000000`, `3ff0000000000000` and `7ff0000000000000` is visited in that order, which is the `totalOrder` key order and not the order of the encoded bytes; a `bits` string with an uppercase digit or of 15 digits is `invalid-value`; and a `float32` element in a `Set<Float64>` is `wrong-value-kind`. | Test (TC-189) |
+| FR-144-AC-26 | `Set<Timer>` over `record Timer { x: Clock; n: Int }` is admitted and holds one element for each distinct `n`; `Set<Clock>` holds at most one element; `Bag<Clock>` holds one element for each occurrence; `OrderedSet<Timer>` keeps the first occurrence of each `n`; the canonical key of a `Timer` element is the key of its `n`; a `Set` of an event type still refuses `ill_typed`/`operator-ineligible`; `=` between two `Set<Timer>` values refuses `invalid_timed_model`/`clock-read-outside-constraint`; `Map<Timer, Int>` refuses `ill_typed`/`operator-ineligible`. | Test (TC-367) |
+| FR-144-AC-27 | A `Set<Bytes>` or `Bag<Bytes>` holding `2000`, `00`, `10` and `0000` (hexadecimal payloads) visits `00`, `0000`, `10`, `2000`, with `00` before `0000` as a proper prefix and the empty sequence, when held, before all of them; a `Set<JsonObject>` holding `{}`, `null`, `[]`, `3` and `"x"` visits `"x"`, `3`, `[]`, `null`, `{}`; one holding `"z"` and `"é"` visits `"z"` first, because the UTF-8 bytes of `é` begin `c3`; and `{"b":1,"a":2}` and `{"a":2,"b":1}` are one member whose key is the text `{"a":2,"b":1}`. A `Bytes` and a `JsonObject` never meet in one collection. | Test (TC-189) |
+| FR-144-AC-28 | A supplied `Set<Bytes>` of `{"type":"bytes","value":"00ff"}` and `{"type":"bytes","value":""}` is admitted with the empty sequence first, and of `00ff` twice is `invalid_runtime_input`/`duplicate-member` at the later element; a `Bag<Bytes>` of `00ff` twice holds `00ff` with multiplicity 2; `{"type":"bytes","value":"0"}`, `"00FF"`, `"0g"` and `"0x00"` are `invalid-value`, and `{"type":"string","value":"00ff"}` is `wrong-value-kind`. A supplied `Set<JsonObject>` of `{"type":"json_object","value":"{\"a\":1,\"b\":[true,null]}"}` and `{"type":"json_object","value":"[]"}` is admitted, of `{"b":1,"a":2}` (not canonical JCS text) is `invalid-value`, and of the same canonical text twice is `duplicate-member`. | Test (TC-189) |
 
 ## Dependencies
 
