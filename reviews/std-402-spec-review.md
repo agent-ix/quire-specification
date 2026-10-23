@@ -34,3 +34,25 @@ Examined, clean:
 ## Verdict
 
 Not mergeable: FND-001 (high) block the PR; FND-002 (medium) should be fixed in the same round.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-004 | high | The identification edge sets the two packages' canonical roots equal with scale 1. Nothing requires those roots to be the same size. Suppose `acme/rpc`'s Time root is `s` and `acme/flow`'s is `ms`. Then `dimension R::Time ~ F::Time;` makes 1 F::ms = 1 R::s, so `convert<Quantity<F::ms>>(3 R::s)` returns 3 F::ms instead of 3000. Root coherence constrains derived roots within one graph, not the base roots of two owners. Fix: the declaration must state the root ratio, for example `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;`, or relate two named units of equal size. Then the edge carries that exact scale. Add a vector with unequal roots. | spec/functional/type-model/FR-142-evaluate-quantities-and-units.md | wrong-requirement |
+
+## Dispositions
+
+Round 1, at 12296a48. Standing-rule check: the equivalence is not restrictive. It relates any two dimension nodes, either owner, transitively; derived dimensions follow by equal maps. Hand-derived: U36's pivot ((3 R::s)*(1 R::s))/(1 R::s) is 3 of the compound R::s^1, and converting it to dsec (map R::Time 1, scale 1) gives 3 dsec. AC-23: convert<F::ms>(3 R::s) = 3000 F::ms over 2 edges; 1500 F::ms = 3/2 R::s; 3 R::s / 3 F::s = 1.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | ## Dimension equivalence ... `dimension R::Time ~ F::Time;` ... Direct conversion between two declared units is admitted when their dimension nodes are equal or in one equivalence class |
+| FND-002 | fixed | the expression `let c = ((3 R::s) * (1 R::s)) / (1 R::s) in convert<Quantity<dsec>>(c)` |
+| FND-003 | fixed | FR-322-AC-105 now sits in numeric order after FR-322-AC-104. |
+
+Round 2. The declaration states the root ratio: `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` (shared grammar `dimension-equivalence`). Hand-derived: with `acme/rpc` root `s` and `acme/clock` root `ms`, `by 1 R::s = 1000 G::ms` has ratio 1000 (one `R::s` root is 1000 `G::ms` roots), so `convert<Quantity<G::ms>>(3 R::s)` is 3000 G::ms with one identification edge, 1500 G::ms is 3/2 R::s, and `3 R::s / 3 G::ms` is 1000. The same declaration over `acme/flow` (root `s`, `ms` = 1/1000 s) has ratio 1. The node key of the TC-233 vector `dimension-equivalence-rpc-clock-time` was recomputed over the preimage with `root_scale`.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-004 | fixed | FR-142 "Dimension equivalence" steps 1 to 7: the `by x U = y V` clause is reduced to the root ratio `(y * b) / (x * a)`; units must belong to their dimensions (`incompatible-definition`), be non-affine and positive (`invalid-value`), ratios around base cycles multiply to exactly one and a derived pair carries the ratio its base roots fix (`conflicting-definition`/`incompatible-definition`); the identification edge from one root to the other carries the ratio (FR-142-AC-22, AC-23, AC-24, AC-26; TC-187 U37, U38, U40; FR-322-AC-118, TC-280 MU-22, MU-23). |

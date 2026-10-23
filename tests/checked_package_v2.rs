@@ -227,6 +227,7 @@ fn semantic_preimage_is_valid(preimage: &Value, vectors: &[Value]) -> bool {
             digests.len() == 2
                 && digests[0].is_some()
                 && digests[0] < digests[1]
+                && root_scale(preimage).is_some()
                 && digests.iter().all(|wanted| {
                     wanted.is_some_and(|wanted| {
                         vector_for_digest(vectors, wanted).is_some_and(|vector| {
@@ -318,36 +319,152 @@ fn class_normalized_map(
     map
 }
 
-/// FR-142 "Dimension equivalence" steps 2 to 4 over the equivalence vectors: no pair of
-/// one node, no repeated pair, and for a pair that is not two base dimensions equal
-/// normalized maps under the base classes.
+/// An exact rational as a reduced numerator and a positive denominator.
+type Ratio = (BigInt, BigInt);
+
+fn ratio_new(numerator: BigInt, denominator: BigInt) -> Ratio {
+    let divisor = numerator.gcd(&denominator);
+    (numerator / &divisor, denominator / divisor)
+}
+
+fn ratio_mul(left: &Ratio, right: &Ratio) -> Ratio {
+    ratio_new(&left.0 * &right.0, &left.1 * &right.1)
+}
+
+fn ratio_inverse(value: &Ratio) -> Ratio {
+    (value.1.clone(), value.0.clone())
+}
+
+fn ratio_pow(value: &Ratio, exponent: i32) -> Ratio {
+    let base = if exponent < 0 { ratio_inverse(value) } else { value.clone() };
+    (0..exponent.unsigned_abs()).fold((BigInt::from(1), BigInt::from(1)), |acc, _| {
+        ratio_mul(&acc, &base)
+    })
+}
+
+/// The `root_scale` of an equivalence preimage: a canonical positive rational.
+fn root_scale(preimage: &Value) -> Option<Ratio> {
+    let scale = &preimage["root_scale"];
+    if !rational_is_canonical(scale) {
+        return None;
+    }
+    let (numerator, denominator) = (integer(&scale["numerator"])?, integer(&scale["denominator"])?);
+    (numerator > BigInt::from(0)).then_some((numerator, denominator))
+}
+
+/// The size of each base-pair member's canonical root against its component's first
+/// member, over the pairs whose two nodes are both base dimensions. A pair states that one
+/// root of its first node is `root_scale` roots of its second, so the first node's root is
+/// `root_scale` times as large. `None` when the ratios around some cycle do not multiply
+/// to exactly one.
+fn base_root_sizes(
+    pairs: &[(String, String, Ratio)],
+    is_base: &dyn Fn(&str) -> bool,
+) -> Option<BTreeMap<String, Ratio>> {
+    let base_pairs = pairs
+        .iter()
+        .filter(|(left, right, _)| is_base(left) && is_base(right))
+        .collect::<Vec<_>>();
+    let mut sizes: BTreeMap<String, Ratio> = BTreeMap::new();
+    for (start, _, _) in &base_pairs {
+        if sizes.contains_key(start) {
+            continue;
+        }
+        sizes.insert(start.clone(), (BigInt::from(1), BigInt::from(1)));
+        let mut changed = true;
+        while changed {
+            changed = false;
+            for (left, right, scale) in &base_pairs {
+                match (sizes.get(left).cloned(), sizes.get(right).cloned()) {
+                    (Some(known), None) => {
+                        sizes.insert(right.clone(), ratio_mul(&known, &ratio_inverse(scale)));
+                        changed = true;
+                    }
+                    (None, Some(known)) => {
+                        sizes.insert(left.clone(), ratio_mul(&known, scale));
+                        changed = true;
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+    base_pairs
+        .iter()
+        .all(|(left, right, scale)| sizes[left] == ratio_mul(scale, &sizes[right]))
+        .then_some(sizes)
+}
+
+/// The size of a dimension's canonical root over its base dimensions: the product of the
+/// sizes of its base terms at their exponents (a base dimension outside every pair is 1).
+fn expanded_root_size(
+    digest: &str,
+    vectors: &[Value],
+    sizes: &BTreeMap<String, Ratio>,
+) -> Ratio {
+    let preimage = &vector_for_digest(vectors, digest).expect("dimension vector exists")["preimage"];
+    let terms = preimage["terms"].as_array().expect("terms are an array");
+    if terms.is_empty() {
+        return sizes
+            .get(digest)
+            .cloned()
+            .unwrap_or((BigInt::from(1), BigInt::from(1)));
+    }
+    terms.iter().fold((BigInt::from(1), BigInt::from(1)), |acc, term| {
+        let inner = expanded_root_size(
+            term["dimension_node_id"]["digest"].as_str().unwrap_or_default(),
+            vectors,
+            sizes,
+        );
+        let exponent = integer(&term["exponent"])
+            .and_then(|exponent| exponent.to_string().parse::<i32>().ok())
+            .expect("exponent is a small integer");
+        ratio_mul(&acc, &ratio_pow(&inner, exponent))
+    })
+}
+
+/// FR-142 "Dimension equivalence" over the equivalence vectors: no pair of one node, no
+/// repeated pair, a canonical positive `root_scale` on every pair, ratios that multiply to
+/// one around every cycle of base pairs, and for a pair that is not two base dimensions
+/// equal normalized maps under the base classes and a `root_scale` equal to the ratio the
+/// base roots imply.
 fn dimension_equivalence_pairs_are_admissible(vectors: &[Value]) -> bool {
     let classes = base_class_representatives(vectors);
-    let mut seen = BTreeSet::new();
-    vectors
-        .iter()
-        .filter(|vector| {
-            vector["preimage"]["version"].as_str() == Some("quire.dimension-equivalence-node/v1")
-        })
-        .all(|vector| {
-            let ids = vector["preimage"]["dimension_node_ids"]
+    let is_base = |digest: &str| {
+        vector_for_digest(vectors, digest).is_some_and(|vector| {
+            vector["preimage"]["terms"]
                 .as_array()
-                .expect("equivalence ids are an array");
-            let left = ids[0]["digest"].as_str().unwrap_or_default();
-            let right = ids[1]["digest"].as_str().unwrap_or_default();
-            let base = |digest: &str| {
-                vector_for_digest(vectors, digest).is_some_and(|vector| {
-                    vector["preimage"]["terms"]
-                        .as_array()
-                        .is_some_and(Vec::is_empty)
-                })
-            };
-            left != right
-                && seen.insert((left.to_string(), right.to_string()))
-                && ((base(left) && base(right))
-                    || class_normalized_map(left, vectors, &classes)
-                        == class_normalized_map(right, vectors, &classes))
+                .is_some_and(Vec::is_empty)
         })
+    };
+    let mut seen = BTreeSet::new();
+    let mut pairs = Vec::new();
+    for vector in vectors.iter().filter(|vector| {
+        vector["preimage"]["version"].as_str() == Some("quire.dimension-equivalence-node/v1")
+    }) {
+        let ids = vector["preimage"]["dimension_node_ids"]
+            .as_array()
+            .expect("equivalence ids are an array");
+        let left = ids[0]["digest"].as_str().unwrap_or_default();
+        let right = ids[1]["digest"].as_str().unwrap_or_default();
+        let Some(scale) = root_scale(&vector["preimage"]) else {
+            return false;
+        };
+        if left == right || !seen.insert((left.to_string(), right.to_string())) {
+            return false;
+        }
+        pairs.push((left.to_string(), right.to_string(), scale));
+    }
+    let Some(sizes) = base_root_sizes(&pairs, &is_base) else {
+        return false;
+    };
+    pairs.iter().all(|(left, right, scale)| {
+        (is_base(left) && is_base(right))
+            || (class_normalized_map(left, vectors, &classes)
+                == class_normalized_map(right, vectors, &classes)
+                && expanded_root_size(left, vectors, &sizes)
+                    == ratio_mul(scale, &expanded_root_size(right, vectors, &sizes)))
+    })
 }
 
 fn compound_unit_preimage_is_valid(preimage: &Value, node_vectors: &[Value]) -> bool {
@@ -16990,11 +17107,13 @@ fn tc_233_dimension_equivalence_node_is_a_self_typed_pair_of_dimension_keys() {
         json!({"sha256": digest, "preimage": {"version": "quire.dimension-node/v1", "terms": [
             {"dimension_node_id": {"digest": term}, "exponent": "-1"}]}})
     };
-    let pair = |digest: &str, left: &str, right: &str| {
+    let pair_scaled = |digest: &str, left: &str, right: &str, numerator: &str, denominator: &str| {
         json!({"sha256": digest, "preimage": {
             "version": "quire.dimension-equivalence-node/v1",
-            "dimension_node_ids": [{"digest": left}, {"digest": right}]}})
+            "dimension_node_ids": [{"digest": left}, {"digest": right}],
+            "root_scale": {"numerator": numerator, "denominator": denominator}}})
     };
+    let pair = |digest: &str, left: &str, right: &str| pair_scaled(digest, left, right, "1", "1");
     let mut speeds = vec![
         base("a1"),
         base("b1"),
@@ -17011,6 +17130,67 @@ fn tc_233_dimension_equivalence_node_is_a_self_typed_pair_of_dimension_keys() {
         dimension_equivalence_pairs_are_admissible(&speeds),
         "the base pair makes the maps equal"
     );
+
+    // Unequal roots: with 1 root of a1 = 1000 roots of b1, the reciprocal dimensions carry
+    // the reciprocal ratio, and any other root ratio contradicts the base roots.
+    let mut scaled = vec![
+        base("a1"),
+        base("b1"),
+        derived("a2", "a1"),
+        derived("b2", "b1"),
+        pair_scaled("e1", "a1", "b1", "1000", "1"),
+        pair_scaled("e2", "a2", "b2", "1", "1000"),
+    ];
+    assert!(
+        dimension_equivalence_pairs_are_admissible(&scaled),
+        "the derived pair carries the ratio the base roots imply"
+    );
+    scaled[5] = pair_scaled("e2", "a2", "b2", "1", "1");
+    assert!(
+        !dimension_equivalence_pairs_are_admissible(&scaled),
+        "a derived pair contradicting the base roots is refused"
+    );
+
+    // The ratios around a cycle of base pairs multiply to exactly one.
+    let cycle = |closing_numerator: &str| {
+        vec![
+            base("c1"),
+            base("c2"),
+            base("c3"),
+            pair_scaled("f1", "c1", "c2", "1", "1"),
+            pair_scaled("f2", "c2", "c3", "1000", "1"),
+            pair_scaled("f3", "c1", "c3", closing_numerator, "1"),
+        ]
+    };
+    assert!(dimension_equivalence_pairs_are_admissible(&cycle("1000")));
+    assert!(
+        !dimension_equivalence_pairs_are_admissible(&cycle("1001")),
+        "a cycle whose ratios do not multiply to one is refused"
+    );
+
+    // The file vectors close the cycle rpc, flow, clock; changing one ratio breaks it.
+    let mut broken = vectors.to_vec();
+    for vector in &mut broken {
+        if vector["name"].as_str() == Some("dimension-equivalence-flow-clock-time") {
+            vector["preimage"]["root_scale"]["numerator"] = json!("1001");
+        }
+    }
+    assert!(
+        !dimension_equivalence_pairs_are_admissible(&broken),
+        "the vectors' cycle is consistent only with its authored ratio"
+    );
+
+    // A zero, negative or unreduced ratio is no root ratio.
+    for refused in [("0", "1"), ("-1", "1"), ("2", "2")] {
+        let mut bad = vectors.to_vec();
+        for vector in &mut bad {
+            if vector["name"].as_str() == Some("dimension-equivalence-rpc-flow-time") {
+                vector["preimage"]["root_scale"] =
+                    json!({"numerator": refused.0, "denominator": refused.1});
+            }
+        }
+        assert!(!dimension_equivalence_pairs_are_admissible(&bad), "{refused:?}");
+    }
 }
 
 /// FR-322-AC-113: membership is decided by value, not by the written spelling.

@@ -330,7 +330,9 @@ text-profile  = 'unicode-scalars' | 'nfc' | 'nfd' | 'nfkc' | 'nfkd'
 dimension-decl = 'dimension', ident,
                  [ '=', dimension-term, { ('*' | '/'), dimension-term } ], ';' ;
 dimension-term = qualified-name, [ '^', signed-int ] ;
-dimension-equivalence = 'dimension', qualified-name, '~', qualified-name, ';' ;
+dimension-equivalence = 'dimension', qualified-name, '~', qualified-name,
+                        'by', ratio-term, '=', ratio-term, ';' ;
+ratio-term    = exact-value, qualified-name ;
 unit-decl     = 'unit', ident, ':', qualified-name, '=', exact-number,
                 [ '*', qualified-name ], [ '+', exact-number ], ';' ;
 enum-decl     = [ 'ordered' ], 'enum', ident, '{', enum-member,
@@ -408,10 +410,16 @@ collection-call = ('map' | 'collect' | 'filter' | 'flatMap'),
 ```
 
 A `dimension-equivalence` declares the two dimension nodes its names resolve to equivalent
-(FR-142 "Dimension equivalence"): the first name resolves in the dimension namespace and the
-second likewise, each a bare name of the unit of compilation or `M::Name` of a selected
-domain package. `~` is the token the `random-decl` and `delay-decl` productions already use,
-and the form is distinguished from a `dimension-decl` by the `~` after the first name.
+and states the ratio between their canonical roots (FR-142 "Dimension equivalence"): the
+first name resolves in the dimension namespace and the second likewise, each a bare name of
+the unit of compilation or `M::Name` of a selected domain package. In
+`dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` each `ratio-term` is a positive exact
+number and a unit name (a bare unit of the unit of compilation or `M::name` of a selected
+package); the first unit belongs to the first dimension and the second to the second, and
+`x U = y V` states that `x` of `U` and `y` of `V` are the same quantity. `~` is the token
+the `random-decl` and `delay-decl` productions already use, `by` is a keyword only in this
+position, and the form is distinguished from a `dimension-decl` by the `~` after the first
+name.
 
 `null`, `none`, collection constructors, record constructors and bit-level
 float constructors are disjoint forms; no empty spelling aliases

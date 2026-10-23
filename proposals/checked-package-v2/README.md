@@ -247,8 +247,11 @@ its term keys; a unit's `semantic_type` equals its dimension key and its
 dependencies are exactly that dimension plus its non-null target; a
 `scalar_type`/`dimension_equivalence` node (FR-142 "Dimension equivalence") is
 self-typed, carries no `declaration`, holds a `SourceOwner` and the keys of the
-two dimension nodes it relates, distinct and in ascending digest order, and
-depends on exactly those keys. Readers recompute the equivalence classes from
+two dimension nodes it relates, distinct and in ascending digest order, and a
+`root_scale` (a positive reduced rational: one canonical root of the first node
+is `root_scale` canonical roots of the second), and depends on exactly those
+keys. The `root_scale` values of the base pairs multiply to one around every
+cycle, and a pair of two non-base nodes carries the ratio their base roots fix. Readers recompute the equivalence classes from
 these nodes, so no other member records one. Changing a
 body/type/dependency while retaining the nominal preimage therefore refuses.
 Runtime compound-unit values are evaluator-owned
