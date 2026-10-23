@@ -42,7 +42,7 @@ Finite-window,
 timestamped and mixed past-and-future mappings return typed unsupported without a
 substitute formula; each past-only mapping with an execution-origin boundary maps
 to `mltl.origin-complete-history/v1` and agrees with the native oracle, and with a
-history-cutoff boundary is incomplete. Each identity mutation fails on its own axis, and only total
+history-cutoff boundary is `incomplete` with cause `missing-history`. Each identity mutation fails on its own axis, and only total
 native Boolean values enter the TL proposition population. Equal TL truth or
 formula bytes never supply a missing result axis; every valid mapping retains
 the native/shared-result metadata outside the TL formula where necessary.
