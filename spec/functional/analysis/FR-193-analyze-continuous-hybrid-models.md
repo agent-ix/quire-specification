@@ -15,6 +15,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-461
     type: references
+  - target: ix://agent-ix/quire-specification/FR-481
+    type: references
 ---
 
 # FR-193: Analyze continuous and hybrid models soundly
@@ -180,10 +182,11 @@ each jump to a source transition:
 - The trace's last state SHALL be the state at which the solver reports the
   possible violation.
 - The schema checks a trace's shape only. Its correspondence to the
-  declaration is checked by the reader that holds the item's checked hybrid
-  model: the producer, which serves a hybrid item in process, because a
-  checked-package v2 document has no hybrid node and a package that holds a
-  hybrid model has no v2 bytes (QSL FR-447). That reader SHALL refuse with
+  declaration is checked by the reader that holds the item's hybrid model:
+  the producer serving the item in process, or a process provider reading
+  the model's `hybrid` nodes from the package bytes
+  ([FR-481](../../objects/interfaces/FR-481-checked-package-hybrid-model-nodes.md)
+  "Hybrid trace correspondence"). That reader SHALL refuse with
   `invalid_result`/`invalid-value`, at the member's pointer, a trace whose
   `mode` names no mode of the declaration, whose `start` is not in the first
   mode, whose `transition` names no transition of the previous state's mode,
