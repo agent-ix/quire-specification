@@ -208,7 +208,9 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 - [FR-340](FR-340-checked-package-frame-location.md) owns the
   `state`/`frame` body.
 - [AD-006](../../assurance/AD-006-model-graph-state-contracts.md) owns
-  invariants, preconditions and postcondition anchors as a model feature;
+  invariants, preconditions and postcondition anchors as a model feature,
+  and [FR-382](../../functional/analysis/FR-382-select-state-space-reductions.md)
+  owns the state constraint;
   `proposals/quire-v1/state-contract.md`'s "Operation anchors, aliases and
   captures" fixes which values each clause binds.
 - [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)
