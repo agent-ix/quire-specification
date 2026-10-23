@@ -65,4 +65,5 @@ The reused record states `max_solver_time` 5. The two `smt_encoding` forms
 have different request identities and cache keys and share no result; the
 empty object, the unknown member, the 0 and the 1.5 are refused before
 consumption (FR-368-AC-12; vectors `temporal-smt-encoding-empty`,
-`temporal-smt-encoding-unknown-member` and `temporal-smt-encoding-zero`).
+`temporal-smt-encoding-unknown-member`, `temporal-smt-encoding-zero` and
+`temporal-smt-encoding-fractional`).

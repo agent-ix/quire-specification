@@ -56,10 +56,16 @@ appear on no other open QSpec PR head.
 **Not mergeable** until FND-001 is resolved together with QSL #1356 FND-003.
 The solver-budget half is sound, and its identity split is correct.
 
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | low | FR-368-AC-12 and TC-302 say a `max_constants` of 1.5 is refused before consumption, but no adverse vector carries it. The vectors are `temporal-smt-encoding-empty`, `-unknown-member` and `-zero`. Fix: add `temporal-smt-encoding-fractional`. | spec/functional/temporal/FR-368-negotiate-temporal-model-check-items.md (FR-368-AC-12); proposals/backend-provider-v1/vectors.json |
+
 ## Dispositions
 
-| FND | outcome | reason |
+| FND | Outcome | Reason |
 | --- | --- | --- |
-| FND-001 | fixed | Lead ruling (lead default, not an owner answer; Peter may veto): the SMT encoding limits go on the wire. FR-368 gains "SMT encoding limits": a closed `temporal.smt_encoding` object of six `PositiveCount` members, named and set as in QSL #1356. Its values are part of the request identity and the cache key (FR-368 and the FR-331 identity line), and an encoder stop names its member. The schema adds `SmtEncodingLimits` and `Temporal.smt_encoding`. The positive vector `temporal-request` carries `smt_encoding`, and the adverse vectors `temporal-smt-encoding-empty`, `-unknown-member` and `-zero` are new. FR-363 rule 3 and FR-363-AC-11 now name a carriable value. New FR-368-AC-12 and TC-302 derivations. |
-| FND-002 | fixed | New adverse vector `temporal-limits-solver-time-zero`, cited in TC-302. |
-| FND-003 | fixed | FR-368 states that a reused record gives the producing run's limit values, so a reused result states the first run's `max_solver_time`, never the reusing request's. A result that `max_solver_time` stopped is never stored. FR-368-AC-12 covers this. |
+| FND-001 | fixed | Fix commits 3b93dd53 and db088311 (head f3960d5d). `temporal.smt_encoding` is a closed `SmtEncodingLimits` object of `PositiveCount`s with `minProperties` 1. It is part of the request identity (FR-368, FR-331) and the cache key. FR-363 rule 3 and AC-11 now settle a stop at the carried member. New FR-368-AC-12 and adverse vectors. |
+| FND-002 | fixed | New vector `temporal-limits-solver-time-zero`. |
+| FND-003 | fixed | FR-368 states that a reused record gives the producing run's limit values, and AC-12 covers 5 reused for 10. |

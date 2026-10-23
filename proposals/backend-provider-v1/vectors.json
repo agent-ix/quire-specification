@@ -4566,6 +4566,18 @@
       ]
     },
     {
+      "name": "temporal-smt-encoding-fractional",
+      "base": "temporal-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/smt_encoding/max_constants",
+          "value": 1.5
+        }
+      ]
+    },
+    {
       "name": "temporal-smt-encoding-zero",
       "base": "temporal-request",
       "owner": "FR-368",
