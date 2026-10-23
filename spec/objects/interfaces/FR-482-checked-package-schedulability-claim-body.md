@@ -69,7 +69,7 @@ refusal in the reader order below.
 - **time values** — every `quantity` literal of the body (`bound` and each
   task's `period`, `deadline`, `wcet`, `wcet_hi`, `jitter` and `blocking`)
   is typed by one `scalar_type`/`unit` node, the task set's unit, a unit of
-  the package's time dimension ([FR-142](../type-model/FR-142-evaluate-quantities-and-units.md)).
+  the package's time dimension ([FR-142](../../functional/type-model/FR-142-evaluate-quantities-and-units.md)).
   The frontend chooses that unit and converts every source value into it
   exactly (QSL FR-246); the literal's `value` is the exact rational
   magnitude in that unit, spelled as [FR-322](FR-322-checked-package-artifact.md)
@@ -171,7 +171,7 @@ step.
   refusal order.
 - [FR-419](../../functional/analysis/FR-419-analyze-task-set-schedulability.md)
   states the task set, the claims and their conditions;
-  [FR-142](../type-model/FR-142-evaluate-quantities-and-units.md) the time
+  [FR-142](../../functional/type-model/FR-142-evaluate-quantities-and-units.md) the time
   dimension and exact unit conversion.
 - [FR-475](FR-475-checked-package-state-graph-claim-body.md) is the sibling
   body of the `claim`/`state_graph` node.
