@@ -54,8 +54,18 @@ A state model declares at most one `time` member:
 - `time M tick O period p unit u` — digital time counted by occurrences of
   operation `O` of the model, each occurrence advancing time by `p`.
 
-`u` is a unit of FR-142's time dimension and `p` a positive exact rational
-quantity of it. A model with a `time` member is a **timed model**, and its
+For a checked tick source, `O` is represented by a `state`/`operation_anchor`
+node. Its `context` is the tick source's explicit `model` reference and equals
+the timed root's `model` reference. The anchor's operation name resolves to an
+operation declared by that model. A function node or an operation anchor for a
+different model is not a tick operation.
+
+`u` is a unit of the base dimension declared `Time`; its exact nominal
+`dimension_node_id` is copied to the checked timed-model root's explicit
+`time_dimension` binding. Readers resolve the unit first and follow its
+`dimension_node_id`; they do not guess which same-named dimension is meant or
+use declaration order to select a node. `p` is a positive exact rational
+quantity of `u`. A model with a `time` member is a **timed model**, and its
 model subject is a **timed subject**. A second `time` member refuses with
 `invalid_timed_model`/`duplicate-time-source`.
 
@@ -74,6 +84,14 @@ frame that is not reset keeps its value. Reset is the one write to a clock;
 any other write refuses with `invalid_timed_model`/`clock-write`.
 
 ### Clock places
+
+In the checked package, FR-322's `clock_place.resolved_path` table is the
+authoritative resolution record. Each row names the declaring object or record,
+member identity and declared member type; collection rows also carry collection
+kind and bounds; the terminal row marks `Clock`. The reader joins each row to
+the corresponding path step and selected model declaration. This table is
+carried in checked-package nodes, so timed readers do not reopen source text or
+infer clock members from a spelling.
 
 A type is **clock-bearing** when it is `Clock`, an alias of a clock-bearing
 type, `Option` of one, a `Set`, `Bag`, `Sequence`, `OrderedSet` or `Map` whose
@@ -340,6 +358,7 @@ its value and the request setting that raises it.
 | FR-415-AC-14 | With `o: Option<Timer>` (`Timer { x: Clock; n: Int }`), `present(self.o) and value(self.o).x >= 1 ms` is a guard on the place `o.x`, and `value(self.o).x >= 1 ms` alone refuses `undefined_expression`/`unproved-presence`; `self.o = Timer { x: 0 ms, n: 1 }` makes `o.x` present at 0 and `self.o = absent` drops it; a `Sequence<Option<Clock>>` slot `j` is present only while the sequence holds slot `j` and the element is present, and `value(self.q[j])` without both tests refuses `unproved-presence`; an operation `arm(c: Option<Clock>)` with `c = 0 ms` has one instance for each guarded place, each making its place present; a function `maybe(o: Timer): Option<Clock>` whose body is `o.x` is a place expression and whose body `absent` is an inactive place. | Test (TC-367) |
 | FR-415-AC-15 | With object `Call` holding clocks `x` and `y` and a field `r: Reference<Clock>`, a universe of two calls and `time dense unit ms`, the precondition `deref(self.r) >= 1 ms` is the disjunction of the four guarded constraints on `Call1.x`, `Call1.y`, `Call2.x` and `Call2.y`, each with the condition `self.r = ref(place)`; `self.r = ref(self.x)` writes the place and resets no clock; `ref(self.x) = ref(other.x)` is a data comparison, false for two calls; `deref(self.r) = 0 ms` with a frame naming only `Call.x` refuses `invalid_timed_model`/`clock-write`; `deref(self.r)` over an `Option<Reference<Clock>>` refuses `undefined_expression`/`unproved-presence` without `present(self.r)`; two states that differ only in clock values have one state key and two that differ in `r` have different keys. | Test (TC-367) |
 | FR-415-AC-16 | A constraint `max "3"` whose `appliesTo` is the alias `Timeout` of `Clock` is the time invariant `x <= 3` on every place typed `Timeout` and on no other clock; with `appliesTo` `Clock` it bounds every clock place; `min "1"` refuses `invalid_timed_model`/`time-invariant-shape`; the keyword `minLength` refuses `invalid_model_binding`/`malformed-declaration`; the same constraint under `time tick` refuses `clock-without-dense-time`. | Test (TC-367) |
+| FR-415-AC-17 | A checked package for a dense model with a clock at `Call.t.0.x`, a reset, a guard, an invariant and `urgent when self.ready` emits a `timed_model` root plus source, place, reset, guard, invariant, urgency and normalized clock-constraint nodes. The place path records owner `Call` and the field, collection slot and field steps; no node represents `Clock` as a value or type. Changing in turn the source unit, tick period, place path or guard, reset, invariant, urgency and constraint bound changes the corresponding timed-node key and package identity; reordering source spans without changing semantics changes neither. | Test (TC-367) |
 
 ## Dependencies
 

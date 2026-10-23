@@ -29,6 +29,12 @@ const COMPOUND_UNIT_VECTORS: &str =
     include_str!("../proposals/quire-v1/definitions/value-compound-unit-vectors.json");
 const POSITIVE_ALL_FAMILIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-all-families.json");
+const POSITIVE_TIMED_MODEL_NODES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-timed-model-nodes.json");
+const TIMED_MODEL_NODE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
+const FR322_BODY_STEPS: &str = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
+const TC233_BODY_STEP_VECTOR: &str = include_str!("../spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md");
 const POSITIVE_NOMINAL_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-nominal-identities.json");
 const POSITIVE_CLAUSE_OPERATIONS: &str =
@@ -11440,7 +11446,7 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
         &schema["$defs"]["Diagnostic"]["properties"]["code"]["enum"],
         "diagnostic codes",
     );
-    let pairings: [(&str, &[&str]); 7] = [
+    let pairings: [(&str, &[&str]); 12] = [
         ("type-mismatch", &["ill_typed"]),
         ("non-boolean-root", &["ill_typed"]),
         (
@@ -11457,6 +11463,11 @@ fn tc_233_diagnostic_schema_pairs_each_selection_and_type_cause_with_its_codes()
         ),
         ("unsupported-wire", &["unknown_wire"]),
         ("unsupported-feature", &["unknown_required_feature"]),
+        ("missing-timed-model", &["invalid_package"]),
+        ("timed-node-reference", &["invalid_package"]),
+        ("duplicate-clock-place", &["invalid_package"]),
+        ("malformed-clock-place", &["invalid_package"]),
+        ("invalid-time-quantity", &["ill_typed"]),
     ];
     for (cause, admitted) in pairings {
         for code in &codes {
@@ -16946,6 +16957,40 @@ fn body_reference_targets(body: &Value) -> Vec<Value> {
     found
 }
 
+/// Every checked-semantic NodeId-shaped reference in a positive vector must
+/// name a node in that vector's complete node document.
+fn assert_semantic_node_refs_resolve(nodes: &[Value], label: &str) {
+    let ids = nodes
+        .iter()
+        .map(|node| node["node_id"]["digest"].as_str().expect("node digest"))
+        .collect::<BTreeSet<_>>();
+    fn visit(value: &Value, path: &str, ids: &BTreeSet<&str>, label: &str) {
+        match value {
+            Value::Object(fields) => {
+                if fields.get("domain") == Some(&json!("quire.checked-semantic-node/v1")) {
+                    let digest = fields["digest"].as_str().expect("semantic NodeId digest");
+                    assert!(
+                        ids.contains(digest),
+                        "{label}{path} references absent node {digest}"
+                    );
+                }
+                for (name, child) in fields {
+                    visit(child, &format!("{path}/{name}"), ids, label);
+                }
+            }
+            Value::Array(children) => {
+                for (index, child) in children.iter().enumerate() {
+                    visit(child, &format!("{path}/{index}"), ids, label);
+                }
+            }
+            _ => {}
+        }
+    }
+    for (index, node) in nodes.iter().enumerate() {
+        visit(node, &format!("/{index}"), &ids, label);
+    }
+}
+
 /// The binding of `name` in an aggregate body's members.
 fn hybrid_binding<'a>(body: &'a Value, name: &str) -> &'a Value {
     &body["members"]
@@ -16987,6 +17032,22 @@ fn rekey_hybrid_vector_node(node: &mut Value, nodes: &[Value]) {
 fn tc_966_hybrid_model_nodes_meet_the_schema_and_carry_their_own_keys() {
     let vectors = parsed_fixture(HYBRID_NODE_VECTORS);
     let nodes = vectors["nodes"].as_array().expect("nodes");
+    let mut positive_document = nodes.clone();
+    positive_document.extend(
+        vectors["extra_nodes"]
+            .as_array()
+            .expect("extra nodes")
+            .iter()
+            .cloned(),
+    );
+    positive_document.extend(
+        vectors["restored_nodes"]
+            .as_array()
+            .expect("restored nodes")
+            .iter()
+            .cloned(),
+    );
+    assert_semantic_node_refs_resolve(&positive_document, "hybrid positive vectors");
     let roles = &vectors["roles"];
     let node_schema = schema_for_def(&parsed_fixture(SCHEMA), "SemanticNode");
     let preimage_schema = schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "HybridNode");
@@ -17778,4 +17839,396 @@ fn tc_966_restored_hybrid_shapes_meet_or_fail_the_published_schema() {
     open["body"]["operation"]["member"]["interval"]["upper"] = Value::Null;
     open["body"]["operation"]["member"]["interval"]["upper_end"] = json!("open");
     assert!(node_schema.is_valid(&open), "a timed `[q, *]` meets the schema");
+}
+
+#[trace("TC-367", "FR-415-AC-17", "FR-322-AC-120")]
+#[test]
+fn tc_367_timed_model_node_tag_and_preimage_are_catalogued() {
+    let schema = parsed_fixture(SCHEMA);
+    let tags = &schema["$defs"]["NodeBase"]["properties"]["node_tag"]["enum"];
+    assert!(tags.as_array().unwrap().contains(&json!("timed_model")));
+    let forms = schema["$defs"]["TimedModelNode"]["allOf"][1]["properties"]["semantic_form"]["enum"]
+        .as_array()
+        .unwrap();
+    for form in ["timed_model", "time_source", "clock_place", "clock_reset", "clock_guard", "time_invariant", "urgency", "clock_constraint"] {
+        assert!(forms.contains(&json!(form)), "{form} is a timed node form");
+    }
+    let preimages = parsed_fixture(NODE_PREIMAGE_SCHEMA);
+    let timed = schema_for_def(&preimages, "TimedModelNode");
+    let package: Value =
+        serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("timed fixture JSON");
+    let source = package["semantic_graph"]["nodes"][44].clone();
+    let preimage = structural_node_preimage(&source).expect("timed source preimage");
+    assert!(timed.is_valid(&preimage), "timed source identity preimage is closed and admissible");
+    let mut adverse = preimage;
+    adverse["body"]["unexpected"] = json!(true);
+    assert!(!timed.is_valid(&adverse), "timed node preimages reject unknown members");
+}
+
+#[trace("TC-367", "FR-322-AC-120", "FR-322-AC-121")]
+#[test]
+fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
+    let package: Value =
+        serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("timed fixture JSON");
+    let schema = parsed_fixture(SCHEMA);
+    let package_validator = jsonschema::validator_for(&schema).expect("checked package schema");
+    assert!(
+        package_validator.is_valid(&package),
+        "all timed forms form a closed checked package: {:?}",
+        package_validator
+            .iter_errors(&package)
+            .map(|error| error.to_string())
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(
+        package["identity_preimage"],
+        derive_identity_preimage(&package)
+    );
+    assert_eq!(
+        package["package_id"]["digest"],
+        unqualified_jcs_sha256(&package_id_preimage(&package))
+    );
+
+    let vectors: Value =
+        serde_json::from_str(TIMED_MODEL_NODE_VECTORS).expect("timed vectors JSON");
+    let indexes = vectors["node_indexes"].as_object().expect("node indexes");
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes");
+    assert_semantic_node_refs_resolve(nodes, "timed checked-package fixture");
+    for (index, unit) in nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| node["node_tag"] == "scalar_type" && node["semantic_form"] == "unit")
+    {
+        let dimension = &unit["nominal_identity_preimage"]["dimension_node_id"];
+        assert_eq!(
+            unqualified_jcs_sha256(&unit["nominal_identity_preimage"]),
+            unit["node_id"]["digest"],
+            "unit node {index} retains its nominal key"
+        );
+        assert!(
+            nominal_node_cross_fields_are_valid(unit),
+            "unit node {index} is typed by its dimension and depends on its declared units"
+        );
+        assert_eq!(
+            unit["semantic_type"], *dimension,
+            "unit node {index} is typed by its dimension"
+        );
+        assert!(
+            nodes.iter().any(|node| node["node_id"] == *dimension
+                && node["node_tag"] == "scalar_type"
+                && node["semantic_form"] == "dimension"),
+            "unit node {index} points at a declared dimension"
+        );
+    }
+    let timed_schema = schema_for_def(&schema, "TimedModelNode");
+    for (name, index) in indexes {
+        let node = &nodes[index.as_u64().expect("index") as usize];
+        if node["node_tag"] != "timed_model" {
+            assert!(
+                matches!(name.as_str(), "dimension" | "unit"),
+                "only support nodes are not timed forms"
+            );
+            continue;
+        }
+        assert_eq!(
+            node["node_tag"], "timed_model",
+            "{name} has the timed node tag"
+        );
+        assert_eq!(
+            node["semantic_type"], node["node_id"],
+            "{name} uses its self type"
+        );
+        assert!(
+            structural_node_key_is_current(node),
+            "{name} key hashes its complete body"
+        );
+        assert_eq!(
+            node["dependencies"],
+            json!(body_reference_targets(&node["body"])),
+            "{name} dependencies match its resolved body references"
+        );
+        let preimage = structural_node_preimage(node).expect("timed form has structural preimage");
+        assert!(
+            schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "TimedModelNode")
+                .is_valid(&preimage),
+            "{name} preimage matches its closed schema"
+        );
+        assert!(
+            timed_schema.is_valid(node),
+            "{name} node matches its closed schema"
+        );
+    }
+    let mut dense_source = nodes[indexes["time_source"].as_u64().unwrap() as usize].clone();
+    dense_source["body"]["members"][0]["value"]["value"] = json!("dense");
+    dense_source["body"]["members"]
+        .as_array_mut()
+        .unwrap()
+        .truncate(2);
+    assert!(
+        timed_schema.is_valid(&dense_source),
+        "the dense source variant has its exact two-binding layout"
+    );
+    for refusal in vectors["schema_refusals"]
+        .as_array()
+        .expect("refusal vectors")
+    {
+        let index = indexes[refusal["node"].as_str().expect("node role")]
+            .as_u64()
+            .expect("node index") as usize;
+        let mut adverse = package.clone();
+        let node = &mut adverse["semantic_graph"]["nodes"][index];
+        match refusal["id"].as_str().expect("vector id") {
+            "TM-01" => {
+                node["body"]["members"].as_array_mut().unwrap().remove(1);
+            }
+            "TM-02" => {
+                node["body"]["members"].as_array_mut().unwrap().push(json!({"term":"binding","name":"extra","value":{"term":"aggregate","members":[]}}));
+            }
+            "TM-03" => {
+                node["body"]["members"][1]["value"]["members"][0]["members"][0]["value"]["value"] =
+                    json!("slot");
+            }
+            "TM-04" => {
+                node["body"]["members"].as_array_mut().unwrap().swap(0, 1);
+            }
+            "TM-05" => {
+                node["body"]["members"][1]["value"]["members"] = json!([]);
+            }
+            other => panic!("unhandled schema refusal vector {other}"),
+        }
+        assert!(
+            !package_validator.is_valid(&adverse),
+            "{} mutation is refused",
+            refusal["id"]
+        );
+    }
+}
+
+#[trace("TC-367", "FR-322-AC-123", "FR-322-AC-124", "FR-322-AC-125")]
+#[test]
+fn tc_367_timed_model_authority_bindings_are_explicit_and_joined() {
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let id = |node: &Value| node["node_id"]["digest"].as_str().unwrap().to_owned();
+    let target = |node: &Value, member: usize| {
+        node["body"]["members"][member]["value"]["target"]["digest"]
+            .as_str()
+            .unwrap()
+            .to_owned()
+    };
+    let root = &nodes[52];
+    let dimension_id = target(root, 1);
+    let dimension = nodes.iter().find(|node| id(node) == dimension_id).unwrap();
+    assert_eq!(dimension["semantic_form"], "dimension");
+    assert_eq!(nodes[43]["semantic_type"]["digest"], dimension_id);
+
+    let source = &nodes[44];
+    assert_eq!(target(source, 2), target(root, 0));
+    let operation_id = target(source, 3);
+    let operation = nodes.iter().find(|node| id(node) == operation_id).unwrap();
+    assert_eq!(operation["node_tag"], "state");
+    assert_eq!(operation["semantic_form"], "operation_anchor");
+    assert_eq!(target(operation, 0), target(source, 2));
+    assert_eq!(operation["body"]["members"][1]["value"]["value"], "size");
+    let frame_id = target(operation, 2);
+    let frame = nodes.iter().find(|node| id(node) == frame_id).unwrap();
+    assert_eq!(frame["semantic_form"], "frame");
+    assert_eq!(frame["semantic_type"]["digest"], target(source, 2));
+    assert!(structural_node_key_is_current(operation));
+
+    let place = &nodes[45];
+    let path = place["body"]["members"][1]["value"]["members"].as_array().unwrap();
+    let resolved = place["body"]["members"][2]["value"]["members"].as_array().unwrap();
+    assert_eq!(path.len(), 2, "the positive path selects a Map value");
+    assert_eq!(resolved.len(), path.len());
+    assert_eq!(resolved[0]["members"][1]["value"]["value"], "ix://acme/orders/Order");
+    assert_eq!(resolved[0]["members"][2]["value"]["value"], "ix://acme/orders/Order/clock");
+    assert_eq!(resolved[0]["members"][3]["value"]["value"], "Map<Text, ix://quire/native/Clock>");
+    assert_eq!(resolved[0]["members"][4]["value"]["value"], "map");
+    assert_eq!(resolved[1]["members"][1]["value"]["value"], "Map<Text, ix://quire/native/Clock>");
+    assert_eq!(resolved[1]["members"][3]["value"]["value"], "ix://quire/native/Clock");
+}
+
+
+
+
+
+
+#[trace("TC-367", "FR-322-AC-120")]
+#[test]
+fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
+    let positive: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
+    let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).unwrap();
+    let schema = parsed_fixture(SCHEMA);
+    let validator = jsonschema::validator_for(&schema).unwrap();
+    let rows = vectors["semantic_refusals"].as_array().unwrap();
+    assert_eq!(rows.len(), 14);
+    let all_ids = ["schema_refusals", "authority_vectors", "semantic_refusals"]
+        .into_iter()
+        .flat_map(|section| vectors[section].as_array().unwrap())
+        .map(|row| row["id"].as_str().unwrap())
+        .collect::<BTreeSet<_>>();
+    let expected_count = ["schema_refusals", "authority_vectors", "semantic_refusals"]
+        .into_iter()
+        .map(|section| vectors[section].as_array().unwrap().len())
+        .sum::<usize>();
+    assert_eq!(all_ids.len(), expected_count, "all timed vector ids are unique");
+    for row in rows {
+        let mut adverse = positive.clone();
+        match row["mutation"].as_str().unwrap() {
+            "remove-timed-root" => {
+                adverse["semantic_graph"]["nodes"].as_array_mut().unwrap().remove(52);
+            }
+            "dangling-tick-operation" => {
+                adverse["semantic_graph"]["nodes"][44]["body"]["members"][3]["value"]["target"]["digest"] =
+                    json!("0000000000000000000000000000000000000000000000000000000000000000");
+            }
+            "function-as-tick-operation" => {
+                adverse["semantic_graph"]["nodes"][44]["body"]["members"][3]["value"]["target"] =
+                    adverse["semantic_graph"]["nodes"][5]["node_id"].clone();
+            }
+            "duplicate-clock-place" => {
+                let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"]
+                    .as_array_mut().unwrap();
+                let duplicate = places[0].clone();
+                places.push(duplicate);
+            }
+            "noncanonical-place-path" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][1]["value"]["members"][0]["members"][1]["value"]["value"] = json!("not-clock");
+            }
+            "zero-tick-period" => {
+                adverse["semantic_graph"]["nodes"][44]["body"]["members"][4]["value"]["value"] = json!("0");
+            }
+            "missing-clock-resolution-row" => {
+                let steps = adverse["semantic_graph"]["nodes"][45]["body"]["members"][1]["value"]["members"]
+                    .as_array_mut().unwrap();
+                let duplicate = steps[0].clone();
+                steps.push(duplicate);
+            }
+            "mismatched-clock-path-step" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"][0]["members"][0]["value"]["value"] = json!(1);
+            }
+            "wrong-clock-collection-metadata" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"][0]["members"][4]["value"]["value"] = json!("sequence");
+            }
+            "undeclared-clock-member" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"][0]["members"][2]["value"]["value"] = json!("ix://acme/orders/Order/unknown");
+            }
+            "wrong-terminal-clock-type" => {
+                adverse["semantic_graph"]["nodes"][45]["body"]["members"][2]["value"]["members"][0]["members"][3]["value"]["value"] = json!("ix://quire/native/Integer");
+            }
+            "coherent-forged-selected-chain" => {
+                let place = &mut adverse["semantic_graph"]["nodes"][45]["body"]["members"];
+                place[1]["value"]["members"][1]["members"][1]["value"]["value"] = json!("sequence");
+                let rows = &mut place[2]["value"]["members"];
+                rows[0]["members"][3]["value"]["value"] = json!("Sequence<Evil>");
+                rows[0]["members"][4]["value"]["value"] = json!("sequence");
+                rows[1]["members"][1]["value"]["value"] = json!("Evil");
+                rows[1]["members"][2]["value"]["value"] = json!("Sequence<Evil>[slot]");
+            }
+            "tick-model-context-mismatch" => {
+                adverse["semantic_graph"]["nodes"][44]["body"]["members"][2]["value"]["target"] =
+                    adverse["semantic_graph"]["nodes"][14]["node_id"].clone();
+            }
+            "unresolved-tick-operation" => {
+                adverse["semantic_graph"]["nodes"][53]["body"]["members"][1]["value"]["value"] = json!("missing");
+            }
+            other => panic!("unhandled semantic timed-model vector {other}"),
+        }
+        rekey_stale_nodes(&mut adverse);
+        assert!(validator.is_valid(&adverse), "{} is a schema-valid semantic control", row["id"]);
+        assert_eq!(
+            adverse["package_id"]["digest"],
+            unqualified_jcs_sha256(&package_id_preimage(&adverse)),
+            "{} retains the recomputed package id",
+            row["id"]
+        );
+        let expected = match row["mutation"].as_str().unwrap() {
+            "remove-timed-root" => ("invalid_package", "missing-timed-model", "/semantic_graph/nodes"),
+            "dangling-tick-operation" | "function-as-tick-operation" => (
+                "invalid_package", "timed-node-reference", "/semantic_graph/nodes/44/body/members/3/value/target",
+            ),
+            "duplicate-clock-place" => (
+                "invalid_package", "duplicate-clock-place", "/semantic_graph/nodes/52/body/members/3/value/members/1",
+            ),
+            "noncanonical-place-path" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/1/value/members/0",
+            ),
+            "zero-tick-period" => (
+                "ill_typed", "invalid-time-quantity", "/semantic_graph/nodes/44/body/members/4/value/value",
+            ),
+            "missing-clock-resolution-row" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members",
+            ),
+            "mismatched-clock-path-step" | "wrong-clock-collection-metadata" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members/0",
+            ),
+            "undeclared-clock-member" | "wrong-terminal-clock-type" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members/0",
+            ),
+            "coherent-forged-selected-chain" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/2/value/members/0",
+            ),
+            "tick-model-context-mismatch" => (
+                "invalid_package", "timed-node-reference", "/semantic_graph/nodes/44/body/members/2/value/target",
+            ),
+            "unresolved-tick-operation" => (
+                "missing_declaration", "missing-name", "/semantic_graph/nodes/53/body/members/1",
+            ),
+            other => panic!("unhandled expected diagnostic for {other}"),
+        };
+        assert_eq!(row["expected_code"], expected.0);
+        assert_eq!(row["expected_cause"], expected.1);
+        assert_eq!(row["locus"], expected.2);
+    }
+}
+
+#[trace("TC-233", "FR-322-AC-121")]
+#[test]
+fn tc_233_body_steps_pin_timed_model_between_hybrid_and_protocol() {
+    let body_steps = FR322_BODY_STEPS
+        .split("**Body steps.**")
+        .nth(1)
+        .expect("FR-322 Body steps section")
+        .split("- derived-shape key stage")
+        .next()
+        .expect("FR-322 body-step section end");
+    let positions = ["hybrid", "timed-model", "protocol"].map(|step| {
+        body_steps.find(step).unwrap_or_else(|| panic!("FR-322 body steps contain {step}"))
+    });
+    assert!(positions[0] < positions[1] && positions[1] < positions[2]);
+    assert!(TC233_BODY_STEP_VECTOR.contains("BS-01"));
+    assert!(TC233_BODY_STEP_VECTOR.contains("timed-model step's refusal before protocol"));
+    assert!(TC233_BODY_STEP_VECTOR.contains("hybrid < timed-model < protocol"));
+}
+
+#[trace("TC-367", "FR-322-AC-120")]
+#[test]
+fn tc_367_timed_model_causes_are_catalogued_and_paired() {
+    let schema = parsed_fixture(SCHEMA);
+    let diagnostic = schema_for_def(&schema, "Diagnostic");
+    for (code, cause) in [
+        ("invalid_package", "missing-timed-model"),
+        ("invalid_package", "timed-node-reference"),
+        ("invalid_package", "duplicate-clock-place"),
+        ("invalid_package", "malformed-clock-place"),
+        ("ill_typed", "invalid-time-quantity"),
+    ] {
+        let entry = json!({"stage":"package_read", "code":code, "cause_tag":cause, "details":[], "loci":[]});
+        assert!(diagnostic.is_valid(&entry), "{cause} pairs with {code}");
+    }
+    let invalid_package = NATIVE_DIAGNOSTICS
+        .lines()
+        .find(|line| line.split('|').nth(1).is_some_and(|cell| backticked(cell).contains("invalid_package")))
+        .expect("native invalid_package row");
+    let ill_typed = NATIVE_DIAGNOSTICS
+        .lines()
+        .find(|line| line.split('|').nth(1).is_some_and(|cell| backticked(cell).contains("ill_typed")))
+        .expect("native ill_typed row");
+    for cause in ["missing-timed-model", "timed-node-reference", "duplicate-clock-place", "malformed-clock-place"] {
+        assert!(backticked(invalid_package).contains(cause), "native invalid_package catalogs {cause}");
+    }
+    assert!(backticked(ill_typed).contains("invalid-time-quantity"));
 }
