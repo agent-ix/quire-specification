@@ -46,9 +46,10 @@ One envelope has three stages, each a closed object carrying
 A request's `manifest` is the registry snapshot its candidates are checked
 against (FR-290).
 
-The manifest stage's descriptor carries `tool`, the name and version of the
-external tool the provider runs; a registry-snapshot descriptor carries it
-exactly when its provider's does (FR-331).
+Every descriptor carries `tool` (FR-331 "Backend tool"): a `{name, version}`
+object for a backend that fronts an external tool, and the string `producer`
+for a pure in-process engine. A `hello` descriptor always carries the object
+form, and a registry snapshot carries each descriptor as its provider gave it.
 
 ## Package bytes
 

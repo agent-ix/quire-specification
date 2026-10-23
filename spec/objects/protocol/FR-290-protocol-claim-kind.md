@@ -363,8 +363,12 @@ backend identity, then by the manifest's RFC 8785 bytes.
   backend. Further backends register under the same contract.
 - **Tool absence** — the routed backend's adapter probes its tool after
   routing and before the run; the probe's placement and fault-injection
-  evidence belong to `quire-contract-codegen`. If the probe finds the tool
-  missing, errors, or exceeds its limit, then the adapter SHALL record the
+  evidence belong to `quire-contract-codegen`. The probe also reads the
+  version of the executable it is about to run, and a version other than
+  the descriptor's `tool.version` is a failed probe whose `detail` names
+  both versions ([FR-331](../interfaces/FR-331-backend-provider-envelope.md)
+  "Backend tool"). If the probe finds the tool
+  missing, finds another version, errors, or exceeds its limit, then the adapter SHALL record the
   FR-331 result `unsupported` for that item with a warning naming the
   capability kind and the backend, cause
   `unsupported_projection`/`tool-unavailable`. The item keeps its `supported`

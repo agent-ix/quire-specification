@@ -90,6 +90,10 @@
         "manifest": [
           {
             "backend": "kani",
+            "tool": {
+              "name": "kani",
+              "version": "0.56.0"
+            },
             "advertises": [
               {
                 "kind": "operation-contract",
@@ -216,6 +220,10 @@
         "manifest": [
           {
             "backend": "kani",
+            "tool": {
+              "name": "kani",
+              "version": "0.56.0"
+            },
             "advertises": [
               {
                 "kind": "value-validity",
@@ -910,6 +918,7 @@
         "manifest": [
           {
             "backend": "qsl-model-check",
+            "tool": "producer",
             "advertises": [
               {
                 "kind": "temporal-satisfaction",
@@ -2870,6 +2879,7 @@
         "manifest": [
           {
             "backend": "qsl-prob",
+            "tool": "producer",
             "advertises": [
               {
                 "kind": "probabilistic-satisfaction",
@@ -3186,6 +3196,7 @@
         "manifest": [
           {
             "backend": "qsl-model-check",
+            "tool": "producer",
             "advertises": [
               {
                 "kind": "temporal-satisfaction",
@@ -4056,6 +4067,52 @@
       ]
     },
     {
+      "name": "hello-tool-producer",
+      "base": "kani-hello",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool",
+          "value": "producer"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-kani-without-tool",
+      "base": "kani-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-engine-without-tool",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/manifest/0/tool"
+        }
+      ]
+    },
+    {
+      "name": "snapshot-tool-unknown-marker",
+      "base": "temporal-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/manifest/0/tool",
+          "value": "in-process"
+        }
+      ]
+    },
+    {
       "name": "manifest-unknown-kind",
       "base": "kani-hello",
       "owner": "FR-290",
@@ -4089,6 +4146,10 @@
           "path": "/manifest/-",
           "value": {
             "backend": "cbmc",
+            "tool": {
+              "name": "cbmc",
+              "version": "6.4.1"
+            },
             "advertises": [
               {
                 "kind": "value-validity",

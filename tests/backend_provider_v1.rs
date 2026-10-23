@@ -863,6 +863,7 @@ fn tc_431_bounded_descriptors_carry_domains() {
     assert!(bounded > 0, "a bounded descriptor is exercised");
     let unbounded_only = serde_json::json!({
         "backend": "qsl-model-check",
+        "tool": "producer",
         "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
         "fairness_kinds": ["weak"]
     });
@@ -1318,6 +1319,7 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     let descriptor = definition("BackendDescriptor");
     let base = serde_json::json!({
         "backend": "qsl-model-check",
+        "tool": "producer",
         "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
         "fairness_kinds": ["weak"]
     });
@@ -1340,6 +1342,7 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     );
     let mut other = serde_json::json!({
         "backend": "smt",
+        "tool": {"name": "z3", "version": "4.13.4"},
         "advertises": [{"kind": "operation-contract", "mode": "unbounded"}]
     });
     assert!(
@@ -1363,42 +1366,69 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     );
 }
 
-/// FR-331-AC-37: a process provider's `hello` descriptor carries `tool`
-/// `{name, version}`; a registry-snapshot descriptor may omit it; the member
-/// is inside the manifest digest preimage and outside the backend identity.
+/// The `{domain, algorithm, digest}` record of a descriptor's FR-331
+/// `ManifestDigest`: SHA-256 over its RFC 8785 bytes in
+/// `quire.tool-manifest.jcs/v1`.
+fn manifest_digest(descriptor: &Value) -> Value {
+    let bytes = jcs_canonicalize(descriptor).expect("descriptor canonicalizes");
+    let digest: String = Sha256::digest(&bytes)
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect();
+    serde_json::json!({
+        "domain": "quire.tool-manifest.jcs/v1",
+        "algorithm": "sha256",
+        "digest": digest
+    })
+}
+
+/// FR-331-AC-37: every descriptor carries `tool`, a `{name, version}` object
+/// for a backend that fronts an external tool and `producer` for a pure
+/// in-process engine; a `hello` descriptor never carries `producer`; the
+/// member is inside the `ManifestDigest` preimage and outside the
+/// `BackendId`.
 #[trace("TC-431", "FR-331-AC-37")]
 #[test]
 fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
-    let hello = definition("ManifestStage");
-    let descriptor = definition("BackendDescriptor");
-    let base = positive("kani-hello")["document"].clone();
-    assert!(hello.is_valid(&base), "the hello with its tool is admitted");
-    let entry = base["manifest"][0].clone();
+    let whole = validator();
+    let hello = positive("kani-hello")["document"].clone();
+    assert!(whole.is_valid(&hello), "the hello with its tool is admitted");
+    let entry = hello["manifest"][0].clone();
     assert_eq!(entry["tool"], serde_json::json!({"name": "kani", "version": "0.56.0"}));
 
-    let mut upgraded = base.clone();
+    // The registry snapshot carries the kani descriptor as its hello gave it.
+    let request = composed(&positive("kani-request"));
+    assert_eq!(request["manifest"][0], entry, "snapshot equals the hello descriptor");
+    assert!(whole.is_valid(&request), "the snapshot with its tool is admitted");
+
+    let mut upgraded = hello.clone();
     upgraded["manifest"][0]["tool"]["version"] = Value::String("0.57.0".into());
-    assert!(hello.is_valid(&upgraded), "the upgraded hello is admitted");
+    assert!(whole.is_valid(&upgraded), "the upgraded hello is admitted");
     let upgraded_entry = &upgraded["manifest"][0];
     assert_eq!(
         upgraded_entry["backend"], entry["backend"],
         "a tool-only change leaves the BackendId"
     );
-    assert_ne!(
-        jcs_sha256(upgraded_entry).expect("descriptor canonicalizes"),
-        jcs_sha256(&entry).expect("descriptor canonicalizes"),
-        "a tool-only change moves the manifest digest"
-    );
+    let (before, after) = (manifest_digest(&entry), manifest_digest(upgraded_entry));
+    assert_eq!(before["domain"], after["domain"]);
+    assert_ne!(before, after, "a tool-only change moves the ManifestDigest");
 
-    let mut without = entry.clone();
-    without.as_object_mut().expect("descriptor").remove("tool");
-    assert!(
-        descriptor.is_valid(&without),
-        "a registry-snapshot descriptor of an in-process engine carries no tool"
-    );
-    let mut hello_without = base.clone();
-    hello_without["manifest"][0] = without;
-    assert!(!hello.is_valid(&hello_without), "a hello descriptor requires tool");
+    // A linked Kani descriptor in a request-stage snapshot without `tool`.
+    let mut linked_without = request.clone();
+    linked_without["manifest"][0]
+        .as_object_mut()
+        .expect("descriptor")
+        .remove("tool");
+    assert!(!whole.is_valid(&linked_without), "a snapshot descriptor requires tool");
+
+    // A pure in-process engine states `producer` in a snapshot, never in a hello.
+    let engine = composed(&positive("temporal-request"));
+    assert_eq!(engine["manifest"][0]["tool"], "producer");
+    assert!(whole.is_valid(&engine), "a pure engine's snapshot descriptor is admitted");
+    let mut hello_producer = hello.clone();
+    hello_producer["manifest"][0]["tool"] = Value::String("producer".into());
+    assert!(!whole.is_valid(&hello_producer), "a hello descriptor is never producer");
+
     for malformed in [
         serde_json::json!({"name": "kani"}),
         serde_json::json!({"version": "0.56.0"}),
@@ -1406,10 +1436,11 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
         serde_json::json!({"name": "", "version": "0.56.0"}),
         serde_json::json!({"name": "kani", "version": "0.56.0", "target": "x"}),
         serde_json::json!("kani 0.56.0"),
+        serde_json::json!(null),
     ] {
-        let mut bad = entry.clone();
-        bad["tool"] = malformed.clone();
-        assert!(!descriptor.is_valid(&bad), "tool {malformed} is refused");
+        let mut bad = request.clone();
+        bad["manifest"][0]["tool"] = malformed.clone();
+        assert!(!whole.is_valid(&bad), "tool {malformed} is refused");
     }
 }
 
