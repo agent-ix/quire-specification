@@ -386,7 +386,7 @@
       "type": "object",
       "required": ["type"],
       "oneOf": [
-        {"properties": {"type": {"enum": ["okamoto", "sprt"]}}, "required": ["type"], "additionalProperties": false},
+        {"properties": {"type": {"enum": ["okamoto", "sprt", "clopper-pearson"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"const": "regenerative"}, "min_cycles": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "min_cycles"], "additionalProperties": false}
       ]
     },
