@@ -314,4 +314,4 @@ runtime dimension of the control's key and are not a member of any node.
 ## Status
 
 Proposed complete-V1 boundary contract for the declaration nodes of the
-protocol family. Implementation and qualification remain tracked separately.
+protocol family.

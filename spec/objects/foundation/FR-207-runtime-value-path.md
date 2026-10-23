@@ -244,5 +244,4 @@ spelling; display renderings remain non-normative.
 
 ## Status
 
-Accepted complete-V1 runtime-path contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 runtime-path contract.

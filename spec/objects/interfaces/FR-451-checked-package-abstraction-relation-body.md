@@ -158,4 +158,3 @@ object, population or operation key refuses `invalid_model_binding`/
 ## Status
 
 Proposed complete-V1 boundary contract for the abstraction relation node.
-Implementation and qualification remain tracked separately.
