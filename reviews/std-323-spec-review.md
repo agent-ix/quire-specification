@@ -85,3 +85,17 @@ accounting limit objects. FND-002 is the XL-01 leftover, which this PR now
 turns into a direct contradiction, and it is a one-line fix in the same
 round. FND-003 makes AC-8 testable on both branches. All three choices are
 lead defaults, not owner answers, and the PR body says so.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | high | [scope-deferral] The PR body's "Follow-ups (QSL)" section leaves two QSL changes that this decision makes necessary with no owning ticket: QSL FR-255 "Accounting setting names" must change from the bare counter name to `accounting.<counter>`, and the `LimitReached` setting of QSL FR-203-AC-7 (from #1256) must become `accounting.work_units`. STD-271 is Done, #1256 is merged, and QSL-656 is Done, so no open ticket owns either change. Until one does, QSL FR-255 still says the bare counter is the setting and contradicts FR-461 B6. Under the standing rule, work needed outside the ticket gets a new STD ticket that the PR names. Fix: file an STD ticket for the QSL FR-255 and FR-203-AC-7 changes, and cite it in the PR body. | PR #390 body, "Follow-ups (QSL)" |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | At 9101f3cc, FR-461 B6 limits `accounting.<counter>` to the ten `ScalarLimitsV1` counters, listed by name, which match `value-accounting.md`. It gives `PopulationAdmissionLimitsV1` counters `admission.<counter>` and `ModelNormalizationLimitsV1` counters `model.<counter>` under B2, which agrees with QSL FR-255's stage rows. FR-461-AC-5 and TC-426 LS-06 test both `work_units` limits on one request, and check that raising `accounting.work_units` does not complete the admission stop. |
+| FND-002 | fixed | TC-365 XL-01 now sets `max_policy_iterations` 1, which the FR-411 positive-count rule and the schema's `PositiveCount` both admit. The vector keeps its precision-budget intent. |
+| FND-003 | fixed | The new positive vector `limit-reached-accounting-setting` (`qsl-prob` `probabilistic-satisfaction`, `incomplete`, `limit` `work_units`, `setting` `accounting.work_units`, with an accounting row) validates. `limit-reached-bare-accounting-counter` is now based on it, so its `limit` is `work_units` and only the `setting` is bare. TC-426 LS-08 names both vectors. |
