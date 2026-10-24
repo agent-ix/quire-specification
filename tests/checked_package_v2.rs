@@ -18215,7 +18215,7 @@ fn tc_367_timed_model_authority_bindings_are_explicit_and_joined() {
 
 
 
-#[trace("TC-367", "FR-322-AC-120")]
+#[trace("TC-367", "FR-322-AC-126", "FR-322-AC-127", "FR-322-AC-120")]
 #[test]
 fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
     let positive: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
@@ -18223,7 +18223,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
     let schema = parsed_fixture(SCHEMA);
     let validator = jsonschema::validator_for(&schema).unwrap();
     let rows = vectors["semantic_refusals"].as_array().unwrap();
-    assert_eq!(rows.len(), 14);
+    assert_eq!(rows.len(), 21);
     let all_ids = ["schema_refusals", "authority_vectors", "semantic_refusals"]
         .into_iter()
         .flat_map(|section| vectors[section].as_array().unwrap())
@@ -18300,6 +18300,63 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
             "unresolved-tick-operation" => {
                 adverse["semantic_graph"]["nodes"][46]["body"]["members"][1]["value"]["value"] = json!("missing");
             }
+            "tick-source-with-clock-place" => {
+                let place = positive["semantic_graph"]["nodes"][45].clone();
+                adverse["semantic_graph"]["nodes"].as_array_mut().unwrap().push(place.clone());
+                let root = &mut adverse["semantic_graph"]["nodes"][45];
+                root["body"]["members"][3]["value"]["members"].as_array_mut().unwrap().push(json!({"term":"reference", "target":place["node_id"].clone()}));
+                root["dependencies"].as_array_mut().unwrap().push(place["node_id"].clone());
+                root["dependencies"].as_array_mut().unwrap().sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+            }
+            "source-unit-length" | "source-unit-derived-non-time" | "source-unit-derived-time" => {
+                let mutation = row["mutation"].as_str().unwrap();
+                let name = match mutation {
+                    "source-unit-length" => "Length",
+                    "source-unit-derived-non-time" => "Area",
+                    _ => "Duration",
+                };
+                let time_id = adverse["semantic_graph"]["nodes"][42]["node_id"].clone();
+                let mut dimension = adverse["semantic_graph"]["nodes"][42].clone();
+                dimension["nominal_identity_preimage"]["qualified_declaration"] = json!(["Example", name]);
+                dimension["declaration"]["qualified_name"] = json!(["Example", name]);
+                if name == "Area" || name == "Duration" {
+                    let base_id = if name == "Area" {
+                        let mut length = dimension.clone();
+                        length["nominal_identity_preimage"]["qualified_declaration"] = json!(["Example", "Length"]);
+                        length["declaration"]["qualified_name"] = json!(["Example", "Length"]);
+                        let id = json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": unqualified_jcs_sha256(&length["nominal_identity_preimage"])});
+                        length["node_id"] = id.clone();
+                        length["semantic_type"] = id.clone();
+                        adverse["semantic_graph"]["nodes"].as_array_mut().unwrap().push(length);
+                        id
+                    } else { time_id };
+                    dimension["nominal_identity_preimage"]["terms"] = json!([{
+                        "dimension_node_id": base_id.clone(),
+                        "exponent": if name == "Area" { "2" } else { "1" }
+                    }]);
+                    dimension["dependencies"] = json!([base_id]);
+                }
+                let dimension_id = json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": unqualified_jcs_sha256(&dimension["nominal_identity_preimage"])});
+                dimension["node_id"] = dimension_id.clone();
+                dimension["semantic_type"] = dimension_id.clone();
+                adverse["semantic_graph"]["nodes"].as_array_mut().unwrap().push(dimension);
+                let mut unit = adverse["semantic_graph"]["nodes"][43].clone();
+                unit["nominal_identity_preimage"]["qualified_declaration"] = json!(["Example", "u"]);
+                unit["nominal_identity_preimage"]["dimension_node_id"] = dimension_id.clone();
+                let unit_id = json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": unqualified_jcs_sha256(&unit["nominal_identity_preimage"])});
+                unit["node_id"] = unit_id.clone();
+                unit["semantic_type"] = dimension_id.clone();
+                unit["dependencies"] = json!([dimension_id]);
+                unit["declaration"]["qualified_name"] = json!(["Example", "u"]);
+                adverse["semantic_graph"]["nodes"].as_array_mut().unwrap().push(unit);
+                let source = &mut adverse["semantic_graph"]["nodes"][44];
+                let old = source["body"]["members"][1]["value"]["target"].clone();
+                source["body"]["members"][1]["value"]["target"] = unit_id.clone();
+                let deps = source["dependencies"].as_array_mut().unwrap();
+                deps.retain(|dep| dep != &old);
+                deps.push(unit_id);
+                deps.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+            }
             other => panic!("unhandled semantic timed-model vector {other}"),
         }
         rekey_stale_nodes(&mut adverse);
@@ -18342,6 +18399,12 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
             "unresolved-tick-operation" => (
                 "missing_declaration", "missing-name", "/semantic_graph/nodes/46/body/members/1",
             ),
+            "tick-source-with-clock-place" => (
+                "invalid_package", "clock-without-dense-time", "/semantic_graph/nodes/49/body/members/0/value/target",
+            ),
+            "source-unit-length" | "source-unit-derived-non-time" | "source-unit-derived-time" => (
+                "ill_typed", "invalid-time-quantity", "/semantic_graph/nodes/44/body/members/1/value/target",
+            ),
             other => panic!("unhandled expected diagnostic for {other}"),
         };
         assert_eq!(row["expected_code"], expected.0);
@@ -18379,6 +18442,7 @@ fn tc_367_timed_model_causes_are_catalogued_and_paired() {
         ("invalid_package", "timed-node-reference"),
         ("invalid_package", "duplicate-clock-place"),
         ("invalid_package", "malformed-clock-place"),
+        ("invalid_package", "clock-without-dense-time"),
         ("ill_typed", "invalid-time-quantity"),
     ] {
         let entry = json!({"stage":"package_read", "code":code, "cause_tag":cause, "details":[], "loci":[]});
@@ -18392,7 +18456,7 @@ fn tc_367_timed_model_causes_are_catalogued_and_paired() {
         .lines()
         .find(|line| line.split('|').nth(1).is_some_and(|cell| backticked(cell).contains("ill_typed")))
         .expect("native ill_typed row");
-    for cause in ["missing-timed-model", "timed-node-reference", "duplicate-clock-place", "malformed-clock-place"] {
+    for cause in ["missing-timed-model", "timed-node-reference", "duplicate-clock-place", "malformed-clock-place", "clock-without-dense-time"] {
         assert!(backticked(invalid_package).contains(cause), "native invalid_package catalogs {cause}");
     }
     assert!(backticked(ill_typed).contains("invalid-time-quantity"));

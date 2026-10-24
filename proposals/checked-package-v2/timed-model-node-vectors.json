@@ -194,6 +194,62 @@
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
       "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
+    },
+    {
+      "id": "TM-23",
+      "mutation": "tick-source-with-clock-place",
+      "fixture": "tick",
+      "expected_code": "invalid_package",
+      "expected_cause": "clock-without-dense-time",
+      "locus": "/semantic_graph/nodes/49/body/members/0/value/target"
+    },
+    {
+      "id": "TM-24",
+      "mutation": "source-unit-length",
+      "fixture": "dense",
+      "expected_code": "ill_typed",
+      "expected_cause": "invalid-time-quantity",
+      "locus": "/semantic_graph/nodes/44/body/members/1/value/target"
+    },
+    {
+      "id": "TM-25",
+      "mutation": "source-unit-length",
+      "fixture": "tick",
+      "expected_code": "ill_typed",
+      "expected_cause": "invalid-time-quantity",
+      "locus": "/semantic_graph/nodes/44/body/members/1/value/target"
+    },
+    {
+      "id": "TM-26",
+      "mutation": "source-unit-derived-non-time",
+      "fixture": "dense",
+      "expected_code": "ill_typed",
+      "expected_cause": "invalid-time-quantity",
+      "locus": "/semantic_graph/nodes/44/body/members/1/value/target"
+    },
+    {
+      "id": "TM-27",
+      "mutation": "source-unit-derived-non-time",
+      "fixture": "tick",
+      "expected_code": "ill_typed",
+      "expected_cause": "invalid-time-quantity",
+      "locus": "/semantic_graph/nodes/44/body/members/1/value/target"
+    },
+    {
+      "id": "TM-28",
+      "mutation": "source-unit-derived-time",
+      "fixture": "dense",
+      "expected_code": "ill_typed",
+      "expected_cause": "invalid-time-quantity",
+      "locus": "/semantic_graph/nodes/44/body/members/1/value/target"
+    },
+    {
+      "id": "TM-29",
+      "mutation": "source-unit-derived-time",
+      "fixture": "tick",
+      "expected_code": "ill_typed",
+      "expected_cause": "invalid-time-quantity",
+      "locus": "/semantic_graph/nodes/44/body/members/1/value/target"
     }
   ],
   "tick_fixture": "fixtures/positive-tick-timed-model-nodes.json",

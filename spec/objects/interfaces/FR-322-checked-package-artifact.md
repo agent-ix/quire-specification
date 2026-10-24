@@ -74,6 +74,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-469
     type: references
+  - target: ix://agent-ix/quire-specification/FR-415
+    type: references
 ---
 
 # FR-322: Immutable checked-package artifact
@@ -2200,17 +2202,26 @@ structural preimage. Each form's complete body participates in its
 `quire.checked-semantic-node/v1` SHA-256 key; dependency keys are sorted and
 included by the common structural-node rule. Timed nodes occur once in graph
 order, are included in the reader-derived identity projection and therefore
-affect `package_id`. The reader validates node shape, ownership, dependency
-closure, path canonicality, unit dimension and exact rational encoding in
-node-id digest order. It refuses missing members, unknown members, dangling
+affect `package_id`. The timed root's `time_dimension` is the selected base
+dimension `Time`; the source unit's `dimension_node_id` MUST equal that exact
+node identity. A base `Length` dimension, a derived non-Time dimension and a
+nominal derived-Time dimension are not interchangeable with that root even
+when their dimension terms are equivalent. The reader validates node shape,
+ownership, dependency closure, path canonicality, unit dimension and exact
+rational encoding in node-id digest order. A tick source cannot own any clock
+place. It refuses missing members, unknown members, dangling
 references, wrong node kinds, duplicate places, malformed paths and invalid
 quantities with these paired diagnostic causes: a missing root is
 `invalid_package`/`missing-timed-model`, an unresolved or wrong-kind target is
 `invalid_package`/`timed-node-reference`, a repeated place is
 `invalid_package`/`duplicate-clock-place`, a malformed path is
-`invalid_package`/`malformed-clock-place`, and an invalid or non-time quantity
-is `ill_typed`/`invalid-time-quantity`. The `TimedModelNotEmitted` condition
-is not a valid package-read
+`invalid_package`/`malformed-clock-place`, a clock place under a tick source
+is `invalid_package`/`clock-without-dense-time` at that place's `model`
+reference, and a source unit whose dimension node does not equal the root's
+base `Time` node is `ill_typed`/`invalid-time-quantity` at the source's `unit`
+reference. The source-unit rule applies to both dense and tick sources. An
+invalid or non-time timed quantity is also `ill_typed`/`invalid-time-quantity`.
+The `TimedModelNotEmitted` condition is not a valid package-read
 outcome for an S3-admitted model. I2 reconstructs the checked timed model from
 the graph and verifies the same normalized constraints and package identity.
 
@@ -2334,9 +2345,11 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-120 | A timed state model has one owned `timed_model` root and one `timed_model`-tagged node per source, clock place, reset, guard, invariant, urgency and clock constraint; their references resolve to correctly typed nodes, their required data enter each node key and package identity, and the reader reconstructs the producer's checked timed model and normalized constraints. The semantic refusal vectors identify the first defect at these JSON pointers (`i` is the indexed graph node and `j` the indexed aggregate member): a missing root is `invalid_package`/`missing-timed-model` at `/semantic_graph/nodes`; a dangling or wrong-kind tick operation is `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{i}/body/members/3/value/target`; a dangling clock-place reference is `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{i}/body/members/3/value/members/{j}/target`; a duplicate place is `invalid_package`/`duplicate-clock-place` at the later reference in `/semantic_graph/nodes/{i}/body/members/3/value/members/{j}`; a noncanonical path order is `invalid_package`/`malformed-clock-place` at `/semantic_graph/nodes/{i}/body/members/1/value/members/{j}`; and a non-time unit or nonpositive period is `ill_typed`/`invalid-time-quantity` at `/semantic_graph/nodes/{i}/body/members/1/value` or `/semantic_graph/nodes/{i}/body/members/4/value/value`, respectively. Reader checks use ascending node-id digest order. | Test (TC-233, TC-367; semantic vectors TM-09..TM-14) |
 | FR-322-AC-121 | The reader runs body steps in the order state-graph, temporal, abstraction, terminal, step-relation, hybrid, timed-model, protocol, schedulability, after state checks and before operation checks; when a schema-valid package has a defect in its timed-model graph and protocol graph but no earlier defect, the timed-model step reports first, when that timed defect is repaired the protocol step reports, and when a hybrid defect is added the hybrid step reports before the timed-model step. | Test (TC-233) |
 | FR-322-AC-122 | A checked package containing each of the eight `timed_model` structural forms is admitted with each node's self `semantic_type` and key derived from its complete closed body; removing, adding, reordering or changing the type/count of any required child is refused by the published wire schema. | Test (TC-367; `proposals/checked-package-v2/fixtures/positive-timed-model-nodes.json`, `timed-model-node-vectors.json`) |
-| FR-322-AC-123 | The timed root's `time_dimension` reference resolves to the nominal dimension node reached by the source unit's `dimension_node_id`; FR-415's base-dimension `Time` check is applied to that exact node. A dimension-name lookup or declaration-order inference never selects among nodes. A mismatched dimension reference or a unit of another dimension refuses `ill_typed`/`invalid-time-quantity`; changing the explicit binding changes the root key and package id. | Test (TC-367; TM-06, TM-07) |
+| FR-322-AC-123 | The timed root's `time_dimension` reference and source unit's `dimension_node_id` name the same nominal node, and that node is the selected base dimension `Time`. A dimension-name lookup, dimension equivalence, derived dimension or declaration-order inference never substitutes a different node. A mismatched root/unit reference or a unit of another dimension refuses `ill_typed`/`invalid-time-quantity`; changing the explicit binding changes the root key and package id. | Test (TC-367; TM-06, TM-07) |
 | FR-322-AC-124 | Every clock-place path step has exactly one matching `resolved_path` row; rows identify owner, member identity and declared type, and collection rows carry kind and bounds. The final row is the `Clock` terminal. The reader resolves rows against the selected model declaration without reopening source; an absent row, mismatched path, undeclared member, coherently forged member chain, wrong terminal type, or wrong collection bound refuses `invalid_package`/`malformed-clock-place` at the affected path step `/semantic_graph/nodes/{i}/body/members/1/value/members/{j}` or resolved-path row `/semantic_graph/nodes/{i}/body/members/2/value/members/{j}`. The positive `Order.clockMap["key"]` vector records the selected `Order` field as `Map<Text, Clock>`, its map-value slot, and terminal Clock. | Test (TC-367; TM-07, TM-15..TM-19, TM-22) |
 | FR-322-AC-125 | A tick source's `operation` reference targets a `state`/`operation_anchor`; its anchor context equals both the tick source's `model` and the timed root's `model`, and its operation resolves as a declared operation of that model. A function node or an anchor of another model refuses `invalid_package`/`timed-node-reference` in the timed-model step. An unresolved name on a model-owned operation anchor is refused earlier by FR-342 as `missing_declaration`/`missing-name` at the operation member. A valid anchor advances time by the exact positive period per occurrence. | Test (TC-367; TM-08, TM-11, TM-20, TM-21) |
+| FR-322-AC-126 | I2 refuses a tick source that owns any clock place as `invalid_package`/`clock-without-dense-time` at the offending place node's `model` binding pointer `/semantic_graph/nodes/{place}/body/members/0/value/target`. A tick source with no places remains admissible; TM-23 starts from the positive tick fixture, adds the positive dense fixture's valid clock-place node to its root, and reports the appended place node's model pointer. | Test (TC-367; TM-23) |
+| FR-322-AC-127 | The timed root names the exact base `Time` dimension node and the source unit's `dimension_node_id` equals that node by identity. I2 refuses a source unit in base `Length`, a derived non-Time dimension, or a nominal derived-Time dimension as `ill_typed`/`invalid-time-quantity` at `/semantic_graph/nodes/{source}/body/members/1/value/target`, for both dense and tick sources. Dimension equivalence, matching dimension terms, names and declaration order do not substitute for this identity equality. | Test (TC-367; TM-24..TM-29) |
 
 ## Dependencies
 
