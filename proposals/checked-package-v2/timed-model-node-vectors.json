@@ -84,10 +84,11 @@
       "id": "TM-08",
       "kind": "tick-operation-anchor",
       "source_node_index": 44,
-      "model_node_index": 54,
-      "frame_node_index": 55,
-      "operation_anchor_index": 53,
-      "expected": "source.model and timed_model.model both reference the explicit acme/orders Order declaration node; operation_anchor.context equals that model node, its frame has that same semantic_type, and operation size resolves in the selected domain package; operation anchor is not a function node"
+      "model_node_index": 47,
+      "frame_node_index": 48,
+      "operation_anchor_index": 46,
+      "expected": "source.model and timed_model.model both reference the explicit acme/orders Order declaration node; operation_anchor.context equals that model node, its frame has that same semantic_type, and operation size resolves in the selected domain package; operation anchor is not a function node",
+      "fixture": "tick"
     }
   ],
   "semantic_refusals": [
@@ -103,14 +104,16 @@
       "mutation": "dangling-tick-operation",
       "expected_code": "invalid_package",
       "expected_cause": "timed-node-reference",
-      "locus": "/semantic_graph/nodes/44/body/members/3/value/target"
+      "locus": "/semantic_graph/nodes/44/body/members/3/value/target",
+      "fixture": "tick"
     },
     {
       "id": "TM-11",
       "mutation": "function-as-tick-operation",
       "expected_code": "invalid_package",
       "expected_cause": "timed-node-reference",
-      "locus": "/semantic_graph/nodes/44/body/members/3/value/target"
+      "locus": "/semantic_graph/nodes/44/body/members/3/value/target",
+      "fixture": "tick"
     },
     {
       "id": "TM-12",
@@ -131,7 +134,8 @@
       "mutation": "zero-tick-period",
       "expected_code": "ill_typed",
       "expected_cause": "invalid-time-quantity",
-      "locus": "/semantic_graph/nodes/44/body/members/4/value/value"
+      "locus": "/semantic_graph/nodes/44/body/members/4/value/value",
+      "fixture": "tick"
     },
     {
       "id": "TM-15",
@@ -173,14 +177,16 @@
       "mutation": "tick-model-context-mismatch",
       "expected_code": "invalid_package",
       "expected_cause": "timed-node-reference",
-      "locus": "/semantic_graph/nodes/44/body/members/2/value/target"
+      "locus": "/semantic_graph/nodes/44/body/members/2/value/target",
+      "fixture": "tick"
     },
     {
       "id": "TM-21",
       "mutation": "unresolved-tick-operation",
       "expected_code": "missing_declaration",
       "expected_cause": "missing-name",
-      "locus": "/semantic_graph/nodes/53/body/members/1"
+      "locus": "/semantic_graph/nodes/46/body/members/1",
+      "fixture": "tick"
     },
     {
       "id": "TM-22",
@@ -189,5 +195,15 @@
       "expected_cause": "malformed-clock-place",
       "locus": "/semantic_graph/nodes/45/body/members/2/value/members/0"
     }
-  ]
+  ],
+  "tick_fixture": "fixtures/positive-tick-timed-model-nodes.json",
+  "tick_node_indexes": {
+    "dimension": 42,
+    "unit": 43,
+    "time_source": 44,
+    "timed_model": 45,
+    "operation_anchor": 46,
+    "model": 47,
+    "frame": 48
+  }
 }
