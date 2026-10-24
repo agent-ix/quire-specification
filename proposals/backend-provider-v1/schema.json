@@ -147,11 +147,13 @@
     },
     "UndefinedReason": {"description": "native diagnostics catalog: a catalogued undefined reason, such as absent-key.", "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"},
     "Where": {
-      "description": "FR-364: the evaluation point of an undefined evaluation, with FR-364's keys; FR-408 adds test and trace_index, FR-411 initial_state, binding and product_state, FR-379 row.",
+      "description": "The shared undefined-evaluation location: FR-364 keys; FR-408 adds test and trace_index, FR-411 initial_state, binding and product_state, FR-379 row; FR-193 hybrid locations add state_position and time.",
       "type": "object",
       "minProperties": 1,
       "properties": {
         "position": {"$ref": "#/$defs/Count"},
+        "state_position": {"description": "FR-193: the zero-based state position in the hybrid trace; start is 0 and jump k reaches state k.", "$ref": "#/$defs/Count"},
+        "time": {"description": "FR-193: the exact rational time stamp of the hybrid evaluation point, in seconds.", "$ref": "#/$defs/Rational"},
         "positions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Count"}},
         "state_key": {"$ref": "#/$defs/StateKey"},
         "state_keys": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}},
@@ -168,6 +170,24 @@
         "row": {"$ref": "#/$defs/Nonempty"}
       },
       "required": ["locus"],
+      "additionalProperties": false
+    },
+    "HybridWhere": {
+      "description": "FR-193: the exact location of an undefined evaluation in a hybrid trace.",
+      "type": "object",
+      "required": ["state_position", "time", "locus"],
+      "properties": {
+        "state_position": {"$ref": "#/$defs/Count"},
+        "time": {"$ref": "#/$defs/Rational"},
+        "locus": {"$ref": "#/$defs/Locus"}
+      },
+      "additionalProperties": false
+    },
+    "HybridUndefinedEvaluation": {
+      "description": "FR-193 hybrid undefined evaluation with its exact trace state and time.",
+      "type": "object",
+      "required": ["type", "where", "cause"],
+      "properties": {"type": {"const": "undefined-evaluation"}, "where": {"$ref": "#/$defs/HybridWhere"}, "cause": {"$ref": "#/$defs/UndefinedReason"}},
       "additionalProperties": false
     },
     "UndefinedEvaluation": {
@@ -914,7 +934,7 @@
       "required": ["type", "kind", "trace"],
       "properties": {
         "type": {"const": "hybrid-counterexample"},
-        "kind": {"oneOf": [{"const": "formula"}, {"$ref": "#/$defs/UndefinedEvaluation"}]},
+        "kind": {"oneOf": [{"const": "formula"}, {"$ref": "#/$defs/HybridUndefinedEvaluation"}]},
         "trace": {"$ref": "#/$defs/HybridTrace"}
       },
       "additionalProperties": false
