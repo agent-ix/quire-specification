@@ -575,6 +575,17 @@ names, FR-462), `kind` and `result`, and:
 | `incomplete` | `cause` (`limit-reached`, `precision-budget`, `cancelled{source}` or `timed-out`) |
 | `failed` | exactly one of `cause` (`tool-failure{defect}`, with `limit` and `value` for `frame-length` and `total-bytes`, FR-462) and `diagnostic` |
 
+For an FR-193 hybrid `undefined-evaluation` counterexample,
+`kind.where` is the hybrid form of the shared `Where` value and carries
+exactly `state_position`, `time` and `locus`. `state_position` is the
+zero-based state position in the trace: `start` is 0 and the target of
+`jumps[k]` is state `k + 1`. `time` is the exact FR-331 `Rational`
+timestamp in seconds. `locus` is FR-331's existing expression locus. A
+hybrid undefined-evaluation location without any one of these members, or
+with another member, is refused before consumption. The shared `Where`
+definition admits these fields while other `Where` uses retain their own
+required members and shapes.
+
 The closed proof bases are those of FR-363 (`exhaustive`,
 `bounded-complete{depth}`, `inductive{depth}`), FR-385
 (`reduced{reductions}`, each reduction `{reduction, parameters, row}`), the
@@ -831,6 +842,7 @@ registry snapshot and the request are not. The backend identity, the
 | FR-331-AC-39 | A `proved` result with `cross_check` `{"tool": "z3", "verdict": "proved"}` and one with `{"tool": "z3", "verdict": "refuted"}`, each `certified`, are admitted; `cross_check` on a `refuted`, `inconclusive` or `failed` result, a `cross_check` missing `tool` or `verdict`, with a `verdict` outside `proved`, `refuted` and `inconclusive`, or with another member, is refused before consumption. `cross_check` on a plugin's `trusted` `bounded-complete` proof (`cross-check-on-trusted`, refused by the `trusted` rule alone), on a certified `reduced` proof (`cross-check-on-non-smt-basis`), and verdict `refuted` on an `uncertified` `inductive` proof (`cross-check-disagreement-on-uncertified`) are each refused at `/results/<i>/cross_check`. An `inconclusive` result with cause `{"type": "cross-check-disagreement", "tool": "z3", "primary": "proved", "cross_check": "refuted"}` is admitted, so is one with `primary` `inconclusive`, and the cause missing `primary` is refused. | Test (TC-431) |
 | FR-331-AC-40 | A `failed` result with cause `{"type": "tool-failure", "defect": "frame-length", "limit": 1048576, "value": 1048577}` and one with `defect` `total-bytes`, `limit` 4194304 and `value` 4194305 are admitted; either defect without `limit` or `value` is refused, and `limit` or `value` on any other defect, such as `crash`, is refused, before consumption. | Test (TC-431) |
 | FR-331-AC-41 | The schema admits a hybrid request item carrying `"requirements": ["hybrid-dynamics"]` and `hybrid`, a temporal descriptor with `dynamics` `["discrete", "hybrid"]` and `bounds` holding `max_solver_steps` and `max_solver_time`, a `proved` entry with `inductive-solver{method: inductive-enclosure}` labelled `uncertified`, and an `inconclusive` entry with `insufficient-horizon{horizon: {numerator: "1", denominator: "1"}, jumps: 1, exhaustive: ["time"]}`; it refuses before consumption `requirements` `[]` or holding another label, `requirements` on an item of another kind, `hybrid` without `requirements`, a `dynamics` that is empty, repeats a label, holds another label or sits on a descriptor advertising no `temporal-satisfaction`, a hybrid descriptor whose `bounds` lack either limit, a `bounded-solver` `method` outside `delta-complete`, `flowpipe-outward-rounded`, `flowpipe-unrounded` and `unclassified`, an `inductive-solver` `method` other than `inductive-enclosure`, an `inductive-solver` proof carrying `certified`, an `insufficient-horizon` without `jumps`, a `bounded-solver` without `exhaustive`, and an `exhaustive` that repeats a dimension or holds a label other than `time` and `jumps`; and it refuses `requirements` `[]` and `["stochastic-dynamics"]` on an item that carries no `hybrid`. A reader refuses an `insufficient-horizon` cause on an item whose claim is not a hybrid claim `invalid_result`/`invalid-value` at `/cause/type`. | Test (TC-431) |
+| FR-331-AC-42 | An FR-193 hybrid `undefined-evaluation` counterexample carries `where` with exactly `state_position`, `time` and `locus`: `state_position` is the zero-based trace state position (`start` 0, target of `jumps[k]` at `k + 1`); `time` is an exact FR-331 `Rational` in seconds; and `locus` is the existing expression locus. The schema admits this hybrid form and refuses a missing member, a noncanonical rational, or an extra member, while preserving the existing shapes for other shared `Where` uses. | Test (TC-431) |
 
 ## Dependencies
 
