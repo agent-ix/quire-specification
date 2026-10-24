@@ -33,6 +33,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-118
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-478-AC-3
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-341
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-342
@@ -63,8 +65,8 @@ relationships:
 
 Qualify the published QSpec contract artifacts themselves: the V2
 checked-package schema and fixtures, the nominal node-identity preimage
-schema and vectors, the operation catalog and its clause and control
-operation identities, and the compound-unit value identity schema and
+schema and vectors, the operation catalog including text-to-number identities,
+its clause and control operation identities, and the compound-unit value identity schema and
 vectors, and the complete-value and complete-model definition locks and
 package-selection vectors. This case proves producer-side schema closure,
 digest recomputation and operation-identity and diagnostic-cause closure
@@ -392,6 +394,25 @@ body changed, canonical order and `dependencies` kept, its node id kept and
 | FB-02 | literal of `value_kind` `float32_bits` with value `3F000000`, `0x3f000000`, `3f00000`, `3f0000000`, `0.5` or the JSON number `1056964608` | `invalid_package`/`invalid-value` | FR-322-AC-108 |
 | FB-03 | literal of `value_kind` `float64_bits` with value `3FE0000000000000`, `0x3fe0000000000000`, `3fe000000000000`, `3fe00000000000000`, `0.5` or the JSON number `4602678819172646912` | `invalid_package`/`invalid-value` | FR-322-AC-108 |
 | FB-04 | literal of `value_kind` `float32_bits` typed by a `float64` type with value `3F000000`; literal of `value_kind` `float64_bits` typed by a `string` type with value `0.5` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-108 |
+
+### Text-to-number operation identity vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| TN-01 | `quire.op.text.to_integer` over a `text` operand, `integer` result and `type_argument` member naming that result | Admitted by both V2 schemas and the operation catalog with `text_profile`, no mode and `member_family` `integer` | FR-322-AC-17; FR-478-AC-3 |
+| TN-02 | `quire.op.text.to_decimal` over a `text` operand and a `decimal` result | Admitted with `text_profile`, `rounding` pinned by the decimal result, and `member_family` `decimal` | FR-322-AC-17; FR-478-AC-3 |
+| TN-03 | `quire.op.text.to_rational` over a `text` operand and a `rational` result | Admitted with `text_profile`, no mode and `member_family` `rational` | FR-322-AC-17; FR-478-AC-3 |
+| TN-04 | `quire.op.text.to_float32` over a `text` operand and a `float32` result | Admitted with `text_profile` and `ieee_profile`, `rounding` pinned by the result, and `member_family` `float32` | FR-322-AC-17; FR-478-AC-3 |
+| TN-05 | `quire.op.text.to_float64` over a `text` operand and a `float64` result | Admitted with `text_profile` and `ieee_profile`, `rounding` pinned by the result, and `member_family` `float64` | FR-322-AC-17; FR-478-AC-3 |
+| TN-06 | `quire.op.text.to_quantity` over a `text` operand and a `quantity` result | Admitted with `text_profile`, `rounding` pinned by the quantity result, and `member_family` `quantity` | FR-322-AC-17; FR-478-AC-3 |
+| TN-07 | `quire.op.string.to_integer` over a `string` operand, `integer` result and `type_argument` member naming that result | Admitted by both V2 schemas and the operation catalog with no law, no mode and `member_family` `integer` | FR-322-AC-17; FR-478-AC-3 |
+| TN-08 | `quire.op.string.to_decimal` over a `string` operand and a `decimal` result | Admitted with no law, `rounding` pinned by the decimal result, and `member_family` `decimal` | FR-322-AC-17; FR-478-AC-3 |
+| TN-09 | `quire.op.string.to_rational` over a `string` operand and a `rational` result | Admitted with no law, no mode and `member_family` `rational` | FR-322-AC-17; FR-478-AC-3 |
+| TN-10 | `quire.op.string.to_float32` over a `string` operand and a `float32` result | Admitted with `ieee_profile`, `rounding` pinned by the result, and `member_family` `float32` | FR-322-AC-17; FR-478-AC-3 |
+| TN-11 | `quire.op.string.to_float64` over a `string` operand and a `float64` result | Admitted with `ieee_profile`, `rounding` pinned by the result, and `member_family` `float64` | FR-322-AC-17; FR-478-AC-3 |
+| TN-12 | `quire.op.string.to_quantity` over a `string` operand and a `quantity` result | Admitted with no law, `rounding` pinned by the quantity result, and `member_family` `quantity` | FR-322-AC-17; FR-478-AC-3 |
+| TN-13 | TN-01 with its result and `type_argument` changed to `Boolean` | `ill_typed`/`operator-ineligible` because the catalogued `member_family` is `integer` | FR-322-AC-17; FR-478-AC-3 |
+| TN-14 | Each of TN-07 through TN-12 with an added `text_profile` law | `invalid_package`/`operation-law-mismatch` | FR-322-AC-17; FR-478-AC-3 |
 
 ### IEEE negate and float leaf vectors
 
