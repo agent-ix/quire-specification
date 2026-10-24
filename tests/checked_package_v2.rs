@@ -31,6 +31,8 @@ const POSITIVE_ALL_FAMILIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-all-families.json");
 const POSITIVE_TIMED_MODEL_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-timed-model-nodes.json");
+const POSITIVE_TICK_TIMED_MODEL_NODES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-tick-timed-model-nodes.json");
 const TIMED_MODEL_NODE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
 const FR322_BODY_STEPS: &str = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
@@ -17888,6 +17890,18 @@ fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
         package["package_id"]["digest"],
         unqualified_jcs_sha256(&package_id_preimage(&package))
     );
+    let tick_package: Value = serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES)
+        .expect("tick timed fixture JSON");
+    assert!(package_validator.is_valid(&tick_package));
+    assert_eq!(tick_package["identity_preimage"], derive_identity_preimage(&tick_package));
+    assert_eq!(tick_package["package_id"]["digest"], unqualified_jcs_sha256(&package_id_preimage(&tick_package)));
+    let tick_nodes = tick_package["semantic_graph"]["nodes"].as_array().unwrap();
+    assert_semantic_node_refs_resolve(tick_nodes, "tick timed checked-package fixture");
+    let tick_root = &tick_nodes[45];
+    assert_eq!(tick_nodes[44]["body"]["members"][0]["value"]["value"], "tick");
+    for index in 3..9 {
+        assert!(tick_root["body"]["members"][index]["value"]["members"].as_array().unwrap().is_empty());
+    }
 
     let vectors: Value =
         serde_json::from_str(TIMED_MODEL_NODE_VECTORS).expect("timed vectors JSON");
@@ -17960,12 +17974,7 @@ fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
             "{name} node matches its closed schema"
         );
     }
-    let mut dense_source = nodes[indexes["time_source"].as_u64().unwrap() as usize].clone();
-    dense_source["body"]["members"][0]["value"]["value"] = json!("dense");
-    dense_source["body"]["members"]
-        .as_array_mut()
-        .unwrap()
-        .truncate(2);
+    let dense_source = nodes[indexes["time_source"].as_u64().unwrap() as usize].clone();
     assert!(
         timed_schema.is_valid(&dense_source),
         "the dense source variant has its exact two-binding layout"
@@ -18011,6 +18020,8 @@ fn tc_367_timed_model_fixture_is_closed_self_typed_and_ordered() {
 fn tc_367_timed_model_authority_bindings_are_explicit_and_joined() {
     let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let tick_package: Value = serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES).unwrap();
+    let tick_nodes = tick_package["semantic_graph"]["nodes"].as_array().unwrap();
     let id = |node: &Value| node["node_id"]["digest"].as_str().unwrap().to_owned();
     let target = |node: &Value, member: usize| {
         node["body"]["members"][member]["value"]["target"]["digest"]
@@ -18024,16 +18035,17 @@ fn tc_367_timed_model_authority_bindings_are_explicit_and_joined() {
     assert_eq!(dimension["semantic_form"], "dimension");
     assert_eq!(nodes[43]["semantic_type"]["digest"], dimension_id);
 
-    let source = &nodes[44];
-    assert_eq!(target(source, 2), target(root, 0));
+    let source = &tick_nodes[44];
+    assert_eq!(source["body"]["members"][0]["value"]["value"], "tick");
+    assert_eq!(target(source, 2), target(&tick_nodes[45], 0));
     let operation_id = target(source, 3);
-    let operation = nodes.iter().find(|node| id(node) == operation_id).unwrap();
+    let operation = tick_nodes.iter().find(|node| id(node) == operation_id).unwrap();
     assert_eq!(operation["node_tag"], "state");
     assert_eq!(operation["semantic_form"], "operation_anchor");
     assert_eq!(target(operation, 0), target(source, 2));
     assert_eq!(operation["body"]["members"][1]["value"]["value"], "size");
     let frame_id = target(operation, 2);
-    let frame = nodes.iter().find(|node| id(node) == frame_id).unwrap();
+    let frame = tick_nodes.iter().find(|node| id(node) == frame_id).unwrap();
     assert_eq!(frame["semantic_form"], "frame");
     assert_eq!(frame["semantic_type"]["digest"], target(source, 2));
     assert!(structural_node_key_is_current(operation));
@@ -18076,10 +18088,15 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
         .sum::<usize>();
     assert_eq!(all_ids.len(), expected_count, "all timed vector ids are unique");
     for row in rows {
-        let mut adverse = positive.clone();
+        let is_tick = row["fixture"] == "tick";
+        let mut adverse = if is_tick {
+            serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES).unwrap()
+        } else {
+            positive.clone()
+        };
         match row["mutation"].as_str().unwrap() {
             "remove-timed-root" => {
-                adverse["semantic_graph"]["nodes"].as_array_mut().unwrap().remove(52);
+                adverse["semantic_graph"]["nodes"].as_array_mut().unwrap().remove(if is_tick { 45 } else { 52 });
             }
             "dangling-tick-operation" => {
                 adverse["semantic_graph"]["nodes"][44]["body"]["members"][3]["value"]["target"]["digest"] =
@@ -18090,7 +18107,8 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                     adverse["semantic_graph"]["nodes"][5]["node_id"].clone();
             }
             "duplicate-clock-place" => {
-                let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"]
+                let root = if is_tick { 45 } else { 52 };
+                let places = adverse["semantic_graph"]["nodes"][root]["body"]["members"][3]["value"]["members"]
                     .as_array_mut().unwrap();
                 let duplicate = places[0].clone();
                 places.push(duplicate);
@@ -18133,7 +18151,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                     adverse["semantic_graph"]["nodes"][14]["node_id"].clone();
             }
             "unresolved-tick-operation" => {
-                adverse["semantic_graph"]["nodes"][53]["body"]["members"][1]["value"]["value"] = json!("missing");
+                adverse["semantic_graph"]["nodes"][46]["body"]["members"][1]["value"]["value"] = json!("missing");
             }
             other => panic!("unhandled semantic timed-model vector {other}"),
         }
@@ -18175,7 +18193,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 "invalid_package", "timed-node-reference", "/semantic_graph/nodes/44/body/members/2/value/target",
             ),
             "unresolved-tick-operation" => (
-                "missing_declaration", "missing-name", "/semantic_graph/nodes/53/body/members/1",
+                "missing_declaration", "missing-name", "/semantic_graph/nodes/46/body/members/1",
             ),
             other => panic!("unhandled expected diagnostic for {other}"),
         };
