@@ -7558,17 +7558,19 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
                 "{identity}: IEEE equality and ordering are the numeric_equal, total_order and bit_identical identities (FR-148)"
             );
         }
-        if family == "text" {
-            assert_eq!(
-                entry(identity)["laws"],
-                json!(["text_profile"]),
-                "{identity} laws"
-            );
-            assert_eq!(
-                entry(identity)["mode"],
-                json!("text_profile"),
-                "{identity} mode"
-            );
+        if family == "text" && operation.starts_with("to_") {
+            let expected_laws = if matches!(operation, "to_float32" | "to_float64") {
+                json!(["text_profile", "ieee_profile"])
+            } else {
+                json!(["text_profile"])
+            };
+            assert_eq!(entry(identity)["laws"], expected_laws, "{identity} laws");
+            assert_eq!(entry(identity)["member"], "type_argument", "{identity} member");
+            assert_eq!(entry(identity)["constraints"][0]["kind"], "member_family", "{identity} target family constraint");
+            assert_ne!(entry(identity)["mode"], json!("text_profile"), "{identity} takes no text_profile mode");
+        } else if family == "text" {
+            assert_eq!(entry(identity)["laws"], json!(["text_profile"]), "{identity} laws");
+            assert_eq!(entry(identity)["mode"], json!("text_profile"), "{identity} mode");
         }
     }
     for identity in [
@@ -11229,7 +11231,11 @@ fn walk_option(name: &str, inner: &str) -> Value {
 
 /// The catalog's text-profile law definition.
 fn walk_text_law(catalog: &Value) -> Value {
-    let law = &catalog["law_roles"]["text_profile"][0];
+    walk_catalog_law(catalog, "text_profile")
+}
+
+fn walk_catalog_law(catalog: &Value, role: &str) -> Value {
+    let law = &catalog["law_roles"][role][0];
     json!({"authority": law["authority"], "identity": law["identity"]})
 }
 
@@ -14863,6 +14869,147 @@ fn tc_233_scalar_equality_refuses_cross_family_laws_modes_ordering_and_arithmeti
     assert_eq!(OperationRefusal::LawMismatch.code(), "invalid_package");
     assert_eq!(OperationRefusal::ModeMismatch.code(), "invalid_package");
     assert_eq!(OperationRefusal::OperatorIneligible.code(), "ill_typed");
+}
+
+/// FR-478-AC-3: every text and string numeric conversion identity is
+/// catalogued, admitted with its target member, and refuses the wrong member
+/// family or a text profile law on a String operand.
+#[trace("FR-322-AC-17", "FR-478-AC-3", "TC-233")]
+#[test]
+fn tc_233_text_number_operations_are_catalogued_and_checked() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let expected_text_identities: Vec<String> = [
+        "integer", "decimal", "rational", "float32", "float64", "quantity",
+    ]
+    .map(|target| format!("quire.op.text.to_{target}"))
+    .into();
+    let expected_string_identities: Vec<String> = [
+        "integer", "decimal", "rational", "float32", "float64", "quantity",
+    ]
+    .map(|target| format!("quire.op.string.to_{target}"))
+    .into();
+    for schema in [parsed_fixture(SCHEMA), parsed_fixture(NODE_PREIMAGE_SCHEMA)] {
+        let identities: Vec<String> = schema["$defs"]["OperationIdentity"]["enum"]
+            .as_array()
+            .expect("operation identities array")
+            .iter()
+            .map(|identity| identity.as_str().expect("an identity").to_owned())
+            .collect();
+        let text_anchor = identities
+            .iter()
+            .position(|identity| identity == "quire.op.text.size")
+            .expect("text.size is enumerated");
+        let string_anchor = identities
+            .iter()
+            .position(|identity| identity == "quire.op.string.ne")
+            .expect("string.ne is enumerated");
+        assert_eq!(
+            &identities[text_anchor + 1..text_anchor + 7],
+            expected_text_identities
+        );
+        assert_eq!(
+            &identities[string_anchor + 1..string_anchor + 7],
+            expected_string_identities
+        );
+    }
+    let mut package = scalar_equality_package(&catalog);
+    package["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .expect("nodes array")
+        .extend([
+            walk_scalar("Decimal", "decimal"),
+            walk_scalar("Rational", "rational"),
+            walk_scalar("Ms", "unit"),
+        ]);
+    package["lock"]["definition_selections"]
+        .as_array_mut()
+        .expect("definition selections")
+        .push(walk_catalog_law(&catalog, "ieee_profile"));
+    let oracle = OperationOracle::for_package(&catalog, &package);
+    let targets = [
+        ("integer", "Integer", None),
+        ("decimal", "Decimal", Some("rounding")),
+        ("rational", "Rational", None),
+        ("float32", "F32", Some("rounding")),
+        ("float64", "F64", Some("rounding")),
+        ("quantity", "Ms", Some("rounding")),
+    ];
+    let application = |identity: &str, source: &str, target: &str, law_roles: &[&str]| {
+        let laws = law_roles
+            .iter()
+            .map(|role| json!({"role": role, "definition": walk_catalog_law(&catalog, role)}))
+            .collect::<Vec<_>>();
+        json!({
+            "term": "application",
+            "operator": "convert",
+            "operation": {
+                "identity": identity,
+                "laws": laws,
+                "mode": if identity.contains("to_decimal") || identity.contains("to_float") || identity.contains("to_quantity") {
+                    json!({"kind": "rounding", "value": "exact"})
+                } else {
+                    Value::Null
+                },
+                "member": {"kind": "type_argument", "declaration": walk_id(target)},
+                "leaves": []
+            },
+            "result_type": walk_id(target),
+            "arguments": [walk_ref(source)]
+        })
+    };
+
+    for source in ["text", "string"] {
+        let source_node = if source == "text" { "x1" } else { "s1" };
+        for (target, target_node, mode) in targets {
+            let identity = format!("quire.op.{source}.to_{target}");
+            let mut law_roles = Vec::new();
+            if source == "text" {
+                law_roles.push("text_profile");
+            }
+            if matches!(target, "float32" | "float64") {
+                law_roles.push("ieee_profile");
+            }
+            let term = application(&identity, source_node, target_node, &law_roles);
+            assert_eq!(
+                oracle.classify(&term).map(|descriptor| descriptor.family),
+                Ok(target.to_owned()),
+                "{identity} is admitted"
+            );
+            assert_eq!(
+                mode,
+                catalog["operations"]
+                    .as_array()
+                    .expect("operations array")
+                    .iter()
+                    .find(|entry| entry["identity"] == identity)
+                    .and_then(|entry| entry["mode"].as_str()),
+                "{identity} pins its target mode"
+            );
+
+            if source == "string" {
+                let mut with_text_law = term;
+                with_text_law["operation"]["laws"]
+                    .as_array_mut()
+                    .expect("laws array")
+                    .push(json!({
+                        "role": "text_profile",
+                        "definition": walk_catalog_law(&catalog, "text_profile")
+                    }));
+                assert_eq!(
+                    oracle.classify(&with_text_law),
+                    Err(OperationRefusal::LawMismatch),
+                    "{identity} refuses a text_profile law"
+                );
+            }
+        }
+    }
+
+    let wrong_member = application("quire.op.text.to_integer", "x1", "Bool", &["text_profile"]);
+    assert_eq!(
+        oracle.classify(&wrong_member),
+        Err(OperationRefusal::OperatorIneligible),
+        "a boolean type_argument violates the integer member_family"
+    );
 }
 
 /// SE-10 and SE-14 to SE-18: a literal whose type is not its kind's family
