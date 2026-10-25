@@ -36,7 +36,9 @@ const POSITIVE_TICK_TIMED_MODEL_NODES: &str =
 const TIMED_MODEL_NODE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
 const FR322_BODY_STEPS: &str = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
+const FR464_PROTOCOL_NODES: &str = include_str!("../spec/objects/interfaces/FR-464-checked-package-protocol-node-bodies.md");
 const TC233_BODY_STEP_VECTOR: &str = include_str!("../spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md");
+const PROTOCOL_NODE_VECTORS: &str = include_str!("../proposals/checked-package-v2/fixtures/protocol-node-vectors.json");
 const POSITIVE_NOMINAL_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-nominal-identities.json");
 const POSITIVE_CLAUSE_OPERATIONS: &str =
@@ -2385,8 +2387,6 @@ const TEMPORAL_PROFILES: [&[u8]; 3] = [
 const PROTOCOL_FINITE: &[u8] =
     include_bytes!("../proposals/quire-v1/definitions/protocol-finite.md");
 const TEMPORAL_COMMON: &str = include_str!("../proposals/quire-v1/definitions/temporal-common.md");
-const BOUNDED_CONTROL_RULE: &str =
-    include_str!("../spec/functional/protocol/FR-052-represent-bounded-control.md");
 
 /// Items of an English list `a, b and c` between `start` and `end` in a text
 /// whose line breaks are read as spaces, spelled with underscores.
@@ -2427,15 +2427,118 @@ fn matched_profile(definition: &Value) -> Option<(&'static str, &'static str)> {
 /// Operators a selected temporal or protocol profile defines, read from the
 /// profile definition the law names: a temporal profile requiring the bounded
 /// facet defines its eight bounded operators, and the finite protocol profile
-/// the FR-052 control constructs.
+/// the FR-464 protocol operator catalog.
 fn profile_operators(definition: &Value) -> Option<Vec<String>> {
     match matched_profile(definition)? {
         ("temporal_profile", text) => text
             .contains("| `quire.temporal.bounded-facet/v1` |")
             .then(|| listed_items(TEMPORAL_COMMON, "bounded operators: ", ".")),
         (_, text) => text
-            .contains("| FR-052 |")
-            .then(|| listed_items(BOUNDED_CONTROL_RULE, "graph for authored ", " without")),
+            .contains("Profile identity: `quire.protocol.finite-global/v1`.")
+            .then(protocol_operators),
+    }
+}
+
+/// The finite-global profile's operators are the FR-464 protocol-node catalog.
+fn protocol_operators() -> Vec<String> {
+    let mut rows = FR464_PROTOCOL_NODES
+        .lines()
+        .skip_while(|line| !line.starts_with("| Operator |"))
+        .skip(2)
+        .take_while(|line| line.starts_with('|'));
+    let mut operators = Vec::new();
+    for row in &mut rows {
+        let Some(cell) = row.split('|').nth(1) else {
+            continue;
+        };
+        operators.extend(cell.split('`').skip(1).step_by(2).map(str::to_owned));
+    }
+    operators
+}
+
+#[trace("TC-946", "FR-464-AC-1")]
+#[test]
+fn protocol_node_vectors_match_the_fr464_operator_catalog() {
+    let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
+    let expected = protocol_operators();
+    let actual = vectors["operators"]
+        .as_array()
+        .expect("protocol operator vectors are an array")
+        .iter()
+        .map(|entry| {
+            let operator = entry["operator"].as_str().expect("operator is text");
+            let semantic_form = entry["semantic_form"]
+                .as_str()
+                .expect("semantic form is text");
+            let arguments = entry["arguments"]
+                .as_array()
+                .expect("argument layout is an array");
+            assert!(!semantic_form.is_empty());
+            assert!(!arguments.is_empty());
+            operator.to_owned()
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(actual, expected);
+    assert_eq!(actual.len(), 20);
+
+    for schema_text in [SCHEMA, NODE_PREIMAGE_SCHEMA] {
+        let schema = parsed_fixture(schema_text);
+        let rules = schema["$defs"]["ProtocolControlApplication"]["allOf"]
+            .as_array()
+            .expect("protocol application argument rules are an array");
+        assert_eq!(rules.len(), actual.len());
+        for vector in vectors["operators"].as_array().unwrap() {
+            let operator = vector["operator"].as_str().unwrap();
+            let rule = rules
+                .iter()
+                .find(|rule| {
+                    rule["if"]["properties"]["operation"]["properties"]["member"]["properties"]["operator"]["const"]
+                        == operator
+                })
+                .unwrap_or_else(|| panic!("schema has no argument rule for {operator}"));
+            let arguments = rule["then"]["properties"]["arguments"]["prefixItems"]
+                .as_array()
+                .expect("schema argument layout is an array");
+            let names = arguments
+                .iter()
+                .map(|argument| argument["properties"]["name"]["const"].as_str().unwrap())
+                .collect::<Vec<_>>();
+            let expected_names = vector["arguments"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|name| name.as_str().unwrap())
+                .collect::<Vec<_>>();
+            assert_eq!(names, expected_names, "{operator} schema argument layout");
+            assert_eq!(rule["then"]["properties"]["arguments"]["minItems"], names.len());
+            assert_eq!(rule["then"]["properties"]["arguments"]["maxItems"], names.len());
+        }
+    }
+}
+
+#[trace("TC-946", "TC-947", "TC-948")]
+#[test]
+fn protocol_node_case_vectors_publish_the_qspec_examples() {
+    let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
+    let cases = vectors["cases"]
+        .as_array()
+        .expect("QSpec protocol cases are an array");
+    let counts = ["TC-946", "TC-947", "TC-948"].map(|test_case| {
+        cases
+            .iter()
+            .filter(|case| case["test_case"] == test_case)
+            .count()
+    });
+    assert_eq!(counts, [108, 85, 162]);
+    for case in cases {
+        assert!(case["section"].as_str().is_some_and(|section| !section.is_empty()));
+        assert!(case["id"].as_str().is_some_and(|id| !id.is_empty()));
+        assert!(case["Expected"].as_str().is_some_and(|expected| !expected.is_empty()));
+        assert!(
+            ["Edit", "Edit to the base", "Encoded"]
+                .iter()
+                .any(|field| case[*field].as_str().is_some_and(|edit| !edit.is_empty()))
+        );
     }
 }
 
@@ -11886,7 +11989,7 @@ fn temporal_clause_refusal(
 #[trace("TC-303", "FR-370-AC-10")]
 #[test]
 fn tc_303_a_clause_profile_check_runs_before_its_other_checks() {
-    let protocol = json!({"authority": "agent-ix", "identity": "quire.protocol.finite/v1"});
+    let protocol = json!({"authority": "agent-ix", "identity": "quire.protocol.finite-global/v1"});
     let lock = json!({
         "edition": {"role": "edition", "definition": {"authority": "agent-ix", "identity": "quire-edition"}},
         "profile_selections": [{"role": "protocol_profile", "definition": protocol}]
