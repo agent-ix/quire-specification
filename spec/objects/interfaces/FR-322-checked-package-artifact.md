@@ -426,7 +426,8 @@ boundary.
   `operator-ineligible` (arity, operand family, constraint, member or result
   type outside the entry; code `ill_typed`); then the leaves.
 - `application_node_preimage` — every `value`/`union_value` node, and every
-  other node whose body contains an application, is keyed by the JCS SHA-256
+  other node whose body contains an application except a
+  `relation`/`refinement` node, is keyed by the JCS SHA-256
   of `{version: "quire.application-node/v1",
   node_tag, semantic_form, semantic_type, declaration, recursion, body}`.
   `declaration` is the node's `declaration` member or `null`; `recursion` is
@@ -466,7 +467,8 @@ boundary.
   refusal, the reader runs the body steps in this one order, each over its
   own node forms and each reporting before the next starts: the state-graph
   step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
-  the terminal step (FR-476), the step-relation step (FR-477), the hybrid
+  the refinement step (FR-375), the terminal step (FR-476),
+  the step-relation step (FR-477), the hybrid
   step (FR-481), the timed-model step (FR-230), the protocol step (FR-464)
   and the schedulability step (FR-482). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
@@ -477,13 +479,19 @@ boundary.
   whose body holds no application, model declaration nodes and clause
   functions included (QSL FR-094 keys a model-owned node by the same
   preimage), except a `value`/`union_value` node or a
-  `correspondence`/`abstraction_relation` node. A `union_value` is checked
+  `correspondence`/`abstraction_relation` node or a
+  `relation`/`refinement` node. A `union_value` is checked
   at the application-node key stage above. An `abstraction_relation`
   node is keyed by its own `{version: "quire.abstraction-relation-node/v1",
   body}` preimage
   ([FR-451](FR-451-checked-package-abstraction-relation-body.md)), which
   FR-451's abstraction step checks after the state step; this stage neither
-  re-keys nor refuses it. Only that form is excluded: a `correspondence` node of
+  re-keys nor refuses it. A `relation`/`refinement` node is keyed by its own
+  `{version: "quire.refinement-node/v1", semantic_type, body}` preimage
+  ([FR-375](../../functional/analysis/FR-375-declare-model-refinement.md));
+  FR-375's refinement step checks it after the abstraction step, and neither
+  general key stage re-keys or refuses it. Among `correspondence` nodes, only
+  the abstraction form is excluded: a node of
   any other form (`source_locus`, `model_correspondence`, `binding_role`,
   `profile_correspondence`) whose body holds no application is a structural
   node and is keyed by this stage. So a consumer reading a range, bound, element type or field
@@ -907,7 +915,8 @@ of every package
 
 A structural node (the derived-shape key stage above: no
 `nominal_identity_preimage`, a body holding no application, and not a
-`value`/`union_value` or `correspondence`/`abstraction_relation` node) is
+`value`/`union_value`, `correspondence`/`abstraction_relation` or
+`relation`/`refinement` node) is
 keyed by the SHA-256 of the RFC 8785 bytes of one `quire.structural-node/v1`
 object. QSL FR-092 mints the key; this section is the same preimage, so that
 a reader re-derives every structural key from the package and this artifact
