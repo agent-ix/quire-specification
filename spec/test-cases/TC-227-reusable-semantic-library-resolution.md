@@ -5,6 +5,8 @@ type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-307
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-307-AC-7
+    type: verifies
 ---
 
 # TC-227: Reusable semantic library resolution
@@ -38,7 +40,7 @@ compiles to.
 | L06 | P imports libraries `Z` and `A` in that source order | the lock lists `A` then `Z` |
 | L08 | L' is L with a changed export, presented as a checked package retaining L's `package_id`; then P links L' as its selection of `L` | `refused { code: invalid_package, cause: invalid-value }` at member path `/package_id`, because the recomputed digest of L''s identity preimage differs; P's import resolves no L' and binds no lock selection |
 | L09 | `import "test/geometry" as g;` with a library supplied as `test/geometry`, together with a library supplied as `test/geometry/extra`; then `import "test/geometry" digest "<64 lowercase hex>" as g;` and `import "test/geometry" version "1.0.0" as g;`; then two libraries supplied as `test/geometry`, first differing and then identical; then no library supplied as `test/geometry`; then, with `test/geometry` also exporting a record `R`, a use `g::R` | admitted, bound to the library supplied as `test/geometry` and to no other, the lock's selection of `test/geometry` the `package_id` its source compiles to; `refused { code: invalid_syntax, cause: unexpected-token }` at the `digest` token and at the `version` token; `refused { code: invalid_package, cause: conflicting-definition }` before any compile, naming both supplied libraries by their identity, in both cases; `refused { code: missing_import, cause: missing-selection }` at the import's identity string; `refused { code: ill_typed, cause: operator-ineligible }` at `g::R` |
-| L10 (planned) | A imports B, B imports C, and A has no direct import of C; compare the produced locks and recompile A against an altered A lock that also lists C | A emits only B, B emits only C, and A derives B and C in its closure. The altered A lock differs from recompilation and is not certified as canonical producer output |
+| L10 | A imports B, B imports C, and A has no direct import of C; compare the produced locks and recompile A against an altered A lock that also lists C | A emits only B, B emits only C, and A derives B and C in its closure. The altered A lock differs from recompilation and is not certified as canonical producer output |
 
 ## Expected Results
 
