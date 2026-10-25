@@ -618,6 +618,7 @@ boundary.
   | `composite_type` `option`, a collection kind, `reference`; declared `record` or `tuple` | each node the body references |
   | `expression`/`reference`, `correspondence`/`source_locus`, `protocol`/`protocol_reference` | the body's target |
   | `scalar_type`/`compound_unit` | each unit its terms reference |
+  | `relation`/`refinement` | the unique digest-ascending local body keys and term references of FR-375, including local `abstract` and `protocol` keys even with no rows; no external `PackageNodeKey`, profile `DefinitionRef` or standalone `semantic_type` edge |
 | `extension`/`extension_form` | the unique digest-ascending targets of its clause bindings |
   | `function`, a clause function included | each node its body references: its parameter nodes, its body's root node and its measure's node |
   | an `expression` holding an application | rules 1 and 2 over the application |
