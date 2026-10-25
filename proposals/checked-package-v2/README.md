@@ -69,7 +69,7 @@ structures, but any external consumer receives only the contract.
 - `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-17` of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
   `generated` `source_map` entries against its step rows, its `steps` order and
-  whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). The refinement members of the cases are illustrative, since no refinement body exists in `schema.json` or in a published package; a real entry is compared by node key.
+  whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node key.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.

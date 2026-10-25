@@ -618,6 +618,7 @@ boundary.
   | `composite_type` `option`, a collection kind, `reference`; declared `record` or `tuple` | each node the body references |
   | `expression`/`reference`, `correspondence`/`source_locus`, `protocol`/`protocol_reference` | the body's target |
   | `scalar_type`/`compound_unit` | each unit its terms reference |
+  | `relation`/`refinement` | the unique digest-ascending local body keys and term references of FR-375, including local `abstract` and `protocol` keys even with no rows; no external `PackageNodeKey`, profile `DefinitionRef` or standalone `semantic_type` edge |
 | `extension`/`extension_form` | the unique digest-ascending targets of its clause bindings |
   | `function`, a clause function included | each node its body references: its parameter nodes, its body's root node and its measure's node |
   | an `expression` holding an application | rules 1 and 2 over the application |
@@ -970,7 +971,7 @@ fixed by the schema, whatever the model's size.
 | Group | `aggregate` whose members are each a Leaf or a `binding` whose value is a Leaf |
 | Tuple | `aggregate` whose members are each a Leaf or a Group |
 | Member | a Leaf, a Group, or a `binding` whose value is a Leaf, a Group or a Tuple |
-| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)); or an `extension_form` body, whose clause values are each a `reference` ([FR-469](FR-469-checked-package-extension-nodes.md)) |
+| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)); a `refinement` body with the closed row and target grammar of [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md); or an `extension_form` body, whose clause values are each a `reference` ([FR-469](FR-469-checked-package-extension-nodes.md)) |
 
 **Integer literal operands.** The producer SHALL write an integer literal
 operand of `quire.op.integer.add`, `quire.op.integer.sub`,

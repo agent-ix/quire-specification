@@ -156,6 +156,17 @@ Mutations, each applied alone to the positive unit:
 22. a plain temporal clause under `quire.temporal.infinite-trace/v1`, with no
     refinement, in a unit that selects no value layer.
 23. a protocol-subject refinement whose rows include `step duplicate`, `step lose`, `step spawn`, `step retire`, `step fork`, `step join`, a template's `cattempt` and `cend` rows, `step memory flush` and `step memory drain`, written in one order and then in the exact reverse of it, so every tied pair and the two memory rows swap their relative order.
+24. select one abstract model `Spec` whose declaration node is local to the
+    declaring package and has no populations, and two distinct
+    concrete model declarations `ImplA` and `ImplB`, each with no operations;
+    declare one refinement from `Spec` to each concrete model under the same
+    infinite-trace profile, with empty `populations`, `objects`, `steps`,
+    `histories`, `assume` and `ensure` arrays and otherwise identical bodies.
+    Compare each node's `semantic_type`, closed node-id preimage and node id.
+25. repeat mutation 13 with the selected abstract protocol clause declared
+    in the unit that declares the refinement, so the clause node is local to
+    the refinement's checked package; compare its `protocol` key and
+    `dependencies` with mutation 13's directly selected dependency clause.
 
 ## Expected Results
 
@@ -189,7 +200,9 @@ declaration requires `temporal-satisfaction` and the step obligation
 `operation-contract` (FR-375-AC-8).
 In mutation 13 the three declarations (`Spec::Twice`, `Spec::Twice2`, `Spec`)
 use identical rows and are each admitted with three distinct node ids; the
-two protocol subjects carry `protocol` and list the clause in `dependencies`,
+two protocol subjects carry `protocol` as a `PackageNodeKey` and join the
+external clause through `dependency_selections`, without listing it in their
+local `dependencies`,
 and the `abstract Spec` node has neither. `Spec::Thrice`, `Spec::Counter`,
 `Spec::counters` and `Nope::Twice` each refuse `missing_declaration`/
 `missing-name` at `Thrice`, `Counter`, `counters` and `Nope`; `Spec::Wrong`
@@ -245,3 +258,10 @@ vector); the `ready = protocol Fill` row, in the separate run, is the only refus
 (FR-375-AC-18, FR-001-AC-7, FR-090-AC-10, FR-250-AC-8). In mutation 22 the
 clause is admitted and the unit's selection gains no value layer or lock row
 (FR-090-AC-10). In mutation 23 the node's `steps` array is identical for the two source orders, the tied rows ordered by alias-free class spelling in UTF-8 byte order and the two `memory` rows after every declaration-naming row, `drain` before `flush` (FR-375-AC-19).
+In mutation 24 both refinements are admitted, their bodies are identical,
+their `semantic_type` keys differ, both closed preimages carry their respective
+`semantic_type`, and their recomputed node ids differ. The local abstract
+model key appears in each node's `dependencies` despite the empty row arrays
+(FR-375-AC-7). In mutation 25 the local clause is a `NodeRef` in `protocol` and appears in
+`dependencies`; mutation 13's external clause remains a `PackageNodeKey`
+joined through the direct dependency selection (FR-375-AC-11).
