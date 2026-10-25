@@ -403,6 +403,32 @@ clause names each declaration by qualified name, such as `M::sys_pump`.
 Artifact-type ids such as `FR-100` declare no model node and are outside this
 rule.
 
+A composed document is a document whose `type` is neither an object type a
+loaded module declares nor equal to its own `object` (an artifact type such as
+`FR`, `NFR` or `TC`) and that also carries an `object:` member, such as a
+requirement `FR-204` with `object: value_object`. The rule sits on extraction
+(step 2) and the lift (step 3), which produce the domain package intake reads:
+the document selection is the filament-core-data extraction step
+(filament-core-data FR-091), which skips a document whose `type` is an
+artifact type such as `FR`, that is, neither an object type a loaded module
+declares nor equal to the document's own `object`, even if it carries
+`object:`. It classifies a document by its `type` alone, never by `object:`. The lift therefore emits no IR node for a composed document, so the
+package has no declaration key and no `<Name>` segment for it, and its
+hyphenated artifact id never meets the object id rule. Its `object:` member is
+descriptive classification for the reader; no model name is derived from it,
+from the document's `id` or from any other member, and there is no
+explicit-name member. Intake reads package bytes only and does not
+classify documents. A reference to a composed document as a model declaration
+is a reference to a node no package carries: a relationship end, supertype,
+field type or other IR reference naming `ix://<package identity>/FR-204`
+refuses `missing_declaration`/`missing-name`, and a clause cannot spell
+`M::FR-204` because `FR-204` is not a `member-name`. A document link to the
+composed document (`ix://agent-ix/<repo>/FR-204` in frontmatter
+relationships) is a document link and never a model reference. A
+package that nevertheless carries a node whose `<Name>` segment is an
+artifact-type id is refused by the object id rule above,
+`invalid_model_binding`/`malformed-declaration`, as a frontend defect.
+
 A declaration's IR node identity is the identity filament-core-data FR-095
 mints (the closed slot list of its "Node identities" section), except for the
 four kinds below, rooted at
@@ -509,6 +535,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-27 | A sequence `items` and a map `values` typed `ix://quire/native/Clock`, and the same typed by an alias of `Clock`, are admitted with no declaration built for the clock and read as `Sequence<Clock>` and `Map<Text, Clock>`; a field typed by such a sequence with multiplicity `{0, 2, true, false}` is a `Sequence<Sequence<Clock>>[0, 2]`; a record value type with a clock field, held by a field of multiplicity `{0, 2, true, false}`, is a `Sequence<Timer>[0, 2]` clock collection. | Test (TC-234) |
 | FR-154-AC-28 | With the unit `ms` and `A/d` a field typed `ix://quire/unit/ms`, a `min` constraint `1` and a `max` constraint `3` on `ms`, the values `1 ms`, `3 ms` and `3/2 ms` are admitted, `0 ms` and `7/2 ms` supplied as an initial state each refuse `invalid_runtime_input`/`invalid-value` naming `A/d`, the constraint identity, its keyword and its bound, an absent optional `A/d` is admitted, a sequence `items` typed `ms` is checked at each element, and a successor whose post-state sets `A/d` to `7/2 ms` is recorded as a successor that violates the `max` invariant and is not pruned; `A/d` stays typed `Quantity<ms>`, `convert<Quantity<s>>(self.d)` is checked for every `ms` quantity, and `self.d / x` still refuses `undefined_expression`/`unproved-nonzero` however the `min` reads. | Test (TC-234) |
 | FR-154-AC-29 | A `min` constraint on `ms` with `operands.value` `"1/0"`, `"0.5"` and `""` refuses `invalid_model_binding`/`malformed-declaration` at `Constraint.operands`; a `min` `5` with a `max` `3` on the same `appliesTo` refuses the same at the later constraint; a `min` `5` on an alias `D` of `ms` with a `max` `3` on `ms` is admitted and no value of a `D` member satisfies both; a bound on the alias `D` constrains `D` members and no other `ms` member; a quantity of the unit `s` is not bounded by a bound on `ms`. | Test (TC-234) |
+| FR-154-AC-30 | A composed document (`type: FR` with `object: value_object`, or with `object: enumeration`, as `FR-204` and `FR-271`) declares no model node: extraction skips it because its `type` is an artifact type even though it carries `object:`, the lift emits none, and a package built from a bundle that holds it equals the package built without it. A relationship end or supertype naming `ix://<package identity>/FR-204` refuses `missing_declaration`/`missing-name`, a node carrying `FR-204` as its `<Name>` segment refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.identity`, and no composed document is ever lifted under a name derived from its id. | Test (TC-234, TC-945) |
 
 ## Dependencies
 

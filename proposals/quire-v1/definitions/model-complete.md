@@ -99,7 +99,11 @@ its artifact id is an object id: ASCII letters, digits and
 underscores, starting with a letter (`^[A-Za-z][A-Za-z0-9_]*$`). An object id
 is always a `member-name`, so a clause names every declaration by qualified
 name, such as `M::sys_pump`. Artifact-type ids such as `FR-100` declare no
-model node.
+model node, and neither does a composed document, an artifact-type document
+that also carries `object:` (such as `FR-204` with `object: value_object`):
+extraction classifies a document by its `type` alone and skips an
+artifact-type document even if it carries `object:`, so `object:` never lifts a
+document or names a model node (FR-154-AC-30).
 
 A declaration's identity is its artifact id. Every type definition is declared
 by its own artifact: an object type, value type, variant type, population,
