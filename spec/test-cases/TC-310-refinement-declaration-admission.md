@@ -167,6 +167,44 @@ Mutations, each applied alone to the positive unit:
     in the unit that declares the refinement, so the clause node is local to
     the refinement's checked package; compare its `protocol` key and
     `dependencies` with mutation 13's directly selected dependency clause.
+26. **Checked-package read/write vectors (RW-01 to RW-08).** Emit the
+    admitted package of mutation 24 with only the `ImplA` refinement as
+    `RW-01`. Keep a second local abstract model `Spec2`, with no populations
+    or operations, in that package for `RW-03`; its key is distinct from
+    `Spec`'s. Pass the emitted canonical bytes through the strict V2 reader,
+    then write the admitted package and read it again. Use a separate
+    producer-emitted package of mutation 2 (`peek -> any`) as the base for
+    `RW-04`, so the refinement is not proof-eligible and carries only its
+    `declaration` occurrence. Use mutation 13's producer-emitted package as
+    the base for `RW-06`, with `abstract` a `PackageNodeKey` of a directly
+    selected dependency. Use the positive unit's producer-emitted package as
+    the base for `RW-07` and `RW-08`.
+
+    For each edited wire below, apply only that edit to its named base. Keep
+    all other nodes and selected inputs valid. Recompute the package's
+    identity projection and `package_id` after the edit. Except for the two
+    deliberately stale-key cases, recompute the refinement's closed
+    `quire.refinement-node/v1` key, rewrite references and source-map
+    occurrence keys to the new node id, and rebuild its exact local
+    `dependencies` list in digest order. For `RW-06`, remove the direct
+    dependency selection and the supplied dependency while leaving the
+    external `PackageNodeKey` in the body; update the lock and selection
+    preimage as well. No vector relies on a stale package id, a stale source
+    map, a missing supplied package for a still-selected entry, or an
+    unrelated graph-shape refusal. Let `{n}` be the refinement's index in
+    `semantic_graph.nodes` after the edit and `{j}` the index of the first
+    row that breaks the order in `RW-04`.
+
+    | Vector | Base and single wire edit |
+    | --- | --- |
+    | `RW-01` | Unedited row-empty `ImplA` package; write, read, write and read again. |
+    | `RW-02` | `RW-01`: replace only `semantic_type` with the existing local `ImplB` model key, retaining the refinement `node_id`. |
+    | `RW-03` | `RW-01`: replace only `body.abstract` with local `Spec2`'s key, rebuild `dependencies`, but retain the refinement `node_id`. |
+    | `RW-04` | Mutation 2 package: swap the first two distinct `steps` entries in the wire while preserving their entry values; rekey the refinement. |
+    | `RW-05` | `RW-01`: set `body.abstract` to a well-formed `NodeRef` absent from this graph, with no dependency package selector; rekey the refinement. |
+    | `RW-06` | Mutation 13 package: remove the direct selection for the external package named by `body.abstract`, leaving that `PackageNodeKey` unchanged; rekey the refinement. |
+    | `RW-07` | Positive package: replace `body.objects[0].concrete_type` with the existing local Boolean `scalar_type` key; rekey the refinement. |
+    | `RW-08` | Positive package: replace `body.objects[0].fields[0].expression` with the inline Boolean literal `{term: "literal", type: B, value_kind: "boolean", value: true}`, where `B` is the package's local Boolean node key; rekey the refinement. |
 
 ## Expected Results
 
@@ -265,3 +303,24 @@ model key appears in each node's `dependencies` despite the empty row arrays
 (FR-375-AC-7). In mutation 25 the local clause is a `NodeRef` in `protocol` and appears in
 `dependencies`; mutation 13's external clause remains a `PackageNodeKey`
 joined through the direct dependency selection (FR-375-AC-11).
+
+In mutation 26, `RW-01` is admitted on both reads; its rewritten canonical
+package has the same refinement node id and `package_id` as the first write.
+Every other vector is schema-valid and identity-consistent at the package
+level, so the strict reader returns `refused`, exposes no admitted package,
+and writes no package from that read. The first refusal is exactly:
+
+| Vector | Code / cause | Locus and reader step |
+| --- | --- | --- |
+| `RW-02` | `invalid_package` / `stale-node-key` | `/semantic_graph/nodes/{n}/node_id`, refinement step 1; the changed `semantic_type` enters the dedicated preimage. |
+| `RW-03` | `invalid_package` / `stale-node-key` | `/semantic_graph/nodes/{n}/node_id`, refinement step 1; the changed body enters the same preimage. |
+| `RW-04` | `invalid_semantic_graph` / no cause | `/semantic_graph/nodes/{n}/body/steps/{j}`, refinement step 2. |
+| `RW-05` | `missing_declaration` / `missing-name` | `/semantic_graph/nodes/{n}/body/abstract`, refinement step 3; a direct dependency holding the same digest does not satisfy the local key. |
+| `RW-06` | `missing_declaration` / `missing-selection` | `/semantic_graph/nodes/{n}/body/abstract/package`, refinement step 3; supplying the removed dependency without restoring its direct selection changes nothing. |
+| `RW-07` | `invalid_model_binding` / `malformed-declaration` | `/semantic_graph/nodes/{n}/body/objects/0/concrete_type`, refinement step 4. |
+| `RW-08` | `ill_typed` / `type-mismatch` | `/semantic_graph/nodes/{n}/body/objects/0/fields/0/expression`, refinement step 4. |
+
+`RW-02` and `RW-03` are FR-375-AC-20's retained-key refusals.
+`RW-04` to `RW-08` exercise FR-375-AC-21's ordered checks and both row
+target and row type joins. Each is refused after the earlier FR-322 stages
+have admitted its shape, source map, dependency list and package identity.

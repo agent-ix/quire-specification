@@ -518,8 +518,9 @@ refinement node, the reader checks in this order and reports its first defect:
    entry shape specified in the row table. A missing target refuses
    `missing_declaration`/`missing-name` at that key; a present target of the
    wrong kind or subject refuses `invalid_model_binding`/
-   `malformed-declaration` at that key; an expression whose admitted
-   `semantic_type` does not conform to its row's abstract target type
+   `malformed-declaration` at that key; an expression whose checked result
+   type (the referenced node's `semantic_type`, or the inline term's
+   declared `type` or `result_type`) does not conform to its row's abstract target type
    refuses `ill_typed`/`type-mismatch` at the expression. An `open` term
    outside a step target's `arguments` fails the V2 schema before this step.
 
