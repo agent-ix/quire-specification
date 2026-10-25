@@ -208,6 +208,18 @@ Mutations, each applied alone to the positive unit:
 
 ## Expected Results
 
+For every producer-emitted refinement with step rows, inspect the closed
+`refinement_step_rows` sidecar: one entry per `body.steps` position names the
+retained refinement node id, that position's zero-based ordinal, and the
+exact original checked source row region. Reverse the source order of two
+semantically distinct rows while keeping the same canonical `steps` order:
+the sidecar regions follow their rows, and the refinement node id and
+`package_id` remain equal. For a proof-eligible refinement, each generated
+owner occurrence at ordinal `i + 1` has that sidecar row region. For a
+refinement made ineligible by an `any` target, the sidecar still has its
+rows and the owner has no generated occurrence (FR-375-AC-22,
+FR-322-AC-129).
+
 The positive unit is admitted with one `relation`/`refinement` node whose
 body carries every row, sorted as FR-375 states (FR-375-AC-1). Mutation 1
 refuses `missing_declaration`/`missing-name` naming `peek`, and mutation 2

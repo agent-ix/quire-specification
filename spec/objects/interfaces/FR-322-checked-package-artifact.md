@@ -846,6 +846,35 @@ boundary.
     source-map agreement of the derived-shape key stage (FR-322-AC-52), over the
     refinement owner nodes, visiting them in ascending retained node-id digest
     order, and report the first failing owner.
+- `refinement_step_rows` — an identity-excluded source-provenance sidecar for
+  refinement step rows. It is absent exactly when no `relation`/`refinement`
+  node has a `steps` entry; otherwise it is a nonempty array of closed
+  `{node_id, ordinal, region}` entries. `node_id` is the refinement owner's
+  retained `NodeRef`; zero-based `ordinal` is the position of one entry in
+  that owner's canonical `body.steps` array; `region` is exactly one
+  `SourceRegion` for the original checked source row that produced the step.
+  QSL SHALL derive this region from the checked source row before writing the
+  package, including for a refinement that is not proof-eligible. The entries
+  are ordered first by owner node-id digest and then by ascending ordinal.
+  Neither the sidecar nor any of its source regions enters a node preimage,
+  the identity projection or `package_id`; changing a row region alone leaves
+  those identities unchanged.
+
+  After the owner join and before refinement step occurrences, the reader
+  SHALL visit `refinement_step_rows` in wire order and refuse
+  `invalid_package`/`invalid-value` at `/refinement_step_rows/{i}` for an entry
+  whose `node_id` is not one retained `relation`/`refinement` node, whose
+  ordinal is outside that owner's `steps` array, whose owner and ordinal pair
+  repeats, or whose position breaks the required order. It then SHALL require
+  exactly one entry for every step position of every refinement owner; an
+  absent sidecar, a present sidecar with no refinement step, or a missing
+  position refuses `invalid_package`/`invalid-value` at
+  `/refinement_step_rows`. For each proof-eligible owner, the reader SHALL
+  compare the single region of its `generated` `source_map` occurrence at
+  ordinal `i + 1` to the region at sidecar ordinal `i`; a mismatch refuses
+  `invalid_package`/`invalid-value` at that `source_map` entry. These checks
+  compare two wire carriers; the reader does not parse raw QSL source to
+  verify that a producer supplied the true original row region.
 - `capability_report` — one closed disposition for every required feature and
   selected model capability. Backend/provider installation is absent.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
@@ -2360,6 +2389,8 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-125 | A tick source's `operation` reference targets a `state`/`operation_anchor`; its anchor context equals both the tick source's `model` and the timed root's `model`, and its operation resolves as a declared operation of that model. A function node or an anchor of another model refuses `invalid_package`/`timed-node-reference` in the timed-model step. An unresolved name on a model-owned operation anchor is refused earlier by FR-342 as `missing_declaration`/`missing-name` at the operation member. A valid anchor advances time by the exact positive period per occurrence. | Test (TC-367; TM-08, TM-11, TM-20, TM-21) |
 | FR-322-AC-126 | I2 refuses a tick source that owns any clock place as `invalid_package`/`clock-without-dense-time` at the offending place node's `model` binding pointer `/semantic_graph/nodes/{place}/body/members/0/value/target`. A tick source with no places remains admissible; TM-23 starts from the positive tick fixture, adds the positive dense fixture's valid clock-place node to its root, and reports the appended place node's model pointer. | Test (TC-367; TM-23) |
 | FR-322-AC-127 | The timed root names the exact base `Time` dimension node and the source unit's `dimension_node_id` equals that node by identity. I2 refuses a source unit in base `Length`, a derived non-Time dimension, or a nominal derived-Time dimension as `ill_typed`/`invalid-time-quantity` at `/semantic_graph/nodes/{source}/body/members/1/value/target`, for both dense and tick sources. Dimension equivalence, matching dimension terms, names and declaration order do not substitute for this identity equality. | Test (TC-367; TM-24..TM-29) |
+| FR-322-AC-128 | A checked package with refinement steps carries one closed `refinement_step_rows` entry for every step of every refinement owner, keyed by that owner's retained node id and zero-based canonical step ordinal; its regions are excluded from node and package identity. The reader admits the `RS-01` and `RS-02` row regions independently of source order, and refuses an absent or incomplete sidecar at `/refinement_step_rows`, and a wrong owner, out-of-range ordinal, duplicate pair or noncanonical order at the offending entry. | Test (TC-233) |
+| FR-322-AC-129 | A proof-eligible refinement owner with source rows `R0` and `R1` is admitted only when generated occurrence ordinals 1 and 2 each carry exactly the region of the corresponding `refinement_step_rows` entry; changing either generated region or its row-region carrier alone leaves identities unchanged but refuses `invalid_package`/`invalid-value` at that `source_map` entry. A refinement that is not proof-eligible still carries every row-region entry and no generated occurrence. | Test (TC-233, TC-310) |
 
 ## Dependencies
 
