@@ -15843,7 +15843,22 @@ const REFINEMENT_STEP_VECTORS: &str =
 /// refinement owner's `source_map` entries, or `None` when admitted.
 fn refinement_step_refusal(case: &Value) -> Option<String> {
     let refinement = &case["refinement"];
-    let owner = &refinement["node_id"];
+    let source_map = case["source_map"].as_array().expect("source map");
+    let owner = source_map
+        .iter()
+        .find(|entry| {
+            entry["role"] == "declaration"
+                && entry["regions"] == json!([refinement["declaration"]])
+        })
+        .or_else(|| {
+            source_map
+                .iter()
+                .find(|entry| entry["node_id"] == refinement["node_id"])
+        })
+        .map(|entry| &entry["node_id"]);
+    let Some(owner) = owner else {
+        return Some("/source_map".to_owned());
+    };
     // A hidden field: an abstract field of the entry's object type with no field row.
     let hidden = refinement["objects"]
         .as_array()
@@ -15858,22 +15873,38 @@ fn refinement_step_refusal(case: &Value) -> Option<String> {
                 .any(|field| !rows.contains(field))
         });
     let eligible = !hidden && refinement["histories"] == 0 && refinement["any_row"] == false;
-    // The region of the row at each `steps` position, whatever the written order.
-    let steps: Vec<&Value> = refinement["steps"]
-        .as_array()
-        .expect("steps")
-        .iter()
-        .map(|name| {
-            &refinement["rows"]
-                .as_array()
-                .expect("rows")
-                .iter()
-                .find(|row| row["name"] == *name)
-                .expect("a named row")["region"]
-        })
-        .collect();
+    let step_names = refinement["steps"].as_array().expect("steps");
+    let Some(step_rows) = case["refinement_step_rows"].as_array() else {
+        return Some("/refinement_step_rows".to_owned());
+    };
+    let mut previous_key: Option<(String, u64)> = None;
+    for (index, row) in step_rows.iter().enumerate() {
+        if row["node_id"] != *owner {
+            return Some(format!("/refinement_step_rows/{index}"));
+        }
+        let ordinal = row["ordinal"].as_u64().expect("row ordinal");
+        let key = (
+            row["node_id"]["digest"].as_str().expect("node digest").to_owned(),
+            ordinal,
+        );
+        if previous_key.as_ref().is_some_and(|previous| previous >= &key) {
+            return Some(format!("/refinement_step_rows/{index}"));
+        }
+        previous_key = Some(key);
+    }
+    if step_rows.len() != step_names.len() {
+        return Some("/refinement_step_rows".to_owned());
+    }
+    for (index, row) in step_rows.iter().enumerate() {
+        if usize::try_from(row["ordinal"].as_u64().expect("row ordinal")).ok() != Some(index) {
+            return Some(format!("/refinement_step_rows/{index}"));
+        }
+    }
+    // The sidecar is keyed by the canonical step order, independently of the
+    // order in which the source rows were written.
+    let steps: Vec<&Value> = step_rows.iter().map(|row| &row["region"]).collect();
     let mut seen = std::collections::BTreeSet::new();
-    for (index, entry) in case["source_map"].as_array().expect("source map").iter().enumerate() {
+    for (index, entry) in source_map.iter().enumerate() {
         if entry["node_id"] != *owner {
             continue;
         }
@@ -15910,7 +15941,7 @@ fn refinement_step_refusal(case: &Value) -> Option<String> {
 fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligation() {
     let vectors = parsed_fixture(REFINEMENT_STEP_VECTORS);
     let cases = vectors["cases"].as_array().expect("cases");
-    assert_eq!(cases.len(), 17);
+    assert_eq!(cases.len(), 24);
     for case in cases {
         let name = case["name"].as_str().expect("name");
         let refusal = refinement_step_refusal(case);
