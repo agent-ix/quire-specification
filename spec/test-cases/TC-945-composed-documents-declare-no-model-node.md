@@ -12,7 +12,7 @@ relationships:
 
 Verify FR-154's composed document rule: a document whose `type` is an artifact
 type and that also carries `object:` is skipped by extraction because its `type` is an artifact type, is never
-lifted, and is never named by a model reference. Scope: FR-154-AC-14.
+lifted, and is never named by a model reference. Scope: FR-154-AC-30.
 
 ## Test Procedure
 
@@ -31,5 +31,5 @@ over package `test/orders` with object types `entity`, `value_object`,
 
 ## Expected Results
 
-Every result matches FR-154-AC-14; no composed document is lifted under a name
+Every result matches FR-154-AC-30; no composed document is lifted under a name
 derived from its id.

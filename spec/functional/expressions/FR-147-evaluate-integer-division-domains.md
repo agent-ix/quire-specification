@@ -46,7 +46,7 @@ member the operator exposes. Division by zero is undefined and no backend may
 saturate or substitute float division.
 
 The shared grammar recognizes `div`, `rem` and `mod` at product precedence, but
-semantic admission requires the declaration's `quire.value.complete/v1` facet.
+semantic admission requires the declaration's `quire.value.complete/v1` facet (for a refinement's rows, the layers the governing infinite-trace profile requires, FR-375).
 Without it, each occurrence is a located `unsupported_construct` refusal even
 inside an unreachable branch. `/` never denotes integer division; rational `/`
 follows FR-044 and FR-149. The required `div`/`rem` law is selected by the

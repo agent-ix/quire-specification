@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-047
     type: references
+  - target: ix://agent-ix/quire-specification/FR-382
+    type: references
 ---
 
 # FR-341: Checked-package state clause body
@@ -22,7 +24,9 @@ relationships:
 When a `quire.checked-semantic-graph/v2` node has `node_tag: "state"` and
 `semantic_form: "state_clause"`, the producer SHALL encode its `body` as one
 application of `quire.op.state.clause`, the clause operation of an
-invariant, a precondition or a postcondition, whose `state_clause` member
+invariant, a state constraint
+([FR-382](../../functional/analysis/FR-382-select-state-space-reductions.md)),
+a precondition or a postcondition, whose `state_clause` member
 names the clause kind and whose three arguments are, in this fixed order,
 the clause's parameter aggregate, its anchor and its Boolean condition. The
 reader SHALL refuse a node whose joins below do not hold with the first
@@ -33,14 +37,14 @@ refusal in the order below.
 - **body** — an `application` term with `operator: "state_clause"` and
   `operation.identity: "quire.op.state.clause"`, whose `operation.member` is
   `{kind: "state_clause", clause}` with `clause` one of `invariant`,
-  `precondition` or `postcondition`, `laws` empty, `mode` `null` and
+  `constraint`, `precondition` or `postcondition`, `laws` empty, `mode` `null` and
   `leaves` empty. Its `arguments` are exactly:
   1. **the parameter aggregate** — an `aggregate` whose members are
      `reference` terms to `value`/`parameter` nodes, one per value the
      clause binds, in binder-level order: `self` at level 0, then `result`
      when present, then the operation's parameters in declared order;
   2. **the anchor** — a `reference` to the node the clause is anchored at:
-     the context's node for an invariant (a `model`/`object_type`,
+     the context's node for an invariant or a constraint (a `model`/`object_type`,
      `model`/`process` or `model`/`state_machine` node), and the
      operation's `state`/`operation_anchor` node
      ([FR-342](FR-342-checked-package-operation-anchor-body.md)) for a
@@ -63,6 +67,7 @@ anchors, aliases and captures" table:
 | Clause | `self` | `result` | Operation parameters |
 | --- | --- | --- | --- |
 | `invariant` | `Reference<C>`, `C` the anchor type | absent | none |
+| `constraint` | `Reference<C>`, `C` the anchor type | absent | none |
 | `precondition` | `Reference<C>`, `C` the anchor's `context` | absent | the resolved operation's parameters, in order |
 | `postcondition` | `Reference<C>`, `C` the anchor's `context` | the resolved operation's result type, present exactly when the operation has a result | the resolved operation's parameters, in order |
 
@@ -95,7 +100,7 @@ families, groups and constraints"):
 | result | `clause` (declared Boolean) |
 | laws | none |
 | mode | none |
-| member | `state_clause`: `{kind: "state_clause", clause: "invariant" \| "precondition" \| "postcondition"}` |
+| member | `state_clause`: `{kind: "state_clause", clause: "invariant" \| "constraint" \| "precondition" \| "postcondition"}` |
 | constraints | none |
 | leaves | none |
 
@@ -103,7 +108,7 @@ The anchor fits the `object` position: the node of an object type, a process
 or a state machine has family `object`, and an `operation_anchor` node's
 `semantic_type` is its context node (FR-342), so a reference to it has family
 `object` too. The
-clause kind is the only difference between the three clauses' spellings, so
+clause kind is the only difference between the four clauses' spellings, so
 the kind member decides which clause an application is.
 
 ## Node forms and body roots
@@ -136,7 +141,10 @@ aliases and captures" table above (`0` for `self`, ascending for `result`
 and each operation parameter in bound order). Every occurrence has role
 `expression`. The node's `semantic_type` is the value's type, as that table
 and [FR-322](FR-322-checked-package-artifact.md)'s "Model-owned members"
-step 4 derive it.
+step 4 derive it. A step relation's execution binders are the one exception to
+the table's levels: they take the levels that continue across executions
+([FR-477](FR-477-checked-package-step-relation-claim-body.md)
+`parameters`), so a later execution's `self` has a level above `0`.
 
 ## Reader order
 
@@ -151,8 +159,9 @@ order. It reports the first defect. For one clause node, the checks run in
 this order and the first failing check is its defect:
 
 1. **Anchor.** The anchor's target is a declared dependency of the clause
-   node, else `missing_declaration`/`missing-name`; for an invariant it is a
-   `model`/`object_type`, `model`/`process` or `model`/`state_machine` node and
+   node, else `missing_declaration`/`missing-name`; for an invariant or a
+   constraint it is a `model`/`object_type`, `model`/`process` or
+   `model`/`state_machine` node and
    for a precondition or postcondition a `state`/`operation_anchor` node, else
    `invalid_model_binding`/`malformed-declaration`. The locus is the anchor's
    target.
@@ -163,7 +172,7 @@ this order and the first failing check is its defect:
 3. **Signature.** The parameter count and each parameter's type equal the
    table above, else `ill_typed`/`operator-ineligible` at the clause node.
    `self` is checked first, then `result`, then the operation's parameters
-   in order.
+   in order. A constraint is checked as an invariant.
 
 The Boolean condition, the operand families and the `result_type` are the
 application's catalog checks, reported at the operation step in FR-322's
@@ -174,7 +183,7 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-341-AC-1 | A `state`/`state_clause` node's body is a `quire.op.state.clause` application with operator class `state_clause`, a `{kind: "state_clause", clause}` member whose `clause` is `invariant`, `precondition` or `postcondition`, and three arguments: an `aggregate` of one or more `reference` terms, a `reference`, and the condition. A body that is another clause application, names another identity or operator class, carries another member kind or clause value, or whose first or second argument has another term shape fails the published schema. | Test (TC-233) |
+| FR-341-AC-1 | A `state`/`state_clause` node's body is a `quire.op.state.clause` application with operator class `state_clause`, a `{kind: "state_clause", clause}` member whose `clause` is `invariant`, `constraint`, `precondition` or `postcondition`, and three arguments: an `aggregate` of one or more `reference` terms, a `reference`, and the condition. A body that is another clause application, names another identity or operator class, carries another member kind or clause value, or whose first or second argument has another term shape fails the published schema. | Test (TC-233) |
 | FR-341-AC-2 | Every occurrence of a `state`/`state_clause` node has role `claim`; an occurrence of another role fails the published schema. | Test (TC-233) |
 | FR-341-AC-3 | The anchor of an invariant is a declared `model`/`object_type`, `model`/`process` or `model`/`state_machine` dependency and the anchor of a precondition or postcondition a declared `state`/`operation_anchor` dependency; an invariant anchored at an operation anchor and a precondition anchored at an object type refuse `invalid_model_binding`/`malformed-declaration` at the anchor's target. | Test (TC-233) |
 | FR-341-AC-4 | Each parameter reference targets a declared `value`/`parameter` dependency, else it refuses `invalid_model_binding`/`malformed-declaration` at its target; `self` has type `Reference<C>` for the clause's context `C` (an object type, a process or a state machine), and an invariant binds `self` alone; a `self` of another type and an invariant binding a second parameter refuse `ill_typed`/`operator-ineligible` at the clause node. | Test (TC-233) |
@@ -186,6 +195,7 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 | FR-341-AC-10 | A `value`/`parameter` node's body is an `aggregate` of exactly two bindings, `name` (a `text` literal) and `level` (an `integer` literal), in that order, and every occurrence has role `expression`; a body with the bindings reordered, a non-text `name`, a non-integer `level`, a missing binding and an occurrence of another role each fail the published schema. | Test (TC-233) |
 | FR-341-AC-11 | A process `Flow` with field `n` and operation `go(): Integer` admits an invariant anchored at the `model`/`process` node binding `[Reference<Flow>]`, a precondition of `go` binding `[Reference<Flow>]` and a postcondition of `go` binding `[Reference<Flow>, Integer]`, whose anchor is the `go` operation anchor of context `Flow`; a state machine `Gate` with operation `toggle()` admits an invariant anchored at the `model`/`state_machine` node binding `[Reference<Gate>]` and a postcondition of `toggle` binding `[Reference<Gate>]`; the `Reference<Flow>` and `Reference<Gate>` nodes are `composite_type`/`reference` nodes over the process and state-machine declaration nodes. | Test (TC-233, TC-280) |
 | FR-341-AC-12 | A clause on a process or a state machine refuses as one on an object type does: an invariant anchored at an operation anchor, and a precondition anchored at the process node, refuse `invalid_model_binding`/`malformed-declaration` at the anchor's target; a `self` of `Reference<Other>` for another declaring type, a missing operation parameter and a missing result each refuse `ill_typed`/`operator-ineligible` at the clause node; an invariant anchored at a record value type, an event type, a persistence interface or a systems interface refuses `invalid_model_binding`/`malformed-declaration` at the anchor's target. | Test (TC-233, TC-280) |
+| FR-341-AC-13 | The published clause package's invariant node with its kind member's `clause` rewritten to `constraint`, rekeyed, validates against both V2 schemas and is admitted by the state step, as a constraint is checked as an invariant; the same constraint anchored at an operation anchor refuses `invalid_model_binding`/`malformed-declaration` at the anchor's target, and one binding a second parameter refuses `ill_typed`/`operator-ineligible` at the clause node. An invariant and a constraint with equal bodies have different node ids, because the kind member is part of the body. | Test (TC-233) |
 
 ## Dependencies
 
@@ -198,7 +208,9 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 - [FR-340](FR-340-checked-package-frame-location.md) owns the
   `state`/`frame` body.
 - [AD-006](../../assurance/AD-006-model-graph-state-contracts.md) owns
-  invariants, preconditions and postcondition anchors as a model feature;
+  invariants, preconditions and postcondition anchors as a model feature,
+  and [FR-382](../../functional/analysis/FR-382-select-state-space-reductions.md)
+  owns the state constraint;
   `proposals/quire-v1/state-contract.md`'s "Operation anchors, aliases and
   captures" fixes which values each clause binds.
 - [FR-047](../../functional/foundation/FR-047-emit-typed-located-causes.md)
@@ -208,5 +220,4 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 ## Status
 
 Accepted complete-V1 boundary value contract for the `state`/`state_clause`
-node body and the `value`/`parameter` node body above. Implementation and
-qualification remain tracked separately.
+node body and the `value`/`parameter` node body above.

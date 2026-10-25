@@ -135,4 +135,3 @@ classification of each compile and run result into the outcomes above.
 ## Status
 
 Proposed complete-V1 requirement for the spec-versioning refinement gate.
-Implementation and qualification remain tracked separately.

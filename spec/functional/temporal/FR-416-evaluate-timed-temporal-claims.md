@@ -58,6 +58,8 @@ order FR-090 requires of order-sensitive operators.
 
 ### Pointwise meaning
 
+This reading applies to the `quire.temporal.timed/v1` profile; the `quire.temporal.timestamped-event.finite-window/v1` profile follows the timestamped rule of [FR-091](FR-091-evaluate-bounded-future.md) and [FR-092](FR-092-evaluate-bounded-past.md); the integer-position profiles, infinite-trace, event-position and fixed-sample, read an interval as position offsets with the meaning of FR-091, FR-092 and [FR-367](FR-367-evaluate-interval-operators-under-infinite-trace.md).
+
 `eventually_I p` holds at position `i` when some `j >= i` has `τ_j − τ_i` in
 `I` and `p` at `j`; `p until_I q` holds when some such `j` has `q` and every
 `k` with `i <= k < j` has `p`; `once`, `historically`, `since` and
@@ -108,6 +110,20 @@ otherwise its lower end plus one unit. A symbolic lasso is concretized by
 solving its loop's linear constraints over rational delays; when no accepting
 cycle concretizes, the item settles `inconclusive`, `lasso-not-concretized`.
 
+### Strong fairness over time
+
+A timed behaviour SHALL satisfy a strong fairness constraint when, if the
+constraint is enabled at arbitrarily late instants (its positions and the
+instants of the delays between them), one of its transitions is taken
+infinitely often. On a timed lasso the constraint is taken somewhere in the
+loop or enabled at no instant of the loop. A constraint enabled only inside
+delays is therefore enabled for strong fairness although it is enabled at no
+position. The symbolic provider SHALL split each symbolic state by the guards
+of the claim's strong constraints as it splits by weak ones, so enabledness at
+an instant is exact on the split graph, and SHALL apply the strong fairness
+filter to the components of that graph, its certificate stating the nested
+numbering of [FR-418](../../objects/interfaces/FR-418-zone-certificate.md).
+
 ### Undefined evaluation
 
 An undefined evaluation refutes by the FR-363 rule for every model engine.
@@ -142,6 +158,7 @@ identity.
 | FR-416-AC-6 | A claim over a timed model with no `clock` member binds `model-time`; `clock "model-steps"` binds steps; `model-time` over an untimed model refuses `invalid_timed_model`/`model-time-on-untimed-model`; writing the default leaves the obligation identity unchanged. | Test (TC-368) |
 | FR-416-AC-7 | Every timed counterexample has exact rational delays chosen canonically and replays with no provider present; an unconcretizable lasso settles `inconclusive`, `lasso-not-concretized`. | Test (TC-369) |
 | FR-416-AC-8 | A timed claim that evaluates undefined at a position of an admitted behaviour settles `refuted`, cause `undefined-evaluation` naming the position, time stamp, discrete state key, clock valuation, expression locus and catalogued reason, with a finite prefix of exact rational delays ending there that replays to the same undefined value. | Test (TC-369) |
+| FR-416-AC-9 | A `Blink` model (`time dense`; object `b` with `fired: Bool` and clock `x`; `tick` with guard `x >= 1` and reset `x`; `fire` with guard `x > 0 and x < 1` and postcondition `self.fired = true`; time invariant `when true { x <= 1 }`; initial `fired = false`, `x = 0`), in which `tick` fires exactly at `x = 1`, and `eventually holds(b.fired)` under infinite-trace: under `fair { weak Blink::fire }` it settles `refuted` with a lasso of `tick` steps of loop delay 1; under `fair { strong Blink::fire }` it settles `proved` with an accepted zone certificate, because `fire` is enabled at instants inside every delay of that lasso, though at no position of it. | Test (TC-963) |
 
 ## Dependencies
 
@@ -158,7 +175,8 @@ identity.
 
 ## References
 
-- QSL ADR-026 DF-1 to DF-7, TV-1, CB-1, CB-5, EZ-8 to EZ-10, CF-4.
+- QSL ADR-026 DF-1 to DF-7, TV-1, CB-1, CB-5, EZ-8 to EZ-10, CF-4, §15; QSL
+  FR-430 (strong fairness over time).
 - R. Alur, T. Feder and T. A. Henzinger, 1996; P. Bouyer, N. Markey,
   J. Ouaknine and J. Worrell, 2007; J. Ouaknine and J. Worrell, 2005.
 - Ticket: STD-139 (paired with QSL-373).

@@ -29,6 +29,7 @@ with a typed, located outcome.
 | V1-SRC-013 | Discover edition, profile, declaration-family and consumer features exactly. | Required | V1-051 |
 | V1-SRC-014 | Extend a typed declaration or semantic family through an explicit extension boundary. | Required | V1-051 |
 | V1-SRC-015 | Reject unknown syntax, profiles and feature spellings with a located typed cause. | Integrity | V1-005, V1-051 |
+| V1-SRC-016 | Define an extension definition's grammar schema and typed-node schema, and refuse a missing member, a keyword or node-kind collision and a dependency cycle. | Integrity | V1-051 |
 
 ## 2. Type and model system
 
@@ -243,7 +244,6 @@ with a typed, located outcome.
 | V1-TOOL-006 | Load Rust plugins only through explicit capability and purity contracts. | Required | prose census |
 | V1-TOOL-007 | Support ahead-of-time and JIT execution without changing language meaning or qualification identity. | Required | prose census |
 | V1-TOOL-008 | Package reusable domain libraries selectable by edition and profile. | Required | prose census |
-| V1-TOOL-009 | Expose a WASM consumer with the same admitted semantics and refusal behavior. | Required | code-surface census |
 | V1-TOOL-010 | Expose code-analysis and source-generation consumers without granting them semantic authority. | Required | code-surface census |
 | V1-TOOL-011 | Confirm a superseding specification edition admits every result its prior edition admitted. | Required | V1-037; prose census |
 | V1-TOOL-012 | Preserve every parent profile's refusal as its child profile's refusal under profile layering. | Required | V1-037; prose census |

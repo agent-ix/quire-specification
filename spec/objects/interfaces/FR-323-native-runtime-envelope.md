@@ -8,6 +8,14 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-180
     type: references
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-340
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-342
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-341
+    type: references
 ---
 
 # FR-323: Native runtime request and result envelope
@@ -23,19 +31,27 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 - `package` — exact FR-322 checked-package reference; a non-replay request
   carries the reference alone, and a replay request adds the `sources` and
   `dependencies` members below, as
-  `{package_id, contract_version, sources, dependencies}`. Definition and
+  `{package_id, contract_version, sources, dependencies}` plus the optional
+  `refinement_internals` below. Definition and
   domain-package bytes are reached through `byte_provision` by the digests
   the recompiled sources name.
   `sources` is the proved package's own FR-322 lock `sources`.
-  `dependencies` holds one entry per entry of the proved package's
-  `dependency_selections`, in the same order, each
-  `{identity, package_id, sources}`: `identity` and `package_id` are that
-  selection's, and `sources` is the selected
-  dependency package's own FR-322 lock `sources`. The producer copies these
-  from the proved package and its admitted dependency packages and invents
-  none. The executor supplies each dependency, recompiled from its entry's
-  `sources`, under the entry's `identity` to every import of that identity
-  (FR-307). It refuses with the first of these, each rule
+  `dependencies` holds one entry per library identity in the proved package's
+  derived closure (its direct selections plus the closure of every selected
+  dependency), in ascending UTF-8 byte order of `identity`, each
+  `{identity, package_id, sources}` plus the optional `refinement_internals`
+  below: `identity` and `package_id` are that
+  library's, and `sources` is that dependency package's own FR-322 lock
+  `sources`. A replay request also carries `refinement_internals`, on
+  `package` and on each `dependencies` entry, when and only when the
+  corresponding lock has one (FR-322); it is that lock's value, since a
+  recompile with the list dropped would compile its refinements with an
+  empty list and reach another `package_id`. The producer obtains these from
+  the proved package and the admitted packages recursively, including
+  transitive-only packages, and invents none. The executor recompiles each
+  dependency from its entry's `sources` and supplies it under the entry's
+  `identity` to every direct or transitive import of that identity (FR-307).
+  It refuses with the first of these, each rule
   applied over all entries, in entry order, before the next rule, and
   yields no result:
   1. before any recompile, entries not in strictly ascending UTF-8 byte
@@ -46,8 +62,10 @@ When a checked package is executed or replayed, the producer SHALL use the immut
      entry's source as `invalid_package`/`conflicting-definition`, naming
      both; then the recompile's own refusals, FR-307's among them: an import
      whose identity no entry supplies refuses
-     `missing_import`/`missing-selection`;
-  3. an entry that no import of the recompiled package reaches refuses
+     `missing_import`/`missing-selection`; each import binds to the entry
+     named by its selecting package's own direct lock, including locks of
+     recompiled dependencies;
+  3. an entry that no import in the recompiled dependency tree reaches refuses
      `invalid_package`/`invalid-value` at `/package/dependencies`;
   4. an entry whose `package_id` differs from the `package_id` its sources
      recompile to refuses `stale_dependency`/`content-mismatch` (QSL's
@@ -55,8 +73,7 @@ When a checked package is executed or replayed, the producer SHALL use the immut
      `package_id` and the recompiled one. An import carries no digest, so
      this is the rule that catches an edited dependency the recompile
      admits, such as an edit to a declaration the proved package does not
-     call or to the body of a called function with its signature unchanged:
-     the entry's `package_id` is the one the proved package's lock pinned.
+     call or to the body of a called function with its signature unchanged.
      An edit that removes or retypes an export the proved package uses
      makes the recompile itself refuse at rule 2 (`missing_declaration` or
      `ill_typed`) before this rule runs;
@@ -102,13 +119,77 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   retains the separate native fault route specified below.
 - `replay` — present only on a replay request, and absent otherwise. It
   carries: the originating counterexample identity and expected originating
-  verdict; the `ReplaySource` (`Witness` or `Input`, FR-197); the selected
-  function's `QualifiedName`; arguments keyed by parameter node id; the
-  semantic profile selections; the failing node's occurrence key
-  (`node_id`, `role`, `ordinal`, FR-322 `source_map` key); the proof bounds
+  verdict; the `ReplaySource` (`Witness` or `Input`, FR-197); the *replay
+  target* (below); for a function request, `arguments` keyed by parameter node id; the
+  semantic profile selections; for a function request, `occurrence_key`, the failing node's
+  occurrence key (`node_id`, `role`, `ordinal`, FR-322 `source_map` key); the proof bounds
   and declared domains carried from the obligation identity; the trace
   position; and the `backend` member (QSL ADR-013 O-19). No replay member is
   inferred from the package or from the non-replay properties above (QC-8).
+
+The *replay target* of a replay request is exactly one of three members, and
+the others are absent (never `null`, an empty name or a placeholder):
+
+- `function`: the selected function's `QualifiedName`, for the replay of a
+  function's counterexample;
+- `frame_operation`: `{object, operation}`, `object` the `QualifiedName` of the
+  object type, process or state machine that declares the operation and
+  `operation` its `Identifier` ([FR-340](FR-340-checked-package-frame-location.md),
+  [FR-342](FR-342-checked-package-operation-anchor-body.md)), for the replay of
+  an operation's frame;
+- `state_clause`: the state clause's own declared `QualifiedName` (the
+  clause's name, such as `VersionUnchanged`, never the name of the object
+  type or operation it constrains), the clause being an invariant, a
+  precondition or a postcondition ([FR-341](FR-341-checked-package-state-clause-body.md)), for the replay of a state clause's counterexample. A
+  precondition or a postcondition of an operation is a state clause and
+  selects by `state_clause`, not by `frame_operation`: the frame and the
+  clause are two obligations of one operation, and the target names the one
+  refuted.
+
+When the producer builds a replay request, the producer SHALL carry exactly one
+of the three members. A frame request carries no `arguments` and no occurrence
+key: the invocation and the frame's identity travel in the frame packet's own
+payload, the single carrier of that identity (QSL FR-116, ADR-017 PF-4). A
+state-clause request carries no `arguments` and no occurrence key either: the
+observation the clause is evaluated over travels in the state-clause packet's
+payload, and the clause's node and `claim` occurrence on that packet's
+envelope (QSL FR-122).
+The replay target is the one item a replay request selects and `results`
+carries its one disposition; on a frame or a state-clause request `selection`
+holds no entry for it, and a function request is otherwise unchanged.
+
+The executor SHALL refuse a replay request, in this order and with the first
+that applies:
+
+1. at decode, before the byte-provision rule and any recompile: a request with none of
+   the three members, `invalid_runtime_input`/`missing-member` at `/replay`; a
+   request with more than one, `invalid_runtime_input`/`invalid-value` at the
+   pointer of the last member present in the order `function`,
+   `frame_operation`, `state_clause` (`/replay/frame_operation` for a request
+   with `function` and `frame_operation`, `/replay/state_clause` for any request
+   carrying `state_clause` with one or both other members); a frame or a state-clause request that carries
+   `arguments` or an occurrence key, `invalid_runtime_input`/`unknown-member`
+   at `/replay/arguments` or at `/replay/occurrence_key`; and a `function`
+   request with no `occurrence_key`, `invalid_runtime_input`/`missing-member`
+   at `/replay/occurrence_key`;
+2. the resolution of the replay target against the recompiled package, after
+   dependency rule 5's `package_id` check.
+
+The executor SHALL resolve a `function` by `QualifiedName` and a
+`frame_operation` by FR-342's operation resolution, refusing: no declaration
+named by `object`, or no operation member of that name, or an operation with
+no frame node, `missing_declaration`/`missing-name` naming the target; an
+`object` that names a node that cannot declare operations (a record value
+type, an event type) or an operation it only inherits,
+`invalid_model_binding`/`malformed-declaration` naming the target; and a name
+that two supertypes expose, `ambiguous_declaration`/`ambiguous-name`.
+
+The executor SHALL resolve a `state_clause` by declared name among the
+recompiled package's state clauses, refusing a name that declares no state
+clause, a function's name included, `missing_declaration`/`missing-name`
+naming the target. A state clause that the packet's envelope identifies by
+another node or `claim` occurrence than the resolved one is the packet's
+staleness refusal (QSL FR-122), not a resolution refusal.
 
 ## Supplied-value phase amendment
 
@@ -435,8 +516,8 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-3 | Missing anchors, exhausted limits and false predicates remain distinct. | Analysis |
 | FR-323-AC-4 | The outcome-to-verdict map assigns one verdict per QSL ADR-013 O-16 category, fixed independently of any request; an `Undefined` outcome and a refused `FamilyOutcome` never settle agreement. | Test (TC-273) |
 | FR-323-AC-5 | A replay request's `byte_provision` supplies every source, definition and domain-package input the replay recompiles, each keyed by its declared digest domain and digest; the `package` reference's `RawSourceRef` digests are exactly the source and definition digests the executor recomputes and compares, and the executor reads no recompilation input by path, environment variable or search location. Before any recompile, a named input the provision does not carry refuses `missing_import`/`missing-selection` naming the requested digest record and the `package` member that names it; a raw-byte entry whose bytes do not match its digest refuses `stale_dependency`/`byte-digest-mismatch` naming the declared and the actual digest; and a `sha256-jcs` entry whose document canonicalises to another digest refuses `stale_dependency`/`content-mismatch` naming the selected and the recomputed digest. | Test (TC-277) |
-| FR-323-AC-6 | A replay request's `replay` property carries the `ReplaySource`, the selected function's `QualifiedName`, arguments keyed by parameter node id, the semantic profile selections, the failing node's occurrence key, the proof bounds and declared domains, the trace position and the `backend` member; a non-replay request carries no `replay` property. | Test (TC-278) |
-| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per `dependency_selections` entry, in its order, each carrying that selection's `identity` and `package_id` and the dependency's own lock `sources`. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import reaches `invalid_package`/`invalid-value`; an entry whose sources are edited, by an edit the recompile admits, so that they recompile to a `package_id` other than the entry's, and an entry whose `package_id` alone is changed, each `stale_dependency`/`content-mismatch` naming its `identity`, its `package_id` and the recompiled one, before the proved package's `package_id` is compared. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. None yields a result. | Test (TC-277) |
+| FR-323-AC-6 | A replay request's `replay` property carries the `ReplaySource`, the replay target (`function`, `frame_operation` or `state_clause`), for a function request arguments keyed by parameter node id, the semantic profile selections, for a function request the failing node's occurrence key, the proof bounds and declared domains, the trace position and the `backend` member; a non-replay request carries no `replay` property. | Test (TC-278) |
+| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per identity in its derived closure, in ascending UTF-8 identity order, each carrying that dependency's `identity`, `package_id` and own lock `sources`, including transitive-only dependencies. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import in the dependency tree reaches `invalid_package`/`invalid-value`; an entry whose sources are edited, by an edit the recompile admits, so that they recompile to a `package_id` other than the entry's, and an entry whose `package_id` alone is changed, each `stale_dependency`/`content-mismatch` naming its `identity`, its `package_id` and the recompiled one, before the proved package's `package_id` is compared. If a transitive-only entry's sources change by an edit the directly importing package's recompile admits, and its declared `package_id` changes to match, the package that directly imports it recompiles to a different `package_id` and its entry refuses by the same rule. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. None yields a result. | Test (TC-277) |
 | FR-323-AC-8 | A replay request's `stage_limits` entry raises its named stage limit for the replay recompile, a stage limit the request does not name runs at its published default, and an entry naming no stage-limit setting refuses before any stage runs. | Test (TC-426) |
 | FR-323-AC-9 | A replay whose sources recompile to a proved `package_id` other than the request's `package.package_id`, after replay rules 1 to 4 pass, refuses `stale_dependency`/`content-mismatch` (QSL's `PackageIdMismatch`) naming the request's `package_id` and the recompiled one, and yields no result. | Test (TC-277) |
 | FR-323-AC-10 | Applicable replay/non-replay requests carry complete effective u64 `limits.supplied` A/H ceilings and B (AC-15), independent of unchanged ScalarLimitsV1, PopulationAdmissionLimitsV1 and per-argument C/occ. Zero permits no event; either changed ceiling changes request identity. Supplied fields in `stage_limits` refuse before stages run. No absent ceiling borrows evaluator/population/stage work; a ceiling omitted at the caller API resolves to its own published default 16777216, while a wire `limits.supplied` object that is incomplete or malformed refuses before consumption. | Test (TC-278) |
@@ -446,11 +527,26 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-14 | An existing typed replay conversion InternalFault supplied at its owning seam retains Failed/internal-failure classification, actual replay stage/invariant/provenance and unavailable basis, with supplied context absent, no ordinary InputRefusal/Inconclusive coercion, no synthetic kernel payload and zero semantic consumption/no added mapping charge. Compare with an ordinary input refusal and a genuine evaluated fault retaining its earlier charges. A five-arm-only serializer that drops/coerces the pre-call fault fails the control; original successful helper prefix is not reset/refunded. | Test (TC-278) |
 | FR-323-AC-15 | A request's `limits.supplied.numeric_magnitude_bits` B (published default 4096; omitted resolves to it, so omitted and stated 4096 have the same request identity and 4095 or 4097 differ) admits a supplied Integer and Rational whose value and every value-in-domain operand (3 Integer, 6 Rational) have bit length at most B, with zero counted as one bit, so B = 0 admits nothing; at the default a 4096-bit operand admits and a 4097-bit operand refuses. An operand at B+1 bits refuses by the `limit` cause with field `supplied.numeric_magnitude_bits`, `limit` B, `consumed` 0, `next_charge` and `counter` its bit length, the named `operand` and `event: value-visit`, stopping on the charged initiating event (the A or H spend includes that one event) before any comparison, with no further unit charged and zero evaluation consumption. A malformed B, a B missing from the wire object, a B above the u64 range or a B in `stage_limits` is a typed input refusal before consumption. | Test (TC-278) |
 | FR-323-AC-16 | NORM: for a nested retained type link comparison, the `type-comparison` event is charged first and then every numeric endpoint (4 Integer, 8 Rational, 4 Decimal) is checked against B by the AC-15 bit-length rule; the first endpoint over B refuses by the same `limit` cause with `event: type-comparison` and a `type-link-` `operand`, before the endpoint equality runs, and an endpoint at exactly B admits. | Test (TC-278) |
+| FR-323-AC-17 | A replay request for a proved package whose lock carries `refinement_internals`, with the member copied onto `package` (and a dependency's own onto its `dependencies` entry), recompiles each refinement with its list and reaches the proved `package_id`; the same request with the member removed, or with a spelling changed to another class that resolves, recompiles to another `package_id` and refuses `stale_dependency`/`content-mismatch` naming the request's `package_id` and the recompiled one (for a dependency, that entry's `identity`, its `package_id` and the recompiled one); a spelling that resolves to no class refuses `missing_declaration`/`missing-name` in the recompile, located at `/package/refinement_internals/<pointer>` for the proved package's value and at `/package/dependencies/<n>/refinement_internals/<pointer>` for the `n`th dependency entry's. None yields a result. | Test (TC-277) |
+| FR-323-AC-18 | A function counterexample's replay request carries `function` and no `frame_operation` or `state_clause`; a frame counterexample's carries `frame_operation` (`object` and `operation`) and no `function` or `state_clause`; and a state-clause counterexample's, an operation's postcondition included, carries `state_clause` and no `function` or `frame_operation`. A frame or a state-clause request carries no `arguments` and no occurrence key (one that carries either is refused by AC-19). | Test (TC-278) |
+| FR-323-AC-19 | A replay request with none of `function`, `frame_operation` and `state_clause` refuses `invalid_runtime_input`/`missing-member` at `/replay`; one with `function` and `frame_operation` refuses `invalid_runtime_input`/`invalid-value` at `/replay/frame_operation`, and one with `state_clause` and either other member, or with all three members, at `/replay/state_clause`; and a frame or a state-clause request carrying `arguments` or an occurrence key refuses `invalid_runtime_input`/`unknown-member` at `/replay/arguments` or `/replay/occurrence_key`; each at decode before the byte-provision rule and any recompile, so a request with two members and a missing provision entry reports the member refusal. | Test (TC-278) |
+| FR-323-AC-20 | A `frame_operation` is resolved after dependency rule 5: with a stale proved `package_id` the rule 5 refusal is reported; with a current one, an undeclared operation or an operation with no frame node refuses `missing_declaration`/`missing-name`, an `object` naming a record value type and an operation that `object` only inherits refuse `invalid_model_binding`/`malformed-declaration`, and a name two supertypes expose refuses `ambiguous_declaration`/`ambiguous-name`, each naming the target. | Test (TC-278) |
+| FR-323-AC-21 | A `state_clause` is resolved after dependency rule 5: with a stale proved `package_id` the rule 5 refusal is reported; with a current one, a `state_clause` naming a declared invariant, precondition or postcondition resolves to that clause, and one naming no declaration or naming a function refuses `missing_declaration`/`missing-name` naming the target. | Test (TC-278) |
+| FR-323-AC-22 | A `function` replay request with no `occurrence_key` refuses `invalid_runtime_input`/`missing-member` at `/replay/occurrence_key` at decode, before the byte-provision rule and any recompile, so the same request with a byte-provision entry removed reports the same refusal. The occurrence key selects the claim the replay decides (QSL FR-098). | Test (TC-278) |
 
 ## Dependencies
 
 - [interface_005](./interface_005-native-runtime.md) owns the operation boundary.
 - FR-180 owns the behavior that produces or consumes this value.
+- [FR-340](FR-340-checked-package-frame-location.md) and
+  [FR-342](FR-342-checked-package-operation-anchor-body.md) own the frame node
+  and the operation resolution a frame replay target uses; QSL
+  [FR-116](ix://agent-ix/quire-spec-language/FR-116) and ADR-017 PF-4 own the
+  frame packet and its payload.
+- [FR-341](FR-341-checked-package-state-clause-body.md) owns the state clause
+  node a `state_clause` replay target names; QSL
+  [FR-122](ix://agent-ix/quire-spec-language/FR-122) owns the state-clause
+  packet, its payload and its envelope's clause identities.
 - [QSL FR-098](ix://agent-ix/quire-spec-language/FR-098) and
   [FR-277](ix://agent-ix/quire-spec-language/FR-277) own QSL-681 conversion
   nodes/occurrences, A/H units/defaults and consumer settlement.
@@ -472,8 +568,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 
 ## Status
 
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 boundary value contract.
 The QSL-681 supplied-phase amendment and AC-10..16 are PROPOSED,
 independently unreviewed and UNQUALIFIED. No implementation, typed native
 mapping, helper proof or acceptance execution is claimed.

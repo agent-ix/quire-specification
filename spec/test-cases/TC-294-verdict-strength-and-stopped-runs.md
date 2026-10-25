@@ -29,6 +29,38 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
 4. Run the subject with an empty list of initial states.
 5. Run a subject whose population `config_history` has no universe.
 6. Check the claim under `quire.temporal.timestamped-event.finite-window/v1`.
+7. Check a claim `over (c: Config::ConfigVersion)` against a subject whose
+   population `config_history` has an empty universe list, so the population is
+   bounded and holds no key; then against a subject whose only populations are
+   unrelated to `ConfigVersion`; then against a subject whose
+   `config_history` has no universe.
+8. Run the step 7 claim against a subject with an empty list of initial
+   states whose `config_history` universe is `[v1, v2]`; then with an empty
+   universe list for `config_history`; then with only unrelated populations;
+   then with `config_history` given no universe.
+9. Over the same subject, take the safety claim `on each always[0,1]
+   holds(c.versionNumber >= 0)` (a bounded claim activated `on each`). Its
+   step case closes over `Int[0, 1000]`, so no solver run yields a step
+   counterexample, and an undecided answer or a stop cannot be produced on
+   demand. Each run below is therefore settled from an injected backend
+   outcome, a k-induction result handed to the settlement in place of a
+   solver run, and the vectors check the settlement, not the solver. Settle
+   a k-induction outcome at depth 2 whose step case has a counterexample to
+   induction; then one whose solver returns `unknown` on
+   the base query; then on the step query; then on the search query; then
+   one whose solver stops for a resource internal to it that no request
+   limit names; then one stopped by the request's named time budget; then
+   one that overruns the request's `deadline_ms`; then one the caller
+   cancels; then one the caller's own deadline ends; then one whose solver
+   answers `unknown` while the caller's deadline also ends the run.
+10. Over step 9's claim and the same injected-outcome form, settle a
+    k-induction outcome at depth 2 whose solver stops a base query at
+    `temporal.limits.max_solver_steps` 1000; then one stopped at
+    `max_solver_time` 5; then the step-budget stop while the caller's own
+    deadline also ends the run; then the step-budget stop while the
+    backend's own wall clock also expires; then one whose request carries
+    `smt_encoding` `{max_constants: 7}` (FR-368) and whose encoder stops at
+    that limit.
 
 ## Expected Results
 
@@ -44,6 +76,26 @@ Over the TC-293 ConfigVersion subject and the step 2 claim (`fair weak whole`):
 4. `inconclusive`, cause `no-initial-state` (FR-361-AC-7).
 5. `requires-bound` before expansion (FR-361-AC-7).
 6. `unsupported`, `unsupported-requested-capability`, basis `unavailable`.
+7. `inconclusive`, basis `unsettled`, cause `no-instance`, before any state is
+   explored, for the empty-universe subject and for the unrelated-population subject (FR-361-AC-8); the third subject returns `requires-bound` before
+   instantiation, never `no-instance` (FR-361-AC-8).
+8. The first three subjects each settle `inconclusive`, basis `unsettled`,
+   cause `no-initial-state`, never `no-instance`; the fourth returns
+   `requires-bound` before expansion (FR-361-AC-16).
+9. The first five settle `inconclusive`, basis `unsettled`,
+   `induction-not-closed{depth: 2}`; the sixth settles `incomplete`,
+   `limit-reached` naming the time budget; the seventh settles `incomplete`,
+   `timed-out`; the eighth and ninth settle `incomplete`,
+   `cancelled{source}` with `source` `requested` and `deadline`; the tenth
+   settles `cancelled{source: deadline}`, never `induction-not-closed`
+   (FR-363-AC-10).
+10. `incomplete`, `limit-reached{limit: max_solver_steps, value: 1000,
+    setting: smt.max_solver_steps}`; `incomplete`, `limit-reached{limit:
+    max_solver_time, value: 5, setting: smt.max_solver_time}`, never
+    `timed-out`; `cancelled{source: deadline}`; `timed-out`; `incomplete`,
+    `limit-reached{limit: max_constants, value: 7, setting:
+    smt_encoding.max_constants}`; none of them `induction-not-closed`
+    (FR-363-AC-11).
 
 No row carries a proof basis, and each row's label, basis and result equal the
 FR-363 verdict table (FR-363-AC-1).

@@ -12,6 +12,8 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-251
     type: references
+  - target: ix://agent-ix/quire-specification/FR-375
+    type: references
   - target: ix://agent-ix/quire-specification/FR-416
     type: references
   - target: ix://agent-ix/quire-specification/FR-367
@@ -34,7 +36,7 @@ exact identities that table names.
 | `quire.temporal.event-position.false-extension/v1` | One interval tick means "One admitted semantic-event position in an authoritative sequence"; the closed-boundary rule is "Atomic predicates are false after closure; constants retain their value" (FR-090). This profile "shall not claim elapsed time" (FR-090), and under FR-094 "Event-position time shall not advance during silence merely because wall time passed." |
 | `quire.temporal.fixed-sample.false-extension/v1` | One interval tick means "One sample of the declared positive rational period from the declared epoch"; the closed-boundary rule is "Atomic predicates are false after closure; constants retain their value" (FR-090). The profile "shall retain epoch, period and unit identity" and "shall classify an absent runtime sample under a valid binding as incomplete" (FR-090). |
 | `quire.temporal.timestamped-event.finite-window/v1` | One interval tick means "One tick in the declared timestamp unit"; the closed-boundary rule is "Quantification ranges over admitted event instants in a complete bounded window" (FR-090). The profile "shall retain clock identity, unit, admitted order and the completeness premise for every evaluated window" (FR-090). |
-| `quire.temporal.infinite-trace/v1` | This profile has no closed-boundary rule: an unbounded operator ranges over the unbounded admitted continuation of the event-position sequence, an interval operator reads its closed interval `[a,b]` and a lower-bounded operator its interval `[a,*]` over that continuation, the three nest in any order (FR-367), and no evaluated window ever closes (FR-090, FR-161). It composes the event-position sequence authority named above without its false-extension closure. It "shall not claim elapsed time", matching the event-position profile it extends. FR-161 names the checked infinite-trace subject and the `proved`/`refuted`/`inconclusive`/`unsupported`/`failed` results a selected sound provider returns for it. It admits the unbounded temporal operator grammar edition FR-048 and AD-012 define. |
+| `quire.temporal.infinite-trace/v1` | This profile has no closed-boundary rule: an unbounded operator ranges over the unbounded admitted continuation of the event-position sequence, an interval operator reads its closed interval `[a,b]` and a lower-bounded operator its interval `[a,*]` over that continuation, the three nest in any order (FR-367), and no evaluated window ever closes (FR-090, FR-161). It composes the event-position sequence authority named above without its false-extension closure. It "shall not claim elapsed time", matching the event-position profile it extends. FR-161 names the checked infinite-trace subject and the `proved`/`refuted`/`inconclusive`/`unsupported`/`failed` results a selected sound provider returns for it. It admits the unbounded temporal operator grammar edition FR-048 and AD-012 define. When it governs a refinement declaration (FR-375) it requires `quire.value.complete/v1` and `quire.model.complete/v1` for the refinement's rows, and so the layers those require. |
 | `quire.temporal.timed/v1` | One interval tick is an exact rational duration of the clock binding's time unit. Positions are read in step order, each with an exact rational time stamp, over time-divergent behaviours of a timed subject or over a timed trace; no evaluated window closes. Intervals have exact rational bounds with open or closed ends and a finite upper bound (FR-255). It is selected by a `model-time` clock binding (FR-252), admits the unbounded temporal operator grammar edition, and claims elapsed time. [FR-416](../../functional/temporal/FR-416-evaluate-timed-temporal-claims.md) gives its meaning. |
 
 These are the profiles authored and selected in native Quire source. The TL
@@ -100,6 +102,7 @@ time-stamped positions.
 | FR-250-AC-5 | No TL evaluator profile appears as a member of this vocabulary. | Test |
 | FR-250-AC-6 | `quire.temporal.infinite-trace/v1` has no closed-boundary rule, admits closed-interval operators nested with unbounded ones, and admits the unbounded temporal operator grammar edition, as does `quire.temporal.timed/v1`; the event-position false-extension, fixed-sample and timestamped-event members admit no unbounded operator. | Test (TC-238, TC-298) |
 | FR-250-AC-7 | `quire.temporal.timed/v1` is a member, selected only by a `model-time` clock binding, and it never lowers to a TL target. | Test (TC-368) |
+| FR-250-AC-8 | `quire.temporal.infinite-trace/v1` governing a refinement declaration requires `quire.value.complete/v1` and `quire.model.complete/v1` for the refinement's rows; the requirement is a property of the profile and the refinement, and no other temporal profile carries it. | Test (TC-310) |
 
 ## Dependencies
 
@@ -116,5 +119,4 @@ time-stamped positions.
 
 ## Status
 
-Accepted complete-V1 temporal-profile identity contract. Implementation and
-qualification remain tracked separately.
+Accepted complete-V1 temporal-profile identity contract.

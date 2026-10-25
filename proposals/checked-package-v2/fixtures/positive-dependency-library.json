@@ -1,0 +1,1272 @@
+{
+  "capability_report": [
+    {
+      "disposition": "available",
+      "feature": "quire.value.complete/v1"
+    }
+  ],
+  "contract_version": "quire.checked-package/v2",
+  "diagnostics": {
+    "catalog": {
+      "authority": "agent-ix",
+      "identity": "quire.native.diagnostics/v1"
+    },
+    "entries": []
+  },
+  "identity_preimage": {
+    "definition_selections": [],
+    "dependency_selections": [],
+    "edition": {
+      "definition": {
+        "authority": "agent-ix",
+        "identity": "quire-edition"
+      },
+      "role": "edition"
+    },
+    "model_selections": [
+      {
+        "digest": "5368187144c77c1ce20817acd6e4cd4c9eb484eb83acaeef565f5a983cb1faa2",
+        "digest_domain": "sha256-jcs",
+        "identity": "acme/orders"
+      }
+    ],
+    "profile_selections": [],
+    "required_features": [
+      "quire.value.complete/v1"
+    ],
+    "version": "quire.checked-package-id/v2"
+  },
+  "lock": {
+    "definition_selections": [],
+    "dependency_selections": [],
+    "edition": {
+      "definition": {
+        "authority": "agent-ix",
+        "identity": "quire-edition"
+      },
+      "role": "edition"
+    },
+    "model_selections": [
+      {
+        "digest": "5368187144c77c1ce20817acd6e4cd4c9eb484eb83acaeef565f5a983cb1faa2",
+        "digest_domain": "sha256-jcs",
+        "identity": "acme/orders"
+      }
+    ],
+    "profile_selections": [],
+    "required_features": [
+      "quire.value.complete/v1"
+    ],
+    "sources": [
+      {
+        "authority": "agent-ix",
+        "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "digest_domain": "quire.source.bytes/v1",
+        "identity": "predicates"
+      }
+    ]
+  },
+  "package_id": {
+    "algorithm": "sha256",
+    "digest": "df92b97073ee845bbc1b6aaccfac88ea8d1b4e34e11e545ca7287c61193b30fe",
+    "domain": "quire.package.semantic/v2"
+  },
+  "semantic_graph": {
+    "graph_version": "quire.checked-semantic-graph/v2",
+    "nodes": [
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "scalar_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "integer",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "scalar_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "boolean",
+        "semantic_type": {
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "scalar_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "text",
+        "semantic_type": {
+          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "min",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "0",
+                "value_kind": "integer"
+              }
+            },
+            {
+              "name": "max",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "9",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "652cc5b63910aca98b8c91b1c1ba42a8da1f568517c70f37de083414cd192477",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "bounded_domain",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "integer_range",
+        "semantic_type": {
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "x",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "0",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "652cc5b63910aca98b8c91b1c1ba42a8da1f568517c70f37de083414cd192477",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "parameters",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "target": {
+                      "digest": "ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "Lib",
+            "is_small"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "0f17302cedf3adf043ed9559f0b447b9efff41ea346b41b1cef45be2067080ce",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "function",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "declaration"
+          }
+        ],
+        "owner": {
+          "authority": "agent-ix",
+          "identity": "predicates",
+          "kind": "source"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "x",
+              "term": "binding",
+              "value": {
+                "target": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "term": "reference"
+              }
+            },
+            {
+              "name": "y",
+              "term": "binding",
+              "value": {
+                "target": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "term": "reference"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "Lib",
+            "Point"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "declaration"
+          }
+        ],
+        "owner": {
+          "authority": "agent-ix",
+          "identity": "predicates",
+          "kind": "source"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "record",
+        "semantic_type": {
+          "digest": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "parameters",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "target": {
+                      "digest": "ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "Lib",
+            "make_point"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "fa983d09a7466fb8f5f10ee50779aa07ca6ca80b8d3a1cdcf9643917150edfe6",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "function",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "declaration"
+          }
+        ],
+        "owner": {
+          "authority": "agent-ix",
+          "identity": "predicates",
+          "kind": "source"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "digest": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "target": {
+                "digest": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "f4f7e25f35dd7b8b3d8493f37052dac668ee26e8c3ffea18bb4be7bff1fff946",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "set",
+        "semantic_type": {
+          "digest": "f4f7e25f35dd7b8b3d8493f37052dac668ee26e8c3ffea18bb4be7bff1fff946",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "points",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "0",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "04c32f391c029ba840f20667662fa1fbb956f2d8f286aa938a958cbd2efb5164",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "f4f7e25f35dd7b8b3d8493f37052dac668ee26e8c3ffea18bb4be7bff1fff946",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "parameters",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "target": {
+                      "digest": "04c32f391c029ba840f20667662fa1fbb956f2d8f286aa938a958cbd2efb5164",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "Lib",
+            "any_point"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "04c32f391c029ba840f20667662fa1fbb956f2d8f286aa938a958cbd2efb5164",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "0deec3ba87fdd3bc1ac5aca8f0b4984d27bf8b0d44c584aede0b5b7b6fdd8589",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "function",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "declaration"
+          }
+        ],
+        "owner": {
+          "authority": "agent-ix",
+          "identity": "predicates",
+          "kind": "source"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "target": {
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            },
+            {
+              "target": {
+                "digest": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "73afcfea45751a68fb5e6034ba7e86795105fe50fb886aa3fdc5756494d485c9",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "tuple",
+        "semantic_type": {
+          "digest": "73afcfea45751a68fb5e6034ba7e86795105fe50fb886aa3fdc5756494d485c9",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "pair",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "0",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "f236142ab60045f843473e5a9cd8295a64c097098f622c110fddf3931f8a31b7",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "73afcfea45751a68fb5e6034ba7e86795105fe50fb886aa3fdc5756494d485c9",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "parameters",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "target": {
+                      "digest": "f236142ab60045f843473e5a9cd8295a64c097098f622c110fddf3931f8a31b7",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "Lib",
+            "first_small"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "f236142ab60045f843473e5a9cd8295a64c097098f622c110fddf3931f8a31b7",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "14ef99fcc94f7588195cab024923f15d525b8e4b4ff4bcd058790d836eb996d4",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "function",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "declaration"
+          }
+        ],
+        "owner": {
+          "authority": "agent-ix",
+          "identity": "predicates",
+          "kind": "source"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "model",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "generated"
+          }
+        ],
+        "owner": {
+          "identity": "acme/orders",
+          "kind": "model",
+          "node": "ix://acme/orders/Order"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "object_type",
+        "semantic_type": {
+          "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "target": {
+                "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [
+          {
+            "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "composite_type",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "type"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "reference",
+        "semantic_type": {
+          "digest": "249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "name",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "order",
+                "value_kind": "text"
+              }
+            },
+            {
+              "name": "level",
+              "term": "binding",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                "value": "0",
+                "value_kind": "integer"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "7f4b04305cc6f9921deab998d47f658f3a28638849ba43e34863fd0749575f88",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "value",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "parameter",
+        "semantic_type": {
+          "digest": "249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [
+            {
+              "name": "parameters",
+              "term": "binding",
+              "value": {
+                "members": [
+                  {
+                    "target": {
+                      "digest": "7f4b04305cc6f9921deab998d47f658f3a28638849ba43e34863fd0749575f88",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                ],
+                "term": "aggregate"
+              }
+            }
+          ],
+          "term": "aggregate"
+        },
+        "declaration": {
+          "qualified_name": [
+            "Lib",
+            "is_open"
+          ]
+        },
+        "dependencies": [
+          {
+            "digest": "7f4b04305cc6f9921deab998d47f658f3a28638849ba43e34863fd0749575f88",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        ],
+        "node_id": {
+          "digest": "f3a9c2646ad053adba2a05968d90df665c3e66aa736d1136b4ef3513890907f4",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "function",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "declaration"
+          }
+        ],
+        "owner": {
+          "authority": "agent-ix",
+          "identity": "predicates",
+          "kind": "source"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      }
+    ]
+  },
+  "source_map": [
+    {
+      "node_id": {
+        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 1,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 0
+        }
+      ],
+      "role": "type"
+    },
+    {
+      "node_id": {
+        "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 2,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 1
+        }
+      ],
+      "role": "type"
+    },
+    {
+      "node_id": {
+        "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 3,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 2
+        }
+      ],
+      "role": "type"
+    },
+    {
+      "node_id": {
+        "digest": "652cc5b63910aca98b8c91b1c1ba42a8da1f568517c70f37de083414cd192477",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 4,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 3
+        }
+      ],
+      "role": "type"
+    },
+    {
+      "node_id": {
+        "digest": "ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 5,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 4
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "0f17302cedf3adf043ed9559f0b447b9efff41ea346b41b1cef45be2067080ce",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 6,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 5
+        }
+      ],
+      "role": "declaration"
+    },
+    {
+      "node_id": {
+        "digest": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 7,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 6
+        }
+      ],
+      "role": "declaration"
+    },
+    {
+      "node_id": {
+        "digest": "fa983d09a7466fb8f5f10ee50779aa07ca6ca80b8d3a1cdcf9643917150edfe6",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 8,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 7
+        }
+      ],
+      "role": "declaration"
+    },
+    {
+      "node_id": {
+        "digest": "f4f7e25f35dd7b8b3d8493f37052dac668ee26e8c3ffea18bb4be7bff1fff946",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 9,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 8
+        }
+      ],
+      "role": "type"
+    },
+    {
+      "node_id": {
+        "digest": "04c32f391c029ba840f20667662fa1fbb956f2d8f286aa938a958cbd2efb5164",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 10,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 9
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "0deec3ba87fdd3bc1ac5aca8f0b4984d27bf8b0d44c584aede0b5b7b6fdd8589",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 11,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 10
+        }
+      ],
+      "role": "declaration"
+    },
+    {
+      "node_id": {
+        "digest": "73afcfea45751a68fb5e6034ba7e86795105fe50fb886aa3fdc5756494d485c9",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 12,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 11
+        }
+      ],
+      "role": "type"
+    },
+    {
+      "node_id": {
+        "digest": "f236142ab60045f843473e5a9cd8295a64c097098f622c110fddf3931f8a31b7",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 13,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 12
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "14ef99fcc94f7588195cab024923f15d525b8e4b4ff4bcd058790d836eb996d4",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 14,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 13
+        }
+      ],
+      "role": "declaration"
+    },
+    {
+      "node_id": {
+        "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 15,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 14
+        }
+      ],
+      "role": "generated"
+    },
+    {
+      "node_id": {
+        "digest": "249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 16,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 15
+        }
+      ],
+      "role": "type"
+    },
+    {
+      "node_id": {
+        "digest": "7f4b04305cc6f9921deab998d47f658f3a28638849ba43e34863fd0749575f88",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 17,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 16
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "f3a9c2646ad053adba2a05968d90df665c3e66aa736d1136b4ef3513890907f4",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 18,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 17
+        }
+      ],
+      "role": "declaration"
+    }
+  ]
+}

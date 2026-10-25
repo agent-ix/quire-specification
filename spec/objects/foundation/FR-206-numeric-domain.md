@@ -19,7 +19,10 @@ When a numeric operand or result is checked, the checker SHALL require its named
 
 - **named_type** (identity component) — the declared numeric type. Ordinary
   operands and results share their named numeric type
-  ([FR-044](../../functional/foundation/FR-044-check-composed-numeric-definedness.md)).
+  ([FR-044](../../functional/foundation/FR-044-check-composed-numeric-definedness.md)),
+  except the two operation-scoped exceptions FR-044 names: rational `/`
+  promotion and the FR-149 expected-type rule, under which a binary `+`, `-` or
+  `*` operand of `=` or `!=` takes the other operand's `Int[..]` type.
 - **unit** (identity component) — the exact unit. Operands and results share it
   (FR-044). Rational operation results are checked in the same named
   dimensionless rational type (FR-044).

@@ -21,17 +21,18 @@ Run each vector through the real local Rust boundary of the provider named by th
 
 The models below are defined here in full; the citation names the QSL design record each one comes from. `ev` selects `quire.temporal.event-position.false-extension/v1`, `inf` selects `quire.temporal.infinite-trace/v1` and `timed` selects `quire.temporal.timed/v1`.
 
-- **`Avail`**, **`LongRun`** and **`Monthly`** (from QSL ADR-024 §7.3). One object `v: Server { up: Boolean }`, initially `up = true`. `Server::tick(fail)` has pre `up` and post `up = not fail`; `Server::repair(ok)` has pre `not up` and post `up = ok`. The declarations are `random Server::tick(fail) ~ { true: 1, false: 1999 };`, `random Server::repair(ok) ~ { true: 9, false: 1 };` and `workload Steady on Avail { weight Server::tick = 1; weight Server::repair = 1; }`. `LongRun` is `probabilistic LongRun using ev on Avail under Steady on origin with alpha 0.01, beta 0.01, indifference 0.0002 { long_run_fraction holds(v.up) >= 0.999 }`, exact value `1800/1801`. `Monthly` is `probabilistic Monthly using ev on Avail under Steady on origin with alpha 0.01, beta 0.01, indifference 0.005 { probability >= 0.99 [ fraction holds(v.up) over [0, 10000] >= 0.999 ] }`, whose probability is about `0.959`.
+- **`Avail`**, **`LongRun`** and **`Monthly`** (from QSL ADR-024 §7.3). One object `v: Server { up: Boolean }`, initially `up = true`. `Server::tick(fail)` has pre `up` and post `up = not fail`; `Server::repair(ok)` has pre `not up` and post `up = ok`. The declarations are `random Server::tick(fail) ~ { true: 1, false: 1999 };`, `random Server::repair(ok) ~ { true: 9, false: 1 };` and `workload Steady on Avail { weight Server::tick = 1; weight Server::repair = 1; }`. `LongRun` is `probabilistic LongRun using ev on Avail under Steady on origin with alpha 0.01, beta 0.01, indifference 0.0002 { long_run_fraction holds(v.up) >= 0.999 }`, exact value `1800/1801`. `Monthly` is `probabilistic Monthly using ev on Avail under Steady on origin with alpha 0.01, beta 0.01, indifference 0.005 { probability >= 0.99 [ fraction holds(v.up) over [0, 10000] >= rational(999, 1000) ] }`, whose probability is about `0.959`.
 
 ## Vectors
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| XL-01 | A claim whose value is within `2^-80` of its threshold, `max_rational_bits` 64, `max_precision_bits` 64, `max_policy_iterations` 0 | `incomplete`, `precision-budget{lower, upper}` with the straddling interval |
+| XL-01 | A claim whose value is within `2^-80` of its threshold, `max_rational_bits` 64, `max_precision_bits` 64, `max_policy_iterations` 1 | `incomplete`, `precision-budget{lower, upper}` with the straddling interval |
 | XL-02 | `Monthly` with `max_states` 1000 | `incomplete`, `limit-reached` naming `max_states`, value 1000, and the request setting that raises it |
 | XL-03 | A `>= θ` claim whose lower certificate on the explored part already passes `θ` when `max_states` stops exploration | `proved` from the partial evidence |
 | XL-04 | A `<= θ` claim whose path set on the explored part already passes `θ` when a limit stops exploration | `refuted` from the partial evidence |
 | XL-05 | `Monthly` cancelled by the caller before its backward induction completes | `incomplete`, `cancelled{source: "requested"}`; not `limit-reached`; no value |
+| XL-06 | A `<= θ` claim refuted on a fully explored model, once under the default `max_witness_paths` and once with `max_witness_paths` 0; and a request with `max_witness_paths` -1 | The 0 request validates and settles the same verdict as the default with no path set; the -1 request fails the provider schema |
 
 ## Expected Results
 

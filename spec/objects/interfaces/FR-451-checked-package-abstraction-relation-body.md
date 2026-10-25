@@ -52,7 +52,8 @@ nothing else.
   `object_type` node, whose node key is the object type's AD-006
   effective-declaration key carried as its `ModelOwner` (FR-322
   "Model-owned members"). A population entry's key is its `population`
-  target, a `relation`/`population` node. A frame entry's key is the
+  target, a `relation`/`population` node, whose node key is the population's
+  declaration key carried as its `ModelOwner` (FR-322 "Population references"). A frame entry's key is the
   operation key: its `context` target, a `model`/`object_type` node, and
   its `operation` identifier, the same pair a `state`/`operation_anchor`
   node binds
@@ -157,4 +158,3 @@ object, population or operation key refuses `invalid_model_binding`/
 ## Status
 
 Proposed complete-V1 boundary contract for the abstraction relation node.
-Implementation and qualification remain tracked separately.

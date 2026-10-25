@@ -28,6 +28,8 @@ Implement the sampler through the real local Rust boundary and compute each vect
 | SM-05 | A workload step with one enabled operation of unit weight and one identity, no random parameter | The operation and identity choices have `n = 1`, draw no digest and take no choice index; the selection equals the unweighted uniform selection |
 | SM-06 | A `uniform` delay with `q = 8` over window `[1, 3]` ms and grid value from `v mod 256` | Delay `1 + 2 · (v mod 256)/256` ms, an exact rational |
 | SM-07 | A workload step with one enabled operation and one identity, and one random parameter with weights `(1, 3)`, seed `424242`, trace `0`, step `0` | The parameter's choice takes choice index `0` (the two one-item choices take none), so its preimage is `{"choice":"0","draw":"0","seed":"424242","step":"0","trace":"0"}`, the TC-210 step-0 digest |
+| SM-08 | A weighted choice with total `n = 2^256` (weights `(2^256 - 1, 1)`), seed `424242`, trace `0`, choice `0`, step `0` | Accepted at `draw = 0` with the digest `d5160380d7495443315376de306a5d3613f3e010df74a5db92853829205995f2` (`v = 0xd516…95f2` is below `2^256 - 1`); selects index `0` |
+| SM-09 | The same choice with total `n = 2^256 + 1` (weights `(2^256, 1)`) | The run settles `unsupported` with cause `total-above-draw-range{total: "115792089237316195423570985008687907853269984665640564039457584007913129639937"}` before any draw: no digest is computed, no choice index is taken and the sampler does not loop |
 
 ## Expected Results
 

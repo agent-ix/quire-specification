@@ -15,6 +15,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-259
     type: references
+  - target: ix://agent-ix/quire-contract-ir/FR-350
+    type: references
 ---
 ## Description
 
@@ -24,11 +26,11 @@ native operator, predicate, clock, capture, history and closure meaning.
 
 ## Inputs
 
-An exact native temporal subject; total-Boolean predicate projections governed
-by [contract-IR issue
-#63](https://github.com/agent-ix/quire-contract-ir/issues/63); selected
-observation and clock bindings; and an exact bridge-definition identity naming
-the TL syntax and evaluator profiles it targets.
+An exact native temporal subject from QSL FR-045; total-Boolean predicate
+projections that Contract IR FR-350 builds from the native `holds` leaves and
+the trace's explicit valuation cells; selected observation and clock bindings;
+and an exact bridge-definition identity naming the TL syntax and evaluator
+profiles it targets.
 
 ## Outputs
 
@@ -39,17 +41,25 @@ editable source.
 
 ## Behavior
 
-The initial correspondence shall use this support table:
+The correspondence shall use the support table that QSL FR-045 classifies:
 
 | Native request | Existing TL target | Disposition |
 | --- | --- | --- |
-| Event-position false-extension, bounded future core, complete execution | `mltl.closed-trace/v1` | Supported when every bridge premise below holds |
-| Event-position false-extension, bounded future core, open prefix | `mltl.online-prefix/v1` | Supported when every bridge premise below holds |
-| Fixed-sample false-extension, bounded future core | The same TL profiles | Supported only with one total valuation per required sample and retained epoch/period/unit correspondence |
+| `quire.temporal.infinite-trace/v1` | No target | Unsupported on the infinite-trace dimension; there is no bounded TL formula to generate, and QSpec FR-161 analyzes unbounded requests natively |
 | Timestamped-event finite-window | Current TL profiles | Unsupported; no index conversion is inferred |
-| Any bounded past operator with origin-complete history | `tl-syntax.past-operators/v1`, `mltl.origin-complete-history/v1`, and the selected position-history/past-evaluator contracts | Supported when every bridge premise below holds |
-| Finite-window future semantics | `mltl.closed-trace/v1` | Unsupported because TL extends atoms false beyond closure |
-| `quire.temporal.infinite-trace/v1` unbounded property (no interval bound) | No TL target | Unsupported; there is no bounded TL formula to generate. [FR-161](FR-161-analyze-infinite-trace-properties.md) analyzes the request natively instead of lowering it. |
+| Both a bounded past and bounded future operator reachable from the root | No target | Unsupported on the mixed-direction dimension; the past-operator profile admits no future or mixed graph |
+| Either false-extension profile, at least one bounded past operator defined by FR-092 and no future operator, with origin-complete history | `tl-syntax.past-operators/v1`, `mltl.origin-complete-history/v1`, and the selected position-history/past-evaluator contracts | Supported when every bridge premise below holds; a history cutoff is `incomplete` with cause `missing-history`, not unsupported |
+| Event-position false-extension, a bounded future operator and no past operator, complete surrounding execution | `mltl.closed-trace/v1` | Supported when every bridge premise below holds |
+| Event-position false-extension, a bounded future operator and no past operator, open surrounding execution | `mltl.online-prefix/v1` | Supported when every bridge premise below holds |
+| Fixed-sample false-extension, a bounded future operator and no past operator | The same TL profiles, selected by surrounding-execution closure | Supported only with one total valuation per required sample and retained epoch/period/unit correspondence |
+| Either false-extension profile, no bounded temporal operator reachable | The same TL profiles, selected by surrounding-execution closure | Supported; a proposition-only formula imposes no additional TL temporal obligation |
+
+The bounded-past operator set is exactly the set defined by QSpec FR-092; this
+row covers every member without a future operator. The table's infinite-trace
+row applies to the whole profile. The timestamped finite-window row also
+precludes a finite-window-to-closed-trace equivalence claim, because TL extends
+atoms false beyond closure. The no-operator row covers each false-extension
+profile and is separate from the bounded-future and bounded-past rows.
 
 For a supported mapping, the bridge shall preserve the native source
 digest and exact clause/expression span; clause/requirement identity;
@@ -95,9 +105,9 @@ correspondence.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-095-AC-1 | Independent native and TL evaluators emit equal truth/pending outcomes for every member of the declared finite exhaustive bounded-future formula/trace population in the event-position mapping domain. | Test (TC-117) |
+| FR-095-AC-1 | Independent native and TL evaluators emit equal truth/pending outcomes for every member of the declared finite exhaustive bounded-future formula/trace population in the event-position mapping domain; a proposition-only formula under either false-extension profile selects the matching target from surrounding-execution closure. | Test (TC-117) |
 | FR-095-AC-2 | The one-position `always[0,1] p` vector rejects a finite-window-to-`mltl.closed-trace/v1` equivalence claim. | Test (TC-117) |
-| FR-095-AC-3 | Timestamped-event and past-time requests return typed unsupported mappings at current TL versions without emitting a substitute formula. | Test (TC-117) |
+| FR-095-AC-3 | Timestamped-event and mixed past-and-future requests return typed unsupported mappings without emitting a substitute formula; a past-only request with origin-complete history maps to `mltl.origin-complete-history/v1`, and with a history-cutoff boundary is `incomplete` with cause `missing-history`. | Test (TC-117) |
 | FR-095-AC-4 | Mutating any native/TL profile, source/span, model/predicate, clock, capture, interval, closure/history or bridge identity breaks correspondence and names that axis. | Test (TC-117) |
 | FR-095-AC-5 | A numeric, nullable, unavailable or pending native value cannot enter the TL proposition population. | Test (TC-117) |
 | FR-095-AC-6 | Fixed-sample lowering retains epoch/period/unit, reports an absent runtime sample as incomplete, and refuses a changed period or event-count reinterpretation even where the TL formula bytes match. | Test (TC-113) |
@@ -107,16 +117,20 @@ correspondence.
 
 ## Dependencies
 
-- [Contract-IR issue #63](https://github.com/agent-ix/quire-contract-ir/issues/63)
-  owns typed predicate projection.
-- Closed [Contract-IR issue #64 / PR #68](https://github.com/agent-ix/quire-contract-ir/pull/68)
-  owns the public bridge interface; open
-  [issue #71](https://github.com/agent-ix/quire-contract-ir/issues/71) owns its
-  executable temporal/result composition. This requirement supplies temporal
-  meaning without copying private planning into that repository.
+- Contract IR FR-350 implements this correspondence: it constructs and
+  validates the formula and valuation projection, correspondence record and
+  result join. This requirement supplies the temporal meaning.
+- QSL FR-045 supplies the `mapping_support_v2` classification and retained
+  subject; QSL FR-050 supplies the strict `/2` package and QSL FR-043 supplies
+  the native `evaluate_v2` report. QSL does not construct the TL correspondence.
+- tl-syntax FR-011 (past-operator semantics; FR-011-AC-4 admits no future or
+  mixed node under `tl-syntax.past-operators/v1`), FR-013 and FR-014 (the
+  formula editions), tl-mltl FR-018 (trace and history wire) and quire-mltl
+  FR-001 and FR-003 (request and result admission, result mapping).
 - TL syntax/evaluation retains its own semantic-profile and release authority.
 
 ## Status
 
-Accepted by FS04 as the exact native-to-TL correspondence contract. The
-Contract-IR bridge remains its independent implementation owner.
+Accepted by FS04 as the exact native-to-TL correspondence contract. Contract IR
+FR-350 is its implementation; QSL FR-045 owns classification and supplies the
+bridge inputs.

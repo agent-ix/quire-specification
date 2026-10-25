@@ -314,7 +314,7 @@ The frame step runs before the state step of
 | FR-340-AC-10 | A field entry on an object type for a field typed with a record value type, and a field entry on that record value type's node for one of its own fields, are distinct entries; a frame body naming both is admitted with no defect. | Test (TC-233) |
 | FR-340-AC-11 | A `modifies` entry naming a relationship is one node key, and a `relation`/`relationship` node carries no `declaration`; that single key is the whole grant, covering every link of the relationship observed from each end, including a link with an end at an object the same invocation creates. | Test (TC-233) |
 | FR-340-AC-12 | A frame node's `semantic_type` is the `model`/`object_type`, `model`/`process` or `model`/`state_machine` node declaring its operation, and a `semantic_type` naming any other node (a record value type, an event type, a persistence interface, a systems interface, a `relation`/`relationship`) refuses `invalid_model_binding`/`malformed-declaration` before any entry defect. | Test (TC-233) |
-| FR-340-AC-13 | A field entry's name resolves among the exposed effective fields of its declaring object type, own and inherited: `(Order, "total")` and `(Sub, "total")` resolve to `Order`'s field; an undeclared name and an operation's name refuse `missing_declaration`/`missing-name`, a name two supertypes both expose refuses `ambiguous_declaration`/`ambiguous-name`, and a declaring node keyed under an unselected domain package version refuses `missing_declaration`/`missing-selection`. | Test |
+| FR-340-AC-13 | A field entry's name resolves among the exposed effective fields of its declaring object type, own and inherited: `(Order, "total")` and `(Sub, "total")` resolve to `Order`'s field; an undeclared name and an operation's name refuse `missing_declaration`/`missing-name`, a name two supertypes both expose refuses `ambiguous_declaration`/`ambiguous-name`, and a declaring node owned by a domain package identity the lock does not select refuses `missing_declaration`/`missing-selection`. | Test (TC-280) |
 | FR-340-AC-14 | A frame occurrence with a role other than `generated` fails the schema. | Test (TC-233) |
 | FR-340-AC-15 | No `model` node stands for a field, an operation or a clause member on its own: `ModelNode.semantic_form` names only FR-208's business type kinds, `model_import` and FR-208's five systems meanings. | Test (TC-233) |
 | FR-340-AC-16 | A field entry carries `scope` exactly `receiver` or `every-object`; an entry without it or with another value fails the schema, two entries for one field with different scopes refuse `invalid_model_binding`/`conflicting-binding` whichever order they are listed in, and that refusal outranks the `invalid_semantic_graph` of a misordered array in the same frame but not any other meaning-join defect, and changing an entry's scope changes the frame node id and the `package_id`. | Test (TC-233) |
@@ -356,7 +356,7 @@ The frame step runs before the state step of
 ## Status
 
 Accepted complete-V1 boundary value contract for the `state`/`frame` node
-body. Implementation and qualification remain tracked separately.
+body.
 
 ## References
 

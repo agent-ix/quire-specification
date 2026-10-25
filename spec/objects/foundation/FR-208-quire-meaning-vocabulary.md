@@ -85,7 +85,10 @@ Rules common to the six meanings:
 - **Field types.** A field, parameter or result `typeRef` may name a record value
   type or a variant type (Variant types below). Naming an event type, state
   machine, process, persistence interface or namespace is
-  `invalid_model_binding`/`malformed-declaration`.
+  `invalid_model_binding`/`malformed-declaration`. A `typeRef` of the form
+  `ix://quire/unit/<name>` names a unit of the checked package, not a
+  declaration of the domain package; the binder SHALL admit it without
+  resolving it, and FR-322 "Model-owned members" step 4 resolves it.
 - **Relationships.** A process's `relationships[]` entries have object-type
   relationship meaning over its runs (FR-150, FR-151): each is one relationship
   declaration, its ends name object types or processes, and it is navigated in
@@ -208,9 +211,9 @@ model's `Operation.pre` and `Operation.post`.
   of the observation, bound by the State-machine context anchors; for a process `self` is the run. Frame entries follow
   the object-type Frames rule, except that the receiver-scoped members
   (`modifies_receiver`, `deletes_receiver: true`) are refused on these
-  operations ([FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)). Redefinition follows FR-151: the effective
-  precondition is the disjunction and the effective postcondition the
-  conjunction over redefined members.
+  operations ([FR-013](../../functional/foundation/FR-013-validate-operation-frames.md)). Redefinition follows FR-151 for the effective
+  precondition (own clauses conjoined, then disjoined with the redefined
+  member's) and for the effective postcondition.
 - **Transitions.** An operation's contract is the same in every transition it
   triggers. A transition's guard is not conjoined to the trigger's
   precondition. A transition's `from` and `to` are not related to the
@@ -424,5 +427,4 @@ the names alone, never on the spelling of `Alias`.
 
 ## Status
 
-Accepted complete-V1 meaning vocabulary. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 meaning vocabulary.

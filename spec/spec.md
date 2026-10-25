@@ -496,6 +496,10 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-154
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-470
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-478
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-160
     type: contains
   - target: ix://agent-ix/quire-specification/FR-161
@@ -554,8 +558,6 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-307
     type: contains
-  - target: ix://agent-ix/quire-specification/FR-308
-    type: contains
   - target: ix://agent-ix/quire-specification/FR-309
     type: contains
   - target: ix://agent-ix/quire-specification/FR-310
@@ -573,6 +575,8 @@ relationships:
   - target: ix://agent-ix/quire-specification/NFR-073
     type: contains
   - target: ix://agent-ix/quire-specification/NFR-075
+    type: contains
+  - target: ix://agent-ix/quire-specification/NFR-076
     type: contains
   - target: ix://agent-ix/quire-specification/IT-070
     type: contains
@@ -688,6 +692,14 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-453
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-464
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-465
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-466
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-467
+    type: contains
   - target: ix://agent-ix/quire-specification/FR-390
     type: contains
   - target: ix://agent-ix/quire-specification/FR-391
@@ -713,6 +725,18 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-401
     type: contains
   - target: ix://agent-ix/quire-specification/FR-402
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-475
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-476
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-477
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-479
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-480
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-481
     type: contains
   - target: ix://agent-ix/quire-specification/FR-403
     type: contains
@@ -759,6 +783,10 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-378
     type: contains
   - target: ix://agent-ix/quire-specification/FR-379
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-468
+    type: contains
+  - target: ix://agent-ix/quire-specification/FR-469
     type: contains
   - target: ix://agent-ix/quire-specification/FR-380
     type: contains
@@ -977,6 +1005,10 @@ The requirement artifacts are indexed below.
 | [FR-451](objects/interfaces/FR-451-checked-package-abstraction-relation-body.md) | FR | Checked-package `correspondence`/`abstraction_relation` body, keys and reader order |
 | [FR-452](functional/tooling/FR-452-preserve-admission-across-specification-revisions.md) | FR | Spec-versioning refinement gate: a superseding revision admits what its prior admitted |
 | [FR-453](functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md) | FR | Profile-layering refinement gate: the five AD-003 layering edges, refusal preservation and per-layer user subsets |
+| [FR-464](objects/interfaces/FR-464-checked-package-protocol-node-bodies.md) | FR | Checked-package `protocol` node family: operation, operator catalog, keys, clause body, binders, causal relation and reader order |
+| [FR-465](objects/interfaces/FR-465-checked-package-protocol-declaration-bodies.md) | FR | Checked-package protocol `role`, `channel`, `queue` and `obligation` (`finish`, `terminal`) bodies |
+| [FR-466](objects/interfaces/FR-466-checked-package-protocol-control-bodies.md) | FR | Checked-package protocol `control` (thirteen operators) and `compensation` bodies, binder scope and decision facts |
+| [FR-467](functional/source-package/FR-467-define-extension-definition-members.md) | FR | Extension definition members: grammar schema, typed-node schema, and their keyword, node-kind and cycle refusals |
 | [FR-405](functional/analysis/FR-405-declare-probabilistic-models.md) | FR | Declare random parameters, workloads and rewards |
 | [FR-406](functional/analysis/FR-406-interpret-probabilistic-models.md) | FR | Interpret probabilistic models under a workload or every scheduler |
 | [FR-407](functional/analysis/FR-407-state-probabilistic-claims.md) | FR | State probabilistic claims over events and measures |
@@ -996,6 +1028,8 @@ The requirement artifacts are indexed below.
 | [FR-421](functional/temporal/FR-421-check-probabilistic-timed-claims-exactly.md) | FR | Check probabilistic timed claims exactly through digital clocks |
 | [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package union, union-value and case nodes, explicit union-value application-preimage selection, and the `quire.op.control.case` catalog entry |
 | [FR-441](objects/interfaces/FR-441-union-member-key.md) | FR | Union member key: the `quire.union-member-node/v1` preimage |
+| [FR-478](functional/type-model/FR-478-convert-text-to-a-number.md) | FR | Text and String to a number: one locale-free grammar per integer, decimal, rational, IEEE and quantity target |
+| [FR-469](objects/interfaces/FR-469-checked-package-extension-nodes.md) | FR | Checked-package extension form node: one `extension`/`extension_form` tag with the node kind as body data, its structural key, and the reader joins for a held, selected extension definition |
 | [FR-390](functional/analysis/FR-390-analyze-state-graph-claims.md) | FR | State-graph claims `possible`, `always possible` and `unique path` over a model subject: forms, graph semantics and admission |
 | [FR-391](functional/analysis/FR-391-settle-state-graph-claims.md) | FR | Settlement of state-graph claims from decisive evidence on open and closed nodes; verdicts, settlement method and reduction rows |
 | [FR-392](functional/analysis/FR-392-sample-possible-witnesses.md) | FR | Seeded witness sampling for `possible` claims; `witness_samples`, `seed` and `max_walk_steps` |
@@ -1009,6 +1043,11 @@ The requirement artifacts are indexed below.
 | [FR-400](objects/interfaces/FR-400-hyper-counterexample.md) | FR | `HyperCounterexample` wire: lockstep, witness-exhausted, projected and step-tuple kinds |
 | [FR-401](functional/analysis/FR-401-replay-hyper-counterexamples.md) | FR | Replay of hyper counterexamples and step-relation code-claim counterexamples |
 | [FR-402](objects/interfaces/FR-402-hyperproperty-obligation-identity.md) | FR | Checked-package hyperproperty claim body and obligation identity |
+| [FR-475](objects/interfaces/FR-475-checked-package-state-graph-claim-body.md) | FR | Checked-package `claim`/`state_graph` body and state-graph obligation identity |
+| [FR-476](objects/interfaces/FR-476-checked-package-model-terminal-declaration-body.md) | FR | Checked-package `temporal`/`terminal` body of a model `terminal` declaration |
+| [FR-477](objects/interfaces/FR-477-checked-package-step-relation-claim-body.md) | FR | Checked-package `claim`/`step_relation` body of a step relation and its code-claim premises |
+| [FR-480](functional/type-model/FR-480-check-and-resolve-reference-literals.md) | FR | Reference literal `M::T#"k"`: syntax, typing, `reference` literal term and resolution at subject binding |
+| [FR-481](objects/interfaces/FR-481-checked-package-hybrid-model-nodes.md) | FR | Checked-package `hybrid` nodes of a hybrid model, its modes and transitions, and its claims |
 | [FR-403](functional/analysis/FR-403-reduce-hyperproperty-state-spaces.md) | FR | Reduction preservation rows for hyper forms and compiler-verified copy-swap symmetry |
 | [FR-049](functional/foundation/FR-049-bind-native-choreography-syntax.md) | FR | Accepted native choreography source integration; complete-V1 review SR-571–580 |
 | [US-006](usecase/US-006-assess-distributed-protocols.md) | US | Accepted complete-V1 protocol intent; review SR-571–580 |
@@ -1188,6 +1227,7 @@ The requirement artifacts are indexed below.
 | [FR-285](objects/protocol/FR-285-participation-fact.md) | FR (value_object) | Object layer; exact known/unknown source participation without importing target status labels |
 | [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; canonical-result identity preimage and strict-reader order |
 | [FR-287](objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md) | FR (value_object) | Object layer; authority-qualified opaque runtime subject identity and non-causal canonical order |
+| [FR-479](objects/protocol/FR-479-obligation-activation-binding.md) | FR | Object layer; exact producer-to-consumer protocol-obligation activation binding over the FR-464 activation relation |
 | [FR-288](objects/protocol/FR-288-qualified-protocol-definition-identity.md) | FR (value_object) | Object layer; exact linked protocol-definition qualifier across source, declaration ownership and semantic selections |
 | [FR-290](objects/protocol/FR-290-protocol-claim-kind.md) | FR (enumeration) | Object layer; cross-family authority: closed capability-kind vocabulary `quire.capability-kind/v1` for the value, state-model, finite-replay, temporal-trace, protocol, probabilistic and real-time families |
 | [FR-291](objects/protocol/FR-291-admitted-analysis-fragment.md) | FR (value_object) | Object layer; exact admitted analysis-fragment selection |
@@ -1223,6 +1263,7 @@ The requirement artifacts are indexed below.
 | [FR-377](functional/analysis/FR-377-decide-model-refinement.md) | FR | Draft; Refinement between two model subjects: step rules, abstract progress, terminal states |
 | [FR-378](functional/analysis/FR-378-check-refinement-auxiliary-state.md) | FR | Draft; Refinement history fields and hidden abstract fields |
 | [FR-379](functional/analysis/FR-379-report-and-replay-refinement-counterexamples.md) | FR | Draft; Refinement verdicts, counterexample wire and replay |
+| [FR-468](functional/analysis/FR-468-certify-per-step-refinement-obligations.md) | FR | Per-step refinement queries: initial and step queries and the base-and-step certificate |
 | [FR-380](functional/analysis/FR-380-transfer-claims-through-refinement.md) | FR | Draft; Claim transfer through a refinement (vertical composition) |
 | [FR-381](functional/analysis/FR-381-check-symmetric-populations.md) | FR | Draft; Symmetric population annotation and identity transparency |
 | [FR-382](functional/analysis/FR-382-select-state-space-reductions.md) | FR | Draft; Reduction request members, admission, identity and negotiation |

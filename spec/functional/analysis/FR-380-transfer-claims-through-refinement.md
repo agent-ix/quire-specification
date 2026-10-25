@@ -76,8 +76,17 @@ states, and universes equal to the concrete subject's universes of the
 populations they are mapped from. The refinement premise's concrete subject
 equals the transfer item's subject.
 
-**Fairness implication.** Every constraint of `F_P` is in the refinement's
-`F_A`, or is the `whole` form of an `each` constraint in `F_A`.
+**Fairness implication.** Every constraint of `F_P`, a triple of kind,
+operation and granularity, is implied by the refinement's `F_A`. A
+constraint of `F_A` implies a constraint of `F_P` on the same operation only
+when the kinds are compatible: a `strong` constraint in `F_A` implies a
+`weak` or a `strong` one in `F_P`, and a `weak` constraint in `F_A` implies
+only a `weak` one in `F_P`, because weak fairness does not imply strong
+fairness ([FR-362](../temporal/FR-362-apply-fairness-constraints.md)). The
+granularity is equal, or the `F_P` constraint is the `whole` form of an
+`each` constraint in `F_A`, and the `whole` form keeps the same kind rule. A
+constraint of `F_P` that no entry of `F_A` implies settles
+`transfer-not-preserving`.
 
 **Safety and liveness premises.** A safety clause transfers from an abstract
 premise over the abstract subject. A liveness clause transfers only from an
@@ -118,7 +127,7 @@ composition over component interface contracts.
 | --- | --- | --- |
 | FR-380-AC-1 | A transfer item with a proved abstract claim, a proved refinement, a clause in the fragment, matching subjects and implied fairness settles `proved`, basis `decisive-witness`, with no exploration of the concrete subject and both premise identities in its record. | Test (TC-317) |
 | FR-380-AC-2 | A clause with an interval operator nested under an unbounded one, and a clause using previous, each settle `inconclusive`, cause `transfer-not-preserving`, naming the operator; checked directly on the concrete subject, the previous clause's verdict differs from its abstract verdict on the vector model. | Test (TC-317) |
-| FR-380-AC-3 | An `F_P` constraint that is not in `F_A` and is not the `whole` form of an `each` constraint in `F_A` settles `inconclusive`, cause `transfer-not-preserving`, naming the constraint; a `whole` constraint in `F_P` with the matching `each` constraint in `F_A` transfers. | Test (TC-317) |
+| FR-380-AC-3 | An `F_P` constraint that no `F_A` constraint implies settles `inconclusive`, cause `transfer-not-preserving`, naming the constraint; a `whole` constraint in `F_P` with the matching `each` constraint of the same or a stronger kind in `F_A` transfers, a `weak` constraint in `F_P` transfers from a `strong` one in `F_A`, and a `strong` constraint in `F_P` does not transfer from a `weak` one in `F_A`, whether `each` or `whole`. | Test (TC-317) |
 | FR-380-AC-4 | A liveness clause proved over maximal abstract behaviours but refuted over the abstract stutter closure settles `inconclusive`, cause `transfer-not-preserving`, naming the missing stutter closure; the same clause with a stutter-closure premise transfers. | Test (TC-317) |
 | FR-380-AC-5 | A premise that is refuted, inconclusive, unsupported or failed settles the transfer item `inconclusive`, cause `premise-unproved`, naming the premise; no transfer item settles `refuted`. | Test (TC-317) |
 | FR-380-AC-6 | A refinement premise whose abstract subject differs from the abstract claim's subject in package, initial states or universes is refused `invalid_runtime_input`/`invalid-value`, naming the mismatching member. | Test (TC-317) |

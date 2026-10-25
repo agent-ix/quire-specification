@@ -21,12 +21,16 @@ For event-position correspondence, exhaustively enumerate ASTs of depth at most
 two from constants, propositions `{p,q}`, negation, conjunction and the four
 future operators using every interval `0 <= a <= b <= 3`; enumerate trace
 lengths zero through five, every total Boolean valuation, every valid anchor and
-both closed and open-prefix lifecycle states. Record the population cardinality
+both closed and open-prefix lifecycle states. Include a proposition-only formula
+under both false-extension profiles and both surrounding-execution closures;
+require closed-trace for closed execution and online-prefix for open execution. Record the population cardinality
 and any infeasible resource stop. For fixed-sample correspondence, exercise the
 same finite population under two declared rational periods and epochs. Compare
 an independent native oracle with the exact selected TL evaluator profiles.
 Include the one-position `always[0,1] p` closure discriminator. Request
-timestamped finite-window and each past operator from current TL. Independently
+timestamped finite-window; every bounded-past operator defined by FR-092 alone
+under both false-extension profiles with an execution-origin boundary and with
+a history-cutoff boundary; and a past operator combined with a future operator. Independently
 mutate every native/TL profile, source/span, model/predicate, clock, capture,
 interval, closure/history and bridge identity. For each mapped result,
 independently omit or change assessment execution, decision-scope progress and
@@ -38,9 +42,13 @@ nullable, unavailable and pending proposition inputs.
 
 Every member of the declared finite population agrees and retains full
 correspondence, or a resource stop is reported without an exhaustive claim.
-Finite-window,
-timestamped and current past-time mappings return typed unsupported without a
-substitute formula. Each identity mutation fails on its own axis, and only total
+A proposition-only formula selects the closed-trace target for closed
+execution and online-prefix for open execution under both false-extension
+profiles. Finite-window, timestamped and mixed past-and-future mappings return
+typed unsupported without a substitute formula; each past-only mapping with an
+execution-origin boundary maps
+to `mltl.origin-complete-history/v1` and agrees with the native oracle, and with a
+history-cutoff boundary is `incomplete` with cause `missing-history`. Each identity mutation fails on its own axis, and only total
 native Boolean values enter the TL proposition population. Equal TL truth or
 formula bytes never supply a missing result axis; every valid mapping retains
 the native/shared-result metadata outside the TL formula where necessary.

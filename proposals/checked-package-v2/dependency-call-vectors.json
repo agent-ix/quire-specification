@@ -1,0 +1,180 @@
+{
+  "library": {
+    "identity": "test/predicates",
+    "package": "fixtures/positive-dependency-library.json",
+    "function": [
+      "Lib",
+      "is_small"
+    ]
+  },
+  "base": "fixtures/positive-dependency-call.json",
+  "call": [
+    "App",
+    "check"
+  ],
+  "mutations": [
+    {
+      "id": "no-dependency-supplied",
+      "supplied": false,
+      "patch": [],
+      "outcome": "refused:missing_import/missing-selection",
+      "locus": "/lock/dependency_selections/0"
+    },
+    {
+      "id": "package-not-a-direct-selection",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/0/package/digest",
+          "value": "09e949d62fc722502cbbc63bcfbb5658b923e16ff4730ea95d4e75030bd67bb8"
+        }
+      ],
+      "outcome": "refused:missing_declaration/missing-selection",
+      "locus": "/semantic_graph/nodes/3/body/arguments/0/package"
+    },
+    {
+      "id": "node-carries-no-declaration",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
+          "value": "ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda"
+        }
+      ],
+      "outcome": "refused:missing_declaration/missing-name",
+      "locus": "/semantic_graph/nodes/3/body/arguments/0/node"
+    },
+    {
+      "id": "node-names-a-declared-record",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
+          "value": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70"
+        }
+      ],
+      "outcome": "refused:ill_typed/operator-ineligible",
+      "locus": "/semantic_graph/nodes/3/body/arguments/0"
+    },
+    {
+      "id": "function-returns-a-declared-record",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
+          "value": "fa983d09a7466fb8f5f10ee50779aa07ca6ca80b8d3a1cdcf9643917150edfe6"
+        }
+      ],
+      "outcome": "refused:ill_typed/operator-ineligible",
+      "locus": "/semantic_graph/nodes/3/body/arguments/0"
+    },
+    {
+      "id": "function-over-a-set-of-a-declared-record",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
+          "value": "0deec3ba87fdd3bc1ac5aca8f0b4984d27bf8b0d44c584aede0b5b7b6fdd8589"
+        }
+      ],
+      "outcome": "refused:ill_typed/operator-ineligible",
+      "locus": "/semantic_graph/nodes/3/body/arguments/0"
+    },
+    {
+      "id": "function-over-a-tuple-holding-a-declared-record",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
+          "value": "14ef99fcc94f7588195cab024923f15d525b8e4b4ff4bcd058790d836eb996d4"
+        }
+      ],
+      "outcome": "refused:ill_typed/operator-ineligible",
+      "locus": "/semantic_graph/nodes/3/body/arguments/0"
+    },
+    {
+      "id": "function-over-a-model-type-reference",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
+          "value": "f3a9c2646ad053adba2a05968d90df665c3e66aa736d1136b4ef3513890907f4"
+        }
+      ],
+      "outcome": "refused:ill_typed/operator-ineligible",
+      "locus": "/semantic_graph/nodes/3/body/arguments/0"
+    },
+    {
+      "id": "term-as-a-non-callee-argument",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/1",
+          "value": {
+            "node": {
+              "digest": "0f17302cedf3adf043ed9559f0b447b9efff41ea346b41b1cef45be2067080ce",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "package": {
+              "algorithm": "sha256",
+              "digest": "df92b97073ee845bbc1b6aaccfac88ea8d1b4e34e11e545ca7287c61193b30fe",
+              "domain": "quire.package.semantic/v2"
+            },
+            "term": "dependency_reference"
+          }
+        }
+      ],
+      "outcome": "refused:ill_typed/operator-ineligible",
+      "locus": "/semantic_graph/nodes/3/body/arguments/1"
+    },
+    {
+      "id": "term-as-a-node-body-root",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body",
+          "value": {
+            "node": {
+              "digest": "0f17302cedf3adf043ed9559f0b447b9efff41ea346b41b1cef45be2067080ce",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "package": {
+              "algorithm": "sha256",
+              "digest": "df92b97073ee845bbc1b6aaccfac88ea8d1b4e34e11e545ca7287c61193b30fe",
+              "domain": "quire.package.semantic/v2"
+            },
+            "term": "dependency_reference"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/3/owner",
+          "value": {
+            "authority": "agent-ix",
+            "identity": "example",
+            "kind": "source"
+          }
+        }
+      ],
+      "outcome": "refused:ill_typed/operator-ineligible",
+      "locus": "/semantic_graph/nodes/3/body"
+    },
+    {
+      "id": "target-listed-in-dependencies",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/dependencies",
+          "value": [
+            {
+              "digest": "0f17302cedf3adf043ed9559f0b447b9efff41ea346b41b1cef45be2067080ce",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          ]
+        }
+      ],
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/3/dependencies"
+    }
+  ]
+}

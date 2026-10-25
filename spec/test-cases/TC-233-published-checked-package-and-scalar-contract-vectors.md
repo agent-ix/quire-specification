@@ -7,6 +7,34 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-340
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-271-AC-7
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-22
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-23
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-24
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-272-AC-25
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-78
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-79
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-114
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-81
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-82
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-83
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-108
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-118
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-478-AC-3
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-341
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-342
@@ -37,8 +65,8 @@ relationships:
 
 Qualify the published QSpec contract artifacts themselves: the V2
 checked-package schema and fixtures, the nominal node-identity preimage
-schema and vectors, the operation catalog and its clause and control
-operation identities, and the compound-unit value identity schema and
+schema and vectors, the operation catalog including text-to-number identities,
+its clause and control operation identities, and the compound-unit value identity schema and
 vectors, and the complete-value and complete-model definition locks and
 package-selection vectors. This case proves producer-side schema closure,
 digest recomputation and operation-identity and diagnostic-cause closure
@@ -49,19 +77,39 @@ those criteria remain with TC-217 and TC-187.
 
 Validate each positive fixture against its published schema and apply every
 authored adverse mutation. Rebuild each V2 identity preimage from the lock
-selections and occurrence-free graph, recompute the JCS SHA-256 package id,
-then edit each excluded member and each named preimage member, requiring each
-excluded member injected into the identity preimage to be refused. Insert the
+selections alone, require it to equal the shipped `identity_preimage`, which
+carries no `identity_projection`, add the identity projection derived from
+the occurrence-free graph to form the package-id preimage, recompute the JCS
+SHA-256 package id, then edit each excluded member and each named preimage member, requiring each
+excluded member injected into the identity preimage to be refused. Add an
+`identity_projection` member to the all-families `identity_preimage` for each
+`adverse.json` `shipped_projection_cases` entry (the occurrence-free graph,
+and `[]`) and require the schema to refuse it, a reader refusing
+`malformed_wire` at `/identity_preimage/identity_projection` (FR-322-AC-100). Insert the
 published dependency selections of `dependency-selection-vectors.json` into
 the all-families package's lock and identity preimage, require the schema to
 admit it and its recorded package id to recompute, require each authored
 entry mutation, and each `model_entry_mutations` entry placed in
 `model_selections`, to fail the schema in either member at the mutated entry, and
-apply each order vector's selections to require its recorded order outcome. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Read
-a package whose function calls a dependency `function` returning `Boolean`
-through a `dependency_reference` callee, with its dependency package supplied,
-and then its FR-322-AC-37 mutations: no dependency package supplied, a
-`package` absent from `dependency_selections`, a `node` with no
+apply each order vector's selections to require its recorded order outcome.
+Treat the members the vectors file lists in `schema_only` as schema and order vectors only, not as supplied packages. Check supply order with the `supply_vectors`: neither entry supplied refuses the first; the first supplied and the second not refuses the second; the first supplied but stale and the second not refuses `stale_dependency`/`content-mismatch` at the first, not `missing-selection` at the second (FR-322-AC-84). Check a `dependency_reference` refusal's locus: `missing-selection` at the term's `package` member, `missing-name` at its `node` member and `operator-ineligible` at the term, under the term's pointer in its node's `body`. Check a function whose parameter is of a declared record type, and one whose body only references a declared record, to decide the signature type nodes: only the first is ineligible.
+Apply the published closure vectors to two direct dependencies whose own locks
+select the same transitive identity at different package IDs; require
+`invalid_package`/`conflicting-definition` with both dependency paths as loci.
+Recompute each direct dependency's recorded `package_id` from its base
+`identity_preimage` with that lock's selections substituted. Check that the
+diamond reaches one identity at distinct real IDs, and that the reference's
+package is in the derived closure but absent from the importer's direct entries.
+With one direct dependency, name its transitive-only selection in a
+`dependency_reference` and require `missing_declaration`/`missing-selection`,
+even though the named package is in the derived closure. Validate a `dependency_reference` term against both schemas, and its bare-digest, other-domain, missing-`node` and extra-member mutations; place it as the callee of the `function-call` operation vector and recompute the application-node id after changing only its `package` digest, then only its `node` (FR-322-AC-36). Validate
+`fixtures/positive-dependency-library.json` and recompute its `package_id`,
+then read `fixtures/positive-dependency-call.json`, whose function calls the
+library's `Int[0, 9] -> Boolean` function through a `dependency_reference`
+callee, with the library supplied under its identity, and then apply each
+FR-322-AC-37 mutation `dependency-call-vectors.json` publishes, recomputing
+node keys and the `package_id` after the patch: no dependency package
+supplied, a `package` absent from `dependency_selections`, a `node` with no
 `declaration`, a `node` naming a declared record or a function returning one,
 a function over `Set<R>` and one over a tuple holding `R` for a declared
 record `R`, a function over `Reference<M::T>` for a model type `M::T`,
@@ -69,8 +117,13 @@ the term as a non-callee argument, the term as a node body root, and the target 
 `dependencies`. Recompute
 every nominal node and compound-unit vector identity and apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
-including `-0` spellings, and require the semantic oracle itself to refuse
-`-0`. Require every qualification-catalog entry of both definition locks to name
+including `-0` spellings and the `dimension-equivalence-` mutations (descending
+ids, one node twice, one id, a stale pair, a stale `root_scale`, a zero, a
+negative, a missing and an unreduced `root_scale`, an owner outside the lock),
+and require the semantic oracle itself to refuse `-0` and to refuse a repeated
+pair, a derived pair of unequal normalized maps or of a ratio the base roots do
+not fix, and a cycle of the `dimension-equivalence-` vectors whose ratios do not
+multiply to one (FR-322-AC-118). Require every qualification-catalog entry of both definition locks to name
 an authored artifact under a unique role and identity, require each
 complete-value catalog role to occupy exactly one always, conditional or
 exactly-one slot and each complete-model role the always slot, and evaluate
@@ -138,12 +191,14 @@ nested application;
 and parse the native-diagnostics rows to require each cause in
 exactly its code's row and the Diagnostic schema pairing. Parse the
 `stage_limit_exceeded` and `duplicate_selection` rows of both native-diagnostics
-and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse
+and FR-272 and require each to list exactly FR-272-AC-10's causes. Parse the FR-272 rows of `unknown_wire`, `unknown_required_feature`, `unknown_contract_version` and `unknown_required_capability` and the `Diagnostic` schema's pairing of `unsupported-wire` and `unsupported-feature`, and require FR-322-AC-78's one pairing. Parse the rows of the eight FR-322 reader codes in both and require FR-272-AC-22's causes and payload names, and FR-271 to hold one row for each (FR-271-AC-7). Parse
 the `resource_exhausted` and `cancelled` rows of both and require each to list
 exactly FR-272-AC-16's causes and payload keys, and the `conflicting_declaration`
 rows to list exactly FR-272-AC-17's cause and payload keys. Parse the
 `runtime_invariant` rows of both and require FR-272-AC-18's cause and
-population-identity payload keys, and require the `resource_exhausted` rows and
+population-identity payload keys. Parse the `invalid_result` rows of both and
+the first cells of FR-331's "Result entries" table, and require FR-272-AC-23's
+causes in all three and its payload keys in both rows. Parse the `invalid_quire_context` rows of both and require FR-272-AC-24's one cause and its `view` and `form` payload keys, parse the `unimplemented_capability` rows of both and require FR-272-AC-25's three causes and its `backend`, `construct`, `construct_name`, `location` and `capability` payload keys, and require the `resource_exhausted` rows and
 `value-accounting.md` to state FR-272-AC-19's `stage` rule. Parse
 the rows of FR-272-AC-11's eleven codes in both documents and require each to
 list exactly that criterion's causes and payload keys, and require FR-272's
@@ -163,13 +218,14 @@ decimal, unit-target and integer-target membership sentences of
 `quire.value.accounting/v1` to carry the same `sum` carve-out on
 `decimal_out_of_domain` and the unit target refusals (FR-140-AC-5).
 Validate a Diagnostic entry carrying each of `type-mismatch`,
-`missing-selection`, `unsupported-selection` and `wrong-selection-role` with
+`missing-selection`, `unsupported-selection`, `wrong-selection-role`,
+`declaration-form`, `expression-form` and `not-yet-implemented` with
 every code of the schema's code enum (FR-322-AC-47).
 Recompute the QSL FR-092 key of every structural node, grouped or not, of
 every published positive fixture, and the recursive-records
 fixture's group digests, and read every published positive fixture with the
 full reader (FR-322-AC-50). Apply each `derived_shape_key_mutations` entry of
-`adverse.json` to its base fixture's node and `identity_projection` entry,
+`adverse.json` to its base fixture's node,
 keep the node id, recompute `package_id`, and read it with the full reader
 (FR-322-AC-48, FR-322-AC-49); relabel the recursive-records `Tree` group with
 a label that is not its group digest, rekey each member under it, rewrite
@@ -182,19 +238,22 @@ QSL's emitter, which replaces the non-emittable placeholders, among them
 `positive-all-families.json`'s declared boolean `Example::Flag` and the
 nodes typed at it, and `positive-operation-identities.json`'s undeclared
 record node and its placeholder function `double` and model `Counter`.
-Only a node of a kind QSL never writes (FR-093-AC-19), kept so that the
-all-families fixture carries all 13 node tags (FR-322-AC-13), is hand
-authored, and it is keyed by FR-092/FR-094's rule: the
+Two sets of nodes are hand authored. The first is each node of a kind QSL
+never writes (FR-093-AC-19), kept so that the all-families fixture carries
+all 15 node tags (FR-322-AC-13); it is keyed by FR-092/FR-094's rule, the
 `quire.structural-node/v1` preimage FR-322's derived-shape key stage
-recomputes. The pass/fail oracle for every node, emitted or hand authored,
+recomputes. The second is the all-families fixture's `Tank` hybrid model,
+written by hand in the form QSL's S4 emits (FR-481); each of its `hybrid`
+nodes is keyed by the same `quire.structural-node/v1` preimage, and each of
+its term nodes by FR-322's preimage for its form. The pass/fail oracle for every node, emitted or hand authored,
 is this case's independent key recomputation and the full reader's
 acceptance, never the node's provenance. Regenerating the fixtures needs
 QSL's emitter to write `owner` (QSL FR-093-AC-21, agent-ix/quire-spec-language#648),
 which needs IR's `CheckedSemanticNodeV2` `owner` field (IR-646) first. The published fixtures carry the node `owner` member (FR-322
 "Owner member schema"). In every positive fixture each declared structural node carries
 the `SourceOwner` of its fixture's lock source (`agent-ix`/`example`, or
-`a`/`u` in the recursive-records fixture); its `identity_projection` entry
-gains the member and the fixture's `package_id` is recomputed. The undeclared
+`a`/`u` in the recursive-records fixture), and the fixture's `package_id` is
+recomputed over it. The undeclared
 `relation`/`relationship` nodes of `positive-all-families.json` and
 `positive-operation-identities.json` become model declaration nodes: each
 carries M4's `ModelOwner` (`acme/orders`, `ix://acme/orders/relationship/Order-order-Order`), is
@@ -206,7 +265,7 @@ fixture's reachability node and the `frame_mutations` and
 `derived_shape_key_mutations` that name them) is rekeyed or rewritten. The
 wire cases of `model-member-type-vectors.json` carry the owners TC-280
 lists. `adverse.json` gains `owner_mutations`, each applied to its base
-fixture with the node id kept, the projection entry patched and
+fixture with the node id kept and
 `package_id` recomputed, and `fixtures/` gains `positive-two-owners-a.json`
 and `positive-two-owners-b.json`, whose declarations carry the qualified
 names QSL emits (`["Point"]`, `["List"]`, `["three"]`), so their `Point`,
@@ -215,8 +274,7 @@ not in AC-22's source: it is hand authored and keyed by FR-322's
 `quire.application-node/v1` rule.
 
 Validate every node of every positive fixture against the owner presence
-rule and require each owner-bearing node's `owner` to equal its preimage's
-and its projection entry's. Apply each `owner_mutations` schema case (a
+rule and require each owner-bearing node's `owner` to equal its preimage's. Apply each `owner_mutations` schema case (a
 declared record without `owner` and with a `ModelOwner`, a model
 declaration node without `owner` and with a `SourceOwner`, an `owner` on the
 `Integer`, nominal enum and application nodes, a `DefinitionOwner`, a
@@ -247,17 +305,41 @@ with the one end `invoiced` (no `targetEnd.role`, `source-to-target`) and
 (admitted), `relationship-end-inverse-against-direction` (`ill_typed`/`operator-ineligible`,
 FR-152) and `relationship-end-names-missing-inverse`
 (`missing_declaration`/`missing-name`), all FR-322-AC-56.
+`adverse.json` `reaches_population_cases` holds `reaches-without-population-keeps-its-member`,
+`reaches-population-max-3-admitted` and `reaches-population-max-0-admitted` (a
+`model_population` node over `Set<Reference<Order>>` named by the `population` key of the
+`Order-order-Order` `reaches` application, whose `dependencies` hold it and whose key is
+recomputed), each admitted; `reaches-population-names-integer-range`,
+`reaches-population-names-absent-node` and `reaches-population-over-another-model-declaration`
+(`ill_typed`/`operator-ineligible`); and `reaches-population-omitted-from-dependencies`
+(`invalid_semantic_graph`), all FR-322-AC-73.
+`adverse.json` `unbounded_population_cases` holds `population-without-max-is-unbounded` and
+`population-max-3-stays-bounded` (a `model_population` node over `Set<Reference<Order>>` with no
+`max` member, and with `max` `3`, each named by the `population` key of the `Order-order-Order`
+`reaches` application), admitted; and `population-max-negative-refused`,
+`population-max-not-an-integer-refused` and `population-max-with-a-second-member-refused`
+(`invalid_package`/`invalid-derived-shape`), all FR-322-AC-74. The bounded populations PO1 (`max` 3) and `max` 0 and the unbounded population PO0 are also
+recomputed from their hand-written RFC 8785 preimages to the keys FR-322 publishes.
+`adverse.json` `population_reference_cases` holds `parameter-operand-admitted`
+(the published fixture's `Population<Order>[2]` binding operand),
+`counters-all-instances-admitted`, `counters-lookup-admitted` and `archive-all-instances-admitted`
+(a `relation`/`population` node owned by a population of the selected document, whose `counters` and `archive` entries `adverse.json` publishes as `selected_document_populations` (FCD populations keyed by `identity`), referenced as
+operand 0, with its key and its application's key recomputed; the `counters` and `archive`
+nodes, applications and package ids differ and `counters` is one node for both operations),
+each admitted; `population-owned-by-an-object-type` and `population-owned-by-an-undeclared-node`
+(`missing_declaration`/`missing-selection` at the population node);
+`population-without-an-owner` (`malformed_wire`); `population-entry-without-an-identity-refused` (entries that carry a `node` and no `identity`), `population-entry-with-a-node-member-refused` (the published entries plus a `node` member) and `population-entry-lacking-only-an-identity-refused` (the published entries with one `identity` removed), each `invalid_model_binding`/`malformed-declaration` at `package_read`, at `/lock/model_selections/0`, before the owner join (FR-322-AC-82); and
+`population-as-a-relationship-declaration`, `population-as-a-field-declaration`,
+`population-as-an-operation-declaration`, `population-as-a-reaches-population-link` and
+`population-as-a-collection-operand`
+(`ill_typed`/`operator-ineligible`), all FR-322-AC-82 and FR-322-AC-83.
 `adverse.json` gains `clause_owner_cases`
 (`clause-precondition-operation-owner` admitted;
 `clause-precondition-owned-by-object-type`,
 `clause-invariant-owned-by-operation-member`, `clause-invariant-owned-by-systems-interface`, `clause-kind-postcondition`,
 `clause-without-kind` and `clause-two-kind-bindings` each refused
-`missing_declaration`/`missing-selection` at the clause function's node id)
-and `projection_owner_mutations` (`projection-source-owner-differs-from-node`
-and `projection-model-owner-differs-from-node`, each refused
-`invalid_package`/`invalid-value` at
-`/identity_preimage/identity_projection/{i}/owner`), read with the full
-reader (FR-322-AC-51, FR-322-AC-55). The `state`/`state_clause` nodes of
+`missing_declaration`/`missing-selection` at the clause function's node id),
+read with the full reader (FR-322-AC-51, FR-322-AC-55). The `state`/`state_clause` nodes of
 `positive-clause-operations.json` carry no `owner`, and the schema refuses one
 that does.
 
@@ -271,8 +353,8 @@ its own `semantic_type`, its body targets as `dependencies` and a
 `declaration` occurrence, keyed by FR-451's
 `quire.abstraction-relation-node/v1` preimage. Read the package with the
 full reader, and read it again with one `function` segment of its `frames` entry's
-body changed, canonical order and `dependencies` kept, its node id kept, its
-projection entry patched and `package_id` recomputed (FR-322-AC-54).
+body changed, canonical order and `dependencies` kept, its node id kept and
+`package_id` recomputed (FR-322-AC-54).
 
 
 ### Scalar equality operation vectors
@@ -298,7 +380,84 @@ projection entry patched and `package_id` recomputed (FR-322-AC-54).
 | SE-17 | literal of `value_kind` `timestamp` with value `-0`, `+1`, `01`, empty text or `170141183460469231731687303715884105728` | `invalid_package`/`invalid-value` | FR-322-AC-67 |
 | SE-18 | `quire.op.text.eq` over two `string` operands with a `text_profile` law and mode | `invalid_package`/`operation-mode-type-mismatch` | FR-322-AC-67 |
 | SE-19 | literal of `value_kind` `string` whose `value` is a number, `null` or an array | `invalid_package`/`invalid-value` | FR-322-AC-67 |
+| QL-01 | literal of `value_kind` `quantity` typed by a unit node, values `3`, `0`, `-5`, `1/1000` and `-7/2` | Admitted with family `quantity`; both schemas enumerate `quantity` | FR-322-AC-79 |
+| QL-02 | literal of `value_kind` `quantity` typed by `integer`, `string` or `boolean` | `ill_typed`/`operator-ineligible` | FR-322-AC-79 |
+| QL-03 | literal of `value_kind` `integer` typed by a unit node | `ill_typed`/`operator-ineligible` | FR-322-AC-79 |
+| QL-04 | literal of `value_kind` `quantity` with value `03`, `+3`, `2/4`, `3/1`, `0/5`, `1/0`, `2.5` or empty text | `invalid_package`/`invalid-value` | FR-322-AC-79 |
+| RL-01 | literal of `value_kind` `rational` typed by a `scalar_type`/`rational` node, values `0`, `1`, `-3`, `1/2` and `-7/2` | Admitted with family `rational` | FR-322-AC-114 |
+| RL-02 | literal of `value_kind` `rational` with value `2/2`, `1/1`, `02`, `+1`, `2/4`, `1/0`, `0/5`, `1/-2`, `2.5` or empty text | `invalid_package`/`invalid-value` | FR-322-AC-114 |
+| NS-01 | nodes of one `declaration` name `ms`: a `scalar_type`/`unit`, a `composite_type`/`record` and a `scalar_type`/`dimension` | Admitted | FR-322-AC-81 |
+| NS-02 | two `scalar_type`/`unit` nodes of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
+| NS-03 | a `composite_type`/`record` and a `scalar_type`/`enum` of one name | `ambiguous_declaration`/`ambiguous-name` at the later node | FR-322-AC-81 |
 | SE-20 | literal of `value_kind` `uuid` typed by a `string` type with an uppercase value; literal of `value_kind` `timestamp` typed by an `integer` type with value `01` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-67 |
+| FB-01 | literal of `value_kind` `float32_bits` typed by a `float32` type, values `3f000000`, `00000000`, `80000000` and `7fc00000`; literal of `value_kind` `float64_bits` typed by a `float64` type, values `3fe0000000000000`, `0000000000000000`, `8000000000000000` and `7ff8000000000001` | Admitted with families `float32` and `float64` | FR-322-AC-108 |
+| FB-02 | literal of `value_kind` `float32_bits` with value `3F000000`, `0x3f000000`, `3f00000`, `3f0000000`, `0.5` or the JSON number `1056964608` | `invalid_package`/`invalid-value` | FR-322-AC-108 |
+| FB-03 | literal of `value_kind` `float64_bits` with value `3FE0000000000000`, `0x3fe0000000000000`, `3fe000000000000`, `3fe00000000000000`, `0.5` or the JSON number `4602678819172646912` | `invalid_package`/`invalid-value` | FR-322-AC-108 |
+| FB-04 | literal of `value_kind` `float32_bits` typed by a `float64` type with value `3F000000`; literal of `value_kind` `float64_bits` typed by a `string` type with value `0.5` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-108 |
+
+### Text-to-number operation identity vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| TN-01 | `quire.op.text.to_integer` over a `text` operand, `integer` result and `type_argument` member naming that result | Admitted by both V2 schemas and the operation catalog with `text_profile`, no mode and `member_family` `integer` | FR-322-AC-17; FR-478-AC-3 |
+| TN-02 | `quire.op.text.to_decimal` over a `text` operand and a `decimal` result | Admitted with `text_profile`, `rounding` pinned by the decimal result, and `member_family` `decimal` | FR-322-AC-17; FR-478-AC-3 |
+| TN-03 | `quire.op.text.to_rational` over a `text` operand and a `rational` result | Admitted with `text_profile`, no mode and `member_family` `rational` | FR-322-AC-17; FR-478-AC-3 |
+| TN-04 | `quire.op.text.to_float32` over a `text` operand and a `float32` result | Admitted with `text_profile` and `ieee_profile`, `rounding` pinned by the result, and `member_family` `float32` | FR-322-AC-17; FR-478-AC-3 |
+| TN-05 | `quire.op.text.to_float64` over a `text` operand and a `float64` result | Admitted with `text_profile` and `ieee_profile`, `rounding` pinned by the result, and `member_family` `float64` | FR-322-AC-17; FR-478-AC-3 |
+| TN-06 | `quire.op.text.to_quantity` over a `text` operand and a `quantity` result | Admitted with `text_profile`, `rounding` pinned by the quantity result, and `member_family` `quantity` | FR-322-AC-17; FR-478-AC-3 |
+| TN-07 | `quire.op.string.to_integer` over a `string` operand, `integer` result and `type_argument` member naming that result | Admitted by both V2 schemas and the operation catalog with no law, no mode and `member_family` `integer` | FR-322-AC-17; FR-478-AC-3 |
+| TN-08 | `quire.op.string.to_decimal` over a `string` operand and a `decimal` result | Admitted with no law, `rounding` pinned by the decimal result, and `member_family` `decimal` | FR-322-AC-17; FR-478-AC-3 |
+| TN-09 | `quire.op.string.to_rational` over a `string` operand and a `rational` result | Admitted with no law, no mode and `member_family` `rational` | FR-322-AC-17; FR-478-AC-3 |
+| TN-10 | `quire.op.string.to_float32` over a `string` operand and a `float32` result | Admitted with `ieee_profile`, `rounding` pinned by the result, and `member_family` `float32` | FR-322-AC-17; FR-478-AC-3 |
+| TN-11 | `quire.op.string.to_float64` over a `string` operand and a `float64` result | Admitted with `ieee_profile`, `rounding` pinned by the result, and `member_family` `float64` | FR-322-AC-17; FR-478-AC-3 |
+| TN-12 | `quire.op.string.to_quantity` over a `string` operand and a `quantity` result | Admitted with no law, `rounding` pinned by the quantity result, and `member_family` `quantity` | FR-322-AC-17; FR-478-AC-3 |
+| TN-13 | TN-01 with its result and `type_argument` changed to `Boolean` | `ill_typed`/`operator-ineligible` because the catalogued `member_family` is `integer` | FR-322-AC-17; FR-478-AC-3 |
+| TN-14 | Each of TN-07 through TN-12 with an added `text_profile` law | `invalid_package`/`operation-law-mismatch` | FR-322-AC-17; FR-478-AC-3 |
+
+### IEEE negate and float leaf vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| NF-01 | `quire.op.ieee.float64.negate` over one `Float64[nearest-even]` operand, `result_type` that operand's type node, the `ieee_profile` law, mode `null`; the same with `quire.op.ieee.float32.negate` over `Float32[toward-zero]` | Identities enumerated by both schemas; application admitted | FR-322-AC-111 |
+| NF-02 | `quire.op.ieee.float64.negate` over a `float32` operand; `quire.op.ieee.float32.negate` over a `float64` operand; over an `integer` operand; over two operands | `ill_typed`/`operator-ineligible` | FR-322-AC-111 |
+| NF-03 | NF-01's `float64` application with `result_type` `Float64[toward-zero]` | `ill_typed`/`operator-ineligible` | FR-322-AC-111 |
+| NF-04 | NF-01's application with a `rounding` mode, with no law, and in a lock without the `ieee_profile` selection | `invalid_package`/`operation-mode-mismatch`; `operation-law-missing`; `operation-law-unselected` | FR-322-AC-111 |
+| NF-05 | `quire.op.ieee.float64.eq`, `quire.op.ieee.float64.ne` and `quire.op.ieee.float64.lt` | `invalid_package`/`unknown-operation` | FR-322-AC-111 |
+| NF-06 | `quire.op.structural.eq` over `record R { x: Float64[nearest-even]; t: Text[0,8;nfc]; }` | Admitted with the leaves `["field:x"]` (`ieee_profile`, mode `null`) then `["field:t"]` (the `nfc` law and mode) | FR-322-AC-112 |
+| NF-07 | `quire.op.structural.ne` over `Option<Float64[nearest-even]>`, `union U { V(Float32[exact]), N }` and `Sequence<Float64[nearest-even]>` | Admitted with the leaves `["inner"]`, `["member:V", "position:0"]` and `["inner"]` | FR-322-AC-112 |
+| NF-08 | NF-06's application with the `field:x` leaf omitted, with a `text_profile` law on it, and with a mode on it | The first failing leaf check refuses as for a text leaf | FR-322-AC-112 |
+
+### Decimal literal vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| DL-01 | literal of `value_kind` `decimal` typed by `Decimal[0, 1000; 0, 2; nearest-even]` with values `1.25`, `0.05`, `10`, `0.00`, `1000`, `0.5`, `1000.00` and `1.250` | Admitted by both schemas and the literal rule: each is a member by value (FR-140), whatever its written coefficient and scale | FR-322-AC-113 |
+| DL-02 | the same type with values `.5`, `1.`, `+1.5`, `01.5`, `-0.0`, `1e2`, `1/4` and empty text | `invalid_package`/`invalid-value` | FR-322-AC-113 |
+| DL-03 | the same type with values `1.255` (membership scale 3), `1001`, `1000.01` and `-1` | `invalid_package`/`invalid-value` | FR-322-AC-113 |
+| DL-04 | values `1.0` and `1.00` typed by one decimal type | Two literals with two node keys | FR-322-AC-113 |
+| DL-05 | `decimal` literal typed by an `integer` or `string` node with value `.5` | `ill_typed`/`operator-ineligible`, the family refusal first | FR-322-AC-113 |
+| DL-06 | literals typed by `Decimal[-1000, 1000; 1, 2; nearest-even]` with values `-0.5`, `5` and `100`, then `1001` | The first three admitted (`5` has membership scale 1 and coefficient 50); `1001` is `invalid_package`/`invalid-value` | FR-322-AC-113 |
+
+### One-occurrence collection vectors
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| OO-01 | `quire.op.collection.sequence.drop_first` over a `Sequence<Integer>[0,9]` operand and `quire.op.collection.ordered_set.drop_first` over an `OrderedSet<Integer>[0,9]` operand, each with `result_type` of the operand's family and bound `[0,8]` | Identities enumerated by both schemas; applications admitted with no law, mode, member or leaf | FR-322-AC-117 |
+| OO-02 | `quire.op.collection.sequence.drop_first` over a `Set<Integer>[0,9]` operand and over a `Bag<Integer>[0,9]` operand; `quire.op.collection.ordered_set.drop_first` over a `Sequence<Integer>[0,9]` operand; `quire.op.collection.sequence.drop_first` over two operands | `ill_typed`/`operator-ineligible` | FR-322-AC-117 |
+| OO-03 | `quire.op.collection.remove_one` over `Bag<Text[0,8;nfc]>[0,9]` and a `Text[0,8;nfc]` value; over `Set<Float64[nearest-even]>[0,9]` and a `Float64[nearest-even]` value; over `Sequence<Integer>[0,9]` and an `Integer` value | Admitted with the empty-path `nfc` text leaf, the empty-path `ieee_profile` float leaf with mode `null`, and no leaf | FR-322-AC-117 |
+| OO-04 | OO-03's `Sequence<Integer>[0,9]` application with a `Text[0,8;nfc]` value, with one operand and with `result_type` `Set<Integer>[0,9]`; OO-01's applications with a `text_profile` law, a `rounding` mode or a `field` member | `ill_typed`/`operator-ineligible`; `invalid_package`/`operation-law-mismatch`, `operation-mode-mismatch` and `operation-member-mismatch` | FR-322-AC-117 |
+
+### Structural node preimage vectors
+
+Build each preimage exactly as FR-322 "Structural node preimage" spells it and hash its RFC 8785 bytes.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| SP-01 | P4: `value`/`parameter`, name `x`, level `0`, `semantic_type` the `Int[0, 9]` node, `declaration` and `recursion` `null`, no `owner` | Key `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda` | FR-322-AC-97 |
+| SP-02 | P4 with level `1`; P4 with name `y` | Each key differs from SP-01's and from the other's | FR-322-AC-97 |
+| SP-03 | U2: `scalar_type`/`compound_unit` over `U_metre` exponent `1` and `U_second` exponent `-1`, self-typed | Key `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7` | FR-322-AC-97 |
+| SP-04 | A `value`/`parameter` node whose body binds `level` before `name`; one with a third binding | Each fails the V2 schema; `malformed_wire` | FR-322-AC-97 |
+| SP-05 | Every `value`/`parameter` node of every published positive fixture | Its `node_id` is the key of its preimage; the full reader admits each fixture | FR-322-AC-97 |
 
 ### Event type vectors
 
@@ -311,6 +470,59 @@ The owner join, projection and equality behaviour of an event type (FR-322-AC-68
 | ET-03 | ET-01 with a `SourceOwner` and no `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 | ET-04 | ET-01 with a `declaration` and a `ModelOwner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-68 |
 
+### Node dependency vectors
+
+Rebuild each node's `dependencies` by FR-322's `dependencies` rules 1 to 4 (the body artifact's own list for a form that states one) and compare it with the list as written. Each mutation recomputes `package_id` before reading.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| DP-01 | Every node of every published positive fixture | The written list equals the rebuilt list; each fixture's `package_id` recomputes | FR-322-AC-96 |
+| DP-02 | `positive-all-families.json`'s `expression`/`reference` node `7916…` and `correspondence`/`source_locus` node `eda3…` | Each lists `8a2a…`, its body target | FR-322-AC-96 |
+| DP-03 | `positive-all-families.json`'s `bounded_domain`/`integer_range` node `652c…`; `positive-operation-identities.json`'s `bounded_domain`/`model_population` node `1ffe…` | `652c…` lists `07f6…`, its `semantic_type`; `1ffe…` lists `0ec8…` alone | FR-322-AC-96 |
+| DP-04 | DP-02's `expression`/`reference` node with `dependencies: []` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
+| DP-05 | DP-03's `integer_range` node with `dependencies: []` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
+| DP-06 | DP-03's `model_population` node with the Integer node `07f6…` added | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
+| DP-07 | a `value`/`parameter` node of `positive-all-families.json` listing its `semantic_type` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
+
+Add the lock's `refinement_internals` member to the all-families package: one
+object for `R` with two spellings in canonical order, and the package with the
+member absent; then the mutations `[]`, `null`, an object with `"internal": []`,
+an object with a third key, objects out of byte order, spellings out of byte
+order, a repeated `refinement` and a repeated spelling.
+
+Check a compiler-derived node: a refinement owner with step rows `R0` and `R1` from which one node per row is derived; require the node derived from `R1` to have an occurrence of role `generated`, ordinal 1 and the region of `R1`'s source row, and the same after swapping the source order of the rows (FR-322-AC-87).
+
+Scan every published producer-output package (every published positive package except the reader-admission fixture `positive-integer-literal-references.json`) for the applications of `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` and `ne`: require each integer literal operand typed at the builtin Integer node to be an inline `literal` term and no such operand to reference a `value`/`literal` node, and require the `three` application of the two-owner packages and the `integer.mul` and `integer.add` applications of the operation package to hold their operands inline, and the `7` and `-2` literal nodes to be present (FR-322-AC-92). For each operator the rule lists in FR-322 "Integer literal operands", require an `inline_literal_cases` entry whose preimage is closed under the application-node schema, whose JCS SHA-256 is recorded and differs from `reference_form_sha256`, and no entry for an operator the rule omits. Read `positive-integer-literal-references.json`, the reference form of the `three` application, through the reader: it is admitted, and its `three` node identity and `package_id` differ from the inline form's (FR-322-AC-93).
+
+Check the refinement step occurrences of `refinement-step-occurrence-vectors.json`: `RS-01` (admitted, with an entry of another node ignored) and `RS-02` (rows written in the order `R1`, `R0` against the `steps` order `R0`, `R1`) are admitted with ordinal 0 at the `declaration` region and ordinal `i + 1` at the region of the row at `steps` position `i` (FR-322-AC-88, FR-322-AC-89); `RS-03` (ordinal 3), `RS-04` (a repeated key), `RS-05` (ordinal 1 with the other row's region), `RS-06` (an `expression` occurrence at ordinal 1) and `RS-07` (a `declaration` occurrence at ordinal 1) are each refused `invalid_package`/`invalid-value` at the offending `source_map` entry, and `RS-08` (ordinal 2 omitted), `RS-09` (the `declaration` occurrence omitted) and `RS-10` and `RS-11` (`generated` ordinals 0 and 1 omitted) at `/source_map` (FR-322-AC-90); `RS-12` (a history field, `declaration` alone) and `RS-16` (the `Counter` rows `value` and `total` written in the other order) are admitted, and `RS-13` (an `any` row), `RS-14` (a hidden field: the abstract `Counter` has fields `total` and `value` and the `objects` entry has a row for `value` alone), `RS-15` (a history field with a `generated` entry) and `RS-17` (two `objects` entries of which only the second has a hidden field) are each refused at their first `generated` entry (FR-322-AC-91).
+
+### Graph order vectors
+
+Graph order is the producer's order of `semantic_graph.nodes`; the reader does not sort it, and it enters `package_id` through the identity projection (FR-322 `semantic_graph`). Each vector except GO-04 recomputes `package_id` over the identity projection derived in the new graph order before reading.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| GO-01 | Each published positive fixture with no `recursion_group`, as published | Admitted by the full reader; every such fixture except `positive-nominal-identities.json` lists its nodes out of ascending node-id digest order | FR-322-AC-95 |
+| GO-02 | GO-01's fixtures with `semantic_graph.nodes` reversed | Admitted; `package_id` differs from the published one | FR-322-AC-95 |
+| GO-03 | GO-01's fixtures with `semantic_graph.nodes` sorted ascending by node-id digest | Admitted; `package_id` differs from the published one exactly when the sort changes the node sequence | FR-322-AC-95 |
+| GO-04 | `positive-all-families.json` with `semantic_graph.nodes` reversed and the recorded `package_id` kept | The projection derived in the new order differs from the published order's and the recorded `package_id` does not recompute | FR-322-AC-95 |
+
+### Body-step precedence vector
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| BS-01 | Three otherwise schema-valid package variants with a valid state-graph, temporal, abstraction, terminal and step-relation graph: (a) timed-model defect plus protocol defect; (b) (a) with the timed-model defect repaired; (c) a hybrid defect added to (a) | (a) reports the timed-model step's refusal before protocol; (b) reports the protocol step's refusal; (c) reports the hybrid step's refusal before timed-model. This pins `hybrid < timed-model < protocol` and prevents either neighboring step from running first. | FR-322-AC-121 |
+
+### State constraint clause vectors
+
+Each vector edits the published clause-operations package and rekeys the edited node before reading, so the read reaches the state step.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| CN-01 | The invariant node's kind member `clause` rewritten to `constraint` | Valid against both V2 schemas; admitted by the state step; its node id differs from the invariant's | FR-341-AC-13 |
+| CN-02 | CN-01's constraint with its anchor argument referencing the operation anchor | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-13 |
+| CN-03 | CN-01's constraint with a second parameter reference in its aggregate | `ill_typed`/`operator-ineligible` at the clause node | FR-341-AC-13 |
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.
@@ -321,10 +533,19 @@ is refused by exactly its named check. Each dependency-selection entry mutation 
 schema at the mutated entry; its `outcome` is the reader refusal a strict
 reader reports for it. Each dependency-selection order vector is admitted by
 the schema and admitted or refused by the order rule with exactly its
-recorded outcome and loci. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency call package is admitted, and its
-mutations refuse `missing_import`/`missing-selection`,
-`missing_declaration`/`missing-selection`, `missing_declaration`/`missing-name`,
-`ill_typed`/`operator-ineligible` (seven times) and `invalid_semantic_graph`. Every catalog entry names an authored
+recorded outcome and loci. The new closure vectors record the diamond's two
+dependency paths and its `invalid_package`/`conflicting-definition` refusal,
+and the transitive-only reference's `missing_declaration`/`missing-selection`
+refusal. Their reader outcomes remain planned until the IR implementation
+lands. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency library is admitted with its recorded `package_id`,
+and the dependency call package that selects it by that id is admitted with it
+supplied. Each published mutation passes the V2 schema and refuses
+`missing_import`/`missing-selection` at the selection entry,
+`missing_declaration`/`missing-selection` at the term's `package`,
+`missing_declaration`/`missing-name` at its `node`,
+`ill_typed`/`operator-ineligible` (seven times) at the term, and
+`invalid_semantic_graph` at the node's `dependencies`, each exactly as its
+vector records. Every catalog entry names an authored
 artifact, and every selection vector is admitted or refused with exactly
 its recorded selection code. The published fixture's frame node is admitted
 with no defect; every frame-entry meaning-join and canonical-order mutation
@@ -354,7 +575,8 @@ or prefix one outcome in every family. The Diagnostic schema admits
 `type-mismatch` only with `ill_typed`, `missing-selection` only with
 `missing_import` and `missing_declaration`, and `unsupported-selection` and
 `wrong-selection-role` only with `unknown_language`, `unknown_edition` and
-`unknown_profile`.
+`unknown_profile`, and `declaration-form`, `expression-form` and
+`not-yet-implemented` only with `unsupported_construct`.
 Every structural node, grouped or not, of every published positive fixture
 carries the key QSL's FR-092 key function mints, the recursive-records
 group labels are their group digests, and the full reader admits every
@@ -363,7 +585,7 @@ declared record `Example::Point`, ungrouped or in-group, refuses `invalid_packag
 and the relabelled `Tree` group refuses `invalid_package`/`stale-node-key` at
 its member with the lowest node-id digest.
 Every owner-bearing node of every positive fixture carries its preimage's
-`owner`, and so does its projection entry; no other node carries one. Each
+`owner`; no other node carries one. Each
 owner schema mutation fails the schema and refuses `malformed_wire`. The
 owner-change mutation refuses `invalid_package`/`stale-node-key` at the
 changed node; each unjoined owner refuses
@@ -379,3 +601,10 @@ package with its `correspondence`/`abstraction_relation` node passes the
 derived-shape key stage untouched and is admitted, and the body-edited node
 refuses `invalid_semantic_graph` at FR-451's abstraction step 1, not
 `invalid_package`/`stale-node-key`.
+
+The canonical `refinement_internals` member validates against the schema and is
+in no identity preimage; its absence validates too. The `[]`, `null`,
+empty-`internal` and third-key mutations fail the schema at that value; the
+two out-of-order mutations refuse `invalid_package`/`invalid-value` at the later
+entry's pointer and the two repeats refuse `invalid_package`/`conflicting-definition`
+with both entries as loci (FR-322-AC-77).

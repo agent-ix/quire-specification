@@ -114,7 +114,7 @@ contributions, and through no other:
 | observation | the model state a thread's attempt evaluates its contracts over | the model state |
 | write | where an attempt's post-state delta goes | applied in place |
 | memory steps | internal steps, each with a typed canonical identity, an enabledness condition and an effect, and no operation | none |
-| gate | an extra enabledness condition on a thread's `fork`, `join`, `send`, `receive` and `attempt` steps | true |
+| gate | an extra enabledness condition on a thread's `fork`, `join`, `send`, `receive`, `attempt` and `fence` steps; for a `fence` it is the model's fence rule | true |
 | split and merge | what a `fork` gives each branch thread and what a `join` gives the parent | nothing |
 | atom values | the value of each location a temporal atom reads | the model state |
 | fairness | constraints added to every infinite-trace clause, with origin `memory` | none |

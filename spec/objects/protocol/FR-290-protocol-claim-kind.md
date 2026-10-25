@@ -16,6 +16,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-368
     type: references
+  - target: ix://agent-ix/quire-specification/FR-193
+    type: references
   - target: ix://agent-ix/quire-specification/FR-390
     type: references
   - target: ix://agent-ix/quire-specification/FR-395
@@ -103,12 +105,16 @@ reported with its exact received bytes and no replacement member.
 
 Each requested item is one claim and requires exactly one kind. A clause's
 kind comes from the clause's own claim form; an expression nested in it, such
-as a function application or a `case` expression, adds no kind.
+as a function application or a `case` expression, adds no kind. A function
+declaration carries no clause; each scalar operation application in its body
+is a claim of its own, as the table below states.
 
 | Claim form | Required kind |
 | --- | --- |
 | Boolean clause over pure expressions, including function application | `value-validity` |
 | Clause containing a `case` expression over a sum type | `value-validity` |
+| Scalar operation application in a function body ([FR-146](../../functional/expressions/FR-146-check-total-pure-functions.md)): the application is defined and its result lies in its result bound, for every argument assignment under which its path condition holds (the guards it is nested under: the condition of an enclosing `if`, required true in the `then` branch and false in the `else` branch, and, for the right operand of an enclosing `and`, `or` or `implies`, its left operand, as FR-146's propagation rule carries guard facts) | `value-validity`, one claim per occurrence |
+| Range narrowing (`quire.op.numeric.narrow`) in a function body | none. When its operand is a scalar operation application, its target range is that application's result bound; otherwise its FR-146 range obligation discharges it |
 | FR-146 `case` exhaustiveness obligation | none; it is discharged during language admission, and an unproved obligation refuses as `undefined_expression`/`unproved-exhaustiveness` |
 | Operation precondition, postcondition or invariant ([FR-196](../../functional/ir-proof/FR-196-generate-kani-contracts.md)) | `operation-contract` |
 | Frame obligation over `modifies`, `creates` and `deletes` sets | `operation-contract` |
@@ -128,6 +134,26 @@ as a function application or a `case` expression, adds no kind.
 | Temporal claim over a timed subject under any profile, and the derived time-lock-freedom item ([FR-417](../../functional/temporal/FR-417-settle-time-lock-freedom.md)) | `temporal-satisfaction` |
 | `schedulable` or `response` claim over a task set | `schedulability` |
 | Hybrid-model claim ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)) | `temporal-satisfaction` |
+
+A scalar operation application is an application in a function body whose
+operation identity has one of the prefixes `quire.op.integer` (FR-044,
+FR-147), `quire.op.rational` (FR-149, including `quire.op.rational.narrow`),
+`quire.op.decimal` (FR-140), `quire.op.ieee` (FR-148), `quire.op.quantity`
+(FR-142, including `quire.op.quantity.convert`), `quire.op.numeric`,
+`quire.op.text` and `quire.op.enum` (FR-141), other than the range narrowing
+(`quire.op.numeric.narrow`). Every other application in a body (`let`, `if`,
+a Boolean connective, Boolean, structural or reference equality, a projection, an option read, a call, a
+dispatch, a collection or model operation, and an operation whose prefix is not
+listed, such as `quire.op.string`, `quire.op.uuid` and `quire.op.timestamp`)
+is not a claim of its own. The
+application's result bound is the target range of the range narrowing whose
+operand it is, when there is one, and otherwise its own result type. Each
+occurrence of a scalar operation application in the body is one claim, so an
+application written twice is two claims; an occurrence in the function's
+termination measure is not in the body. The claim is requested beside the
+function's FR-146 admission: FR-146's definedness and range obligations still
+refuse an unproved occurrence when the body is linked, and the claim does not
+discharge or replace them.
 
 Unbounded quantification (FR-346), induction (FR-347), compositional discharge
 (FR-348), mathematical integers (FR-147), the three state-graph forms (FR-390)
@@ -210,7 +236,13 @@ advertised modes for the item's kind:
 | `unbounded` | `bounded` only, and no finite bound is available | `unsupported`, warned, `unsupported_projection`/`unbounded-extent` |
 
 An unbounded extent settles `supported` only on a candidate that advertises
-`unbounded` for the kind.
+`unbounded` for the kind. A model refinement's per-step simulation
+obligation is an `operation-contract` item whose extent is classified over
+its roots as [FR-468](../../functional/analysis/FR-468-certify-per-step-refinement-obligations.md)
+states (Claim extent); it takes this table like every other
+`operation-contract` item, so an `unbounded` per-step obligation settles
+`requires-bound` under a candidate that advertises `operation-contract` only
+in `bounded` mode when a finite bound is available.
 
 A backend that advertises `temporal-satisfaction` also advertises the fairness
 kinds it decides, a subset of {`weak`, `strong`}. At the single candidate's
@@ -238,8 +270,8 @@ kind for the other: an item naming `exact` with no candidate advertising
 `statistical` candidate exists, and the converse holds as well. A
 `statistical` candidate's negotiation arm settles `unsupported` an item whose
 claim states no confidence parameters (`missing-confidence`), whose scheduler
-clause is `under every scheduler` (`every-scheduler`), or whose form is an
-exact-only form (`exact-only-form`) (FR-408). One claim may be
+clause is `under every scheduler` (`every-scheduler`), whose form is an
+exact-only form (`exact-only-form`), or whose regenerative method has no quantile bound for its confidence (`confidence-beyond-precision`) (FR-408). One claim may be
 requested twice, once per evidence kind; the two items have separate terminal
 records.
 
@@ -275,14 +307,20 @@ receives the unknown-backend mark and it is a candidate for no item.
 
 An item's `candidates` value in the [FR-331](../interfaces/FR-331-backend-provider-envelope.md)
 request is valid when it equals the registry snapshot's candidate set for the
-item:
+item. A backend *matches* an item when it advertises the item's kind, its
+evidence kind for a `probabilistic-satisfaction` item ("Evidence kinds"),
+and, for a `temporal-satisfaction` item, the item's dynamics: `hybrid` in
+its `dynamics` for an item carrying the hybrid-dynamics requirement and
+`discrete` for one carrying none, a descriptor with no `dynamics` deciding
+`discrete` only ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md)
+"Routing a hybrid item").
 
 - When the request names a registered backend, the set is that backend if it
-  advertises the item's kind, and is empty otherwise.
+  matches the item, and is empty otherwise.
 - When the request names an unregistered backend, the value is the
   unknown-backend mark carrying that identity.
 - When the request names none, the set is every registered backend that
-  advertises the item's kind.
+  matches the item.
 
 The `quire-spec-language` registry computes `candidates`
 ([quire-spec-language#185](https://github.com/agent-ix/quire-spec-language/issues/185)).
@@ -295,24 +333,24 @@ extent classification; then the candidate table below, top row first.
 | Candidates | Disposition |
 | --- | --- |
 | unknown-backend mark, or a registered backend with no negotiation arm | `invalid-request`, `invalid_capability`/`unknown-backend`, naming the backend |
-| a candidate absent from the request's manifest, a candidate that does not advertise the item's kind, or a set that disagrees with the named backend | `invalid-request`, `invalid_capability`/`inconsistent-candidates`, naming each offending candidate |
-| empty | `unsupported`, with a warning naming the item's kind and, when the request names one, the named backend; `unsupported_projection`/`unsupported-requested-capability` |
+| a candidate absent from the request's manifest, a candidate that does not match the item, or a set that disagrees with the named backend | `invalid-request`, `invalid_capability`/`inconsistent-candidates`, naming each offending candidate |
+| empty | `unsupported`, with a warning naming the item's kind, its `requirements` when it carries them (FR-193), and, when the request names one, the named backend; `unsupported_projection`/`unsupported-requested-capability` |
 | more than one, and the request names none | `invalid-request`, `invalid_capability`/`ambiguous-backend`, naming every candidate in candidate order |
 | exactly one | that candidate's negotiation arm settles `supported`, `requires-bound`, `unsupported` (warned) or `invalid-request` under the domain-kind check and then the advertised-mode rules |
 
 `negotiate_*` SHALL NOT select among several candidates. Registration order,
 display names and ambient state never change a candidate set, its order or a
 disposition. The caller resolves a multi-candidate item by
-naming one backend. Candidates match on kind alone, so once two registered
-backends advertise the same kind, every item of that kind must name its
-backend; a bounded-only and an unbounded-only registrant of one kind are both
+naming one backend. Candidates match on kind, evidence kind and dynamics
+alone, so once two registered backends match the same item, that item must
+name its backend; a bounded-only and an unbounded-only registrant of one kind are both
 candidates, and the mode is compared only at the single candidate's arm.
 
 The item-level causes (`absent-kind`, `unknown-kind`, `absent-extent`,
 `unknown-backend`, `inconsistent-candidates`, `ambiguous-backend`) settle only
 their own item. `unknown-vocabulary` refuses its whole carrier.
 Registration causes `absent-kind`, `unknown-kind`, `unknown-mode`,
-`unknown-evidence-kind` and `invalid-domains` refuse only that registration. `duplicate-backend` refuses every registration of its
+`unknown-evidence-kind`, `invalid-domains`, `invalid-fairness-kinds` (FR-368) and `invalid-dynamics` (FR-193) refuse only that registration. `duplicate-backend` refuses every registration of its
 identity and no other. Registration refusals are reported ordered bytewise by
 backend identity, then by the manifest's RFC 8785 bytes.
 
@@ -333,8 +371,12 @@ backend identity, then by the manifest's RFC 8785 bytes.
   backend. Further backends register under the same contract.
 - **Tool absence** — the routed backend's adapter probes its tool after
   routing and before the run; the probe's placement and fault-injection
-  evidence belong to `quire-contract-codegen`. If the probe finds the tool
-  missing, errors, or exceeds its limit, then the adapter SHALL record the
+  evidence belong to `quire-contract-codegen`. The probe also reads the
+  version of the executable it is about to run, and a version other than
+  the descriptor's `tool.version` is a failed probe whose `detail` names
+  both versions ([FR-331](../interfaces/FR-331-backend-provider-envelope.md)
+  "Backend tool"). If the probe finds the tool
+  missing, finds another version, errors, or exceeds its limit, then the adapter SHALL record the
   FR-331 result `unsupported` for that item with a warning naming the
   capability kind and the backend, cause
   `unsupported_projection`/`tool-unavailable`. The item keeps its `supported`
@@ -356,15 +398,17 @@ backend identity, then by the manifest's RFC 8785 bytes.
 | FR-290-AC-2 | Every pair of claim kinds may retain independent execution and outcome states without promotion or premise transfer. | Test (TC-060, TC-271) |
 | FR-290-AC-3 | A non-global claim cannot carry the complete-global-conformance premise set as evidence for its own success. | Test (TC-060, TC-061, TC-271) |
 | FR-290-AC-4 | An item whose candidate set is empty settles `unsupported` with a warning naming its capability kind, and the named backend when there is one. | Test (TC-060, TC-271) |
-| FR-290-AC-5 | Each claim form in the claim-form assignment table requires exactly its listed kind; an expression nested in a clause adds no kind; a `case` exhaustiveness obligation and an FR-353 abstraction relation request no backend. | Test (TC-271, TC-330, TC-342, TC-343) |
+| FR-290-AC-5 | Each claim form in the claim-form assignment table requires exactly its listed kind; an expression nested in a clause adds no kind; a scalar operation application in a function body requires `value-validity` once per occurrence and a range narrowing requires none; a `case` exhaustiveness obligation and an FR-353 abstraction relation request no backend. | Test (TC-271, TC-330, TC-342, TC-343) |
 | FR-290-AC-6 | For each row of the advertised-mode table, negotiation settles the listed disposition; an unbounded extent on a bounded-only advertisement never settles `supported`; an item with no extent classification settles `invalid-request`. | Test (TC-271) |
 | FR-290-AC-7 | Each row of the candidate table settles its listed disposition and cause; an item with two or more candidates and no named backend settles `invalid-request` naming every candidate in candidate order, identically under every registration order; a malformed registration is refused and keyed by backend identity. | Test (TC-271) |
-| FR-290-AC-8 | A routed item whose tool is missing, or whose probe errors or exceeds its limit, records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind and backend; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that becomes unavailable after a passing probe records the FR-331 result `failed` with the same cause. | Test (TC-271) |
+| FR-290-AC-8 | A routed item whose tool is missing, or whose probe finds a version other than the descriptor's `tool.version`, errors or exceeds its limit, records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind and backend; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that becomes unavailable after a passing probe records the FR-331 result `failed` with the same cause. | Test (TC-271) |
 | FR-290-AC-9 | Two or more admitted registrations of one backend identity with equal manifests leave that identity registered once, with no refusal, and give the same snapshot and candidate sets as one registration. | Test (TC-282) |
 | FR-290-AC-10 | Admitted registrations of one backend identity with two or more differing manifests are all refused with `invalid_capability`/`duplicate-backend`, one refusal per distinct manifest, ordered by identity and then by the manifest's RFC 8785 bytes; the snapshot holds no registration of that identity, a request naming it receives the unknown-backend mark, and registrations of other identities stand; the snapshot, its refusals and every candidate set are identical under every registration order. | Test (TC-282) |
 | FR-290-AC-11 | A probabilistic claim requires `probabilistic-satisfaction`, a task-set claim `schedulability`, and a timed temporal claim and the time-lock-freedom item `temporal-satisfaction`. | Test (TC-353, TC-370, TC-372) |
 | FR-290-AC-12 | A `probabilistic-satisfaction` item is a candidate only for backends advertising its evidence kind; an `exact` item with only a `statistical` candidate, and the converse, settle `unsupported`, `unsupported-requested-capability`; an item with an absent or unknown evidence kind settles `invalid-request` with its named cause. | Test (TC-353) |
 | FR-290-AC-13 | At the single candidate's arm, the domain-kind check runs after the candidate table and before the advertised-mode table: a bounded item whose `extent.bounds` hold a kind outside the candidate's `domains` settles `unsupported`, `unsupported-requested-capability`, naming the kind, and one with empty `bounds` passes. An unbounded item on a candidate that advertises only `bounded` for its kind has only its boundable `extent.domains` kinds compared: when one is outside `domains` it settles `unsupported`, `unsupported-requested-capability`, naming the kind, whatever `finite_bound_available` says; when every boundable kind is in `domains`, the advertised-mode table settles it, `requires-bound` with a finite bound available and `unsupported`, `unbounded-extent` without one, so a `quantity`, `loop` or `infinite-trace` domain never settles `unsupported-requested-capability`. An unbounded item is not compared on a candidate that advertises `unbounded`. Any registration, including one that advertises only `unbounded` modes, whose `domains` is present and empty, holds a non-boundable or unknown kind or repeats a kind is refused `invalid_capability`/`invalid-domains`, keyed by backend identity; a registration with no `domains` is refused the same way only when it advertises a `bounded` pair, and one that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-271) |
+| FR-290-AC-14 | A per-step simulation obligation whose extent is `unbounded` with one boundable `population` domain, on a single candidate that advertises `operation-contract` only in `bounded` mode with `domains` holding `population`, settles `requires-bound` when `finite_bound_available` is true and `unsupported`, `unsupported_projection`/`unbounded-extent` when it is false; on a bounded-only candidate whose `domains` lack `population` it settles `unsupported`, `unsupported_projection`/`unsupported-requested-capability` naming `population`, whatever `finite_bound_available` says; on a candidate that advertises `unbounded` it takes the negotiation arm's own disposition; the same obligation with that population bounded is `bounded` and takes the arm's own disposition on either mode. | Test (TC-950) |
+| FR-290-AC-15 | With `qsl-model-check` advertising `temporal-satisfaction` with no `dynamics` and `dreal` advertising it with `dynamics` `["hybrid"]`, a `temporal-satisfaction` item carrying `"requirements": ["hybrid-dynamics"]` and naming no backend has the candidate set `[dreal]`, and one carrying no `requirements` `[qsl-model-check]`; naming `qsl-model-check`, the hybrid item's set is empty and it settles `unsupported`, `unsupported-requested-capability`; a hybrid item whose `candidates` is `[dreal, qsl-model-check]` settles `invalid-request`, `inconsistent-candidates`, naming `qsl-model-check`; and with `dreal`'s `dynamics` `["discrete", "hybrid"]` the item carrying no `requirements` has the set `[dreal, qsl-model-check]` and settles `ambiguous-backend`. | Test (TC-373) |
 
 ## Dependencies
 

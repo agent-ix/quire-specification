@@ -53,9 +53,20 @@ read at each position. A bounded measure adds to the product state its
 accumulator (steps, reward or weighted sums since activation, saturating one
 unit above the threshold) and the activation flag; rewards are non-negative
 values from finite supports, so the accumulator takes finitely many values.
-The product state key is (model state key, monitor state, accumulator); a
-product edge carries the model edge's action, draw and probability. Every
-product path reaches an accepting or rejecting monitor state, a **decided**
+The complete product key SHALL use QSL FR-196's canonical RFC 8785 UTF-8
+octets of `["quire.probability-product-key/v1", model, monitor, accumulator,
+pending]`: the full typed model form, actual canonical monitor/accumulator,
+and actual pending scheduled identity and declaration-ordered drawn vector.
+All members are present; actual None is null, never a default component.
+Formula monitors retain the full parsed QSL FR-338 automaton array, not a
+local state index. Exact-only forms retain actual None monitor/accumulator;
+digital model forms retain actual clocks, deadline and tail control.
+Equality/order SHALL compare complete decoded unsigned octets, not a
+model digest or local product number. FR-331 owns their transport spelling
+in FR-412 certificates and rejections; no new digest or canonical
+representation is defined here. A product edge retains QSL FR-196's full
+semantic ProductAction, actual action/draw and probability.
+Every product path reaches an accepting or rejecting monitor state, a **decided**
 state, within `h + 1` positions; decided states are absorbing, and the product
 restricted to undecided states is acyclic. An exact-only form needs no
 monitor: its state predicates label model states and its reward labels edges.
@@ -233,7 +244,10 @@ the proof basis records the reduction.
 `max_precision_bits`, `max_rational_bits`, `max_policy_iterations` and
 `max_witness_paths`, plus time and the clause meter. Each is set by the
 request, with the published default FR-461 gives it, and each is outside the
-obligation identity. A caller cancellation stops the run with `incomplete`,
+obligation identity. Each is a positive count except `max_witness_paths`,
+which may be 0: FR-413 emits a path set only when at most `max_witness_paths`
+paths reach the bound, so 0 emits none and the item settles with no path-set
+evidence. A caller cancellation stops the run with `incomplete`,
 `cancelled{source}`, whose `source` is the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run, and records no value. The evidence kind is a request member and is outside the claim's
 obligation identity; the confidence parameters a claim states are inside it
 and are not read.
@@ -257,6 +271,7 @@ and are not read.
 | FR-411-AC-13 | `quantile 0.5 of M >= 3` with `M` equal to 1 or 3 with probability `1/2` each settles `refuted`, the exact value `Pr(M < 3) = 1/2` equal to `q` failing the strict bound, both under a workload and, through the zero-maximum second pass, over every scheduler; `quantile 0.5 of M >= 1` settles `proved`. | Test (TC-360) |
 | FR-411-AC-14 | A quantile claim whose activation probability is 0 settles `proved` in both forms, under a workload and over every scheduler. | Test (TC-360) |
 | FR-411-AC-15 | A caller cancellation of an exact run stops it with `incomplete`, `cancelled{source}` with `source` `requested`, not `limit-reached`, and records no value. | Test (TC-365) |
+| FR-411-AC-16 | A request whose `ExactProbLimits.max_witness_paths` is 0 validates against the backend-provider schema; a `<= θ` claim refuted on a fully explored model under it settles the verdict it settles under the default and carries no path set, and a `max_witness_paths` of -1 fails the schema. | Test (TC-365) |
 
 ## Dependencies
 

@@ -62,7 +62,7 @@ is a layer a `profile` declaration selects by naming its identity (FR-001).
 The row carries the layer's identity, the layers it `requires`, its
 `admitted_forms` definition, what it `admits` and its `witness_request`
 (an FR-290 kind and an FR-331 extent classification). A layering edge is one AD-003 `requires` edge between two of those
-layers. The gate covers exactly these five edges:
+layers. The gate covers exactly these six edges:
 
 | Edge | Parent | Child |
 | --- | --- | --- |
@@ -71,6 +71,7 @@ layers. The gate covers exactly these five edges:
 | E3 | `quire.state.core/v1` | `quire.value.complete/v1` |
 | E4 | `quire.state.graph/v1` | `quire.model.complete/v1` |
 | E5 | `quire.value.complete/v1` | `quire.model.complete/v1` |
+| E6 | `quire.model.complete/v1` | `quire.temporal.complete/v1` |
 
 AD-003 forbids a child from weakening an inherited rule, so a unit the parent
 refuses with a typed refusal stays refused under the child.
@@ -84,8 +85,8 @@ refuses with a typed refusal stays refused under the child.
   a tool failure naming the case.
 - Each side's selected definitions follow FR-001: its layer and the layer's
   `requires` closure, plus the qualification rows the complete-value lock's
-  `package_selection` gives for those layers.
-- A case naming a pair of layers that is not one of E1 to E5 is a tool
+  `package_selection` gives for those layers, counting the layers an infinite-trace profile requires for a refinement's rows (FR-001).
+- A case naming a pair of layers that is not one of E1 to E6 is a tool
   failure naming the case.
 - Each side compiles in the running build. No outcome is recorded or
   written by hand; both sides are compiled.
@@ -120,8 +121,8 @@ this against the running build in two parts:
   state core. The witness selects only that layer and holds one clause, the
   witness item. Its required FR-290 kind and extent classification are the
   layer's `witness_request`: `operation-contract`, `bounded` for state
-  core, state queries, state graph and complete model, whose witnesses are
-  operation and invariant clauses; `value-validity`, `bounded` for complete
+  core, state queries, state graph, complete model and complete temporal, whose
+  witnesses are operation and invariant clauses; `value-validity`, `bounded` for complete
   value, whose witness is a Boolean clause over values. The gate compiles
   the witness, takes the registry's FR-290 candidate set for that kind,
   and submits the item in one FR-331 request per candidate, each naming
@@ -142,7 +143,7 @@ this against the running build in two parts:
 The distinguishing form of each edge is the one the child's definition file
 adds: a named predicate or query for E1; a reference or `reaches` for E2;
 whole-record equality or a `record` declaration for E3; conformance or
-dispatch over a supertype for E4; object navigation for E5.
+dispatch over a supertype for E4; object navigation for E5; a `time` member of a state model for E6.
 
 quire-spec-language FR-345 implements this gate.
 
@@ -150,12 +151,14 @@ quire-spec-language FR-345 implements this gate.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-453-AC-1 | On each of E1 to E5, a case whose unit the parent layer refuses with a typed refusal and the child layer admits is a regression naming the case, the edge and the parent's codes; verdict violation, exit 10. | Test (TC-414) |
-| FR-453-AC-2 | On each of E1 to E5, a case both layers refuse holds and reports both codes, and a case whose unit uses a form the parent prohibits and the child admits is not applicable. | Test (TC-414) |
+| FR-453-AC-1 | On each of E1 to E6, a case whose unit the parent layer refuses with a typed refusal and the child layer admits is a regression naming the case, the edge and the parent's codes; verdict violation, exit 10. | Test (TC-414) |
+| FR-453-AC-2 | On each of E1 to E6, a case both layers refuse holds and reports both codes, and a case whose unit uses a form the parent prohibits and the child admits is not applicable. | Test (TC-414) |
 | FR-453-AC-3 | A case whose two units differ outside the identity string of their `profile` declaration is a tool failure, verdict tool failure, exit 30. | Test (TC-414) |
-| FR-453-AC-4 | A case naming a pair of layers that is not one of E1 to E5, such as state core and complete model, is a tool failure naming the case. | Test (TC-414) |
-| FR-453-AC-5 | Each of the five layers, selected alone by a `profile` declaration, admits its witness unit, and its witness item, requested with the layer's `witness_request` kind and extent once from each candidate backend by name, settles `supported` under at least one candidate; with two candidates of which one supports and one does not, the layer holds. A layer that refuses its witness, or whose item settles `supported` under no candidate, gives a regression naming the layer and the stage, or each candidate's backend identity and disposition. | Test (TC-414) |
-| FR-453-AC-6 | On each of E1 to E5, the parent prohibits the edge's distinguishing unit with `unsupported_construct` naming the parent layer and the child admits it; a parent that admits it gives a regression naming the edge, verdict violation, exit 10. | Test (TC-414) |
+| FR-453-AC-4 | A case naming a pair of layers that is not one of E1 to E6, such as state core and complete model, is a tool failure naming the case. | Test (TC-414) |
+| FR-453-AC-5 | Each of the six layers, selected alone by a `profile` declaration, admits its witness unit, and its witness item, requested with the layer's `witness_request` kind and extent once from each candidate backend by name, settles `supported` under at least one candidate; with two candidates of which one supports and one does not, the layer holds. A layer that refuses its witness, or whose item settles `supported` under no candidate, gives a regression naming the layer and the stage, or each candidate's backend identity and disposition. | Test (TC-414) |
+| FR-453-AC-6 | On each of E1 to E6, the parent prohibits the edge's distinguishing unit with `unsupported_construct` naming the parent layer and the child admits it; a parent that admits it gives a regression naming the edge, verdict violation, exit 10. | Test (TC-414) |
+| FR-453-AC-7 | On E6, the distinguishing unit, a state model whose source writes `time M dense unit ms;`, is prohibited by `quire.model.complete/v1` with `unsupported_construct`/`declaration-form` naming `quire.model.complete/v1` and the required layer `quire.temporal.complete/v1`, and is admitted under `quire.temporal.complete/v1`; E6's case over a unit both layers refuse holds, and E6's case over a unit that a fault makes the child admit gives a regression naming E6. | Test (TC-414) |
+| FR-453-AC-8 | `quire.temporal.complete/v1`, selected alone by a `profile` declaration, admits its witness unit, a state model with `time M dense unit ms;`, a clock field, a reset, a guard `x >= 1 ms`, a time invariant and one `invariant` clause, and the invariant clause, requested with `operation-contract` and `bounded` from each candidate backend by name, settles `supported` under at least one candidate; an empty candidate set, or a set in which every candidate settles it `unsupported`, gives a regression naming `quire.temporal.complete/v1` and the empty set or each candidate's identity and disposition. | Test (TC-414) |
 
 ## Dependencies
 

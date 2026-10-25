@@ -57,7 +57,7 @@ fn name_segment<'a>(identity: &'a str, package: &str) -> &'a str {
 }
 
 #[test]
-#[trace("TC-945", "FR-154-AC-14")]
+#[trace("TC-945", "FR-154-AC-30")]
 fn a_composed_document_declares_no_node_and_an_object_type_declares_one() {
     let v = vectors();
     let package = text(&v, "package_identity");
@@ -75,7 +75,7 @@ fn a_composed_document_declares_no_node_and_an_object_type_declares_one() {
 }
 
 #[test]
-#[trace("TC-945", "FR-154-AC-14")]
+#[trace("TC-945", "FR-154-AC-30")]
 fn no_document_of_an_artifact_type_is_lifted_and_no_lifted_name_has_a_hyphen() {
     let v = vectors();
     let package = text(&v, "package_identity");
@@ -91,7 +91,7 @@ fn no_document_of_an_artifact_type_is_lifted_and_no_lifted_name_has_a_hyphen() {
 }
 
 #[test]
-#[trace("TC-945", "FR-154-AC-14")]
+#[trace("TC-945", "FR-154-AC-30")]
 fn a_reference_to_a_composed_document_is_a_missing_declaration() {
     let v = vectors();
     let package = text(&v, "package_identity");
@@ -115,7 +115,7 @@ fn a_reference_to_a_composed_document_is_a_missing_declaration() {
 }
 
 #[test]
-#[trace("TC-945", "FR-154-AC-14")]
+#[trace("TC-945", "FR-154-AC-30")]
 fn a_node_named_by_an_artifact_type_id_is_malformed() {
     let v = vectors();
     let package = text(&v, "package_identity");

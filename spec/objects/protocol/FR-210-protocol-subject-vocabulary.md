@@ -129,5 +129,4 @@ object artifact, not by minting a subject-kind label.
 
 ## Status
 
-Accepted complete-V1 subject-vocabulary contract. Implementation and
-qualification remain tracked separately.
+Accepted complete-V1 subject-vocabulary contract.

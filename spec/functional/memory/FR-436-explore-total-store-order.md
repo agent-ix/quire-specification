@@ -45,6 +45,10 @@ the model state's value of each shared location. The state key's `memory`
 member maps `{"type":"store-buffer","thread":<thread path>}` to
 `{"type":"sequence","elements":[{"location":<location>,"value":<encoded>}, ...]}`,
 oldest first, with an entry for each live thread of the weak `parallel`.
+When the subject has a shared location with a non-atomic access, each element
+also has the member `race`, the race map of the buffered store, and the
+`memory` member also holds the race summary and the `race-summaries` and
+`race-memory` entries ([FR-438](FR-438-report-data-races.md)).
 
 ### Rules
 
@@ -97,7 +101,7 @@ mapping's x86-TSO behaviour.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-436-AC-1 | The store-buffering protocol under `tso` reaches exactly 34 states inside the `parallel` and 4 joined states, and the claim that both loads never read 0 settles `refuted` with the depth-4 counterexample `Sx`, `Ly`, `Sy`, `Lx` in which both stores are still buffered. | Test (TC-390) |
+| FR-436-AC-1 | The store-buffering protocol under `tso` reaches exactly 34 states inside the `parallel` and 4 joined states, and the claim that both loads never read 0 settles `refuted` with the canonical depth-4 counterexample `Sx`, `Sy`, `Lx`, `Ly` in which both stores are still buffered. | Test (TC-390) |
 | FR-436-AC-2 | Each `tso` row of the litmus table (TC-391) gives its stated outcome: SB allowed; SB with `seq_cst` fences, SB with `seq_cst` accesses, MP, MP with relaxed flags, LB, IRIW, 2+2W and CoRR forbidden. | Test (TC-391) |
 | FR-436-AC-3 | A locked access and a `seq_cst` fence are disabled while their thread's buffer is non-empty; `fork`, `join` and `send` are disabled until the relevant buffers are empty; no terminal state has a non-empty buffer. | Test (TC-390) |
 | FR-436-AC-4 | A lasso whose loop keeps a thread's buffer non-empty without flushing it is rejected by flush fairness, and the fairness set lists one `memory` constraint per thread. | Test (TC-390) |

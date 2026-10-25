@@ -23,7 +23,7 @@ When a conformance result is derived, the result SHALL identify the exact premis
 | Receiver | FR-054 | The exact authored receiving role of the channel. Missing or conflicting refuses admission. |
 | Message type | FR-054 | The one exact admitted message type carried by the channel. Missing or conflicting refuses admission. |
 | Ordering policy | FR-054 | Exactly `unordered`, or `fifo` with its admitted declaration-local binder and typed key-expression definition. |
-| Delivery cardinality | FR-054 | One authored inclusive `[minimum, maximum]` interval of nonnegative deliveries per send, with `minimum <= maximum`. |
+| Delivery policy | FR-054 | Exactly one of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise`. |
 
 Synchronized clocks are likewise never inferred (FR-054).
 
@@ -37,7 +37,7 @@ Synchronized clocks are likewise never inferred (FR-054).
   declaration-local typed key-expression handle; its admitted expression
   retains its complete selected type and semantic dependencies. The runtime
   value produced by evaluating that expression does not identify the static
-  premise. Duplication permission is derived from the delivery interval and is
+  premise. Duplication and loss permission are derived from the delivery policy and are
   not an additional component. Equality is componentwise over exactly these
   values. Display name, external path, span, locale and rendering do not extend
   this key (FR-035, FR-049-AC-7, FR-047).
@@ -71,10 +71,10 @@ Synchronized clocks are likewise never inferred (FR-054).
 | --- | --- | --- |
 | FR-216-AC-1 | Two premise sets equal in all five independent components compare equal, while changing any component, FIFO expression definition or delivery endpoint makes them unequal. | Analysis |
 | FR-216-AC-2 | A conformance result names the exact premise set under which it was derived. | Inspection |
-| FR-216-AC-3 | An absent premise compares only to absence and is never equal to `unordered`, FIFO, a delivery interval or a synchronized-clock fact. | Analysis |
+| FR-216-AC-3 | An absent premise compares only to absence and is never equal to `unordered`, FIFO, a delivery policy or a synchronized-clock fact. | Analysis |
 | FR-216-AC-4 | The declared key order over premise components is used only for collection comparison and is never cited as precedence or as a causal edge. | Analysis |
 | FR-216-AC-5 | `unordered` and FIFO are the complete ordering vocabulary; FIFO requires an exact admitted binder and stable-equality typed expression, and its runtime scope is one static channel plus one exact evaluated value. | Test (TC-054) |
-| FR-216-AC-6 | Delivery cardinality is an inclusive nonnegative per-send interval; its maximum alone derives whether a duplicate delivery is permitted, and no separate duplication premise is accepted. | Test (TC-054) |
+| FR-216-AC-6 | The delivery policy alone derives whether a duplicate delivery or a loss is permitted, and no separate duplication premise is accepted. | Test (TC-054) |
 
 ## Dependencies
 

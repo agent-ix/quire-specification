@@ -138,7 +138,19 @@ fn declarations(package: &Value) -> Vec<Declared<'_>> {
                 object_type: Some(declared),
             })
     });
-    objects.chain(relationships).chain(owned).collect()
+    let populations = array_or_empty(package, "populations")
+        .iter()
+        .map(|population| Declared {
+            tag: "relation",
+            form: "population",
+            node: text(population, "identity"),
+            object_type: None,
+        });
+    objects
+        .chain(relationships)
+        .chain(owned)
+        .chain(populations)
+        .collect()
 }
 
 fn declaration_key(package: &Value, declared: &Declared<'_>) -> String {
@@ -272,10 +284,39 @@ fn element_type(package: &Value, type_ref: &str) -> Option<Value> {
             _ => None,
         };
     }
+    if let Some(name) = type_ref.strip_prefix("ix://quire/unit/") {
+        return unit_element_type(package, name);
+    }
     let target = declarations(package)
         .into_iter()
         .find(|declared| declared.form == "object_type" && declared.node == type_ref)?;
     Some(json!({"type": "Reference", "target": declaration_key(package, &target)}))
+}
+
+/// FR-322 step 4's unit row: a `typeRef` of the form `ix://quire/unit/<name>`
+/// names the `scalar_type`/`unit` node of the checked package whose qualified
+/// declaration name is the `/`-joined `<name>`. The vectors list the checked
+/// package's units as `checked_units`, which the test carries on the package
+/// value it passes down. A name that matches no unit is
+/// `missing_declaration`/`missing-name`, so it has no element type here.
+fn unit_element_type(package: &Value, name: &str) -> Option<Value> {
+    array(package, "checked_units")
+        .iter()
+        .any(|unit| {
+            unit.as_array().is_some_and(|segments| {
+                segments.iter().filter_map(Value::as_str).collect::<Vec<_>>().join("/") == name
+            })
+        })
+        .then(|| json!({"type": "Quantity", "unit": name}))
+}
+
+/// The refusal for a declared type whose unit `typeRef` names no unit of the
+/// checked package, or `None` for any other declared type.
+fn unresolved_unit(package: &Value, declared: &Value) -> Option<Value> {
+    let name = text(declared, "typeRef").strip_prefix("ix://quire/unit/")?;
+    unit_element_type(package, name)
+        .is_none()
+        .then(|| refused("missing_declaration", "missing-name"))
 }
 
 /// FR-322 step 4's multiplicity rule.
@@ -391,6 +432,12 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
         if member["receiver"] != receiver {
             return ineligible();
         }
+        if let Some(missing) = array(record, "parameters")
+            .iter()
+            .find_map(|parameter| unresolved_unit(package, parameter))
+        {
+            return missing;
+        }
         let parameters: Option<Vec<Value>> = array(record, "parameters")
             .iter()
             .map(|parameter| declared_type_of(package, parameter))
@@ -403,6 +450,9 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
         }
         &record["result"]
     };
+    if let Some(missing) = unresolved_unit(package, declared_type) {
+        return missing;
+    }
     let member_type = declared_type_of(package, declared_type).map(|value| {
         if record["presence"] == "optional" {
             json!({"type": "Option", "inner": value})
@@ -438,6 +488,11 @@ fn owner_declares(package: &Value, node: &Value, owner_node: &str) -> bool {
         ("relation", "relationship") => array(package, "relationships")
             .iter()
             .any(|relationship| relationship["node"] == owner_node),
+        // A population is declared by its raw `PopulationRecord`, keyed by
+        // `identity`; the reader reads no `node` member of it (FR-322 owner join).
+        ("relation", "population") => array_or_empty(package, "populations")
+            .iter()
+            .any(|population| population["identity"] == owner_node),
         ("function", _) => match clause_kind(node) {
             // An invariant clause is owned by its object type; a
             // precondition or body clause by an operation member of an
@@ -564,9 +619,6 @@ fn select(package: &Value, case: &Value) -> Value {
     let Some(document) = supplied.get(&selected) else {
         return refused("missing_import", "missing-selection");
     };
-    if digest(document) != selected {
-        return refused("stale_dependency", "content-mismatch");
-    }
     if document["package"]["identity"] != selection["identity"] {
         return refused("invalid_model_binding", "wrong-model-selection");
     }
@@ -583,11 +635,27 @@ fn cases_for<'a>(vectors: &'a Value, criterion: &str) -> Vec<&'a Value> {
     cases
 }
 
+/// The domain package value with the checked package's units attached, the
+/// context FR-322 step 4's unit row resolves a unit `typeRef` against. The
+/// unit-typed members live in the `acme/timing` package, which no checked
+/// package fixture selects.
+fn with_checked_units(vectors: &Value, case: &Value) -> (Value, Value) {
+    if case["package"] != "timing" {
+        return (
+            vectors["domain_package"].clone(),
+            vectors["model_declaration_nodes"].clone(),
+        );
+    }
+    let mut package = vectors["timing_package"].clone();
+    package["checked_units"] = vectors["checked_units"].clone();
+    (package, vectors["timing_declaration_nodes"].clone())
+}
+
 fn assert_member_cases(vectors: &Value, criterion: &str) {
-    let nodes = array(vectors, "model_declaration_nodes");
     for case in cases_for(vectors, criterion) {
+        let (package, nodes) = with_checked_units(vectors, case);
         assert_eq!(
-            derive(&vectors["domain_package"], nodes, &case["member"]),
+            derive(&package, nodes.as_array().unwrap(), &case["member"]),
             case["expected"],
             "{}",
             text(case, "name")
@@ -666,6 +734,12 @@ fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
     assert_member_cases(&parsed(VECTORS), "FR-322-AC-31");
 }
 
+#[trace("TC-280", "FR-322-AC-80")]
+#[test]
+fn tc_280_unit_type_references_resolve_against_the_checked_packages_units() {
+    assert_member_cases(&parsed(VECTORS), "FR-322-AC-80");
+}
+
 #[trace("TC-280", "FR-322-AC-44")]
 #[test]
 fn tc_280_text_value_type_members_carry_their_bounds_and_profile() {
@@ -674,7 +748,7 @@ fn tc_280_text_value_type_members_carry_their_bounds_and_profile() {
 
 #[trace("TC-280", "FR-322-AC-32")]
 #[test]
-fn tc_280_selected_domain_package_documents_are_admitted_by_content_and_identity() {
+fn tc_280_selected_domain_package_documents_are_admitted_by_digest_key_and_identity() {
     let vectors = parsed(VECTORS);
     let cases = array(&vectors, "selection_cases");
     let causes: BTreeSet<_> = cases
@@ -686,7 +760,6 @@ fn tc_280_selected_domain_package_documents_are_admitted_by_content_and_identity
         BTreeSet::from([
             "digest-domain-mismatch",
             "missing-selection",
-            "content-mismatch",
             "wrong-model-selection"
         ])
     );
@@ -698,26 +771,6 @@ fn tc_280_selected_domain_package_documents_are_admitted_by_content_and_identity
             text(case, "name")
         );
     }
-}
-
-#[trace("TC-280", "FR-322-AC-43")]
-#[test]
-fn tc_280_an_altered_document_under_the_selected_digest_is_refused() {
-    let vectors = parsed(VECTORS);
-    let case = |name: &str| {
-        array(&vectors, "selection_cases")
-            .iter()
-            .find(|case| case["name"] == name)
-            .unwrap_or_else(|| panic!("{name} is recorded"))
-    };
-    assert_eq!(
-        select(&parsed(DOCUMENT), case("MS-03")),
-        refused("stale_dependency", "content-mismatch")
-    );
-    assert_eq!(
-        select(&parsed(DOCUMENT), case("MS-01")),
-        json!({"admission": "passed"})
-    );
 }
 
 /// A catalog entry by identity.
@@ -1328,11 +1381,6 @@ fn project_document(document: &Value) -> Value {
         let node = text(declared, "identity");
         match meaning {
             "quire.meaning.model.object-type/v1" | "quire.meaning.systems.interface/v1" => {
-                let redefined: BTreeMap<&str, &Value> = array(declared, "extensions")
-                    .iter()
-                    .flat_map(|extension| array(&extension["payload"], "redefines"))
-                    .map(|entry| (text(entry, "operation"), &entry["target"]))
-                    .collect();
                 let fields: Vec<Value> = array(declared, "fields")
                     .iter()
                     .map(|field| {
@@ -1369,9 +1417,10 @@ fn project_document(document: &Value) -> Value {
                                 "typeRef": returns["typeRef"],
                                 "multiplicity": projected_multiplicity(&returns["multiplicity"]),
                             })),
-                            "redefines": redefined
-                                .get(text(operation, "identity"))
-                                .map_or(Value::Null, |target| (*target).clone()),
+                            "redefines": operation
+                                .get("redefines")
+                                .cloned()
+                                .unwrap_or(Value::Null),
                         })
                     })
                     .collect();
@@ -1458,6 +1507,54 @@ fn tc_280_the_domain_package_projection_is_derived_from_the_selected_document() 
         sorted(project_document(&parsed(DOCUMENT))),
         sorted(vectors["domain_package"].clone())
     );
+}
+
+/// FR-154-AC-16: intake reads an operation's redefinition only from
+/// `Operation.redefines`, and a `redefines` naming no node of the package
+/// refuses at the operation and the member.
+fn read_operation_redefinitions(document: &Value) -> Result<(), Value> {
+    let identities: BTreeSet<&str> = array(document, "types")
+        .iter()
+        .flat_map(|declared| {
+            ["fields", "operations"]
+                .into_iter()
+                .flat_map(move |list| array_or_empty(declared, list))
+        })
+        .map(|member| text(member, "identity"))
+        .collect();
+    for declared in array(document, "types") {
+        for operation in array_or_empty(declared, "operations") {
+            if let Some(target) = operation["redefines"].as_str() {
+                if !identities.contains(target) {
+                    return Err(json!({"refused": {
+                        "code": "missing_declaration",
+                        "cause": "missing-name",
+                        "at": operation["identity"],
+                        "path": "Operation.redefines",
+                    }}));
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+#[trace("TC-280", "FR-154-AC-16")]
+#[trace("TC-280", "FR-322-AC-30")]
+#[test]
+fn tc_280_an_operation_redefines_only_through_operation_redefines() {
+    let vectors = parsed(VECTORS);
+    let nodes = array(&vectors, "model_declaration_nodes");
+    let cases = array(&vectors, "operation_redefinition_cases");
+    assert_eq!(cases.len(), 4);
+    for case in cases {
+        let document = patched_document(Some(&case["patch"]));
+        let outcome = match read_operation_redefinitions(&document) {
+            Err(refusal) => refusal,
+            Ok(()) => derive(&project_document(&document), nodes, &case["member"]),
+        };
+        assert_eq!(outcome, case["expected"], "{}", text(case, "name"));
+    }
 }
 
 /// FR-154-AC-9: the document carries filament-core-data FR-095's identity
@@ -1834,6 +1931,99 @@ fn tc_280_relationship_declarations_refuse_each_defect_at_the_selection_row() {
     }
 }
 
+/// FR-154 operation parameter names at domain selection. Within one operation
+/// the repeated-identity check runs first and suppresses the name check of both
+/// colliding parameters (a collision is reported alone); then the name check of every parameter, in
+/// `params` order. A collision names the shared parameter identity, a name
+/// refusal the operation identity; both name the member path.
+fn read_parameter_names(
+    document: &Value,
+) -> Result<(), (&'static str, &'static str, String, String)> {
+    let member_name = |name: &str| {
+        let mut chars = name.chars();
+        chars
+            .next()
+            .is_some_and(|first| first.is_ascii_alphabetic())
+            && chars.all(|c| c.is_ascii_alphanumeric() || c == '_')
+    };
+    let mut types: Vec<&Value> = array(document, "types").iter().collect();
+    types.sort_by_key(|declared| declared["identity"].as_str().map(str::to_owned));
+    for owner in types {
+        for (k, operation) in array_or_empty(owner, "operations").iter().enumerate() {
+            let operation_identity = text(operation, "identity");
+            let params = array_or_empty(operation, "params");
+            let path = |s: usize, member: &str| {
+                format!("TypeDefinition.operations[{k}].params[{s}]{member}")
+            };
+            let mut first_seen: BTreeMap<&str, usize> = BTreeMap::new();
+            let mut collision = None;
+            for (s, param) in params.iter().enumerate() {
+                let identity = text(param, "identity");
+                match first_seen.get(identity) {
+                    Some(_) => {
+                        collision.get_or_insert((identity.to_owned(), s));
+                    }
+                    None => {
+                        first_seen.insert(identity, s);
+                    }
+                }
+            }
+            if let Some((identity, s)) = collision {
+                return Err((
+                    "invalid_model_binding",
+                    "conflicting-binding",
+                    identity,
+                    path(s, ""),
+                ));
+            }
+            for (s, param) in params.iter().enumerate() {
+                let identity = text(param, "identity");
+                let valid = param["name"].as_str().is_some_and(|name| {
+                    member_name(name) && identity == format!("{operation_identity}/{name}")
+                });
+                if !valid {
+                    return Err((
+                        MALFORMED.0,
+                        MALFORMED.1,
+                        operation_identity.to_owned(),
+                        path(s, ".name"),
+                    ));
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+/// FR-154-AC-14: each `parameter_name_cases` entry patches the selected
+/// document and the reader reports the recorded refusal at the selection row.
+#[trace("TC-280", "FR-154-AC-14")]
+#[test]
+fn tc_280_parameter_names_refuse_each_defect_at_the_selection_row() {
+    let adverse = parsed(ADVERSE);
+    let cases = array(&adverse, "parameter_name_cases");
+    for case in cases {
+        let id = text(case, "id");
+        let outcome = read_parameter_names(&patched_document(Some(&case["patch"])));
+        match case["outcome"].as_str() {
+            Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            _ => {
+                assert_eq!(text(case, "expected_locus"), "selection_row", "{id}");
+                assert_eq!(
+                    outcome,
+                    Err((
+                        text(case, "expected_code"),
+                        text(case, "expected_cause"),
+                        text(case, "expected_identity").to_owned(),
+                        text(case, "expected_path").to_owned(),
+                    )),
+                    "{id}"
+                );
+            }
+        }
+    }
+}
+
 /// The mapping `derive`'s wire cases name: a model declaration vector's
 /// declared node identity.
 fn vector_node<'a>(nodes: &'a [Value], name: &str) -> &'a str {
@@ -2056,6 +2246,142 @@ fn tc_280_process_state_machine_and_persistence_owners_join_the_selected_documen
             case["expected"],
             "{}",
             text(case, "name")
+        );
+    }
+}
+
+/// FR-322-AC-82: a declared population is a self-typed `relation`/`population`
+/// model declaration node whose `ModelOwner` is the population's declaration
+/// key (package, then node). Two populations of one package key differently,
+/// the closed preimage refuses every other form and shape, the owner join
+/// admits the node exactly when the selected document declares the owner as a
+/// population, and an ownerless node fails the V2 schema.
+#[trace("TC-280", "FR-322-AC-82")]
+#[test]
+fn tc_280_a_population_reference_node_is_keyed_by_its_declaration_key_alone() {
+    let vectors = parsed(OWNER_FORMS);
+    let schema =
+        jsonschema::validator_for(&parsed(PREIMAGE_SCHEMA)).expect("node preimage schema is valid");
+    let package = &vectors["domain_package"];
+    let nodes = array(&vectors, "model_declaration_nodes");
+    let counters = node_vector(nodes, "P7");
+    let archive = node_vector(nodes, "P8");
+    for vector in [counters, archive] {
+        assert_eq!(vector["preimage"]["node_tag"], "relation");
+        assert_eq!(vector["preimage"]["semantic_form"], "population");
+        assert!(
+            schema.is_valid(&vector["preimage"]),
+            "{}",
+            text(vector, "name")
+        );
+    }
+    assert_ne!(
+        text(counters, "sha256"),
+        text(archive, "sha256"),
+        "two populations of one package carry different declaration keys and so different node keys"
+    );
+    let mut other_package = counters["preimage"].clone();
+    other_package["owner"]["identity"] = json!("acme/other");
+    assert_ne!(digest(&other_package), text(counters, "sha256"));
+    for (mutation, change) in [
+        ("a model-tagged population", ("node_tag", json!("model"))),
+        (
+            "a relation-tagged object type",
+            ("semantic_form", json!("object_type")),
+        ),
+        (
+            "a typed population",
+            (
+                "semantic_type",
+                json!({"domain": NODE_DOMAIN, "digest": "0".repeat(64)}),
+            ),
+        ),
+        (
+            "a declared population",
+            ("declaration", json!({"qualified_name": ["counters"]})),
+        ),
+        (
+            "a population with a body",
+            (
+                "body",
+                json!({"term": "aggregate", "members": [{"term": "reference"}]}),
+            ),
+        ),
+    ] {
+        let mut candidate = counters["preimage"].clone();
+        candidate[change.0] = change.1;
+        assert!(
+            !schema.is_valid(&candidate),
+            "{mutation} fails the closed preimage"
+        );
+    }
+    let mut ownerless = owner_form_node(
+        package,
+        &json!({
+            "node_tag": "relation", "semantic_form": "population", "owner_node": "ix://acme/runs/counters"
+        }),
+    );
+    assert_eq!(
+        read_wire(package, &ownerless),
+        json!({"recovers": "ix://acme/runs/counters"})
+    );
+    ownerless.as_object_mut().expect("a node").remove("owner");
+    assert_eq!(
+        read_wire(package, &ownerless),
+        json!({"refused": {"code": "malformed_wire"}}),
+        "a population node without its owner fails the V2 schema"
+    );
+    for case in array(&vectors, "owner_cases")
+        .iter()
+        .filter(|case| text(case, "name").starts_with("PR-"))
+    {
+        assert_eq!(
+            read_wire(package, &owner_form_node(package, case)),
+            case["expected"],
+            "{}",
+            text(case, "name")
+        );
+    }
+    // Each projected population is an FCD semantic IR 2.0.0 population: the six
+    // required members and the optional `symmetric`, and nothing else.
+    for population in array(package, "populations") {
+        let members: std::collections::BTreeSet<&str> = population
+            .as_object()
+            .expect("a population is an object")
+            .keys()
+            .map(String::as_str)
+            .collect();
+        let required = [
+            "displayName",
+            "extent",
+            "identity",
+            "kind",
+            "members",
+            "origin",
+        ];
+        assert!(
+            required.iter().all(|member| members.contains(member)),
+            "a population carries {required:?}"
+        );
+        assert!(
+            members
+                .iter()
+                .all(|member| required.contains(member) || *member == "symmetric"),
+            "a population carries no member beyond the six and `symmetric`: {members:?}"
+        );
+        assert!(text(population, "identity").starts_with("ix://"));
+        assert!(matches!(text(population, "extent"), "closed" | "open"));
+        text(&population["kind"], "module");
+        text(&population["kind"], "name");
+        assert!(array(population, "members").iter().all(Value::is_string));
+        let origin = population["origin"].as_object().expect("an origin object");
+        assert_eq!(
+            origin
+                .keys()
+                .filter(|key| *key == "source" || *key == "generated")
+                .count(),
+            1,
+            "an origin is exactly one of `source` or `generated`"
         );
     }
 }

@@ -9,7 +9,7 @@ structures, but any external consumer receives only the contract.
 
 - `schema.json` defines the closed `quire.checked-package/v2` wire shape.
 - `node-identity-preimage.schema.json` defines the closed RFC 8785 preimages for
-  complete-V1 enum, dimension and declared-unit node identities.
+  complete-V1 enum, dimension, dimension-equivalence and declared-unit node identities.
 - The closed `quire.checked-operation-catalog/v1` is not kept here. Its only copy is
   `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`,
   which the tests read through that crate. It holds
@@ -29,12 +29,47 @@ structures, but any external consumer receives only the contract.
   `state`/`operation_anchor` node, its `state`/`frame` node with a scoped
   field entry and the four frame members, and the `value`/`parameter` node
   for `self` (FR-340, FR-341, FR-342).
+- `fixtures/positive-extension-nodes.json` is a V2 package carrying the
+  `retention Audit { subject: "audit", days: 30 }` form of a selected
+  extension as one `extension`/`extension_form` node, its two clause subnodes
+  and the `retention` entry of `lock.definition_selections` (FR-469,
+  TC-951); `fixtures/positive-all-families.json` carries the same form as its
+  fourteenth node tag, and the `Tank` hybrid model (one `hybrid_model`, one
+  `hybrid_mode` and one `hybrid_transition` node, a rate and a reset value
+  that are bare variable references, and a `hybrid` variable whose rate is
+  the literal `1`) as its fifteenth (FR-481, TC-966). `node-identity-preimage.schema.json` defines the
+  `ExtensionFormNode` preimage that keys it.
+- `extension-definitions.json` publishes the FR-467 extension definitions
+  (`policy`, `quota`, `retention`) a reader holds when it reads these
+  fixtures, each as `{reference, definition}` with `definition` exactly the
+  `{grammar_schema, typed_node_schema}` members, closed by
+  `extension-definitions.schema.json`. A reader holds the published
+  definition of each `lock.definition_selections` entry of the fixture it
+  reads. `extension-definition-vectors.json` lists the withheld-definition
+  controls: a fixture read with `retention` withheld refuses
+  `unknown_required_capability` at the extension node (FR-469, TC-951).
+- `hybrid-node-vectors.json` holds the graph nodes of QSL FR-447's `Braking`
+  hybrid declaration and its `SlowEnough` claim: one `hybrid`/`hybrid_model`
+  node, two `hybrid`/`hybrid_mode` nodes, one `hybrid`/`hybrid_transition`
+  node, the continuous variables' `value`/`parameter` nodes, the term nodes
+  and the claim's `temporal_clause` and formula nodes, each keyed by its own
+  preimage, with the `-(2 * a)` term nodes of an identity case and eight
+  schema refusals, and as `restored_nodes` the `Braking2` model with two
+  initial entries and a reset relation, its `Slows` claim with an `each`
+  activation, a capture, hybrid fairness and a timed interval, and the
+  `model-steps` claim `Recent` reading `once` (FR-481, TC-966).
+  `node-identity-preimage.schema.json`
+  defines the `HybridNode` preimage that keys each `hybrid` node.
 - `model-owner-form-vectors.json` supplies a domain package projection that
   also declares processes, state machines and a persistence interface, with
   the owner-join, frame-field, anchor, clause-signature and receiver-frame
   cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
   FR-342-AC-7 to AC-9). Its model declaration node keys are recomputed by the
   tests from each preimage.
+- `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-17` of
+  FR-322's refinement step occurrences: a refinement owner's `declaration` and
+  `generated` `source_map` entries against its step rows, its `steps` order and
+  whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). The refinement members of the cases are illustrative, since no refinement body exists in `schema.json` or in a published package; a real entry is compared by node key.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.
@@ -56,8 +91,8 @@ structures, but any external consumer receives only the contract.
   `NodeId`). One vector additionally carries a
   `second_frame` member: a complete second `state`/`frame` node object,
   every member a real semantic-graph node requires, inserted into the graph
-  verbatim, so the vector exercises the reader's ascending-node-id-digest
-  order across two frame nodes.
+  verbatim, so the vector exercises the reader's visit order across two
+  frame nodes, which ascends by node-id digest.
 - `dependency-selection-vectors.json` carries two `DependencySelection`
   entries (`{identity, package_id}`), the `package_id` of
   `fixtures/positive-all-families.json` with those entries as its lock's and
@@ -71,12 +106,53 @@ structures, but any external consumer receives only the contract.
   order (where UTF-16 order differs) are admitted, a repeated identity
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
+  The members its top-level `schema_only` lists (`dependency_selections`,
+  `entry_mutations`, `model_selections`, `model_entry_mutations`,
+  `order_vectors` and `supply_vectors`) carry placeholder `package_id` or
+  digest values, or symbolic supply states, that name no admitted package:
+  they exercise the schema, the order rule and the supply order only, and a
+  reader that requires every entry's package to be supplied refuses them
+  `missing_import`/`missing-selection` at entry 0 by design. Only
+  `closure_vectors`, whose digests are recomputed from real packages, and
+  `dependency-call-vectors.json` name packages a reader can be supplied. Each `supply_vectors` entry lists the
+  direct entries in lock order with a symbolic `supply` state (`bound`,
+  `stale` for a supplied package whose recomputed `package_id` differs, or
+  `absent`) and the outcome FR-322-AC-84 requires.
+  Its `closure_vectors` contain `direct_dependencies` of the importer and
+  `dependency_locks` for those direct packages; each dependency lock names a
+  fixture `base` and its own `dependency_selections`. The diamond vector
+  carries two importer-rooted selection-path JSON-pointer `loci` and a
+  conflicting-definition `outcome`. The transitive-only vector carries a
+  `dependency_reference` and its call `use`, with an expected missing-selection
+  `outcome`. The reader outcomes remain planned; QSpec checks the recorded
+  package IDs and the producer-side closure relationships.
 - Both schemas carry the `dependency_reference` term
   `{term: "dependency_reference", package, node}` (FR-322): `package` is a
   `PackageId` naming a `dependency_selections` entry and `node` a `NodeId`
   naming a declaration node of that dependency. The node-identity preimage
   spells it as the wire does, so both components enter the referencing
   node's id, and it is never listed in a node's `dependencies`.
+- `fixtures/positive-dependency-library.json` is an admitted library package,
+  supplied under the library identity `test/predicates`, whose recorded
+  `package_id` recomputes. It declares `Lib::is_small`, a `function` over
+  `Int[0, 9]` returning `Boolean` whose signature type nodes carry no
+  `declaration` or `ModelOwner`, together with the declared record
+  `Lib::Point`, a function returning it, functions over `Set<Point>`, over a
+  tuple holding `Point` and over `Reference<acme/orders::Order>`, and
+  `value`/`parameter` nodes that carry no `declaration`.
+  `fixtures/positive-dependency-call.json` selects that library by its
+  `package_id` and declares `App::check`, whose body is a
+  `quire.op.function.call` with a `dependency_reference` callee naming
+  `Lib::is_small`, the Boolean node as `result_type` and no `dependencies`
+  entry for the target; it is admitted when the library is supplied.
+  `dependency-call-vectors.json` carries FR-322-AC-37's mutations of that
+  package as patches over it: no dependency supplied, a `package` that is no
+  direct selection, a `node` carrying no `declaration`, a `node` naming the
+  record or a function whose signature reaches it or a model type, the term
+  as a non-callee argument and as a node body root, and the target listed in
+  `dependencies`. Each records its refusal `outcome` and its `locus`, the JSON
+  pointer FR-322 fixes for it in the mutated package; node keys and the
+  `package_id` are recomputed after the patch.
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
@@ -91,7 +167,8 @@ structures, but any external consumer receives only the contract.
 - `model-member-type-vectors.json` carries a domain package as a projection
   of the declaration records FR-154 intake reads from it, the model declaration node vectors
   that recover a declaring node's `ModelOwner`, the member and selection
-  cases for FR-322's "Model-owned members", and the reference equality and
+  cases for FR-322's "Model-owned members", the operation redefinition cases of
+  FR-154-AC-16, and the reference equality, reference upcast and
   field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
   of its `domain_package` member stands for the document's `sha256-jcs`
@@ -111,14 +188,31 @@ structures, but any external consumer receives only the contract.
   `bounded_domain`/`model_population`; and a formed compound quantity unit is
   an anonymous `scalar_type`/`compound_unit`. Their bodies and refusal rules
   are specified by FR-322's derived type forms section.
+- A population a domain package declares and a state clause names (`M::P`) is
+  a `relation`/`population` model declaration node (FR-322 "Population
+  references"): self-typed, with an empty body and a `ModelOwner` that is the
+  population's declaration key, keyed like every model declaration node by the
+  closed `ModelDeclarationNode` preimage of `node-identity-preimage.schema.json`.
+  It is operand 0 of `quire.op.model.all_instances` and `quire.op.model.lookup`
+  and carries no member type or maximum. `fixtures/adverse.json`'s
+  `population_reference_cases` read it through the full reader against the FCD populations of its `selected_document_populations`, and
+  `model-owner-form-vectors.json` carries the `populations` list of its
+  `acme/runs` projection, the node vectors `P7` and `P8` and the owner cases
+  `PR-01` to `PR-06`.
 
 ## Identity rules
 
 The package key is the selected contract version and a
 `quire.package.semantic/v2` digest over a non-circular JCS preimage. The
-preimage is exactly the `quire.checked-package-id/v2` object containing ordered
-edition, profile, definition, model, feature and dependency selections plus the
-checked semantic graph's typed-key ordered identity projection. It excludes
+package shows `identity_preimage`, the `quire.checked-package-id/v2` object
+containing ordered edition, profile, definition, model, feature and dependency
+selections and no node. The package-id preimage is that object plus the
+checked semantic graph's identity projection, one occurrence-free entry per
+node in graph order (the producer's order of `semantic_graph.nodes`, which a
+reader does not sort and which enters the id); a reader derives the
+projection from the graph and a package never ships it, so every node is on
+the wire once. An `identity_preimage` carrying `identity_projection` fails the
+schema. The preimage excludes
 package identity itself, source-occurrence/source-map data, raw-byte artifacts,
 presentation, runtime inputs, installed backends, diagnostic wording and reader
 limits.
@@ -139,7 +233,7 @@ package. A node id depends only on content: an unchanged source- or
 definition-owned declaration retains its identity across unrelated document
 changes. A structural node carries its `owner` member (`SourceOwner` on a
 declared node, `ModelOwner` on a model declaration node or clause function, none
-elsewhere), also on its `identity_projection` entry, so a reader re-derives
+elsewhere), which the derived identity projection carries, so a reader re-derives
 every structural key from the package alone. `fixtures/positive-two-owners-a.json`
 and `-b.json` declare the same records under two `SourceOwner`s and differ in
 every owner-keyed node id. Qualified names are arrays of ASCII identifier segments.
@@ -157,7 +251,15 @@ dimension keys. Cross-field joins are exact: an enum member's `semantic_type`
 and sole dependency equal its preimage declaration key and its enum literal
 body equals the preimage case; a dimension is self-typed and depends exactly on
 its term keys; a unit's `semantic_type` equals its dimension key and its
-dependencies are exactly that dimension plus its non-null target. Changing a
+dependencies are exactly that dimension plus its non-null target; a
+`scalar_type`/`dimension_equivalence` node (FR-142 "Dimension equivalence") is
+self-typed, carries no `declaration`, holds a `SourceOwner` and the keys of the
+two dimension nodes it relates, distinct and in ascending digest order, and a
+`root_scale` (a positive reduced rational: one canonical root of the first node
+is `root_scale` canonical roots of the second), and depends on exactly those
+keys. The `root_scale` values of the base pairs multiply to one around every
+cycle, and a pair of two non-base nodes carries the ratio their base roots fix. Readers recompute the equivalence classes from
+these nodes, so no other member records one. Changing a
 body/type/dependency while retaining the nominal preimage therefore refuses.
 Runtime compound-unit values are evaluator-owned
 `quire.value.compound-unit/v1` identities defined with the complete-value
@@ -246,22 +348,29 @@ exactly (`promotes_exact`); `quire.op.numeric.narrow` and
 obligations with no mode, and only `quire.op.numeric.convert_rounding`, a
 decimal scale reduction, rounds.
 
-IEEE values have no `eq`, `ne`, ordering or `negate`: numeric equality, total
-order and bit identity are three distinct identities, and only
-`quire.op.ieee.total_order` orders floats.
+IEEE values have no `eq`, `ne` or ordering identity: numeric equality, total
+order and bit identity are three distinct identities, and the source `=` and
+`!=` over floats lower to `quire.op.ieee.numeric_equal` and its
+`quire.op.boolean.not`. `quire.op.ieee.float32.negate` and
+`quire.op.ieee.float64.negate` flip the sign bit of one float, with the
+`ieee_profile` law, no mode and the operand's type as result. A
+`quire.op.structural.eq` or `.ne` over a type holding a float lists that float
+leaf with the `ieee_profile` law.
 
 A reader reports the first refusal in the order owned by
 `quire.native.diagnostics/v1`: graph-shape refusals, then
 `stale-node-key` (`invalid_package`) for an application node whose retained key
 is not its preimage digest, then declaration refusals, then frame refusals at
-the first `state`/`frame` node in ascending node-id digest order carrying one
+the first `state`/`frame` node carrying one, visiting them in ascending
+node-id digest order
 (that node's own `missing_declaration`/`invalid_model_binding` meaning-join
 defect outranking its `invalid_semantic_graph` canonical-order defect, per
 FR-340), then state refusals (the placement of `quire.op.state.clause`, then
 each `state`/`operation_anchor` node and then each `state`/`state_clause`
-node in ascending node-id digest order, per FR-341 and FR-342), then nodes
-in ascending node-id digest order and, inside a
-node, applications in pre-order. One
+node, visiting each kind in ascending node-id digest order, per FR-341 and
+FR-342), then nodes, visited in ascending node-id digest order and, inside a
+node, applications in pre-order. These visit orders choose the refusal to
+report; they are not an order of `semantic_graph.nodes`. One
 application checks `unknown-operation`, `operation-class-mismatch`,
 `operation-law-missing`, `operation-law-mismatch`,
 `operation-law-unselected`, `operation-mode-mismatch` and
@@ -275,7 +384,8 @@ semantic_type, declaration, recursion, body}`, where a reference to a member of
 the node's own recursion group becomes a `group_reference` ordinal. An
 expression whose root is an application has the semantic form fixed by its
 operator class, and its dependencies are exactly the unique digest-ascending
-reference targets and member declarations of its body. Changing division from
+reference targets and member declarations of its body. Every other node's
+dependencies follow FR-322's `dependencies` rules. Changing division from
 floor to Euclidean therefore changes the node id and the package id, and the
 `division-law-unselected-by-package-lock` mutation shows that a law absent from
 the lock refuses.
@@ -300,8 +410,12 @@ A field of a model object is `quire.op.record.project` over a
 declaration node, of family `object`, which the projection's `field_owner`
 operand group admits. `quire.op.reference.eq` and `quire.op.reference.ne`
 compare two references whose object types conform one to the other
-(`conforming_reference`), decided over the owners the same recovery yields
+(`conforming_reference`), and `quire.op.reference.upcast` retypes a
+reference only to a type its object type conforms to (`conforming_upcast`),
+each decided over the owners the same recovery yields
 ([FR-322's "Reference conformance"](../../spec/objects/interfaces/FR-322-checked-package-artifact.md#reference-conformance)).
+The operation catalog's `constraint_kinds` vocabulary lists `conforming_upcast`
+beside `conforming_reference`.
 
 ## Declarations
 
@@ -316,3 +430,4 @@ part of the node identity. On a nominal node it equals the nominal
 `qualified_declaration` (else `declaration-nominal-mismatch`, `invalid_package`),
 and two nodes declaring one name refuse as `ambiguous-name`
 (`ambiguous_declaration`). Library exports resolve only through this member.
+- `fixtures/positive-integer-literal-references.json` is the reference form of the `three` application of `positive-two-owners-a.json` (its integer literal operands are references to `value`/`literal` nodes); the reader admits it under a node identity different from the inline form's.

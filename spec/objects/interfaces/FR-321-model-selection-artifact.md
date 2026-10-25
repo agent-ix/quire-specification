@@ -27,7 +27,7 @@ When a package imports a domain package for native linking, the checker SHALL us
 ## Identity and validation
 
 The key is (`identity`, `digest_domain`, `digest`): the domain package identity and its content digest. Two selections with equal identity and different digests are unequal.
-A digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`. Intake reads the package bytes supplied under the selection's digest and refuses a document whose recomputed canonical digest differs from it as `stale_dependency`/`content-mismatch` (FR-154).
+A digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`. Intake reads the package bytes supplied under the selection's digest and does not recompute that digest (FR-154).
 A package selects at most one domain package per `identity`; intake
 refuses a second selection of an already-selected `identity`, before name
 binding, as `duplicate_selection`/`duplicate-identity` (QSL ADR-013 O-01,
@@ -39,7 +39,7 @@ Missing required properties, duplicate keys, out-of-domain values and non-canoni
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-321-AC-1 | Every effective declaration names its original declaration and ordered derivation path. | Analysis |
-| FR-321-AC-2 | A document whose recomputed digest differs from the selected digest, a wrong digest domain or a malformed declaration refuses before name binding. | Analysis |
+| FR-321-AC-2 | A wrong digest domain or a malformed declaration refuses before name binding. | Analysis |
 | FR-321-AC-3 | A declaration key is fixed by the domain package identity and the IR node identity; the checker never mints, renames or merges one. | Analysis |
 | FR-321-AC-4 | The key components map exactly to the domain package identity and its `sha256-jcs` digest, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
 | FR-321-AC-5 | A second selection of an already-selected domain-package `identity` refuses `duplicate_selection`/`duplicate-identity` before name binding, retaining the repeated identity and both selected digests; a second selection of a distinct `identity` is unaffected. | Analysis |
@@ -52,5 +52,4 @@ Missing required properties, duplicate keys, out-of-domain values and non-canoni
 
 ## Status
 
-Accepted complete-V1 boundary value contract. Implementation and qualification
-remain tracked separately.
+Accepted complete-V1 boundary value contract.

@@ -61,12 +61,22 @@ One result per clause instance, classified by
   different aliases range over different subjects. The request supplies one
   subject per distinct alias.
 - **Object parameters.** `behaviours (v: V::T)` binds an object of a
-  population of alias `V`'s model. The clause has one instance per key of
-  that population's universe. Within an instance, `v` denotes the object with
+  population of alias `V`'s model. The clause has one instance per admitted key
+  (FR-361): a key of the universe of a population of that model that overlaps
+  `T` and that a member record of an initial state admits, a key listed by
+  several of them being one instance. Within an instance, `v` denotes the object with
   that key in every trace of that alias: objects are correlated across traces
   by universe key, never by local name. A clause over two aliases names one
   parameter per alias it reads, and its instances range over the product of
-  their universes.
+  their admitted keys. A clause one of whose parameters has no admitted key
+  (no population overlaps its type, every overlapping population has an empty
+  universe, or no initial member record admits a key of their universes), which
+  FR-361 states as zero instances, has an
+  empty product and zero instances: the item is a `NoInstance` item of
+  [FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md)
+  Instancing and settles by [FR-399](FR-399-settle-hyperproperty-results.md),
+  never `proved`, since no instance was ever evaluated. A parameter with an
+  overlapping population that has no universe is `requires-bound` first.
 - **Indexed reads.** Every model member read in the body carries exactly one
   trace variable, written `e @ a`; one atom may read several variables.
 - **Step labels.** Inside `match`, `a.step.op` is the operation of the step
@@ -132,7 +142,13 @@ One result per clause instance, classified by
 - **Vacuity.** A clause with a non-empty `μ_U` and no tuple of fair universal
   behaviours on which `μ_U` holds at every joint step is vacuous and is never
   `proved` (FR-399). With `μ_U` empty the universal domain is never empty,
-  because a finite subject with an initial state has a fair behaviour.
+  because a finite subject with an initial state has a fair behaviour. An
+  HP-6 clause ([FR-398](FR-398-align-hyperproperty-traces-on-a-projection.md))
+  is never vacuous: the tuple of initial states with its empty projected
+  prefix counts as matched, so its matched set is never empty and a `μ_U` that
+  no joint visible step satisfies leaves the item deciding on the position-0
+  prefix alone. A subject with no initial state is `no-initial-state`, and a
+  clause with no instance `no-instance`, as for every form.
 - **Deadlocks.** A hyper item reports no deadlock. A request that holds a
   hyper item holds the one derived deadlock-freedom item
   ([FR-366](../temporal/FR-366-check-deadlock-freedom.md)) of each distinct
@@ -161,11 +177,11 @@ One result per clause instance, classified by
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-395-AC-1 | Under `behaviours`, a quantifier without `of`, and under a finite trace domain a quantifier with `of`, refuse at the quantifier; an indexed read through a variable of another model and an unindexed member read refuse `ill_typed`; a match that reads state refuses. | Test (TC-337) |
-| FR-395-AC-2 | Two quantifiers over one alias range independently over one subject, quantifiers over two aliases over two subjects, and an object parameter yields one instance per universe key with the object correlated by key in every trace. | Test (TC-337, TC-338) |
+| FR-395-AC-2 | Two quantifiers over one alias range independently over one subject, quantifiers over two aliases over two subjects, and an object parameter yields one instance per admitted key (FR-361) of the overlapping populations' universes with the object correlated by key in every trace. | Test (TC-337, TC-338) |
 | FR-395-AC-3 | Lockstep noninterference with matched inputs is refuted on the leaky vault and proved on the secure vault; without `match` it is refuted on both. | Test (TC-338) |
 | FR-395-AC-4 | `μ_U` restricts the universal tuples and `μ_E` the existential tuples, so a `∀∃` clause is refuted on the leaky vault and proved on the secure vault. | Test (TC-339) |
 | FR-395-AC-5 | A component at a terminal state stutters with step label `stutter`, and a match of equal operations pairs it only with another stuttering component; `a.step.receiver` is none at its terminal-stutter step, so `a.step.receiver = b.step.receiver` holds between two stuttering components. | Test (TC-340) |
-| FR-395-AC-6 | A clause whose non-empty `μ_U` no fair universal tuple satisfies is vacuous and is not `proved`. | Test (TC-340) |
+| FR-395-AC-6 | An HP-2 or HP-3 clause whose non-empty `μ_U` no fair universal tuple satisfies is vacuous and is not `proved`; an HP-6 clause whose `μ_U` no joint visible step satisfies is not vacuous and settles on its position-0 prefix. | Test (TC-340) |
 | FR-395-AC-7 | Each variable's fairness set filters only its own behaviours: a liveness body that holds only under one variable's fairness set is proved with that set and refuted without it. | Test (TC-341) |
 | FR-395-AC-8 | A body with an interval operator nested under `always` is evaluated over joint positions of a tuple of lassos, with the stem the longest component stem and the period the least common multiple of the loop lengths. | Test (TC-341) |
 | FR-395-AC-9 | A clause over `behaviours` under a profile other than infinite-trace settles `unsupported` with `unsupported_projection`/`unsupported-requested-capability`. | Test (TC-337) |

@@ -35,15 +35,30 @@ subjects, its fairness sets, and the reductions the request selects.
 
 ## Outputs
 
-The reductions applied, named in a reduced proof's basis, or the
-`reduction-not-preserving` settlement.
+The reductions applied, named in a reduced proof's basis, the
+`reduction-not-preserving` settlement, or the `unsupported` settlement of a
+selected reduction the provider does not build.
 
 ## Preservation rows
 
-A reduction applies exactly where its row reads "yes". Where the row reads
-"no", the item settles `inconclusive` with `reduction-not-preserving` before
-expansion. Copy-swap symmetry applies only when the analyzer has verified it
-on the checked clause.
+A reduction is admitted where its cell reads anything other than "no". Where
+the cell reads "no", the item settles `inconclusive` with
+`reduction-not-preserving` before expansion. A cell other than "no" says the
+reduction preserves the verdict; in the state-constraint column it also says
+how the verdict is read when the constraint cuts states. Copy-swap symmetry
+applies only when the analyzer has verified it on the checked clause.
+
+- Where a selected reduction is admitted by its cell and the provider does not
+  build it for the item's form, the analyzer SHALL settle the item
+  `unsupported`, `unsupported_projection`/`unsupported-requested-capability`
+  before expansion, naming the reduction. The rule is evaluated for each
+  selection on its own, for the key symmetry of every form (the orbit
+  representatives of HP-1 and the diagonal action of HP-2, HP-3 and HP-6) and
+  for the state constraint of HP-1, HP-2 and HP-6.
+- The analyzer SHALL NOT ignore a selected reduction.
+- When several reductions are selected, the analyzer SHALL decide by the first
+  whose cell reads "no", in the order key symmetry, partial-order reduction,
+  state constraint, and otherwise SHALL name the first selected reduction.
 
 | Form | Symmetry | Partial-order reduction | State constraint |
 | --- | --- | --- | --- |
@@ -51,7 +66,7 @@ on the checked clause.
 | HP-2, every variable over one subject, every fairness constraint `whole` | yes, diagonal | no: lockstep pairs positions across traces | lasso decisive; `proved` only when no boundary state is reached |
 | HP-2 over two subjects, or with any `each` constraint | no | no | as the row above |
 | HP-6, every variable over one subject | yes, diagonal | no: it changes which visible steps align | refutation decisive; `proved` only when no boundary state is reached |
-| HP-2 or HP-6 with swappable variables (copy-swap) | yes, any fairness granularity | not applicable | as the form's own row |
+| HP-2 with swappable variables (copy-swap) | yes, for each class whose variables carry no fairness set; a class whose variables carry any fairness set is stored whole | not applicable | as the form's own row |
 | HP-3, every variable over one subject | yes, diagonal, with each witness set renamed member by member and re-sorted | no | no: a cut existential state removes a witness |
 
 - **Diagonal symmetry.** One permutation of the admitted symmetry group is
@@ -81,20 +96,48 @@ on the checked clause.
   test is sound and incomplete: a clause symmetric for a deeper reason is not
   detected, and then no swap applies. Swappable variables fall into classes,
   and the **copy group** is the product of the symmetric groups of the
-  classes. No request selects it and no author declares it.
+  classes. No request selects it and no author declares it. Detection runs on
+  every HP-2 and HP-6 clause and records the copy group; whether the run
+  reduces by it is the next three rules.
+- **Fairness.** A fairness constraint reads the slot of its variable in the
+  stored state, and a quotient moves a concrete copy between slots wherever an
+  edge swaps them, so a slot's enabled and taken steps would not be one
+  behaviour's and the quotient would decide fair cycles wrongly. A class
+  whose variables carry any fairness set, whatever the granularity, is stored
+  whole and named in no reduction.
+- **Acceptance condition.** The run reduces only if every exchange of the copy
+  group fixes the initial state of the body's automaton and maps each of its
+  acceptance sets, one for each unbounded `eventually` or `until` that the
+  negated body holds, to itself. A swap that exchanges two acceptance sets, as
+  the swap of `a` and `b` does for `always holds(v.l @ a = 0) and always
+  holds(v.l @ b = 0)`, is not an automorphism of the acceptance condition. The
+  rule is all-or-nothing: if the exchange of any class fails, the product is
+  stored whole and names no reduction, for the classes that pass as well.
+- **Form.** Copy-swap applies to an HP-2 clause only. An HP-6 clause is stored
+  whole as its projected product and names no copy-swap, since no exchange of
+  the bad-prefix monitor's states is built for the projected product.
 - **Canonical state.** The canonical form of a product state is the member of
   its orbit under the copy group with the least key bytes, component keys in
-  quantifier order and then the automaton state index. The copy group commutes
-  with diagonal key symmetry, and the run's group is their product.
-- **Soundness.** `σ` maps a matched tuple in the domain to a matched tuple in
-  the domain with the same body truth, and maps acceptance sets, the rejecting
-  monitor state and every fairness constraint onto themselves, so the quotient
-  has a fair accepting cycle, or a reachable rejecting state, exactly when the
-  product does.
+  quantifier order and then the automaton state index. The run's group is the product of the symmetric
+  groups of the copy group's classes whose variables carry no fairness set;
+  where a provider builds a diagonal key symmetry (see "Preservation rows"),
+  that group commutes with it and the run's group is their product.
+- **Soundness.** For a class whose variables carry no fairness set and whose
+  exchange fixes the automaton's initial state and each acceptance set, `σ` is
+  an automorphism: it maps a matched tuple in the domain to a matched tuple in
+  the domain with the same body truth, and maps the acceptance sets and the
+  rejecting monitor state onto themselves, so the quotient has a fair
+  accepting cycle, or a reachable rejecting state, exactly when the product
+  does. A class with a fairness set or a failing exchange is not reduced, since
+  `σ` is not then an automorphism of the fairness or acceptance condition.
 - **Counterexamples.** A counterexample found on the quotient is concretised
   with the copy permutation, repeating a loop that closes on a permuted state
   until the concrete tuple closes, at most the permutation's order. The result
-  is an ordinary counterexample in quantifier order.
+  is an ordinary counterexample in quantifier order. The lasso a refutation
+  reports is the canonical lasso of the quotient, concretised, not the
+  canonical lasso of the unreduced product: both are real and both replay, but
+  they may differ in stem, loop and `trace_position`, and the one reported is a
+  function of the request, the same on every run.
 - **Verdicts.** A proof under copy-swap names copy-swap with its classes among
   the reductions of its reduced basis. With copy-swap as its only reduction,
   the core's product-closure checker checks its certificate and the proof
@@ -104,10 +147,14 @@ on the checked clause.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-403-AC-1 | Each form admits symmetry, partial-order reduction and a state constraint exactly as its row reads; a reduction a row rejects settles `inconclusive` with `reduction-not-preserving` before expansion. | Test (TC-347) |
-| FR-403-AC-2 | On the leaky and secure vault noninterference clauses, copy-swap applies without a request selection, the reduced and unreduced runs give the same verdict, and the reduced proof names copy-swap with its class and settles `proved`, certification `certified`. | Test (TC-347) |
+| FR-403-AC-1 | A reduction whose cell reads "no" settles `inconclusive` with `reduction-not-preserving` before expansion; a reduction whose cell reads anything else is applied or, where the provider does not build it, settles `unsupported` (AC-8). | Test (TC-347) |
+| FR-403-AC-2 | On the leaky and secure vault noninterference clauses, copy-swap applies without a request selection and stores 7 and 6 states against 10 and 8 unreduced, the reduced and unreduced runs give the same verdict, and the reduced proof names copy-swap with its class and settles `proved`, certification `certified`. | Test (TC-347) |
 | FR-403-AC-3 | A body that is not unchanged under the swap in normal form, or two variables with different fairness sets, admit no copy-swap. | Test (TC-347) |
-| FR-403-AC-4 | A counterexample found under diagonal symmetry or copy-swap carries no canonical state and replays as an ordinary counterexample. | Test (TC-347) |
+| FR-403-AC-4 | A counterexample found under copy-swap carries no canonical state, reports the quotient's canonical lasso concretised, byte-equal across repeated runs, and replays as an ordinary counterexample. | Test (TC-347) |
+| FR-403-AC-5 | A class whose variables carry any fairness set is stored whole with the unreduced state count and no reduction named; a second class without fairness in the same clause is reduced, with a stored-state count below the unreduced count and the same verdict, and where the run is proved its basis names copy-swap with that class alone (a refutation names no reduction). | Test (TC-347) |
+| FR-403-AC-6 | A copy group with one class whose swap exchanges two acceptance sets of the body's automaton is stored whole with no reduction named; a clause with one passing class and one failing class is stored whole with none named; a swap that fixes every acceptance set is reduced. | Test (TC-347) |
+| FR-403-AC-7 | An HP-6 clause with a swappable pair is stored whole and names no copy-swap. | Test (TC-347) |
+| FR-403-AC-8 | A key symmetry of an HP-1, HP-2, HP-3 or HP-6 item and a state constraint of an HP-1, HP-2 or HP-6 item that the provider does not build, each selected on its own, settle `unsupported`, `unsupported_projection`/`unsupported-requested-capability` before expansion naming the reduction, and neither run ignores the selection; with a selection whose cell reads "no" and another that is admitted, the first "no" in the order key symmetry, partial-order reduction, state constraint decides. | Test (TC-347) |
 
 ## Dependencies
 

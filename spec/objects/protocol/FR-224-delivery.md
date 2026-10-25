@@ -27,13 +27,12 @@ The prose distinguishes the delivery identity from the relationships it must
 satisfy and from the receipt records that provide observation provenance.
 
 - **related send** ([FR-222](FR-222-send-occurrence.md)) — the send whose
-  delivery cardinality this delivery counts against. FR-054 binds "delivery
-  cardinality" as an explicit conformance premise of the channel, and the
+  delivery cardinality this delivery counts against. FR-054 binds the delivery
+  policy as an explicit conformance premise of the channel, and the
   [choreography surface](../../../proposals/quire-v1/choreography-surface.md)
-  states that "Channel `delivery [a,b]` declares inclusive per-send delivery
-  cardinality with `0 <= a <= b` and finite b".
+  states the channel's delivery policy.
 - **channel** ([FR-215](FR-215-protocol-channel.md)) — the channel whose sender,
-  receiver, message types, ordering policy, delivery cardinality and duplication
+  receiver, message types, ordering policy and delivery policy
   premises ([FR-216](FR-216-channel-premise.md)) are bound by FR-054.
 - **transport record** — the transport observation the delivery is bound from.
   FR-051 requires "explicit relationships between transport records, attempts
@@ -93,7 +92,7 @@ delivery, node occurrence or effect.
   preserves delivery as a distinct typed subject and states the cardinality
   obligation.
 - [FR-054](../../functional/protocol/FR-054-bind-channel-premises.md) binds delivery
-  cardinality, ordering policy and duplication premises.
+  policy and ordering policy premises.
 - [FR-059](../../functional/protocol/FR-059-assess-finite-global-conformance.md) requires
   duplicated and misordered events to be reported.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the

@@ -26,7 +26,7 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 | Authored obligation | FR-054-AC-1 | "At-least-once delivery admits a duplicate receipt while retaining the single authored message/effect obligation." |
 | Distinct from its events | FR-051 | "the protocol binder SHALL preserve message, send, receive, delivery, attempt and effect as distinct typed subjects." |
 | Cardinality independence | FR-051-AC-1 | "One message sent once, delivered twice and applied as one payment effect retains cardinalities 1, 2 and 1 for the respective subjects." |
-| Message type in a channel | FR-054 | A channel binds "sender, receiver, message types, ordering policy, delivery cardinality and duplication premises"; see [FR-215](FR-215-protocol-channel.md). |
+| Message type in a channel | FR-054 | A channel binds "sender, receiver, message type, ordering policy and delivery policy"; see [FR-215](FR-215-protocol-channel.md). |
 
 ## Identity and comparison
 
@@ -86,5 +86,4 @@ and do not remove `message` from FR-210.
 
 ## Status
 
-Accepted complete-V1 message contract. Implementation and qualification remain
-tracked separately.
+Accepted complete-V1 message contract.
