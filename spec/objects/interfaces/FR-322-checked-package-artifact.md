@@ -489,6 +489,12 @@ boundary.
   re-keys nor refuses it. A `relation`/`refinement` node is keyed by its own
   `{version: "quire.refinement-node/v1", semantic_type, body}` preimage
   ([FR-375](../../functional/analysis/FR-375-declare-model-refinement.md));
+  when FR-375's `class_catalog` is present it is part of that exact `body`
+  in both V2 wire and node-preimage schemas, and the same body enters the
+  package identity projection. Its local class `node` and `binder_types`
+  keys enter the node's exact `dependencies` list; external
+  `PackageNodeKey`s do not. The dependency check precedes FR-375's class
+  joins.
   FR-375's refinement step checks it after the abstraction step, and neither
   general key stage re-keys or refuses it. Among `correspondence` nodes, only
   the abstraction form is excluded: a node of
@@ -2391,6 +2397,7 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-127 | The timed root names the exact base `Time` dimension node and the source unit's `dimension_node_id` equals that node by identity. I2 refuses a source unit in base `Length`, a derived non-Time dimension, or a nominal derived-Time dimension as `ill_typed`/`invalid-time-quantity` at `/semantic_graph/nodes/{source}/body/members/1/value/target`, for both dense and tick sources. Dimension equivalence, matching dimension terms, names and declaration order do not substitute for this identity equality. | Test (TC-367; TM-24..TM-29) |
 | FR-322-AC-128 | A checked package with refinement steps carries one closed `refinement_step_rows` entry for every step of every refinement owner, keyed by that owner's retained node id and zero-based canonical step ordinal; its regions are excluded from node and package identity. The reader admits the `RS-01` and `RS-02` row regions independently of source order, and refuses an absent or incomplete sidecar at `/refinement_step_rows`, and a wrong owner, out-of-range ordinal, duplicate pair or noncanonical order at the offending entry. | Test (TC-233) |
 | FR-322-AC-129 | A proof-eligible refinement owner with source rows `R0` and `R1` is admitted only when generated occurrence ordinals 1 and 2 each carry exactly the region of the corresponding `refinement_step_rows` entry; changing either generated region or its row-region carrier alone leaves identities unchanged but refuses `invalid_package`/`invalid-value` at that `source_map` entry. A refinement that is not proof-eligible still carries every row-region entry and no generated occurrence. | Test (TC-233, TC-310) |
+| FR-322-AC-130 | Both closed V2 schemas admit a refinement `class_catalog` with ordered concrete and abstract declared classes (local `NodeRef` versus local-or-dependency `RefinementKey`), typed binders and source-default memory classes, and refuse a missing or extra class-entry member or a wrong key shape. In an admitted protocol refinement, changing a class, node, binder type or memory model while retaining its node key refuses the dedicated refinement key; rekeying changes the node id and `package_id`; removing a local class node or binder type from `dependencies` refuses in graph shape before class joins. A model-only refinement retains its nine-member body with no catalog. | Test (TC-233, TC-310) |
 
 ## Dependencies
 
