@@ -321,22 +321,25 @@ with one concrete `parallel` node (`fork` and `join`), one concrete attempt,
 one abstract attempt with receiver and argument binders, and a `tso` parallel.
 Read the emitted `class_catalog`. Repeat with an abstract model subject and
 with a selected abstract protocol clause in a directly selected dependency.
-For each variant below, keep the source row sidecar valid; except for the
-retained-key and dependency cases, rekey the refinement, rewrite its
-references, rebuild its exact dependencies and recompute `package_id` before
-reading (FR-375-AC-23).
+For each wire variant below, keep the source row sidecar and generated
+`source_map` occurrences valid. Rekey the refinement and rewrite its
+references except in the retained-key case; rebuild its exact dependencies
+except in `CC-07`; always recompute `package_id` before reading
+(FR-375-AC-23).
 
 | Vector | Single catalog or row change | Expected result |
 | --- | --- | --- |
 | `CC-01` | Unedited producer catalog | Admitted; concrete `fork` and `join` are distinct sorted classes of the same parallel node, the abstract attempt's ordered binder types match its checked operation, and `memory flush` records its `tso` source default. External abstract keys remain `PackageNodeKey`s. |
-| `CC-02` | Change a catalog class, node, binder type or memory model and retain the refinement node id | `invalid_package`/`stale-node-key` at its node id, reader step 1. |
-| `CC-03` | Remove `join`, repeat `fork`, reverse two entries, or add a class of another model | `invalid_semantic_graph` at the omitted array or first offending catalog entry, reader step 2 for order and step 4 for membership. |
-| `CC-04` | Associate `fork` with an existing unrelated control key; change the abstract attempt binder type to another existing type | Both refuse `invalid_model_binding`/`malformed-declaration` at the catalog entry, reader step 4. |
+| `CC-02` | Change a catalog class, node, binder type or memory model and retain only the refinement node id | `invalid_package`/`stale-node-key` at its node id, reader step 1; the recomputed `package_id` matches the edited projection. |
+| `CC-03` | Remove `join` and its deciding step row together; separately repeat `fork`, reverse two entries, or add a class of another model | Duplicate or reversed entries refuse `invalid_semantic_graph` in refinement step 2; omission or foreign class refuses at the catalog array or entry in protocol step 7. |
+| `CC-04` | Associate `fork` with an existing unrelated control key and change its deciding row's `source_node` to the same key; separately change the abstract attempt binder type to another existing type while its target argument list is empty | Both refuse `invalid_model_binding`/`malformed-declaration` at the catalog entry in protocol step 7, with row/catalog consistency intact. |
 | `CC-05` | Change a step's `source_class`, `source_node`, target class or target node independently of the catalog | Missing class refuses `missing_declaration`/`missing-name`; wrong node or subject refuses `invalid_model_binding`/`malformed-declaration`, at the row member in step 5. |
 | `CC-06` | Give an abstract attempt target zero arguments, then the complete typed list, then one fewer or a wrong-typed argument | Both first forms admit (zero leaves all binders open); short nonempty list refuses `ill_typed`/`operator-ineligible`, wrong type `ill_typed`/`type-mismatch`, in step 5. |
 | `CC-07` | Remove one local catalog node or binder type from the exact `dependencies`; retain an external catalog key there | `invalid_semantic_graph` at `/dependencies` before the refinement step. |
-| `CC-08` | Replace a source-default `tso` `memory flush` class with an absent kind, or omit the catalog on a protocol refinement | `invalid_semantic_graph` at the class entry or `/body/class_catalog`, reader step 4. |
+| `CC-08` | Replace a source-default `tso` `memory flush` class and its deciding row with the same absent kind; separately omit the catalog on a protocol refinement | The absent kind refuses `invalid_semantic_graph` at the class entry in protocol step 7; missing catalog refuses at `/body/class_catalog` in refinement step 4. |
 | `CC-09` | `RW-01`'s model-only refinement with no catalog; then add an empty catalog and rekey | The first admits; the second refuses `invalid_semantic_graph` at `/body/class_catalog`, reader step 4. |
+| `CC-10` | From `CC-01`, request analysis twice over the same admitted package: once with its source-default `tso` choice and once with an override to `sc` under FR-434 | The checked catalog and `package_id` are byte-identical; the resolved memory model and resulting obligation identities differ. Package admission makes no claim that an override's memory class is a source class. |
+| `CC-11` | From `CC-04`'s wrong `fork` association and matching row, also make an independent protocol-body defect: a `send` binder whose type disagrees with its channel's `carries` type (FR-466-AC-7). Rewrite every changed send-node key in the graph, catalog and deciding row, and keep the catalog binder types equal to the edited binder while preserving the wrong `fork` association. First read with both defects; then repair only the send binder type and rebuild affected keys, dependencies and package identity; separately introduce a step-row class mismatch with both defects present. | The first read reports the binder-type refusal in protocol step 4 before the catalog graph join; after repair, the catalog association refuses in protocol step 7; the separate row mismatch refuses in the earlier refinement step 5 before either protocol defect. |
 
 In mutation 26, `RW-01` is admitted on both reads; its rewritten canonical
 package has the same refinement node id and `package_id` as the first write.

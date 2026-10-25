@@ -457,7 +457,7 @@ ordered array of local `NodeRef`s or abstract-side `RefinementKey`s for that
 class's checked binder record and may be empty. A memory entry is exactly
 `{class: "memory <kind>", memory_model}`, with no `node` or
 `binder_types`, where `memory_model` is `sc`, `tso` or `ra` and `<kind>` is a
-nonempty single step-kind name. The reader admits the entry only when that
+nonempty single step-kind name. The protocol body step admits the entry only when that
 source-default model defines the named step (FR-434, FR-436, FR-437); among
 these models the only currently defined memory class is `tso`/`flush`.
 FR-432's closed class table determines the spellings and node associations:
@@ -477,19 +477,24 @@ argument types to one abstract entry. An empty `arguments` array leaves
 every binder open as FR-432's omitted argument list does; a nonempty array
 has one entry per binder. A memory class has no node or binder record.
 A missing class refuses `missing_declaration`/`missing-name` at
-the class member; a wrong-kind or wrong-subject node, unequal node key or
-a catalog binder signature that disagrees with the checked subject refuses
-`invalid_model_binding`/`malformed-declaration` at the affected key or
-catalog entry. A nonempty target argument count unequal to its admitted binder count
+the class member; a row node key unequal to its catalog entry refuses
+`invalid_model_binding`/`malformed-declaration` at that row key.
+A nonempty target argument count unequal to its catalog binder count
 refuses `ill_typed`/`operator-ineligible`, and an argument of another type
 refuses `ill_typed`/`type-mismatch`, at that target argument as FR-432 states.
-The reader SHALL
-compare the complete catalog with classes reconstructed from the selected
-model declarations and the protocol graph under FR-432 and FR-464 to
-FR-466; source-default memory classes are reconstructed from admitted
-`parallel` bodies and FR-434/FR-436/FR-437. An omitted, extra, duplicate
-or misordered catalog class refuses `invalid_semantic_graph` at the first
-offending entry, or at that catalog array for an omission. This is a
+The refinement step uses only already checked node keys, declarations,
+types, dependency selections, canonical catalog order and the catalog's
+own row joins. It does not treat protocol control bodies as admitted.
+At FR-464 protocol body step 7, the reader SHALL compare the complete
+catalog with classes reconstructed from the selected model declarations
+and admitted protocol graph under FR-432 and FR-464 to FR-466; source-default
+memory classes are reconstructed from admitted `parallel` bodies and
+FR-434/FR-436/FR-437. A wrong-kind or wrong-subject catalog node or a binder
+signature that disagrees with the admitted subject refuses
+`invalid_model_binding`/`malformed-declaration` at the catalog entry.
+An omitted or extra catalog class refuses `invalid_semantic_graph` at the
+first offending entry, or at that catalog array for an omission; duplicate
+or misordered entries refuse during refinement canonical order. This is a
 producer attestation and wire/graph consistency check, not a second parse
 of QSL source. A later analysis request may override a parallel's memory
 model; its resolved memory classes belong to that request's obligation
@@ -587,11 +592,13 @@ refinement node, the reader checks in this order and reports its first defect:
    present key of the wrong declaration kind, a protocol of a different
    abstract model, or a profile of the wrong kind refuses
    `invalid_model_binding`/`malformed-declaration` at that member.
-4. **Class catalog.** After the header joins, compare the catalog with the
-   selected subjects and their checked protocol graph and source memory
-   defaults as specified above, before any row join. For equal class names,
-   compare node, then binder types in array order. Report the first defect
-   from `concrete` before `abstract`, and in class order within each array.
+4. **Class catalog.** After the header joins, check presence and the closed
+   catalog entries against already admitted node keys, declaration kinds,
+   type keys and direct dependency selections. Check `concrete` before
+   `abstract`, in class order, and each entry's node before its binder type
+   keys. This does not inspect protocol body layout, membership, control
+   associations, binder records or source memory defaults: FR-464's later
+   protocol step checks those after admitting the protocol graph.
 5. **Rows.** In the same array and nested-array order as step 2, resolve
    each local and external declaration key under the rule above, and check
    its role and type against the concrete and abstract subjects and the
