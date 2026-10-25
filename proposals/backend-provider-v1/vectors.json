@@ -4460,7 +4460,10 @@
                 }
               ],
               "loop": [],
-              "over_binding": null,
+              "over_binding": {
+                "population": "Counters",
+                "key": "c1"
+              },
               "fairness": [],
               "interval": null,
               "trace_position": 0
@@ -4534,7 +4537,10 @@
                 }
               ],
               "loop": [],
-              "over_binding": null,
+              "over_binding": {
+                "population": "Counters",
+                "key": "c1"
+              },
               "fairness": [],
               "interval": null,
               "trace_position": 1

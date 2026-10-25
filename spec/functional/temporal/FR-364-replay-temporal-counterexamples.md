@@ -72,7 +72,7 @@ this table does not list refuses before replay.
 | `initial_state` | model arm: the zero-based index of the behaviour's initial state in the subject's ordered list of initial states; observed arm: `null` |
 | `prefix` | the ordered steps of the prefix |
 | `loop` | the ordered steps of the loop; empty for a finite prefix |
-| `over_binding` | model arm: the reference of the object the clause's `over` parameter is bound to, `null` for `kind: deadlock`; observed arm: `null` |
+| `over_binding` | model arm: the instance `{population, key}` of the object the clause's `over` parameter is bound to, `null` for `kind: deadlock`; observed arm: the instance `{population, key}` resolved for the clause's `over` parameter in the first observed document |
 | `fairness` | the item's resolved fairness set, each member `{kind, operation, granularity}` with `kind` `weak` or `strong` and `granularity` `whole` or `each`, in fairness-set order; empty for `kind: deadlock` |
 | `interval` | for `kind: formula`, the interval of the formula's first interval-carrying operator in pre-order, in the form [FR-370](../../objects/interfaces/FR-370-checked-package-temporal-clause-body.md) encodes it under the clause's profile: the integer form `{lower, upper}` for a closed interval `[a,b]` or `{lower, upper: null}` for a lower-bounded interval `[a,*]`, two non-negative decimal integer strings; or, under `quire.temporal.timed/v1`, the timed form `{lower, upper, lower_end, upper_end}`, where `lower` and `upper` are exact non-negative rationals `{numerator, denominator}` in lowest terms and `lower_end` and `upper_end` are each `closed` or `open`; `null` when the formula has no interval-carrying operator, for `kind: deadlock` and for the undefined-evaluation envelope |
 | `final_delay` | for `kind: time-lock` only (and then required): the exact rational delay that reaches the time-locked state ([FR-417](FR-417-settle-time-lock-freedom.md)); absent for every other kind |
@@ -81,7 +81,8 @@ this table does not list refuses before replay.
 
 The arms are coupled. The replayer SHALL refuse before replay, as
 `malformed_wire`, an observed-arm counterexample that has a non-null
-`initial_state` or `over_binding`, a model-arm step in its `prefix` or `loop`,
+`initial_state`, lacks a well-formed `over_binding` instance, or has a
+model-arm step in its `prefix` or `loop`,
 a `kind` of `deadlock` or `time-lock` (which have no observed form), or an
 undefined-evaluation envelope whose `where` carries `state_key` or
 `state_keys`. The replayer SHALL refuse the same way a model-arm counterexample
@@ -132,7 +133,9 @@ The replayer SHALL, in this order:
 1. Re-admit the checked package. Model arm: re-admit the subject's initial
    states and universes, and select initial state `initial_state`. Observed
    arm: admit each step's document from the byte provision; a digest the
-   provision does not hold refuses `invalid_runtime_input`/`invalid-value`.
+   provision does not hold refuses `invalid_runtime_input`/`invalid-value`;
+   resolve the `over_binding` population and key in the first observed
+   document, and refuse a missing object as `invalid_runtime_input`/`invalid-value`.
 2. Model arm: re-execute each step of the prefix, then of the loop, through
    the successor relation of
    [FR-361](FR-361-read-model-behaviours-as-temporal-traces.md). A step's
@@ -208,7 +211,7 @@ counterexamples an engine returned.
 | FR-364-AC-7 | A lasso whose formula reads a past operator across the loop boundary evaluates by the infinite trace the lasso denotes. | Test (TC-200) |
 | FR-364-AC-8 | A counterexample of an undefined evaluation is a finite prefix with an empty `loop`, a `kind` that is the envelope `{"type": "undefined-evaluation", "where", "cause"}` and `trace_position` at its last position; its replay re-evaluates the claim, guard, `terminal when` predicate or state constraint the locus names at the reported state and reproduces the undefined value with the locus and reason the envelope carries, read from the counterexample alone, settling `reproduced-with-evaluated-witness` and the item `refuted` with cause `undefined-evaluation`; a `trace_position` at which the expression is defined settles `inconclusive`, cause `replay-parity`. | Test (TC-305) |
 | FR-364-AC-9 | An observed-arm formula counterexample whose documents are held by the byte provision, with an empty `fairness`, replays over the documents' trace and settles `reproduced-with-evaluated-witness` when the formula is false at `trace_position`; the same counterexample with a non-empty `fairness` settles `unsupported`, cause `missing-fairness-premise`, with no formula evaluated; a step digest the provision does not hold refuses `invalid_runtime_input`/`invalid-value`; an `interval` unequal to the clause's refuses `stale_dependency`/`content-mismatch` naming `interval`, and an infinite-trace formula counterexample for `eventually[2,*] holds(p)` carries `interval` `{lower: "2", upper: null}` and is refused the same way against the clause `eventually[3,*] holds(p)`. | Test (TC-295) |
-| FR-364-AC-10 | The wire schema admits an observed-arm formula counterexample (null `initial_state` and `over_binding`, two `document` steps) and an observed-arm undefined-evaluation envelope whose `where` carries `position`, `document` and `locus`; it refuses an observed-arm counterexample that names an initial state, carries an `over_binding`, carries a model-arm step in its `prefix` or in its `loop`, has `kind` `deadlock`, has `kind` `time-lock` with its `final_delay`, or has an envelope whose `where` carries `state_key` or `state_keys`; and it refuses a model-arm counterexample that has a null `initial_state`, carries a `document` step in its `prefix` or in its `loop`, or has an envelope whose `where` carries `document`. | Test (TC-431) |
+| FR-364-AC-10 | The wire schema admits an observed-arm formula counterexample with null `initial_state`, a `{population, key}` `over_binding` instance, and two `document` steps, plus an observed-arm undefined-evaluation envelope whose `where` carries `position`, `document` and `locus`; it refuses an observed-arm counterexample that names an initial state, omits or mistypes `over_binding`, carries a model-arm step in its `prefix` or in its `loop`, has `kind` `deadlock`, has `kind` `time-lock` with its `final_delay`, or has an envelope whose `where` carries `state_key` or `state_keys`; and it refuses a model-arm counterexample that has a null `initial_state`, carries a `document` step in its `prefix` or in its `loop`, or has an envelope whose `where` carries `document`. | Test (TC-431) |
 
 ## Dependencies
 

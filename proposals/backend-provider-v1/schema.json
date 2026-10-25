@@ -99,6 +99,16 @@
       "properties": {"digest_domain": {"const": "sha256-jcs"}, "digest": {"$ref": "#/$defs/HexDigest"}, "bytes": {"$ref": "#/$defs/Base64Url"}},
       "additionalProperties": false
     },
+    "InstanceReference": {
+      "description": "FR-361, FR-364: an instance of an over parameter, named by its population declaration and key.",
+      "type": "object",
+      "required": ["population", "key"],
+      "properties": {
+        "population": {"$ref": "#/$defs/Nonempty"},
+        "key": {"$ref": "#/$defs/Nonempty"}
+      },
+      "additionalProperties": false
+    },
     "StringMap": {"description": "A nonempty map of string values; absence means no entries.", "type": "object", "minProperties": 1, "additionalProperties": {"type": "string"}},
     "CountMap": {"description": "A nonempty map of counts keyed by limit name.", "type": "object", "minProperties": 1, "propertyNames": {"$ref": "#/$defs/LimitName"}, "additionalProperties": {"$ref": "#/$defs/Count"}},
 
@@ -506,7 +516,7 @@
         "initial_state": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/Count"}]},
         "prefix": {"type": "array", "items": {"$ref": "#/$defs/TraceStep"}},
         "loop": {"type": "array", "items": {"$ref": "#/$defs/TraceStep"}},
-        "over_binding": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
+        "over_binding": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/InstanceReference"}]},
         "fairness": {"type": "array", "items": {"$ref": "#/$defs/Fairness"}},
         "interval": {"oneOf": [
           {"type": "null"},
@@ -520,11 +530,11 @@
       "allOf": [
         {"if": {"properties": {"kind": {"const": "time-lock"}}, "required": ["kind"]}, "then": {"required": ["final_delay"]}, "else": {"not": {"required": ["final_delay"]}}},
         {
-          "description": "FR-364: the arms are coupled. Observed arm: null initial_state and over_binding, document steps, kind formula or an undefined-evaluation envelope whose where carries no model-arm state key. Model arm: a non-null initial_state, model steps, and an envelope whose where carries no document.",
+          "description": "FR-364: the arms are coupled. Observed arm: null initial_state, a resolved over_binding instance, document steps, kind formula or an undefined-evaluation envelope whose where carries no model-arm state key. Model arm: a non-null initial_state, model steps, and an envelope whose where carries no document.",
           "if": {"properties": {"trace": {"const": "observed"}}, "required": ["trace"]},
           "then": {"properties": {
             "initial_state": {"type": "null"},
-            "over_binding": {"type": "null"},
+            "over_binding": {"$ref": "#/$defs/InstanceReference"},
             "kind": {"oneOf": [
               {"const": "formula"},
               {"allOf": [{"$ref": "#/$defs/UndefinedEvaluation"}, {"properties": {"where": {"not": {"anyOf": [{"required": ["state_key"]}, {"required": ["state_keys"]}]}}}}]}
