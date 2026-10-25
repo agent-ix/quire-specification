@@ -372,20 +372,64 @@ empty.
 **Checked-package node.** An admitted declaration is one
 `quire.checked-semantic-graph/v2` node with `node_tag: "relation"` and
 `semantic_form: "refinement"` ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)).
-Its `semantic_type` is the concrete model declaration node, and its
-`dependencies` hold every node its rows name. Its body is
+Its `semantic_type` is the concrete model declaration node. Its
+`dependencies` hold every local node its rows name; dependency-package nodes
+join through the selected dependency package, as FR-322 requires for
+cross-package keys. Its body is
 `{"term": "refinement", "abstract", "profile", "populations", "objects",
-"steps", "histories", "assume", "ensure"}`: `abstract` is the abstract
-model's `PackageNodeKey`, and a protocol subject adds `protocol`, the
-selected protocol clause's `PackageNodeKey` (the entry is absent for a model
-subject); `populations`, `objects`, `steps` and `histories`
-hold one entry per row, each carrying its names as node keys and its
-expressions as `SemanticTerm`s; a step entry's `target` is
-`{"kind": "operation", "operation", "receiver", "arguments"}` with a
-`{"term": "open"}` term for each `_`, or `{"kind": "stutter"}`, or
-`{"kind": "any"}`; `assume` and `ensure` hold `{operation, kind, granularity}`
-entries with `kind` exactly `weak` or `strong` and `granularity` exactly
-`each` or `whole`. A protocol subject whose resolved internal list is
+"steps", "histories", "assume", "ensure"}`. Its node id is the JCS SHA-256
+of the closed `{version: "quire.refinement-node/v1", body}` preimage in
+`node-identity-preimage.schema.json`; the same body enters FR-322's package
+identity projection. The closed member shapes below also apply to that
+node-identity preimage, with FR-322's `group_reference` leaf admitted in a
+preimage expression. A `NodeRef` has FR-322's `NodeId`
+shape and names a node of this graph. A `PackageNodeKey` is the closed
+`{package: PackageId, node: NodeId}` shape and names a node of a directly
+selected dependency package. A `RefinementKey` is exactly one of those two
+shapes: a key for this graph MUST be a `NodeRef`, and a key for a dependency
+MUST be a `PackageNodeKey`. Source aliases and source-order positions are
+never keys. In particular, the current package's `package_id` MUST NOT appear
+inside its own refinement body: the body enters the package identity
+projection, so using that package id would make identity circular. `abstract`
+is a `RefinementKey` for the abstract model declaration; a protocol subject
+adds `protocol`, a `RefinementKey` for the selected protocol clause (absent
+for a model subject). Both keys use the same local-or-dependency rule.
+`profile` is the selected infinite-trace profile's `DefinitionRef`, not the
+local profile alias.
+
+The six row arrays use these exact closed entries; all arrays are present,
+including empty arrays. `SemanticTerm` means FR-322's closed body term, with
+composite expressions referenced through their own nodes rather than nested
+applications. A row's local declaration key is a `NodeRef`; a key for an
+abstract declaration uses `RefinementKey`.
+
+| Array | Entry | Meaning |
+| --- | --- | --- |
+| `populations` | `{abstract: RefinementKey, concrete: NodeRef}` | The abstract and source concrete population declarations. |
+| `objects` | `{abstract_type: RefinementKey, concrete_type: NodeRef, fields: [{name: Identifier, expression: SemanticTerm}]}` | One object mapping and its field rows; `name` is an abstract field name, resolved on `abstract_type`. |
+| `steps` | `{source_class: Nonempty, source_node?: NodeRef, target: StepTarget}` | One concrete operation or protocol step class. `source_class` is its alias-free canonical class spelling; `source_node` is required for a class with a declaration node and absent for a memory step class, which names no declaration. The reader resolves the spelling against the concrete subject and checks the node when present. |
+| `histories` | `{concrete_type: NodeRef, name: Identifier, type: NodeRef, initial: HistoryInitial, updates: [{operation: NodeRef, expression: SemanticTerm}]}` | One history field; `HistoryInitial` is a `literal` or local `reference` term naming the admitted `history-literal`; each update names the concrete operation it follows. |
+| `assume` | `{operation: NodeRef, kind: "weak"|"strong", granularity: "each"|"whole"}` | A concrete fairness row. |
+| `ensure` | `{operation: RefinementKey, kind: "weak"|"strong", granularity: "each"|"whole"}` | An abstract fairness row. |
+
+`StepTarget` is one of four closed shapes. An abstract operation target is
+`{kind: "operation", operation: RefinementKey, receiver: SemanticTerm,
+arguments: [StepArgument]}`. An abstract protocol target is
+`{kind: "protocol_step", class: Nonempty, node?: RefinementKey,
+arguments: [StepArgument]}`; its `class` is the alias-free FR-432 spelling,
+and `node` is required for a class with a declaration node and absent for a
+memory class. The remaining shapes are `{kind: "stutter"}` and
+`{kind: "any"}`. `StepArgument` is either a `SemanticTerm` or exactly
+`{term: "open"}` for a written `_`. The open term is admitted only in the
+arguments of a step target; it is not a general `SemanticTerm`. Every
+`source_node`, `operation`, `node`, expression reference and type key is
+checked against the selected subject and its declared kind; a schema-valid
+but unresolved or wrong-kind key is refused under the existing graph and
+model-binding rules, not silently dropped. `histories[].updates` is sorted
+by its operation node-key digest, and `objects[].fields` by field name in
+UTF-8 byte order.
+
+A protocol subject whose resolved internal list is
 non-empty also carries `abstract_internal`, the resolved classes as
 **alias-free spellings** (a class's FR-432 spelling with `<A>::` removed, such
 as `Twice::finish`, `lose Twice::ch`, `activate Twice`, `memory flush`) in

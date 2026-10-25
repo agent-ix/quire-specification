@@ -970,7 +970,7 @@ fixed by the schema, whatever the model's size.
 | Group | `aggregate` whose members are each a Leaf or a `binding` whose value is a Leaf |
 | Tuple | `aggregate` whose members are each a Leaf or a Group |
 | Member | a Leaf, a Group, or a `binding` whose value is a Leaf, a Group or a Tuple |
-| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)); or an `extension_form` body, whose clause values are each a `reference` ([FR-469](FR-469-checked-package-extension-nodes.md)) |
+| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)); a `refinement` body with the closed row and target grammar of [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md); or an `extension_form` body, whose clause values are each a `reference` ([FR-469](FR-469-checked-package-extension-nodes.md)) |
 
 **Integer literal operands.** The producer SHALL write an integer literal
 operand of `quire.op.integer.add`, `quire.op.integer.sub`,
