@@ -20,6 +20,7 @@
     "lock": {"$ref": "#/$defs/PackageLock"},
     "semantic_graph": {"$ref": "#/$defs/SemanticGraph"},
     "source_map": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/SourceMapEntry"}},
+    "refinement_step_rows": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/RefinementStepRowRegion"}},
     "capability_report": {"type": "array", "items": {"$ref": "#/$defs/Capability"}},
     "diagnostics": {"$ref": "#/$defs/Diagnostics"}
   },
@@ -142,6 +143,7 @@
     "SemanticNode": {"oneOf": [{"$ref": "#/$defs/ScalarTypeNode"}, {"$ref": "#/$defs/CompositeTypeNode"}, {"$ref": "#/$defs/DomainNode"}, {"$ref": "#/$defs/ValueNode"}, {"$ref": "#/$defs/ExpressionNode"}, {"$ref": "#/$defs/FunctionNode"}, {"$ref": "#/$defs/ModelNode"}, {"$ref": "#/$defs/RelationNode"}, {"$ref": "#/$defs/StateNode"}, {"$ref": "#/$defs/TemporalNode"}, {"$ref": "#/$defs/ProtocolNode"}, {"$ref": "#/$defs/ClaimNode"}, {"$ref": "#/$defs/CorrespondenceNode"}, {"$ref": "#/$defs/ExtensionNode"}, {"$ref": "#/$defs/HybridNode"}, {"$ref": "#/$defs/TimedModelNode"}]},
     "SemanticGraph": {"type": "object", "required": ["graph_version", "nodes"], "properties": {"graph_version": {"const": "quire.checked-semantic-graph/v2"}, "nodes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/SemanticNode"}}}, "additionalProperties": false},
     "SourceRegion": {"type": "object", "required": ["source", "start", "end"], "properties": {"source": {"$ref": "#/$defs/RawSourceRef"}, "start": {"type": "integer", "minimum": 0}, "end": {"type": "integer", "minimum": 1}}, "additionalProperties": false},
+    "RefinementStepRowRegion": {"type": "object", "required": ["node_id", "ordinal", "region"], "properties": {"node_id": {"$ref": "#/$defs/NodeRef"}, "ordinal": {"type": "integer", "minimum": 0}, "region": {"$ref": "#/$defs/SourceRegion"}}, "additionalProperties": false},
     "SourceMapEntry": {"type": "object", "required": ["node_id", "role", "ordinal", "regions"], "properties": {"node_id": {"$ref": "#/$defs/NodeRef"}, "role": {"enum": ["declaration", "type", "expression", "anchor", "claim", "generated"]}, "ordinal": {"type": "integer", "minimum": 0}, "regions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/SourceRegion"}}}, "additionalProperties": false},
     "Capability": {"type": "object", "required": ["feature", "disposition"], "properties": {"feature": {"$ref": "#/$defs/Nonempty"}, "disposition": {"enum": ["available", "unimplemented", "unsupported"]}}, "additionalProperties": false},
     "Diagnostics": {"type": "object", "required": ["catalog", "entries"], "properties": {"catalog": {"$ref": "#/$defs/DefinitionRef"}, "entries": {"type": "array", "items": {"$ref": "#/$defs/Diagnostic"}}}, "additionalProperties": false},

@@ -467,6 +467,17 @@ enters the `package_id` and the obligation identity of every item that
 cites it; the internal list is therefore part of both identities through
 `abstract_internal`, and needs no member of its own in the identity preimage.
 
+For every emitted `steps[i]`, the producer SHALL retain the exact
+`SourceRegion` of its original checked source row and write one
+`refinement_step_rows` sidecar entry keyed by the refinement node id and
+zero-based canonical step ordinal `i` (FR-322). It writes these entries for
+proof-eligible and ineligible refinements alike. The sidecar is outside the
+refinement body, node-key preimage and package identity projection; source
+reordering therefore changes row regions without changing those identities.
+The reader checks the sidecar against the retained body step count and, for
+proof-eligible owners, against generated `source_map` occurrences. This is a
+closed wire consistency check, not a second parse of the QSL source.
+
 **Claim kinds.** A request to check the whole declaration is one item of
 kind `temporal-satisfaction`; each per-step simulation obligation is one item
 of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)).
@@ -555,6 +566,7 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-19 | A protocol-subject declaration whose rows include `step duplicate C::P::ch`, `step lose C::P::ch`, `step spawn C::P::w`, `step retire C::P::w`, `step fork C::P::par`, `step join C::P::par`, a template's `cattempt` and `cend` rows and `step memory flush` and `step memory drain` emits `steps` in one total order, the same for every permutation of those rows in the source: the declaration-naming rows by node-key digest then member name with tied rows ordered by alias-free class spelling in UTF-8 byte order (`duplicate P::ch` before `lose P::ch`; `retire P::w` before `spawn P::w`; `fork P::par` before `join P::par`), and the `memory` rows after every declaration-naming row, `drain` before `flush`. | Test (TC-310) |
 | FR-375-AC-20 | A checked package carrying an admitted `relation`/`refinement` node with row-empty arrays and a local abstract model is read with the node key recomputed from the closed `quire.refinement-node/v1` preimage, not from `quire.structural-node/v1` or `quire.application-node/v1`; changing only its concrete `semantic_type` or one body row while retaining its node id, and recomputing the package id and dependency list, refuses `invalid_package`/`stale-node-key` at that node in the refinement body step. | Test (TC-310) |
 | FR-375-AC-21 | With every identity recomputed, the reader visits refinement nodes in ascending retained digest order and applies canonical order, header joins and row joins after the identity check; an out-of-order row refuses `invalid_semantic_graph` at the first offending entry, an absent local `abstract` key refuses `missing_declaration`/`missing-name`, an absent direct dependency for an external `abstract` key refuses `missing_declaration`/`missing-selection`, and a wrong-kind local `semantic_type` refuses `invalid_model_binding`/`malformed-declaration`, each at the member this section names. | Test (TC-310) |
+| FR-375-AC-22 | For each step row the producer emits one `refinement_step_rows` entry with the source region of that original checked row, associated with the refinement owner id and its canonical zero-based step ordinal; reversing source order while retaining the same semantic rows changes the region assignments but not the owner id or package id. | Test (TC-310) |
 
 ## Dependencies
 
