@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-191
     type: references
+  - target: ix://agent-ix/quire-specification/FR-370
+    type: references
 ---
 
 # FR-402: Hyperproperty claim body and obligation identity
@@ -34,22 +36,29 @@ member that changes the clause's meaning.
     declared finite trace population with its bound for an FR-191 finite
     domain;
   - `subjects` — an aggregate of one `binding(alias, reference(M))` per
-    distinct model alias the quantifiers name, in order of first naming, each
-    referencing the alias's `model` node; empty for a finite domain;
+    distinct model alias the quantifiers name, in order of first naming. Each
+    target `M` is the alias's model declaration node: `node_tag: "model"`,
+    with its selected `ModelOwner` as
+    [FR-322](FR-322-checked-package-artifact.md) defines; empty for a finite
+    domain;
   - `parameters` — an aggregate of one `binding(name, reference(T))` per
-    object parameter, in declaration order, each referencing the object type
-    whose population it binds;
+    object parameter, in declaration order, each referencing the `model` /
+    `object_type` declaration node whose population it binds;
   - `quantifiers` — an aggregate of one `binding(variable, aggregate)` per
     quantifier, in source order, whose aggregate holds a `literal` text term
     `forall` or `exists`, a `literal` text term naming the alias (absent for a
     finite domain), and an aggregate of references to its fairness
-    constraints in source order (empty for the empty set);
+    constraints in source order (empty for the empty set). Each reference
+    targets that constraint's `temporal`/`fairness` node under
+    [FR-370](FR-370-checked-package-temporal-clause-body.md);
   - `match` — an aggregate of references to the match's conjuncts in source
     order; empty with no `match` block;
   - `align_skip` — an aggregate of references to the `state`/`operation_anchor`
     nodes of the listed operations, in source order; empty with no list;
-  - `body` — a reference to the body's `temporal` node, or to its expression
-    node for a finite domain.
+  - `body` — for a `behaviours` domain, a reference to the body's
+    `temporal`/`formula` node; for a finite trace domain, a reference to the
+    body's Boolean `expression` node. A model-domain body is not a reference
+    to a `temporal`/`temporal_clause` node.
 - **dependencies** — every node the body references.
 
 ## Obligation identity
@@ -65,6 +74,18 @@ The obligation identity of a hyper item binds:
 - the `align skip` list;
 - the body;
 - the object parameters' instance: each parameter's universe key.
+
+For a `behaviours` domain, each `subjects` reference targets the `model` node
+selected for its alias: its `ModelOwner` resolves to the model selection bound
+to that alias under [FR-322](FR-322-checked-package-artifact.md). A target
+that is not a `model` node for that alias refuses
+`invalid_model_binding`/`malformed-declaration` at the target. The
+`body` reference targets a `temporal`/`formula` node, and each quantifier's
+fairness references target `temporal`/`fairness` nodes.
+[FR-370](FR-370-checked-package-temporal-clause-body.md) admits those
+references only in the slots defined here. For a finite trace domain,
+`subjects` is empty, every quantifier has an empty fairness set, and the
+`body` reference targets an `expression` node.
 
 Reversing two quantifiers, moving a fairness constraint from one variable to
 another, renaming which alias a variable ranges over, or changing the
@@ -84,10 +105,11 @@ identity.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-402-AC-1 | A hyperproperty claim node's body has exactly the seven bindings in order, with subjects in order of first naming and quantifiers in source order. | Test (TC-346) |
+| FR-402-AC-1 | A `claim`/`hyperproperty` node's body has exactly the seven bindings in order, with subjects in order of first naming and quantifiers in source order. | Test (TC-346) |
 | FR-402-AC-2 | Reversing two quantifiers, moving a fairness constraint between variables, changing a variable's alias, changing the match or the `align skip` list, and changing the instance key each change the obligation identity. | Test (TC-346) |
 | FR-402-AC-3 | Two clauses that differ only in source spelling with the same checked meaning share one obligation identity. | Test (TC-346) |
 | FR-402-AC-4 | A step relation's model claim and code claim have different obligation identities. | Test (TC-343, TC-346) |
+| FR-402-AC-5 | For a `behaviours` domain, each subject reference targets its alias's selected `model` node, the body reference targets a `temporal`/`formula` node, and each quantifier's fairness references target `temporal`/`fairness` nodes; these placements are admitted by FR-370. A subject reference that targets no model node selected for its alias refuses `invalid_model_binding`/`malformed-declaration` at the target. For a finite trace domain, `subjects` and each fairness set are empty and the body reference targets a Boolean `expression` node. | Test (TC-346) |
 
 ## Dependencies
 
@@ -98,6 +120,8 @@ identity.
   state the clause meanings this identity binds.
 - [FR-191](../../functional/analysis/FR-191-analyze-relational-hyperproperties.md)
   requires quantifier order to be preserved in identity.
+- [FR-370](FR-370-checked-package-temporal-clause-body.md) defines the
+  temporal formula and fairness nodes referenced by model-domain claims.
 
 ## References
 

@@ -25,6 +25,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-481
     type: references
+  - target: ix://agent-ix/quire-specification/FR-402
+    type: references
 ---
 
 # FR-370: Checked-package temporal clause body and temporal operation identities
@@ -175,15 +177,23 @@ upper: "1"}`; it has no identity of its own.
 - A `quire.op.temporal.clause` application is the body root of a
   `temporal`/`temporal_clause` node and stands nowhere else.
 - A `temporal_formula` application stands only as the body root of a
-  `temporal`/`formula` node, and that node is referenced only from a clause's
-  formula argument or as an operand of another `temporal_formula` application.
+  `temporal`/`formula` node. That node is referenced only from a clause's
+  formula argument, as an operand of another `temporal_formula` application,
+  or from the `body` binding of a `claim`/`hyperproperty` node as
+  [FR-402](FR-402-hyperproperty-obligation-identity.md)
+  defines for a `behaviours` domain.
   A `quire.op.temporal.fair` application stands only as the body root of a
-  `temporal`/`fairness` node, referenced only from a clause's fairness
-  argument.
+  `temporal`/`fairness` node. That node is referenced only from a clause's
+  fairness argument or from the fairness-reference aggregate of a quantifier
+  in a `claim`/`hyperproperty` body, as
+  [FR-402](FR-402-hyperproperty-obligation-identity.md) defines for a
+  `behaviours` domain.
 - A reference to a `temporal`/`formula` or `temporal`/`fairness` node
-  stands only where the rule above places it. A misplaced reference is
-  located at the node whose body holds the reference, not at the formula or
-  fairness node it names.
+  stands only in the positions above. In a `claim`/`hyperproperty` body, a
+  formula reference in any member other than `body`, or a fairness reference
+  outside a quantifier's fairness-reference aggregate, is misplaced. A
+  misplaced reference is located at the node whose body holds the reference,
+  not at the formula or fairness node it names.
 - A diagnostic's `details` never reference a `temporal`/`formula`,
   `temporal`/`fairness` or `expression`/`case` node, and never hold an
   application of the `temporal_formula`, `temporal_fairness` or `case`
@@ -294,6 +304,7 @@ applications' catalog checks at the operation step.
 | FR-370-AC-11 | A fairness member naming an operation its `object_type` declaring node only inherits is admitted and resolves to the most derived redefinition; a name matching two effective operations refuses `ambiguous_declaration`/`ambiguous-name`; a declaring node no selected owner matches refuses `missing_declaration`/`missing-selection`; and a `declaration` naming a `systems_interface` model node or a non-model node refuses `invalid_model_binding`/`malformed-declaration` at the target. | Test (TC-303) |
 | FR-370-AC-12 | A reference to a `temporal`/`formula` node from a state clause's condition, and a reference to a `temporal`/`fairness` node from a clause's formula argument, refuse `ill_typed`/`operator-ineligible` located at the referencing node; a diagnostic whose `details` reference a `temporal`/`formula`, `temporal`/`fairness` or `expression`/`case` node refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}`; a `details` term that is an application of the `temporal_formula`, `temporal_fairness` or `case` operator class refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}/operator`; a `details` term holding several such applications refuses at the first in document pre-order, so a `temporal_formula` application with a nested `case` argument refuses at `/diagnostics/entries/{e}/details/{d}/operator` and an aggregate of a `temporal_formula` application and then a `case` application at `/diagnostics/entries/{e}/details/{d}/members/0/operator`; and `details` referencing a `composite_type`/`union` or `value`/`union_value` node are admitted. | Test (TC-303) |
 | FR-370-AC-13 | A `temporal` clause written with no `over` parameter refuses `invalid_syntax`/`unexpected-token` at the token standing where `over` is required, and produces no node; a `quire.op.temporal.clause` application whose argument 1 is absent, `null` or a non-reference term (such as the clause's clock text literal) fails the published schema. | Test (TC-180, TC-303) |
+| FR-370-AC-14 | In a `claim`/`hyperproperty` node for a `behaviours` domain, [FR-402](FR-402-hyperproperty-obligation-identity.md)'s `body` binding may reference a `temporal`/`formula` node and each quantifier's fairness-reference aggregate may reference `temporal`/`fairness` nodes; these references are admitted. A formula reference in another claim-body member and a fairness reference outside a quantifier's fairness-reference aggregate refuse `ill_typed`/`operator-ineligible` at the referencing claim node. | Test (TC-303, TC-346) |
 
 ## Published artifacts and the operation catalog
 
@@ -330,6 +341,8 @@ member.
 - [FR-272](../foundation/FR-272-typed-diagnostic-cause.md) owns the
   `unknown_profile` causes `unsupported-selection` and
   `wrong-selection-role`.
+- [FR-402](FR-402-hyperproperty-obligation-identity.md) owns the hyperproperty
+  claim-body positions that may reference temporal formula and fairness nodes.
 
 ## References
 

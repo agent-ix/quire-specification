@@ -7,6 +7,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-402
+    type: verifies
 ---
 
 # TC-303: Checked-package temporal clause body and operation identities
@@ -63,7 +65,11 @@ Encode as V2 packages:
     `temporal_formula`, `temporal_fairness` and `case` operator classes; a
     `details` term that is a `temporal_formula` application with a nested
     `case` argument; a `details` aggregate of a `temporal_formula`
-    application and then a `case` application.
+    application and then a `case` application;
+    [TC-346](TC-346-hyperproperty-obligation-identity.md) HI-08's valid
+    hyperproperty claim references; HI-10's misplaced claim-body references;
+    and HI-11's wrong subject target, with node keys, dependencies and package
+    identity rebuilt.
 
 11. A `quire.op.temporal.clause` body whose argument 1 is removed, one whose argument 1 is replaced by a `null` literal, and one whose argument 1 is replaced by the clause's clock text literal.
 
@@ -123,4 +129,12 @@ Encode as V2 packages:
     nested `case` at `/diagnostics/entries/{e}/details/{d}/operator`, the
     aggregate at `/diagnostics/entries/{e}/details/{d}/members/0/operator`,
     and the union and union-value references are admitted (FR-370-AC-12).
+    HI-08's formula and fairness references are admitted from
+    [FR-402](../objects/interfaces/FR-402-hyperproperty-obligation-identity.md)'s `body`
+    binding and per-quantifier fairness aggregate; HI-10's formula reference
+    in `match` and fairness reference outside that aggregate refuse
+    `ill_typed`/`operator-ineligible` at the `claim` node
+    ([FR-370-AC-14](../objects/interfaces/FR-370-checked-package-temporal-clause-body.md)). HI-11
+    refuses `invalid_model_binding`/`malformed-declaration` at the subject
+    target (FR-402-AC-5).
 11. All three fail the schema (FR-370-AC-13).
