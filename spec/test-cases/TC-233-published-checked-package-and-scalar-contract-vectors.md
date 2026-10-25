@@ -496,6 +496,25 @@ Scan every published producer-output package (every published positive package e
 
 Check the refinement step occurrences of `refinement-step-occurrence-vectors.json`: `RS-01` (admitted, with an entry of another node ignored) and `RS-02` (rows written in the order `R1`, `R0` against the `steps` order `R0`, `R1`) are admitted with ordinal 0 at the `declaration` region and ordinal `i + 1` at the region of the row at `steps` position `i` (FR-322-AC-88, FR-322-AC-89). Each case carries an independent `refinement_step_rows` entry for each canonical step position, including the ineligible cases. `RS-03` (ordinal 3), `RS-04` (a repeated key), `RS-05` (ordinal 1 with the other row's region), `RS-06` (an `expression` occurrence at ordinal 1) and `RS-07` (a `declaration` occurrence at ordinal 1) are each refused `invalid_package`/`invalid-value` at the offending `source_map` entry, and `RS-08` (ordinal 2 omitted), `RS-09` (the `declaration` occurrence omitted) and `RS-10` and `RS-11` (`generated` ordinals 0 and 1 omitted) at `/source_map` (FR-322-AC-90); `RS-12` (a history field, `declaration` alone) and `RS-16` (the `Counter` rows `value` and `total` written in the other order) are admitted, and `RS-13` (an `any` row), `RS-14` (a hidden field: the abstract `Counter` has fields `total` and `value` and the `objects` entry has a row for `value` alone), `RS-15` (a history field with a `generated` entry) and `RS-17` (two `objects` entries of which only the second has a hidden field) are each refused at their first `generated` entry (FR-322-AC-91). `RS-18` omits the sidecar and `RS-21` omits one row, both refusing at `/refinement_step_rows`; `RS-19` names a non-owner, `RS-20` repeats an owner/ordinal pair, `RS-23` reverses canonical order and `RS-24` names an out-of-range ordinal, each refusing at the offending sidecar entry. `RS-22` changes only the first sidecar region and refuses at generated ordinal 1's `source_map` entry while retaining the same node and package identities (FR-322-AC-128/129).
 
+### Refinement class catalog wire vectors
+
+Validate both closed V2 schemas against a refinement body carrying
+`class_catalog: {concrete: [...], abstract: [...]}`. Each declared entry has
+exactly `class`, `node` and ordered `binder_types`; a concrete key is a local
+`NodeRef`, an abstract key is a local `NodeRef` or selected dependency
+`PackageNodeKey`. A memory entry has exactly `class` and `memory_model`, with
+no node or binder types. Use the producer-emitted `CC-01` catalog of TC-310
+as the positive protocol case and `RW-01` without a catalog as the positive
+model-only case (FR-322-AC-130).
+
+| Vector | Schema or identity change | Expected result |
+| --- | --- | --- |
+| `CCW-01` | Positive protocol case; reorder source step rows but keep the canonical body, and change only `refinement_step_rows` regions to match | Both schemas accept the body and preimage; the refinement node id and `package_id` stay equal. |
+| `CCW-02` | Remove a declared class entry's `node` or `binder_types`, add any extra member, give a concrete entry an external key, or give an abstract entry an ill-shaped key | Both schemas refuse the malformed member. |
+| `CCW-03` | Add `node` or `binder_types` to a memory entry, or use a memory class spelling with a second word after its kind | Both schemas refuse the malformed member. |
+| `CCW-04` | Change only one catalog class, node, binder type or source-default memory model while retaining the refinement node id | The closed preimage digest changes; the dedicated refinement identity check refuses `invalid_package`/`stale-node-key` before class joins. |
+| `CCW-05` | Rekey the changed refinement and update references and package identity, but leave a local catalog node or binder type out of exact `dependencies` | Graph shape refuses `invalid_semantic_graph` at `/dependencies` before the refinement body step. |
+
 ### Graph order vectors
 
 Graph order is the producer's order of `semantic_graph.nodes`; the reader does not sort it, and it enters `package_id` through the identity projection (FR-322 `semantic_graph`). Each vector except GO-04 recomputes `package_id` over the identity projection derived in the new graph order before reading.

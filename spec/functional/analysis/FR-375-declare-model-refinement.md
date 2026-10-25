@@ -379,7 +379,8 @@ Its `semantic_type` is the concrete model declaration node. Its
 `dependencies` are the distinct local `NodeRef`s named by the body's
 `abstract` and optional `protocol` keys, every row's direct declaration and
 type key, and the row expressions' `reference` targets and application member
-declarations and populations, in ascending node-id digest order. This rule
+declarations and populations, plus every local `class_catalog` class node and
+binder type key, in ascending node-id digest order. This rule
 includes the local header keys even when every row array is empty. As in
 FR-322, a literal's `type`, an application's `result_type` and the node's own
 `semantic_type` are annotations, not dependencies unless another listed body
@@ -387,7 +388,8 @@ key or reference names the same node. External `PackageNodeKey`s and the
 profile `DefinitionRef` never enter this local list; dependency-package nodes
 join through the selected dependency package. Its body is
 `{"term": "refinement", "abstract", "profile", "populations", "objects",
-"steps", "histories", "assume", "ensure"}`. Its node id is the JCS SHA-256
+"steps", "histories", "assume", "ensure"}` with the conditional
+`class_catalog` below. Its node id is the JCS SHA-256
 of the closed `{version: "quire.refinement-node/v1", semantic_type, body}` preimage in
 `node-identity-preimage.schema.json`; the same body enters FR-322's package
 identity projection. `semantic_type` is the concrete model declaration's
@@ -442,6 +444,66 @@ but unresolved or wrong-kind key is refused under the existing graph and
 model-binding rules, not silently dropped. `histories[].updates` is sorted
 by its operation node-key digest, and `objects[].fields` by field name in
 UTF-8 byte order.
+
+**Checked class catalog.** When either subject contributes a protocol or
+memory step class, the producer SHALL emit `class_catalog` in the refinement
+body; otherwise the member SHALL be absent. This closed object has exactly
+`concrete` and `abstract` arrays. Each lists the complete source-level step
+classes of its selected subject, once each in ascending UTF-8 byte order of
+alias-free `class` spelling. A declared class entry is exactly
+`{class, node, binder_types}`: `node` is a local `NodeRef` for a concrete
+class and a `RefinementKey` for an abstract class; `binder_types` is the
+ordered array of local `NodeRef`s or abstract-side `RefinementKey`s for that
+class's checked binder record and may be empty. A memory entry is exactly
+`{class: "memory <kind>", memory_model}`, with no `node` or
+`binder_types`, where `memory_model` is `sc`, `tso` or `ra` and `<kind>` is a
+nonempty single step-kind name. The reader admits the entry only when that
+source-default model defines the named step (FR-434, FR-436, FR-437); among
+these models the only currently defined memory class is `tso`/`flush`.
+FR-432's closed class table determines the spellings and node associations:
+`fork` and `join` are two classes of one `parallel` node, and a memory class
+has no node. The concrete catalog covers the selected concrete model's
+operation classes and all protocol clauses in the declaring package whose
+`over` parameter denotes that model, with their source memory defaults.
+The abstract catalog covers the selected `protocol` clause when present,
+or the abstract model's operation classes otherwise. It excludes classes
+of another model or an unselected dependency.
+
+QSL SHALL derive the catalog from its checked subjects and binder records,
+independently of the emitted step rows. The reader SHALL compare every
+`steps[i].source_class` and `source_node` to one concrete entry, and every
+`protocol_step` target's `class`, optional `node`, argument count and
+argument types to one abstract entry. An empty `arguments` array leaves
+every binder open as FR-432's omitted argument list does; a nonempty array
+has one entry per binder. A memory class has no node or binder record.
+A missing class refuses `missing_declaration`/`missing-name` at
+the class member; a wrong-kind or wrong-subject node, unequal node key or
+a catalog binder signature that disagrees with the checked subject refuses
+`invalid_model_binding`/`malformed-declaration` at the affected key or
+catalog entry. A nonempty target argument count unequal to its admitted binder count
+refuses `ill_typed`/`operator-ineligible`, and an argument of another type
+refuses `ill_typed`/`type-mismatch`, at that target argument as FR-432 states.
+The reader SHALL
+compare the complete catalog with classes reconstructed from the selected
+model declarations and the protocol graph under FR-432 and FR-464 to
+FR-466; source-default memory classes are reconstructed from admitted
+`parallel` bodies and FR-434/FR-436/FR-437. An omitted, extra, duplicate
+or misordered catalog class refuses `invalid_semantic_graph` at the first
+offending entry, or at that catalog array for an omission. This is a
+producer attestation and wire/graph consistency check, not a second parse
+of QSL source. A later analysis request may override a parallel's memory
+model; its resolved memory classes belong to that request's obligation
+identity and are outside checked-package admission.
+
+The catalog enters the closed `quire.refinement-node/v1` body preimage and
+FR-322 package identity projection. A changed class, node, binder type or
+source-default memory model changes both identities. Every local catalog
+`node` and `binder_types` key enters the refinement's exact local
+`dependencies`; external `PackageNodeKey`s do not. A present catalog on
+a model-only refinement, or an absent catalog when a protocol or memory
+class participates, refuses `invalid_semantic_graph` at
+`/semantic_graph/nodes/{n}/body/class_catalog` after the dedicated key check
+and before row joins.
 
 A protocol subject whose resolved internal list is
 non-empty also carries `abstract_internal`, the resolved classes as
@@ -507,7 +569,9 @@ refinement node, the reader checks in this order and reports its first defect:
 2. **Canonical order.** Check each array and nested array in the order
    `populations`, `objects` (each entry's `fields` first), `steps`,
    `histories` (each entry's `updates` first), `assume`, `ensure`, and then
-   `abstract_internal` when present. Apply the total ordering rules above;
+   `abstract_internal` and `class_catalog` (`concrete`, then `abstract`) when
+   present. Apply the total ordering rules above, with catalog classes sorted
+   by UTF-8 bytes;
    the first out-of-order entry refuses `invalid_semantic_graph` at its
    array entry. A duplicate first key or tied row that violates the same
    total order refuses at the later entry.
@@ -523,7 +587,12 @@ refinement node, the reader checks in this order and reports its first defect:
    present key of the wrong declaration kind, a protocol of a different
    abstract model, or a profile of the wrong kind refuses
    `invalid_model_binding`/`malformed-declaration` at that member.
-4. **Rows.** In the same array and nested-array order as step 2, resolve
+4. **Class catalog.** After the header joins, compare the catalog with the
+   selected subjects and their checked protocol graph and source memory
+   defaults as specified above, before any row join. For equal class names,
+   compare node, then binder types in array order. Report the first defect
+   from `concrete` before `abstract`, and in class order within each array.
+5. **Rows.** In the same array and nested-array order as step 2, resolve
    each local and external declaration key under the rule above, and check
    its role and type against the concrete and abstract subjects and the
    entry shape specified in the row table. A missing target refuses
@@ -567,6 +636,7 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-20 | A checked package carrying an admitted `relation`/`refinement` node with row-empty arrays and a local abstract model is read with the node key recomputed from the closed `quire.refinement-node/v1` preimage, not from `quire.structural-node/v1` or `quire.application-node/v1`; changing only its concrete `semantic_type` or one body row while retaining its node id, and recomputing the package id and dependency list, refuses `invalid_package`/`stale-node-key` at that node in the refinement body step. | Test (TC-310) |
 | FR-375-AC-21 | With every identity recomputed, the reader visits refinement nodes in ascending retained digest order and applies canonical order, header joins and row joins after the identity check; an out-of-order row refuses `invalid_semantic_graph` at the first offending entry, an absent local `abstract` key refuses `missing_declaration`/`missing-name`, an absent direct dependency for an external `abstract` key refuses `missing_declaration`/`missing-selection`, and a wrong-kind local `semantic_type` refuses `invalid_model_binding`/`malformed-declaration`, each at the member this section names. | Test (TC-310) |
 | FR-375-AC-22 | For each step row the producer emits one `refinement_step_rows` entry with the source region of that original checked row, associated with the refinement owner id and its canonical zero-based step ordinal; reversing source order while retaining the same semantic rows changes the region assignments but not the owner id or package id. | Test (TC-310) |
+| FR-375-AC-23 | A protocol refinement carries a complete, canonical `class_catalog` of its source-level concrete and abstract classes and checked binder types in both V2 schemas and its node-key preimage. A tied `fork`/`join` pair names one parallel node under two distinct class spellings; a class of another selected model or protocol, a changed class/node association, a missing or duplicated class, a wrong binder record, or a memory kind absent from its source-default model refuses under the catalog and row-join rules. A later request's memory override changes no checked-package class fact or package id. | Test (TC-310, TC-233) |
 
 ## Dependencies
 

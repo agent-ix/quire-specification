@@ -316,6 +316,28 @@ model key appears in each node's `dependencies` despite the empty row arrays
 `dependencies`; mutation 13's external clause remains a `PackageNodeKey`
 joined through the direct dependency selection (FR-375-AC-11).
 
+For the checked class catalog, start from a producer-emitted protocol refinement
+with one concrete `parallel` node (`fork` and `join`), one concrete attempt,
+one abstract attempt with receiver and argument binders, and a `tso` parallel.
+Read the emitted `class_catalog`. Repeat with an abstract model subject and
+with a selected abstract protocol clause in a directly selected dependency.
+For each variant below, keep the source row sidecar valid; except for the
+retained-key and dependency cases, rekey the refinement, rewrite its
+references, rebuild its exact dependencies and recompute `package_id` before
+reading (FR-375-AC-23).
+
+| Vector | Single catalog or row change | Expected result |
+| --- | --- | --- |
+| `CC-01` | Unedited producer catalog | Admitted; concrete `fork` and `join` are distinct sorted classes of the same parallel node, the abstract attempt's ordered binder types match its checked operation, and `memory flush` records its `tso` source default. External abstract keys remain `PackageNodeKey`s. |
+| `CC-02` | Change a catalog class, node, binder type or memory model and retain the refinement node id | `invalid_package`/`stale-node-key` at its node id, reader step 1. |
+| `CC-03` | Remove `join`, repeat `fork`, reverse two entries, or add a class of another model | `invalid_semantic_graph` at the omitted array or first offending catalog entry, reader step 2 for order and step 4 for membership. |
+| `CC-04` | Associate `fork` with an existing unrelated control key; change the abstract attempt binder type to another existing type | Both refuse `invalid_model_binding`/`malformed-declaration` at the catalog entry, reader step 4. |
+| `CC-05` | Change a step's `source_class`, `source_node`, target class or target node independently of the catalog | Missing class refuses `missing_declaration`/`missing-name`; wrong node or subject refuses `invalid_model_binding`/`malformed-declaration`, at the row member in step 5. |
+| `CC-06` | Give an abstract attempt target zero arguments, then the complete typed list, then one fewer or a wrong-typed argument | Both first forms admit (zero leaves all binders open); short nonempty list refuses `ill_typed`/`operator-ineligible`, wrong type `ill_typed`/`type-mismatch`, in step 5. |
+| `CC-07` | Remove one local catalog node or binder type from the exact `dependencies`; retain an external catalog key there | `invalid_semantic_graph` at `/dependencies` before the refinement step. |
+| `CC-08` | Replace a source-default `tso` `memory flush` class with an absent kind, or omit the catalog on a protocol refinement | `invalid_semantic_graph` at the class entry or `/body/class_catalog`, reader step 4. |
+| `CC-09` | `RW-01`'s model-only refinement with no catalog; then add an empty catalog and rekey | The first admits; the second refuses `invalid_semantic_graph` at `/body/class_catalog`, reader step 4. |
+
 In mutation 26, `RW-01` is admitted on both reads; its rewritten canonical
 package has the same refinement node id and `package_id` as the first write.
 Every other vector is schema-valid and identity-consistent at the package
@@ -329,8 +351,8 @@ and writes no package from that read. The first refusal is exactly:
 | `RW-04` | `invalid_semantic_graph` / no cause | `/semantic_graph/nodes/{n}/body/steps/{j}`, refinement step 2. |
 | `RW-05` | `missing_declaration` / `missing-name` | `/semantic_graph/nodes/{n}/body/abstract`, refinement step 3; a direct dependency holding the same digest does not satisfy the local key. |
 | `RW-06` | `missing_declaration` / `missing-selection` | `/semantic_graph/nodes/{n}/body/abstract/package`, refinement step 3; supplying the removed dependency without restoring its direct selection changes nothing. |
-| `RW-07` | `invalid_model_binding` / `malformed-declaration` | `/semantic_graph/nodes/{n}/body/objects/0/concrete_type`, refinement step 4. |
-| `RW-08` | `ill_typed` / `type-mismatch` | `/semantic_graph/nodes/{n}/body/objects/0/fields/0/expression`, refinement step 4. |
+| `RW-07` | `invalid_model_binding` / `malformed-declaration` | `/semantic_graph/nodes/{n}/body/objects/0/concrete_type`, refinement step 5. |
+| `RW-08` | `ill_typed` / `type-mismatch` | `/semantic_graph/nodes/{n}/body/objects/0/fields/0/expression`, refinement step 5. |
 
 `RW-02` and `RW-03` are FR-375-AC-20's retained-key refusals.
 `RW-04` to `RW-08` exercise FR-375-AC-21's ordered checks and both row
