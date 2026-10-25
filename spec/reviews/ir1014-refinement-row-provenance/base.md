@@ -20,7 +20,7 @@ relationships:
 
 ## Summary
 
-Independent review of PR 442 at 86e2210f against the existing refinement
+Independent review of PR 442 at 43b072a0 against the existing refinement
 occurrence and reader-order contracts. No applicable `AssuranceProfile` was
 found in the authored spec tree. The sidecar schema is closed, requires each
 entry's owner, ordinal and region, and excludes the sidecar from node and
@@ -35,10 +35,10 @@ missing frontmatter `id` and typed-fields structural errors.
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | medium | The normative body-step order inserts refinement between abstraction and terminal, but AC-121 still enumerates the complete order without refinement. TC-233 BS-01 also names the valid baseline steps without refinement and tests only later hybrid/timed/protocol precedence. Update the order criterion and a mixed-defect vector to pin `abstraction < refinement < terminal`; retain the existing later-step checks. | FR-322 Body steps and AC-121; TC-233 BS-01; FR-375 Reader order |
+| FND-001 | medium | Resolved at 43b072a0: AC-121 now includes refinement between abstraction and terminal. TC-233 BS-02 puts independently valid abstraction, refinement and terminal defects in one schema-valid package and checks the three successive refusals as each earlier defect is repaired; BS-01 retains its later-step precedence checks. | FR-322 Body steps and AC-121; TC-233 BS-01/BS-02; FR-375 Reader order |
 
 ## Verdict
 
-Changes requested: resolve FND-001 in this PR and revalidate the changed
-specification. The finding concerns the acceptance and test contract; it
-does not call for a change to the sidecar's closed wire shape.
+PASS for the revised specification. FND-001 is fixed within this PR. This
+verdict covers the authored reader and producer contract, not implementation
+qualification.
