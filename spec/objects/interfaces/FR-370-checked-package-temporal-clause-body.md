@@ -29,6 +29,10 @@ relationships:
 
 # FR-370: Checked-package temporal clause body and temporal operation identities
 
+> **Proposal status: unconfirmed by operator.** The aggregate-atom wire form
+> below is a design proposal only. It is not an effective checked-package-v2
+> contract unless the operator confirms it.
+
 ## Description
 
 When a `quire.checked-semantic-graph/v2` node has `node_tag: "temporal"` and
@@ -92,12 +96,48 @@ operand position except a nested temporal operator's.
 | --- | --- | --- | --- | --- |
 | `quire.op.temporal.clause` | `temporal` | `reference`, `text`, `aggregate`, `aggregate`, `aggregate`, `temporal` | `clause` (declared Boolean) | none |
 | `quire.op.temporal.holds` | `temporal_formula` | `boolean` | `temporal` | none |
+| `quire.op.temporal.aggregate` (**proposal, unconfirmed by operator**) | `temporal_formula` | `aggregate` | `temporal` | none |
 | `quire.op.temporal.true`, `quire.op.temporal.false` | `temporal_formula` | none | `temporal` | none |
 | `quire.op.temporal.not` | `temporal_formula` | `temporal` | `temporal` | none |
 | `quire.op.temporal.and`, `quire.op.temporal.or`, `quire.op.temporal.implies` | `temporal_formula` | `temporal`, `temporal` | `temporal` | none |
 | `quire.op.temporal.eventually`, `quire.op.temporal.always`, `quire.op.temporal.once`, `quire.op.temporal.historically` | `temporal_formula` | `temporal` | `temporal` | `temporal_interval` |
 | `quire.op.temporal.until`, `quire.op.temporal.release`, `quire.op.temporal.since`, `quire.op.temporal.triggered` | `temporal_formula` | `temporal`, `temporal` | `temporal` | `temporal_interval` |
 | `quire.op.temporal.fair` | `temporal_fairness` | none | `temporal` | `fairness` |
+
+### Proposed aggregate-atom body (unconfirmed by operator)
+
+A checked aggregate atom is a `temporal`/`formula` node whose body is an
+application with identity `quire.op.temporal.aggregate`, operator class
+`temporal_formula`, result family `temporal`, `member: null`, and exactly one
+`aggregate` argument. The argument is a closed ordered aggregate of bindings:
+
+1. `kind`: a text literal `count`, `sum`, `min`, `max`, `fraction` or
+   `quantile`;
+2. `window_kind`: a text literal `positions` or `duration`;
+3. `lower` and `upper`: exact integer literals for positions, or exact
+   quantity terms for durations, already converted to the selected profile's
+   binding unit;
+4. `min_count`: an exact non-negative integer literal, normalized to 1 when
+   omitted in source;
+5. `quantile`: the exact rational `q`, present only for `quantile`;
+6. `value`: the checked `of` expression when present;
+7. `filter`: the checked Boolean `where holds(...)` expression when present;
+8. `predicate`: the checked Boolean predicate for `fraction`, present only
+   for `fraction`;
+9. `comparison`: a text literal `<`, `<=`, `=`, `>=` or `>`;
+10. `threshold`: the checked expression for the comparison, with exact unit
+    conversion represented in the term as FR-142 requires.
+
+Optional bindings absent in source are omitted, not encoded as `null`; the
+remaining bindings appear in the order above. Every expression term is in the
+temporal clause's binder scope. The application's canonical identity includes
+the aggregate argument, so changes to kind, bounds, normalized `min_count`,
+expressions, comparison or threshold change the formula node identity. Source
+spans remain in the source map, not in this preimage. A reader SHALL reject
+unknown, duplicate, missing-required or out-of-order bindings and the
+kind-specific shape violations above. This proposed shape preserves an
+authored `of` expression when one is present; FR-414 remains the authority for
+its evaluation meaning.
 
 The `temporal_interval` member is `{kind: "temporal_interval", interval}`,
 where `interval` is one of:
@@ -294,6 +334,7 @@ applications' catalog checks at the operation step.
 | FR-370-AC-11 | A fairness member naming an operation its `object_type` declaring node only inherits is admitted and resolves to the most derived redefinition; a name matching two effective operations refuses `ambiguous_declaration`/`ambiguous-name`; a declaring node no selected owner matches refuses `missing_declaration`/`missing-selection`; and a `declaration` naming a `systems_interface` model node or a non-model node refuses `invalid_model_binding`/`malformed-declaration` at the target. | Test (TC-303) |
 | FR-370-AC-12 | A reference to a `temporal`/`formula` node from a state clause's condition, and a reference to a `temporal`/`fairness` node from a clause's formula argument, refuse `ill_typed`/`operator-ineligible` located at the referencing node; a diagnostic whose `details` reference a `temporal`/`formula`, `temporal`/`fairness` or `expression`/`case` node refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}`; a `details` term that is an application of the `temporal_formula`, `temporal_fairness` or `case` operator class refuses `ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}/operator`; a `details` term holding several such applications refuses at the first in document pre-order, so a `temporal_formula` application with a nested `case` argument refuses at `/diagnostics/entries/{e}/details/{d}/operator` and an aggregate of a `temporal_formula` application and then a `case` application at `/diagnostics/entries/{e}/details/{d}/members/0/operator`; and `details` referencing a `composite_type`/`union` or `value`/`union_value` node are admitted. | Test (TC-303) |
 | FR-370-AC-13 | A `temporal` clause written with no `over` parameter refuses `invalid_syntax`/`unexpected-token` at the token standing where `over` is required, and produces no node; a `quire.op.temporal.clause` application whose argument 1 is absent, `null` or a non-reference term (such as the clause's clock text literal) fails the published schema. | Test (TC-180, TC-303) |
+| FR-370-AC-14 | **Proposal, unconfirmed by operator:** aggregate atoms for all six kinds use `quire.op.temporal.aggregate` with the single closed ordered binding aggregate; positions carry integer bounds, durations carry converted exact quantities, omitted `min_count` is encoded as 1, only `quantile` carries `q`, and optional `of`, `where`, and fraction predicate terms use their corresponding bindings. The reader rejects a duplicate, unknown, misordered, missing-required or kind-inapplicable binding. | Test (TC-303) |
 
 ## Published artifacts and the operation catalog
 
