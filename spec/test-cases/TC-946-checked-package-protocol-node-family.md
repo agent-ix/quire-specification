@@ -18,7 +18,7 @@ Schema and reader vectors for the `protocol` node family of
 body, the operator catalog, node keys, declaration paths, the clause body,
 membership and containment, binders and their scope, the derived causal
 relation and progress, placement, profile fit, the reader order and the
-activation relation. Scope: FR-464-AC-1 to FR-464-AC-13.
+activation relation. Scope: FR-464-AC-1 to FR-464-AC-15.
 
 ## Base package
 
@@ -113,9 +113,10 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | K7 | two roles named `Orders` | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
 | K8 | two controls on one path named `Done` | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
 | K9 | a node's retained key differs from the digest of its preimage | `invalid_package`/`stale-node-key` at the node, before any protocol check |
-| K10 | a protocol node carries a `recursion_group` | refuses `malformed_wire` (`malformed_wire`) |
+| K10 | an acyclic protocol node adds `recursion_group` but leaves `recursion` `null` | refuses `malformed_wire` (`malformed_wire`) |
 | K11 | a `queue` node carries a `declaration` | refuses `malformed_wire` (a `generated`-only node carries no declaration) |
 | K12 | a `role` node has no `declaration` occurrence | refuses `malformed_wire` (`declaration` is present exactly with a `declaration` occurrence) |
+| K14 | a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic | the complete cyclic reference component shares one `recursion_group`, each member has its FR-322 `{size, ordinal}` coordinate and intra-component edges use `group_reference`; the reader admits the package. `Plain` and every other node outside that component have no `recursion_group` and `recursion` `null` |
 
 ## Clause body
 
