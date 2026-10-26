@@ -28,7 +28,7 @@ delay left to the scheduler.
 ## Inputs
 
 A `time dense` timed subject ([FR-415](../temporal/FR-415-declare-clocks-and-timed-models.md))
-with its operations' `delay` members ([FR-405](FR-405-declare-probabilistic-models.md));
+with its operations' `delay` declarations ([FR-405](FR-405-declare-probabilistic-models.md));
 a workload; a probabilistic claim ([FR-407](FR-407-state-probabilistic-claims.md));
 for statistical evidence, the request's grid exponent `q`, `max_sample_steps`
 and `StatisticalLimits`.
@@ -44,7 +44,7 @@ are timed behaviours, or an `unsupported` result with cause `not-stochastic` or
 
 ### Delay distributions
 
-An operation's `delay ~ D` member gives one of these families, every
+An operation's `delay M::o ~ D;` declaration gives one of these families, every
 parameter an exact rational and every delay a time quantity converted exactly
 to the model's unit (FR-142):
 
@@ -58,7 +58,7 @@ to the model's unit (FR-142):
 
 Uniform over a set is uniform in length; over a set of zero length it is
 uniform over its finitely many points. The delay of an operation with a
-`delay` member is **given**; the delay of an operation with no `delay` member
+`delay` declaration is **given**; the delay of an operation with no `delay` declaration
 is **free**: it is nondeterministic, and no distribution is implied for it.
 
 ### Windows
@@ -144,17 +144,17 @@ model and ignore distributions.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-420-AC-1 | On the `RareLate` vector, `reply` with `delay ~ discrete { 1 ms: 90, 3 ms: 10 }` ties with `timeout` at 3 ms with probability `1/10`, the workload orders the tie evenly, and the event's exact probability is `1/20`. | Test (TC-374) |
+| FR-420-AC-1 | On the `RareLate` vector, `reply` with `delay Call::reply ~ discrete { 1 ms: 90, 3 ms: 10 };` ties with `timeout` at 3 ms with probability `1/10`, the workload orders the tie evenly, and the event's exact probability is `1/20`. | Test (TC-374) |
 | FR-420-AC-2 | Every sampled delay is an exact rational from the `2^-q` grid's conditioned inverse distribution function, `q` is recorded in the basis, and each sample replays with its delays. | Test (TC-374) |
-| FR-420-AC-3 | A racing identity of an operation with no `delay` member settles a statistical item `unsupported`, `not-stochastic`; under exact evidence its delay is a scheduler choice and the bound compares the minimum or maximum. | Test (TC-374) |
+| FR-420-AC-3 | A racing identity of an operation with no `delay` declaration settles a statistical item `unsupported`, `not-stochastic`; under exact evidence its delay is a scheduler choice and the bound compares the minimum or maximum. | Test (TC-374) |
 | FR-420-AC-4 | An identity with an unbounded window and `uniform`, or a state with bounded delay and no racing identity, settles `unsupported`, `not-stochastic{state, identity}`. | Test (TC-374) |
 | FR-420-AC-5 | A sample exceeding `max_sample_steps` stops the run with `incomplete`, `limit-reached` naming `max_sample_steps`, its value and how to raise it; an omitted `max_sample_steps` is `2^24`. | Test (TC-374) |
-| FR-420-AC-6 | With `reply` under `delay ~ uniform` the event's probability is 0, the statistical item settles `measured: accepted`, and the every-behaviour claim `NoLateReply` settles `refuted`. | Test (TC-374) |
+| FR-420-AC-6 | With `reply` under `delay Call::reply ~ uniform;` the event's probability is 0, the statistical item settles `measured: accepted`, and the every-behaviour claim `NoLateReply` settles `refuted`. | Test (TC-374) |
 | FR-420-AC-7 | A sample that reaches a state with no admissible positive delay and no enabled transition identity before its horizon settles the item `unsupported`, `time-locked-sample{state}` naming that state, with no witness kept. | Test (TC-374) |
 
 ## Dependencies
 
-- [FR-405](FR-405-declare-probabilistic-models.md) declares `delay` members;
+- [FR-405](FR-405-declare-probabilistic-models.md) declares `delay` declarations;
   [FR-406](FR-406-interpret-probabilistic-models.md) supplies the scheduler
   resolution; [FR-408](FR-408-settle-probabilistic-claims-statistically.md)
   supplies the statistical methods.
