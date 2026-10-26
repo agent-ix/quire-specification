@@ -156,8 +156,69 @@ Mutations, each applied alone to the positive unit:
 22. a plain temporal clause under `quire.temporal.infinite-trace/v1`, with no
     refinement, in a unit that selects no value layer.
 23. a protocol-subject refinement whose rows include `step duplicate`, `step lose`, `step spawn`, `step retire`, `step fork`, `step join`, a template's `cattempt` and `cend` rows, `step memory flush` and `step memory drain`, written in one order and then in the exact reverse of it, so every tied pair and the two memory rows swap their relative order.
+24. select one abstract model `Spec` whose declaration node is local to the
+    declaring package and has no populations, and two distinct
+    concrete model declarations `ImplA` and `ImplB`, each with no operations;
+    declare one refinement from `Spec` to each concrete model under the same
+    infinite-trace profile, with empty `populations`, `objects`, `steps`,
+    `histories`, `assume` and `ensure` arrays and otherwise identical bodies.
+    Compare each node's `semantic_type`, closed node-id preimage and node id.
+25. repeat mutation 13 with the selected abstract protocol clause declared
+    in the unit that declares the refinement, so the clause node is local to
+    the refinement's checked package; compare its `protocol` key and
+    `dependencies` with mutation 13's directly selected dependency clause.
+26. **Checked-package read/write vectors (RW-01 to RW-08).** Emit the
+    admitted package of mutation 24 with only the `ImplA` refinement as
+    `RW-01`. Keep a second local abstract model `Spec2`, with no populations
+    or operations, in that package for `RW-03`; its key is distinct from
+    `Spec`'s. Pass the emitted canonical bytes through the strict V2 reader,
+    then write the admitted package and read it again. Use a separate
+    producer-emitted package of mutation 2 (`peek -> any`) as the base for
+    `RW-04`, so the refinement is not proof-eligible and carries only its
+    `declaration` occurrence. Use mutation 13's producer-emitted package as
+    the base for `RW-06`, with `abstract` a `PackageNodeKey` of a directly
+    selected dependency. Use the positive unit's producer-emitted package as
+    the base for `RW-07` and `RW-08`.
+
+    For each edited wire below, apply only that edit to its named base. Keep
+    all other nodes and selected inputs valid. Recompute the package's
+    identity projection and `package_id` after the edit. Except for the two
+    deliberately stale-key cases, recompute the refinement's closed
+    `quire.refinement-node/v1` key, rewrite references and source-map
+    occurrence keys to the new node id, and rebuild its exact local
+    `dependencies` list in digest order. For `RW-06`, remove the direct
+    dependency selection and the supplied dependency while leaving the
+    external `PackageNodeKey` in the body; update the lock and selection
+    preimage as well. No vector relies on a stale package id, a stale source
+    map, a missing supplied package for a still-selected entry, or an
+    unrelated graph-shape refusal. Let `{n}` be the refinement's index in
+    `semantic_graph.nodes` after the edit and `{j}` the index of the first
+    row that breaks the order in `RW-04`.
+
+    | Vector | Base and single wire edit |
+    | --- | --- |
+    | `RW-01` | Unedited row-empty `ImplA` package; write, read, write and read again. |
+    | `RW-02` | `RW-01`: replace only `semantic_type` with the existing local `ImplB` model key, retaining the refinement `node_id`. |
+    | `RW-03` | `RW-01`: replace only `body.abstract` with local `Spec2`'s key, rebuild `dependencies`, but retain the refinement `node_id`. |
+    | `RW-04` | Mutation 2 package: swap the first two distinct `steps` entries in the wire while preserving their entry values; rekey the refinement. |
+    | `RW-05` | `RW-01`: set `body.abstract` to a well-formed `NodeRef` absent from this graph, with no dependency package selector; rekey the refinement. |
+    | `RW-06` | Mutation 13 package: remove the direct selection for the external package named by `body.abstract`, leaving that `PackageNodeKey` unchanged; rekey the refinement. |
+    | `RW-07` | Positive package: replace `body.objects[0].concrete_type` with the existing local Boolean `scalar_type` key; rekey the refinement. |
+    | `RW-08` | Positive package: replace `body.objects[0].fields[0].expression` with the inline Boolean literal `{term: "literal", type: B, value_kind: "boolean", value: true}`, where `B` is the package's local Boolean node key; rekey the refinement. |
 
 ## Expected Results
+
+For every producer-emitted refinement with step rows, inspect the closed
+`refinement_step_rows` sidecar: one entry per `body.steps` position names the
+retained refinement node id, that position's zero-based ordinal, and the
+exact original checked source row region. Reverse the source order of two
+semantically distinct rows while keeping the same canonical `steps` order:
+the sidecar regions follow their rows, and the refinement node id and
+`package_id` remain equal. For a proof-eligible refinement, each generated
+owner occurrence at ordinal `i + 1` has that sidecar row region. For a
+refinement made ineligible by an `any` target, the sidecar still has its
+rows and the owner has no generated occurrence (FR-375-AC-22,
+FR-322-AC-129).
 
 The positive unit is admitted with one `relation`/`refinement` node whose
 body carries every row, sorted as FR-375 states (FR-375-AC-1). Mutation 1
@@ -189,7 +250,9 @@ declaration requires `temporal-satisfaction` and the step obligation
 `operation-contract` (FR-375-AC-8).
 In mutation 13 the three declarations (`Spec::Twice`, `Spec::Twice2`, `Spec`)
 use identical rows and are each admitted with three distinct node ids; the
-two protocol subjects carry `protocol` and list the clause in `dependencies`,
+two protocol subjects carry `protocol` as a `PackageNodeKey` and join the
+external clause through `dependency_selections`, without listing it in their
+local `dependencies`,
 and the `abstract Spec` node has neither. `Spec::Thrice`, `Spec::Counter`,
 `Spec::counters` and `Nope::Twice` each refuse `missing_declaration`/
 `missing-name` at `Thrice`, `Counter`, `counters` and `Nope`; `Spec::Wrong`
@@ -245,3 +308,56 @@ vector); the `ready = protocol Fill` row, in the separate run, is the only refus
 (FR-375-AC-18, FR-001-AC-7, FR-090-AC-10, FR-250-AC-8). In mutation 22 the
 clause is admitted and the unit's selection gains no value layer or lock row
 (FR-090-AC-10). In mutation 23 the node's `steps` array is identical for the two source orders, the tied rows ordered by alias-free class spelling in UTF-8 byte order and the two `memory` rows after every declaration-naming row, `drain` before `flush` (FR-375-AC-19).
+In mutation 24 both refinements are admitted, their bodies are identical,
+their `semantic_type` keys differ, both closed preimages carry their respective
+`semantic_type`, and their recomputed node ids differ. The local abstract
+model key appears in each node's `dependencies` despite the empty row arrays
+(FR-375-AC-7). In mutation 25 the local clause is a `NodeRef` in `protocol` and appears in
+`dependencies`; mutation 13's external clause remains a `PackageNodeKey`
+joined through the direct dependency selection (FR-375-AC-11).
+
+For the checked class catalog, start from a producer-emitted protocol refinement
+with one concrete `parallel` node (`fork` and `join`), one concrete attempt,
+one abstract attempt with receiver and argument binders, and a `tso` parallel.
+Read the emitted `class_catalog`. Repeat with an abstract model subject and
+with a selected abstract protocol clause in a directly selected dependency.
+For each wire variant below, keep the source row sidecar and generated
+`source_map` occurrences valid. Rekey the refinement and rewrite its
+references except in the retained-key case; rebuild its exact dependencies
+except in `CC-07`; always recompute `package_id` before reading
+(FR-375-AC-23).
+
+| Vector | Single catalog or row change | Expected result |
+| --- | --- | --- |
+| `CC-01` | Unedited producer catalog | Admitted; concrete `fork` and `join` are distinct sorted classes of the same parallel node, the abstract attempt's ordered binder types match its checked operation, and `memory flush` records its `tso` source default. External abstract keys remain `PackageNodeKey`s. |
+| `CC-02` | Change a catalog class, node, binder type or memory model and retain only the refinement node id | `invalid_package`/`stale-node-key` at its node id, reader step 1; the recomputed `package_id` matches the edited projection. |
+| `CC-03` | Remove `join` and its deciding step row together; separately repeat `fork`, reverse two entries, or add a class of another model | Duplicate or reversed entries refuse `invalid_semantic_graph` in refinement step 2; omission or foreign class refuses at the catalog array or entry in protocol step 7. |
+| `CC-04` | Associate `fork` with an existing unrelated control key and change its deciding row's `source_node` to the same key; separately change the abstract attempt binder type to another existing type while its target argument list is empty | Both refuse `invalid_model_binding`/`malformed-declaration` at the catalog entry in protocol step 7, with row/catalog consistency intact. |
+| `CC-05` | Change a step's `source_class`, `source_node`, target class or target node independently of the catalog | Missing class refuses `missing_declaration`/`missing-name`; wrong node or subject refuses `invalid_model_binding`/`malformed-declaration`, at the row member in step 5. |
+| `CC-06` | Give an abstract attempt target zero arguments, then the complete typed list, then one fewer or a wrong-typed argument | Both first forms admit (zero leaves all binders open); short nonempty list refuses `ill_typed`/`operator-ineligible`, wrong type `ill_typed`/`type-mismatch`, in step 5. |
+| `CC-07` | Remove one local catalog node or binder type from the exact `dependencies`; retain an external catalog key there | `invalid_semantic_graph` at `/dependencies` before the refinement step. |
+| `CC-08` | Replace a source-default `tso` `memory flush` class and its deciding row with the same absent kind; separately omit the catalog on a protocol refinement | The absent kind refuses `invalid_semantic_graph` at the class entry in protocol step 7; missing catalog refuses at `/body/class_catalog` in refinement step 4. |
+| `CC-09` | `RW-01`'s model-only refinement with no catalog; then add an empty catalog and rekey | The first admits; the second refuses `invalid_semantic_graph` at `/body/class_catalog`, reader step 4. |
+| `CC-10` | From `CC-01`, request analysis twice over the same admitted package: once with its source-default `tso` choice and once with an override to `sc` under FR-434 | The checked catalog and `package_id` are byte-identical; the resolved memory model and resulting obligation identities differ. Package admission makes no claim that an override's memory class is a source class. |
+| `CC-11` | From `CC-04`'s wrong `fork` association and matching row, also make an independent protocol-body defect: a `send` binder whose type disagrees with its channel's `carries` type (FR-466-AC-7). Rewrite every changed send-node key in the graph, catalog and deciding row, and keep the catalog binder types equal to the edited binder while preserving the wrong `fork` association. First read with both defects; then repair only the send binder type and rebuild affected keys, dependencies and package identity; separately introduce a step-row class mismatch with both defects present. | The first read reports the binder-type refusal in protocol step 4 before the catalog graph join; after repair, the catalog association refuses in protocol step 7; the separate row mismatch refuses in the earlier refinement step 5 before either protocol defect. |
+
+In mutation 26, `RW-01` is admitted on both reads; its rewritten canonical
+package has the same refinement node id and `package_id` as the first write.
+Every other vector is schema-valid and identity-consistent at the package
+level, so the strict reader returns `refused`, exposes no admitted package,
+and writes no package from that read. The first refusal is exactly:
+
+| Vector | Code / cause | Locus and reader step |
+| --- | --- | --- |
+| `RW-02` | `invalid_package` / `stale-node-key` | `/semantic_graph/nodes/{n}/node_id`, refinement step 1; the changed `semantic_type` enters the dedicated preimage. |
+| `RW-03` | `invalid_package` / `stale-node-key` | `/semantic_graph/nodes/{n}/node_id`, refinement step 1; the changed body enters the same preimage. |
+| `RW-04` | `invalid_semantic_graph` / no cause | `/semantic_graph/nodes/{n}/body/steps/{j}`, refinement step 2. |
+| `RW-05` | `missing_declaration` / `missing-name` | `/semantic_graph/nodes/{n}/body/abstract`, refinement step 3; a direct dependency holding the same digest does not satisfy the local key. |
+| `RW-06` | `missing_declaration` / `missing-selection` | `/semantic_graph/nodes/{n}/body/abstract/package`, refinement step 3; supplying the removed dependency without restoring its direct selection changes nothing. |
+| `RW-07` | `invalid_model_binding` / `malformed-declaration` | `/semantic_graph/nodes/{n}/body/objects/0/concrete_type`, refinement step 5. |
+| `RW-08` | `ill_typed` / `type-mismatch` | `/semantic_graph/nodes/{n}/body/objects/0/fields/0/expression`, refinement step 5. |
+
+`RW-02` and `RW-03` are FR-375-AC-20's retained-key refusals.
+`RW-04` to `RW-08` exercise FR-375-AC-21's ordered checks and both row
+target and row type joins. Each is refused after the earlier FR-322 stages
+have admitted its shape, source map, dependency list and package identity.
