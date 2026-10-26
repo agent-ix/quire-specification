@@ -4837,7 +4837,21 @@
       }
     },
     {"name": "limit-reached-max-clocks", "stage": "outcome", "owners": {"/results/0/cause": "FR-415"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "incomplete", "cause": {"type": "limit-reached", "limit": "max_clocks", "value": 1024, "setting": "model_check.max_clocks"}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result", "method": "exploration", "limits": {"max_clocks": 1024}, "reached": ["max_clocks"]}]}},
-    {"name": "limit-reached-accounting-setting", "stage": "outcome", "owners": {"/results/0/cause": "FR-461"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "incomplete", "cause": {"type": "limit-reached", "limit": "work_units", "value": 4096, "setting": "accounting.work_units"}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result", "limits": {"work_units": 4096}, "reached": ["work_units"]}]}}
+    {"name": "limit-reached-accounting-setting", "stage": "outcome", "owners": {"/results/0/cause": "FR-461"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "incomplete", "cause": {"type": "limit-reached", "limit": "work_units", "value": 4096, "setting": "accounting.work_units"}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result", "limits": {"work_units": 4096}, "reached": ["work_units"]}]}},
+    {
+      "name": "refuted-ignoring-constraints-outcome",
+      "stage": "outcome",
+      "owners": {"/results/0/cause": "FR-331"},
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [{"request_index": 0, "disposition": "supported"}],
+        "artifacts": [],
+        "results": [{"request_index": 0, "backend": "qsl-analyze", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "refuted-ignoring-constraints"}}],
+        "counterexamples": [],
+        "accounting": [{"request_index": 0, "settled_by": "result"}]
+      }
+    }
   ],
   "adverse": [
     {"name": "temporal-limits-max-clocks-zero", "base": "temporal-request", "owner": "FR-415", "patch": [{"op": "replace", "path": "/request/items/0/temporal/limits/max_clocks", "value": 0}]},
@@ -7621,6 +7635,18 @@
           "path": "/results/1/cause/requested"
         }
       ]
+    },
+    {
+      "name": "refuted-ignoring-constraints-as-refuted",
+      "base": "refuted-ignoring-constraints-outcome",
+      "owner": "FR-331",
+      "patch": [{"op": "replace", "path": "/results/0/result", "value": "refuted"}]
+    },
+    {
+      "name": "refuted-ignoring-constraints-as-proved",
+      "base": "refuted-ignoring-constraints-outcome",
+      "owner": "FR-331",
+      "patch": [{"op": "replace", "path": "/results/0/result", "value": "proved"}]
     }
   ],
   "universe_provision_vectors": [
