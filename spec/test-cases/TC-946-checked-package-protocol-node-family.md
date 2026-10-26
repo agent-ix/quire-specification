@@ -122,7 +122,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 
 | Vector | Edit to the base | Expected |
 | --- | --- | --- |
-| C1 | none | admitted: thirteen bindings `over`, `activation`, `captures`, `roles`, `relationships`, `channels`, `queues`, `requirements`, `compensations`, `terminal`, `scheduling`, `run`, `finish` in that order |
+| C1 | none | admitted: thirteen bindings `over`, `activation`, `captures`, `roles`, `relationships`, `channels`, `queues`, `requirements`, `compensations`, `terminal`, `scheduling`, `run`, `finish` in that order, plus the node-level `owner_model` edge |
 | C2 | `activation on origin` | `activation` is `{kind: origin}`; admitted |
 | C3 | a protocol with no relationship, requirement, compensation, `terminal` or `scheduling` | empty lists and absent optionals; admitted |
 | C4 | `scheduling` removed from the base | the clause node key and the `package_id` change |
@@ -135,6 +135,15 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | C11 | `relationships` names a `protocol`/`role` node | `invalid_model_binding`/`wrong-export` at the target, retaining required kind `relationship`, the actual kind and both keys |
 | C12 | `run` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | C13 | `compensations` names a node that is not in the clause's `dependencies` | `missing_declaration`/`missing-name` at the target |
+
+## Clause model owner edge
+
+| Vector | Edit to the base | Expected |
+| --- | --- | --- |
+| OM-01 | Keep the `over` argument and add `owner_model` to the exact local model declaration node represented by the source clause's `over` type | Admitted; the target is in `dependencies` and in the application-node identity preimage |
+| OM-02 | Change only `owner_model` to another existing selected model node and recompute the node and package identities | Admitted as a different clause identity; FR-375 class-catalog reconstruction associates its classes only with the new owner model |
+| OM-03 | Omit `owner_model`, use an external `PackageNodeKey`, target a non-model node, or omit its local dependency | Schema refusal for omission/external key; reader refuses a wrong-kind target or missing dependency before protocol interpretation |
+| OM-04 | Keep two clauses over distinct selected models and build the concrete catalog for one of them, including a clause with no deciding step rows | Classes from all clauses owned by the selected model are included; the other model's classes are excluded |
 
 ## Membership
 

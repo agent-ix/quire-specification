@@ -517,9 +517,11 @@ model-only case (FR-322-AC-130).
 | --- | --- | --- |
 | `CCW-01` | Positive protocol case; reorder source step rows but keep the canonical body, and update both `refinement_step_rows` regions and the matching generated owner `source_map` occurrence regions | Both schemas accept the body and preimage; each generated occurrence equals its sidecar row region, while the refinement node id and `package_id` stay equal. |
 | `CCW-02` | Remove a declared class entry's `node` or `binder_types`, add any extra member, give a concrete entry an external key, or give an abstract entry an ill-shaped key | Both schemas refuse the malformed member. |
-| `CCW-03` | Add `node` or `binder_types` to a memory entry, or use a memory class spelling with a second word after its kind | Both schemas refuse the malformed member. |
-| `CCW-04` | Change one catalog class, node, binder type or source-default memory model; rebuild exact dependencies and recompute `package_id`, but retain the refinement node id | The edited projection matches the new `package_id`; the closed preimage digest changes and the dedicated refinement identity check refuses `invalid_package`/`stale-node-key` before class joins. |
+| `CCW-03` | Add `node` or `binder_types` to a memory entry, omit `drain` from `memory drain`, add `drain` to `memory flush`, use a memory class spelling other than `memory drain` or `memory flush`, or use a second word after the kind | Both schemas refuse the malformed member. |
+| `CCW-04` | Change one catalog class, node, binder type, source-default memory model or drain member; rebuild exact dependencies and recompute `package_id`, but retain the refinement node id | The edited projection matches the new `package_id`; the closed preimage digest changes and the dedicated refinement identity check refuses `invalid_package`/`stale-node-key` before class joins. |
 | `CCW-05` | Rekey the changed refinement and update references and package identity, but leave a local catalog node or binder type out of exact `dependencies` | Graph shape refuses `invalid_semantic_graph` at `/dependencies` before the refinement body step. |
+| `CCW-06` | Remove a protocol clause's `owner_model`, put an external key there, or remove its local owner node from exact dependencies | Both schemas refuse the absent edge or external-key shape; graph admission refuses a missing owner dependency. |
+| `CCW-07` | Retarget `owner_model` to another selected model and recompute the clause node id and package id | Both schemas admit the closed local edge; the clause key changes and the reader returns the new owner identity unchanged. |
 
 ### Graph order vectors
 
