@@ -27,7 +27,7 @@ completed result. That record is closed; its members are defined under
 | --- | --- |
 | decimal | `decimal.operands`, `decimal.scale-expansion`, `decimal.arithmetic`, `decimal.rounding`, `decimal.result-retain` |
 | text | `text.input-bytes`, `text.decode-scalars`, `text.normalize-input`, one `text.normalize-output` before each emitted scalar, `text.result-retain` |
-| text to number | `text.input-bytes`, `text.decode-scalars`, for a `Text[..]` operand under a normalizing profile `text.normalize-input` and one `text.normalize-output` before each normalized scalar, `text-number.value`, then for a decimal target at a non-`exact` rounding step `decimal.rounding` and for a finite IEEE text `ieee.round`, then `text-number.result-retain` (FR-478) |
+| text to number | `text.input-bytes`, `text.decode-scalars`, for a `Text[..]` operand under a normalizing profile `text.normalize-input` and one `text.normalize-output` before each normalized scalar; for a decimal target at a non-`exact` rounding step `decimal.rounding`, and for finite IEEE text `ieee.round` (FR-478) |
 | enum | `enum.identity-read`, `enum.result-retain` |
 | unit | `unit.identity-read`, one `unit.edge` before each source/target edge, `unit.rational-arithmetic`, `unit.target-domain`, `unit.result-retain` |
 | integer division | `integer-division.operands`, `integer-division.arithmetic`, `integer-division.domain`, `integer-division.result-retain` |
@@ -82,8 +82,6 @@ unmaterialized result.
 | `text.normalize-input` | no size-counter change |
 | kth `text.normalize-output` | `normalized_scalars=k` across all result-side normalized operand sequences |
 | `text.result-retain` | `result_units += 1` for a text or Boolean result |
-| `text-number.value` | sized from the spelled value before it is materialized, `value_occurrences=1` in every case: for a spelled integer `n` into an integer target, `integer_bits=bits(n)`, `decimal_digits=digits(n)`; for a spelled decimal of coefficient `c` and scale `s` into a decimal target, `integer_bits=bits(c)`, `decimal_digits=digits(c)`; for a rational or quantity target, `integer_bits=max(bits(n),bits(d))` of the spelled numerator `n` and denominator `d` before reduction, where a decimal spelling has `n=c` and `d=10^s` and an integer spelling has `d=1`; for a finite IEEE text of significand digits `c` and power `k` (value `c × 10^k`), `integer_bits=sbits(c,abs(k))`, `decimal_digits=sdigits(c,abs(k))`; for `inf`, `-inf` and `nan`, no size counter |
-| `text-number.result-retain` | `result_units += 1` |
 | each `enum.identity-read` | `value_occurrences=number of enum operands read so far` |
 | `enum.result-retain` | `result_units += 1` |
 | each `unit.identity-read` | `value_occurrences=number of quantity operands read so far`, `integer_bits=maxparts` over their exact rational values |
