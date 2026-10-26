@@ -440,3 +440,9 @@ fixtures/positive-*.json` reports stale keys without writing). It does not
 rewrite values derived from a package id elsewhere, such as
 `dependency-selection-vectors.json`; `cargo test --test checked_package_v2`
 names those that are stale.
+
+The top-level `dependency_selections` of `dependency-selection-vectors.json`
+are placeholder ids (`3333...`, `4444...`) that no admitted package has, so the
+reader refuses them `missing_import`; a rekey must never replace them with a
+fixture's own package id (a test checks this). Only the vectors' own
+`package_id` and the `closure_vectors` ids built on real fixtures are derived.

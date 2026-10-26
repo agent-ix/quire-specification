@@ -6196,6 +6196,19 @@ fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
         "the published selections are one per library identity, ascending"
     );
 
+    // The published selections are placeholders no admitted package has.
+    let admitted_ids: Vec<Value> = positive_fixtures()
+        .iter()
+        .map(|(_, package)| package["package_id"]["digest"].clone())
+        .collect();
+    for entry in entries.as_array().expect("dependency selections are an array") {
+        assert!(
+            !admitted_ids.contains(&entry["package_id"]["digest"]),
+            "{} names an admitted fixture, not a placeholder",
+            entry["identity"]
+        );
+    }
+
     let mut package = with_dependency_selections(entries);
     package["package_id"]["digest"] = vectors["package_id"].clone();
     let errors: Vec<String> = schema

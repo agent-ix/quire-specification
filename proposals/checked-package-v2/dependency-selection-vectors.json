@@ -14,7 +14,7 @@
       "package_id": {
         "domain": "quire.package.semantic/v2",
         "algorithm": "sha256",
-        "digest": "c76d732a12cc415be0ca09e0c0e45c64e81736fe450de0f5da746e59b060a9ff"
+        "digest": "3333333333333333333333333333333333333333333333333333333333333333"
       }
     },
     {
@@ -22,11 +22,11 @@
       "package_id": {
         "domain": "quire.package.semantic/v2",
         "algorithm": "sha256",
-        "digest": "c76d732a12cc415be0ca09e0c0e45c64e81736fe450de0f5da746e59b060a9ff"
+        "digest": "4444444444444444444444444444444444444444444444444444444444444444"
       }
     }
   ],
-  "package_id": "05e585ba6a64ba6fd096d733e4df4ea67a1c4e9abcf65c171789d40149752123",
+  "package_id": "59a14a9a774b346b826f0565099638b9d60b3e61fc64c79a4ce32299c2f2d778",
   "entry_mutations": [
     {
       "id": "definition-selection-shape",
