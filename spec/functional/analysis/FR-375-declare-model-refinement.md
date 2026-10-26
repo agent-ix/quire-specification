@@ -454,17 +454,33 @@ alias-free `class` spelling. A declared class entry is exactly
 `{class, node, binder_types}`: `node` is a local `NodeRef` for a concrete
 class and a `RefinementKey` for an abstract class; `binder_types` is the
 ordered array of local `NodeRef`s or abstract-side `RefinementKey`s for that
-class's checked binder record and may be empty. A memory entry is exactly
-`{class: "memory <kind>", memory_model}`, with no `node` or
-`binder_types`, where `memory_model` is `sc`, `tso` or `ra` and `<kind>` is a
-nonempty single step-kind name. The protocol body step admits the entry only when that
-source-default model defines the named step (FR-434, FR-436, FR-437); among
-these models the only currently defined memory class is `tso`/`flush`.
+class's checked binder record and may be empty. A memory entry is one of
+`{class: "memory drain", memory_model, drain}` and
+`{class: "memory flush", memory_model: "tso"}`, with no `node` or
+`binder_types`. A drain entry's `memory_model` is `sc`, `tso` or `ra`, and
+its `drain` is `store-buffer-flush`. A
+`memory drain` is a class of each source-default model (`sc`, `tso` and
+`ra`), and the catalog contains it for each of those models selected by a
+source `parallel` in that subject. Executing the class drains the thread's pending writes until they
+are visible according to that model's visibility rule; under `sc` it is a
+no-op. Under `tso` it flushes the thread's store buffer in FIFO order; under
+`ra` it has no store-buffer entries to remove and grants no additional
+visibility or ordering beyond FR-437. `memory flush` remains a `tso` class
+and is catalogued when a source `parallel` selects `tso`; it removes the
+oldest buffered write for one thread. Other memory entries
+are admitted only when the source-default model defines their named step
+(FR-434, FR-436, FR-437).
 FR-432's closed class table determines the spellings and node associations:
 `fork` and `join` are two classes of one `parallel` node, and a memory class
 has no node. The concrete catalog covers the selected concrete model's
 operation classes and all protocol clauses in the declaring package whose
-`over` parameter denotes that model, with their source memory defaults.
+identity-bound `owner_model` edge names that model, with their source memory
+defaults. The edge is on each protocol-clause node, names the exact model
+`NodeRef`, is part of its application-node identity preimage and exact
+`dependencies`, and is not inferred from the `over` parameter's type. Every
+such clause contributes its classes even when the refinement has no step
+rows; a clause whose edge names another model is foreign and contributes
+none.
 The abstract catalog covers the selected `protocol` clause when present,
 or the abstract model's operation classes otherwise. It excludes classes
 of another model or an unselected dependency.
@@ -643,7 +659,7 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-20 | A checked package carrying an admitted `relation`/`refinement` node with row-empty arrays and a local abstract model is read with the node key recomputed from the closed `quire.refinement-node/v1` preimage, not from `quire.structural-node/v1` or `quire.application-node/v1`; changing only its concrete `semantic_type` or one body row while retaining its node id, and recomputing the package id and dependency list, refuses `invalid_package`/`stale-node-key` at that node in the refinement body step. | Test (TC-310) |
 | FR-375-AC-21 | With every identity recomputed, the reader visits refinement nodes in ascending retained digest order and applies canonical order, header joins and row joins after the identity check; an out-of-order row refuses `invalid_semantic_graph` at the first offending entry, an absent local `abstract` key refuses `missing_declaration`/`missing-name`, an absent direct dependency for an external `abstract` key refuses `missing_declaration`/`missing-selection`, and a wrong-kind local `semantic_type` refuses `invalid_model_binding`/`malformed-declaration`, each at the member this section names. | Test (TC-310) |
 | FR-375-AC-22 | For each step row the producer emits one `refinement_step_rows` entry with the source region of that original checked row, associated with the refinement owner id and its canonical zero-based step ordinal; reversing source order while retaining the same semantic rows changes the region assignments but not the owner id or package id. | Test (TC-310) |
-| FR-375-AC-23 | A protocol refinement carries a complete, canonical `class_catalog` of its source-level concrete and abstract classes and checked binder types in both V2 schemas and its node-key preimage. A tied `fork`/`join` pair names one parallel node under two distinct class spellings; a class of another selected model or protocol, a changed class/node association, a missing or duplicated class, a wrong binder record, or a memory kind absent from its source-default model refuses under the catalog and row-join rules. A later request's memory override changes no checked-package class fact or package id. | Test (TC-310, TC-233) |
+| FR-375-AC-23 | A protocol refinement carries a complete, canonical `class_catalog` of its source-level concrete and abstract classes and checked binder types in both V2 schemas and its node-key preimage. A tied `fork`/`join` pair names one parallel node under two distinct class spellings; a class of another selected model or protocol, a changed class/node association, a missing or duplicated class, a wrong binder record, or a memory kind absent from its source-default model refuses under the catalog and row-join rules. The concrete catalog includes classes from every clause whose identity-bound `owner_model` equals the selected concrete model, including when no step rows name those classes, and excludes clauses whose edge names another model. For each of `sc`, `tso` and `ra` used as a source default in that subject, `memory drain` is recorded; `memory flush` is recorded when `tso` is a source default. Each `memory drain` entry carries `drain: store-buffer-flush`, whose SC behavior is a no-op. A later request's memory override changes no checked-package class fact or package id. | Test (TC-310, TC-233) |
 
 ## Dependencies
 

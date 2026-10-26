@@ -58,6 +58,7 @@ admits a step row. The left sides read:
 | `fence` of one fence node | `step <C>::<protocol>::<node>` |
 | `activate` of the clause's trigger | `step activate <C>::<protocol>` |
 | one memory step kind | `step memory <kind>` with `kind` a memory step name of the resolved model, such as `flush` |
+| cross-model drain class | `step memory drain`, available under source defaults `sc`, `tso` and `ra`; it drains the thread's pending writes under that model's visibility rule, is a no-op under `sc`, flushes the TSO store buffer in FIFO order, and under RA has no store-buffer entries to remove and grants no additional visibility or ordering beyond FR-437 |
 
 **Deciding row.** Each class has exactly one deciding row. For an `attempt`
 class, the deciding row is the node row naming that attempt node when one
@@ -167,6 +168,7 @@ whitespace and no other characters, and is its own canonical spelling.
 | `spawn`, `retire` of one role | `spawn <A>::<protocol>::<role>`, `retire <A>::<protocol>::<role>` |
 | `activate` of the clause's trigger | `activate <A>::<protocol>` |
 | one memory step kind | `memory <kind>` |
+| cross-model drain class | `memory drain` |
 
 `<A>::<protocol>` must be the refinement's abstract alias and selected
 abstract protocol. A bare node path names the one class of an attempt, event,
@@ -224,7 +226,7 @@ FR-177 over the same product.
 | --- | --- | --- |
 | FR-432-AC-1 | A protocol refinement whose concrete protocol has a `fork`, a `join`, a `send` and a `finish` with no rows refuses `missing_declaration`/`missing-name` once per class, naming each node; with one row per class written out as `stutter`, `any` or an abstract step it is admitted. | Test (TC-386) |
 | FR-432-AC-2 | A node row and an operation row for the same attempt node admit, with the node row deciding that node's steps and the operation row deciding a second attempt node of the same operation that has no node row; two node rows for one node, or two operation rows for one operation, refuse `invalid_model_binding`/`conflicting-binding` naming both. | Test (TC-386) |
-| FR-432-AC-3 | A concrete protocol under `tso` with no `step memory flush` row refuses naming the `flush` kind; with the row it is admitted. | Test (TC-386) |
+| FR-432-AC-3 | A concrete protocol under `tso` with no `step memory flush` row refuses naming the `flush` kind; with the row it is admitted. A `step memory drain` row is a valid class under each source default `sc`, `tso` and `ra`; it drains pending writes according to the selected model, with no-op behavior under `sc` and no stronger visibility promise under `ra`. | Test (TC-386, TC-310) |
 | FR-432-AC-4 | A concrete step mapped by `stutter` that changes a mapped visible field refutes the refinement; one mapped to an abstract send whose label no enabled abstract step carries, after abstract internal steps, refutes it; with the matching abstract step enabled it passes. | Test (TC-386) |
 | FR-432-AC-5 | An abstract step absent from the refinement's internal list is visible: a concrete internal step cannot match it. | Test (TC-386) |
 | FR-432-AC-6 | A declaration headed `abstract Spec::Req` over the abstract model alias `Spec` selects its protocol clause `Req`, and its step rows may name that protocol's nodes; the same rows under the header `abstract Spec` select a model subject and a row naming `node Spec::Req::Ask` refuses `invalid_model_binding`/`malformed-declaration` at that node. | Test (TC-386) |

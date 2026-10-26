@@ -65,11 +65,18 @@ FR-466, with the first refusal in the order below.
 - **occurrences** — every occurrence has role `declaration`, one per
   declaring construct in the source, except a `queue` node, whose occurrences
   have role `generated`.
-- **dependencies** — FR-322's application-node rule: exactly the unique
-  digest-ascending `reference` targets of the body.
+- **owner_model** — required on a `protocol_clause` node and absent on every
+  other protocol node. It is a local `NodeRef` to the exact model declaration
+  over which the source clause is declared. This explicit edge is authoritative
+  for clause-to-model ownership; a consumer SHALL NOT infer ownership from the
+  `over` parameter's type. It enters the node's application identity preimage
+  and exact dependency set.
+- **dependencies** — exactly the unique digest-ascending local `NodeRef`s
+  reached by the body plus `owner_model` when present.
 - **node key** — FR-322's `quire.application-node/v1` preimage
   `{version, node_tag, semantic_form, semantic_type, declaration, recursion,
-  body}`. Under Option A below, `recursion` is `null` and
+  owner_model, body}` for a protocol clause; `owner_model` is absent on other
+  protocol nodes. Under Option A below, `recursion` is `null` and
   `recursion_group` absent for a protocol node outside a cyclic reference
   component. Every node in a cyclic component, including nodes with another
   `node_tag`, uses FR-322's recursion-group encoding: one explicit shared
@@ -170,6 +177,13 @@ with thirteen arguments, in this order:
 | 12 | `run` | a reference to the root `protocol`/`control` node |
 | 13 | `finish` | a reference to the protocol's `finish` `obligation` node |
 
+The clause's model owner is the separate node-level `owner_model` edge above;
+it is not a fourteenth body argument. The edge targets the exact local model
+declaration node represented by the clause's source `over` type. The reader
+checks that the target is a selected model declaration node and that it is an
+exact dependency of the clause. FR-375 uses this identity-bound edge to decide
+which concrete clauses contribute classes to a refinement catalog.
+
 A relationship declaration has no node of its own: its name is a source
 alias, and the `related by` annotations of FR-466 name the model
 relationship node directly. The alias is not carried. A protocol with no
@@ -179,8 +193,9 @@ without `scheduling adversarial` and one with it are two different
 packages.
 
 The `protocol_clause` node's occurrences have role `declaration`, at the
-`protocol` declaration. Its `dependencies` are the nodes its body
-references, so the clause depends on its roles, channels, queues,
+`protocol` declaration. Its `dependencies` are the nodes its body references
+plus `owner_model`, so the clause depends on its exact owner model, its roles,
+channels, queues,
 requirements, compensations, `terminal` and `finish` nodes, its root control
 and the `value`/`parameter` and `expression` nodes of its first three
 arguments. A `requirements` entry whose temporal clause reaches the same
@@ -480,7 +495,7 @@ alternate cycle encoding.
 | --- | --- | --- |
 | FR-464-AC-1 | Every protocol node's body is a `quire.op.protocol.control` application with operator class `protocol_control`, one `protocol_profile` law equal to the lock's row, a `profile_operator` member naming an operator of the catalog, `null` mode, empty leaves, `result_type` the Boolean node and `semantic_type` the same node; a body that applies another identity, carries two laws, another member kind or a `null` member, or whose arguments are not the operator's bindings in order, refuses `malformed_wire` or `operation-member-mismatch`. | Test (TC-946) |
 | FR-464-AC-2 | Each operator belongs to the one `semantic_form` the catalog names; an application at the body root of a node of another form or tag refuses `ill_typed`/`operator-ineligible` at that node, and the same application nested in a body or term refuses `malformed_wire` at the nested application. | Test (TC-946) |
-| FR-464-AC-3 | An acyclic protocol node has no `recursion_group` and a `quire.application-node/v1` key preimage with `recursion` `null`: reformatting the source, a comment, a second reference to the protocol and declaring the roles in another source order leave every key and the `package_id` unchanged; renaming a role, reordering two `children`, changing one literal or retargeting one reference changes the node key and the `package_id`; a set out of ascending digest order or repeating an entry refuses `invalid_semantic_graph`. | Test (TC-946) |
+| FR-464-AC-3 | An acyclic protocol node has no `recursion_group` and a `quire.application-node/v1` key preimage with `recursion` `null`: reformatting the source, a comment, a second reference to the protocol and declaring the roles in another source order leave every key and the `package_id` unchanged; renaming a role, reordering two `children`, changing one literal, retargeting one reference or changing a clause's `owner_model` changes the affected node key and the `package_id`; a set out of ascending digest order or repeating an entry refuses `invalid_semantic_graph`. | Test (TC-946) |
 | FR-464-AC-4 | A role, a channel, a template and a control named `X` in one protocol have four distinct declarations; two controls on one path, or two roles of one name, refuse `ambiguous_declaration`/`ambiguous-name` naming both keys; a control whose declaration is not its holder's declaration followed by its name, a control held twice and a control held by nothing refuse `invalid_semantic_graph` at the control. | Test (TC-946) |
 | FR-464-AC-5 | The clause body is thirteen bindings in the order the "Clause body" table lists; `activation` is `origin` with no trigger or `each` with a trigger and an optional guard; a protocol with no relationship, requirement, compensation, `terminal` member or `scheduling` has empty sets and absent optionals and is admitted; a body with arguments reordered, missing or of another term shape refuses `malformed_wire`. | Test (TC-946) |
 | FR-464-AC-6 | A listed role, channel, queue, compensation or obligation node that is not of the stated tag and form refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `relationships` target that is not a `relation`/`relationship` node `invalid_model_binding`/`wrong-export`; a target absent from `dependencies` refuses `missing_declaration`/`missing-name`; a declaration node named by two arguments of one clause or by two clauses, a node owned by no clause, a channel with no queue or with two, and a queue naming another clause's channel refuse `invalid_semantic_graph`. | Test (TC-946) |
@@ -493,6 +508,7 @@ alternate cycle encoding.
 | FR-464-AC-13 | The activation relation of an admitted protocol is derived from its clause node's `activation` and `requirements` alone: `activation on each (opened)` with `requires temporal OrderClosureBounded` gives exactly one row, the clause key, `each` with `opened`'s node key and `OrderClosureBounded`'s node key; under `activation on origin` the one row carries `origin` and no trigger; a protocol with no requirement has no row; a second `requires temporal OrderClosureBounded` leaves one row; a second required temporal clause gives two rows in ascending node-id digest order; a temporal clause that shares the protocol's clock but is not required gives no row; a `requirements` entry or an `each` trigger absent from the clause's `dependencies` refuses `missing_declaration`/`missing-name` at the target with no relation. | Test (TC-946) |
 | FR-464-AC-14 | A complete refinement class catalog whose rows agree with it is admitted after its selected protocol graph passes the protocol step. When one otherwise valid package has both an independent protocol-body member defect and a rekeyed catalog class associated with the wrong existing control node, the protocol-body defect refuses first; after repairing only that defect and rebuilding the changed keys and package identity, the catalog association refuses. A refinement row/catalog mismatch instead refuses at the earlier refinement step before either protocol defect. | Test (TC-310) |
 | FR-464-AC-15 | When a predicate-join function refers to its own protocol and the checked-node references form a cycle, the reader admits the package using FR-322's recursion-group encoding for the entire cyclic component, including non-protocol nodes: all component members share the group, carry `{size, ordinal}` coordinates and encode in-component references as `group_reference`. Acyclic protocol nodes have no `recursion_group`, use `recursion` `null` and retain their existing key inputs. | Test (TC-946) |
+| FR-464-AC-16 | Every `protocol_clause` node has one `owner_model` local `NodeRef` to its exact model declaration node; the edge is present in both V2 schemas, included in the clause's application-node preimage and exact dependencies, and absent from every other node. A missing edge, external key, non-model target or missing dependency refuses at the edge or dependency before clause interpretation. Retargeting only the edge changes the clause key and package id. FR-375 includes every clause whose edge equals the selected concrete model in its class catalog, even when no step row names its classes, and excludes a clause whose edge names another model. | Test (TC-946, TC-310) |
 
 ## Published artifacts and the operation catalog
 
