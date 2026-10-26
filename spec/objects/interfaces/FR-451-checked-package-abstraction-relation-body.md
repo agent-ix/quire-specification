@@ -51,9 +51,28 @@ nothing else.
 - **Keys.** An object entry's key is its `type` target, a `model`/
   `object_type` node, whose node key is the object type's AD-006
   effective-declaration key carried as its `ModelOwner` (FR-322
-  "Model-owned members"). A population entry's key is its `population`
-  target, a `relation`/`population` node, whose node key is the population's
-  declaration key carried as its `ModelOwner` (FR-322 "Population references"). A frame entry's key is the
+  "Model-owned members"). A population entry's `population` value is the
+  `NodeId` of its target `relation`/`population` node, not the population's
+  declaration key directly, its member type, a collection node, or a scalar
+  text node. The target is the FR-322 "Population references" node: its
+  `owner` is `{kind: "model", identity, node}`, where `identity` is the
+  selected domain package identity and `node` is the population declaration's
+  IR identity; its `node_tag`/`semantic_form` are `relation`/`population`, its
+  body is `{term: "aggregate", members: []}`, its `semantic_type` is its own
+  `node_id`, and its `dependencies` are empty. Its `node_id` is the JCS
+  SHA-256 of the FR-322 `quire.structural-node/v1` preimage containing exactly
+  that tag, form, owner, self-typing inputs and body. It therefore identifies
+  the declaration through its `ModelOwner`, while the enclosing abstraction
+  relation's `dependencies` includes this target node id. The published
+  P7/P8 identity vectors in
+  [model-owner-form-vectors.json](../../../proposals/checked-package-v2/model-owner-form-vectors.json)
+  are two concrete cases: `acme/runs/counters` targets P7
+  (`15ed74b124665e2fb9375dc02e715243dce2eb0d7d63d1f36c52f5fa1241a91a`),
+  and `acme/runs/archive` targets P8
+  (`cc575f3d64f43a4bf787f5febdc73fbc9f2212617393877fa00371611204be24`).
+  Both use the same node shape and package identity, but their declaration
+  identities produce distinct owner nodes, target ids and relation keys. A
+  frame entry's key is the
   operation key: its `context` target, a `model`/`object_type` node, and
   its `operation` identifier, the same pair a `state`/`operation_anchor`
   node binds
@@ -134,6 +153,7 @@ object, population or operation key refuses `invalid_model_binding`/
 | FR-451-AC-5 | Two nodes that bind one object key refuse `invalid_model_binding`/`conflicting-binding` naming both entries and the key, at the second in ascending node-id digest order. | Test (TC-412) |
 | FR-451-AC-6 | Recompiling an unchanged unit gives the same node id and package id; changing one field's `rust_field` changes both. | Test (TC-412) |
 | FR-451-AC-7 | An object entry holding two `fields` entries named `version`, bound to different Rust fields, refuses `invalid_model_binding`/`conflicting-binding` naming both entries and `version`. | Test (TC-412) |
+| FR-451-AC-8 | The `population` value of an abstraction entry is the `node_id` of the FR-322 population declaration node: the P7 `counters` case and P8 `archive` case each admit the exact `relation`/`population` node, owner, empty aggregate body, self `semantic_type`, empty dependencies and identity preimage in `model-owner-form-vectors.json`; the enclosing relation depends on that node id. The two targets remain distinct although they share package identity and node shape. A member-type or text-literal node used in place of either target refuses `invalid_model_binding`/`malformed-declaration` at the target. | Test (TC-412) |
 
 ## Dependencies
 
