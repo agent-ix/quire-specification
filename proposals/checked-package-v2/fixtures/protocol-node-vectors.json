@@ -1,0 +1,2730 @@
+{
+  "operators": [
+    {
+      "arguments": [
+        "over",
+        "activation",
+        "captures",
+        "roles",
+        "relationships",
+        "channels",
+        "queues",
+        "requirements",
+        "compensations",
+        "terminal",
+        "scheduling",
+        "run",
+        "finish"
+      ],
+      "operator": "protocol",
+      "semantic_form": "protocol_clause"
+    },
+    {
+      "arguments": [
+        "model",
+        "replication"
+      ],
+      "operator": "role",
+      "semantic_form": "role"
+    },
+    {
+      "arguments": [
+        "from",
+        "to",
+        "carries",
+        "ordering",
+        "delivery"
+      ],
+      "operator": "channel",
+      "semantic_form": "channel"
+    },
+    {
+      "arguments": [
+        "channel",
+        "capacity",
+        "overflow",
+        "loss"
+      ],
+      "operator": "queue",
+      "semantic_form": "queue"
+    },
+    {
+      "arguments": [
+        "binder",
+        "constraint"
+      ],
+      "operator": "finish",
+      "semantic_form": "obligation"
+    },
+    {
+      "arguments": [
+        "mode",
+        "condition"
+      ],
+      "operator": "terminal",
+      "semantic_form": "obligation"
+    },
+    {
+      "arguments": [
+        "children"
+      ],
+      "operator": "sequence",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "owner",
+        "visible",
+        "cases"
+      ],
+      "operator": "choice",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "memory",
+        "branches",
+        "join",
+        "joined",
+        "outstanding"
+      ],
+      "operator": "parallel",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "owner",
+        "visible",
+        "maximum",
+        "proof",
+        "guard",
+        "body",
+        "exhausted"
+      ],
+      "operator": "repeat",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "after",
+        "clock",
+        "within",
+        "event",
+        "then",
+        "timeout"
+      ],
+      "operator": "await",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "condition"
+      ],
+      "operator": "check",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "channel",
+        "binder",
+        "related",
+        "constraint"
+      ],
+      "operator": "send",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "channel",
+        "of",
+        "binder",
+        "related",
+        "constraint"
+      ],
+      "operator": "receive",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "role",
+        "operation",
+        "ordering",
+        "contracts",
+        "binder",
+        "related",
+        "constraint"
+      ],
+      "operator": "attempt",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "of",
+        "binder",
+        "related",
+        "constraint"
+      ],
+      "operator": "effect",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "role",
+        "compensation",
+        "binder",
+        "related",
+        "constraint"
+      ],
+      "operator": "event",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "role",
+        "binder",
+        "constraint"
+      ],
+      "operator": "commit",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "ordering"
+      ],
+      "operator": "fence",
+      "semantic_form": "control"
+    },
+    {
+      "arguments": [
+        "forward",
+        "forward_binder",
+        "role",
+        "operation",
+        "clock",
+        "registration_captures",
+        "trigger",
+        "activation_captures",
+        "within",
+        "attempts",
+        "retry",
+        "commit",
+        "recovery"
+      ],
+      "operator": "compensate",
+      "semantic_form": "compensation"
+    }
+  ],
+  "positive": [
+    {
+      "expected": "admitted",
+      "fixture": "positive-all-families.json",
+      "id": "P1",
+      "node_form": "protocol_clause"
+    },
+    {
+      "expected": "admitted",
+      "fixture": "positive-clause-operations.json",
+      "id": "P2",
+      "node_form": "control",
+      "operator": "sequence"
+    }
+  ],
+  "protocol_profile": {
+    "authority": "agent-ix",
+    "identity": "quire.protocol.finite-global/v1"
+  },
+  "cases": [
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V1",
+      "Edit to the base": "none",
+      "Expected": "admitted; every body is a `quire.op.protocol.control` application with one `protocol_profile` law equal to the lock's row, a `profile_operator` member, the Boolean `result_type` and `semantic_type`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V2",
+      "Edit to the base": "`Requested`'s body applies `quire.op.state.clause`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the node (a state clause application at a protocol node's root)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V3",
+      "Edit to the base": "the `Orders` role node's operator is `channel`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the node (operator of another form)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V4",
+      "Edit to the base": "the `Orders` node's `semantic_form` is `control` with the `role` operator",
+      "Expected": "`ill_typed`/`operator-ineligible` at the node"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V5",
+      "Edit to the base": "a `quire.op.protocol.control` application nested as an argument of `Main`",
+      "Expected": "`malformed_wire` at the nested application (strict wire validation)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V6",
+      "Edit to the base": "a `protocol_reference` carrier's body is a `quire.op.protocol.control` application",
+      "Expected": "refuses `malformed_wire` (`malformed_wire`)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V7",
+      "Edit to the base": "`Requested`'s member operator is `jump`",
+      "Expected": "`invalid_package`/`operation-member-mismatch` at the application"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V8",
+      "Edit to the base": "`Requested`'s member is `null`",
+      "Expected": "`invalid_package`/`operation-member-mismatch`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V9",
+      "Edit to the base": "`Requested`'s `laws` is empty",
+      "Expected": "`invalid_package`/`operation-law-missing`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V10",
+      "Edit to the base": "`Requested`'s law names the package's `temporal_profile` definition",
+      "Expected": "`invalid_package`/`operation-law-mismatch`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V11",
+      "Edit to the base": "the lock has no `protocol_profile` row",
+      "Expected": "`invalid_package`/`operation-law-unselected`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V12",
+      "Edit to the base": "`Requested` has two laws",
+      "Expected": "refuses `malformed_wire` (`malformed_wire`)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V13",
+      "Edit to the base": "`Requested`'s `result_type` and `semantic_type` are the integer node",
+      "Expected": "`ill_typed`/`operator-ineligible` at the operation step (a clause result is Boolean)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V14",
+      "Edit to the base": "a state clause's condition references `Requested`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the state clause node"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V15",
+      "Edit to the base": "a diagnostic's `details` references a `role` node",
+      "Expected": "`ill_typed`/`operator-ineligible` at `/diagnostics/entries/{e}/details/{d}`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Placement and operators",
+      "id": "V16",
+      "Edit to the base": "the lock selects no `temporal_profile` (the base's `Refund` template reads a clock role)",
+      "Expected": "`missing_declaration`/`missing-selection` at the `Refund` node"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K1",
+      "Edit to the base": "reformat the source; add a comment; add a second source reference to the protocol; declare the roles in another source order",
+      "Expected": "every node key and the `package_id` unchanged; the carrier gains one `expression` occurrence"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K2",
+      "Edit to the base": "rename role `Fulfillment` to `Shipping`",
+      "Expected": "the role's node key, every node that references it and the `package_id` change"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K3",
+      "Edit to the base": "swap `Orders` and `Payments` in the clause's `roles` set",
+      "Expected": "`invalid_semantic_graph` at the clause node (a set out of ascending digest order); no role node key changes"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K13",
+      "Edit to the base": "list `Outcome.cases` with `shipped` before `failed`'s sorted position; and, separately, swap two independent `children` of `Finalized`'s holder",
+      "Expected": "the unsorted `cases` is `invalid_semantic_graph` at `Outcome`; swapping two `children` of a `sequence` changes the sequence's key and the `package_id`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K4",
+      "Edit to the base": "change `max 3` to `max 4`",
+      "Expected": "`Poll`'s node key, its ancestors' keys and the `package_id` change"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K5",
+      "Edit to the base": "retarget `Applied`'s `of` from `Charged` to `Requested`",
+      "Expected": "`Applied`'s node key changes and the reader refuses `invalid_model_binding`/`malformed-declaration` at the target (not an `attempt`)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K6",
+      "Edit to the base": "a role `Main`, a channel `Main`, a template `Main` and the root control `Main`",
+      "Expected": "admitted: four distinct declarations (`role`, `channel`, `compensate`, `run` segments)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K7",
+      "Edit to the base": "two roles named `Orders`",
+      "Expected": "`ambiguous_declaration`/`ambiguous-name` naming both node keys"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K8",
+      "Edit to the base": "two controls on one path named `Done`",
+      "Expected": "`ambiguous_declaration`/`ambiguous-name` naming both node keys"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K9",
+      "Edit to the base": "a node's retained key differs from the digest of its preimage",
+      "Expected": "`invalid_package`/`stale-node-key` at the node, before any protocol check"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K10",
+      "Edit to the base": "an acyclic protocol node adds `recursion_group` but leaves `recursion` `null`",
+      "Expected": "refuses `malformed_wire` (`malformed_wire`)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K11",
+      "Edit to the base": "a `queue` node carries a `declaration`",
+      "Expected": "refuses `malformed_wire` (a `generated`-only node carries no declaration)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K12",
+      "Edit to the base": "a `role` node has no `declaration` occurrence",
+      "Expected": "refuses `malformed_wire` (`declaration` is present exactly with a `declaration` occurrence)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K14",
+      "Edit to the base": "a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic",
+      "Expected": "the complete cyclic reference component shares one `recursion_group`, each member has its FR-322 `{size, ordinal}` coordinate and intra-component edges use `group_reference`; the reader admits the package. `Plain` and every other node outside that component have no `recursion_group` and `recursion` `null`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C1",
+      "Edit to the base": "none",
+      "Expected": "admitted: thirteen bindings `over`, `activation`, `captures`, `roles`, `relationships`, `channels`, `queues`, `requirements`, `compensations`, `terminal`, `scheduling`, `run`, `finish` in that order"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C2",
+      "Edit to the base": "`activation on origin`",
+      "Expected": "`activation` is `{kind: origin}`; admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C3",
+      "Edit to the base": "a protocol with no relationship, requirement, compensation, `terminal` or `scheduling`",
+      "Expected": "empty lists and absent optionals; admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C4",
+      "Edit to the base": "`scheduling` removed from the base",
+      "Expected": "the clause node key and the `package_id` change"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C5",
+      "Edit to the base": "`roles` and `channels` swapped in the body",
+      "Expected": "refuses `malformed_wire` (binding names out of order)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C6",
+      "Edit to the base": "the `finish` binding missing",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C7",
+      "Edit to the base": "`over` is a `literal`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C8",
+      "Edit to the base": "`activation.kind` is `always`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C9",
+      "Edit to the base": "`activation` is `origin` and carries `trigger`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C10",
+      "Edit to the base": "`requirements` names a `state`/`state_clause` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C11",
+      "Edit to the base": "`relationships` names a `protocol`/`role` node",
+      "Expected": "`invalid_model_binding`/`wrong-export` at the target, retaining required kind `relationship`, the actual kind and both keys"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C12",
+      "Edit to the base": "`run` names a `role` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C13",
+      "Edit to the base": "`compensations` names a node that is not in the clause's `dependencies`",
+      "Expected": "`missing_declaration`/`missing-name` at the target"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M1",
+      "Edit to the base": "`Orders` listed in `roles` twice",
+      "Expected": "`invalid_semantic_graph` at the clause node"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M2",
+      "Edit to the base": "an extra `role` node `Auditor` that no clause lists",
+      "Expected": "`invalid_semantic_graph` at the node (unattached)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M3",
+      "Edit to the base": "an extra `queue` for `Charges`",
+      "Expected": "`invalid_semantic_graph` (a channel with two queues)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M4",
+      "Edit to the base": "the `queue` removed",
+      "Expected": "`invalid_semantic_graph` (a channel with no queue)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M5",
+      "Edit to the base": "the `queue` names a channel of another clause",
+      "Expected": "`invalid_semantic_graph` at the queue node"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M6",
+      "Edit to the base": "`Shipments`' `branches` names `Polled` as `east`'s body, while `Poll` also holds it",
+      "Expected": "`invalid_semantic_graph` at `Polled` (held twice)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M7",
+      "Edit to the base": "a control `Stray` that no control holds and `run` does not root",
+      "Expected": "`invalid_semantic_graph` at `Stray`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M8",
+      "Edit to the base": "`Done`'s declaration is `OrderFlow, run, Done`",
+      "Expected": "`invalid_semantic_graph` at `Done` (declaration is not its holder's path followed by its name)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M9",
+      "Edit to the base": "`Applied`'s declaration begins with another protocol's name",
+      "Expected": "`invalid_semantic_graph` at `Applied` (declaration prefix)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Membership",
+      "id": "M10",
+      "Edit to the base": "a second `finish` node not named by any clause",
+      "Expected": "`invalid_semantic_graph` at the node"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B1",
+      "Edit to the base": "none",
+      "Expected": "`view` level 0, `opened` 1, `order` 2, `sent` 3, `got` 4, `charge` 5, `paid` 6"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B2",
+      "Edit to the base": "`opened`'s `level` is 0",
+      "Expected": "`invalid_semantic_graph` at the binder (level is the entry count)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B3",
+      "Edit to the base": "`got`'s `body` has a third binding",
+      "Expected": "refuses `malformed_wire` (the FR-341 binder body is exactly `name`, `level`)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B4",
+      "Edit to the base": "`got`'s occurrence has role `declaration`",
+      "Expected": "refuses `malformed_wire` (binder occurrences are `expression`)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B5",
+      "Edit to the base": "two binders named `order` readable at one place",
+      "Expected": "`ambiguous_declaration`/`ambiguous-name` at the second binder's introducing node"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B6",
+      "Edit to the base": "the activation guard references capture `order`",
+      "Expected": "`missing_declaration`/`missing-name` at the clause node, `stage` `protocol-activation`, `read` `stage` (the guard reads the activation binder only)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B20",
+      "Edit to the base": "the activation guard references `view` (`over`)",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read, naming the guard (`over` is model state; the refusal precedes the stage table)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B21",
+      "Edit to the base": "the `Poll` guard references `view`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read, naming the guard"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B22",
+      "Edit to the base": "the `Poll` guard references the capture `order`",
+      "Expected": "admitted (a guard may read a protocol capture without listing it)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B23",
+      "Edit to the base": "a protocol capture initializer reads `view` and the activation binder",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B24",
+      "Edit to the base": "a `check` condition reads `view`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B25",
+      "Edit to the base": "an event constraint and a `related` end read `view`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B26",
+      "Edit to the base": "the `Poll` guard is an integer term",
+      "Expected": "`ill_typed`/`non-boolean-root` at the guard"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B7",
+      "Edit to the base": "the capture initializer references a later capture",
+      "Expected": "`missing_declaration`/`missing-name` at the clause node, `read` `forward`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B8",
+      "Edit to the base": "`Received`'s constraint reads `sent`",
+      "Expected": "admitted (a successor reads its predecessor's binder)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B9",
+      "Edit to the base": "`East`'s constraint reads `westRes`",
+      "Expected": "`missing_declaration`/`missing-name` at `East` (sibling branches read nothing of each other)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B10",
+      "Edit to the base": "`Done`'s `check` reads `eastRes`",
+      "Expected": "admitted (`join all` exposes the branches' binders after `Shipments`)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B11",
+      "Edit to the base": "`Limit`'s `check` reads `polled`",
+      "Expected": "`missing_declaration`/`missing-name` at `Limit` (an iteration binder does not escape)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B12",
+      "Edit to the base": "`Finalized`'s constraint reads `eastRes`",
+      "Expected": "admitted (`Out(Outcome)` keeps the joined branches' binders)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B13",
+      "Edit to the base": "`Finalized`'s constraint reads `polled`",
+      "Expected": "`missing_declaration`/`missing-name` at `Finalized`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B14",
+      "Edit to the base": "`Outcome`'s case `shipped` guard `{ eastRes.ok }` is replaced by `{ isTrue(M::Order(view.id).open) }` (a `quire.op.model.deref`)",
+      "Expected": "`ill_typed`/`operator-ineligible` at the guard's read"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B15",
+      "Edit to the base": "the `Poll` guard holds `quire.op.state.pre`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B16",
+      "Edit to the base": "a `check` condition over a `quire.op.model.all_instances`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B17",
+      "Edit to the base": "`Requested`'s constraint (not binders-only) dereferences a model object",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B18",
+      "Edit to the base": "the `finish` constraint reads `eastRes`",
+      "Expected": "admitted (`finish` reads `Out(root)`)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Binders and scope",
+      "id": "B19",
+      "Edit to the base": "the `finish` constraint reads `polled`",
+      "Expected": "`missing_declaration`/`missing-name` at the `finish` node"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R1",
+      "Edit to the base": "none",
+      "Expected": "acyclic: `message` edge `Requested`.exit to `Received`.enter, `effect` edge `Charged` to `Applied`, `join` edges from `East` and `West` to `Shipments`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R2",
+      "Edit to the base": "`Received` is sequenced before `Requested` (children swapped) while `Received` still receives `Requested`",
+      "Expected": "`invalid_package`/`definition-cycle` naming `Requested` and `Received`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R3",
+      "Edit to the base": "`Requested` on branch `east` and `Received` on branch `west` of one `parallel`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R4",
+      "Edit to the base": "`Applied` sequenced before `Charged`",
+      "Expected": "`invalid_package`/`definition-cycle` naming `Charged` and `Applied`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R5",
+      "Edit to the base": "an `await` anchored at a control that follows the `await`",
+      "Expected": "`invalid_package`/`definition-cycle` naming the `await` and its anchor"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R6",
+      "Edit to the base": "`Poll`'s back edge",
+      "Expected": "not a cycle: admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R7",
+      "Edit to the base": "`Poll`'s body is only a `check`",
+      "Expected": "`unsupported_construct`/`declaration-form` at `Poll`, naming it and the profile"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R8",
+      "Edit to the base": "`Poll`'s body is a `choice` with an `attempt` in one case and an empty `sequence` in the other",
+      "Expected": "`unsupported_construct`/`declaration-form` at `Poll`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R9",
+      "Edit to the base": "`Poll`'s body is a `choice` with an `attempt` in one case and a nested `repeat` around an `attempt` in the other",
+      "Expected": "`unsupported_construct`/`declaration-form` at the outer `repeat`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R10",
+      "Edit to the base": "`Poll`'s body is one `await` with a `timeout` control, or one `parallel` with a `join`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R11",
+      "Edit to the base": "`Poll` with a `maximum` only, a `proof` only, both and neither",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R12",
+      "Edit to the base": "`Poll` with `maximum: 0`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O1",
+      "Edit to the base": "a `state`/`state_clause` defect and `V7`",
+      "Expected": "the state-step defect is reported"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O2",
+      "Edit to the base": "`V2` (placement) and `K7` (duplicate declaration)",
+      "Expected": "the placement defect is reported"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O3",
+      "Edit to the base": "`K7` and `M2`",
+      "Expected": "the duplicate declaration is reported"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O4",
+      "Edit to the base": "`M2` and `B6`",
+      "Expected": "the membership defect `M2` is reported"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O5",
+      "Edit to the base": "`R2` and `B9`",
+      "Expected": "the cycle `R2` is reported (the causal relation precedes binder scope)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O6",
+      "Edit to the base": "`V7` and an operation-step defect on another node",
+      "Expected": "`invalid_package`/`operation-member-mismatch` (protocol step) is reported before the operation-step defect"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O7",
+      "Edit to the base": "`R2` (cycle) and `B14` (a model-state read in a guard)",
+      "Expected": "the cycle `R2` is reported (cycle and progress precede the slot checks)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O8",
+      "Edit to the base": "one guard that reads `view` and an unlisted fact `eastRes.ok`",
+      "Expected": "`ill_typed`/`operator-ineligible` (the `over` refusal precedes the decision-fact check)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O9",
+      "Edit to the base": "one guard that reads an out-of-scope binder and an unlisted fact",
+      "Expected": "`missing_declaration`/`missing-name` (the scope refusal precedes the decision-fact check)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A1",
+      "Edit to the base": "none",
+      "Expected": "one row: the `Example::OrderFlow` clause key, `each` with `opened`'s node key, and `OrderClosureBounded`'s node key"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A2",
+      "Edit to the base": "`activation on origin` (C2)",
+      "Expected": "one row: the clause key, `origin` with no trigger, and `OrderClosureBounded`'s node key"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A3",
+      "Edit to the base": "the protocol requires no temporal clause (C3)",
+      "Expected": "no row"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A4",
+      "Edit to the base": "a second `requires temporal OrderClosureBounded`",
+      "Expected": "one `requirements` entry and one row, equal to A1's"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A5",
+      "Edit to the base": "a second temporal clause `OrderPaidBounded` and `requires temporal OrderPaidBounded`",
+      "Expected": "two rows, in ascending node-id digest order of the two temporal clause nodes"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A6",
+      "Edit to the base": "a temporal clause `RefundBounded` on the clock `refund-clock`, which `Refund` reads, not required by the protocol",
+      "Expected": "the relation equals A1's: no row for `RefundBounded`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A7",
+      "Edit to the base": "K1's reformatting, comment and second protocol reference",
+      "Expected": "the relation equals A1's"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A8",
+      "Edit to the base": "the `requirements` entry names a `temporal_clause` node absent from the clause's `dependencies`",
+      "Expected": "`missing_declaration`/`missing-name` at the target; no relation"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A9",
+      "Edit to the base": "the `each` `trigger` names a `value`/`parameter` node absent from the clause's `dependencies`",
+      "Expected": "`missing_declaration`/`missing-name` at the target; no relation"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL1",
+      "Edit": "none: three static roles",
+      "Expected": "admitted; `replication` is an empty Group"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL2",
+      "Edit": "a role on a `model`/`process`, `state_machine`, `systems_interface` and `persistence_interface` node, one each",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL3",
+      "Edit": "a role on a `model`/`record_value_type` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL4",
+      "Edit": "a role on a `model`/`event_type` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL5",
+      "Edit": "a role on a `model`/`variant_type` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL6",
+      "Edit": "`model` names a `value` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL7",
+      "Edit": "`model` names a node absent from `dependencies`",
+      "Expected": "`missing_declaration`/`missing-name` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL8",
+      "Edit": "the replicated role with `lifetime` `workflow`, `scope` and `until`",
+      "Expected": "admitted; `binder` is the `value`/`parameter` node named `w`, of type `Reference<M::Worker>`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL9",
+      "Edit": "`until` present with `lifetime: workflow`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL10",
+      "Edit": "`until` absent with `lifetime: until`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL11",
+      "Edit": "`max` is `0`",
+      "Expected": "`ill_typed`/`type-mismatch` at `max`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL12",
+      "Edit": "`binder` has type `Reference<M::Other>`",
+      "Expected": "`ill_typed`/`type-mismatch` at the role node, retaining expected and actual"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL13",
+      "Edit": "`binder` names a `role` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL14",
+      "Edit": "`until` reads the capture `order`",
+      "Expected": "admitted (`C0` and the role's binder are readable)"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL15",
+      "Edit": "`until` reads `sent`, a binder of the `run` tree",
+      "Expected": "`missing_declaration`/`missing-name` at the role node"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL16",
+      "Edit": "`until` is an integer term",
+      "Expected": "`ill_typed`/`non-boolean-root` at the role node"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL17",
+      "Edit": "a role body with an `internality` binding",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL18",
+      "Edit": "`replication` holds only `population`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL19",
+      "Edit": "`population` is an integer literal",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL20",
+      "Edit": "a static role whose `model` is the text `identity` of the lock's `model_selections` row, with no `model` dependency",
+      "Expected": "admitted as a role on a whole model; its node key differs from RL1's role on a model type of that selection (FR-465-AC-9)"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL21",
+      "Edit": "RL20's clause with a second role whose text is a second `model_selections` row's `identity`; and RL20 in clauses whose `over` type is a scalar, a record and a `Set<M::Cell>`, one each",
+      "Expected": "admitted; the two roles have different node keys; each `over` type is admitted"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL22",
+      "Edit": "RL20 with a text naming no `model_selections` row",
+      "Expected": "`missing_declaration`/`missing-selection` at the role node, retaining the text"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL23",
+      "Edit": "RL20 with a non-empty `replication` Group",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the role node"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL24",
+      "Edit": "`model` is an integer, a Boolean and a Group, one each",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL25",
+      "Edit": "RL22 with a non-empty `replication` Group: a text naming no `model_selections` row and a replication",
+      "Expected": "`missing_declaration`/`missing-selection` at the role node: the selection check precedes the replication check"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH1",
+      "Edit": "none: `fifo` by `message.order`, `at-least-once`",
+      "Expected": "admitted; five bindings `from`, `to`, `carries`, `ordering`, `delivery` in order"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH2",
+      "Edit": "`ordering` is `{kind: unordered}`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH3",
+      "Edit": "`unordered` with a `binder`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH4",
+      "Edit": "`fifo` with no `key`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH5",
+      "Edit": "`fifo` `binder` has a type other than `carries`",
+      "Expected": "`ill_typed`/`type-mismatch` at the channel node, retaining expected and actual"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH6",
+      "Edit": "`key` reads `sent`",
+      "Expected": "`missing_declaration`/`missing-name` at the channel node, stage `channel-key`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH7",
+      "Edit": "`key` reads the message binder's field only",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH7a",
+      "Edit": "`key` reads the capture `order`",
+      "Expected": "`missing_declaration`/`missing-name` at the channel node, stage `channel-key`, `read` `stage`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH7e",
+      "Edit": "`key` reads `view` (`over`)",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read, naming the key"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH7b",
+      "Edit": "`key` holds `quire.op.model.deref`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read, naming the key"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH7c",
+      "Edit": "`key` has type `float64`; `Option<float64>`; a `model`/`event_type`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the channel node, retaining `=` and the type"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH7d",
+      "Edit": "`key` has type `text`, `integer`, `uuid`, `enum`, `Reference<T>`, a record of integers",
+      "Expected": "admitted: equality-stable (FR-322)"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH8",
+      "Edit": "`from` names the `Charges` queue node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH9",
+      "Edit": "`from` names a role of another protocol",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH10",
+      "Edit": "`to` is absent from `dependencies`",
+      "Expected": "`missing_declaration`/`missing-name` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH11",
+      "Edit": "`carries` names a `model`/`record_value_type`, a `model`/`event_type`, a `model`/`variant_type`, a `composite_type` and a `scalar_type` node, one each",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH12",
+      "Edit": "`carries` names a `role` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH13",
+      "Edit": "`delivery` is each of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise`",
+      "Expected": "admitted: four distinct node keys"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH14",
+      "Edit": "`delivery` is `exactly-once`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH15",
+      "Edit": "`delivery` removed",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH16",
+      "Edit": "`ordering` removed",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH17",
+      "Edit": "changing `delivery` from `at-least-once` to `unknown`",
+      "Expected": "the channel's node key, the clause's and the `package_id` change"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU1",
+      "Edit": "none: `literal 4`, `reject`",
+      "Expected": "admitted; occurrence role `generated`, no `declaration`, `dependencies` the channel only"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU2",
+      "Edit": "each of `reject`, `block`, `loss head`, `loss tail`, `loss new` with `literal` and with `symbolic(bound)`",
+      "Expected": "admitted: ten distinct node keys (the selector enters the node key)"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU3",
+      "Edit": "`literal` capacity `0`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU4",
+      "Edit": "`literal` capacity with a `name` binding",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU5",
+      "Edit": "`symbolic` capacity with a `value` binding",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU6",
+      "Edit": "`overflow` is `drop`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU6a",
+      "Edit": "`overflow` is `loss` with the `loss` member absent; with `middle`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU6b",
+      "Edit": "`overflow` is `reject` or `block` with a `loss` member",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU7",
+      "Edit": "`literal` capacity `-1`",
+      "Expected": "`invalid_package`/`invalid-value` at the value, at strict wire validation"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU8",
+      "Edit": "`channel` names a `role` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU9",
+      "Edit": "`channel` absent from `dependencies`",
+      "Expected": "`missing_declaration`/`missing-name` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU11",
+      "Edit": "`at-least-once` delivery with overflow `loss`",
+      "Expected": "admitted: overflow governs a full queue and delivery policy governs transport duplication and loss; an overflow loss is not a transport `lose` step"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU10",
+      "Edit": "the queue's occurrence has role `declaration`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "FN1",
+      "Edit": "none: `finish Closed as (closed) { closed.order = order }`",
+      "Expected": "admitted; declaration `Example::OrderFlow`, `finish`, `Closed`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "FN2",
+      "Edit": "the constraint is an integer term",
+      "Expected": "`ill_typed`/`non-boolean-root` at the node"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "FN3",
+      "Edit": "the constraint reads `eastRes`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "FN3b",
+      "Edit": "the constraint reads `view`",
+      "Expected": "admitted (`finish` may read `over`)"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "FN4",
+      "Edit": "the constraint reads `polled`",
+      "Expected": "`missing_declaration`/`missing-name` at the node"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "FN5",
+      "Edit": "`binder` names an `expression` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "FN6",
+      "Edit": "the clause's `finish` names the `terminal` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "FN7",
+      "Edit": "a second `finish` node the clause does not name",
+      "Expected": "`invalid_semantic_graph` at the node"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM1",
+      "Edit": "none: `terminal any`",
+      "Expected": "admitted; `mode: any`, `condition` an empty optional; declaration `Example::OrderFlow`, `terminal`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM2",
+      "Edit": "`terminal when { k.v = 3 }`",
+      "Expected": "admitted; `condition` holds the Boolean term"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM3",
+      "Edit": "`mode: when` with no condition",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM4",
+      "Edit": "`mode: any` with a condition",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM5",
+      "Edit": "a second `terminal` node of the same clause",
+      "Expected": "`ambiguous_declaration`/`ambiguous-name` naming both node keys"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM6",
+      "Edit": "the condition is an integer term",
+      "Expected": "`ill_typed`/`non-boolean-root` at the node"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM7",
+      "Edit": "the condition reads `sent`",
+      "Expected": "`missing_declaration`/`missing-name` at the node, stage `terminal`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM10",
+      "Edit": "the condition reads the capture `order` of the `on each` base protocol",
+      "Expected": "`missing_declaration`/`missing-name` at the node, stage `terminal`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM13",
+      "Edit": "the same condition in a protocol activated `on origin` (no trigger, so no `opened` binder), whose capture `order` is initialized from a model constant instead of `opened.order`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM12",
+      "Edit": "the condition reads the activation binder `opened`",
+      "Expected": "`missing_declaration`/`missing-name` at the node, stage `terminal`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM11",
+      "Edit": "the condition reads `view` (`over`, the model observation)",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM8",
+      "Edit": "the clause's `terminal` names the `finish` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Finish and terminal vectors",
+      "id": "TM9",
+      "Edit": "`terminal` removed from the clause",
+      "Expected": "admitted; the clause node key changes"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Runtime-subject vectors",
+      "id": "RT1",
+      "Edit": "compile the base with no workflow instance, delivery, clock observation or runtime binding",
+      "Expected": "admitted; no node holds an instance, ordinal, delivery or observation"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Runtime-subject vectors",
+      "id": "RT2",
+      "Edit": "a node body with an `instance` binding",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Runtime-subject vectors",
+      "id": "RT3",
+      "Edit": "read the operators of the base package",
+      "Expected": "the runtime subject kinds are `workflow-instance` (`protocol`), `role-instance` (`role`), `message` and `send` (`send`), `receive` and `delivery` (`receive`), `operation-attempt` (`attempt`), `business-effect` (`effect`), `commit` (`commit`), the compensation kinds (`compensate`) and the workflow-closure observation (`finish`)"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Runtime-subject vectors",
+      "id": "RT4",
+      "Edit": "two sends of one protocol in two repeat iterations",
+      "Expected": "one `send` node; the iteration ordinal is a runtime dimension, in no node"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L1",
+      "Encoded": "the base package",
+      "Expected": "admitted: every control has exactly its layout of FR-466"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L2",
+      "Encoded": "an empty `sequence`",
+      "Expected": "admitted; `children` is an empty Group"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L3",
+      "Encoded": "`parallel` with each policy: `all [east, west]`, `any [east]`, `quorum` with count 1 and 2 over `[east, west]`, `predicate` naming a `function` node over `[east, west]`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L4",
+      "Encoded": "`parallel` with `memory` `sc`, `tso` and `ra`, and with none",
+      "Expected": "admitted: four distinct node keys"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L5",
+      "Encoded": "`parallel` with `outstanding` `continue`, `cancel` and none",
+      "Expected": "admitted: three distinct node keys"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L6",
+      "Encoded": "`attempt` with `ordering` each of `relaxed`, `acquire`, `release`, `acq_rel`, `seq_cst`, and none",
+      "Expected": "admitted: six distinct node keys"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L7",
+      "Encoded": "`fence` with `ordering` each of `acquire`, `release`, `acq_rel`, `seq_cst`",
+      "Expected": "admitted: four distinct node keys"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L8",
+      "Encoded": "`repeat` with `maximum` and `exhausted`; with `proof`; with both; with neither",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L9",
+      "Encoded": "`event` with and without a `compensation`; `commit`; `check`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L10",
+      "Encoded": "`Requested`'s two top-level arguments swapped",
+      "Expected": "refuses `malformed_wire` (binding names out of order)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L11",
+      "Encoded": "a binding missing from `Charged`; a surplus binding on `Applied`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L12",
+      "Encoded": "`fence` with `ordering: relaxed`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L13",
+      "Encoded": "`attempt` `ordering: strong`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L14",
+      "Encoded": "`parallel` `memory: pso`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L15",
+      "Encoded": "`parallel` `outstanding: abort`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L16",
+      "Encoded": "`parallel` `join.policy: majority`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L17",
+      "Encoded": "a `join` with `policy: all` carrying a `count`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L18",
+      "Encoded": "a `join` with `policy: quorum` and no `count`; with `policy: predicate` and no `predicate`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Layouts",
+      "id": "L19",
+      "Encoded": "`Requested`'s member operator is `jump`",
+      "Expected": "`invalid_package`/`operation-member-mismatch`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "S1",
+      "Edit": "swap `Requested` and `Charged` in `Main`'s `children`",
+      "Expected": "`Main`'s node key and the `package_id` change; the reader refuses `definition-cycle` for the `receive`/`send` edge (`Requested` and `Received`)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "S2",
+      "Edit": "a child of `Main` that is a `role` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "S3",
+      "Edit": "a child of `Main` that is absent from `dependencies`",
+      "Expected": "`missing_declaration`/`missing-name` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE1",
+      "Edit": "`Outcome` with one case",
+      "Expected": "refuses `malformed_wire` (at least two cases)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE2",
+      "Edit": "two cases labelled `shipped`",
+      "Expected": "`ambiguous_declaration`/`ambiguous-name` at `Outcome`, naming the label"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE3",
+      "Edit": "the `shipped` guard dereferences a model object",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE4",
+      "Edit": "the `shipped` guard is an integer term",
+      "Expected": "`ill_typed`/`non-boolean-root` at `Outcome`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE5",
+      "Edit": "`owner` names a channel",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE6",
+      "Edit": "`visible` empty, guards over constants and the capture `order` only",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE6b",
+      "Edit": "`visible` empty, a guard reads `eastRes.ok`",
+      "Expected": "`wrong_snapshot`/`wrong-observation`, `reason` `unlisted`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE8",
+      "Edit": "`cases` listed `shipped`, `failed` (not in ascending label order)",
+      "Expected": "`invalid_semantic_graph`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE9",
+      "Edit": "`visible` entries out of digest order; a repeated entry",
+      "Expected": "`invalid_semantic_graph`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE10",
+      "Edit": "`contracts` out of digest order; `related` out of order; a repeated `related` entry",
+      "Expected": "`invalid_semantic_graph`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE11",
+      "Edit": "the same `eastRes.ok` node listed in `Outcome.visible` and `Poll.visible`",
+      "Expected": "admitted (a shared expression node is not a duplicate declaration)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "CE7",
+      "Edit": "the two guards overlap (`eastRes.ok` and `eastRes.ok or true`)",
+      "Expected": "admitted: the reader does not re-prove exhaustiveness or exclusiveness"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA1",
+      "Edit": "`Shipments` with one branch",
+      "Expected": "refuses `malformed_wire` (at least two branches)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA2",
+      "Edit": "two branches labelled `east`",
+      "Expected": "`ambiguous_declaration`/`ambiguous-name` at `Shipments`, naming the label"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA3",
+      "Edit": "`joined` is `[east, middle]`",
+      "Expected": "`missing_declaration`/`missing-name` at `middle`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA4",
+      "Edit": "`join all [east]`",
+      "Expected": "`invalid_package`/`invalid-value` at `joined`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA12",
+      "Edit": "`branches` listed `west`, `east`",
+      "Expected": "`invalid_semantic_graph` (branches sorted by label)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA13",
+      "Edit": "the same protocol declared with branches `west` then `east` in the source",
+      "Expected": "one encoding, `east` then `west`: the same node keys as the base"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA5",
+      "Edit": "`joined` is `[west, east]` (branch order reversed)",
+      "Expected": "`invalid_semantic_graph`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA6",
+      "Edit": "`joined` is `[east, east, west]`",
+      "Expected": "`invalid_semantic_graph`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA7",
+      "Edit": "`quorum` with `count` 0, and with `count` 3 over two joined branches",
+      "Expected": "`invalid_package`/`invalid-value` at `count`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA8",
+      "Edit": "`any` with an empty `joined`",
+      "Expected": "`invalid_package`/`invalid-value` at `joined`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA9",
+      "Edit": "`predicate` naming a `role` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA10",
+      "Edit": "`join any [east]` and read `eastRes` after `Shipments`",
+      "Expected": "`missing_declaration`/`missing-name` (no branch binder escapes a join that is not `all`)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA11",
+      "Edit": "a branch body held by `east` also held by `west`",
+      "Expected": "`invalid_semantic_graph` (held twice)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA14",
+      "Edit": "`Shipments` joined `predicate` over `[east, west]`, its `function` node with two `boolean` parameters and a `boolean` result",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA15",
+      "Edit": "PA14 with a function of one parameter, then of three",
+      "Expected": "`ill_typed`/`type-mismatch` at `predicate`, retaining expected and actual"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA16",
+      "Edit": "PA14 with the second parameter typed by an integer node",
+      "Expected": "`ill_typed`/`type-mismatch` at `predicate`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "PA17",
+      "Edit": "PA14 with an integer result type",
+      "Expected": "`ill_typed`/`type-mismatch` at `predicate`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "RP1",
+      "Edit": "`Poll` with `maximum` 3 and `exhausted`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "RP2",
+      "Edit": "`Poll` with `maximum` and no `exhausted`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "RP3",
+      "Edit": "`Poll` with `exhausted` and no `maximum`",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "RP4",
+      "Edit": "`Poll` with `proof` of `invariant` only",
+      "Expected": "refuses `malformed_wire`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "RP5",
+      "Edit": "`Poll` with `maximum: 0`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "RP6",
+      "Edit": "`Poll`'s guard is an integer term",
+      "Expected": "`ill_typed`/`non-boolean-root` at `Poll`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "RP7",
+      "Edit": "`Poll`'s guard reads model state",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "RP8",
+      "Edit": "`Poll` body is a `check`",
+      "Expected": "`unsupported_construct`/`declaration-form` at `Poll`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW1",
+      "Edit": "`await ResponseWindow after Requested within [0,30] match Reply then ... timeout ...` with `Reply` a `receive`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW2",
+      "Edit": "the awaited `event` is an `effect`; is an `event` control",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW3",
+      "Edit": "the awaited `event` is a `send`",
+      "Expected": "`unsupported_construct`/`declaration-form` at the `await`, naming the form and the profile"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW4",
+      "Edit": "the awaited `event` is an `attempt`",
+      "Expected": "`unsupported_construct`/`declaration-form` at the `await`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW5",
+      "Edit": "`after` `kind: event` names a `check`",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW6",
+      "Edit": "`after` `kind: compensation` names `Refund`",
+      "Expected": "admitted; the `await` reads `Refund`'s activation"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW7",
+      "Edit": "`after` `kind: compensation` names a control",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW8",
+      "Edit": "the anchor is a control that follows the `await`",
+      "Expected": "`invalid_package`/`definition-cycle` naming the `await` and its anchor"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW9",
+      "Edit": "`within` is `{lower: 5, upper: 1}`",
+      "Expected": "`ill_typed`/`type-mismatch` at the interval, member `within`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW10",
+      "Edit": "`then` reads the matched event's binder",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW11",
+      "Edit": "`timeout` reads the matched event's binder",
+      "Expected": "`missing_declaration`/`missing-name` at the `await`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Repeat and await",
+      "id": "AW12",
+      "Edit": "the `await` was written with no temporal profile in the lock",
+      "Expected": "`missing_declaration`/`missing-selection`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E1",
+      "Edit": "`Requested` and `Received` over `Charges`, binders typed `M::ChargeRequest`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E2",
+      "Edit": "`sent` has type `M::ChargeResponse`",
+      "Expected": "`ill_typed`/`type-mismatch` at `Requested`, retaining expected and actual"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E3",
+      "Edit": "`Received` receives `Requested` on another channel",
+      "Expected": "`ill_typed`/`operator-ineligible` at `Received`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E4",
+      "Edit": "`Received.of` names `Charged` (an `attempt`)",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E5",
+      "Edit": "`Received.channel` names a queue node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E6",
+      "Edit": "`Charged.contracts` lists `CanCharge` and `ChargePost` anchored at `charge`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E7",
+      "Edit": "`Charged.contracts` lists a clause anchored at `refund`",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E8",
+      "Edit": "`Charged.contracts` lists an `invariant` clause",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E9",
+      "Edit": "`Charged.contracts` lists a role node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E10",
+      "Edit": "`East.contracts` is `[]`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E11",
+      "Edit": "`Charged.operation` names a `state`/`frame` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E12",
+      "Edit": "`Applied.of` names `Charged`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E13",
+      "Edit": "`Applied.of` names `Requested`",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E14",
+      "Edit": "`related by ShipmentOwner(order, eastRes.shipment)` on `East`, with the relationship in the clause's list",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E15",
+      "Edit": "`related` names a relationship the clause does not list",
+      "Expected": "`missing_declaration`/`missing-name` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E16",
+      "Edit": "`related` end term of a type other than the relationship's endpoint",
+      "Expected": "`ill_typed`/`type-mismatch` at the end"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E17",
+      "Edit": "`event Compensated by Payments for Refund`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E18",
+      "Edit": "the `event`'s `compensation` names a template of another protocol",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E19",
+      "Edit": "`Finalized` is a `commit` by `Orders`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E20",
+      "Edit": "a constraint is an integer term",
+      "Expected": "`ill_typed`/`non-boolean-root` at the slot"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E21",
+      "Edit": "`Finalized`'s constraint reads `done`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Event controls",
+      "id": "E22",
+      "Edit": "`Requested`'s constraint reads `got` (a later control's binder)",
+      "Expected": "`missing_declaration`/`missing-name` at `Requested`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS1",
+      "Edit": "`Received` reads `sent`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS2",
+      "Edit": "`East` reads `westRes`",
+      "Expected": "`missing_declaration`/`missing-name` at `East`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS3",
+      "Edit": "`Done` reads `eastRes` and `westRes`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS4",
+      "Edit": "`Done` reads the binder of a step control added to case `failed`",
+      "Expected": "`missing_declaration`/`missing-name` at `Done`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS5",
+      "Edit": "`Finalized` reads `eastRes`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS6",
+      "Edit": "`Finalized` reads `polled`",
+      "Expected": "`missing_declaration`/`missing-name` at `Finalized`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS7",
+      "Edit": "`Limit` reads `polled`",
+      "Expected": "`missing_declaration`/`missing-name` at `Limit`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS8",
+      "Edit": "`Polled` reads `charge`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS9",
+      "Edit": "levels: `sent` is `size(In(Requested))` and `got` is `size(In(Received))`, one greater",
+      "Expected": "admitted; a `got` of the same level as `sent` is `invalid_semantic_graph`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS10",
+      "Edit": "a `repeat` and a `choice` guard read the capture `order`",
+      "Expected": "admitted (binders-only: binders, captures and constants)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Binder scope",
+      "id": "BS11",
+      "Edit": "a `repeat` and a `choice` guard read `view`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read (`over` is model state)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF1",
+      "Edit": "`Outcome` owned by `Fulfillment` deciding on the Boolean field `eastRes.ok`, listed individually in `visible`, with guards `eastRes.ok` and `not eastRes.ok`",
+      "Expected": "admitted (`eastRes` is an `attempt` `by Fulfillment`)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF2",
+      "Edit": "`Outcome` owned by `Payments` over the same `visible`",
+      "Expected": "`wrong_snapshot`/`wrong-observation`, `reason` `other-role`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF3",
+      "Edit": "a `choice` owned by `Payments` deciding on the Boolean field of `Received`'s `got`",
+      "Expected": "admitted (`Payments` is `Charges`' `to` role)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF4",
+      "Edit": "the same, owned by `Orders`",
+      "Expected": "`wrong_snapshot`/`wrong-observation`, `reason` `other-role`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF5",
+      "Edit": "a guard reads a field of `sent` (a `send` record)",
+      "Expected": "`wrong_snapshot`/`wrong-observation`, `reason` `ineligible-kind`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF6",
+      "Edit": "a guard reads a field of `paid` (an `effect` record); of the commit binder; of the finish binder",
+      "Expected": "each `wrong_snapshot`/`wrong-observation`, `reason` `ineligible-kind`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF7",
+      "Edit": "a guard reads `view.ready` (the protocol input)",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read, naming the guard (before the decision-fact table)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF7b",
+      "Edit": "a guard reads a field of the protocol activation binder `opened`",
+      "Expected": "`wrong_snapshot`/`wrong-observation`, `reason` `ineligible-kind`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF7c",
+      "Edit": "a guard and a `visible` entry read the capture `order`",
+      "Expected": "admitted without listing"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF8",
+      "Edit": "a guard reads `eastRes.ok` that no `visible` entry lists individually",
+      "Expected": "`wrong_snapshot`/`wrong-observation`, `reason` `unlisted`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF9",
+      "Edit": "`visible` lists the composite `eastRes.ok and westRes.ok` and a guard reads `eastRes.ok`",
+      "Expected": "`wrong_snapshot`/`wrong-observation`, `reason` `unlisted`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF10",
+      "Edit": "a `visible` entry reads `sent.ok`",
+      "Expected": "`wrong_snapshot`/`wrong-observation` at the entry, `reason` `ineligible-kind`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF11",
+      "Edit": "a guard reads the binder of a `repeat` body from the repeat's own guard",
+      "Expected": "`missing_declaration`/`missing-name` (out-of-scope read, before the decision-fact check)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF12",
+      "Edit": "a `repeat` owned by `Fulfillment` whose `visible` lists `eastRes.ok` and whose guard reads it",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF13",
+      "Edit": "an `event` binder `by Payments`, read by a choice owned by `Payments`, and by one owned by `Orders`",
+      "Expected": "admitted; `wrong_snapshot`/`wrong-observation`, `reason` `other-role`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP1",
+      "Edit": "the base `Refund`: `commit Finalized`, `attempts 3 of M::RefundAttempt`",
+      "Expected": "admitted; thirteen bindings in order"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP2",
+      "Edit": "`Refund` with `commit never`",
+      "Expected": "admitted; `commit` is an empty optional; the node key differs from CP1's"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP3",
+      "Edit": "`forward` names `Charged` (an `attempt`)",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP4",
+      "Edit": "`forward_binder` has a type other than `Applied`'s own binder",
+      "Expected": "`ill_typed`/`type-mismatch` at the template, retaining expected and actual"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP5",
+      "Edit": "`role` names a role of another protocol",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP6",
+      "Edit": "`operation` names a `state`/`state_clause` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP7",
+      "Edit": "`record_type` names a `scalar_type` node",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP8",
+      "Edit": "`commit` names `Charged`",
+      "Expected": "`invalid_model_binding`/`malformed-declaration` at the target"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP9",
+      "Edit": "`Applied` is moved after `Outcome` and `commit` names an extra `commit` control placed before `Applied` in `Main` (on every path to it)",
+      "Expected": "`unsupported_construct`/`declaration-form` at `commit`, retaining the selected profile and reason `commit-precedes-effect`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP10",
+      "Edit": "`Applied` and a `commit` control are placed in different branches of a new `parallel`, and `commit` names that control",
+      "Expected": "admitted (no edge orders it against `Applied`)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP9b",
+      "Edit": "`Applied` after a `parallel` with `join all`; `commit` names a `commit` control in one of its branches",
+      "Expected": "`unsupported_construct`/`declaration-form` at `commit`, profile and reason `commit-precedes-effect` (`taken` of a `join all` is the union over its branches)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP9c",
+      "Edit": "as CP9b with `join any [east]`",
+      "Expected": "admitted (`taken` is the intersection over the branches)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP9d",
+      "Edit": "`Applied` after a `choice` whose two cases hold separate `commit` controls `C1` and `C2`; `commit` names `C1`",
+      "Expected": "admitted (`taken` is `{C1}` intersected with `{C2}`, empty)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP9f",
+      "Edit": "a `commit` control that is a sequence child before that `choice`, `Applied` after it",
+      "Expected": "`unsupported_construct`/`declaration-form` at `commit`, reason `commit-precedes-effect`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP9e",
+      "Edit": "`Applied` and the `commit` in sibling branches of one `parallel`",
+      "Expected": "admitted (unordered)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP10b",
+      "Edit": "`commit` names a `commit` control in one case of a `choice` that precedes `Applied`",
+      "Expected": "admitted (it does not dominate the effect)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP11",
+      "Edit": "`attempts.maximum` is `0`",
+      "Expected": "`ill_typed`/`type-mismatch` at `maximum`, member `attempts`, expected a count of at least one, actual `0`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP12",
+      "Edit": "`attempts.maximum` is `1`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP13",
+      "Edit": "`within` is `{lower: 31, upper: 30}`",
+      "Expected": "`ill_typed`/`type-mismatch` at the interval, member `within`, expected a closed interval with `lower <= upper`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP14",
+      "Edit": "`earlier` has type `M::RefundAttempt`, `later` has type `M::Other`",
+      "Expected": "`ill_typed`/`type-mismatch` at the template, retaining expected and actual"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP15",
+      "Edit": "`retry.relation` is an integer term",
+      "Expected": "`ill_typed`/`non-boolean-root` at the slot"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP16",
+      "Edit": "the trigger guard reads `forward`",
+      "Expected": "`missing_declaration`/`missing-name` at the template, stage `trigger-guard`, `read` `stage`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP17",
+      "Edit": "the trigger guard reads `order` (a clause capture) and the trigger binder",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP18",
+      "Edit": "the activation capture reads the trigger and a registration capture",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP19",
+      "Edit": "an activation capture reads a later activation capture",
+      "Expected": "`missing_declaration`/`missing-name` at the template"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP20",
+      "Edit": "a registration capture reads the trigger binder",
+      "Expected": "`missing_declaration`/`missing-name` at the template, stage `registration-capture`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP21",
+      "Edit": "the registration capture reads `forward`",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP22",
+      "Edit": "the retry relation reads `earlier`, `later` and a capture",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP23",
+      "Edit": "the retry relation reads `sent`",
+      "Expected": "`missing_declaration`/`missing-name` at the template"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP24",
+      "Edit": "the recovery predicate reads its binder and a capture",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP25",
+      "Edit": "the recovery predicate reads `earlier`",
+      "Expected": "`missing_declaration`/`missing-name` at the template"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP26",
+      "Edit": "two templates named `Refund`",
+      "Expected": "`ambiguous_declaration`/`ambiguous-name` naming both node keys"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP27",
+      "Edit": "a template that no clause lists",
+      "Expected": "`invalid_semantic_graph` at the template"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP28",
+      "Edit": "the lock selects no `temporal_profile`",
+      "Expected": "`missing_declaration`/`missing-selection` at the template"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP29",
+      "Edit": "the trigger guard reads `view` (`over`)",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read, naming the guard"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP30",
+      "Edit": "the trigger guard reads the protocol activation binder `opened`",
+      "Expected": "`missing_declaration`/`missing-name`, stage `trigger-guard`, `read` `stage`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP31",
+      "Edit": "an activation capture reads `view`",
+      "Expected": "admitted (an activation capture may read `over`)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP32",
+      "Edit": "the retry relation reads `view`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read, naming the retry relation"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP33",
+      "Edit": "the recovery predicate reads `view`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read, naming the recovery predicate"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP34",
+      "Edit": "a registration capture reads `view`, the activation binder `opened` and a protocol capture",
+      "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP35",
+      "Edit": "the trigger guard holds a `quire.op.model.deref`",
+      "Expected": "`ill_typed`/`operator-ineligible` at the read, naming the guard"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP36",
+      "Edit": "a registration capture reads a capture of another template `Other`",
+      "Expected": "`missing_declaration`/`missing-name`, `read` `foreign`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Compensation vectors",
+      "id": "CP37",
+      "Edit": "a registration capture reads itself",
+      "Expected": "`missing_declaration`/`missing-name`, `read` `forward`"
+    }
+  ]
+}

@@ -1,60 +1,369 @@
 {
-  "schema_only": ["dependency_selections", "entry_mutations", "model_selections", "model_entry_mutations", "order_vectors", "supply_vectors"],
+  "schema_only": [
+    "dependency_selections",
+    "entry_mutations",
+    "model_selections",
+    "model_entry_mutations",
+    "order_vectors",
+    "supply_vectors"
+  ],
   "base": "fixtures/positive-all-families.json",
   "dependency_selections": [
-    {"identity": "test/geometry", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}},
-    {"identity": "test/units", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "4444444444444444444444444444444444444444444444444444444444444444"}}
+    {
+      "identity": "test/geometry",
+      "package_id": {
+        "domain": "quire.package.semantic/v2",
+        "algorithm": "sha256",
+        "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+      }
+    },
+    {
+      "identity": "test/units",
+      "package_id": {
+        "domain": "quire.package.semantic/v2",
+        "algorithm": "sha256",
+        "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+      }
+    }
   ],
-  "package_id": "e41a17899dfdee7478fb599e843655f88e5f4bb8b11ed956985390a6183d9fe3",
+  "package_id": "59a14a9a774b346b826f0565099638b9d60b3e61fc64c79a4ce32299c2f2d778",
   "entry_mutations": [
-    {"id": "definition-selection-shape", "entry": {"role": "profile", "definition": {"authority": "test", "identity": "test/geometry"}}, "outcome": "refused:malformed_wire"},
-    {"id": "definition-ref-shape", "entry": {"authority": "test", "identity": "test/geometry"}, "outcome": "refused:malformed_wire"},
-    {"id": "missing-package-id", "entry": {"identity": "test/geometry"}, "outcome": "refused:malformed_wire"},
-    {"id": "bare-digest-package-id", "entry": {"identity": "test/geometry", "package_id": "3333333333333333333333333333333333333333333333333333333333333333"}, "outcome": "refused:malformed_wire"},
-    {"id": "source-bytes-package-id", "entry": {"identity": "test/geometry", "package_id": {"domain": "quire.source.bytes/v1", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}, "outcome": "refused:digest_domain_mismatch"},
-    {"id": "selection-carries-version", "entry": {"identity": "test/geometry", "version": "1.0.0", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}, "outcome": "refused:unknown_member"}
+    {
+      "id": "definition-selection-shape",
+      "entry": {
+        "role": "profile",
+        "definition": {
+          "authority": "test",
+          "identity": "test/geometry"
+        }
+      },
+      "outcome": "refused:malformed_wire"
+    },
+    {
+      "id": "definition-ref-shape",
+      "entry": {
+        "authority": "test",
+        "identity": "test/geometry"
+      },
+      "outcome": "refused:malformed_wire"
+    },
+    {
+      "id": "missing-package-id",
+      "entry": {
+        "identity": "test/geometry"
+      },
+      "outcome": "refused:malformed_wire"
+    },
+    {
+      "id": "bare-digest-package-id",
+      "entry": {
+        "identity": "test/geometry",
+        "package_id": "3333333333333333333333333333333333333333333333333333333333333333"
+      },
+      "outcome": "refused:malformed_wire"
+    },
+    {
+      "id": "source-bytes-package-id",
+      "entry": {
+        "identity": "test/geometry",
+        "package_id": {
+          "domain": "quire.source.bytes/v1",
+          "algorithm": "sha256",
+          "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      },
+      "outcome": "refused:digest_domain_mismatch"
+    },
+    {
+      "id": "selection-carries-version",
+      "entry": {
+        "identity": "test/geometry",
+        "version": "1.0.0",
+        "package_id": {
+          "domain": "quire.package.semantic/v2",
+          "algorithm": "sha256",
+          "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+        }
+      },
+      "outcome": "refused:unknown_member"
+    }
   ],
   "model_selections": [
-    {"identity": "test/orders", "digest_domain": "sha256-jcs", "digest": "8888888888888888888888888888888888888888888888888888888888888888"}
+    {
+      "identity": "test/orders",
+      "digest_domain": "sha256-jcs",
+      "digest": "8888888888888888888888888888888888888888888888888888888888888888"
+    }
   ],
   "model_entry_mutations": [
-    {"id": "model-selection-carries-version", "entry": {"identity": "test/orders", "version": "1.0.0", "digest_domain": "sha256-jcs", "digest": "8888888888888888888888888888888888888888888888888888888888888888"}, "outcome": "refused:unknown_member"}
+    {
+      "id": "model-selection-carries-version",
+      "entry": {
+        "identity": "test/orders",
+        "version": "1.0.0",
+        "digest_domain": "sha256-jcs",
+        "digest": "8888888888888888888888888888888888888888888888888888888888888888"
+      },
+      "outcome": "refused:unknown_member"
+    }
   ],
   "order_vectors": [
-    {"id": "utf8-byte-order", "dependency_selections": [{"identity": "test/\uff61", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "6666666666666666666666666666666666666666666666666666666666666666"}}, {"identity": "test/\ud83d\ude00", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "7777777777777777777777777777777777777777777777777777777777777777"}}], "outcome": "admitted", "loci": []},
-    {"id": "duplicate-identity", "dependency_selections": [{"identity": "test/geometry", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}, {"identity": "test/geometry", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}}, {"identity": "test/units", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "4444444444444444444444444444444444444444444444444444444444444444"}}], "outcome": "refused:invalid_package/conflicting-definition", "loci": ["/lock/dependency_selections/0", "/lock/dependency_selections/1"]},
-    {"id": "misordered", "dependency_selections": [{"identity": "test/units", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "4444444444444444444444444444444444444444444444444444444444444444"}}, {"identity": "test/geometry", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "3333333333333333333333333333333333333333333333333333333333333333"}}], "outcome": "refused:invalid_package/invalid-value", "loci": ["/lock/dependency_selections/1"]}
+    {
+      "id": "utf8-byte-order",
+      "dependency_selections": [
+        {
+          "identity": "test/｡",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "6666666666666666666666666666666666666666666666666666666666666666"
+          }
+        },
+        {
+          "identity": "test/😀",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+          }
+        }
+      ],
+      "outcome": "admitted",
+      "loci": []
+    },
+    {
+      "id": "duplicate-identity",
+      "dependency_selections": [
+        {
+          "identity": "test/geometry",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+          }
+        },
+        {
+          "identity": "test/geometry",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          }
+        },
+        {
+          "identity": "test/units",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+          }
+        }
+      ],
+      "outcome": "refused:invalid_package/conflicting-definition",
+      "loci": [
+        "/lock/dependency_selections/0",
+        "/lock/dependency_selections/1"
+      ]
+    },
+    {
+      "id": "misordered",
+      "dependency_selections": [
+        {
+          "identity": "test/units",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+          }
+        },
+        {
+          "identity": "test/geometry",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+          }
+        }
+      ],
+      "outcome": "refused:invalid_package/invalid-value",
+      "loci": [
+        "/lock/dependency_selections/1"
+      ]
+    }
   ],
   "supply_vectors": [
-    {"id": "both-entries-unsupplied", "entries": [{"identity": "test/a", "supply": "absent"}, {"identity": "test/b", "supply": "absent"}], "outcome": "refused:missing_import/missing-selection", "locus": "/lock/dependency_selections/0"},
-    {"id": "first-supplied-second-absent", "entries": [{"identity": "test/a", "supply": "bound"}, {"identity": "test/b", "supply": "absent"}], "outcome": "refused:missing_import/missing-selection", "locus": "/lock/dependency_selections/1"},
-    {"id": "first-stale-second-absent", "entries": [{"identity": "test/a", "supply": "stale"}, {"identity": "test/b", "supply": "absent"}], "outcome": "refused:stale_dependency/content-mismatch", "locus": "/lock/dependency_selections/0"},
-    {"id": "first-absent-second-stale", "entries": [{"identity": "test/a", "supply": "absent"}, {"identity": "test/b", "supply": "stale"}], "outcome": "refused:missing_import/missing-selection", "locus": "/lock/dependency_selections/0"},
-    {"id": "all-bound", "entries": [{"identity": "test/a", "supply": "bound"}, {"identity": "test/b", "supply": "bound"}], "outcome": "admitted"}
+    {
+      "id": "both-entries-unsupplied",
+      "entries": [
+        {
+          "identity": "test/a",
+          "supply": "absent"
+        },
+        {
+          "identity": "test/b",
+          "supply": "absent"
+        }
+      ],
+      "outcome": "refused:missing_import/missing-selection",
+      "locus": "/lock/dependency_selections/0"
+    },
+    {
+      "id": "first-supplied-second-absent",
+      "entries": [
+        {
+          "identity": "test/a",
+          "supply": "bound"
+        },
+        {
+          "identity": "test/b",
+          "supply": "absent"
+        }
+      ],
+      "outcome": "refused:missing_import/missing-selection",
+      "locus": "/lock/dependency_selections/1"
+    },
+    {
+      "id": "first-stale-second-absent",
+      "entries": [
+        {
+          "identity": "test/a",
+          "supply": "stale"
+        },
+        {
+          "identity": "test/b",
+          "supply": "absent"
+        }
+      ],
+      "outcome": "refused:stale_dependency/content-mismatch",
+      "locus": "/lock/dependency_selections/0"
+    },
+    {
+      "id": "first-absent-second-stale",
+      "entries": [
+        {
+          "identity": "test/a",
+          "supply": "absent"
+        },
+        {
+          "identity": "test/b",
+          "supply": "stale"
+        }
+      ],
+      "outcome": "refused:missing_import/missing-selection",
+      "locus": "/lock/dependency_selections/0"
+    },
+    {
+      "id": "all-bound",
+      "entries": [
+        {
+          "identity": "test/a",
+          "supply": "bound"
+        },
+        {
+          "identity": "test/b",
+          "supply": "bound"
+        }
+      ],
+      "outcome": "admitted"
+    }
   ],
   "closure_vectors": [
     {
       "id": "diamond-conflict-across-dependency-locks",
       "direct_dependencies": [
-        {"identity": "test/a", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "d8c21b004ebb958d479216ca5c49af2f3ebbbbb6d8c78767728fed4481e852bc"}},
-        {"identity": "test/b", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "fcb75a5001f475a704ad7788b089c4d76d5f07ad5a24aa351af3e6d999886425"}}
+        {
+          "identity": "test/a",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "3c1d23c990880cbc27ea0fc2210834684bb984871e5ebdab55a8eae64a916ca9"
+          }
+        },
+        {
+          "identity": "test/b",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "fbe7f0d6865d004d2567a40f318ff4a85c95723e33590a6a6329efc76f75d4f7"
+          }
+        }
       ],
       "dependency_locks": [
-        {"identity": "test/a", "base": "fixtures/positive-all-families.json", "dependency_selections": [{"identity": "test/leaf", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "527fa57180c1c51e0227a98ffc70e5050d5fd49b1c14fa61db6229b63757c37c"}}]},
-        {"identity": "test/b", "base": "fixtures/positive-clause-operations.json", "dependency_selections": [{"identity": "test/leaf", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "8f969c06d2e274431929ab7ee538ad21e12d45a3d807f3474d3c8489d35f590a"}}]}
+        {
+          "identity": "test/a",
+          "base": "fixtures/positive-all-families.json",
+          "dependency_selections": [
+            {
+              "identity": "test/leaf",
+              "package_id": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "c76d732a12cc415be0ca09e0c0e45c64e81736fe450de0f5da746e59b060a9ff"
+              }
+            }
+          ]
+        },
+        {
+          "identity": "test/b",
+          "base": "fixtures/positive-clause-operations.json",
+          "dependency_selections": [
+            {
+              "identity": "test/leaf",
+              "package_id": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "7d33478af7465250bd8d82f1ca13cc0f1f019161437f4a6f577740281aac1998"
+              }
+            }
+          ]
+        }
       ],
       "outcome": "refused:invalid_package/conflicting-definition",
-      "loci": ["/lock/dependency_selections/0/lock/dependency_selections/0", "/lock/dependency_selections/1/lock/dependency_selections/0"]
+      "loci": [
+        "/lock/dependency_selections/0/lock/dependency_selections/0",
+        "/lock/dependency_selections/1/lock/dependency_selections/0"
+      ]
     },
     {
       "id": "transitive-only-dependency-reference",
       "direct_dependencies": [
-        {"identity": "test/a", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "d8c21b004ebb958d479216ca5c49af2f3ebbbbb6d8c78767728fed4481e852bc"}}
+        {
+          "identity": "test/a",
+          "package_id": {
+            "domain": "quire.package.semantic/v2",
+            "algorithm": "sha256",
+            "digest": "3c1d23c990880cbc27ea0fc2210834684bb984871e5ebdab55a8eae64a916ca9"
+          }
+        }
       ],
       "dependency_locks": [
-        {"identity": "test/a", "base": "fixtures/positive-all-families.json", "dependency_selections": [{"identity": "test/leaf", "package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "527fa57180c1c51e0227a98ffc70e5050d5fd49b1c14fa61db6229b63757c37c"}}]}
+        {
+          "identity": "test/a",
+          "base": "fixtures/positive-all-families.json",
+          "dependency_selections": [
+            {
+              "identity": "test/leaf",
+              "package_id": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "c76d732a12cc415be0ca09e0c0e45c64e81736fe450de0f5da746e59b060a9ff"
+              }
+            }
+          ]
+        }
       ],
-      "dependency_reference": {"term": "dependency_reference", "package": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "527fa57180c1c51e0227a98ffc70e5050d5fd49b1c14fa61db6229b63757c37c"}, "node": {"domain": "quire.checked-semantic-node/v1", "digest": "ac15b477899ce4bf720e32ff29a6418e565c693028b4ed4451a4a6f4b2d4b368"}},
+      "dependency_reference": {
+        "term": "dependency_reference",
+        "package": {
+          "domain": "quire.package.semantic/v2",
+          "algorithm": "sha256",
+          "digest": "c76d732a12cc415be0ca09e0c0e45c64e81736fe450de0f5da746e59b060a9ff"
+        },
+        "node": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "ac15b477899ce4bf720e32ff29a6418e565c693028b4ed4451a4a6f4b2d4b368"
+        }
+      },
       "use": "callee of quire.op.function.call",
       "outcome": "refused:missing_declaration/missing-selection"
     }

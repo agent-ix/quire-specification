@@ -262,9 +262,9 @@ boundary.
   are checked only at the later carrier join. The carrier has no package
   selector: a key absent locally
   fails this join even if a selected dependency contains that key.
-  For a worked admitted example, take a package whose graph holds a
-  conforming protocol clause node `P`
-  ([FR-464](FR-464-checked-package-protocol-node-bodies.md)) and add one
+  For a worked admitted example, take `positive-all-families.json`; its
+  `protocol`/`protocol_clause` node `Example::Handshake` is `P`, with the
+  conforming FR-464 body and recomputed package keys. Add one
   carrier `R` with `node_tag: "protocol"`,
   `semantic_form: "protocol_reference"`, `body: {term: "reference",
   target: P.node_id}`, `semantic_type: P.semantic_type`,

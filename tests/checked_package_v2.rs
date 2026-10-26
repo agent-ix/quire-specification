@@ -36,7 +36,12 @@ const POSITIVE_TICK_TIMED_MODEL_NODES: &str =
 const TIMED_MODEL_NODE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
 const FR322_BODY_STEPS: &str = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
+const FR464_PROTOCOL_NODES: &str = include_str!("../spec/objects/interfaces/FR-464-checked-package-protocol-node-bodies.md");
 const TC233_BODY_STEP_VECTOR: &str = include_str!("../spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md");
+const TC946_PROTOCOL_NODE_FAMILY: &str = include_str!("../spec/test-cases/TC-946-checked-package-protocol-node-family.md");
+const TC947_PROTOCOL_NODE_FAMILY: &str = include_str!("../spec/test-cases/TC-947-checked-package-protocol-declaration-bodies.md");
+const TC948_PROTOCOL_NODE_FAMILY: &str = include_str!("../spec/test-cases/TC-948-checked-package-protocol-control-bodies.md");
+const PROTOCOL_NODE_VECTORS: &str = include_str!("../proposals/checked-package-v2/fixtures/protocol-node-vectors.json");
 const POSITIVE_NOMINAL_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-nominal-identities.json");
 const POSITIVE_CLAUSE_OPERATIONS: &str =
@@ -2385,8 +2390,6 @@ const TEMPORAL_PROFILES: [&[u8]; 3] = [
 const PROTOCOL_FINITE: &[u8] =
     include_bytes!("../proposals/quire-v1/definitions/protocol-finite.md");
 const TEMPORAL_COMMON: &str = include_str!("../proposals/quire-v1/definitions/temporal-common.md");
-const BOUNDED_CONTROL_RULE: &str =
-    include_str!("../spec/functional/protocol/FR-052-represent-bounded-control.md");
 
 /// Items of an English list `a, b and c` between `start` and `end` in a text
 /// whose line breaks are read as spaces, spelled with underscores.
@@ -2427,15 +2430,155 @@ fn matched_profile(definition: &Value) -> Option<(&'static str, &'static str)> {
 /// Operators a selected temporal or protocol profile defines, read from the
 /// profile definition the law names: a temporal profile requiring the bounded
 /// facet defines its eight bounded operators, and the finite protocol profile
-/// the FR-052 control constructs.
+/// the FR-464 protocol operator catalog.
 fn profile_operators(definition: &Value) -> Option<Vec<String>> {
     match matched_profile(definition)? {
         ("temporal_profile", text) => text
             .contains("| `quire.temporal.bounded-facet/v1` |")
             .then(|| listed_items(TEMPORAL_COMMON, "bounded operators: ", ".")),
         (_, text) => text
-            .contains("| FR-052 |")
-            .then(|| listed_items(BOUNDED_CONTROL_RULE, "graph for authored ", " without")),
+            .contains("Profile identity: `quire.protocol.finite-global/v1`.")
+            .then(protocol_operators),
+    }
+}
+
+/// The finite-global profile's operators are the FR-464 protocol-node catalog.
+fn protocol_operators() -> Vec<String> {
+    let mut rows = FR464_PROTOCOL_NODES
+        .lines()
+        .skip_while(|line| !line.starts_with("| Operator |"))
+        .skip(2)
+        .take_while(|line| line.starts_with('|'));
+    let mut operators = Vec::new();
+    for row in &mut rows {
+        let Some(cell) = row.split('|').nth(1) else {
+            continue;
+        };
+        operators.extend(cell.split('`').skip(1).step_by(2).map(str::to_owned));
+    }
+    operators
+}
+
+#[trace("TC-946", "FR-464-AC-1")]
+#[test]
+fn protocol_node_vectors_match_the_fr464_operator_catalog() {
+    let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
+    let expected = protocol_operators();
+    let actual = vectors["operators"]
+        .as_array()
+        .expect("protocol operator vectors are an array")
+        .iter()
+        .map(|entry| {
+            let operator = entry["operator"].as_str().expect("operator is text");
+            let semantic_form = entry["semantic_form"]
+                .as_str()
+                .expect("semantic form is text");
+            let arguments = entry["arguments"]
+                .as_array()
+                .expect("argument layout is an array");
+            assert!(!semantic_form.is_empty());
+            assert!(!arguments.is_empty());
+            operator.to_owned()
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(actual, expected);
+    assert_eq!(actual.len(), 20);
+
+    for schema_text in [SCHEMA, NODE_PREIMAGE_SCHEMA] {
+        let schema = parsed_fixture(schema_text);
+        let rules = schema["$defs"]["ProtocolControlApplication"]["allOf"]
+            .as_array()
+            .expect("protocol application argument rules are an array");
+        assert_eq!(rules.len(), actual.len());
+        for vector in vectors["operators"].as_array().unwrap() {
+            let operator = vector["operator"].as_str().unwrap();
+            let rule = rules
+                .iter()
+                .find(|rule| {
+                    rule["if"]["properties"]["operation"]["properties"]["member"]["properties"]["operator"]["const"]
+                        == operator
+                })
+                .unwrap_or_else(|| panic!("schema has no argument rule for {operator}"));
+            let arguments = rule["then"]["properties"]["arguments"]["prefixItems"]
+                .as_array()
+                .expect("schema argument layout is an array");
+            let names = arguments
+                .iter()
+                .map(|argument| argument["properties"]["name"]["const"].as_str().unwrap())
+                .collect::<Vec<_>>();
+            let expected_names = vector["arguments"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|name| name.as_str().unwrap())
+                .collect::<Vec<_>>();
+            assert_eq!(names, expected_names, "{operator} schema argument layout");
+            assert_eq!(rule["then"]["properties"]["arguments"]["minItems"], names.len());
+            assert_eq!(rule["then"]["properties"]["arguments"]["maxItems"], names.len());
+        }
+    }
+}
+
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15")]
+#[test]
+fn protocol_node_case_vectors_publish_the_qspec_examples() {
+    let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
+    let cases = vectors["cases"]
+        .as_array()
+        .expect("QSpec protocol cases are an array");
+    let counts = ["TC-946", "TC-947", "TC-948"].map(|test_case| {
+        cases
+            .iter()
+            .filter(|case| case["test_case"] == test_case)
+            .count()
+    });
+    assert_eq!(counts, [109, 85, 162]);
+    // Every vector id a QSpec table row names is published as a case: a row
+    // the table adds without a vector (TC-946 K10, K14) fails here.
+    for (test_case, table) in [
+        ("TC-946", TC946_PROTOCOL_NODE_FAMILY),
+        ("TC-947", TC947_PROTOCOL_NODE_FAMILY),
+        ("TC-948", TC948_PROTOCOL_NODE_FAMILY),
+    ] {
+        for row in table.lines() {
+            let Some(id) = row
+                .strip_prefix("| ")
+                .and_then(|rest| rest.split(" | ").next())
+                .filter(|id| {
+                    id.starts_with(|c: char| c.is_ascii_uppercase())
+                        && id.ends_with(|c: char| c.is_ascii_digit())
+                        && id.chars().all(|c| c.is_ascii_alphanumeric())
+                })
+            else {
+                continue;
+            };
+            let cells = row.trim_end().trim_end_matches('|').split(" | ").collect::<Vec<_>>();
+            let vector = cases
+                .iter()
+                .find(|case| case["test_case"] == test_case && case["id"] == id);
+            let Some(vector) = vector else {
+                panic!("{test_case} row {id} has no protocol node vector");
+            };
+            // A vector's text is its table row's text (rows a vector splits
+            // into lettered cases keep their own ids and are not compared).
+            if cells.len() == 3 {
+                assert_eq!(vector["Expected"], cells[2].trim(), "{test_case} {id} Expected");
+                let edit = ["Edit", "Edit to the base", "Encoded"]
+                    .iter()
+                    .find_map(|field| vector[*field].as_str());
+                assert_eq!(edit, Some(cells[1].trim()), "{test_case} {id} edit text");
+            }
+        }
+    }
+    for case in cases {
+        assert!(case["section"].as_str().is_some_and(|section| !section.is_empty()));
+        assert!(case["id"].as_str().is_some_and(|id| !id.is_empty()));
+        assert!(case["Expected"].as_str().is_some_and(|expected| !expected.is_empty()));
+        assert!(
+            ["Edit", "Edit to the base", "Encoded"]
+                .iter()
+                .any(|field| case[*field].as_str().is_some_and(|edit| !edit.is_empty()))
+        );
     }
 }
 
@@ -6062,6 +6205,19 @@ fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
         identities.len() > 1 && identities.windows(2).all(|pair| pair[0] < pair[1]),
         "the published selections are one per library identity, ascending"
     );
+
+    // The published selections are placeholders no admitted package has.
+    let admitted_ids: Vec<Value> = positive_fixtures()
+        .iter()
+        .map(|(_, package)| package["package_id"]["digest"].clone())
+        .collect();
+    for entry in entries.as_array().expect("dependency selections are an array") {
+        assert!(
+            !admitted_ids.contains(&entry["package_id"]["digest"]),
+            "{} names an admitted fixture, not a placeholder",
+            entry["identity"]
+        );
+    }
 
     let mut package = with_dependency_selections(entries);
     package["package_id"]["digest"] = vectors["package_id"].clone();
@@ -11886,7 +12042,7 @@ fn temporal_clause_refusal(
 #[trace("TC-303", "FR-370-AC-10")]
 #[test]
 fn tc_303_a_clause_profile_check_runs_before_its_other_checks() {
-    let protocol = json!({"authority": "agent-ix", "identity": "quire.protocol.finite/v1"});
+    let protocol = json!({"authority": "agent-ix", "identity": "quire.protocol.finite-global/v1"});
     let lock = json!({
         "edition": {"role": "edition", "definition": {"authority": "agent-ix", "identity": "quire-edition"}},
         "profile_selections": [{"role": "protocol_profile", "definition": protocol}]
@@ -15740,7 +15896,22 @@ const REFINEMENT_STEP_VECTORS: &str =
 /// refinement owner's `source_map` entries, or `None` when admitted.
 fn refinement_step_refusal(case: &Value) -> Option<String> {
     let refinement = &case["refinement"];
-    let owner = &refinement["node_id"];
+    let source_map = case["source_map"].as_array().expect("source map");
+    let owner = source_map
+        .iter()
+        .find(|entry| {
+            entry["role"] == "declaration"
+                && entry["regions"] == json!([refinement["declaration"]])
+        })
+        .or_else(|| {
+            source_map
+                .iter()
+                .find(|entry| entry["node_id"] == refinement["node_id"])
+        })
+        .map(|entry| &entry["node_id"]);
+    let Some(owner) = owner else {
+        return Some("/source_map".to_owned());
+    };
     // A hidden field: an abstract field of the entry's object type with no field row.
     let hidden = refinement["objects"]
         .as_array()
@@ -15755,22 +15926,38 @@ fn refinement_step_refusal(case: &Value) -> Option<String> {
                 .any(|field| !rows.contains(field))
         });
     let eligible = !hidden && refinement["histories"] == 0 && refinement["any_row"] == false;
-    // The region of the row at each `steps` position, whatever the written order.
-    let steps: Vec<&Value> = refinement["steps"]
-        .as_array()
-        .expect("steps")
-        .iter()
-        .map(|name| {
-            &refinement["rows"]
-                .as_array()
-                .expect("rows")
-                .iter()
-                .find(|row| row["name"] == *name)
-                .expect("a named row")["region"]
-        })
-        .collect();
+    let step_names = refinement["steps"].as_array().expect("steps");
+    let Some(step_rows) = case["refinement_step_rows"].as_array() else {
+        return Some("/refinement_step_rows".to_owned());
+    };
+    let mut previous_key: Option<(String, u64)> = None;
+    for (index, row) in step_rows.iter().enumerate() {
+        if row["node_id"] != *owner {
+            return Some(format!("/refinement_step_rows/{index}"));
+        }
+        let ordinal = row["ordinal"].as_u64().expect("row ordinal");
+        let key = (
+            row["node_id"]["digest"].as_str().expect("node digest").to_owned(),
+            ordinal,
+        );
+        if previous_key.as_ref().is_some_and(|previous| previous >= &key) {
+            return Some(format!("/refinement_step_rows/{index}"));
+        }
+        previous_key = Some(key);
+    }
+    if step_rows.len() != step_names.len() {
+        return Some("/refinement_step_rows".to_owned());
+    }
+    for (index, row) in step_rows.iter().enumerate() {
+        if usize::try_from(row["ordinal"].as_u64().expect("row ordinal")).ok() != Some(index) {
+            return Some(format!("/refinement_step_rows/{index}"));
+        }
+    }
+    // The sidecar is keyed by the canonical step order, independently of the
+    // order in which the source rows were written.
+    let steps: Vec<&Value> = step_rows.iter().map(|row| &row["region"]).collect();
     let mut seen = std::collections::BTreeSet::new();
-    for (index, entry) in case["source_map"].as_array().expect("source map").iter().enumerate() {
+    for (index, entry) in source_map.iter().enumerate() {
         if entry["node_id"] != *owner {
             continue;
         }
@@ -15807,7 +15994,7 @@ fn refinement_step_refusal(case: &Value) -> Option<String> {
 fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligation() {
     let vectors = parsed_fixture(REFINEMENT_STEP_VECTORS);
     let cases = vectors["cases"].as_array().expect("cases");
-    assert_eq!(cases.len(), 17);
+    assert_eq!(cases.len(), 24);
     for case in cases {
         let name = case["name"].as_str().expect("name");
         let refusal = refinement_step_refusal(case);
@@ -18400,7 +18587,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 "missing_declaration", "missing-name", "/semantic_graph/nodes/46/body/members/1",
             ),
             "tick-source-with-clock-place" => (
-                "invalid_package", "clock-without-dense-time", "/semantic_graph/nodes/49/body/members/0/value/target",
+                "invalid_package", "clock-without-dense-time", "/semantic_graph/nodes/51/body/members/0/value/target",
             ),
             "source-unit-length" | "source-unit-derived-non-time" | "source-unit-derived-time" => (
                 "ill_typed", "invalid-time-quantity", "/semantic_graph/nodes/44/body/members/1/value/target",
