@@ -108,7 +108,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "5801140f64720180aaeebafe7b88be68a95cf8077f19beb1ae41dbbbc94920ff",
+    "digest": "d2c5bab2899270808e9a96894030d11f2075146d3d5414dd2faab338e9fc82e9",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -734,12 +734,16 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
+            "digest": "acf50b9b51f2f423da80884436c0524f445e3674c05a434ff8db85f7440fda49",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
             "digest": "b6065e6366463a6fe5ddefe7da5d14ae285fa72b1640b39161a7de4aa34470a7",
             "domain": "quire.checked-semantic-node/v1"
           }
         ],
         "node_id": {
-          "digest": "0d47734247b0903842f51b06e636b1f3edeb44f14c51e75c0e2274f21726a985",
+          "digest": "5bbc034bf937499188275685e384f7c00688b93315decf2b08e1792fcd49e285",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "protocol",
@@ -753,6 +757,10 @@
         "semantic_form": "protocol_clause",
         "semantic_type": {
           "digest": "2c8a0dce10573206bc442b2da6d32ad0ba75373e04e91b09059467e791b211ec",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "owner_model": {
+          "digest": "acf50b9b51f2f423da80884436c0524f445e3674c05a434ff8db85f7440fda49",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -4601,7 +4609,7 @@
     },
     {
       "node_id": {
-        "digest": "0d47734247b0903842f51b06e636b1f3edeb44f14c51e75c0e2274f21726a985",
+        "digest": "5bbc034bf937499188275685e384f7c00688b93315decf2b08e1792fcd49e285",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,

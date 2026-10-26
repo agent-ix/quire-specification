@@ -449,7 +449,7 @@
       "section": "Clause body",
       "id": "C1",
       "Edit to the base": "none",
-      "Expected": "admitted: thirteen bindings `over`, `activation`, `captures`, `roles`, `relationships`, `channels`, `queues`, `requirements`, `compensations`, `terminal`, `scheduling`, `run`, `finish` in that order"
+      "Expected": "admitted: thirteen bindings `over`, `activation`, `captures`, `roles`, `relationships`, `channels`, `queues`, `requirements`, `compensations`, `terminal`, `scheduling`, `run`, `finish` in that order, plus the node-level `owner_model` edge"
     },
     {
       "test_case": "TC-946",
@@ -2725,6 +2725,34 @@
       "id": "CP37",
       "Edit": "a registration capture reads itself",
       "Expected": "`missing_declaration`/`missing-name`, `read` `forward`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-01",
+      "Edit to the base": "Keep the `over` argument and add `owner_model` to the exact local model declaration node represented by the source clause's `over` type",
+      "Expected": "Admitted; the target is in `dependencies` and in the application-node identity preimage"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-02",
+      "Edit to the base": "Change only `owner_model` to another existing selected model node and recompute the node and package identities",
+      "Expected": "Admitted as a different clause identity; FR-375 class-catalog reconstruction associates its classes only with the new owner model"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-03",
+      "Edit to the base": "Omit `owner_model`, use an external `PackageNodeKey`, target a non-model node, or omit its local dependency",
+      "Expected": "Schema refusal for omission/external key; reader refuses a wrong-kind target or missing dependency before clause interpretation"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-04",
+      "Edit to the base": "Keep two clauses over distinct selected models and build the concrete catalog for one of them, including a clause with no deciding step rows",
+      "Expected": "Classes from all clauses owned by the selected model are included; the other model's classes are excluded"
     }
   ]
 }

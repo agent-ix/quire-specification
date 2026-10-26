@@ -955,7 +955,8 @@ fn is_application_node(node: &Value) -> bool {
 
 /// Exact dependency list of an application-bearing node: every reference
 /// target, every operation member declaration and every `reaches` member
-/// `population` node of its body, unique and ascending by digest.
+/// `population` node of its body, plus the optional protocol-clause owner
+/// model edge, unique and ascending by digest.
 fn application_dependencies(term: &Value) -> Vec<Value> {
     let mut targets = BTreeMap::new();
     let mut pending = vec![term];
@@ -983,6 +984,18 @@ fn application_dependencies(term: &Value) -> Vec<Value> {
         }
     }
     targets.into_values().cloned().collect()
+}
+
+/// Exact dependencies of a checked application node, including its
+/// identity-bound protocol-clause owner edge when present.
+fn application_node_dependencies(node: &Value) -> Vec<Value> {
+    let mut targets = application_dependencies(&node["body"]);
+    if let Some(owner) = node.get("owner_model") {
+        targets.push(owner.clone());
+    }
+    targets.sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+    targets.dedup_by(|left, right| left["digest"] == right["digest"]);
+    targets
 }
 
 /// Closed reader refusal causes for an application's operation, in evaluation
@@ -2519,7 +2532,7 @@ fn protocol_node_vectors_match_the_fr464_operator_catalog() {
     }
 }
 
-#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15")]
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15", "FR-464-AC-16")]
 #[test]
 fn protocol_node_case_vectors_publish_the_qspec_examples() {
     let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
@@ -2532,7 +2545,7 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
             .filter(|case| case["test_case"] == test_case)
             .count()
     });
-    assert_eq!(counts, [109, 85, 162]);
+    assert_eq!(counts, [113, 85, 162]);
     // Every vector id a QSpec table row names is published as a case: a row
     // the table adds without a vector (TC-946 K10, K14) fails here.
     for (test_case, table) in [
@@ -2684,7 +2697,8 @@ fn preimage_term(term: &Value, group: &[&Value]) -> Value {
     }
 }
 
-/// The `quire.application-node/v1` preimage of every FR-322 application node.
+/// The `quire.application-node/v1` preimage of every FR-322 application node;
+/// protocol clauses add their identity-bound `owner_model` field.
 fn application_node_preimage(node: &Value, nodes: &[Value]) -> Option<Value> {
     if !is_application_node(node) {
         return None;
@@ -2700,7 +2714,7 @@ fn application_node_preimage(node: &Value, nodes: &[Value]) -> Option<Value> {
         Value::Null,
         |ordinal| json!({"size": group.len(), "ordinal": ordinal}),
     );
-    Some(json!({
+    let mut preimage = json!({
         "version": "quire.application-node/v1",
         "node_tag": node["node_tag"],
         "semantic_form": node["semantic_form"],
@@ -2708,12 +2722,17 @@ fn application_node_preimage(node: &Value, nodes: &[Value]) -> Option<Value> {
         "declaration": node.get("declaration").cloned().unwrap_or(Value::Null),
         "recursion": recursion,
         "body": preimage_term(&node["body"], &group),
-    }))
+    });
+    if let Some(owner_model) = node.get("owner_model") {
+        preimage["owner_model"] = owner_model.clone();
+    }
+    Some(preimage)
 }
 
 /// Graph-shape constraints of an application-bearing node: an expression
 /// whose root is an application has the operator's semantic form, and its
-/// dependencies are exactly its reference targets and member declarations.
+/// dependencies are exactly its body references and member declarations,
+/// plus the optional protocol-clause owner-model edge.
 fn application_node_shape_is_valid(node: &Value) -> bool {
     application_node_shape_locus(node).is_none()
 }
@@ -2739,7 +2758,7 @@ fn application_node_shape_locus(node: &Value) -> Option<&'static str> {
     }
     let dependencies_fit = node["dependencies"]
         .as_array()
-        .is_some_and(|actual| *actual == application_dependencies(body));
+        .is_some_and(|actual| *actual == application_node_dependencies(node));
     (!dependencies_fit).then_some("/dependencies")
 }
 
