@@ -100,11 +100,14 @@ weight that is not a positive exact rational (`invalid_probabilistic_model`/`inv
 ### Delay distributions
 
 Over a `time dense` model ([FR-415](../temporal/FR-415-declare-clocks-and-timed-models.md))
-an operation may declare one `delay ~ D` member, `D` one of the families of
+an operation may be the subject of one model-level `delay M::o ~ D;`
+declaration (`delay-decl` of the shared grammar), `D` one of the families of
 [FR-420](FR-420-sample-stochastic-timed-models.md). An operation with no
-`delay` member has a nondeterministic delay. A `delay` member on an operation
-of an untimed or digital model refuses with
-`invalid_probabilistic_model`/`delay-on-untimed-model`.
+`delay` declaration has a nondeterministic delay. A `delay` declaration on an
+operation of an untimed or digital model refuses with
+`invalid_probabilistic_model`/`delay-on-untimed-model`, and a second `delay`
+declaration of one operation refuses with
+`invalid_model_binding`/`malformed-declaration` at the second declaration.
 
 A **scheduled identity** is a transition identity without its random
 arguments: (operation, receiver, non-random argument vector).
@@ -126,7 +129,7 @@ obligation that reads it.
 | FR-405-AC-3 | A distribution with a repeated value, a non-positive weight, or a value outside the parameter's type refuses `repeated-support-value`, `invalid-weight` or `value-outside-type` under `invalid_probabilistic_model` at the value's locus. | Test (TC-350) |
 | FR-405-AC-4 | A reward reading state, typed other than integer or quantity, or negative for some argument vector refuses with its typed cause; an admitted reward is carried by every transition of its operation. | Test (TC-350) |
 | FR-405-AC-5 | A workload that omits, duplicates or misnames an operation, or gives an invalid weight, refuses with its typed cause; a complete workload is admitted. | Test (TC-350) |
-| FR-405-AC-6 | A `delay` member is admitted on an operation of a `time dense` model and refuses `invalid_probabilistic_model`/`delay-on-untimed-model` on an untimed or digital model; an operation with no `delay` member has a nondeterministic delay. | Test (TC-350) |
+| FR-405-AC-6 | A `delay` declaration is admitted on an operation of a `time dense` model and refuses `invalid_probabilistic_model`/`delay-on-untimed-model` on an untimed or digital model; a second `delay` declaration of one operation refuses `invalid_model_binding`/`malformed-declaration`; an operation with no `delay` declaration has a nondeterministic delay. | Test (TC-350) |
 | FR-405-AC-7 | Changing one weight, support value or reward expression changes the identity of every obligation that reads it. | Test (TC-350) |
 | FR-405-AC-8 | A second `random` declaration of one operation parameter refuses `invalid_probabilistic_model`/`duplicate-distribution` at the second declaration's locus, naming the operation and the parameter. | Test (TC-350) |
 | FR-405-AC-9 | A second `reward duration on Server::attempt = d;` after the first refuses `invalid_probabilistic_model`/`duplicate-reward` at the second declaration's locus, naming `Server::attempt` and `duration`; `reward duration` on `Server::attempt` and on `Server::request` with one value type is admitted. | Test (TC-350) |

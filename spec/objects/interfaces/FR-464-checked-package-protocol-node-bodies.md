@@ -69,8 +69,13 @@ FR-466, with the first refusal in the order below.
   digest-ascending `reference` targets of the body.
 - **node key** — FR-322's `quire.application-node/v1` preimage
   `{version, node_tag, semantic_form, semantic_type, declaration, recursion,
-  body}`, with `recursion` `null`: a protocol node carries no
-  `recursion_group`. Because the body, its references and the `declaration`
+  body}`. Under Option A below, `recursion` is `null` and
+  `recursion_group` absent for a protocol node outside a cyclic reference
+  component. Every node in a cyclic component, including nodes with another
+  `node_tag`, uses FR-322's recursion-group encoding: one explicit shared
+  `recursion_group`, the component's `{size, ordinal}` coordinates, and
+  `group_reference` for each reference to a member of that same component.
+  Because the body, its references and the `declaration`
   path enter the preimage and occurrences do not, a member node's key is a
   function of its own content, the content of every node it references and
   its place in its protocol, and of nothing in the source text but those.
@@ -458,13 +463,24 @@ form) precedes a type defect, which precedes a bound defect. Operand
 families and `result_type` are the application's catalog checks at the
 operation step.
 
+## Cyclic protocol reference components (Option A)
+
+A predicate-join function that refers to its own protocol is admitted when
+the resulting checked-node references form a cycle. The reader uses FR-322's
+existing recursion-group mechanism for the entire cyclic strongly connected
+component; the group is not restricted to `protocol` nodes. FR-322's generic
+graph-cycle validation assigns and validates the group before the
+protocol-specific body step. Acyclic protocol nodes keep `recursion` `null`
+and have no `recursion_group`. This adds no protocol-specific wire variant or
+alternate cycle encoding.
+
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-464-AC-1 | Every protocol node's body is a `quire.op.protocol.control` application with operator class `protocol_control`, one `protocol_profile` law equal to the lock's row, a `profile_operator` member naming an operator of the catalog, `null` mode, empty leaves, `result_type` the Boolean node and `semantic_type` the same node; a body that applies another identity, carries two laws, another member kind or a `null` member, or whose arguments are not the operator's bindings in order, refuses `malformed_wire` or `operation-member-mismatch`. | Test (TC-946) |
 | FR-464-AC-2 | Each operator belongs to the one `semantic_form` the catalog names; an application at the body root of a node of another form or tag refuses `ill_typed`/`operator-ineligible` at that node, and the same application nested in a body or term refuses `malformed_wire` at the nested application. | Test (TC-946) |
-| FR-464-AC-3 | A protocol node's key is the `quire.application-node/v1` digest of its tag, form, type, declaration, `null` recursion and body: reformatting the source, a comment, a second reference to the protocol and declaring the roles in another source order leave every key and the `package_id` unchanged; renaming a role, reordering two `children`, changing one literal or retargeting one reference changes the node key and the `package_id`; a set out of ascending digest order or repeating an entry refuses `invalid_semantic_graph`. | Test (TC-946) |
+| FR-464-AC-3 | An acyclic protocol node has no `recursion_group` and a `quire.application-node/v1` key preimage with `recursion` `null`: reformatting the source, a comment, a second reference to the protocol and declaring the roles in another source order leave every key and the `package_id` unchanged; renaming a role, reordering two `children`, changing one literal or retargeting one reference changes the node key and the `package_id`; a set out of ascending digest order or repeating an entry refuses `invalid_semantic_graph`. | Test (TC-946) |
 | FR-464-AC-4 | A role, a channel, a template and a control named `X` in one protocol have four distinct declarations; two controls on one path, or two roles of one name, refuse `ambiguous_declaration`/`ambiguous-name` naming both keys; a control whose declaration is not its holder's declaration followed by its name, a control held twice and a control held by nothing refuse `invalid_semantic_graph` at the control. | Test (TC-946) |
 | FR-464-AC-5 | The clause body is thirteen bindings in the order the "Clause body" table lists; `activation` is `origin` with no trigger or `each` with a trigger and an optional guard; a protocol with no relationship, requirement, compensation, `terminal` member or `scheduling` has empty sets and absent optionals and is admitted; a body with arguments reordered, missing or of another term shape refuses `malformed_wire`. | Test (TC-946) |
 | FR-464-AC-6 | A listed role, channel, queue, compensation or obligation node that is not of the stated tag and form refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `relationships` target that is not a `relation`/`relationship` node `invalid_model_binding`/`wrong-export`; a target absent from `dependencies` refuses `missing_declaration`/`missing-name`; a declaration node named by two arguments of one clause or by two clauses, a node owned by no clause, a channel with no queue or with two, and a queue naming another clause's channel refuse `invalid_semantic_graph`. | Test (TC-946) |
@@ -476,6 +492,7 @@ operation step.
 | FR-464-AC-12 | The protocol step runs after the state, temporal, abstraction and refinement steps and before the operation step and reports, in order, placement, operator, declaration, member, membership, clause and refinement class-catalog graph-join defects; within a clause the cycle and progress defects precede the slot checks, and within a slot the `over`/model-state refusal precedes the binder-scope refusal, which precedes the decision-fact refusal; a state-step defect and a protocol defect in one package report the state-step defect. | Test (TC-946, TC-310) |
 | FR-464-AC-13 | The activation relation of an admitted protocol is derived from its clause node's `activation` and `requirements` alone: `activation on each (opened)` with `requires temporal OrderClosureBounded` gives exactly one row, the clause key, `each` with `opened`'s node key and `OrderClosureBounded`'s node key; under `activation on origin` the one row carries `origin` and no trigger; a protocol with no requirement has no row; a second `requires temporal OrderClosureBounded` leaves one row; a second required temporal clause gives two rows in ascending node-id digest order; a temporal clause that shares the protocol's clock but is not required gives no row; a `requirements` entry or an `each` trigger absent from the clause's `dependencies` refuses `missing_declaration`/`missing-name` at the target with no relation. | Test (TC-946) |
 | FR-464-AC-14 | A complete refinement class catalog whose rows agree with it is admitted after its selected protocol graph passes the protocol step. When one otherwise valid package has both an independent protocol-body member defect and a rekeyed catalog class associated with the wrong existing control node, the protocol-body defect refuses first; after repairing only that defect and rebuilding the changed keys and package identity, the catalog association refuses. A refinement row/catalog mismatch instead refuses at the earlier refinement step before either protocol defect. | Test (TC-310) |
+| FR-464-AC-15 | When a predicate-join function refers to its own protocol and the checked-node references form a cycle, the reader admits the package using FR-322's recursion-group encoding for the entire cyclic component, including non-protocol nodes: all component members share the group, carry `{size, ordinal}` coordinates and encode in-component references as `group_reference`. Acyclic protocol nodes have no `recursion_group`, use `recursion` `null` and retain their existing key inputs. | Test (TC-946) |
 
 ## Published artifacts and the operation catalog
 
@@ -516,4 +533,5 @@ operation step.
 
 ## Status
 
-Proposed complete-V1 boundary contract for the protocol node family.
+Proposed complete-V1 boundary contract for the protocol node family, including
+the approved Option A cycle handling.

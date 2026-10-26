@@ -16,7 +16,10 @@ relationships:
 Read `correspondence`/`abstraction_relation` nodes against the published
 schema and the FR-451 reader order, and confirm that the node carries every
 binding, keys a frame binding by its operation key, and enters the package
-identity.
+identity. For the population-target vectors, use the P7/P8 population node
+identity vectors from `proposals/checked-package-v2/model-owner-form-vectors.json`
+as the relation entries' targets, and recompute the enclosing relation and
+package digests.
 
 ## Test Procedure
 
@@ -43,9 +46,14 @@ refusal's code, cause and locus, with the vector.
 | AN-11 | A second relation node binding the `ConfigVersion` object key | `invalid_model_binding`/`conflicting-binding` at the second node in ascending node-id digest order, naming both entries and the key |
 | AN-12 | AD-01 compiled twice; then AD-01 with `version to "v2"` | The two unchanged compiles give equal node ids and package ids; the edited one gives a different node id and package id |
 | AN-13 | The `ConfigVersion` object entry with two `fields` entries named `version`, bound to `"version"` and `"rev"` | `invalid_model_binding`/`conflicting-binding` at the entry, naming both entries and `version` |
+| AN-14 | Population entry targeting P7, the `acme/runs/counters` vector | Admitted; `population` is P7's node id `15ed74b124665e2fb9375dc02e715243dce2eb0d7d63d1f36c52f5fa1241a91a`; the target has the vector's `relation`/`population` tag/form, `ModelOwner`, empty aggregate body, self `semantic_type`, empty dependencies and matching identity preimage; the relation depends on P7 |
+| AN-15 | Population entry targeting P8, the `acme/runs/archive` vector | Admitted with the corresponding P8 node id `cc575f3d64f43a4bf787f5febdc73fbc9f2212617393877fa00371611204be24`; the target has the vector's same node shape and matching preimage, and the relation depends on P8; P7 and P8 remain distinct despite their shared package identity and node shape |
+| AN-16 | A population entry targeting a member-type node or scalar text node instead of a `relation`/`population` node | `invalid_model_binding`/`malformed-declaration` at the target |
 
 ## Expected Results
 
 Each vector gives exactly its listed result. A frame entry never carries a
 frame or anchor node, and its pair resolves as an `operation_anchor` pair
-does. Every binding change changes the package identity.
+does. Every binding change changes the package identity. P7 and P8 are
+population declaration-node identities; they are not member-type or
+collection identities.

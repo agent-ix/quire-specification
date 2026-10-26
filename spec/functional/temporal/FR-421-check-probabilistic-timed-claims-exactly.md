@@ -33,7 +33,7 @@ the rule it breaks.
 ## Inputs
 
 A timed subject ([FR-415](FR-415-declare-clocks-and-timed-models.md)) with
-its operations' `delay` members, and a probabilistic claim with its scheduler
+its operations' `delay` declarations, and a probabilistic claim with its scheduler
 clause ([FR-420](../analysis/FR-420-sample-stochastic-timed-models.md)).
 
 ## Outputs
@@ -48,7 +48,7 @@ verdict over the digital process, or `unsupported` with `strict-clock-constraint
 
 `under every scheduler`, with or without a fairness set, chooses every delay
 and every scheduled identity, and random arguments are drawn by FR-406; a
-model whose operations declare a `delay` member settles `unsupported`,
+model whose operations declare a `delay` declaration settles `unsupported`,
 `delay-distribution{operation}`, on this form.
 
 `under W` resolves the scheduled identity and, through FR-420's race, every
@@ -57,7 +57,7 @@ state (each racing identity's delay drawn from its distribution conditioned on
 its window, the smallest winning, ties ordered by `W`'s weights) is one
 probabilistic edge with an exact rational probability. When every racing
 identity's delay is so given, the subject under `W` is a Markov chain over
-digital timed states. The delay of an operation with no `delay` member stays
+digital timed states. The delay of an operation with no `delay` declaration stays
 the scheduler's choice, and the provider decides the claim over every
 resolution of those delays, the bound read on their minimum or maximum. A
 `uniform`, `uniform[a, b]` or `exponential` distribution has no exact digital
@@ -120,9 +120,9 @@ with the scaled constants and is bounded only by the request's `max_states`.
 | FR-421-AC-1 | On the `Retx` vector, `Deadline` at 0.99 over every scheduler settles `proved`, `exact-value{99/100}` at equality, with maximum `9999/10000`. | Test (TC-374) |
 | FR-421-AC-2 | `Deadline` at 0.995 settles `refuted` by a one-path set of probability `1/100` with losses at 2 ms and 4 ms, and replay checks that the next `send` needs time past 4 ms. | Test (TC-374) |
 | FR-421-AC-3 | `MeanTime` settles `proved`, `exact-value{20/9 ms}` for the maximum expected time, with minimum `10/9 ms`. | Test (TC-374) |
-| FR-421-AC-4 | A strict guard settles `unsupported`, `strict-clock-constraint`; a `uniform` or `exponential` delay under a workload, or any `delay` member under every scheduler, settles `delay-distribution`; a zero-delay cycle settles `zero-delay-cycle`; an unadmitted timed form settles `timed-form-shape`. | Test (TC-374) |
+| FR-421-AC-4 | A strict guard settles `unsupported`, `strict-clock-constraint`; a `uniform` or `exponential` delay under a workload, or any `delay` declaration under every scheduler, settles `delay-distribution`; a zero-delay cycle settles `zero-delay-cycle`; an unadmitted timed form settles `timed-form-shape`. | Test (TC-374) |
 | FR-421-AC-5 | Under a workload whose every racing delay is `discrete`, the timed subject is a Markov chain and the exact value of the all-`discrete` `RareLate` variant is `1/20`. | Test (TC-374) |
-| FR-421-AC-6 | Under a workload, an operation with no `delay` member has its delay chosen by the scheduler, and the bound compares the minimum or maximum over those choices: on the all-`discrete` `RareLate` variant with `reply`'s delay free, the maximum is `1/2` and the minimum 0, and `probability <= 0.01` settles `refuted` with a witness scheduler that takes `reply`'s delay 3 ms. | Test (TC-374) |
+| FR-421-AC-6 | Under a workload, an operation with no `delay` declaration has its delay chosen by the scheduler, and the bound compares the minimum or maximum over those choices: on the all-`discrete` `RareLate` variant with `reply`'s delay free, the maximum is `1/2` and the minimum 0, and `probability <= 0.01` settles `refuted` with a witness scheduler that takes `reply`'s delay 3 ms. | Test (TC-374) |
 
 ## Dependencies
 

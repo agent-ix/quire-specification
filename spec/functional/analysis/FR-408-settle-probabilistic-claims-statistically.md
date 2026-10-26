@@ -71,7 +71,7 @@ with:
 - `not-markov` when a drawn step breaks FR-406's Markov condition, at the
   first such step;
 - `not-stochastic` over a timed subject when a racing identity's operation
-  declares no `delay` member, at the first state where it races
+  declares no `delay` declaration, at the first state where it races
   ([FR-420](FR-420-sample-stochastic-timed-models.md));
 - `time-locked-sample{state}` over a timed subject when a sample reaches a
   time-locked state before its horizon (FR-420);
