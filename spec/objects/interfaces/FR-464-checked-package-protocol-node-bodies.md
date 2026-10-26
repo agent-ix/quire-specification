@@ -91,6 +91,12 @@ FR-466, with the first refusal in the order below.
   ordered list, changes the node key and, through the package's
   `identity_projection`, the `package_id` ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)
   AC-4).
+- **operation anchors** — an `attempt` resolves its operation through the
+  `state`/`operation_anchor` of that operation (FR-342). A protocol-only
+  anchor has no `execution_point`; if a state clause also names the operation
+  with an accepted execution point, that clause-bound anchor has its own
+  point-bound identity and the attempt continues to reference the no-point
+  protocol anchor. The two anchors may share the same frame.
 
 ## Operator catalog
 
@@ -509,6 +515,7 @@ alternate cycle encoding.
 | FR-464-AC-14 | A complete refinement class catalog whose rows agree with it is admitted after its selected protocol graph passes the protocol step. When one otherwise valid package has both an independent protocol-body member defect and a rekeyed catalog class associated with the wrong existing control node, the protocol-body defect refuses first; after repairing only that defect and rebuilding the changed keys and package identity, the catalog association refuses. A refinement row/catalog mismatch instead refuses at the earlier refinement step before either protocol defect. | Test (TC-310) |
 | FR-464-AC-15 | When a predicate-join function refers to its own protocol and the checked-node references form a cycle, the reader admits the package using FR-322's recursion-group encoding for the entire cyclic component, including non-protocol nodes: all component members share the group, carry `{size, ordinal}` coordinates and encode in-component references as `group_reference`. Acyclic protocol nodes have no `recursion_group`, use `recursion` `null` and retain their existing key inputs. | Test (TC-946) |
 | FR-464-AC-16 | Every `protocol_clause` node has one `owner_model` local `NodeRef` to its exact model declaration node; the edge is present in both V2 schemas, included in the clause's application-node preimage and exact dependencies, and absent from every other node. A missing edge, external key, non-model target or missing dependency refuses at the edge or dependency before clause interpretation. Retargeting only the edge changes the clause key and package id. FR-375 includes every clause whose edge equals the selected concrete model in its class catalog, even when no step row names its classes, and excludes a clause whose edge names another model. | Test (TC-946, TC-310) |
+| FR-464-AC-17 | An `attempt` references the no-point `operation_anchor` for its operation. When a state clause names that same operation with a `ClauseBinding.execution_point`, the package has a distinct point-bearing anchor for the clause and a no-point anchor for the attempt; both may reference the operation's shared frame. Altering either point-bearing anchor changes its identity without changing the protocol attempt's anchor reference. | Test (TC-946) |
 
 ## Published artifacts and the operation catalog
 

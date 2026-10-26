@@ -551,6 +551,24 @@ Each vector edits the published clause-operations package and rekeys the edited 
 | CN-02 | CN-01's constraint with its anchor argument referencing the operation anchor | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-13 |
 | CN-03 | CN-01's constraint with a second parameter reference in its aggregate | `ill_typed`/`operator-ineligible` at the clause node | FR-341-AC-13 |
 
+### Execution point identity vectors
+
+Each vector in `node-identity-vectors.json`'s `operation_vectors` applies the
+execution point to the published `positive-clause-operations.json` state-clause
+body, then recomputes the `quire.application-node/v1` JCS SHA-256. Both V2
+schemas admit each preimage. On complete package reads, exercise valid
+initialization/handler invariants and pre/post operation clauses, rekey the
+clause and corresponding anchor, and verify that each accepted point round
+trips and changes both applicable identities. Mutate a variant, name, or
+clause/anchor agreement and require the first FR-341/FR-342 refusal.
+
+| Vector | Execution point | Expected SHA-256 | Criteria |
+| --- | --- | --- | --- |
+| `execution-point-initialization` | `initialization{name: "boot"}` | `0f573793a678636dc4803eba16ff75a3432a44a2d39670b908e3aa9f607cd6f9` | FR-322-AC-131; FR-341-AC-14 |
+| `execution-point-handler` | `handler{name: "validate"}` | `c9e9e7bd0021df4fef1aa0a52c10172c288bab4ccf05099e2215b0c082554497` | FR-322-AC-131; FR-341-AC-14 |
+| `execution-point-pre` | `pre{operation: "attemptUpdate"}` | `011830fb0053fc357fb07d7f4118b397743918ef9e93bc0cc5c0465066828b60` | FR-322-AC-131; FR-341-AC-14 |
+| `execution-point-post` | `post{operation: "attemptUpdate"}` | `065de29f4474005bc23d5cb5561f77ca997ef26d60657d64f5a95a0809461d45` | FR-322-AC-131; FR-341-AC-14 |
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.

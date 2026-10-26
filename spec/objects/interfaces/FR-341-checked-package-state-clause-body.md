@@ -36,7 +36,7 @@ refusal in the order below.
 
 - **body** — an `application` term with `operator: "state_clause"` and
   `operation.identity: "quire.op.state.clause"`, whose `operation.member` is
-  `{kind: "state_clause", clause}` with `clause` one of `invariant`,
+  `{kind: "state_clause", clause, execution_point?}` with `clause` one of `invariant`,
   `constraint`, `precondition` or `postcondition`, `laws` empty, `mode` `null` and
   `leaves` empty. Its `arguments` are exactly:
   1. **the parameter aggregate** — an `aggregate` whose members are
@@ -50,6 +50,12 @@ refusal in the order below.
      ([FR-342](FR-342-checked-package-operation-anchor-body.md)) for a
      precondition or postcondition;
   3. **the condition** — the Boolean term the clause asserts.
+- **execution point** — the optional `execution_point` member of the
+  `state_clause` operation member. When present it is the accepted
+  `ClauseBinding.execution_point`, in FR-322's closed `ExecutionPoint` shape.
+  It is absent only when the checked clause has no execution point. Because
+  the operation member is part of the application body, the point participates
+  in the state-clause node's application preimage and identity.
 - **semantic_type** — the `scalar_type`/`boolean` node. The application's
   `result_type` names the same node: the catalog's `clause` result form
   declares a Boolean result, and FR-322's rule that a node whose body root
@@ -100,7 +106,7 @@ families, groups and constraints"):
 | result | `clause` (declared Boolean) |
 | laws | none |
 | mode | none |
-| member | `state_clause`: `{kind: "state_clause", clause: "invariant" \| "constraint" \| "precondition" \| "postcondition"}` |
+| member | `state_clause`: `{kind: "state_clause", clause: "invariant" \| "constraint" \| "precondition" \| "postcondition", execution_point?: ExecutionPoint}` |
 | constraints | none |
 | leaves | none |
 
@@ -108,8 +114,9 @@ The anchor fits the `object` position: the node of an object type, a process
 or a state machine has family `object`, and an `operation_anchor` node's
 `semantic_type` is its context node (FR-342), so a reference to it has family
 `object` too. The
-clause kind is the only difference between the four clauses' spellings, so
-the kind member decides which clause an application is.
+clause kind decides which clause an application. The optional execution point
+is also part of the member and application identity; equal clause conditions
+at different accepted points are distinct nodes.
 
 ## Node forms and body roots
 
@@ -173,6 +180,13 @@ this order and the first failing check is its defect:
    table above, else `ill_typed`/`operator-ineligible` at the clause node.
    `self` is checked first, then `result`, then the operation's parameters
    in order. A constraint is checked as an invariant.
+4. **Execution point.** When present, the point has FR-322's exact closed
+   shape. `invariant` and `constraint` take `initialization{name}` or
+   `handler{name}`; `precondition` and `postcondition` take `pre{operation}`
+   or `post{operation}`. The name equals the checked source anchor, and an
+   operation clause's point equals its `operation_anchor` point. A malformed,
+   mismatched or inapplicable point refuses
+   `invalid_model_binding`/`malformed-declaration` at the clause node.
 
 The Boolean condition, the operand families and the `result_type` are the
 application's catalog checks, reported at the operation step in FR-322's
@@ -196,6 +210,7 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 | FR-341-AC-11 | A process `Flow` with field `n` and operation `go(): Integer` admits an invariant anchored at the `model`/`process` node binding `[Reference<Flow>]`, a precondition of `go` binding `[Reference<Flow>]` and a postcondition of `go` binding `[Reference<Flow>, Integer]`, whose anchor is the `go` operation anchor of context `Flow`; a state machine `Gate` with operation `toggle()` admits an invariant anchored at the `model`/`state_machine` node binding `[Reference<Gate>]` and a postcondition of `toggle` binding `[Reference<Gate>]`; the `Reference<Flow>` and `Reference<Gate>` nodes are `composite_type`/`reference` nodes over the process and state-machine declaration nodes. | Test (TC-233, TC-280) |
 | FR-341-AC-12 | A clause on a process or a state machine refuses as one on an object type does: an invariant anchored at an operation anchor, and a precondition anchored at the process node, refuse `invalid_model_binding`/`malformed-declaration` at the anchor's target; a `self` of `Reference<Other>` for another declaring type, a missing operation parameter and a missing result each refuse `ill_typed`/`operator-ineligible` at the clause node; an invariant anchored at a record value type, an event type, a persistence interface or a systems interface refuses `invalid_model_binding`/`malformed-declaration` at the anchor's target. | Test (TC-233, TC-280) |
 | FR-341-AC-13 | The published clause package's invariant node with its kind member's `clause` rewritten to `constraint`, rekeyed, validates against both V2 schemas and is admitted by the state step, as a constraint is checked as an invariant; the same constraint anchored at an operation anchor refuses `invalid_model_binding`/`malformed-declaration` at the anchor's target, and one binding a second parameter refuses `ill_typed`/`operator-ineligible` at the clause node. An invariant and a constraint with equal bodies have different node ids, because the kind member is part of the body. | Test (TC-233) |
+| FR-341-AC-14 | The state-clause member admits each closed `execution_point` variant: initialization/handler on an invariant, pre/post on an operation clause; it refuses an unknown variant, extra member, missing anchor name, an inapplicable point, or a name that disagrees with the checked source/operation anchor. Equal clause bodies with different accepted points have different node identities and package ids; the same point round-trips unchanged. | Test (TC-233) |
 
 ## Dependencies
 
