@@ -2939,26 +2939,6 @@
     },
     {
       "node_id": {
-        "digest": "12432a66163e81ff5f49da6c49fda4ab0b0b90b923b63f5f00e0e89287d80222",
-        "domain": "quire.checked-semantic-node/v1"
-      },
-      "ordinal": 0,
-      "regions": [
-        {
-          "end": 11,
-          "source": {
-            "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
-            "identity": "example"
-          },
-          "start": 10
-        }
-      ],
-      "role": "declaration"
-    },
-    {
-      "node_id": {
         "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14",
         "domain": "quire.checked-semantic-node/v1"
       },

@@ -7,6 +7,7 @@ Without --check, every text literal whose `type` is not the package's
 scalar_type/text node is retyped to it (FR-464), each application node's
 `node_id` is recomputed from its `quire.application-node/v1` preimage until the
 graph is stable (a changed key is rewritten wherever it is referenced), and the
+source-map entries naming no node are dropped, and the
 `package_id` is recomputed from `identity_preimage` plus the occurrence-free
 node projection (FR-322). With --check nothing is written; the exit status is
 1 if any key or package id is stale. The preimages mirror the helpers in
@@ -87,13 +88,19 @@ def walk(term, visit):
             walk(value, visit)
 
 
+def stale_source_map(package):
+    """Positions of source-map entries naming no node of the graph."""
+    ids = {n["node_id"]["digest"] for n in package["semantic_graph"]["nodes"]}
+    return [i for i, e in enumerate(package["source_map"]) if e["node_id"]["digest"] not in ids]
+
+
 def stale(package):
     nodes = package["semantic_graph"]["nodes"]
     keys = [
         i for i, n in enumerate(nodes)
         if is_application_node(n) and digest(application_preimage(n, nodes)) != n["node_id"]["digest"]
     ]
-    return keys, package_id(package) != package["package_id"]["digest"]
+    return keys, package_id(package) != package["package_id"]["digest"], stale_source_map(package)
 
 
 def rekey(text):
@@ -119,6 +126,8 @@ def rekey(text):
         else:
             break
     package = json.loads(out)
+    drop = set(stale_source_map(package))
+    package["source_map"] = [e for i, e in enumerate(package["source_map"]) if i not in drop]
     package["package_id"]["digest"] = package_id(package)
     return json.dumps(package, indent=2, ensure_ascii=False)
 
@@ -130,10 +139,10 @@ def main(argv):
     for path in paths:
         text = open(path, encoding="utf-8").read()
         if check:
-            keys, package = stale(json.loads(text))
-            if keys or package:
+            keys, package, source_map = stale(json.loads(text))
+            if keys or package or source_map:
                 failed = True
-                print(f"{path}: stale node keys {keys}, stale package id {package}")
+                print(f"{path}: stale node keys {keys}, stale package id {package}, stale source map {source_map}")
         else:
             tail = "\n" if text.endswith("\n") else ""
             open(path, "w", encoding="utf-8").write(rekey(text) + tail)
