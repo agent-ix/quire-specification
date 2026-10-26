@@ -66,8 +66,8 @@ Encode as V2 packages:
     application and then a `case` application.
 
 11. A `quire.op.temporal.clause` body whose argument 1 is removed, one whose argument 1 is replaced by a `null` literal, and one whose argument 1 is replaced by the clause's clock text literal.
-12. **Proposal, unconfirmed by operator:** Encode `count`, `sum`, `min`,
-    `max`, `fraction` and `quantile` aggregate atoms under event-position;
+12. Encode `count`, `sum`, `min`, `max`, `fraction` and `quantile` aggregate
+    atoms under event-position;
     encode a duration-window `quantile` under timestamped-event with a
     threshold converted from seconds to milliseconds; encode omitted and
     explicit `min_count 1` spellings; mutate the aggregate payload with a
@@ -131,8 +131,8 @@ Encode as V2 packages:
     aggregate at `/diagnostics/entries/{e}/details/{d}/members/0/operator`,
     and the union and union-value references are admitted (FR-370-AC-12).
 11. All three fail the schema (FR-370-AC-13).
-12. **Proposal, unconfirmed by operator:** Each of the six atoms is admitted
-    as a `temporal`/`formula` node using `quire.op.temporal.aggregate` and one
+12. Each of the six atoms is admitted as a `temporal`/`formula` node using
+    `quire.op.temporal.aggregate` and one
     aggregate argument with the ordered closed binding shape. Position bounds
     are integers; duration bounds and the converted threshold are exact
     quantities; omitted `min_count` is encoded as 1 and has the same node key
