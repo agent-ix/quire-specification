@@ -21,6 +21,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-79
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-75
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-114
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-81
@@ -69,9 +71,13 @@ schema and vectors, the operation catalog including text-to-number identities,
 its clause and control operation identities, and the compound-unit value identity schema and
 vectors, and the complete-value and complete-model definition locks and
 package-selection vectors. This case proves producer-side schema closure,
-digest recomputation and operation-identity and diagnostic-cause closure
-only. It does not exercise a production reader, linker, lowerer or evaluator;
-those criteria remain with TC-217 and TC-187.
+digest recomputation, and operation-identity and diagnostic-cause closure
+through QSpec's Rust qualification. The dependency-closure reader outcomes
+below have implementation evidence in quire-contract-ir's
+`diamond_with_different_transitive_package_ids_refuses` and
+`transitive_only_dependency_reference_refuses_missing_selection` tests; the
+QSpec crate itself does not contain a production reader, linker, lowerer, or
+evaluator. Other reader and evaluator criteria remain with TC-217 and TC-187.
 
 ## Test Procedure
 
@@ -556,8 +562,11 @@ the schema and admitted or refused by the order rule with exactly its
 recorded outcome and loci. The new closure vectors record the diamond's two
 dependency paths and its `invalid_package`/`conflicting-definition` refusal,
 and the transitive-only reference's `missing_declaration`/`missing-selection`
-refusal. Their reader outcomes remain planned until the IR implementation
-lands. A `dependency_reference` term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency library is admitted with its recorded `package_id`,
+refusal. The quire-contract-ir reader implements both outcomes: its diamond
+test refuses conflicting transitive selections with both importer-rooted
+selection paths, and its transitive-reference test refuses a transitive-only
+package as `missing_declaration`/`missing-selection`. A `dependency_reference`
+term is admitted by both schemas and each of its four mutations fails both; as a call's callee it keys a valid application-node preimage, and changing its `package` or its `node` each gives a new, distinct id. The dependency library is admitted with its recorded `package_id`,
 and the dependency call package that selects it by that id is admitted with it
 supplied. Each published mutation passes the V2 schema and refuses
 `missing_import`/`missing-selection` at the selection entry,
