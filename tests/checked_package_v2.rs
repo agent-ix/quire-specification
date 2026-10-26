@@ -38,6 +38,9 @@ const TIMED_MODEL_NODE_VECTORS: &str =
 const FR322_BODY_STEPS: &str = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
 const FR464_PROTOCOL_NODES: &str = include_str!("../spec/objects/interfaces/FR-464-checked-package-protocol-node-bodies.md");
 const TC233_BODY_STEP_VECTOR: &str = include_str!("../spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md");
+const TC946_PROTOCOL_NODE_FAMILY: &str = include_str!("../spec/test-cases/TC-946-checked-package-protocol-node-family.md");
+const TC947_PROTOCOL_NODE_FAMILY: &str = include_str!("../spec/test-cases/TC-947-checked-package-protocol-declaration-bodies.md");
+const TC948_PROTOCOL_NODE_FAMILY: &str = include_str!("../spec/test-cases/TC-948-checked-package-protocol-control-bodies.md");
 const PROTOCOL_NODE_VECTORS: &str = include_str!("../proposals/checked-package-v2/fixtures/protocol-node-vectors.json");
 const POSITIVE_NOMINAL_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-nominal-identities.json");
@@ -2516,7 +2519,7 @@ fn protocol_node_vectors_match_the_fr464_operator_catalog() {
     }
 }
 
-#[trace("TC-946", "TC-947", "TC-948")]
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15")]
 #[test]
 fn protocol_node_case_vectors_publish_the_qspec_examples() {
     let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
@@ -2529,7 +2532,34 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
             .filter(|case| case["test_case"] == test_case)
             .count()
     });
-    assert_eq!(counts, [108, 85, 162]);
+    assert_eq!(counts, [109, 85, 162]);
+    // Every vector id a QSpec table row names is published as a case: a row
+    // the table adds without a vector (TC-946 K10, K14) fails here.
+    for (test_case, table) in [
+        ("TC-946", TC946_PROTOCOL_NODE_FAMILY),
+        ("TC-947", TC947_PROTOCOL_NODE_FAMILY),
+        ("TC-948", TC948_PROTOCOL_NODE_FAMILY),
+    ] {
+        for row in table.lines() {
+            let Some(id) = row
+                .strip_prefix("| ")
+                .and_then(|rest| rest.split(" | ").next())
+                .filter(|id| {
+                    id.starts_with(|c: char| c.is_ascii_uppercase())
+                        && id.ends_with(|c: char| c.is_ascii_digit())
+                        && id.chars().all(|c| c.is_ascii_alphanumeric())
+                })
+            else {
+                continue;
+            };
+            assert!(
+                cases
+                    .iter()
+                    .any(|case| case["test_case"] == test_case && case["id"] == id),
+                "{test_case} row {id} has no protocol node vector"
+            );
+        }
+    }
     for case in cases {
         assert!(case["section"].as_str().is_some_and(|section| !section.is_empty()));
         assert!(case["id"].as_str().is_some_and(|id| !id.is_empty()));

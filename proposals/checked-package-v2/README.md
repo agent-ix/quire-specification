@@ -431,3 +431,12 @@ part of the node identity. On a nominal node it equals the nominal
 and two nodes declaring one name refuse as `ambiguous-name`
 (`ambiguous_declaration`). Library exports resolve only through this member.
 - `fixtures/positive-integer-literal-references.json` is the reference form of the `three` application of `positive-two-owners-a.json` (its integer literal operands are references to `value`/`literal` nodes); the reader admits it under a node identity different from the inline form's.
+
+## Regenerating fixture keys
+
+`tools/rekey_fixtures.py` recomputes the application-node keys and the package
+id of the positive fixtures after a body edit (`rekey_fixtures.py --check
+fixtures/positive-*.json` reports stale keys without writing). It does not
+rewrite values derived from a package id elsewhere, such as
+`dependency-selection-vectors.json`; `cargo test --test checked_package_v2`
+names those that are stale.

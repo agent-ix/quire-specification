@@ -439,6 +439,13 @@
     },
     {
       "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K14",
+      "Edit to the base": "a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic",
+      "Expected": "the complete cyclic reference component shares one `recursion_group`, each member has its FR-322 `{size, ordinal}` coordinate and intra-component edges use `group_reference`; the reader admits the package. `Plain` and every other node outside that component have no `recursion_group` and `recursion` `null`"
+    },
+    {
+      "test_case": "TC-946",
       "section": "Clause body",
       "id": "C1",
       "Edit to the base": "none",
