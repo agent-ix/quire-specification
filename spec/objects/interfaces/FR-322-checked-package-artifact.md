@@ -426,7 +426,8 @@ boundary.
   `operator-ineligible` (arity, operand family, constraint, member or result
   type outside the entry; code `ill_typed`); then the leaves.
 - `application_node_preimage` — every `value`/`union_value` node, and every
-  other node whose body contains an application, is keyed by the JCS SHA-256
+  other node whose body contains an application except a
+  `relation`/`refinement` node, is keyed by the JCS SHA-256
   of `{version: "quire.application-node/v1",
   node_tag, semantic_form, semantic_type, declaration, recursion, body}`.
   `declaration` is the node's `declaration` member or `null`; `recursion` is
@@ -466,7 +467,8 @@ boundary.
   refusal, the reader runs the body steps in this one order, each over its
   own node forms and each reporting before the next starts: the state-graph
   step (FR-475), the temporal step (FR-370), the abstraction step (FR-451),
-  the terminal step (FR-476), the step-relation step (FR-477), the hybrid
+  the refinement step (FR-375), the terminal step (FR-476),
+  the step-relation step (FR-477), the hybrid
   step (FR-481), the timed-model step (FR-230), the protocol step (FR-464)
   and the schedulability step (FR-482). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
@@ -477,13 +479,25 @@ boundary.
   whose body holds no application, model declaration nodes and clause
   functions included (QSL FR-094 keys a model-owned node by the same
   preimage), except a `value`/`union_value` node or a
-  `correspondence`/`abstraction_relation` node. A `union_value` is checked
+  `correspondence`/`abstraction_relation` node or a
+  `relation`/`refinement` node. A `union_value` is checked
   at the application-node key stage above. An `abstraction_relation`
   node is keyed by its own `{version: "quire.abstraction-relation-node/v1",
   body}` preimage
   ([FR-451](FR-451-checked-package-abstraction-relation-body.md)), which
   FR-451's abstraction step checks after the state step; this stage neither
-  re-keys nor refuses it. Only that form is excluded: a `correspondence` node of
+  re-keys nor refuses it. A `relation`/`refinement` node is keyed by its own
+  `{version: "quire.refinement-node/v1", semantic_type, body}` preimage
+  ([FR-375](../../functional/analysis/FR-375-declare-model-refinement.md));
+  when FR-375's `class_catalog` is present it is part of that exact `body`
+  in both V2 wire and node-preimage schemas, and the same body enters the
+  package identity projection. Its local class `node` and `binder_types`
+  keys enter the node's exact `dependencies` list; external
+  `PackageNodeKey`s do not. The dependency check precedes FR-375's class
+  joins.
+  FR-375's refinement step checks it after the abstraction step, and neither
+  general key stage re-keys or refuses it. Among `correspondence` nodes, only
+  the abstraction form is excluded: a node of
   any other form (`source_locus`, `model_correspondence`, `binding_role`,
   `profile_correspondence`) whose body holds no application is a structural
   node and is keyed by this stage. So a consumer reading a range, bound, element type or field
@@ -618,6 +632,7 @@ boundary.
   | `composite_type` `option`, a collection kind, `reference`; declared `record` or `tuple` | each node the body references |
   | `expression`/`reference`, `correspondence`/`source_locus`, `protocol`/`protocol_reference` | the body's target |
   | `scalar_type`/`compound_unit` | each unit its terms reference |
+  | `relation`/`refinement` | the unique digest-ascending local body keys and term references of FR-375, including local `abstract` and `protocol` keys even with no rows; no external `PackageNodeKey`, profile `DefinitionRef` or standalone `semantic_type` edge |
 | `extension`/`extension_form` | the unique digest-ascending targets of its clause bindings |
   | `function`, a clause function included | each node its body references: its parameter nodes, its body's root node and its measure's node |
   | an `expression` holding an application | rules 1 and 2 over the application |
@@ -837,6 +852,35 @@ boundary.
     source-map agreement of the derived-shape key stage (FR-322-AC-52), over the
     refinement owner nodes, visiting them in ascending retained node-id digest
     order, and report the first failing owner.
+- `refinement_step_rows` — an identity-excluded source-provenance sidecar for
+  refinement step rows. It is absent exactly when no `relation`/`refinement`
+  node has a `steps` entry; otherwise it is a nonempty array of closed
+  `{node_id, ordinal, region}` entries. `node_id` is the refinement owner's
+  retained `NodeRef`; zero-based `ordinal` is the position of one entry in
+  that owner's canonical `body.steps` array; `region` is exactly one
+  `SourceRegion` for the original checked source row that produced the step.
+  QSL SHALL derive this region from the checked source row before writing the
+  package, including for a refinement that is not proof-eligible. The entries
+  are ordered first by owner node-id digest and then by ascending ordinal.
+  Neither the sidecar nor any of its source regions enters a node preimage,
+  the identity projection or `package_id`; changing a row region alone leaves
+  those identities unchanged.
+
+  After the owner join and before refinement step occurrences, the reader
+  SHALL visit `refinement_step_rows` in wire order and refuse
+  `invalid_package`/`invalid-value` at `/refinement_step_rows/{i}` for an entry
+  whose `node_id` is not one retained `relation`/`refinement` node, whose
+  ordinal is outside that owner's `steps` array, whose owner and ordinal pair
+  repeats, or whose position breaks the required order. It then SHALL require
+  exactly one entry for every step position of every refinement owner; an
+  absent sidecar, a present sidecar with no refinement step, or a missing
+  position refuses `invalid_package`/`invalid-value` at
+  `/refinement_step_rows`. For each proof-eligible owner, the reader SHALL
+  compare the single region of its `generated` `source_map` occurrence at
+  ordinal `i + 1` to the region at sidecar ordinal `i`; a mismatch refuses
+  `invalid_package`/`invalid-value` at that `source_map` entry. These checks
+  compare two wire carriers; the reader does not parse raw QSL source to
+  verify that a producer supplied the true original row region.
 - `capability_report` — one closed disposition for every required feature and
   selected model capability. Backend/provider installation is absent.
 - `diagnostics` — catalog-qualified, stage-qualified typed causes and exact
@@ -906,7 +950,8 @@ of every package
 
 A structural node (the derived-shape key stage above: no
 `nominal_identity_preimage`, a body holding no application, and not a
-`value`/`union_value` or `correspondence`/`abstraction_relation` node) is
+`value`/`union_value`, `correspondence`/`abstraction_relation` or
+`relation`/`refinement` node) is
 keyed by the SHA-256 of the RFC 8785 bytes of one `quire.structural-node/v1`
 object. QSL FR-092 mints the key; this section is the same preimage, so that
 a reader re-derives every structural key from the package and this artifact
@@ -970,7 +1015,7 @@ fixed by the schema, whatever the model's size.
 | Group | `aggregate` whose members are each a Leaf or a `binding` whose value is a Leaf |
 | Tuple | `aggregate` whose members are each a Leaf or a Group |
 | Member | a Leaf, a Group, or a `binding` whose value is a Leaf, a Group or a Tuple |
-| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)); or an `extension_form` body, whose clause values are each a `reference` ([FR-469](FR-469-checked-package-extension-nodes.md)) |
+| Body | a Leaf; an `application` whose `arguments` are each a Member; an `aggregate` whose members are each a Member; a `frame` body ([FR-340](FR-340-checked-package-frame-location.md)); an `abstraction_relation` body ([FR-451](FR-451-checked-package-abstraction-relation-body.md)); a `refinement` body with the closed row and target grammar of [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md); or an `extension_form` body, whose clause values are each a `reference` ([FR-469](FR-469-checked-package-extension-nodes.md)) |
 
 **Integer literal operands.** The producer SHALL write an integer literal
 operand of `quire.op.integer.add`, `quire.op.integer.sub`,
@@ -2343,13 +2388,16 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-118 | With the unit of compilation of FR-322-AC-105 and `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` (both packages' roots are `s`), the unit graph holds one `scalar_type`/`dimension_equivalence` node besides the three `Time` nodes: no `declaration`, self-typed, preimage `{version: quire.dimension-equivalence-node/v1, owner: SourceOwner, dimension_node_ids: [the two package Time keys in ascending digest order], root_scale: 1/1}` (key `bbf770ea312108434ee12d0ca4448c6d3d53a0004484b93b8ec577ff1ede00d4` in the TC-233 vector `dimension-equivalence-rpc-flow-time`), `dependencies` exactly those two keys, one occurrence of role `anchor` and ordinal 0; `dimension F::Time ~ R::Time by 1 F::s = 1 R::s;` in its place gives the same key; with `acme/clock` as a third package (root `ms`), `dimension R::Time ~ G::Time by 1 R::s = 1000 G::ms;` gives `root_scale` `1000/1` over `[acme/rpc Time, acme/clock Time]` (key `d707eb948ab055a64cf90b8009997ebc54c9bfe5361479afb6485c9c2df56c24`, vector `dimension-equivalence-rpc-clock-time`), the same declaration written `dimension G::Time ~ R::Time by 1000 G::ms = 1 R::s;` the same key, and `dimension F::Time ~ G::Time by 1 F::s = 1000 G::ms;` gives `1000/1` over `[acme/flow Time, acme/clock Time]` (key `584c6bbcb5056cf9dd5d10504339e49c5507348601530e5ef6d67bc5e351714b`, vector `dimension-equivalence-flow-clock-time`); the `acme/rpc`, `acme/flow` and `acme/clock` `Time` nodes keep their keys. The key is the SHA-256 of the JCS of the preimage, so changing `root_scale` rekeys the node. The strict reader admits the package and derives one class of the three. Refused `invalid_semantic_graph` at the node: its two ids in descending order, its two ids equal, a pair naming a unit node, a second node with the same pair, a pair of two derived dimensions whose normalized maps differ or whose `root_scale` differs from the ratio the base roots fix, a cycle of base pairs whose `root_scale` values do not multiply to exactly one (the three vectors above with the third `root_scale` changed to `1001/1`), a `root_scale` that is zero, negative, unreduced (`2000/2`) or missing, a `dependencies` list holding only one of the two keys, a `semantic_type` other than its own key, a `declaration` member, and an owner that does not join the lock; a changed pair or a changed `root_scale` under its retained key is refused as FR-322-AC-10 refuses a stale dimension key. | Test (TC-233, TC-280) |
 | FR-322-AC-119 | An `application` of `quire.op.quantity.negate` with one `quantity` operand typed by the unit node of `m` is admitted with result type the unit node of `m`, no laws, `mode` `null` and no member; a second operand or a non-`quantity` operand (an `integer`) refuses `ill_typed`/`operator-ineligible`, a `mode` value refuses `invalid_package`/`operation-mode-mismatch` and a `laws` entry refuses `invalid_package`/`operation-law-mismatch`; both V2 schemas enumerate `quire.op.quantity.negate` in `OperationIdentity` directly after `quire.op.quantity.sub`, and the catalog entry of `quire-verification-contracts` carries it. | Test (TC-187) |
 | FR-322-AC-120 | A timed state model has one owned `timed_model` root and one `timed_model`-tagged node per source, clock place, reset, guard, invariant, urgency and clock constraint; their references resolve to correctly typed nodes, their required data enter each node key and package identity, and the reader reconstructs the producer's checked timed model and normalized constraints. The semantic refusal vectors identify the first defect at these JSON pointers (`i` is the indexed graph node and `j` the indexed aggregate member): a missing root is `invalid_package`/`missing-timed-model` at `/semantic_graph/nodes`; a dangling or wrong-kind tick operation is `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{i}/body/members/3/value/target`; a dangling clock-place reference is `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{i}/body/members/3/value/members/{j}/target`; a duplicate place is `invalid_package`/`duplicate-clock-place` at the later reference in `/semantic_graph/nodes/{i}/body/members/3/value/members/{j}`; a noncanonical path order is `invalid_package`/`malformed-clock-place` at `/semantic_graph/nodes/{i}/body/members/1/value/members/{j}`; and a non-time unit or nonpositive period is `ill_typed`/`invalid-time-quantity` at `/semantic_graph/nodes/{i}/body/members/1/value` or `/semantic_graph/nodes/{i}/body/members/4/value/value`, respectively. Reader checks use ascending node-id digest order. | Test (TC-233, TC-367; semantic vectors TM-09..TM-14) |
-| FR-322-AC-121 | The reader runs body steps in the order state-graph, temporal, abstraction, terminal, step-relation, hybrid, timed-model, protocol, schedulability, after state checks and before operation checks; when a schema-valid package has a defect in its timed-model graph and protocol graph but no earlier defect, the timed-model step reports first, when that timed defect is repaired the protocol step reports, and when a hybrid defect is added the hybrid step reports before the timed-model step. | Test (TC-233) |
+| FR-322-AC-121 | The reader runs body steps in the order state-graph, temporal, abstraction, refinement, terminal, step-relation, hybrid, timed-model, protocol, schedulability, after state checks and before operation checks. In a schema-valid package with independent abstraction, refinement and terminal defects and no earlier defect, the abstraction step reports first; repairing only that defect reports refinement, and then repairing only the refinement defect reports terminal. When a schema-valid package has a defect in its timed-model graph and protocol graph but no earlier defect, the timed-model step reports first, when that timed defect is repaired the protocol step reports, and when a hybrid defect is added the hybrid step reports before the timed-model step. | Test (TC-233) |
 | FR-322-AC-122 | A checked package containing each of the eight `timed_model` structural forms is admitted with each node's self `semantic_type` and key derived from its complete closed body; removing, adding, reordering or changing the type/count of any required child is refused by the published wire schema. | Test (TC-367; `proposals/checked-package-v2/fixtures/positive-timed-model-nodes.json`, `timed-model-node-vectors.json`) |
 | FR-322-AC-123 | The timed root's `time_dimension` reference and source unit's `dimension_node_id` name the same nominal node, and that node is the selected base dimension `Time`. A dimension-name lookup, dimension equivalence, derived dimension or declaration-order inference never substitutes a different node. A mismatched root/unit reference or a unit of another dimension refuses `ill_typed`/`invalid-time-quantity`; changing the explicit binding changes the root key and package id. | Test (TC-367; TM-06, TM-07) |
 | FR-322-AC-124 | Every clock-place path step has exactly one matching `resolved_path` row; rows identify owner, member identity and declared type, and collection rows carry kind and bounds. The final row is the `Clock` terminal. The reader resolves rows against the selected model declaration without reopening source; an absent row, mismatched path, undeclared member, coherently forged member chain, wrong terminal type, or wrong collection bound refuses `invalid_package`/`malformed-clock-place` at the affected path step `/semantic_graph/nodes/{i}/body/members/1/value/members/{j}` or resolved-path row `/semantic_graph/nodes/{i}/body/members/2/value/members/{j}`. The positive `Order.clockMap["key"]` vector records the selected `Order` field as `Map<Text, Clock>`, its map-value slot, and terminal Clock. | Test (TC-367; TM-07, TM-15..TM-19, TM-22) |
 | FR-322-AC-125 | A tick source's `operation` reference targets a `state`/`operation_anchor`; its anchor context equals both the tick source's `model` and the timed root's `model`, and its operation resolves as a declared operation of that model. A function node or an anchor of another model refuses `invalid_package`/`timed-node-reference` in the timed-model step. An unresolved name on a model-owned operation anchor is refused earlier by FR-342 as `missing_declaration`/`missing-name` at the operation member. A valid anchor advances time by the exact positive period per occurrence. | Test (TC-367; TM-08, TM-11, TM-20, TM-21) |
 | FR-322-AC-126 | I2 refuses a tick source that owns any clock place as `invalid_package`/`clock-without-dense-time` at the offending place node's `model` binding pointer `/semantic_graph/nodes/{place}/body/members/0/value/target`. A tick source with no places remains admissible; TM-23 starts from the positive tick fixture, adds the positive dense fixture's valid clock-place node to its root, and reports the appended place node's model pointer. | Test (TC-367; TM-23) |
 | FR-322-AC-127 | The timed root names the exact base `Time` dimension node and the source unit's `dimension_node_id` equals that node by identity. I2 refuses a source unit in base `Length`, a derived non-Time dimension, or a nominal derived-Time dimension as `ill_typed`/`invalid-time-quantity` at `/semantic_graph/nodes/{source}/body/members/1/value/target`, for both dense and tick sources. Dimension equivalence, matching dimension terms, names and declaration order do not substitute for this identity equality. | Test (TC-367; TM-24..TM-29) |
+| FR-322-AC-128 | A checked package with refinement steps carries one closed `refinement_step_rows` entry for every step of every refinement owner, keyed by that owner's retained node id and zero-based canonical step ordinal; its regions are excluded from node and package identity. The reader admits the `RS-01` and `RS-02` row regions independently of source order, and refuses an absent or incomplete sidecar at `/refinement_step_rows`, and a wrong owner, out-of-range ordinal, duplicate pair or noncanonical order at the offending entry. | Test (TC-233) |
+| FR-322-AC-129 | A proof-eligible refinement owner with source rows `R0` and `R1` is admitted only when generated occurrence ordinals 1 and 2 each carry exactly the region of the corresponding `refinement_step_rows` entry; changing either generated region or its row-region carrier alone leaves identities unchanged but refuses `invalid_package`/`invalid-value` at that `source_map` entry. A refinement that is not proof-eligible still carries every row-region entry and no generated occurrence. | Test (TC-233, TC-310) |
+| FR-322-AC-130 | Both closed V2 schemas admit a refinement `class_catalog` with ordered concrete and abstract declared classes (local `NodeRef` versus local-or-dependency `RefinementKey`), typed binders and source-default memory classes, and refuse a missing or extra class-entry member or a wrong key shape. In an admitted protocol refinement, changing a class, node, binder type or memory model while retaining its node key refuses the dedicated refinement key; rekeying changes the node id and `package_id`; removing a local class node or binder type from `dependencies` refuses in graph shape before class joins. A model-only refinement retains its nine-member body with no catalog. | Test (TC-233, TC-310) |
 
 ## Dependencies
 

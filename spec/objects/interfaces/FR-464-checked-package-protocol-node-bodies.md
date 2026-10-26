@@ -439,6 +439,19 @@ order:
    one slot the checks run in this order: the `over` and model-state
    refusals, then the binder-scope refusals, then (for a `choice` or `repeat`)
    the decision facts (FR-466 "Decision facts").
+7. **Refinement class catalogs.** After all protocol nodes pass steps 1 to 6,
+   visit `relation`/`refinement` nodes in ascending node-id digest order.
+   For each present `class_catalog`, reconstruct the complete concrete and
+   abstract class lists from its selected model declarations and the now
+   admitted local or directly selected dependency protocol graph, using
+   FR-432's class table and binder records. Compare `concrete` before
+   `abstract`, in class order; within one equal class compare node
+   association, then binder types in order, then source-default memory
+   model. FR-375 specifies the refusal and locus for each mismatch. A
+   protocol-body defect therefore precedes a catalog-versus-graph defect,
+   while any refinement-step row/catalog defect precedes both. This check
+   runs even when the package has no local protocol node and the selected
+   abstract clause is in an admitted direct dependency.
 
 Within one node, a reference defect (absent from `dependencies`, then wrong
 form) precedes a type defect, which precedes a bound defect. Operand
@@ -460,8 +473,9 @@ operation step.
 | FR-464-AC-9 | The derived causal relation is acyclic: a `receive` sequenced before the `send` it names, a send/receive pair in one sequence in the wrong order and an `await` anchored at a later control each refuse `invalid_package`/`definition-cycle` naming the controls on the cycle; the same pair on different branches of a `parallel` is admitted; a `repeat` back edge is not a cycle. | Test (TC-946) |
 | FR-464-AC-10 | A `repeat` whose body is only a `check`, or a `choice` with a step in one case and an empty `sequence` in the other, or a nested `repeat` in one case, refuses `unsupported_construct`/`declaration-form` at the `repeat`; a `repeat` whose body is a step, a `parallel` or an `await` is admitted with a maximum, with a loop proof, with both and with neither. | Test (TC-946) |
 | FR-464-AC-11 | An operator the profile does not define refuses `operation-member-mismatch`; a protocol application with the law missing, of the temporal role or not the lock's row refuses as FR-322-AC-22 states; an `await` or `compensate` in a package whose lock selects no `temporal_profile` refuses `missing_declaration`/`missing-selection`. | Test (TC-946) |
-| FR-464-AC-12 | The protocol step runs after the state, temporal and abstraction steps and before the operation step and reports, in order, placement, operator, declaration, member, membership and clause defects; within a clause the cycle and progress defects precede the slot checks, and within a slot the `over`/model-state refusal precedes the binder-scope refusal, which precedes the decision-fact refusal; a state-step defect and a protocol defect in one package report the state-step defect. | Test (TC-946) |
+| FR-464-AC-12 | The protocol step runs after the state, temporal, abstraction and refinement steps and before the operation step and reports, in order, placement, operator, declaration, member, membership, clause and refinement class-catalog graph-join defects; within a clause the cycle and progress defects precede the slot checks, and within a slot the `over`/model-state refusal precedes the binder-scope refusal, which precedes the decision-fact refusal; a state-step defect and a protocol defect in one package report the state-step defect. | Test (TC-946, TC-310) |
 | FR-464-AC-13 | The activation relation of an admitted protocol is derived from its clause node's `activation` and `requirements` alone: `activation on each (opened)` with `requires temporal OrderClosureBounded` gives exactly one row, the clause key, `each` with `opened`'s node key and `OrderClosureBounded`'s node key; under `activation on origin` the one row carries `origin` and no trigger; a protocol with no requirement has no row; a second `requires temporal OrderClosureBounded` leaves one row; a second required temporal clause gives two rows in ascending node-id digest order; a temporal clause that shares the protocol's clock but is not required gives no row; a `requirements` entry or an `each` trigger absent from the clause's `dependencies` refuses `missing_declaration`/`missing-name` at the target with no relation. | Test (TC-946) |
+| FR-464-AC-14 | A complete refinement class catalog whose rows agree with it is admitted after its selected protocol graph passes the protocol step. When one otherwise valid package has both an independent protocol-body member defect and a rekeyed catalog class associated with the wrong existing control node, the protocol-body defect refuses first; after repairing only that defect and rebuilding the changed keys and package identity, the catalog association refuses. A refinement row/catalog mismatch instead refuses at the earlier refinement step before either protocol defect. | Test (TC-310) |
 
 ## Published artifacts and the operation catalog
 

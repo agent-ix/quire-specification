@@ -66,10 +66,10 @@ structures, but any external consumer receives only the contract.
   cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
   FR-342-AC-7 to AC-9). Its model declaration node keys are recomputed by the
   tests from each preimage.
-- `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-17` of
+- `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
   `generated` `source_map` entries against its step rows, its `steps` order and
-  whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). The refinement members of the cases are illustrative, since no refinement body exists in `schema.json` or in a published package; a real entry is compared by node key.
+  whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). Cases `RS-18` to `RS-24` cover the closed, identity-excluded `refinement_step_rows` sidecar and its comparison with generated occurrences. The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node key.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.
