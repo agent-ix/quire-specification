@@ -420,7 +420,7 @@
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "id": "K10",
-      "Edit to the base": "a protocol node carries a `recursion_group`",
+      "Edit to the base": "an acyclic protocol node adds `recursion_group` but leaves `recursion` `null`",
       "Expected": "refuses `malformed_wire` (`malformed_wire`)"
     },
     {

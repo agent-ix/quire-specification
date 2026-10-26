@@ -2552,12 +2552,22 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
             else {
                 continue;
             };
-            assert!(
-                cases
+            let cells = row.trim_end().trim_end_matches('|').split(" | ").collect::<Vec<_>>();
+            let vector = cases
+                .iter()
+                .find(|case| case["test_case"] == test_case && case["id"] == id);
+            let Some(vector) = vector else {
+                panic!("{test_case} row {id} has no protocol node vector");
+            };
+            // A vector's text is its table row's text (rows a vector splits
+            // into lettered cases keep their own ids and are not compared).
+            if cells.len() == 3 {
+                assert_eq!(vector["Expected"], cells[2].trim(), "{test_case} {id} Expected");
+                let edit = ["Edit", "Edit to the base", "Encoded"]
                     .iter()
-                    .any(|case| case["test_case"] == test_case && case["id"] == id),
-                "{test_case} row {id} has no protocol node vector"
-            );
+                    .find_map(|field| vector[*field].as_str());
+                assert_eq!(edit, Some(cells[1].trim()), "{test_case} {id} edit text");
+            }
         }
     }
     for case in cases {
