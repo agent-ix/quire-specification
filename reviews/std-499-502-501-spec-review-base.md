@@ -59,8 +59,18 @@ Rulings checked: STD-499 memory key (class, memory_model) with class-then-model 
 
 ## Dispositions
 
-(none yet)
+Round 1, reviewed at 7df09f0f (merge-tree with PR #460 ac717128 is clean; no schema, fixture or test file changed, so no cargo).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-432-AC-16..19 are contiguous table rows; `quire matrix` lists FR-375-AC-26/27, FR-432-AC-16..19, FR-322-AC-133, FR-154-AC-32 and FR-208-AC-18 each once; the TC-310/233/386 rows are contiguous |
+| FND-002 | fixed | AC-27 and CC-17 now give `invalid_semantic_graph` at the catalog array for a dropped entry and at the extra entry for an `origin` clause, and say FR-464 step 7 |
+| FND-003 | fixed | FR-208 effective field order step 4 applies hiding once over the whole walk; FR-432-AC-19 and TC-386 FO-04 give (t', l, r, z) for the redefinition diamond; checked by hand |
+| FND-004 | fixed | A binder record over an ambiguous T refuses ambiguous-name at the row's node right side (FR-375 reader step 5) or the binder_types entry in FR-464 step 7; the type itself stays admitted (FR-432-AC-18) |
+| FND-005 | fixed | FR-154 states that intake keeps authored `fields` and `supertypes` order; FR-154-AC-32 and TC-386 FO-05 bind it |
+| FND-006 | fixed | CC-12 now supplies the entries in canonical order ra, sc, tso |
+| FND-007 | fixed | Sentence break repaired; the rule moved to FR-208 (Effective field order, FR-208-AC-18) with the acyclic precondition stated, FR-432 points to it; covers record, event, state machine and process |
 
 ## Verdict
 
-Request changes. One high (FND-001, a one-line blank-line removal) and three mediums are fixable inside this PR; FND-005 may be a ticketed follow-up if the lead prefers, but a one-sentence FR-154 statement is cheaper. The rulings themselves are sound and cheapest-consistent: memory key and order are a total order, CC-12 is admitted exactly in canonical order and refused when reordered or repeated, `activate` reuses FR-432's event rule, and the diamond and redefine rule is well defined once FND-003 is fixed. IR follow-ups, not defects: IR FieldTables (model_fields.rs) orders by identity and must follow FR-432's effective order; IR FR-061-AC-12 / FR-064 should cite FR-375-AC-26/27. STD-503's PR (schema/FR-341/TC) has no spec text yet; no id collision today, but FR-322-AC-133 and TC-310 CC-15.. are claimed here, so STD-503 must take the next free ids.
+Round 1 (7df09f0f): all seven findings fixed, no new findings; mergeable. Original verdict was request changes. One high (FND-001, a one-line blank-line removal) and three mediums are fixable inside this PR; FND-005 may be a ticketed follow-up if the lead prefers, but a one-sentence FR-154 statement is cheaper. The rulings themselves are sound and cheapest-consistent: memory key and order are a total order, CC-12 is admitted exactly in canonical order and refused when reordered or repeated, `activate` reuses FR-432's event rule, and the diamond and redefine rule is well defined once FND-003 is fixed. IR follow-ups, not defects: IR FieldTables (model_fields.rs) orders by identity and must follow FR-432's effective order; IR FR-061-AC-12 / FR-064 should cite FR-375-AC-26/27. STD-503's PR (schema/FR-341/TC) has no spec text yet; no id collision today, but FR-322-AC-133 and TC-310 CC-15.. are claimed here, so STD-503 must take the next free ids.
