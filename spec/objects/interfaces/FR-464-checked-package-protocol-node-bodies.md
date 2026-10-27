@@ -506,8 +506,9 @@ order:
    runs even when the package has no local protocol node and the selected
    abstract clause is in an admitted direct dependency.
 
-Within one node, a reference defect (absent from `dependencies`, then wrong
-form) precedes a type defect, which precedes a bound defect. Operand
+Within one member node's body references (the clause's `owner_model` edge excepted:
+"Owner-model edge phase" states its stages and codes), a reference defect (absent from
+`dependencies`, then wrong form) precedes a type defect, which precedes a bound defect. Operand
 families and `result_type` are the application's catalog checks at the
 operation step.
 
@@ -538,10 +539,12 @@ exactly one earlier or later stage, in this order of precedence:
    the graph refuses `missing_declaration`/`missing-name`; a target that is
    not the `model`/`object_type` node of a selected declaration refuses
    `invalid_model_binding`/`malformed-declaration`. The second case holds for a
-   non-model node, a source-local declaration (a source `owner`), and a
-   selected declaration's node of any other form (`state_machine`, `process`,
-   `record_value_type`, `event_type`, a relation node, the package's
-   `model_root`). The check does not compare the target with the `over`
+   non-model node, a non-model declared node with a source `owner` (a
+   model-tagged node with a `SourceOwner` is `malformed_wire` already,
+   FR-322-AC-51), and a model-tagged node of a selected declaration of any
+   other form (`state_machine`, `process`, `record_value_type`, `event_type`,
+   a relation node) or the selected package's `model_root` node (not a
+   declaration, but a model node). The check does not compare the target with the `over`
    parameter's type: a selected second `object_type` is admitted as a
    different clause identity.
 4. **Catalog association** (step 7) reads only an edge that passed 1 to 3.
@@ -585,7 +588,7 @@ alternate cycle encoding.
 | FR-464-AC-17 | An `attempt` references the no-point `operation_anchor` for its operation. When a state clause names that same operation with a `ClauseBinding.execution_point`, the package has a distinct point-bearing anchor for the clause and a no-point anchor for the attempt; both may reference the operation's shared frame. Altering either point-bearing anchor changes its identity without changing the protocol attempt's anchor reference. | Test (TC-946) |
 | FR-464-AC-18 | A protocol clause retains `owner_model` as the owner model's object-type node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge, node preimage or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
 | FR-464-AC-19 | The protocol profile defines the operator `transition` for the `state`/`transition` form only: a `quire.op.state.transition` application naming `transition` is admitted by the operation step, a `quire.op.state.transition` application naming any operator of the protocol-node table (for example `sequence`) refuses `invalid_package`/`operation-member-mismatch`, and a `quire.op.protocol.control` application naming `transition` refuses `invalid_package`/`operation-member-mismatch`. | Test (TC-233) |
-| FR-464-AC-20 | The `owner_model` target is checked in one phase ("Owner-model edge phase"), with a fail-closed outcome for each case: an omitted edge and an external key refuse `malformed_wire` at the node; a genuinely unselected `model`/`object_type` target (owner joining no selection row, or not declared as an object type by the selected document) refuses `missing_declaration`/`missing-selection` at the target's own `node_id` in FR-322's owner join before any body step and before the clause's edge is read; a target missing from the clause's `dependencies` refuses `invalid_semantic_graph` at `/dependencies`; a local target naming no node refuses `missing_declaration`/`missing-name`, and a selected declaration's node of another form, a source-local declaration and a non-model node refuse `invalid_model_binding`/`malformed-declaration`, both at `/semantic_graph/nodes/{i}/owner_model` as the first check of the clause at step 6; a valid selected second `object_type` is admitted and is not compared with the `over` type. An earlier-stage fault wins when paired: the owner join of the target precedes every body step, the refinement-step defects and the step 4 and 5 defects precede the typed edge check, and the typed edge check precedes the same clause's activation, capture and slot defects. | Test (TC-946, TC-310) |
+| FR-464-AC-20 | The `owner_model` target is checked in one phase ("Owner-model edge phase"), with a fail-closed outcome for each case: an omitted edge and an external key refuse `malformed_wire` at the node; a genuinely unselected `model`/`object_type` target (owner joining no selection row, or not declared as an object type by the selected document) refuses `missing_declaration`/`missing-selection` at the target's own `node_id` in FR-322's owner join before any body step and before the clause's edge is read; a target missing from the clause's `dependencies` refuses `invalid_semantic_graph` at `/dependencies`; a local target naming no node refuses `missing_declaration`/`missing-name`, and a model node of a selected declaration of another form, a selected package's `model_root` node, a non-model declared node with a source owner and a non-model node refuse `invalid_model_binding`/`malformed-declaration`, both at `/semantic_graph/nodes/{i}/owner_model` as the first check of the clause at step 6; a valid selected second `object_type` is admitted and is not compared with the `over` type. An earlier-stage fault wins when paired: the owner join of the target precedes every body step, the refinement-step defects and the step 4 and 5 defects precede the typed edge check, and the typed edge check precedes the same clause's activation, capture and slot defects. Reader evidence is owned by IR-1053 (IR FR-064-AC-4/TC-048); no QSpec reader test exists, so the vectors TC-946 OM-03, OM-05..OM-11 and O10..O12 are the published oracle. | Analysis |
 
 ## Published artifacts and the operation catalog
 

@@ -2599,7 +2599,7 @@ fn protocol_node_vectors_match_the_fr464_operator_catalog() {
     }
 }
 
-#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15", "FR-464-AC-16", "FR-464-AC-20", "FR-466-AC-16")]
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15", "FR-464-AC-16")]
 #[test]
 fn protocol_node_case_vectors_publish_the_qspec_examples() {
     let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
@@ -6864,10 +6864,9 @@ fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
         {
             apply_authored_patch(&mut candidate, patch);
         }
-        // FR-322-AC-139: wire precedes graph, so a dimension-equivalence mutation that the
-        // closed schema refuses is `malformed_wire`; every other mutation is a graph defect.
-        let wire_refused = name.starts_with("dimension-equivalence-")
-            && mutation["refused_by"].as_str() == Some("schema");
+        // FR-322-AC-139: wire precedes graph, so a mutation that the closed schema refuses is
+        // `malformed_wire`; every other mutation is a graph defect.
+        let wire_refused = mutation["refused_by"].as_str() == Some("schema");
         assert_eq!(
             mutation["expected_code"].as_str(),
             Some(if wire_refused {

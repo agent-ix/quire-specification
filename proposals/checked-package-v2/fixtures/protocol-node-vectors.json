@@ -2814,14 +2814,14 @@
       "test_case": "TC-946",
       "section": "Clause model owner edge",
       "id": "OM-06",
-      "Edit to the base": "Retarget `owner_model` to a selected declaration's node of another form (a `state_machine`), then a `process`, a `record_value_type`, and the package's `model_root`",
+      "Edit to the base": "Retarget `owner_model` to a selected declaration's model node of another form (a `state_machine`), then a `process`, a `record_value_type`, and the selected package's `model_root` node",
       "Expected": "each `invalid_model_binding`/`malformed-declaration` at `/semantic_graph/nodes/{i}/owner_model` after the refinement step, as the clause's first step 6 check"
     },
     {
       "test_case": "TC-946",
       "section": "Clause model owner edge",
       "id": "OM-07",
-      "Edit to the base": "Retarget `owner_model` to a source-local declaration (a node with a source `owner`), then to a non-model node",
+      "Edit to the base": "Retarget `owner_model` to a non-model declared node with a source `owner` (a source-local declaration such as `Config::ConfigVersion`), then to a non-model node without one (a model-tagged node with a `SourceOwner` is `malformed_wire`, FR-322-AC-51)",
       "Expected": "each `invalid_model_binding`/`malformed-declaration` at `/semantic_graph/nodes/{i}/owner_model`"
     },
     {
