@@ -244,7 +244,9 @@ that the meaning states, `fields`, `identityFields`, `occurrenceField` or
 `operations`, is present when the node or one of its ancestors declares it.
 
 - **Record value type.** A subtype inherits every field and invariant and may
-  add fields. A value of the subtype is a value of each ancestor wherever a
+  add fields; its fields are listed in the effective field order of FR-432
+  (ancestors first in supertype-list order, then its own declaration
+  order). A value of the subtype is a value of each ancestor wherever a
   field, parameter or result names the ancestor, and equally wherever an
   `Option` payload, a collection element, a tuple position or a union member
   payload names it. The value stays the subtype value, with its own

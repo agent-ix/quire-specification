@@ -469,8 +469,18 @@ UTF-8 byte order.
 memory step class, the producer SHALL emit `class_catalog` in the refinement
 body; otherwise the member SHALL be absent. This closed object has exactly
 `concrete` and `abstract` arrays. Each lists the complete source-level step
-classes of its selected subject, once each in ascending UTF-8 byte order of
-alias-free `class` spelling. A declared class entry is exactly
+classes of its selected subject, once each by **catalog key**, in ascending
+order of that key. The catalog key of a declared class entry is its
+alias-free `class` spelling alone. The catalog key of a memory entry is the
+pair (`class`, `memory_model`): the `class` spelling is shared by every
+model that defines the class (`memory drain` is a class of each of `sc`,
+`tso` and `ra`), so the model, not the spelling, tells two such entries
+apart. Entries order by the UTF-8 bytes of `class`, then, when the spellings
+are equal, by the UTF-8 bytes of `memory_model` (`ra`, then `sc`, then `tso`).
+A declared class and a memory class never share a spelling, since the
+declared spelling excludes the `memory ` prefix. Two entries of one array
+with equal catalog keys are a duplicate and refuse as the canonical-order
+rule below states. A declared class entry is exactly
 `{class, node, binder_types}`: `node` is a local `NodeRef` for a concrete
 class and a `RefinementKey` for an abstract class; `binder_types` is the
 ordered array of local `NodeRef`s or abstract-side `RefinementKey`s for that
@@ -492,7 +502,18 @@ are admitted only when the source-default model defines their named step
 (FR-434, FR-436, FR-437).
 FR-432's closed class table determines the spellings and node associations:
 `fork` and `join` are two classes of one `parallel` node, and a memory class
-has no node. The concrete catalog covers the selected concrete model's
+has no node. The `activate` class of a protocol clause with activation
+`on each` is a declared class entry whose `class` is the alias-free
+spelling `activate <protocol>`, whose `node` is the protocol clause node
+itself (a local `NodeRef` on the concrete side, the `RefinementKey` of the
+selected `protocol` clause on the abstract side), and whose `binder_types`
+is the trigger binder record of FR-432's "The binder record of an abstract
+node": the trigger's declared type `T` when `T` is not a record type, else
+one key per field of `T` in the effective field order of FR-432. The trigger
+is neither a separate catalog node nor a clause of its own: the class
+associates with the clause that declares the trigger, and `binder_types`
+alone carries the trigger's type. A clause with activation `on origin` has
+no `activate` class and no entry. The concrete catalog covers the selected concrete model's
 operation classes and all protocol clauses in the declaring package whose
 identity-bound `owner_model` edge names the object-type node of a model owned
 by that selected concrete declaration, with their source memory
@@ -614,8 +635,9 @@ refinement node, the reader checks in this order and reports its first defect:
    `populations`, `objects` (each entry's `fields` first), `steps`,
    `histories` (each entry's `updates` first), `assume`, `ensure`, and then
    `abstract_internal` and `class_catalog` (`concrete`, then `abstract`) when
-   present. Apply the total ordering rules above, with catalog classes sorted
-   by UTF-8 bytes;
+   present. Apply the total ordering rules above, with catalog entries sorted
+   by their catalog key (`class` UTF-8 bytes, then `memory_model` UTF-8 bytes
+   for memory entries);
    the first out-of-order entry refuses `invalid_semantic_graph` at its
    array entry. A duplicate first key or tied row that violates the same
    total order refuses at the later entry.
@@ -686,6 +708,8 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-23 | A protocol refinement carries a complete, canonical `class_catalog` of its source-level concrete and abstract classes and checked binder types in both V2 schemas and its node-key preimage. A tied `fork`/`join` pair names one parallel node under two distinct class spellings; a class of another selected model or protocol, a changed class/node association, a missing or duplicated class, a wrong binder record, or a memory kind absent from its source-default model refuses under the catalog and row-join rules. The concrete catalog includes classes from every clause whose identity-bound `owner_model` is the object-type node of a model owned by the selected concrete declaration, including when no step rows name those classes, and excludes clauses whose edge names a model owned by another declaration. For each of `sc`, `tso` and `ra` used as a source default in that subject, `memory drain` is recorded; `memory flush` is recorded when `tso` is a source default. Each `memory drain` entry carries `drain: store-buffer-flush`, whose SC behavior is a no-op. A later request's memory override changes no checked-package class fact or package id. | Test (TC-310, TC-233) |
 | FR-375-AC-24 | A `state_machine` field set is represented by an existing `objects[]` row whose `abstract_type` and `concrete_type` keys resolve to `state_machine` declarations and whose field names resolve on the abstract machine; the row keeps the existing closed shape and requires no population row. A model with only object types and populations is admitted using its ordinary object rows without a `state_machine` anchor. Missing or duplicate abstract machine rows refuse as the corresponding missing or conflicting object mapping; an object row that mixes a `state_machine` declaration and an object type refuses `invalid_model_binding`/`malformed-declaration`. The reader admits the same rows by joining their keys to the selected packages; no additional wire member is present in either V2 schema. | Test (TC-310) |
 | FR-375-AC-25 | For a selected model with any number of object types and state machines, including none, the producer derives exactly one identity-bound model root from the selected package identity and digest; it does not choose a declaration as a representative. Model-subject `abstract` keys and refinement `semantic_type` keys name that root, and protocol-subject `abstract` keys name that root while `protocol` names the exact clause. Changing a source alias leaves the root identity unchanged; changing selected package content changes its digest and therefore the root identity. The model root is derived from existing selection state and requires no FCD declaration or new selection field. | Test (TC-310) |
+| FR-375-AC-26 | A catalog is unique and ordered by catalog key. Over a subject whose source `parallel` controls default to `sc`, `tso` and `ra`, `concrete` holds `memory drain` three times, once per model, in the order `ra`, `sc`, `tso`, each with `drain: store-buffer-flush`, and `memory flush` once for `tso`, after the three drains; every such catalog is admitted. The same models selected by two `parallel` controls produce one entry per model, not two. Reordering the three drains, repeating a `(memory drain, memory_model)` pair, or repeating a declared class spelling refuses `invalid_semantic_graph` at the first out-of-order or later duplicate array entry. | Test (TC-310, TC-233) |
+| FR-375-AC-27 | A concrete protocol clause with activation `on each (x: T)` carries one catalog entry `{class: "activate <protocol>", node: <clause node>, binder_types: [...]}` where `binder_types` is `[T]` for a non-record `T` and one key per field of `T`, in effective field order, for a record `T`; the abstract catalog carries the same entry with `RefinementKey`s for a selected abstract clause with that activation. A clause with activation `on origin` carries none. A catalog that associates `activate` with a node other than its clause, drops the entry, adds an `origin` clause's entry, or lists a wrong or reordered binder type refuses `invalid_model_binding`/`malformed-declaration` at the catalog entry in protocol step 7. | Test (TC-310) |
 
 ## Dependencies
 
