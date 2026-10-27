@@ -289,7 +289,11 @@
           "enum": [
             "source",
             "model",
-            "input"
+            "input",
+            "call",
+            "object-context",
+            "replay-request",
+            "bytes"
           ]
         },
         "path": {

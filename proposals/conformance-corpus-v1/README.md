@@ -11,7 +11,10 @@ The corpus has four top-level members:
 - `vectors` contains each vector's `id`, `capability_id`, `class`,
   `subject`, `applicability`, `input` and `expected` members. `subject`
   names a consumer type and its operation. `input.files` names source,
-  model or operation-input files by path relative to the corpus root.
+  model, operation-input, `call`, `object-context`, `replay-request` or
+  `bytes` files by path relative to the corpus root. A subject's requirement
+  assigns meanings to its consumer-input kinds; this corpus contract does not
+  add members to that subject's existing request wire.
   `expected.disposition` is either `value` or `refusal`. `value` carries the
   operation's typed JSON result; `refusal` carries the typed code and cause,
   and may carry operation-defined details. A vector class of `incomplete`

@@ -16,7 +16,7 @@ fn parsed(text: &str) -> Value {
 }
 
 #[test]
-#[trace("TC-969", "FR-336-AC-4")]
+#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5")]
 fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
     let schema = parsed(SCHEMA);
     jsonschema::meta::validate(&schema).expect("Draft 2020-12 schema is valid");
@@ -55,4 +55,24 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
     let mut invalid_disposition = fixture;
     invalid_disposition["vectors"][0]["expected"]["disposition"] = json!("outside-domain");
     assert!(!validator.is_valid(&invalid_disposition));
+
+    let kinds = [
+        "source",
+        "model",
+        "input",
+        "call",
+        "object-context",
+        "replay-request",
+        "bytes",
+    ];
+    for kind in kinds {
+        let mut corpus = parsed(FIXTURE);
+        corpus["vectors"][0]["input"]["files"] = json!([{ "kind": kind, "path": "input/example.json" }]);
+        assert!(validator.is_valid(&corpus), "input file kind {kind} is admitted");
+    }
+
+    let mut invalid_kind = parsed(FIXTURE);
+    invalid_kind["vectors"][0]["input"]["files"] =
+        json!([{ "kind": "unknown", "path": "input/example.json" }]);
+    assert!(!validator.is_valid(&invalid_kind));
 }

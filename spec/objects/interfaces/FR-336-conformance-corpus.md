@@ -2,7 +2,6 @@
 id: FR-336
 title: "Independent complete-V1 conformance corpus"
 type: FR
-object: value_object
 relationships:
   - target: ix://agent-ix/quire-specification/interface_019
     type: specifies
@@ -24,13 +23,23 @@ The closed Draft 2020-12 schema and its example fixture are published in
 [conformance-corpus-v1](../../../proposals/conformance-corpus-v1/README.md).
 The schema's `$id` is `urn:quire:conformance-corpus:v1`.
 
-## Properties
+## Corpus members
+
+| Field | Type | Multiplicity | Constraints |
+|---|---|---|---|
+| contract_version | String | 1..1 | exactly `quire.conformance-corpus/v1` |
+| vectors | CorpusVector | 1..many | ordered; every vector names one primary capability |
+| results | QualificationResult | 0..many | prior outcomes only; consumers preserve these rows |
+| coverage | CorpusCoverage | 1..1 | primary capability inventory and rollups |
 
 - `contract_version` — exactly `quire.conformance-corpus/v1`.
 - `vectors` — an ordered array of vectors. Each vector has `id`,
   `capability_id`, `class`, `subject`, `applicability`, `input` and
-  `expected`. `input.files` lists source, model or operation-input files
-  by `kind` and path relative to the corpus root. `expected.disposition` is
+  `expected`. `input.files` lists source, model, operation-input, call,
+  object-context, replay-request or bytes files by `kind` and path relative to
+  the corpus root. Consumer requirements assign meanings to these file kinds;
+  they do not add members to the corpus vector or to their existing request
+  wires. `expected.disposition` is
   either `value` or `refusal` and is the vector's independently authored
   oracle: `value` carries the operation's
   typed JSON result; `refusal` carries `code` and `cause`, with optional
@@ -53,6 +62,11 @@ The schema's `$id` is `urn:quire:conformance-corpus:v1`.
   the criterion and consumer views. Each vector SHALL name a capability
   from `coverage.primary`.
 
+The `kind` vocabulary of `input.files` is `source`, `model`, `input`, `call`,
+`object-context`, `replay-request` and `bytes`. A consumer interprets only the
+file kinds assigned to its subject by its own requirement; this interface
+does not define a second encoding for those subject-owned inputs.
+
 ## Identity and validation
 
 Vector identity covers its complete input bytes and expected oracle; corpus
@@ -72,6 +86,7 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-2 | Removing or mutating a required vector makes qualification incomplete. | Analysis |
 | FR-336-AC-3 | A producer cannot qualify itself solely with an oracle sharing its implementation. | Analysis |
 | FR-336-AC-4 | The published schema admits the complete-v1 fixture and refuses a missing required member, an unknown member, and out-of-domain class, consumer-type or expected-disposition values. | Test |
+| FR-336-AC-5 | The published schema admits each `input.files[*].kind` in the closed vocabulary `source`, `model`, `input`, `call`, `object-context`, `replay-request` and `bytes`, and refuses another kind. | Test |
 
 ## Dependencies
 
