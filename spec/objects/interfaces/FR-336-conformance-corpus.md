@@ -13,6 +13,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-spec-language/FR-350
     type: references
+  - target: ix://agent-ix/quire-specification/FR-323
+    type: references
 ---
 
 # FR-336: Independent complete-V1 conformance corpus
@@ -121,21 +123,97 @@ wire encoding (QSL FR-100).
 
 ### Replay request file
 
-A `replay-request` file is a closed JSON adapter document whose request
-members map one-to-one, by member name and value, to the existing replay
-request type selected by the consuming requirement. The harness JSON
-`byte_provision` is an array of closed rows `{digest_domain, digest,
-bytes_path}`. `digest_domain` is a string or `null` exactly as the typed
-request uses; `digest` is 64 lowercase hexadecimal digits. `bytes_path` is
-relative to the directory containing that vector's `replay-request` file and
-SHALL resolve to exactly one `kind: bytes` path also listed in the same
-vector. It SHALL be relative, nonempty and contain no parent traversal. The
-adapter reads that file as raw bytes and supplies those bytes for the row's
-digest key. The row maps to the existing typed provision tuple
-`(digest_domain, digest, bytes)`; it adds no path field to the typed product
-request. `$defs.ReplayProvisionPath` publishes the row shape. The consumer
-requirement owns the remaining field-to-type mapping and retains existing
-digest validation and refusal behavior.
+A `replay-request` file is a closed JSON adapter document matching
+`$defs.ReplayRequest`. It is corpus-owned, not a product wire. Its top-level
+members map one-to-one to the corresponding `ReplayRequestWire` fields in the
+consuming requirement. Member values use FR-323 `NativeRuntimeEnvelope`
+shapes for replay source, target and result; all other nested typed values use
+the corpus-owned structural encoding below. A structural object has exactly
+one member per Rust field, uses that field's `snake_case` spelling and refuses
+unknown members. Integers and limit values are canonical decimal strings.
+Every Rust enum is a closed object tagged by `kind`, with the Rust variant's
+`snake_case` name and exactly that variant's fields. Arrays retain vector
+order; object maps retain their string keys.
+
+#### Top-level field mapping
+
+| JSON member | Rust field and value mapping |
+| --- | --- |
+| `profile_selections` | `ReplayRequestWire.profile_selections`: ordered `ProfileSelection` objects `{profile, value}`. |
+| `package_id` | `ReplayRequestWire.package_id`: FR-323 `package.package_id`, digest record `{domain, digest}`. |
+| `source_digests` | `ReplayRequestWire.source_digests`: ordered `SourceDigestWire` objects `{authority, identity, revision_namespace, revision, digest_domain, digest}`. |
+| `dependencies` | `ReplayRequestWire.dependencies`: ordered `DependencyEntryWire` objects `{identity, package_id, sources}`; digest and source values use FR-323 package/source shapes. |
+| `replay_target` | `ReplayRequestWire.replay_target`: FR-323 target members under `members`, plus request fields `arguments`, `occurrence_key` and `over`. |
+| `source` | `ReplayRequestWire.source`: the FR-323 `ReplaySource`, one `witness` or `input` arm. |
+| `obligation_identity` | `ReplayRequestWire.obligation_identity`: 64 lowercase hexadecimal digits decoded to the 32-byte identity. |
+| `backend` | `ReplayRequestWire.backend`: FR-323 backend identity string, unchanged. |
+| `state_environment` | `ReplayRequestWire.state_environment`: ordered `[name, value]` string pairs, preserving the stored tuple order. |
+| `accounting_limits` | `ReplayRequestWire.accounting_limits`: complete FR-255 `ScalarLimitsV1`; every numeric member is an unsigned decimal string. |
+| `stage_limits` | `ReplayRequestWire.stage_limits`: string-keyed map of FR-255 setting names to unsigned decimal strings. |
+| `supplied_limits` | `ReplayRequestWire.supplied_limits`: `null` or complete FR-323 `limits.supplied` object `{admission_work_units, conversion_work_units, numeric_magnitude_bits}`. |
+| `object_environment` | `ReplayRequestWire.object_environment`: `null` or FR-106 reference `{identity, digest}`; identity has the four FR-001 labels and digest is the string `sha256-jcs:<64 lowercase hex digits>`. |
+| `declared_domains` | `ReplayRequestWire.declared_domains`: ordered `DeclaredDomain` objects as specified below. |
+| `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows; the adapter reads each referenced sibling file as raw bytes and constructs `(digest_domain, digest, bytes)`. |
+
+#### FR-323 replay source and target
+
+`source` is the closed FR-323 `ReplaySource` subset:
+`{"kind":"witness","transcript":STRING}` or
+`{"kind":"input","assignments":[...]}`. A witness transcript is the
+admitted, trimmed assertion-block transcript; decoded values are not stored
+beside it. An input assignment is keyed by parameter node id, never by
+position: `{"parameter": NODE_ID, "value": VALUE}`. `NODE_ID` is 64 lowercase
+hexadecimal digits. `VALUE` uses the structural `WitnessValue` tagged union
+below because replay assignments may contain complete-V1 values beyond the
+corpus call `InputValue` forms. No other replay-source arm is admitted by
+this adapter.
+
+`replay_target.members` is exactly one FR-323 target member: `function` with
+its FR-323 `QualifiedName`,
+`frame_operation` with `{object, operation}`, or `state_clause` with a
+qualified name. Absent target members are omitted, never null. The containing
+`replay_target` object has exactly `members`, `arguments`, `occurrence_key`
+and `over`. `arguments` is boolean; `occurrence_key` is null or the FR-322
+`{node_id, role, ordinal}` key with decimal-string ordinal; `over` is null or
+`{population, key}`. FR-323's target validity rules still apply, including
+the function-only occurrence key and the frame/state-clause absence rules.
+
+The expected replay value is the FR-323 result envelope, a closed
+`{"results":[RESULT]}` with exactly one result for this request's one
+obligation. `RESULT` uses FR-323's typed result disposition and the matching
+FR-072 replay-result arm. It is compared as a typed result, never rendered
+debug text. It remains an independently authored expected value and is never
+copied from actual replay.
+
+#### Structural nested types
+
+| Rust type | Closed structural fields |
+| --- | --- |
+| `ProfileSelection` | `{profile, value}`; both strings. |
+| `SourceDigestWire` | `{authority, identity, revision_namespace, revision, digest_domain, digest}`; digest domain is string or null, digest is 64 lowercase hexadecimal digits. |
+| `DependencyEntryWire` | `{identity, package_id, sources}`; identity string, package id and source entries use the FR-323 shapes. |
+| `ScalarLimits` | `integer_bits`, `decimal_digits`, `scale_expansion`, `text_input_bytes`, `text_scalars`, `normalized_scalars`, `unit_edges`, `value_occurrences`, `work_units`, `result_units`; each is an unsigned decimal string. |
+| `RequestTargetWire` | `{members, arguments, occurrence_key, over}` as described above. |
+| `ReplayOverBinding` | `{population, key}`, both strings. |
+| `DeclaredDomain` | `{domain, kind, bound}`; `domain` is tagged `node` `{node, path}` or `population` `{member_type, ordinal}`, `kind` is null or tagged `DomainKind`, and `bound` uses `FiniteBound`. |
+| `DomainKind` | tagged variants `collection`, `population`, `integer`, `recursive`, `loop`, `infinite_trace` or `quantity`; each has only its `kind` tag. |
+| `FiniteBound` | tagged `cardinality` `{maximum}`, `integer_range` `{lower, upper}`, `depth` `{maximum}` or `variants` `{members}`; integral values are decimal strings and arrays preserve order. |
+| `WitnessValue` | closed tagged variants `boolean(value)`, `integer(decimal)`, `exact_integer(decimal)`, `enum(declaration, member)`, `text(value)`, `uuid(value)`, `timestamp(decimal)`, `string(value)`, `rational(numerator, denominator)`, `decimal(coefficient, scale)`, `float32(bits)`, `float64(bits)`, `quantity(magnitude, unit)`, `reference(universe, object_type, identity)`, `option(value)`, `record(declaration, fields)`, `tuple(declaration, components)`, `union(declaration, member, components)`, `sequence(elements)`, `ordered_set(elements)`, `set(elements)`, and `bag(elements)`. `option.value` is null or another `WitnessValue`; record fields are ordered `{name, slot}` objects whose slot is tagged `present(value)`, `absent` or `null`; quantity magnitude is tagged `rational(numerator, denominator)` or `decimal(coefficient, scale)`. |
+| `StateEnvironment` | ordered `[name, value]` pairs of strings, matching its stored tuples. |
+
+Node and digest bytes use 64 lowercase hexadecimal digits; arbitrary byte
+vectors use lowercase hexadecimal; signed integers use canonical signed
+decimal strings and unsigned integers use canonical unsigned decimal strings.
+All object and enum forms are closed. `$defs.ReplayRequest` and its referenced
+structural definitions publish these rules in the JSON Schema.
+
+Each adapter `byte_provision` row is exactly
+`{digest_domain, digest, bytes_path}`. `bytes_path` is relative to the
+vector directory and SHALL resolve to exactly one `kind: bytes` path listed in the same vector. It SHALL be
+nonempty, relative and contain no parent traversal. The adapter reads raw
+bytes and supplies those bytes for the row's digest key. The path is not
+added to the typed product request. Existing digest validation and refusal
+behavior remain authoritative.
 
 ## Identity and validation
 
@@ -158,7 +236,8 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-4 | The published schema admits the complete-v1 fixture and refuses a missing required member, an unknown member, and out-of-domain class, consumer-type or expected-disposition values. | Test |
 | FR-336-AC-5 | The published schema admits each `input.files[*].kind` in the closed vocabulary `source`, `model`, `input`, `call`, `object-context`, `population`, `replay-request` and `bytes`, and refuses another kind. | Test |
 | FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `digest_domain`, `digest` and `bytes_path` and refuses extra members or malformed digest text. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test |
-| FR-336-AC-7 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and validates it under the named digest record. | Test |
+| FR-336-AC-7 | A `replay-request` file matches the closed `$defs.ReplayRequest`; all 15 top-level fields map to their `ReplayRequestWire` fields, each nested value follows its FR-323 or structural type mapping, integers use canonical decimal strings, unknown object members and tags are refused, and setting names outside FR-255 are refused by the consumer decoder. The Witness/Input source arms, FR-323 replay target members and one-result envelope retain their stated shapes. | Test (TC-970) |
+| FR-336-AC-8 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and validates it under the named digest record. | Test (TC-970) |
 
 ## Dependencies
 

@@ -10,11 +10,10 @@ review_set: subset
 
 ## Summary
 
-PASS. Normative reader behaviors have explicit actors and conditions; the
-acceptance criterion states observable schema admission and rejection results.
+The new ACs name the replay-request actor, closed schema, mapping obligations, refusal conditions and byte-path boundary; they are test-linked through TC-970.
 
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No unresolved EARS issue found in the added requirement wording: the reader SHALL validate the named contract before vector execution, while FR-336-AC-4 directly states the fixture and mutation outcomes. | FR-336; FR-336-AC-4 |
+| FND-001 | low | AC-7/8 state observable structural and path behavior and are verified by the replay adapter case. | FR-336-AC-7/8; TC-970 |

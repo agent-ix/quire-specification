@@ -477,6 +477,1241 @@
         }
       },
       "additionalProperties": false
-    }
+    },
+      "HexDigest": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "UnsignedDecimal": {
+        "type": "string",
+        "pattern": "^(0|[1-9][0-9]*)$"
+      },
+      "SignedDecimal": {
+        "type": "string",
+        "pattern": "^(0|-?[1-9][0-9]*)$"
+      },
+      "DigestRecord": {
+        "type": "object",
+        "required": [
+          "domain",
+          "digest"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "digest": {
+            "$ref": "#/$defs/HexDigest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SourceDigest": {
+        "type": "object",
+        "required": [
+          "authority",
+          "identity",
+          "revision_namespace",
+          "revision",
+          "digest_domain",
+          "digest"
+        ],
+        "properties": {
+          "authority": {
+            "type": "string"
+          },
+          "identity": {
+            "type": "string"
+          },
+          "revision_namespace": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "digest_domain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "digest": {
+            "$ref": "#/$defs/HexDigest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProfileSelection": {
+        "type": "object",
+        "required": [
+          "profile",
+          "value"
+        ],
+        "properties": {
+          "profile": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DependencyEntry": {
+        "type": "object",
+        "required": [
+          "identity",
+          "package_id",
+          "sources"
+        ],
+        "properties": {
+          "identity": {
+            "type": "string"
+          },
+          "package_id": {
+            "$ref": "#/$defs/DigestRecord"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/SourceDigest"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScalarLimits": {
+        "type": "object",
+        "required": [
+          "integer_bits",
+          "decimal_digits",
+          "scale_expansion",
+          "text_input_bytes",
+          "text_scalars",
+          "normalized_scalars",
+          "unit_edges",
+          "value_occurrences",
+          "work_units",
+          "result_units"
+        ],
+        "properties": {
+          "integer_bits": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "decimal_digits": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "scale_expansion": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "text_input_bytes": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "text_scalars": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "normalized_scalars": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "unit_edges": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "value_occurrences": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "work_units": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "result_units": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OccurrenceKey": {
+        "type": "object",
+        "required": [
+          "node_id",
+          "role",
+          "ordinal"
+        ],
+        "properties": {
+          "node_id": {
+            "$ref": "#/$defs/HexDigest"
+          },
+          "role": {
+            "type": "string"
+          },
+          "ordinal": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReplayOverBinding": {
+        "type": "object",
+        "required": [
+          "population",
+          "key"
+        ],
+        "properties": {
+          "population": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReplayTargetMembers": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "function"
+            ],
+            "properties": {
+              "function": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "frame_operation"
+            ],
+            "properties": {
+              "frame_operation": {
+                "type": "object",
+                "required": [
+                  "object",
+                  "operation"
+                ],
+                "properties": {
+                  "object": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "operation": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "state_clause"
+            ],
+            "properties": {
+              "state_clause": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "RequestTargetWire": {
+        "type": "object",
+        "required": [
+          "members",
+          "arguments",
+          "occurrence_key",
+          "over"
+        ],
+        "properties": {
+          "members": {
+            "$ref": "#/$defs/ReplayTargetMembers"
+          },
+          "arguments": {
+            "type": "boolean"
+          },
+          "occurrence_key": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/OccurrenceKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "over": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ReplayOverBinding"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CanonicalAssignment": {
+        "type": "object",
+        "required": [
+          "parameter",
+          "value"
+        ],
+        "properties": {
+          "parameter": {
+            "$ref": "#/$defs/HexDigest"
+          },
+          "value": {
+            "$ref": "#/$defs/WitnessValue"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReplaySource": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "transcript"
+            ],
+            "properties": {
+              "kind": {
+                "const": "witness"
+              },
+              "transcript": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "assignments"
+            ],
+            "properties": {
+              "kind": {
+                "const": "input"
+              },
+              "assignments": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/CanonicalAssignment"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "DomainKey": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "node",
+              "path"
+            ],
+            "properties": {
+              "kind": {
+                "const": "node"
+              },
+              "node": {
+                "$ref": "#/$defs/HexDigest"
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/UnsignedDecimal"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "member_type",
+              "ordinal"
+            ],
+            "properties": {
+              "kind": {
+                "const": "population"
+              },
+              "member_type": {
+                "$ref": "#/$defs/HexDigest"
+              },
+              "ordinal": {
+                "$ref": "#/$defs/UnsignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "DomainKind": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "collection"}},
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "population"}},
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "integer"}},
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "recursive"}},
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "loop"}},
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "infinite_trace"}},
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {"kind": {"const": "quantity"}},
+            "additionalProperties": false
+          }
+        ]
+      },
+      "FiniteBound": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "maximum"
+            ],
+            "properties": {
+              "kind": {
+                "const": "cardinality"
+              },
+              "maximum": {
+                "$ref": "#/$defs/UnsignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "lower",
+              "upper"
+            ],
+            "properties": {
+              "kind": {
+                "const": "integer_range"
+              },
+              "lower": {
+                "$ref": "#/$defs/SignedDecimal"
+              },
+              "upper": {
+                "$ref": "#/$defs/SignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "maximum"
+            ],
+            "properties": {
+              "kind": {
+                "const": "depth"
+              },
+              "maximum": {
+                "$ref": "#/$defs/UnsignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "members"
+            ],
+            "properties": {
+              "kind": {
+                "const": "variants"
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "DeclaredDomain": {
+        "type": "object",
+        "required": [
+          "domain",
+          "kind",
+          "bound"
+        ],
+        "properties": {
+          "domain": {
+            "$ref": "#/$defs/DomainKey"
+          },
+          "kind": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/DomainKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bound": {
+            "$ref": "#/$defs/FiniteBound"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ObjectEnvironmentRef": {
+        "type": "object",
+        "required": [
+          "identity",
+          "digest"
+        ],
+        "properties": {
+          "identity": {
+            "type": "object",
+            "required": [
+              "authority",
+              "identity",
+              "revision_namespace",
+              "revision"
+            ],
+            "properties": {
+              "authority": {
+                "type": "string"
+              },
+              "identity": {
+                "type": "string"
+              },
+              "revision_namespace": {
+                "type": "string"
+              },
+              "revision": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256-jcs:[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuppliedLimits": {
+        "type": "object",
+        "required": [
+          "admission_work_units",
+          "conversion_work_units",
+          "numeric_magnitude_bits"
+        ],
+        "properties": {
+          "admission_work_units": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "conversion_work_units": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          },
+          "numeric_magnitude_bits": {
+            "$ref": "#/$defs/UnsignedDecimal"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StateEnvironment": {
+        "type": "array",
+        "items": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "ReplayRequest": {
+        "type": "object",
+        "required": [
+          "profile_selections",
+          "package_id",
+          "source_digests",
+          "dependencies",
+          "replay_target",
+          "source",
+          "obligation_identity",
+          "backend",
+          "state_environment",
+          "accounting_limits",
+          "stage_limits",
+          "supplied_limits",
+          "object_environment",
+          "declared_domains",
+          "byte_provision"
+        ],
+        "properties": {
+          "profile_selections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/ProfileSelection"
+            }
+          },
+          "package_id": {
+            "$ref": "#/$defs/DigestRecord"
+          },
+          "source_digests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/SourceDigest"
+            }
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/DependencyEntry"
+            }
+          },
+          "replay_target": {
+            "$ref": "#/$defs/RequestTargetWire"
+          },
+          "source": {
+            "$ref": "#/$defs/ReplaySource"
+          },
+          "obligation_identity": {
+            "$ref": "#/$defs/HexDigest"
+          },
+          "backend": {
+            "$ref": "#/$defs/Nonempty"
+          },
+          "state_environment": {
+            "$ref": "#/$defs/StateEnvironment"
+          },
+          "accounting_limits": {
+            "$ref": "#/$defs/ScalarLimits"
+          },
+          "stage_limits": {
+            "type": "object",
+            "propertyNames": {
+              "$ref": "#/$defs/Nonempty"
+            },
+            "additionalProperties": {
+              "$ref": "#/$defs/UnsignedDecimal"
+            }
+          },
+          "supplied_limits": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/SuppliedLimits"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "object_environment": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ObjectEnvironmentRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "declared_domains": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/DeclaredDomain"
+            }
+          },
+          "byte_provision": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/ReplayProvisionPath"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "WitnessValue": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "value"
+            ],
+            "properties": {
+              "kind": {
+                "const": "boolean"
+              },
+              "value": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "decimal"
+            ],
+            "properties": {
+              "kind": {
+                "const": "integer"
+              },
+              "decimal": {
+                "$ref": "#/$defs/SignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "decimal"
+            ],
+            "properties": {
+              "kind": {
+                "const": "exact_integer"
+              },
+              "decimal": {
+                "$ref": "#/$defs/SignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "declaration",
+              "member"
+            ],
+            "properties": {
+              "kind": {
+                "const": "enum"
+              },
+              "declaration": {
+                "$ref": "#/$defs/HexDigest"
+              },
+              "member": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "value"
+            ],
+            "properties": {
+              "kind": {
+                "const": "text"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "value"
+            ],
+            "properties": {
+              "kind": {
+                "const": "uuid"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "decimal"
+            ],
+            "properties": {
+              "kind": {
+                "const": "timestamp"
+              },
+              "decimal": {
+                "$ref": "#/$defs/SignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "value"
+            ],
+            "properties": {
+              "kind": {
+                "const": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "numerator",
+              "denominator"
+            ],
+            "properties": {
+              "kind": {
+                "const": "rational"
+              },
+              "numerator": {
+                "$ref": "#/$defs/SignedDecimal"
+              },
+              "denominator": {
+                "$ref": "#/$defs/UnsignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "coefficient",
+              "scale"
+            ],
+            "properties": {
+              "kind": {
+                "const": "decimal"
+              },
+              "coefficient": {
+                "$ref": "#/$defs/SignedDecimal"
+              },
+              "scale": {
+                "$ref": "#/$defs/SignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "bits"
+            ],
+            "properties": {
+              "kind": {
+                "const": "float32"
+              },
+              "bits": {
+                "$ref": "#/$defs/UnsignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "bits"
+            ],
+            "properties": {
+              "kind": {
+                "const": "float64"
+              },
+              "bits": {
+                "$ref": "#/$defs/UnsignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "magnitude",
+              "unit"
+            ],
+            "properties": {
+              "kind": {
+                "const": "quantity"
+              },
+              "magnitude": {
+                "$ref": "#/$defs/QuantityMagnitude"
+              },
+              "unit": {
+                "$ref": "#/$defs/HexDigest"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "universe",
+              "object_type",
+              "identity"
+            ],
+            "properties": {
+              "kind": {
+                "const": "reference"
+              },
+              "universe": {
+                "$ref": "#/$defs/HexDigest"
+              },
+              "object_type": {
+                "$ref": "#/$defs/HexDigest"
+              },
+              "identity": {
+                "type": "string",
+                "pattern": "^([0-9a-f]{2})*$"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "value"
+            ],
+            "properties": {
+              "kind": {
+                "const": "option"
+              },
+              "value": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/WitnessValue"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "declaration",
+              "fields"
+            ],
+            "properties": {
+              "kind": {
+                "const": "record"
+              },
+              "declaration": {
+                "$ref": "#/$defs/HexDigest"
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/WitnessField"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "declaration",
+              "components"
+            ],
+            "properties": {
+              "kind": {
+                "const": "tuple"
+              },
+              "declaration": {
+                "$ref": "#/$defs/HexDigest"
+              },
+              "components": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/WitnessValue"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "declaration",
+              "member",
+              "components"
+            ],
+            "properties": {
+              "kind": {
+                "const": "union"
+              },
+              "declaration": {
+                "$ref": "#/$defs/HexDigest"
+              },
+              "member": {
+                "type": "string"
+              },
+              "components": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/WitnessValue"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "elements"
+            ],
+            "properties": {
+              "kind": {
+                "const": "sequence"
+              },
+              "elements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/WitnessValue"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "elements"
+            ],
+            "properties": {
+              "kind": {
+                "const": "ordered_set"
+              },
+              "elements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/WitnessValue"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "elements"
+            ],
+            "properties": {
+              "kind": {
+                "const": "set"
+              },
+              "elements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/WitnessValue"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "elements"
+            ],
+            "properties": {
+              "kind": {
+                "const": "bag"
+              },
+              "elements": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/WitnessValue"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "QuantityMagnitude": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "numerator",
+              "denominator"
+            ],
+            "properties": {
+              "kind": {
+                "const": "rational"
+              },
+              "numerator": {
+                "$ref": "#/$defs/SignedDecimal"
+              },
+              "denominator": {
+                "$ref": "#/$defs/UnsignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "kind",
+              "coefficient",
+              "scale"
+            ],
+            "properties": {
+              "kind": {
+                "const": "decimal"
+              },
+              "coefficient": {
+                "$ref": "#/$defs/SignedDecimal"
+              },
+              "scale": {
+                "$ref": "#/$defs/SignedDecimal"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "WitnessField": {
+        "type": "object",
+        "required": [
+          "name",
+          "slot"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slot": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "kind",
+                  "value"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "present"
+                  },
+                  "value": {
+                    "$ref": "#/$defs/WitnessValue"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "absent"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "null"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
   }
 }

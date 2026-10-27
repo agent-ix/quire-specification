@@ -1,0 +1,75 @@
+{
+  "profile_selections": [],
+  "package_id": {
+    "domain": "quire.package.semantic/v2",
+    "digest": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "source_digests": [],
+  "dependencies": [],
+  "replay_target": {
+    "members": {
+      "function": "zero"
+    },
+    "arguments": false,
+    "occurrence_key": {
+      "node_id": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role": "declaration",
+      "ordinal": "0"
+    },
+    "over": null
+  },
+  "source": {
+    "kind": "input",
+    "assignments": [
+      {
+        "parameter": "1111111111111111111111111111111111111111111111111111111111111111",
+        "value": {
+          "kind": "integer",
+          "decimal": "7"
+        }
+      }
+    ]
+  },
+  "obligation_identity": "0000000000000000000000000000000000000000000000000000000000000000",
+  "backend": "fixture.backend",
+  "state_environment": [],
+  "accounting_limits": {
+    "integer_bits": "0",
+    "decimal_digits": "0",
+    "scale_expansion": "0",
+    "text_input_bytes": "0",
+    "text_scalars": "0",
+    "normalized_scalars": "0",
+    "unit_edges": "0",
+    "value_occurrences": "0",
+    "work_units": "0",
+    "result_units": "0"
+  },
+  "stage_limits": {},
+  "supplied_limits": {
+    "admission_work_units": "0",
+    "conversion_work_units": "0",
+    "numeric_magnitude_bits": "0"
+  },
+  "object_environment": null,
+  "declared_domains": [
+    {
+      "domain": {
+        "kind": "node",
+        "node": "2222222222222222222222222222222222222222222222222222222222222222",
+        "path": [
+          "0"
+        ]
+      },
+      "kind": {
+        "kind": "integer"
+      },
+      "bound": {
+        "kind": "integer_range",
+        "lower": "0",
+        "upper": "9"
+      }
+    }
+  ],
+  "byte_provision": []
+}
