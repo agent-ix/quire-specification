@@ -575,7 +575,7 @@ clause/anchor agreement and require the first FR-341/FR-342 refusal.
 
 ### State transition vectors
 
-Vector ids are `TS-nn` (TC-374's `ST-nn` are stochastic timed vectors).
+Vector ids are `XT-nn` (TC-374's `ST-nn` and TC-369's `TS-nn` are other vectors).
 `fixtures/positive-state-transition.json` is the published Boolean model-field
 transition: `Switch.set(flag: Boolean)` over the required Boolean field `on` of
 `acme/orders`, with the precondition `flag || on` and the postcondition `on`,
@@ -589,26 +589,26 @@ first FR-341 state-step refusal.
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
-| TS-01 | The unedited package | Valid against `schema.json`; every application preimage valid under the preimage schema; every node key and the `package_id` recompute; every application, the subject projection included, admitted by the operation step | FR-341-AC-17 |
-| TS-02 | The transition's `anchor` and `subject` bindings swapped | Fails the schema | FR-341-AC-15 |
-| TS-03 | The `post` binding removed; a sixth binding added | Fails the schema | FR-341-AC-15 |
-| TS-04 | `pre` holding the precondition twice; `subject` an empty aggregate | Fails the schema | FR-341-AC-15 |
-| TS-05 | Member operator `sequence`; law role `temporal_profile`; a `rounding` mode; occurrence role `declaration` | Fails the schema | FR-341-AC-15 |
-| TS-06 | Member operator `sequence` on the transition | `invalid_package`/`operation-member-mismatch` at the operation step | FR-341-AC-15; FR-464-AC-19 |
-| TS-07 | A `quire.op.protocol.control` application naming operator `transition` | `invalid_package`/`operation-member-mismatch` | FR-464-AC-19 |
-| TS-08 | The anchor's `operation` rewritten, rekeyed | The anchor, both clauses and the transition take new ids; the `package_id` changes | FR-341-AC-17 |
-| TS-09 | A source-map region moved | Every node id and the `package_id` unchanged | FR-341-AC-17 |
-| TS-10 | `anchor` naming the `Switch` model node | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-16 |
-| TS-11 | `subject` naming the `self` parameter; a subject projecting a field the frame does not modify | `invalid_model_binding`/`malformed-declaration` at the subject's target | FR-341-AC-16 |
-| TS-12 | `subject` a projection of the Integer field `level` (typed Integer); a projection of the optional Boolean field `Order.note` (typed `Option<Boolean>`) | `ill_typed`/`operator-ineligible` at the transition node; the same projection declaring `Boolean` refuses `ill_typed`/`operator-ineligible` at the projection (operation step) | FR-341-AC-16 |
-| TS-13 | `inputs` naming `self`; `inputs` missing the Boolean parameter `flag` | `invalid_model_binding`/`malformed-declaration` at the input; `ill_typed`/`operator-ineligible` at the transition node | FR-341-AC-16 |
-| TS-14 | `pre` naming the postcondition; `post` naming the precondition; `post` anchored at another operation | `invalid_model_binding`/`malformed-declaration` at the clause's target | FR-341-AC-16 |
-| TS-15 | A second transition over the same `anchor` and `subject` | `ambiguous_declaration`/`ambiguous-name` at the later node in ascending node-id digest order | FR-341-AC-16 |
-| TS-16 | The transition application nested as an argument of the `or` expression; the transition node's body replaced by the `or` application | Fails the schema | FR-341-AC-18 |
-| TS-17 | The transition application as the body root of the `or` expression node | `ill_typed`/`operator-ineligible` at that node, before any anchor check | FR-341-AC-18; FR-341-AC-16 |
-| TS-18 | The lock without the `protocol_profile` selection | `invalid_package`/`operation-law-unselected` | FR-341-AC-15 |
+| XT-01 | The unedited package | Valid against `schema.json`; every application preimage valid under the preimage schema; every node key and the `package_id` recompute; every application, the subject projection included, admitted by the operation step | FR-341-AC-17 |
+| XT-02 | The transition's `anchor` and `subject` bindings swapped | Fails the schema | FR-341-AC-15 |
+| XT-03 | The `post` binding removed; a sixth binding added | Fails the schema | FR-341-AC-15 |
+| XT-04 | `pre` holding the precondition twice; `subject` an empty aggregate | Fails the schema | FR-341-AC-15 |
+| XT-05 | Member operator `sequence`; law role `temporal_profile`; a `rounding` mode; occurrence role `declaration` | Fails the schema | FR-341-AC-15 |
+| XT-06 | Member operator `sequence` on the transition | `invalid_package`/`operation-member-mismatch` at the operation step | FR-341-AC-15; FR-464-AC-19 |
+| XT-07 | A `quire.op.protocol.control` application naming operator `transition` | `invalid_package`/`operation-member-mismatch` | FR-464-AC-19 |
+| XT-08 | The anchor's `operation` rewritten, rekeyed | The anchor, both clauses and the transition take new ids; the `package_id` changes | FR-341-AC-17 |
+| XT-09 | A source-map region moved | Every node id and the `package_id` unchanged | FR-341-AC-17 |
+| XT-10 | `anchor` naming the `Switch` model node | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-16 |
+| XT-11 | `subject` naming the `self` parameter; a subject projecting a field the frame does not modify | `invalid_model_binding`/`malformed-declaration` at the subject's target | FR-341-AC-16 |
+| XT-12 | `subject` a projection of the Integer field `level` (typed Integer); a projection of the optional Boolean field `Order.note` (typed `Option<Boolean>`) | `ill_typed`/`operator-ineligible` at the transition node; the same projection declaring `Boolean` refuses `ill_typed`/`operator-ineligible` at the projection (operation step) | FR-341-AC-16 |
+| XT-13 | `inputs` naming `self`; `inputs` missing the Boolean parameter `flag` | `invalid_model_binding`/`malformed-declaration` at the input; `ill_typed`/`operator-ineligible` at the transition node | FR-341-AC-16 |
+| XT-14 | `pre` naming the postcondition; `post` naming the precondition; `post` anchored at another operation | `invalid_model_binding`/`malformed-declaration` at the clause's target | FR-341-AC-16 |
+| XT-15 | A second transition over the same `anchor` and `subject` | `ambiguous_declaration`/`ambiguous-name` at the later node in ascending node-id digest order | FR-341-AC-16 |
+| XT-16 | The transition application nested as an argument of the `or` expression; the transition node's body replaced by the `or` application | Fails the schema | FR-341-AC-18 |
+| XT-17 | The transition application as the body root of the `or` expression node | `ill_typed`/`operator-ineligible` at that node, before any anchor check | FR-341-AC-18; FR-341-AC-16 |
+| XT-18 | The lock without the `protocol_profile` selection | `invalid_package`/`operation-law-unselected` | FR-341-AC-15 |
 
-TS-10 through TS-15 and TS-17 are reader outcomes the QSpec crate does not
+XT-10 through XT-15 and XT-17 are reader outcomes the QSpec crate does not
 implement; the quire-contract-ir reader owns their execution evidence.
 
 ## Expected Results

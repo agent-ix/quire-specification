@@ -18791,6 +18791,7 @@ fn tc_367_timed_model_causes_are_catalogued_and_paired() {
 #[trace("TC-233", "FR-341-AC-15")]
 #[trace("TC-233", "FR-341-AC-17")]
 #[trace("TC-233", "FR-464-AC-19")]
+#[trace("TC-233", "FR-341-AC-18")]
 #[test]
 fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
@@ -18929,7 +18930,7 @@ fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
         "a protocol control never applies the state operator"
     );
 
-    // TS-18: a lock without the protocol_profile selection leaves the law unselected.
+    // XT-18: a lock without the protocol_profile selection leaves the law unselected.
     let mut unselected = package.clone();
     for prefix in ["/lock", "/identity_preimage"] {
         unselected
@@ -18945,7 +18946,7 @@ fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
         "a transition needs the protocol profile selected"
     );
 
-    // TS-16: a transition application nested in another term, and another
+    // XT-16: a transition application nested in another term, and another
     // application as a transition node's body, each fail the schema.
     let enabled = package["semantic_graph"]["nodes"]
         .as_array()
