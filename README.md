@@ -50,6 +50,7 @@ The proposals are:
 | [`shared-reference-2-draft`](proposals/shared-reference-2-draft/README.md) | The artifact roles and canonical identity (JCS plus SHA-256) that verification records use. |
 | [`checked-package-v2`](proposals/checked-package-v2/README.md) | The checked-package schema and its identity, model and operation vectors. |
 | [`backend-provider-v1`](proposals/backend-provider-v1/README.md) | The schema and vectors for how a backend advertises what it can check. |
+| [`conformance-corpus-v1`](proposals/conformance-corpus-v1/README.md) | The closed schema and fixture for the FR-336 qualification corpus. |
 
 ## Example conformance case
 
@@ -104,6 +105,7 @@ file under `proposals/quire-v1/definitions/`. The crate does no parsing.
 | Test file | What it checks |
 | --- | --- |
 | `tests/backend_provider_v1.rs` | Every positive backend-provider vector is admitted by the schema, every adverse one is refused, and the request carries exactly the checked package its identifier names. |
+| `tests/conformance_corpus_v1.rs` | The FR-336 fixture and closed-domain controls are checked against the conformance-corpus schema. |
 | `tests/checked_package_v2.rs` | The checked-package and complete-value vectors, and the definition constants against their files. |
 | `tests/checked_package_model.rs` | The model definition lock and the effective-declaration vectors. |
 | `tests/model_member_types.rs` | Model-owned member vectors: owner recovery, member resolution and member type derivation. |
