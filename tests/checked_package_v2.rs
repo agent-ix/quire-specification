@@ -46,6 +46,8 @@ const POSITIVE_NOMINAL_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-nominal-identities.json");
 const POSITIVE_CLAUSE_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-clause-operations.json");
+const POSITIVE_STATE_TRANSITION: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-state-transition.json");
 const POSITIVE_CONTROL_OPERATIONS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-control-operations.json");
 const POSITIVE_EXTENSION_NODES: &str =
@@ -2172,6 +2174,13 @@ impl<'a> OperationOracle<'a> {
                     && laws
                         .first()
                         .and_then(|law| profile_operators(&law["definition"]))
+                        .map(|operators| {
+                            if operation["identity"] == "quire.op.state.transition" {
+                                state_transition_operators()
+                            } else {
+                                operators
+                            }
+                        })
                         .zip(member["operator"].as_str())
                         .is_some_and(|(operators, operator)| {
                             operators.iter().any(|candidate| candidate == operator)
@@ -2470,6 +2479,19 @@ fn protocol_operators() -> Vec<String> {
         operators.extend(cell.split('`').skip(1).step_by(2).map(str::to_owned));
     }
     operators
+}
+
+/// The finite-global profile's one `state`/`transition` operator, read from
+/// FR-464's "State transition operator" table.
+fn state_transition_operators() -> Vec<String> {
+    FR464_PROTOCOL_NODES
+        .lines()
+        .skip_while(|line| !line.starts_with("| State operator |"))
+        .skip(2)
+        .take_while(|line| line.starts_with('|'))
+        .filter_map(|row| row.split('|').nth(1))
+        .flat_map(|cell| cell.split('`').skip(1).step_by(2).map(str::to_owned))
+        .collect()
 }
 
 #[trace("TC-946", "FR-464-AC-1")]
@@ -10123,12 +10145,6 @@ fn tc_233_state_node_forms_fix_their_body_roots_and_occurrence_roles() {
     let invariant = clause_node_index(&package, "invariant");
     let anchor = node_index(&package, &clause_digest("anchor"));
     let frame = node_index(&package, &clause_digest("frame"));
-    let transition = package["semantic_graph"]["nodes"]
-        .as_array()
-        .expect("nodes")
-        .iter()
-        .position(|node| node["semantic_form"] == "transition")
-        .expect("the clause package carries a transition");
     let refused = |pointer: &str, value: Value, why: &str| {
         let mut candidate = package.clone();
         *candidate
@@ -10245,10 +10261,23 @@ fn tc_233_state_node_forms_fix_their_body_roots_and_occurrence_roles() {
         json!("declaration"),
         "a parameter occurrence is expression",
     );
-    refused(
-        &format!("{}/body", node(transition)),
-        temporal,
-        "a transition body root is a state.transition application",
+    let transition_package = parsed_fixture(POSITIVE_STATE_TRANSITION);
+    schema
+        .validate(&transition_package)
+        .unwrap_or_else(|error| panic!("the transition package has the closed V2 shape: {error}"));
+    let transition = transition_package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| node["semantic_form"] == "transition")
+        .expect("the transition package carries a transition");
+    let mut candidate = transition_package.clone();
+    *candidate
+        .pointer_mut(&format!("{}/body", node(transition)))
+        .expect("transition body exists") = temporal;
+    assert!(
+        !schema.is_valid(&candidate),
+        "a transition body root is a state.transition application"
     );
     refused(
         &format!(
@@ -18703,3 +18732,172 @@ fn tc_367_timed_model_causes_are_catalogued_and_paired() {
     }
     assert!(backticked(ill_typed).contains("invalid-time-quantity"));
 }
+
+/// FR-341-AC-15, FR-341-AC-17, FR-464-AC-19: the published transition package
+/// carries one Boolean model-field `state`/`transition` node whose body is the
+/// five-binding `quire.op.state.transition` application. Both keys recompute,
+/// the closed schema refuses each body mutation, the operation step admits it
+/// and refuses another profile operator, and the identity binds the anchor,
+/// subject, pre and post nodes while the source map stays outside it.
+#[trace("TC-233", "FR-341-AC-15")]
+#[trace("TC-233", "FR-341-AC-17")]
+#[trace("TC-233", "FR-464-AC-19")]
+#[test]
+fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let package = parsed_fixture(POSITIVE_STATE_TRANSITION);
+    schema
+        .validate(&package)
+        .unwrap_or_else(|error| panic!("the transition package has the closed V2 shape: {error}"));
+    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+    for node in nodes {
+        let current = if is_application_node(node) {
+            application_node_key_is_current(node, nodes)
+        } else {
+            structural_node_key_is_current(node)
+        };
+        assert!(current, "{} keeps the digest of its preimage", node["semantic_form"]);
+    }
+    assert_eq!(
+        package["package_id"]["digest"].as_str(),
+        Some(unqualified_jcs_sha256(&derive_package_id_preimage(&package)).as_str())
+    );
+    // The operation step admits every application of the package but the
+    // field projection: this oracle types a field only on a record, and TC-280
+    // qualifies a projection over a `deref` of a model object, so the
+    // projection is skipped here and the transition is checked alone.
+    let operation_refusal = |candidate: &Value, form: &str| {
+        let oracle = OperationOracle::for_package_with(&catalog, candidate, &[]);
+        oracle
+            .nodes
+            .iter()
+            .filter(|node| node["semantic_form"] == form)
+            .flat_map(|node| {
+                application_terms(&node["body"])
+                    .into_iter()
+                    .map(|term| oracle.classify_in(node, term).map(drop))
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Result<Vec<_>, _>>()
+            .map(drop)
+    };
+    for form in ["deref", "unary", "state_clause", "transition"] {
+        assert_eq!(operation_refusal(&package, form), Ok(()), "{form} is admitted");
+    }
+
+    let transition = node_with_operation(&package, "quire.op.state.transition");
+    let body = |index: usize| format!("/semantic_graph/nodes/{index}/body");
+    let refused = |pointer: String, value: Value, why: &str| {
+        let mut candidate = package.clone();
+        *candidate.pointer_mut(&pointer).unwrap_or_else(|| panic!("{pointer} exists")) = value;
+        assert!(!schema.is_valid(&candidate), "{why}");
+    };
+    let arguments = package["semantic_graph"]["nodes"][transition]["body"]["arguments"].clone();
+    let names = arguments
+        .as_array()
+        .expect("arguments")
+        .iter()
+        .map(|argument| argument["name"].as_str().expect("binding name"))
+        .collect::<Vec<_>>();
+    assert_eq!(names, ["anchor", "subject", "inputs", "pre", "post"]);
+    let with_arguments = |edit: &dyn Fn(&mut Vec<Value>)| {
+        let mut edited = arguments.as_array().expect("arguments").clone();
+        edit(&mut edited);
+        Value::Array(edited)
+    };
+    refused(
+        format!("{}/arguments", body(transition)),
+        with_arguments(&|edited| edited.swap(0, 1)),
+        "the bindings are anchor, subject, inputs, pre, post in that order",
+    );
+    refused(
+        format!("{}/arguments", body(transition)),
+        with_arguments(&|edited| {
+            edited.pop();
+        }),
+        "post is required",
+    );
+    refused(
+        format!("{}/arguments", body(transition)),
+        with_arguments(&|edited| edited.push(edited[4].clone())),
+        "the body carries exactly five bindings",
+    );
+    refused(
+        format!("{}/arguments/3/value/members", body(transition)),
+        json!([arguments[4]["value"], arguments[4]["value"]]),
+        "pre holds at most one clause",
+    );
+    refused(
+        format!("{}/arguments/1/value", body(transition)),
+        json!({"term": "aggregate", "members": []}),
+        "the subject is one reference",
+    );
+    refused(
+        format!("{}/operation/member/operator", body(transition)),
+        json!("sequence"),
+        "the schema fixes the transition operator",
+    );
+    refused(
+        format!("{}/operation/laws/0/role", body(transition)),
+        json!("temporal_profile"),
+        "the law is the protocol profile",
+    );
+    refused(
+        format!("{}/operation/mode", body(transition)),
+        json!({"kind": "rounding", "value": "nearest-even"}),
+        "a transition carries no mode",
+    );
+    refused(
+        format!("/semantic_graph/nodes/{transition}/occurrences/0/role"),
+        json!("declaration"),
+        "a transition occurrence is a claim",
+    );
+
+    let mut other_operator = package.clone();
+    other_operator["semantic_graph"]["nodes"][transition]["body"]["operation"]["member"]
+        ["operator"] = json!("sequence");
+    assert_eq!(
+        operation_refusal(&other_operator, "transition"),
+        Err(OperationRefusal::MemberMismatch),
+        "the finite-global profile defines no protocol operator for a state transition"
+    );
+
+    let clause_package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    let protocol = node_with_operation(&clause_package, "quire.op.protocol.control");
+    let mut protocol_transition = clause_package.clone();
+    protocol_transition["semantic_graph"]["nodes"][protocol]["body"]["operation"]["member"]
+        ["operator"] = json!("transition");
+    assert_eq!(
+        package_operations_refusal(&protocol_transition, &catalog),
+        Err(OperationRefusal::MemberMismatch),
+        "a protocol control never applies the state operator"
+    );
+
+    let transition_id = package["semantic_graph"]["nodes"][transition]["node_id"].clone();
+    let mut regions = package.clone();
+    regions["source_map"][0]["regions"][0]["start"] = json!(40);
+    assert_eq!(
+        unqualified_jcs_sha256(&derive_package_id_preimage(&regions)),
+        package["package_id"]["digest"].as_str().expect("id"),
+        "a source region is outside the package identity"
+    );
+    let mut renamed = package.clone();
+    let anchor = node_with_operation(&package, "quire.op.state.transition");
+    let anchor_digest = package["semantic_graph"]["nodes"][anchor]["body"]["arguments"][0]["value"]
+        ["target"]["digest"]
+        .as_str()
+        .expect("anchor digest")
+        .to_owned();
+    let anchor_index = node_index(&renamed, &anchor_digest);
+    renamed["semantic_graph"]["nodes"][anchor_index]["body"]["members"][1]["value"]["value"] =
+        json!("restore");
+    rekey_stale_nodes(&mut renamed);
+    let renamed_transition = node_with_operation(&renamed, "quire.op.state.transition");
+    assert_ne!(
+        renamed["semantic_graph"]["nodes"][renamed_transition]["node_id"], transition_id,
+        "the anchor's operation enters the transition identity"
+    );
+    assert_ne!(renamed["package_id"], package["package_id"]);
+}
+

@@ -113,7 +113,7 @@ FR-466, with the first refusal in the order below.
 ## Operator catalog
 
 The protocol profile the lock selects (`protocol_profile`) defines exactly
-these operators. Each operator belongs to one `semantic_form`, and the form
+these operators and the one state operator below. Each operator belongs to one `semantic_form`, and the form
 fixes which operator a node's body root may apply. The argument layouts are
 in FR-464 for the clause, FR-465 for the declarations and FR-466 for the
 controls and the compensation.
@@ -128,6 +128,16 @@ controls and the compensation.
 | `terminal` | `obligation` | `P` followed by `terminal` | FR-465 |
 | `sequence`, `choice`, `parallel`, `repeat`, `await`, `check`, `send`, `receive`, `attempt`, `effect`, `event`, `commit`, `fence` | `control` | `P` followed by `run` and the control names from the root control down to this control | FR-466 |
 | `compensate` | `compensation` | `P` followed by `compensate`, the template's name | FR-466 |
+
+The profile also defines one operator for the `state`/`transition` node
+form of [FR-341](FR-341-checked-package-state-clause-body.md) "State
+transition body". It is applied by `quire.op.state.transition` only, never by
+`quire.op.protocol.control`, and no operator of the table above is applied by
+`quire.op.state.transition`:
+
+| State operator | `semantic_form` | `declaration.qualified_name` | Layout |
+| --- | --- | --- | --- |
+| `transition` | `transition` | none | FR-341 |
 
 The word after `P` is a fixed segment, so a role, a channel, a template and
 a control of equal names have distinct declarations, and a name a
@@ -530,6 +540,7 @@ alternate cycle encoding.
 | FR-464-AC-16 | Every `protocol_clause` node has one `owner_model` local `NodeRef` to its exact model declaration node; the edge is present in both V2 schemas, included in the clause's application-node preimage and exact dependencies, and absent from every other node. A missing edge, external key, non-model target or missing dependency refuses at the edge or dependency before clause interpretation. Retargeting only the edge changes the clause key and package id. FR-375 includes every clause whose edge is the object-type node of a model owned by the selected concrete declaration in its class catalog, even when no step row names its classes, and excludes a clause whose edge names a model owned by another declaration. | Test (TC-946, TC-310) |
 | FR-464-AC-17 | An `attempt` references the no-point `operation_anchor` for its operation. When a state clause names that same operation with a `ClauseBinding.execution_point`, the package has a distinct point-bearing anchor for the clause and a no-point anchor for the attempt; both may reference the operation's shared frame. Altering either point-bearing anchor changes its identity without changing the protocol attempt's anchor reference. | Test (TC-946) |
 | FR-464-AC-18 | A protocol clause retains `owner_model` as the owner model's object-type node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge, node preimage or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
+| FR-464-AC-19 | The protocol profile defines the operator `transition` for the `state`/`transition` form only: a `quire.op.state.transition` application naming `transition` is admitted by the operation step, a `quire.op.state.transition` application naming any operator of the protocol-node table (for example `sequence`) refuses `invalid_package`/`operation-member-mismatch`, and a `quire.op.protocol.control` application naming `transition` refuses `invalid_package`/`operation-member-mismatch`. | Test (TC-233) |
 
 ## Published artifacts and the operation catalog
 
@@ -547,7 +558,11 @@ alternate cycle encoding.
 - Every published package that carries a `protocol_clause` node encodes it in
   the clause body above.
 - The set of `profile_operator` operators the protocol profile defines is the
-  operator catalog above.
+  operator catalog above and the one state operator `transition`. The
+  `quire.op.state.transition` catalog entry (operator class `state_transition`,
+  no operand position, rest `any_term`, result `clause`, law role
+  `protocol_profile`, member kind `profile_operator`) admits the argument list
+  FR-341 fixes, so it needs no new entry.
 
 ## Dependencies
 

@@ -21,14 +21,25 @@ structures, but any external consumer receives only the contract.
   application nodes carry integer, IEEE, text, structural, projection, model,
   call and collection operations keyed by their application-node preimages.
   `fixtures/positive-clause-operations.json` is a V2 package whose clause
-  applications (`temporal`, `protocol_control`, `state_transition`, `claim`)
-  each carry a lock-selected profile law and a `profile_operator` member. The
+  applications (`temporal`, `protocol_control`, `claim`)
+  each carry a lock-selected profile law and a `profile_operator` member
+  (a `state_transition` application does too and is published in
+  `fixtures/positive-state-transition.json`). The
   same package carries an invariant and a precondition as
   `state`/`state_clause` nodes whose `quire.op.state.clause` applications
   carry a `state_clause` member and no law, the precondition's
   `state`/`operation_anchor` node, its `state`/`frame` node with a scoped
   field entry and the four frame members, and the `value`/`parameter` node
   for `self` (FR-340, FR-341, FR-342).
+- `fixtures/positive-state-transition.json` is a V2 package carrying the
+  Boolean model-field transition `Order.reset` over the field `note` of
+  `acme/orders`: the `Order` model node, its `Reference<Order>`, the `self`
+  parameter, a `deref` and a field `project` node (the subject), a `not`
+  term, the frame, the no-point operation anchor, the precondition and
+  postcondition state clauses and one `state`/`transition` node whose
+  `quire.op.state.transition` application binds `anchor`, `subject`, `inputs`,
+  `pre` and `post` (FR-341 "State transition body", FR-464-AC-19, TC-233).
+  Its keys and `package_id` follow "Regenerating protocol fixture keys".
 - `fixtures/positive-extension-nodes.json` is a V2 package carrying the
   `retention Audit { subject: "audit", days: 30 }` form of a selected
   extension as one `extension`/`extension_form` node, its two clause subnodes

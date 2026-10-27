@@ -41,6 +41,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-342
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-464-AC-19
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-451
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-201
@@ -568,6 +570,37 @@ clause/anchor agreement and require the first FR-341/FR-342 refusal.
 | `execution-point-handler` | `handler{name: "validate"}` | `c9e9e7bd0021df4fef1aa0a52c10172c288bab4ccf05099e2215b0c082554497` | FR-322-AC-131; FR-341-AC-14 |
 | `execution-point-pre` | `pre{operation: "attemptUpdate"}` | `011830fb0053fc357fb07d7f4118b397743918ef9e93bc0cc5c0465066828b60` | FR-322-AC-131; FR-341-AC-14 |
 | `execution-point-post` | `post{operation: "attemptUpdate"}` | `065de29f4474005bc23d5cb5561f77ca997ef26d60657d64f5a95a0809461d45` | FR-322-AC-131; FR-341-AC-14 |
+
+### State transition vectors
+
+`fixtures/positive-state-transition.json` is the published Boolean model-field
+transition: `Order.reset` over the Boolean field `note` of `acme/orders`, with
+the precondition `note` and the postcondition `not note`, anchored at one
+no-point `operation_anchor`. Its nodes and `package_id` are recomputed with the
+README's "Regenerating protocol fixture keys" procedure. Each schema vector
+edits that package and requires the closed V2 schema to refuse it; each reader
+vector rekeys the edit and requires the first FR-341 state-step refusal.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| ST-01 | The unedited package | Valid against both V2 schemas; every node key and the `package_id` recompute; admitted by the operation step | FR-341-AC-15; FR-341-AC-17 |
+| ST-02 | The transition's `anchor` and `subject` bindings swapped | Fails the schema | FR-341-AC-15 |
+| ST-03 | The `post` binding removed; a sixth binding added | Fails the schema | FR-341-AC-15 |
+| ST-04 | `pre` holding the precondition twice; `subject` an empty aggregate | Fails the schema | FR-341-AC-15 |
+| ST-05 | Member operator `sequence`; law role `temporal_profile`; a `rounding` mode; occurrence role `declaration` | Fails the schema | FR-341-AC-15 |
+| ST-06 | Member operator `sequence` kept at the schema-free operation step | `invalid_package`/`operation-member-mismatch` | FR-341-AC-15; FR-464-AC-19 |
+| ST-07 | A `quire.op.protocol.control` application naming operator `transition` | `invalid_package`/`operation-member-mismatch` | FR-464-AC-19 |
+| ST-08 | The anchor's `operation` rewritten to `restore`, rekeyed | The transition, both clauses and the anchor take new ids; the `package_id` changes | FR-341-AC-17 |
+| ST-09 | A source-map region moved | Transition id and `package_id` unchanged | FR-341-AC-17 |
+| ST-10 | `anchor` naming the `Order` model node | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-16 |
+| ST-11 | `subject` naming the `self` parameter; a subject projecting a field the frame does not modify | `invalid_model_binding`/`malformed-declaration` at the subject's target | FR-341-AC-16 |
+| ST-12 | `subject` a projection of a non-Boolean field | `ill_typed`/`operator-ineligible` at the transition node | FR-341-AC-16 |
+| ST-13 | `inputs` naming `self`; `inputs` missing a Boolean parameter of the operation | `invalid_model_binding`/`malformed-declaration` at the input; `ill_typed`/`operator-ineligible` at the transition node | FR-341-AC-16 |
+| ST-14 | `pre` naming the postcondition; `post` naming the precondition; `post` anchored at another operation | `invalid_model_binding`/`malformed-declaration` at the clause's target | FR-341-AC-16 |
+| ST-15 | A second transition over the same `anchor` and `subject` | `ambiguous_declaration`/`ambiguous-name` at the later node in ascending node-id digest order | FR-341-AC-16 |
+
+ST-10 through ST-15 are reader outcomes the QSpec crate does not implement;
+the quire-contract-ir reader owns their execution evidence.
 
 ## Expected Results
 
