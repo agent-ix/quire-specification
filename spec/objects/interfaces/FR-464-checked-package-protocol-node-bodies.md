@@ -496,7 +496,10 @@ order:
    FR-432's class table and binder records. Compare `concrete` before
    `abstract`, in class order; within one equal class compare node
    association, then binder types in order, then source-default memory
-   model. FR-375 specifies the refusal and locus for each mismatch. A
+   model (a memory class is catalogued once per model, so two entries
+   of one `memory` spelling are distinct by model, and the `activate`
+   class of an `on each` clause compares its clause node and trigger binder
+   types as FR-375 states). FR-375 specifies the refusal and locus for each mismatch. A
    protocol-body defect therefore precedes a catalog-versus-graph defect,
    while any refinement-step row/catalog defect precedes both. This check
    runs even when the package has no local protocol node and the selected
