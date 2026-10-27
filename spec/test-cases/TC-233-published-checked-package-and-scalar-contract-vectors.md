@@ -522,6 +522,8 @@ model-only case (FR-322-AC-130).
 | `CCW-05` | Rekey the changed refinement and update references and package identity, but leave a local catalog node or binder type out of exact `dependencies` | Graph shape refuses `invalid_semantic_graph` at `/dependencies` before the refinement body step. |
 | `CCW-06` | Remove a protocol clause's `owner_model`, put an external key there, or remove its local owner node from exact dependencies | Both schemas refuse the absent edge or external-key shape; graph admission refuses a missing owner dependency. |
 | `CCW-07` | Retarget `owner_model` to another selected model and recompute the clause node id and package id | Both schemas admit the closed local edge; the clause key changes and the reader returns the new owner identity unchanged. |
+| `CCW-08` | Memory entries `memory drain` for `ra`, `sc` and `tso`, each with `drain: store-buffer-flush`, and `memory flush` for `tso`, in that order | Both schemas admit each entry (a schema states shape, not order); the reader admits the canonical order and refuses a reordered or repeated (`class`, `memory_model`) pair as `invalid_semantic_graph` at the entry in step 2 (FR-322-AC-133). |
+| `CCW-09` | A declared class entry `{class: "activate P", node, binder_types}` on the concrete (`NodeRef`) and abstract (`RefinementKey`) side | Both schemas admit it as an ordinary declared class (FR-322-AC-133). |
 
 ### Graph order vectors
 

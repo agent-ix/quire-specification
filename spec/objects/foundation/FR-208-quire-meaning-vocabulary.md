@@ -243,8 +243,32 @@ meaning. A type conforms to each of its ancestors (FR-151). A required member
 that the meaning states, `fields`, `identityFields`, `occurrenceField` or
 `operations`, is present when the node or one of its ancestors declares it.
 
+**Effective field order.** For a record value type, event type, state machine
+or process `T`, the effective fields of `T` (its own and inherited, less every
+field a redefinition hides) have one total order, defined over the acyclic
+supertype graph (a cycle is refused `specialization-cycle` before any order is
+read), so the recursion terminates:
+
+1. the effective fields of `T`'s supertypes, one supertype after another in
+   the order `T`'s `supertypes` array lists them, each recursively in this
+   order (a grandparent's fields before its child's);
+2. then `T`'s own declared fields in the order `T` declares them;
+3. a field reached along more than one path (one original declaration)
+   appears once, at its first position in this walk;
+4. a field that redefines an inherited field takes the position of the field
+   it hides, wherever that position is. Hiding is applied once over the
+   whole walk, so a field a redefinition hides is absent however many paths
+   reach it, and a redefiner whose hidden field is absent from the walk keeps
+   its declared position in step 2. Subsetting and a shared name change no
+   position.
+
+The order depends only on the `supertypes` and `fields` array orders, never on
+node identity, so it is the same in every package. A binder record, tuple of
+fields or any other listing "in declaration order" of a type's fields reads it
+(FR-432 for protocol binder records).
+
 - **Record value type.** A subtype inherits every field and invariant and may
-  add fields. A value of the subtype is a value of each ancestor wherever a
+  add fields (effective field order above). A value of the subtype is a value of each ancestor wherever a
   field, parameter or result names the ancestor, and equally wherever an
   `Option` payload, a collection element, a tuple position or a union member
   payload names it. The value stays the subtype value, with its own
@@ -415,6 +439,7 @@ the names alone, never on the spelling of `Alias`.
 | FR-208-AC-15 | A type definition whose construct names `quire.meaning.model.variant-type/v1` binds its cases and no payload. A case with a resolving `payloadType` is `unsupported_construct`/`declaration-form`; no case, a case with no source span, a case whose identity is not the variant slot identity of its owner and name, and a construct of a shape other than `enumeration` are `invalid_model_binding`/`malformed-declaration` (except a case already refused by a same-identity collision, FR-154-AC-13); two cases with equal names and distinct identities are `invalid_model_binding`/`conflicting-binding`. A field, parameter or result `typeRef` naming the variant type is admitted and raises no refusal, and a clause naming the variant type raises no `unsupported_construct`/`declaration-form`. | Test (TC-235, TC-939) |
 | FR-208-AC-16 | An admitted package with variant type `Tier` (cases `Gold`, `Standard`), object `Account` with field `tier: Tier`, record value type `Settings` with field `tier: Tier`, a state machine with context field `tier: Tier`, a process with field `tier: Tier` and an operation with parameter `t: Tier` and result `Tier` is admitted with no refusal. An event type whose occurrence field is `Tier` is `invalid_model_binding`/`malformed-declaration` at the event type node, path `TypeDefinition.occurrenceField`, while a non-occurrence event field `tier: Tier` is admitted. A variant type with no case refuses once at the variant type, path `TypeDefinition.variants`, and the field naming it raises no refusal of its own. A field `typeRef` naming an event type, state machine, process, persistence interface or namespace keeps its refusal. | Test (TC-939) |
 | FR-208-AC-17 | `Alias::Tier::Gold` has static type `Alias::Tier` and the value of the case `Gold`; the Text literal `"Gold"`, the Integer literal `0` and a bare `Gold` at an `Alias::Tier` slot are `ill_typed`/`type-mismatch`. `Alias::Tier::Silver` (a case `Tier` does not declare) and `Alias::Tier::gold` are `ill_typed`/`type-mismatch` naming the type and the case. `Alias::Nope::Gold` and `Alias::Nope` in a type position are `missing_declaration`/`missing-name`. An ordering comparison over `Alias::Tier` is `ill_typed`/`operator-ineligible`, and an equality of `Alias::Level::Gold` with `Alias::Tier::Gold` is `ill_typed`/`type-mismatch`. A unit that selects the package under another alias resolves the same type and case. | Test (TC-941) |
+| FR-208-AC-18 | The effective field order of a record value type, event type, state machine or process is the supertypes' effective fields in `supertypes` array order, then its own fields in declaration order, a field reached twice once at its first position and a redefining field at the position of the field it hides, with hiding applied once over the whole walk; it never depends on node identity, and a supertype cycle is refused `specialization-cycle` before any order is read. | Test (TC-386) |
 
 ## Dependencies
 
