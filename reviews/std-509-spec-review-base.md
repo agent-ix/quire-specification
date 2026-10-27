@@ -62,8 +62,23 @@ QSL (main 446a6e9f3, pins IR 8b49bd48, which predates IR #599): qsl-package conf
 
 ## Dispositions
 
-None yet (review pass).
+Round 1, reviewed at 14444f96 (author fix of FND-001..008). Independent checks: own script recomputed the package_id of every patched package in model-root-vectors.json (MR-00, MR-01..04, MR-06, MR-09; all equal the recorded values, MR-06 equals main's all-families id dc7982b8, MR-04's added root key recomputes); all seven vectors were run through the IR main reader (bcbb4af) with a throwaway test and each returns exactly the recorded code, cause and pointer; QSpec `cargo test` 156 pass / 2 fail (K15, execution-point-initialization) as before; `quire validate` identical to main; `quire matrix` tags FR-322-AC-132 and AC-134..138.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-322 now says a model_root with a ModelOwner and a ModelRootOwner on another form fail the schema and are refused `malformed_wire` at the owner (FR-322-AC-51); only the unjoined owner is `missing_declaration`/`missing-selection`; vectors MR-01..03 agree and IR returns MalformedWire at those loci |
+| FND-002 | fixed | The Order paragraph places the repeated node_id in the graph-shape pass before any owner join, the owner join first and completeness after the nominal-node keys and before the declaration-name checks, and says both defects report the owner join; matches IR mod.rs (index insert, owner joins, completeness after nominal nodes) |
+| FND-003 | fixed | model-root-vectors.json publishes MR-00, MR-01..04, MR-06, MR-09 as RFC 6902 patches with recomputed package_id, schema validity and code, cause, pointer (FR-322-AC-138); MR-04 now changes identity and digest with every row keeping its root (one defect), MR-09 covers the repeated root; the QSpec test runs them from the file and IR reproduces all seven. The reader mirror in the test remains, but the vectors are consumable by IR and QSL |
+| FND-004 | fixed | FR-322 and AC-136 now state the relation is producer-asserted, at least one region, two regions admitted, one-byte regions are placeholders, FR-065-AC-2 correspondence stays unclaimed in IR-1043 and STD-505 closes with that statement; the test asserts at least one region, each naming a lock source |
+| FND-005 | fixed | AC-134 and AC-137 and the Order paragraph require the root last in graph order and its source_map entry last; the test asserts both for every selected fixture |
+| FND-006 | fixed | TC-310 items 28 and 29 now name MR-01..MR-09 consistently with the test and the vectors; MR-01..03 are validated against schema.json and the closed node-preimage schema |
+| FND-007 | fixed | TC-310 item 29 records that the model-root vector is a structural preimage bound by the node-preimage schema and its JCS digest, not the nominal schema |
+| FND-008 | fixed | `cargo fmt --check` reports no hunk in tests/checked_package_v2.rs |
+
+Residual notes (not findings): the MR-01 and MR-02 mutants leave the root key stale, which is harmless because the schema failure precedes key checks; MR-05, MR-07 and MR-08 are fixture-level checks with no patch vector by design. IR conformance_qspec at IR bcbb4af is 66 pass / 5 fail / 1 ignored on the PR (52 / 19 / 1 on QSpec main): three failures are the earlier IR test-side ones, and `timed_model_rebuilt_semantic_defects_keep_paired_causes` and TM-23 fail identically on QSpec main (`timed-node-reference` at /semantic_graph/nodes/46/body/members/0/value/target, IR-1040 drift), so this PR does not cause them.
 
 ## Verdict
 
 Mergeable. Every identity, key and vector recomputes; the ruling is the right one and weakens no obligation, but FND-001 to FND-004 leave the stage and oracle text incomplete and should be fixed in this PR (a sentence each for FND-001, FND-002, FND-004 and FND-005; published refusal vectors or an explicit owner for them for FND-003). Merge ordering: merging turns QSL qsl-package conformance from 15 / 0 to 2 / 13 until QSL bumps its IR pin, and IR conformance_qspec stays at 68 / 3 / 1 until its three tests are fixed.
+
+Round 1 (14444f96): FND-001..008 fixed, no new finding. Mergeable. Merge ordering unchanged: QSL qsl-package conformance needs the IR pin bump (DimensionEquivalence arm) and QSL-1128, and IR needs its five test-side/drift fixes for conformance_qspec to go green.
