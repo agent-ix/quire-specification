@@ -18606,7 +18606,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 "missing_declaration", "missing-name", "/semantic_graph/nodes/46/body/members/1",
             ),
             "tick-source-with-clock-place" => (
-                "invalid_package", "clock-without-dense-time", "/semantic_graph/nodes/51/body/members/0/value/target",
+                "invalid_package", "clock-without-dense-time", "/semantic_graph/nodes/52/body/members/0/value/target",
             ),
             "source-unit-length" | "source-unit-derived-non-time" | "source-unit-derived-time" => (
                 "ill_typed", "invalid-time-quantity", "/semantic_graph/nodes/44/body/members/1/value/target",
