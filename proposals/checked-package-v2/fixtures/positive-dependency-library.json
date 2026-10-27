@@ -68,7 +68,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "0ca1063fa2cc42c8572f47bac1c16522e04a9055832ca65879ee078ff58ac811",
+    "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -904,6 +904,35 @@
           "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
           "domain": "quire.checked-semantic-node/v1"
         }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "model",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "generated"
+          }
+        ],
+        "owner": {
+          "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
+          "identity": "acme/orders",
+          "kind": "model_root"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "model_root",
+        "semantic_type": {
+          "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+          "domain": "quire.checked-semantic-node/v1"
+        }
       }
     ]
   },
@@ -1267,6 +1296,26 @@
         }
       ],
       "role": "declaration"
+    },
+    {
+      "node_id": {
+        "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 1,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "predicates"
+          },
+          "start": 0
+        }
+      ],
+      "role": "generated"
     }
   ]
 }

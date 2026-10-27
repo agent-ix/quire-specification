@@ -84,7 +84,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "95f12a9983fd916476131104ac74bb1b68fa1928650983772d5c5e17d44e2e18",
+    "digest": "1e7b8e065cce4c3e4850f2b1901de6fa2d0fad5e7cf24adaf494214fef9646a3",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -923,6 +923,35 @@
           "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
           "domain": "quire.checked-semantic-node/v1"
         }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "model",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "generated"
+          }
+        ],
+        "owner": {
+          "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
+          "identity": "acme/orders",
+          "kind": "model_root"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "model_root",
+        "semantic_type": {
+          "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+          "domain": "quire.checked-semantic-node/v1"
+        }
       }
     ]
   },
@@ -1226,6 +1255,26 @@
         }
       ],
       "role": "type"
+    },
+    {
+      "node_id": {
+        "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 6,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 5
+        }
+      ],
+      "role": "generated"
     }
   ]
 }

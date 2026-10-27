@@ -201,7 +201,7 @@
       "fixture": "tick",
       "expected_code": "invalid_package",
       "expected_cause": "clock-without-dense-time",
-      "locus": "/semantic_graph/nodes/52/body/members/0/value/target"
+      "locus": "/semantic_graph/nodes/53/body/members/0/value/target"
     },
     {
       "id": "TM-24",
