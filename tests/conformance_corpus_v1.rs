@@ -3,7 +3,7 @@
 
 //! FR-336's closed conformance-corpus v1 structural contract.
 
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 
 use ix_trace_rs::trace;
 use quire_verification_contracts::jcs_canonicalize;
@@ -94,33 +94,40 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
     let valid_call = json!({
         "function": "check",
         "arguments": [
-            {"parameter": "enabled", "value": {"kind": "boolean", "value": true}},
-            {"parameter": "count", "value": {"kind": "integer", "decimal": "-17"}},
-            {"parameter": "item", "value": {
+            {"kind": "boolean", "value": true},
+            {"kind": "integer", "decimal": "-17"},
+            {
                 "kind": "reference", "universe": "a".repeat(64),
                 "type": "b".repeat(64), "object_identity": "item-1"
-            }},
-            {"parameter": "items", "value": {"kind": "population", "name": "items"}}
+            },
+            {"kind": "population", "name": "items"}
         ],
         "accounting": {"work_units": "18446744073709551615"}
     });
     assert!(call_validator.is_valid(&valid_call));
 
     let mut unknown_tag = valid_call.clone();
-    unknown_tag["arguments"][0]["value"]["kind"] = json!("text");
+    unknown_tag["arguments"][0]["kind"] = json!("text");
     assert!(!call_validator.is_valid(&unknown_tag));
 
     let mut malformed_decimal = valid_call.clone();
-    malformed_decimal["arguments"][1]["value"]["decimal"] = json!("-0");
+    malformed_decimal["arguments"][1]["decimal"] = json!("-0");
     assert!(!call_validator.is_valid(&malformed_decimal));
 
     let mut malformed_identity = valid_call.clone();
-    malformed_identity["arguments"][2]["value"]["universe"] = json!("a".repeat(63));
+    malformed_identity["arguments"][2]["universe"] = json!("a".repeat(63));
     assert!(!call_validator.is_valid(&malformed_identity));
 
     let mut unknown_call_member = valid_call.clone();
     unknown_call_member["invented"] = json!(true);
     assert!(!call_validator.is_valid(&unknown_call_member));
+
+    let mut named_argument = valid_call.clone();
+    named_argument["arguments"][0] = json!({
+        "parameter": "enabled",
+        "value": {"kind": "boolean", "value": true}
+    });
+    assert!(!call_validator.is_valid(&named_argument));
 
     let mut invalid_limit = valid_call;
     invalid_limit["accounting"]["work_units"] = json!("-1");

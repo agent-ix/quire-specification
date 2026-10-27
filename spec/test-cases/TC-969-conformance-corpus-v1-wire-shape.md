@@ -30,11 +30,14 @@ Compile the published `$defs.InputValue`, `$defs.CallInput` and
 `$defs.ReplayProvisionPath` and validate
 each tagged value, a call with all four value tags, and invalid tag, member,
 decimal, identity, malformed accounting-decimal and replay digest mutations.
+Verify that call arguments are a positional array of tagged values and that a
+`{parameter, value}` argument object is refused by the schema.
 
 Tag the tests `#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5", "FR-336-AC-6")]`.
 
 ## Expected Results
 
 The schema is valid, the fixture and every listed input-file kind are admitted,
-the four tagged input-value forms and call-file shape are admitted, and invalid
-mutations are refused.
+the four tagged input-value forms and positional call-file shape are admitted,
+and invalid mutations, including a named `{parameter, value}` call argument,
+are refused.
