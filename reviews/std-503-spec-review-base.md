@@ -53,6 +53,30 @@ The ruling is complete for the body positions IR-1052, QSL-1163 and IR-1049 need
 | FND-007 | low | FR-342 is not extended: anchor occurrences are "one per clause or protocol attempt", the transition now also names a (usually no-point) anchor, and "the anchor of the same point as its clauses" is vacuous when both `pre` and `post` are present (distinct points); say the no-point anchor, as FR-464-AC-17 does for attempts. | spec/objects/interfaces/FR-341-checked-package-state-clause-body.md:211 |
 | FND-008 | low | Vector ids ST-01..ST-15 repeat TC-374's ST-01..ST-07 (stochastic timed), so a bare "ST-03" citation is ambiguous; the helper comment cites a "State transition operator" table that does not exist (the header is "State operator"). | spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md:574 |
 
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-009 | low | FR-341-AC-18 (Test, TC-233) is `untagged` in `quire matrix`: the test that executes TS-16 and TS-18 carries trace tags for FR-341-AC-15, AC-17 and FR-464-AC-19 only. | tests/checked_package_v2.rs:18795 |
+| FND-010 | low | The renamed vector ids TS-01..TS-18 now repeat TC-369's TS-01..TS-14 (timed semantics), the same ambiguity FND-008 named for ST-nn against TC-374; a bare "TS-03" citation is still ambiguous. | spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md:575 |
+
+## Dispositions
+
+Round 1, reviewed at ae57549d (merge of main 2b991805 included).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The fixture is now `Switch.set(flag: Boolean)` over the required Boolean `on`; QSL qsl-package conformance 15 pass / 0 fail and qsl-semantics 7 pass with QSPEC_DIR = ae57549d; FR-341 states required single-valued Boolean subjects, `Option<Boolean>` refused (FR-341-AC-16, TS-12); the QSpec test now runs the operation step over the whole package, projection included |
+| FND-002 | fixed | `inputs` is [flag]; acme/orders gained `Switch` (id, on, level; set(flag)) in domain-package-acme-orders.json and model-member-type-vectors.json; TS-12 and TS-13 are producible from the package; every digest recomputes (independent script) |
+| FND-003 | fixed | FR-341 Placement paragraph and FR-341-AC-18: root elsewhere refuses `ill_typed`/`operator-ineligible` before any anchor check, nested fails the schema, wrong body root fails the schema; TS-16, TS-17 |
+| FND-004 | fixed | protocol-finite.md gains "Checked-package state transition carrier" (profile selection required, `operation-law-unselected`); TS-18 executed by the test |
+| FND-005 | fixed | The test validates every application preimage under the preimage schema, runs the operation step over the whole package, asserts the renamed ids (anchor, both clauses, transition) and unchanged ids and package id under a region move |
+| FND-006 | fixed | positive-state-transition is in positive_fixtures() |
+| FND-007 | fixed | The transition's anchor is the no-point anchor (FR-464-AC-17 precedent); FR-342 occurrences name `state`/`transition` nodes |
+| FND-008 | fixed | Vector ids renamed (but see FND-010); the helper comment now cites the "State operator" table |
+
 ## Verdict
 
-Request changes. One high: the published fixture is not admitted by the QSL strict reader and turns QSL main's `qsl-package` conformance red the moment it lands (FND-001), and the same missing supply leaves the Boolean `inputs` binding with no positive vector (FND-002, required fix inside this PR rather than a follow-up, since it is the same supply and FR-003@4 needs `input_current`). FND-003 and FND-004 are one-paragraph spec fixes. The ruling itself (five ordered bindings, member `transition`, Boolean result, claim occurrence, whole-node preimage with no declaration or regions, catalog reuse) is sound, schema closedness is sound, and every key and package id is genuine.
+Round 1 (ae57549d): FND-001..008 fixed; two new low findings (FND-009 missing trace tag for FR-341-AC-18, FND-010 vector-id prefix collision with TC-369), neither blocking: the lead may take them as a one-line tag addition and a prefix rename in this PR or as a follow-up. Mergeable. Evidence: every node key, package id, lock digest (acme/orders 5368187144c7 to 179fb0d98f7f) and dependency-selection and dependency-call id recomputes independently for all 16 positive fixtures and the closure vectors, after first reproducing main; no old digest remains in QSpec, QSL, IR, codegen, verification-contracts or quire-cli; QSL qsl-package 15/0, qsl-semantics 7/0; QSpec checked_package_v2 151/3 (same three pre-existing failures as main), model_member_types tc_280 fails identically on main; IR conformance_qspec 54/17/1 with the identical 17 failures as IR main against QSpec main. Widening acme/orders is acceptable: QSL, IR and codegen load domain-package-acme-orders.json from the QSpec checkout at run time and none hardcodes its digest.
+
+Original verdict was request changes (one high, three medium).
