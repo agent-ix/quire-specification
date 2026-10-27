@@ -50,6 +50,8 @@ local Rust boundary.
 | FO-01 | Records `Base { a: Boolean; b: Int[0, 9] }`, `Mid { c: Int[0, 9] }` (supertype `Base`), `Leaf { d: Boolean }` (supertype `Mid`) and an abstract event `ev as (e: Leaf)`; rows `-> node Spec::A::ev(true, 1, 2, false)` and `-> node Spec::A::ev(1, true, 2, false)`; then `Base` redeclared with fields `b`, `a` | Binder record (`a`, `b`, `c`, `d`); first row admitted, second refuses `ill_typed`/`type-mismatch` at its first argument; reordered `Base` gives (`b`, `a`, `c`, `d`) (FR-432-AC-16). |
 | FO-02 | `Both` with supertypes `P`, `Q` and then `Q`, `P`; the `Top`/`L`/`R`/`Bot` diamond | (`p`, `q`, `r`), then (`q`, `p`, `r`); diamond (`t`, `l`, `r`, `z`) with `t` once (FR-432-AC-17). |
 | FO-03 | `Sub` redefining `Base::a`; then an own `b` without `redefines`; then two supertypes both declaring one name | (`a`, `b`, `c`) with `a` at the hidden field's position and the redefined type; the last two refuse `ambiguous_declaration`/`ambiguous-name` (FR-432-AC-18). |
+| FO-04 | `Top { t }`, `L { l; t' }` (supertype `Top`, `t'` redefining `Top::t`), `R { r }` (supertype `Top`), `Bot { z }` with supertypes `L`, `R`, as the binder of an event | (`t'`, `l`, `r`, `z`); no ambiguity between `Top::t` via `R` and `L::t'` (FR-432-AC-19). |
+| FO-05 | FO-01 and FO-02 types with the `fields` and `supertypes` arrays rewritten in identity-sorted order; a state machine and an event type with inherited fields | The authored array order is retained at intake (FR-154-AC-32) and the effective field order follows it for record, event, state machine and process alike (FR-208 effective field order). |
 
 ## Expected Results
 

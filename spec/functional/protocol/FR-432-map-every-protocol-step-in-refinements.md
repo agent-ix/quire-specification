@@ -101,7 +101,9 @@ kind are:
 
 An `activate` class is never the abstract node of a row's right side, so its
 binder record is read only from the checked class catalog ([FR-375](../analysis/FR-375-declare-model-refinement.md)
-"Checked class catalog"), as `binder_types`. So a binder of a scalar, enumeration, variant or object type is one field of
+"Checked class catalog"), as `binder_types`.
+
+So a binder of a scalar, enumeration, variant or object type is one field of
 that type, and no node kind is refused as a right side for its binder's type.
 Each argument expression is typed against its field's type after reference
 lifting, over the scope FR-375 gives the arguments of an abstract-operation
@@ -117,33 +119,23 @@ and leaves an open field unconstrained.
 
 ### Effective field order of a record
 
-The fields of a record type `T` are its **effective fields**, which name
-resolution exposes (FR-322 member resolution; FR-150 and FR-151): the fields
-`T` declares and the fields it inherits along its declared supertypes, less
-every field a redefinition hides. The **effective field order** is the one
-total order below, and every list of a record's fields in this FR (a binder
-record, `binder_types`) and every consumer of a record's fields in
-declaration order SHALL use it; no order by identity, name or node-key digest
-is a declaration order.
+The fields of a record type `T` that a binder record lists are its effective
+fields in the **effective field order** that [FR-208](../../objects/foundation/FR-208-quire-meaning-vocabulary.md)
+"Generalization" states: supertypes' fields first in `supertypes` list order,
+then `T`'s own fields in declaration order, a field reached twice once, and a
+redefining field at the position of the field it hides. Every list of a
+record's fields in this FR (a binder record, `binder_types`) uses it; no
+order by identity, name or node-key digest is a declaration order.
 
-1. The fields of `T`'s supertypes come first, one supertype after another in
-   the order `T`'s `supertypes` lists them, each supertype contributing its
-   own effective field order recursively (so a grandparent's fields precede
-   its child's).
-2. `T`'s own declared fields follow, in the order `T` declares them.
-3. A field reached along more than one path (a diamond, one original
-   declaration) appears once, at its first position in this walk.
-4. A field that redefines an inherited field (FR-154 `redefines`) takes the
-   position of the field it redefines, which it hides; a redefining field
-   whose redefined field is absent from the walk takes its declared position
-   in step 2. Subsetting and a shared name alone change no position.
-
-Two fields of one name reaching `T` from different supertypes with no
-`redefines` between them are not ordered by this rule: `ambiguous_declaration`/
-`ambiguous-name` (FR-322 member resolution) applies first, and no binder record
-exists for such a `T`. The order depends only on the `supertypes` list order and
-each type's field declaration order, so it is the same in every package and for
-every alias.
+A `T` whose effective fields include two fields of one name from different
+supertypes with no `redefines` between them is admitted as a type, but has no
+binder record: the unordered pair is not an ambiguity of the order rule but of
+name resolution (FR-322 member resolution). A binder record requested over
+such a `T` refuses `ambiguous_declaration`/`ambiguous-name`, naming both
+fields: at the row's `node` right side for an abstract node row (step 5 of
+FR-375 "Reader order"), and, for the class catalog, at the `binder_types`
+entry of the class in FR-464 step 7,
+`/semantic_graph/nodes/{n}/body/class_catalog/{side}/{i}/binder_types`.
 
 ### A protocol on the abstract side
 
@@ -274,10 +266,10 @@ FR-177 over the same product.
 | FR-432-AC-13 | Over the abstract protocol `Full` of TC-386 IL-01, a step row whose right side is `node Spec::Full::to` (a `timeout`), `node Spec::Full::fe` (a `fence`), `node Spec::Full::par` (a `parallel`) or `node Spec::Full::Ghost` (no node) refuses `missing_declaration`/`missing-name` at the node; the same row naming an attempt, event, send, receive or finish node is admitted. | Test (TC-386) |
 | FR-432-AC-14 | Over the abstract protocol `A` of the abstract model `Spec`, headed `abstract Spec::A`, with attempt `a1` on `twice(x: Int[0, 9])` (no result), attempt `a2` on `quad(x: Int[0, 9])` with result `Int[0, 99]`, event `ev as (e: Spec::Evt)` with `Evt{p: Boolean, q: Int[0, 9]}` and event `eb as (b: Boolean)`, the binder record of `a1` is (`receiver`, `x`), of `a2` is (`receiver`, `x`, `result`), of `ev` is (`p`, `q`) and of `eb` is the one field `b`; the rows `node Spec::A::a1(self, 1)`, `node Spec::A::a2(self, 1, _)`, `node Spec::A::ev(true, 3)`, `node Spec::A::eb(true)` and `node Spec::A::a1` with no argument list are admitted. | Test (TC-386) |
 | FR-432-AC-15 | In the protocol of FR-432-AC-14, each refusal is `ill_typed`/`operator-ineligible` at the node retaining `expected` (the field count) and `actual` (the argument count): `node Spec::A::a1(self, 1, 2)` with 2 and 3, `node Spec::A::a1(self)` with 2 and 1, `node Spec::A::ev(true)` with 2 and 1, and `node Spec::A::eb(true, false)` with 1 and 2; `node Spec::A::a1(self, true)` refuses `ill_typed`/`type-mismatch` at the argument `true` with `expected` `Int[0, 9]` and `actual` `Boolean`, and `node Spec::A::ev(true, true)` does the same at its second argument with `expected` `Int[0, 9]` and `actual` `Boolean`. | Test (TC-386) |
-
 | FR-432-AC-16 | For `record Base { a: Boolean; b: Int[0, 9]; }`, `record Mid { c: Int[0, 9]; }` with supertype `Base` and `record Leaf { d: Boolean; }` with supertype `Mid`, the binder record of an event `ev as (e: Leaf)` is (`a`, `b`, `c`, `d`): ancestors first, each type's own fields in declaration order; `node Spec::A::ev(true, 1, 2, false)` is admitted and `node Spec::A::ev(1, true, 2, false)` refuses `ill_typed`/`type-mismatch` at its first argument with `expected` `Boolean` and `actual` `Int[0, 9]`. Declaring the fields of `Base` in the order `b`, `a` makes the binder record (`b`, `a`, `c`, `d`). | Test (TC-386) |
 | FR-432-AC-17 | For `record P { p: Boolean; }`, `record Q { q: Int[0, 9]; }` and `record Both { r: Boolean; }` with supertypes listed `P`, `Q`, the effective field order is (`p`, `q`, `r`); with the supertypes listed `Q`, `P` it is (`q`, `p`, `r`). In a diamond where `Top { t }` is the supertype of `L { l }` and `R { r }`, and both are supertypes of `Bot { z }` (listed `L`, `R`), the order is (`t`, `l`, `r`, `z`) with `t` once. Neither order depends on field names, node-key digests or the order of the IR `types` array. | Test (TC-386) |
-| FR-432-AC-18 | For `record Base { a: Int[0, 9]; b: Boolean; }` and `record Sub { c: Boolean; a: Int[0, 5]; }` with supertype `Base` and `Sub::a` redefining `Base::a` (FR-154), the effective field order is (`a`, `b`, `c`) with `a` the redefining field at the position of the field it hides, and its binder type is `Int[0, 5]`; a `Sub` field named `b` with no `redefines`, or a name declared by two supertypes with no `redefines` between them, refuses `ambiguous_declaration`/`ambiguous-name` and has no binder record. | Test (TC-386) |
+| FR-432-AC-18 | For `record Base { a: Int[0, 9]; b: Boolean; }` and `record Sub { c: Boolean; a: Int[0, 5]; }` with supertype `Base` and `Sub::a` redefining `Base::a` (FR-154), the effective field order is (`a`, `b`, `c`) with `a` the redefining field at the position of the field it hides, and its binder type is `Int[0, 5]`; a `Sub` field named `b` with no `redefines`, or a name declared by two supertypes with no `redefines` between them, is an admitted type with no binder record, and a binder record requested over it refuses `ambiguous_declaration`/`ambiguous-name` at the row's `node` right side (FR-464 step 7 `binder_types` entry for the catalog). | Test (TC-386) |
+| FR-432-AC-19 | For `Top { t }`, `L { l; t' }` with supertype `Top` and `L::t'` redefining `Top::t`, `R { r }` with supertype `Top`, and `Bot { z }` with supertypes listed `L`, `R`, the effective field order is (`t'`, `l`, `r`, `z`): hiding applies once over the whole walk, `Top::t` reached through `R` is the field `L::t'` hides and not an unordered same-name pair, and `Top::t` appears nowhere. | Test (TC-386) |
 
 ## Dependencies
 
