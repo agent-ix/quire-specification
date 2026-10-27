@@ -481,7 +481,8 @@ order:
    refusals and the decision facts are not local checks; they run at step 6.
 5. **Membership**: containment, listing and unattached nodes.
 6. **Clause nodes**, each in ascending node-id digest order. For one clause:
-   its references and their forms, the activation, the captures, the derived
+   first the **owner-model edge** ("Owner-model edge phase" below), then its
+   other references and their forms, the activation, the captures, the derived
    causal relation (cycle), progress, and then the **slots**, in this order:
    the clause (activation guard, captures), the roles, the channels, the
    `run` tree in pre-order, `finish`, `terminal`, then the compensations. For
@@ -505,10 +506,53 @@ order:
    runs even when the package has no local protocol node and the selected
    abstract clause is in an admitted direct dependency.
 
-Within one node, a reference defect (absent from `dependencies`, then wrong
-form) precedes a type defect, which precedes a bound defect. Operand
+Within one member node's body references (the clause's `owner_model` edge excepted:
+"Owner-model edge phase" states its stages and codes), a reference defect (absent from
+`dependencies`, then wrong form) precedes a type defect, which precedes a bound defect. Operand
 families and `result_type` are the application's catalog checks at the
 operation step.
+
+### Owner-model edge phase
+
+The typed check of a clause's `owner_model` target has one phase: the first
+check of that clause at step 6, after every state, temporal, abstraction and
+refinement step and after steps 1 to 5. It is neither a refinement-step check
+nor part of the step 7 catalog association. Every defect of the edge falls in
+exactly one earlier or later stage, in this order of precedence:
+
+1. **Wire** (strict V2 schema, `malformed_wire` at the node): an omitted
+   `owner_model` on a `protocol_clause`, an external `PackageNodeKey` or any
+   other non-`NodeRef` value, and an `owner_model` on another node.
+2. **Graph shape** (FR-322 key and graph stages, before any body step): the
+   target's own **owner join**. A `model`/`object_type` node whose
+   `ModelOwner` joins no `model_selections` row, or whose admitted document
+   does not declare that node as an object type, is a genuinely unselected
+   target. It refuses `missing_declaration`/`missing-selection` at the
+   target's own `node_id` (FR-322 owner join), whether or not any clause names
+   it, so a clause never reaches the typed check with such a target. In the
+   same stage a clause whose `dependencies` lack its `owner_model` target
+   refuses `invalid_semantic_graph` at the clause's `/dependencies`
+   (FR-322-AC-96).
+3. **Typed edge check** (step 6, first check of the clause), at
+   `/semantic_graph/nodes/{i}/owner_model`, retaining the clause `node_id`,
+   the target key and the target's form: a local target that names no node of
+   the graph refuses `missing_declaration`/`missing-name`; a target that is
+   not the `model`/`object_type` node of a selected declaration refuses
+   `invalid_model_binding`/`malformed-declaration`. The second case holds for a
+   non-model node, a non-model declared node with a source `owner` (a
+   model-tagged node with a `SourceOwner` is `malformed_wire` already,
+   FR-322-AC-51), and a model-tagged node of a selected declaration of any
+   other form (`state_machine`, `process`, `record_value_type`, `event_type`,
+   a relation node) or the selected package's `model_root` node (not a
+   declaration, but a model node). The check does not compare the target with the `over`
+   parameter's type: a selected second `object_type` is admitted as a
+   different clause identity.
+4. **Catalog association** (step 7) reads only an edge that passed 1 to 3.
+
+A defect of an earlier stage in the same package is reported instead (the
+refinement step's row and catalog-shape defects, the member defects of step
+4, membership at step 5); a defect of the same clause's activation, captures,
+causal relation or slots is reported only after the edge passes.
 
 ## Cyclic protocol reference components (Option A)
 
@@ -540,10 +584,11 @@ alternate cycle encoding.
 | FR-464-AC-13 | The activation relation of an admitted protocol is derived from its clause node's `activation` and `requirements` alone: `activation on each (opened)` with `requires temporal OrderClosureBounded` gives exactly one row, the clause key, `each` with `opened`'s node key and `OrderClosureBounded`'s node key; under `activation on origin` the one row carries `origin` and no trigger; a protocol with no requirement has no row; a second `requires temporal OrderClosureBounded` leaves one row; a second required temporal clause gives two rows in ascending node-id digest order; a temporal clause that shares the protocol's clock but is not required gives no row; a `requirements` entry or an `each` trigger absent from the clause's `dependencies` refuses `missing_declaration`/`missing-name` at the target with no relation. | Test (TC-946) |
 | FR-464-AC-14 | A complete refinement class catalog whose rows agree with it is admitted after its selected protocol graph passes the protocol step. When one otherwise valid package has both an independent protocol-body member defect and a rekeyed catalog class associated with the wrong existing control node, the protocol-body defect refuses first; after repairing only that defect and rebuilding the changed keys and package identity, the catalog association refuses. A refinement row/catalog mismatch instead refuses at the earlier refinement step before either protocol defect. | Test (TC-310) |
 | FR-464-AC-15 | When a predicate-join function refers to its own protocol and the checked-node references form a cycle, the reader admits the package using FR-322's recursion-group encoding for the entire cyclic component, including non-protocol nodes: all component members share the group, carry `{size, ordinal}` coordinates and encode in-component references as `group_reference`. Acyclic protocol nodes have no `recursion_group`, use `recursion` `null` and retain their existing key inputs. | Test (TC-946) |
-| FR-464-AC-16 | Every `protocol_clause` node has one `owner_model` local `NodeRef` to its exact model declaration node; the edge is present in both V2 schemas, included in the clause's application-node preimage and exact dependencies, and absent from every other node. A missing edge, external key, non-model target or missing dependency refuses at the edge or dependency before clause interpretation. Retargeting only the edge changes the clause key and package id. FR-375 includes every clause whose edge is the object-type node of a model owned by the selected concrete declaration in its class catalog, even when no step row names its classes, and excludes a clause whose edge names a model owned by another declaration. | Test (TC-946, TC-310) |
+| FR-464-AC-16 | Every `protocol_clause` node has one `owner_model` local `NodeRef` to its exact model declaration node; the edge is present in both V2 schemas, included in the clause's application-node preimage and exact dependencies, and absent from every other node. A missing edge, external key, non-model target or missing dependency refuses at the edge or dependency before clause interpretation, in the stage and with the code that FR-464-AC-20 states. Retargeting only the edge changes the clause key and package id. FR-375 includes every clause whose edge is the object-type node of a model owned by the selected concrete declaration in its class catalog, even when no step row names its classes, and excludes a clause whose edge names a model owned by another declaration. | Test (TC-946, TC-310) |
 | FR-464-AC-17 | An `attempt` references the no-point `operation_anchor` for its operation. When a state clause names that same operation with a `ClauseBinding.execution_point`, the package has a distinct point-bearing anchor for the clause and a no-point anchor for the attempt; both may reference the operation's shared frame. Altering either point-bearing anchor changes its identity without changing the protocol attempt's anchor reference. | Test (TC-946) |
 | FR-464-AC-18 | A protocol clause retains `owner_model` as the owner model's object-type node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge, node preimage or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
 | FR-464-AC-19 | The protocol profile defines the operator `transition` for the `state`/`transition` form only: a `quire.op.state.transition` application naming `transition` is admitted by the operation step, a `quire.op.state.transition` application naming any operator of the protocol-node table (for example `sequence`) refuses `invalid_package`/`operation-member-mismatch`, and a `quire.op.protocol.control` application naming `transition` refuses `invalid_package`/`operation-member-mismatch`. | Test (TC-233) |
+| FR-464-AC-20 | The `owner_model` target is checked in one phase ("Owner-model edge phase"), with a fail-closed outcome for each case: an omitted edge and an external key refuse `malformed_wire` at the node; a genuinely unselected `model`/`object_type` target (owner joining no selection row, or not declared as an object type by the selected document) refuses `missing_declaration`/`missing-selection` at the target's own `node_id` in FR-322's owner join before any body step and before the clause's edge is read; a target missing from the clause's `dependencies` refuses `invalid_semantic_graph` at `/dependencies`; a local target naming no node refuses `missing_declaration`/`missing-name`, and a model node of a selected declaration of another form, a selected package's `model_root` node, a non-model declared node with a source owner and a non-model node refuse `invalid_model_binding`/`malformed-declaration`, both at `/semantic_graph/nodes/{i}/owner_model` as the first check of the clause at step 6; a valid selected second `object_type` is admitted and is not compared with the `over` type. An earlier-stage fault wins when paired: the owner join of the target precedes every body step, the refinement-step defects and the step 4 and 5 defects precede the typed edge check, and the typed edge check precedes the same clause's activation, capture and slot defects. Reader evidence is owned by IR-1053 (IR FR-064-AC-4/TC-048); no QSpec reader test exists, so the vectors TC-946 OM-03, OM-05..OM-11 and O10..O12 are the published oracle. | Analysis |
 
 ## Published artifacts and the operation catalog
 

@@ -127,7 +127,9 @@ every nominal node and compound-unit vector identity and apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
 including `-0` spellings and the `dimension-equivalence-` mutations (descending
 ids, one node twice, one id, a stale pair, a stale `root_scale`, a zero, a
-negative, a missing and an unreduced `root_scale`, an owner outside the lock),
+negative, a missing and an unreduced `root_scale`, an owner outside the lock;
+the one-id, zero, negative and missing mutations are `malformed_wire`, the
+others `invalid_semantic_graph`, FR-322-AC-139),
 and require the semantic oracle itself to refuse `-0` and to refuse a repeated
 pair, a derived pair of unequal normalized maps or of a ratio the base roots do
 not fix, and a cycle of the `dimension-equivalence-` vectors whose ratios do not
