@@ -110,6 +110,11 @@
       "name": "dimension-equivalence-flow-clock-time",
       "preimage": {"version":"quire.dimension-equivalence-node/v1","owner":{"kind":"source","authority":"agent-ix","identity":"example"},"dimension_node_ids":[{"domain":"quire.checked-semantic-node/v1","digest":"a005567d213eebe2b5afcea6571eed60595e02a2138cd8e21b9c0310efbf8a7c"},{"domain":"quire.checked-semantic-node/v1","digest":"d6728197a52375cb5e131e7d439f053e1b622950b4875a09b31d67ab46012c46"}],"root_scale":{"numerator":"1000","denominator":"1"}},
       "sha256": "584c6bbcb5056cf9dd5d10504339e49c5507348601530e5ef6d67bc5e351714b"
+    },
+    {
+      "name": "model-root-counter-cas",
+      "preimage": {"version":"quire.structural-node/v1","node_tag":"model","semantic_form":"model_root","semantic_type":null,"declaration":null,"recursion":null,"owner":{"kind":"model_root","identity":"example/counter-cas","digest":"0000000000000000000000000000000000000000000000000000000000000000"},"body":{"term":"aggregate","members":[]}},
+      "sha256": "d6ee4495e48811c9e3c7551c768cba73391f8bac1cd14c05bfff37c0af67f757"
     }
   ],
   "union_member_vectors": [

@@ -70,7 +70,12 @@ FR-466, with the first refusal in the order below.
   over which the source clause is declared. This explicit edge is authoritative
   for clause-to-model ownership; a consumer SHALL NOT infer ownership from the
   `over` parameter's type. It enters the node's application identity preimage
-  and exact dependency set.
+  and exact dependency set. This edge continues to name the exact declaring
+  model node; it is not replaced by FR-322's canonical selected-package
+  `model_root`. A refinement's `abstract`/`semantic_type` headers use the
+  model root to identify a whole selected package, while protocol class
+  ownership is joined through this exact declaration edge and its selected
+  package.
 - **dependencies** — exactly the unique digest-ascending local `NodeRef`s
   reached by the body plus `owner_model` when present.
 - **node key** — FR-322's `quire.application-node/v1` preimage
@@ -516,6 +521,7 @@ alternate cycle encoding.
 | FR-464-AC-15 | When a predicate-join function refers to its own protocol and the checked-node references form a cycle, the reader admits the package using FR-322's recursion-group encoding for the entire cyclic component, including non-protocol nodes: all component members share the group, carry `{size, ordinal}` coordinates and encode in-component references as `group_reference`. Acyclic protocol nodes have no `recursion_group`, use `recursion` `null` and retain their existing key inputs. | Test (TC-946) |
 | FR-464-AC-16 | Every `protocol_clause` node has one `owner_model` local `NodeRef` to its exact model declaration node; the edge is present in both V2 schemas, included in the clause's application-node preimage and exact dependencies, and absent from every other node. A missing edge, external key, non-model target or missing dependency refuses at the edge or dependency before clause interpretation. Retargeting only the edge changes the clause key and package id. FR-375 includes every clause whose edge equals the selected concrete model in its class catalog, even when no step row names its classes, and excludes a clause whose edge names another model. | Test (TC-946, TC-310) |
 | FR-464-AC-17 | An `attempt` references the no-point `operation_anchor` for its operation. When a state clause names that same operation with a `ClauseBinding.execution_point`, the package has a distinct point-bearing anchor for the clause and a no-point anchor for the attempt; both may reference the operation's shared frame. Altering either point-bearing anchor changes its identity without changing the protocol attempt's anchor reference. | Test (TC-946) |
+| FR-464-AC-18 | A protocol clause retains `owner_model` as the exact declaring model node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge, node preimage or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
 
 ## Published artifacts and the operation catalog
 
