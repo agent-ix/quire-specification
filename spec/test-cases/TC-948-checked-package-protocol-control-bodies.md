@@ -176,7 +176,8 @@ FR-466-AC-15.
 | DF7d | a `choice` guard, a `choice` `visible` entry, a `repeat` guard and a `repeat` `visible` entry each read `view.ready` | each `ill_typed`/`operator-ineligible` at the read, naming the slot; never `wrong_snapshot` (FR-466-AC-16) |
 | DF7e | one guard reads both `view.ready` and a field of the finish binder; one guard reads both a field of the finish binder and a field of `sent` | the first `ill_typed`/`operator-ineligible` at the `view` read; the second `missing_declaration`/`missing-name` at the finish read (FR-466-AC-16) |
 | DF7f | a guard reads a field of a binder a compensation template declares | `missing_declaration`/`missing-name`, `read` `foreign` (FR-466-AC-16) |
-| DF7g | a `choice` guard, a `choice` `visible` entry, a `repeat` guard and a `repeat` `visible` entry each read the protocol activation binder `opened` bare (no field projection); the same slots each read the `receive` binder `got` bare | each `ill_typed`/`operator-ineligible` at the read, naming the slot; never `wrong_snapshot`, and no `wrong_snapshot` detail without a field (FR-466-AC-14, FR-466-AC-16) |
+| DF7g | a `choice` guard, a `choice` `visible` entry, a `repeat` guard and a `repeat` `visible` entry each hold a Boolean-rooted expression with the protocol activation binder `opened` read bare nested inside (a Boolean function applied to `opened`, so the root is Boolean and no non-Boolean-root refusal precedes); the same slots with the `receive` binder `got` read bare likewise | each `ill_typed`/`operator-ineligible` at the bare read, naming the slot; never `wrong_snapshot`, and no `wrong_snapshot` detail without a field (FR-466-AC-14, FR-466-AC-16) |
+| DF7h | a guard reads `opened` bare and a field of `sent` (a `send` record, ineligible), in both operand orders | each `ill_typed`/`operator-ineligible` at the bare read, whatever the order; never `wrong_snapshot` (FR-466-AC-16) |
 | DF7c | a guard and a `visible` entry read the capture `order` | admitted without listing |
 | DF8 | a guard reads `eastRes.ok` that no `visible` entry lists individually | `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` |
 | DF9 | `visible` lists the composite `eastRes.ok and westRes.ok` and a guard reads `eastRes.ok` | `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` |
@@ -246,7 +247,7 @@ FR-466-AC-15.
 7. E1 to E22 behave as listed (FR-466-AC-7, FR-466-AC-8, FR-466-AC-9).
 8. BS1 to BS11 behave as listed (FR-466-AC-10).
 9. CP1 to CP37 (with CP9b to CP9f and CP10b) behave as listed (FR-466-AC-11, FR-466-AC-12).
-10. DF1 to DF13 (with DF6b and DF7b to DF7g) behave as listed (FR-466-AC-14, FR-466-AC-16).
+10. DF1 to DF13 (with DF6b and DF7b to DF7h) behave as listed (FR-466-AC-14, FR-466-AC-16).
 11. Every admitted vector's node keys are unchanged by reformatting the source
     and by a second reference to the protocol, and change with any retargeted
     reference, renamed control, reordered child or changed literal
