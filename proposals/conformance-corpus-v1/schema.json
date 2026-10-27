@@ -90,13 +90,7 @@
         "arguments": {
           "type": "array",
           "items": {
-            "type": "object",
-            "required": ["parameter", "value"],
-            "properties": {
-              "parameter": { "$ref": "#/$defs/Nonempty" },
-              "value": { "$ref": "#/$defs/InputValue" }
-            },
-            "additionalProperties": false
+            "$ref": "#/$defs/InputValue"
           }
         },
         "accounting": {

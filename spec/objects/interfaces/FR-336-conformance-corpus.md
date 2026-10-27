@@ -95,11 +95,16 @@ published schema:
 | Field | Type | Constraint |
 | --- | --- | --- |
 | `function` | String | Existing function identity spelling assigned by the consumer requirement. |
-| `arguments` | Array | Each row is the closed object `{parameter, value}`; `parameter` is the declared parameter name and `value` is one tagged input value. |
+| `arguments` | Array | Each item is one `$defs.InputValue`. Items are positional: item at zero-based index `i` supplies the function's declared parameter at index `i`. |
 | `accounting` | Object | Required; any subset of the ten `quire.value.accounting/v1` counter names, each a canonical nonnegative decimal string. The adapter parses it as `u64` before constructing the call; an omitted counter uses its operation's existing default. |
 
-No other call-file field is admitted. The consumer maps each row and limit
-onto the existing typed Call API; it does not add a product call wire.
+No other call-file field is admitted. The consumer resolves the declared
+parameter names from the selected function signature, pairs each item with the
+parameter at the same zero-based index, and maps each pair and limit onto the
+existing typed Call API; it does not add a product call wire. If an item has
+no corresponding declared parameter, the consumer reports an input-adapter
+refusal rather than dropping or reassigning it. A shorter array remains a
+prefix call and the typed operation settles the unbound declared parameters.
 
 ### Population file
 
@@ -152,7 +157,7 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-3 | A producer cannot qualify itself solely with an oracle sharing its implementation. | Analysis |
 | FR-336-AC-4 | The published schema admits the complete-v1 fixture and refuses a missing required member, an unknown member, and out-of-domain class, consumer-type or expected-disposition values. | Test |
 | FR-336-AC-5 | The published schema admits each `input.files[*].kind` in the closed vocabulary `source`, `model`, `input`, `call`, `object-context`, `population`, `replay-request` and `bytes`, and refuses another kind. | Test |
-| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, `arguments` and `accounting`; it refuses an unknown tag, unknown member, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `digest_domain`, `digest` and `bytes_path` and refuses extra members or malformed digest text. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test |
+| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `digest_domain`, `digest` and `bytes_path` and refuses extra members or malformed digest text. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test |
 | FR-336-AC-7 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and validates it under the named digest record. | Test |
 
 ## Dependencies
