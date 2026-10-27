@@ -47,9 +47,9 @@ relationships:
 
 When a unit declares a refinement between an abstract and a concrete state
 model, the checker SHALL admit the declaration only when every abstract
-population, every mapped abstract field and every concrete operation has
-exactly one well-typed row, and SHALL emit the admitted declaration as one
-node of the checked package.
+population, every mapped abstract field, every state-machine field set and
+every concrete operation has exactly one well-typed row, and SHALL emit the
+admitted declaration as one node of the checked package.
 
 ## Inputs
 
@@ -244,10 +244,26 @@ refuses `missing_declaration`/`missing-name`; one with two rows refuses
 population that is no row's source is concrete-only state.
 
 **Object rows.** Each abstract object type that an abstract population admits
-is mapped from one concrete object type of that population's source. Each
-`field-row` defines one abstract field. Its expression has the concrete
-object as `self` and reads the concrete state through the forms a
-state-clause body admits, history fields
+is mapped from one concrete object type of that population's source. A
+`state_machine` declaration also contributes a field set to the model state:
+each abstract `state_machine` declaration is mapped by one `object-row` to
+one concrete `state_machine` declaration, without a population row. The row's
+`field-row`s map the abstract machine's declared fields from expressions over
+the concrete machine's declared fields. A `state_machine` row is not an
+object-type row and does not create an object or population. A model may have
+no `state_machine` declaration; its mapped object-type fields remain a valid
+model subject through the population and object rows. Multiple
+`state_machine` declarations are mapped by their explicit rows and are not
+ambiguous. An `object-row` SHALL pair two object types or pair two
+`state_machine` declarations; it SHALL NOT mix those declaration kinds.
+An abstract `state_machine` declaration without a row refuses
+`missing_declaration`/`missing-name`, naming that declaration. Two rows for
+one abstract machine refuse `invalid_model_binding`/`conflicting-binding`,
+naming both rows. A concrete type that is not a `state_machine` declaration
+for a state-machine row refuses `invalid_model_binding`/`malformed-declaration`.
+Each `field-row` defines one abstract field. Its expression has the concrete
+object or concrete machine field set as `self` and reads the concrete state
+through the forms a state-clause body admits, history fields
 ([FR-378](FR-378-check-refinement-auxiliary-state.md)), pure function
 application and the FR-376 forms. A field named in two rows refuses
 `invalid_model_binding`/`conflicting-binding`, naming both rows. A field with
@@ -422,7 +438,7 @@ abstract declaration uses `RefinementKey`.
 | Array | Entry | Meaning |
 | --- | --- | --- |
 | `populations` | `{abstract: RefinementKey, concrete: NodeRef}` | The abstract and source concrete population declarations. |
-| `objects` | `{abstract_type: RefinementKey, concrete_type: NodeRef, fields: [{name: Identifier, expression: SemanticTerm}]}` | One object mapping and its field rows; `name` is an abstract field name, resolved on `abstract_type`. |
+| `objects` | `{abstract_type: RefinementKey, concrete_type: NodeRef, fields: [{name: Identifier, expression: SemanticTerm}]}` | One object-type mapping or one state-machine field-set mapping and its field rows; `name` is an abstract field name, resolved on `abstract_type`. For a state-machine mapping both type keys name `state_machine` declarations; it does not imply an object or population. |
 | `steps` | `{source_class: Nonempty, source_node?: NodeRef, target: StepTarget}` | One concrete operation or protocol step class. `source_class` is its alias-free canonical class spelling; `source_node` is required for a class with a declaration node and absent for a memory step class, which names no declaration. The reader resolves the spelling against the concrete subject and checks the node when present. |
 | `histories` | `{concrete_type: NodeRef, name: Identifier, type: NodeRef, initial: HistoryInitial, updates: [{operation: NodeRef, expression: SemanticTerm}]}` | One history field; `HistoryInitial` is a `literal` or local `reference` term naming the admitted `history-literal`; each update names the concrete operation it follows. |
 | `assume` | `{operation: NodeRef, kind: "weak"|"strong", granularity: "each"|"whole"}` | A concrete fairness row. |
@@ -637,7 +653,7 @@ before this step and cannot substitute for a missing body key.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-375-AC-1 | A declaration with one population row per abstract population, one well-typed object row per admitted abstract type, one step row per concrete operation and well-typed history and fairness rows is admitted and emitted as one `relation`/`refinement` node whose body carries every row. | Test (TC-310) |
+| FR-375-AC-1 | A declaration with one population row per abstract population, one well-typed object row per abstract object type admitted by those populations and per abstract `state_machine` field set, one step row per concrete operation and well-typed history and fairness rows is admitted and emitted as one `relation`/`refinement` node whose body carries every row. A model with no `state_machine` declaration remains a valid subject when its object-type rows are valid. | Test (TC-310) |
 | FR-375-AC-2 | A concrete operation with no step row refuses `missing_declaration`/`missing-name` naming the operation, and the declaration is not admitted with any default target; the same declaration with `step … -> any;` written for it is admitted. | Test (TC-310) |
 | FR-375-AC-3 | An abstract population with no row refuses `missing_declaration`/`missing-name`; a second row for one population, a field named twice, a second step row for one operation, a second history update for one operation and two fairness rows of one set with the same kind, operation and granularity each refuse `invalid_model_binding`/`conflicting-binding` naming both rows. | Test (TC-310) |
 | FR-375-AC-4 | A field-row or step-argument expression whose type does not conform to the abstract type after reference lifting refuses `ill_typed`/`type-mismatch` at that expression; a `Reference<T_C>` expression for a `Reference<T_A>` field is admitted exactly when an object row maps `T_A` from `T_C`. | Test (TC-310) |
@@ -657,9 +673,10 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-18 | In a refinement governed by `quire.temporal.infinite-trace/v1`, the ring-buffer rows `s.ring = self`, `(self.head + i) mod 2` and an `a div b` row are admitted even when the unit's own declarations select no layer, the lock selection counts the rows' layers (the `always` rows and exactly one integer-division law, `selection_trigger_unsatisfied` when none is selected), and a Boolean field row `ready = protocol Fill` naming a local protocol refuses `unsupported_construct`/`expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks. | Test (TC-310) |
 | FR-375-AC-19 | A protocol-subject declaration whose rows include `step duplicate C::P::ch`, `step lose C::P::ch`, `step spawn C::P::w`, `step retire C::P::w`, `step fork C::P::par`, `step join C::P::par`, a template's `cattempt` and `cend` rows and `step memory flush` and `step memory drain` emits `steps` in one total order, the same for every permutation of those rows in the source: the declaration-naming rows by node-key digest then member name with tied rows ordered by alias-free class spelling in UTF-8 byte order (`duplicate P::ch` before `lose P::ch`; `retire P::w` before `spawn P::w`; `fork P::par` before `join P::par`), and the `memory` rows after every declaration-naming row, `drain` before `flush`. | Test (TC-310) |
 | FR-375-AC-20 | A checked package carrying an admitted `relation`/`refinement` node with row-empty arrays and a local abstract model is read with the node key recomputed from the closed `quire.refinement-node/v1` preimage, not from `quire.structural-node/v1` or `quire.application-node/v1`; changing only its concrete `semantic_type` or one body row while retaining its node id, and recomputing the package id and dependency list, refuses `invalid_package`/`stale-node-key` at that node in the refinement body step. | Test (TC-310) |
-| FR-375-AC-21 | With every identity recomputed, the reader visits refinement nodes in ascending retained digest order and applies canonical order, header joins and row joins after the identity check; an out-of-order row refuses `invalid_semantic_graph` at the first offending entry, an absent local `abstract` key refuses `missing_declaration`/`missing-name`, an absent direct dependency for an external `abstract` key refuses `missing_declaration`/`missing-selection`, and a wrong-kind local `semantic_type` refuses `invalid_model_binding`/`malformed-declaration`, each at the member this section names. | Test (TC-310) |
+| FR-375-AC-21 | With every identity recomputed, the reader visits refinement nodes in ascending retained digest order and applies canonical order, header joins and row joins after the identity check; an out-of-order row refuses `invalid_semantic_graph` at the first offending entry, an absent local `abstract` key refuses `missing_declaration`/`missing-name`, an absent direct dependency for an external `abstract` key refuses `missing_declaration`/`missing-selection`, and a wrong-kind local `semantic_type` or object-row type key refuses `invalid_model_binding`/`malformed-declaration`, each at the member this section names. Object rows join either two object types admitted by mapped populations or two `state_machine` declarations and reject mixed or unrelated declaration kinds. | Test (TC-310) |
 | FR-375-AC-22 | For each step row the producer emits one `refinement_step_rows` entry with the source region of that original checked row, associated with the refinement owner id and its canonical zero-based step ordinal; reversing source order while retaining the same semantic rows changes the region assignments but not the owner id or package id. | Test (TC-310) |
 | FR-375-AC-23 | A protocol refinement carries a complete, canonical `class_catalog` of its source-level concrete and abstract classes and checked binder types in both V2 schemas and its node-key preimage. A tied `fork`/`join` pair names one parallel node under two distinct class spellings; a class of another selected model or protocol, a changed class/node association, a missing or duplicated class, a wrong binder record, or a memory kind absent from its source-default model refuses under the catalog and row-join rules. The concrete catalog includes classes from every clause whose identity-bound `owner_model` equals the selected concrete model, including when no step rows name those classes, and excludes clauses whose edge names another model. For each of `sc`, `tso` and `ra` used as a source default in that subject, `memory drain` is recorded; `memory flush` is recorded when `tso` is a source default. Each `memory drain` entry carries `drain: store-buffer-flush`, whose SC behavior is a no-op. A later request's memory override changes no checked-package class fact or package id. | Test (TC-310, TC-233) |
+| FR-375-AC-24 | A `state_machine` field set is represented by an existing `objects[]` row whose `abstract_type` and `concrete_type` keys resolve to `state_machine` declarations and whose field names resolve on the abstract machine; the row keeps the existing closed shape and requires no population row. A model with only object types and populations is admitted using its ordinary object rows without a `state_machine` anchor. Missing or duplicate abstract machine rows refuse as the corresponding missing or conflicting object mapping; an object row that mixes a `state_machine` declaration and an object type refuses `invalid_model_binding`/`malformed-declaration`. The reader admits the same rows by joining their keys to the selected packages; no additional wire member is present in either V2 schema. | Test (TC-310) |
 
 ## Dependencies
 

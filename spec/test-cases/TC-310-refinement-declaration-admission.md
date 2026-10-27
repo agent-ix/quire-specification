@@ -18,8 +18,8 @@ relationships:
 ## Description
 
 Admit the compare-and-set counter refinement and refuse each malformed row,
-checking the emitted refinement node, its identity and the claim kinds its
-items require.
+checking the emitted refinement node, its identity, object-type and
+state-machine field-set rows, and the claim kinds its items require.
 
 ## Test Procedure
 
@@ -206,6 +206,21 @@ Mutations, each applied alone to the positive unit:
     | `RW-07` | Positive package: replace `body.objects[0].concrete_type` with the existing local Boolean `scalar_type` key; rekey the refinement. |
     | `RW-08` | Positive package: replace `body.objects[0].fields[0].expression` with the inline Boolean literal `{term: "literal", type: B, value_kind: "boolean", value: true}`, where `B` is the package's local Boolean node key; rekey the refinement. |
 
+27. **State-machine field-set rows (SM-01 to SM-05).** Build an abstract
+    package with a `state_machine` declaration `SpecMachine` and a concrete
+    package with a `state_machine` declaration `ImplMachine`; each has a
+    declared field `value: Int[0, 2]`. Emit a refinement whose object row maps
+    `SpecMachine::value = self.value`, with no population row. Repeat with two
+    state-machine declarations on each side and one object row for each pair.
+    Also emit the ordinary `CasRefinesCounter` object-type-only refinement.
+    For malformed cases, omit the abstract machine's row, duplicate it, or
+    replace its concrete machine key with an object-type key. For the accepted
+    cases, check the closed row shape and canonical object and field order;
+    pass the bytes through both V2 schemas and the strict reader. `SM-03`
+    replaces the concrete
+    machine key with an object-type key; `SM-04` omits the abstract machine's
+    row; `SM-05` duplicates that row.
+
 ## Expected Results
 
 For every producer-emitted refinement with step rows, inspect the closed
@@ -364,3 +379,14 @@ and writes no package from that read. The first refusal is exactly:
 `RW-04` to `RW-08` exercise FR-375-AC-21's ordered checks and both row
 target and row type joins. Each is refused after the earlier FR-322 stages
 have admitted its shape, source map, dependency list and package identity.
+
+For mutation 27, `SM-01`, `SM-02` and the ordinary object-type-only case are
+admitted with the existing `objects` entry shape and no additional wire
+member. The state-machine type keys are present in local dependencies and the
+row has the same closed shape as an object-type row. `SM-03` refuses
+`invalid_model_binding`/`malformed-declaration` at
+`objects[0].concrete_type`; `SM-04` refuses
+`missing_declaration`/`missing-name` naming the unmapped abstract machine;
+`SM-05` refuses `invalid_model_binding`/`conflicting-binding` naming the
+duplicate rows. The object-type-only refinement is admitted without a
+state-machine node or synthetic anchor.
