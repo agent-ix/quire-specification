@@ -288,6 +288,49 @@ FR-322's order ([FR-322-AC-22](FR-322-checked-package-artifact.md)): a missing
 or non-protocol law, an undefined operator and a non-Boolean `result_type`
 refuse as there.
 
+### Stage boundary for a mismatched profile operator
+
+FR-322's reader order applies the published V2 schema before any step. The
+schema pins the member operator of a `quire.op.state.transition` application
+to `transition` and enumerates the member operators of a
+`quire.op.protocol.control` application without `transition`. A complete
+reader therefore refuses these inputs at the schema stage and never reaches
+the operation step for them:
+
+- a `quire.op.state.transition` application naming any other operator, and a
+  `quire.op.protocol.control` application naming `transition`, refuse
+  `malformed_wire` at the application's `operation/member/operator`;
+- the operation step still defines `operation-member-mismatch` for the same
+  inputs, as the catalog's member check, and a component that runs that step
+  alone on an unvalidated document (an operation oracle, a partial reader)
+  SHALL refuse them with it. A complete reader never reports it for these
+  pairs, because the schema stage precedes it. The schema is deliberately not
+  widened: a wider enum would admit a state operator into a protocol node
+  and leave the refusal to a later stage for no gain.
+
+`operation-member-mismatch` stays reachable through a complete reader for a
+member the schema admits and the lock's profile does not define.
+
+### Several postconditions on one operation
+
+A `state`/`transition` node is a Boolean model-field claim over one
+(`anchor`, `subject`) pair. It is not the summary of an operation's
+postconditions. An operation anchor may have any number of `state_clause`
+nodes of clause `postcondition` (QSL FR-105-AC-4 adds a second one as one
+more node on the same anchor), each checked as FR-341 states, and an
+operation's postconditions are the conjunction of its postcondition clauses
+whether or not any transition names one of them. A transition's `post` binds
+exactly the one postcondition the producer states for its subject. The
+producer SHALL emit at most one transition per (`anchor`, `subject`); where
+several postconditions constrain one subject, the producer that wants a
+transition for it states one postcondition clause for that subject (the
+source's own `post A and B`) and binds that, and the others remain plain
+postcondition nodes. A consumer SHALL NOT read a transition's `post` as the
+operation's complete postcondition, and SHALL NOT infer from a transition
+that no further postcondition exists. No conjunction node is synthesized, so
+no new canonical order or identity exists to rule, and the single `post`
+binding, its preimage and the uniqueness rule are unchanged.
+
 ## Reader order
 
 The state step runs after the frame step (FR-340) and before any operation
@@ -347,10 +390,12 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 | FR-341-AC-12 | A clause on a process or a state machine refuses as one on an object type does: an invariant anchored at an operation anchor, and a precondition anchored at the process node, refuse `invalid_model_binding`/`malformed-declaration` at the anchor's target; a `self` of `Reference<Other>` for another declaring type, a missing operation parameter and a missing result each refuse `ill_typed`/`operator-ineligible` at the clause node; an invariant anchored at a record value type, an event type, a persistence interface or a systems interface refuses `invalid_model_binding`/`malformed-declaration` at the anchor's target. | Test (TC-233, TC-280) |
 | FR-341-AC-13 | The published clause package's invariant node with its kind member's `clause` rewritten to `constraint`, rekeyed, validates against both V2 schemas and is admitted by the state step, as a constraint is checked as an invariant; the same constraint anchored at an operation anchor refuses `invalid_model_binding`/`malformed-declaration` at the anchor's target, and one binding a second parameter refuses `ill_typed`/`operator-ineligible` at the clause node. An invariant and a constraint with equal bodies have different node ids, because the kind member is part of the body. | Test (TC-233) |
 | FR-341-AC-14 | The state-clause member admits each closed `execution_point` variant: initialization/handler on an invariant, pre/post on an operation clause; it refuses an unknown variant, extra member, missing anchor name, an inapplicable point, or a name that disagrees with the checked source/operation anchor. Equal clause bodies with different accepted points have different node identities and package ids; the same point round-trips unchanged. | Test (TC-233) |
-| FR-341-AC-15 | A `state`/`transition` node's body is a `quire.op.state.transition` application with operator class `state_transition`, one `protocol_profile` law, `member` `{kind: "profile_operator", operator: "transition"}`, `null` mode, empty leaves, a Boolean `result_type`, and exactly the five bindings `anchor`, `subject`, `inputs`, `pre`, `post` in that order, where `anchor`, `subject` and `post` are references, `inputs` an aggregate of references and `pre` an aggregate of at most one reference; every occurrence has role `claim`. A body with the bindings reordered, one missing or added, `pre` holding two references, an aggregate `subject`, another member operator, another law role, a mode, or an occurrence of another role fails the published schema, and the operation step refuses another profile operator as `operation-member-mismatch`. | Test (TC-233) |
+| FR-341-AC-15 | A `state`/`transition` node's body is a `quire.op.state.transition` application with operator class `state_transition`, one `protocol_profile` law, `member` `{kind: "profile_operator", operator: "transition"}`, `null` mode, empty leaves, a Boolean `result_type`, and exactly the five bindings `anchor`, `subject`, `inputs`, `pre`, `post` in that order, where `anchor`, `subject` and `post` are references, `inputs` an aggregate of references and `pre` an aggregate of at most one reference; every occurrence has role `claim`. A body with the bindings reordered, one missing or added, `pre` holding two references, an aggregate `subject`, another member operator, another law role, a mode, or an occurrence of another role fails the published schema (`malformed_wire`); the operation step, run alone on a document the schema was not applied to, refuses another profile operator as `operation-member-mismatch` (FR-341-AC-19). | Test (TC-233) |
 | FR-341-AC-16 | The state step refuses a transition node with the first defect in this order, each at its stated locus: a transition application at the root of another node (`ill_typed`/`operator-ineligible` at that node); an `anchor` that is not a declared `operation_anchor` dependency; a `subject` that is not a declared field projection of a dereferenced `Reference<C>` `self` of the anchor's context, or whose field the anchor's frame does not modify (`invalid_model_binding`/`malformed-declaration`), or whose type is not the required single-valued Boolean node, such as an optional Boolean field typed `Option<Boolean>` or an Integer field (`ill_typed`/`operator-ineligible` at the node); an `inputs` list that is not the operation's Boolean parameters in declared order; a `pre` or `post` that is not the operation's precondition or postcondition state clause, including one anchored at another context or operation; and a second transition over the same `anchor` and `subject` (`ambiguous_declaration`/`ambiguous-name`). | Analysis |
 | FR-341-AC-17 | The published `positive-state-transition.json` package, whose transition is `Switch.set(flag: Boolean)` over the required Boolean field `on` of `acme/orders` with precondition `flag || on` and postcondition `on`, validates against `schema.json`, has every application node's preimage valid under the preimage schema, keys every node by its preimage and its `package_id` by the identity preimage plus the occurrence-free node projection, and is admitted by the operation step for every application, the subject projection included. Rewriting the anchor's operation name changes the ids of the anchor, both clauses and the transition and the `package_id`; rewriting the subject's field, `pre`, `post` or the profile selection changes the transition id and the `package_id`; moving a source-map region leaves every node id and the `package_id` unchanged. | Test (TC-233) |
 | FR-341-AC-18 | A `quire.op.state.transition` application nested inside a node body or another term fails the V2 schema (`malformed_wire` at the nested application), and a `state`/`transition` node whose body root is another application or term fails the V2 schema; the state step refuses a transition application at the root of any other node as `ill_typed`/`operator-ineligible` at that node, before any anchor check. | Test (TC-233) |
+| FR-341-AC-19 | For the published `positive-clause-operations.json` and `positive-state-transition.json` packages, a `quire.op.protocol.control` application naming operator `transition` fails the published schema and a complete reader refuses it `malformed_wire` at the application's `operation/member/operator`; a `quire.op.state.transition` application naming `sequence` fails the schema likewise; the operation step run alone on either edited document refuses `invalid_package`/`operation-member-mismatch` at the application. The schema is not widened. | Test (TC-233) |
+| FR-341-AC-20 | A package whose operation anchor has two `postcondition` `state_clause` nodes and one transition binding either one as `post` is admitted; a transition's `post` does not stand for the operation's complete postcondition, and two transitions over one (`anchor`, `subject`) refuse `ambiguous_declaration`/`ambiguous-name` whichever postcondition each binds. | Analysis |
 
 ## Dependencies
 
