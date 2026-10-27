@@ -1,0 +1,387 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:quire:conformance-corpus:v1",
+  "title": "Quire complete-V1 conformance corpus",
+  "description": "FR-336: closed transport structure for independently authored complete-V1 qualification vectors.",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "vectors",
+    "results",
+    "coverage"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "quire.conformance-corpus/v1"
+    },
+    "vectors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/Vector"
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Result"
+      }
+    },
+    "coverage": {
+      "$ref": "#/$defs/Coverage"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Nonempty": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ConsumerType": {
+      "enum": [
+        "language",
+        "runtime",
+        "monitor",
+        "analyzer/backend",
+        "tool",
+        "consuming-system"
+      ]
+    },
+    "ConsumerTypes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/ConsumerType"
+      }
+    },
+    "CapabilityApplicability": {
+      "type": "object",
+      "required": [
+        "consumer_types",
+        "semantic_profiles"
+      ],
+      "properties": {
+        "consumer_types": {
+          "$ref": "#/$defs/ConsumerTypes"
+        },
+        "semantic_profiles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/Nonempty"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "VectorApplicability": {
+      "type": "object",
+      "required": [
+        "consumer_types"
+      ],
+      "properties": {
+        "consumer_types": {
+          "$ref": "#/$defs/ConsumerTypes"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Capability": {
+      "type": "object",
+      "required": [
+        "capability_id",
+        "applicability"
+      ],
+      "properties": {
+        "capability_id": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "applicability": {
+          "$ref": "#/$defs/CapabilityApplicability"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Coverage": {
+      "type": "object",
+      "required": [
+        "primary",
+        "criteria_rollups",
+        "consumer_rollups"
+      ],
+      "properties": {
+        "primary": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/Capability"
+          }
+        },
+        "criteria_rollups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CriterionRollup"
+          }
+        },
+        "consumer_rollups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConsumerRollup"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "CriterionRollup": {
+      "type": "object",
+      "required": [
+        "criterion_id",
+        "capability_ids"
+      ],
+      "properties": {
+        "criterion_id": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "capability_ids": {
+          "$ref": "#/$defs/NonemptyStringSet"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ConsumerRollup": {
+      "type": "object",
+      "required": [
+        "consumer_type",
+        "capability_ids"
+      ],
+      "properties": {
+        "consumer_type": {
+          "$ref": "#/$defs/ConsumerType"
+        },
+        "capability_ids": {
+          "$ref": "#/$defs/NonemptyStringSet"
+        }
+      },
+      "additionalProperties": false
+    },
+    "NonemptyStringSet": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/Nonempty"
+      }
+    },
+    "Vector": {
+      "type": "object",
+      "required": [
+        "id",
+        "capability_id",
+        "class",
+        "subject",
+        "applicability",
+        "input",
+        "expected"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "capability_id": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "class": {
+          "enum": [
+            "positive",
+            "lower-boundary",
+            "upper-boundary",
+            "just-outside",
+            "refusal",
+            "incomplete",
+            "metamorphic"
+          ]
+        },
+        "mutation_of": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "subject": {
+          "$ref": "#/$defs/Subject"
+        },
+        "applicability": {
+          "$ref": "#/$defs/VectorApplicability"
+        },
+        "input": {
+          "$ref": "#/$defs/Input"
+        },
+        "expected": {
+          "$ref": "#/$defs/ExpectedDisposition"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "class": {
+                "const": "metamorphic"
+              }
+            },
+            "required": [
+              "class"
+            ]
+          },
+          "then": {
+            "required": [
+              "mutation_of"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "mutation_of"
+              ]
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "Subject": {
+      "type": "object",
+      "required": [
+        "consumer_type",
+        "operation"
+      ],
+      "properties": {
+        "consumer_type": {
+          "$ref": "#/$defs/ConsumerType"
+        },
+        "operation": {
+          "$ref": "#/$defs/Nonempty"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Input": {
+      "type": "object",
+      "required": [
+        "files"
+      ],
+      "properties": {
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/InputFile"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "InputFile": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "source",
+            "model",
+            "input"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/Nonempty"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExpectedDisposition": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ValueDisposition"
+        },
+        {
+          "$ref": "#/$defs/RefusalDisposition"
+        }
+      ]
+    },
+    "ValueDisposition": {
+      "type": "object",
+      "required": [
+        "disposition",
+        "value"
+      ],
+      "properties": {
+        "disposition": {
+          "const": "value"
+        },
+        "value": {
+          "description": "The JSON serialization of the subject operation's typed result; its type is defined by that operation."
+        }
+      },
+      "additionalProperties": false
+    },
+    "RefusalDisposition": {
+      "type": "object",
+      "required": [
+        "disposition",
+        "code",
+        "cause"
+      ],
+      "properties": {
+        "disposition": {
+          "const": "refusal"
+        },
+        "code": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "cause": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "details": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Result": {
+      "type": "object",
+      "required": [
+        "subject",
+        "run_id",
+        "vector_id",
+        "outcome",
+        "artifacts"
+      ],
+      "properties": {
+        "subject": {
+          "$ref": "#/$defs/Subject"
+        },
+        "run_id": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "vector_id": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "outcome": {
+          "enum": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unexecuted"
+          ]
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Nonempty"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

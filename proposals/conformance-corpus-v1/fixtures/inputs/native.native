@@ -1,0 +1,5 @@
+language "ix:native" edition "1-draft";
+profile v = "quire.value.complete/v1";
+function zero using v () : Integer pure {
+  0
+}
