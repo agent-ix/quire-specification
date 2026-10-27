@@ -595,9 +595,9 @@ first FR-341 state-step refusal.
 | XT-02 | The transition's `anchor` and `subject` bindings swapped | Fails the schema | FR-341-AC-15 |
 | XT-03 | The `post` binding removed; a sixth binding added | Fails the schema | FR-341-AC-15 |
 | XT-04 | `pre` holding the precondition twice; `subject` an empty aggregate | Fails the schema | FR-341-AC-15 |
-| XT-05 | Member operator `sequence`; law role `temporal_profile`; a `rounding` mode; occurrence role `declaration` | Fails the schema | FR-341-AC-15 |
-| XT-06 | Member operator `sequence` on the transition | `invalid_package`/`operation-member-mismatch` at the operation step | FR-341-AC-15; FR-464-AC-19 |
-| XT-07 | A `quire.op.protocol.control` application naming operator `transition` | `invalid_package`/`operation-member-mismatch` | FR-464-AC-19 |
+| XT-05 | Law role `temporal_profile`; a `rounding` mode; occurrence role `declaration` | Fails the schema | FR-341-AC-15 |
+| XT-06 | Member operator `sequence` on the transition (XT-05 covers the law, mode and occurrence cases) | Fails the schema at the member operator (`malformed_wire` in a complete reader); see XT-19 for the operation step alone | FR-341-AC-15; FR-341-AC-19; FR-464-AC-19 |
+| XT-07 | A `quire.op.protocol.control` application naming operator `transition` | Fails the schema at the member operator (`malformed_wire` in a complete reader); see XT-20 for the operation step alone | FR-341-AC-19; FR-464-AC-19 |
 | XT-08 | The anchor's `operation` rewritten, rekeyed | The anchor, both clauses and the transition take new ids; the `package_id` changes | FR-341-AC-17 |
 | XT-09 | A source-map region moved | Every node id and the `package_id` unchanged | FR-341-AC-17 |
 | XT-10 | `anchor` naming the `Switch` model node | `invalid_model_binding`/`malformed-declaration` at the anchor's target | FR-341-AC-16 |
@@ -609,9 +609,20 @@ first FR-341 state-step refusal.
 | XT-16 | The transition application nested as an argument of the `or` expression; the transition node's body replaced by the `or` application | Fails the schema | FR-341-AC-18 |
 | XT-17 | The transition application as the body root of the `or` expression node | `ill_typed`/`operator-ineligible` at that node, before any anchor check | FR-341-AC-18; FR-341-AC-16 |
 | XT-18 | The lock without the `protocol_profile` selection | `invalid_package`/`operation-law-unselected` | FR-341-AC-15 |
+| XT-19 | XT-06's edited document given to the operation step alone | `invalid_package`/`operation-member-mismatch` at the application | FR-341-AC-19; FR-464-AC-19 |
+| XT-20 | XT-07's edited document given to the operation step alone | `invalid_package`/`operation-member-mismatch` at the application | FR-341-AC-19; FR-464-AC-19 |
 
 XT-10 through XT-15 and XT-17 are reader outcomes the QSpec crate does not
 implement; the quire-contract-ir reader owns their execution evidence.
+
+The QSpec crate executes XT-01 through XT-09, XT-16, XT-18, XT-19 and XT-20:
+the schema refusals (XT-02 through XT-06 and XT-07, each against the published
+`schema.json`), the identity recomputations, and the operation step alone
+(XT-19, XT-20). The `malformed_wire` code and its locus for XT-06 and XT-07
+are reader outcomes the quire-contract-ir reader owns; the crate proves only
+that the schema refuses. How QSL's first transition emitter chooses among
+several pre or post clauses is QSL-owned and OPEN (QSL-1163, e38), so XT-01
+through XT-20 do not close the QSL-authored part of IR-1052 AC-7.
 
 ## Expected Results
 

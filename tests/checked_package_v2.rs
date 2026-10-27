@@ -18827,6 +18827,7 @@ fn tc_367_timed_model_causes_are_catalogued_and_paired() {
 #[trace("TC-233", "FR-341-AC-15")]
 #[trace("TC-233", "FR-341-AC-17")]
 #[trace("TC-233", "FR-464-AC-19")]
+#[trace("TC-233", "FR-341-AC-19")]
 #[trace("TC-233", "FR-341-AC-18")]
 #[test]
 fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
@@ -18949,10 +18950,16 @@ fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
     let mut other_operator = package.clone();
     other_operator["semantic_graph"]["nodes"][transition]["body"]["operation"]["member"]
         ["operator"] = json!("sequence");
+    // XT-06 / XT-19: the published schema refuses the document first; the
+    // operation step alone still refuses it as a member mismatch.
+    assert!(
+        !schema.is_valid(&other_operator),
+        "the schema pins the transition body's operator, so a complete reader refuses malformed_wire"
+    );
     assert_eq!(
         operation_refusal(&other_operator, "transition"),
         Err(OperationRefusal::MemberMismatch),
-        "the finite-global profile defines no protocol operator for a state transition"
+        "XT-19: the finite-global profile defines no protocol operator for a state transition"
     );
 
     let clause_package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
@@ -18960,10 +18967,19 @@ fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
     let mut protocol_transition = clause_package.clone();
     protocol_transition["semantic_graph"]["nodes"][protocol]["body"]["operation"]["member"]
         ["operator"] = json!("transition");
+    // XT-07 / XT-20: schema-invalid first (malformed_wire), operation step alone refuses.
+    assert!(
+        schema.is_valid(&clause_package),
+        "control: the unedited clause package is schema-valid, so the failure below is the operator alone"
+    );
+    assert!(
+        !schema.is_valid(&protocol_transition),
+        "ProtocolControlApplication enumerates no `transition` operator, so the schema refuses first"
+    );
     assert_eq!(
         package_operations_refusal(&protocol_transition, &catalog),
         Err(OperationRefusal::MemberMismatch),
-        "a protocol control never applies the state operator"
+        "XT-20: a protocol control never applies the state operator"
     );
 
     // XT-18: a lock without the protocol_profile selection leaves the law unselected.
