@@ -39,3 +39,17 @@ Checked and clean: FR-142, FR-154 and FR-322 now agree on the type, the subtype 
 ## Verdict
 
 Approve in substance; changes requested for FND-001 and FND-002 (two vectors in AC-31 and I24 that are unbuildable or ambiguous) before merge. The ruling is implemented consistently across FR-154, FR-142, FR-322 and QSL FR-230-AC-26. FND-003 to FND-005 are low.
+
+## Dispositions
+
+Round 1, reviewed at 22349c14ed60ab5c44da818923f1894f82a0e1bc.
+
+| FND | Outcome | sha/reason |
+| --- | --- | --- |
+| FND-001 | fixed | 22349c14: AC-31 and I24 drop the field-default position and state that a unit member has no default |
+| FND-002 | fixed | 22349c14: FR-154 and AC-31 define the refusal site as the outermost folded constant expression; `-1 ms` refuses at the negation, citing FR-142-AC-25 and "Quantity negation" |
+| FND-003 | fixed | 22349c14: AC-28 and I22 name the pre-state `3/2 ms` |
+| FND-004 | fixed | 22349c14: FR-154 types Sequence, Set, Map and Option members with bounded elements and checks literal elements and payloads; AC-31 and I24 cover `sequence[5 ms, 11 ms]` and `Some(11 ms)` |
+| FND-005 | fixed | 22349c14: I24 adds folding, min-only and max-only bounds, comparison operands, the unsatisfiable pair and bounded-to-wider-bounded flow |
+
+Round 1 checks of the new text found no new defect. The sentence on "equal or looser" bounds is awkwardly worded but consistent: a bounded value that flows to a narrower bounded position is still admitted as a plain `Quantity<u>` and left to the run-time invariant.
