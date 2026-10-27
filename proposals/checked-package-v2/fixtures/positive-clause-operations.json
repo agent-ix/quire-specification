@@ -25,7 +25,7 @@
     },
     "model_selections": [
       {
-        "digest": "5368187144c77c1ce20817acd6e4cd4c9eb484eb83acaeef565f5a983cb1faa2",
+        "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
         "digest_domain": "sha256-jcs",
         "identity": "acme/orders"
       }
@@ -63,7 +63,7 @@
     },
     "model_selections": [
       {
-        "digest": "5368187144c77c1ce20817acd6e4cd4c9eb484eb83acaeef565f5a983cb1faa2",
+        "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
         "digest_domain": "sha256-jcs",
         "identity": "acme/orders"
       }
@@ -98,7 +98,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "d8373551829f8e2049529bae48a2a815340797a8bc9746fe9903d206b6c99c2d",
+    "digest": "238339fc969281cf0fc83484739d6be95554f9d1d2c86679ad461610d5289142",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -382,66 +382,6 @@
         ],
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "control",
-        "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
-        }
-      },
-      {
-        "body": {
-          "arguments": [
-            {
-              "target": {
-                "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-                "domain": "quire.checked-semantic-node/v1"
-              },
-              "term": "reference"
-            }
-          ],
-          "operation": {
-            "identity": "quire.op.state.transition",
-            "laws": [
-              {
-                "definition": {
-                  "authority": "agent-ix",
-                  "identity": "quire.protocol.finite-global/v1"
-                },
-                "role": "protocol_profile"
-              }
-            ],
-            "leaves": [],
-            "member": {
-              "kind": "profile_operator",
-              "operator": "sequence"
-            },
-            "mode": null
-          },
-          "operator": "state_transition",
-          "result_type": {
-            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "term": "application"
-        },
-        "dependencies": [
-          {
-            "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-            "domain": "quire.checked-semantic-node/v1"
-          }
-        ],
-        "node_id": {
-          "digest": "dbf9a7fafca110264e8a24d1a1fb9485e8fb1c66cf59c269116aa15fab38c5e1",
-          "domain": "quire.checked-semantic-node/v1"
-        },
-        "node_tag": "state",
-        "occurrences": [
-          {
-            "ordinal": 0,
-            "role": "claim"
-          }
-        ],
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "semantic_form": "transition",
         "semantic_type": {
           "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
           "domain": "quire.checked-semantic-node/v1"
@@ -1367,8 +1307,8 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5"
+                  "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5",
+                  "domain": "quire.checked-semantic-node/v1"
                 },
                 "term": "reference"
               }
@@ -1531,8 +1471,8 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5"
+            "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5",
+            "domain": "quire.checked-semantic-node/v1"
           },
           {
             "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
@@ -1550,14 +1490,14 @@
             "role": "declaration"
           }
         ],
+        "owner_model": {
+          "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+          "domain": "quire.checked-semantic-node/v1"
+        },
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "protocol_clause",
         "semantic_type": {
           "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
-        },
-        "owner_model": {
-          "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -1632,8 +1572,8 @@
         },
         "dependencies": [],
         "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5"
+          "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5",
+          "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "value",
         "occurrences": [
@@ -1994,26 +1934,6 @@
     },
     {
       "node_id": {
-        "digest": "dbf9a7fafca110264e8a24d1a1fb9485e8fb1c66cf59c269116aa15fab38c5e1",
-        "domain": "quire.checked-semantic-node/v1"
-      },
-      "ordinal": 0,
-      "regions": [
-        {
-          "end": 6,
-          "source": {
-            "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
-            "identity": "example"
-          },
-          "start": 5
-        }
-      ],
-      "role": "claim"
-    },
-    {
-      "node_id": {
         "digest": "e43e0ce6861b0952ad31d1fb39c8fe143500fd426e65848eec43d6bdcc02b2fd",
         "domain": "quire.checked-semantic-node/v1"
       },
@@ -2174,8 +2094,8 @@
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5"
+        "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5",
+        "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
       "regions": [

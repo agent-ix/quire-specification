@@ -55,6 +55,21 @@ claims with their own premises and backend dispositions; a finite passing trace
 does not prove them. No result grants testing adequacy or evidence sufficiency
 from observed conformance. C's assurance completion is not a semantic dependency.
 
+## Checked-package state transition carrier
+
+The profile role `protocol_profile` of the checked-package catalog also law-binds
+the `quire.op.state.transition` application of a Boolean model-field
+`state`/`transition` node
+([FR-341](../../../spec/objects/interfaces/FR-341-checked-package-state-clause-body.md)
+"State transition body"). The profile defines for it exactly one operator,
+`transition`, so a state transition is not a protocol and adds no protocol
+semantics: only the catalog law role requires this profile. A producer that
+emits a `state`/`transition` node SHALL write the `protocol_profile` selection
+of this profile into the package lock even when the package declares no
+protocol (the selection enters the identity preimage and so the `package_id`),
+and a reader refuses a transition under a lock without it as
+`operation-law-unselected`.
+
 ## Selected protocol rules
 
 The native surface fixes concrete syntax/binding details; B's requirements own

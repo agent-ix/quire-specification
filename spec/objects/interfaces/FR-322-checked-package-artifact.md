@@ -340,8 +340,10 @@ boundary.
   member naming one operator the law's profile defines (for a
   `quire.op.protocol.control` application the operators of
   [FR-464](FR-464-checked-package-protocol-node-bodies.md)'s catalog: the
-  protocol clause, its declarations and its controls; or for a claim the
-  temporal operator it applies), or for
+  protocol clause, its declarations and its controls; for a
+  `quire.op.state.transition` application the one operator `transition`,
+  whose body [FR-341](FR-341-checked-package-state-clause-body.md) fixes; or
+  for a claim the temporal operator it applies), or for
   `quire.op.temporal.clause` no member: a temporal clause's body, its
   `quire.op.temporal.*` operator identities and their `temporal_interval` and
   `fairness` members are

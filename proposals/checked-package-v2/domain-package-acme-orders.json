@@ -1375,6 +1375,139 @@
     },
     {
       "constraints": [],
+      "displayName": "Switch",
+      "extensions": [],
+      "fields": [
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Switch/id",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "id",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Switch.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Integer"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Switch/on",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "on",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Switch.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Boolean"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Switch/level",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "level",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Switch.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Integer"
+        }
+      ],
+      "identity": "ix://acme/orders/Switch",
+      "identityFields": [
+        "ix://acme/orders/Switch/id"
+      ],
+      "kind": {
+        "module": "acme/orders",
+        "name": "entity"
+      },
+      "operations": [
+        {
+          "identity": "ix://acme/orders/Switch/set",
+          "name": "set",
+          "origin": {
+            "source": {
+              "path": "orders/Switch.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "params": [
+            {
+              "defaultKind": "none",
+              "identity": "ix://acme/orders/Switch/set/flag",
+              "multiplicity": {
+                "lower": 1,
+                "ordered": false,
+                "unique": true,
+                "upper": 1
+              },
+              "name": "flag",
+              "nullable": false,
+              "origin": {
+                "source": {
+                  "path": "orders/Switch.md",
+                  "sourceIdentity": "ix://acme/orders/spec",
+                  "startColumn": 1,
+                  "startLine": 1
+                }
+              },
+              "presence": "required",
+              "typeRef": "ix://quire/native/Boolean"
+            }
+          ],
+          "post": [],
+          "pre": []
+        }
+      ],
+      "origin": {
+        "source": {
+          "path": "orders/Switch.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "relationships": [],
+      "roles": [],
+      "supertypes": [],
+      "unknownPolicy": "reject"
+    },
+    {
+      "constraints": [],
       "displayName": "Tagged",
       "extensions": [],
       "fields": [
