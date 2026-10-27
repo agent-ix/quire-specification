@@ -353,6 +353,48 @@
             "redefines": null
           }
         ]
+      },
+      {
+        "node": "ix://acme/orders/Switch",
+        "interfaceFeatures": null,
+        "supertypes": [],
+        "fields": [
+          {
+            "name": "id",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+            "redefines": null
+          },
+          {
+            "name": "on",
+            "typeRef": "ix://quire/native/Boolean",
+            "presence": "required",
+            "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+            "redefines": null
+          },
+          {
+            "name": "level",
+            "typeRef": "ix://quire/native/Integer",
+            "presence": "required",
+            "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+            "redefines": null
+          }
+        ],
+        "operations": [
+          {
+            "name": "set",
+            "parameters": [
+              {
+                "name": "flag",
+                "typeRef": "ix://quire/native/Boolean",
+                "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}
+              }
+            ],
+            "result": null,
+            "redefines": null
+          }
+        ]
       }
     ],
     "value_types": [

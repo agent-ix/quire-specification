@@ -49,9 +49,11 @@ below.
   therefore has family `object`, which is the anchor position of
   `quire.op.state.clause`
   ([FR-341](FR-341-checked-package-state-clause-body.md)).
-- **occurrences** — every occurrence has role `anchor`, one per clause or
-  protocol attempt that names the operation and resolves to this exact
-  point-qualified anchor.
+- **occurrences** — every occurrence has role `anchor`, one per clause,
+  protocol attempt or `state`/`transition` node
+  ([FR-341](FR-341-checked-package-state-clause-body.md)) that names the
+  operation and resolves to this exact point-qualified anchor. A transition
+  names the no-point anchor.
 - **dependencies** — `C` and `F`, the two nodes the body references.
 
 One `operation_anchor` node stands for one (declaring type, operation name,

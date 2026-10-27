@@ -20,7 +20,7 @@
         "identity": "test/predicates",
         "package_id": {
           "algorithm": "sha256",
-          "digest": "df92b97073ee845bbc1b6aaccfac88ea8d1b4e34e11e545ca7287c61193b30fe",
+          "digest": "0ca1063fa2cc42c8572f47bac1c16522e04a9055832ca65879ee078ff58ac811",
           "domain": "quire.package.semantic/v2"
         }
       }
@@ -46,7 +46,7 @@
         "identity": "test/predicates",
         "package_id": {
           "algorithm": "sha256",
-          "digest": "df92b97073ee845bbc1b6aaccfac88ea8d1b4e34e11e545ca7287c61193b30fe",
+          "digest": "0ca1063fa2cc42c8572f47bac1c16522e04a9055832ca65879ee078ff58ac811",
           "domain": "quire.package.semantic/v2"
         }
       }
@@ -74,7 +74,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "e024c38ab0619339f8ceebbc28266095aad6fb829ba32536e8cbac5b9a18d5ad",
+    "digest": "c467d1d4b718ce75ab887f55a2086c3ff169cb902b743baf378c906a71131da6",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -194,7 +194,7 @@
               },
               "package": {
                 "algorithm": "sha256",
-                "digest": "df92b97073ee845bbc1b6aaccfac88ea8d1b4e34e11e545ca7287c61193b30fe",
+                "digest": "0ca1063fa2cc42c8572f47bac1c16522e04a9055832ca65879ee078ff58ac811",
                 "domain": "quire.package.semantic/v2"
               },
               "term": "dependency_reference"
@@ -231,7 +231,7 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "a43190b87afaf393d1726f5980f93617398063dc6ba5ab77aab151089d380d77",
+          "digest": "196fbd069392d3282e3058730d476cd26aa23d3ee63af949e62aa6f595be6fd7",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "function",
@@ -313,7 +313,7 @@
     },
     {
       "node_id": {
-        "digest": "a43190b87afaf393d1726f5980f93617398063dc6ba5ab77aab151089d380d77",
+        "digest": "196fbd069392d3282e3058730d476cd26aa23d3ee63af949e62aa6f595be6fd7",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,

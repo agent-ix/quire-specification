@@ -1605,11 +1605,56 @@ impl<'a> OperationOracle<'a> {
             )
     }
 
+    /// The field of a model object type, typed by FR-322 "Model-owned members"
+    /// step 4 from the selected document: a required, single-valued Boolean or
+    /// Integer field is that scalar node. `None` when `member` does not name a
+    /// model object type; `Some(None)` when the field is absent or has another
+    /// presence, multiplicity or type (an optional field is `Option<T>`, which
+    /// this oracle does not form), so the projection is ineligible.
+    fn model_field_descriptor(&self, member: &Value) -> Option<Option<Descriptor>> {
+        let declaration = self.node(&member["declaration"])?;
+        if declaration["node_tag"] != "model"
+            || declaration["semantic_form"] != "object_type"
+            || declaration["owner"]["kind"] != "model"
+        {
+            return None;
+        }
+        let owner = declaration["owner"]["node"].as_str()?;
+        let field = self
+            .documents
+            .iter()
+            .filter_map(|document| document["object_types"].as_array())
+            .flatten()
+            .find(|declared| declared["node"] == owner)
+            .and_then(|declared| declared["fields"].as_array())
+            .and_then(|fields| fields.iter().find(|field| field["name"] == member["name"]));
+        Some((|| {
+            let field = field?;
+            let single = field["multiplicity"]["lower"] == "1" && field["multiplicity"]["upper"] == "1";
+            if field["presence"] != "required" || !single {
+                return None;
+            }
+            let form = match field["typeRef"].as_str()? {
+                "ix://quire/native/Boolean" => "boolean",
+                "ix://quire/native/Integer" => "integer",
+                _ => return None,
+            };
+            let scalar = self
+                .nodes
+                .iter()
+                .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == form)?;
+            self.typed(&scalar["node_id"])
+        })())
+    }
+
     /// Result descriptor of a member selection, resolved against its declaration.
     fn member_descriptor(&self, member: &Value) -> Option<Descriptor> {
         let declaration = &member["declaration"];
         match member["kind"].as_str()? {
             "field" => {
+                if let Some(typed) = self.model_field_descriptor(member) {
+                    return typed;
+                }
                 let record = self.resolve(declaration)?;
                 (self.type_family(declaration)? == "record").then_some(())?;
                 self.typed(Self::reference_target(Self::binding(
@@ -2482,7 +2527,7 @@ fn protocol_operators() -> Vec<String> {
 }
 
 /// The finite-global profile's one `state`/`transition` operator, read from
-/// FR-464's "State transition operator" table.
+/// FR-464's "State operator" table.
 fn state_transition_operators() -> Vec<String> {
     FR464_PROTOCOL_NODES
         .lines()
@@ -13529,7 +13574,7 @@ const POSITIVE_TWO_OWNERS_B: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-two-owners-b.json");
 
 /// Every published positive fixture, by name.
-fn positive_fixtures() -> [(&'static str, Value); 11] {
+fn positive_fixtures() -> [(&'static str, Value); 12] {
     let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     modelize_legacy_record_reference(&mut operation);
     [
@@ -13554,6 +13599,10 @@ fn positive_fixtures() -> [(&'static str, Value); 11] {
         (
             "positive-recursive-records",
             parsed_fixture(POSITIVE_RECURSIVE_RECORDS),
+        ),
+        (
+            "positive-state-transition",
+            parsed_fixture(POSITIVE_STATE_TRANSITION),
         ),
         (
             "positive-extension-nodes",
@@ -14216,8 +14265,8 @@ fn tc_233_published_model_selections_name_the_domain_document_by_its_jcs_digest(
         }
     }
     assert_eq!(
-        selecting, 8,
-        "four published packages select it, twice each"
+        selecting, 10,
+        "five published packages select it, twice each"
     );
 }
 
@@ -18763,10 +18812,19 @@ fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
         package["package_id"]["digest"].as_str(),
         Some(unqualified_jcs_sha256(&derive_package_id_preimage(&package)).as_str())
     );
-    // The operation step admits every application of the package but the
-    // field projection: this oracle types a field only on a record, and TC-280
-    // qualifies a projection over a `deref` of a model object, so the
-    // projection is skipped here and the transition is checked alone.
+    let preimage_schema =
+        schema_for_def(&parsed_fixture(NODE_PREIMAGE_SCHEMA), "ApplicationNode");
+    for node in nodes.iter().filter(|node| is_application_node(node)) {
+        let preimage = application_node_preimage(node, nodes).expect("application preimage");
+        assert!(
+            preimage_schema.is_valid(&preimage),
+            "{} preimage is valid under the preimage schema",
+            node["semantic_form"]
+        );
+    }
+    // The operation step admits every application of the package, the
+    // subject projection over a dereferenced model object included.
+    assert_eq!(package_operations_refusal(&package, &catalog), Ok(()));
     let operation_refusal = |candidate: &Value, form: &str| {
         let oracle = OperationOracle::for_package_with(&catalog, candidate, &[]);
         oracle
@@ -18782,9 +18840,6 @@ fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
             .collect::<Result<Vec<_>, _>>()
             .map(drop)
     };
-    for form in ["deref", "unary", "state_clause", "transition"] {
-        assert_eq!(operation_refusal(&package, form), Ok(()), "{form} is admitted");
-    }
 
     let transition = node_with_operation(&package, "quire.op.state.transition");
     let body = |index: usize| format!("/semantic_graph/nodes/{index}/body");
@@ -18874,30 +18929,93 @@ fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
         "a protocol control never applies the state operator"
     );
 
-    let transition_id = package["semantic_graph"]["nodes"][transition]["node_id"].clone();
+    // TS-18: a lock without the protocol_profile selection leaves the law unselected.
+    let mut unselected = package.clone();
+    for prefix in ["/lock", "/identity_preimage"] {
+        unselected
+            .pointer_mut(&format!("{prefix}/profile_selections"))
+            .and_then(Value::as_array_mut)
+            .expect("profile selections")
+            .retain(|row| row["role"] != "protocol_profile");
+    }
+    refresh_package_id(&mut unselected);
+    assert_eq!(
+        operation_refusal(&unselected, "transition"),
+        Err(OperationRefusal::LawUnselected),
+        "a transition needs the protocol profile selected"
+    );
+
+    // TS-16: a transition application nested in another term, and another
+    // application as a transition node's body, each fail the schema.
+    let enabled = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| node["body"]["operation"]["identity"] == "quire.op.boolean.or")
+        .expect("the precondition term");
+    refused(
+        format!("{}/arguments/0", body(enabled)),
+        package["semantic_graph"]["nodes"][transition]["body"].clone(),
+        "a transition application is never nested",
+    );
+    refused(
+        body(transition),
+        package["semantic_graph"]["nodes"][enabled]["body"].clone(),
+        "a transition node's body root is the transition application",
+    );
+
+    let ids = |candidate: &Value| {
+        candidate["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .map(|node| node["node_id"]["digest"].as_str().expect("id").to_owned())
+            .collect::<BTreeSet<_>>()
+    };
     let mut regions = package.clone();
     regions["source_map"][0]["regions"][0]["start"] = json!(40);
+    assert_eq!(ids(&regions), ids(&package), "a source region moves no node id");
     assert_eq!(
         unqualified_jcs_sha256(&derive_package_id_preimage(&regions)),
         package["package_id"]["digest"].as_str().expect("id"),
         "a source region is outside the package identity"
     );
-    let mut renamed = package.clone();
-    let anchor = node_with_operation(&package, "quire.op.state.transition");
-    let anchor_digest = package["semantic_graph"]["nodes"][anchor]["body"]["arguments"][0]["value"]
-        ["target"]["digest"]
+
+    let anchor_digest = package["semantic_graph"]["nodes"][transition]["body"]["arguments"][0]
+        ["value"]["target"]["digest"]
         .as_str()
         .expect("anchor digest")
         .to_owned();
+    let mut renamed = package.clone();
     let anchor_index = node_index(&renamed, &anchor_digest);
     renamed["semantic_graph"]["nodes"][anchor_index]["body"]["members"][1]["value"]["value"] =
         json!("restore");
-    rekey_stale_nodes(&mut renamed);
-    let renamed_transition = node_with_operation(&renamed, "quire.op.state.transition");
-    assert_ne!(
-        renamed["semantic_graph"]["nodes"][renamed_transition]["node_id"], transition_id,
-        "the anchor's operation enters the transition identity"
+    let renames = rekey_stale_nodes(&mut renamed);
+    let renamed_forms = renames
+        .keys()
+        .map(|old| {
+            let node = &package["semantic_graph"]["nodes"][node_index(&package, old)];
+            format!("{}/{}", node["node_tag"], node["semantic_form"])
+        })
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        renamed_forms,
+        BTreeSet::from([
+            "\"state\"/\"operation_anchor\"".to_owned(),
+            "\"state\"/\"state_clause\"".to_owned(),
+            "\"state\"/\"transition\"".to_owned(),
+        ]),
+        "the anchor's operation enters the anchor, both clauses and the transition"
     );
     assert_ne!(renamed["package_id"], package["package_id"]);
-}
 
+    // Rewriting `post` to name the precondition changes the transition and the package id.
+    let mut rewired = package.clone();
+    let pre_target = rewired["semantic_graph"]["nodes"][transition]["body"]["arguments"][3]
+        ["value"]["members"][0]
+        .clone();
+    rewired["semantic_graph"]["nodes"][transition]["body"]["arguments"][4]["value"] = pre_target;
+    let renames = rekey_stale_nodes(&mut rewired);
+    assert_eq!(renames.len(), 1, "only the transition is rekeyed");
+    assert_ne!(rewired["package_id"], package["package_id"]);
+}

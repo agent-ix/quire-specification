@@ -32,14 +32,17 @@ structures, but any external consumer receives only the contract.
   field entry and the four frame members, and the `value`/`parameter` node
   for `self` (FR-340, FR-341, FR-342).
 - `fixtures/positive-state-transition.json` is a V2 package carrying the
-  Boolean model-field transition `Order.reset` over the field `note` of
-  `acme/orders`: the `Order` model node, its `Reference<Order>`, the `self`
-  parameter, a `deref` and a field `project` node (the subject), a `not`
-  term, the frame, the no-point operation anchor, the precondition and
-  postcondition state clauses and one `state`/`transition` node whose
-  `quire.op.state.transition` application binds `anchor`, `subject`, `inputs`,
-  `pre` and `post` (FR-341 "State transition body", FR-464-AC-19, TC-233).
-  Its keys and `package_id` follow "Regenerating protocol fixture keys".
+  Boolean model-field transition `Switch.set(flag: Boolean)` over the required
+  Boolean field `on` of `acme/orders` (the `Switch` entity is in
+  `domain-package-acme-orders.json` and its projection in
+  `model-member-type-vectors.json`): the `Switch` model node, its
+  `Reference<Switch>`, the `self` and `flag` parameters, a `deref` and a field
+  `project` node (the subject), the `flag || on` term, the frame, the no-point
+  operation anchor, the precondition and postcondition state clauses and one
+  `state`/`transition` node whose `quire.op.state.transition` application binds
+  `anchor`, `subject`, `inputs`, `pre` and `post` (FR-341 "State transition
+  body", FR-464-AC-19, TC-233). Its keys and `package_id` follow "Regenerating
+  protocol fixture keys".
 - `fixtures/positive-extension-nodes.json` is a V2 package carrying the
   `retention Audit { subject: "audit", days: 30 }` form of a selected
   extension as one `extension`/`extension_form` node, its two clause subnodes
