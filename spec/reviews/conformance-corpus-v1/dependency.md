@@ -10,12 +10,10 @@ review_set: subset
 
 ## Summary
 
-PASS. The ownership direction is QSpec contract to QSL consumer, and QSL
-consumes QSpec's declared applicability and result fields without adding a
-reverse dependency.
+PASS. The ownership direction remains QSpec FR-336 to QSL FR-350. QSpec references the existing FR-323 and FR-071/072 contracts; QSL binds the corpus-owned adapter to the typed request and replay operation.
 
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No unresolved dependency issue found: FR-336 owns the wire contract; FR-350/351/353 depend on it for execution, scope and preflight settlement. | FR-336; FR-350; FR-351; FR-353 |
+| FND-001 | low | FR-336 owns the corpus adapter; FR-323 owns reused envelope shapes; FR-071/072 own request and result behavior. The dependency direction remains acyclic. | FR-336; FR-323; FR-350; FR-071; FR-072 |

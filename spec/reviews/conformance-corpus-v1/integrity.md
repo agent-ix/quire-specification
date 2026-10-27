@@ -10,11 +10,10 @@ review_set: subset
 
 ## Summary
 
-PASS. The vector, capability, rollup, subject and expected-disposition shapes
-are consistent across the schema, fixture, interface and QSL consumer rules.
+PASS. The replay request fixture has all 15 required members; nested request types, target members and source arms align across the schema, FR-336 mapping table and FR-350 adapter binding.
 
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No unresolved integrity issue found: the `incomplete` vector class is not confused with a result disposition, capability applicability is separate from per-vector applicability, and QSL reads only the primary capability rows for scope. | FR-336; FR-350; FR-351 |
+| FND-001 | low | The FR-323 target/source forms and the structural RequestTargetWire fields remain distinct, and declared-domain kind/null and bound fields are represented separately. | FR-336-AC-7; TC-970; FR-350 |

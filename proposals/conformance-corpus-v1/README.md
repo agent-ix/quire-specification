@@ -23,10 +23,15 @@ The corpus has four top-level members:
   canonical Reference, and named Population values. The `population` file is
   the consuming API's object-context document; QSL binds it to FR-106's
   `quire.state.snapshot/v1` document and resolves Population names only after
-  admission. A `replay-request` adapter's `byte_provision` rows use
-  `$defs.ReplayProvisionPath`: `digest_domain`, `digest`, and a `bytes_path`
-  to a sibling `bytes` file. The consumer reads raw file bytes into its typed
-  digest-addressed provision. These are harness adapters, not product wires.
+  admission. A `replay-request` adapter uses `$defs.ReplayRequest`, a closed
+  request adapter whose 15 members map one-to-one to `ReplayRequestWire`.
+  FR-323 source, target and result members are reused; other nested types have
+  closed structural encodings with `snake_case` Rust fields, tagged variants,
+  decimal-string integers and no unknown members.
+  `$defs.ReplayProvisionPath` rows carry `digest_domain`, `digest`, and a
+  `bytes_path` to a sibling `bytes` file. The consumer reads raw file bytes
+  into its typed digest-addressed provision. These are harness adapters, not
+  product wires.
   `expected.disposition` is either `value` or `refusal`. `value` carries the
   operation's typed JSON result; `refusal` carries the typed code and cause,
   and may carry operation-defined details. A vector class of `incomplete`
@@ -47,8 +52,10 @@ canonical encoding. A valid path whose file is absent is reported as that
 vector's execution failure, as FR-350 requires; it is not a corpus preflight
 refusal. These checks do not rewrite `results` or `coverage`.
 
-The fixture is intentionally a small wire example rather than a complete
-qualification claim. FR-336-AC-1 still requires corpus owners to cover every
+The fixture `fixtures/replay-request.json` is a schema-valid example of the
+closed replay adapter shape. It is not an executable replay vector and makes
+no qualification claim. The main corpus fixture remains intentionally a small
+wire example rather than a complete qualification claim. FR-336-AC-1 still requires corpus owners to cover every
 inventory capability with positive and adverse or boundary vectors where
 applicable. The QSL runner selects a scope from the primary rows, then runs
 only vectors whose own applicability includes the selected QSL consumer, as

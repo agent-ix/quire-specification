@@ -10,11 +10,10 @@ review_set: subset
 
 ## Summary
 
-PASS. The wire distinguishes schema/preflight refusal from a missing but
-otherwise valid vector input, which remains an isolated per-vector tool failure.
+PASS. The replay adapter closes source, target, witness-value and request objects; unsafe/unlisted byte paths refuse before request construction, while readable-path and digest errors remain assigned to their existing per-vector and FR-071 owners.
 
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No unresolved failure-domain issue found in this change: closed object shapes, typed expected dispositions and explicit reader-side uniqueness/reference checks preserve refusal boundaries; a valid unreadable input does not abort sibling vectors. | FR-336; FR-350; FR-353 |
+| FND-001 | low | Structural unknowns, unsupported source arms and unsafe byte paths have explicit refusal points; ordinary missing vector files remain isolated tool failures. | FR-336-AC-7/8; TC-970; FR-350 |

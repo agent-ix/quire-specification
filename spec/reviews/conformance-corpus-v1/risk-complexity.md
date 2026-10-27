@@ -10,12 +10,10 @@ review_set: subset
 
 ## Summary
 
-PASS. The format keeps its first version small: typed structural alternatives
-are closed, operation-specific values remain operation-owned, and the fixture
-does not overstate qualification coverage.
+PASS. The replay mapping adds many nested typed values, creating conversion risk at the adapter boundary. The exhaustive member table, closed schema and focused TC-970 mutations make that conversion auditable without changing product wires.
 
 ## Findings
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No unresolved risk/complexity issue found: the schema avoids duplicating operation result schemas while still fixing the expected value/refusal discriminator and refuses future silent extensions. | FR-336; schema.json; fixture |
+| FND-001 | low | Primary residual risk is implementation fidelity for integer/range and byte-path conversions; test each mapped variant and refusal before the runner consumes broad corpus data. | FR-336-AC-7/8; TC-970; FR-350 |
