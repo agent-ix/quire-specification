@@ -521,7 +521,7 @@ dependencies = [
 [[package]]
 name = "quire-verification-contracts"
 version = "0.1.0"
-source = "git+https://github.com/agent-ix/quire-verification-contracts?branch=main#5cc7b34a97435b006f050e08e72c8ee53a6f0b2a"
+source = "git+https://github.com/agent-ix/quire-verification-contracts?branch=main#80c735dd8d8a789b240cbc7c29d18ae83c56d2fb"
 dependencies = [
  "chrono",
  "jsonschema",
