@@ -37,6 +37,102 @@
       "type": "string",
       "minLength": 1
     },
+    "InputValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["kind", "value"],
+          "properties": {
+            "kind": { "const": "boolean" },
+            "value": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "decimal"],
+          "properties": {
+            "kind": { "const": "integer" },
+            "decimal": { "type": "string", "pattern": "^(0|-?[1-9][0-9]*)$" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "universe", "type", "object_identity"],
+          "properties": {
+            "kind": { "const": "reference" },
+            "universe": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+            "type": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+            "object_identity": { "$ref": "#/$defs/Nonempty" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["kind", "name"],
+          "properties": {
+            "kind": { "const": "population" },
+            "name": { "$ref": "#/$defs/Nonempty" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "CallInput": {
+      "type": "object",
+      "required": ["function", "arguments", "accounting"],
+      "properties": {
+        "function": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*$"
+        },
+        "arguments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["parameter", "value"],
+            "properties": {
+              "parameter": { "$ref": "#/$defs/Nonempty" },
+              "value": { "$ref": "#/$defs/InputValue" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "accounting": {
+          "type": "object",
+          "properties": {
+            "work_units": { "$ref": "#/$defs/CanonicalUnsignedDecimal" },
+            "result_units": { "$ref": "#/$defs/CanonicalUnsignedDecimal" },
+            "integer_bits": { "$ref": "#/$defs/CanonicalUnsignedDecimal" },
+            "decimal_digits": { "$ref": "#/$defs/CanonicalUnsignedDecimal" },
+            "scale_expansion": { "$ref": "#/$defs/CanonicalUnsignedDecimal" },
+            "text_input_bytes": { "$ref": "#/$defs/CanonicalUnsignedDecimal" },
+            "text_scalars": { "$ref": "#/$defs/CanonicalUnsignedDecimal" },
+            "normalized_scalars": { "$ref": "#/$defs/CanonicalUnsignedDecimal" },
+            "unit_edges": { "$ref": "#/$defs/CanonicalUnsignedDecimal" },
+            "value_occurrences": { "$ref": "#/$defs/CanonicalUnsignedDecimal" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "ReplayProvisionPath": {
+      "type": "object",
+      "required": ["digest_domain", "digest", "bytes_path"],
+      "properties": {
+        "digest_domain": { "type": ["string", "null"] },
+        "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "bytes_path": { "$ref": "#/$defs/Nonempty" }
+      },
+      "additionalProperties": false
+    },
+    "CanonicalUnsignedDecimal": {
+      "type": "string",
+      "maxLength": 20,
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
     "ConsumerType": {
       "enum": [
         "language",
@@ -289,7 +385,12 @@
           "enum": [
             "source",
             "model",
-            "input"
+            "input",
+            "call",
+            "object-context",
+            "population",
+            "replay-request",
+            "bytes"
           ]
         },
         "path": {
