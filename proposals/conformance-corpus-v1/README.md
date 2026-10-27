@@ -11,10 +11,22 @@ The corpus has four top-level members:
 - `vectors` contains each vector's `id`, `capability_id`, `class`,
   `subject`, `applicability`, `input` and `expected` members. `subject`
   names a consumer type and its operation. `input.files` names source,
-  model, operation-input, `call`, `object-context`, `replay-request` or
-  `bytes` files by path relative to the corpus root. A subject's requirement
-  assigns meanings to its consumer-input kinds; this corpus contract does not
-  add members to that subject's existing request wire.
+  model, operation-input, `call`, `object-context`, `population`,
+  `replay-request` or `bytes` files by path relative to the corpus root. The
+  corpus-owned `$defs.InputValue` and `$defs.CallInput` define test harness
+  input values and calls; a subject's requirement maps those values to its
+  existing typed API and does not add fields to a product request wire.
+  `accounting` limits use canonical unsigned decimal strings so the corpus's
+  canonical JSON does not round large `u64` values; the adapter parses and
+  range-checks them before constructing the typed call.
+  `$defs.InputValue` is a closed tagged union of Boolean, canonical Integer,
+  canonical Reference, and named Population values. The `population` file is
+  the consuming API's object-context document; QSL binds it to FR-106's
+  `quire.state.snapshot/v1` document and resolves Population names only after
+  admission. A `replay-request` adapter's `byte_provision` rows use
+  `$defs.ReplayProvisionPath`: `digest_domain`, `digest`, and a `bytes_path`
+  to a sibling `bytes` file. The consumer reads raw file bytes into its typed
+  digest-addressed provision. These are harness adapters, not product wires.
   `expected.disposition` is either `value` or `refusal`. `value` carries the
   operation's typed JSON result; `refusal` carries the typed code and cause,
   and may carry operation-defined details. A vector class of `incomplete`

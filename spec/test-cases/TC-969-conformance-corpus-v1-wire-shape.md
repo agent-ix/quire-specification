@@ -14,7 +14,7 @@ relationships:
 Verify the published structural schema admits its fixture and rejects missing,
 unknown and out-of-domain wire values before consumption.
 
-Scope: FR-336-AC-4, FR-336-AC-5.
+Scope: FR-336-AC-4, FR-336-AC-5, FR-336-AC-6.
 
 ## Test Procedure
 
@@ -26,10 +26,15 @@ member, and replacing the vector class, subject consumer type and expected
 disposition with values outside their vocabularies. Then set
 `input.files[0].kind` to each member of FR-336's input-file-kind vocabulary
 and validate each document; replace it once with `unknown` and validate again.
+Compile the published `$defs.InputValue`, `$defs.CallInput` and
+`$defs.ReplayProvisionPath` and validate
+each tagged value, a call with all four value tags, and invalid tag, member,
+decimal, identity, malformed accounting-decimal and replay digest mutations.
 
-Tag the tests `#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5")]`.
+Tag the tests `#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5", "FR-336-AC-6")]`.
 
 ## Expected Results
 
 The schema is valid, the fixture and every listed input-file kind are admitted,
-and every out-of-domain mutated document is refused by the schema.
+the four tagged input-value forms and call-file shape are admitted, and invalid
+mutations are refused.

@@ -3,7 +3,7 @@
 
 //! FR-336's closed conformance-corpus v1 structural contract.
 
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 use ix_trace_rs::trace;
 use quire_verification_contracts::jcs_canonicalize;
@@ -15,8 +15,17 @@ fn parsed(text: &str) -> Value {
     serde_json::from_str(text).expect("authored JSON is valid")
 }
 
+fn definition_validator(schema: &Value, name: &str) -> jsonschema::Validator {
+    let wrapper = json!({
+        "$schema": schema["$schema"],
+        "$defs": schema["$defs"],
+        "$ref": format!("#/$defs/{name}"),
+    });
+    jsonschema::validator_for(&wrapper).expect("definition compiles")
+}
+
 #[test]
-#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5")]
+#[trace("TC-969", "FR-336-AC-4", "FR-336-AC-5", "FR-336-AC-6")]
 fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
     let schema = parsed(SCHEMA);
     jsonschema::meta::validate(&schema).expect("Draft 2020-12 schema is valid");
@@ -62,17 +71,74 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
         "input",
         "call",
         "object-context",
+        "population",
         "replay-request",
         "bytes",
     ];
     for kind in kinds {
         let mut corpus = parsed(FIXTURE);
-        corpus["vectors"][0]["input"]["files"] = json!([{ "kind": kind, "path": "input/example.json" }]);
-        assert!(validator.is_valid(&corpus), "input file kind {kind} is admitted");
+        corpus["vectors"][0]["input"]["files"] =
+            json!([{ "kind": kind, "path": "input/example.json" }]);
+        assert!(
+            validator.is_valid(&corpus),
+            "input file kind {kind} is admitted"
+        );
     }
 
     let mut invalid_kind = parsed(FIXTURE);
     invalid_kind["vectors"][0]["input"]["files"] =
         json!([{ "kind": "unknown", "path": "input/example.json" }]);
     assert!(!validator.is_valid(&invalid_kind));
+
+    let call_validator = definition_validator(&schema, "CallInput");
+    let valid_call = json!({
+        "function": "check",
+        "arguments": [
+            {"parameter": "enabled", "value": {"kind": "boolean", "value": true}},
+            {"parameter": "count", "value": {"kind": "integer", "decimal": "-17"}},
+            {"parameter": "item", "value": {
+                "kind": "reference", "universe": "a".repeat(64),
+                "type": "b".repeat(64), "object_identity": "item-1"
+            }},
+            {"parameter": "items", "value": {"kind": "population", "name": "items"}}
+        ],
+        "accounting": {"work_units": "18446744073709551615"}
+    });
+    assert!(call_validator.is_valid(&valid_call));
+
+    let mut unknown_tag = valid_call.clone();
+    unknown_tag["arguments"][0]["value"]["kind"] = json!("text");
+    assert!(!call_validator.is_valid(&unknown_tag));
+
+    let mut malformed_decimal = valid_call.clone();
+    malformed_decimal["arguments"][1]["value"]["decimal"] = json!("-0");
+    assert!(!call_validator.is_valid(&malformed_decimal));
+
+    let mut malformed_identity = valid_call.clone();
+    malformed_identity["arguments"][2]["value"]["universe"] = json!("a".repeat(63));
+    assert!(!call_validator.is_valid(&malformed_identity));
+
+    let mut unknown_call_member = valid_call.clone();
+    unknown_call_member["invented"] = json!(true);
+    assert!(!call_validator.is_valid(&unknown_call_member));
+
+    let mut invalid_limit = valid_call;
+    invalid_limit["accounting"]["work_units"] = json!("-1");
+    assert!(!call_validator.is_valid(&invalid_limit));
+
+    let replay_provision_validator = definition_validator(&schema, "ReplayProvisionPath");
+    let valid_provision_path = json!({
+        "digest_domain": "quire.source.bytes/v1",
+        "digest": "c".repeat(64),
+        "bytes_path": "inputs/source.quire"
+    });
+    assert!(replay_provision_validator.is_valid(&valid_provision_path));
+
+    let mut malformed_digest = valid_provision_path.clone();
+    malformed_digest["digest"] = json!("not-a-digest");
+    assert!(!replay_provision_validator.is_valid(&malformed_digest));
+
+    let mut extra_provision_member = valid_provision_path;
+    extra_provision_member["bytes"] = json!([1, 2, 3]);
+    assert!(!replay_provision_validator.is_valid(&extra_provision_member));
 }

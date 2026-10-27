@@ -28,7 +28,7 @@ operations:
     corpus_wire: quire.conformance-corpus/v1
     capability_entries: coverage.primary
     vector_members: [id, capability_id, class, subject, applicability, input, expected]
-    input_file_kinds: [source, model, input, call, object-context, replay-request, bytes]
+    input_file_kinds: [source, model, input, call, object-context, population, replay-request, bytes]
     result_members: [subject, run_id, vector_id, outcome, artifacts]
 invariants:
   - every inventory ID appears exactly once in coverage.primary
