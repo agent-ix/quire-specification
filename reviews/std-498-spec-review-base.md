@@ -54,6 +54,23 @@ Independent recomputation: a Python JCS script mirroring `application_node_preim
 | FND-002 | low | The new FR-464 sentence "No selected declaration owns a model declaration node of an unselected package, so such a node is never a valid target" is circular and does not describe the removed case: the old target Config::ConfigVersion is a source-local node, not a node of an unselected package. "Selected declaration" is not defined where FR-375/FR-464 use it. | spec/objects/interfaces/FR-464-checked-package-protocol-node-bodies.md:70 |
 | FND-003 | low | FR-464-AC-18 still says `owner_model` is "the exact declaring model node"; FR-322:508 and TC-310 CC-14 ("owned by the selected concrete model") keep the old phrasing, so the ruling's wording is applied to FR-375/FR-464 bullet only. | spec/objects/interfaces/FR-464-checked-package-protocol-node-bodies.md:527 |
 
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-004 | medium | Option A defines the edge as the object type of the clause's `over` input, but FR-465-AC/TC-947 RL21 still admit clauses whose `over` type is a scalar, a record or `Set<M::Cell>`, and `owner_model` is required on every clause; no rule says what the edge is then. Also FR-464-AC-16 and TC-946 OM-03 do not list the new source-local-target refusal. | spec/objects/interfaces/FR-464-checked-package-protocol-node-bodies.md:68 |
+
+## Dispositions
+
+Round 1, reviewed at 0a4ae305 (merged with main 14497d77 for tests).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | FR-464 bullet and owner paragraph, FR-322:508, TC-946 OM-01 and protocol-node-vectors.json OM-01 (script: identical text) now say the object-type node of the over input's model; fixtures retarget over to Order (owner == over reference target in all four) |
+| FND-002 | fixed | `selected declaration` defined in the FR-464 bullet (declaration of a package named by a lock.model_selections row; source-local nodes are not); circular sentence removed |
+| FND-003 | fixed | FR-464-AC-18, FR-322:508, TC-310 CC-14 reworded; grep for the old phrases finds only model-package uses |
+| FND-004 | still-open | scalar/record/Set `over` types (RL21) have no defined owner object type, and the source-local refusal has no QSpec vector or AC-16 text |
+
 ## Verdict
 
 #456: the hand-computed keys and package ids are correct; nothing was fudged. The finish-binder repair is right: FR-464 Level gives `finish` an entry count of the binders readable after the root control, which is `over` alone (1) in these fixtures, so a distinct `closing` binder at level 1 conforms and the old reuse of level-0 `over` did not. Criterion ids are stable. Mergeable once FND-001 is fixed (or ruled a follow-up by the planner); FND-002 and FND-003 are wording nits. #456 requires #457 to compile the schema, so #457 merges first.
