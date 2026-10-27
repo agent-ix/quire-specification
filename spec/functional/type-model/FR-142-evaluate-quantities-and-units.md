@@ -510,9 +510,10 @@ the element of `Option` and of the collection types, and the target of
   a dimension name included, the checker SHALL refuse
   `missing_declaration`/`missing-name` at the name.
 - The checker SHALL admit under `Quantity<u>` every quantity of the unit and no
-  bound on the magnitude; a bounded magnitude is not a complete-V1 type form. A
-  domain package's `min` or `max` constraint on a unit is a value constraint on
-  members (FR-154 "Unit bounds") and leaves their type `Quantity<u>`.
+  bound on the magnitude; `Quantity<u>[min, max]` is not a source type form. A
+  domain package's `min` or `max` constraint on a unit gives its members the
+  bounded quantity type `Quantity<u>[min, max]`, a subtype of `Quantity<u>`
+  (FR-154 "Unit bounds").
 - The checker SHALL NOT admit `Quantity<D>` over a dimension `D` as a type
   form; a source that wants it declares a unit of `D` and writes `Quantity<u>`.
 - The checker SHALL lower a quantity literal to a checked-package `literal` term
