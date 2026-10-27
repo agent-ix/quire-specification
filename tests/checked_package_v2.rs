@@ -2599,7 +2599,7 @@ fn protocol_node_vectors_match_the_fr464_operator_catalog() {
     }
 }
 
-#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15", "FR-464-AC-16")]
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15", "FR-464-AC-16", "FR-464-AC-20", "FR-466-AC-16")]
 #[test]
 fn protocol_node_case_vectors_publish_the_qspec_examples() {
     let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
@@ -2612,7 +2612,7 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
             .filter(|case| case["test_case"] == test_case)
             .count()
     });
-    assert_eq!(counts, [113, 85, 162]);
+    assert_eq!(counts, [123, 85, 166]);
     // Every vector id a QSpec table row names is published as a case: a row
     // the table adds without a vector (TC-946 K10, K14) fails here.
     for (test_case, table) in [
@@ -6793,7 +6793,7 @@ fn tc_233_nominal_identity_preimages_have_exact_jcs_identities_and_semantics() {
     }
 }
 
-#[trace("TC-233", "FR-322-AC-15")]
+#[trace("TC-233", "FR-322-AC-15", "FR-322-AC-139")]
 #[test]
 fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
     let schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
@@ -6864,9 +6864,17 @@ fn tc_233_nominal_node_mutations_refuse_before_exposing_a_stale_identity() {
         {
             apply_authored_patch(&mut candidate, patch);
         }
+        // FR-322-AC-139: wire precedes graph, so a dimension-equivalence mutation that the
+        // closed schema refuses is `malformed_wire`; every other mutation is a graph defect.
+        let wire_refused = name.starts_with("dimension-equivalence-")
+            && mutation["refused_by"].as_str() == Some("schema");
         assert_eq!(
             mutation["expected_code"].as_str(),
-            Some("invalid_semantic_graph"),
+            Some(if wire_refused {
+                "malformed_wire"
+            } else {
+                "invalid_semantic_graph"
+            }),
             "{name} fixes its expected reader code"
         );
         let structurally_valid = schema.is_valid(&candidate);

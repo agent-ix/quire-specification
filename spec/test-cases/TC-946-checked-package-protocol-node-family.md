@@ -143,8 +143,15 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | --- | --- | --- |
 | OM-01 | Keep the `over` argument and add `owner_model` as the object-type node of the model owned by a selected declaration that the source clause's `over` type names | Admitted; the target is in `dependencies` and in the application-node identity preimage |
 | OM-02 | Change only `owner_model` to another existing selected model node and recompute the node and package identities | Admitted as a different clause identity; FR-375 class-catalog reconstruction associates its classes only with the new owner model |
-| OM-03 | Omit `owner_model`, use an external `PackageNodeKey`, target a non-model node, or omit its local dependency | Schema refusal for omission/external key; reader refuses a wrong-kind target or missing dependency before protocol interpretation |
+| OM-03 | Omit `owner_model`, or use an external `PackageNodeKey` | `malformed_wire` at the node (both V2 schemas) |
 | OM-04 | Keep two clauses over distinct selected models and build the concrete catalog for one of them, including a clause with no deciding step rows | Classes from all clauses owned by the selected model are included; the other model's classes are excluded |
+| OM-05 | Retarget `owner_model` to a `model`/`object_type` node whose `ModelOwner` joins no `model_selections` row (or whose selected document does not declare it as an object type), rebuild the clause key and package identity | `missing_declaration`/`missing-selection` at the target's own `node_id` in the owner join, before any body step and before the clause edge is read |
+| OM-06 | Retarget `owner_model` to a selected declaration's node of another form (a `state_machine`), then a `process`, a `record_value_type`, and the package's `model_root` | each `invalid_model_binding`/`malformed-declaration` at `/semantic_graph/nodes/{i}/owner_model` after the refinement step, as the clause's first step 6 check |
+| OM-07 | Retarget `owner_model` to a source-local declaration (a node with a source `owner`), then to a non-model node | each `invalid_model_binding`/`malformed-declaration` at `/semantic_graph/nodes/{i}/owner_model` |
+| OM-08 | Retarget `owner_model` to the object-type node of a second selected declaration that the `over` type does not name | Admitted as a different clause identity; the reader does not compare the target with the `over` type |
+| OM-09 | Retarget `owner_model` to a local node id that is no node of the graph; separately drop only the target from the clause's `dependencies` | `missing_declaration`/`missing-name` at `/semantic_graph/nodes/{i}/owner_model`; `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` (graph stage, before any body step) |
+| OM-10 | An unselected `model`/`object_type` target (OM-05) and a protocol-body defect in the same package | The unselected target's owner-join refusal is reported |
+| OM-11 | A selected wrong-kind target (OM-06) with a refinement row/catalog-shape defect; then with a step 4 member defect; then with a binder-scope defect in the same clause's slot | The refinement-step defect; the step 4 member defect; the `invalid_model_binding`/`malformed-declaration` edge refusal before the slot defect |
 
 ## Membership
 
@@ -222,6 +229,9 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | O7 | `R2` (cycle) and `B14` (a model-state read in a guard) | the cycle `R2` is reported (cycle and progress precede the slot checks) |
 | O8 | one guard that reads `view` and an unlisted fact `eastRes.ok` | `ill_typed`/`operator-ineligible` (the `over` refusal precedes the decision-fact check) |
 | O9 | one guard that reads an out-of-scope binder and an unlisted fact | `missing_declaration`/`missing-name` (the scope refusal precedes the decision-fact check) |
+| O10 | an unselected `owner_model` target (OM-05) and `V7` | the target's owner-join `missing_declaration`/`missing-selection` at the target is reported (graph stage precedes the protocol step) |
+| O11 | a wrong-kind selected `owner_model` target (OM-06) and `B6` in the same clause | the `invalid_model_binding`/`malformed-declaration` edge refusal is reported (the edge is the clause's first step 6 check) |
+| O12 | a wrong-kind selected `owner_model` target and `M2` | the membership defect `M2` is reported (steps 4 and 5 precede the clause edge) |
 
 ## Expected Results
 
@@ -239,8 +249,8 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 6. B2 to B26 behave as listed (FR-464-AC-7, FR-464-AC-8).
 7. R2, R4, R5 refuse `definition-cycle`; R7 to R9 refuse `declaration-form`;
    R1, R3, R6 and R10 to R12 are admitted (FR-464-AC-9, FR-464-AC-10).
-8. O1 to O9 report the first defect in the reader order of FR-464
-   (FR-464-AC-12).
+8. O1 to O12 report the first defect in the reader order of FR-464
+   (FR-464-AC-12, FR-464-AC-20).
 Assertions compare typed fields, causes and pointers, never message text.
 
 ## Activation relation

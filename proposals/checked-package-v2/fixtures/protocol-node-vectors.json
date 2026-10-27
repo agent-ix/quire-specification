@@ -936,6 +936,27 @@
     },
     {
       "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O10",
+      "Edit to the base": "an unselected `owner_model` target (OM-05) and `V7`",
+      "Expected": "the target's owner-join `missing_declaration`/`missing-selection` at the target is reported (graph stage precedes the protocol step)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O11",
+      "Edit to the base": "a wrong-kind selected `owner_model` target (OM-06) and `B6` in the same clause",
+      "Expected": "the `invalid_model_binding`/`malformed-declaration` edge refusal is reported (the edge is the clause's first step 6 check)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Reader order",
+      "id": "O12",
+      "Edit to the base": "a wrong-kind selected `owner_model` target and `M2`",
+      "Expected": "the membership defect `M2` is reported (steps 4 and 5 precede the clause edge)"
+    },
+    {
+      "test_case": "TC-946",
       "section": "Activation relation",
       "id": "A1",
       "Edit to the base": "none",
@@ -2359,8 +2380,15 @@
       "test_case": "TC-948",
       "section": "Decision facts",
       "id": "DF6",
-      "Edit": "a guard reads a field of `paid` (an `effect` record); of the commit binder; of the finish binder",
+      "Edit": "a guard reads a field of `paid` (an `effect` record); of the commit binder",
       "Expected": "each `wrong_snapshot`/`wrong-observation`, `reason` `ineligible-kind`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF6b",
+      "Edit": "a `choice` guard, a `choice` `visible` entry, a `repeat` guard and a `repeat` `visible` entry each read a field of the finish binder (not readable in a `run` slot)",
+      "Expected": "each `missing_declaration`/`missing-name` at the read, `read` `stage`, before the decision-fact check; never `wrong_snapshot` (FR-466-AC-16)"
     },
     {
       "test_case": "TC-948",
@@ -2375,6 +2403,27 @@
       "id": "DF7b",
       "Edit": "a guard reads a field of the protocol activation binder `opened`",
       "Expected": "`wrong_snapshot`/`wrong-observation`, `reason` `ineligible-kind`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF7d",
+      "Edit": "a `choice` guard, a `choice` `visible` entry, a `repeat` guard and a `repeat` `visible` entry each read `view.ready`",
+      "Expected": "each `ill_typed`/`operator-ineligible` at the read, naming the slot; never `wrong_snapshot` (FR-466-AC-16)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF7e",
+      "Edit": "one guard reads both `view.ready` and a field of the finish binder; one guard reads both a field of the finish binder and a field of `sent`",
+      "Expected": "the first `ill_typed`/`operator-ineligible` at the `view` read; the second `missing_declaration`/`missing-name` at the finish read (FR-466-AC-16)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF7f",
+      "Edit": "a guard reads a field of a binder a compensation template declares",
+      "Expected": "`missing_declaration`/`missing-name`, `read` `foreign` (FR-466-AC-16)"
     },
     {
       "test_case": "TC-948",
@@ -2744,8 +2793,8 @@
       "test_case": "TC-946",
       "section": "Clause model owner edge",
       "id": "OM-03",
-      "Edit to the base": "Omit `owner_model`, use an external `PackageNodeKey`, target a non-model node, or omit its local dependency",
-      "Expected": "Schema refusal for omission/external key; reader refuses a wrong-kind target or missing dependency before clause interpretation"
+      "Edit to the base": "Omit `owner_model`, or use an external `PackageNodeKey`",
+      "Expected": "`malformed_wire` at the node (both V2 schemas)"
     },
     {
       "test_case": "TC-946",
@@ -2753,6 +2802,55 @@
       "id": "OM-04",
       "Edit to the base": "Keep two clauses over distinct selected models and build the concrete catalog for one of them, including a clause with no deciding step rows",
       "Expected": "Classes from all clauses owned by the selected model are included; the other model's classes are excluded"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-05",
+      "Edit to the base": "Retarget `owner_model` to a `model`/`object_type` node whose `ModelOwner` joins no `model_selections` row (or whose selected document does not declare it as an object type), rebuild the clause key and package identity",
+      "Expected": "`missing_declaration`/`missing-selection` at the target's own `node_id` in the owner join, before any body step and before the clause edge is read"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-06",
+      "Edit to the base": "Retarget `owner_model` to a selected declaration's node of another form (a `state_machine`), then a `process`, a `record_value_type`, and the package's `model_root`",
+      "Expected": "each `invalid_model_binding`/`malformed-declaration` at `/semantic_graph/nodes/{i}/owner_model` after the refinement step, as the clause's first step 6 check"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-07",
+      "Edit to the base": "Retarget `owner_model` to a source-local declaration (a node with a source `owner`), then to a non-model node",
+      "Expected": "each `invalid_model_binding`/`malformed-declaration` at `/semantic_graph/nodes/{i}/owner_model`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-08",
+      "Edit to the base": "Retarget `owner_model` to the object-type node of a second selected declaration that the `over` type does not name",
+      "Expected": "Admitted as a different clause identity; the reader does not compare the target with the `over` type"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-09",
+      "Edit to the base": "Retarget `owner_model` to a local node id that is no node of the graph; separately drop only the target from the clause's `dependencies`",
+      "Expected": "`missing_declaration`/`missing-name` at `/semantic_graph/nodes/{i}/owner_model`; `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` (graph stage, before any body step)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-10",
+      "Edit to the base": "An unselected `model`/`object_type` target (OM-05) and a protocol-body defect in the same package",
+      "Expected": "The unselected target's owner-join refusal is reported"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause model owner edge",
+      "id": "OM-11",
+      "Edit to the base": "A selected wrong-kind target (OM-06) with a refinement row/catalog-shape defect; then with a step 4 member defect; then with a binder-scope defect in the same clause's slot",
+      "Expected": "The refinement-step defect; the step 4 member defect; the `invalid_model_binding`/`malformed-declaration` edge refusal before the slot defect"
     }
   ]
 }
