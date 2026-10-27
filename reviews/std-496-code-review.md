@@ -25,6 +25,14 @@ Ticket: STD-497 (STD-496 and STD-510 trace additions). Rust lane folded in: 16 l
 | --- | --- | --- | --- |
 | FND-001 | low | The expected_code assertion derives `malformed_wire` from the mutation name prefix `dimension-equivalence-` combined with `refused_by` `schema`, instead of from `refused_by` alone. It hard-codes the inconsistency of SR-496001 FND-002 (other schema-refused mutations still expect `invalid_semantic_graph`) and will silently apply the wrong code to any later schema-refused mutation outside that prefix. FR-466-AC-16 and FR-464-AC-20 are tagged only to the vector-publication test, which checks row text, not reader behaviour; that is acceptable for a spec PR but means the matrix `tagged` status is not reader evidence. | tests/checked_package_v2.rs:6867 |
 
+## Dispositions
+
+Round 1, reviewed at 7ea036da.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The assertion is now `let wire_refused = mutation["refused_by"].as_str() == Some("schema");` with no name prefix; the protocol case-vector test lost the FR-464-AC-20 and FR-466-AC-16 traces (Analysis rows). |
+
 ## Verdict
 
 One low finding. The Rust change is minimal and correct for the vectors as written.
