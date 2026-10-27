@@ -4656,6 +4656,23 @@ fn clause_digest(role: &str) -> String {
             .expect("digest")
             .to_owned();
     }
+    if role == "reference" {
+        // The anchors' context type; the protocol clause's `over` type references the Order owner.
+        let context = clause_digest("object_type");
+        return package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| {
+                node["node_tag"] == "composite_type"
+                    && node["semantic_form"] == "reference"
+                    && node["body"]["members"][0]["target"]["digest"] == context.as_str()
+            })
+            .expect("the context reference type is published")["node_id"]["digest"]
+            .as_str()
+            .expect("digest")
+            .to_owned();
+    }
     if role == "object_type" {
         // The anchors' context; the selected acme/orders Order node is the clause's owner.
         return published_digest(&package, "model", "object_type", Some("ConfigVersion"));

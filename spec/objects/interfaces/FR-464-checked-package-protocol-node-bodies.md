@@ -66,15 +66,19 @@ FR-466, with the first refusal in the order below.
   declaring construct in the source, except a `queue` node, whose occurrences
   have role `generated`.
 - **owner_model** — required on a `protocol_clause` node and absent on every
-  other protocol node. It is a local `NodeRef` to the exact model declaration
-  over which the source clause is declared: the object-type node of a model
-  that a selected declaration owns. No selected declaration owns a model
-  declaration node of an unselected package, so such a node is never a valid
-  target. This explicit edge is authoritative
-  for clause-to-model ownership; a consumer SHALL NOT infer ownership from the
-  `over` parameter's type. It enters the node's application identity preimage
-  and exact dependency set. This edge continues to name the exact declaring
-  model node; it is not replaced by FR-322's canonical selected-package
+  other protocol node. It is a local `NodeRef` to the object-type node of the
+  model that the source clause is declared over, which is the object type of
+  its `over` input. That model is owned by a *selected declaration*: a
+  declaration of a model package named by a `lock.model_selections` row, whose
+  declaration node key is that package's recorded key for it (FR-322). A
+  source-local declaration (a node with a source `owner`, such as
+  `Config::ConfigVersion` of the published fixtures) is declared by no selected
+  package and is never a valid target. The producer sets the edge from the
+  clause's `over` object type; the edge is then authoritative for
+  clause-to-model ownership, and a consumer SHALL NOT infer ownership from, or
+  compare the edge with, the `over` parameter's type. It enters the node's application identity preimage
+  and exact dependency set. This edge continues to name the owner model's object-type
+  node; it is not replaced by FR-322's canonical selected-package
   `model_root`. A refinement's `abstract`/`semantic_type` headers use the
   model root to identify a whole selected package, while protocol class
   ownership is joined through this exact declaration edge and its selected
@@ -192,10 +196,11 @@ with thirteen arguments, in this order:
 | 13 | `finish` | a reference to the protocol's `finish` `obligation` node |
 
 The clause's model owner is the separate node-level `owner_model` edge above;
-it is not a fourteenth body argument. The edge targets the exact local model
-declaration node represented by the clause's source `over` type. The reader
-checks that the target is a selected model declaration node and that it is an
-exact dependency of the clause. FR-375 uses this identity-bound edge to decide
+it is not a fourteenth body argument. The edge targets the object-type node of the model
+declaration that the clause's `over` input's object type names, a model owned
+by a selected declaration. The reader checks that the target is such a
+selected model declaration node and that it is an exact dependency of the
+clause; it does not compare the target with the `over` parameter's type. FR-375 uses this identity-bound edge to decide
 which concrete clauses contribute classes to a refinement catalog.
 
 A relationship declaration has no node of its own: its name is a source
@@ -524,7 +529,7 @@ alternate cycle encoding.
 | FR-464-AC-15 | When a predicate-join function refers to its own protocol and the checked-node references form a cycle, the reader admits the package using FR-322's recursion-group encoding for the entire cyclic component, including non-protocol nodes: all component members share the group, carry `{size, ordinal}` coordinates and encode in-component references as `group_reference`. Acyclic protocol nodes have no `recursion_group`, use `recursion` `null` and retain their existing key inputs. | Test (TC-946) |
 | FR-464-AC-16 | Every `protocol_clause` node has one `owner_model` local `NodeRef` to its exact model declaration node; the edge is present in both V2 schemas, included in the clause's application-node preimage and exact dependencies, and absent from every other node. A missing edge, external key, non-model target or missing dependency refuses at the edge or dependency before clause interpretation. Retargeting only the edge changes the clause key and package id. FR-375 includes every clause whose edge is the object-type node of a model owned by the selected concrete declaration in its class catalog, even when no step row names its classes, and excludes a clause whose edge names a model owned by another declaration. | Test (TC-946, TC-310) |
 | FR-464-AC-17 | An `attempt` references the no-point `operation_anchor` for its operation. When a state clause names that same operation with a `ClauseBinding.execution_point`, the package has a distinct point-bearing anchor for the clause and a no-point anchor for the attempt; both may reference the operation's shared frame. Altering either point-bearing anchor changes its identity without changing the protocol attempt's anchor reference. | Test (TC-946) |
-| FR-464-AC-18 | A protocol clause retains `owner_model` as the exact declaring model node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge, node preimage or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
+| FR-464-AC-18 | A protocol clause retains `owner_model` as the owner model's object-type node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge, node preimage or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
 
 ## Published artifacts and the operation catalog
 
