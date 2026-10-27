@@ -19121,21 +19121,33 @@ fn model_root_positions(package: &Value) -> Vec<usize> {
         .collect()
 }
 
-/// The reader-stage model-root checks of FR-322-AC-135: a root owner that joins
-/// no selection refuses `missing_declaration`/`missing-selection` at the
-/// owner; a selection without a root refuses `invalid_semantic_graph` at
-/// `/semantic_graph/nodes`. Returns `(code, cause, pointer)`.
+/// The reader-stage model-root checks of FR-322-AC-135, in reader order: a
+/// repeated `node_id` (graph shape), the owner join, then completeness.
+/// Returns `(code, cause, pointer)`.
 fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static str, String)> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes are an array");
+    let mut seen = BTreeSet::new();
+    for (position, node) in nodes.iter().enumerate() {
+        if !seen.insert(node["node_id"].to_string()) {
+            return Some((
+                "invalid_semantic_graph",
+                "",
+                format!("/semantic_graph/nodes/{position}/node_id"),
+            ));
+        }
+    }
     let selections = package["lock"]["model_selections"]
         .as_array()
         .expect("model selections are an array");
     let roots = model_root_positions(package);
+    let joins = |selection: &Value, owner: &Value| {
+        selection["identity"] == owner["identity"] && selection["digest"] == owner["digest"]
+    };
     for position in &roots {
-        let owner = &package["semantic_graph"]["nodes"][*position]["owner"];
-        let joins = selections.iter().any(|selection| {
-            selection["identity"] == owner["identity"] && selection["digest"] == owner["digest"]
-        });
-        if !joins {
+        let owner = &nodes[*position]["owner"];
+        if !selections.iter().any(|selection| joins(selection, owner)) {
             return Some((
                 "missing_declaration",
                 "missing-selection",
@@ -19146,11 +19158,9 @@ fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static 
     selections
         .iter()
         .any(|selection| {
-            !roots.iter().any(|position| {
-                let owner = &package["semantic_graph"]["nodes"][*position]["owner"];
-                selection["identity"] == owner["identity"]
-                    && selection["digest"] == owner["digest"]
-            })
+            !roots
+                .iter()
+                .any(|position| joins(selection, &nodes[*position]["owner"]))
         })
         .then(|| {
             (
@@ -19182,6 +19192,36 @@ fn rekey_model_root(package: &mut Value, position: usize) {
     refresh_package_id(package);
 }
 
+const MODEL_ROOT_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/model-root-vectors.json");
+
+/// Applies the RFC 6902 `add`, `remove` and `replace` operations the model-root
+/// vectors use.
+fn apply_json_patch(package: &mut Value, patch: &Value) {
+    let path = patch["path"].as_str().expect("patch path");
+    let (parent, member) = path.rsplit_once('/').expect("patch path has a member");
+    let target = package.pointer_mut(parent).expect("patch parent exists");
+    match (patch["op"].as_str().expect("patch op"), target) {
+        ("add", Value::Array(items)) if member == "-" => items.push(patch["value"].clone()),
+        ("add", Value::Object(map)) => {
+            map.insert(member.to_owned(), patch["value"].clone());
+        }
+        ("replace", Value::Array(items)) => {
+            items[member.parse::<usize>().expect("index")] = patch["value"].clone();
+        }
+        ("replace", Value::Object(map)) => {
+            *map.get_mut(member).expect("replaced member exists") = patch["value"].clone();
+        }
+        ("remove", Value::Array(items)) => {
+            items.remove(member.parse::<usize>().expect("index"));
+        }
+        ("remove", Value::Object(map)) => {
+            map.remove(member).expect("removed member exists");
+        }
+        (operation, _) => panic!("unsupported model-root patch {operation} at {path}"),
+    }
+}
+
 #[trace("TC-310", "FR-322-AC-132", "FR-322-AC-134")]
 #[test]
 fn tc_310_every_selected_model_package_carries_exactly_one_recomputed_root() {
@@ -19207,19 +19247,40 @@ fn tc_310_every_selected_model_package_carries_exactly_one_recomputed_root() {
             package["package_id"]["digest"].as_str().unwrap(),
             "{name}: package_id recomputes with the root"
         );
+        let node_count = package["semantic_graph"]["nodes"].as_array().unwrap().len();
         for selection in selections {
             selected += 1;
             let expected = derived_model_root(selection);
-            let found = roots
+            let position = roots
                 .iter()
-                .map(|position| &package["semantic_graph"]["nodes"][*position])
-                .find(|node| node["owner"]["identity"] == selection["identity"])
+                .copied()
+                .find(|position| {
+                    package["semantic_graph"]["nodes"][*position]["owner"]["identity"]
+                        == selection["identity"]
+                })
                 .unwrap_or_else(|| panic!("{name}: no root for {}", selection["identity"]));
+            let found = &package["semantic_graph"]["nodes"][position];
             assert_eq!(found, &expected, "{name}: root equals the derived root");
-            assert!(structural_node_key_is_current(found), "{name}: root key is current");
+            assert_eq!(
+                position,
+                node_count - 1,
+                "{name}: the root is last in graph order"
+            );
+            assert_eq!(
+                package["source_map"].as_array().unwrap().last().unwrap()["node_id"],
+                found["node_id"],
+                "{name}: the root's entry is last in the source map"
+            );
+            assert!(
+                structural_node_key_is_current(found),
+                "{name}: root key is current"
+            );
             assert_eq!(
                 root_keys
-                    .entry((selection["identity"].to_string(), selection["digest"].to_string()))
+                    .entry((
+                        selection["identity"].to_string(),
+                        selection["digest"].to_string()
+                    ))
                     .or_insert_with(|| found["node_id"].clone()),
                 &found["node_id"],
                 "{name}: the root key depends on identity and digest alone"
@@ -19229,75 +19290,75 @@ fn tc_310_every_selected_model_package_carries_exactly_one_recomputed_root() {
     assert!(selected >= 7, "every selected-model positive is covered");
 }
 
-#[trace("TC-310", "FR-322-AC-135")]
+#[trace("TC-310", "FR-322-AC-135", "FR-322-AC-138")]
 #[test]
-fn tc_310_root_owner_schema_and_reader_stages_are_split() {
+fn tc_310_root_owner_schema_and_reader_stages_run_from_the_published_vectors() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
-    let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
-    let position = model_root_positions(&package)[0];
-    assert!(schema.is_valid(&package));
-    assert_eq!(model_root_reader_refusal(&package), None);
-
-    // Shape defects fail the schema (MR-01 to MR-03).
-    let mut no_owner = package.clone();
-    no_owner["semantic_graph"]["nodes"][position]
-        .as_object_mut()
-        .unwrap()
-        .remove("owner");
-    assert!(!schema.is_valid(&no_owner), "MR-01: root without owner");
-    let mut extra = package.clone();
-    extra["semantic_graph"]["nodes"][position]["owner"]["version"] = json!("1");
-    assert!(!schema.is_valid(&extra), "MR-02: extra owner member");
-    let mut misplaced = package.clone();
-    let object_type = package["semantic_graph"]["nodes"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .position(|node| node["semantic_form"] == "object_type")
-        .expect("an object type exists");
-    misplaced["semantic_graph"]["nodes"][object_type]["owner"] =
-        package["semantic_graph"]["nodes"][position]["owner"].clone();
-    assert!(!schema.is_valid(&misplaced), "MR-03: root owner on an object type");
-
-    // An owner pair absent from model_selections is schema-valid and is
-    // refused by the reader at the owner, after every identity is rebuilt
-    // (MR-04).
-    let mut unselected = package.clone();
-    unselected["semantic_graph"]["nodes"][position]["owner"]["digest"] = json!("f".repeat(64));
-    rekey_model_root(&mut unselected, position);
-    assert!(schema.is_valid(&unselected), "MR-04: the join is not a schema rule");
+    let preimage_schema = parsed_fixture(NODE_PREIMAGE_SCHEMA);
+    let preimage_validator = schema_for_def(&preimage_schema, "ModelDeclarationNode");
+    let vectors = parsed_fixture(MODEL_ROOT_VECTORS);
+    assert_eq!(vectors["base"], "fixtures/positive-all-families.json");
+    let base = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let mut ids = BTreeSet::new();
+    for vector in vectors["vectors"].as_array().expect("vectors") {
+        let id = vector["id"].as_str().expect("vector id");
+        assert!(ids.insert(id), "vector ids are unique");
+        let mut package = base.clone();
+        for patch in vector["patch"].as_array().expect("patch") {
+            apply_json_patch(&mut package, patch);
+        }
+        assert_eq!(
+            unqualified_jcs_sha256(&package_id_preimage(&package)),
+            package["package_id"]["digest"].as_str().unwrap(),
+            "{id}: the vector carries the recomputed package_id"
+        );
+        let schema_valid = schema.is_valid(&package);
+        assert_eq!(schema_valid, vector["schema"] == "valid", "{id}: schema");
+        let observed = if schema_valid {
+            model_root_reader_refusal(&package)
+        } else {
+            let locus = vector["locus"].as_str().expect("locus");
+            let position = locus
+                .strip_prefix("/semantic_graph/nodes/")
+                .and_then(|rest| rest.split('/').next())
+                .and_then(|index| index.parse::<usize>().ok())
+                .expect("node locus");
+            let node = &package["semantic_graph"]["nodes"][position];
+            let preimage = structural_node_preimage(node).expect("structural node");
+            assert!(
+                !preimage_validator.is_valid(&preimage),
+                "{id}: the closed node-preimage schema refuses it too"
+            );
+            Some(("malformed_wire", "", locus.to_owned()))
+        };
+        let expected = match vector["outcome"].as_str().expect("outcome") {
+            "admitted" => None,
+            refused => {
+                let code = refused.strip_prefix("refused:").expect("refused outcome");
+                Some((
+                    code.to_owned(),
+                    vector["cause"].as_str().unwrap_or("").to_owned(),
+                    vector["locus"].as_str().expect("locus").to_owned(),
+                ))
+            }
+        };
+        assert_eq!(
+            observed.map(|(code, cause, locus)| (code.to_owned(), cause.to_owned(), locus)),
+            expected,
+            "{id}"
+        );
+    }
     assert_eq!(
-        model_root_reader_refusal(&unselected),
-        Some((
-            "missing_declaration",
-            "missing-selection",
-            format!("/semantic_graph/nodes/{position}/owner")
-        ))
-    );
-
-    // A selection with no root is schema-valid and refused by the reader
-    // (MR-05).
-    let mut rootless = package.clone();
-    let removed = rootless["semantic_graph"]["nodes"]
-        .as_array_mut()
-        .unwrap()
-        .remove(position)["node_id"]
-        .clone();
-    rootless["source_map"]
-        .as_array_mut()
-        .unwrap()
-        .retain(|entry| entry["node_id"] != removed);
-    refresh_package_id(&mut rootless);
-    assert!(schema.is_valid(&rootless), "MR-05: completeness is not a schema rule");
-    assert_eq!(
-        model_root_reader_refusal(&rootless),
-        Some(("invalid_semantic_graph", "", "/semantic_graph/nodes".to_owned()))
+        ids,
+        BTreeSet::from([
+            "MR-00", "MR-01", "MR-02", "MR-03", "MR-04", "MR-06", "MR-09"
+        ])
     );
 }
 
 #[trace("TC-310", "FR-322-AC-136")]
 #[test]
-fn tc_310_root_generated_occurrence_is_the_selection_to_source_relation() {
+fn tc_310_root_generated_occurrence_is_the_producer_asserted_source_relation() {
     for (name, package) in published_positive_packages() {
         let sources = package["lock"]["sources"].as_array().unwrap();
         for position in model_root_positions(&package) {
@@ -19308,16 +19369,18 @@ fn tc_310_root_generated_occurrence_is_the_selection_to_source_relation() {
                 .iter()
                 .filter(|entry| &entry["node_id"] == id)
                 .collect::<Vec<_>>();
-            assert_eq!(entries.len(), 1, "{name}: exactly one source-map entry");
+            assert_eq!(entries.len(), 1, "{name}: one source-map entry");
             assert_eq!(entries[0]["role"], "generated");
             assert_eq!(entries[0]["ordinal"], 0);
             let regions = entries[0]["regions"].as_array().unwrap();
-            assert_eq!(regions.len(), 1, "{name}: exactly one region");
-            assert!(
-                sources.iter().any(|source| source == &regions[0]["source"]),
-                "{name}: the region names a lock source"
-            );
-            assert!(regions[0]["start"].as_u64() < regions[0]["end"].as_u64());
+            assert!(!regions.is_empty(), "{name}: at least one region");
+            for region in regions {
+                assert!(
+                    sources.iter().any(|source| source == &region["source"]),
+                    "{name}: the region names a lock source"
+                );
+                assert!(region["start"].as_u64() < region["end"].as_u64());
+            }
         }
     }
 }

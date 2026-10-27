@@ -232,23 +232,34 @@ Mutations, each applied alone to the positive unit:
     protocol refinement keeps `protocol` at the exact clause key and the
     clause's `owner_model` unchanged. The model root is derived from existing
     model selection; the test adds no FCD field.
-28. **Root owner joins (MR-01 to MR-04).** Starting from an admitted selected
-    model package, remove `owner` from its root, add an extra `version` member
-    to `ModelRootOwner`, attach `ModelRootOwner` to an object-type node, and
-    separately change only the root owner's identity or digest to a pair not
-    in `model_selections`. Validate the first three mutations against both
-    schemas; validate every mutation with the strict reader after rebuilding
-    all identities and `package_id` that the mutation permits.
-29. **Selected-root fixtures (MR-05 to MR-08).** For every published positive
-    package with `model_selections`, derive the root from each row alone and
-    compare it with the package's root (`MR-05`, FR-322-AC-134); remove the
+28. **Root owner joins (MR-01 to MR-04).** Starting from the admitted selected
+    model package, remove `owner` from its root (`MR-01`), add an extra
+    `version` member to `ModelRootOwner` (`MR-02`), attach `ModelRootOwner` to
+    an object-type node (`MR-03`), and add a second root whose owner identity
+    and digest join no `model_selections` row while every row keeps its own
+    root (`MR-04`). Validate `MR-01` to `MR-03` against both V2 schemas
+    (`schema.json` and, through the node's structural preimage,
+    `node-identity-preimage.schema.json`) and `MR-04` against `schema.json`,
+    which admits it; validate every mutation with the strict reader after
+    rebuilding the identities and `package_id` the mutation permits. The
+    vectors are the RFC 6902 patches of `model-root-vectors.json`.
+29. **Selected-root fixtures (MR-05 to MR-09).** For every published positive
+    package with `model_selections`, derive the root and its source-map entry
+    from each row alone and compare them with the package's, last in graph
+    order and last in the source map (`MR-05`, FR-322-AC-134); remove the only
     root of one row, which the schemas admit and the reader refuses
     `invalid_semantic_graph` at `/semantic_graph/nodes` (`MR-06`,
     FR-322-AC-135); check that each root's `generated` ordinal-zero entry has
-    one region naming a lock source (`MR-07`, FR-322-AC-136); recompute the
-    published model-root vector from its selection (`MR-08`, FR-322-AC-137).
-    `MR-04` refuses `missing_declaration`/`missing-selection` at
-    `/semantic_graph/nodes/{i}/owner` and is schema-valid.
+    at least one region, each naming a lock source, without claiming it is the
+    selecting range (`MR-07`, FR-322-AC-136); recompute the published
+    model-root vector from its selection (`MR-08`, FR-322-AC-137); repeat the
+    root, which the reader refuses `invalid_semantic_graph` at the second
+    node's `node_id` (`MR-09`). `MR-04` refuses
+    `missing_declaration`/`missing-selection` at
+    `/semantic_graph/nodes/{i}/owner` and is schema-valid. The model-root
+    vector is a structural preimage, not a nominal one, so the nominal-vector
+    test (TC-233) binds it by the closed node-preimage schema and its JCS
+    digest, not by the nominal-preimage schema.
 
 ## Expected Results
 

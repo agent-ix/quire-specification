@@ -1,0 +1,220 @@
+{
+  "base": "fixtures/positive-all-families.json",
+  "note": "RFC 6902 patches applied to the base; each patch ends by replacing package_id with the recomputed package id. A schema of invalid fails the V2 schema and a reader refuses it malformed_wire at the locus; a schema of valid passes it. Outcomes are the first reader refusal.",
+  "vectors": [
+    {
+      "id": "MR-00",
+      "description": "the published package, unmutated",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "admitted"
+    },
+    {
+      "id": "MR-04",
+      "description": "an extra root whose owner identity and digest join no model_selections row; every row keeps its own root, so this is the only defect",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "3e4ee82c5c58d80249c6acf04bbd1fb6b887a1b27a5b84c48b0b37fe9f29c13e"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "generated"
+              }
+            ],
+            "owner": {
+              "kind": "model_root",
+              "identity": "acme/unselected",
+              "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "model_root",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "3e4ee82c5c58d80249c6acf04bbd1fb6b887a1b27a5b84c48b0b37fe9f29c13e"
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/-",
+          "value": {
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "3e4ee82c5c58d80249c6acf04bbd1fb6b887a1b27a5b84c48b0b37fe9f29c13e"
+            },
+            "ordinal": 0,
+            "regions": [
+              {
+                "end": 1,
+                "source": {
+                  "authority": "agent-ix",
+                  "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                  "digest_domain": "quire.source.bytes/v1",
+                  "identity": "example"
+                },
+                "start": 0
+              }
+            ],
+            "role": "generated"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "701e2c8eed846598e86e8e18e0e27a6779605006d8039edd2426b202d210802e"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/47/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "MR-06",
+      "description": "the only root removed with its source_map entry, leaving a model_selections row with no root",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/46"
+        },
+        {
+          "op": "remove",
+          "path": "/source_map/46"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "dc7982b8070ecb8c03fafa4ad8d33f6f4003e6f638b967a61753f4322f4e6ea5"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes"
+    },
+    {
+      "id": "MR-09",
+      "description": "a second copy of the root for the one row; the copy has the root's key, so the row has two roots with one node_id",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "generated"
+              }
+            ],
+            "owner": {
+              "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
+              "identity": "acme/orders",
+              "kind": "model_root"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "model_root",
+            "semantic_type": {
+              "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "ee02fa91812a666140dac522ef38b6b834564041c797063b79329951083ed1de"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/47/node_id"
+    },
+    {
+      "id": "MR-01",
+      "description": "the root without its owner",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/46/owner"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "5021507b44004a2f69d8d9d5740d32de0518329476d98dc5c062d4bb98add487"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/46"
+    },
+    {
+      "id": "MR-02",
+      "description": "the root owner with an extra version member",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/46/owner/version",
+          "value": "1"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "9a442a8d329ce0f2dcef0e68254ad904468d85d14efae7520830582628dec572"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/46/owner"
+    },
+    {
+      "id": "MR-03",
+      "description": "the root owner on an object-type node",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/13/owner",
+          "value": {
+            "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
+            "identity": "acme/orders",
+            "kind": "model_root"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "7661ea80edb13a6bd81b1bcda42d81ab18ee3d6a50e6258fc6c46e9e53c34313"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/13/owner"
+    }
+  ]
+}
