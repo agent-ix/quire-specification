@@ -284,7 +284,7 @@
           "package_id": {
             "domain": "quire.package.semantic/v2",
             "algorithm": "sha256",
-            "digest": "fbe7f0d6865d004d2567a40f318ff4a85c95723e33590a6a6329efc76f75d4f7"
+            "digest": "35cfacaa52f851a2df95a8a43d486e0e07e385bafcdc28dac0482cdd5b2b813e"
           }
         }
       ],
@@ -312,7 +312,7 @@
               "package_id": {
                 "domain": "quire.package.semantic/v2",
                 "algorithm": "sha256",
-                "digest": "7d33478af7465250bd8d82f1ca13cc0f1f019161437f4a6f577740281aac1998"
+                "digest": "6c4a9deda1b29438ceb5e9ea009b8a7ff8447692707bc91d48b933076cbe49f2"
               }
             }
           ]

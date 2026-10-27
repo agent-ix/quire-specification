@@ -4640,8 +4640,27 @@ fn clause_digest(role: &str) -> String {
             .expect("digest")
             .to_owned();
     }
+    if role == "parameter" {
+        // The clause's `over` binder; the finish binder is the other parameter.
+        return package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| {
+                node["node_tag"] == "value"
+                    && node["semantic_form"] == "parameter"
+                    && node["body"]["members"][0]["value"]["value"] == "self"
+            })
+            .expect("the self binder is published")["node_id"]["digest"]
+            .as_str()
+            .expect("digest")
+            .to_owned();
+    }
+    if role == "object_type" {
+        // The anchors' context; the selected acme/orders Order node is the clause's owner.
+        return published_digest(&package, "model", "object_type", Some("ConfigVersion"));
+    }
     let (tag, form) = match role {
-        "object_type" => ("model", "object_type"),
         "parameter" => ("value", "parameter"),
         "frame" => ("state", "frame"),
         "anchor" => ("state", "operation_anchor"),
@@ -14151,8 +14170,8 @@ fn tc_233_published_model_selections_name_the_domain_document_by_its_jcs_digest(
         }
     }
     assert_eq!(
-        selecting, 6,
-        "three published packages select it, twice each"
+        selecting, 8,
+        "four published packages select it, twice each"
     );
 }
 
