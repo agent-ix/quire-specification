@@ -504,8 +504,9 @@ boundary.
   A `protocol`/`protocol_clause` application node carries the identity input
   `owner_model` required by FR-464: its exact local model `NodeRef` enters the
   closed `quire.application-node/v1` preimage and the node's exact local
-  `dependencies`. Other application nodes omit it. The reference names the
-  model declaration node over which that protocol clause is declared;
+  `dependencies`. Other application nodes omit it. The reference names the object-type node of the model, owned by a
+  selected declaration, over which that protocol clause is declared (the
+  object type of its `over` input);
   consumers use this edge as the authoritative clause-to-model association.
   FR-375's refinement step checks it after the abstraction step, and neither
   general key stage re-keys or refuses it. Among `correspondence` nodes, only

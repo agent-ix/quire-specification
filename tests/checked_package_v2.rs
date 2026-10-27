@@ -4640,8 +4640,44 @@ fn clause_digest(role: &str) -> String {
             .expect("digest")
             .to_owned();
     }
+    if role == "parameter" {
+        // The clause's `over` binder; the finish binder is the other parameter.
+        return package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| {
+                node["node_tag"] == "value"
+                    && node["semantic_form"] == "parameter"
+                    && node["body"]["members"][0]["value"]["value"] == "self"
+            })
+            .expect("the self binder is published")["node_id"]["digest"]
+            .as_str()
+            .expect("digest")
+            .to_owned();
+    }
+    if role == "reference" {
+        // The anchors' context type; the protocol clause's `over` type references the Order owner.
+        let context = clause_digest("object_type");
+        return package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .find(|node| {
+                node["node_tag"] == "composite_type"
+                    && node["semantic_form"] == "reference"
+                    && node["body"]["members"][0]["target"]["digest"] == context.as_str()
+            })
+            .expect("the context reference type is published")["node_id"]["digest"]
+            .as_str()
+            .expect("digest")
+            .to_owned();
+    }
+    if role == "object_type" {
+        // The anchors' context; the selected acme/orders Order node is the clause's owner.
+        return published_digest(&package, "model", "object_type", Some("ConfigVersion"));
+    }
     let (tag, form) = match role {
-        "object_type" => ("model", "object_type"),
         "parameter" => ("value", "parameter"),
         "frame" => ("state", "frame"),
         "anchor" => ("state", "operation_anchor"),
@@ -14151,8 +14187,8 @@ fn tc_233_published_model_selections_name_the_domain_document_by_its_jcs_digest(
         }
     }
     assert_eq!(
-        selecting, 6,
-        "three published packages select it, twice each"
+        selecting, 8,
+        "four published packages select it, twice each"
     );
 }
 
@@ -18606,7 +18642,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 "missing_declaration", "missing-name", "/semantic_graph/nodes/46/body/members/1",
             ),
             "tick-source-with-clock-place" => (
-                "invalid_package", "clock-without-dense-time", "/semantic_graph/nodes/51/body/members/0/value/target",
+                "invalid_package", "clock-without-dense-time", "/semantic_graph/nodes/52/body/members/0/value/target",
             ),
             "source-unit-length" | "source-unit-derived-non-time" | "source-unit-derived-time" => (
                 "ill_typed", "invalid-time-quantity", "/semantic_graph/nodes/44/body/members/1/value/target",

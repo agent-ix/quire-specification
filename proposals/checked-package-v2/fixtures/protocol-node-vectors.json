@@ -2730,7 +2730,7 @@
       "test_case": "TC-946",
       "section": "Clause model owner edge",
       "id": "OM-01",
-      "Edit to the base": "Keep the `over` argument and add `owner_model` to the exact local model declaration node represented by the source clause's `over` type",
+      "Edit to the base": "Keep the `over` argument and add `owner_model` as the object-type node of the model owned by a selected declaration that the source clause's `over` type names",
       "Expected": "Admitted; the target is in `dependencies` and in the application-node identity preimage"
     },
     {
