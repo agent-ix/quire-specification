@@ -2,7 +2,6 @@
 id: FR-208
 title: "Quire meaning id vocabulary"
 type: FR
-object: enumeration
 relationships:
   - target: ix://agent-ix/quire-specification/FR-150
     type: specifies
@@ -42,6 +41,7 @@ package (agent-ix/filament-core-data#172) embeds that construct in its
 | `quire.meaning.model.value-type/v1` | A value type: a named type bound to a native value type, with no object identity. Fields may name it as their `typeRef` (FR-154). |
 | `quire.meaning.model.variant-type/v1` | A variant type: a closed set of named cases. Normalization admits it as an effective type, and a field, parameter, result or clause may name it (Variant types below). |
 | `quire.meaning.model.record-value-type/v1` | A record value type: a named record of one or more fields, none an identity field, equal to another value exactly when both have one most-specific type and every field is equal. Its invariants hold for every value of the type. |
+| `quire.meaning.model.tuple-value-type/v1` | A tuple value type: a closed, identity-free ordered product of one or more typed positions, with positions named only by their zero-based ordinal (FR-154). A field, parameter, result, tuple position or union payload may name it. |
 | `quire.meaning.model.event-type/v1` | An event type: a record of one occurrence, with no identity field and one occurrence field whose type resolves to `Timestamp`. It has no equality rule, and its invariants hold for every value of the type. |
 | `quire.meaning.model.state-machine/v1` | A state machine: context fields, operations with preconditions and postconditions, invariants over its context, a closed set of states and a transition relation of `from` state, `to` state, `trigger` operation, optional guard clause and emitted event types. No firing or current state is bound. |
 | `quire.meaning.model.process/v1` | A process: an identified type whose runs are the objects of an object universe, with invariants and operation contracts as for an object type, and steps in declaration order, each with a step kind and the event types it consumes and emits. No execution is bound. |
@@ -54,15 +54,16 @@ package (agent-ix/filament-core-data#172) embeds that construct in its
 | `quire.meaning.systems.connection/v1` | A systems Connection: two Port ends and a declared direction (FR-152). |
 | `quire.meaning.systems.allocation/v1` | A systems Allocation: a source element (Part, Port or operation) and a target Part (FR-152). |
 
-The model meanings are exactly the ten `quire.meaning.model.*` values, and the
+The model meanings are exactly the eleven `quire.meaning.model.*` values, and the
 systems meanings are exactly the five `quire.meaning.systems.*` values.
 Fields, relationships, operations and clauses are members and carry no meaning
 id.
 
 ## Business model meanings
 
-The six business model meanings are `record-value-type`, `event-type`,
-`state-machine`, `process`, `persistence-interface` and `namespace`, each
+The seven business model meanings are `record-value-type`, `tuple-value-type`,
+`event-type`, `state-machine`, `process`, `persistence-interface` and
+`namespace`, each
 `quire.meaning.model.<name>/v1`. Each meaning binds only what the domain
 package's IR members state. Where a member states no meaning, the meaning is
 structural: intake binds the member as data and derives no behavior from it.
@@ -70,20 +71,20 @@ Intake (FR-154) and normalization (FR-150) refuse a node that breaks a rule
 below with the refusal the rule names, and a package with a refused node yields
 no effective view.
 
-Rules common to the six meanings:
+Rules common to the seven meanings:
 
 - **Declarations.** Each node yields exactly one original declaration keyed
   by the package identity and its IR node identity, `ix://<package>/<artifact
-  id>`, and one per field, relationship, operation and clause member. States,
+  id>`, and one per field, tuple position, relationship, operation and clause member. States,
   transitions, steps, `persists`, `members` and `vocabulary` are data of that
   declaration, not members. An operation's precondition and postcondition are
   part of its operation declaration.
 - **Object universe.** Only a process has an object universe (below), so a
   process may be a population member, a `creates` or `deletes` frame entry or
-  a relationship end. No node of the other five meanings is any of these.
+  a relationship end. No node of the other six meanings is any of these.
   Naming one there is `invalid_model_binding`/`malformed-declaration`.
 - **Field types.** A field, parameter or result `typeRef` may name a record value
-  type or a variant type (Variant types below). Naming an event type, state
+  type, tuple value type or a variant type (Variant types below). Naming an event type, state
   machine, process, persistence interface or namespace is
   `invalid_model_binding`/`malformed-declaration`. A `typeRef` of the form
   `ix://quire/unit/<name>` names a unit of the checked package, not a
@@ -93,7 +94,7 @@ Rules common to the six meanings:
   relationship meaning over its runs (FR-150, FR-151): each is one relationship
   declaration, its ends name object types or processes, and it is navigated in
   the universe of its ends. A `relationships[]` entry of a node of the other
-  five meanings is `invalid_model_binding`/`malformed-declaration`. Links the
+  six meanings is `invalid_model_binding`/`malformed-declaration`. Links the
   lift does not carry into the IR, such as `owns` and `transitions_to`, bind
   nothing.
 - **References.** A reference below that names no node of the package is
@@ -313,6 +314,20 @@ fields or any other listing "in declaration order" of a type's fields reads it
 - **`record-value-type/v1`.** One or more `fields` and no identity field. Two
   values are equal exactly when they have one most-specific type and every
   field is equal. A field `typeRef` may name it.
+- **`tuple-value-type/v1`.** A closed declaration of one or more positions in
+  declaration order. Its identity is owner-nested under the domain package as
+  `<package identity>/<tuple name>`. Position `i` has identity
+  `<tuple identity>/p<i>` and carries one admitted value type; the decimal
+  index is zero-based, contiguous and is the position's identity. Each
+  position identity is bound to its admitted type. The ordered sequence of
+  ordinal/type pairs is the tuple's type identity and defines its shape;
+  positions have no names. Reordering positions changes that type identity,
+  while the owner-nested declaration identity remains the same.
+  Tuple values have no object identity and compare by their tuple type and
+  component values (FR-143). A tuple has no fields, identity fields,
+  operations, supertypes or clauses. Its shape is an ordered product: the
+  first position is the most significant position for finite-domain
+  enumeration. No tuple with zero positions is admitted.
 - **`event-type/v1`.** One or more `fields`, no identity field, and an
   `occurrenceField` naming one field whose `typeRef` resolves through value
   types to the native `Timestamp`. The declaration carries no occurrence
@@ -351,13 +366,19 @@ fields or any other listing "in declaration order" of a type's fields reads it
 `quire.meaning.model.variant-type/v1` is not one of the six business model
 meanings. A type definition bound to it has a construct of shape `enumeration`
 and one or more cases in `variants`, each with a name, a source span and the
-identity `variant/<Name>-<value>` of its owner and name (FR-154). A case has no
-payload: a case with a resolving `payloadType` is
-`unsupported_construct`/`declaration-form`. No case, a case with no source
-span, a case whose identity is not that identity and a construct of another
-shape are `invalid_model_binding`/`malformed-declaration`, and two cases with
-one name and distinct identities are `invalid_model_binding`/`conflicting-binding` at
-the later case. The order of `variants` carries no meaning.
+identity `variant/<Name>-<value>` of its owner and name (FR-154). If every case
+omits `payloadType`, it is an enumeration and every case is nullary. If one or
+more cases carry `payloadType`, it is a union: each resolving payload type is
+the single typed payload of that member, and a case that omits `payloadType`
+remains nullary. An unresolved or unsupported payload type is
+`unsupported_construct`/`declaration-form` at `Variant.payloadType`; it is not
+silently dropped. A union member's payload is identity-free and typed by its
+declared type. No case, a case with no source span, a case whose identity is
+not that identity and a construct of another shape are
+`invalid_model_binding`/`malformed-declaration`, and two cases with one name
+and distinct identities are `invalid_model_binding`/`conflicting-binding` at
+the later case. Reordering `variants` carries no meaning, for an enumeration
+or a union.
 
 When a field, an operation parameter or an operation result has a `typeRef`
 that names a variant type, the binder SHALL admit the member, and it SHALL
@@ -436,10 +457,11 @@ the names alone, never on the spelling of `Alias`.
 | FR-208-AC-12 | A record value type, event type, state machine or process specializing a node of its own meaning inherits its fields, invariants and operations, an event type its occurrence field, and a state machine its states and transitions, and conforms to each ancestor; a process inherits no steps; a supertype of another meaning is `invalid_model_binding`/`malformed-declaration`; a state or transition declared by two owners, or an ancestor occurrence field the subtype's neither is nor redefines, is `invalid_model_binding`/`derivation-conflict`; a subtype transition whose guard names an ancestor's invariant is `invalid_model_binding`/`malformed-declaration` at that guard; a persistence interface or namespace with supertypes is `unsupported_construct`/`declaration-form`; a `supertypes` cycle among these meanings is refused `invalid_model_binding`/`specialization-cycle` once per declaration on the cycle, each refusal listing the cycle's type keys. | Test (TC-235) |
 | FR-208-AC-13 | A state-machine operation's precondition over a pre-call observation holding one machine context, with no post observation, evaluates over that context and the call's parameters; the same pre-call observation with no context of the machine is `invalid_model_binding`/`wrong-context`. | Test (TC-401) |
 | FR-208-AC-14 | With `Money` and its subtype `TaxedMoney` adding `tax_minor`, a `TaxedMoney` value is admitted at a `Money` field, parameter or result, as the payload of an `Option<Money>`, as an element of a `Sequence<Money>`, `Set<Money>`, `Bag<Money>` or `OrderedSet<Money>`, at a tuple position typed `Money` and as a union member payload typed `Money`, and keeps its most-specific type and its `tax_minor`. A `Money` value is not admitted at a `TaxedMoney` slot, and a `Sequence<TaxedMoney>` is not a `Sequence<Money>`. A `TaxedMoney` value and a `Money` value with equal shared fields are unequal. | Test (TC-235) |
-| FR-208-AC-15 | A type definition whose construct names `quire.meaning.model.variant-type/v1` binds its cases and no payload. A case with a resolving `payloadType` is `unsupported_construct`/`declaration-form`; no case, a case with no source span, a case whose identity is not the variant slot identity of its owner and name, and a construct of a shape other than `enumeration` are `invalid_model_binding`/`malformed-declaration` (except a case already refused by a same-identity collision, FR-154-AC-13); two cases with equal names and distinct identities are `invalid_model_binding`/`conflicting-binding`. A field, parameter or result `typeRef` naming the variant type is admitted and raises no refusal, and a clause naming the variant type raises no `unsupported_construct`/`declaration-form`. | Test (TC-235, TC-939) |
+| FR-208-AC-15 | A type definition whose construct names `quire.meaning.model.variant-type/v1` binds an enumeration when every case omits `payloadType`, and binds a union when at least one case carries a resolving payload type; each resolving payload has its declared admitted value type, a case that omits `payloadType` in that union remains nullary, and reordering `variants` changes no declaration key. An unresolved or unsupported `payloadType` is `unsupported_construct`/`declaration-form` at `Variant.payloadType`. No case, a case with no source span, a case whose identity is not the variant slot identity of its owner and name, and a construct of a shape other than `enumeration` are `invalid_model_binding`/`malformed-declaration` (except a case already refused by a same-identity collision, FR-154-AC-13); two cases with equal names and distinct identities are `invalid_model_binding`/`conflicting-binding`. A field, parameter or result `typeRef` naming the variant type is admitted and raises no refusal, and a clause naming the variant type raises no `unsupported_construct`/`declaration-form`. | Test (TC-234, TC-235, TC-939) |
 | FR-208-AC-16 | An admitted package with variant type `Tier` (cases `Gold`, `Standard`), object `Account` with field `tier: Tier`, record value type `Settings` with field `tier: Tier`, a state machine with context field `tier: Tier`, a process with field `tier: Tier` and an operation with parameter `t: Tier` and result `Tier` is admitted with no refusal. An event type whose occurrence field is `Tier` is `invalid_model_binding`/`malformed-declaration` at the event type node, path `TypeDefinition.occurrenceField`, while a non-occurrence event field `tier: Tier` is admitted. A variant type with no case refuses once at the variant type, path `TypeDefinition.variants`, and the field naming it raises no refusal of its own. A field `typeRef` naming an event type, state machine, process, persistence interface or namespace keeps its refusal. | Test (TC-939) |
 | FR-208-AC-17 | `Alias::Tier::Gold` has static type `Alias::Tier` and the value of the case `Gold`; the Text literal `"Gold"`, the Integer literal `0` and a bare `Gold` at an `Alias::Tier` slot are `ill_typed`/`type-mismatch`. `Alias::Tier::Silver` (a case `Tier` does not declare) and `Alias::Tier::gold` are `ill_typed`/`type-mismatch` naming the type and the case. `Alias::Nope::Gold` and `Alias::Nope` in a type position are `missing_declaration`/`missing-name`. An ordering comparison over `Alias::Tier` is `ill_typed`/`operator-ineligible`, and an equality of `Alias::Level::Gold` with `Alias::Tier::Gold` is `ill_typed`/`type-mismatch`. A unit that selects the package under another alias resolves the same type and case. | Test (TC-941) |
 | FR-208-AC-18 | The effective field order of a record value type, event type, state machine or process is the supertypes' effective fields in `supertypes` array order, then its own fields in declaration order, a field reached twice once at its first position and a redefining field at the position of the field it hides, with hiding applied once over the whole walk; it never depends on node identity, and a supertype cycle is refused `specialization-cycle` before any order is read. | Test (TC-386) |
+| FR-208-AC-19 | A tuple value type has declaration identity `<package identity>/<tuple name>` and ordered positions `p0` through `pN-1`, each with exactly one admitted value type and no name; `N` is at least one, position order is the authored order, and the ordered ordinal/type pairs form the tuple's type identity and product order. Reordering a tuple's position/type pairs changes its type identity but not its declaration identity. A field, parameter, result, tuple position or union payload may name the tuple type. A gap, empty tuple, absent `typeRef` or unsupported type is refused `invalid_model_binding`/`malformed-declaration`; a missing package reference is `missing_declaration`/`missing-name`; two positions with one ordinal identity are `invalid_model_binding`/`conflicting-binding` at the later position. | Test (TC-234, TC-235) |
 
 ## Dependencies
 
