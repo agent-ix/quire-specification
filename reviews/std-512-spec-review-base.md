@@ -61,6 +61,21 @@ Ruling (2) analysis, verified in quire-spec-language (origin/main 2417c95e5):
 | FND-003 | low | Test-case closing note lists only XT-10 to XT-15 and XT-17 as reader outcomes the QSpec crate does not implement. XT-06 and XT-07 name `malformed_wire` at `operation/member/operator`, a code and locus the QSpec test does not exercise (it asserts only schema invalidity, and a oneOf validator reports the node plus several branch leaves). FR-341-AC-19 is labelled Test (TC-233) for both halves. | spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md:613 |
 | FND-004 | low | XT-05 (member operator `sequence`) and XT-06 (member operator `sequence`) now state the same input and outcome; XT-06 differs only by pointing to XT-19. | spec/test-cases/TC-233-published-checked-package-and-scalar-contract-vectors.md:596 |
 
+## Dispositions
+
+Round 1, reviewed at 6e60514f (main 000cd943 merged in, unmoved).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The FR-341 section is now "Several postconditions and preconditions on one operation": it covers `state_clause` nodes of clause `precondition` as well, says a consumer SHALL NOT read `pre` as the operation's complete precondition, and FR-341-AC-20 now reads "and likewise for two `precondition` nodes and `pre`". |
+| FND-002 | fixed | The `post A and B` text is now "One producer option, not a requirement of this specification ... Which option QSL takes is QSL-owned and OPEN (QSL-1163, escalation e38). QSL FR-105 and ADR-012 section 15.4 currently say QSL emits no `state`/`transition` node"; FR-341-AC-20 and the TC-233 note both state that the QSL-authored part of IR-1052 AC-7 is not closed. |
+| FND-003 | fixed | TC-233 now has a paragraph listing the vectors the crate executes (XT-01 to XT-09, XT-16, XT-18, XT-19, XT-20; verified against tc_233_state_transition_package_binds_anchor_subject_pre_and_post: XT-01 unedited package, XT-02 to XT-07 `refused(...)` schema checks, XT-08 anchor rewrite and rekey, XT-09 region move, XT-16 nesting, XT-18 unselected law, XT-19 and XT-20 operation step alone) and says the `malformed_wire` code and locus for XT-06 and XT-07 are reader outcomes IR owns. |
+| FND-004 | fixed | XT-05 now lists only the law role, mode and occurrence role; XT-06 owns member operator `sequence` and cross-references XT-05. |
+
+Merge result: clean; the only difference from main in FR-464 is the FR-464-AC-19 row, FR-464-AC-20 is byte-identical to main; no proposals/ file differs from main; the four changed spec and test files plus this SR are the whole diff. cargo test --test checked_package_v2: 156 passed, 2 failed (the same K15 and execution-point-initialization failures). quire validate: only the pre-existing FR-464-AC-18 warning. quire matrix: FR-341-AC-15, AC-19 and FR-464-AC-19 tagged; FR-341-AC-20 and FR-464-AC-20 Analysis rows. FR-341-AC-1 to AC-20 contiguous; FR-341-AC-19/20, XT-19/20 and SR-512001 unused on main and the other open PR branches. No new finding.
+
 ## Verdict
 
 Approve with FND-001 and FND-002 settled in this PR (one sentence each, and one added clause in FR-341-AC-20) and a rebase onto main 000cd943 resolving the single FR-464-AC-19 / AC-20 row conflict. FND-003 and FND-004 are optional. Rulings (1) and (2) are sound as wire rulings. The deeper QSL question (what source produces a transition when a unit has several posts or pres) is not answered by this PR and needs QSL decision e38; that is expected, not a defect of this PR, but its text must not imply otherwise.
+
+Round 1 verdict: all four findings fixed at 6e60514f; no new finding. Approve.
