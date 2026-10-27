@@ -545,7 +545,26 @@ boundary.
     other owner refuses `missing_declaration`/`missing-selection`
     at that node's `node_id`, whether or not any member, frame, anchor or
     reference reaches the node. Each document lookup charges one validation
-    visit. A structural node outside every recursion group,
+    visit.
+  - A `ModelRootOwner` joins when its `identity` and `digest` equal those of
+    one `model_selections` row. It identifies the selected domain package as
+    a whole, not one of that package's declarations. A model root uses
+    `node_tag: "model"`, `semantic_form: "model_root"`, an empty aggregate
+    body and its own node id as `semantic_type`; its closed owner is
+    `{kind: "model_root", identity, digest}`. The root's structural
+    `ModelDeclarationNode` preimage includes that owner. Its node key is
+    content-addressed by the selected package identity and digest and is
+    independent of the source alias; its selected package digest captures the
+    selected package contents. A `model_root`
+    with a `ModelOwner`, a `ModelRootOwner` on another form, or a root whose
+    owner does not join a selected model package refuses
+    `missing_declaration`/`missing-selection` at the node's `owner`.
+    The root has exactly one `generated` occurrence at ordinal zero, whose
+    source-map region is the existing source occurrence that selected this
+    model package; the root has no declaration occurrence of its own.
+    The root is derived by the checked-package producer from the existing
+    model selection; it does not require a new FCD declaration.
+  A structural node outside every recursion group,
   declared or not and of any shape, is current when its key is the JCS
   SHA-256 of its preimage: `recursion` `null`, `semantic_type` `null`
   exactly when the node is its own type, and `owner` present exactly when
@@ -714,6 +733,11 @@ boundary.
   no member, so the reader derives the member from the domain package the
   lock selects for its owner, in the four steps of
   "Model-owned members" below.
+- `model_root` — one self-typed `model` node the producer derives for each
+  selected domain-package identity and digest. It has no `declaration`, an
+  empty aggregate body and a `ModelRootOwner`; unlike a declaration node, it
+  names the selected package as a whole. It is independent of source aliases,
+  object-type count and state-machine count.
 - `declaration` — `{qualified_name}`, the name a named, source-declared node
   introduces, with the `qualified_declaration` grammar. It is carried exactly by
   a `scalar_type`, `composite_type`, `bounded_domain`, `function`, `model`,
@@ -755,7 +779,7 @@ boundary.
   structural node (no `nominal_identity_preimage`, and a body whose root is
   not an `application`) that either carries a `declaration` or is a
   **model-owned node** (QSL FR-094) carrying none: a model declaration node
-  (`model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`,
+  (`model`/`model_root`, `model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`,
   `model`/`variant_type`, `model`/`state_machine`, `model`/`process`,
   `model`/`persistence_interface`, `model`/`systems_interface`,
   `relation`/`relationship` or `relation`/`population`) or a clause function
@@ -763,7 +787,10 @@ boundary.
   owner-bearing node carries the `SourceOwner` of the source unit that
   declares it, `{kind: "source", authority, identity}`; a model-owned node
   carries its `ModelOwner`, `{kind: "model", identity, node}`, with no
-  `version` member (FR-322-AC-28). The value is exactly the `owner` member of
+  `version` member (FR-322-AC-28), or the `ModelRootOwner`
+  `{kind: "model_root", identity, digest}` for a `model`/`model_root`.
+  The latter's identity and digest join one `model_selections` row. The value
+  is exactly the `owner` member of
   the node's `quire.structural-node/v1` preimage, so the reader copies it
   into that preimage unchanged. Every other node carries no `owner`: a
   builtin or anonymous type, an undeclared value, parameter or expression,
@@ -1093,8 +1120,10 @@ as its own node, so the grammar holds for an expression of any depth.
 
 `schema.json` gives `NodeBase` the optional property
 `owner`, `{"$ref": "#/$defs/NodeOwner"}`, where `NodeOwner` is
-`{"oneOf": [SourceOwner, ModelOwner]}` over the existing closed
-`SourceOwner` and `ModelOwner` definitions. The node definition carries one
+`{"oneOf": [SourceOwner, ModelOwner, ModelRootOwner]}` over these closed
+owner definitions. `ModelRootOwner` is `{kind: "model_root", identity,
+digest}` and its `identity` and `digest` join one `model_selections` row.
+The node definition carries one
 further rule, `OwnerPresenceRule`, in its `allOf`. A node is
 **structural** for this rule when it carries no `nominal_identity_preimage`
 and its `body.term` is not `application` (an application stands only at a
@@ -1107,13 +1136,15 @@ neither model-owned row, so it falls in the last row and carries none.
 | Node | `owner` |
 | --- | --- |
 | structural, carries `declaration` | required, `SourceOwner` |
+| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`model_root` | required, `ModelRootOwner` |
 | structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`state_machine`, `model`/`process`, `model`/`persistence_interface`, `model`/`systems_interface`, `relation`/`relationship` or `relation`/`population` | required, `ModelOwner` |
 | structural, no `declaration`, `node_tag` `function` | required, `ModelOwner` |
 | every other node | absent |
 
 A node that breaks the rule, or whose `owner` is a `DefinitionOwner`, has a
-member outside its owner's closed definition or a `ModelOwner` carrying
-`version`, fails the schema, and a reader refuses it `malformed_wire` at
+member outside its owner's closed definition, a `ModelOwner` carrying
+`version`, or a `ModelRootOwner` carrying an extra member, fails the schema,
+and a reader refuses it `malformed_wire` at
 `/semantic_graph/nodes/{i}/owner`, or at `/semantic_graph/nodes/{i}` when a
 required `owner` is absent (FR-322-AC-51). The identity projection entry
 the reader derives carries exactly its node's `owner`.
@@ -2411,6 +2442,7 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-128 | A checked package with refinement steps carries one closed `refinement_step_rows` entry for every step of every refinement owner, keyed by that owner's retained node id and zero-based canonical step ordinal; its regions are excluded from node and package identity. The reader admits the `RS-01` and `RS-02` row regions independently of source order, and refuses an absent or incomplete sidecar at `/refinement_step_rows`, and a wrong owner, out-of-range ordinal, duplicate pair or noncanonical order at the offending entry. | Test (TC-233) |
 | FR-322-AC-129 | A proof-eligible refinement owner with source rows `R0` and `R1` is admitted only when generated occurrence ordinals 1 and 2 each carry exactly the region of the corresponding `refinement_step_rows` entry; changing either generated region or its row-region carrier alone leaves identities unchanged but refuses `invalid_package`/`invalid-value` at that `source_map` entry. A refinement that is not proof-eligible still carries every row-region entry and no generated occurrence. | Test (TC-233, TC-310) |
 | FR-322-AC-130 | Both closed V2 schemas admit a refinement `class_catalog` with ordered concrete and abstract declared classes (local `NodeRef` versus local-or-dependency `RefinementKey`), typed binders and source-default memory classes, and refuse a missing or extra class-entry member or a wrong key shape. A `memory drain` entry carries `drain: store-buffer-flush`; the catalog includes `memory drain` for each of `sc`, `tso` and `ra` that occurs as a source default, and `memory flush` for `tso` when it occurs, without a `drain` member. In an admitted protocol refinement, changing a class, node, binder type, memory model or drain member while retaining its node key refuses the dedicated refinement key; rekeying changes the node id and `package_id`; removing a local class node or binder type from `dependencies` refuses in graph shape before class joins. A model-only refinement retains its nine-member body with no catalog. Every V2 `protocol_clause` node carries the identity-bound `owner_model` reference in its application preimage and exact dependencies; other nodes omit it. | Test (TC-233, TC-310, TC-946) |
+| FR-322-AC-132 | For each selected domain-package identity and digest, a package contains exactly one self-typed `model`/`model_root` node with the closed `{kind: "model_root", identity, digest}` owner, one `generated` occurrence at ordinal zero mapped to the existing model-selection source region, and the closed `ModelDeclarationNode` preimage; this form exists regardless of declaration count and its key is determined by the selected identity and digest, never by a model alias or representative declaration. The V2 schema rejects a root without `ModelRootOwner`, a `ModelRootOwner` on another node form, an extra owner member or an owner identity/digest pair absent from `model_selections`. The published model-root vector recomputes from its canonical preimage, and the reader admits it without a new FCD declaration or selection field. | Test |
 
 ## Dependencies
 

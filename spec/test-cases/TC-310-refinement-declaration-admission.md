@@ -220,6 +220,23 @@ Mutations, each applied alone to the positive unit:
     replaces the concrete
     machine key with an object-type key; `SM-04` omits the abstract machine's
     row; `SM-05` duplicates that row.
+    For each selected model package in these writes, also verify exactly one
+    `model_root` node whose `ModelRootOwner` identity and digest join the
+    selected `model_selections` row, whose generated occurrence ordinal zero
+    maps to the model-selection source region, and whose identity is derived
+    from the selected package identity and digest, independent of alias
+    spelling. Verify the model-only
+    refinement's `abstract` and `semantic_type` name the roots, while a
+    protocol refinement keeps `protocol` at the exact clause key and the
+    clause's `owner_model` unchanged. The model root is derived from existing
+    model selection; the test adds no FCD field.
+28. **Root owner joins (MR-01 to MR-04).** Starting from an admitted selected
+    model package, remove `owner` from its root, add an extra `version` member
+    to `ModelRootOwner`, attach `ModelRootOwner` to an object-type node, and
+    separately change only the root owner's identity or digest to a pair not
+    in `model_selections`. Validate the first three mutations against both
+    schemas; validate every mutation with the strict reader after rebuilding
+    all identities and `package_id` that the mutation permits.
 
 ## Expected Results
 
@@ -389,4 +406,19 @@ row has the same closed shape as an object-type row. `SM-03` refuses
 `missing_declaration`/`missing-name` naming the unmapped abstract machine;
 `SM-05` refuses `invalid_model_binding`/`conflicting-binding` naming the
 duplicate rows. The object-type-only refinement is admitted without a
-state-machine node or synthetic anchor.
+state-machine node or synthetic anchor. Each selected package has exactly
+one `model_root` with `ModelRootOwner` joined to its selection row, generated
+occurrence zero mapped to the existing model-selection source region, and a
+key recomputed from the published model-root vector. Its alias is not in the
+preimage. For a model subject, `abstract` and the refinement's
+`semantic_type` identify the selected roots; for a protocol subject,
+`abstract` identifies the abstract root, `protocol` identifies the exact
+clause, and the clause's `owner_model` remains its exact declaring node. The
+reader admits both V2 schemas and the package without a new FCD field.
+
+For mutation 28, `MR-01` fails the schema because the root lacks its required
+owner; `MR-02` fails the closed-owner schema; `MR-03` fails the graph-owner
+rule because a root owner is restricted to `model`/`model_root`. `MR-04`
+refuses `missing_declaration`/`missing-selection` at the root owner because
+its identity/digest pair does not join a selected model package, even after
+node keys and package identity are recomputed.
