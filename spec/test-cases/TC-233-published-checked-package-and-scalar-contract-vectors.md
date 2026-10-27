@@ -127,7 +127,9 @@ every nominal node and compound-unit vector identity and apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
 including `-0` spellings and the `dimension-equivalence-` mutations (descending
 ids, one node twice, one id, a stale pair, a stale `root_scale`, a zero, a
-negative, a missing and an unreduced `root_scale`, an owner outside the lock),
+negative, a missing and an unreduced `root_scale`, an owner outside the lock;
+the one-id, zero, negative and missing mutations are `malformed_wire`, the
+others `invalid_semantic_graph`, FR-322-AC-139),
 and require the semantic oracle itself to refuse `-0` and to refuse a repeated
 pair, a derived pair of unequal normalized maps or of a ratio the base roots do
 not fix, and a cycle of the `dimension-equivalence-` vectors whose ratios do not
@@ -593,8 +595,8 @@ first FR-341 state-step refusal.
 | XT-02 | The transition's `anchor` and `subject` bindings swapped | Fails the schema | FR-341-AC-15 |
 | XT-03 | The `post` binding removed; a sixth binding added | Fails the schema | FR-341-AC-15 |
 | XT-04 | `pre` holding the precondition twice; `subject` an empty aggregate | Fails the schema | FR-341-AC-15 |
-| XT-05 | Member operator `sequence`; law role `temporal_profile`; a `rounding` mode; occurrence role `declaration` | Fails the schema | FR-341-AC-15 |
-| XT-06 | Member operator `sequence` on the transition | Fails the schema at the member operator (`malformed_wire` in a complete reader); see XT-19 for the operation step alone | FR-341-AC-15; FR-341-AC-19; FR-464-AC-19 |
+| XT-05 | Law role `temporal_profile`; a `rounding` mode; occurrence role `declaration` | Fails the schema | FR-341-AC-15 |
+| XT-06 | Member operator `sequence` on the transition (XT-05 covers the law, mode and occurrence cases) | Fails the schema at the member operator (`malformed_wire` in a complete reader); see XT-19 for the operation step alone | FR-341-AC-15; FR-341-AC-19; FR-464-AC-19 |
 | XT-07 | A `quire.op.protocol.control` application naming operator `transition` | Fails the schema at the member operator (`malformed_wire` in a complete reader); see XT-20 for the operation step alone | FR-341-AC-19; FR-464-AC-19 |
 | XT-08 | The anchor's `operation` rewritten, rekeyed | The anchor, both clauses and the transition take new ids; the `package_id` changes | FR-341-AC-17 |
 | XT-09 | A source-map region moved | Every node id and the `package_id` unchanged | FR-341-AC-17 |
@@ -612,6 +614,15 @@ first FR-341 state-step refusal.
 
 XT-10 through XT-15 and XT-17 are reader outcomes the QSpec crate does not
 implement; the quire-contract-ir reader owns their execution evidence.
+
+The QSpec crate executes XT-01 through XT-09, XT-16, XT-18, XT-19 and XT-20:
+the schema refusals (XT-02 through XT-06 and XT-07, each against the published
+`schema.json`), the identity recomputations, and the operation step alone
+(XT-19, XT-20). The `malformed_wire` code and its locus for XT-06 and XT-07
+are reader outcomes the quire-contract-ir reader owns; the crate proves only
+that the schema refuses. How QSL's first transition emitter chooses among
+several pre or post clauses is QSL-owned and OPEN (QSL-1163, e38), so XT-01
+through XT-20 do not close the QSL-authored part of IR-1052 AC-7.
 
 ## Expected Results
 

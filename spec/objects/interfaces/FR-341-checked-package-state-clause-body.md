@@ -311,25 +311,35 @@ the operation step for them:
 `operation-member-mismatch` stays reachable through a complete reader for a
 member the schema admits and the lock's profile does not define.
 
-### Several postconditions on one operation
+### Several postconditions and preconditions on one operation
 
 A `state`/`transition` node is a Boolean model-field claim over one
 (`anchor`, `subject`) pair. It is not the summary of an operation's
-postconditions. An operation anchor may have any number of `state_clause`
-nodes of clause `postcondition` (QSL FR-105-AC-4 adds a second one as one
-more node on the same anchor), each checked as FR-341 states, and an
-operation's postconditions are the conjunction of its postcondition clauses
+postconditions or of its preconditions. An operation anchor may have any
+number of `state_clause` nodes of clause `postcondition` and of clause
+`precondition` (QSL FR-105-AC-4 adds a second post as one more node on the
+same anchor; QSL allows several preconditions, evaluated as a conjunction),
+each checked as FR-341 states, and an operation's postconditions (and,
+likewise, its preconditions) are the conjunction of its clauses of that kind
 whether or not any transition names one of them. A transition's `post` binds
-exactly the one postcondition the producer states for its subject. The
-producer SHALL emit at most one transition per (`anchor`, `subject`); where
-several postconditions constrain one subject, the producer that wants a
-transition for it states one postcondition clause for that subject (the
-source's own `post A and B`) and binds that, and the others remain plain
-postcondition nodes. A consumer SHALL NOT read a transition's `post` as the
-operation's complete postcondition, and SHALL NOT infer from a transition
-that no further postcondition exists. No conjunction node is synthesized, so
-no new canonical order or identity exists to rule, and the single `post`
-binding, its preimage and the uniqueness rule are unchanged.
+exactly one postcondition and its `pre` at most one precondition, the ones the
+producer states for its subject. The producer SHALL emit at most one
+transition per (`anchor`, `subject`). A consumer SHALL NOT read a
+transition's `post` as the operation's complete postcondition, SHALL NOT read
+its `pre` as the operation's complete precondition, and SHALL NOT infer from a
+transition that no further postcondition or precondition exists. No
+conjunction node is synthesized, so no new canonical order or identity exists
+to rule, and the single `post` binding, the at-most-one `pre`, the preimage
+and the uniqueness rule are unchanged.
+
+One producer option, not a requirement of this specification: where several
+clauses of one kind constrain one subject, the producer that wants a
+transition for it states one clause for that subject (the source's own
+`post A and B`) and binds that, and the others remain plain clause nodes.
+Which option QSL takes is QSL-owned and OPEN (QSL-1163, the first transition
+emitter, escalation e38). QSL FR-105 and ADR-012 section 15.4 currently say
+QSL emits no `state`/`transition` node from a state clause, so the QSL-authored
+part of IR-1052 AC-7 is not closed by this specification.
 
 ## Reader order
 
@@ -395,7 +405,7 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 | FR-341-AC-17 | The published `positive-state-transition.json` package, whose transition is `Switch.set(flag: Boolean)` over the required Boolean field `on` of `acme/orders` with precondition `flag || on` and postcondition `on`, validates against `schema.json`, has every application node's preimage valid under the preimage schema, keys every node by its preimage and its `package_id` by the identity preimage plus the occurrence-free node projection, and is admitted by the operation step for every application, the subject projection included. Rewriting the anchor's operation name changes the ids of the anchor, both clauses and the transition and the `package_id`; rewriting the subject's field, `pre`, `post` or the profile selection changes the transition id and the `package_id`; moving a source-map region leaves every node id and the `package_id` unchanged. | Test (TC-233) |
 | FR-341-AC-18 | A `quire.op.state.transition` application nested inside a node body or another term fails the V2 schema (`malformed_wire` at the nested application), and a `state`/`transition` node whose body root is another application or term fails the V2 schema; the state step refuses a transition application at the root of any other node as `ill_typed`/`operator-ineligible` at that node, before any anchor check. | Test (TC-233) |
 | FR-341-AC-19 | For the published `positive-clause-operations.json` and `positive-state-transition.json` packages, a `quire.op.protocol.control` application naming operator `transition` fails the published schema and a complete reader refuses it `malformed_wire` at the application's `operation/member/operator`; a `quire.op.state.transition` application naming `sequence` fails the schema likewise; the operation step run alone on either edited document refuses `invalid_package`/`operation-member-mismatch` at the application. The schema is not widened. | Test (TC-233) |
-| FR-341-AC-20 | A package whose operation anchor has two `postcondition` `state_clause` nodes and one transition binding either one as `post` is admitted; a transition's `post` does not stand for the operation's complete postcondition, and two transitions over one (`anchor`, `subject`) refuse `ambiguous_declaration`/`ambiguous-name` whichever postcondition each binds. | Analysis |
+| FR-341-AC-20 | A package whose operation anchor has two `postcondition` `state_clause` nodes and one transition binding either one as `post` is admitted, and likewise for two `precondition` nodes and `pre`; a transition's `post` and `pre` do not stand for the operation's complete postcondition or precondition, and two transitions over one (`anchor`, `subject`) refuse `ambiguous_declaration`/`ambiguous-name` whichever clauses each binds. How QSL's first transition emitter chooses its clause (for example one source-stated `post A and B`) is QSL-owned and OPEN (QSL-1163, e38); this criterion does not close the QSL-authored part of IR-1052 AC-7. | Analysis |
 
 ## Dependencies
 
