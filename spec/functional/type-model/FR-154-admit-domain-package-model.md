@@ -222,7 +222,8 @@ as a `reference` `target` refuses
 `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.target`: a
 reference names an object and a quantity has no identity.
 
-**Unit bounds.** A unit bound is a value constraint, not a type form. Its
+**Unit bounds.** A unit bound is a value invariant that also forms a bounded
+quantity type (below). Its
 `keyword` is `min` or `max` and its `operands.value` is a canonical rational
 string `c` (the form of a unit's `scale`), a magnitude in the unit `u` that
 `appliesTo` names directly or through an alias; an `operands.value` that is not a
@@ -247,21 +248,50 @@ environment choice or a replayed recorded value, that violates a bound refuses
 `invalid_runtime_input`/`invalid-value` naming the member path, the constraint
 `identity`, its keyword and `c`. A successor whose post-state value violates a
 bound is a successor that violates an invariant (FR-181): it is recorded rather
-than pruned, and the invariant it violates is the constraint. A literal or
-constant that a postcondition assigns to a bounded member is not checked
-statically against the bound, because the bound is not a fact about the type.
+than pruned, and the invariant it violates is the constraint. A value that is
+not statically known is checked only as the invariant above.
 
-The type of every bounded member stays `Quantity<u>`: no bounded type is formed,
-FR-142's `Quantity<u>` still admits every quantity of `u` with no bound on the
-magnitude, and conversion, comparison and equality of the member read the
-unbounded type. A bound is not a type fact for FR-146: a quotient of quantities
+The type of a bounded member is the bounded quantity type `Quantity<u>[min, max]`,
+a refinement of `Quantity<u>` (FR-142) whose values are the quantities of `u`
+whose magnitude satisfies every bound that applies to the member (an absent
+bound is open). It is a subtype of `Quantity<u>`: a bounded value, and a bounded value assigned or passed to a position of the
+same or a wider bounded type (equal or looser bounds), is read as a
+`Quantity<u>` by conversion, comparison, equality and arithmetic, and the result
+of arithmetic is a plain `Quantity<u>`; a member of type `Quantity<u>` supplied
+to a bounded position is admitted by the checker and left to the invariant above.
+A quantity literal, or an exact constant expression that folds to one, whose
+expected type is a bounded quantity type refuses `ill_typed`/`type-mismatch` at
+the literal when its magnitude violates a bound (`11 ms` against `max` `10`),
+naming the member path or alias, the constraint `identity`, its keyword, `c`,
+the refusal site and the expected type `Quantity<u>[min, max]`, and checks when it satisfies
+every bound (`5 ms`, and `10 ms` at `max` `10`, equality satisfying); this holds
+at every position, a postcondition assignment included. The constant is the
+whole exact constant expression after folding, and the refusal is at its outermost
+expression: `-1 ms` is unary minus (FR-142 "Quantity negation") applied to the
+literal `1 ms`, so against `min` `0` it refuses at the negation expression `-1 ms`,
+not at `1 ms`, and `2 ms - 3 ms` refuses at the subtraction. A sequence, set, map
+or optional member with a bounded element or value has the type
+`Sequence<Quantity<u>[min, max]>`, `Set<...>`, `Map<K, Quantity<u>[min, max]>` or
+`Option<Quantity<u>[min, max]>`, and a literal element, map value or optional
+payload written in a collection or `Some` constructor is checked statically as
+above, at that element. A literal of another
+unit refuses as FR-142 refuses it, with no conversion. A conjunction of bounds no
+magnitude satisfies makes every literal of that position refuse. Two bounded
+types are the same type exactly when their unit and effective bounds are equal;
+a bound declared on an alias gives the type to members of that alias and of its
+aliases only, never to another member typed `u`, and a bound on `u` itself types
+every member of `u`. The runtime and post-state invariant above stays in force
+for every value the checker cannot decide.
+
+The bounded type is not a fact for FR-146: a quotient of quantities
 keeps the exact rational magnitude over the whole rational domain and carries no
 range obligation, and no guard fact is derived from a bound. A bound holds as an
 invariant of the states and supplied values it is checked on, and a function body
 is checked for every quantity argument of the unit, so a bound proves nothing
 about an argument and a divisor still has no nonzero proof form from it. The
-checked package carries no node for a bound (FR-322 "Model-owned members"); the
-checker reads it by (declaring node, member path) from the admitted document,
+checked package carries no node for a bound or a bounded type (FR-322
+"Model-owned members"); a bounded member's node is the unit node, and the
+checker reads the bound by (declaring node, member path) from the admitted document,
 as it reads a clock constraint. The filament-core-data FR-146 mapping of a unit
 bound to `x-agent-ix-quantity-min` and `x-agent-ix-quantity-max` has the same
 meaning, equality satisfying.
@@ -533,9 +563,10 @@ Admission checks are decided before the first charge.
 | FR-154-AC-25 | A variant case whose `payloadType` is `ix://quire/native/Clock` or `ix://quire/unit/ms` is read by the variant payload row as any payload type is, `unsupported_construct`/`declaration-form` at `Variant.payloadType`, and never `malformed-declaration`. | Test (TC-234) |
 | FR-154-AC-26 | A field typed `ix://quire/native/Clock` with multiplicity `{0, 3, true, false}` is a `Sequence<Clock>[0, 3]` clock member, with `{0, 3, false, true}` a `Set<Clock>[0, 3]`, with `{0, 3, false, false}` a `Bag<Clock>[0, 3]`, with `{0, 3, true, true}` an `OrderedSet<Clock>[0, 3]` and with an unbounded upper bound, ordered and not unique, a `Sequence<Clock>`; an operation parameter and an operation result typed `Clock` with multiplicity `{0, 2, true, false}` are admitted the same way; each is admitted with no declaration built and no refusal at `Field.multiplicity`; a clock field with multiplicity `{3, 1, true, false}` refuses `invalid_model_binding`/`unpreserved-model-meaning` at `Field.multiplicity`. | Test (TC-234) |
 | FR-154-AC-27 | A sequence `items` and a map `values` typed `ix://quire/native/Clock`, and the same typed by an alias of `Clock`, are admitted with no declaration built for the clock and read as `Sequence<Clock>` and `Map<Text, Clock>`; a field typed by such a sequence with multiplicity `{0, 2, true, false}` is a `Sequence<Sequence<Clock>>[0, 2]`; a record value type with a clock field, held by a field of multiplicity `{0, 2, true, false}`, is a `Sequence<Timer>[0, 2]` clock collection. | Test (TC-234) |
-| FR-154-AC-28 | With the unit `ms` and `A/d` a field typed `ix://quire/unit/ms`, a `min` constraint `1` and a `max` constraint `3` on `ms`, the values `1 ms`, `3 ms` and `3/2 ms` are admitted, `0 ms` and `7/2 ms` supplied as an initial state each refuse `invalid_runtime_input`/`invalid-value` naming `A/d`, the constraint identity, its keyword and its bound, an absent optional `A/d` is admitted, a sequence `items` typed `ms` is checked at each element, and a successor whose post-state sets `A/d` to `7/2 ms` is recorded as a successor that violates the `max` invariant and is not pruned; `A/d` stays typed `Quantity<ms>`, `convert<Quantity<s>>(self.d)` is checked for every `ms` quantity, and `self.d / x` still refuses `undefined_expression`/`unproved-nonzero` however the `min` reads. | Test (TC-234) |
+| FR-154-AC-28 | With the unit `ms` and `A/d` a field typed `ix://quire/unit/ms`, a `min` constraint `1` and a `max` constraint `3` on `ms`, the values `1 ms`, `3 ms` and `3/2 ms` are admitted, `0 ms` and `7/2 ms` supplied as an initial state each refuse `invalid_runtime_input`/`invalid-value` naming `A/d`, the constraint identity, its keyword and its bound, an absent optional `A/d` is admitted, a sequence `items` typed `ms` is checked at each element, and a successor from the pre-state `A/d` = `3/2 ms` whose post-state sets `A/d` to the non-constant `self.d + 2 ms` (`7/2 ms`) is recorded as a successor that violates the `max` invariant and is not pruned; `A/d` has the type `Quantity<ms>[1, 3]`, a subtype of `Quantity<ms>`, `convert<Quantity<s>>(self.d)` is checked for every `ms` quantity, and `self.d / x` still refuses `undefined_expression`/`unproved-nonzero` however the `min` reads. | Test (TC-234) |
 | FR-154-AC-29 | A `min` constraint on `ms` with `operands.value` `"1/0"`, `"0.5"` and `""` refuses `invalid_model_binding`/`malformed-declaration` at `Constraint.operands`; a `min` `5` with a `max` `3` on the same `appliesTo` refuses the same at the later constraint; a `min` `5` on an alias `D` of `ms` with a `max` `3` on `ms` is admitted and no value of a `D` member satisfies both; a bound on the alias `D` constrains `D` members and no other `ms` member; a quantity of the unit `s` is not bounded by a bound on `ms`. | Test (TC-234) |
 | FR-154-AC-30 | A composed document (`type: FR` with `object: value_object`, or with `object: enumeration`, as `FR-204` and `FR-271`) declares no model node: extraction skips it because its `type` is an artifact type even though it carries `object:`, the lift emits none, and a package built from a bundle that holds it equals the package built without it. A relationship end or supertype naming `ix://<package identity>/FR-204` refuses `missing_declaration`/`missing-name`, a node carrying `FR-204` as its `<Name>` segment refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.identity`, and no composed document is ever lifted under a name derived from its id. | Test (TC-234, TC-945) |
+| FR-154-AC-31 | With the unit `ms`, an alias `Level` of `ms` and a `min` `0` and a `max` `10` constraint on `Level`, `Level` is the type `Quantity<ms>[0, 10]`: the literals `0 ms`, `5 ms` and `10 ms` check at a call argument for a `Level` parameter, an annotated `let x: Level` and a postcondition assignment to a `Level` field (a unit member has no default, so no default position exists), and `11 ms` refuses `ill_typed`/`type-mismatch` at the literal at each of those positions, naming the member path or alias, the constraint identity, its keyword, its bound, the refusal site and the expected type `Quantity<ms>[0, 10]`; `-1 ms` refuses at the negation expression `-1 ms` (unary minus on the literal `1 ms`, FR-142-AC-25), not at `1 ms`, and `4 ms + 7 ms` refuses at the sum; `Sequence<Level>` and `Option<Level>` members hold `Level` elements and payloads and `sequence[5 ms, 11 ms]` refuses at `11 ms`; with only `min` `0` `-1 ms` refuses and `1000000 ms` checks, with only `max` `10` `-1000000 ms` checks and `11 ms` refuses; `5 s` for a `Level` position refuses as FR-142 refuses a unit mismatch; a `Level` value is read as `Quantity<ms>` (`self.d + 1 ms` is a plain `Quantity<ms>`, `convert<Quantity<s>>(self.d)` checks) and `self.d < 11 ms` and `self.d = 11 ms` as comparison operands are not refused; a `Level` value flows to a `Quantity<ms>[0, 20]` position with no refusal and a plain `Quantity<ms>` value is admitted by the checker to a `Level` position, left to the run-time invariant of FR-154-AC-28; a plain `ms` member is not typed `Quantity<ms>[0, 10]`; `min` `5` with `max` `3` refuses as FR-154-AC-29, and under `min` `5` with a `max` `3` on an alias and its parent every literal at that position refuses. | Test (TC-234) |
 
 ## Dependencies
 
