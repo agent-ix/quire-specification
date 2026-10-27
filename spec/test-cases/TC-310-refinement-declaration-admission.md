@@ -11,6 +11,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-250
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: verifies
 ---
 
 # TC-310: Refinement declaration admission
@@ -237,6 +239,16 @@ Mutations, each applied alone to the positive unit:
     in `model_selections`. Validate the first three mutations against both
     schemas; validate every mutation with the strict reader after rebuilding
     all identities and `package_id` that the mutation permits.
+29. **Selected-root fixtures (MR-05 to MR-08).** For every published positive
+    package with `model_selections`, derive the root from each row alone and
+    compare it with the package's root (`MR-05`, FR-322-AC-134); remove the
+    root of one row, which the schemas admit and the reader refuses
+    `invalid_semantic_graph` at `/semantic_graph/nodes` (`MR-06`,
+    FR-322-AC-135); check that each root's `generated` ordinal-zero entry has
+    one region naming a lock source (`MR-07`, FR-322-AC-136); recompute the
+    published model-root vector from its selection (`MR-08`, FR-322-AC-137).
+    `MR-04` refuses `missing_declaration`/`missing-selection` at
+    `/semantic_graph/nodes/{i}/owner` and is schema-valid.
 
 ## Expected Results
 

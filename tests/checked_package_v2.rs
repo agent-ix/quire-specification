@@ -3391,6 +3391,18 @@ fn owner_join_refusal(package: &Value, nodes: &[Value]) -> Result<(), ReadRefusa
                     return Err(unjoined);
                 }
             }
+            Some("model_root") => {
+                let joined = package["lock"]["model_selections"]
+                    .as_array()
+                    .is_some_and(|rows| {
+                        rows.iter().any(|row| {
+                            row["identity"] == owner["identity"] && row["digest"] == owner["digest"]
+                        })
+                    });
+                if !joined {
+                    return Err(unjoined);
+                }
+            }
             _ => return Err(unjoined),
         }
     }
@@ -6759,9 +6771,6 @@ fn tc_233_nominal_identity_preimages_have_exact_jcs_identities_and_semantics() {
         schema
             .validate(&vector["preimage"])
             .unwrap_or_else(|error| panic!("{name} has the closed preimage shape: {error}"));
-        integrated_schema
-            .validate(&vector["preimage"])
-            .unwrap_or_else(|error| panic!("{name} is integrated in the I04 schema: {error}"));
         assert_eq!(
             unqualified_jcs_sha256(&vector["preimage"]),
             vector["sha256"]
@@ -6769,6 +6778,14 @@ fn tc_233_nominal_identity_preimages_have_exact_jcs_identities_and_semantics() {
                 .expect("vector digest is a string"),
             "{name} binds its exact RFC 8785 JCS preimage"
         );
+        // A structural vector (the model root) is no nominal preimage: the
+        // closed node-preimage schema above and the JCS digest bind it.
+        if vector["preimage"]["version"] == "quire.structural-node/v1" {
+            continue;
+        }
+        integrated_schema
+            .validate(&vector["preimage"])
+            .unwrap_or_else(|error| panic!("{name} is integrated in the I04 schema: {error}"));
         assert!(
             semantic_preimage_is_valid(&vector["preimage"], vectors),
             "{name} satisfies the closed nominal-node semantic constraints"
@@ -13634,6 +13651,8 @@ fn required_owner_kind(node: &Value) -> Option<&'static str> {
         None
     } else if node.get("declaration").is_some() {
         Some("source")
+    } else if node["node_tag"] == "model" && node["semantic_form"] == "model_root" {
+        Some("model_root")
     } else if is_model_declaration(node) || node["node_tag"] == "function" {
         Some("model")
     } else {
@@ -13720,7 +13739,11 @@ fn tc_233_every_positive_fixture_carries_owners_exactly_where_the_rule_requires(
     }
     assert_eq!(
         kinds,
-        BTreeSet::from(["model".to_owned(), "source".to_owned()])
+        BTreeSet::from([
+            "model".to_owned(),
+            "model_root".to_owned(),
+            "source".to_owned()
+        ])
     );
 }
 
@@ -14335,7 +14358,13 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
                 "digest": unqualified_jcs_sha256(&document),
             }]);
             candidate["model_bindings"] = json!({"domain_package": document});
-            replace_selection_consistently(&mut candidate, "/model_selections", selection);
+            replace_selection_consistently(&mut candidate, "/model_selections", selection.clone());
+            // The selected package changed, so its root joins the new row.
+            for root in model_root_positions(&candidate) {
+                candidate["semantic_graph"]["nodes"][root]["owner"]["digest"] =
+                    selection[0]["digest"].clone();
+                rekey_model_root(&mut candidate, root);
+            }
             let placeholder =
                 json!({"domain": "quire.checked-semantic-node/v1", "digest": "0".repeat(64)});
             let mut node = json!({
@@ -18720,7 +18749,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 "missing_declaration", "missing-name", "/semantic_graph/nodes/46/body/members/1",
             ),
             "tick-source-with-clock-place" => (
-                "invalid_package", "clock-without-dense-time", "/semantic_graph/nodes/52/body/members/0/value/target",
+                "invalid_package", "clock-without-dense-time", "/semantic_graph/nodes/53/body/members/0/value/target",
             ),
             "source-unit-length" | "source-unit-derived-non-time" | "source-unit-derived-time" => (
                 "ill_typed", "invalid-time-quantity", "/semantic_graph/nodes/44/body/members/1/value/target",
@@ -19019,4 +19048,309 @@ fn tc_233_state_transition_package_binds_anchor_subject_pre_and_post() {
     let renames = rekey_stale_nodes(&mut rewired);
     assert_eq!(renames.len(), 1, "only the transition is rekeyed");
     assert_ne!(rewired["package_id"], package["package_id"]);
+}
+
+/// Every published positive package, read from the fixtures directory so that
+/// a newly published package cannot escape the selected-root checks.
+fn published_positive_packages() -> Vec<(String, Value)> {
+    let directory = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("proposals/checked-package-v2/fixtures");
+    let mut paths = std::fs::read_dir(&directory)
+        .expect("fixtures directory is readable")
+        .map(|entry| entry.expect("fixture entry").path())
+        .filter(|path| {
+            path.file_name()
+                .and_then(|name| name.to_str())
+                .is_some_and(|name| name.starts_with("positive-") && name.ends_with(".json"))
+        })
+        .collect::<Vec<_>>();
+    paths.sort();
+    paths
+        .into_iter()
+        .map(|path| {
+            let text = std::fs::read_to_string(&path).expect("fixture is readable");
+            (
+                path.file_name().unwrap().to_string_lossy().into_owned(),
+                parsed_fixture(&text),
+            )
+        })
+        .collect()
+}
+
+/// The `model_root` node a producer derives from one `model_selections` row,
+/// computed from the row alone.
+fn derived_model_root(selection: &Value) -> Value {
+    let owner = json!({
+        "kind": "model_root",
+        "identity": selection["identity"],
+        "digest": selection["digest"],
+    });
+    let body = json!({"term": "aggregate", "members": []});
+    let key = unqualified_jcs_sha256(&json!({
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "model_root",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": owner,
+        "body": body,
+    }));
+    let node_id = json!({"domain": "quire.checked-semantic-node/v1", "digest": key});
+    json!({
+        "node_id": node_id,
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "model_root",
+        "semantic_type": node_id,
+        "dependencies": [],
+        "occurrences": [{"role": "generated", "ordinal": 0}],
+        "owner": owner,
+        "body": body,
+    })
+}
+
+fn model_root_positions(package: &Value) -> Vec<usize> {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes are an array")
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| node["node_tag"] == "model" && node["semantic_form"] == "model_root")
+        .map(|(position, _)| position)
+        .collect()
+}
+
+/// The reader-stage model-root checks of FR-322-AC-135: a root owner that joins
+/// no selection refuses `missing_declaration`/`missing-selection` at the
+/// owner; a selection without a root refuses `invalid_semantic_graph` at
+/// `/semantic_graph/nodes`. Returns `(code, cause, pointer)`.
+fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static str, String)> {
+    let selections = package["lock"]["model_selections"]
+        .as_array()
+        .expect("model selections are an array");
+    let roots = model_root_positions(package);
+    for position in &roots {
+        let owner = &package["semantic_graph"]["nodes"][*position]["owner"];
+        let joins = selections.iter().any(|selection| {
+            selection["identity"] == owner["identity"] && selection["digest"] == owner["digest"]
+        });
+        if !joins {
+            return Some((
+                "missing_declaration",
+                "missing-selection",
+                format!("/semantic_graph/nodes/{position}/owner"),
+            ));
+        }
+    }
+    selections
+        .iter()
+        .any(|selection| {
+            !roots.iter().any(|position| {
+                let owner = &package["semantic_graph"]["nodes"][*position]["owner"];
+                selection["identity"] == owner["identity"]
+                    && selection["digest"] == owner["digest"]
+            })
+        })
+        .then(|| {
+            (
+                "invalid_semantic_graph",
+                "",
+                "/semantic_graph/nodes".to_owned(),
+            )
+        })
+}
+
+/// Rewrites the root at `position`, rekeys it and the package id, and keeps
+/// the source map in step, as a producer rebuilding identities would.
+fn rekey_model_root(package: &mut Value, position: usize) {
+    let old = package["semantic_graph"]["nodes"][position]["node_id"].clone();
+    let preimage = structural_node_preimage(&package["semantic_graph"]["nodes"][position])
+        .expect("root has a structural preimage");
+    let new = json!({
+        "domain": "quire.checked-semantic-node/v1",
+        "digest": unqualified_jcs_sha256(&preimage),
+    });
+    let node = &mut package["semantic_graph"]["nodes"][position];
+    node["node_id"] = new.clone();
+    node["semantic_type"] = new.clone();
+    for entry in package["source_map"].as_array_mut().expect("source map") {
+        if entry["node_id"] == old {
+            entry["node_id"] = new.clone();
+        }
+    }
+    refresh_package_id(package);
+}
+
+#[trace("TC-310", "FR-322-AC-132", "FR-322-AC-134")]
+#[test]
+fn tc_310_every_selected_model_package_carries_exactly_one_recomputed_root() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let mut selected = 0;
+    let mut root_keys = BTreeMap::new();
+    for (name, package) in published_positive_packages() {
+        let selections = package["lock"]["model_selections"].as_array().unwrap();
+        let roots = model_root_positions(&package);
+        assert_eq!(
+            roots.len(),
+            selections.len(),
+            "{name}: one root per model selection, none without one"
+        );
+        assert!(schema.is_valid(&package), "{name} is schema-valid");
+        assert_eq!(
+            model_root_reader_refusal(&package),
+            None,
+            "{name}: the reader admits its roots"
+        );
+        assert_eq!(
+            unqualified_jcs_sha256(&package_id_preimage(&package)),
+            package["package_id"]["digest"].as_str().unwrap(),
+            "{name}: package_id recomputes with the root"
+        );
+        for selection in selections {
+            selected += 1;
+            let expected = derived_model_root(selection);
+            let found = roots
+                .iter()
+                .map(|position| &package["semantic_graph"]["nodes"][*position])
+                .find(|node| node["owner"]["identity"] == selection["identity"])
+                .unwrap_or_else(|| panic!("{name}: no root for {}", selection["identity"]));
+            assert_eq!(found, &expected, "{name}: root equals the derived root");
+            assert!(structural_node_key_is_current(found), "{name}: root key is current");
+            assert_eq!(
+                root_keys
+                    .entry((selection["identity"].to_string(), selection["digest"].to_string()))
+                    .or_insert_with(|| found["node_id"].clone()),
+                &found["node_id"],
+                "{name}: the root key depends on identity and digest alone"
+            );
+        }
+    }
+    assert!(selected >= 7, "every selected-model positive is covered");
+}
+
+#[trace("TC-310", "FR-322-AC-135")]
+#[test]
+fn tc_310_root_owner_schema_and_reader_stages_are_split() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let position = model_root_positions(&package)[0];
+    assert!(schema.is_valid(&package));
+    assert_eq!(model_root_reader_refusal(&package), None);
+
+    // Shape defects fail the schema (MR-01 to MR-03).
+    let mut no_owner = package.clone();
+    no_owner["semantic_graph"]["nodes"][position]
+        .as_object_mut()
+        .unwrap()
+        .remove("owner");
+    assert!(!schema.is_valid(&no_owner), "MR-01: root without owner");
+    let mut extra = package.clone();
+    extra["semantic_graph"]["nodes"][position]["owner"]["version"] = json!("1");
+    assert!(!schema.is_valid(&extra), "MR-02: extra owner member");
+    let mut misplaced = package.clone();
+    let object_type = package["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .position(|node| node["semantic_form"] == "object_type")
+        .expect("an object type exists");
+    misplaced["semantic_graph"]["nodes"][object_type]["owner"] =
+        package["semantic_graph"]["nodes"][position]["owner"].clone();
+    assert!(!schema.is_valid(&misplaced), "MR-03: root owner on an object type");
+
+    // An owner pair absent from model_selections is schema-valid and is
+    // refused by the reader at the owner, after every identity is rebuilt
+    // (MR-04).
+    let mut unselected = package.clone();
+    unselected["semantic_graph"]["nodes"][position]["owner"]["digest"] = json!("f".repeat(64));
+    rekey_model_root(&mut unselected, position);
+    assert!(schema.is_valid(&unselected), "MR-04: the join is not a schema rule");
+    assert_eq!(
+        model_root_reader_refusal(&unselected),
+        Some((
+            "missing_declaration",
+            "missing-selection",
+            format!("/semantic_graph/nodes/{position}/owner")
+        ))
+    );
+
+    // A selection with no root is schema-valid and refused by the reader
+    // (MR-05).
+    let mut rootless = package.clone();
+    let removed = rootless["semantic_graph"]["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .remove(position)["node_id"]
+        .clone();
+    rootless["source_map"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|entry| entry["node_id"] != removed);
+    refresh_package_id(&mut rootless);
+    assert!(schema.is_valid(&rootless), "MR-05: completeness is not a schema rule");
+    assert_eq!(
+        model_root_reader_refusal(&rootless),
+        Some(("invalid_semantic_graph", "", "/semantic_graph/nodes".to_owned()))
+    );
+}
+
+#[trace("TC-310", "FR-322-AC-136")]
+#[test]
+fn tc_310_root_generated_occurrence_is_the_selection_to_source_relation() {
+    for (name, package) in published_positive_packages() {
+        let sources = package["lock"]["sources"].as_array().unwrap();
+        for position in model_root_positions(&package) {
+            let id = &package["semantic_graph"]["nodes"][position]["node_id"];
+            let entries = package["source_map"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|entry| &entry["node_id"] == id)
+                .collect::<Vec<_>>();
+            assert_eq!(entries.len(), 1, "{name}: exactly one source-map entry");
+            assert_eq!(entries[0]["role"], "generated");
+            assert_eq!(entries[0]["ordinal"], 0);
+            let regions = entries[0]["regions"].as_array().unwrap();
+            assert_eq!(regions.len(), 1, "{name}: exactly one region");
+            assert!(
+                sources.iter().any(|source| source == &regions[0]["source"]),
+                "{name}: the region names a lock source"
+            );
+            assert!(regions[0]["start"].as_u64() < regions[0]["end"].as_u64());
+        }
+    }
+}
+
+#[trace("TC-310", "FR-322-AC-137")]
+#[test]
+fn tc_310_published_roots_are_the_producer_oracle() {
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let vector = vectors["vectors"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|vector| vector["name"] == "model-root-counter-cas")
+        .expect("the model-root vector is published");
+    let selection = json!({
+        "identity": vector["preimage"]["owner"]["identity"],
+        "digest": vector["preimage"]["owner"]["digest"],
+    });
+    assert_eq!(
+        derived_model_root(&selection)["node_id"]["digest"],
+        vector["sha256"],
+        "the producer derivation reproduces the published root vector"
+    );
+    for (name, package) in published_positive_packages() {
+        for selection in package["lock"]["model_selections"].as_array().unwrap() {
+            let derived = derived_model_root(selection);
+            assert!(
+                package["semantic_graph"]["nodes"]
+                    .as_array()
+                    .unwrap()
+                    .contains(&derived),
+                "{name}: a producer deriving the root from the selection emits this node"
+            );
+        }
+    }
 }
