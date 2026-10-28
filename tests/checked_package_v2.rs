@@ -21073,11 +21073,26 @@ fn tc_310_refinement_name_is_identity_and_step_rows_use_declaring_type_anchors()
         );
     }
 
-    // OC-*: the occurrence of an anchor no clause names.
-    for case in provenance["anchor_occurrences"]
+    // OC-*: the occurrence of an anchor no clause names. The expected
+    // outcomes are restated here, independent of the fixture's own field.
+    let occurrence_cases = provenance["anchor_occurrences"]
         .as_array()
-        .expect("occurrences")
-    {
+        .expect("occurrences");
+    let names: Vec<&str> = occurrence_cases
+        .iter()
+        .map(|case| case["name"].as_str().expect("name"))
+        .collect();
+    assert_eq!(names, ["OC-01", "OC-02", "OC-03", "OC-04"]);
+    let independent = [
+        "admitted",
+        "refused:no-occurrence",
+        "refused:unnamed-anchor-has-exactly-one-occurrence",
+        "admitted",
+    ];
+    for (case, expected) in occurrence_cases.iter().zip(independent) {
+        assert_eq!(case["expected"], expected, "{}", case["name"]);
+    }
+    for case in occurrence_cases {
         assert_eq!(
             anchor_occurrence_outcome(case),
             case["expected"].as_str().expect("expected"),
