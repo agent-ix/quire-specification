@@ -22887,6 +22887,8 @@ fn tc_310_concrete_identity_is_checked_against_the_owner_of_every_concrete_key()
         "The rows are checked in the array order of step 2, then by index, then by member.",
         "a class the concrete identity does not derive is an extra class (`invalid_semantic_graph`) and is decided before a class whose node alone is foreign or mismatched",
         "first discrepancy decides, an extra class refusing at its entry and an omitted class at the `concrete` array",
+        "where declared classes are the entries other than `memory` entries",
+        "located by the tie-break of the paragraph above that begins \"Extra and omitted classes\"",
         "the presence check below, then the row joins of step 5, then the FR-464 step 7 comparison",
     ] {
         assert!(step5.contains(phrase), "FR-375 lacks: {phrase}");
