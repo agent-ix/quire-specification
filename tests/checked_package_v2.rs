@@ -19980,6 +19980,27 @@ fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_pinned
         assert!(document[member].as_array().is_some_and(|list| !list.is_empty()), "{member}");
     }
     assert!(document.get("tuple_types").is_none() && document.get("variant_types").is_none());
+    let tuple_construct = document["constructs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["construct"]["meaning"] == "quire.meaning.model.tuple-value-type/v1")
+        .expect("the tuple-value-type construct is declared");
+    assert_eq!(tuple_construct["construct"]["shape"], "tuple");
+    assert_eq!(
+        tuple_construct["construct"]["members"]["positions"],
+        "required"
+    );
+    for declared in document["types"].as_array().unwrap() {
+        if declared["kind"]["name"] == "tuple" {
+            for position in declared["positions"].as_array().unwrap() {
+                assert!(
+                    position["origin"].is_object(),
+                    "tuple positions carry FCD origins"
+                );
+            }
+        }
+    }
     let projection = shapes_project_document(&document);
     assert_eq!(projection, vectors["domain_package"], "the projection derives from the document");
     let package = parsed_fixture(include_str!(
