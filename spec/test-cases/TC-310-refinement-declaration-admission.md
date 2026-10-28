@@ -260,6 +260,25 @@ Mutations, each applied alone to the positive unit:
     vector is a structural preimage, not a nominal one, so the nominal-vector
     test (TC-233) binds it by the closed node-preimage schema and its JCS
     digest, not by the nominal-preimage schema.
+30. **Refinement identity (RI-01 to RI-04) and step provenance (SP-01 to
+    SP-11, each run with the class catalog (`c`) and without (`f`): 22 cases;
+    OC-01 to OC-04; BI-01 to BI-07).** Build two refinements of one unit that differ
+    only in name (`Alpha`, `Beta`): both are admitted as two nodes whose
+    recomputed ids differ, and the package emits no internal failure
+    (FR-375-AC-29); a body without `name` fails both schemas; two nodes with
+    equal `name` refuse `ambiguous_declaration`/`ambiguous-name` at the later
+    node's `body/name` (FR-375-AC-30). The vectors are
+    `refinement-identity-vectors.json`. For the step provenance vectors, an
+    operation class `Counter::beginA` is admitted with the no-point anchor of
+    (`Counter`, `beginA`), with and without a `class_catalog`, and refused with
+    the concrete model root, the model-owner node, another operation's anchor
+    or a point-qualified anchor as `source_node`, and with none
+    (FR-375-AC-31); `Sub::reset` of an inherited operation is a missing class,
+    resolved before `source_node`; an anchor no clause names carries one
+    `anchor` occurrence, the operation's declaration region (OC-01 to OC-04).
+    For the binder vectors, `self` at level 0 and the parameters at levels
+    1..n by declared name are admitted; a wrong name, level or type, and a
+    step row with a `result` binder, are refused (FR-375-AC-32).
 
 ## Expected Results
 

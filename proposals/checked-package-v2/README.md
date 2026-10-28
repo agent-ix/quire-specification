@@ -103,6 +103,13 @@ structures, but any external consumer receives only the contract.
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
   `generated` `source_map` entries against its step rows, its `steps` order and
   whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). Cases `RS-18` to `RS-24` cover the closed, identity-excluded `refinement_step_rows` sidecar and its comparison with generated occurrences. The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node key.
+- `refinement-identity-vectors.json` supplies the refinement-name identity
+  vectors `RI-01` to `RI-04` (two names, two JCS SHA-256 node ids; a body
+  without `name` fails the closed preimage schema; an equal `name` is an
+  `ambiguous-name`), the operation-class `source_node` cases `SP-01` to
+  `SP-11` (the no-point `operation_anchor` of the declaring type, with and
+  without a class catalog) and the row-expression binder cases `BI-01` to
+  `BI-07` of FR-375-AC-29 to FR-375-AC-32.
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.
