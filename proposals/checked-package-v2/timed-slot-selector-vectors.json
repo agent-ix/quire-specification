@@ -5,7 +5,87 @@
     "integer": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
     "text": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
     "predicate_expression": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
-    "model": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"
+    "model": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+    "owner_reference_type": "249d3baf1f4728325f4b5194d54320ad6d7e11bc88de7a339504ea6582fe1fbb"
+  },
+  "model_join": {
+    "node": {
+      "body": {
+        "members": [],
+        "term": "aggregate"
+      },
+      "dependencies": [],
+      "node_id": {
+        "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "node_tag": "model",
+      "occurrences": [
+        {
+          "ordinal": 0,
+          "role": "expression"
+        }
+      ],
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/Order"
+      },
+      "schema_version": "quire.checked-semantic-graph/v2",
+      "semantic_form": "object_type",
+      "semantic_type": {
+        "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+        "domain": "quire.checked-semantic-node/v1"
+      }
+    },
+    "declared_without_v": {
+      "identity": "ix://acme/orders/Order",
+      "fields": [
+        {
+          "identity": "ix://acme/orders/Order/sku",
+          "name": "sku",
+          "presence": "required",
+          "typeRef": "ix://quire/native/Integer",
+          "multiplicity": {
+            "lower": 1,
+            "upper": 1,
+            "ordered": false,
+            "unique": true
+          }
+        }
+      ]
+    },
+    "declared_with_v": {
+      "identity": "ix://acme/orders/Order",
+      "fields": [
+        {
+          "identity": "ix://acme/orders/Order/sku",
+          "name": "sku",
+          "presence": "required",
+          "typeRef": "ix://quire/native/Integer",
+          "multiplicity": {
+            "lower": 1,
+            "upper": 1,
+            "ordered": false,
+            "unique": true
+          }
+        },
+        {
+          "identity": "ix://acme/orders/Order/v",
+          "name": "v",
+          "presence": "optional",
+          "typeRef": "ix://quire/native/Clock",
+          "multiplicity": {
+            "lower": 1,
+            "upper": 1,
+            "ordered": false,
+            "unique": true
+          }
+        }
+      ]
+    },
+    "expected": "the object_type node is the same node (one key, recomputed from its owner and its empty body) with and without v; its declared members are exactly sku and v, with no presence member and no Option<Boolean>; the v place row joins field v by identity, declared presence optional and typeRef Clock rendered Option<ix://quire/native/Clock>",
+    "joined_place": "v"
   },
   "rule": "FR-322-AC-148..FR-322-AC-150; a clock_place is one template node for each clock path; the slot selector is a reference to the type node of the selector domain (Integer for Sequence, Set, Bag and OrderedSet, the key type for Map); a concrete position or key exists only on an instantiated place and enters no node",
   "node_key": "sha256 over the RFC 8785 bytes of {version, node_tag, semantic_form, semantic_type: null (self-typed), declaration: null, recursion: null, body}",

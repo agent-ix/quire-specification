@@ -127,7 +127,8 @@ collection are live only while the collection holds the element (below).
   the place that `p` denotes: the instance named by the owner object, the
   template node and the slots (QSL FR-230 "Place identity"). It is read from
   the state's data (the case the value on the path holds, the collection
-  holding the slot) or, for an `Option<Clock>` place, from its presence bit.
+  holding the slot) or, for an `Option<Clock>` place, from its runtime state bit, which is
+  not a package member.
   The model declares no `Option<Boolean>` field, member or type for it, and
   the checked package carries none (FR-322 "Timed-model nodes", Presence). `p`
   may denote a place of another object of the universe or a parameter

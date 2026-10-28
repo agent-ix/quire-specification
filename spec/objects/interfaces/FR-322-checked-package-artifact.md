@@ -2528,7 +2528,9 @@ the key of its complete body. The `selector` of a `slot` step is therefore the
 **symbolic element selector**, a `reference` to the type node of the selector's
 domain: the package's `Integer` type node for a `Sequence`, `Set`, `Bag` or
 `OrderedSet` (the element's zero-based position, FR-415 "Element places"), and
-the node of the key type for a `Map` (a scalar, tuple or record key type alike).
+the node of the key type for a `Map`. Only a scalar key type is ruled here: a tuple or
+record key is out of scope until a vector exercises it, and a reader that cannot resolve it
+refuses the place `malformed-clock-place`.
 A `Map` that is the element of a `Sequence`, `Set`, `Bag` or `OrderedSet` adds
 a second slot step, so a path may carry several. A slot step whose selector is
 an integer literal, a reference to any other node, or a reference to the type
@@ -2558,8 +2560,9 @@ or a bound variable); and one term for each `slot` step of the path in path
 order, of the selector's domain (an Integer position, or a key for a `Map`).
 The place identity (owner, `clock_place` node key, slots; QSL FR-230 "Place
 identity") is the whole operand, so no record, tuple, model, type or
-`clock_place` node carries a presence bit or an `Option<Boolean>`, and no model
-node key changes for holding an `Option<Clock>`. A quantifier over a clock
+`clock_place` node carries a presence bit or an `Option<Boolean>`, and the
+`object_type` node of the owner, a function of its `owner` and its empty body, is the
+same node with or without an `Option<Clock>` member. A quantifier over a clock
 collection (`forall(e in p: ...)`, `exists`) binds `e` as a `parameter` of the
 selector's domain (the one case in which a parameter's `semantic_type` is the
 slot's selector domain and not the element's value type), and `present(e)` and every other read of the element place
@@ -2770,7 +2773,7 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-154 | In `TW-05` (the `Pair` node keyed over a non-empty body) every `reference` to the published `Pair` key dangles, and each such target equals the recomputed key of the closed `ModelDeclarationNode` preimage of the rekeyed `Pair` node; they are dependent on the rekey, so the first refusal is `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`. A dangling `reference` whose target is no recomputed key of a stale-keyed node is a graph-shape refusal that precedes every stale-node-key refusal, and stale nodes keep ascending retained digest order. | Test (TC-940) |
 | FR-322-AC-155 | `present(other.v)` over `v: Option<Clock>`, `present(self.q[i])` over `q: Sequence<Option<Clock>>[0, 2]`, and the body `present(e)` of `forall(e in self.q: ...)` are each one `presence_read` application of `quire.op.option.present`, typed Boolean, with the arguments the place template, the owner term (`other`, `self`) and, for `q`, one slot term (the parameter `i`; the binder parameter `e`); the three nodes have distinct keys, the place nodes are the same templates for every owner, and no place, parameter or model node carries a `presence` member or an `Option<Boolean>`. | Test (TC-367; CK-27; PR-01..PR-03) |
 | FR-322-AC-156 | A `presence_read` with no slot term over `q` refuses `ill_typed`/`operator-ineligible` at `/body/arguments`; one whose owner term is an Integer parameter refuses `ill_typed`/`type-mismatch` at `/body/arguments/1`; one whose first argument is no `clock_place` node refuses `ill_typed`/`operator-ineligible` at `/body/arguments/0`. | Test (TC-367; CK-27; PR-04..PR-06) |
-| FR-322-AC-157 | The `clock_place` of `v: Option<Clock>` has the single path step `field(v)` and one `resolved_path` row whose member type is `Option<ix://quire/native/Clock>`, and the `Option` wrapper adds no step; the place of `q: Sequence<Option<Clock>>` has a `field` and a `slot` step whose row type is that `Option` type. Both are admitted with their terminal `Clock` after the wrapper is removed. | Test (TC-367; CK-27; PR-01..PR-03) |
+| FR-322-AC-157 | The `clock_place` of `v: Option<Clock>` has the single path step `field(v)` and one `resolved_path` row whose member type is `Option<ix://quire/native/Clock>`, and the `Option` wrapper adds no step. The row joins the declared field `v` of the `Order` declaration by identity, declared presence `optional` and type `Clock`, and terminates at `Clock` once the wrapper is removed; the `object_type` node of `Order` has one key with and without `v`, and its declared members are exactly the declared fields. The place of `q: Sequence<Option<Clock>>` has a `field` and a `slot` step whose row type is that `Option` type and is checked for its schema and symbolic selector only. | Test (TC-367; CK-27; PR-01..PR-03, model_join) |
 
 ## Dependencies
 

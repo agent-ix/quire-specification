@@ -467,9 +467,12 @@ and two nodes declaring one name refuse as `ambiguous-name`
 - `timed-slot-selector-vectors.json` publishes standalone `clock_place` nodes
   for the slot selector of a template step (FR-322-AC-148..FR-322-AC-150,
   TC-367 CK-26): positive collection kinds, refused selectors and the guard
-  cases, whose package-level mutations the tests replay, and `presence`: the
-  derived `presence_read` predicate over a clock place (FR-322-AC-155..157). Each node key is the SHA-256 of the RFC 8785 structural preimage and
-  `SL-06` equals the published fixture place.
+  cases, whose package-level mutations the tests replay. Its `presence`
+  section publishes the derived `presence_read` predicate over a clock place
+  (FR-322-AC-155..157), and `model_join` the `object_type` node of `Order`
+  with and without `v: Option<Clock>`. Each node key is the SHA-256 of the
+  RFC 8785 structural or application preimage, and `SL-06` equals the
+  published fixture place.
 
 ## Regenerating protocol fixture keys
 

@@ -21073,6 +21073,105 @@ fn presence_cause(
     None
 }
 
+/// A hidden presence member anywhere in the presence vectors' model, place or
+/// parameter bodies, or a hidden presence field in the declared members.
+fn presence_hidden_member(vectors: &Value) -> Result<(), String> {
+    let hidden = |value: &Value| {
+        let text = serde_json::to_string(value).unwrap();
+        text.contains("\"presence\"") || text.contains("Option<Boolean>") || text.contains("Option<ix://quire/native/Boolean>")
+    };
+    let presence = &vectors["presence"];
+    for (name, place) in presence["places"].as_object().unwrap() {
+        if hidden(&place["node"]["body"]) {
+            return Err(format!("hidden member in place {name}"));
+        }
+    }
+    for (name, node) in presence["parameters"].as_object().unwrap() {
+        if hidden(&node["body"]) {
+            return Err(format!("hidden member in parameter {name}"));
+        }
+    }
+    let join = &vectors["model_join"];
+    if hidden(&join["node"]["body"]) {
+        return Err("hidden member in the object_type node".to_owned());
+    }
+    for declared in ["declared_without_v", "declared_with_v"] {
+        for field in join[declared]["fields"].as_array().unwrap() {
+            let ty = field["typeRef"].as_str().unwrap();
+            if field["name"] == "presence" || ty.contains("Boolean") && field["presence"] == "optional" {
+                return Err(format!("hidden field {} in {declared}", field["name"]));
+            }
+        }
+    }
+    let names = |declared: &str| -> Vec<String> {
+        join[declared]["fields"].as_array().unwrap().iter().map(|f| f["name"].as_str().unwrap().to_owned()).collect()
+    };
+    let (without, with) = (names("declared_without_v"), names("declared_with_v"));
+    if with.len() != without.len() + 1 || with[..without.len()] != without[..] || with.last().map(String::as_str) != Some("v") {
+        return Err("declared members are not exactly the baseline plus v".to_owned());
+    }
+    Ok(())
+}
+
+/// The `object_type` node is one node with and without `v`, and the `v`
+/// place's resolved row joins the declared field.
+fn presence_model_join(vectors: &Value, nodes: &[Value]) -> Result<(), String> {
+    let join = &vectors["model_join"];
+    let model = &join["node"];
+    if !structural_node_key_is_current(model) {
+        return Err("object_type key is stale".to_owned());
+    }
+    if !nodes.iter().any(|n| n == model) {
+        return Err("object_type node is not the published node".to_owned());
+    }
+    if model["body"] != json!({"members": [], "term": "aggregate"}) {
+        return Err("object_type body is not empty".to_owned());
+    }
+    let owner = join["declared_with_v"]["identity"].as_str().unwrap();
+    if join["declared_without_v"]["identity"] != owner || model["owner"]["node"] != owner {
+        return Err("declarations and node disagree on the owner".to_owned());
+    }
+    let field = join["declared_with_v"]["fields"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|f| f["name"] == "v")
+        .ok_or("no field v")?;
+    let place = &vectors["presence"]["places"]["v"]["node"];
+    if place["body"]["members"][0]["value"]["target"] != model["node_id"] {
+        return Err("the v place is not owned by the object_type node".to_owned());
+    }
+    let row = &place["body"]["members"][2]["value"]["members"][0]["members"];
+    let text = |at: usize| row[at]["value"]["value"].as_str().unwrap();
+    let declared = field["typeRef"].as_str().unwrap();
+    let rendered = if field["presence"] == "optional" { format!("Option<{declared}>") } else { declared.to_owned() };
+    if text(1) != owner || text(2) != field["identity"] || text(3) != rendered {
+        return Err("the resolved row does not join the declared field".to_owned());
+    }
+    Ok(())
+}
+
+/// The owner/slot parameter types resolve to nodes the vectors name.
+fn presence_type_nodes(vectors: &Value, nodes: &[Value]) -> Result<(), String> {
+    let digest = |value: &Value| value["digest"].as_str().map(str::to_owned);
+    let reference = vectors["type_nodes"]["owner_reference_type"].as_str().ok_or("no owner type")?;
+    let node = nodes
+        .iter()
+        .find(|n| n["node_id"]["digest"] == reference && n["node_tag"] == "composite_type" && n["semantic_form"] == "reference")
+        .ok_or("the owner reference type is not a published reference type node")?;
+    if node["body"]["members"][0]["target"] != vectors["model_join"]["node"]["node_id"] {
+        return Err("the owner reference type does not name the object_type node".to_owned());
+    }
+    let integer = scalar_type_node(nodes, "integer");
+    for (name, want) in [("self", reference), ("other", reference), ("i", integer), ("e", integer)] {
+        let ty = digest(&vectors["presence"]["parameters"][name]["semantic_type"]);
+        if ty.as_deref() != Some(want) {
+            return Err(format!("parameter {name} has the wrong type"));
+        }
+    }
+    Ok(())
+}
+
 #[trace("TC-367", "FR-322-AC-155", "FR-322-AC-156", "FR-322-AC-157")]
 #[test]
 fn tc_367_presence_over_a_clock_place_is_a_derived_predicate_not_a_field() {
@@ -21082,6 +21181,10 @@ fn tc_367_presence_over_a_clock_place_is_a_derived_predicate_not_a_field() {
     let schema = parsed_fixture(SCHEMA);
     let place_schema = schema_for_def(&schema, "TimedModelNode");
     let expression_schema = schema_for_def(&schema, "ExpressionNode");
+    // The hidden-member scan runs first and on its own, before any key check.
+    assert_eq!(presence_hidden_member(&vectors), Ok(()));
+    assert_eq!(presence_model_join(&vectors, nodes), Ok(()));
+    assert_eq!(presence_type_nodes(&vectors, nodes), Ok(()));
     let presence = &vectors["presence"];
     let mut places = BTreeMap::new();
     for (name, place) in presence["places"].as_object().unwrap() {
@@ -21126,16 +21229,61 @@ fn tc_367_presence_over_a_clock_place_is_a_derived_predicate_not_a_field() {
             }
         }
     }
-    // No presence bit or Option<Boolean> member anywhere in the model, place or
-    // parameter nodes: presence is derived from the place identity.
-    let hidden = |value: &Value| {
-        let text = serde_json::to_string(value).unwrap();
-        text.contains("\"presence\"") || text.contains("Option<Boolean>")
+}
+
+/// Each assertion of the presence test fails on its own mutation.
+#[trace("TC-367", "FR-322-AC-155", "FR-322-AC-156", "FR-322-AC-157")]
+#[test]
+fn tc_367_presence_vector_assertions_each_fail_on_their_mutation() {
+    let vectors: Value = serde_json::from_str(TIMED_SLOT_SELECTOR_VECTORS).unwrap();
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let mutate = |edit: &dyn Fn(&mut Value)| {
+        let mut copy = vectors.clone();
+        edit(&mut copy);
+        copy
     };
-    for place in places.values().chain(parameters.values()) {
-        assert!(!hidden(&place["body"]));
-    }
-    for node in nodes.iter().filter(|n| n["node_tag"] == "model" || n["node_tag"] == "timed_model") {
-        assert!(!hidden(&node["body"]));
-    }
+    let hidden = |v: &Value| presence_hidden_member(v).expect_err("a hidden member is caught");
+    assert!(hidden(&mutate(&|v| {
+        v["presence"]["parameters"]["other"]["body"]["members"].as_array_mut().unwrap()
+            .push(json!({"name": "presence", "term": "binding", "value": {"term": "literal"}}));
+    })).contains("parameter other"));
+    assert!(hidden(&mutate(&|v| {
+        v["presence"]["places"]["v"]["node"]["body"]["members"].as_array_mut().unwrap()
+            .push(json!({"name": "presence", "term": "binding", "value": {"term": "literal"}}));
+    })).contains("place v"));
+    assert!(hidden(&mutate(&|v| {
+        v["model_join"]["node"]["body"]["members"].as_array_mut().unwrap()
+            .push(json!({"name": "flag", "value": "Option<Boolean>"}));
+    })).contains("object_type"));
+    assert!(hidden(&mutate(&|v| {
+        v["model_join"]["declared_with_v"]["fields"].as_array_mut().unwrap()
+            .push(json!({"name": "v_present", "presence": "optional", "typeRef": "ix://quire/native/Boolean", "identity": "x", "multiplicity": {}}));
+    })).contains("hidden field"));
+    assert!(hidden(&mutate(&|v| {
+        v["model_join"]["declared_with_v"]["fields"].as_array_mut().unwrap().pop();
+    })).contains("not exactly"));
+
+    let join = |v: &Value| presence_model_join(v, nodes).expect_err("the join is caught");
+    assert!(join(&mutate(&|v| v["model_join"]["node"]["owner"]["node"] = json!("ix://acme/orders/Other"))).contains("key is stale"));
+    assert!(join(&mutate(&|v| v["presence"]["places"]["v"]["node"]["body"]["members"][2]["value"]["members"][0]["members"][2]["value"]["value"] = json!("ix://acme/orders/Order/w"))).contains("does not join"));
+    assert!(join(&mutate(&|v| v["model_join"]["declared_with_v"]["fields"][1]["presence"] = json!("required"))).contains("does not join"));
+    assert!(join(&mutate(&|v| v["model_join"]["declared_with_v"]["identity"] = json!("ix://acme/orders/Other"))).contains("disagree"));
+    assert!(join(&mutate(&|v| v["presence"]["places"]["v"]["node"]["body"]["members"][0]["value"]["target"]["digest"] = json!("00".repeat(32)))).contains("not owned"));
+
+    let types = |v: &Value| presence_type_nodes(v, nodes).expect_err("the type join is caught");
+    assert!(types(&mutate(&|v| v["type_nodes"]["owner_reference_type"] = json!("00".repeat(32)))).contains("not a published"));
+    assert!(types(&mutate(&|v| v["presence"]["parameters"]["i"]["semantic_type"]["digest"] = json!("00".repeat(32)))).contains("parameter i"));
+
+    // The oracle refuses a presence_read with an argument dropped.
+    let places: BTreeMap<String, Value> = vectors["presence"]["places"].as_object().unwrap().values()
+        .map(|p| (p["node"]["node_id"]["digest"].as_str().unwrap().to_owned(), p["node"].clone())).collect();
+    let parameters: BTreeMap<String, Value> = vectors["presence"]["parameters"].as_object().unwrap().values()
+        .map(|p| (p["node_id"]["digest"].as_str().unwrap().to_owned(), p.clone())).collect();
+    let owner_type = vectors["presence"]["parameters"]["self"]["semantic_type"].clone();
+    let slot_type = json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": vectors["type_nodes"]["integer"]});
+    let mut pr02 = vectors["presence"]["cases"][1]["node"].clone();
+    assert_eq!(presence_cause(&pr02, &places, &parameters, &owner_type, &slot_type), None);
+    pr02["body"]["arguments"].as_array_mut().unwrap().pop();
+    assert!(presence_cause(&pr02, &places, &parameters, &owner_type, &slot_type).is_some());
 }
