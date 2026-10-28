@@ -279,7 +279,7 @@ Mutations, each applied alone to the positive unit:
     For the binder vectors, `self` at level 0 and the parameters at levels
     1..n by declared name are admitted; a wrong name, level or type, and a
     step row with a `result` binder, are refused (FR-375-AC-32).
-31. **Selected model roots (SR-01 to SR-11).** The vectors are the
+31. **Selected model roots (SR-01 to SR-13).** The vectors are the
     `selected_roots` section of `refinement-identity-vectors.json`: five
     selected models (`acme/spec` the abstract `RA`, `acme/impl` `RB`,
     `acme/other` `RC`, `acme/bare` `RD`, `acme/plain` `RF`), each root
@@ -300,7 +300,10 @@ Mutations, each applied alone to the positive unit:
     7); SR-09 has an absent protocol catalog and a foreign row and refuses at
     `/body/class_catalog` (presence precedes rows); SR-10 refuses a foreign
     `histories[].updates[].operation`. SR-11 is the reflexive refinement
-    (`semantic_type` is `RA`), admitted (FR-375-AC-33, FR-375-AC-34).
+    (`semantic_type` is `RA`), admitted (FR-375-AC-34). SR-12 and SR-13 fix the
+    tie-break between an omitted and an extra class by catalog-key order:
+    `[Zed::Run]` against derived `[Other::Go]` refuses at the `concrete` array,
+    `[Aaa::Run]` at entry 0 (FR-375-AC-33).
 
 ## Expected Results
 

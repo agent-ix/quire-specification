@@ -22745,24 +22745,28 @@ fn selected_root_outcome(roots: &Value, case: &Value) -> String {
         // A model-only refinement carries no catalog to compare.
         return "admitted".to_owned();
     }
-    let derived: Vec<&str> = concrete["derived_concrete_classes"]
+    let mut derived: Vec<&str> = concrete["derived_concrete_classes"]
         .as_array()
         .expect("derived")
         .iter()
         .map(|class| class.as_str().expect("class"))
         .collect();
+    derived.sort_unstable();
     let listed: Vec<&str> = catalog
-        .map(|entries| {
-            entries
-                .iter()
-                .map(|class| class.as_str().expect("class"))
-                .collect()
-        })
+        .map(|entries| entries.iter().map(|class| class.as_str().expect("class")).collect())
         .unwrap_or_default();
-    if let Some(extra) = listed.iter().position(|class| !derived.contains(class)) {
-        return format!("{GRAPH} at body/class_catalog/concrete/{extra}");
+    // Walk the catalog and the derived set together in catalog-key order:
+    // the first discrepancy decides.
+    for (index, class) in listed.iter().enumerate() {
+        match derived.get(index) {
+            Some(expected) if expected == class => {}
+            Some(expected) if expected < class => {
+                return format!("{GRAPH} at body/class_catalog/concrete");
+            }
+            _ => return format!("{GRAPH} at body/class_catalog/concrete/{index}"),
+        }
     }
-    if derived.iter().any(|class| !listed.contains(class)) {
+    if derived.len() > listed.len() {
         return format!("{GRAPH} at body/class_catalog/concrete");
     }
     "admitted".to_owned()
@@ -22803,6 +22807,8 @@ fn tc_310_concrete_identity_is_checked_against_the_owner_of_every_concrete_key()
             format!("{wrong} at body/histories/0/updates/0/operation"),
         ),
         ("SR-11", "admitted".to_owned()),
+        ("SR-12", format!("{graph} at body/class_catalog/concrete")),
+        ("SR-13", format!("{graph} at body/class_catalog/concrete/0")),
     ];
     let cases = selected["cases"].as_array().expect("cases");
     assert_eq!(cases.len(), independent.len());
@@ -22852,22 +22858,49 @@ fn tc_310_concrete_identity_is_checked_against_the_owner_of_every_concrete_key()
     // The normative text and the vectors agree: AC-33 and AC-34 state the
     // codes the vectors expect, and TC-310 names every vector.
     let spec = include_str!("../spec/functional/analysis/FR-375-declare-model-refinement.md");
+    let flat = |text: &str| text.split_whitespace().collect::<Vec<_>>().join(" ");
     let ac = |id: &str| {
-        spec.lines()
-            .find(|line| line.starts_with(&format!("| {id} |")))
-            .unwrap_or_else(|| panic!("{id} row"))
+        flat(
+            spec.lines()
+                .find(|line| line.starts_with(&format!("| {id} |")))
+                .unwrap_or_else(|| panic!("{id} row")),
+        )
     };
-    for text in [ac("FR-375-AC-33"), ac("FR-375-AC-34")] {
-        assert!(text.contains("TC-310"));
-    }
     let ac33 = ac("FR-375-AC-33");
-    assert!(ac33.contains("`invalid_model_binding`/`malformed-declaration`"));
-    assert!(ac33.contains("`invalid_semantic_graph`"));
+    let ac34 = ac("FR-375-AC-34");
+    assert!(ac33.contains("TC-310") && ac34.contains("TC-310"));
+    // AC-33 states the three refusals in order, each with its code.
+    let positions: Vec<usize> = [
+        "absent concrete catalog on a protocol subject `invalid_semantic_graph` at `/body/class_catalog`",
+        "(array order of reader step 2) whose declaration or anchor owner is not the concrete identity `invalid_model_binding`/`malformed-declaration`",
+        "then, at FR-464 step 7, `invalid_semantic_graph` at the first discrepancy",
+        "walked together in catalog-key order: at the entry for a class the identity does not derive, at the `class_catalog/concrete` array for a derived class the catalog lacks",
+    ]
+    .iter()
+    .map(|phrase| ac33.find(phrase).unwrap_or_else(|| panic!("AC-33 lacks: {phrase}")))
+    .collect();
+    assert!(positions.windows(2).all(|pair| pair[0] < pair[1]), "AC-33 order");
     assert!(ac33.contains("identical class set"));
-    let tc = include_str!("../spec/test-cases/TC-310-refinement-declaration-admission.md");
+    assert!(ac34.contains("is admitted when") && !ac34.contains("refus"));
+    let step5 = flat(spec);
+    for phrase in [
+        "The rows are checked in the array order of step 2, then by index, then by member.",
+        "a class the concrete identity does not derive is an extra class (`invalid_semantic_graph`) and is decided before a class whose node alone is foreign or mismatched",
+        "first discrepancy decides, an extra class refusing at its entry and an omitted class at the `concrete` array",
+        "the presence check below, then the row joins of step 5, then the FR-464 step 7 comparison",
+    ] {
+        assert!(step5.contains(phrase), "FR-375 lacks: {phrase}");
+    }
+    let tc = flat(include_str!(
+        "../spec/test-cases/TC-310-refinement-declaration-admission.md"
+    ));
     for (name, _) in &independent {
         assert!(tc.contains(name), "TC-310 names {name}");
     }
+    assert!(tc.contains(
+        "SR-11 is the reflexive refinement (`semantic_type` is `RA`), admitted (FR-375-AC-34)."
+    ));
+    assert!(tc.contains("`[Zed::Run]` against derived `[Other::Go]` refuses at the `concrete` array"));
 }
 
 /// Index of the node a vectors file names, looked up by role in `node_indexes`.

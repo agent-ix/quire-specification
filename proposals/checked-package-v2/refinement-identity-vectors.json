@@ -809,6 +809,28 @@
           }
         ],
         "expected": "admitted"
+      },
+      {
+        "name": "SR-12",
+        "description": "row-empty protocol subject swapped to RC (derives Other::Go) with catalog [Zed::Run]: Other::Go sorts first and is omitted, so the discrepancy is at the array, not at the extra entry",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Zed::Run"
+        ],
+        "concrete_keys": [],
+        "expected": "invalid_semantic_graph at body/class_catalog/concrete"
+      },
+      {
+        "name": "SR-13",
+        "description": "as SR-12 with catalog [Aaa::Run]: the extra class sorts first, so the discrepancy is at entry 0",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Aaa::Run"
+        ],
+        "concrete_keys": [],
+        "expected": "invalid_semantic_graph at body/class_catalog/concrete/0"
       }
     ],
     "row_empty_identities": [
