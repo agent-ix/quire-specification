@@ -3435,9 +3435,9 @@ fn selected_model_document(package: &Value, identity: &str) -> Option<Value> {
     {
         return Some(own.clone());
     }
-    let shapes = parsed_fixture(MODEL_TUPLE_UNION_VECTORS)["domain_package"].clone();
-    if shapes["identity"] == identity && selects(&shapes) {
-        return Some(shapes);
+    let shapes = parsed_fixture(SHAPES_DOCUMENT);
+    if shapes["package"]["identity"] == identity && selects(&shapes) {
+        return Some(parsed_fixture(MODEL_TUPLE_UNION_VECTORS)["domain_package"].clone());
     }
     let document = parsed_fixture(DOMAIN_DOCUMENT);
     (document["package"]["identity"] == identity && selects(&document))
@@ -19967,8 +19967,7 @@ fn expected_refusal(expected: &Value) -> Option<(String, Option<String>)> {
 
 /// FR-322-AC-151: the selected document of `acme/shapes` is a full FCD
 /// semantic IR; the vectors' `domain_package` is exactly its projection, and
-/// the row digest the lock pins is the JCS SHA-256 of that projection, not of
-/// the document's own bytes.
+/// the row digest the lock pins is the JCS SHA-256 of the whole document.
 #[trace("TC-940", "FR-322-AC-151")]
 #[test]
 fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_pinned() {
@@ -19988,13 +19987,18 @@ fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_pinned
     ));
     let row = &package["lock"]["model_selections"][0];
     assert_eq!(row["identity"], document["package"]["identity"]);
-    assert_eq!(row["digest"], unqualified_jcs_sha256(&projection), "the row pins the projection");
-    assert_ne!(
-        row["digest"],
-        unqualified_jcs_sha256(&document),
-        "the row digest is not the document's own digest: the reader admits the document whatever that is"
-    );
-    // Swapping a position type in the document changes the projection, so the row digest.
+    assert_eq!(row["digest"], unqualified_jcs_sha256(&document), "the row pins the whole document");
+    assert_eq!(vectors["selection_digest"], row["digest"]);
+    assert_ne!(row["digest"], unqualified_jcs_sha256(&projection), "the projection is not digested");
+    // The model_root key and the package id derive from that digest.
+    let root = package["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|node| node["semantic_form"] == "model_root")
+        .expect("model_root");
+    assert_eq!(root["owner"]["digest"], row["digest"]);
+    // Swapping a position type in the document changes the document, so the row digest.
     let mut swapped = document.clone();
     let pair = swapped["types"]
         .as_array_mut()
@@ -20003,11 +20007,12 @@ fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_pinned
         .find(|declared| declared["identity"] == "ix://acme/shapes/Pair")
         .expect("Pair");
     pair["positions"].as_array_mut().expect("positions").swap(0, 1);
-    assert_ne!(unqualified_jcs_sha256(&shapes_project_document(&swapped)), row["digest"].as_str().unwrap());
-    // The projection lists follow document order, so reordering two tuples changes the row digest.
+    assert_ne!(unqualified_jcs_sha256(&swapped), row["digest"].as_str().unwrap());
+    // The projection lists follow document order, and reordering two declarations changes the document.
     let mut reordered = document.clone();
     reordered["types"].as_array_mut().expect("types").swap(1, 2);
-    assert_ne!(unqualified_jcs_sha256(&shapes_project_document(&reordered)), row["digest"].as_str().unwrap());
+    assert_ne!(unqualified_jcs_sha256(&reordered), row["digest"].as_str().unwrap());
+    assert_ne!(shapes_project_document(&reordered), projection);
 }
 
 /// FR-322-AC-140 to FR-322-AC-146: the declarations, the fixture and the
@@ -20031,8 +20036,8 @@ fn tc_940_tuple_and_payload_variant_declarations_are_model_declaration_nodes() {
     );
     assert_eq!(
         vectors["selection_digest"],
-        unqualified_jcs_sha256(&vectors["domain_package"]),
-        "the row digest is the JCS digest of the projection (FR-322-AC-151)"
+        unqualified_jcs_sha256(&parsed_fixture(SHAPES_DOCUMENT)),
+        "the selection digest is the JCS digest of the whole selected document (FR-322-AC-151)"
     );
     assert_eq!(
         package["lock"]["model_selections"][0]["digest"], vectors["selection_digest"],

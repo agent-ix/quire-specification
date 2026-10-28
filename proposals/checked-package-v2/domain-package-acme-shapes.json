@@ -21,7 +21,6 @@
         "module": "acme/shapes",
         "name": "entity"
       },
-      "manifestDigest": "sha256:d45302167f31a89183c042ad58fe240171b20e44188a34dd19fee0874b60c048",
       "moduleVersion": "1.0.0"
     },
     {
@@ -37,7 +36,6 @@
         "module": "acme/shapes",
         "name": "tuple"
       },
-      "manifestDigest": "sha256:52841df180924a0eefb16b42d0edae20340ff22edd718501b45b275b6d69ceb2",
       "moduleVersion": "1.0.0"
     },
     {
@@ -53,7 +51,6 @@
         "module": "acme/shapes",
         "name": "variant"
       },
-      "manifestDigest": "sha256:4b5c69c5c22b1e7fca3db8afdfff0822f262f06c478d351819f84f54a9beea28",
       "moduleVersion": "1.0.0"
     }
   ],
@@ -62,15 +59,12 @@
   "occurrences": [],
   "package": {
     "identity": "acme/shapes",
-    "lockDigest": "sha256:dd14a01dbf27630b037655ef2a121da9709d605ff79f383ea1bbe95ec5c6a8ca",
-    "manifestDigest": "sha256:0bab35506a9dd8220eba656db9f4996813dcbe7e20b12e1231e584ea5294f8e0",
     "mappingVersions": [],
     "profileVersions": [],
     "version": "1.0.0"
   },
   "source": {
     "dialect": "spec-bundle",
-    "digest": "sha256:41cf6794ba4200b839c53531555f0f3998df4cbb01a4d5cb0b94e3ca5e23947d",
     "identity": "ix://acme/shapes/spec",
     "version": "1.0.0"
   },

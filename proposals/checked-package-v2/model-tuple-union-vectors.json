@@ -1,6 +1,6 @@
 {
   "version": "quire.model-tuple-union-vectors/v1",
-  "note": "STD-519 (review round 1: package-level nodes, recursion, application-node keys). The selected document of fixtures/positive-model-tuple-union.json is the full FCD semantic IR 2.0.0 domain-package-acme-shapes.json (STD-529, FR-322-AC-151); domain_package is its projection, the declarations FR-154 reads (tuple_types carry ordered positions, variant_types carry cases, all in document order), and selection_digest is the JCS SHA-256 of domain_package, the digest the lock row pins (not the document own digest). Cases are evaluated by the QSpec test over domain_package; wire_cases are RFC 6902 patches over the fixture, each ending by replacing package_id with the recomputed package id. Node names are the declaration_nodes names.",
+  "note": "STD-519 (review round 1: package-level nodes, recursion, application-node keys). The selected document of fixtures/positive-model-tuple-union.json is the full FCD semantic IR 2.0.0 domain-package-acme-shapes.json (STD-529, FR-322-AC-151); domain_package is its projection, the declarations FR-154 reads (tuple_types carry ordered positions, variant_types carry cases, all in document order), and selection_digest is the JCS SHA-256 of the whole document, the digest the lock row pins. Cases are evaluated by the QSpec test over domain_package; wire_cases are RFC 6902 patches over the fixture, each ending by replacing package_id with the recomputed package id. Node names are the declaration_nodes names.",
   "base": "fixtures/positive-model-tuple-union.json",
   "selected_document": "domain-package-acme-shapes.json",
   "domain_package": {
@@ -152,7 +152,7 @@
       }
     ]
   },
-  "selection_digest": "1c30be09c32a7fccbcd93b55eaa19ac1304f0a5d8f5a8113208e7903b62f368b",
+  "selection_digest": "654cccb233bb191e39deec01fe5fd05afc273aaa03cebfe1714baf4f135fe4ed",
   "declaration_nodes": [
     {
       "name": "Pair",
@@ -1567,7 +1567,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "47655d5ecd78d1a370ffd50c79bdf035baebcb8007138801ed0ebc51e9091414"
+          "value": "7acdff313087cf731d647ecc8e01029303380bde31f9b5987e191b86f1a78051"
         }
       ],
       "schema": "valid",
@@ -1584,7 +1584,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "ce8896278ca23098c0a5e66091d5cda9d12e3e21440d12be413eeb4f55fae5a7"
+          "value": "71bf27dd08c388f593cf01b7bf3c2fec9f34aae78b731ad3f368146047ab9e52"
         }
       ],
       "schema": "invalid",
@@ -1607,7 +1607,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "d71a011bfdb98b373ed9db66ff3fd8534383b2261bb89befe65df253c4c0ab49"
+          "value": "3e3eb37fdd9e10d5c027e52973c1364237508fee30b5a983d87aed8818adfa75"
         }
       ],
       "schema": "invalid",
@@ -1630,7 +1630,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "68490154f05f15145c3044267f35801c8c036b5ce3f4d4b469f89e4d0436fa96"
+          "value": "f83dac3f93f3c5fb957b6d7333b20080bb4bdc03f39bfd1e9778768e2620e9eb"
         }
       ],
       "schema": "invalid",
@@ -1649,7 +1649,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "d2d740593b253f8f85cbc6a90d996996929e3a6a6ce811b410f940a6ff6ccc4b"
+          "value": "8971860ea3f436f9d965f9462edbbc4a27eed326f19f992badc89ecec1d61e85"
         }
       ],
       "schema": "invalid",
@@ -1712,7 +1712,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "d7a0cc6159d39287326a6a8c56c9b1de1794a10a0f71f0e945be1b31bcc59bb2"
+          "value": "5426051e1a8af83d0f79d60205f4a95703f6dddf4bfc73bec6d8ca415401c8c5"
         }
       ],
       "schema": "valid",
@@ -1768,7 +1768,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "7644a2b5ff095d06e498ebc57a2f2c999dc65c68114254d16782fd5a81b1dfae"
+          "value": "268ac2dde4888f2babc6460532a361ffb8964a95f00cc8030916171587520ef2"
         }
       ],
       "schema": "valid",
@@ -1824,7 +1824,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "5906f005fe4b3c9ebf4972e1fa8f15d0191a6d72a94643b9b8fff4ce96c6efb5"
+          "value": "ba29f090daa983b3cf785c20c69110642fce40245c667c2ff3eb400b162f5082"
         }
       ],
       "schema": "valid",
@@ -1880,7 +1880,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "d05a88eb94cfc57831fc1d0fc61828861dcf084a0ecc52550dcffc015adb0d68"
+          "value": "d42b86077bba854ce0adc7448aa2b217a03594c6b793d504c1f3a5130fd86743"
         }
       ],
       "schema": "valid",
@@ -1936,7 +1936,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "a45a02514910e163355b8540791aac3f6aa156db72de7a4e53a7dd14c2408d1b"
+          "value": "3ad93e8a6ff9eb9366ec64bc1bcac4aa53188b6f09b7b157593f7aad83c31435"
         }
       ],
       "schema": "valid",
@@ -1955,7 +1955,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "c5c63a47297a29428d0bcaf1f7cc3c65460ec8e4e5b444549f111637830fde09"
+          "value": "4211f2e9ba9771f30099bd19507986866783aad974e5db77030ee3b9c9180998"
         }
       ],
       "schema": "invalid",
@@ -2027,7 +2027,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "58139ce26c13dd03a95915500d061c835d2ce0d4e491151daea267ac7a820adb"
+          "value": "167e2f692abf2272e62c4cf23b88e4e5048a914baa2d8fe61e25661b1764c3ca"
         }
       ],
       "schema": "valid",
@@ -2087,7 +2087,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "0be931ff84c0f232adc414cc4589fbc2763cf6d0204703a3cf69de50712de64f"
+          "value": "91fd981b66738ec33a0564ba659e5188f5c966b61152785cefdb0da9fe6a5f7e"
         }
       ],
       "schema": "valid",
@@ -2160,7 +2160,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "e7dc202151b36aee6132c1d0e54491d7a6103c4fedc2851ad061833e0cf58ddb"
+          "value": "c662416483eec054fcb32cddb146a236bb06f53a9a4156516e560f177aeb7d60"
         }
       ],
       "schema": "valid",
@@ -2220,7 +2220,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "84f17b5c2087b4c434989ec45068213767b83a675c86c2350cf3781ad20d6782"
+          "value": "588d68f1c6f7e5a18fe687a42f7bbcc193e4c7b6cd4b9d225bc1e66923f68753"
         }
       ],
       "schema": "valid",
@@ -2280,7 +2280,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "19b56841a6edddf87aa8d6b0fcac74a5ce0b9743e379262f8e14770709063629"
+          "value": "731a667a3b53c371181104982f4ef7071f9f03629c391c4ef73305ef8bd1cbb9"
         }
       ],
       "schema": "valid",
@@ -2416,7 +2416,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "5cf6b74f7ea8178d09320c38e5604ce0c822c5bea3f5563241bac0bc1984055b"
+          "value": "0dd95a4a69ec583c903c27bf9e6a438a3822d9de7e3de8f55eb021b63c6a5441"
         }
       ],
       "schema": "valid",
@@ -2588,7 +2588,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "025bcb1a9a001c602c709729fce8fddc7c1be72367aea01dbfc7993397de22f0"
+          "value": "fd86270b556b4494a48a795588c762c0f34e70e1283e6fe54e05ecd3568b72f4"
         }
       ],
       "schema": "valid",
@@ -2675,7 +2675,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "ed869b75501400895aabc2b26e8330285b16ee0faabd2c14e2eb96c9bdeda30e"
+          "value": "4d59ae6869bb06166c38d4f0f1ff1bd4f2df62c66499ffcbfb3ab174bc59820d"
         }
       ],
       "schema": "valid",
@@ -2762,7 +2762,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "1968155d49e9135700d959a4d60185cf177f6b1f92c7f88f7003376c6bfe9dfe"
+          "value": "750eb1edf9a81de9f1b7aa0d30a6fadca90f4b1b0a32a351e89a6ab791cde1fd"
         }
       ],
       "schema": "valid",
@@ -2849,7 +2849,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "4f32bbe115fd0ad4cb88a86c89cfc7d03c9ee67da31b28f8dba7f3bca3bb7f5a"
+          "value": "40a0693d0df04dbfc5472cd8d0641fcfa29338af7606d1ffe1c0ac843b522d1c"
         }
       ],
       "schema": "valid",
@@ -2918,7 +2918,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "fe4490943396a5d8a69a33424459844833bdd89ca901fd32cc01c49f9a511aed"
+          "value": "c2ef39d1c98f46cfc7217581bc31b442cbc3b502f7551810b14281e0c3d7ec36"
         }
       ],
       "schema": "valid",
@@ -2986,7 +2986,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "847d74d87acf8963c60664e42b7a543840a587f676cf891ec557870f302ea8c1"
+          "value": "7ad7af67d5b14b6a4bef30744c8fb1179fb2863524082e0a9d5e7945d9361a76"
         }
       ],
       "schema": "valid",
@@ -3072,7 +3072,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "f3f13d9283601446fac7f0428ac1f755f79ed13126f1342e83953dee877158b7"
+          "value": "96f0a1a5cc1a2881e07d82344dde0b7d7f3a8a2b732424a1368e1f5b644f2684"
         }
       ],
       "schema": "valid",
@@ -3159,7 +3159,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "fae07d091de27a74ac687073c5b45e80ea9251f30079d390197098d66be7eca7"
+          "value": "47a94fdd822ec33ebe995ce8391c9a0e0e1c27ce456092c556f27f4bac98ff2b"
         }
       ],
       "schema": "valid",
@@ -3254,7 +3254,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "a2e418429aa1ad67e08f918d29b34356e1c5f7e60fcc90f83aa4038791c0112d"
+          "value": "ad2ee8b4f6c8f02b6c3e94de2c22230f0f3fa5bdf606bb7b1bee7d68a04e4106"
         }
       ],
       "schema": "valid",
@@ -3274,7 +3274,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "9e0ad0d30e3ed3305b7e45c6c379f77201913c09f70bd0d6883bb495f5095fcb"
+          "value": "57863b8932a38751506e3d3645aa2c3e2c619f4937d14d00cd45816772f6b425"
         }
       ],
       "schema": "invalid",
