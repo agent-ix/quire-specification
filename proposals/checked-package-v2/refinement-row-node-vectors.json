@@ -2384,6 +2384,25 @@
       "cause": "operator-ineligible",
       "locus": "",
       "summary": "The member of an only is not the type of its binder bound."
+    },
+    {
+      "id": "RR-09",
+      "base": "seq_range",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body/operation/member/declaration",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+          }
+        }
+      ],
+      "reachable": true,
+      "outcome": "refused:ill_typed",
+      "cause": "operator-ineligible",
+      "locus": "",
+      "summary": "The member declaration of a seq is not the element type of its sequence result (the over_element clause), here the Boolean node against the Int[0, 3] element."
     }
   ]
 }

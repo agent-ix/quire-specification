@@ -1,6 +1,6 @@
 ---
 id: TC-940
-title: "Model-owned variant, tuple and union declaration nodes, their keys and their reads"
+title: "Model-owned variant, tuple and union declaration nodes, their keys and their reads; nominal rekey and refinement row nodes"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-322
@@ -8,7 +8,7 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-141
     type: verifies
 ---
-# TC-940: Model-owned variant, tuple and union declaration nodes, their keys and their reads
+# TC-940: Model-owned variant, tuple and union declaration nodes, their keys and their reads; nominal rekey and refinement row nodes
 
 ## Description
 
@@ -16,8 +16,12 @@ Verify the `model`/`variant_type` declaration node, the type a variant-typed
 member derives, and the identity of the node and of its cases (steps 1 to 5,
 independent of the alias), then the `model`/`tuple_value_type` node, the
 payload-bearing variant type read as a union, the application nodes over them
-and a cyclic pair of model types (steps 6 to 12). Scope: FR-322-AC-71,
-FR-141-AC-7 (steps 1 to 5); FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12).
+and a cyclic pair of model types (steps 6 to 12), then the nominal key stage
+and its placement among the key stages (steps 14 to 15) and the refinement row
+expression nodes: history read, whole-population value, `count`, `only` and
+`seq` (steps 16 to 18). Scope: FR-322-AC-71, FR-141-AC-7 (steps 1 to 5);
+FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12); FR-322-AC-160 to FR-322-AC-168
+(steps 14 to 18).
 
 ## Test Procedure
 
@@ -133,29 +137,34 @@ FR-322-AC-168 (steps 16 to 18). Use `nominal-rekey-vectors.json` with
 `fixtures/positive-compound-unit.json`, and `refinement-row-node-vectors.json`.
 
 14. Read `fixtures/positive-compound-unit.json`, then each case `NK-00` to
-    `NK-05` of `nominal-rekey-vectors.json`: a nominal Unit `U` rekeyed with a
+    `NK-07` of `nominal-rekey-vectors.json`: a nominal Unit `U` rekeyed with a
     dependent compound unit holding the new key, holding `U`'s old key, and
-    itself stale; only the compound stale; two stale units recomputing to one key.
-15. Present a dangling reference that depends on no nominal rekey, alongside a
-    nominal rekey.
+    itself stale; only the compound stale; two stale units recomputing to one key;
+    `U` rekeyed beside an application node with a stale key; `U` rekeyed beside
+    an owner-join failure.
+15. Replace the target of the dangling references of `NK-01` and `NK-05` by a key
+    no stale node recomputes to.
 16. Recompute the key of each vector `VN-01` to `VN-06` (history read,
     `pre` over it, whole-population value, `count`, `only`, `seq`) from the
     recorded world nodes and preimages.
-17. Run each refusal case `RR-01` to `RR-08` through the refinement step and the
+17. Run each refusal case `RR-01` to `RR-09` through the refinement step and the
     operation stage.
-18. Compare the catalog delta with the operations the vectors use.
+18. Compare the catalog delta with the operations the vectors use and with its
+    exact entries (operator, operands, member kind, constraints).
 
 Expected results:
 
-14. The unmutated package is admitted; `NK-01` to `NK-03` and `NK-05` refuse
-    `invalid_semantic_graph` (no cause) at the `node_id` of the first stale
+14. The unmutated package is admitted; `NK-01` to `NK-03`, `NK-05` and `NK-07`
+    refuse `invalid_semantic_graph` (no cause) at the `node_id` of the first stale
     nominal node by retained digest; `NK-04` refuses `invalid_package`/
-    `stale-node-key` at the compound (FR-322-AC-160, FR-322-AC-161).
-15. The dangling reference is refused in the graph-shape stage, before the
-    nominal key stage (FR-322-AC-162).
+    `stale-node-key` at the compound and `NK-06` at the application node, the
+    application-node stage preceding the nominal one (FR-322-AC-160,
+    FR-322-AC-161).
+15. The dangling references of the published cases are all deferred; the
+    replaced target is not deferred (FR-322-AC-162).
 16. Every key equals the published digest; the history read carries no
     refinement in its key (FR-322-AC-163, 165, 166, 167).
 17. Each case refuses with the code, cause and locus its vector states
     (FR-322-AC-164, 165, 166, 167).
 18. The delta names exactly the three operations and the member kind `history`
-    the vectors use (FR-322-AC-168).
+    the vectors use, with the exact entries the FR text states (FR-322-AC-168).

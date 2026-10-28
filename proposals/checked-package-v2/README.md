@@ -186,6 +186,13 @@ structures, but any external consumer receives only the contract.
   `dependencies`. Each records its refusal `outcome` and its `locus`, the JSON
   pointer FR-322 fixes for it in the mutated package; node keys and the
   `package_id` are recomputed after the patch.
+- `fixtures/positive-compound-unit.json` is a V2 package of four nodes: a
+  nominal `dimension` (`Length`), a nominal root `unit` `U` (`metre`), the
+  builtin `Integer`, and the structural `scalar_type`/`compound_unit` node
+  `metre^1` that holds `unit` = `reference(U)` and an exponent. It is the base
+  of `nominal-rekey-vectors.json` (`NK-00` to `NK-07`, RFC 6902 patches ending in
+  the recomputed `package_id`), whose cases rekey `U` and observe the nominal
+  key stage (FR-322-AC-160 to FR-322-AC-162).
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes

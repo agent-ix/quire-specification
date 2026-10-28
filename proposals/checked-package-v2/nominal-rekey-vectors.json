@@ -6,7 +6,9 @@
     "K1": "0c208ce76c7a9e95072bb8e8edb57d5556c1362f20c68d366a68cf9377722e1d",
     "compound_over_U": "02df6b0ff98d087f2807cd502d84ac503dffe56d1a4af72067975a22f7be7023",
     "compound_over_K1": "380001eaddc4e6ed5ed0cf189d3a3ea3ee5ee1d853e9d975944decdee7193546",
-    "retained_low_key": "0000000000000000000000000000000000000000000000000000000000000001"
+    "retained_low_key": "0000000000000000000000000000000000000000000000000000000000000001",
+    "stale_application_key": "4dbceabb3aaad488512b090a63a7fad78a6fb8fd0f63c9da4ffb2f62f3725855",
+    "stale_application_recomputed": "cce660d8e5b3eb46b66530e529aa53b19f026a01c1acd4a43f077f778ae9f187"
   },
   "wire_cases": [
     {
@@ -308,6 +310,163 @@
       ],
       "outcome": "refused:invalid_semantic_graph",
       "locus": "/semantic_graph/nodes/4/node_id"
+    },
+    {
+      "id": "NK-06",
+      "summary": "U is rekeyed (key retained) and an added application node (7 * -3 over Integer) keeps the key of 7 * -2: the application-node key stage precedes the nominal key stage, so the application node is reported as invalid_package/stale-node-key and not U.",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "arguments": [
+                {
+                  "term": "literal",
+                  "type": {
+                    "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                    "domain": "quire.checked-semantic-node/v1"
+                  },
+                  "value": "7",
+                  "value_kind": "integer"
+                },
+                {
+                  "term": "literal",
+                  "type": {
+                    "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                    "domain": "quire.checked-semantic-node/v1"
+                  },
+                  "value": "-3",
+                  "value_kind": "integer"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.integer.mul",
+                "laws": [],
+                "leaves": [],
+                "member": null,
+                "mode": null
+              },
+              "operator": "binary",
+              "result_type": {
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "application"
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "4dbceabb3aaad488512b090a63a7fad78a6fb8fd0f63c9da4ffb2f62f3725855",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "binary",
+            "semantic_type": {
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/nominal_identity_preimage/qualified_declaration",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/declaration/qualified_name",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "40a4581b149979871874bcbe33ffea1511394771d2e62dd32f574ca3632c53dc"
+        }
+      ],
+      "outcome": "refused:invalid_package",
+      "cause": "stale-node-key",
+      "locus": "/semantic_graph/nodes/4/node_id"
+    },
+    {
+      "id": "NK-07",
+      "summary": "U is rekeyed and an added function node `Example::double` names a source owner the lock does not select: the nominal key stage precedes the owner join, so U is reported and not the owner-join refusal.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/nominal_identity_preimage/qualified_declaration",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/declaration/qualified_name",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "declaration": {
+              "qualified_name": [
+                "Example",
+                "double"
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "ba834b0067068c2e58aa9fcf9edd94ffe971687f41ea469749715fa2b42031b9",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "function",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "owner": {
+              "kind": "source",
+              "authority": "agent-ix",
+              "identity": "unlocked"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "pure_function",
+            "semantic_type": {
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "056ee993de8a68164ff4459db65f717ca3075c807a7eb29369e0584526280412"
+        }
+      ],
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/1/node_id"
     }
   ]
 }

@@ -20885,7 +20885,7 @@ fn tc_940_nominal_rekey_vectors_run_from_the_published_vectors() {
         let dangling = targets.iter().any(|target| !present.contains(target.as_str()));
         assert_eq!(dangling, matches!(id, "NK-01" | "NK-05"), "{id}: dangling reference");
     }
-    assert_eq!(seen.len(), 6, "every published case ran");
+    assert_eq!(seen.len(), 8, "every published case ran");
     // The FR text, the diagnostics list and the README state the same placement.
     let fr322 = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
     let nominal_stage = fr322.find("- nominal key stage").expect("nominal key stage bullet");
@@ -20911,37 +20911,43 @@ fn tc_940_nominal_rekey_vectors_run_from_the_published_vectors() {
             .unwrap_or_else(|| panic!("{name} row"))
     };
     let ac160 = row("FR-322-AC-160");
-    for id in ["NK-00", "NK-01", "NK-02", "NK-03", "NK-04"] {
+    for id in ["NK-00", "NK-01", "NK-02", "NK-03", "NK-04", "NK-06", "NK-07"] {
         assert!(ac160.contains(id), "AC-160 lists {id}");
     }
     assert!(row("FR-322-AC-161").contains("NK-05"));
 }
 
-/// FR-322-AC-162: a dangling reference that is no recomputed key of a stale
-/// node is independent, in a package with a stale nominal node as in the base;
-/// it is a graph-shape refusal that precedes the nominal key stage.
+/// FR-322-AC-162: the deferral of a dangling reference is a membership test
+/// over the recomputed keys of all stale nodes (`undeferred_dangling_targets`,
+/// the test-local form of the rule): the dependent references of the published
+/// cases are deferred, and a target that is no recomputed key is not. The
+/// reader has no dangling-reference refusal of its own here; the stage order of
+/// the graph-shape refusal is FR-322's text and FR-322-AC-154.
 #[trace("TC-940", "FR-322-AC-162")]
 #[test]
-fn tc_940_an_independent_dangling_reference_is_not_deferred_to_the_nominal_stage() {
+fn tc_940_the_deferral_is_a_membership_test_over_the_recomputed_keys_of_stale_nodes() {
     let vectors = parsed_fixture(NOMINAL_REKEY_VECTORS);
     let base = parsed_fixture(POSITIVE_COMPOUND_UNIT);
     let foreign = "ff".repeat(32);
-    for id in ["NK-00", "NK-01", "NK-02"] {
+    for case in vectors["wire_cases"].as_array().expect("wire cases") {
+        let id = case["id"].as_str().expect("id");
         let mut package = nominal_rekey_package(&vectors, &base, id);
-        let before = undeferred_dangling_targets(&package);
-        assert!(before.is_empty(), "{id}: the published case defers or has no dangling reference");
+        assert!(
+            undeferred_dangling_targets(&package).is_empty(),
+            "{id}: every dangling reference of a published case is deferred"
+        );
         package["semantic_graph"]["nodes"][3]["body"]["members"][0]["members"][0]["value"]
             ["target"]["digest"] = json!(foreign);
         assert_eq!(
             undeferred_dangling_targets(&package),
             vec![foreign.clone()],
-            "{id}: the foreign target is independent"
+            "{id}: a target no stale node recomputes to is not deferred"
         );
     }
     assert!(
         include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md")
             .lines()
-            .any(|line| line.starts_with("| FR-322-AC-162 |") && line.contains("graph-shape"))
+            .any(|line| line.starts_with("| FR-322-AC-162 |") && line.contains("membership test"))
     );
 }
 
@@ -21228,7 +21234,7 @@ fn tc_940_refinement_row_refusals_run_from_the_published_vectors() {
         ));
         assert_eq!(observed, expected, "{id}");
     }
-    assert_eq!(ids.len(), 8);
+    assert_eq!(ids.len(), 9);
 }
 
 /// FR-322-AC-168: `catalog_delta` is a well-formed change to the checked
@@ -21239,6 +21245,35 @@ fn tc_940_the_catalog_delta_is_exact_and_covers_every_identity_the_vectors_use()
     let vectors = parsed_fixture(REFINEMENT_ROW_NODE_VECTORS);
     let catalog = parsed_fixture(OPERATION_CATALOG);
     let delta = &vectors["catalog_delta"];
+    // The exact change, entry by entry: the operand the `bound_is_member`
+    // constraint names, the result form and the operator are each pinned.
+    let entry = |identity: &str, operator: &str, operands: Value, result: &str, member: &str, constraints: Value| {
+        json!({
+            "identity": identity, "operator": operator, "operands": operands, "rest": null,
+            "result": result, "laws": [], "mode": null, "member": member,
+            "constraints": constraints, "leaves": null
+        })
+    };
+    assert_eq!(
+        *delta,
+        json!({
+            "member_kinds": ["history"],
+            "operations": [
+                entry("quire.op.refinement.history", "query", json!(["reference"]), "member", "history", json!([])),
+                entry(
+                    "quire.op.collection.only", "collection", json!(["collection_kind", "binder"]),
+                    "member", "type_argument",
+                    json!([{"kind": "bound_is_member", "operands": [1], "family": null}])
+                ),
+                entry(
+                    "quire.op.collection.seq", "collection", json!(["integer", "integer", "binder"]),
+                    "sequence", "type_argument",
+                    json!([{"kind": "bound_is_member", "operands": [2], "family": null}])
+                ),
+            ]
+        }),
+        "the catalog delta is exactly the change the FR text states"
+    );
     let published = catalog["operations"].as_array().unwrap();
     let mut member_kinds = string_set(&catalog["member_kinds"], "member kinds");
     member_kinds.extend(string_set(&delta["member_kinds"], "delta member kinds"));
