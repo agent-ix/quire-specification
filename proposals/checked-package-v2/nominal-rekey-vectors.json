@@ -1,5 +1,5 @@
 {
-  "note": "STD-536: stage placement of the nominal key check. Base package fixtures/positive-compound-unit.json (nominal Length dimension, unit metre U, builtin Integer, and the compound unit metre^1 that holds unit=reference(U)). U_key is the key of U; K1 is the JCS SHA-256 of U's rekeyed nominal_identity_preimage (qualified_declaration Example::metres); the compound unit holding K1 has the key recorded in NK-01. Each wire case is an RFC 6902 patch over the fixture ending by replacing package_id with the recomputed package id.",
+  "note": "STD-536: stage placement of the nominal key check. Base package fixtures/positive-compound-unit.json (nominal Length dimension, unit metre U, builtin Integer, and the compound unit metre^1 that holds unit=reference(U)). U_key is the key of U; K1 is the JCS SHA-256 of U's rekeyed nominal_identity_preimage (qualified_declaration Example::metres); the compound unit holding K1 has the key recorded in NK-01. Each wire case is an RFC 6902 patch over the fixture ending by replacing package_id with the recomputed package id. STD-546 (FR-322-AC-169, FR-322-AC-170): NK-08 to NK-13 pin the one total order of the key-and-join stages: graph shape, independent dangling reference, application key, nominal key, owner join, structural key, derived-shape semantic checks, then a dangling semantic_type or dependencies edge. NK-08 to NK-13 add nodes (no source_map entry) to the package; NK-10 and NK-11 also rekey the compound unit to its exponent-0 key. The node keys and package ids are recomputed from the JCS SHA-256 of the FR-322 preimages.",
   "base": "fixtures/positive-compound-unit.json",
   "keys": {
     "U_key": "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4",
@@ -467,6 +467,533 @@
       ],
       "outcome": "refused:invalid_semantic_graph",
       "locus": "/semantic_graph/nodes/1/node_id"
+    },
+    {
+      "id": "NK-08",
+      "summary": "No nominal rekey: an added application node (7 * -3 over Integer) keeps the key of 7 * -2 and an added function node `Example::double` names a source owner the lock does not select (its structural key is current): the application-node key stage precedes the owner join, so the application node is reported and not the owner-join refusal.",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "arguments": [
+                {
+                  "term": "literal",
+                  "type": {
+                    "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                    "domain": "quire.checked-semantic-node/v1"
+                  },
+                  "value": "7",
+                  "value_kind": "integer"
+                },
+                {
+                  "term": "literal",
+                  "type": {
+                    "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                    "domain": "quire.checked-semantic-node/v1"
+                  },
+                  "value": "-3",
+                  "value_kind": "integer"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.integer.mul",
+                "laws": [],
+                "leaves": [],
+                "member": null,
+                "mode": null
+              },
+              "operator": "binary",
+              "result_type": {
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "application"
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "4dbceabb3aaad488512b090a63a7fad78a6fb8fd0f63c9da4ffb2f62f3725855",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "binary",
+            "semantic_type": {
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "declaration": {
+              "qualified_name": [
+                "Example",
+                "double"
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "7056b4ee2150d5a8589e1972bb0714ec90b40c07a8021596ead425127e6a0018",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "function",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "owner": {
+              "kind": "source",
+              "authority": "agent-ix",
+              "identity": "unlocked"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "pure_function",
+            "semantic_type": {
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "ee94f434c1be53d39d55e9add40eb2a895a8eae1f5ab55ebd2de375d0f96d10a"
+        }
+      ],
+      "outcome": "refused:invalid_package",
+      "locus": "/semantic_graph/nodes/4/node_id",
+      "cause": "stale-node-key"
+    },
+    {
+      "id": "NK-09",
+      "summary": "Only the compound unit changes its exponent with its key retained (the lower-digest structural stale key of NK-04) and an added function node `Example::double` names a source owner the lock does not select: the owner join precedes every structural stale-node-key, so the owner is reported and not the lower-digest compound unit.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/members/0/members/1/value/value",
+          "value": "2"
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "declaration": {
+              "qualified_name": [
+                "Example",
+                "double"
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "7056b4ee2150d5a8589e1972bb0714ec90b40c07a8021596ead425127e6a0018",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "function",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "owner": {
+              "kind": "source",
+              "authority": "agent-ix",
+              "identity": "unlocked"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "pure_function",
+            "semantic_type": {
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "064263d20aba2b54b3039ecd3c1e662dea6c55c10810f0f203876c77a9484f90"
+        }
+      ],
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/4/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "NK-10",
+      "summary": "The compound unit holds exponent 0 under its recomputed key (a derived-shape semantic defect with a current key) and an added compound unit with exponent 2 retains a stale key: the structural key stage precedes the derived-shape semantic checks, so the stale key is reported and not the exponent.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/members/0/members/1/value/value",
+          "value": "0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/node_id/digest",
+          "value": "9000ea82239fed1737333697b290521b40284ace7ae95e034f8684790c8274c0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/semantic_type/digest",
+          "value": "9000ea82239fed1737333697b290521b40284ace7ae95e034f8684790c8274c0"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/3/node_id/digest",
+          "value": "9000ea82239fed1737333697b290521b40284ace7ae95e034f8684790c8274c0"
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "0000000000000000000000000000000000000000000000000000000000000001"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "node_tag": "scalar_type",
+            "semantic_form": "compound_unit",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "0000000000000000000000000000000000000000000000000000000000000001"
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
+              }
+            ],
+            "occurrences": [
+              {
+                "role": "type",
+                "ordinal": 0
+              }
+            ],
+            "body": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "aggregate",
+                  "members": [
+                    {
+                      "term": "binding",
+                      "name": "unit",
+                      "value": {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
+                        }
+                      }
+                    },
+                    {
+                      "term": "binding",
+                      "name": "exponent",
+                      "value": {
+                        "term": "literal",
+                        "type": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+                        },
+                        "value": "2",
+                        "value_kind": "integer"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "d3fb0d5264fdad8497f6772037a8bc9f1f86ef8070f25be86cc2a16c86b9295e"
+        }
+      ],
+      "outcome": "refused:invalid_package",
+      "locus": "/semantic_graph/nodes/4/node_id",
+      "cause": "stale-node-key"
+    },
+    {
+      "id": "NK-11",
+      "summary": "The compound unit holds exponent 0 under its recomputed key (a derived-shape semantic defect) and an added function node `Example::double` names a `semantic_type` no node carries (its structural key is current and its owner is selected): the derived-shape semantic checks precede the generic edge check, so the compound unit is reported.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/members/0/members/1/value/value",
+          "value": "0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/node_id/digest",
+          "value": "9000ea82239fed1737333697b290521b40284ace7ae95e034f8684790c8274c0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/semantic_type/digest",
+          "value": "9000ea82239fed1737333697b290521b40284ace7ae95e034f8684790c8274c0"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/3/node_id/digest",
+          "value": "9000ea82239fed1737333697b290521b40284ace7ae95e034f8684790c8274c0"
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "declaration": {
+              "qualified_name": [
+                "Example",
+                "double"
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "d38ce6de6b9b0648dd98c179a02c074eca01b2aadbee41974b6321136bcb349e",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "function",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "owner": {
+              "kind": "source",
+              "authority": "agent-ix",
+              "identity": "example"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "pure_function",
+            "semantic_type": {
+              "digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "c06767177bb88df5ca27621a00f04c410a3cc5ae23515d92612c685ca6691617"
+        }
+      ],
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/3"
+    },
+    {
+      "id": "NK-12",
+      "summary": "An added compound unit holds reference(`ee..`), a target no node carries and no stale node recomputes to, and an added application node (7 * -3 over Integer) keeps the key of 7 * -2: the independent dangling reference is a graph-shape refusal and precedes the application-node key stage, so the compound unit is reported and not the stale application node.",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "2eda2cd1cb7e392c2ed05f23ed4315026a7793e0fec08cd088256e7af2000c08"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "node_tag": "scalar_type",
+            "semantic_form": "compound_unit",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "2eda2cd1cb7e392c2ed05f23ed4315026a7793e0fec08cd088256e7af2000c08"
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+              }
+            ],
+            "occurrences": [
+              {
+                "role": "type",
+                "ordinal": 0
+              }
+            ],
+            "body": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "aggregate",
+                  "members": [
+                    {
+                      "term": "binding",
+                      "name": "unit",
+                      "value": {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+                        }
+                      }
+                    },
+                    {
+                      "term": "binding",
+                      "name": "exponent",
+                      "value": {
+                        "term": "literal",
+                        "type": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+                        },
+                        "value": "1",
+                        "value_kind": "integer"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "arguments": [
+                {
+                  "term": "literal",
+                  "type": {
+                    "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                    "domain": "quire.checked-semantic-node/v1"
+                  },
+                  "value": "7",
+                  "value_kind": "integer"
+                },
+                {
+                  "term": "literal",
+                  "type": {
+                    "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                    "domain": "quire.checked-semantic-node/v1"
+                  },
+                  "value": "-3",
+                  "value_kind": "integer"
+                }
+              ],
+              "operation": {
+                "identity": "quire.op.integer.mul",
+                "laws": [],
+                "leaves": [],
+                "member": null,
+                "mode": null
+              },
+              "operator": "binary",
+              "result_type": {
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "application"
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "4dbceabb3aaad488512b090a63a7fad78a6fb8fd0f63c9da4ffb2f62f3725855",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "binary",
+            "semantic_type": {
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "da10f6835dbaee496a7b3d079983079176eb4fc87fe1157db2e39a624242ab27"
+        }
+      ],
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/4"
+    },
+    {
+      "id": "NK-13",
+      "summary": "An added function node `Example::double` names a source owner the lock does not select and a `semantic_type` no node carries (its structural key is current): a dangling `semantic_type` is not a graph-shape refusal, so the owner join reports the owner.",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "declaration": {
+              "qualified_name": [
+                "Example",
+                "double"
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "a4ebc28448f0bbf2bf0cc721d7602eee9e62483a3bf212c50b2c2f042a0f04d2",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "function",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "owner": {
+              "kind": "source",
+              "authority": "agent-ix",
+              "identity": "unlocked"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "pure_function",
+            "semantic_type": {
+              "digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "77083ecf4a366bee503aef25f60a7faa81fdc55c05d4398cdf822d17e7a57e2f"
+        }
+      ],
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/4/owner",
+      "cause": "missing-selection"
     }
   ]
 }
