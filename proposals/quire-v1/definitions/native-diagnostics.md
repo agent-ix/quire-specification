@@ -148,11 +148,19 @@ order):
 4. `stale-node-key` (`invalid_package`), at the first application node in
    ascending retained node-id digest order whose retained key differs from the
    JCS SHA-256 of its `quire.application-node/v1` preimage;
-5. `declaration-nominal-mismatch` (`invalid_package`), nodes in ascending
+5. the nominal key check (`invalid_semantic_graph`, no cause), at the first
+   node in ascending retained node-id digest order that carries a
+   `nominal_identity_preimage` and whose retained key differs from the JCS
+   SHA-256 of that preimage, reported at the node's `node_id`. It follows the
+   application-node check above and precedes the derived-shape key stage of
+   FR-322, so it precedes every structural `stale-node-key` and the owner
+   join; a dangling `reference` whose target is the recomputed key of a
+   stale nominal node is deferred to it (FR-322-AC-160);
+6. `declaration-nominal-mismatch` (`invalid_package`), nodes in ascending
    node-id digest order;
-6. `ambiguous-name` (`ambiguous_declaration`), at the first node in ascending
+7. `ambiguous-name` (`ambiguous_declaration`), at the first node in ascending
    node-id digest order whose name an earlier node already declares;
-7. operation refusals, nodes in ascending node-id digest order and, inside a
+8. operation refusals, nodes in ascending node-id digest order and, inside a
    node, applications in pre-order (an application before its arguments,
    arguments left to right). One application is checked in this order:
    `unknown-operation`, `operation-class-mismatch`, `operation-law-missing`,

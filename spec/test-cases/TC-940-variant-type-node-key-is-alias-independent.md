@@ -125,3 +125,37 @@ Expected results:
     `origin`; the projection equals `domain_package`; the row digest equals the
     SHA-256 of the whole document; both mutations change that digest
     (FR-322-AC-151).
+
+## Nominal rekey and refinement row nodes (STD-536, STD-538)
+
+Scope: FR-322-AC-160 to FR-322-AC-162 (steps 14 to 15); FR-322-AC-163 to
+FR-322-AC-168 (steps 16 to 18). Use `nominal-rekey-vectors.json` with
+`fixtures/positive-compound-unit.json`, and `refinement-row-node-vectors.json`.
+
+14. Read `fixtures/positive-compound-unit.json`, then each case `NK-00` to
+    `NK-05` of `nominal-rekey-vectors.json`: a nominal Unit `U` rekeyed with a
+    dependent compound unit holding the new key, holding `U`'s old key, and
+    itself stale; only the compound stale; two stale units recomputing to one key.
+15. Present a dangling reference that depends on no nominal rekey, alongside a
+    nominal rekey.
+16. Recompute the key of each vector `VN-01` to `VN-06` (history read,
+    `pre` over it, whole-population value, `count`, `only`, `seq`) from the
+    recorded world nodes and preimages.
+17. Run each refusal case `RR-01` to `RR-08` through the refinement step and the
+    operation stage.
+18. Compare the catalog delta with the operations the vectors use.
+
+Expected results:
+
+14. The unmutated package is admitted; `NK-01` to `NK-03` and `NK-05` refuse
+    `invalid_semantic_graph` (no cause) at the `node_id` of the first stale
+    nominal node by retained digest; `NK-04` refuses `invalid_package`/
+    `stale-node-key` at the compound (FR-322-AC-160, FR-322-AC-161).
+15. The dangling reference is refused in the graph-shape stage, before the
+    nominal key stage (FR-322-AC-162).
+16. Every key equals the published digest; the history read carries no
+    refinement in its key (FR-322-AC-163, 165, 166, 167).
+17. Each case refuses with the code, cause and locus its vector states
+    (FR-322-AC-164, 165, 166, 167).
+18. The delta names exactly the three operations and the member kind `history`
+    the vectors use (FR-322-AC-168).

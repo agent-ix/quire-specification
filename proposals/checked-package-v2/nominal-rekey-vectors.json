@@ -1,0 +1,313 @@
+{
+  "note": "STD-536: stage placement of the nominal key check. Base package fixtures/positive-compound-unit.json (nominal Length dimension, unit metre U, builtin Integer, and the compound unit metre^1 that holds unit=reference(U)). U_key is the key of U; K1 is the JCS SHA-256 of U's rekeyed nominal_identity_preimage (qualified_declaration Example::metres); the compound unit holding K1 has the key recorded in NK-01. Each wire case is an RFC 6902 patch over the fixture ending by replacing package_id with the recomputed package id.",
+  "base": "fixtures/positive-compound-unit.json",
+  "keys": {
+    "U_key": "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4",
+    "K1": "0c208ce76c7a9e95072bb8e8edb57d5556c1362f20c68d366a68cf9377722e1d",
+    "compound_over_U": "02df6b0ff98d087f2807cd502d84ac503dffe56d1a4af72067975a22f7be7023",
+    "compound_over_K1": "380001eaddc4e6ed5ed0cf189d3a3ea3ee5ee1d853e9d975944decdee7193546",
+    "retained_low_key": "0000000000000000000000000000000000000000000000000000000000000001"
+  },
+  "wire_cases": [
+    {
+      "id": "NK-00",
+      "summary": "Admitted: the published package, every nominal key and the compound unit current.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "badb1cc5ad175aca47df9ab693af3f3a4d1174be82e6fad7f0c4e102b1a6cdd4"
+        }
+      ],
+      "outcome": "admitted"
+    },
+    {
+      "id": "NK-01",
+      "summary": "U is rekeyed (its preimage changes, its retained key is kept) and the compound unit holds unit=reference(U) under the recomputed key K1: the reference dangles only because of the rekey, so it is deferred and the nominal key stage reports U.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/nominal_identity_preimage/qualified_declaration",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/declaration/qualified_name",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/members/0/members/0/value/target/digest",
+          "value": "0c208ce76c7a9e95072bb8e8edb57d5556c1362f20c68d366a68cf9377722e1d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/dependencies",
+          "value": [
+            {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "0c208ce76c7a9e95072bb8e8edb57d5556c1362f20c68d366a68cf9377722e1d"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/node_id/digest",
+          "value": "380001eaddc4e6ed5ed0cf189d3a3ea3ee5ee1d853e9d975944decdee7193546"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/semantic_type/digest",
+          "value": "380001eaddc4e6ed5ed0cf189d3a3ea3ee5ee1d853e9d975944decdee7193546"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/3/node_id/digest",
+          "value": "380001eaddc4e6ed5ed0cf189d3a3ea3ee5ee1d853e9d975944decdee7193546"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "c73d123bec155e7ee0eb23d023a157d7a443819778f134510a47c3afb827ecee"
+        }
+      ],
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/1/node_id"
+    },
+    {
+      "id": "NK-02",
+      "summary": "U is rekeyed and the compound unit retains U's old key: nothing dangles and the nominal key stage reports U.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/nominal_identity_preimage/qualified_declaration",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/declaration/qualified_name",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "fcff962c8180b8eddf5d13eaadade9c7ebbe371d01e51e196685d0f320101ae5"
+        }
+      ],
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/1/node_id"
+    },
+    {
+      "id": "NK-03",
+      "summary": "U is rekeyed and the compound unit also changes its exponent with its key retained: the nominal key stage precedes the structural stale-node-key, so U is reported and not the compound unit.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/nominal_identity_preimage/qualified_declaration",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/declaration/qualified_name",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/members/0/members/1/value/value",
+          "value": "2"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "2784a4318ee5ac36b6386b68f88230e7f8d6127fb502da59307c1bdfdf794d54"
+        }
+      ],
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/1/node_id"
+    },
+    {
+      "id": "NK-04",
+      "summary": "Control: only the compound unit changes its exponent with its key retained. The structural stale-key stage keeps its code and locus.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/members/0/members/1/value/value",
+          "value": "2"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "43b27266786a464c46d5ea08f3e12b5359843cceea506eb203601c9e970f95a1"
+        }
+      ],
+      "outcome": "refused:invalid_package",
+      "cause": "stale-node-key",
+      "locus": "/semantic_graph/nodes/3/node_id"
+    },
+    {
+      "id": "NK-05",
+      "summary": "Two stale units recompute to one key K1 and the compound unit holds reference(K1): the reference is deferred without choosing a target, and the nominal key stage reports the stale node of lowest retained digest, here the later node in graph order.",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/nominal_identity_preimage/qualified_declaration",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/1/declaration/qualified_name",
+          "value": [
+            "Example",
+            "metres"
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/members/0/members/0/value/target/digest",
+          "value": "0c208ce76c7a9e95072bb8e8edb57d5556c1362f20c68d366a68cf9377722e1d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/dependencies",
+          "value": [
+            {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "0c208ce76c7a9e95072bb8e8edb57d5556c1362f20c68d366a68cf9377722e1d"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/node_id/digest",
+          "value": "380001eaddc4e6ed5ed0cf189d3a3ea3ee5ee1d853e9d975944decdee7193546"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/semantic_type/digest",
+          "value": "380001eaddc4e6ed5ed0cf189d3a3ea3ee5ee1d853e9d975944decdee7193546"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/3/node_id/digest",
+          "value": "380001eaddc4e6ed5ed0cf189d3a3ea3ee5ee1d853e9d975944decdee7193546"
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "0000000000000000000000000000000000000000000000000000000000000001"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "node_tag": "scalar_type",
+            "semantic_form": "unit",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"
+            },
+            "declaration": {
+              "qualified_name": [
+                "Example",
+                "metres"
+              ]
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"
+              }
+            ],
+            "occurrences": [
+              {
+                "role": "declaration",
+                "ordinal": 0
+              }
+            ],
+            "nominal_identity_preimage": {
+              "version": "quire.unit-node/v1",
+              "owner": {
+                "kind": "definition",
+                "authority": "agent-ix",
+                "identity": "example-model"
+              },
+              "qualified_declaration": [
+                "Example",
+                "metres"
+              ],
+              "dimension_node_id": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"
+              },
+              "target_unit_node_id": null,
+              "scale": {
+                "numerator": "1",
+                "denominator": "1"
+              },
+              "offset": {
+                "numerator": "0",
+                "denominator": "1"
+              }
+            },
+            "body": {
+              "term": "aggregate",
+              "members": []
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/-",
+          "value": {
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "0000000000000000000000000000000000000000000000000000000000000001"
+            },
+            "role": "declaration",
+            "ordinal": 0,
+            "regions": [
+              {
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example",
+                  "digest_domain": "quire.source.bytes/v1",
+                  "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "start": 4,
+                "end": 5
+              }
+            ]
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "672d34b5b76b8321d639a58168b2fbc101eec019c84f400a004802e0433b4ef5"
+        }
+      ],
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/4/node_id"
+    }
+  ]
+}
