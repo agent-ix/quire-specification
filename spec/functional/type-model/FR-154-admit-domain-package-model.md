@@ -88,7 +88,7 @@ Declaration refusals:
 
 | Failure | Refusal |
 | --- | --- |
-| A type definition's or population node's artifact id does not match `^[A-Za-z][A-Za-z0-9_]*$` | `invalid_model_binding`/`malformed-declaration` |
+| A type definition's or population node's artifact id does not match `^[A-Za-z][A-Za-z0-9_-]*$` | `invalid_model_binding`/`malformed-declaration` |
 | A tuple value type's nested identity is not `<package identity>/<tuple name>`, or a tuple name is not a valid artifact id | `invalid_model_binding`/`malformed-declaration` |
 | A type definition's or population node's `kind` names no entry of the `constructs` table, or its construct has no `meaning` or a `meaning` that is not a Quire meaning id (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An IR node is not valid for its construct's meaning, including a reference that names a node of the wrong meaning and a `supertypes` entry that names a node of another meaning (FR-208) | `invalid_model_binding`/`malformed-declaration` |
@@ -447,14 +447,25 @@ an earlier row of the table is not reported again as
 An admission refusal ends intake with no declaration.
 
 A model-declaring artifact is an artifact whose type is an object type of any
-spec-objects module (spec-objects-architecture, spec-objects-business, …). Its artifact id is an object id: ASCII letters, digits and underscores,
-starting with a letter (`^[A-Za-z][A-Za-z0-9_]*$`). An id such as `entity-001`
-is not an object id, and intake refuses the node it declares
-`invalid_model_binding`/`malformed-declaration`, naming the IR node identity
-and its `origin`. Because every object id is a `member-name`, a
-clause names each declaration by qualified name, such as `M::sys_pump`.
-Artifact-type ids such as `FR-100` declare no model node and are outside this
-rule.
+spec-objects module (spec-objects-architecture, spec-objects-business, …). Its
+artifact id is an object id: an ASCII letter followed by zero or more ASCII
+letters, digits, underscores or hyphens (`^[A-Za-z][A-Za-z0-9_-]*$`). The
+identity carries that id verbatim. A node whose id does not match this rule is
+refused `invalid_model_binding`/`malformed-declaration`, naming the IR node
+identity and its `origin`. Object ids and member names are distinct. This
+intake identity rule does not define the source-language spelling by which a
+clause names a type; that spelling is governed by the grammar and resolution
+requirements for that clause.
+
+Artifact-type ids such as `FR-100` still declare no model node because the
+artifact's type is not a model-declaring object type. A composed document such
+as `FR-204` with `object: value_object` is likewise skipped by extraction:
+classification uses the document's `type`, never `object:`. The lexical
+appearance of an id (including a prefix used by an artifact type) does not
+change whether a package node is admitted; intake reads the IR node and its
+meaning, not the source artifact type. A valid package node whose id is
+`FR-204` is therefore admitted when it satisfies the same declaration checks
+as any other node.
 
 A composed document is a document whose `type` is neither an object type a
 loaded module declares nor equal to its own `object` (an artifact type such as
@@ -465,22 +476,22 @@ the document selection is the filament-core-data extraction step
 (filament-core-data FR-091), which skips a document whose `type` is an
 artifact type such as `FR`, that is, neither an object type a loaded module
 declares nor equal to the document's own `object`, even if it carries
-`object:`. It classifies a document by its `type` alone, never by `object:`. The lift therefore emits no IR node for a composed document, so the
-package has no declaration key and no `<Name>` segment for it, and its
-hyphenated artifact id never meets the object id rule. Its `object:` member is
-descriptive classification for the reader; no model name is derived from it,
-from the document's `id` or from any other member, and there is no
-explicit-name member. Intake reads package bytes only and does not
-classify documents. A reference to a composed document as a model declaration
-is a reference to a node no package carries: a relationship end, supertype,
-field type or other IR reference naming `ix://<package identity>/FR-204`
-refuses `missing_declaration`/`missing-name`, and a clause cannot spell
-`M::FR-204` because `FR-204` is not a `member-name`. A document link to the
-composed document (`ix://agent-ix/<repo>/FR-204` in frontmatter
-relationships) is a document link and never a model reference. A
-package that nevertheless carries a node whose `<Name>` segment is an
-artifact-type id is refused by the object id rule above,
-`invalid_model_binding`/`malformed-declaration`, as a frontend defect.
+`object:`. It classifies a document by its `type` alone, never by `object:`.
+The lift therefore emits no IR node for a composed document, so the package
+has no declaration key and no `<Name>` segment for it. Its hyphenated artifact
+id is immaterial: `object:` is descriptive classification for the reader; no
+model name is derived from it, from the document's `id` or from any other
+member, and there is no explicit-name member. Intake reads package bytes only
+and does not classify source documents. A reference to a composed document as
+a model declaration is a reference to a node no package carries: a
+relationship end, supertype, field type or other IR reference naming
+`ix://<package identity>/FR-204` refuses `missing_declaration`/`missing-name`.
+A document link to the composed document
+(`ix://agent-ix/<repo>/FR-204` in frontmatter relationships) is a document
+link and never a model reference. A package that carries a well-formed model
+node whose `<Name>` segment resembles an artifact-type id is admitted under
+the same object-id and meaning rules as any other node; intake has no
+source-document classification with which to infer otherwise.
 
 A declaration's IR node identity is the identity filament-core-data FR-095
 mints (the closed slot list of its "Node identities" section), except for the
@@ -567,7 +578,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
 | FR-154-AC-6 | Retitling an artifact leaves every declaration key unchanged. Changing an artifact's id changes the declaration key of the type it declares and of that type's members, leaves every other declaration key unchanged, and a reference to the old key refuses `missing_declaration`/`missing-name`. | Test (TC-234) |
 | FR-154-AC-7 | A type definition or population node whose kind names no construct entry, or whose construct has no Quire meaning id or an id outside FR-208, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity and its `origin`, and no meaning is inferred from its kind name. | Test (TC-234) |
-| FR-154-AC-8 | A type definition or population node declared by an artifact whose id does not match `^[A-Za-z][A-Za-z0-9_]*$`, such as `sys-pump`, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity and its `origin`, a reference to that node reports no `missing_declaration`/`missing-name`, and a second failing check on the same node reports after the id refusal; the artifact id `sys_pump` is admitted and a clause names its declaration `M::sys_pump`. | Test (TC-234) |
+| FR-154-AC-8 | A type definition or population node whose artifact id begins with an ASCII letter and continues with ASCII letters, digits, underscores or hyphens is admitted with that id in its node identity and declaration key; this includes `sys_pump`, `sys-pump` and `FR-001`. An artifact id that does not match this rule, such as `-sys_pump`, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity and its `origin`, a reference to that node reports no `missing_declaration`/`missing-name`, and a second failing check on the same node reports after the id refusal. An artifact-type document such as `FR-204` with `object: value_object` still yields no node because extraction classifies by `type`; a model-declaring object artifact with id `FR-204` does yield a node and is admitted. | Test (TC-234) |
 | FR-154-AC-9 | The published domain package document of `acme/orders` (`domain-package-acme-orders.json`) carries exactly FR-095's identity forms: types `ix://acme/orders/<artifact id>`, fields, operations and parameters nested under their owner, and relationships `ix://acme/orders/relationship/<Name>-<verb>-<TargetName>` (`Order-order-Order`, `Order-invoiced-Invoice`, `Order-follows-Order`, `Order-twin-Order`), the constrained-field alias `ix://acme/orders/OrderTotal`, none of them owner-nested. | Test (TC-280) |
 | FR-154-AC-10 | A relationship declaration of the selected document refuses at the selection row (`/lock/model_selections/<i>`), in node order and, within a node, in the order malformed declaration, unresolved end type, duplicate identity, reversed multiplicity: an identity outside the package's global `relationship` slot (owner-nested, foreign-package or wrong-slot), a missing or invalid `direction`, `category`, `composite` or `origin`, a missing, null, empty or non-string `sourceEnd.role`, a present null, empty or non-string `targetEnd.role` (an absent `targetEnd.role` is valid), a source end naming another owning type, a malformed end or multiplicity, and an end type naming a relationship or another declaration of the wrong meaning each refuse `invalid_model_binding`/`malformed-declaration`; an end type naming no declaration refuses `missing_declaration`/`missing-name`; a repeated relationship identity, including under two owners, refuses `invalid_model_binding`/`conflicting-binding`, and two missing identities are malformed declarations, not conflicting ones; `lower > upper` alone refuses `invalid_model_binding`/`unpreserved-model-meaning`. The published `adverse.json` `relationship_document_cases` hold one entry per refusal and three admitted entries. Each refusal retains the relationship's IR identity and its `origin` verbatim: `declaration_origin_cases` `refusal-retains-source-origin` (a source origin with its `sourceIdentity`, `path` and span) `refusal-retains-generated-origin` (a generated origin with its members and no span) and `refusal-retains-no-malformed-origin` (a malformed origin, refused `malformed-declaration`, retained as none). | Test (TC-280) |
 | FR-154-AC-11 | A variant type with no case, a case with no source span, a case whose identity is not `variant/<Name>-<value>` of its owner and name, and a construct of a shape other than `enumeration` each refuse `invalid_model_binding`/`malformed-declaration` (except a case already refused by a same-identity collision, FR-154-AC-13), at the node and member path FR-154 names (`TypeDefinition.kind`, `TypeDefinition.variants`, `TypeDefinition.variants[i].origin`, `Variant.identity`); a field `typeRef`, an operation parameter and an operation result naming a variant type are admitted and raise no refusal; a case with a supported, resolving `payloadType` is admitted as that union member's single payload, and an unresolved or unsupported `payloadType` refuses `unsupported_construct`/`declaration-form` at its case node and `Variant.payloadType`, never `invalid_model_binding`; a type whose cases all omit `payloadType` remains an enumeration of nullary cases, while a case without `payloadType` in a union is a nullary member; two cases with equal names and distinct identities refuse the later case `invalid_model_binding`/`conflicting-binding` at the type node and `TypeDefinition.variants[i]` and raise no other refusal for it; within the type node the failures report in the order shape, empty list, repeated names, source spans, and each case node then reports identity and payload after the type node's refusals; reordering the `variants` list changes no declaration key for an enumeration or a union. | Test (TC-235, TC-939) |
