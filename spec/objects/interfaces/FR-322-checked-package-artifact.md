@@ -1491,11 +1491,12 @@ no operation identity, and the published operation catalog is unchanged.
   `fixtures/positive-model-tuple-union.json`), and never at a member of it:
   not `/semantic_graph/nodes/<i>/body/operation/member`, nor its `/position` or
   `/declaration`. A `position` that is no `KeyOrdinal` fails the V2 schema and is
-  `malformed_wire` at the same node (FR-322-AC-152): the node is the `locus` and
-  the offending field, `/semantic_graph/nodes/<i>/body/operation/member/position`,
-  is the `document_pointer`, as for the field-level cases of a tuple node. A
-  vector's `locus` is an RFC 6901 pointer into the package, the pointer FR-272's
-  `document_pointer` carries. A `typeRef` that names another tuple or a variant
+  `malformed_wire` at the same node (FR-322-AC-152). In FR-272's terms the
+  refusal's `locus` is the `CheckedNodeId` of that node and its `document_pointer`
+  is the offending field, `/semantic_graph/nodes/<i>/body/operation/member/position`;
+  the vector's `locus` string is an RFC 6901 pointer into the package, not a
+  `CheckedNodeId`, and here names the node, where the field-level cases of a
+  tuple node (TW-02 to TW-04) name the field. A `typeRef` that names another tuple or a variant
   type gives that type's declaration node, so a tuple may nest tuples and
   unions. A `composite_type`/`tuple` node and a `model`/`tuple_value_type` node
   are two different type nodes even when their positions have equal types.

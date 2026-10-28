@@ -20620,10 +20620,10 @@ fn tc_940_wire_case_loci_and_causes_follow_the_refusal_vocabulary() {
 fn reference_term_targets(value: &Value, out: &mut Vec<String>) {
     match value {
         Value::Object(map) => {
-            if map.get("domain").and_then(Value::as_str) == Some("quire.checked-semantic-node/v1") {
-                if let Some(digest) = map.get("digest").and_then(Value::as_str) {
-                    out.push(digest.to_owned());
-                }
+            let in_domain =
+                map.get("domain").and_then(Value::as_str) == Some("quire.checked-semantic-node/v1");
+            if let Some(digest) = map.get("digest").and_then(Value::as_str).filter(|_| in_domain) {
+                out.push(digest.to_owned());
             }
             map.values().for_each(|inner| reference_term_targets(inner, out));
         }
