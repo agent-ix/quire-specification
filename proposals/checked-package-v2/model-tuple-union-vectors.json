@@ -1,7 +1,8 @@
 {
   "version": "quire.model-tuple-union-vectors/v1",
-  "note": "STD-519 (review round 1: package-level nodes, recursion, application-node keys). The selected document of fixtures/positive-model-tuple-union.json is domain_package (a projection of the FCD IR 2.0.0 declarations FR-154 reads, as in model-owner-form-vectors.json: tuple_types carry ordered positions, variant_types carry cases). Cases are evaluated by the QSpec test over domain_package; wire_cases are RFC 6902 patches over the fixture, each ending by replacing package_id with the recomputed package id. Node names are the declaration_nodes names.",
+  "note": "STD-519 (review round 1: package-level nodes, recursion, application-node keys). The selected document of fixtures/positive-model-tuple-union.json is the full FCD semantic IR 2.0.0 domain-package-acme-shapes.json (STD-529, FR-322-AC-151); domain_package is its projection, the declarations FR-154 reads (tuple_types carry ordered positions, variant_types carry cases, all in document order), and selection_digest is the JCS SHA-256 of the whole document, the digest the lock row pins. Cases are evaluated by the QSpec test over domain_package; wire_cases are RFC 6902 patches over the fixture, each ending by replacing package_id with the recomputed package id. Node names are the declaration_nodes names.",
   "base": "fixtures/positive-model-tuple-union.json",
+  "selected_document": "domain-package-acme-shapes.json",
   "domain_package": {
     "identity": "acme/shapes",
     "version": "1.0.0",
@@ -151,7 +152,7 @@
       }
     ]
   },
-  "selection_digest": "1c30be09c32a7fccbcd93b55eaa19ac1304f0a5d8f5a8113208e7903b62f368b",
+  "selection_digest": "16a50417f0a811044b5e9c52e9a2ece20631dc4777daa62353a60e64568b8c29",
   "declaration_nodes": [
     {
       "name": "Pair",
@@ -1566,7 +1567,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "47655d5ecd78d1a370ffd50c79bdf035baebcb8007138801ed0ebc51e9091414"
+          "value": "4d959d2b8fb7434a6647bacdf304ea27d9300bcaa85205509abc5922cfcd0506"
         }
       ],
       "schema": "valid",
@@ -1583,7 +1584,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "ce8896278ca23098c0a5e66091d5cda9d12e3e21440d12be413eeb4f55fae5a7"
+          "value": "e98cba5a272b1d986f25bd5ee8ee560cda4154f019353691f210e11dc976be9e"
         }
       ],
       "schema": "invalid",
@@ -1606,7 +1607,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "d71a011bfdb98b373ed9db66ff3fd8534383b2261bb89befe65df253c4c0ab49"
+          "value": "fcc26a87022fdf9878f5aecf27382524db1c5c1134364f32f1f8b57ed092fd32"
         }
       ],
       "schema": "invalid",
@@ -1629,7 +1630,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "68490154f05f15145c3044267f35801c8c036b5ce3f4d4b469f89e4d0436fa96"
+          "value": "594f8df60af25451768548d0239d243a27a578d99d96d49ce7a803df3c2bc98e"
         }
       ],
       "schema": "invalid",
@@ -1648,7 +1649,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "d2d740593b253f8f85cbc6a90d996996929e3a6a6ce811b410f940a6ff6ccc4b"
+          "value": "fc101743f8e2d082a82b5b5757fd196f99db49f66071b3815b54e24d8adfc2d8"
         }
       ],
       "schema": "invalid",
@@ -1711,7 +1712,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "d7a0cc6159d39287326a6a8c56c9b1de1794a10a0f71f0e945be1b31bcc59bb2"
+          "value": "076c4436257105bc3bf257962afbdce8aa20b37b8519980c2a0d3f70c4652185"
         }
       ],
       "schema": "valid",
@@ -1767,7 +1768,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "7644a2b5ff095d06e498ebc57a2f2c999dc65c68114254d16782fd5a81b1dfae"
+          "value": "5ebc5206a83cf030e55766521617d5407977ae1c782bd77bff60799dc40bef48"
         }
       ],
       "schema": "valid",
@@ -1823,7 +1824,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "5906f005fe4b3c9ebf4972e1fa8f15d0191a6d72a94643b9b8fff4ce96c6efb5"
+          "value": "81692735c971ec52b729cd81a00caf8a6907bbe80f8265a1c2d6fd42945a9818"
         }
       ],
       "schema": "valid",
@@ -1879,7 +1880,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "d05a88eb94cfc57831fc1d0fc61828861dcf084a0ecc52550dcffc015adb0d68"
+          "value": "0b95b794894407ba82eebd49b1ad33961f4f26d467a56bf0cb769bb15ee465b6"
         }
       ],
       "schema": "valid",
@@ -1935,7 +1936,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "a45a02514910e163355b8540791aac3f6aa156db72de7a4e53a7dd14c2408d1b"
+          "value": "ade4409c98f7ea3342694c46eb8abb267fbaf4cd13219bc0441ab4e125f488d7"
         }
       ],
       "schema": "valid",
@@ -1954,7 +1955,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "c5c63a47297a29428d0bcaf1f7cc3c65460ec8e4e5b444549f111637830fde09"
+          "value": "bab36a552c6fe45203ccf5b9f8f4f6e8068e87d6a4b4500ece568a1d7d3b1cc3"
         }
       ],
       "schema": "invalid",
@@ -2026,7 +2027,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "58139ce26c13dd03a95915500d061c835d2ce0d4e491151daea267ac7a820adb"
+          "value": "621dd270c4ae476b9a8ff16dfe092808055c0abb8d09ab5b280c77883a7df8f1"
         }
       ],
       "schema": "valid",
@@ -2086,7 +2087,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "0be931ff84c0f232adc414cc4589fbc2763cf6d0204703a3cf69de50712de64f"
+          "value": "3edfb6379bce0ef20ae7a052f843113e2e4d672f5f52ab5eb829331f42166598"
         }
       ],
       "schema": "valid",
@@ -2159,7 +2160,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "e7dc202151b36aee6132c1d0e54491d7a6103c4fedc2851ad061833e0cf58ddb"
+          "value": "2594c35b1536e6827000c0abc8ec3c300baa01d99651723a4edf0b1dd7d76f55"
         }
       ],
       "schema": "valid",
@@ -2219,7 +2220,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "84f17b5c2087b4c434989ec45068213767b83a675c86c2350cf3781ad20d6782"
+          "value": "1a28ebe36f355bece7fe5c1b9f62ff2f77fef1ce9205eb124c3116fe24d5a374"
         }
       ],
       "schema": "valid",
@@ -2279,7 +2280,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "19b56841a6edddf87aa8d6b0fcac74a5ce0b9743e379262f8e14770709063629"
+          "value": "32ab91096ffd60d728b8bb39095e32eda721ea72b2aa7f37b03e3c4224c51238"
         }
       ],
       "schema": "valid",
@@ -2415,7 +2416,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "5cf6b74f7ea8178d09320c38e5604ce0c822c5bea3f5563241bac0bc1984055b"
+          "value": "4900b85eafd9f348fefdc056aa4b9ea5ed6a5aa3423b9e883bfd0ad85d0f67e5"
         }
       ],
       "schema": "valid",
@@ -2587,7 +2588,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "025bcb1a9a001c602c709729fce8fddc7c1be72367aea01dbfc7993397de22f0"
+          "value": "077be10bbaf62eb5a91085dc5ac7488d10131cf69affc27a90542f36d9e434a0"
         }
       ],
       "schema": "valid",
@@ -2674,7 +2675,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "ed869b75501400895aabc2b26e8330285b16ee0faabd2c14e2eb96c9bdeda30e"
+          "value": "7ddaa585c104b3c00e3dcab40021f73729c512d6b40011224df337488fee6beb"
         }
       ],
       "schema": "valid",
@@ -2761,7 +2762,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "1968155d49e9135700d959a4d60185cf177f6b1f92c7f88f7003376c6bfe9dfe"
+          "value": "c2e491a45057f24b225e5c67ecf3d6bdae3e2a6f35c2e9b55968d622f62d3521"
         }
       ],
       "schema": "valid",
@@ -2848,7 +2849,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "4f32bbe115fd0ad4cb88a86c89cfc7d03c9ee67da31b28f8dba7f3bca3bb7f5a"
+          "value": "01788cacf95c8a2d5eb438fd0c16722e6c2c256bc41e1ba8e5bfb3f8b518302d"
         }
       ],
       "schema": "valid",
@@ -2917,7 +2918,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "fe4490943396a5d8a69a33424459844833bdd89ca901fd32cc01c49f9a511aed"
+          "value": "063d96e77c2f73ac9d8d216acc061d87189c4a747b292bbc4361d931fc5614bb"
         }
       ],
       "schema": "valid",
@@ -2985,7 +2986,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "847d74d87acf8963c60664e42b7a543840a587f676cf891ec557870f302ea8c1"
+          "value": "421f24cda9728997e29545c3fd61c6b7d64bf9c0613858416f171e08b3590f4f"
         }
       ],
       "schema": "valid",
@@ -3071,7 +3072,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "f3f13d9283601446fac7f0428ac1f755f79ed13126f1342e83953dee877158b7"
+          "value": "c19c6ec02e5f172cd98484ee7c044b0c78359bebacb12c360d73a803d9596127"
         }
       ],
       "schema": "valid",
@@ -3158,7 +3159,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "fae07d091de27a74ac687073c5b45e80ea9251f30079d390197098d66be7eca7"
+          "value": "d782b48ab57b279df8b73afef4632a70f5e8a17229d014e97b1594886873275d"
         }
       ],
       "schema": "valid",
@@ -3253,7 +3254,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "a2e418429aa1ad67e08f918d29b34356e1c5f7e60fcc90f83aa4038791c0112d"
+          "value": "17f04b9797e72f0ac08b3b1fef74a4a7549dcc52734343c05057d403ff66e2f9"
         }
       ],
       "schema": "valid",
@@ -3273,7 +3274,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "9e0ad0d30e3ed3305b7e45c6c379f77201913c09f70bd0d6883bb495f5095fcb"
+          "value": "6a07f0fe0d28b046463a1a19cb3df56ea2a9a4e5570c2483fd6b20c50ddd8e07"
         }
       ],
       "schema": "invalid",

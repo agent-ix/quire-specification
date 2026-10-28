@@ -289,7 +289,9 @@ boundary.
   [FR-441](FR-441-union-member-key.md) specifies. A
   `value` node with `semantic_form: "parameter"` stands for a value a binder
   binds (a function parameter; a `let`, query, `count` or `sum` binder; a
-  `fold` or `reduce` accumulator or element binder; or the `self`, `result`
+  `fold` or `reduce` accumulator or element binder; a `forall` or `exists` binder over a clock
+  collection, which binds the element place's slot position (or key), typed by the selector's
+  domain ("Presence" below); or the `self`, `result`
   and operation parameters of a state clause; or a continuous variable of a
   hybrid model, [FR-481](FR-481-checked-package-hybrid-model-nodes.md)), and
   its `semantic_type` is the bound value's type. It carries no `declaration` and no `owner`, and its
@@ -460,7 +462,13 @@ boundary.
   from the digest of its preimage refuses as `invalid_package` with cause
   `stale-node-key`, after every graph-shape refusal and before any declaration,
   frame or operation refusal, at the first such node the reader visits in
-  ascending retained digest order. A frame body refusal, meaning-join or canonical-order
+  ascending retained digest order. A dangling `reference` whose target equals
+  the recomputed key of a node whose retained key is stale dangles only because
+  of that rekey: it is dependent on it and is not a graph-shape refusal, so the
+  stale-key stage reports the stale node instead (FR-322-AC-154). A dangling
+  `reference` whose target is no such recomputed key is independent and remains a
+  graph-shape refusal, preceding every stale-key refusal, and the stale nodes
+  keep their ascending retained digest order. A frame body refusal, meaning-join or canonical-order
   ([FR-340](FR-340-checked-package-frame-location.md)), is reported after
   every declaration refusal and before any state or operation refusal, at
   the first `state`/`frame` node, visiting them in ascending node-id digest order, that
@@ -1229,7 +1237,14 @@ constraints ("Reference conformance" below).
    `targetEnd`. The declarations steps 2 to 4 read are the projection of that
    document, a derived view that holds no member the document does not: the
    published `domain-package-acme-orders.json` is the document and `domain_package`
-   in `model-member-type-vectors.json` is its projection. The read's refusal is the first refusal
+   in `model-member-type-vectors.json` is its projection; likewise
+   `domain-package-acme-shapes.json` is the document and `domain_package` in
+   `model-tuple-union-vectors.json` its projection (FR-322-AC-151). The digest of a
+   selected document is the SHA-256 of the RFC 8785 bytes of the whole document,
+   and the `model_selections` row of a published fixture pins exactly that digest
+   (the published `acme/orders` and `acme/shapes` fixtures alike); the projection
+   is derived from the document and is never what is digested. Admission is as
+   FR-322-AC-32 states. The read's refusal is the first refusal
    in FR-154's report order, with its own code, cause and loci, at stage
    `package_read`. The caller supplies `ModelNormalizationLimitsV1` among the
    reader's limits, and an exhausted one is the read's `incomplete` result.
@@ -1471,8 +1486,19 @@ no operation identity, and the published operation catalog is unchanged.
   `Option`, a collection or a `Reference`): `p0: Boolean`, `p1: Integer` of the
   tuple `Pair` give `quire.op.tuple.project` over a `Pair` value with position
   `0` the `Boolean` node and with position `1` the `Integer` node. A `position`
-  that is not a position of the tuple refuses `ill_typed`/`operator-ineligible`
-  at the application's `member`. A `typeRef` that names another tuple or a variant
+  that is not a position of the tuple, and a `declaration` that is not the
+  operand's tuple node, refuse `ill_typed`/`operator-ineligible` at the
+  application node, the RFC 6901 pointer `/semantic_graph/nodes/<i>` of the
+  `quire.op.tuple.project` application (`/semantic_graph/nodes/31` in
+  `fixtures/positive-model-tuple-union.json`), and never at a member of it:
+  not `/semantic_graph/nodes/<i>/body/operation/member`, nor its `/position` or
+  `/declaration`. A `position` that is no `KeyOrdinal` fails the V2 schema and is
+  `malformed_wire` at the same node (FR-322-AC-152). In FR-272's terms the
+  refusal's `locus` is the `CheckedNodeId` of that node and its `document_pointer`
+  is the offending field, `/semantic_graph/nodes/<i>/body/operation/member/position`;
+  the vector's `locus` string is an RFC 6901 pointer into the package, not a
+  `CheckedNodeId`, and here names the node, where the field-level cases of a
+  tuple node (TW-02 to TW-04) name the field. A `typeRef` that names another tuple or a variant
   type gives that type's declaration node, so a tuple may nest tuples and
   unions. A `composite_type`/`tuple` node and a `model`/`tuple_value_type` node
   are two different type nodes even when their positions have equal types.
@@ -2519,7 +2545,33 @@ is empty exactly when the model has no guard to list. A guard that exists is
 never absent from its aggregate: a `clock_guard` node that the root's `guards`
 does not list refuses `invalid_package`/`timed-node-reference`, and a producer
 that cannot yet write the guards of a model refuses to emit that model rather
-than write an empty aggregate. A `clock_reset` is
+than write an empty aggregate.
+
+**Presence.** `present(p)` over a clock place is a derived Boolean predicate
+and is the application of `quire.op.option.present` (form `presence_read`,
+result type Boolean). The existing form over one Option-typed operand is
+unchanged, with the same body and so the same node key; the place form has the
+arguments, in order: a reference to the
+`clock_place` template node of `p`; the owner term, an expression of the
+place's owner object type (`self`, another object such as `other`, a parameter
+or a bound variable); and one term for each `slot` step of the path in path
+order, of the selector's domain (an Integer position, or a key for a `Map`).
+The place identity (owner, `clock_place` node key, slots; QSL FR-230 "Place
+identity") is the whole operand, so no record, tuple, model, type or
+`clock_place` node carries a presence bit or an `Option<Boolean>`, and no model
+node key changes for holding an `Option<Clock>`. A quantifier over a clock
+collection (`forall(e in p: ...)`, `exists`) binds `e` as a `parameter` of the
+selector's domain (the one case in which a parameter's `semantic_type` is the
+slot's selector domain and not the element's value type), and `present(e)` and every other read of the element place
+take that parameter as the slot term. The reader refuses
+`ill_typed`/`operator-ineligible` at `/body/arguments` an argument count other
+than two plus the number of slot steps, and at `/body/arguments/0` a first
+argument that is neither a `clock_place` node nor an Option-typed term; and
+`ill_typed`/`type-mismatch` at the argument an owner term not of the owner type
+or a slot term not of the selector's domain. An `Option` or `?` wrapper adds no
+path step: the `resolved_path` row of the field carries the rendered declared
+type `Option<T>`, and the terminal row is the one whose type is `Clock` once
+the wrapper is removed. A `clock_reset` is
 exactly `place`, `value`; `clock_guard` and `time_invariant` are each exactly
 `predicate`. An `urgency` is exactly `kind`, `predicate` for `when`, or
 `kind`, `model`, `operation_name` for `operation`. A `clock_constraint` is
@@ -2658,7 +2710,7 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-93 | The reader admits the reference form of an integer literal operand under the six operators: `positive-integer-literal-references.json`, whose `three` application is `quire.op.integer.add` over references to two `value`/`literal` nodes, validates against the V2 schema and passes every reader check, and its `three` node identity and `package_id` differ from those of `positive-two-owners-a.json`, which holds the inline form. | Test (TC-233) |
 | FR-322-AC-94 | `quire.op.reference.upcast` admits an operand `Reference<S>` with `type_argument` `Reference<T>` exactly when `S` and `T` are selected object types of one document and `S` conforms to `T` along declared supertypes: one type to itself, a subtype to its supertype, a subtype two levels down to its root, and a type with two supertypes to either. A supertype to its subtype (a downcast), two unrelated object types, a systems interface with no declared supertype to an object type, a reference to a relationship at either end and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand or member whose owner is not selected refuses `missing_declaration`/`missing-selection`. | Test |
 | FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id digest order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id digest, each with its `package_id` recomputed over the identity projection derived in the new graph order. Each reorder that changes the node sequence changes the `package_id`, and the reader reports no refusal for the order of the nodes. A published fixture with its `semantic_graph.nodes` reversed and its recorded `package_id` kept fails the identity recomputation of FR-322-AC-14. | Test (TC-233) |
-| FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node `7916…` and the `correspondence`/`source_locus` node `eda3…` each list their body target `8a2a…`, and the `bounded_domain`/`integer_range` node `652c…` lists its `semantic_type` `07f6…`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node `1ffe…` lists its `semantic_type` `0ec8…` alone, not its `max` literal's `type`. Each fixture's `package_id` recomputes with those lists. With `package_id` recomputed, the full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
+| FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node `7916…` and the `correspondence`/`source_locus` node `eda3…` each list their body target `8a2a…`, and the `bounded_domain`/`integer_range` node `652c…` lists its `semantic_type` `07f6…`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node `b4fe…` lists its `semantic_type` `b8a0…` alone, not its `max` literal's `type`. Each fixture's `package_id` recomputes with those lists. With `package_id` recomputed, the full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
 | FR-322-AC-97 | The `quire.structural-node/v1` preimages that "Structural node preimage" spells recompute: P4, the `value`/`parameter` node of `x: Int[0, 9]` at level 0, to `ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda`, and U2, the `scalar_type`/`compound_unit` node of `metre / second`, to `bcf431d15781d66fcdd2514e251004373eb64a3ef21e37f7b2535f2a871821e7`; P4 at level `1`, and P4 named `y`, each give a different key. The V2 schema admits a `value`/`parameter` node whose body binds `name` then `level`, and a `scalar_type`/`compound_unit` node; a parameter body with `level` before `name`, or with a third member, fails the V2 schema (`malformed_wire`). Every `value`/`parameter` node of every published positive fixture is current under that preimage, and the full reader admits each fixture. | Test (TC-233) |
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
 | FR-322-AC-99 | With the unit of compilation declaring `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;` and the admitted domain package `acme/rpc` declaring base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate` (`target` `us`, `scale` `1000`), a field typed `ix://quire/unit/ms` has type `Quantity<ms>` over the source unit's node and a field typed `ix://quire/unit/acme/rpc/ms` has type `Quantity<M::ms>` (with `model M = "acme/rpc" …`) over the package unit's node, two distinct `scalar_type`/`unit` nodes with no `ambiguous_declaration`; the package unit node carries no `declaration`, its `owner` is `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, its preimage has `qualified_declaration` `["ms"]` and a key distinct from the source `ms` node's, and it depends exactly on the package `Rate` node and the package `us` node; a field typed `ix://quire/unit/rpc/ms` refuses `missing_declaration`/`missing-name`. A field typed `ix://quire/native/Clock` resolves as a `field` member to the clock type with no checked-package node; a `field` application over it in a value position refuses `invalid_timed_model`/`clock-read-outside-constraint`, while the same clock as the operand of an atomic clock constraint in a guard or time invariant raises no such refusal. | Test (TC-280) |
@@ -2712,6 +2764,13 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-148 | The slot selector of a template step is symbolic. For `ts: Sequence<Timer>[0, 3]` with `Timer { x: Clock; n: Int }`, the place `ts.0.x` is the one `clock_place` whose path is `field(ts)`, `slot(sequence, <Integer type node>, 0, 3)`, `field(x)`; `Set`, `Bag` and `OrderedSet` differ only in the `collection` literal and the key, `Sequence<Sequence<Clock>>` carries one Integer-typed slot step for each level, and `Map<Text, Clock>` carries the Text type node (the published fixture place). A slot selector that is an integer literal, a reference to the Text type node under a `Sequence`, a reference to an expression node, or a reference to the Integer type node under a `Map<Text, _>` refuses `invalid_package`/`malformed-clock-place` at the path step `/semantic_graph/nodes/{i}/body/members/1/value/members/{j}`. | Test (TC-367; CK-26; SL-01..SL-06, SR-01..SR-04) |
 | FR-322-AC-149 | One template node serves every instance. The places `ts.0.x`, `ts.1.x` and `ts.2.x` of AC-148 are instances of the one node of `SL-01`; no node carries an index and no node field depends on how many elements a state holds. Two `clock_place` nodes with one path and different `guards` refuse `invalid_package`/`duplicate-clock-place`. | Test (TC-367; CK-26; SL-01, SL-07, SL-08, GD-02) |
 | FR-322-AC-150 | An empty `guards` aggregate is admitted on a `clock_place` (`SL-08`) and on a `timed_model` root (the published tick fixture) when the model has no guard, and the same place with a guard predicate listed (`SL-07`) is admitted with a different key. A `clock_guard` node that the root's `guards` does not list refuses `invalid_package`/`timed-node-reference` and is never read as absent (`GD-03`), and two places of one path with different guards refuse `invalid_package`/`duplicate-clock-place` (`GD-02`); the vectors publish both as replayable package mutations. | Test (TC-367; CK-26; GD-01..GD-03) |
+| FR-322-AC-151 | The selected document of the published `acme/shapes` package is `domain-package-acme-shapes.json`, a full FCD semantic IR 2.0.0 document (`contractVersion`, `package.identity`, `constructs`, `types`) with `Holder` an object type, `Pair`, `Swap`, `Nest` and `Cell` tuple value types with ordered `positions` (the tuple construct uses FCD's `tuple` shape and each position carries its schema-required `origin`, per filament-core-data FR-147-AC-2 and FR-147-AC-3), and `Shape`, `Color` and `List` variant types with `variants`; `domain_package` in `model-tuple-union-vectors.json` is exactly the projection of it that intake reads (types in document order, lists in declared order, multiplicity bounds as decimal strings, a tuple position's ordinal its index) and is not digested. `selection_digest`, the digest of the fixture's `model_selections` row and the input to its `model_root` key and `package_id`, is the SHA-256 of the RFC 8785 bytes of the whole document; the `model_root` key and the `package_id` recompute from it. Swapping the position types of `Pair` in the document, or reordering two declarations in its `types`, changes the document and so the row digest. | Test (TC-940) |
+| FR-322-AC-152 | The wire cases `TW-18` (position `2`), `TW-19` (the `declaration` is the tuple `Swap`) and `TW-20` (the beyond-safe `KeyOrdinal` string `9007199254740993`) of `model-tuple-union-vectors.json` each refuse `ill_typed`/`operator-ineligible` at the locus `/semantic_graph/nodes/31`, the `quire.op.tuple.project` application node, which is the position-0 projection over the `Pair`-typed parameter (node 14, result type the `Boolean` node), and not at `/semantic_graph/nodes/31/body/operation/member`, `/member/position` or `/member/declaration`; `TW-26` (position the string `0`) is `malformed_wire` at the same `/semantic_graph/nodes/31`. | Test (TC-940) |
+| FR-322-AC-153 | A wire case of `model-tuple-union-vectors.json` states a `cause` exactly when its code carries one: `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration` and `invalid_model_binding` rows state their cause (`TW-05`, `TW-06` to `TW-09`, `TW-11` to `TW-20`, `TW-23` to `TW-25`), and the admitted case `TW-00` and the rows of `malformed_wire` (`TW-01` to `TW-04`, `TW-10`, `TW-26`) and `invalid_semantic_graph` (`TW-21`, `TW-22`), codes that carry no cause (FR-272), state none. | Test (TC-940) |
+| FR-322-AC-154 | In `TW-05` (the `Pair` node keyed over a non-empty body) every `reference` to the published `Pair` key dangles, and each such target equals the recomputed key of the closed `ModelDeclarationNode` preimage of the rekeyed `Pair` node; they are dependent on the rekey, so the first refusal is `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`. A dangling `reference` whose target is no recomputed key of a stale-keyed node is a graph-shape refusal that precedes every stale-node-key refusal, and stale nodes keep ascending retained digest order. | Test (TC-940) |
+| FR-322-AC-155 | `present(other.v)` over `v: Option<Clock>`, `present(self.q[i])` over `q: Sequence<Option<Clock>>[0, 2]`, and the body `present(e)` of `forall(e in self.q: ...)` are each one `presence_read` application of `quire.op.option.present`, typed Boolean, with the arguments the place template, the owner term (`other`, `self`) and, for `q`, one slot term (the parameter `i`; the binder parameter `e`); the three nodes have distinct keys, the place nodes are the same templates for every owner, and no place, parameter or model node carries a `presence` member or an `Option<Boolean>`. | Test (TC-367; CK-27; PR-01..PR-03) |
+| FR-322-AC-156 | A `presence_read` with no slot term over `q` refuses `ill_typed`/`operator-ineligible` at `/body/arguments`; one whose owner term is an Integer parameter refuses `ill_typed`/`type-mismatch` at `/body/arguments/1`; one whose first argument is no `clock_place` node refuses `ill_typed`/`operator-ineligible` at `/body/arguments/0`. | Test (TC-367; CK-27; PR-04..PR-06) |
+| FR-322-AC-157 | The `clock_place` of `v: Option<Clock>` has the single path step `field(v)` and one `resolved_path` row whose member type is `Option<ix://quire/native/Clock>`, and the `Option` wrapper adds no step; the place of `q: Sequence<Option<Clock>>` has a `field` and a `slot` step whose row type is that `Option` type. Both are admitted with their terminal `Clock` after the wrapper is removed. | Test (TC-367; CK-27; PR-01..PR-03) |
 
 ## Dependencies
 

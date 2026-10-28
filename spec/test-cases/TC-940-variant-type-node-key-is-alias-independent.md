@@ -55,7 +55,8 @@ and a second variant type `Level` with cases `Gold` and `Silver`.
 
 ## Tuple value types and payload-bearing variant types (STD-519)
 
-Scope: FR-322-AC-140 to FR-322-AC-147. Use `model-tuple-union-vectors.json`:
+Scope: FR-322-AC-140 to FR-322-AC-147 and FR-322-AC-151 to FR-322-AC-154. Use `model-tuple-union-vectors.json`
+and its selected document `domain-package-acme-shapes.json`:
 the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 `p1: Integer`), `Swap` (`p0: Integer`, `p1: Boolean`) and `Nest` (`p0: Pair`,
 `p1: Shape`), the variant type `Shape` (cases `Empty`, `Flag(Boolean)`,
@@ -86,6 +87,14 @@ the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 12. Declare `Cell` (`Integer`, `List`) and `List` (`Nil`, `Cons(Cell)`) and walk
     them; compare the keys of `Cell` and `List` with their owner-only preimages.
 
+13. Confirm the selected document's tuple construct uses FCD's `tuple` shape
+    and every tuple position has its schema-required `origin` (FR-322-AC-151;
+    filament-core-data FR-147-AC-2 and FR-147-AC-3). Derive the projection of
+    `domain-package-acme-shapes.json`, compare it with `domain_package`, and
+    hash the RFC 8785 bytes of the whole document against the lock row digest;
+    swap the position types of `Pair` and reorder two declarations in the
+    document.
+
 Expected results:
 
 6. The first is admitted with family `tuple`; the owner-less node, the
@@ -104,7 +113,15 @@ Expected results:
 10. Each refuses with the code and cause FR-322-AC-145 names, in the order
     "Intake refusal order" of FR-322 states.
 11. The unmutated package is admitted; each application node recomputes its
-    published application-node key; every wire case refuses with the code, cause
-    and locus its vector states, `TW-05` as `invalid_package`/`stale-node-key`.
+    published application-node key; every wire case refuses with the code, locus
+    and, for a code that carries a cause, the cause its vector states (a
+    `malformed_wire` or `invalid_semantic_graph` case states none, FR-322-AC-153),
+    `TW-05` as `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`, the
+    references dangling only through its rekey being deferred (FR-322-AC-154); `TW-18` to `TW-20` refuse at the
+    application node `/semantic_graph/nodes/31` (FR-322-AC-152).
 12. The cycle is admitted; neither node has a `recursion_group`; the walk and
     the empty leaf list are those of FR-322-AC-147.
+13. The tuple construct shape is `tuple` and each tuple position carries an
+    `origin`; the projection equals `domain_package`; the row digest equals the
+    SHA-256 of the whole document; both mutations change that digest
+    (FR-322-AC-151).

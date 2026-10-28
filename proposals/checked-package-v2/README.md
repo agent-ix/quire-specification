@@ -60,8 +60,11 @@ structures, but any external consumer receives only the contract.
   `union_value`, `enum_value`, `quire.op.tuple.project`, `case` and equality nodes
   over them, each keyed by its application-node or nominal preimage
   (FR-322 "Tuple value types and payload-bearing variant types", FR-440,
-  FR-441, TC-940). `model-tuple-union-vectors.json` publishes its selected
-  document (`domain_package`), the declaration node keys, the application-node
+  FR-441, TC-940). `domain-package-acme-shapes.json` is its selected document, a full FCD
+  semantic IR 2.0.0 domain package (FR-322-AC-151; its tuple `positions` depend on IR-1059 / FCD tuple support) and
+  `model-tuple-union-vectors.json` publishes its projection (`domain_package`, derived
+  from the document) and `selection_digest`, the RFC 8785 SHA-256 of the whole
+  document that the lock row pins, the declaration node keys, the application-node
   key vectors and the family, position, member, union-value, enum-value,
   equality, identity, recursion, intake and wire cases the QSpec test runs over
   them; `node-identity-vectors.json` carries the keys
@@ -95,6 +98,7 @@ structures, but any external consumer receives only the contract.
   cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
   FR-342-AC-7 to AC-9). Its model declaration node keys are recomputed by the
   tests from each preimage.
+- `class-catalog-vectors.json` supplies the canonical `class_catalog` of TC-233 `CCW-10` (effect, commit, event, attempt, `cend`, the three drain entries and `memory flush`) with schema and reader mutations; node digests are `sha256("std-524/" + label)`.
 - `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
   `generated` `source_map` entries against its step rows, its `steps` order and
@@ -200,8 +204,8 @@ structures, but any external consumer receives only the contract.
   FR-154-AC-16, and the reference equality, reference upcast and
   field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
-  of its `domain_package` member stands for the document's `sha256-jcs`
-  digest.
+  of the document `domain-package-acme-orders.json` is the `sha256-jcs` digest
+  the lock rows pin; `domain_package` is derived from it and not digested.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.
@@ -463,7 +467,8 @@ and two nodes declaring one name refuse as `ambiguous-name`
 - `timed-slot-selector-vectors.json` publishes standalone `clock_place` nodes
   for the slot selector of a template step (FR-322-AC-148..FR-322-AC-150,
   TC-367 CK-26): positive collection kinds, refused selectors and the guard
-  cases, whose package-level mutations the tests replay. Each node key is the SHA-256 of the RFC 8785 structural preimage and
+  cases, whose package-level mutations the tests replay, and `presence`: the
+  derived `presence_read` predicate over a clock place (FR-322-AC-155..157). Each node key is the SHA-256 of the RFC 8785 structural preimage and
   `SL-06` equals the published fixture place.
 
 ## Regenerating protocol fixture keys

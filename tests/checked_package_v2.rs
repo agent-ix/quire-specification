@@ -3437,9 +3437,9 @@ fn selected_model_document(package: &Value, identity: &str) -> Option<Value> {
     {
         return Some(own.clone());
     }
-    let shapes = parsed_fixture(MODEL_TUPLE_UNION_VECTORS)["domain_package"].clone();
-    if shapes["identity"] == identity && selects(&shapes) {
-        return Some(shapes);
+    let shapes = parsed_fixture(SHAPES_DOCUMENT);
+    if shapes["package"]["identity"] == identity && selects(&shapes) {
+        return Some(parsed_fixture(MODEL_TUPLE_UNION_VECTORS)["domain_package"].clone());
     }
     let document = parsed_fixture(DOMAIN_DOCUMENT);
     (document["package"]["identity"] == identity && selects(&document))
@@ -5925,41 +5925,6 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
         renames.entry(old).or_insert(new);
     }
     panic!("rekeying does not settle within {limit} renames");
-}
-
-/// The operation fixture predates the derived `Reference<O>` rule and points
-/// its generic reference at a record. Rebind that fixture to its published
-/// model declaration before semantic-reader tests, then rekey the complete
-/// dependency closure so the resulting package is an ordinary valid vector.
-fn modelize_legacy_record_reference(package: &mut Value) -> BTreeMap<String, String> {
-    let nodes = package["semantic_graph"]["nodes"]
-        .as_array()
-        .expect("fixture nodes are an array");
-    let index = nodes
-        .iter()
-        .position(|node| {
-            node["node_tag"] == "composite_type"
-                && node["semantic_form"] == "reference"
-                && nodes.iter().any(|target| {
-                    target["node_id"] == node["body"]["members"][0]["target"]
-                        && target["node_tag"] == "composite_type"
-                        && target["semantic_form"] == "record"
-                })
-        })
-        .expect("legacy generic record reference");
-    let model_id = nodes
-        .iter()
-        .find(|node| is_model_declaration(node))
-        .expect("fixture model declaration")["node_id"]
-        .clone();
-    replace_node_field_in_graph(
-        package,
-        index,
-        "/body/members/0/target",
-        model_id.clone(),
-    );
-    replace_node_field_in_graph(package, index, "/dependencies", json!([model_id]));
-    rekey_stale_nodes(package)
 }
 
 /// Append a structural node to a fixture, bind its current key and recompute
@@ -8673,7 +8638,7 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
     let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
     let mutations = &vectors["operation_mutations"];
     let mut package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    let renames = modelize_legacy_record_reference(&mut package);
+    let renames = BTreeMap::<String, String>::new();
     let causes = mutations
         .as_array()
         .expect("mutations are an array")
@@ -9030,8 +8995,7 @@ fn tc_233_operation_and_declaration_causes_pair_with_one_catalogued_code() {
 }
 
 fn published_v2_packages() -> [(&'static str, Value); 7] {
-    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut operation);
+    let operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     [
         ("operation-identities", operation),
         ("all-families", parsed_fixture(POSITIVE_ALL_FAMILIES)),
@@ -13068,8 +13032,7 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
     let mutations = adverse["derived_shape_key_mutations"]
         .as_array()
         .expect("derived-shape mutations are an array");
-    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut operation);
+    let operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     let bases = BTreeMap::from([
         (
             "positive-all-families",
@@ -13299,8 +13262,7 @@ fn tc_322_derived_form_key_mutations() {
 #[test]
 fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
-    let mut base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut base);
+    let base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
 
     let mut wrong_reference = base.clone();
     let reference_index = wrong_reference["semantic_graph"]["nodes"]
@@ -13367,11 +13329,11 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     }
 
     let mut wrong_population = base.clone();
-    let mut population_reference = wrong_population["semantic_graph"]["nodes"][43].clone();
+    let mut population_reference = wrong_population["semantic_graph"]["nodes"][58].clone();
     population_reference["body"]["members"][0]["target"] =
-        wrong_population["semantic_graph"]["nodes"][58]["node_id"].clone();
+        wrong_population["semantic_graph"]["nodes"][57]["node_id"].clone();
     population_reference["dependencies"] =
-        json!([wrong_population["semantic_graph"]["nodes"][58]["node_id"]]);
+        json!([wrong_population["semantic_graph"]["nodes"][57]["node_id"]]);
     append_rekeyed_structural_node(&mut wrong_population, population_reference);
     let population_reference_id = wrong_population["semantic_graph"]["nodes"]
         .as_array()
@@ -13389,7 +13351,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .last()
         .unwrap()["node_id"]
         .clone();
-    let mut population = wrong_population["semantic_graph"]["nodes"][51].clone();
+    let mut population = wrong_population["semantic_graph"]["nodes"][50].clone();
     population["semantic_form"] = json!("model_population");
     population["semantic_type"] = population_set_id.clone();
     population["body"] = json!({
@@ -13831,8 +13793,7 @@ const POSITIVE_TWO_OWNERS_B: &str =
 
 /// Every published positive fixture, by name.
 fn positive_fixtures() -> [(&'static str, Value); 12] {
-    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut operation);
+    let operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     [
         (
             "positive-nominal-identities",
@@ -19675,6 +19636,71 @@ fn tc_310_published_roots_are_the_producer_oracle() {
 
 const MODEL_TUPLE_UNION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/model-tuple-union-vectors.json");
+/// The selected document of `acme/shapes`: a full FCD semantic IR 2.0.0
+/// domain package. `domain_package` in the vectors is its projection.
+const SHAPES_DOCUMENT: &str =
+    include_str!("../proposals/checked-package-v2/domain-package-acme-shapes.json");
+
+/// FR-322-AC-151: the projection FR-154 intake reads from the `acme/shapes`
+/// document, in document order: for each object type its supertypes and fields
+/// (multiplicities as decimal strings), for each tuple its positions by ordinal
+/// and for each variant type its cases in declared order.
+fn shapes_project_document(document: &Value) -> Value {
+    let meaning = |declared: &Value| -> String {
+        document["constructs"]
+            .as_array()
+            .expect("constructs")
+            .iter()
+            .find(|construct| construct["kind"] == declared["kind"])
+            .and_then(|construct| construct["construct"]["meaning"].as_str())
+            .expect("a construct for the kind")
+            .to_owned()
+    };
+    let (mut objects, mut tuples, mut variants) = (Vec::new(), Vec::new(), Vec::new());
+    for declared in document["types"].as_array().expect("types") {
+        match meaning(declared).as_str() {
+            "quire.meaning.model.object-type/v1" => objects.push(json!({
+                "node": declared["identity"],
+                "interfaceFeatures": null,
+                "supertypes": declared["supertypes"],
+                "fields": declared["fields"].as_array().expect("fields").iter().map(|field| json!({
+                    "name": field["name"],
+                    "typeRef": field["typeRef"],
+                    "presence": field["presence"],
+                    "multiplicity": {
+                        "lower": field["multiplicity"]["lower"].to_string(),
+                        "upper": field["multiplicity"]["upper"].to_string(),
+                        "ordered": field["multiplicity"]["ordered"],
+                        "unique": field["multiplicity"]["unique"],
+                    },
+                    "redefines": null,
+                })).collect::<Vec<_>>(),
+                "operations": [],
+            })),
+            "quire.meaning.model.tuple-value-type/v1" => tuples.push(json!({
+                "node": declared["identity"],
+                "positions": declared["positions"].as_array().expect("positions").iter().enumerate()
+                    .map(|(ordinal, position)| json!({"ordinal": ordinal, "typeRef": position["typeRef"]}))
+                    .collect::<Vec<_>>(),
+            })),
+            "quire.meaning.model.variant-type/v1" => variants.push(json!({
+                "node": declared["identity"],
+                "cases": declared["variants"].as_array().expect("variants").iter().map(|case| json!({
+                    "name": case["name"],
+                    "payloadType": case.get("payloadType").cloned().unwrap_or(Value::Null),
+                })).collect::<Vec<_>>(),
+            })),
+            other => panic!("unexpected meaning {other}"),
+        }
+    }
+    json!({
+        "identity": document["package"]["identity"],
+        "version": document["package"]["version"],
+        "object_types": objects,
+        "tuple_types": tuples,
+        "variant_types": variants,
+    })
+}
 
 /// The type a `typeRef` of the `acme/shapes` projection derives (FR-322
 /// "Model-owned members" step 4): a native name is its scalar, a package type
@@ -19941,6 +19967,77 @@ fn expected_refusal(expected: &Value) -> Option<(String, Option<String>)> {
     ))
 }
 
+/// FR-322-AC-151: the selected document of `acme/shapes` is a full FCD
+/// semantic IR; the vectors' `domain_package` is exactly its projection, and
+/// the row digest the lock pins is the JCS SHA-256 of the whole document.
+#[trace("TC-940", "FR-322-AC-151")]
+#[test]
+fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_pinned() {
+    let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
+    let document = parsed_fixture(SHAPES_DOCUMENT);
+    assert_eq!(vectors["selected_document"], "domain-package-acme-shapes.json");
+    assert_eq!(document["contractVersion"], "2.0.0");
+    assert_eq!(document["package"]["identity"], "acme/shapes");
+    for member in ["constructs", "types"] {
+        assert!(document[member].as_array().is_some_and(|list| !list.is_empty()), "{member}");
+    }
+    assert!(document.get("tuple_types").is_none() && document.get("variant_types").is_none());
+    let tuple_construct = document["constructs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["construct"]["meaning"] == "quire.meaning.model.tuple-value-type/v1")
+        .expect("the tuple-value-type construct is declared");
+    assert_eq!(tuple_construct["construct"]["shape"], "tuple");
+    assert_eq!(
+        tuple_construct["construct"]["members"]["positions"],
+        "required"
+    );
+    for declared in document["types"].as_array().unwrap() {
+        if declared["kind"]["name"] == "tuple" {
+            for position in declared["positions"].as_array().unwrap() {
+                assert!(
+                    position["origin"].is_object(),
+                    "tuple positions carry FCD origins"
+                );
+            }
+        }
+    }
+    let projection = shapes_project_document(&document);
+    assert_eq!(projection, vectors["domain_package"], "the projection derives from the document");
+    let package = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
+    ));
+    let row = &package["lock"]["model_selections"][0];
+    assert_eq!(row["identity"], document["package"]["identity"]);
+    assert_eq!(row["digest"], unqualified_jcs_sha256(&document), "the row pins the whole document");
+    assert_eq!(vectors["selection_digest"], row["digest"]);
+    assert_ne!(row["digest"], unqualified_jcs_sha256(&projection), "the projection is not digested");
+    // The model_root key and the package id derive from that digest.
+    let root = package["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|node| node["semantic_form"] == "model_root")
+        .expect("model_root");
+    assert_eq!(root["owner"]["digest"], row["digest"]);
+    // Swapping a position type in the document changes the document, so the row digest.
+    let mut swapped = document.clone();
+    let pair = swapped["types"]
+        .as_array_mut()
+        .expect("types")
+        .iter_mut()
+        .find(|declared| declared["identity"] == "ix://acme/shapes/Pair")
+        .expect("Pair");
+    pair["positions"].as_array_mut().expect("positions").swap(0, 1);
+    assert_ne!(unqualified_jcs_sha256(&swapped), row["digest"].as_str().unwrap());
+    // The projection lists follow document order, and reordering two declarations changes the document.
+    let mut reordered = document.clone();
+    reordered["types"].as_array_mut().expect("types").swap(1, 2);
+    assert_ne!(unqualified_jcs_sha256(&reordered), row["digest"].as_str().unwrap());
+    assert_ne!(shapes_project_document(&reordered), projection);
+}
+
 /// FR-322-AC-140 to FR-322-AC-146: the declarations, the fixture and the
 /// published identity vectors.
 #[trace("TC-940", "FR-322-AC-140", "FR-322-AC-146")]
@@ -19962,8 +20059,8 @@ fn tc_940_tuple_and_payload_variant_declarations_are_model_declaration_nodes() {
     );
     assert_eq!(
         vectors["selection_digest"],
-        unqualified_jcs_sha256(&vectors["domain_package"]),
-        "the selection digest is the projection's JCS digest"
+        unqualified_jcs_sha256(&parsed_fixture(SHAPES_DOCUMENT)),
+        "the selection digest is the JCS digest of the whole selected document (FR-322-AC-151)"
     );
     assert_eq!(
         package["lock"]["model_selections"][0]["digest"], vectors["selection_digest"],
@@ -20449,6 +20546,301 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
     assert_eq!(ids.len(), 27, "every published wire case ran");
 }
 
+/// FR-322-AC-152 and FR-322-AC-153: the tuple.project wire cases refuse at the
+/// application node, and a wire case states a `cause` exactly when its code
+/// carries one.
+#[trace("TC-940", "FR-322-AC-152", "FR-322-AC-153")]
+#[test]
+fn tc_940_wire_case_loci_and_causes_follow_the_refusal_vocabulary() {
+    let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
+    let base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
+    ));
+    let carries_cause = [
+        "invalid_package",
+        "ill_typed",
+        "ambiguous_declaration",
+        "missing_declaration",
+        "invalid_model_binding",
+    ];
+    let node = &base["semantic_graph"]["nodes"][31];
+    assert_eq!(node["body"]["operation"]["identity"], "quire.op.tuple.project");
+    assert_eq!(node["body"]["operation"]["member"]["position"], 0);
+    let operand = &node["body"]["arguments"][0]["target"];
+    let nodes = base["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let operand_node = nodes.iter().find(|n| n["node_id"] == *operand).expect("operand");
+    assert_eq!(operand_node["semantic_form"], "parameter", "the Pair-typed parameter");
+    for vector in vectors["wire_cases"].as_array().expect("wire cases") {
+        let id = vector["id"].as_str().expect("id");
+        let code = vector["outcome"].as_str().and_then(|o| o.strip_prefix("refused:"));
+        let has_cause = vector.get("cause").is_some();
+        assert_eq!(
+            has_cause,
+            code.is_some_and(|code| carries_cause.contains(&code)),
+            "{id}: a cause is stated exactly when the code carries one"
+        );
+        if matches!(id, "TW-18" | "TW-19" | "TW-20" | "TW-26") {
+            assert_eq!(vector["locus"], "/semantic_graph/nodes/31", "{id}: the application node");
+        }
+        if matches!(id, "TW-18" | "TW-19" | "TW-20") {
+            assert_eq!(vector["outcome"], "refused:ill_typed", "{id}");
+            assert_eq!(vector["cause"], "operator-ineligible", "{id}");
+        }
+    }
+    // The FR-322 text names the same locus and rows.
+    let fr322 = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
+    assert!(fr322.contains("`/semantic_graph/nodes/31` in\n  `fixtures/positive-model-tuple-union.json`"));
+    let row = |name: &str| {
+        fr322
+            .lines()
+            .find(|line| line.starts_with(&format!("| {name} |")))
+            .unwrap_or_else(|| panic!("{name} row"))
+    };
+    let ac152 = row("FR-322-AC-152");
+    for id in ["TW-18", "TW-19", "TW-20", "TW-26"] {
+        assert!(ac152.contains(id), "AC-152 lists {id}");
+    }
+    assert!(ac152.contains("/semantic_graph/nodes/31"));
+    // AC-153's row lists exactly the cause-bearing rows, derived from the vocabulary.
+    let ac153 = row("FR-322-AC-153");
+    let (with_cause, without) = ac153.split_once("and the admitted case").expect("AC-153 shape");
+    let expand = |text: &str| -> BTreeSet<String> {
+        let ids: Vec<usize> = text
+            .split("`TW-")
+            .skip(1)
+            .map(|rest| rest[..2].parse().expect("row number"))
+            .collect();
+        let mut out = BTreeSet::new();
+        let mut index = 0;
+        while index < ids.len() {
+            let range_end = text.contains(&format!("`TW-{:02}` to `TW-{:02}`", ids[index], ids.get(index + 1).copied().unwrap_or(0)));
+            if range_end {
+                out.extend((ids[index]..=ids[index + 1]).map(|n| format!("TW-{n:02}")));
+                index += 2;
+            } else {
+                out.insert(format!("TW-{:02}", ids[index]));
+                index += 1;
+            }
+        }
+        out
+    };
+    let mut expect_with = BTreeSet::new();
+    let mut expect_without = BTreeSet::new();
+    for vector in vectors["wire_cases"].as_array().expect("wire cases") {
+        let id = vector["id"].as_str().expect("id").to_owned();
+        if vector.get("cause").is_some() {
+            expect_with.insert(id);
+        } else {
+            expect_without.insert(id);
+        }
+    }
+    assert_eq!(expand(with_cause), expect_with, "AC-153 cause-bearing rows");
+    assert_eq!(expand(without), expect_without, "AC-153 cause-free rows");
+}
+
+/// Every node reference (`quire.checked-semantic-node/v1` digest) in `value`:
+/// reference terms, member declarations, result types and dependencies.
+fn reference_term_targets(value: &Value, out: &mut Vec<String>) {
+    match value {
+        Value::Object(map) => {
+            let in_domain =
+                map.get("domain").and_then(Value::as_str) == Some("quire.checked-semantic-node/v1");
+            if let Some(digest) = map.get("digest").and_then(Value::as_str).filter(|_| in_domain) {
+                out.push(digest.to_owned());
+            }
+            map.values().for_each(|inner| reference_term_targets(inner, out));
+        }
+        Value::Array(items) => items.iter().for_each(|inner| reference_term_targets(inner, out)),
+        _ => {}
+    }
+}
+
+/// FR-322-AC-154: the `reference` targets of the graph that name no node and
+/// are not deferred. A dangling target is deferred when it equals the recomputed
+/// key of a model declaration node whose retained key is stale (the reference
+/// dangles only because that node was rekeyed); every other dangling target is
+/// a graph-shape refusal that precedes the stale-key stage.
+fn without_id(node: &Value) -> Value {
+    let mut node = node.clone();
+    node.as_object_mut().expect("node").remove("node_id");
+    node
+}
+
+fn undeferred_dangling_targets(package: &Value) -> Vec<String> {
+    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let present: BTreeSet<&str> = nodes
+        .iter()
+        .filter_map(|node| node["node_id"]["digest"].as_str())
+        .collect();
+    let recomputed: BTreeSet<String> = nodes
+        .iter()
+        .filter(|node| is_model_declaration(node) && !model_declaration_key_is_current(node))
+        .filter_map(|node| {
+            let mut empty = node.clone();
+            empty["body"] = json!({"term": "aggregate", "members": []});
+            structural_node_preimage(&empty)
+        })
+        .map(|preimage| unqualified_jcs_sha256(&preimage))
+        .collect();
+    let mut targets = Vec::new();
+    nodes.iter().for_each(|node| reference_term_targets(&without_id(node), &mut targets));
+    targets
+        .into_iter()
+        .filter(|target| !present.contains(target.as_str()) && !recomputed.contains(target))
+        .collect()
+}
+
+/// FR-322-AC-154: TW-05 rekeys the `Pair` node over a non-empty body, so every
+/// reference to its published key dangles; each equals the recomputed key, is
+/// deferred, and the stale-node-key at node 0 is the first refusal. An
+/// independent dangling reference is not deferred.
+#[trace("TC-940", "FR-322-AC-154")]
+#[test]
+fn tc_940_rekey_dependent_dangling_references_defer_to_the_stale_key() {
+    let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
+    let base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
+    ));
+    assert!(undeferred_dangling_targets(&base).is_empty(), "the base has no dangling reference");
+    let vector = vectors["wire_cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|vector| vector["id"] == "TW-05")
+        .expect("TW-05");
+    assert_eq!(vector["outcome"], "refused:invalid_package");
+    assert_eq!(vector["cause"], "stale-node-key");
+    assert_eq!(vector["locus"], "/semantic_graph/nodes/0/node_id");
+    let mut package = base.clone();
+    for patch in vector["patch"].as_array().unwrap() {
+        apply_json_patch(&mut package, patch);
+    }
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let present: BTreeSet<&str> =
+        nodes.iter().filter_map(|node| node["node_id"]["digest"].as_str()).collect();
+    let mut targets = Vec::new();
+    nodes.iter().for_each(|node| reference_term_targets(&without_id(node), &mut targets));
+    let dangling = targets.iter().filter(|target| !present.contains(target.as_str())).count();
+    assert!(dangling > 0, "rekeying Pair leaves references to its derived key dangling");
+    assert!(undeferred_dangling_targets(&package).is_empty(), "all of them defer to the rekey");
+    let mut independent = package.clone();
+    independent["semantic_graph"]["nodes"][1]["body"] = json!({
+        "term": "aggregate",
+        "members": [{"term": "reference", "target": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "ff".repeat(32)
+        }}]
+    });
+    assert_eq!(undeferred_dangling_targets(&independent), vec!["ff".repeat(32)]);
+}
+
+
+const CLASS_CATALOG_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/class-catalog-vectors.json");
+
+/// The concrete classes of the CCF-01 subject, in canonical order, each as
+/// (class, memory model): declared classes, `cend`, three drains, then `flush`.
+const EXPECTED_CONCRETE_CLASSES: [(&str, &str); 10] = [
+    ("Impl::Do", ""),
+    ("Impl::E", ""),
+    ("Impl::K", ""),
+    ("Impl::T", ""),
+    ("Impl::ev", ""),
+    ("cend Impl::T", ""),
+    ("memory drain", "ra"),
+    ("memory drain", "sc"),
+    ("memory drain", "tso"),
+    ("memory flush", "tso"),
+];
+
+/// Reader-level class-catalog check over a schema-valid catalog: canonical
+/// order by (class UTF-8 bytes, memory model), no duplicate catalog key, and
+/// the effect, commit and cend classes the producer must catalogue.
+fn class_catalog_reader_refusal(catalog: &Value) -> Option<&'static str> {
+    for side in ["concrete", "abstract"] {
+        let entries = catalog[side].as_array().expect("catalog side");
+        let keys: Vec<(String, String)> = entries
+            .iter()
+            .map(|entry| {
+                (
+                    entry["class"].as_str().expect("class").to_owned(),
+                    entry["memory_model"].as_str().unwrap_or("").to_owned(),
+                )
+            })
+            .collect();
+        for pair in keys.windows(2) {
+            if pair[0] == pair[1] {
+                return Some("duplicate_class");
+            }
+            if pair[0] > pair[1] {
+                return Some("misordered_class");
+            }
+        }
+    }
+    let present: BTreeSet<(String, String)> = catalog["concrete"]
+        .as_array()
+        .expect("concrete")
+        .iter()
+        .map(|entry| {
+            (
+                entry["class"].as_str().expect("class").to_owned(),
+                entry["memory_model"].as_str().unwrap_or("").to_owned(),
+            )
+        })
+        .collect();
+    for (class, model) in EXPECTED_CONCRETE_CLASSES {
+        if !present.contains(&(class.to_owned(), model.to_owned())) {
+            return Some("omitted_class");
+        }
+    }
+    None
+}
+
+#[trace("TC-310", "FR-375-AC-28")]
+#[test]
+fn tc_310_class_catalog_carries_effect_commit_and_cend_classes() {
+    let defs = parsed_fixture(SCHEMA)["$defs"].clone();
+    let wrapper = json!({"$ref": "#/$defs/RefinementClassCatalog", "$defs": defs});
+    let validator = jsonschema::validator_for(&wrapper).expect("catalog schema is valid");
+    let vectors = parsed_fixture(CLASS_CATALOG_VECTORS);
+    let mut admitted = 0;
+    for case in vectors["cases"].as_array().expect("cases") {
+        let name = case["name"].as_str().expect("name");
+        let catalog = &case["catalog"];
+        let observed = if !validator.is_valid(catalog) {
+            "schema_refused"
+        } else {
+            class_catalog_reader_refusal(catalog).unwrap_or("admitted")
+        };
+        assert_eq!(observed, case["expected"].as_str().expect("expected"), "{name}");
+        if observed == "admitted" {
+            admitted += 1;
+            let concrete: Vec<(&str, &str)> = catalog["concrete"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|entry| {
+                    (
+                        entry["class"].as_str().unwrap(),
+                        entry["memory_model"].as_str().unwrap_or(""),
+                    )
+                })
+                .collect();
+            assert_eq!(
+                concrete,
+                EXPECTED_CONCRETE_CLASSES,
+                "{name}: the canonical concrete class order"
+            );
+        }
+    }
+    assert_eq!(admitted, 1, "exactly the positive vector is admitted");
+    assert_eq!(
+        vectors["cases"].as_array().unwrap().len(),
+        15,
+        "every single-drop, misordered and duplicate case is present"
+    );
+}
+
 /// Index of the node a vectors file names, looked up by role in `node_indexes`.
 fn timed_node_index(role: &str) -> usize {
     let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).unwrap();
@@ -20643,4 +21035,107 @@ fn timed_node_index_of(package: &Value, form: &str) -> usize {
         .iter()
         .position(|node| node["semantic_form"] == form)
         .unwrap_or_else(|| panic!("{form} node"))
+}
+
+/// The reader-side checks of FR-322 "Presence" over one `presence_read` node,
+/// against the vectors' places and parameters: the cause and code, and the
+/// argument pointer, or `None` when the node is admitted.
+fn presence_cause(
+    case: &Value,
+    places: &BTreeMap<String, Value>,
+    parameters: &BTreeMap<String, Value>,
+    owner_type: &Value,
+    slot_type: &Value,
+) -> Option<(&'static str, &'static str, String)> {
+    let arguments = case["body"]["arguments"].as_array().unwrap();
+    let target = |k: usize| arguments[k]["target"]["digest"].as_str().unwrap();
+    let Some(place) = places.get(target(0)) else {
+        return Some(("ill_typed", "operator-ineligible", "/body/arguments/0".to_owned()));
+    };
+    let slots = place["body"]["members"][1]["value"]["members"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|step| step["members"][0]["value"]["value"] == "slot")
+        .count();
+    if arguments.len() != 2 + slots {
+        return Some(("ill_typed", "operator-ineligible", "/body/arguments".to_owned()));
+    }
+    let type_of = |k: usize| parameters.get(target(k)).map(|node| node["semantic_type"].clone());
+    if type_of(1).as_ref() != Some(owner_type) {
+        return Some(("ill_typed", "type-mismatch", "/body/arguments/1".to_owned()));
+    }
+    for k in 2..arguments.len() {
+        if type_of(k).as_ref() != Some(slot_type) {
+            return Some(("ill_typed", "type-mismatch", format!("/body/arguments/{k}")));
+        }
+    }
+    None
+}
+
+#[trace("TC-367", "FR-322-AC-155", "FR-322-AC-156", "FR-322-AC-157")]
+#[test]
+fn tc_367_presence_over_a_clock_place_is_a_derived_predicate_not_a_field() {
+    let vectors: Value = serde_json::from_str(TIMED_SLOT_SELECTOR_VECTORS).expect("vectors JSON");
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("fixture JSON");
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let schema = parsed_fixture(SCHEMA);
+    let place_schema = schema_for_def(&schema, "TimedModelNode");
+    let expression_schema = schema_for_def(&schema, "ExpressionNode");
+    let presence = &vectors["presence"];
+    let mut places = BTreeMap::new();
+    for (name, place) in presence["places"].as_object().unwrap() {
+        let node = &place["node"];
+        assert!(structural_node_key_is_current(node), "place {name} key");
+        assert!(place_schema.is_valid(node), "place {name} schema");
+        assert!(place_selectors_are_symbolic(node, nodes), "place {name} selectors");
+        places.insert(node["node_id"]["digest"].as_str().unwrap().to_owned(), node.clone());
+    }
+    let mut parameters = BTreeMap::new();
+    for (name, node) in presence["parameters"].as_object().unwrap() {
+        assert!(structural_node_key_is_current(node), "parameter {name} key");
+        parameters.insert(node["node_id"]["digest"].as_str().unwrap().to_owned(), node.clone());
+    }
+    let self_node = nodes.iter().find(|n| n["node_id"] == presence["parameters"]["self"]["node_id"]).unwrap();
+    assert_eq!(*self_node, presence["parameters"]["self"], "self is the published parameter");
+    let owner_type = self_node["semantic_type"].clone();
+    let slot_type = nodes.iter().find(|n| n["node_tag"] == "scalar_type" && n["semantic_form"] == "integer").unwrap()["node_id"].clone();
+    let boolean = nodes.iter().find(|n| n["node_tag"] == "scalar_type" && n["semantic_form"] == "boolean").unwrap()["node_id"].clone();
+    let mut keys = BTreeSet::new();
+    for case in presence["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let node = &case["node"];
+        assert_eq!(
+            node["node_id"]["digest"],
+            unqualified_jcs_sha256(&application_node_preimage(node, &[]).expect("application node")),
+            "{id} key hashes its application preimage"
+        );
+        assert!(application_node_shape_is_valid(node), "{id} shape");
+        assert!(expression_schema.is_valid(node), "{id} expression schema");
+        assert_eq!(node["semantic_form"], "presence_read");
+        assert_eq!(node["semantic_type"], boolean, "{id} is Boolean");
+        assert_eq!(node["body"]["operation"]["identity"], "quire.op.option.present");
+        assert!(keys.insert(node["node_id"]["digest"].as_str().unwrap().to_owned()), "{id} key is distinct");
+        let cause = presence_cause(node, &places, &parameters, &owner_type, &slot_type);
+        match case["expected"].as_str().unwrap() {
+            "admitted" => assert_eq!(cause, None, "{id}"),
+            _ => {
+                let (code, why, at) = cause.unwrap_or_else(|| panic!("{id} is refused"));
+                assert_eq!((code, why), (case["expected_code"].as_str().unwrap(), case["expected_cause"].as_str().unwrap()), "{id}");
+                assert!(at.ends_with(case["locus_suffix"].as_str().unwrap().trim_start_matches("body")), "{id} {at}");
+            }
+        }
+    }
+    // No presence bit or Option<Boolean> member anywhere in the model, place or
+    // parameter nodes: presence is derived from the place identity.
+    let hidden = |value: &Value| {
+        let text = serde_json::to_string(value).unwrap();
+        text.contains("\"presence\"") || text.contains("Option<Boolean>")
+    };
+    for place in places.values().chain(parameters.values()) {
+        assert!(!hidden(&place["body"]));
+    }
+    for node in nodes.iter().filter(|n| n["node_tag"] == "model" || n["node_tag"] == "timed_model") {
+        assert!(!hidden(&node["body"]));
+    }
 }

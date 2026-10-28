@@ -30,8 +30,9 @@ declaration key, and whether a Quire clause can name a declaration at all.
 that a declaration's IR node identity is its artifact id
 (`ix://<package identity>/<artifact id>`, member identity being the owner's
 identity, `/` and the member name), that the artifact title is presentation
-only, and that an artifact id matching `^[A-Za-z][A-Za-z0-9_]*$` such as
-`sys_pump` is admitted verbatim.
+only, and that object ids matching FR-154's object-id rule are admitted
+verbatim. Source-language qualified-name spelling is governed by the language
+grammar, separately from identity intake.
 
 `ix://agent-ix/filament-core-data/FR-095` mints a type node as
 `ix://<org>/<name>/type/<slug(displayName)>` and a member as
@@ -43,8 +44,8 @@ artifact title when the frontmatter name is not an identifier. Slugging maps
 Three consequences follow from the difference. A retitled artifact keeps every
 declaration key under FR-154 and re-mints under FR-095. A member key is
 `<owner>/<member>` under FR-154 and `field/<Name>-<field>` under FR-095. An
-artifact id carrying an underscore is admitted under FR-154 and is slugged to a
-hyphenated identity that FR-154 refuses as `invalid_model_binding`.
+artifact id carrying an underscore or hyphen is admitted verbatim under
+FR-154; the producer must preserve that identity instead of slugging it.
 
 ## Question
 
