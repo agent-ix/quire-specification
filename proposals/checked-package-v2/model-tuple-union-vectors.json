@@ -1589,15 +1589,27 @@
       "patch": [
         {
           "op": "add",
+          "path": "/value_types",
+          "value": [
+            {
+              "node": "ix://acme/shapes/Money",
+              "native": "ix://quire/native/Decimal",
+              "lower": "0",
+              "upper": "9"
+            }
+          ]
+        },
+        {
+          "op": "add",
           "path": "/aliases",
           "value": [
             {
               "node": "ix://acme/shapes/Outer",
-              "target": "ix://acme/shapes/Inner"
+              "target": "ix://acme/shapes/Mid"
             },
             {
-              "node": "ix://acme/shapes/Inner",
-              "target": "ix://quire/native/Rational"
+              "node": "ix://acme/shapes/Mid",
+              "target": "ix://acme/shapes/Money"
             }
           ]
         },
@@ -1638,6 +1650,43 @@
           "op": "replace",
           "path": "/tuple_types/0/positions/0/typeRef",
           "value": "ix://acme/shapes/FloatAlias"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TK-35",
+      "criterion": "FR-322-AC-181",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/aliases",
+          "value": [
+            {
+              "node": "ix://acme/shapes/Outer",
+              "target": "ix://acme/shapes/Mid"
+            },
+            {
+              "node": "ix://acme/shapes/Mid",
+              "target": "ix://acme/shapes/Last"
+            },
+            {
+              "node": "ix://acme/shapes/Last",
+              "target": "ix://quire/native/Float64"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": "ix://acme/shapes/Outer"
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/0/typeRef",
+          "value": "ix://acme/shapes/Outer"
         }
       ],
       "expected": {

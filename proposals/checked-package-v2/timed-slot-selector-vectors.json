@@ -1,6 +1,29 @@
 {
   "version": "quire.checked-timed-slot-selector-vectors/v1",
   "fixture": "fixtures/positive-timed-model-nodes.json",
+  "selected_document": "domain-package-acme-timed-slots.json",
+  "selection_digest": "d63856fcbe0f4369cd9ce9264192d3d3baa66dd1dcd33bef7e918ec0355b5643",
+  "selected_package": "fixtures/positive-timed-slot-nodes.json",
+  "selected_package_id": "2e24c0ffc505114892af1869ff899f7858dc05c63f70b30a096db41fe9aa546d",
+  "selected_note": "The selected package carries the nodes of SL-01..SL-05, SL-06 (the published place), SL-07, the places and parameters of the presence section and PR-01..PR-03, each at the graph index package_node names, and its timed root lists every place; its model_selections row digest is the SHA-256 of the RFC 8785 bytes of the whole selected document (FR-322-AC-240), whose projection of Order, Timer, ClockRow and ClockMap is the only declaration source of every resolved_path row. SL-03 and SL-04 declare the fields b and o (a model has one field c); no other node key changed.",
+  "nested_collection": {
+    "case": "SL-05",
+    "rule": "FR-322-AC-241: a collection whose element is a collection is declared by a named FCD type definition of kind sequence (or map) whose items (or values) names the element type; the field names that definition as typeRef and its multiplicity gives the outermost level, and the rendered type is derived: Sequence<Sequence<ix://quire/native/Clock>>",
+    "schema": "filament-core-data schema/semantic/v1/semantic-ir.schema.json $defs/field (typeRef, presence, multiplicity), $defs/typeDefinition (kind sequence|map, items|values)",
+    "field": "ix://acme/orders/Order/g",
+    "typeRef": "ix://acme/orders/ClockRow",
+    "multiplicity": {
+      "lower": 0,
+      "ordered": true,
+      "unique": false
+    },
+    "type_definition": {
+      "identity": "ix://acme/orders/ClockRow",
+      "kind": "sequence",
+      "items": "ix://quire/native/Clock"
+    },
+    "rendered": "Sequence<Sequence<ix://quire/native/Clock>>"
+  },
   "type_nodes": {
     "integer": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
     "text": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
@@ -600,7 +623,9 @@
           ]
         }
       ],
-      "instance_expectation": "the places ts.0.x, ts.1.x and ts.2.x are instances of this one node; no node exists for an index"
+      "instance_expectation": "the places ts.0.x, ts.1.x and ts.2.x are instances of this one node; no node exists for an index",
+      "field": "ix://acme/orders/Order/ts",
+      "package_node": 57
     },
     {
       "id": "SL-02",
@@ -967,7 +992,9 @@
         }
       },
       "declared": "c: Set<Clock>[0, 5]",
-      "expected": "admitted"
+      "expected": "admitted",
+      "field": "ix://acme/orders/Order/c",
+      "package_node": 58
     },
     {
       "id": "SL-03",
@@ -1014,7 +1041,7 @@
                             "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
                             "domain": "quire.checked-semantic-node/v1"
                           },
-                          "value": "c",
+                          "value": "b",
                           "value_kind": "text"
                         }
                       }
@@ -1135,7 +1162,7 @@
                             "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
                             "domain": "quire.checked-semantic-node/v1"
                           },
-                          "value": "ix://acme/orders/Order/c",
+                          "value": "ix://acme/orders/Order/b",
                           "value_kind": "text"
                         }
                       },
@@ -1325,16 +1352,18 @@
           }
         ],
         "node_id": {
-          "digest": "c82325bb25bd0a90c22dfab61790516d095543b7c4733d5fb68c7356f407eb84",
+          "digest": "74fba01546ec827b0adbf65da00b0870e2ccbf03aef118b958b8516ee8558870",
           "domain": "quire.checked-semantic-node/v1"
         },
         "semantic_type": {
-          "digest": "c82325bb25bd0a90c22dfab61790516d095543b7c4733d5fb68c7356f407eb84",
+          "digest": "74fba01546ec827b0adbf65da00b0870e2ccbf03aef118b958b8516ee8558870",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
-      "declared": "c: Bag<Clock>[0, 2]",
-      "expected": "admitted"
+      "declared": "b: Bag<Clock>[0, 2]",
+      "expected": "admitted",
+      "field": "ix://acme/orders/Order/b",
+      "package_node": 59
     },
     {
       "id": "SL-04",
@@ -1381,7 +1410,7 @@
                             "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
                             "domain": "quire.checked-semantic-node/v1"
                           },
-                          "value": "c",
+                          "value": "o",
                           "value_kind": "text"
                         }
                       }
@@ -1502,7 +1531,7 @@
                             "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
                             "domain": "quire.checked-semantic-node/v1"
                           },
-                          "value": "ix://acme/orders/Order/c",
+                          "value": "ix://acme/orders/Order/o",
                           "value_kind": "text"
                         }
                       },
@@ -1692,16 +1721,18 @@
           }
         ],
         "node_id": {
-          "digest": "482c81bfc71913c8c63e99fbdde475d802b1531ad38eaed125985e440b3233fc",
+          "digest": "63ad6f8b01af751ae549129cb44ec19f64a194db4c2497eb0fe2827bf16e87f0",
           "domain": "quire.checked-semantic-node/v1"
         },
         "semantic_type": {
-          "digest": "482c81bfc71913c8c63e99fbdde475d802b1531ad38eaed125985e440b3233fc",
+          "digest": "63ad6f8b01af751ae549129cb44ec19f64a194db4c2497eb0fe2827bf16e87f0",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
-      "declared": "c: OrderedSet<Clock>[0, 5]",
-      "expected": "admitted"
+      "declared": "o: OrderedSet<Clock>[0, 5]",
+      "expected": "admitted",
+      "field": "ix://acme/orders/Order/o",
+      "package_node": 60
     },
     {
       "id": "SL-05",
@@ -2247,7 +2278,9 @@
           ]
         }
       ],
-      "instance_expectation": "two slot steps, each with the Integer selector; every instance is this one node"
+      "instance_expectation": "two slot steps, each with the Integer selector; every instance is this one node",
+      "field": "ix://acme/orders/Order/g",
+      "package_node": 61
     },
     {
       "id": "SL-06",
@@ -2628,7 +2661,9 @@
       "declared": "clock: Map<Text, Clock>",
       "expected": "admitted",
       "published_node": "clock_place",
-      "note": "byte-identical to the published place of fixtures/positive-timed-model-nodes.json; the key selector is the Text type node"
+      "note": "byte-identical to the published place of fixtures/positive-timed-model-nodes.json; the key selector is the Text type node",
+      "field": "ix://acme/orders/Order/clock",
+      "package_node": 45
     },
     {
       "id": "SL-07",
@@ -3008,7 +3043,9 @@
       },
       "declared": "s: Sequence<Clock> with one guard predicate",
       "expected": "admitted",
-      "note": "a present guard is listed in guards; the same path with guards [] is a different node body and key, and the pair duplicates one clock path (duplicate-clock-place)"
+      "note": "a present guard is listed in guards; the same path with guards [] is a different node body and key, and the pair duplicates one clock path (duplicate-clock-place)",
+      "field": "ix://acme/orders/Order/s",
+      "package_node": 62
     },
     {
       "id": "SL-08",
@@ -3376,7 +3413,8 @@
       },
       "declared": "s: Sequence<Clock>, no guard",
       "expected": "admitted",
-      "note": "an empty guards aggregate is admitted when no guard exists"
+      "note": "an empty guards aggregate is admitted when no guard exists",
+      "field": "ix://acme/orders/Order/s"
     },
     {
       "id": "SR-01",
@@ -3745,7 +3783,8 @@
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
       "locus_suffix": "body/members/1/value/members/1",
-      "why": "an integer literal is a concrete selector; a template step has none"
+      "why": "an integer literal is a concrete selector; a template step has none",
+      "field": "ix://acme/orders/Order/s"
     },
     {
       "id": "SR-02",
@@ -4116,7 +4155,8 @@
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
       "locus_suffix": "body/members/1/value/members/1",
-      "why": "a sequence-like collection is selected by the Integer type node, not Text"
+      "why": "a sequence-like collection is selected by the Integer type node, not Text",
+      "field": "ix://acme/orders/Order/s"
     },
     {
       "id": "SR-03",
@@ -4487,7 +4527,8 @@
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
       "locus_suffix": "body/members/1/value/members/1",
-      "why": "the selector references an expression node, not a scalar type node"
+      "why": "the selector references an expression node, not a scalar type node",
+      "field": "ix://acme/orders/Order/s"
     },
     {
       "id": "SR-04",
@@ -4870,7 +4911,8 @@
       "expected_code": "invalid_package",
       "expected_cause": "malformed-clock-place",
       "locus_suffix": "body/members/1/value/members/1",
-      "why": "a Map<Text, _> is selected by the Text type node"
+      "why": "a Map<Text, _> is selected by the Text type node",
+      "field": "ix://acme/orders/Order/clock"
     }
   ],
   "presence": {
@@ -5070,7 +5112,8 @@
             "digest": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd",
             "domain": "quire.checked-semantic-node/v1"
           }
-        }
+        },
+        "package_node": 63
       },
       "q": {
         "declared": "q: Sequence<Option<Clock>>[0, 2]",
@@ -5435,7 +5478,8 @@
             "digest": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f",
             "domain": "quire.checked-semantic-node/v1"
           }
-        }
+        },
+        "package_node": 64
       }
     },
     "parameters": {
@@ -5644,6 +5688,12 @@
         }
       }
     },
+    "parameter_package_nodes": {
+      "self": 27,
+      "other": 65,
+      "i": 66,
+      "e": 67
+    },
     "cases": [
       {
         "id": "PR-01",
@@ -5713,7 +5763,8 @@
           "place v",
           "owner other"
         ],
-        "note": "the owner is another object; the place node is the template of v"
+        "note": "the owner is another object; the place node is the template of v",
+        "package_node": 68
       },
       {
         "id": "PR-02",
@@ -5789,7 +5840,8 @@
             "domain": "quire.checked-semantic-node/v1"
           }
         },
-        "expected": "admitted"
+        "expected": "admitted",
+        "package_node": 69
       },
       {
         "id": "PR-03",
@@ -5866,7 +5918,8 @@
           }
         },
         "expected": "admitted",
-        "note": "e is bound as a parameter of the selector domain (the slot position); same place template and owner as PR-02"
+        "note": "e is bound as a parameter of the selector domain (the slot position); same place template and owner as PR-02",
+        "package_node": 70
       },
       {
         "id": "PR-04",
@@ -6075,19 +6128,486 @@
       "id": "GD-02",
       "subject": "SL-08 against SL-07",
       "mutation": "duplicate-place-different-guards",
-      "fixture": "fixtures/positive-timed-model-nodes.json",
+      "fixture": "fixtures/positive-timed-slot-nodes.json",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/71",
+          "value": {
+            "body": {
+              "members": [
+                {
+                  "name": "model",
+                  "term": "binding",
+                  "value": {
+                    "term": "reference",
+                    "target": {
+                      "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+                      "domain": "quire.checked-semantic-node/v1"
+                    }
+                  }
+                },
+                {
+                  "name": "path",
+                  "term": "binding",
+                  "value": {
+                    "members": [
+                      {
+                        "members": [
+                          {
+                            "name": "kind",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "field",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "name",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "s",
+                              "value_kind": "text"
+                            }
+                          }
+                        ],
+                        "term": "aggregate"
+                      },
+                      {
+                        "members": [
+                          {
+                            "name": "kind",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "slot",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "collection",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "sequence",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "selector",
+                            "term": "binding",
+                            "value": {
+                              "term": "reference",
+                              "target": {
+                                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                                "domain": "quire.checked-semantic-node/v1"
+                              }
+                            }
+                          },
+                          {
+                            "name": "minimum",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": 0,
+                              "value_kind": "integer"
+                            }
+                          },
+                          {
+                            "name": "maximum",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "unbounded",
+                              "value_kind": "text"
+                            }
+                          }
+                        ],
+                        "term": "aggregate"
+                      }
+                    ],
+                    "term": "aggregate"
+                  }
+                },
+                {
+                  "name": "resolved_path",
+                  "term": "binding",
+                  "value": {
+                    "members": [
+                      {
+                        "members": [
+                          {
+                            "name": "path_step",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": 0,
+                              "value_kind": "integer"
+                            }
+                          },
+                          {
+                            "name": "declaring_type",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "ix://acme/orders/Order",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "member_identity",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "ix://acme/orders/Order/s",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "member_type",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "Sequence<ix://quire/native/Clock>",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "collection_kind",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "sequence",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "minimum",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "0",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "maximum",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "unbounded",
+                              "value_kind": "text"
+                            }
+                          }
+                        ],
+                        "term": "aggregate"
+                      },
+                      {
+                        "members": [
+                          {
+                            "name": "path_step",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": 1,
+                              "value_kind": "integer"
+                            }
+                          },
+                          {
+                            "name": "declaring_type",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "ix://quire/native/Clock",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "member_identity",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "Sequence<ix://quire/native/Clock>[slot]",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "member_type",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "ix://quire/native/Clock",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "collection_kind",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "none",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "minimum",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "",
+                              "value_kind": "text"
+                            }
+                          },
+                          {
+                            "name": "maximum",
+                            "term": "binding",
+                            "value": {
+                              "term": "literal",
+                              "type": {
+                                "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                "domain": "quire.checked-semantic-node/v1"
+                              },
+                              "value": "",
+                              "value_kind": "text"
+                            }
+                          }
+                        ],
+                        "term": "aggregate"
+                      }
+                    ],
+                    "term": "aggregate"
+                  }
+                },
+                {
+                  "name": "guards",
+                  "term": "binding",
+                  "value": {
+                    "members": [],
+                    "term": "aggregate"
+                  }
+                }
+              ],
+              "term": "aggregate"
+            },
+            "node_tag": "timed_model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "clock_place",
+            "dependencies": [
+              {
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              {
+                "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+                "domain": "quire.checked-semantic-node/v1"
+              }
+            ],
+            "node_id": {
+              "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "semantic_type": {
+              "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/52/body/members/3/value/members/-",
+          "value": {
+            "target": {
+              "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "term": "reference"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/52/dependencies/3",
+          "value": {
+            "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/71",
+          "value": {
+            "node_id": {
+              "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "ordinal": 0,
+            "regions": [
+              {
+                "end": 2101,
+                "source": {
+                  "authority": "agent-ix",
+                  "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                  "digest_domain": "quire.source.bytes/v1",
+                  "identity": "example"
+                },
+                "start": 2100
+              }
+            ],
+            "role": "expression"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "1eeda97ae3c4ac96bf3cc63a9f584f278fb3a610dda01dfdda6e8519cd449622"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "1eeda97ae3c4ac96bf3cc63a9f584f278fb3a610dda01dfdda6e8519cd449622"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "1eeda97ae3c4ac96bf3cc63a9f584f278fb3a610dda01dfdda6e8519cd449622"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "6f1818a30b27f07ee2fc1360c44cd9c7e3daef7db891ae2db71eeb2bff50e2f9"
+        }
+      ],
+      "schema": "valid",
       "expected_code": "invalid_package",
       "expected_cause": "duplicate-clock-place",
-      "expected": "the published place gets a second place node of the same path with empty guards (SL-08 shape); both listed in the root refuse at the second root entry because guards never enter place identity"
+      "locus": "/semantic_graph/nodes/52/body/members/3/value/members/9",
+      "locus_suffix": "body/members/3/value/members/9",
+      "expected": "SL-08 (the path of SL-07 with empty guards) is added before the model_root and listed last in the root's clock_places; both places of one path are listed, so the reader refuses at the later reference (guards never enter place identity); the patch ends with the recomputed root key, its source_map entry and package_id"
     },
     {
       "id": "GD-03",
-      "subject": "a clock_guard node of the dense fixture removed from the root guards aggregate",
+      "subject": "the clock_guard node of the selected package removed from the root guards aggregate",
       "mutation": "unlisted-clock-guard",
-      "fixture": "fixtures/positive-timed-model-nodes.json",
+      "fixture": "fixtures/positive-timed-slot-nodes.json",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/52/body/members/5/value/members/0"
+        },
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/52/dependencies/17"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "4b5ec97bc08cc95c54873c912bd19d250ea268098b38657e8adefa27c60c90f2"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "4b5ec97bc08cc95c54873c912bd19d250ea268098b38657e8adefa27c60c90f2"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "4b5ec97bc08cc95c54873c912bd19d250ea268098b38657e8adefa27c60c90f2"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "9a03e3229a373acca51adc835b065e6e58d5ced07205e1db27bad61fbb6a2240"
+        }
+      ],
+      "schema": "valid",
       "expected_code": "invalid_package",
       "expected_cause": "timed-node-reference",
-      "expected": "a present guard node the root does not list is refused, never read as absent"
+      "locus": "/semantic_graph/nodes/47/body",
+      "locus_suffix": "body",
+      "expected": "the clock_guard node stays in the graph and the root's guards aggregate (and the root's dependencies) no longer lists it: the reader refuses the unlisted guard node, never reading it as absent, at the node's own body"
     }
   ]
 }
