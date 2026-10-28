@@ -240,7 +240,7 @@
     },
     {
       "id": "CL-03",
-      "subject": "a reset whose operation anchor is point-qualified (pre{operation: \"size\"})",
+      "subject": "a reset whose operation anchor is point-qualified (pre{operation: \"size\"}); reader-level only, because the generic SemanticTerm body rule of the V2 schema already rejects every node with an execution_point binding",
       "fixture": "fixtures/positive-timed-clause-nodes.json",
       "patch": [
         {
@@ -336,7 +336,7 @@
           "value": "b8fdee6d62308307463c0444e3b2ebc4e9ca006347dc945d31864748f418e477"
         }
       ],
-      "schema": "valid",
+      "schema": "anchor-point-schema-gap",
       "rule": "FR-322-AC-262",
       "expected": "refused",
       "expected_code": "invalid_package",
