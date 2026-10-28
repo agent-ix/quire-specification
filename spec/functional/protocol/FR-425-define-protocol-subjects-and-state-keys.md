@@ -182,8 +182,9 @@ removed once its join has settled and every branch thread has left
   `parallel` reads the binder of an earlier `all`-joined `parallel` through the
   environment its forking thread copied to it.
 - A `repeat` with an authored maximum keeps one counter per (repeat node,
-  thread path) while the thread is inside it. A `repeat` with no maximum keeps
-  none. Every cycle of a repeat's body graph passes through a step node
+  thread path) while the thread is inside it; the counter is 0 on each entry
+  from outside the `repeat`, including each entry of a `repeat` nested in the
+  body of another `repeat`. A `repeat` with no maximum keeps none. Every cycle of a repeat's body graph passes through a step node
   ([FR-052](FR-052-represent-bounded-control.md)), so every cycle of the
   protocol system's state graph through a repeat takes at least one step.
 - Each channel has one queue per protocol instance: a sequence in delivery

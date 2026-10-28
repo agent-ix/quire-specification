@@ -18,7 +18,7 @@ Schema and reader vectors for the `protocol` node family of
 body, the operator catalog, node keys, declaration paths, the clause body,
 membership and containment, binders and their scope, the derived causal
 relation and progress, placement, profile fit, the reader order and the
-activation relation. Scope: FR-464-AC-1 to FR-464-AC-15.
+activation relation. Scope: FR-464-AC-1 to FR-464-AC-15 and FR-464-AC-21 to FR-464-AC-23.
 
 ## Base package
 
@@ -212,10 +212,22 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | R6 | `Poll`'s back edge | not a cycle: admitted |
 | R7 | `Poll`'s body is only a `check` | `unsupported_construct`/`declaration-form` at `Poll`, naming it and the profile |
 | R8 | `Poll`'s body is a `choice` with an `attempt` in one case and an empty `sequence` in the other | `unsupported_construct`/`declaration-form` at `Poll` |
-| R9 | `Poll`'s body is a `choice` with an `attempt` in one case and a nested `repeat` around an `attempt` in the other | `unsupported_construct`/`declaration-form` at the outer `repeat` |
+| R9 | `Poll`'s body is a `choice` with an `attempt` in one case and a nested `repeat` around an `attempt` whose guard has a feasible exit in the other | `unsupported_construct`/`declaration-form` at the outer `repeat` |
 | R10 | `Poll`'s body is one `await` with a `timeout` control, or one `parallel` with a `join` | admitted |
 | R11 | `Poll` with a `maximum` only, a `proof` only, both and neither | admitted |
 | R12 | `Poll` with `maximum: 0` | admitted |
+| R13 | `Poll`'s body is only a nested `repeat` whose guard is `true`, no `maximum`, around an `attempt` | admitted: the nested exit is infeasible and its body steps (FR-464-AC-21) |
+| R14 | `Poll`'s body is only a nested `repeat max 1` with an `exhausted` `check` (FR-466-AC-5), `visible` listing `a` then `b`, whose guard is the tautology `a or not a or b or not b`, around an `attempt` | admitted (FR-464-AC-21) |
+| R15 | `Poll`'s body is only a nested `repeat` with `maximum` 0 and an `exhausted` `check` around an `attempt`, whose guard is `true`; and the same with `visible` listing `a` and the tautology guard `a or not a` | each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the body is never entered (FR-464-AC-21) |
+| R16 | `Poll`'s body is only a nested `repeat` around an `attempt`, `visible` listing `a` then `b`, whose guard is the single fact `a`; `not a`; `a and not a`; `false`; `a or b`; each with no `maximum` and with `maximum` 1 and an `exhausted` `check` | each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the exit is feasible (FR-464-AC-21) |
+| R17 | `Poll`'s body is a `sequence` of a nested `repeat` around an `attempt` and a second `attempt`, in either order; and a `parallel` with a `join` holding the nested `repeat` in one branch; and an `await` whose `then` is the nested `repeat`; the nested guard is `a`, a feasible exit, with `visible` listing `a` | each admitted (a sibling step, the `parallel` and the `await` step) whatever the nested guard is (FR-464-AC-21) |
+| R18 | `Poll`'s body is only a nested `repeat` whose guard is `true` and whose own body is only a `check`; and the same with `maximum` 1, an `exhausted` `attempt` and the own body only a `check` | each `unsupported_construct`/`declaration-form` at the first `repeat` in tree order, the outer `repeat`, naming it and the profile: the nested body does not step and its `exhausted` control is never counted (FR-464-AC-21, FR-464-AC-23) |
+| R19 | `Poll`'s body is a `choice` with a nested `repeat` around an `attempt` in one case and an `attempt` in the other, the nested guard being `true`; and the same with the nested guard `a` and `visible` listing `a` | admitted; `unsupported_construct`/`declaration-form` at the outer `repeat` (FR-464-AC-21) |
+| R20 | `Poll`'s body is only a nested `repeat` around an `attempt`, `visible` listing the entry `quire.op.boolean.eq(a, b)`, whose guard is `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(a, b)`; and `visible` listing the entries `quire.op.boolean.eq(a, b)` then `quire.op.boolean.eq(b, a)`, whose guard is `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(b, a)` | admitted (one atom, infeasible exit); `unsupported_construct`/`declaration-form` at the outer `repeat` (two atoms, no commutativity, feasible exit) (FR-464-AC-22) |
+| R21 | R14 under `CheckedPackageReadLimits.work` set to *V* minus 1, to *V* and to *T*, with *V* the reader's total consumption through the nested `repeat`'s fourth valuation charge and *T* its total for the package; R16's `a or b`, whose valuation charges are exactly one unit; and a `Poll` that is not nested in another `repeat`'s body, with `visible` listing 30 atoms and a guard over them, whose total consumption equals that of the same package with the guard `true` | *V* minus 1: `stage_limit_exceeded`/`work-budget-exceeded` (incomplete) at the nested `repeat`, no progress refusal; *V*: the same incomplete result at a later charge, never at the nested `repeat`; *T*: admitted; `a or b`: the one valuation unit is charged (all-false is the first valuation) and the refusal of R16; the 30-atom `Poll`: no valuation is charged (FR-464-AC-22) |
+| R22 | `Poll`'s body is only a nested `repeat` around an `attempt`, `visible` listing the entry `E` (the expression `a and b`), then `a`, then `b`, whose guard is `E or not a or not b` | `unsupported_construct`/`declaration-form` at the outer `repeat`: `E` is an atom and is not descended into, so the exit is feasible (FR-464-AC-22) |
+| R23 | `Poll`'s body is only a nested `repeat` around an `attempt` whose guard is a `reference` to a Boolean `value`/`literal` node `true`; and the guard `a or true` with `visible` listing `a` and the `true` written as that reference | each admitted: a Boolean constant, inline or by reference, is never an atom (FR-464-AC-22) |
+| R24 | `Poll`'s body is only a nested `repeat max 1` with an `exhausted` `check`, whose guard is `true`, around an `attempt` | admitted: the nested counter is reset on each entry from outside, so the `attempt` is taken on every iteration of `Poll` (FR-464-AC-23) |
 
 ## Reader order
 
@@ -248,8 +260,10 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 4. C1 to C13a hold (FR-464-AC-5, FR-464-AC-6).
 5. M1 to M10 refuse as listed (FR-464-AC-4, FR-464-AC-6).
 6. B2 to B26 behave as listed (FR-464-AC-7, FR-464-AC-8).
-7. R2, R4, R5 refuse `definition-cycle`; R7 to R9 refuse `declaration-form`;
-   R1, R3, R6 and R10 to R12 are admitted (FR-464-AC-9, FR-464-AC-10).
+7. R2, R4, R5 refuse `definition-cycle`; R7 to R9, R15, R16, R18 and R22
+   refuse `declaration-form`; R1, R3, R6, R10 to R14, R17, R23 and R24 are
+   admitted; R19, R20 and R21 behave as listed (FR-464-AC-9, FR-464-AC-10,
+   FR-464-AC-21 to FR-464-AC-23).
 8. O1 to O12 report the first defect in the reader order of FR-464
    (FR-464-AC-12, FR-464-AC-20).
 Assertions compare typed fields, causes and pointers, never message text.
