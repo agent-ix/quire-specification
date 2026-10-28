@@ -1,0 +1,63 @@
+{
+  "version": "quire.checked-package-option-value-cases/v1",
+  "fixture": "positive-integer-literal-references.json",
+  "positive": [
+    {
+      "id": "OV-01",
+      "meaning": "Some(1) over the fixture's Option<Integer>",
+      "element_type_selector": {"node_tag": "scalar_type", "semantic_form": "integer", "ordinal": 0},
+      "payload_selector": {"node_tag": "value", "semantic_form": "literal", "value_kind": "integer", "value": "1", "ordinal": 0}
+    },
+    {
+      "id": "OV-02",
+      "meaning": "Some(2) over the same fixture option type",
+      "element_type_selector": {"node_tag": "scalar_type", "semantic_form": "integer", "ordinal": 0},
+      "payload_selector": {"node_tag": "value", "semantic_form": "literal", "value_kind": "integer", "value": "2", "ordinal": 0}
+    }
+  ],
+  "schema_refusals": [
+    {"id": "OV-SR1", "mutation": "empty-members"},
+    {"id": "OV-SR2", "mutation": "wrong-binding-name"},
+    {"id": "OV-SR3", "mutation": "inline-literal"},
+    {"id": "OV-SR4", "mutation": "multiple-bindings"}
+  ],
+  "reader_refusals": [
+    {
+      "id": "OV-R1",
+      "mutation": "semantic-type-is-payload-node",
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "expected_locus": "/semantic_graph/nodes/{index}/semantic_type"
+    },
+    {
+      "id": "OV-R2",
+      "mutation": "semantic-type-is-composite-non-option",
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "expected_locus": "/semantic_graph/nodes/{index}/semantic_type"
+    },
+    {
+      "id": "OV-R3",
+      "mutation": "payload-target-is-boolean-literal",
+      "payload_fixture": "positive-control-operations.json",
+      "payload_selector": {"node_tag": "value", "semantic_form": "literal", "value_kind": "boolean", "value": true, "ordinal": 0},
+      "expected_code": "ill_typed",
+      "expected_cause": "type-mismatch",
+      "expected_locus": "/semantic_graph/nodes/{index}/body/members/0/value"
+    },
+    {
+      "id": "OV-R4",
+      "mutation": "payload-target-is-option-type-node",
+      "expected_code": "ill_typed",
+      "expected_cause": "type-mismatch",
+      "expected_locus": "/semantic_graph/nodes/{index}/body/members/0/value"
+    },
+    {
+      "id": "OV-R5",
+      "mutation": "dependencies-have-extra-target",
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "expected_locus": "/semantic_graph/nodes/{index}/dependencies"
+    }
+  ]
+}
