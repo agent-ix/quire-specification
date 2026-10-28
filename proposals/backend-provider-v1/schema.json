@@ -376,6 +376,16 @@
           },
           "additionalProperties": false
         },
+        "abstract_subject": {
+          "description": "FR-368, FR-377: the abstract subject of a refinement item: its package's id (a package of request.dependencies, a reader obligation) and its initial-state snapshots, spelled as subject.initial_states. Present exactly on a refinement item.",
+          "type": "object",
+          "required": ["package_id", "initial_states"],
+          "properties": {
+            "package_id": {"$ref": "#/$defs/PackageId"},
+            "initial_states": {"type": "array", "items": {"$ref": "#/$defs/ProvisionRef"}}
+          },
+          "additionalProperties": false
+        },
         "item_kind": {"description": "FR-368 \"Item kinds\": an authored clause, the derived items of FR-366/FR-429, FR-417 and FR-438, and the refinement item of FR-377.", "enum": ["formula", "deadlock-freedom", "time-lock-freedom", "race-freedom", "refinement"]},
         "fairness": {"description": "FR-368, FR-362: the resolved fairness set, empty for deadlock-freedom, time-lock-freedom and race-freedom.", "type": "array", "items": {"$ref": "#/$defs/Fairness"}},
         "max_depth": {"description": "FR-368, FR-363: the bounded-search horizon; absent for an exhaustive search.", "$ref": "#/$defs/Count"},
@@ -385,6 +395,7 @@
         "seed": {"description": "FR-392: absent takes the provider's published default.", "$ref": "#/$defs/Decimal"}
       },
       "allOf": [
+        {"description": "FR-368, FR-377: abstract_subject is present exactly on a refinement item.", "if": {"properties": {"item_kind": {"const": "refinement"}}, "required": ["item_kind"]}, "then": {"required": ["abstract_subject"]}, "else": {"not": {"required": ["abstract_subject"]}}},
         {"description": "FR-368 Item kinds: a derived item has no authored clause, so its fairness set is empty.", "if": {"properties": {"item_kind": {"enum": ["deadlock-freedom", "time-lock-freedom", "race-freedom"]}}, "required": ["item_kind"]}, "then": {"properties": {"fairness": {"maxItems": 0}}}}
       ],
       "additionalProperties": false
@@ -803,7 +814,7 @@
         {"description": "FR-418, QSL FR-245 post-differs: an edge, its position in the certificate's edges.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["backward-edge", "post-differs"]}, "at": {"type": "object", "required": ["edge"], "properties": {"edge": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "QSL FR-245 step-fails: an edge and the failing step verdict, both present.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "step-fails"}, "at": {"type": "object", "required": ["edge", "verdict"], "properties": {"edge": {"$ref": "#/$defs/Count"}, "verdict": {"$ref": "#/$defs/StepVerdict"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "FR-418: a component, its index.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "witness-fails"}, "at": {"type": "object", "required": ["component"], "properties": {"component": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
-        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence", "initial", "admitted", "refinement", "concrete_package", "abstract_package", "initials", "positions", "taken"]}}, "additionalProperties": false}}, "additionalProperties": false}
+        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement", "concrete_package", "abstract_package", "positions", "taken"]}}, "additionalProperties": false}}, "additionalProperties": false}
       ]
     },
     "InconclusiveCause": {
@@ -1054,16 +1065,16 @@
     },
     "DbmBound": {"description": "FR-418: one DBM entry: a scaled integer bound with its strictness, or infinity.", "oneOf": [{"const": "infinity"}, {"type": "object", "required": ["bound", "strict"], "properties": {"bound": {"$ref": "#/$defs/IntegerString"}, "strict": {"type": "boolean"}}, "additionalProperties": false}]},
     "ZoneCertificate": {
-      "description": "FR-418 zone certificate, serialized as RFC 8785 bytes (FR-418 \"Canonical bytes\"). components, reasons and divergence carry the Buchi emptiness extension; locked, initial, admitted and refinement carry QSL FR-244's additive members. An absent optional member is omitted, never null.",
+      "description": "FR-418 zone certificate, serialized as RFC 8785 bytes (FR-418 \"Canonical bytes\"). components, reasons and divergence carry the Buchi emptiness extension; locked, initials, admitted and refinement carry QSL FR-244's additive members. An absent optional member is omitted, never null.",
       "type": "object",
-      "required": ["identity", "scale", "bounds", "nodes", "edges", "initial", "admitted"],
+      "required": ["identity", "scale", "bounds", "nodes", "edges", "initials", "admitted"],
       "properties": {
         "identity": {"$ref": "#/$defs/CertificateIdentity"},
         "scale": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"},
         "bounds": {"description": "FR-418: the LU bounds (QSL lu_bounds), one entry per discrete state and clock, ordered by the state's first node in nodes then by clock index; an absent bound is infinity.", "type": "array", "items": {"type": "object", "required": ["state", "clock", "lower", "upper"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "clock": {"$ref": "#/$defs/Nonempty"}, "lower": {"$ref": "#/$defs/DbmBound"}, "upper": {"$ref": "#/$defs/DbmBound"}}, "additionalProperties": false}},
         "nodes": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "automaton", "zone"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "automaton": {"description": "FR-418: a claim-automaton state; in a refinement form an index into refinement.positions, the reserved index positions.len() naming no position (QSL FR-244).", "$ref": "#/$defs/Count"}, "locked": {"description": "FR-418: present, as true, exactly on a locked node; never false.", "const": true}, "zone": {"description": "FR-418: the canonical DBM as rows, entry [i][j] bounding x_i - x_j, index 0 the reference clock.", "type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}}}, "additionalProperties": false}},
         "edges": {"type": "array", "items": {"type": "object", "required": ["node", "transition", "target"], "properties": {"node": {"$ref": "#/$defs/Count"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "target": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
-        "initial": {"description": "FR-418: the position in nodes of the node covering the initial symbolic state (QSL initial).", "$ref": "#/$defs/Count"},
+        "initials": {"description": "FR-418: the position in nodes of the initial node of each initial state, in the subject's initial-state order.", "type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Count"}},
         "admitted": {"description": "FR-418: the ADR-026 TD-6 witness: the start node and the positions in edges of a path of certificate edges.", "type": "object", "required": ["start", "edges"], "properties": {"start": {"$ref": "#/$defs/Count"}, "edges": {"type": "array", "items": {"$ref": "#/$defs/Count"}}}, "additionalProperties": false},
         "components": {"description": "FR-418: per node, its component index.", "type": "array", "items": {"$ref": "#/$defs/Count"}},
         "reasons": {"description": "FR-418: per component, its reason.", "type": "array", "items": {"$ref": "#/$defs/ComponentReason"}},
@@ -1081,15 +1092,14 @@
       ]
     },
     "RefinementPart": {
-      "description": "FR-418: QSL FR-244's RefinementPart. initials[0] equals the certificate's initial; taken has one entry per edge in order, null for an edge into or inside the locked region.",
+      "description": "FR-418: QSL FR-244's RefinementPart. positions is nonempty; taken has one entry per edge in order, null for an edge into or inside the locked region.",
       "type": "object",
-      "required": ["refinement", "concrete_package", "abstract_package", "initials", "positions", "taken"],
+      "required": ["refinement", "concrete_package", "abstract_package", "positions", "taken"],
       "properties": {
         "refinement": {"$ref": "#/$defs/NodeId"},
         "concrete_package": {"$ref": "#/$defs/PackageId"},
         "abstract_package": {"$ref": "#/$defs/PackageId"},
-        "initials": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Count"}},
-        "positions": {"type": "array", "items": {"type": "object", "required": ["concrete", "history", "abstract_states"], "properties": {"concrete": {"$ref": "#/$defs/StateKey"}, "history": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}, "abstract_states": {"type": "array", "items": {"$ref": "#/$defs/StateKey"}}}, "additionalProperties": false}},
+        "positions": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["concrete", "history", "abstract_states"], "properties": {"concrete": {"$ref": "#/$defs/StateKey"}, "history": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}, "abstract_states": {"type": "array", "items": {"$ref": "#/$defs/StateKey"}}}, "additionalProperties": false}},
         "taken": {"type": "array", "items": {"oneOf": [{"type": "null"}, {"oneOf": [
           {"properties": {"type": {"const": "stutter"}}, "required": ["type"], "additionalProperties": false},
           {"properties": {"type": {"const": "abstract"}, "transitions": {"type": "array", "items": {"$ref": "#/$defs/TransitionIdentity"}}}, "required": ["type", "transitions"], "additionalProperties": false}

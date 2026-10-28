@@ -41,7 +41,16 @@ abstract progress only through the abstract fairness set.
 An admitted refinement declaration ([FR-375](FR-375-declare-model-refinement.md)),
 the concrete subject (its checked package, initial states and universes) and
 the abstract subject (its checked package and initial states, with each
-abstract universe equal to its source population's concrete universe).
+abstract universe equal to its source population's concrete universe). On the
+[FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) request
+the concrete subject is the item's `subject` and the abstract subject is its
+`abstract_subject`, `{package_id, initial_states}`: the id of the abstract
+subject's package, which is a package of the request's `dependencies`, and its
+ordered initial-state references, as `subject.initial_states` spells them
+([FR-368](../temporal/FR-368-negotiate-temporal-model-check-items.md) "Item
+kinds"). The abstract universes are not carried: the equality above fixes
+them, and the abstract subject has no proof bounds of its own. The reader
+takes the abstract subject from no other member.
 
 ## Outputs
 
@@ -159,6 +168,14 @@ the row of `t`'s operation, with `a = map(s, h)` and `a' = map(s', h')`:
 
 One function decides each step, and every engine and replay answers to it.
 
+**Reading of behaviours.** A refinement item reads the behaviours of both
+subjects as maximal paths with a terminal stutter step (above), which is the
+`quire.temporal.infinite-trace/v1` reading of
+[FR-361](../temporal/FR-361-read-model-behaviours-as-temporal-traces.md); a
+terminal-stutter path counts as an infinite trace. A refinement item therefore
+classifies `unbounded` ([FR-368](../temporal/FR-368-negotiate-temporal-model-check-items.md)
+"Extent"), whatever its fairness sets hold.
+
 **Initial states.** For each initial state `c0` of the concrete subject with
 initial history values `h0`, `map(c0, h0)` equals, by state key, an initial
 state of the abstract subject.
@@ -254,6 +271,7 @@ until and since are non-strict ([FR-161](../temporal/FR-161-analyze-infinite-tra
 | FR-377-AC-7 | A per-step simulation obligation is one `operation-contract` item per step row and one for the initial-state rule; it is never routed for a declaration with a hidden field, a history field or an `any` row. | Test (TC-312) |
 | FR-377-AC-8 | The compare-and-set counter refines the abstract counter (28 reachable concrete states, every edge passing the step function, no fair stutter SCC below `value` 2); the same refinement under a concrete `terminal when` member written from the abstract predicate has its concrete deadlock-freedom item proved. | Test (TC-312, TC-313) |
 | FR-377-AC-9 | Among several rows that fail at one state, the first undefined row in the order (object key, then field name bytes) is reported and refutes the claim even when an earlier row is refused, incomplete or unmapped; otherwise the first undetermined row is reported; writing the rows in another source order changes neither the order nor the reported row; an internal fault settles the item `failed` and is never a row value. | Test (TC-315) |
+| FR-377-AC-10 | A refinement item's request carries the concrete subject as `subject` and the abstract subject as `abstract_subject` with the abstract package's id and its initial-state references; an item with no `abstract_subject`, or with one whose `package_id` names no package of the request's `dependencies`, is refused before consumption, and the abstract subject is never read from the abstract package's own initial states. The item classifies `unbounded`, and a terminal-stutter path is an infinite trace. | Test (TC-431, TC-313) |
 | FR-377-AC-10 | A mapped field declared `?` is absent for the row `none` and set to `v` for `Some(v)`, and a field declared `Option<T>` keeps an explicit `none`. | Test (TC-315) |
 | FR-377-AC-11 | A concrete object of a most-specific type no object row names makes `map` undetermined at that state and is never dropped from the mapped state; a reference to such an object makes `map` undetermined naming the row that holds it; the mapped state of a refinement holds no relationship extent. | Test (TC-315) |
 | FR-377-AC-12 | Among the receiver, arguments, post history and post-state rows of one step, an internal fault settles the item `failed` whatever the other reads return; otherwise the first undefined read in the order receiver, arguments as written, post history, post-state rows is reported and refutes the claim even when an earlier read is refused, incomplete, out of type or of an unmapped type; otherwise the first undetermined read is reported; an undefined receiver is reported before an undefined argument, an undefined argument before an undefined post-state row, an undefined post history before an undefined post-state row, and an incomplete argument before an out-of-type post history; the reported read is the same in the verdict and its replay. | Test (TC-315) |

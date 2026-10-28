@@ -1756,17 +1756,21 @@ fn tc_431_zone_loci_admit_the_refinement_form_rules_and_the_added_members() {
         }
     }
     let members = ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale",
-        "bounds", "nodes", "edges", "reasons", "divergence", "initial", "admitted", "refinement",
-        "concrete_package", "abstract_package", "initials", "positions", "taken"];
-    assert_eq!(members.len(), 21);
+        "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement",
+        "concrete_package", "abstract_package", "positions", "taken"];
+    assert_eq!(members.len(), 20);
     for member in members {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
         assert!(rejection.is_valid(&cause), "{member} is a member");
     }
-    for member in ["initials[0]", "position", "refinement_name", "", "Initial"] {
+    for member in ["initial", "initials[0]", "position", "refinement_name", "", "Initial"] {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
         assert!(!rejection.is_valid(&cause), "{member} is not a member");
     }
+}
+
+fn abstract_subject() -> Value {
+    composed(&positive("derived-items-request"))["request"]["items"][2]["temporal"]["abstract_subject"].clone()
 }
 
 /// FR-368-AC-13 and AC-15: the five spellings, and an empty fairness set on a
@@ -1782,13 +1786,70 @@ fn tc_431_item_kinds_are_the_five_spellings_and_derived_items_carry_no_fairness(
         ("race-freedom", true), ("refinement", false)] {
         let mut item = base.clone();
         item["item_kind"] = kind.into();
+        if kind == "refinement" {
+            item["abstract_subject"] = abstract_subject();
+        }
         assert!(temporal.is_valid(&item), "{kind} with no fairness");
         item["fairness"] = fair.clone();
         assert_eq!(temporal.is_valid(&item), !derived, "{kind} with a fairness constraint");
     }
-    for kind in ["time-lock", "race", "deadlock", "refine", "Formula", "", "deadlock_freedom"] {
+    for kind in ["time-lock", "race", "deadlock", "refine", "Formula", "", "deadlock_freedom", "transfer"] {
         let mut item = base.clone();
         item["item_kind"] = kind.into();
         assert!(!temporal.is_valid(&item), "{kind} is no kind");
     }
+}
+
+/// FR-368-AC-19, FR-377-AC-10 and FR-331-AC-47: `abstract_subject` is present
+/// exactly on a refinement item and has exactly its two members.
+#[trace("TC-431", "FR-368-AC-19")]
+#[trace("TC-431", "FR-377-AC-10")]
+#[trace("TC-431", "FR-331-AC-47")]
+#[test]
+fn tc_431_abstract_subject_is_present_exactly_on_a_refinement_item() {
+    let temporal = definition("Temporal");
+    let document = composed(&positive("derived-items-request"));
+    let items = document["request"]["items"].as_array().expect("items");
+    for item in items {
+        let t = &item["temporal"];
+        let refinement = t["item_kind"] == "refinement";
+        assert_eq!(t.get("abstract_subject").is_some(), refinement, "request_index {}", item["request_index"]);
+        assert!(temporal.is_valid(t));
+        let mut flipped = t.clone();
+        if refinement {
+            flipped.as_object_mut().unwrap().remove("abstract_subject");
+        } else {
+            flipped["abstract_subject"] = abstract_subject();
+        }
+        assert!(!temporal.is_valid(&flipped), "request_index {} with the member flipped", item["request_index"]);
+    }
+    for (member, value) in [("universes", serde_json::json!([])), ("proof_bounds", serde_json::json!([]))] {
+        let mut extra = abstract_subject();
+        extra[member] = value;
+        let mut t = items[2]["temporal"].clone();
+        t["abstract_subject"] = extra;
+        assert!(!temporal.is_valid(&t), "{member} is not a member of abstract_subject");
+    }
+    let mut bare = items[2]["temporal"].clone();
+    bare["abstract_subject"]["package_id"] = serde_json::json!("5".repeat(64));
+    assert!(!temporal.is_valid(&bare));
+    assert_ne!(abstract_subject()["initial_states"], items[2]["temporal"]["subject"]["initial_states"],
+        "the abstract subject's states are its own, not the concrete subject's");
+}
+
+/// FR-368-AC-20: one set of limits and one `max_depth` for the whole request.
+#[trace("TC-431", "FR-368-AC-20")]
+#[test]
+fn tc_431_every_temporal_item_of_a_request_carries_the_same_limits() {
+    let document = composed(&positive("derived-items-request"));
+    let items = document["request"]["items"].as_array().expect("items");
+    let shared = |item: &Value| {
+        let t = &item["temporal"];
+        (t["limits"].clone(), t["max_depth"].clone(), t.get("smt_encoding").cloned())
+    };
+    assert!(items.len() > 3);
+    for item in items {
+        assert_eq!(shared(item), shared(&items[0]), "request_index {}", item["request_index"]);
+    }
+    assert_ne!(shared(&items[0]).0, Value::Null);
 }

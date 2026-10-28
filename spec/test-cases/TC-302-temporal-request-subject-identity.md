@@ -75,3 +75,5 @@ The caller's items keep their `request_index` 0 to 2 whether or not the
 deadlock-freedom item of the first subject exists, and the derived items follow
 in subject-then-kind order, each of kind `temporal-satisfaction` with no
 `hybrid` and no `requirements` (FR-368-AC-17, FR-368-AC-18).
+
+Two requests that differ only in one `memory` entry's model have different request identities (FR-331-AC-48, FR-434-AC-1).

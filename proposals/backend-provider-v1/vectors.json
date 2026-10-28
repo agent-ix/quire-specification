@@ -4877,7 +4877,7 @@
         "/request/items/6/temporal/item_kind": "FR-368",
         "/request/items/6/temporal/fairness": "FR-368"
       },
-      "description": "FR-368 Item kinds, claim, extent and position. Items 0 and 1 are the caller's authored clauses over two subjects, item 2 a refinement item over subject 1 (its node id is an illustrative value: the package fixture holds no refinement node); items 3 to 6 are the derived items, grouped by subject in order of first occurrence and, within a subject, deadlock-freedom, time-lock-freedom, race-freedom. Anchors are the fixture's Example::Session model node and Example::Handshake protocol clause node, each with its declaration occurrence at ordinal 0.",
+      "description": "FR-368 Item kinds, claim, extent, position, shared limits and the refinement item's abstract_subject (an illustrative package id: the vector carries no dependencies). Items 0 and 1 are the caller's authored clauses over two subjects, item 2 a refinement item over subject 1 (its node id is an illustrative value: the package fixture holds no refinement node); items 3 to 6 are the derived items, grouped by subject in order of first occurrence and, within a subject, deadlock-freedom, time-lock-freedom, race-freedom. Anchors are the fixture's Example::Session model node and Example::Handshake protocol clause node, each with its declaration occurrence at ordinal 0.",
       "document": {
         "contract_version": "quire.backend-provider/v1",
         "capability_vocabulary": "quire.capability-kind/v1",
@@ -4994,7 +4994,11 @@
                     "operation": "Example::Session::step",
                     "granularity": "whole"
                   }
-                ]
+                ],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                }
               }
             },
             {
@@ -5045,7 +5049,11 @@
                   "proof_bounds": []
                 },
                 "item_kind": "formula",
-                "fairness": []
+                "fairness": [],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                }
               }
             },
             {
@@ -5102,7 +5110,24 @@
                     "operation": "Example::Session::step",
                     "granularity": "whole"
                   }
-                ]
+                ],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                },
+                "abstract_subject": {
+                  "package_id": {
+                    "domain": "quire.package.semantic/v2",
+                    "algorithm": "sha256",
+                    "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+                  },
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                    }
+                  ]
+                }
               }
             },
             {
@@ -5153,7 +5178,11 @@
                   "proof_bounds": []
                 },
                 "item_kind": "deadlock-freedom",
-                "fairness": []
+                "fairness": [],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                }
               }
             },
             {
@@ -5204,7 +5233,11 @@
                   "proof_bounds": []
                 },
                 "item_kind": "time-lock-freedom",
-                "fairness": []
+                "fairness": [],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                }
               }
             },
             {
@@ -5255,7 +5288,11 @@
                   "proof_bounds": []
                 },
                 "item_kind": "deadlock-freedom",
-                "fairness": []
+                "fairness": [],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                }
               }
             },
             {
@@ -5306,7 +5343,11 @@
                   "proof_bounds": []
                 },
                 "item_kind": "race-freedom",
-                "fairness": []
+                "fairness": [],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                }
               }
             }
           ]
@@ -5478,7 +5519,7 @@
               "type": "certificate-rejected",
               "rule": "malformed",
               "at": {
-                "member": "initial"
+                "member": "initials"
               }
             }
           },
@@ -8437,6 +8478,13 @@
     {"name": "refinement-item-bounded-extent", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/extent", "value": {"classification": "bounded", "bounds": []}}]},
     {"name": "derived-item-without-infinite-trace-domain", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/5/extent/domains/0/kind", "value": "population"}]},
     {"name": "derived-item-claim-without-occurrence", "base": "derived-items-request", "owner": "FR-331", "patch": [{"op": "remove", "path": "/request/items/3/claim/occurrence"}]},
+    {"name": "refinement-item-without-abstract-subject", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "remove", "path": "/request/items/2/temporal/abstract_subject"}]},
+    {"name": "abstract-subject-on-formula", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/0/temporal/abstract_subject", "value": {"package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}, "initial_states": [{"digest_domain": "sha256-jcs", "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}]}}]},
+    {"name": "abstract-subject-on-derived-item", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/3/temporal/abstract_subject", "value": {"package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}, "initial_states": [{"digest_domain": "sha256-jcs", "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}]}}]},
+    {"name": "abstract-subject-with-universes", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/2/temporal/abstract_subject/universes", "value": []}]},
+    {"name": "abstract-subject-without-initial-states", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "remove", "path": "/request/items/2/temporal/abstract_subject/initial_states"}]},
+    {"name": "abstract-subject-package-id-bare-digest", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/temporal/abstract_subject/package_id", "value": "5555555555555555555555555555555555555555555555555555555555555555"}]},
+    {"name": "item-kind-transfer", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/temporal/item_kind", "value": "transfer"}]},
     {"name": "initial-mismatch-at-edge", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": {"edge": 0}}]},
     {"name": "post-differs-at-node", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": {"node": 1}}]},
     {"name": "post-differs-with-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": {"edge": 1, "verdict": {"kind": "AbstractStepRejected", "position": "2", "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []}, "cause": {"kind": "Postcondition"}}}}]},

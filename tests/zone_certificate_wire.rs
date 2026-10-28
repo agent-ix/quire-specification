@@ -71,7 +71,7 @@ fn tc_371_zone_certificate_bytes_are_the_rfc_8785_encoding_of_the_wire_value() {
     let zc10 = vector("ZC-10")["canonical_text"].as_str().unwrap().to_owned();
     assert!(zc10.starts_with("{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":"), "admitted first, its members ascending");
     assert!(zc10.ends_with(",\"scale\":\"1\"}"), "scale last");
-    assert!(zc10.contains("\"initial\":0,\"nodes\":"), "initial before nodes");
+    assert!(zc10.contains("\"initials\":[0],\"nodes\":"), "initials before nodes");
 }
 
 #[trace("TC-371", "FR-418-AC-7")]
@@ -98,7 +98,7 @@ fn tc_371_numbers_are_counts_or_integer_strings() {
     scale["scale"] = json!("0");
     assert!(!valid.is_valid(&scale));
     let mut huge = base.clone();
-    huge["initial"] = json!(9_007_199_254_740_992_u64);
+    huge["initials"] = json!([9_007_199_254_740_992_u64]);
     assert!(!valid.is_valid(&huge));
     // A bound beyond the safe range is carried exactly as a string.
     let mut big = base.clone();
@@ -184,9 +184,10 @@ fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_
     let valid = validator();
     let zc12 = vector("ZC-12")["document"].clone();
     let part = &zc12["refinement"];
-    let initials = part["initials"].as_array().unwrap();
+    let initials = zc12["initials"].as_array().unwrap();
     assert_eq!(initials.len(), 2);
-    assert_eq!(initials[0], zc12["initial"], "initials[0] is the certificate's initial");
+    assert!(part.get("initials").is_none(), "initials is a top-level member only");
+    assert!(zc12.get("initial").is_none(), "the wire has one name for the concept");
     let positions = part["positions"].as_array().unwrap().len() as u64;
     let locked = &zc12["nodes"][initials[0].as_u64().unwrap() as usize];
     // admitted starts at a positioned initial node, not at the locked initials[0].
@@ -198,16 +199,25 @@ fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_
     assert_eq!(locked["automaton"].as_u64().unwrap(), positions, "the reserved index names no position");
     assert_eq!(part["taken"], json!([]));
     // initials is required and nonempty; a refinement without positions is malformed.
-    for member in ["initials", "positions", "taken", "refinement", "concrete_package", "abstract_package"] {
+    for member in ["positions", "taken", "refinement", "concrete_package", "abstract_package"] {
         let mut bad = zc12.clone();
         bad["refinement"].as_object_mut().unwrap().remove(member);
         assert!(!valid.is_valid(&bad), "{member} is required");
     }
     let mut empty = zc12.clone();
-    empty["refinement"]["initials"] = json!([]);
+    empty["initials"] = json!([]);
     assert!(!valid.is_valid(&empty));
-    // A certificate without initial or admitted is not a ZoneCertificate.
-    for member in ["initial", "admitted"] {
+    let mut no_positions = zc12.clone();
+    no_positions["refinement"]["positions"] = json!([]);
+    assert!(!valid.is_valid(&no_positions), "an empty positions is not a refinement part");
+    let mut alias = zc12.clone();
+    alias["initial"] = json!(0);
+    assert!(!valid.is_valid(&alias), "initial is not a member");
+    let mut inner = zc12.clone();
+    inner["refinement"]["initials"] = json!([0, 1]);
+    assert!(!valid.is_valid(&inner), "the part carries no initials");
+    // A certificate without initials or admitted is not a ZoneCertificate.
+    for member in ["initials", "admitted"] {
         let mut bad = zc12.clone();
         bad.as_object_mut().unwrap().remove(member);
         assert!(!valid.is_valid(&bad), "{member} is required");

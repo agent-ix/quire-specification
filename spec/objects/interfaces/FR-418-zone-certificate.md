@@ -51,7 +51,7 @@ For a safety form (TT-1, TT-2, TT-3, the deadlock-freedom item):
 | `bounds` | The per-clock lower and upper bounds `L` and `U`, per discrete state, used by the simulation test. |
 | `nodes` | A finite list of nodes `(s, q, Z)`: discrete state key, claim-automaton state, canonical DBM. |
 | `edges` | For each node and each transition identity enabled from it, the index of a target node. |
-| `initial` | The position in `nodes` of the node that covers the initial symbolic state (QSL FR-244 `initial`); in a refinement form, the node covering the first concrete initial state's symbolic state, `initials[0]`. |
+| `initials` | Nonempty. The position in `nodes` of the initial node of each initial state of the subject, in the subject's initial-state order (FR-361): the node that covers that state's initial symbolic state. A form with one initial state lists one position. QSL FR-244 reads its single `initial` as `initials[0]`; the wire carries no `initial` member. |
 | `admitted` | The ADR-026 TD-6 witness: a start node (in a refinement form, any positioned `initials[i]`, so a time-locked first initial state does not decide it) and a path of certificate edges to a quiescent node or to a node of a component with a cycle of positive total delay (QSL FR-244 `admitted`). |
 | `refinement` | Present only for the safety half of a timed refinement (QSL FR-430): the refinement part below. |
 
@@ -93,8 +93,7 @@ read over the refinement product (QSL FR-244 "Refinement form"):
 | --- | --- |
 | `refinement` | The refinement node's id (FR-322 `NodeId`). |
 | `concrete_package`, `abstract_package` | The two packages' ids (FR-322 `PackageId`). |
-| `initials` | The position in `nodes` of the initial node of each concrete initial state, in index order; `initials[0]` equals `initial`. Each node covers its own initial state's symbolic state. |
-| `positions` | The certified positions: each `{concrete, history, abstract_states}`, a concrete `StateKey`, the FR-378 history values as FR-181 typed values in history-row order, and the sorted abstract `StateKey`s. |
+| `positions` | Nonempty (an admitted refinement half starts at a positioned initial node, so it certifies at least one position). The certified positions: each `{concrete, history, abstract_states}`, a concrete `StateKey`, the FR-378 history values as FR-181 typed values in history-row order, and the sorted abstract `StateKey`s. |
 | `taken` | One entry per element of `edges`, in order: `null` for an edge into or inside the locked region (QSL FR-244), else `{type: "stutter"}` or `{type: "abstract", transitions}` with FR-181 transition identities. |
 
 A node's `automaton` is then an index into `positions`; the locked region's
@@ -111,12 +110,12 @@ and AC-5), and the encoding is a function of the value alone.
 
 - **Member order.** Object members are in ascending UTF-16 code-unit order of
   their names, at every depth: for the certificate, `admitted`, `bounds`,
-  `components`, `divergence`, `edges`, `identity`, `initial`, `nodes`,
+  `components`, `divergence`, `edges`, `identity`, `initials`, `nodes`,
   `reasons`, `refinement`, `scale`. Array elements keep the order the
   certificate states: `nodes` in discovery order, `edges` in canonical
   transition order, `bounds` by the first node of its state then by clock
   index, `components`, `divergence` and `zone` rows by node or clock index.
-- **Number encoding.** An index, a count or a position (`initial`, `node`,
+- **Number encoding.** An index, a count or a position (`node`,
   `target`, `automaton`, `components` entries, `divergence` entries, `admitted`
   entries, `initials`) is a JSON integer from 0 to 2^53 − 1. A scaled constant
   (`scale`, every `bound`) is an integer string `0` or `-?[1-9][0-9]*`,
@@ -193,7 +192,7 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 | FR-418-AC-7 | An index is a JSON integer in 0 to 2^53 − 1 and a scale or a bound an integer string; a bound written as a JSON number, with a leading zero, a `+` or `-0`, or a scale `0`, is not a `ZoneCertificate`, and a bound of 27 digits is carried exactly. | Test (TC-371) |
 | FR-418-AC-8 | An absent optional member is omitted: `components`, `reasons`, `divergence` or `refinement` as `null` is not a `ZoneCertificate`, `locked` is present only as `true`, and a `taken` entry that is absent is `null`. | Test (TC-371) |
 | FR-418-AC-9 | The only digest-bearing members of a certificate are `identity` and, in a refinement form, `refinement`, `concrete_package` and `abstract_package`; no member carries a digest, hash or checksum of the certificate or of another artifact. | Test (TC-371) |
-| FR-418-AC-10 | A refinement-form certificate lists `initials` (nonempty, `initials[0]` equal to `initial`), `positions` and `taken`; ZC-12's first initial node (`initials[0]`) is a `locked` node with `automaton` equal to the number of positions and its `admitted` starts at the positioned `initials[1]`, a refinement form whose `initials[i]` does not cover concrete initial state `i` is `initial-missing` at that state's State record (the locus is the discrete state; two initial states sharing one discrete state share the locus, and the checker reports the lowest failing index first), `admitted` may start at any positioned `initials[i]`, and a certificate without `initial` or `admitted` is not a `ZoneCertificate`. | Test (TC-371); the checker clauses by QSL TC-700 and TC-371 ZC-14 |
+| FR-418-AC-10 | Every certificate lists `initials` (nonempty), and a refinement-form certificate lists, in its part, `positions` (nonempty) and `taken`, so a refinement part with empty `positions` is not a `ZoneCertificate`; ZC-12's first initial node (`initials[0]`) is a `locked` node with `automaton` equal to the number of positions and its `admitted` starts at the positioned `initials[1]`, a refinement form whose `initials[i]` does not cover concrete initial state `i` is `initial-missing` at that state's State record (the locus is the discrete state; two initial states sharing one discrete state share the locus, and the checker reports the lowest failing index first), `admitted` may start at any positioned `initials[i]`, and a certificate without `initials` or `admitted`, or with an `initial` member, is not a `ZoneCertificate`. | Test (TC-371); the checker clauses by QSL TC-700 and TC-371 ZC-14 |
 
 ## Dependencies
 
