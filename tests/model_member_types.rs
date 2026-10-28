@@ -734,6 +734,52 @@ fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
     assert_member_cases(&parsed(VECTORS), "FR-322-AC-31");
 }
 
+/// FR-322-AC-183: a field typed `Rational`, `Decimal` or bare `Text` is
+/// declared by the package and gives the member no type. The `label` field of
+/// the published package is retyped in turn; the control types it `Boolean`,
+/// which resolves, so the refusal is the declared type's and not a missing
+/// field.
+#[trace("TC-280", "FR-322-AC-183")]
+#[test]
+fn tc_280_rational_decimal_and_bare_text_members_have_no_type() {
+    let vectors = parsed(VECTORS);
+    let nodes = array(&vectors, "model_declaration_nodes");
+    let member = json!({"kind": "field", "declaration": "M1", "name": "label"});
+    let retyped = |native: &str| {
+        let mut package = vectors["domain_package"].clone();
+        let order = package["object_types"]
+            .as_array_mut()
+            .expect("object types")
+            .iter_mut()
+            .find(|candidate| text(candidate, "node") == "ix://acme/orders/Order")
+            .expect("Order");
+        let field = order["fields"]
+            .as_array_mut()
+            .expect("fields")
+            .iter_mut()
+            .find(|candidate| text(candidate, "name") == "label")
+            .expect("label");
+        field["typeRef"] = json!(native);
+        derive(&package, nodes, &member)
+    };
+    let refused = json!({"refused": {"code": "ill_typed", "cause": "operator-ineligible"}});
+    for native in [
+        "ix://quire/native/Rational",
+        "ix://quire/native/Decimal",
+        "ix://quire/native/Text",
+    ] {
+        assert_eq!(retyped(native), refused, "{native}");
+    }
+    assert_eq!(
+        retyped("ix://quire/native/Boolean"),
+        json!({
+            "resolves": "ix://acme/orders/Order/label",
+            "member_type": {"type": "Boolean"}
+        }),
+        "the control resolves"
+    );
+}
+
 #[trace("TC-280", "FR-322-AC-80")]
 #[test]
 fn tc_280_unit_type_references_resolve_against_the_checked_packages_units() {

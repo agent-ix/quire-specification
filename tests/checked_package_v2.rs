@@ -19808,14 +19808,31 @@ fn shapes_field_type(document: &Value, object: &str, field: &str) -> Value {
 fn shapes_intake_refusal(document: &Value) -> Option<(&'static str, &'static str, String)> {
     let natives = [
         "Boolean", "Integer", "Text", "String", "UUID", "Timestamp", "Bytes", "JsonObject",
-        "Float32", "Float64", "Duration",
+        "Float32", "Float64", "Duration", "Rational", "Decimal",
     ];
+    let value_type = |reference: &str| {
+        document["value_types"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .find(|candidate| candidate["node"] == reference)
+    };
     let resolves = |reference: &str| match reference.strip_prefix("ix://quire/native/") {
         Some(native) => natives.contains(&native),
-        None => reference.strip_prefix("ix://acme/shapes/").is_some_and(|name| {
-            shapes_declared(document, "tuple_types", name).is_some()
-                || shapes_declared(document, "variant_types", name).is_some()
-        }),
+        None => {
+            value_type(reference).is_some()
+                || reference.strip_prefix("ix://acme/shapes/").is_some_and(|name| {
+                    shapes_declared(document, "tuple_types", name).is_some()
+                        || shapes_declared(document, "variant_types", name).is_some()
+                })
+        }
+    };
+    // FR-322 "Admitted payload and position types": the four declared types
+    // with no step 4 row are refused at intake (FR-322-AC-181, -182).
+    let unmapped = |reference: &str| match reference.strip_prefix("ix://quire/native/") {
+        Some(native) => matches!(native, "Rational" | "Decimal" | "Text"),
+        None => value_type(reference)
+            .is_some_and(|found| found["native"] == "ix://quire/native/Text" && found["bounds"].is_null()),
     };
     for (index, tuple) in document["tuple_types"].as_array().into_iter().flatten().enumerate() {
         let at = format!("/tuple_types/{index}");
@@ -19837,7 +19854,7 @@ fn shapes_intake_refusal(document: &Value) -> Option<(&'static str, &'static str
         for (slot, position) in positions.iter().enumerate() {
             let supported = position["typeRef"]
                 .as_str()
-                .is_some_and(|reference| reference != "ix://quire/native/Clock");
+                .is_some_and(|reference| reference != "ix://quire/native/Clock" && !unmapped(reference));
             if position["ordinal"] != slot || !supported {
                 return Some(("invalid_model_binding", "malformed-declaration", format!("{at}/positions/{slot}")));
             }
@@ -19851,7 +19868,7 @@ fn shapes_intake_refusal(document: &Value) -> Option<(&'static str, &'static str
     for (index, variant) in document["variant_types"].as_array().into_iter().flatten().enumerate() {
         for (slot, case) in variant["cases"].as_array().expect("cases").iter().enumerate() {
             if let Some(payload) = case["payloadType"].as_str()
-                && (payload == "ix://quire/native/Clock" || !resolves(payload))
+                && (payload == "ix://quire/native/Clock" || unmapped(payload) || !resolves(payload))
             {
                 return Some((
                     "unsupported_construct",
@@ -20182,7 +20199,9 @@ fn tc_940_tuple_and_payload_variant_declarations_are_model_declaration_nodes() {
     "FR-322-AC-143",
     "FR-322-AC-144",
     "FR-322-AC-145",
-    "FR-322-AC-147"
+    "FR-322-AC-147",
+    "FR-322-AC-181",
+    "FR-322-AC-182"
 )]
 #[test]
 fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
@@ -20411,7 +20430,7 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
     ]
     .map(|list| vectors[list].as_array().expect(list).len());
     assert_eq!(names.len(), published.iter().sum::<usize>(), "every published case ran");
-    assert_eq!(published, [5, 7, 3, 1, 8, 4, 5, 4, 4, 10], "no published case was dropped");
+    assert_eq!(published, [5, 7, 3, 1, 8, 4, 5, 4, 4, 20], "no published case was dropped");
 }
 
 /// FR-322-AC-140 and FR-322-AC-146: the wire cases over the fixture.

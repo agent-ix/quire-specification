@@ -1530,6 +1530,33 @@ no operation identity, and the published operation catalog is unchanged.
   operand. A nullary case of a union is a `union_value` node with the empty
   payload `aggregate`, never an `enum_value` node. The text leaves of a model
   union are those of its payload types under `member:<Name>` then `position:0`.
+- **Admitted payload and position types.** A tuple position `typeRef` and a variant
+  case `payloadType` is typed by the step 4 table as a field of presence `required`
+  and multiplicity `[1, 1]`, and it is admitted exactly when a row of that table gives
+  its `typeRef` a type: the natives `Boolean`, `Integer`, `String`, `UUID`, `Timestamp`,
+  `Bytes`, `JsonObject`, `Duration`, `Float32` and `Float64`, a unit, and the package
+  record, tuple and variant types and bounded value types. Four declared types have no
+  row, and each is refused (not mapped, and never inferred): the native
+  `ix://quire/native/Rational`, the native `ix://quire/native/Decimal`, the native
+  `ix://quire/native/Text` with no `Text[min, max; profile]` bound (a bare `Text`, or a
+  package value type bound as `Text` without `min`, `max` and `profile`), and any other
+  package value type that no row binds (so a value type bound as a `Decimal[...]` or
+  `Rational` domain is refused too until a row maps it; a later row is additive). An alias
+  is read through to its target before this test. `Bytes` and `JsonObject` are unbounded
+  octet and JSON values but have rows, so they are admitted; the refused set is the four
+  types above, not "unbounded" as a class. The refusal is raised in step 1, at stage
+  `package_read`, before any graph refusal and with FR-154's codes for the same site, and
+  FR-154 itself admits these natives (FR-154-AC-17), so the refusal is this reader's: a
+  `payloadType` of one is `unsupported_construct`/`declaration-form` at
+  `Variant.payloadType`, a position `typeRef` of one is
+  `invalid_model_binding`/`malformed-declaration` at the position, exactly as for
+  `ix://quire/native/Clock`. A consumer of the selected document (the semantic IR intake,
+  the FCD reader) that admits such a `typeRef` as a payload or position refuses at its
+  intake with the same code and locus; it never carries the type on to an operation
+  lookup. A *member* (field, parameter or result) of one of the four types is not an
+  intake refusal: it gives the member no type and the application refuses
+  `ill_typed`/`operator-ineligible` ("A declared type outside the table"), as a bare `Text`
+  field does (FR-322-AC-31).
 - **Refusals.** In FR-322's order: the closed V2 schema refuses (`malformed_wire`)
   a `tuple_value_type` node with no `owner`, with a `SourceOwner` and no
   `declaration`, with a `declaration` beside a `ModelOwner`, or with a
@@ -1556,11 +1583,11 @@ no operation identity, and the published operation catalog is unchanged.
   ordinal, `conflicting-binding` at the later position; then (2) no position, or a
   tuple member other than `node` and `positions`, `malformed-declaration` at the
   tuple; then (3) the first position whose ordinal is not its index or whose
-  `typeRef` is absent or `ix://quire/native/Clock`, `malformed-declaration` at the
-  position; then (4) the first position whose `typeRef` names no package type or
+  `typeRef` is absent, `ix://quire/native/Clock` or one of the four refused types above,
+  `malformed-declaration` at the position; then (4) the first position whose `typeRef` names no package type or
   native, `missing-name` at the position; then each variant of `variant_types` in
-  document order, the first case whose `payloadType` is unresolved or
-  `ix://quire/native/Clock`, `unsupported_construct`/`declaration-form` at
+  document order, the first case whose `payloadType` is unresolved,
+  `ix://quire/native/Clock` or one of the four refused types above, `unsupported_construct`/`declaration-form` at
   `payloadType`. The tuples are all read before any variant type, so a document
   with a defect of each kind reports the tuple's.
 - **Recursion.** Model types may refer to one another and to themselves through
@@ -2712,6 +2739,9 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-152 | The wire cases `TW-18` (position `2`), `TW-19` (the `declaration` is the tuple `Swap`) and `TW-20` (the beyond-safe `KeyOrdinal` string `9007199254740993`) of `model-tuple-union-vectors.json` each refuse `ill_typed`/`operator-ineligible` at the locus `/semantic_graph/nodes/31`, the `quire.op.tuple.project` application node, which is the position-0 projection over the `Pair`-typed parameter (node 14, result type the `Boolean` node), and not at `/semantic_graph/nodes/31/body/operation/member`, `/member/position` or `/member/declaration`; `TW-26` (position the string `0`) is `malformed_wire` at the same `/semantic_graph/nodes/31`. | Test (TC-940) |
 | FR-322-AC-153 | A wire case of `model-tuple-union-vectors.json` states a `cause` exactly when its code carries one: `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration` and `invalid_model_binding` rows state their cause (`TW-05`, `TW-06` to `TW-09`, `TW-11` to `TW-20`, `TW-23` to `TW-25`), and the admitted case `TW-00` and the rows of `malformed_wire` (`TW-01` to `TW-04`, `TW-10`, `TW-26`) and `invalid_semantic_graph` (`TW-21`, `TW-22`), codes that carry no cause (FR-272), state none. | Test (TC-940) |
 | FR-322-AC-154 | In `TW-05` (the `Pair` node keyed over a non-empty body) every `reference` to the published `Pair` key dangles, and each such target equals the recomputed key of the closed `ModelDeclarationNode` preimage of the rekeyed `Pair` node; they are dependent on the rekey, so the first refusal is `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`. A dangling `reference` whose target is no recomputed key of a stale-keyed node is a graph-shape refusal that precedes every stale-node-key refusal, and stale nodes keep ascending retained digest order. | Test (TC-940) |
+| FR-322-AC-181 | A variant case whose `payloadType` is the native `Rational`, the native `Decimal`, the native `Text` (bare), or a package value type bound as `Text` without `min`, `max` and `profile`, refuses `unsupported_construct`/`declaration-form` at `Variant.payloadType` in step 1, at stage `package_read`, with FR-154's code and no graph refusal; an alias of any of them refuses the same. The cases whose `payloadType` is `Float32`, `Float64`, `Bytes`, `JsonObject`, `String`, `UUID`, `Timestamp`, `Duration`, a `Text[0, 8; nfc]` value type, or a declared tuple or variant type are admitted, so unbounded `Bytes` and `JsonObject` are not refused. | Test (TC-940) |
+| FR-322-AC-182 | A tuple position whose `typeRef` is the native `Rational`, the native `Decimal`, a bare native `Text`, or a package value type bound as `Text` without bounds refuses `invalid_model_binding`/`malformed-declaration` at the position in step 1, at stage `package_read`, as `ix://quire/native/Clock` does and ahead of the `missing-name` check of a later position; a position typed `Float64`, `Bytes` or a `Text[0, 8; nfc]` value type is admitted. | Test (TC-940) |
+| FR-322-AC-183 | A field, an operation parameter or an operation result typed `Rational`, `Decimal` or bare `Text` is admitted by FR-154 intake and gives the member no type: the application that resolves it refuses `ill_typed`/`operator-ineligible`, never a mapping to a `scalar_type` node. The four types of FR-322-AC-181 have no node mapping and no identity rule, and no operation lookup is reached for them. | Test (TC-940) |
 
 ## Dependencies
 
