@@ -95,15 +95,25 @@ as the type's identity segment below.
 
 A model-declaring artifact is an artifact whose type is an object type of any
 spec-objects module (spec-objects-architecture, spec-objects-business, …), and
-its artifact id is an object id: ASCII letters, digits and
-underscores, starting with a letter (`^[A-Za-z][A-Za-z0-9_]*$`). An object id
-is always a `member-name`, so a clause names every declaration by qualified
-name, such as `M::sys_pump`. Artifact-type ids such as `FR-100` declare no
-model node, and neither does a composed document, an artifact-type document
-that also carries `object:` (such as `FR-204` with `object: value_object`):
-extraction classifies a document by its `type` alone and skips an
-artifact-type document even if it carries `object:`, so `object:` never lifts a
-document or names a model node (FR-154-AC-30).
+its artifact id is an object id: an ASCII letter followed by zero or more
+ASCII letters, digits, underscores or hyphens
+(`^[A-Za-z][A-Za-z0-9_-]*$`). An object id is carried verbatim in its type
+identity; it is distinct from a `member-name`. Source-language qualified-name
+spelling is governed by the language grammar and is not part of this intake
+identity rule. Artifact-type ids
+such as `FR-100` declare no model node, and neither does a composed document,
+an artifact-type document that also carries `object:` (such as `FR-204` with
+`object: value_object`): extraction classifies a document by its `type` alone
+and skips an artifact-type document even if it carries `object:`, so `object:`
+never lifts a document or names a model node (FR-154-AC-30). A model-declaring
+object artifact may use the same id spelling, including `FR-204`; intake
+examines emitted IR nodes, not source documents. FCD extraction selects source
+documents by document `type`, so `type: FR` emits no model node regardless of
+its id or `object:` value. For an emitted `TypeDefinition` or population node,
+intake reads the final identity segment as its artifact id, applies FR-154's
+object-id rule, and resolves its `{module, name}` kind through the package
+`constructs` table to obtain its meaning under FR-208. It does not classify
+the emitted node using the source document's `type`, `object:` or `id`.
 
 A declaration's identity is its artifact id. Every type definition is declared
 by its own artifact: an object type, value type, variant type, population,
