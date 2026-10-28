@@ -30,7 +30,7 @@
         "members": {
           "positions": "required"
         },
-        "shape": "record"
+        "shape": "tuple"
       },
       "kind": {
         "module": "acme/shapes",
@@ -183,11 +183,27 @@
       "positions": [
         {
           "identity": "ix://acme/shapes/Pair/p0",
-          "typeRef": "ix://quire/native/Boolean"
+          "typeRef": "ix://quire/native/Boolean",
+          "origin": {
+            "source": {
+              "path": "shapes/Pair.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
         },
         {
           "identity": "ix://acme/shapes/Pair/p1",
-          "typeRef": "ix://quire/native/Integer"
+          "typeRef": "ix://quire/native/Integer",
+          "origin": {
+            "source": {
+              "path": "shapes/Pair.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
         }
       ],
       "roles": [],
@@ -213,11 +229,27 @@
       "positions": [
         {
           "identity": "ix://acme/shapes/Swap/p0",
-          "typeRef": "ix://quire/native/Integer"
+          "typeRef": "ix://quire/native/Integer",
+          "origin": {
+            "source": {
+              "path": "shapes/Swap.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
         },
         {
           "identity": "ix://acme/shapes/Swap/p1",
-          "typeRef": "ix://quire/native/Boolean"
+          "typeRef": "ix://quire/native/Boolean",
+          "origin": {
+            "source": {
+              "path": "shapes/Swap.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
         }
       ],
       "roles": [],
@@ -243,11 +275,27 @@
       "positions": [
         {
           "identity": "ix://acme/shapes/Nest/p0",
-          "typeRef": "ix://acme/shapes/Pair"
+          "typeRef": "ix://acme/shapes/Pair",
+          "origin": {
+            "source": {
+              "path": "shapes/Nest.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
         },
         {
           "identity": "ix://acme/shapes/Nest/p1",
-          "typeRef": "ix://acme/shapes/Shape"
+          "typeRef": "ix://acme/shapes/Shape",
+          "origin": {
+            "source": {
+              "path": "shapes/Nest.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
         }
       ],
       "roles": [],
@@ -273,11 +321,27 @@
       "positions": [
         {
           "identity": "ix://acme/shapes/Cell/p0",
-          "typeRef": "ix://quire/native/Integer"
+          "typeRef": "ix://quire/native/Integer",
+          "origin": {
+            "source": {
+              "path": "shapes/Cell.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
         },
         {
           "identity": "ix://acme/shapes/Cell/p1",
-          "typeRef": "ix://acme/shapes/List"
+          "typeRef": "ix://acme/shapes/List",
+          "origin": {
+            "source": {
+              "path": "shapes/Cell.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
         }
       ],
       "roles": [],
