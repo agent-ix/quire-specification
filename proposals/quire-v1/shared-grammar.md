@@ -359,7 +359,7 @@ expr          = 'let', ident, '=', expr, 'in', expr
 case-arm      = qualified-name, [ '(', ident, { ',', ident }, ')' ],
                 ':', expr, ';' ;
 
-primary       = 'true' | 'false' | 'null' | 'none' | 'self' | 'result'
+primary       = 'true' | 'false' | 'null' | 'none' | 'absent' | 'self' | 'result'
               | uint | string | exact-number | collection-value
               | record-value | float-value
               | qualified-name, [ '(', [ expr, { ',', expr } ], ')' ]
@@ -489,6 +489,11 @@ positions; contextual `member-name` positions still admit it. Lowercase
 `population` remains the distinct contextual abstraction-binding keyword and
 an identifier elsewhere, never an alias for the uppercase type constructor.
 Neither spelling creates a population or supplies an ambient binding. A state clause names a domain-package population by the qualified name `M::P` as the operand of `allInstances` or `lookup` (FR-153); that name selects a declaration and takes its binding from the clause's observation.
+
+`absent` as a `primary` is the Option literal of FR-143 ("The `absent` Option
+literal"), the same value and typing rule as `none`; the `absent` after the
+closing parenthesis of a `lookup` is the mode keyword of that production and is
+never read as the literal, since the literal stands only where a `primary` starts.
 
 The selected `quire.model.complete/v1` definition gives the model forms above
 their meaning; FR-150 through FR-153 own it. `lookup<T>(p, r) absent m` reads
