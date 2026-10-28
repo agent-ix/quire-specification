@@ -20407,3 +20407,110 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
     }
     assert_eq!(ids.len(), 27, "every published wire case ran");
 }
+
+
+const CLASS_CATALOG_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/class-catalog-vectors.json");
+
+/// The concrete classes of the CCF-01 subject, in canonical order, each as
+/// (class, memory model): declared classes, `cend`, three drains, then `flush`.
+const EXPECTED_CONCRETE_CLASSES: [(&str, &str); 10] = [
+    ("Impl::Do", ""),
+    ("Impl::E", ""),
+    ("Impl::K", ""),
+    ("Impl::T", ""),
+    ("Impl::ev", ""),
+    ("cend Impl::T", ""),
+    ("memory drain", "ra"),
+    ("memory drain", "sc"),
+    ("memory drain", "tso"),
+    ("memory flush", "tso"),
+];
+
+/// Reader-level class-catalog check over a schema-valid catalog: canonical
+/// order by (class UTF-8 bytes, memory model), no duplicate catalog key, and
+/// the effect, commit and cend classes the producer must catalogue.
+fn class_catalog_reader_refusal(catalog: &Value) -> Option<&'static str> {
+    for side in ["concrete", "abstract"] {
+        let entries = catalog[side].as_array().expect("catalog side");
+        let keys: Vec<(String, String)> = entries
+            .iter()
+            .map(|entry| {
+                (
+                    entry["class"].as_str().expect("class").to_owned(),
+                    entry["memory_model"].as_str().unwrap_or("").to_owned(),
+                )
+            })
+            .collect();
+        for pair in keys.windows(2) {
+            if pair[0] == pair[1] {
+                return Some("duplicate_class");
+            }
+            if pair[0] > pair[1] {
+                return Some("misordered_class");
+            }
+        }
+    }
+    let present: BTreeSet<(String, String)> = catalog["concrete"]
+        .as_array()
+        .expect("concrete")
+        .iter()
+        .map(|entry| {
+            (
+                entry["class"].as_str().expect("class").to_owned(),
+                entry["memory_model"].as_str().unwrap_or("").to_owned(),
+            )
+        })
+        .collect();
+    for (class, model) in EXPECTED_CONCRETE_CLASSES {
+        if !present.contains(&(class.to_owned(), model.to_owned())) {
+            return Some("omitted_class");
+        }
+    }
+    None
+}
+
+#[trace("TC-310", "FR-375-AC-28")]
+#[test]
+fn tc_310_class_catalog_carries_effect_commit_and_cend_classes() {
+    let defs = parsed_fixture(SCHEMA)["$defs"].clone();
+    let wrapper = json!({"$ref": "#/$defs/RefinementClassCatalog", "$defs": defs});
+    let validator = jsonschema::validator_for(&wrapper).expect("catalog schema is valid");
+    let vectors = parsed_fixture(CLASS_CATALOG_VECTORS);
+    let mut admitted = 0;
+    for case in vectors["cases"].as_array().expect("cases") {
+        let name = case["name"].as_str().expect("name");
+        let catalog = &case["catalog"];
+        let observed = if !validator.is_valid(catalog) {
+            "schema_refused"
+        } else {
+            class_catalog_reader_refusal(catalog).unwrap_or("admitted")
+        };
+        assert_eq!(observed, case["expected"].as_str().expect("expected"), "{name}");
+        if observed == "admitted" {
+            admitted += 1;
+            let concrete: Vec<(&str, &str)> = catalog["concrete"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|entry| {
+                    (
+                        entry["class"].as_str().unwrap(),
+                        entry["memory_model"].as_str().unwrap_or(""),
+                    )
+                })
+                .collect();
+            assert_eq!(
+                concrete,
+                EXPECTED_CONCRETE_CLASSES,
+                "{name}: the canonical concrete class order"
+            );
+        }
+    }
+    assert_eq!(admitted, 1, "exactly the positive vector is admitted");
+    assert_eq!(
+        vectors["cases"].as_array().unwrap().len(),
+        15,
+        "every single-drop, misordered and duplicate case is present"
+    );
+}
