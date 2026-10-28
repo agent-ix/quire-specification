@@ -24010,3 +24010,163 @@ fn tc_935_selection_vector_disagreement_is_detected() {
         assert!(outcome.is_err(), "mutation `{to}` must be detected");
     }
 }
+
+/// Every `.json` file under `dir`, recursively, in path order.
+fn proposal_json_files(dir: &std::path::Path, out: &mut Vec<std::path::PathBuf>) {
+    let mut entries = std::fs::read_dir(dir)
+        .expect("proposals directory is readable")
+        .map(|entry| entry.expect("directory entry").path())
+        .collect::<Vec<_>>();
+    entries.sort();
+    for path in entries {
+        if path.is_dir() {
+            proposal_json_files(&path, out);
+        } else if path.extension().is_some_and(|extension| extension == "json") {
+            out.push(path);
+        }
+    }
+}
+
+/// Every embedded checked package (an object carrying `lock` and a
+/// `semantic_graph` with `nodes`) under `value`, with its JSON pointer.
+fn embedded_packages<'a>(value: &'a Value, pointer: &str, out: &mut Vec<(String, &'a Value)>) {
+    match value {
+        Value::Object(members) => {
+            if members.contains_key("lock") && value.pointer("/semantic_graph/nodes").is_some() {
+                out.push((pointer.to_owned(), value));
+            }
+            for (key, member) in members {
+                embedded_packages(member, &format!("{pointer}/{key}"), out);
+            }
+        }
+        Value::Array(items) => {
+            for (at, item) in items.iter().enumerate() {
+                embedded_packages(item, &format!("{pointer}/{at}"), out);
+            }
+        }
+        _ => {}
+    }
+}
+
+/// The first model-owned node of `package` that its selected FCD document
+/// does not declare (FR-322 "Model-owned members": the strict owner join),
+/// as `/semantic_graph/nodes/<i>`, or `None`. The selected document of a
+/// `model_selections` row is the published `domain-package-*.json` whose
+/// RFC 8785 digest the row carries; a type declares an object type, a
+/// tuple or variant type, or an invariant clause, a `relationships` member
+/// declares a relationship and an `operations` member an operation clause.
+fn model_owner_declaration_defect(package: &Value, documents: &[Value]) -> Option<String> {
+    let rows = package["lock"]["model_selections"].as_array()?;
+    for (at, node) in package["semantic_graph"]["nodes"].as_array()?.iter().enumerate() {
+        let owner = &node["owner"];
+        if owner["kind"] != "model" {
+            continue;
+        }
+        let selected = rows
+            .iter()
+            .filter(|row| row["identity"] == owner["identity"])
+            .find_map(|row| {
+                documents
+                    .iter()
+                    .find(|document| Some(unqualified_jcs_sha256(document).as_str()) == row["digest"].as_str())
+            });
+        let node_name = owner["node"].as_str().unwrap_or_default();
+        let declared = selected.is_some_and(|document| {
+            let types = document["types"].as_array().into_iter().flatten();
+            let members = |list: &'static str| {
+                types
+                    .clone()
+                    .flat_map(move |declared| declared[list].as_array().into_iter().flatten())
+                    .any(|member| member["identity"] == node_name)
+            };
+            match node["node_tag"].as_str() {
+                Some("relation") => members("relationships"),
+                Some("function") if clause_kind(node) == Some("invariant") => {
+                    types.clone().any(|declared| declared["identity"] == node_name)
+                }
+                Some("function") => members("operations"),
+                _ => types.clone().any(|declared| declared["identity"] == node_name),
+            }
+        });
+        if !declared {
+            return Some(format!("/semantic_graph/nodes/{at}"));
+        }
+    }
+    None
+}
+
+#[trace("TC-367", "FR-322-AC-240")]
+#[test]
+fn tc_367_every_fixture_model_owned_node_is_declared_by_its_selected_document() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("proposals");
+    let mut files = Vec::new();
+    proposal_json_files(&root, &mut files);
+    let parsed = files
+        .iter()
+        .map(|path| (path.clone(), serde_json::from_str::<Value>(&std::fs::read_to_string(path).unwrap()).unwrap()))
+        .collect::<Vec<_>>();
+    let documents = parsed
+        .iter()
+        .filter(|(path, _)| {
+            path.file_name().and_then(|name| name.to_str()).is_some_and(|name| name.starts_with("domain-package-"))
+        })
+        .map(|(_, document)| document.clone())
+        .collect::<Vec<_>>();
+    assert!(documents.len() >= 3, "the published selected documents are found");
+
+    let mut checked = 0;
+    for (path, value) in &parsed {
+        let mut packages = Vec::new();
+        embedded_packages(value, "", &mut packages);
+        for (pointer, package) in packages {
+            let owned = package["semantic_graph"]["nodes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|node| node["owner"]["kind"] == "model")
+                .count();
+            if owned == 0 {
+                continue;
+            }
+            assert_eq!(
+                model_owner_declaration_defect(package, &documents),
+                None,
+                "{}{pointer}: a model-owned node is not declared by the selected document",
+                path.display()
+            );
+            checked += 1;
+        }
+    }
+    assert!(checked >= 8, "the published model-owning fixtures are covered, not {checked}");
+
+    // Mutation: the timed slot package without its relationship or operation
+    // declaration is refused at the first undeclared owner (nodes 7 and 30).
+    let package = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
+    let document = parsed_fixture(SELECTED_TIMED_SLOT_DOCUMENT);
+    let selected = std::slice::from_ref(&document);
+    assert_eq!(model_owner_declaration_defect(&package, selected), None);
+    for (member, node) in [("relationships", 7), ("operations", 30)] {
+        let mut stripped = document.clone();
+        for declared in stripped["types"].as_array_mut().unwrap() {
+            if let Some(list) = declared.get_mut(member) {
+                *list = json!([]);
+            }
+        }
+        // Re-pin the row so the failure is the missing declaration, not the digest.
+        let mut pinned = package.clone();
+        pinned["lock"]["model_selections"][0]["digest"] = json!(unqualified_jcs_sha256(&stripped));
+        assert_eq!(
+            model_owner_declaration_defect(&pinned, std::slice::from_ref(&stripped)),
+            Some(format!("/semantic_graph/nodes/{node}")),
+            "{member}"
+        );
+    }
+    // Mutation: a row pinning a document that is not the published one has no selected document.
+    let mut unpinned = package.clone();
+    unpinned["lock"]["model_selections"][0]["digest"] = json!("00".repeat(32));
+    assert_eq!(model_owner_declaration_defect(&unpinned, selected), Some("/semantic_graph/nodes/7".to_owned()));
+    // Mutation: an owner naming an undeclared node.
+    let mut renamed = package.clone();
+    renamed["semantic_graph"]["nodes"][53]["owner"]["node"] = json!("ix://acme/orders/Missing");
+    assert_eq!(model_owner_declaration_defect(&renamed, selected), Some("/semantic_graph/nodes/53".to_owned()));
+}
