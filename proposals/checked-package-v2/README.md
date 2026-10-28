@@ -202,10 +202,10 @@ structures, but any external consumer receives only the contract.
   nominal `dimension` (`Length`), a nominal root `unit` `U` (`metre`), the
   builtin `Integer`, and the structural `scalar_type`/`compound_unit` node
   `metre^1` that holds `unit` = `reference(U)` and an exponent. It is the base
-  of `nominal-rekey-vectors.json` (`NK-00` to `NK-13`, RFC 6902 patches ending in
+  of `nominal-rekey-vectors.json` (`NK-00` to `NK-14`, RFC 6902 patches ending in
   the recomputed `package_id`), whose cases rekey `U` and observe the nominal
   key stage (FR-322-AC-160 to FR-322-AC-162) and the order of the key-and-join
-  stages (`NK-06` to `NK-13`, FR-322-AC-169, FR-322-AC-170).
+  stages (`NK-06` to `NK-14`, FR-322-AC-169, FR-322-AC-170).
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes

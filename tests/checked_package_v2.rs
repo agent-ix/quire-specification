@@ -4443,6 +4443,10 @@ fn application_node_is_valid(node: &Value, nodes: &[Value]) -> bool {
 #[derive(Clone, Debug, PartialEq)]
 enum ReadRefusal {
     GraphShape(Value),
+    /// `invalid_package`/`invalid-derived-shape` at the `node_id` of a derived
+    /// shape (reference, population, compound unit) whose body is not well
+    /// formed and whose key is current (FR-322 "Derived type forms").
+    DerivedShape(Value),
     /// `invalid_model_binding`/`malformed-declaration` at `package_read`: a
     /// `populations` entry of the selected document that is no FCD population.
     /// The locus is the selection row (`/lock/model_selections/<i>`).
@@ -4592,6 +4596,19 @@ fn stage_reference_targets(term: &Value, out: &mut Vec<String>) {
     }
 }
 
+/// FR-322-AC-169 stage 7 covers a node of a form with no step of its own: the
+/// `semantic_type` and `dependencies` of a `state`, `temporal`, `protocol`,
+/// `relation`, `claim`, `correspondence`, `extension`, `hybrid` or
+/// `timed_model` node are read by the step that owns that form (FR-340,
+/// FR-341 and FR-342 refuse a frame, anchor or clause target that names no node
+/// as `missing_declaration`/`missing-name`).
+fn edge_stage_owns(node: &Value) -> bool {
+    matches!(
+        node["node_tag"].as_str(),
+        Some("scalar_type" | "composite_type" | "bounded_domain" | "value" | "expression" | "function" | "model")
+    )
+}
+
 fn nodes_by_digest(nodes: &[Value]) -> Vec<&Value> {
     let mut ordered = nodes.iter().collect::<Vec<_>>();
     ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
@@ -4653,11 +4670,14 @@ fn key_stage_refusal(
         }
         KeyStage::DerivedShape => {
             if let Some(node) = derived_shape_semantic_refusal(nodes) {
-                return Err(ReadRefusal::GraphShape(node["node_id"].clone()));
+                return Err(ReadRefusal::DerivedShape(node["node_id"].clone()));
             }
         }
         KeyStage::EdgeExistence => {
             if let Some(node) = nodes_by_digest(nodes).into_iter().find(|node| {
+                if !edge_stage_owns(node) {
+                    return false;
+                }
                 let mut edges = vec![node["semantic_type"]["digest"].clone()];
                 edges.extend(
                     node["dependencies"]
@@ -14367,7 +14387,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     rekey_stale_nodes(&mut wrong_reference);
     assert_eq!(
         read_package_semantics(&wrong_reference, &catalog),
-        Err(ReadRefusal::GraphShape(
+        Err(ReadRefusal::DerivedShape(
             wrong_reference["semantic_graph"]["nodes"][reference_index]["node_id"].clone()
         )),
         "recomputed reference target is rejected"
@@ -14399,7 +14419,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         rekey_stale_nodes(&mut candidate);
         assert_eq!(
             read_package_semantics(&candidate, &catalog),
-            Err(ReadRefusal::GraphShape(
+            Err(ReadRefusal::DerivedShape(
                 candidate["semantic_graph"]["nodes"][index]["node_id"].clone()
             )),
             "recomputed {label} is rejected"
@@ -14458,7 +14478,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .clone();
     assert_eq!(
         read_package_semantics(&wrong_population, &catalog),
-        Err(ReadRefusal::GraphShape(population_id)),
+        Err(ReadRefusal::DerivedShape(population_id)),
         "recomputed negative population bound is rejected"
     );
 
@@ -14520,7 +14540,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     refresh_package_id(&mut arbitrary_set_population);
     assert_eq!(
         read_package_semantics(&arbitrary_set_population, &catalog),
-        Err(ReadRefusal::GraphShape(
+        Err(ReadRefusal::DerivedShape(
             arbitrary_set_population["semantic_graph"]["nodes"][population_index]["node_id"]
                 .clone()
         )),
@@ -14666,7 +14686,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let compound_id = wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"].clone();
     assert_eq!(
         read_package_semantics(&wrong_compound, &catalog),
-        Err(ReadRefusal::GraphShape(compound_id)),
+        Err(ReadRefusal::DerivedShape(compound_id)),
         "recomputed noncanonical compound-unit order is rejected"
     );
 
@@ -14688,7 +14708,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     refresh_package_id(&mut non_self_typed);
     assert_eq!(
         read_package_semantics(&non_self_typed, &catalog),
-        Err(ReadRefusal::GraphShape(
+        Err(ReadRefusal::DerivedShape(
             non_self_typed["semantic_graph"]["nodes"][compound_index]["node_id"].clone()
         )),
         "a non-self-typed compound unit is rejected"
@@ -14712,7 +14732,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     refresh_package_id(&mut non_root);
     assert_eq!(
         read_package_semantics(&non_root, &catalog),
-        Err(ReadRefusal::GraphShape(
+        Err(ReadRefusal::DerivedShape(
             non_root["semantic_graph"]["nodes"][non_root_index]["node_id"].clone()
         )),
         "a compound term naming a non-unit root is rejected"
@@ -15999,7 +16019,7 @@ fn tc_233_a_model_population_with_no_max_is_the_unbounded_population() {
                 );
                 assert_eq!(
                     outcome,
-                    Err(ReadRefusal::GraphShape(population["node_id"].clone())),
+                    Err(ReadRefusal::DerivedShape(population["node_id"].clone())),
                     "{id}: refused at the population node"
                 );
             }
@@ -24342,7 +24362,19 @@ fn stage_outcome(package: &Value, order: &[KeyStage]) -> String {
     let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
     let position = |id: &Value| nodes.iter().position(|node| node["node_id"] == *id).unwrap();
     match key_stages_refusal(package, nodes, order) {
-        Ok(()) => "admitted".to_owned(),
+        Ok(()) => match read_package_semantics(package, &parsed_fixture(OPERATION_CATALOG)) {
+            Ok(()) => "admitted".to_owned(),
+            Err(ReadRefusal::Frame(FrameRefusal::MissingName, locus)) => {
+                let at = nodes
+                    .iter()
+                    .position(|node| node["semantic_type"] == locus)
+                    .expect("the frame whose semantic_type names no node");
+                format!(
+                    "refused:missing_declaration:missing-name:/semantic_graph/nodes/{at}/semantic_type"
+                )
+            }
+            Err(other) => panic!("unexpected reader refusal {other:?}"),
+        },
         Err(ReadRefusal::NominalKey(id)) => format!(
             "refused:invalid_semantic_graph::/semantic_graph/nodes/{}/node_id",
             position(&id)
@@ -24351,12 +24383,26 @@ fn stage_outcome(package: &Value, order: &[KeyStage]) -> String {
             "refused:invalid_package:stale-node-key:/semantic_graph/nodes/{}/node_id",
             position(&id)
         ),
-        Err(ReadRefusal::OwnerSelection(id)) => format!(
-            "refused:missing_declaration:missing-selection:/semantic_graph/nodes/{}/owner",
-            position(&id)
-        ),
+        Err(ReadRefusal::OwnerSelection(id)) => {
+            // A `ModelOwner` refusal of a tuple or variant model type is at
+            // the node's `owner`; every other owner refusal at its `node_id`.
+            let at = position(&id);
+            let member = if matches!(
+                nodes[at]["semantic_form"].as_str(),
+                Some("tuple_value_type" | "variant_type")
+            ) {
+                "owner"
+            } else {
+                "node_id"
+            };
+            format!("refused:missing_declaration:missing-selection:/semantic_graph/nodes/{at}/{member}")
+        }
         Err(ReadRefusal::GraphShape(id)) => format!(
             "refused:invalid_semantic_graph::/semantic_graph/nodes/{}",
+            position(&id)
+        ),
+        Err(ReadRefusal::DerivedShape(id)) => format!(
+            "refused:invalid_package:invalid-derived-shape:/semantic_graph/nodes/{}/node_id",
             position(&id)
         ),
         Err(other) => panic!("unexpected stage refusal {other:?}"),
@@ -24416,7 +24462,7 @@ fn stage_order_cases() -> Vec<(String, Value, String)> {
 fn tc_940_the_key_and_join_stage_order_vectors_run_in_one_total_order() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     let cases = stage_order_cases();
-    assert_eq!(cases.len(), 14 + 5, "every published stage-order case ran");
+    assert_eq!(cases.len(), 15 + 5, "every published stage-order case ran");
     for (id, package, expected) in &cases {
         assert_eq!(
             unqualified_jcs_sha256(&package_id_preimage(package)),
@@ -24464,7 +24510,7 @@ fn tc_940_the_key_and_join_stage_order_vectors_run_in_one_total_order() {
             .find(|line| line.starts_with(&format!("| {name} |")))
             .unwrap_or_else(|| panic!("{name} row"))
     };
-    for id in ["NK-08", "NK-09", "NK-10", "NK-11", "NK-12", "NK-13", "TW-06", "TW-09"] {
+    for id in ["NK-08", "NK-09", "NK-10", "NK-11", "NK-12", "NK-13", "NK-14", "TW-06", "TW-09"] {
         assert!(row("FR-322-AC-169").contains(id) || row("FR-322-AC-170").contains(id), "{id}");
     }
 }
@@ -24488,6 +24534,18 @@ fn tc_940_swapping_any_two_adjacent_key_and_join_stages_fails_a_vector() {
     let flatten = |groups: &[Vec<KeyStage>]| groups.concat();
     let canonical = flatten(&groups);
     assert_eq!(canonical, VECTOR_STAGE_ORDER);
+    // The production order is the vector order without the two edge-existence
+    // stages, so a swap of the stages both share is caught by these vectors.
+    let production: Vec<KeyStage> = VECTOR_STAGE_ORDER
+        .iter()
+        .copied()
+        .filter(|stage| !matches!(stage, KeyStage::DanglingReference | KeyStage::EdgeExistence))
+        .collect();
+    assert_eq!(production, KEY_STAGE_ORDER);
+    // NK-14: the frame is outside stage 7's scope, though its edge dangles.
+    let frame = cases.iter().find(|case| case.0 == "NK-14").unwrap();
+    assert!(!edge_stage_owns(&frame.1["semantic_graph"]["nodes"][4]));
+    assert!(!undeferred_dangling_targets(&frame.1).is_empty());
     let expected_killers: [&[&str]; 6] = [
         &["NK-12"],
         &["NK-06"],

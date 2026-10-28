@@ -1,5 +1,5 @@
 {
-  "note": "STD-536: stage placement of the nominal key check. Base package fixtures/positive-compound-unit.json (nominal Length dimension, unit metre U, builtin Integer, and the compound unit metre^1 that holds unit=reference(U)). U_key is the key of U; K1 is the JCS SHA-256 of U's rekeyed nominal_identity_preimage (qualified_declaration Example::metres); the compound unit holding K1 has the key recorded in NK-01. Each wire case is an RFC 6902 patch over the fixture ending by replacing package_id with the recomputed package id. STD-546 (FR-322-AC-169, FR-322-AC-170): NK-08 to NK-13 pin the one total order of the key-and-join stages: graph shape, independent dangling reference, application key, nominal key, owner join, structural key, derived-shape semantic checks, then a dangling semantic_type or dependencies edge. NK-08 to NK-13 add nodes (no source_map entry) to the package; NK-10 and NK-11 also rekey the compound unit to its exponent-0 key. The node keys and package ids are recomputed from the JCS SHA-256 of the FR-322 preimages.",
+  "note": "STD-536: stage placement of the nominal key check. Base package fixtures/positive-compound-unit.json (nominal Length dimension, unit metre U, builtin Integer, and the compound unit metre^1 that holds unit=reference(U)). U_key is the key of U; K1 is the JCS SHA-256 of U's rekeyed nominal_identity_preimage (qualified_declaration Example::metres); the compound unit holding K1 has the key recorded in NK-01. Each wire case is an RFC 6902 patch over the fixture ending by replacing package_id with the recomputed package id. STD-546 (FR-322-AC-169, FR-322-AC-170): NK-08 to NK-14 pin the one total order of the key-and-join stages: graph shape, independent dangling reference, application key, nominal key, owner join, structural key, derived-shape semantic checks, then a dangling semantic_type or dependencies edge of a node whose own step does not own the check (NK-14: a frame is refused by the frame step). NK-14 is read through the full reader. NK-08 to NK-14 add nodes (no source_map entry) to the package; NK-10 and NK-11 also rekey the compound unit to its exponent-0 key. The node keys and package ids are recomputed from the JCS SHA-256 of the FR-322 preimages.",
   "base": "fixtures/positive-compound-unit.json",
   "keys": {
     "U_key": "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4",
@@ -635,7 +635,7 @@
         }
       ],
       "outcome": "refused:missing_declaration",
-      "locus": "/semantic_graph/nodes/4/owner",
+      "locus": "/semantic_graph/nodes/4/node_id",
       "cause": "missing-selection"
     },
     {
@@ -737,7 +737,7 @@
     },
     {
       "id": "NK-11",
-      "summary": "The compound unit holds exponent 0 under its recomputed key (a derived-shape semantic defect) and an added function node `Example::double` names a `semantic_type` no node carries (its structural key is current and its owner is selected): the derived-shape semantic checks precede the generic edge check, so the compound unit is reported.",
+      "summary": "The compound unit holds exponent 0 under its recomputed key (a derived-shape semantic defect) and an added function node `Example::double` names a `semantic_type` no node carries (its structural key is current and its owner is selected): the derived-shape semantic checks precede the dangling-edge check, so the compound unit is reported as `invalid_package`/`invalid-derived-shape` at its `node_id`.",
       "patch": [
         {
           "op": "replace",
@@ -804,8 +804,9 @@
           "value": "c06767177bb88df5ca27621a00f04c410a3cc5ae23515d92612c685ca6691617"
         }
       ],
-      "outcome": "refused:invalid_semantic_graph",
-      "locus": "/semantic_graph/nodes/3"
+      "outcome": "refused:invalid_package",
+      "locus": "/semantic_graph/nodes/3/node_id",
+      "cause": "invalid-derived-shape"
     },
     {
       "id": "NK-12",
@@ -992,8 +993,53 @@
         }
       ],
       "outcome": "refused:missing_declaration",
-      "locus": "/semantic_graph/nodes/4/owner",
+      "locus": "/semantic_graph/nodes/4/node_id",
       "cause": "missing-selection"
+    },
+    {
+      "id": "NK-14",
+      "summary": "An added `state`/`frame` node whose `semantic_type` names no node (its structural key is current): FR-340 owns the check in the frame step, so the dangling-edge stage leaves the frame alone and the frame step refuses `missing_declaration`/`missing-name` with the `semantic_type` as the locus (FR-340, `A frame node whose semantic_type names no node`).",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "creates": [],
+              "deletes": [],
+              "deletes_scoped": [],
+              "modifies": [],
+              "term": "frame"
+            },
+            "dependencies": [],
+            "node_tag": "state",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "generated"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "frame",
+            "semantic_type": {
+              "digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_id": {
+              "digest": "5868f2fe25297de34ca86837a2f8365422ab8036c4c0936e27a3eb4b10e178b1",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "d094d76093eeea6fff0b543b50c0e9702f3c8605f1d105c51848a8e55e04811c"
+        }
+      ],
+      "outcome": "refused:missing_declaration",
+      "cause": "missing-name",
+      "locus": "/semantic_graph/nodes/4/semantic_type"
     }
   ]
 }
