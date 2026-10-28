@@ -2,9 +2,9 @@
   "version": "quire.checked-timed-slot-selector-vectors/v1",
   "fixture": "fixtures/positive-timed-model-nodes.json",
   "selected_document": "domain-package-acme-timed-slots.json",
-  "selection_digest": "d63856fcbe0f4369cd9ce9264192d3d3baa66dd1dcd33bef7e918ec0355b5643",
+  "selection_digest": "4be5b6efa6f802944c55f1a711349c22c3d895560f8e70b5b712705a508d279a",
   "selected_package": "fixtures/positive-timed-slot-nodes.json",
-  "selected_package_id": "ce948569ce328ca2c8d39b8378517d60b3321ec2674c81b7fe81fc97249c745a",
+  "selected_package_id": "59e131784363a505f0ab65ae55be075ab9e68090e9c08b45484c8e17e67b6757",
   "selected_note": "The selected package carries the nodes of SL-01..SL-05, SL-06 (the published place), SL-07, the places and parameters of the presence section and PR-01 and PR-03, each at the graph index package_node names, and its timed root lists every place; its model_selections row digest is the SHA-256 of the RFC 8785 bytes of the whole selected document (FR-322-AC-240), whose projection of Order, Timer, ClockRow and ClockMap is the only declaration source of every resolved_path row. SL-03 and SL-04 declare the fields b and o (a model has one field c); the timed root key changed with the declared order of its aggregates (FR-322-AC-260) and the package id with it; the parameter node i, no longer the slot term of any admitted vector (PR-02 was dropped), stays published because PR-05 and PR-06 use it as an Integer owner and the owner/slot type checks name it.",
   "nested_collection": {
     "case": "SL-05",
@@ -6480,7 +6480,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "f17536e95552ad30b6f39c8cc69b6ee01085fc01ce128e4b38b60be53fa03cc6"
+          "value": "f096bf53aa4d7099116c457b6051b54ba5e9a79c32e73f5266758a632cbf81b3"
         }
       ],
       "schema": "valid",
@@ -6522,7 +6522,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "988617463056e175039229a7210bfc511eb4477dbad721f66103e1dbdf43a56e"
+          "value": "da64d40105db70acd005769c4e0d897ad58325becdb7f078cad4cb0d52e5b5a0"
         }
       ],
       "schema": "valid",
@@ -6577,7 +6577,7 @@
           {
             "op": "replace",
             "path": "/package_id/digest",
-            "value": "6f2aec3c2159c4755e51ff4205244dea0cb8d063c1b5a7dfc6c97f075ae5da51"
+            "value": "32cf399f92bbf99ecd295350569f21bc19802a4636bf2453d6ba8dc2c7cf8467"
           }
         ],
         "schema": "valid",
@@ -6650,7 +6650,7 @@
           {
             "op": "replace",
             "path": "/package_id/digest",
-            "value": "8dd766622b4ed8856659d107d3b87557f0b07136b013c53631d2f2eb6d7fe754"
+            "value": "9cfc50fbe1794567112c17e553a91715000850b991e33e29eb4eb8fdfef6bc05"
           }
         ],
         "schema": "valid",
@@ -6693,7 +6693,7 @@
           {
             "op": "replace",
             "path": "/package_id/digest",
-            "value": "970cb6965172cefa822edcbc93cd6c50c13fc11abdcde01aa1ce7e674daf9844"
+            "value": "584d223683a5795268a05bd3ad4eda689906a2487ae1beb440edee29c7361a9c"
           }
         ],
         "schema": "valid",

@@ -332,8 +332,68 @@
       "identityFields": [
         "ix://acme/orders/Order/sku"
       ],
-      "operations": [],
-      "relationships": [],
+      "operations": [
+        {
+          "identity": "ix://acme/orders/Order/size",
+          "name": "size",
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "params": [],
+          "post": [],
+          "pre": [],
+          "returns": {
+            "multiplicity": {
+              "lower": 1,
+              "ordered": false,
+              "unique": true,
+              "upper": 1
+            },
+            "nullable": false,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        }
+      ],
+      "relationships": [
+        {
+          "category": "structural",
+          "composite": false,
+          "direction": "bidirectional",
+          "identity": "ix://acme/orders/relationship/Order-order-Order",
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "sourceEnd": {
+            "multiplicity": {
+              "lower": 0,
+              "ordered": false,
+              "unique": true
+            },
+            "role": "order",
+            "type": "ix://acme/orders/Order"
+          },
+          "targetEnd": {
+            "multiplicity": {
+              "lower": 1,
+              "ordered": false,
+              "unique": true,
+              "upper": 1
+            },
+            "role": "next",
+            "type": "ix://acme/orders/Order"
+          }
+        }
+      ],
       "supertypes": []
     },
     {

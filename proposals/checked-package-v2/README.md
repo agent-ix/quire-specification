@@ -500,7 +500,9 @@ and two nodes declaring one name refuse as `ambiguous-name`
   section publishes the derived `presence_read` predicate over a clock place
   (FR-322-AC-155..157), and `model_join` the `object_type` node of `Order`
   with and without `v: Option<Clock>`. `domain-package-acme-timed-slots.json`
-  is the full selected document (FR-322-AC-240, FR-322-AC-241) and
+  is the full selected document (FR-322-AC-240, FR-322-AC-241; it declares
+  the `Order-order-Order` relationship and the `size` operation that the
+  package's model-owned nodes 7 and 30 name) and
   `fixtures/positive-timed-slot-nodes.json` the complete package that selects
   it and carries the `SL`, `PR` and model nodes; the `GD-02` and `GD-03`
   `patch` members are RFC 6902 patches on that package (FR-322-AC-242,
