@@ -362,7 +362,7 @@ this order and the first failing check is its defect:
    `invalid_model_binding`/`malformed-declaration`. The locus is the anchor's
    target.
 2. **Parameters.** Each parameter reference, in aggregate order, targets a
-   declared dependency, else `missing_declaration`/`missing-name`, that is
+   declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-322-AC-96, before this step), else `missing_declaration`/`missing-name` for a target that names no node, that is
    a `value`/`parameter` node, else `invalid_model_binding`/
    `malformed-declaration`. The locus is the offending target.
 3. **Signature.** The parameter count and each parameter's type equal the
