@@ -3435,9 +3435,9 @@ fn selected_model_document(package: &Value, identity: &str) -> Option<Value> {
     {
         return Some(own.clone());
     }
-    let shapes = parsed_fixture(MODEL_TUPLE_UNION_VECTORS)["domain_package"].clone();
-    if shapes["identity"] == identity && selects(&shapes) {
-        return Some(shapes);
+    let shapes = parsed_fixture(SHAPES_DOCUMENT);
+    if shapes["package"]["identity"] == identity && selects(&shapes) {
+        return Some(parsed_fixture(MODEL_TUPLE_UNION_VECTORS)["domain_package"].clone());
     }
     let document = parsed_fixture(DOMAIN_DOCUMENT);
     (document["package"]["identity"] == identity && selects(&document))
@@ -19634,6 +19634,71 @@ fn tc_310_published_roots_are_the_producer_oracle() {
 
 const MODEL_TUPLE_UNION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/model-tuple-union-vectors.json");
+/// The selected document of `acme/shapes`: a full FCD semantic IR 2.0.0
+/// domain package. `domain_package` in the vectors is its projection.
+const SHAPES_DOCUMENT: &str =
+    include_str!("../proposals/checked-package-v2/domain-package-acme-shapes.json");
+
+/// FR-322-AC-151: the projection FR-154 intake reads from the `acme/shapes`
+/// document, in document order: for each object type its supertypes and fields
+/// (multiplicities as decimal strings), for each tuple its positions by ordinal
+/// and for each variant type its cases in declared order.
+fn shapes_project_document(document: &Value) -> Value {
+    let meaning = |declared: &Value| -> String {
+        document["constructs"]
+            .as_array()
+            .expect("constructs")
+            .iter()
+            .find(|construct| construct["kind"] == declared["kind"])
+            .and_then(|construct| construct["construct"]["meaning"].as_str())
+            .expect("a construct for the kind")
+            .to_owned()
+    };
+    let (mut objects, mut tuples, mut variants) = (Vec::new(), Vec::new(), Vec::new());
+    for declared in document["types"].as_array().expect("types") {
+        match meaning(declared).as_str() {
+            "quire.meaning.model.object-type/v1" => objects.push(json!({
+                "node": declared["identity"],
+                "interfaceFeatures": null,
+                "supertypes": declared["supertypes"],
+                "fields": declared["fields"].as_array().expect("fields").iter().map(|field| json!({
+                    "name": field["name"],
+                    "typeRef": field["typeRef"],
+                    "presence": field["presence"],
+                    "multiplicity": {
+                        "lower": field["multiplicity"]["lower"].to_string(),
+                        "upper": field["multiplicity"]["upper"].to_string(),
+                        "ordered": field["multiplicity"]["ordered"],
+                        "unique": field["multiplicity"]["unique"],
+                    },
+                    "redefines": null,
+                })).collect::<Vec<_>>(),
+                "operations": [],
+            })),
+            "quire.meaning.model.tuple-value-type/v1" => tuples.push(json!({
+                "node": declared["identity"],
+                "positions": declared["positions"].as_array().expect("positions").iter().enumerate()
+                    .map(|(ordinal, position)| json!({"ordinal": ordinal, "typeRef": position["typeRef"]}))
+                    .collect::<Vec<_>>(),
+            })),
+            "quire.meaning.model.variant-type/v1" => variants.push(json!({
+                "node": declared["identity"],
+                "cases": declared["variants"].as_array().expect("variants").iter().map(|case| json!({
+                    "name": case["name"],
+                    "payloadType": case.get("payloadType").cloned().unwrap_or(Value::Null),
+                })).collect::<Vec<_>>(),
+            })),
+            other => panic!("unexpected meaning {other}"),
+        }
+    }
+    json!({
+        "identity": document["package"]["identity"],
+        "version": document["package"]["version"],
+        "object_types": objects,
+        "tuple_types": tuples,
+        "variant_types": variants,
+    })
+}
 
 /// The type a `typeRef` of the `acme/shapes` projection derives (FR-322
 /// "Model-owned members" step 4): a native name is its scalar, a package type
@@ -19900,6 +19965,56 @@ fn expected_refusal(expected: &Value) -> Option<(String, Option<String>)> {
     ))
 }
 
+/// FR-322-AC-151: the selected document of `acme/shapes` is a full FCD
+/// semantic IR; the vectors' `domain_package` is exactly its projection, and
+/// the row digest the lock pins is the JCS SHA-256 of the whole document.
+#[trace("TC-940", "FR-322-AC-151")]
+#[test]
+fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_pinned() {
+    let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
+    let document = parsed_fixture(SHAPES_DOCUMENT);
+    assert_eq!(vectors["selected_document"], "domain-package-acme-shapes.json");
+    assert_eq!(document["contractVersion"], "2.0.0");
+    assert_eq!(document["package"]["identity"], "acme/shapes");
+    for member in ["constructs", "types"] {
+        assert!(document[member].as_array().is_some_and(|list| !list.is_empty()), "{member}");
+    }
+    assert!(document.get("tuple_types").is_none() && document.get("variant_types").is_none());
+    let projection = shapes_project_document(&document);
+    assert_eq!(projection, vectors["domain_package"], "the projection derives from the document");
+    let package = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
+    ));
+    let row = &package["lock"]["model_selections"][0];
+    assert_eq!(row["identity"], document["package"]["identity"]);
+    assert_eq!(row["digest"], unqualified_jcs_sha256(&document), "the row pins the whole document");
+    assert_eq!(vectors["selection_digest"], row["digest"]);
+    assert_ne!(row["digest"], unqualified_jcs_sha256(&projection), "the projection is not digested");
+    // The model_root key and the package id derive from that digest.
+    let root = package["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|node| node["semantic_form"] == "model_root")
+        .expect("model_root");
+    assert_eq!(root["owner"]["digest"], row["digest"]);
+    // Swapping a position type in the document changes the document, so the row digest.
+    let mut swapped = document.clone();
+    let pair = swapped["types"]
+        .as_array_mut()
+        .expect("types")
+        .iter_mut()
+        .find(|declared| declared["identity"] == "ix://acme/shapes/Pair")
+        .expect("Pair");
+    pair["positions"].as_array_mut().expect("positions").swap(0, 1);
+    assert_ne!(unqualified_jcs_sha256(&swapped), row["digest"].as_str().unwrap());
+    // The projection lists follow document order, and reordering two declarations changes the document.
+    let mut reordered = document.clone();
+    reordered["types"].as_array_mut().expect("types").swap(1, 2);
+    assert_ne!(unqualified_jcs_sha256(&reordered), row["digest"].as_str().unwrap());
+    assert_ne!(shapes_project_document(&reordered), projection);
+}
+
 /// FR-322-AC-140 to FR-322-AC-146: the declarations, the fixture and the
 /// published identity vectors.
 #[trace("TC-940", "FR-322-AC-140", "FR-322-AC-146")]
@@ -19921,8 +20036,8 @@ fn tc_940_tuple_and_payload_variant_declarations_are_model_declaration_nodes() {
     );
     assert_eq!(
         vectors["selection_digest"],
-        unqualified_jcs_sha256(&vectors["domain_package"]),
-        "the selection digest is the projection's JCS digest"
+        unqualified_jcs_sha256(&parsed_fixture(SHAPES_DOCUMENT)),
+        "the selection digest is the JCS digest of the whole selected document (FR-322-AC-151)"
     );
     assert_eq!(
         package["lock"]["model_selections"][0]["digest"], vectors["selection_digest"],

@@ -55,7 +55,8 @@ and a second variant type `Level` with cases `Gold` and `Silver`.
 
 ## Tuple value types and payload-bearing variant types (STD-519)
 
-Scope: FR-322-AC-140 to FR-322-AC-147. Use `model-tuple-union-vectors.json`:
+Scope: FR-322-AC-140 to FR-322-AC-147 and FR-322-AC-151. Use `model-tuple-union-vectors.json`
+and its selected document `domain-package-acme-shapes.json`:
 the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 `p1: Integer`), `Swap` (`p0: Integer`, `p1: Boolean`) and `Nest` (`p0: Pair`,
 `p1: Shape`), the variant type `Shape` (cases `Empty`, `Flag(Boolean)`,
@@ -86,6 +87,11 @@ the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 12. Declare `Cell` (`Integer`, `List`) and `List` (`Nil`, `Cons(Cell)`) and walk
     them; compare the keys of `Cell` and `List` with their owner-only preimages.
 
+13. Derive the projection of `domain-package-acme-shapes.json`, compare it with
+    `domain_package`, and hash the RFC 8785 bytes of the whole document against
+    the lock row digest; swap the position types of `Pair` and reorder two
+    declarations in the document.
+
 Expected results:
 
 6. The first is admitted with family `tuple`; the owner-less node, the
@@ -108,3 +114,5 @@ Expected results:
     and locus its vector states, `TW-05` as `invalid_package`/`stale-node-key`.
 12. The cycle is admitted; neither node has a `recursion_group`; the walk and
     the empty leaf list are those of FR-322-AC-147.
+13. The projection equals `domain_package`; the row digest equals the SHA-256 of
+    the whole document; both mutations change that digest (FR-322-AC-151).
