@@ -19444,6 +19444,21 @@ fn tc_310_published_roots_are_the_producer_oracle() {
 const CLASS_CATALOG_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/class-catalog-vectors.json");
 
+/// The concrete classes of the CCF-01 subject, in canonical order, each as
+/// (class, memory model): declared classes, `cend`, three drains, then `flush`.
+const EXPECTED_CONCRETE_CLASSES: [(&str, &str); 10] = [
+    ("Impl::Do", ""),
+    ("Impl::E", ""),
+    ("Impl::K", ""),
+    ("Impl::T", ""),
+    ("Impl::ev", ""),
+    ("cend Impl::T", ""),
+    ("memory drain", "ra"),
+    ("memory drain", "sc"),
+    ("memory drain", "tso"),
+    ("memory flush", "tso"),
+];
+
 /// Reader-level class-catalog check over a schema-valid catalog: canonical
 /// order by (class UTF-8 bytes, memory model), no duplicate catalog key, and
 /// the effect, commit and cend classes the producer must catalogue.
@@ -19468,14 +19483,19 @@ fn class_catalog_reader_refusal(catalog: &Value) -> Option<&'static str> {
             }
         }
     }
-    let classes: BTreeSet<&str> = catalog["concrete"]
+    let present: BTreeSet<(String, String)> = catalog["concrete"]
         .as_array()
         .expect("concrete")
         .iter()
-        .map(|entry| entry["class"].as_str().expect("class"))
+        .map(|entry| {
+            (
+                entry["class"].as_str().expect("class").to_owned(),
+                entry["memory_model"].as_str().unwrap_or("").to_owned(),
+            )
+        })
         .collect();
-    for required in ["Impl::E", "Impl::K", "cend Impl::T"] {
-        if !classes.contains(required) {
+    for (class, model) in EXPECTED_CONCRETE_CLASSES {
+        if !present.contains(&(class.to_owned(), model.to_owned())) {
             return Some("omitted_class");
         }
     }
@@ -19501,28 +19521,28 @@ fn tc_310_class_catalog_carries_effect_commit_and_cend_classes() {
         assert_eq!(observed, case["expected"].as_str().expect("expected"), "{name}");
         if observed == "admitted" {
             admitted += 1;
-            let concrete: Vec<&str> = catalog["concrete"]
+            let concrete: Vec<(&str, &str)> = catalog["concrete"]
                 .as_array()
                 .unwrap()
                 .iter()
-                .map(|entry| entry["class"].as_str().unwrap())
+                .map(|entry| {
+                    (
+                        entry["class"].as_str().unwrap(),
+                        entry["memory_model"].as_str().unwrap_or(""),
+                    )
+                })
                 .collect();
             assert_eq!(
                 concrete,
-                [
-                    "Impl::Do",
-                    "Impl::E",
-                    "Impl::K",
-                    "Impl::T",
-                    "Impl::ev",
-                    "cend Impl::T",
-                    "memory drain",
-                    "memory drain",
-                    "memory drain"
-                ],
+                EXPECTED_CONCRETE_CLASSES,
                 "{name}: the canonical concrete class order"
             );
         }
     }
     assert_eq!(admitted, 1, "exactly the positive vector is admitted");
+    assert_eq!(
+        vectors["cases"].as_array().unwrap().len(),
+        15,
+        "every single-drop, misordered and duplicate case is present"
+    );
 }
