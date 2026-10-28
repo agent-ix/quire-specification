@@ -1,0 +1,40 @@
+{
+  "version": "quire.checked-package-option-value-vectors/v1",
+  "note": "Each positive entry is a complete application-node preimage for an identity-bound value/option_value. Digests are generated from the preimage with RFC 8785 JCS SHA-256. Refusal bodies are mutations of the closed OptionValueBody shape.",
+  "positive": [
+    {
+      "id": "OV-01",
+      "meaning": "Some(7) over Option<Integer>",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "value",
+        "semantic_form": "option_value",
+        "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "34d6ccd0ec2d1b9535c8f403f97f975f2b644c239318306e62602365efe35d0d"},
+        "declaration": null,
+        "recursion": null,
+        "body": {"term": "aggregate", "members": [{"term": "binding", "name": "value", "value": {"term": "reference", "target": {"domain": "quire.checked-semantic-node/v1", "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"}}}]}
+      },
+      "sha256": "193aa151f137126bd27c7994c07a92d4b4d2afb0c99d9019c5c850aaec2df952"
+    },
+    {
+      "id": "OV-02",
+      "meaning": "Some(8) differs from Some(7) by its referenced payload identity",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "value",
+        "semantic_form": "option_value",
+        "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "34d6ccd0ec2d1b9535c8f403f97f975f2b644c239318306e62602365efe35d0d"},
+        "declaration": null,
+        "recursion": null,
+        "body": {"term": "aggregate", "members": [{"term": "binding", "name": "value", "value": {"term": "reference", "target": {"domain": "quire.checked-semantic-node/v1", "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"}}}]}
+      },
+      "sha256": "2fdc4bc1f410a260dab16ce06fad420e33125780387100e23ea5df055ced5732"
+    }
+  ],
+  "refusal_bodies": [
+    {"id": "OV-R1", "body": {"term": "aggregate", "members": []}},
+    {"id": "OV-R2", "body": {"term": "aggregate", "members": [{"term": "binding", "name": "payload", "value": {"term": "reference", "target": {"domain": "quire.checked-semantic-node/v1", "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"}}}]}},
+    {"id": "OV-R3", "body": {"term": "aggregate", "members": [{"term": "binding", "name": "value", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"}, "value_kind": "integer", "value": "7"}}]}},
+    {"id": "OV-R4", "body": {"term": "aggregate", "members": [{"term": "binding", "name": "value", "value": {"term": "reference", "target": {"domain": "quire.checked-semantic-node/v1", "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"}}}, {"term": "binding", "name": "value", "value": {"term": "reference", "target": {"domain": "quire.checked-semantic-node/v1", "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"}}}]}}
+  ]
+}

@@ -66,6 +66,8 @@ const EXTENSION_DEFINITION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/extension-definition-vectors.json");
 const POSITIVE_UNION_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-union-nodes.json");
+const OPTION_VALUE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/option-value-vectors.json");
 const POSITIVE_RECURSIVE_RECORDS: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-recursive-records.json");
 const MODEL_MEMBER_TYPE_VECTORS: &str =
@@ -960,11 +962,12 @@ fn application_terms(term: &Value) -> Vec<&Value> {
 }
 
 /// Nodes with an application-node identity under FR-322: every node whose
-/// body contains an application, plus every `value`/`union_value` node,
-/// including a nullary aggregate construction.
+/// body contains an application, plus every `value`/`union_value` or
+/// `value`/`option_value` node, including nullary union constructions.
 fn is_application_node(node: &Value) -> bool {
     !application_terms(&node["body"]).is_empty()
-        || (node["node_tag"] == "value" && node["semantic_form"] == "union_value")
+        || (node["node_tag"] == "value"
+            && matches!(node["semantic_form"].as_str(), Some("union_value" | "option_value")))
 }
 
 /// Exact dependency list of an application-bearing node: every reference
@@ -24799,4 +24802,94 @@ fn tc_940_swapping_any_two_adjacent_key_and_join_stages_fails_a_vector() {
             .any(|(id, package, expected)| id == "NK-08"
                 && &stage_outcome(package, &owner_first) != expected)
     );
+}
+
+/// FR-322-AC-244: a present option is a value node with an identity-bound
+/// payload reference; it has no operator identity.
+#[trace("TC-971", "FR-322-AC-244")]
+#[test]
+fn tc_971_option_value_body_is_closed_and_its_preimage_covers_type_and_payload() {
+    let schema_document: Value = serde_json::from_str(SCHEMA).expect("published schema is JSON");
+    let node_schema = json!({
+        "$schema": schema_document["$schema"],
+        "$defs": schema_document["$defs"],
+        "$ref": "#/$defs/SemanticNode"
+    });
+    let schema = jsonschema::validator_for(&node_schema).expect("semantic-node schema is valid");
+    let vectors = parsed_fixture(OPTION_VALUE_VECTORS);
+    let fixture = parsed_fixture(POSITIVE_INTEGER_LITERAL_REFERENCES);
+    let template = fixture["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("fixture nodes are an array")
+        .iter()
+        .find(|node| node["node_tag"] == "value" && node["semantic_form"] == "literal")
+        .expect("fixture has a literal node")
+        .clone();
+
+    let positives = vectors["positive"]
+        .as_array()
+        .expect("positive vectors are an array");
+    let mut observed_keys = BTreeSet::new();
+    for vector in positives {
+        let preimage = &vector["preimage"];
+        let digest = unqualified_jcs_sha256(preimage);
+        assert_eq!(
+            digest,
+            vector["sha256"].as_str().unwrap_or_default(),
+            "{}",
+            vector["id"]
+        );
+        assert!(
+            observed_keys.insert(digest.clone()),
+            "positive keys are distinct"
+        );
+
+        let mut node = template.clone();
+        node["node_tag"] = json!("value");
+        node["semantic_form"] = json!("option_value");
+        node["semantic_type"] = preimage["semantic_type"].clone();
+        node["node_id"]["digest"] = json!(digest);
+        node["body"] = preimage["body"].clone();
+        node["dependencies"] = json!([preimage["body"]["members"][0]["value"]["target"]]);
+        assert!(
+            schema.is_valid(&node),
+            "{} is a closed option-value node",
+            vector["id"]
+        );
+        assert_eq!(
+            application_node_preimage(&node, &[]).as_ref(),
+            Some(preimage),
+            "the whole option-value body and semantic type enter its application preimage"
+        );
+    }
+    assert_eq!(
+        observed_keys.len(),
+        2,
+        "payload identity changes option identity"
+    );
+
+    let option_preimage = &positives[0]["preimage"];
+    let mut other_type = option_preimage.clone();
+    other_type["semantic_type"]["digest"] =
+        json!("1111111111111111111111111111111111111111111111111111111111111111");
+    assert_ne!(
+        unqualified_jcs_sha256(&other_type),
+        positives[0]["sha256"].as_str().unwrap()
+    );
+
+    for refusal in vectors["refusal_bodies"]
+        .as_array()
+        .expect("refusal vectors are an array")
+    {
+        let mut node = template.clone();
+        node["node_tag"] = json!("value");
+        node["semantic_form"] = json!("option_value");
+        node["semantic_type"] = option_preimage["semantic_type"].clone();
+        node["body"] = refusal["body"].clone();
+        assert!(
+            !schema.is_valid(&node),
+            "{} is refused by OptionValueBody",
+            refusal["id"]
+        );
+    }
 }

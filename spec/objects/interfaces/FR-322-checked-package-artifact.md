@@ -429,7 +429,7 @@ boundary.
   then `operation-mode-type-mismatch` (`invalid_package`) and
   `operator-ineligible` (arity, operand family, constraint, member or result
   type outside the entry; code `ill_typed`); then the leaves.
-- `application_node_preimage` — every `value`/`union_value` node, and every
+- `application_node_preimage` — every `value` node with `semantic_form` `union_value` or `option_value`, and every
   other node whose body contains an application except a
   `relation`/`refinement` node, is keyed by the JCS SHA-256
   of `{version: "quire.application-node/v1",
@@ -451,7 +451,18 @@ boundary.
   [FR-440](FR-440-checked-package-union-and-case-nodes.md) specifies, with
   no construction application, operator or operation identity added. This
   exception does not select `record_value` or `tuple_value` nodes whose
-  bodies contain no application. An `expression` whose body root is
+  bodies contain no application. A present option value is a `value` node
+  with `semantic_form: "option_value"`, keyed by the JCS SHA-256 of the
+  `quire.application-node/v1` preimage. Its `semantic_type` is the
+  `composite_type`/`option` node; its body is exactly
+  `aggregate{[binding "value" = reference(payload)]}`. The referenced payload
+  is the checked value of the option's element type. The option type and
+  payload reference both affect the node key. Its `dependencies` contains the
+  payload target, not the `semantic_type` edge. It has no operator identity:
+  constructing `Some(e)` is a value construction, not an application.
+  `option_value` body shape and identity vectors are published in
+  `option-value-vectors.json`.
+  An `expression` whose body root is
   an application has the `semantic_form` fixed by its operator class; the
   node's `dependencies` are exactly the unique digest-ascending `reference`
   term targets, member declarations and member `population` nodes of its body;
@@ -780,6 +791,7 @@ boundary.
   | --- | --- |
   | builtin `scalar_type`, `model` or `relation` declaration node, enum declaration | `[]` |
   | `value`/`literal`, `value`/`parameter` | `[]`; the body holds literals only |
+  | `value`/`option_value` | the one payload target referenced by its `value` binding; its `semantic_type` is not a dependency |
   | `bounded_domain` (`integer_range`, `collection_bounds`, `model_population` and every other form) | its `semantic_type` only; a bound's literal `type` is not listed |
   | `composite_type` `option`, a collection kind, `reference`; declared `record` or `tuple` | each node the body references |
   | `expression`/`reference`, `correspondence`/`source_locus`, `protocol`/`protocol_reference` | the body's target |
@@ -3092,6 +3104,7 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-242 | `GD-02` and `GD-03` publish `patch`, an RFC 6902 array of `add`, `remove` and `replace` operations on `fixtures/positive-timed-slot-nodes.json` that ends with the replaced root key (`node_id` and `semantic_type`), its `source_map` entry and the recomputed `package_id`. The patched package is valid under the V2 schema and every key and the package id are current; the reader refuses it with the vector's `expected_code`, `expected_cause` and `locus` and no other. The unmutated package is the control and is admitted. | Test (TC-367; CK-29; GD-02, GD-03) |
 | FR-322-AC-243 | A `clock_guard` node that no timed root's `guards` lists refuses `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{i}/body`, `i` the graph index of the unlisted node (the first in ascending node-id digest order when several are unlisted), not at the root's `guards` aggregate; `GD-03` refuses at `/semantic_graph/nodes/47/body` with `locus_suffix` `body`. The duplicate place of `GD-02` refuses `invalid_package`/`duplicate-clock-place` at `/semantic_graph/nodes/52/body/members/3/value/members/9`, the later reference of AC-120. The `GD-02` patch appends the twin last in the root's `clock_places`; the vector does not exercise aggregate order, the locus is the duplicate member 9 either way, and this criterion asserts no aggregate order. | Test (TC-367; CK-29; GD-02, GD-03) |
 | FR-322-AC-260 | The slot vectors' `aggregate_order` section publishes the order rule and four cases over `fixtures/positive-timed-slot-nodes.json`: `AO-01`, the selected package, lists `clock_places`, `resets`, `guards`, `invariants`, `urgencies` and `constraints` in ascending order key (the nine places in the order of their source regions, which is not their node-digest order); `AO-02` swaps two adjacent places, `AO-03` lists the places in ascending node-id digest order (the order the earlier fixture used: a hash-derived order is not canonical) and `AO-04` swaps the two urgencies; `AO-05` and `AO-06` give two places one start and order them by their end (in order, and out of order), and `AO-07` gives the second place a further `source_map` entry that starts earlier, so its minimum key falls below its predecessor's. The order key is the minimum triple (`source.identity`, `start`, `end`) over every region of every `source_map` entry of the node. Each of `AO-02`..`AO-04`, `AO-06` and `AO-07` is an RFC 6902 `patch` that ends with the replaced root key, its `source_map` entry and the recomputed `package_id`, is schema-valid with every key current, and refuses `invalid_semantic_graph`, with no cause, at the first member whose order key is not above its predecessor's (`locus`), and no other refusal; `AO-05` is admitted. A repeated path is a distinct place node in order (`TM-12`, `GD-02`), never one node listed twice, which would repeat its order key. `GD-02`, which appends `SL-08` last, is in order. | Test (TC-367; CK-30; AO-01..AO-07) |
+| FR-322-AC-244 | The positive `option_value` vectors have the closed single `value` binding to a payload reference and their recorded application-node digests recompute from the complete preimage; changing either the option type or payload reference changes the digest. Each refusal body in OV-R1..OV-R4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fails `OptionValueBody`. | Test (TC-971) |
 
 ## Dependencies
 
