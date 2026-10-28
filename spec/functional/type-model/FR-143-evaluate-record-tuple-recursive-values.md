@@ -201,6 +201,28 @@ before any charge. A position whose expected type is not an option, such as an
 `Option<T>` position (Field presence): `P { b: absent }` for `b: Integer?` is
 `type-mismatch`, because that slot is absent by omitting the field and is never
 written with an option value, and `null` is still never an `Option<T>` value.
+The slot state `absent` of a `?` field is therefore not the Option literal: it is a
+state of the slot, never an expression, and only the omission of the field
+constructs it. The literals `none` and `absent` stand only in `Option<T>`-typed
+positions; the FR-375-AC-17 refinement row `none` over an abstract `?` field is
+such a position (the row is `Option<T>`-typed and leaves the field absent) and is
+admitted, while `P { b: absent }` for the same `b: Integer?` written as a record
+value is refused.
+
+`none` obeys the same rules as `absent`, which is a change for `none`: outside a
+refinement row, `let x = none in x`, `none = none` and `present(none)` are
+`refused { code: ill_typed, cause: ambiguous-literal }` and `none` for an
+`Integer` position is `type-mismatch`; inside a refinement row FR-375 ("Option
+rows") keeps its own rule, `none` with no field type or `if` sibling being
+`type-mismatch`.
+
+An `if` and a `case` differ in where their branch types come from. An `if` branch
+takes the expected type of the `if` itself, so `if true then absent else x` is
+admitted where the `if` stands at an `Option<Integer>` position. A `case` with no
+expected type infers its arm bodies (FR-146 "Result type", rule 2), and arms do not
+type one another: an arm body `absent`, or `let y = absent in y`, is then refused
+`ambiguous-literal` even when a sibling arm has type `Option<Integer>`; a `case` at
+an `Option<Integer>` position admits `absent` as an arm body.
 
 The word `absent` has one other use: in `lookup<T>(p, r) absent m` it follows
 the closing parenthesis of the `lookup` and introduces the absence mode `m`
@@ -298,7 +320,7 @@ and equality.
 | FR-143-AC-15 | A supplied `Shape` argument is refused `invalid_runtime_input`/`wrong-value-kind` before any evaluation or charge when its member key is a member key of another union, when its member key is no member's key, when it carries one payload value for `Rect`, and when its `Circle` payload is a `Text` value; a well-formed supplied `Shape::Rect(2, 3)` is admitted. | Test (TC-400) |
 | FR-143-AC-16 | A package selecting `quire.value.complete/v1` with exactly the always-selected definitions and no trigger admits a union declaration, its construction and a `case` over it, and its selection equals that of the same package with the union replaced by a record. | Test (TC-400) |
 | FR-143-AC-17 | Two units that select one model under different aliases (`model M = ...` and `model N = ...`) give `Money` and `TaxedMoney` the same declaration keys, each equal to the record's model node key; a `TaxedMoney` built in one unit equals the same value built in the other, and a `Set<Money>` holding a `Money` and a `TaxedMoney` orders its two members identically in both. | Test (TC-188) |
-| FR-143-AC-18 | `absent` takes its `Option<T>` from the unique expected type of its position and denotes the `none` of that type: the write `self.v = absent` for `v: Option<Clock>` and for `v: Option<Integer>`, the argument for an `Option<Integer>` parameter, a function result typed `Option<Integer>`, an `if` branch whose other branch is an `Option<Integer>` operand, the record field `v: absent` for `v: Option<Integer>`, and either operand of `=` against an `Option<Integer>` operand are admitted; `(lookup<M::A>(p, r) absent empty) = absent` is true for a key `p` does not hold and false for one it holds; `absent = absent` of two `Option<Integer>` operands is true. | Test (TC-188) |
+| FR-143-AC-18 | `absent` takes its `Option<T>` from the unique expected type of its position and denotes the `none` of that type: the write `self.v = absent` for `v: Option<Clock>` and for `v: Option<Integer>`, the argument for an `Option<Integer>` parameter, a function result typed `Option<Integer>`, an `if` branch whose other branch is an `Option<Integer>` operand, the record field `v: absent` for `v: Option<Integer>`, and either operand of `=` against an `Option<Integer>` operand are admitted; `(lookup<M::A>(p, r) absent empty) = absent` is true for a key `p` does not hold and false for one it holds; `x = y` of two `Option<Integer>`-typed operands (parameters or fields, not literals) that both hold no value is true, and `x = absent` is true exactly when `x` holds none; the literal against the literal, `absent = absent`, has no expected type and is refused (FR-143-AC-19). | Test (TC-188) |
 | FR-143-AC-19 | An `absent` with no unique expected type (both operands of `=`, `let x = absent in x`, `present(absent)`, `value(absent)`) is `refused { code: ill_typed, cause: ambiguous-literal }` before any charge, and one whose expected type is not an option (an `Integer` field or parameter, a `Reference<T>`, a `Set<Integer>`) is `refused { code: ill_typed, cause: type-mismatch }`; neither is read as the `none` of a guessed type. | Test (TC-188) |
 | FR-143-AC-20 | A `?` field takes no `absent` literal: `P { a: 1, b: absent }` for `b: Integer?` is `refused { code: ill_typed, cause: type-mismatch }` while omitting `b` still constructs the absent slot, and `null` for an `Option<Integer>` parameter stays `ill_typed`. `lookup<M::A>(p, r) absent undefined`, `absent empty` and `absent refused` parse as before, the `absent` after the `)` introducing the mode, and `lookup<M::A>(p, r) absent absent` is not a mode and is `refused { code: invalid_syntax, cause: unexpected-token }`. | Test (TC-188) |
 

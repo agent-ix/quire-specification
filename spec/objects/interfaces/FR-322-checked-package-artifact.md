@@ -2227,6 +2227,13 @@ application has `semantic_type` equal to that `result_type`. A `literal` term's
 `text`, `string`, `uuid`, `timestamp`, `bytes`, `json_object`, `enum`→`enum` or `ordered_enum`, `none`→`option`, `quantity`→`quantity`, `reference`→`reference`). Any failure is
 `operator-ineligible`.
 
+The Option literals `none` and `absent` (FR-143 "The `absent` Option literal") lower
+to one `literal` term with `value_kind` `none` whose `type` is a node of family
+`option`, the `composite_type`/`option` node of the `Option<T>` the position
+expects; the spelling is not carried. No type node stands for a clock, so for an
+`Option<Clock>` place no such literal exists in the package: `self.v = absent` over
+`v: Option<Clock>` is recorded by the timed model (FR-415), not carried in the package.
+
 The fit rule has one exception besides record conformance ("Record
 conformance"), **event equality**: `quire.op.structural.eq` and
 `quire.op.structural.ne` refuse an application whose operand 0 type node is,
