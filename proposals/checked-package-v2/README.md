@@ -498,3 +498,9 @@ differently on purpose.
    never replace them with a fixture's own package id (a test checks this).
 6. Node-position loci follow the fixture: a vector whose mutation appends a
    node (`timed-model-node-vectors.json` TM-23) names the new fixture length.
+
+- `timed-slot-selector-vectors.json` publishes standalone `clock_place` nodes
+  for the slot selector of a template step (FR-322-AC-148..FR-322-AC-150,
+  TC-367 CK-26): positive collection kinds, refused selectors and the guard
+  cases. Each node key is the SHA-256 of the RFC 8785 structural preimage and
+  `SL-06` equals the published fixture place.

@@ -33,6 +33,8 @@ const POSITIVE_TIMED_MODEL_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-timed-model-nodes.json");
 const POSITIVE_TICK_TIMED_MODEL_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-tick-timed-model-nodes.json");
+const TIMED_SLOT_SELECTOR_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/timed-slot-selector-vectors.json");
 const TIMED_MODEL_NODE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
 const FR322_BODY_STEPS: &str = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
@@ -20445,4 +20447,86 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
         assert_eq!(observed, expected, "{id}");
     }
     assert_eq!(ids.len(), 27, "every published wire case ran");
+}
+
+/// The slot-selector oracle of FR-322 "Timed-model nodes": a reference to the
+/// Integer type node (sequence-like) or the Text key type node (map).
+fn slot_selector_is_symbolic(step: &Value, integer: &str, text: &str) -> bool {
+    let members = step["members"].as_array().expect("slot step members");
+    let collection = members[1]["value"]["value"].as_str().expect("collection");
+    let selector = &members[2]["value"];
+    let want = if collection == "map" { text } else { integer };
+    selector["term"] == "reference" && selector["target"]["digest"] == want
+}
+
+#[trace("TC-367", "FR-322-AC-148", "FR-322-AC-149", "FR-322-AC-150")]
+#[test]
+fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
+    let vectors: Value = serde_json::from_str(TIMED_SLOT_SELECTOR_VECTORS).expect("vectors JSON");
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("fixture JSON");
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let schema = parsed_fixture(SCHEMA);
+    let timed_schema = schema_for_def(&schema, "TimedModelNode");
+    let integer = vectors["type_nodes"]["integer"].as_str().unwrap();
+    let text = vectors["type_nodes"]["text"].as_str().unwrap();
+    assert_eq!(nodes[24]["node_id"]["digest"], integer);
+    assert_eq!(nodes[23]["node_id"]["digest"], text);
+    let mut keys = BTreeSet::new();
+    let mut positives = 0;
+    let mut refusals = 0;
+    for case in vectors["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let node = &case["node"];
+        assert!(structural_node_key_is_current(node), "{id} key hashes its body");
+        assert_eq!(node["semantic_type"], node["node_id"], "{id} is self-typed");
+        assert_eq!(node["dependencies"], json!(body_reference_targets(&node["body"])), "{id}");
+        assert!(timed_schema.is_valid(node), "{id} matches the closed schema");
+        assert!(keys.insert(node["node_id"]["digest"].as_str().unwrap().to_owned()), "{id} key is distinct");
+        let steps = node["body"]["members"][1]["value"]["members"].as_array().unwrap();
+        let symbolic = steps
+            .iter()
+            .filter(|step| step["members"][0]["value"]["value"] == "slot")
+            .all(|step| slot_selector_is_symbolic(step, integer, text));
+        match case["expected"].as_str().unwrap() {
+            "admitted" => {
+                assert!(symbolic, "{id} carries symbolic selectors");
+                positives += 1;
+            }
+            "refused" => {
+                assert!(!symbolic, "{id} selector is refused");
+                assert_eq!(case["expected_cause"], "malformed-clock-place");
+                refusals += 1;
+            }
+            other => panic!("{id}: {other}"),
+        }
+        if let Some(index) = case["published_node_index"].as_u64() {
+            assert_eq!(*node, nodes[index as usize], "{id} is the published place");
+        }
+        if let Some(instances) = case["instances"].as_array() {
+            let slots = steps
+                .iter()
+                .filter(|step| step["members"][0]["value"]["value"] == "slot")
+                .count();
+            for instance in instances {
+                assert_eq!(instance["slots"].as_array().unwrap().len(), slots, "{id}");
+            }
+        }
+    }
+    assert_eq!((positives, refusals), (8, 4));
+    // Guards never enter place identity: SL-07 and SL-08 share one path.
+    let cases = vectors["cases"].as_array().unwrap();
+    let by = |id: &str| cases.iter().find(|c| c["id"] == id).unwrap()["node"].clone();
+    assert_eq!(by("SL-07")["body"]["members"][1], by("SL-08")["body"]["members"][1]);
+    assert_ne!(by("SL-07")["node_id"], by("SL-08")["node_id"]);
+    assert!(by("SL-08")["body"]["members"][3]["value"]["members"].as_array().unwrap().is_empty());
+    // GD-01: the published tick root has empty clock aggregates.
+    let tick: Value = serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES).unwrap();
+    for index in 3..9 {
+        assert!(tick["semantic_graph"]["nodes"][45]["body"]["members"][index]["value"]["members"].as_array().unwrap().is_empty());
+    }
+    // GD-03: every clock_guard of the dense fixture is listed by the root.
+    let root = &nodes[52]["body"]["members"][5]["value"]["members"];
+    for guard in nodes.iter().filter(|n| n["semantic_form"] == "clock_guard") {
+        assert!(root.as_array().unwrap().iter().any(|r| r["target"] == guard["node_id"]));
+    }
 }
