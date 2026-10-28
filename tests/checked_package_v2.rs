@@ -2864,86 +2864,287 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
 const FR466_PROTOCOL_CONTROLS: &str =
     include_str!("../spec/objects/interfaces/FR-466-checked-package-protocol-control-bodies.md");
 
-/// The published protocol vector with this test case and id.
-fn protocol_vector<'a>(cases: &'a [Value], test_case: &str, id: &str) -> &'a Value {
-    cases
-        .iter()
-        .find(|case| case["test_case"] == test_case && case["id"] == id)
-        .unwrap_or_else(|| panic!("{test_case} {id} is published"))
+/// A text with every run of whitespace collapsed to one space, so a pinned
+/// sentence is compared independent of line wrapping.
+fn normalized(text: &str) -> String {
+    text.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
-/// A vector's Expected text names this refusal: its code and cause pair,
-/// stated as the one backticked `code`/`cause` token the vectors use.
-fn expects_refusal(vector: &Value, pair: &str) -> bool {
-    vector["Expected"]
-        .as_str()
-        .is_some_and(|expected| expected.contains(&format!("`{pair}`")))
+/// The cells of the table row whose first cell is `id`, in a document.
+fn table_row(document: &str, id: &str) -> Option<Vec<String>> {
+    let prefix = format!("| {id} |");
+    document
+        .lines()
+        .find(|line| line.starts_with(&prefix))
+        .map(|line| {
+            line.trim_start_matches("| ")
+                .trim_end_matches(" |")
+                .split(" | ")
+                .map(str::to_string)
+                .collect()
+        })
+}
+
+/// The exact `Expected` of each STD-539 vector (test case, id, text).
+const STD_539_EXPECTED: [(&str, &str, &str); 9] = [
+    (
+        "TC-946",
+        "R13",
+        "`unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile (FR-464-AC-21)",
+    ),
+    (
+        "TC-946",
+        "R14",
+        "`unsupported_construct`/`declaration-form` at the outer `repeat`; the guard is not evaluated (FR-464-AC-21)",
+    ),
+    (
+        "TC-946",
+        "R15",
+        "each `unsupported_construct`/`declaration-form` at the outer `repeat`, the same refusal as R13 and R14 (FR-464-AC-21)",
+    ),
+    (
+        "TC-946",
+        "R16",
+        "each admitted (a sibling step, the `parallel` and the `await` step) (FR-464-AC-21)",
+    ),
+    (
+        "TC-948",
+        "DF14",
+        "each `missing_declaration`/`missing-name` at the read (out-of-scope; a `repeat` has no post-test form); never admitted, never `wrong_snapshot`, never `invalid_package`/`invalid-value` (FR-466-AC-17)",
+    ),
+    ("TC-948", "DF15", "admitted (FR-466-AC-17)"),
+    (
+        "TC-948",
+        "DF16",
+        "each `invalid_model_binding`/`malformed-declaration` at the target (FR-466-AC-18)",
+    ),
+    (
+        "TC-948",
+        "DF17",
+        "each `ill_typed`/`operator-ineligible` at the read, naming the slot (FR-466-AC-18)",
+    ),
+    (
+        "TC-948",
+        "DF18",
+        "the entries are admitted as composite entries; the guard read refuses `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` (FR-466-AC-18)",
+    ),
+];
+
+const FR464_AC21_BODY: &str = "A `repeat` never counts as a step in an enclosing `repeat`'s progress: an outer `repeat` whose body is only a nested `repeat` that holds a step refuses `unsupported_construct`/`declaration-form` at the outer `repeat` whatever the nested guard is (`true`, the tautology `a or not a`, a non-tautological `a`, with or without a `maximum`, with `maximum` 0), the guard is never evaluated or compared, while a body that holds a step beside the nested `repeat` (a `sequence` with a stepping sibling) or a `parallel` or `await` around it is admitted.";
+const FR466_AC17_BODY: &str = "A `repeat` has no post-test form: a `repeat` guard and a `repeat` `visible` entry that read a field of a binder introduced in that `repeat`'s own body (an `attempt` or `event` binder `by` the owner, so eligible) each refuse `missing_declaration`/`missing-name` as an out-of-scope read, for a `repeat` with no `maximum`, with `maximum` 3 and with `maximum` 0, and are never admitted, never `wrong_snapshot`/`wrong-observation` and never `invalid_package`/`invalid-value`; the same `visible` entry and guard reading a binder in scope at the `repeat`'s entry are admitted.";
+const FR466_AC18_BODY: &str = "A `visible` entry is an `expression` node: an entry targeting a `value`/`literal` node and one targeting a record binder's `value`/`parameter` node each refuse `invalid_model_binding`/`malformed-declaration` at the target; an `expression`/`reference` entry to a record binder refuses `ill_typed`/`operator-ineligible` at the read; a `choice` and a `repeat` behave alike; an application over constants only, and one over a capture only, is admitted as a composite entry and lists no fact a guard may read (a guard reading a fact no individual entry lists still refuses `wrong_snapshot`/`wrong-observation`, `reason` `unlisted`).";
+
+/// FR-464's sentence that a `repeat` is never a step, even when its guard is
+/// `true`, a tautology or its `maximum` is 0.
+const FR464_NEVER_A_STEP: &str = "A `repeat` is never a step, whatever it nests and whatever its guard: progress reads the graph's edges, never a guard's value ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)), so a `repeat` that is the whole of an outer `repeat`'s body, or the only stepping part of a `choice` case, a `sequence` or another nested `repeat`, contributes no step to the outer `repeat`, even when its guard is `true`, a tautology or its `maximum` is 0;";
+const FR464_NO_GUARD_FEASIBILITY: &str = "a source checker that does so (a guard-feasibility proof) has no wire form: an outer `repeat` whose body steps only through a nested `repeat` is refused.";
+/// FR-466's "No post-test `repeat`" paragraph, whole.
+const FR466_NO_POST_TEST: &str = "**No post-test `repeat`.** A `repeat` guard or `visible` entry that reads a binder introduced in that `repeat`'s own body, such as the most recently completed iteration's `attempt` binder, refuses `missing_declaration`/ `missing-name` as an out-of-scope read, whatever the binder's kind, its eligibility for the owner, the `maximum` (including 0) and whether the read is a field or bare. The wire has no post-test form: a `repeat` has no argument that runs the body once before its first guard, and FR-426 has no such move. A source language that defines post-test `repeat` semantics (QSL FR-218-AC-33) has no checked-package encoding until a requirement adds one.";
+
+/// Every way the STD-539 rulings are not pinned by these texts; empty when
+/// each pin holds exactly.
+fn std_539_defects(
+    fr464: &str,
+    fr466: &str,
+    tc946: &str,
+    tc948: &str,
+    vectors: &Value,
+) -> Vec<String> {
+    let mut defects = Vec::new();
+    let cases = vectors["cases"].as_array().expect("cases are an array");
+    for (test_case, id, expected) in STD_539_EXPECTED {
+        let vector = cases
+            .iter()
+            .find(|case| case["test_case"] == test_case && case["id"] == id);
+        let Some(vector) = vector else {
+            defects.push(format!("{test_case} {id} is not published"));
+            continue;
+        };
+        if vector["Expected"].as_str() != Some(expected) {
+            defects.push(format!("{test_case} {id} Expected is not the ruled text"));
+        }
+        // The table row restates the vector: same Edit, same Expected.
+        let document = if test_case == "TC-946" { tc946 } else { tc948 };
+        let edit = ["Edit", "Edit to the base"]
+            .iter()
+            .find_map(|field| vector[*field].as_str());
+        let row = table_row(document, id);
+        if row.as_deref()
+            != edit
+                .map(|edit| vec![id.to_string(), edit.to_string(), expected.to_string()])
+                .as_deref()
+        {
+            defects.push(format!(
+                "{test_case} {id} table row differs from the vector"
+            ));
+        }
+    }
+    let df14 = cases
+        .iter()
+        .find(|case| case["test_case"] == "TC-948" && case["id"] == "DF14")
+        .and_then(|case| case["Edit"].as_str())
+        .unwrap_or_default();
+    if !(df14.contains("no `maximum`")
+        && df14.contains("`maximum` 3")
+        && df14.contains("`maximum` 0"))
+    {
+        defects.push("DF14 does not cover maximum none, 3 and 0".to_string());
+    }
+    for (document, id, body) in [
+        (fr464, "FR-464-AC-21", FR464_AC21_BODY),
+        (fr466, "FR-466-AC-17", FR466_AC17_BODY),
+        (fr466, "FR-466-AC-18", FR466_AC18_BODY),
+    ] {
+        let row = table_row(document, id);
+        if row
+            .as_ref()
+            .and_then(|cells| cells.get(1))
+            .map(String::as_str)
+            != Some(body)
+        {
+            defects.push(format!("{id} row body is not the ruled text"));
+        }
+    }
+    for (document, sentence, name) in [
+        (
+            fr464,
+            FR464_NEVER_A_STEP,
+            "FR-464 'never a step ... even when its guard is true'",
+        ),
+        (
+            fr464,
+            FR464_NO_GUARD_FEASIBILITY,
+            "FR-464 no guard-feasibility form",
+        ),
+        (fr466, FR466_NO_POST_TEST, "FR-466 'No post-test repeat'"),
+    ] {
+        if !normalized(document).contains(&normalized(sentence)) {
+            defects.push(format!("{name} paragraph is missing or changed"));
+        }
+    }
+    defects
 }
 
 /// STD-539: a nested `repeat` is never a step in an enclosing `repeat`'s
 /// progress (FR-464-AC-21), a `repeat` has no post-test form (FR-466-AC-17)
 /// and a `visible` entry is an `expression` node (FR-466-AC-18). The rulings
-/// are pinned in the requirement text, the criterion rows and the vectors; each
-/// pin is then mutated and the mutation must be caught.
+/// are pinned by exact text in the criterion rows, the requirement
+/// paragraphs and the vectors with their table rows; each mutant below must
+/// produce a defect.
 #[trace("TC-946", "TC-948", "FR-464-AC-21", "FR-466-AC-17", "FR-466-AC-18")]
 #[test]
 fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
     let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
-    let cases = vectors["cases"].as_array().expect("cases are an array");
-    let declaration_form = "unsupported_construct`/`declaration-form";
-    let missing_name = "missing_declaration`/`missing-name";
-    let malformed = "invalid_model_binding`/`malformed-declaration";
-    let operator_ineligible = "ill_typed`/`operator-ineligible";
+    let check = std_539_defects;
+    let (fr464, fr466) = (FR464_PROTOCOL_NODES, FR466_PROTOCOL_CONTROLS);
+    let (tc946, tc948) = (TC946_PROTOCOL_NODE_FAMILY, TC948_PROTOCOL_NODE_FAMILY);
+    assert_eq!(
+        check(fr464, fr466, tc946, tc948, &vectors),
+        Vec::<String>::new()
+    );
 
-    // (test case, vector, refusal pair it must name)
-    let refusing = [
-        ("TC-946", "R13", declaration_form),
-        ("TC-946", "R14", declaration_form),
-        ("TC-946", "R15", declaration_form),
-        ("TC-948", "DF14", missing_name),
-        ("TC-948", "DF16", malformed),
-        ("TC-948", "DF17", operator_ineligible),
-    ];
-    for (test_case, id, pair) in refusing {
-        let vector = protocol_vector(cases, test_case, id);
-        assert!(expects_refusal(vector, pair), "{test_case} {id} names {pair}");
-        // Mutation: swapping the cause for another is caught.
-        let mutated = serde_json::json!({
-            "Expected": vector["Expected"].as_str().unwrap().replace(pair, "invalid_package`/`invalid-value")
-        });
-        assert!(!expects_refusal(&mutated, pair), "{test_case} {id} mutation is caught");
-    }
-    // The admitted vectors say admitted, and a refusing vector never does.
-    for (test_case, id) in [("TC-946", "R16"), ("TC-948", "DF15")] {
-        let expected = protocol_vector(cases, test_case, id)["Expected"].as_str().unwrap();
-        assert!(expected.contains("admitted"), "{test_case} {id} is admitted");
-    }
-    for (test_case, id, _) in refusing {
-        let expected = protocol_vector(cases, test_case, id)["Expected"].as_str().unwrap();
-        assert!(!expected.starts_with("admitted"), "{test_case} {id} is a refusal");
-    }
-    // DF14 covers a repeat with no maximum, maximum 3 and maximum 0.
-    let df14 = protocol_vector(cases, "TC-948", "DF14")["Edit"].as_str().unwrap();
-    assert!(df14.contains("no `maximum`") && df14.contains("`maximum` 3") && df14.contains("`maximum` 0"));
+    let mutate_vector = |test_case: &str, id: &str, expected: &str| {
+        let mut mutated = vectors.clone();
+        let case = mutated["cases"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|case| case["test_case"] == test_case && case["id"] == id)
+            .expect("vector is published");
+        case["Expected"] = Value::String(expected.to_string());
+        mutated
+    };
+    let replaced = |document: &str, from: &str, to: &str| {
+        assert!(document.contains(from), "mutation target {from:?} exists");
+        document.replacen(from, to, 1)
+    };
 
-    // Requirement-text pins, each with a mutation that removes the pinned
-    // sentence and must be caught.
-    let pins: [(&str, &str, &str); 5] = [
-        (FR464_PROTOCOL_NODES, "A `repeat` is never a step, whatever it\nnests and whatever its guard", "never a step"),
-        (FR464_PROTOCOL_NODES, "| FR-464-AC-21 | A `repeat` never counts as a step", "AC-21 row"),
-        (FR466_PROTOCOL_CONTROLS, "**No post-test `repeat`.**", "no post-test"),
-        (FR466_PROTOCOL_CONTROLS, "| FR-466-AC-17 | A `repeat` has no post-test form", "AC-17 row"),
-        (FR466_PROTOCOL_CONTROLS, "**A `visible` entry is an `expression` node.**", "visible entry form"),
-    ];
-    for (document, pin, name) in pins {
-        assert!(document.contains(pin), "{name} is pinned in the requirement");
-        let mutated = document.replace(pin, "");
-        assert!(!mutated.contains(pin), "{name} mutation is caught");
-    }
-    assert!(FR466_PROTOCOL_CONTROLS.contains("| FR-466-AC-18 | A `visible` entry is an `expression` node"));
-    // The old guard-feasibility exception must not reappear in either text.
-    for document in [FR464_PROTOCOL_NODES, FR466_PROTOCOL_CONTROLS] {
-        assert!(!document.contains("skip edge is absent"));
+    let mut mutants: Vec<(&str, Vec<String>)> = Vec::new();
+    // M2: R13's Expected becomes an admitted form that keeps the refusal
+    // substring.
+    let m2 = mutate_vector(
+        "TC-946",
+        "R13",
+        "admitted; `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile (FR-464-AC-21)",
+    );
+    mutants.push((
+        "M2 R13 admitted form",
+        check(fr464, fr466, tc946, tc948, &m2),
+    ));
+    // DF14 Expected loses the refusal; DF18 Expected loses its `unlisted`.
+    let df14 = mutate_vector("TC-948", "DF14", "admitted (FR-466-AC-17)");
+    mutants.push(("DF14 admitted", check(fr464, fr466, tc946, tc948, &df14)));
+    let df18 = mutate_vector(
+        "TC-948",
+        "DF18",
+        "the entries are admitted as composite entries; the guard read is admitted (FR-466-AC-18)",
+    );
+    mutants.push(("DF18 Expected", check(fr464, fr466, tc946, tc948, &df18)));
+    // AC-17 and AC-18 row bodies.
+    let ac17 = replaced(
+        fr466,
+        "each refuse `missing_declaration`/`missing-name` as an out-of-scope read, for a `repeat` with no",
+        "each refuse `missing_declaration`/`missing-name` as an out-of-scope read, for a `repeat` with a",
+    );
+    mutants.push(("AC-17 body", check(fr464, &ac17, tc946, tc948, &vectors)));
+    let ac18 = replaced(
+        fr466,
+        "an application over constants only, and one over a capture only, is admitted",
+        "an application over constants only is admitted",
+    );
+    mutants.push(("AC-18 body", check(fr464, &ac18, tc946, tc948, &vectors)));
+    let ac21 = replaced(
+        fr464,
+        "whatever the nested guard is (`true`,",
+        "whatever the nested guard is (",
+    );
+    mutants.push(("AC-21 body", check(&ac21, fr466, tc946, tc948, &vectors)));
+    // TC table rows.
+    let r13 = replaced(
+        tc946,
+        "| R13 | `Poll`'s body is only a nested `repeat` (guard `true`) around an `attempt` | `unsupported",
+        "| R13 | `Poll`'s body is only a nested `repeat` (guard `true`) around an `attempt` | admitted; `unsupported",
+    );
+    mutants.push(("TC-946 R13 row", check(fr464, fr466, &r13, tc948, &vectors)));
+    let df18_row = replaced(
+        tc948,
+        "reason` `unlisted` (FR-466-AC-18) |",
+        "reason` `other-role` (FR-466-AC-18) |",
+    );
+    mutants.push((
+        "TC-948 DF18 row",
+        check(fr464, fr466, tc946, &df18_row, &vectors),
+    ));
+    let df14_row = replaced(
+        tc948,
+        "| DF14 | a `repeat` owned by `Fulfillment` whose body holds",
+        "| DF14 | a `repeat` owned by `Orders` whose body holds",
+    );
+    mutants.push((
+        "TC-948 DF14 row",
+        check(fr464, fr466, tc946, &df14_row, &vectors),
+    ));
+    // Requirement paragraphs.
+    let never = replaced(
+        fr464,
+        "even when its guard is `true`, a\ntautology or its `maximum` is 0;",
+        "even when its guard is a tautology;",
+    );
+    mutants.push((
+        "FR-464 never a step",
+        check(&never, fr466, tc946, tc948, &vectors),
+    ));
+    let post_test = replaced(
+        fr466,
+        "has no checked-package encoding until a requirement adds one.",
+        "has a checked-package encoding.",
+    );
+    mutants.push((
+        "FR-466 post-test",
+        check(fr464, &post_test, tc946, tc948, &vectors),
+    ));
+    for (name, defects) in mutants {
+        assert!(!defects.is_empty(), "mutant {name} is caught");
     }
 }
 
