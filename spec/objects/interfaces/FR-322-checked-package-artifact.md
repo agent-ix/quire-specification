@@ -2837,7 +2837,27 @@ entry of the node, compared in that order (the identity as UTF-8 bytes, the
 positions as integers). A node with one entry and one region has that region
 as its key; the minimum makes the key a total order when a node has several
 entries or regions, and two members that share a start are ordered by their
-end. No node
+end. A `clock_place` that has no region of its own (the model document of a
+`model_selections` row is a document of the lock, not a source artifact of
+`source_map`: its bytes are not a `quire.source.bytes/v1` source and no region
+points into it) carries the region of its model's declaration, which a
+`source_map` entry must give it, so several places can have one minimum
+triple, and the order key of a `clock_place` is the pair (that triple, its
+**place path key**). The path key compares the steps of `path` in order and
+ends the comparison at the shorter path when it is a prefix of the other: a
+step is ordered first by its kind (`field`, `tuple`, `union`, `slot`), then a
+`field` or `union` step by the UTF-8 bytes of its name, a `tuple` step by its
+index, and a `slot` step by the UTF-8 bytes of its `collection`, then its
+`minimum`, then its `maximum`, `unbounded` above every integer. The `selector`
+of a slot step is a reference to a node and the `resolved_path` is derived from
+the path and the document, so neither enters the key; a member that is not a
+`clock_place` has the empty path key. The key is a function of the source
+region and the declared path alone. Two places with one triple and one path
+are one repeated path and are refused as out of order, before
+`duplicate-clock-place`. The same strict order holds in the lists the clause
+forms nest: the `constraints` of each `parts` entry of a `clock_guard` and the
+`bounds` of a `time_invariant`, whose members are `clock_constraint` nodes
+ordered by the minimum triple of their regions. No node
 key, digest or other hash-derived value enters the order, so a node's position
 in an aggregate does not change when another member is added or changed and
 two compilations of one source list a model's members identically; a
@@ -2847,7 +2867,10 @@ strictly above its predecessor's (out of order, or equal) refuses
 `/semantic_graph/nodes/{i}/body/members/{b}/value/members/{j}` for a root
 (`b` the index of the binding, `j` the index of the first such member) and
 `/semantic_graph/nodes/{i}/body/members/3/value/members/{j}` for a place's
-`guards`. It is the noncanonical order that FR-322-AC-10 refuses and is
+`guards`, `/semantic_graph/nodes/{i}/body/members/1/value/members/{p}/members/{j}`
+for the constraints of the part `p` of a guard (`j` the index in the part, from
+1) and `/semantic_graph/nodes/{i}/body/members/1/value/members/{j}` for the
+`bounds` of an invariant. It is the noncanonical order that FR-322-AC-10 refuses and is
 reported before `duplicate-clock-place` and the unlisted-guard refusal of the
 same node. A producer writes this order and a reader refuses every other, so a
 node's aggregate has one encoding whatever the order its members were
@@ -2897,19 +2920,105 @@ argument that is neither a `clock_place` node nor an Option-typed term; and
 or a slot term not of the selector's domain. An `Option` or `?` wrapper adds no
 path step: the `resolved_path` row of the field carries the rendered declared
 type `Option<T>`, and the terminal row is the one whose type is `Clock` once
-the wrapper is removed. A `clock_reset` is
-exactly `place`, `value`; `clock_guard` and `time_invariant` are each exactly
-`predicate`. An `urgency` is exactly `kind`, `predicate` for `when`, or
-`kind`, `model`, `operation_name` for `operation`. A `clock_constraint` is
-exactly `place`, `comparison`, `bound`. Bindings, path entries and child
-collections have the counts and order fixed by the corresponding definitions
-in both schemas; all terms have their declared reference or literal type.
+the wrapper is removed.
+
+**Clause nodes.** The five clause forms are closed, and every field is
+authored on the wire: no member is derived from another node and no node
+carries a field that only a reader can fill. A `time_invariant` is exactly
+`predicate`, `bounds`; a `clock_guard` is exactly `operation`, `parts`; an
+`urgency` is exactly `kind`, `predicate` for `when`, or `kind`, `model`,
+`operation_name` for `operation`; a `clock_reset` and a `clock_constraint` each
+have two kinds, selected by their first binding `kind` (a `text` literal):
+
+| form | `kind` | exact bindings, in order |
+| --- | --- | --- |
+| `clock_constraint` | `place` | `kind`, `place`, `owner`, `slots`, `comparison`, `bound` |
+| `clock_constraint` | `parameter` | `kind`, `operation`, `parameter`, `comparison`, `bound` |
+| `clock_reset` | `place` | `kind`, `operation`, `place`, `owner`, `slots`, `binders`, `condition`, `value` |
+| `clock_reset` | `parameter` | `kind`, `operation`, `parameter`, `value` |
+| `clock_guard` | none | `operation`, `parts` |
+| `time_invariant` | none | `predicate`, `bounds` |
+
+`comparison` is a `text` literal, one of `lt`, `le`, `eq`, `ge`, `gt` (one
+word for each relation of a clock constraint; `eq` is the relation FR-415
+writes `==`, admitted in a guard because a guard may test equality, and excluded from an invariant, which bounds a delay from above and refuses an equality as `time-invariant-shape`), and `bound` and `value` are quantity literals of the root's unit
+node, nonnegative and in lowest terms. `operation` is a `reference` to a
+`state`/`operation_anchor` node of the root's model with no execution point
+(FR-342-AC-11), the one node that stands for the operation in every clause
+that names it. `place` is a `reference` to a `clock_place` template; `owner`
+and `slots` are the owner term and the slot terms of the place identity
+exactly as `present(p)` carries them (Presence, above), so a constraint or a
+reset of an element place names its element by terms, not by a position stored
+in the template. `binders` is the ordered aggregate of `parameter` references
+that the reset quantifies (`for e in p`), each one of the reset's own `slots`,
+in slot order; `condition` is a Boolean `expression` reference (the
+reset's `when` condition).
+`parameter` is a `text` literal naming a parameter of the referenced
+operation whose declared type is `Clock`: a `Clock` parameter is bound by
+place (FR-415 "Clock parameters"), so the `parameter` constraint bounds the
+clock the call supplies and the `parameter` reset sets it to `value`, over the
+places of the clock fields the operation's frame names (a frame that names no
+clock field is the source refusal `clock-write`, and a package that carries
+such a reset refuses as below). The `Clock` parameter is the only parameter
+form: it is an inline `text` name, not a node, and the root gains no member. `parts` is a nonempty aggregate whose members
+are aggregates, each exactly the binding `predicate` (a Boolean `expression`
+reference) followed by one or more `reference` members to
+`clock_constraint` nodes, the constraints that hold in the operation when the
+predicate does, in order (a member of a part after `predicate` is a bare reference, not a
+binding: the generic `SemanticTerm` that every consumer of the V2 schema shares
+admits an aggregate in a binding value only one level deep, and a nested
+`constraints` binding would be a third, so the part is flat instead of that
+shared schema being widened); `bounds` is a nonempty
+aggregate of references to `clock_constraint` nodes of kind `place` whose
+`comparison` is `lt` or `le`: an invariant is an upper bound, which FR-415
+states with `<` and `<=` only.
+
+**Clause membership is derived on the clause side.** A `clock_place` carries
+no clause references; its own `guards` aggregate is the existing list of
+FR-322-AC-243. A clause is a member of the model by the root aggregate that
+lists it, a `clock_constraint` is a member through the guard part or
+invariant that names it, and the root's `constraints` lists exactly the
+constraints that a part or an invariant names, no other (a listed
+constraint that nothing names refuses `invalid_package`/`timed-node-reference`
+at its member of the root, `/semantic_graph/nodes/{i}/body/members/8/value/members/{j}/target`,
+and a constraint that a part or an invariant names and the root does not list
+refuses at that member of the part or the invariant). A model has at most one
+`clock_guard` for each operation anchor, every `parts` entry of the operation
+being one member of it: a second guard for one anchor refuses at the
+second in the root's `guards`, `.../members/0/value/target`. A guard
+and a reset name the same anchor node, and a reset of the place `p` in the
+operation `o` requires `o`'s frame (FR-340) to modify the object field that
+begins `p`'s path, so `size()` cannot reset a clock it does not write.
+
+**Reader joins.** In ascending node-id digest order the reader refuses with
+`invalid_package`/`timed-node-reference` at the member named: an `operation`
+that is not a `state`/`operation_anchor` node of the root's model or that
+carries an execution point (`/body/members/{k}/value/target`, `k` the index of
+the `operation` binding); a `parameter` that names no `Clock` parameter of the
+anchored operation; a `place` that is not a `clock_place`; a reset place, or a
+`Clock` parameter reset, that the operation's frame does not modify; a `binders` member that is not a
+`parameter` node among the reset's `slots`, or out of slot order; a
+`predicate` or `condition` that is not a Boolean `expression`; a part or
+invariant member that is not a listed `clock_constraint` (and, for an
+invariant, not of kind `place` with `lt` or `le`); and, in a part, a
+constraint of kind `parameter` whose anchor is not the guard's. It refuses
+`ill_typed`/`type-mismatch` at the term an `owner` that is not of the owner
+type or a slot term not of the selector's domain, and
+`ill_typed`/`operator-ineligible` at `/body/members/{k}/value` a `slots`
+count other than the number of `slot` steps of the place, by the same rules as
+`present(p)`. A constraint that is not above its predecessor in a part, or a
+bound that is not above its predecessor in an invariant, refuses
+`invalid_semantic_graph` with no cause by the aggregate order below.
+
+Closed layouts, counts and orders are in both schemas; all terms have their declared reference or literal type.
 These closed layouts reject omitted, extra, reordered, wrongly typed and
-wrong-count children before semantic graph checks. Reset nodes carry the place
-reference and exact normalized nonnegative quantity. Guard and invariant
-nodes carry the canonical typed constraint terms; urgency carries either its
-data predicate or operation reference; each clock constraint carries its
-place, comparator, normalized quantity and unit reference. `Clock` is not a
+wrong-count children before semantic graph checks (an empty `parts`, a part
+without a constraint, an empty `bounds` and a `comparison` outside the five
+words are schema refusals). Reset nodes carry the normalized nonnegative
+quantity; guard nodes carry the constraints they bound and invariant nodes
+their upper bounds; urgency carries either its data predicate or operation
+reference; each clock constraint carries its comparator, normalized quantity
+and unit reference. `Clock` is not a
 value or scalar type node, and
 clock fields do not appear as data fields in record/model nodes.
 
@@ -3117,7 +3226,13 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-241 | The nested collection `g: Sequence<Sequence<Clock>>` of `SL-05` is declared by FCD members alone: the `Order` field `g` has `typeRef` `ix://acme/orders/ClockRow`, presence `required` and multiplicity `{lower: 0, ordered: true, unique: false}` (no `upper`), and `ix://acme/orders/ClockRow` is a type definition of kind `sequence` whose `items` is `ix://quire/native/Clock`. The `sequence` definition gives the inner `Sequence<ix://quire/native/Clock>` and the multiplicity the outer level, so the member type renders `Sequence<Sequence<ix://quire/native/Clock>>` and the rows 0, 1 and 2 of the place are `g` (kind `sequence`, bounds `0` and `unbounded`), `Sequence<Sequence<ix://quire/native/Clock>>[slot]` (declaring type `Sequence<ix://quire/native/Clock>`, member type `Sequence<ix://quire/native/Clock>`, kind `sequence`, `0`, `unbounded`) and `Sequence<ix://quire/native/Clock>[slot]` (declaring type and member type `ix://quire/native/Clock`, kind `none`). The map place `clock` is declared the same way by the `map` definition `ClockMap` (`values` `Clock`) under multiplicity `{1, 1}`. A `typeRef` that is a rendered string, a type definition without `items` or `values`, and a bound on the definition are not FCD members and no encoding is read from them. | Test (TC-367; CK-28; SL-05, SL-06) |
 | FR-322-AC-242 | `GD-02` and `GD-03` publish `patch`, an RFC 6902 array of `add`, `remove` and `replace` operations on `fixtures/positive-timed-slot-nodes.json` that ends with the replaced root key (`node_id` and `semantic_type`), its `source_map` entry and the recomputed `package_id`. The patched package is valid under the V2 schema and every key and the package id are current; the reader refuses it with the vector's `expected_code`, `expected_cause` and `locus` and no other. The unmutated package is the control and is admitted. | Test (TC-367; CK-29; GD-02, GD-03) |
 | FR-322-AC-243 | A `clock_guard` node that no timed root's `guards` lists refuses `invalid_package`/`timed-node-reference` at `/semantic_graph/nodes/{i}/body`, `i` the graph index of the unlisted node (the first in ascending node-id digest order when several are unlisted), not at the root's `guards` aggregate; `GD-03` refuses at `/semantic_graph/nodes/47/body` with `locus_suffix` `body`. The duplicate place of `GD-02` refuses `invalid_package`/`duplicate-clock-place` at `/semantic_graph/nodes/52/body/members/3/value/members/9`, the later reference of AC-120. The `GD-02` patch appends the twin last in the root's `clock_places`; the vector does not exercise aggregate order, the locus is the duplicate member 9 either way, and this criterion asserts no aggregate order. | Test (TC-367; CK-29; GD-02, GD-03) |
-| FR-322-AC-260 | The slot vectors' `aggregate_order` section publishes the order rule and four cases over `fixtures/positive-timed-slot-nodes.json`: `AO-01`, the selected package, lists `clock_places`, `resets`, `guards`, `invariants`, `urgencies` and `constraints` in ascending order key (the nine places in the order of their source regions, which is not their node-digest order); `AO-02` swaps two adjacent places, `AO-03` lists the places in ascending node-id digest order (the order the earlier fixture used: a hash-derived order is not canonical) and `AO-04` swaps the two urgencies; `AO-05` and `AO-06` give two places one start and order them by their end (in order, and out of order), and `AO-07` gives the second place a further `source_map` entry that starts earlier, so its minimum key falls below its predecessor's. The order key is the minimum triple (`source.identity`, `start`, `end`) over every region of every `source_map` entry of the node. Each of `AO-02`..`AO-04`, `AO-06` and `AO-07` is an RFC 6902 `patch` that ends with the replaced root key, its `source_map` entry and the recomputed `package_id`, is schema-valid with every key current, and refuses `invalid_semantic_graph`, with no cause, at the first member whose order key is not above its predecessor's (`locus`), and no other refusal; `AO-05` is admitted. A repeated path is a distinct place node in order (`TM-12`, `GD-02`), never one node listed twice, which would repeat its order key. `GD-02`, which appends `SL-08` last, is in order. | Test (TC-367; CK-30; AO-01..AO-07) |
+| FR-322-AC-260 | The slot vectors' `aggregate_order` section publishes the order rule and the cases `AO-01`..`AO-10` over `fixtures/positive-timed-slot-nodes.json`: `AO-01`, the selected package, lists `clock_places`, `resets`, `guards`, `invariants`, `urgencies` and `constraints` in ascending order key (the nine places in the order of their source regions, which is not their node-digest order); `AO-02` swaps two adjacent places, `AO-03` lists the places in ascending node-id digest order (the order the earlier fixture used: a hash-derived order is not canonical) and `AO-04` swaps the two urgencies; `AO-05` and `AO-06` give two places one start and order them by their end (in order, and out of order), `AO-07` gives the second place a further `source_map` entry that starts earlier, so its minimum key falls below its predecessor's, and `AO-08`..`AO-10` give two places one region and order them by the place path key (FR-322-AC-265): `AO-08` lists them in path order (admitted), `AO-09` out of it, `AO-10` gives a duplicate path the same region as the place it repeats (equal keys, refused as out of order before `duplicate-clock-place`). The order key is the minimum triple (`source.identity`, `start`, `end`) over every region of every `source_map` entry of the node and, for a `clock_place`, its place path key after it (FR-322-AC-265). Each of `AO-02`..`AO-04`, `AO-06` and `AO-07` is an RFC 6902 `patch` that ends with the replaced root key, its `source_map` entry and the recomputed `package_id`, is schema-valid with every key current, and refuses `invalid_semantic_graph`, with no cause, at the first member whose order key is not above its predecessor's (`locus`), and no other refusal; `AO-05` is admitted. A repeated path is a distinct place node in order (`TM-12`, `GD-02`), never one node listed twice, which would repeat its order key. `GD-02`, which appends `SL-08` last, is in order. | Test (TC-367; CK-30; AO-01..AO-10) |
+| FR-322-AC-261 | The five clause forms are closed layouts with every field authored on the wire (`proposals/checked-package-v2/timed-clause-node-vectors.json`, `forms`): a `clock_constraint` of kind `place` is exactly `kind`, `place`, `owner`, `slots`, `comparison`, `bound` and of kind `parameter` exactly `kind`, `operation`, `parameter`, `comparison`, `bound`; a `clock_reset` of kind `place` is exactly `kind`, `operation`, `place`, `owner`, `slots`, `binders`, `condition`, `value` and of kind `parameter` exactly `kind`, `operation`, `parameter`, `value`; a `clock_guard` is exactly `operation`, `parts`, each part the binding `predicate` followed by at least one constraint reference; a `time_invariant` is exactly `predicate`, `bounds` with at least one bound; `comparison` is one of `lt`, `le`, `eq`, `ge`, `gt`. An empty `parts` (`CL-17`), an empty `bounds` (`CL-18`), a comparison outside the five words (`CL-19`) and a part with no constraint (`CL-20`) are refused by both schemas at the node's `body`, before any semantic check. | Test (TC-367; CK-32; CL-01, CL-17..CL-20) |
+| FR-322-AC-262 | The references of a clause are joined in ascending node-id digest order and refuse `invalid_package`/`timed-node-reference` at the member: an `operation` that is a frame and not an `operation_anchor` (`CL-02`) or an anchor with an execution point (`CL-03`), an invariant bound compared with anything but `lt` or `le` (`CL-07`), a `parameter` the operation does not declare (`CL-14`) or declares with a type other than `Clock` (`CL-15`); the `Clock` parameter form is the inline `kind: parameter` of a reset and a constraint, with no new node form and no new member of the root. | Test (TC-367; CK-33; CL-02, CL-03, CL-07, CL-14, CL-15) |
+| FR-322-AC-263 | Clause membership is derived on the clause side: the root lists every guard, reset, invariant and constraint, a constraint is a member through the guard part or invariant that names it, and no `clock_place` carries a clause reference. A model has at most one `clock_guard` for each operation anchor (`CL-04` refuses the second at its `operation`), a constraint a part names that the root does not list refuses at the part's member (`CL-05`), and a constraint the root lists that no part and no invariant names refuses at the root's `constraints` member (`CL-06`), each `invalid_package`/`timed-node-reference`. | Test (TC-367; CK-34; CL-04..CL-06) |
+| FR-322-AC-264 | The terms of a place clause are typed as the terms of `present(p)`: an `owner` that is not of the place's owner type refuses `ill_typed`/`type-mismatch` at `/body/members/{k}/value` (`CL-08`), a slot term of another type than the selector's domain `ill_typed`/`type-mismatch` at that slot (`CL-10`), a `slots` count other than the number of `slot` steps `ill_typed`/`operator-ineligible` (`CL-09`); a reset of a place whose first field the operation's frame does not modify (`CL-11`), a `binders` member that is not a slot term or is out of slot order (`CL-12`) and a non-Boolean `condition` (`CL-13`) refuse `invalid_package`/`timed-node-reference`. | Test (TC-367; CK-35; CL-08..CL-13) |
+| FR-322-AC-265 | The strict aggregate order of FR-322-AC-260 holds in the lists the clause forms nest, the constraints of a guard part and the bounds of an invariant (`CL-16` swaps two constraints of one part and refuses `invalid_semantic_graph` with no cause at the second), and a `clock_place` whose regions give it the same minimum triple as its neighbour is ordered by its place path key (field and union by name bytes, tuple by index, slot by collection bytes then minimum then maximum with `unbounded` last; neither the selector nor `resolved_path` is read): `AO-08` lists two places of one region in path order and is admitted, `AO-09` lists them out of path order and `AO-10` repeats a path with its region, and both refuse `invalid_semantic_graph` at the member. The model document of a `model_selections` row is not a source artifact, so no location in it orders a place. | Test (TC-367; CK-30, CK-36; AO-08..AO-10, CL-16) |
+| FR-322-AC-266 | The clause fixture `fixtures/positive-timed-clause-nodes.json` (package id `fedf266b04d0de3af8582d29b705163d19089148580ee4bf59b8efddb0f040ec`) selects `domain-package-acme-timed-clauses.json` and carries the clause forms in both kinds; every timed key is the SHA-256 of the RFC 8785 bytes of its structural-node preimage, its dependencies are the sorted references of its body, and the package id follows. The dense timed fixtures `positive-timed-model-nodes.json` and `positive-timed-slot-nodes.json` carry the same forms and have the package ids `4ffd54e3237f86b036c58ddf56120c118ff8e3a6fafe51125f2ee9f4d8e3fcb6` and `5dc6f66b200e21cf41a140fc62f8e65321fccb6f13796f46ffa7c620e7cce2fa` (previously `e639fe89…9337` and `59e13178…6757`). The vectors `CL-01`..`CL-20` are replayed as RFC 6902 patches on the clause fixture and each patched package has every timed key and the package id current. | Test (TC-367; CK-32..CK-36; CL-01..CL-20) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture, forms each complete application-node preimage, and computes its key. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the computed key. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 
 ## Dependencies

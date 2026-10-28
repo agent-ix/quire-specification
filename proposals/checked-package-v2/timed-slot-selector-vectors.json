@@ -4,7 +4,7 @@
   "selected_document": "domain-package-acme-timed-slots.json",
   "selection_digest": "4be5b6efa6f802944c55f1a711349c22c3d895560f8e70b5b712705a508d279a",
   "selected_package": "fixtures/positive-timed-slot-nodes.json",
-  "selected_package_id": "59e131784363a505f0ab65ae55be075ab9e68090e9c08b45484c8e17e67b6757",
+  "selected_package_id": "5dc6f66b200e21cf41a140fc62f8e65321fccb6f13796f46ffa7c620e7cce2fa",
   "selected_note": "The selected package carries the nodes of SL-01..SL-05, SL-06 (the published place), SL-07, the places and parameters of the presence section and PR-01 and PR-03, each at the graph index package_node names, and its timed root lists every place; its model_selections row digest is the SHA-256 of the RFC 8785 bytes of the whole selected document (FR-322-AC-240), whose projection of Order, Timer, ClockRow and ClockMap is the only declaration source of every resolved_path row. SL-03 and SL-04 declare the fields b and o (a model has one field c); the timed root key changed with the declared order of its aggregates (FR-322-AC-260) and the package id with it; the parameter node i, no longer the slot term of any admitted vector (PR-02 was dropped), stays published because PR-05 and PR-06 use it as an Integer owner and the owner/slot type checks name it.",
   "nested_collection": {
     "case": "SL-05",
@@ -6055,7 +6055,7 @@
       "patch": [
         {
           "op": "add",
-          "path": "/semantic_graph/nodes/70",
+          "path": "/semantic_graph/nodes/72",
           "value": {
             "body": {
               "members": [
@@ -6432,15 +6432,7 @@
         },
         {
           "op": "add",
-          "path": "/semantic_graph/nodes/52/dependencies/3",
-          "value": {
-            "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
-            "domain": "quire.checked-semantic-node/v1"
-          }
-        },
-        {
-          "op": "add",
-          "path": "/source_map/70",
+          "path": "/source_map/72",
           "value": {
             "node_id": {
               "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
@@ -6463,24 +6455,32 @@
           }
         },
         {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/node_id/digest",
-          "value": "df262f84a44e0531fd1021d497472a087d3e1c9d0ed2c5e914ee1ff2853f2e00"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/semantic_type/digest",
-          "value": "df262f84a44e0531fd1021d497472a087d3e1c9d0ed2c5e914ee1ff2853f2e00"
-        },
-        {
-          "op": "replace",
-          "path": "/source_map/47/node_id/digest",
-          "value": "df262f84a44e0531fd1021d497472a087d3e1c9d0ed2c5e914ee1ff2853f2e00"
+          "op": "add",
+          "path": "/semantic_graph/nodes/52/dependencies/3",
+          "value": {
+            "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+            "domain": "quire.checked-semantic-node/v1"
+          }
         },
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "f096bf53aa4d7099116c457b6051b54ba5e9a79c32e73f5266758a632cbf81b3"
+          "value": "ad61dc66d48013e833ba1b1e4ac5f0f93b31246e35822907825123142f6bc0e2"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "282307d00ff784d493ca63e2e0d524464406e7b0b44abcaa09889b7d048cd24a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "282307d00ff784d493ca63e2e0d524464406e7b0b44abcaa09889b7d048cd24a"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "282307d00ff784d493ca63e2e0d524464406e7b0b44abcaa09889b7d048cd24a"
         }
       ],
       "schema": "valid",
@@ -6502,27 +6502,27 @@
         },
         {
           "op": "remove",
-          "path": "/semantic_graph/nodes/52/dependencies/17"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/node_id/digest",
-          "value": "2d4c26fd8b8a34d0f2d4ca1ea13e35e5524d54672098a097ea09ef50fdd582ba"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/semantic_type/digest",
-          "value": "2d4c26fd8b8a34d0f2d4ca1ea13e35e5524d54672098a097ea09ef50fdd582ba"
-        },
-        {
-          "op": "replace",
-          "path": "/source_map/47/node_id/digest",
-          "value": "2d4c26fd8b8a34d0f2d4ca1ea13e35e5524d54672098a097ea09ef50fdd582ba"
+          "path": "/semantic_graph/nodes/52/dependencies/8"
         },
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "da64d40105db70acd005769c4e0d897ad58325becdb7f078cad4cb0d52e5b5a0"
+          "value": "13fad2885041f11705aeb137b65934eb55b9703c38f8e61034af50e111098623"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "dd6efe1d5d6aeb2d54571bf899a2b0f6565530d42d0a889159ab862ea1c49799"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "dd6efe1d5d6aeb2d54571bf899a2b0f6565530d42d0a889159ab862ea1c49799"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "dd6efe1d5d6aeb2d54571bf899a2b0f6565530d42d0a889159ab862ea1c49799"
         }
       ],
       "schema": "valid",
@@ -6534,8 +6534,8 @@
     }
   ],
   "aggregate_order": {
-    "rule": "FR-322-AC-260: the six reference aggregates of a timed_model root (clock_places, resets, guards, invariants, urgencies, constraints) and the guards of a clock_place list their members in declared order, the strictly ascending order of the member node's order key: the minimum (source.identity, start, end) over every region of every source_map entry of the node, compared in that order. No digest enters the order. A member that is not above its predecessor refuses invalid_semantic_graph, with no cause, at that member.",
-    "order_key": "minimum (source.identity, start, end) over all regions of all source_map entries of the member node",
+    "rule": "FR-322-AC-260, FR-322-AC-265: the six reference aggregates of a timed_model root (clock_places, resets, guards, invariants, urgencies, constraints), the guards of a clock_place, the constraints of every guard part and the bounds of a time_invariant list their members in declared order, the strictly ascending order of the member node's order key: the minimum (source.identity, start, end) over every region of every source_map entry of the node, compared in that order, and, when two members have one minimum triple, the place path key of a clock_place (step by step; field and union by name bytes, tuple by index, slot by collection name bytes, then minimum, then maximum with unbounded last). No digest enters the order. A member that is not above its predecessor refuses invalid_semantic_graph, with no cause, at that member.",
+    "order_key": "the pair (minimum (source.identity, start, end) over all regions of all source_map entries of the member node, place path key); the path key of a node that is not a clock_place is empty",
     "cases": [
       {
         "id": "AO-01",
@@ -6561,23 +6561,23 @@
           },
           {
             "op": "replace",
+            "path": "/package_id/digest",
+            "value": "fa94895231e93dcf75c46635522504a3ca4e6826b552762f90788090422e14f8"
+          },
+          {
+            "op": "replace",
             "path": "/semantic_graph/nodes/52/node_id/digest",
-            "value": "f1540ca614272e92cd4c81e87035741fd5a17422454cb93d6510f5a0750f4aaf"
+            "value": "afeafadc893f669385edf250ba669cf974976b78f91628888f2913dd073fc208"
           },
           {
             "op": "replace",
             "path": "/semantic_graph/nodes/52/semantic_type/digest",
-            "value": "f1540ca614272e92cd4c81e87035741fd5a17422454cb93d6510f5a0750f4aaf"
+            "value": "afeafadc893f669385edf250ba669cf974976b78f91628888f2913dd073fc208"
           },
           {
             "op": "replace",
             "path": "/source_map/47/node_id/digest",
-            "value": "f1540ca614272e92cd4c81e87035741fd5a17422454cb93d6510f5a0750f4aaf"
-          },
-          {
-            "op": "replace",
-            "path": "/package_id/digest",
-            "value": "32cf399f92bbf99ecd295350569f21bc19802a4636bf2453d6ba8dc2c7cf8467"
+            "value": "afeafadc893f669385edf250ba669cf974976b78f91628888f2913dd073fc208"
           }
         ],
         "schema": "valid",
@@ -6634,23 +6634,23 @@
           },
           {
             "op": "replace",
+            "path": "/package_id/digest",
+            "value": "846697f1f550bc75662ecae06388fc438639e53d0eea47476806fcf658be1067"
+          },
+          {
+            "op": "replace",
             "path": "/semantic_graph/nodes/52/node_id/digest",
-            "value": "26673c0f9a499fea74a737e2d8130aa1931736fe0bf9c60765ef4e967e4de8c3"
+            "value": "b090df1895bb866f11047e82d02e4204fc86f81646d39a0c6cfe928fefda4641"
           },
           {
             "op": "replace",
             "path": "/semantic_graph/nodes/52/semantic_type/digest",
-            "value": "26673c0f9a499fea74a737e2d8130aa1931736fe0bf9c60765ef4e967e4de8c3"
+            "value": "b090df1895bb866f11047e82d02e4204fc86f81646d39a0c6cfe928fefda4641"
           },
           {
             "op": "replace",
             "path": "/source_map/47/node_id/digest",
-            "value": "26673c0f9a499fea74a737e2d8130aa1931736fe0bf9c60765ef4e967e4de8c3"
-          },
-          {
-            "op": "replace",
-            "path": "/package_id/digest",
-            "value": "9cfc50fbe1794567112c17e553a91715000850b991e33e29eb4eb8fdfef6bc05"
+            "value": "b090df1895bb866f11047e82d02e4204fc86f81646d39a0c6cfe928fefda4641"
           }
         ],
         "schema": "valid",
@@ -6677,23 +6677,23 @@
           },
           {
             "op": "replace",
+            "path": "/package_id/digest",
+            "value": "a53451903981aeb0c02483272be06ddc86e2b1efcd20272f238f203a5b98ca55"
+          },
+          {
+            "op": "replace",
             "path": "/semantic_graph/nodes/52/node_id/digest",
-            "value": "869ad7b59e8e435e00d4343241b3c7320d3f26f3abb4ebae5d8d52e1a2921519"
+            "value": "66c05841bd807f55d9a9c6d23f8dea5c744b1d402588b31bc6966ca289419504"
           },
           {
             "op": "replace",
             "path": "/semantic_graph/nodes/52/semantic_type/digest",
-            "value": "869ad7b59e8e435e00d4343241b3c7320d3f26f3abb4ebae5d8d52e1a2921519"
+            "value": "66c05841bd807f55d9a9c6d23f8dea5c744b1d402588b31bc6966ca289419504"
           },
           {
             "op": "replace",
             "path": "/source_map/47/node_id/digest",
-            "value": "869ad7b59e8e435e00d4343241b3c7320d3f26f3abb4ebae5d8d52e1a2921519"
-          },
-          {
-            "op": "replace",
-            "path": "/package_id/digest",
-            "value": "584d223683a5795268a05bd3ad4eda689906a2487ae1beb440edee29c7361a9c"
+            "value": "66c05841bd807f55d9a9c6d23f8dea5c744b1d402588b31bc6966ca289419504"
           }
         ],
         "schema": "valid",
@@ -6786,7 +6786,579 @@
         "expected_cause": null,
         "locus": "/semantic_graph/nodes/52/body/members/3/value/members/1",
         "locus_suffix": "body/members/3/value/members/1"
+      },
+      {
+        "id": "AO-08",
+        "subject": "places c and b share one region (2001, 2002) and are listed b before c: the path key orders them, so this is in order",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "patch": [
+          {
+            "op": "replace",
+            "path": "/package_id/digest",
+            "value": "bbaad2ad85f7d58bfa8db8a38de9bffb7b644e30a016bb4fa9266b8d2c43cfd8"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/2/target/digest",
+            "value": "74fba01546ec827b0adbf65da00b0870e2ccbf03aef118b958b8516ee8558870"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/3/target/digest",
+            "value": "587d090168212dae371a5f9e2eea7f5c82bb4c2ab1f6308c546fd5d9107ff457"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/node_id/digest",
+            "value": "dd852832fa37fd3fd349116badf5f05f968fb9303ce2a96cb6acdb1059922ea7"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/semantic_type/digest",
+            "value": "dd852832fa37fd3fd349116badf5f05f968fb9303ce2a96cb6acdb1059922ea7"
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/47/node_id/digest",
+            "value": "dd852832fa37fd3fd349116badf5f05f968fb9303ce2a96cb6acdb1059922ea7"
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/59/regions/0/end",
+            "value": 2002
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/59/regions/0/start",
+            "value": 2001
+          }
+        ],
+        "schema": "valid",
+        "expected": "admitted"
+      },
+      {
+        "id": "AO-09",
+        "subject": "the same shared region with c listed before b: the path key decides, so the second place is out of order",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "patch": [
+          {
+            "op": "replace",
+            "path": "/source_map/59/regions/0/end",
+            "value": 2002
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/59/regions/0/start",
+            "value": 2001
+          }
+        ],
+        "schema": "valid",
+        "expected": "refused",
+        "expected_code": "invalid_semantic_graph",
+        "expected_cause": null,
+        "locus": "/semantic_graph/nodes/52/body/members/3/value/members/3",
+        "locus_suffix": "body/members/3/value/members/3"
+      },
+      {
+        "id": "AO-10",
+        "subject": "GD-02's duplicate of s given the region of s and listed right after it: equal region and equal path, so the order key is equal and the member is refused as out of order, before and instead of duplicate-clock-place",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "patch": [
+          {
+            "op": "add",
+            "path": "/semantic_graph/nodes/72",
+            "value": {
+              "body": {
+                "members": [
+                  {
+                    "name": "model",
+                    "term": "binding",
+                    "value": {
+                      "term": "reference",
+                      "target": {
+                        "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+                        "domain": "quire.checked-semantic-node/v1"
+                      }
+                    }
+                  },
+                  {
+                    "name": "path",
+                    "term": "binding",
+                    "value": {
+                      "members": [
+                        {
+                          "members": [
+                            {
+                              "name": "kind",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "field",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "name",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "s",
+                                "value_kind": "text"
+                              }
+                            }
+                          ],
+                          "term": "aggregate"
+                        },
+                        {
+                          "members": [
+                            {
+                              "name": "kind",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "slot",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "collection",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "sequence",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "selector",
+                              "term": "binding",
+                              "value": {
+                                "term": "reference",
+                                "target": {
+                                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                }
+                              }
+                            },
+                            {
+                              "name": "minimum",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": 0,
+                                "value_kind": "integer"
+                              }
+                            },
+                            {
+                              "name": "maximum",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "unbounded",
+                                "value_kind": "text"
+                              }
+                            }
+                          ],
+                          "term": "aggregate"
+                        }
+                      ],
+                      "term": "aggregate"
+                    }
+                  },
+                  {
+                    "name": "resolved_path",
+                    "term": "binding",
+                    "value": {
+                      "members": [
+                        {
+                          "members": [
+                            {
+                              "name": "path_step",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": 0,
+                                "value_kind": "integer"
+                              }
+                            },
+                            {
+                              "name": "declaring_type",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "ix://acme/orders/Order",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "member_identity",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "ix://acme/orders/Order/s",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "member_type",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "Sequence<ix://quire/native/Clock>",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "collection_kind",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "sequence",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "minimum",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "0",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "maximum",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "unbounded",
+                                "value_kind": "text"
+                              }
+                            }
+                          ],
+                          "term": "aggregate"
+                        },
+                        {
+                          "members": [
+                            {
+                              "name": "path_step",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": 1,
+                                "value_kind": "integer"
+                              }
+                            },
+                            {
+                              "name": "declaring_type",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "ix://quire/native/Clock",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "member_identity",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "Sequence<ix://quire/native/Clock>[slot]",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "member_type",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "ix://quire/native/Clock",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "collection_kind",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "none",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "minimum",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "",
+                                "value_kind": "text"
+                              }
+                            },
+                            {
+                              "name": "maximum",
+                              "term": "binding",
+                              "value": {
+                                "term": "literal",
+                                "type": {
+                                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                                  "domain": "quire.checked-semantic-node/v1"
+                                },
+                                "value": "",
+                                "value_kind": "text"
+                              }
+                            }
+                          ],
+                          "term": "aggregate"
+                        }
+                      ],
+                      "term": "aggregate"
+                    }
+                  },
+                  {
+                    "name": "guards",
+                    "term": "binding",
+                    "value": {
+                      "members": [],
+                      "term": "aggregate"
+                    }
+                  }
+                ],
+                "term": "aggregate"
+              },
+              "node_tag": "timed_model",
+              "occurrences": [
+                {
+                  "ordinal": 0,
+                  "role": "expression"
+                }
+              ],
+              "schema_version": "quire.checked-semantic-graph/v2",
+              "semantic_form": "clock_place",
+              "dependencies": [
+                {
+                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
+                  "domain": "quire.checked-semantic-node/v1"
+                },
+                {
+                  "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+                  "domain": "quire.checked-semantic-node/v1"
+                }
+              ],
+              "node_id": {
+                "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "semantic_type": {
+                "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+                "domain": "quire.checked-semantic-node/v1"
+              }
+            }
+          },
+          {
+            "op": "add",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/-",
+            "value": {
+              "target": {
+                "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          },
+          {
+            "op": "add",
+            "path": "/source_map/72",
+            "value": {
+              "node_id": {
+                "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "ordinal": 0,
+              "regions": [
+                {
+                  "end": 2101,
+                  "source": {
+                    "authority": "agent-ix",
+                    "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                    "digest_domain": "quire.source.bytes/v1",
+                    "identity": "example"
+                  },
+                  "start": 2100
+                }
+              ],
+              "role": "expression"
+            }
+          },
+          {
+            "op": "add",
+            "path": "/semantic_graph/nodes/52/dependencies/3",
+            "value": {
+              "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          },
+          {
+            "op": "replace",
+            "path": "/package_id/digest",
+            "value": "ad61dc66d48013e833ba1b1e4ac5f0f93b31246e35822907825123142f6bc0e2"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/node_id/digest",
+            "value": "282307d00ff784d493ca63e2e0d524464406e7b0b44abcaa09889b7d048cd24a"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/semantic_type/digest",
+            "value": "282307d00ff784d493ca63e2e0d524464406e7b0b44abcaa09889b7d048cd24a"
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/47/node_id/digest",
+            "value": "282307d00ff784d493ca63e2e0d524464406e7b0b44abcaa09889b7d048cd24a"
+          },
+          {
+            "op": "replace",
+            "path": "/package_id/digest",
+            "value": "9d1186299cda317e5f370576a321f87aaefe8ce0ef6cb860879713f06ac27739"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/7/target/digest",
+            "value": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/8/target/digest",
+            "value": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/9/target/digest",
+            "value": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/node_id/digest",
+            "value": "e86a66405cd9c8c8ceb9a127274bf758b03aa2c845e6dde9edf9a2a80f110c26"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/semantic_type/digest",
+            "value": "e86a66405cd9c8c8ceb9a127274bf758b03aa2c845e6dde9edf9a2a80f110c26"
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/47/node_id/digest",
+            "value": "e86a66405cd9c8c8ceb9a127274bf758b03aa2c845e6dde9edf9a2a80f110c26"
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/72/regions/0/end",
+            "value": 2006
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/72/regions/0/start",
+            "value": 2005
+          }
+        ],
+        "schema": "valid",
+        "expected": "refused",
+        "expected_code": "invalid_semantic_graph",
+        "expected_cause": null,
+        "locus": "/semantic_graph/nodes/52/body/members/3/value/members/7",
+        "locus_suffix": "body/members/3/value/members/7"
       }
-    ]
+    ],
+    "path_key": {
+      "order": "a path compares step by step; a shorter path that is a prefix of a longer one is below it",
+      "step_kind": [
+        "field",
+        "tuple",
+        "union",
+        "slot"
+      ],
+      "field_and_union": "UTF-8 bytes of the name",
+      "tuple": "the index as an integer",
+      "slot": "UTF-8 bytes of the collection kind, then the minimum as an integer, then the maximum as an integer with unbounded above every integer; the selector, a reference, never enters the key",
+      "note": "A place with no region of its own carries the region of its model's declaration (a source_map entry has at least one region, and the selected model document is not a source artifact), so several such places share one minimum triple and the path orders them. resolved_path is not read: it is derived from the path and the document."
+    }
   }
 }
