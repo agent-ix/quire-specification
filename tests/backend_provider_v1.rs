@@ -23,6 +23,9 @@ const CHECKED_PACKAGE_SCHEMA: &str = include_str!("../proposals/checked-package-
 const PACKAGE_FIXTURE: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-all-families.json");
 
+const DEPENDENCY_FIXTURE: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-dependency-library.json");
+
 const ALPHABET: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
 fn parsed(text: &str) -> Value {
@@ -158,6 +161,17 @@ fn composed(vector: &Value) -> Value {
             "package_id".into(),
             parsed(PACKAGE_FIXTURE)["package_id"].clone(),
         );
+        if vector["name"] == "derived-items-request" {
+            // The refinement item's abstract package is a dependency, with its own id and v2 bytes.
+            let dependency = parsed(DEPENDENCY_FIXTURE);
+            request.insert(
+                "dependencies".into(),
+                serde_json::json!([{
+                    "package_id": dependency["package_id"].clone(),
+                    "package": encode(&jcs_canonicalize(&dependency).expect("dependency canonicalizes")),
+                }]),
+            );
+        }
     }
     document
 }
@@ -1705,18 +1719,17 @@ fn tc_431_derived_items_name_their_anchor_and_follow_the_structural_order() {
         }
         let anchor = nodes.iter().find(|node| node["node_id"] == claim["node"]).expect("anchor node in the package");
         let protocol = item["temporal"]["subject"] == document["request"]["items"][1]["temporal"]["subject"];
-        let expected_tag = if protocol { ("protocol", "protocol_clause") } else { ("model", "") };
-        assert_eq!(anchor["node_tag"], expected_tag.0, "anchor of item {index}");
-        if protocol {
-            assert_eq!(anchor["semantic_form"], expected_tag.1);
-        }
+        let (tag, form, role) = if protocol { ("protocol", "protocol_clause", "declaration") } else { ("model", "model_root", "generated") };
+        assert_eq!(anchor["node_tag"], tag, "anchor of item {index}");
+        assert_eq!(anchor["semantic_form"], form, "anchor of item {index}");
+        // The occurrence is declaration ordinal 0, else expression ordinal 0, else generated ordinal 0.
         let has = |role: &str| {
             anchor["occurrences"].as_array().expect("occurrences").iter()
                 .any(|occurrence| occurrence["role"] == role && occurrence["ordinal"] == 0)
         };
-        let role = if has("declaration") { "declaration" } else { "expression" };
-        assert!(has(role), "the anchor has the occurrence the rule picks");
-        assert_eq!(claim["occurrence"], serde_json::json!({"role": role, "ordinal": 0}));
+        let picked = ["declaration", "expression", "generated"].into_iter().find(|role| has(role)).expect("an occurrence");
+        assert_eq!(picked, role);
+        assert_eq!(claim["occurrence"], serde_json::json!({"role": picked, "ordinal": 0}));
     }
     // Position: subjects by first occurrence among the caller's items, then the kind order.
     let subject_rank = |item: &Value| {
@@ -1757,13 +1770,13 @@ fn tc_431_zone_loci_admit_the_refinement_form_rules_and_the_added_members() {
     }
     let members = ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale",
         "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement",
-        "node", "concrete_package", "abstract_package", "positions", "taken"];
-    assert_eq!(members.len(), 21);
+        "refinement_node", "concrete_package", "abstract_package", "positions", "taken", "locked", "start", "nested"];
+    assert_eq!(members.len(), 24);
     for member in members {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
         assert!(rejection.is_valid(&cause), "{member} is a member");
     }
-    for member in ["initial", "initials[0]", "position", "refinement_name", "", "Initial"] {
+    for member in ["initial", "initials[0]", "position", "refinement_name", "node", "", "Initial"] {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
         assert!(!rejection.is_valid(&cause), "{member} is not a member");
     }
@@ -1777,6 +1790,7 @@ fn abstract_subject() -> Value {
 /// derived item, stated independently of the vectors.
 #[trace("TC-431", "FR-368-AC-13")]
 #[trace("TC-431", "FR-368-AC-15")]
+#[trace("TC-431", "FR-368-AC-21")]
 #[test]
 fn tc_431_item_kinds_are_the_five_spellings_and_derived_items_carry_no_fairness() {
     let temporal = definition("Temporal");
@@ -1800,10 +1814,10 @@ fn tc_431_item_kinds_are_the_five_spellings_and_derived_items_carry_no_fairness(
     }
 }
 
-/// FR-368-AC-19, FR-377-AC-10 and FR-331-AC-47: `abstract_subject` is present
+/// FR-368-AC-19, FR-377-AC-17 and FR-331-AC-47: `abstract_subject` is present
 /// exactly on a refinement item and has exactly its two members.
 #[trace("TC-431", "FR-368-AC-19")]
-#[trace("TC-431", "FR-377-AC-10")]
+#[trace("TC-431", "FR-377-AC-17")]
 #[trace("TC-431", "FR-331-AC-47")]
 #[test]
 fn tc_431_abstract_subject_is_present_exactly_on_a_refinement_item() {
@@ -1861,19 +1875,74 @@ fn tc_431_abstract_subject_package_is_one_of_the_request_dependencies() {
     assert!(!in_dependencies(&none), "a request with no dependencies has no abstract package");
 }
 
-/// FR-368-AC-20: one set of limits and one `max_depth` for the whole request.
+/// FR-368-AC-20: a derived item takes the provider defaults for `max_depth`
+/// and the limits; FR-331 has no request-level limits, so none is inherited.
 #[trace("TC-431", "FR-368-AC-20")]
 #[test]
-fn tc_431_every_temporal_item_of_a_request_carries_the_same_limits() {
+fn tc_431_a_derived_item_takes_provider_defaults_and_inherits_no_limits() {
     let document = composed(&positive("derived-items-request"));
     let items = document["request"]["items"].as_array().expect("items");
-    let shared = |item: &Value| {
-        let t = &item["temporal"];
-        (t["limits"].clone(), t["max_depth"].clone(), t.get("smt_encoding").cloned())
-    };
-    assert!(items.len() > 3);
+    let temporal = definition("Temporal");
+    let mut derived = 0;
     for item in items {
-        assert_eq!(shared(item), shared(&items[0]), "request_index {}", item["request_index"]);
+        let t = &item["temporal"];
+        let kind = t["item_kind"].as_str().expect("kind");
+        if ["deadlock-freedom", "time-lock-freedom", "race-freedom"].contains(&kind) {
+            derived += 1;
+            assert!(t.get("max_depth").is_none() && t.get("limits").is_none() && t.get("smt_encoding").is_none(), "{kind}");
+            // A caller's FR-461 setting may still be written; a horizon may not.
+            let mut set = t.clone();
+            set["limits"] = serde_json::json!({"max_states": 250000});
+            assert!(temporal.is_valid(&set), "{kind} with a caller setting");
+            set["max_depth"] = 40.into();
+            assert!(!temporal.is_valid(&set), "{kind} with a max_depth");
+        } else {
+            assert!(t.get("max_depth").is_some() && t.get("limits").is_some(), "{kind} carries the caller's settings");
+        }
     }
-    assert_ne!(shared(&items[0]).0, Value::Null);
+    assert_eq!(derived, 4);
+}
+
+/// FR-368-AC-16, AC-20, AC-21 and FR-331-AC-44: the adverse vectors that pin
+/// each derived kind's extent rule, the derived `max_depth` rule and the
+/// refusal of `transfer` are present by name, so deleting one is a failure and
+/// not a silent loss of coverage.
+#[trace("TC-431", "FR-368-AC-16")]
+#[trace("TC-431", "FR-368-AC-20")]
+#[trace("TC-431", "FR-331-AC-44")]
+#[test]
+fn tc_431_the_derived_item_adverse_vectors_cover_every_kind() {
+    let adverse: Vec<String> = parsed(VECTORS)["adverse"].as_array().expect("adverse").iter()
+        .map(|vector| vector["name"].as_str().expect("name").to_owned()).collect();
+    for kind in ["deadlock-freedom", "time-lock-freedom", "race-freedom", "refinement"] {
+        let stem = kind.strip_suffix("-freedom").map_or_else(|| "refinement-item".to_owned(), |_| kind.to_owned());
+        for name in [format!("{stem}-bounded-extent"), format!("{stem}-without-infinite-trace-domain")] {
+            // The deadlock-freedom pair predates the per-kind names.
+            let name = match name.as_str() {
+                "deadlock-freedom-bounded-extent" => "derived-item-bounded-extent".to_owned(),
+                "deadlock-freedom-without-infinite-trace-domain" => "derived-item-without-infinite-trace-domain".to_owned(),
+                _ => name,
+            };
+            assert!(adverse.contains(&name), "adverse vector {name}");
+        }
+    }
+    for name in ["deadlock-freedom-with-max-depth", "time-lock-freedom-with-max-depth", "race-freedom-with-max-depth", "item-kind-transfer"] {
+        assert!(adverse.contains(&name.to_owned()), "adverse vector {name}");
+    }
+}
+
+/// FR-331-AC-48: `memory` is a member of the request, and the identity
+/// paragraph of the requirement names it; the request writer's identity is the
+/// requirement's list.
+#[trace("TC-431", "FR-331-AC-48")]
+#[test]
+fn tc_431_the_request_has_a_memory_member_and_its_identity_includes_it() {
+    let mut document = composed(&positive("derived-items-request"));
+    document["request"]["memory"] = serde_json::json!([{"parallel": "Example::Session::par", "model": "tso"}]);
+    assert_eq!(errors(&validator(), &document), Vec::<String>::new(), "a memory selection is a request member");
+    document["request"]["memory"][0]["model"] = "weak".into();
+    assert_ne!(errors(&validator(), &document), Vec::<String>::new(), "only sc, tso and ra are models");
+    let spec = include_str!("../spec/objects/interfaces/FR-331-backend-provider-envelope.md");
+    let identity = spec.lines().find(|line| line.starts_with("Request identity includes")).expect("identity paragraph");
+    assert!(identity.contains("the request's `memory` selections"));
 }

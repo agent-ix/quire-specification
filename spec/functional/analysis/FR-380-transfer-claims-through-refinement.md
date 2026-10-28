@@ -48,8 +48,12 @@ result for the transfer item with its basis, cause and premises.
 
 ## Behavior
 
-**Kind and reading.** A transfer item is one item of kind
-`temporal-satisfaction` ([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)).
+**Kind and reading.** A transfer item is classified as an item of kind
+`temporal-satisfaction` ([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md))
+by the verification planner only: it is a planner-local item, evaluated by the
+planner and never sent to a provider, so it has no FR-331 `item_kind` and is
+not a request item ([FR-368](../temporal/FR-368-negotiate-temporal-model-check-items.md)
+"Item kinds").
 Its claim is `P` read through the refinement's `map`, under the refinement's
 concrete fairness set `F_C`: `P`'s atoms read the mapped abstract state, and
 `P`'s `over` parameter ranges over the images of the concrete subject's

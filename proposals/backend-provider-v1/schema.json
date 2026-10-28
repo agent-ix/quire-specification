@@ -396,7 +396,7 @@
       },
       "allOf": [
         {"description": "FR-368, FR-377: abstract_subject is present exactly on a refinement item.", "if": {"properties": {"item_kind": {"const": "refinement"}}, "required": ["item_kind"]}, "then": {"required": ["abstract_subject"]}, "else": {"not": {"required": ["abstract_subject"]}}},
-        {"description": "FR-368 Item kinds: a derived item has no authored clause, so its fairness set is empty.", "if": {"properties": {"item_kind": {"enum": ["deadlock-freedom", "time-lock-freedom", "race-freedom"]}}, "required": ["item_kind"]}, "then": {"properties": {"fairness": {"maxItems": 0}}}}
+        {"description": "FR-368 Item kinds and Negotiation: a derived item has no authored clause, so its fairness set is empty, and it carries no max_depth (the provider default, an exhaustive search, applies).", "if": {"properties": {"item_kind": {"enum": ["deadlock-freedom", "time-lock-freedom", "race-freedom"]}}, "required": ["item_kind"]}, "then": {"properties": {"fairness": {"maxItems": 0}}, "not": {"required": ["max_depth"]}}}
       ],
       "additionalProperties": false
     },
@@ -814,7 +814,7 @@
         {"description": "FR-418, QSL FR-245 post-differs: an edge, its position in the certificate's edges.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["backward-edge", "post-differs"]}, "at": {"type": "object", "required": ["edge"], "properties": {"edge": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "QSL FR-245 step-fails: an edge and the failing step verdict, both present.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "step-fails"}, "at": {"type": "object", "required": ["edge", "verdict"], "properties": {"edge": {"$ref": "#/$defs/Count"}, "verdict": {"$ref": "#/$defs/StepVerdict"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "FR-418: a component, its index.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "witness-fails"}, "at": {"type": "object", "required": ["component"], "properties": {"component": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
-        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement", "node", "concrete_package", "abstract_package", "positions", "taken"]}}, "additionalProperties": false}}, "additionalProperties": false}
+        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement", "refinement_node", "concrete_package", "abstract_package", "positions", "taken", "locked", "start", "nested"]}}, "additionalProperties": false}}, "additionalProperties": false}
       ]
     },
     "InconclusiveCause": {
@@ -1094,9 +1094,9 @@
     "RefinementPart": {
       "description": "FR-418: QSL FR-244's RefinementPart. positions is nonempty; taken has one entry per edge in order, null for an edge into or inside the locked region.",
       "type": "object",
-      "required": ["node", "concrete_package", "abstract_package", "positions", "taken"],
+      "required": ["refinement_node", "concrete_package", "abstract_package", "positions", "taken"],
       "properties": {
-        "node": {"description": "FR-418: the refinement node's id.", "$ref": "#/$defs/NodeId"},
+        "refinement_node": {"description": "FR-418: the refinement node's id.", "$ref": "#/$defs/NodeId"},
         "concrete_package": {"$ref": "#/$defs/PackageId"},
         "abstract_package": {"$ref": "#/$defs/PackageId"},
         "positions": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["concrete", "history", "abstract_states"], "properties": {"concrete": {"$ref": "#/$defs/StateKey"}, "history": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}, "abstract_states": {"type": "array", "items": {"$ref": "#/$defs/StateKey"}}}, "additionalProperties": false}},

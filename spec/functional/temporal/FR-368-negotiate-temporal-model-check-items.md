@@ -112,11 +112,12 @@ kind is part of the obligation identity (above), so the five never share a
 verdict.
 
 A transfer item ([FR-380](../analysis/FR-380-transfer-claims-through-refinement.md))
-has no `item_kind`: it is settled by the verification planner from two
-premises, "no backend is negotiated for it, and no exploration of the concrete
-subject runs", so it is not a request item that reaches a provider and no
-sixth spelling exists. Its two premises are request items of kind `formula`
-and `refinement`.
+has no `item_kind` and is not a request item. FR-380 classifies it as an item
+of kind `temporal-satisfaction` only as the verification planner's own
+classification; the planner evaluates it from its two premises, "no backend is
+negotiated for it, and no exploration of the concrete subject runs", so it
+never reaches a provider and no sixth spelling exists. Its two premises are
+request items of kind `formula` and `refinement`.
 
 ### Claim and anchor of a derived or refinement item
 
@@ -131,25 +132,33 @@ reader's choice:
   derived item over a protocol subject, the subject's checked protocol clause
   node ([FR-425](../protocol/FR-425-define-protocol-subjects-and-state-keys.md)
   "Protocol subject"). For a derived item over any other model subject, the
-  `model` node of the model alias the subject's items name, the node
-  [FR-476](../../objects/interfaces/FR-476-checked-package-model-terminal-declaration-body.md)
-  `model` member and FR-402's `subjects` binding reference. The
-  deadlock-freedom and time-lock-freedom items of one model subject therefore
-  share a claim node, and the `timed_model` root ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
+  package's `model_root` node for the model selection the subject reads
+  ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
+  "Model root": one self-typed `model`/`model_root` node per `model_selections`
+  row). A model subject ([FR-361](FR-361-read-model-behaviours-as-temporal-traces.md)
+  "Model subject") is (checked package, initial states, universes, proof
+  bounds) and names no model alias, so the anchor is read from the selection
+  and invents no alias. This requirement fixes the anchor of a subject that
+  reads one `model_selections` row; FR-361 states no subject over several, and
+  none is invented here. The deadlock-freedom and time-lock-freedom items of
+  one model subject therefore share a claim node, and the `timed_model` root
+  ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
   "Timed-model nodes"), owned by that model, is not a second anchor.
 - **Occurrence.** The anchor node's occurrence of role `declaration` and
   ordinal 0 when it has one, otherwise its occurrence of role `expression` and
-  ordinal 0 (a model declaration node carries no `declaration` member and its
-  one occurrence has role `expression`, FR-322 "Occurrence roles"). The
-  anchor node of every kind above has one of the two, so the pair always
-  names a `source_map` entry. The choice depends on the node alone, not on the
-  order of the node's `occurrences` array.
+  ordinal 0, otherwise its occurrence of role `generated` and ordinal 0, as
+  FR-322 "Occurrence roles" gives the node kind its role: a protocol clause
+  node and a refinement node carry a `declaration` occurrence, and the
+  `model_root` node's one occurrence has role `generated`
+  (FR-322-AC-132). The anchor node of every kind above has one of the three, so
+  the pair always names a `source_map` entry. The choice depends on the node
+  alone, not on the order of the node's `occurrences` array.
 
 The pair is the `locus` of every `where` and payload that names the item
 (FR-331), and the package source map gives its regions, so a derived item's
 result is located at the model, protocol or refinement declaration that it
 reports on. The claim enters the request identity with the item's other
-members (FR-331 "Request identity").
+members (FR-331 "Identity and validation").
 
 ### Extent and domains of a derived or refinement item
 
@@ -177,10 +186,10 @@ finite_bound_available: false}` and nothing else:
 
 ### Position of derived items in the request
 
-`request_index` is the item's zero-based position (FR-331 "Items"), and
-FR-360 joins a result to its item by it, so the position is part of the wire.
-The request writer SHALL order the items by structure alone, never by a
-digest, a hash or a map's iteration order:
+`request_index` is the item's zero-based position, and a result, a
+disposition and a terminal record name their item by it (FR-331 "Items"), so
+the position is part of the wire. The request writer SHALL order the items by
+structure alone, never by a digest, a hash or a map's iteration order:
 
 1. The items the caller requested, authored and `refinement`, first, in the
    caller's order. Adding or removing a derived item, as a `terminal any`
@@ -196,6 +205,12 @@ digest, a hash or a map's iteration order:
 Each subject has at most one item of each derived kind, so the order is total.
 A subject with no item in step 1 has no derived item.
 
+The order depends on the caller's order of items: the same items in another
+caller order are another request, with other `request_index` values and
+another request identity. That is accepted and deterministic for a given
+request. No canonical sort key is introduced, since the order is fixed by the
+caller's own order and the kind order above.
+
 ### Negotiation of a derived or refinement item
 
 Each item of the five kinds is one item of kind `temporal-satisfaction`
@@ -208,14 +223,17 @@ item over a dense subject is still a `discrete` item: clocks are the model's
 (FR-415), not hybrid dynamics. Its fairness check ("Fairness kinds") never
 trips for an empty set. The item reads its `limits` (`max_clocks` included
 for a timed subject), `max_depth` and `smt_encoding` as any temporal item
-does; an absent member takes the routed provider's published default, and
-a derived or `refinement` item has no value of its own for them. The caller's
-limit settings ([FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md),
-for example `model_check.max_states`) and `max_depth` are written once for the
-request, so every temporal item carries the same `limits`, `max_depth` and
-`smt_encoding`, the derived and `refinement` items included, and a member the
-caller did not set takes the provider's published default. FR-331 has no
-request-level `limits` member, so none is inherited from an authored item.
+does, with no value of its own for them. FR-331 has no request-level `limits`
+member, so none is shared or inherited between items. A derived item therefore
+takes the routed provider's published default for `max_depth` (an exhaustive
+search: the member is absent, and a derived item never carries one) and for
+each state-graph limit the caller has not set; it carries a `limits` member
+only for a setting the caller gave under
+[FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md)'s names (for
+example `model_check.max_states`), and `smt_encoding` only when the caller set
+one and the routed method is SMT. An authored or `refinement` item carries its
+own settings as before. Two items of one request may thus carry different
+`limits` and `max_depth`.
 
 ### SMT solver budgets
 
@@ -374,13 +392,14 @@ infinite-trace formula that no registered candidate decides.
 | FR-368-AC-11 | A temporal item whose `limits` carry `max_solver_steps` 1000 and `max_solver_time` 5 is admitted, and its solver stops settle as FR-363-AC-11 states; two requests that differ only in `max_solver_time` have equal request identity and cache key bytes, two that differ only in `max_solver_steps` differ, and a result stopped by `max_solver_time` is stored by neither request; a `max_solver_time` of 1.5 on the wire, and either member at 0, is refused before consumption. | Test (TC-302) |
 | FR-368-AC-12 | A temporal item carrying `smt_encoding` `{max_constants: 7}` is admitted, and its encoder stop settles as FR-363-AC-11 states; two requests that differ only in `smt_encoding.max_constants` (7 and 8) have different request identities and cache keys, and a result recorded for one is not reused for the other; an empty `smt_encoding`, an unknown member, a `max_constants` of 0 and one of 1.5 are each refused before consumption. A completed result produced under `max_solver_time` 5 and reused for a request that sets 10 states 5. | Test (TC-302) |
 | FR-368-AC-13 | The `item_kind` of a temporal item is one of `formula`, `deadlock-freedom`, `time-lock-freedom`, `race-freedom` and `refinement`; each of the five is admitted, and `time-lock`, `race`, `deadlock`, `refine` and `Formula` are each refused before consumption. | Test (TC-431) |
-| FR-368-AC-14 | The claim of a `deadlock-freedom`, `time-lock-freedom` or `race-freedom` item names its subject's anchor node and that node's `declaration` occurrence at ordinal 0, or its `expression` occurrence at ordinal 0 when it has no `declaration` occurrence: the protocol clause node for a protocol subject, the `model` node of the alias for any other model subject, and the refinement node for a `refinement` item. The deadlock-freedom and time-lock-freedom items of one model subject name the same node and occurrence. | Test (TC-431) |
+| FR-368-AC-14 | The claim of a `deadlock-freedom`, `time-lock-freedom` or `race-freedom` item names its subject's anchor node and that node's `declaration` occurrence at ordinal 0, else its `expression` occurrence at ordinal 0, else its `generated` occurrence at ordinal 0: the protocol clause node (`declaration`) for a protocol subject, the `model_root` node (`generated`) for any other model subject, and the refinement node for a `refinement` item. The deadlock-freedom and time-lock-freedom items of one model subject name the same node and occurrence. | Test (TC-431) |
 | FR-368-AC-15 | A `deadlock-freedom`, `time-lock-freedom` or `race-freedom` item whose `fairness` holds a constraint is refused before consumption; a `refinement` item carries the concrete fairness set. | Test (TC-431) |
 | FR-368-AC-16 | A derived or `refinement` item classifies `unbounded` with `finite_bound_available` false, an `infinite-trace` domain keyed by the claim's node with the empty path, and no `extent.bounds`; the same item with a `bounded` extent, or with no `infinite-trace` domain, is refused. | Test (TC-431) |
-| FR-368-AC-17 | In a request, the caller's items come first in the caller's order and the derived items follow, grouped by subject in order of the subject's first occurrence among the caller's items and, within a subject, as `deadlock-freedom`, `time-lock-freedom`, `race-freedom`; `request_index` is the position. Exchanging two derived items of one subject, or moving a derived item before a caller's item, breaks the order. | Test (TC-302, TC-431) |
+| FR-368-AC-17 | In a request, the caller's items come first in the caller's order and the derived items follow, grouped by subject in order of the subject's first occurrence among the caller's items and, within a subject, as `deadlock-freedom`, `time-lock-freedom`, `race-freedom`; `request_index` is the position; the order depends on the caller's order of items and adds no sort key. Exchanging two derived items of one subject, or moving a derived item before a caller's item, breaks the order. | Test (TC-302, TC-431) |
 | FR-368-AC-18 | A derived or `refinement` item is a `temporal-satisfaction` item with no `hybrid` and no `requirements`, routed by FR-290's tables; a request that gains a derived item changes no caller's item's `request_index`. | Test (TC-302) |
 | FR-368-AC-19 | A `refinement` item carries `abstract_subject` (`package_id`, `initial_states`) beside its concrete `subject`, and an item of any other kind carrying one is refused; a refinement item without one, one whose `abstract_subject` has an extra member such as `universes` or `proof_bounds`, and one whose `package_id` is not a package id are refused, and a `package_id` that no entry of `request.dependencies` carries is refused by the reader (the schema cannot relate the two members); two refinement items that differ only in `abstract_subject` have different obligation identities. | Test (TC-431) |
-| FR-368-AC-20 | Every temporal item of a request, authored, derived and `refinement`, carries the same `limits`, `max_depth` and `smt_encoding`; `transfer` is not an `item_kind`. | Test (TC-431) |
+| FR-368-AC-20 | A derived item carries no `max_depth` (a derived item with one is refused) and takes the provider defaults for `limits` it has no caller setting for; it may carry `limits` for a caller's FR-461 setting; no item inherits `limits`, `max_depth` or `smt_encoding` from another, so an authored item's `max_depth` and `limits` are absent from the request's derived items. | Test (TC-431) |
+| FR-368-AC-21 | `transfer` is not an `item_kind` and a transfer item is not a request item: it is evaluated by the planner and never reaches a provider. | Test (TC-431) |
 
 ## Dependencies
 
