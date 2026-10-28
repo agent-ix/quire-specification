@@ -4,8 +4,8 @@
   "selected_document": "domain-package-acme-timed-slots.json",
   "selection_digest": "d63856fcbe0f4369cd9ce9264192d3d3baa66dd1dcd33bef7e918ec0355b5643",
   "selected_package": "fixtures/positive-timed-slot-nodes.json",
-  "selected_package_id": "2e24c0ffc505114892af1869ff899f7858dc05c63f70b30a096db41fe9aa546d",
-  "selected_note": "The selected package carries the nodes of SL-01..SL-05, SL-06 (the published place), SL-07, the places and parameters of the presence section and PR-01..PR-03, each at the graph index package_node names, and its timed root lists every place; its model_selections row digest is the SHA-256 of the RFC 8785 bytes of the whole selected document (FR-322-AC-240), whose projection of Order, Timer, ClockRow and ClockMap is the only declaration source of every resolved_path row. SL-03 and SL-04 declare the fields b and o (a model has one field c); no other node key changed.",
+  "selected_package_id": "ce948569ce328ca2c8d39b8378517d60b3321ec2674c81b7fe81fc97249c745a",
+  "selected_note": "The selected package carries the nodes of SL-01..SL-05, SL-06 (the published place), SL-07, the places and parameters of the presence section and PR-01 and PR-03, each at the graph index package_node names, and its timed root lists every place; its model_selections row digest is the SHA-256 of the RFC 8785 bytes of the whole selected document (FR-322-AC-240), whose projection of Order, Timer, ClockRow and ClockMap is the only declaration source of every resolved_path row. SL-03 and SL-04 declare the fields b and o (a model has one field c); the timed root key changed with the declared order of its aggregates (FR-322-AC-260) and the package id with it; the parameter node i, no longer the slot term of any admitted vector (PR-02 was dropped), stays published because PR-05 and PR-06 use it as an Integer owner and the owner/slot type checks name it.",
   "nested_collection": {
     "case": "SL-05",
     "rule": "FR-322-AC-241: a collection whose element is a collection is declared by a named FCD type definition of kind sequence (or map) whose items (or values) names the element type; the field names that definition as typeRef and its multiplicity gives the outermost level, and the rendered type is derived: Sequence<Sequence<ix://quire/native/Clock>>",
@@ -5767,83 +5767,6 @@
         "package_node": 68
       },
       {
-        "id": "PR-02",
-        "source": "present(self.q[i])",
-        "node": {
-          "body": {
-            "arguments": [
-              {
-                "term": "reference",
-                "target": {
-                  "digest": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f",
-                  "domain": "quire.checked-semantic-node/v1"
-                }
-              },
-              {
-                "term": "reference",
-                "target": {
-                  "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5",
-                  "domain": "quire.checked-semantic-node/v1"
-                }
-              },
-              {
-                "term": "reference",
-                "target": {
-                  "digest": "5d6ec348649ff9e308af317b03273a2fdf55f1a08c7d447e896f6d91fe8e0c2e",
-                  "domain": "quire.checked-semantic-node/v1"
-                }
-              }
-            ],
-            "operation": {
-              "identity": "quire.op.option.present",
-              "laws": [],
-              "leaves": [],
-              "member": null,
-              "mode": null
-            },
-            "operator": "present",
-            "result_type": {
-              "digest": "2c8a0dce10573206bc442b2da6d32ad0ba75373e04e91b09059467e791b211ec",
-              "domain": "quire.checked-semantic-node/v1"
-            },
-            "term": "application"
-          },
-          "dependencies": [
-            {
-              "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5",
-              "domain": "quire.checked-semantic-node/v1"
-            },
-            {
-              "digest": "5d6ec348649ff9e308af317b03273a2fdf55f1a08c7d447e896f6d91fe8e0c2e",
-              "domain": "quire.checked-semantic-node/v1"
-            },
-            {
-              "digest": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f",
-              "domain": "quire.checked-semantic-node/v1"
-            }
-          ],
-          "node_tag": "expression",
-          "occurrences": [
-            {
-              "ordinal": 0,
-              "role": "expression"
-            }
-          ],
-          "schema_version": "quire.checked-semantic-graph/v2",
-          "semantic_form": "presence_read",
-          "node_id": {
-            "digest": "2aac753c2b070f586850e4eb48c42d55e24de56259f994f7c95a34f66e8177a7",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "semantic_type": {
-            "digest": "2c8a0dce10573206bc442b2da6d32ad0ba75373e04e91b09059467e791b211ec",
-            "domain": "quire.checked-semantic-node/v1"
-          }
-        },
-        "expected": "admitted",
-        "package_node": 69
-      },
-      {
         "id": "PR-03",
         "source": "forall(e in self.q: present(e))  (body of the quantifier)",
         "node": {
@@ -5918,8 +5841,8 @@
           }
         },
         "expected": "admitted",
-        "note": "e is bound as a parameter of the selector domain (the slot position); same place template and owner as PR-02",
-        "package_node": 70
+        "note": "e is bound as a parameter of the selector domain (the slot position); same place template q and owner self as a slot-indexed read of q, which this version does not publish",
+        "package_node": 69
       },
       {
         "id": "PR-04",
@@ -6132,7 +6055,7 @@
       "patch": [
         {
           "op": "add",
-          "path": "/semantic_graph/nodes/71",
+          "path": "/semantic_graph/nodes/70",
           "value": {
             "body": {
               "members": [
@@ -6517,7 +6440,7 @@
         },
         {
           "op": "add",
-          "path": "/source_map/71",
+          "path": "/source_map/70",
           "value": {
             "node_id": {
               "digest": "096c0fbf4e0314fc16136cb539a2a2310f5d2d65ad6c4395c0a89e7fafaf2481",
@@ -6542,22 +6465,22 @@
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/52/node_id/digest",
-          "value": "1eeda97ae3c4ac96bf3cc63a9f584f278fb3a610dda01dfdda6e8519cd449622"
+          "value": "df262f84a44e0531fd1021d497472a087d3e1c9d0ed2c5e914ee1ff2853f2e00"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/52/semantic_type/digest",
-          "value": "1eeda97ae3c4ac96bf3cc63a9f584f278fb3a610dda01dfdda6e8519cd449622"
+          "value": "df262f84a44e0531fd1021d497472a087d3e1c9d0ed2c5e914ee1ff2853f2e00"
         },
         {
           "op": "replace",
           "path": "/source_map/47/node_id/digest",
-          "value": "1eeda97ae3c4ac96bf3cc63a9f584f278fb3a610dda01dfdda6e8519cd449622"
+          "value": "df262f84a44e0531fd1021d497472a087d3e1c9d0ed2c5e914ee1ff2853f2e00"
         },
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "6f1818a30b27f07ee2fc1360c44cd9c7e3daef7db891ae2db71eeb2bff50e2f9"
+          "value": "f17536e95552ad30b6f39c8cc69b6ee01085fc01ce128e4b38b60be53fa03cc6"
         }
       ],
       "schema": "valid",
@@ -6584,22 +6507,22 @@
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/52/node_id/digest",
-          "value": "4b5ec97bc08cc95c54873c912bd19d250ea268098b38657e8adefa27c60c90f2"
+          "value": "2d4c26fd8b8a34d0f2d4ca1ea13e35e5524d54672098a097ea09ef50fdd582ba"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/52/semantic_type/digest",
-          "value": "4b5ec97bc08cc95c54873c912bd19d250ea268098b38657e8adefa27c60c90f2"
+          "value": "2d4c26fd8b8a34d0f2d4ca1ea13e35e5524d54672098a097ea09ef50fdd582ba"
         },
         {
           "op": "replace",
           "path": "/source_map/47/node_id/digest",
-          "value": "4b5ec97bc08cc95c54873c912bd19d250ea268098b38657e8adefa27c60c90f2"
+          "value": "2d4c26fd8b8a34d0f2d4ca1ea13e35e5524d54672098a097ea09ef50fdd582ba"
         },
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "9a03e3229a373acca51adc835b065e6e58d5ced07205e1db27bad61fbb6a2240"
+          "value": "988617463056e175039229a7210bfc511eb4477dbad721f66103e1dbdf43a56e"
         }
       ],
       "schema": "valid",
@@ -6609,5 +6532,261 @@
       "locus_suffix": "body",
       "expected": "the clock_guard node stays in the graph and the root's guards aggregate (and the root's dependencies) no longer lists it: the reader refuses the unlisted guard node, never reading it as absent, at the node's own body"
     }
-  ]
+  ],
+  "aggregate_order": {
+    "rule": "FR-322-AC-260: the six reference aggregates of a timed_model root (clock_places, resets, guards, invariants, urgencies, constraints) and the guards of a clock_place list their members in declared order, the strictly ascending order of the member node's order key: the minimum (source.identity, start, end) over every region of every source_map entry of the node, compared in that order. No digest enters the order. A member that is not above its predecessor refuses invalid_semantic_graph, with no cause, at that member.",
+    "order_key": "minimum (source.identity, start, end) over all regions of all source_map entries of the member node",
+    "cases": [
+      {
+        "id": "AO-01",
+        "subject": "the published selected package lists every aggregate in declared order",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "expected": "admitted",
+        "note": "clock_places lists the nine places by the order key (minimum source region) of each place node (45, 57, 58, 59, 60, 61, 62, 63, 64 in graph order); GD-02 appends SL-08 (region start 2100) last, which is also in order"
+      },
+      {
+        "id": "AO-02",
+        "subject": "two adjacent clock_places swapped",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "patch": [
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/0/target/digest",
+            "value": "079a13c98e1f9e9b6738390d373b2c4312c2dd9d23e553baba88dcdb25dd08d2"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/1/target/digest",
+            "value": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/node_id/digest",
+            "value": "f1540ca614272e92cd4c81e87035741fd5a17422454cb93d6510f5a0750f4aaf"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/semantic_type/digest",
+            "value": "f1540ca614272e92cd4c81e87035741fd5a17422454cb93d6510f5a0750f4aaf"
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/47/node_id/digest",
+            "value": "f1540ca614272e92cd4c81e87035741fd5a17422454cb93d6510f5a0750f4aaf"
+          },
+          {
+            "op": "replace",
+            "path": "/package_id/digest",
+            "value": "6f2aec3c2159c4755e51ff4205244dea0cb8d063c1b5a7dfc6c97f075ae5da51"
+          }
+        ],
+        "schema": "valid",
+        "expected": "refused",
+        "expected_code": "invalid_semantic_graph",
+        "expected_cause": null,
+        "locus": "/semantic_graph/nodes/52/body/members/3/value/members/1",
+        "locus_suffix": "body/members/3/value/members/1"
+      },
+      {
+        "id": "AO-03",
+        "subject": "clock_places in ascending node-id digest order, the order the earlier fixture used: a hash-derived order is not canonical",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "patch": [
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/0/target/digest",
+            "value": "06e475ed351c7ebb36c6fe3d0da25e348619978d99da5e0b829611f5aa066087"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/2/target/digest",
+            "value": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/3/target/digest",
+            "value": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/4/target/digest",
+            "value": "587d090168212dae371a5f9e2eea7f5c82bb4c2ab1f6308c546fd5d9107ff457"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/5/target/digest",
+            "value": "63ad6f8b01af751ae549129cb44ec19f64a194db4c2497eb0fe2827bf16e87f0"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/6/target/digest",
+            "value": "74fba01546ec827b0adbf65da00b0870e2ccbf03aef118b958b8516ee8558870"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/7/target/digest",
+            "value": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/8/target/digest",
+            "value": "cfe44326312d7ed29a0d3d1adecbb9cfccf638789895151a31a2ef400a2b9844"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/node_id/digest",
+            "value": "26673c0f9a499fea74a737e2d8130aa1931736fe0bf9c60765ef4e967e4de8c3"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/semantic_type/digest",
+            "value": "26673c0f9a499fea74a737e2d8130aa1931736fe0bf9c60765ef4e967e4de8c3"
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/47/node_id/digest",
+            "value": "26673c0f9a499fea74a737e2d8130aa1931736fe0bf9c60765ef4e967e4de8c3"
+          },
+          {
+            "op": "replace",
+            "path": "/package_id/digest",
+            "value": "8dd766622b4ed8856659d107d3b87557f0b07136b013c53631d2f2eb6d7fe754"
+          }
+        ],
+        "schema": "valid",
+        "expected": "refused",
+        "expected_code": "invalid_semantic_graph",
+        "expected_cause": null,
+        "locus": "/semantic_graph/nodes/52/body/members/3/value/members/1",
+        "locus_suffix": "body/members/3/value/members/1"
+      },
+      {
+        "id": "AO-04",
+        "subject": "two urgencies swapped",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "patch": [
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/7/value/members/0/target/digest",
+            "value": "0cbef5be8c4497fa1b32239c2aea7399fce67b3d8419bce70ebbb1a06c412084"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/7/value/members/1/target/digest",
+            "value": "9a18ee606d48a6f1b96826db9e1cc14b0a8287fcfb6ab35bb36a500793a009c0"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/node_id/digest",
+            "value": "869ad7b59e8e435e00d4343241b3c7320d3f26f3abb4ebae5d8d52e1a2921519"
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/semantic_type/digest",
+            "value": "869ad7b59e8e435e00d4343241b3c7320d3f26f3abb4ebae5d8d52e1a2921519"
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/47/node_id/digest",
+            "value": "869ad7b59e8e435e00d4343241b3c7320d3f26f3abb4ebae5d8d52e1a2921519"
+          },
+          {
+            "op": "replace",
+            "path": "/package_id/digest",
+            "value": "970cb6965172cefa822edcbc93cd6c50c13fc11abdcde01aa1ce7e674daf9844"
+          }
+        ],
+        "schema": "valid",
+        "expected": "refused",
+        "expected_code": "invalid_semantic_graph",
+        "expected_cause": null,
+        "locus": "/semantic_graph/nodes/52/body/members/7/value/members/1",
+        "locus_suffix": "body/members/7/value/members/1"
+      },
+      {
+        "id": "AO-05",
+        "subject": "two places share a start: the end orders them, the first place ending first is in order",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "patch": [
+          {
+            "op": "replace",
+            "path": "/source_map/57/regions/0/start",
+            "value": 1006
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/57/regions/0/end",
+            "value": 1008
+          }
+        ],
+        "schema": "valid",
+        "expected": "admitted"
+      },
+      {
+        "id": "AO-06",
+        "subject": "two places share a start and the first ends after the second: the end decides, so this is out of order",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "patch": [
+          {
+            "op": "replace",
+            "path": "/source_map/7/regions/0/end",
+            "value": 1009
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/57/regions/0/start",
+            "value": 1006
+          },
+          {
+            "op": "replace",
+            "path": "/source_map/57/regions/0/end",
+            "value": 1008
+          }
+        ],
+        "schema": "valid",
+        "expected": "refused",
+        "expected_code": "invalid_semantic_graph",
+        "expected_cause": null,
+        "locus": "/semantic_graph/nodes/52/body/members/3/value/members/1",
+        "locus_suffix": "body/members/3/value/members/1"
+      },
+      {
+        "id": "AO-07",
+        "subject": "a member with a second source_map entry (ordinal 1) whose region starts earlier: the key is the minimum over every entry, so the second place is out of order",
+        "fixture": "fixtures/positive-timed-slot-nodes.json",
+        "patch": [
+          {
+            "op": "add",
+            "path": "/source_map/-",
+            "value": {
+              "node_id": {
+                "digest": "079a13c98e1f9e9b6738390d373b2c4312c2dd9d23e553baba88dcdb25dd08d2",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "ordinal": 1,
+              "regions": [
+                {
+                  "end": 501,
+                  "source": {
+                    "authority": "agent-ix",
+                    "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                    "digest_domain": "quire.source.bytes/v1",
+                    "identity": "example"
+                  },
+                  "start": 500
+                }
+              ],
+              "role": "expression"
+            }
+          }
+        ],
+        "schema": "valid",
+        "expected": "refused",
+        "expected_code": "invalid_semantic_graph",
+        "expected_cause": null,
+        "locus": "/semantic_graph/nodes/52/body/members/3/value/members/1",
+        "locus_suffix": "body/members/3/value/members/1"
+      }
+    ]
+  }
 }

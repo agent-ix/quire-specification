@@ -3032,7 +3032,7 @@ const STD_539_AC_BODIES: [(&str, &str, &str); 8] = [
     ("fr464", "FR-464-AC-21", "Repeat-through-repeat: an outer `repeat` whose body steps only through a nested `repeat` that necessarily steps (a stepping body, `maximum` absent or at least 1) is admitted when the nested guard's exit is infeasible over the independent atoms (the guard `true`, the tautology `a or not a or b or not b`, with or without a `maximum` of at least 1) and refuses `unsupported_construct`/`declaration-form` at the outer `repeat` when the exit is feasible (the guard `a`, `not a`, `a and not a`, `false`, `a or b`) or when the nested `maximum` is 0 whatever its guard is; a nested `repeat` that is the only stepping part of a `choice` case follows the same rule (the `choice` necessarily steps only when the nested `repeat` necessarily steps and every other case steps), and a nested `repeat` whose own body does not step refuses at the first such `repeat` in tree order; a body that holds a step beside the nested `repeat` (a `sequence` with a stepping sibling) or a `parallel` or `await` around it is admitted whatever the nested guard is."),
     ("fr464", "FR-464-AC-22", "The exit-feasibility derivation adds no field and compares no guard. Atoms: every listed `visible` entry, in set order and read or not, then every other maximal subterm that is neither a Boolean constant (an inline Boolean `literal` or a reference to a Boolean `value`/`literal` node) nor an application of `quire.op.boolean.not`, `.and`, `.or` or `.implies`, by first occurrence in a depth-first walk visiting the last operand first; a node equal to a listed entry is an atom and is not descended into (the entry `E` listing `a and b` with the guard `E or not a or not b` has three atoms and a feasible exit, so the outer `repeat` refuses); equal nodes are one atom and `quire.op.boolean.eq(a, b)` and `quire.op.boolean.eq(b, a)` are two (`eq(a, b) or not eq(a, b)` is infeasible, `eq(a, b) or not eq(b, a)` is feasible); a guard `true` written as a reference to a Boolean literal node is the constant, as an inline literal is. Valuations are enumerated from the all-false valuation as a little-endian counter over the atoms in that order. One `work` unit is charged before each valuation: a two-atom tautology charges four units, a feasible guard stops at its first false valuation (`a or b` charges one), a nested `repeat` is charged whatever its `maximum`, a `repeat` that is not inside another `repeat`'s `body` is charged nothing (its total consumption equals that with the guard `true`) and the collection and comparison of atoms charges nothing. With *V* the total consumption through the nested `repeat`'s last valuation charge and *T* the total for the package, a limit of *V* minus 1 that denies a valuation yields `stage_limit_exceeded`/`work-budget-exceeded` located at the nested `repeat` with no progress refusal for the enclosing `repeat`, and a limit of *T* admits the package."),
     ("fr464", "FR-464-AC-23", "A nested `repeat`'s counter is reset on each entry from outside it, so `repeat max 1 while true { attempt }` with an `exhausted` control, nested as the only body of an outer `repeat`, is admitted: its exit is infeasible, its `maximum` is 1 and its body steps, and the outer `repeat` takes a step on every iteration. A nested `repeat` is never counted through its `exhausted` control: a nested `repeat max 1 while true` whose body is only a `check` and whose `exhausted` control is an `attempt` leaves the outer `repeat` refused (`unsupported_construct`/`declaration-form` at the first `repeat` in tree order, the outer one)."),
-    ("fr466", "FR-466-AC-5", "A `repeat` is admitted with a maximum and an `exhausted` control, with a `proof`, with both, and with neither; `exhausted` without `maximum` and `maximum` without `exhausted` refuse `malformed_wire`, a body that does not necessarily step refuses `unsupported_construct`/`declaration-form` (FR-464), `maximum: 0` is admitted, and a `repeat` nested in another `repeat`'s body counts as a step in the enclosing progress only under the nested `repeat` rule (FR-464-AC-21, FR-464-AC-22)."),
+    ("fr466", "FR-466-AC-5", "A `repeat` is admitted with a maximum and an `exhausted` control, with a `proof`, with both, and with neither; `exhausted` without `maximum` and `maximum` without `exhausted` refuse `malformed_wire`, a body that does not necessarily step refuses `unsupported_construct`/`declaration-form` (FR-464), `maximum: 0` is admitted, and a `repeat` nested in another `repeat`'s body counts as a step in the enclosing progress only under the nested `repeat` rule (FR-464-AC-21, FR-464-AC-22, FR-464-AC-23)."),
     ("fr466", "FR-466-AC-17", "A `repeat` has no post-test form: a `repeat` guard and a `repeat` `visible` entry that read a field of a binder introduced in that `repeat`'s own body (an `attempt` or `event` binder `by` the owner, so eligible) each refuse `missing_declaration`/`missing-name` as an out-of-scope read, for a `repeat` with no `maximum`, with `maximum` 3 and with `maximum` 0, and are never admitted, never `wrong_snapshot`/`wrong-observation` and never `invalid_package`/`invalid-value`; the same `visible` entry and guard reading a binder in scope at the `repeat`'s entry are admitted."),
     ("fr466", "FR-466-AC-18", "A `visible` entry is an `expression` node: an entry targeting a `value`/`literal` node and one targeting a record binder's `value`/`parameter` node each refuse `invalid_model_binding`/`malformed-declaration` at the target; an `expression`/`reference` entry to a record binder refuses `ill_typed`/`operator-ineligible` at the read; a `choice` and a `repeat` behave alike; an application over constants only, and one over a capture only, is admitted as a composite entry and lists no fact a guard may read (a guard reading a fact no individual entry lists still refuses `wrong_snapshot`/`wrong-observation`, `reason` `unlisted`)."),
     ("fr052", "FR-052-AC-3", "A missing join input, causal cycle or zero-progress loop refuses admission, the zero-progress loop with `unsupported_construct`/`declaration-form` naming the repeat, including a repeat whose body holds a step in one `choice` case and an empty sequence in another; a repeat whose body holds only a nested repeat is refused when the nested repeat's exit is feasible or its maximum is 0 and admitted when its exit is infeasible, its maximum is absent or at least 1 and its own body holds a step (FR-464-AC-21); a repeat whose body holds a step is admitted with a maximum only, with an invariant and variant only, with both, and with neither."),
@@ -3279,6 +3279,28 @@ fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
         let mutated = replaced(base.fr464, from, to);
         let docs = Std539Docs { fr464: &mutated, ..base };
         mutants.push((name.to_string(), std_539_defects(docs)));
+    }
+    // The counter-reset ruling removed outright: the FR-425 and FR-426
+    // sentences, and the Soundness sentence of FR-464, each deleted whole
+    // (whitespace-insensitive, so line wrapping cannot hide the target).
+    let soundness = "A nested `repeat`'s iteration counter is reset to 0 on each entry from outside it (FR-425, FR-426), so each entry reaches its first guard test with the counter below any `maximum` of at least 1: `repeat max 1 while true { attempt }` nested in an outer `repeat` takes its `attempt` on every iteration of the outer `repeat`, and is a step of the outer `repeat`.";
+    for (name, key, sentence) in [
+        ("FR-425 reset sentence removed", "fr425", STD_539_PARAGRAPHS.iter().find(|p| p.1 == "FR-425 counter reset").unwrap().2),
+        ("FR-426 reset sentence removed", "fr426", STD_539_PARAGRAPHS.iter().find(|p| p.1 == "FR-426 counter reset").unwrap().2),
+        ("Soundness reset sentence removed", "fr464", soundness),
+    ] {
+        let words: Vec<&str> = sentence.split_whitespace().collect();
+        let mutated = replace_words(base.named(key), &words, "")
+            .unwrap_or_else(|| panic!("{name}: the sentence is in the document"));
+        assert_ne!(mutated, base.named(key), "{name} applies");
+        let docs = match key {
+            "fr425" => Std539Docs { fr425: &mutated, ..base },
+            "fr426" => Std539Docs { fr426: &mutated, ..base },
+            _ => Std539Docs { fr464: &mutated, ..base },
+        };
+        let defects = std_539_defects(docs);
+        assert!(!defects.is_empty(), "mutant {name} is caught");
+        mutants.push((name.to_string(), defects));
     }
     for (name, defects) in mutants {
         assert!(!defects.is_empty(), "mutant {name} is caught");
@@ -9024,6 +9046,81 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
     );
 }
 
+/// FR-322-AC-131: an execution-point identity vector is the published
+/// `positive-clause-operations.json` state-clause body with the point added to
+/// its `member`, nothing else changed, under the clause the point belongs to,
+/// and its key is neither the clause's own key nor another point's.
+fn execution_point_vector_defect(vector: &Value, clauses: &Value) -> Result<(), String> {
+    let preimage = &vector["preimage"];
+    let member = &preimage["body"]["operation"]["member"];
+    let nodes = clauses["semantic_graph"]["nodes"].as_array().expect("clause nodes");
+    let base = nodes
+        .iter()
+        .filter(|node| node["semantic_form"] == "state_clause")
+        .find(|node| node["body"]["arguments"] == preimage["body"]["arguments"])
+        .ok_or("no published state-clause body has the vector's arguments")?;
+    let mut expected = application_node_preimage(base, nodes).expect("clause preimage");
+    expected["body"]["operation"]["member"] =
+        json!({"clause": member["clause"], "kind": "state_clause", "execution_point": member["execution_point"]});
+    if *preimage != expected {
+        return Err("the preimage differs from the clause body beyond its execution point".to_owned());
+    }
+    let point = &member["execution_point"];
+    let belongs = match point["kind"].as_str() {
+        Some("initialization" | "handler") => member["clause"] == "invariant",
+        Some("pre") => member["clause"] == "precondition",
+        Some("post") => member["clause"] == "postcondition",
+        _ => false,
+    };
+    if !belongs {
+        return Err("the execution point does not belong to the clause".to_owned());
+    }
+    if vector["sha256"] == base["node_id"]["digest"] {
+        return Err("the execution point leaves the clause key unchanged".to_owned());
+    }
+    Ok(())
+}
+
+#[trace("TC-233", "FR-322-AC-131")]
+#[test]
+fn tc_233_execution_point_vectors_each_fail_on_their_mutation() {
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let clauses = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+    let points: Vec<&Value> = vectors["operation_vectors"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|vector| vector["preimage"]["body"]["operation"]["member"].get("execution_point").is_some())
+        .collect();
+    let kinds: BTreeSet<_> = points
+        .iter()
+        .map(|vector| vector["preimage"]["body"]["operation"]["member"]["execution_point"]["kind"].as_str().unwrap())
+        .collect();
+    assert_eq!(kinds, BTreeSet::from(["initialization", "handler", "pre", "post"]));
+    let digests: BTreeSet<_> = points.iter().map(|vector| vector["sha256"].as_str().unwrap()).collect();
+    assert_eq!(digests.len(), points.len(), "each point has its own key");
+    for vector in &points {
+        assert_eq!(execution_point_vector_defect(vector, &clauses), Ok(()));
+        let mutate = |edit: &dyn Fn(&mut Value)| {
+            let mut copy = (*vector).clone();
+            edit(&mut copy);
+            execution_point_vector_defect(&copy, &clauses).expect_err("the mutation is caught")
+        };
+        assert!(mutate(&|v| v["preimage"]["body"]["arguments"][1]["target"]["digest"] = json!("00".repeat(32)))
+            .contains("no published state-clause body"));
+        assert!(mutate(&|v| v["preimage"]["semantic_type"]["digest"] = json!("00".repeat(32)))
+            .contains("beyond its execution point"));
+        assert!(mutate(&|v| v["preimage"]["body"]["operation"]["laws"] = json!([{"role": "x"}]))
+            .contains("beyond its execution point"));
+        let other_clause = if vector["preimage"]["body"]["operation"]["member"]["clause"] == "invariant" { "postcondition" } else { "invariant" };
+        assert!(mutate(&|v| v["preimage"]["body"]["operation"]["member"]["clause"] = json!(other_clause))
+            .contains("does not belong"));
+        assert!(mutate(&|v| v["sha256"] = clauses["semantic_graph"]["nodes"]
+            .as_array().unwrap().iter().find(|n| n["semantic_form"] == "state_clause" && n["body"]["arguments"] == v["preimage"]["body"]["arguments"]).unwrap()["node_id"]["digest"].clone())
+            .contains("unchanged"));
+    }
+}
+
 #[trace("TC-233", "FR-322-AC-18")]
 #[test]
 fn tc_233_operation_vectors_key_every_application_node_of_the_published_packages() {
@@ -9102,6 +9199,15 @@ fn tc_233_operation_vectors_key_every_application_node_of_the_published_packages
                 Some(preimage),
                 "{name} is exactly the preimage of its package node"
             ),
+            // An execution-point vector keys a state clause of the published
+            // clause-operations package, not an operation of this one.
+            None if preimage["body"]["operation"]["member"].get("execution_point").is_some() => {
+                assert_eq!(
+                    execution_point_vector_defect(vector, &parsed_fixture(POSITIVE_CLAUSE_OPERATIONS)),
+                    Ok(()),
+                    "{name} applies its execution point to a published state-clause body"
+                );
+            }
             None => {
                 let laws = &preimage["body"]["operation"]["laws"];
                 assert!(
@@ -19617,11 +19723,33 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                     adverse["semantic_graph"]["nodes"][5]["node_id"].clone();
             }
             "duplicate-clock-place" => {
+                // A DISTINCT second place of the same path (its guards aggregate empty, so a
+                // different body and key), listed after the first and starting after every
+                // published place: in declared order, so only the repeated path is refused
+                // (FR-322-AC-260 does not apply). Repeating one node reference would repeat
+                // its order key and refuse as an order defect first.
                 let root = if is_tick { 45 } else { 52 };
-                let places = adverse["semantic_graph"]["nodes"][root]["body"]["members"][3]["value"]["members"]
-                    .as_array_mut().unwrap();
-                let duplicate = places[0].clone();
-                places.push(duplicate);
+                let mut second = adverse["semantic_graph"]["nodes"][45].clone();
+                second["body"]["members"][3]["value"]["members"] = json!([]);
+                second["dependencies"] = json!(body_reference_targets(&second["body"]));
+                let key = unqualified_jcs_sha256(&structural_node_preimage(&second).unwrap());
+                second["node_id"]["digest"] = json!(key);
+                second["semantic_type"]["digest"] = json!(key);
+                let id = second["node_id"].clone();
+                let mut entry = adverse["source_map"].as_array().unwrap().iter()
+                    .find(|entry| entry["node_id"] == adverse["semantic_graph"]["nodes"][45]["node_id"]).unwrap().clone();
+                entry["node_id"] = id.clone();
+                entry["regions"][0]["start"] = json!(9000);
+                entry["regions"][0]["end"] = json!(9001);
+                let nodes = adverse["semantic_graph"]["nodes"].as_array_mut().unwrap();
+                let at = nodes.len() - 1;
+                nodes.insert(at, second);
+                let places = &mut nodes[root];
+                places["body"]["members"][3]["value"]["members"]
+                    .as_array_mut().unwrap().push(json!({"term": "reference", "target": id.clone()}));
+                places["dependencies"].as_array_mut().unwrap().push(id);
+                places["dependencies"].as_array_mut().unwrap().sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+                adverse["source_map"].as_array_mut().unwrap().push(entry);
             }
             "noncanonical-place-path" => {
                 adverse["semantic_graph"]["nodes"][45]["body"]["members"][1]["value"]["members"][0]["members"][1]["value"]["value"] = json!("not-clock");
@@ -19773,6 +19901,11 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
         assert_eq!(row["expected_code"], expected.0);
         assert_eq!(row["expected_cause"], expected.1);
         assert_eq!(row["locus"], expected.2);
+        if row["mutation"] == "duplicate-clock-place" {
+            assert_eq!(timed_aggregate_order_refusal(&adverse), None, "TM-12 is in declared order, so only the repeated path is refused");
+            let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"].as_array().unwrap();
+            assert_ne!(places[0], places[1], "the repeated path is a distinct node, not a repeated reference");
+        }
     }
 }
 
@@ -22760,6 +22893,183 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
     assert_eq!(replayed, 2, "GD-02 and GD-03 are machine-readable patches");
 }
 
+/// FR-322-AC-260: the locus of the first aggregate member (a timed root's six
+/// reference aggregates, then each place's `guards`) whose order key, the
+/// minimum (source identity, start, end) over every region of every
+/// `source_map` entry of the member node, is not strictly above its predecessor's, or `None` when every aggregate is in
+/// declared order.
+fn timed_aggregate_order_refusal(package: &Value) -> Option<String> {
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let key = |id: &Value| {
+        package["source_map"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|entry| entry["node_id"] == *id)
+            .flat_map(|entry| entry["regions"].as_array().unwrap())
+            .map(|region| (region["source"]["identity"].as_str().unwrap().to_owned(), region["start"].as_u64().unwrap(), region["end"].as_u64().unwrap()))
+            .min()
+            .expect("a source_map region")
+    };
+    let first_out_of_order = |members: &[Value]| {
+        (1..members.len()).find(|at| key(&members[*at]["target"]) <= key(&members[at - 1]["target"]))
+    };
+    for (at, node) in nodes.iter().enumerate() {
+        let bindings: &[usize] = match node["semantic_form"].as_str() {
+            Some("timed_model") => &[3, 4, 5, 6, 7, 8],
+            Some("clock_place") => &[3],
+            _ => continue,
+        };
+        for binding in bindings {
+            let members = node["body"]["members"][*binding]["value"]["members"].as_array().unwrap();
+            if let Some(member) = first_out_of_order(members) {
+                return Some(format!("/semantic_graph/nodes/{at}/body/members/{binding}/value/members/{member}"));
+            }
+        }
+    }
+    None
+}
+
+#[trace("TC-367", "FR-322-AC-260")]
+#[test]
+fn tc_367_timed_aggregates_list_their_members_in_declared_order() {
+    let vectors = parsed_fixture(TIMED_SLOT_SELECTOR_VECTORS);
+    let selected = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
+    let schema = parsed_fixture(SCHEMA);
+    let validator = jsonschema::validator_for(&schema).unwrap();
+    let section = &vectors["aggregate_order"];
+    assert!(section["rule"].as_str().unwrap().starts_with("FR-322-AC-260"));
+    assert_eq!(timed_aggregate_order_refusal(&selected), None, "the selected package is in declared order");
+    // Declared order is not digest order: the control's place listing is not sorted by node key.
+    let places_of = |package: &Value| -> Vec<String> {
+        let root = &package["semantic_graph"]["nodes"][timed_node_index_of(package, "timed_model")];
+        root["body"]["members"][3]["value"]["members"]
+            .as_array().unwrap().iter().map(|entry| entry["target"]["digest"].as_str().unwrap().to_owned()).collect()
+    };
+    let control = places_of(&selected);
+    let mut by_digest = control.clone();
+    by_digest.sort();
+    assert_ne!(control, by_digest, "the published order is not a hash-derived order");
+    // GD-02 appends SL-08 last: in order, so it refuses only as a repeated place.
+    for gd in vectors["guards"].as_array().unwrap().iter().filter(|g| g["id"] == "GD-02") {
+        let mut adverse = selected.clone();
+        for operation in gd["patch"].as_array().unwrap() {
+            apply_json_patch(&mut adverse, operation);
+        }
+        assert_eq!(timed_aggregate_order_refusal(&adverse), None, "GD-02 appends in order");
+    }
+    let cases = section["cases"].as_array().unwrap();
+    let ids: Vec<_> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, ["AO-01", "AO-02", "AO-03", "AO-04", "AO-05", "AO-06", "AO-07"]);
+    let (mut refused, mut admitted_patched) = (0, 0);
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        assert_eq!(case["fixture"], vectors["selected_package"], "{id}");
+        let Some(patch) = case.get("patch") else {
+            assert_eq!(case["expected"], "admitted", "{id}");
+            continue;
+        };
+        if case["expected"] == "admitted" {
+            let mut admitted = selected.clone();
+            for operation in patch.as_array().unwrap() {
+                apply_json_patch(&mut admitted, operation);
+            }
+            assert!(validator.is_valid(&admitted), "{id} is schema-valid");
+            assert_eq!(timed_aggregate_order_refusal(&admitted), None, "{id} is in order");
+            admitted_patched += 1;
+            continue;
+        }
+        let mut adverse = selected.clone();
+        for operation in patch.as_array().unwrap() {
+            apply_json_patch(&mut adverse, operation);
+        }
+        assert_eq!(case["schema"], "valid");
+        assert!(validator.is_valid(&adverse), "{id} is schema-valid");
+        assert_eq!(adverse["package_id"]["digest"], unqualified_jcs_sha256(&package_id_preimage(&adverse)), "{id} package id");
+        let mut recomputed = adverse.clone();
+        rekey_stale_nodes(&mut recomputed);
+        assert_eq!(recomputed, adverse, "{id} every key is current");
+        assert_eq!(case["expected"], "refused");
+        assert_eq!(case["expected_code"], "invalid_semantic_graph");
+        assert!(case["expected_cause"].is_null(), "{id} has no cause");
+        let locus = timed_aggregate_order_refusal(&adverse).unwrap_or_else(|| panic!("{id} is refused"));
+        assert_eq!(locus, case["locus"].as_str().unwrap(), "{id}");
+        assert!(locus.ends_with(case["locus_suffix"].as_str().unwrap()), "{id}");
+        refused += 1;
+    }
+    assert_eq!((refused, admitted_patched), (5, 1));
+    // AO-03 is exactly the digest-ordered listing.
+    let digest_case = cases.iter().find(|case| case["id"] == "AO-03").unwrap();
+    let mut listed = selected.clone();
+    for operation in digest_case["patch"].as_array().unwrap() {
+        apply_json_patch(&mut listed, operation);
+    }
+    assert_eq!(places_of(&listed), by_digest);
+}
+
+/// Each reading of the order rule fails on its mutation: a source region moved
+/// before or onto its predecessor's, a listing sorted by digest, the key read
+/// from a different region, and an out-of-order `guards` of a place.
+#[trace("TC-367", "FR-322-AC-260")]
+#[test]
+fn tc_367_aggregate_order_oracle_fails_on_each_mutation() {
+    let selected = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
+    assert_eq!(timed_aggregate_order_refusal(&selected), None);
+    let place_at = |package: &Value, at: usize| -> Value {
+        let root = &package["semantic_graph"]["nodes"][timed_node_index_of(package, "timed_model")];
+        root["body"]["members"][3]["value"]["members"][at]["target"].clone()
+    };
+    let root_at = timed_node_index_of(&selected, "timed_model");
+    let entry_of = |package: &mut Value, id: &Value| -> usize {
+        package["source_map"].as_array().unwrap().iter().position(|entry| entry["node_id"] == *id).unwrap()
+    };
+    // The second place's region moved onto the first's: equal keys refuse.
+    let mut equal = selected.clone();
+    let (first, second) = (place_at(&equal, 0), place_at(&equal, 1));
+    let (a, b) = (entry_of(&mut equal, &first), entry_of(&mut equal, &second));
+    equal["source_map"][b]["regions"][0] = equal["source_map"][a]["regions"][0].clone();
+    assert_eq!(
+        timed_aggregate_order_refusal(&equal),
+        Some(format!("/semantic_graph/nodes/{root_at}/body/members/3/value/members/1"))
+    );
+    // The first place's region moved after the second's.
+    let mut moved = selected.clone();
+    moved["source_map"][a]["regions"][0]["start"] = json!(9000);
+    moved["source_map"][a]["regions"][0]["end"] = json!(9001);
+    assert_eq!(
+        timed_aggregate_order_refusal(&moved),
+        Some(format!("/semantic_graph/nodes/{root_at}/body/members/3/value/members/1"))
+    );
+    // A different source identity orders before the position: identity first.
+    let mut identity = selected.clone();
+    identity["source_map"][b]["regions"][0]["source"]["identity"] = json!("a");
+    identity["source_map"][a]["regions"][0]["source"]["identity"] = json!("b");
+    assert!(timed_aggregate_order_refusal(&identity).is_some());
+    // A repeated member of an aggregate is not strictly ascending.
+    let mut repeated = selected.clone();
+    let urgencies = repeated["semantic_graph"]["nodes"][root_at]["body"]["members"][7]["value"]["members"].clone();
+    repeated["semantic_graph"]["nodes"][root_at]["body"]["members"][7]["value"]["members"][1] = urgencies[0].clone();
+    assert_eq!(
+        timed_aggregate_order_refusal(&repeated),
+        Some(format!("/semantic_graph/nodes/{root_at}/body/members/7/value/members/1"))
+    );
+    // A place whose `guards` lists two guards in reverse of their regions refuses at that place.
+    let mut guarded = selected.clone();
+    let place = guarded["semantic_graph"]["nodes"].as_array().unwrap().iter().position(|n| n["semantic_form"] == "clock_place").unwrap();
+    let guard = guarded["semantic_graph"]["nodes"][root_at]["body"]["members"][5]["value"]["members"][0].clone();
+    let other = guarded["semantic_graph"]["nodes"][root_at]["body"]["members"][6]["value"]["members"][0].clone();
+    let (ga, gb) = (entry_of(&mut guarded, &guard["target"]), entry_of(&mut guarded, &other["target"]));
+    let (ka, kb) = (guarded["source_map"][ga]["regions"][0].clone(), guarded["source_map"][gb]["regions"][0].clone());
+    assert!(ka["start"].as_u64() < kb["start"].as_u64());
+    guarded["semantic_graph"]["nodes"][place]["body"]["members"][3]["value"]["members"] = json!([guard.clone(), other.clone()]);
+    assert_eq!(timed_aggregate_order_refusal(&guarded), None, "ascending guards of a place are in order");
+    guarded["semantic_graph"]["nodes"][place]["body"]["members"][3]["value"]["members"] = json!([other, guard]);
+    assert_eq!(
+        timed_aggregate_order_refusal(&guarded),
+        Some(format!("/semantic_graph/nodes/{place}/body/members/3/value/members/1"))
+    );
+}
+
 /// Position of the first node of a package with the given semantic form.
 fn timed_node_index_of(package: &Value, form: &str) -> usize {
     package["semantic_graph"]["nodes"]
@@ -22937,6 +23247,16 @@ fn tc_367_presence_over_a_clock_place_is_a_derived_predicate_not_a_field() {
     let owner_type = self_node["semantic_type"].clone();
     let slot_type = nodes.iter().find(|n| n["node_tag"] == "scalar_type" && n["semantic_form"] == "integer").unwrap()["node_id"].clone();
     let boolean = nodes.iter().find(|n| n["node_tag"] == "scalar_type" && n["semantic_form"] == "boolean").unwrap()["node_id"].clone();
+    // The indexed read `self.q[i]` is not published (FR-322-AC-155): the cases
+    // are exactly PR-01 and PR-03..PR-06, and every admitted slot term is the binder `e`.
+    let case_ids: Vec<_> = presence["cases"].as_array().unwrap().iter().map(|case| case["id"].as_str().unwrap()).collect();
+    assert_eq!(case_ids, ["PR-01", "PR-03", "PR-04", "PR-05", "PR-06"]);
+    for case in presence["cases"].as_array().unwrap().iter().filter(|case| case["expected"] == "admitted") {
+        let arguments = case["node"]["body"]["arguments"].as_array().unwrap();
+        for slot in arguments.iter().skip(2) {
+            assert_eq!(slot["target"], presence["parameters"]["e"]["node_id"], "{} slot term is the binder", case["id"]);
+        }
+    }
     let mut keys = BTreeSet::new();
     for case in presence["cases"].as_array().unwrap() {
         let id = case["id"].as_str().unwrap();
@@ -23015,10 +23335,11 @@ fn tc_367_presence_vector_assertions_each_fail_on_their_mutation() {
         .map(|p| (p["node_id"]["digest"].as_str().unwrap().to_owned(), p.clone())).collect();
     let owner_type = vectors["presence"]["parameters"]["self"]["semantic_type"].clone();
     let slot_type = json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": vectors["type_nodes"]["integer"]});
-    let mut pr02 = vectors["presence"]["cases"][1]["node"].clone();
-    assert_eq!(presence_cause(&pr02, &places, &parameters, &owner_type, &slot_type), None);
-    pr02["body"]["arguments"].as_array_mut().unwrap().pop();
-    assert!(presence_cause(&pr02, &places, &parameters, &owner_type, &slot_type).is_some());
+    assert_eq!(vectors["presence"]["cases"][1]["id"], "PR-03");
+    let mut pr03 = vectors["presence"]["cases"][1]["node"].clone();
+    assert_eq!(presence_cause(&pr03, &places, &parameters, &owner_type, &slot_type), None);
+    pr03["body"]["arguments"].as_array_mut().unwrap().pop();
+    assert!(presence_cause(&pr03, &places, &parameters, &owner_type, &slot_type).is_some());
 }
 
 /// The type definition of `identity` in a selected FCD document.
@@ -23343,6 +23664,171 @@ fn tc_367_selected_package_assertions_each_fail_on_their_mutation() {
     let root_at = unlisted["semantic_graph"]["nodes"].as_array().unwrap().iter().position(|n| n["semantic_form"] == "timed_model").unwrap();
     unlisted["semantic_graph"]["nodes"][root_at]["body"]["members"][3]["value"]["members"].as_array_mut().unwrap().remove(0);
     assert!(defect(&vectors, &document, &unlisted).contains("not listed"));
+}
+
+const CLOCK_PRESENCE_FRAME_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/clock-presence-frame-vectors.json");
+const FR415_DECLARE_CLOCKS: &str =
+    include_str!("../spec/functional/temporal/FR-415-declare-clocks-and-timed-models.md");
+
+/// The whole FR-415-AC-21 row, pinned exactly.
+const FR415_AC21_ROW: &str = "| FR-415-AC-21 | With `v: Option<Clock>` and `st: Mode` where `Mode` is a union of `Idle` and `Armed { x: Clock }`, both in the frame of an operation: a postcondition that requires `present(self.v)` of an absent `v`, or `present(self.st.Armed)` of an `Idle` `st`, with no write of the clock has no successor (no implicit reset to 0), and refuses `invalid_timed_model`/`clock-presence-unwritten` when the precondition establishes the place absent; with the write `self.v = 5 ms` or the constructor `self.st = Armed { x: 5 ms }` it has one successor in which the place is present with the clock `5 ms`; a write of `absent` or of `Idle` drops the place; a requirement is never a write, so `not present(self.v)` of a present, unwritten `v` has no successor, while `not present(self.st.Armed)` of an `Armed` `st` has the successor with `st` an `Idle`; an unwritten `Armed` `st` with no requirement keeps its clock and also admits the `Idle` successor, and an unwritten present `v` only keeps it. The vectors `FP-01`..`FP-14` of `clock-presence-frame-vectors.json` pair each `Option` vector with its union twin and state which pairs agree and which differ only because a union can leave its case. | Test (TC-367; CK-31; FP-01..FP-14) |";
+
+/// The sentences of the FR-415 frame paragraphs that the vectors realize.
+const FR415_FRAME_SENTENCES: [&str; 5] = [
+    "A place becomes present only by a write of its clock value, for an `Option<Clock>` place and for a union case alike.",
+    "does not select an `Armed` successor with a clock of 0: nothing writes the clock, so there is no successor, exactly as `present(self.v)` alone from an absent `v` has none.",
+    "refuses `invalid_timed_model`/`clock-presence-unwritten` at the `present(...)` requirement, naming the place.",
+    "A requirement is a constraint, never a write: `not present(p)` does not write `absent` or `Idle`.",
+    "they differ only because a union can leave a case and an `Option<Clock>` bit does not change.",
+];
+
+/// How an oracle reads a place that becomes present with no write of its clock.
+#[derive(Clone, Copy, PartialEq)]
+enum UnwrittenPresence {
+    /// FR-415-AC-21: there is no successor (or the static refusal).
+    NoSuccessor,
+    /// The defect STD-542 rules out: an implicit reset to 0.
+    ImplicitReset,
+}
+
+/// The outcome of one frame vector under the one rule: a write fixes the
+/// place; with no write an `Option<Clock>` keeps its state and a union also
+/// admits the clockless case; the requirement then filters the candidates and
+/// is never itself a write.
+fn frame_outcome(case: &Value, unwritten: UnwrittenPresence) -> Value {
+    let (present, clock) = match case["form"].as_str().unwrap() {
+        "option" => (case["pre"]["present"].as_bool().unwrap(), case["pre"]["clock"].clone()),
+        "union" => (case["pre"]["case"] == "Armed", case["pre"]["clock"].clone()),
+        other => panic!("form {other}"),
+    };
+    let requires = case["requires"].as_str();
+    let wants_present = requires.map(|text| !text.starts_with("not "));
+    let write = &case["write"];
+    let kept = json!({"present": present, "clock": clock});
+    let dropped = json!({"present": false, "clock": null});
+    let mut candidates = Vec::new();
+    if write.is_null() {
+        if wants_present == Some(true) && !present {
+            if case["precondition_establishes_absent"] == true {
+                return json!({"refused": {"code": "invalid_timed_model", "cause": "clock-presence-unwritten"}});
+            }
+            if unwritten == UnwrittenPresence::ImplicitReset {
+                return json!([{"present": true, "clock": "0 ms"}]);
+            }
+        }
+        candidates.push(kept.clone());
+        if case["form"] == "union" && dropped != kept {
+            candidates.push(dropped);
+        }
+    } else if write.get("absent").is_some() || write["constructor"] == "Idle" {
+        candidates.push(dropped);
+    } else {
+        candidates.push(json!({"present": true, "clock": write["clock"]}));
+    }
+    Value::Array(
+        candidates
+            .into_iter()
+            .filter(|candidate| wants_present.is_none_or(|wanted| candidate["present"] == wanted))
+            .collect(),
+    )
+}
+
+/// Every way the FR-415-AC-21 frame vectors or its pinned text disagree with the rule.
+fn frame_defects(vectors: &Value, fr415: &str, unwritten: UnwrittenPresence) -> Vec<String> {
+    let mut defects = Vec::new();
+    let cases = vectors["cases"].as_array().unwrap();
+    let mut differing = Vec::new();
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        if frame_outcome(case, unwritten) != case["expected"] {
+            defects.push(format!("{id} outcome differs from the rule"));
+        }
+        let twin = cases.iter().find(|other| other["id"] == case["pair"]["with"]);
+        match twin {
+            Some(twin) if twin["pair"]["with"] == case["id"] && twin["form"] != case["form"] && twin["pair"]["outcome"] == case["pair"]["outcome"] => {
+                let agree = twin["expected"] == case["expected"];
+                match case["pair"]["outcome"].as_str() {
+                    Some("same") if agree => {}
+                    Some("differs") if !agree => differing.push(id.to_owned()),
+                    _ => defects.push(format!("{id} and its twin do not {}", case["pair"]["outcome"])),
+                }
+            }
+            _ => defects.push(format!("{id} has no paired twin of the other form")),
+        }
+    }
+    differing.sort();
+    if differing != ["FP-05", "FP-06", "FP-13", "FP-14"] {
+        defects.push(format!("the differing pairs are {differing:?}"));
+    }
+    let ids: Vec<_> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
+    if ids != ["FP-01", "FP-02", "FP-03", "FP-04", "FP-05", "FP-06", "FP-07", "FP-08", "FP-09", "FP-10", "FP-11", "FP-12", "FP-13", "FP-14"] {
+        defects.push("the vector ids are not FP-01..FP-14".to_owned());
+    }
+    let text = normalized(fr415);
+    let row = fr415.lines().find(|line| line.starts_with("| FR-415-AC-21 |"));
+    if row != Some(FR415_AC21_ROW) {
+        defects.push("the FR-415-AC-21 row is not the pinned row".to_owned());
+    }
+    for pinned in FR415_FRAME_SENTENCES {
+        if !text.contains(&normalized(pinned)) {
+            defects.push(format!("FR-415 does not state: {pinned}"));
+        }
+    }
+    defects
+}
+
+/// FR-415-AC-21 (STD-542): under an operation's frame a place becomes present
+/// only by a write of its clock value, `Option<Clock>` and union case alike;
+/// there is no implicit reset, a requirement is never a write.
+#[trace("TC-367", "FR-415-AC-21")]
+#[test]
+fn tc_367_a_place_becomes_present_only_by_a_write_of_its_clock() {
+    let vectors = parsed_fixture(CLOCK_PRESENCE_FRAME_VECTORS);
+    assert_eq!(frame_defects(&vectors, FR415_DECLARE_CLOCKS, UnwrittenPresence::NoSuccessor), Vec::<String>::new());
+    for diagnostics in [NATIVE_DIAGNOSTICS, TYPED_DIAGNOSTIC_CAUSE] {
+        assert!(
+            diagnostic_row_causes(diagnostics, "invalid_timed_model").contains("clock-presence-unwritten"),
+            "the cause is catalogued"
+        );
+    }
+}
+
+/// Each reading of the rule fails on its mutation: an implicit reset, a vector
+/// whose expected outcome changes, an unpaired form and removed text.
+#[trace("TC-367", "FR-415-AC-21")]
+#[test]
+fn tc_367_frame_presence_vectors_fail_on_each_mutation() {
+    let vectors = parsed_fixture(CLOCK_PRESENCE_FRAME_VECTORS);
+    let defects = |vectors: &Value, fr415: &str, unwritten| frame_defects(vectors, fr415, unwritten);
+    let reset = defects(&vectors, FR415_DECLARE_CLOCKS, UnwrittenPresence::ImplicitReset);
+    assert!(reset.iter().any(|d| d.starts_with("FP-01 ")) && reset.iter().any(|d| d.starts_with("FP-02 ")), "{reset:?}");
+    let edit = |change: &dyn Fn(&mut Value)| {
+        let mut copy = vectors.clone();
+        change(&mut copy);
+        defects(&copy, FR415_DECLARE_CLOCKS, UnwrittenPresence::NoSuccessor)
+    };
+    assert!(!edit(&|v| v["cases"][1]["expected"] = json!([{"present": true, "clock": "0 ms"}])).is_empty());
+    assert!(!edit(&|v| v["cases"][4]["expected"] = json!([{"present": true, "clock": null}])).is_empty());
+    assert!(!edit(&|v| v["cases"][2]["write"]["clock"] = json!("6 ms")).is_empty());
+    assert!(!edit(&|v| v["cases"][3]["pair"]["with"] = json!("FP-05")).is_empty());
+    assert!(!edit(&|v| { v["cases"].as_array_mut().unwrap().pop(); }).is_empty());
+    // `not present` read as a write of absent for the Option bit, or the union kept.
+    assert!(!edit(&|v| v["cases"][12]["expected"] = json!([{"present": false, "clock": null}])).is_empty());
+    assert!(!edit(&|v| v["cases"][13]["expected"] = json!([])).is_empty());
+    // The static refusal dropped or renamed.
+    assert!(!edit(&|v| v["cases"][10]["expected"] = json!([])).is_empty());
+    assert!(!edit(&|v| v["cases"][11]["expected"]["refused"]["cause"] = json!("clock-write")).is_empty());
+    // A differing pair declared the same.
+    assert!(!edit(&|v| { v["cases"][5]["pair"]["outcome"] = json!("same"); v["cases"][4]["pair"]["outcome"] = json!("same"); }).is_empty());
+    // The pinned row and sentences edited or removed.
+    let edited = FR415_DECLARE_CLOCKS.replacen("`FP-01`..`FP-14`", "`FP-01`..`FP-12`", 1);
+    assert!(!defects(&vectors, &edited, UnwrittenPresence::NoSuccessor).is_empty());
+    for pinned in FR415_FRAME_SENTENCES {
+        let words: Vec<&str> = pinned.split_whitespace().collect();
+        let mutated = replace_words(FR415_DECLARE_CLOCKS, &words, "").expect("the sentence is in FR-415");
+        assert!(!defects(&vectors, &mutated, UnwrittenPresence::NoSuccessor).is_empty(), "{pinned}");
+    }
 }
 
 const CONTRACT_PACKAGE_SELECTION_VECTORS: &str =

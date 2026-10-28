@@ -1,0 +1,294 @@
+{
+  "version": "quire.clock-presence-frame-vectors/v1",
+  "rule": "FR-415-AC-21: a clock is live only by a write of its clock value, for an Option<Clock> place and a union case place alike; an unwritten place keeps its clock; a requirement is a constraint, never a write. An Option<Clock> bit does not change unless written; a union value may leave its case (a clockless case drops the clock) but no case makes a clock live without the write. A presence requirement that nothing writes has no successor, and refuses invalid_timed_model/clock-presence-unwritten when the precondition establishes the place absent. There is no implicit reset to 0.",
+  "places": {
+    "option": "v: Option<Clock>",
+    "union": "st: Mode, Mode = Idle | Armed { x: Clock }; the place is st.Armed.x"
+  },
+  "pre_state": "option: {present, clock}; union: {case, clock} with clock null in Idle",
+  "write": "option: {clock: c} makes the place present with c, {absent: true} drops it; union: {constructor: Armed, clock: c} makes it present with c, {constructor: Idle} drops it; null writes nothing",
+  "successor": "a list of {present, clock}; an empty list is no successor; {refused} is the static refusal",
+  "pair": "each Option vector and its union twin: outcome 'same' means equal expected results, 'differs' means they differ only because a union can leave its case",
+  "cases": [
+    {
+      "id": "FP-01",
+      "form": "option",
+      "pre": {
+        "present": false,
+        "clock": null
+      },
+      "requires": "present(self.v)",
+      "write": null,
+      "expected": [],
+      "pair": {
+        "with": "FP-02",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-02",
+      "form": "union",
+      "pre": {
+        "case": "Idle",
+        "clock": null
+      },
+      "requires": "present(self.st.Armed)",
+      "write": null,
+      "expected": [],
+      "pair": {
+        "with": "FP-01",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-03",
+      "form": "option",
+      "pre": {
+        "present": false,
+        "clock": null
+      },
+      "requires": "present(self.v)",
+      "write": {
+        "clock": "5 ms"
+      },
+      "expected": [
+        {
+          "present": true,
+          "clock": "5 ms"
+        }
+      ],
+      "pair": {
+        "with": "FP-04",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-04",
+      "form": "union",
+      "pre": {
+        "case": "Idle",
+        "clock": null
+      },
+      "requires": "present(self.st.Armed)",
+      "write": {
+        "constructor": "Armed",
+        "clock": "5 ms"
+      },
+      "expected": [
+        {
+          "present": true,
+          "clock": "5 ms"
+        }
+      ],
+      "pair": {
+        "with": "FP-03",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-05",
+      "form": "option",
+      "pre": {
+        "present": true,
+        "clock": "3 ms"
+      },
+      "requires": null,
+      "write": null,
+      "expected": [
+        {
+          "present": true,
+          "clock": "3 ms"
+        }
+      ],
+      "pair": {
+        "with": "FP-06",
+        "outcome": "differs"
+      }
+    },
+    {
+      "id": "FP-06",
+      "form": "union",
+      "pre": {
+        "case": "Armed",
+        "clock": "3 ms"
+      },
+      "requires": null,
+      "write": null,
+      "expected": [
+        {
+          "present": true,
+          "clock": "3 ms"
+        },
+        {
+          "present": false,
+          "clock": null
+        }
+      ],
+      "pair": {
+        "with": "FP-05",
+        "outcome": "differs"
+      }
+    },
+    {
+      "id": "FP-07",
+      "form": "option",
+      "pre": {
+        "present": true,
+        "clock": "3 ms"
+      },
+      "requires": null,
+      "write": {
+        "absent": true
+      },
+      "expected": [
+        {
+          "present": false,
+          "clock": null
+        }
+      ],
+      "pair": {
+        "with": "FP-08",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-08",
+      "form": "union",
+      "pre": {
+        "case": "Armed",
+        "clock": "3 ms"
+      },
+      "requires": null,
+      "write": {
+        "constructor": "Idle"
+      },
+      "expected": [
+        {
+          "present": false,
+          "clock": null
+        }
+      ],
+      "pair": {
+        "with": "FP-07",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-09",
+      "form": "option",
+      "pre": {
+        "present": true,
+        "clock": "3 ms"
+      },
+      "requires": "present(self.v)",
+      "write": null,
+      "expected": [
+        {
+          "present": true,
+          "clock": "3 ms"
+        }
+      ],
+      "pair": {
+        "with": "FP-10",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-10",
+      "form": "union",
+      "pre": {
+        "case": "Armed",
+        "clock": "3 ms"
+      },
+      "requires": "present(self.st.Armed)",
+      "write": null,
+      "expected": [
+        {
+          "present": true,
+          "clock": "3 ms"
+        }
+      ],
+      "pair": {
+        "with": "FP-09",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-11",
+      "form": "option",
+      "pre": {
+        "present": false,
+        "clock": null
+      },
+      "requires": "present(self.v)",
+      "write": null,
+      "precondition_establishes_absent": true,
+      "expected": {
+        "refused": {
+          "code": "invalid_timed_model",
+          "cause": "clock-presence-unwritten"
+        }
+      },
+      "pair": {
+        "with": "FP-12",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-12",
+      "form": "union",
+      "pre": {
+        "case": "Idle",
+        "clock": null
+      },
+      "requires": "present(self.st.Armed)",
+      "write": null,
+      "precondition_establishes_absent": true,
+      "expected": {
+        "refused": {
+          "code": "invalid_timed_model",
+          "cause": "clock-presence-unwritten"
+        }
+      },
+      "pair": {
+        "with": "FP-11",
+        "outcome": "same"
+      }
+    },
+    {
+      "id": "FP-13",
+      "form": "option",
+      "pre": {
+        "present": true,
+        "clock": "3 ms"
+      },
+      "requires": "not present(self.v)",
+      "write": null,
+      "expected": [],
+      "pair": {
+        "with": "FP-14",
+        "outcome": "differs"
+      }
+    },
+    {
+      "id": "FP-14",
+      "form": "union",
+      "pre": {
+        "case": "Armed",
+        "clock": "3 ms"
+      },
+      "requires": "not present(self.st.Armed)",
+      "write": null,
+      "expected": [
+        {
+          "present": false,
+          "clock": null
+        }
+      ],
+      "pair": {
+        "with": "FP-13",
+        "outcome": "differs"
+      }
+    }
+  ]
+}

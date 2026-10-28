@@ -108,7 +108,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "2e24c0ffc505114892af1869ff899f7858dc05c63f70b30a096db41fe9aa546d",
+    "digest": "ce948569ce328ca2c8d39b8378517d60b3321ec2674c81b7fe81fc97249c745a",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -3154,7 +3154,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "06e475ed351c7ebb36c6fe3d0da25e348619978d99da5e0b829611f5aa066087",
+                      "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3168,28 +3168,7 @@
                   },
                   {
                     "target": {
-                      "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
-                      "domain": "quire.checked-semantic-node/v1"
-                    },
-                    "term": "reference"
-                  },
-                  {
-                    "target": {
-                      "digest": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd",
-                      "domain": "quire.checked-semantic-node/v1"
-                    },
-                    "term": "reference"
-                  },
-                  {
-                    "target": {
                       "digest": "587d090168212dae371a5f9e2eea7f5c82bb4c2ab1f6308c546fd5d9107ff457",
-                      "domain": "quire.checked-semantic-node/v1"
-                    },
-                    "term": "reference"
-                  },
-                  {
-                    "target": {
-                      "digest": "63ad6f8b01af751ae549129cb44ec19f64a194db4c2497eb0fe2827bf16e87f0",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3203,7 +3182,14 @@
                   },
                   {
                     "target": {
-                      "digest": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f",
+                      "digest": "63ad6f8b01af751ae549129cb44ec19f64a194db4c2497eb0fe2827bf16e87f0",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  },
+                  {
+                    "target": {
+                      "digest": "06e475ed351c7ebb36c6fe3d0da25e348619978d99da5e0b829611f5aa066087",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3211,6 +3197,20 @@
                   {
                     "target": {
                       "digest": "cfe44326312d7ed29a0d3d1adecbb9cfccf638789895151a31a2ef400a2b9844",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  },
+                  {
+                    "target": {
+                      "digest": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  },
+                  {
+                    "target": {
+                      "digest": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3390,7 +3390,7 @@
           }
         ],
         "node_id": {
-          "digest": "26673c0f9a499fea74a737e2d8130aa1931736fe0bf9c60765ef4e967e4de8c3",
+          "digest": "5875f4c8960d235931f78e2db0e6583693665fe2cf3372beab8b2b23c7c6de5b",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -3408,7 +3408,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "timed_model",
         "semantic_type": {
-          "digest": "26673c0f9a499fea74a737e2d8130aa1931736fe0bf9c60765ef4e967e4de8c3",
+          "digest": "5875f4c8960d235931f78e2db0e6583693665fe2cf3372beab8b2b23c7c6de5b",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -6907,77 +6907,6 @@
             {
               "term": "reference",
               "target": {
-                "digest": "5d6ec348649ff9e308af317b03273a2fdf55f1a08c7d447e896f6d91fe8e0c2e",
-                "domain": "quire.checked-semantic-node/v1"
-              }
-            }
-          ],
-          "operation": {
-            "identity": "quire.op.option.present",
-            "laws": [],
-            "leaves": [],
-            "member": null,
-            "mode": null
-          },
-          "operator": "present",
-          "result_type": {
-            "digest": "2c8a0dce10573206bc442b2da6d32ad0ba75373e04e91b09059467e791b211ec",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "term": "application"
-        },
-        "dependencies": [
-          {
-            "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          {
-            "digest": "5d6ec348649ff9e308af317b03273a2fdf55f1a08c7d447e896f6d91fe8e0c2e",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          {
-            "digest": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f",
-            "domain": "quire.checked-semantic-node/v1"
-          }
-        ],
-        "node_tag": "expression",
-        "occurrences": [
-          {
-            "ordinal": 0,
-            "role": "expression"
-          }
-        ],
-        "schema_version": "quire.checked-semantic-graph/v2",
-        "semantic_form": "presence_read",
-        "node_id": {
-          "digest": "2aac753c2b070f586850e4eb48c42d55e24de56259f994f7c95a34f66e8177a7",
-          "domain": "quire.checked-semantic-node/v1"
-        },
-        "semantic_type": {
-          "digest": "2c8a0dce10573206bc442b2da6d32ad0ba75373e04e91b09059467e791b211ec",
-          "domain": "quire.checked-semantic-node/v1"
-        }
-      },
-      {
-        "body": {
-          "arguments": [
-            {
-              "term": "reference",
-              "target": {
-                "digest": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f",
-                "domain": "quire.checked-semantic-node/v1"
-              }
-            },
-            {
-              "term": "reference",
-              "target": {
-                "digest": "18cf5ed16dd555a52d0695ca3194de4835b4475cee06c2a6329f57bd147bc7e5",
-                "domain": "quire.checked-semantic-node/v1"
-              }
-            },
-            {
-              "term": "reference",
-              "target": {
                 "digest": "8c2c52f6f5e194fb4dd87bf92952b90ff728ddfedae67c7c28e74da2195db323",
                 "domain": "quire.checked-semantic-node/v1"
               }
@@ -8003,7 +7932,7 @@
     },
     {
       "node_id": {
-        "digest": "26673c0f9a499fea74a737e2d8130aa1931736fe0bf9c60765ef4e967e4de8c3",
+        "digest": "5875f4c8960d235931f78e2db0e6583693665fe2cf3372beab8b2b23c7c6de5b",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -8437,26 +8366,6 @@
             "identity": "example"
           },
           "start": 2011
-        }
-      ],
-      "role": "expression"
-    },
-    {
-      "node_id": {
-        "digest": "2aac753c2b070f586850e4eb48c42d55e24de56259f994f7c95a34f66e8177a7",
-        "domain": "quire.checked-semantic-node/v1"
-      },
-      "ordinal": 0,
-      "regions": [
-        {
-          "end": 2013,
-          "source": {
-            "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
-            "identity": "example"
-          },
-          "start": 2012
         }
       ],
       "role": "expression"

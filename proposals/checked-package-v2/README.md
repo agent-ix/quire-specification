@@ -508,7 +508,12 @@ and two nodes declaring one name refuse as `ambiguous-name`
   in the package fixture; their equality is enforced through `package_node`,
   so the two copies cannot drift. Each node key is the SHA-256 of the
   RFC 8785 structural or application preimage, and `SL-06` equals the
-  published fixture place.
+  published fixture place. Its `aggregate_order` section publishes the
+  declared-order rule of the timed-root aggregates and the replayable
+  `AO-02`..`AO-04` patches that break it (FR-322-AC-260, TC-367 CK-30).
+- `clock-presence-frame-vectors.json` publishes the frame rule of FR-415-AC-21
+  (no implicit reset on a presence change) for an `Option<Clock>` place and a
+  union case place, paired case for case (TC-367 CK-31).
 
 ## Regenerating protocol fixture keys
 
