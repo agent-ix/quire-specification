@@ -139,7 +139,8 @@
           {"name": "trail", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": true, "unique": false}, "redefines": null},
           {"name": "sku", "typeRef": "ix://acme/orders/Code", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
           {"name": "alias", "typeRef": "ix://acme/orders/Inverted", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "slug", "typeRef": "ix://acme/orders/Folded", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
+          {"name": "slug", "typeRef": "ix://acme/orders/Folded", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
+          {"name": "clock", "typeRef": "Map<Text, ix://quire/native/Clock>", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
         ],
         "operations": [
           {

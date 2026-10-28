@@ -1,0 +1,897 @@
+{
+  "version": "quire.refinement-identity-vectors/v1",
+  "identity_cases": [
+    {
+      "name": "RI-01",
+      "preimage": {
+        "version": "quire.refinement-node/v1",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "body": {
+          "term": "refinement",
+          "abstract": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "profile": {
+            "authority": "agent-ix",
+            "identity": "quire.temporal.infinite-trace/v1"
+          },
+          "populations": [],
+          "objects": [],
+          "steps": [],
+          "histories": [],
+          "assume": [],
+          "ensure": [],
+          "name": "Alpha"
+        }
+      },
+      "sha256": "270b0643276e73e0acb5a6c9bafc94abebb2a5b903c70c32dea578c462d838d7"
+    },
+    {
+      "name": "RI-02",
+      "preimage": {
+        "version": "quire.refinement-node/v1",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "body": {
+          "term": "refinement",
+          "abstract": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "profile": {
+            "authority": "agent-ix",
+            "identity": "quire.temporal.infinite-trace/v1"
+          },
+          "populations": [],
+          "objects": [],
+          "steps": [],
+          "histories": [],
+          "assume": [],
+          "ensure": [],
+          "name": "Beta"
+        }
+      },
+      "sha256": "c86e0fe54021838d18731a57b00f99672e6ed4a4ee4f1ca7ad81983993acba64"
+    }
+  ],
+  "wire_cases": [
+    {
+      "name": "RI-03",
+      "preimage": {
+        "version": "quire.refinement-node/v1",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "body": {
+          "term": "refinement",
+          "abstract": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "profile": {
+            "authority": "agent-ix",
+            "identity": "quire.temporal.infinite-trace/v1"
+          },
+          "populations": [],
+          "objects": [],
+          "steps": [],
+          "histories": [],
+          "assume": [],
+          "ensure": []
+        }
+      },
+      "expected": "schema_refused"
+    },
+    {
+      "name": "RI-03b",
+      "preimage": {
+        "version": "quire.refinement-node/v1",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "body": {
+          "term": "refinement",
+          "abstract": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "profile": {
+            "authority": "agent-ix",
+            "identity": "quire.temporal.infinite-trace/v1"
+          },
+          "populations": [],
+          "objects": [],
+          "steps": [],
+          "histories": [],
+          "assume": [],
+          "ensure": [],
+          "name": "1bad"
+        }
+      },
+      "expected": "schema_refused"
+    },
+    {
+      "name": "RI-04",
+      "nodes": [
+        {
+          "name": "Alpha",
+          "preimage": {
+            "version": "quire.refinement-node/v1",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "body": {
+              "term": "refinement",
+              "abstract": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+              },
+              "profile": {
+                "authority": "agent-ix",
+                "identity": "quire.temporal.infinite-trace/v1"
+              },
+              "populations": [],
+              "objects": [],
+              "steps": [],
+              "histories": [],
+              "assume": [],
+              "ensure": [],
+              "name": "Alpha"
+            }
+          }
+        },
+        {
+          "name": "Alpha",
+          "preimage": {
+            "version": "quire.refinement-node/v1",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "body": {
+              "term": "refinement",
+              "abstract": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+              },
+              "profile": {
+                "authority": "agent-ix",
+                "identity": "quire.temporal.infinite-trace/v2"
+              },
+              "populations": [],
+              "objects": [],
+              "steps": [],
+              "histories": [],
+              "assume": [],
+              "ensure": [],
+              "name": "Alpha"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name",
+          "at_member": "body/name",
+          "node": "later-by-digest"
+        }
+      }
+    }
+  ],
+  "step_provenance": {
+    "types": {
+      "Counter": {
+        "declares": [
+          "beginA",
+          "commitA"
+        ],
+        "owner": "concrete"
+      },
+      "Base": {
+        "declares": [
+          "reset"
+        ],
+        "owner": "concrete"
+      },
+      "Sub": {
+        "declares": [],
+        "supertypes": [
+          "Base"
+        ],
+        "owner": "concrete"
+      },
+      "Other": {
+        "declares": [
+          "beginA"
+        ],
+        "owner": "foreign"
+      }
+    },
+    "anchors": {
+      "AN-Counter-beginA": {
+        "context": "Counter",
+        "operation": "beginA",
+        "point": null
+      },
+      "AN-Counter-commitA": {
+        "context": "Counter",
+        "operation": "commitA",
+        "point": null
+      },
+      "AN-Counter-commitA-post": {
+        "context": "Counter",
+        "operation": "commitA",
+        "point": "post"
+      },
+      "AN-Base-reset": {
+        "context": "Base",
+        "operation": "reset",
+        "point": null
+      },
+      "AN-Other-beginA": {
+        "context": "Other",
+        "operation": "beginA",
+        "point": null
+      }
+    },
+    "non_anchor_nodes": [
+      "MODEL-ROOT",
+      "MODEL-OWNER-Counter",
+      "PROTOCOL-CLAUSE-P"
+    ],
+    "cases": [
+      {
+        "name": "SP-01f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Counter-beginA",
+        "expected": "admitted"
+      },
+      {
+        "name": "SP-02f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "MODEL-ROOT",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-03f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "MODEL-OWNER-Counter",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-04f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Counter-commitA",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-05f",
+        "class_catalog": false,
+        "source_class": "Counter::commitA",
+        "source_node": "AN-Counter-commitA-post",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-06f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": null,
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-07f",
+        "class_catalog": false,
+        "source_class": "Counter::nope",
+        "source_node": "AN-Counter-beginA",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-08f",
+        "class_catalog": false,
+        "source_class": "Base::reset",
+        "source_node": "AN-Base-reset",
+        "expected": "admitted"
+      },
+      {
+        "name": "SP-09f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Other-beginA",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-01c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Counter-beginA",
+        "expected": "admitted"
+      },
+      {
+        "name": "SP-02c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "MODEL-ROOT",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-03c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "MODEL-OWNER-Counter",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-04c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Counter-commitA",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-05c",
+        "class_catalog": true,
+        "source_class": "Counter::commitA",
+        "source_node": "AN-Counter-commitA-post",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-06c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": null,
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-07c",
+        "class_catalog": true,
+        "source_class": "Counter::nope",
+        "source_node": "AN-Counter-beginA",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-08c",
+        "class_catalog": true,
+        "source_class": "Base::reset",
+        "source_node": "AN-Base-reset",
+        "expected": "admitted"
+      },
+      {
+        "name": "SP-09c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Other-beginA",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-10f",
+        "class_catalog": false,
+        "source_class": "Other::beginA",
+        "source_node": "AN-Other-beginA",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-11f",
+        "class_catalog": false,
+        "source_class": "Sub::reset",
+        "source_node": "AN-Base-reset",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-10c",
+        "class_catalog": true,
+        "source_class": "Other::beginA",
+        "source_node": "AN-Other-beginA",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-11c",
+        "class_catalog": true,
+        "source_class": "Sub::reset",
+        "source_node": "AN-Base-reset",
+        "expected": "missing_declaration/missing-name"
+      }
+    ],
+    "catalog": [
+      {
+        "class": "Base::reset",
+        "node": "AN-Base-reset"
+      },
+      {
+        "class": "Counter::beginA",
+        "node": "AN-Counter-beginA"
+      },
+      {
+        "class": "Counter::commitA",
+        "node": "AN-Counter-commitA"
+      }
+    ],
+    "anchor_occurrences": [
+      {
+        "name": "OC-01",
+        "anchor": "AN-Counter-beginA",
+        "named_by_clause": false,
+        "occurrences": [
+          {
+            "role": "anchor",
+            "region": "declaration of Counter::beginA"
+          }
+        ],
+        "expected": "admitted"
+      },
+      {
+        "name": "OC-02",
+        "anchor": "AN-Counter-beginA",
+        "named_by_clause": false,
+        "occurrences": [],
+        "expected": "refused:no-occurrence"
+      },
+      {
+        "name": "OC-03",
+        "anchor": "AN-Counter-beginA",
+        "named_by_clause": false,
+        "occurrences": [
+          {
+            "role": "anchor",
+            "region": "declaration of Counter::beginA"
+          },
+          {
+            "role": "anchor",
+            "region": "declaration of Counter::beginA"
+          }
+        ],
+        "expected": "refused:unnamed-anchor-has-exactly-one-occurrence"
+      },
+      {
+        "name": "OC-04",
+        "anchor": "AN-Counter-beginA",
+        "named_by_clause": true,
+        "occurrences": [
+          {
+            "role": "anchor",
+            "region": "clause 1"
+          },
+          {
+            "role": "anchor",
+            "region": "clause 2"
+          }
+        ],
+        "expected": "admitted"
+      }
+    ]
+  },
+  "row_binders": {
+    "operation": {
+      "declaring_type": "Counter",
+      "parameters": [
+        {
+          "name": "n",
+          "type": "Integer"
+        },
+        {
+          "name": "m",
+          "type": "Integer"
+        }
+      ]
+    },
+    "cases": [
+      {
+        "name": "BI-01",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "n",
+            "level": 1,
+            "type": "Integer"
+          },
+          {
+            "name": "m",
+            "level": 2,
+            "type": "Integer"
+          }
+        ],
+        "expected": "admitted"
+      },
+      {
+        "name": "BI-02",
+        "kind": "object",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          }
+        ],
+        "expected": "admitted"
+      },
+      {
+        "name": "BI-03",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "n",
+            "level": 2,
+            "type": "Integer"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "BI-04",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "k",
+            "level": 1,
+            "type": "Integer"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "BI-05",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Other>"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "BI-06",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "result",
+            "level": 1,
+            "type": "Integer"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "BI-07",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "n",
+            "level": 1,
+            "type": "Boolean"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      }
+    ]
+  },
+  "selected_roots": {
+    "note": "FR-375-AC-33, FR-375-AC-34. Five selected model roots. Each root node is the structural model_root key of its selection (identity, digest), recomputed by the test; the selection digests are labels, no selected document is published. Cases are graph cases, not wire packages. `semantic_type` names the concrete root; the abstract root is always RA.",
+    "roots": {
+      "RA": {
+        "identity": "acme/spec",
+        "digest": "4706a1cd0b467ba2bd85f158f86e896f35d4e9d2b44793baab74f34bbd50abc7",
+        "node": "78920d7fbea1d340be76e1bc3236cf3a46c8de3236e4072e69ff1b82949214ae",
+        "derived_concrete_classes": [
+          "Spec::Tick"
+        ]
+      },
+      "RB": {
+        "identity": "acme/impl",
+        "digest": "72940eef4217c2889abe93daf2adc3d03e188779e4a042091d577758c40ad883",
+        "node": "9280040317d34160eb1763d745966188e56ff138ec4cf498a8e7d48e5fa2ffb0",
+        "derived_concrete_classes": [
+          "Impl::Do"
+        ]
+      },
+      "RC": {
+        "identity": "acme/other",
+        "digest": "33b1eff36dc1e15ca206432ce2a1dcc551be0bfb877c5edcb761f9acb878ab78",
+        "node": "83d62faa4b2f9a233c1fc928300e7b7bd3c239f860f30db0a6e902941a24d6de",
+        "derived_concrete_classes": [
+          "Other::Go"
+        ]
+      },
+      "RD": {
+        "identity": "acme/bare",
+        "digest": "8f7780defcd8f1cbd502ff04802eb7e58b512a19b7115f220215d656f73ef584",
+        "node": "8b3cef44525b95961031bc9b35471d43f6090d13f5eb72ebd3bc275b43a492dc",
+        "derived_concrete_classes": []
+      },
+      "RF": {
+        "identity": "acme/plain",
+        "digest": "c4f23338dbf67b73e8b6cd0d932c36032576cb6faf64ba7d9613b373f99fb6dc",
+        "node": "c6c72df767df9ed249de2d411f3227f00309366e88723defcd9534a388f17866",
+        "derived_concrete_classes": []
+      }
+    },
+    "cases": [
+      {
+        "name": "SR-01",
+        "description": "valid: semantic_type is RB, the catalog and every concrete key belong to acme/impl; keys are listed in non-spec order",
+        "semantic_type": "RB",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
+        ],
+        "concrete_keys": [
+          {
+            "array": "steps",
+            "index": 0,
+            "member": "source_node",
+            "owner": "acme/impl"
+          },
+          {
+            "array": "objects",
+            "index": 0,
+            "member": "concrete_type",
+            "owner": "acme/impl"
+          }
+        ],
+        "expected": "admitted"
+      },
+      {
+        "name": "SR-02",
+        "description": "swap RB to RC with rows kept: the first foreign key in array order (objects before steps) refuses",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
+        ],
+        "concrete_keys": [
+          {
+            "array": "steps",
+            "index": 0,
+            "member": "source_node",
+            "owner": "acme/impl"
+          },
+          {
+            "array": "objects",
+            "index": 0,
+            "member": "concrete_type",
+            "owner": "acme/impl"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration at body/objects/0/concrete_type"
+      },
+      {
+        "name": "SR-03",
+        "description": "row-empty protocol subject, swap RB to RC: the concrete catalog lists Impl::Do, which RC does not derive",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
+        ],
+        "concrete_keys": [],
+        "expected": "invalid_semantic_graph at body/class_catalog/concrete/0"
+      },
+      {
+        "name": "SR-04",
+        "description": "row-empty protocol subject over RD, which derives no class, with an empty concrete catalog: admitted",
+        "semantic_type": "RD",
+        "subject": "protocol",
+        "catalog": [],
+        "concrete_keys": [],
+        "expected": "admitted"
+      },
+      {
+        "name": "SR-05",
+        "description": "SR-04 with semantic_type swapped to RC, which owns Other::Go: the empty catalog omits it",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [],
+        "concrete_keys": [],
+        "expected": "invalid_semantic_graph at body/class_catalog/concrete"
+      },
+      {
+        "name": "SR-06",
+        "description": "SR-04 swapped to RF, which derives the same (empty) class set: undetectable, admitted as a different node",
+        "semantic_type": "RF",
+        "subject": "protocol",
+        "catalog": [],
+        "concrete_keys": [],
+        "expected": "admitted"
+      },
+      {
+        "name": "SR-07",
+        "description": "row-empty model subject (no catalog), swap RB to RC: no concrete key and no catalog, admitted as a different node",
+        "semantic_type": "RC",
+        "subject": "model",
+        "catalog": null,
+        "concrete_keys": [],
+        "expected": "admitted"
+      },
+      {
+        "name": "SR-08",
+        "description": "a foreign catalog class and a foreign row key together: the row join (step 5) precedes the step 7 catalog comparison",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
+        ],
+        "concrete_keys": [
+          {
+            "array": "steps",
+            "index": 0,
+            "member": "source_node",
+            "owner": "acme/impl"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration at body/steps/0/source_node"
+      },
+      {
+        "name": "SR-09",
+        "description": "a protocol subject whose catalog is absent and a foreign row key: the presence check precedes the row joins",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": null,
+        "concrete_keys": [
+          {
+            "array": "steps",
+            "index": 0,
+            "member": "source_node",
+            "owner": "acme/impl"
+          }
+        ],
+        "expected": "invalid_semantic_graph at body/class_catalog"
+      },
+      {
+        "name": "SR-10",
+        "description": "row key owned by another model while semantic_type is right: histories updates operation",
+        "semantic_type": "RB",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
+        ],
+        "concrete_keys": [
+          {
+            "array": "histories",
+            "index": 0,
+            "member": "updates/0/operation",
+            "owner": "acme/other"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration at body/histories/0/updates/0/operation"
+      },
+      {
+        "name": "SR-11",
+        "description": "reflexive refinement (FR-375-AC-34): semantic_type is the abstract root RA itself; keys and catalog belong to acme/spec",
+        "semantic_type": "RA",
+        "subject": "protocol",
+        "catalog": [
+          "Spec::Tick"
+        ],
+        "concrete_keys": [
+          {
+            "array": "objects",
+            "index": 0,
+            "member": "concrete_type",
+            "owner": "acme/spec"
+          }
+        ],
+        "expected": "admitted"
+      },
+      {
+        "name": "SR-12",
+        "description": "row-empty protocol subject swapped to RC (derives Other::Go) with catalog [Zed::Run]: Other::Go sorts first and is omitted, so the discrepancy is at the array, not at the extra entry",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Zed::Run"
+        ],
+        "concrete_keys": [],
+        "expected": "invalid_semantic_graph at body/class_catalog/concrete"
+      },
+      {
+        "name": "SR-13",
+        "description": "as SR-12 with catalog [Aaa::Run]: the extra class sorts first, so the discrepancy is at entry 0",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Aaa::Run"
+        ],
+        "concrete_keys": [],
+        "expected": "invalid_semantic_graph at body/class_catalog/concrete/0"
+      }
+    ],
+    "row_empty_identities": [
+      {
+        "name": "SR-07",
+        "preimage": {
+          "version": "quire.refinement-node/v1",
+          "semantic_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "9280040317d34160eb1763d745966188e56ff138ec4cf498a8e7d48e5fa2ffb0"
+          },
+          "body": {
+            "term": "refinement",
+            "abstract": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "78920d7fbea1d340be76e1bc3236cf3a46c8de3236e4072e69ff1b82949214ae"
+            },
+            "profile": {
+              "authority": "agent-ix",
+              "identity": "quire.temporal.infinite-trace/v1"
+            },
+            "populations": [],
+            "objects": [],
+            "steps": [],
+            "histories": [],
+            "assume": [],
+            "ensure": [],
+            "name": "Alpha"
+          }
+        },
+        "sha256": "b70129c4dc1f6567547e0edffcd62896e1b9ef74ccbb6b7ccc7fefc54388ce7f"
+      },
+      {
+        "name": "SR-07-swapped",
+        "preimage": {
+          "version": "quire.refinement-node/v1",
+          "semantic_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "83d62faa4b2f9a233c1fc928300e7b7bd3c239f860f30db0a6e902941a24d6de"
+          },
+          "body": {
+            "term": "refinement",
+            "abstract": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "78920d7fbea1d340be76e1bc3236cf3a46c8de3236e4072e69ff1b82949214ae"
+            },
+            "profile": {
+              "authority": "agent-ix",
+              "identity": "quire.temporal.infinite-trace/v1"
+            },
+            "populations": [],
+            "objects": [],
+            "steps": [],
+            "histories": [],
+            "assume": [],
+            "ensure": [],
+            "name": "Alpha"
+          }
+        },
+        "sha256": "f43bf0f85c4481eaa431f47df4a42f0b11a8a49474fae7234ed1dbea75e99997"
+      }
+    ]
+  }
+}

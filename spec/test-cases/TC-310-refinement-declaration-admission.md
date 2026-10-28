@@ -260,6 +260,50 @@ Mutations, each applied alone to the positive unit:
     vector is a structural preimage, not a nominal one, so the nominal-vector
     test (TC-233) binds it by the closed node-preimage schema and its JCS
     digest, not by the nominal-preimage schema.
+30. **Refinement identity (RI-01 to RI-04) and step provenance (SP-01 to
+    SP-11, each run with the class catalog (`c`) and without (`f`): 22 cases;
+    OC-01 to OC-04; BI-01 to BI-07).** Build two refinements of one unit that differ
+    only in name (`Alpha`, `Beta`): both are admitted as two nodes whose
+    recomputed ids differ, and the package emits no internal failure
+    (FR-375-AC-29); a body without `name` fails both schemas; two nodes with
+    equal `name` refuse `ambiguous_declaration`/`ambiguous-name` at the later
+    node's `body/name` (FR-375-AC-30). The vectors are
+    `refinement-identity-vectors.json`. For the step provenance vectors, an
+    operation class `Counter::beginA` is admitted with the no-point anchor of
+    (`Counter`, `beginA`), with and without a `class_catalog`, and refused with
+    the concrete model root, the model-owner node, another operation's anchor
+    or a point-qualified anchor as `source_node`, and with none
+    (FR-375-AC-31); `Sub::reset` of an inherited operation is a missing class,
+    resolved before `source_node`; an anchor no clause names carries one
+    `anchor` occurrence, the operation's declaration region (OC-01 to OC-04).
+    For the binder vectors, `self` at level 0 and the parameters at levels
+    1..n by declared name are admitted; a wrong name, level or type, and a
+    step row with a `result` binder, are refused (FR-375-AC-32).
+31. **Selected model roots (SR-01 to SR-13).** The vectors are the
+    `selected_roots` section of `refinement-identity-vectors.json`: five
+    selected models (`acme/spec` the abstract `RA`, `acme/impl` `RB`,
+    `acme/other` `RC`, `acme/bare` `RD`, `acme/plain` `RF`), each root
+    recomputed as its selection's `model_root` key. They are graph cases, not
+    wire packages: no two-selection wire fixture is published, so only the
+    root keys and the row-empty node ids (SR-07) are recomputed.
+    SR-01 is admitted. SR-02 swaps `RB` to `RC` with rows kept and refuses
+    `invalid_model_binding`/`malformed-declaration` at the first foreign key in
+    array order (`objects` before `steps`). SR-03 is row-empty over a protocol
+    subject: the concrete catalog lists `Impl::Do`, which `RC` does not derive,
+    and it refuses `invalid_semantic_graph` at that entry. SR-04 admits an
+    empty catalog over `RD`, SR-05 swaps it to `RC`, which owns `Other::Go`,
+    and refuses `invalid_semantic_graph` at the catalog array, and SR-06 swaps
+    it to `RF`, which derives the same empty set: admitted. SR-07 is a
+    row-empty model subject with no catalog: admitted under `RB` and `RC` as
+    two nodes differing by `semantic_type` alone. SR-08 has a foreign catalog
+    class and a foreign row key and refuses at the row (step 5 precedes step
+    7); SR-09 has an absent protocol catalog and a foreign row and refuses at
+    `/body/class_catalog` (presence precedes rows); SR-10 refuses a foreign
+    `histories[].updates[].operation`. SR-11 is the reflexive refinement
+    (`semantic_type` is `RA`), admitted (FR-375-AC-34). SR-12 and SR-13 fix the
+    tie-break between an omitted and an extra class by catalog-key order:
+    `[Zed::Run]` against derived `[Other::Go]` refuses at the `concrete` array,
+    `[Aaa::Run]` at entry 0 (FR-375-AC-33).
 
 ## Expected Results
 
@@ -401,6 +445,8 @@ except in `CC-07`; always recompute `package_id` before reading
 | `CC-15` | From `CC-12`, reorder the three `memory drain` entries to `tso`, `sc`, `ra`; separately repeat the `sc` drain entry; separately repeat a declared class entry; separately select `tso` by two source `parallel` controls | Reordered, repeated-pair and repeated-spelling catalogs refuse `invalid_semantic_graph` at the first out-of-order or later duplicate entry in reader step 2; two controls selecting `tso` yield one `tso` drain and one `tso` flush entry. The canonical `CC-12` order is `memory drain` for `ra`, `sc`, `tso`, then `memory flush` for `tso`. Uniqueness is by (`class`, `memory_model`) (FR-375-AC-26). |
 | `CC-16` | A concrete protocol clause `activation on each (x: T)` with non-record `T`, then with record `T{p, q}`, then `activation on origin`; the abstract clause likewise | `on each` catalogues `activate <protocol>` with the clause node and `binder_types` `[T]`, then one key per field of `T` in effective field order; `on origin` catalogues none (FR-375-AC-27). |
 | `CC-17` | From `CC-16`, associate `activate` with the trigger's parameter node instead of its clause, drop the entry, add one for an `origin` clause, swap two `binder_types`, or give a wrong type | A wrong node association, a swapped or wrong binder type each refuse `invalid_model_binding`/`malformed-declaration` at the catalog entry in FR-464 step 7; a dropped entry refuses `invalid_semantic_graph` at the catalog array, and an entry added for an `origin` clause refuses `invalid_semantic_graph` at that entry. |
+| `CC-18` | Concrete protocol `Impl` with attempt `Do`, effect `E`, commit `K`, event `ev` and template `T` (with `cend`) under `sc`, `tso` and `ra` parallels (so `tso` also contributes `memory flush`), and abstract protocol `Req` with attempt `Ask`, effect `AE` and commit `AK`; read the producer catalog. Independent mutations of it, each from the unedited catalog: (a) drop `Impl::E`; (b) drop `Impl::K`; (c) drop `cend Impl::T`; (d) repeat the `Impl::E` entry; (e) add `cend Impl::Do` (an attempt, not a template) in canonical position; (f) add `Impl::Ghost` naming no node; (g) set the `Impl::K` entry's `node` to `E`'s key | The unedited concrete array is, in order: `Impl::Do`, `Impl::E`, `Impl::K`, `Impl::T`, `Impl::ev`, `cend Impl::T`, then `memory drain` for `ra`, `sc`, `tso`, then `memory flush` for `tso`; the abstract array is `Req::AE`, `Req::AK`, `Req::Ask`; admitted (the wire form is `CCF-01` of `class-catalog-vectors.json`). (a), (b), (c) each refuse `invalid_semantic_graph` at `/semantic_graph/nodes/{n}/body/class_catalog/concrete`; (d) refuses `invalid_semantic_graph` at the later duplicate entry, reader step 2; (e) and (f) each refuse `invalid_semantic_graph` at the added entry, protocol step 7; (g) refuses `invalid_model_binding`/`malformed-declaration` at the `Impl::K` entry, protocol step 7 (FR-375-AC-28). |
+| `CC-19` | `CC-18` with a protocol that has no effect, commit or template node; then add an `Impl::E` entry naming no node | The first is admitted with no effect, commit or `cend` entry; the second refuses `invalid_semantic_graph` at the added entry (FR-375-AC-28). |
 
 In mutation 26, `RW-01` is admitted on both reads; its rewritten canonical
 package has the same refinement node id and `package_id` as the first write.

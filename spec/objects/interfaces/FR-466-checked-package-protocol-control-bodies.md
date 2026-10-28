@@ -185,6 +185,28 @@ scope"), which precedes this check. The decision-fact check runs after the
 entries first, then the guards in case order. An empty `visible` set is
 admitted when the guards read constants and captures only.
 
+**No post-test `repeat`.** A `repeat` guard or `visible` entry that reads a
+binder introduced in that `repeat`'s own body, such as the most recently
+completed iteration's `attempt` binder, refuses `missing_declaration`/
+`missing-name` as an out-of-scope read, whatever the binder's kind, its
+eligibility for the owner, the `maximum` (including 0) and whether the read is
+a field or bare. The wire has no post-test form: a `repeat` has no argument
+that runs the body once before its first guard, and FR-426 has no such move.
+A source language that defines post-test `repeat` semantics (QSL FR-218-AC-33)
+has no checked-package encoding until a requirement adds one.
+
+**A `visible` entry is an `expression` node.** The `visible` set holds
+`expression` nodes (the layout above). An entry that targets a `value`/`literal`
+node (a constant written bare, such as `true`) or a `value`/`parameter` binder
+node refuses `invalid_model_binding`/`malformed-declaration` at the target
+(reference rule 1); an `expression`/`reference` entry whose target is a record
+binder is a bare binder read and refuses `ill_typed`/`operator-ineligible`
+as above; an `expression` that is an application over constants and captures
+only is a composite entry, admitted, that makes its constant value visible.
+A source that writes a bare literal or a bare binder as a `visible` entry
+therefore has no encoding of that entry, and no decision fact is lost by
+refusing it: neither reads a field of an eligible record binder.
+
 
 ## Binder scope
 
@@ -200,7 +222,7 @@ the following levels, in layout order, for its others (FR-464 "Binders").
 | `sequence` | `In(child 1)` is `In(sequence)`; `In(child i+1)` is `Out(child i)`; `Out(sequence)` is `Out(last child)`, or `In(sequence)` for no child |
 | `choice` | the guards and `visible` read `In(choice)`; `In(case body)` is `In(choice)`; `Out(choice)` is `In(choice)`: a case's binders do not escape it |
 | `parallel` | `In(branch body)` is `In(parallel)`; sibling branches read nothing of each other; `Out(parallel)` is `In(parallel)` and the `Out` of every branch for policy `all`, and `In(parallel)` for any other policy |
-| `repeat` | the guard and `visible` read `In(repeat)`; `In(body)` and `In(exhausted)` are `In(repeat)`; `Out(repeat)` is `In(repeat)`: iteration binders do not escape |
+| `repeat` | the guard and `visible` read `In(repeat)`; `In(body)` and `In(exhausted)` are `In(repeat)`; `Out(repeat)` is `In(repeat)`: iteration binders do not escape. A `repeat` is pre-test: its guard and `visible` entries are read at the `repeat`'s entry, before any body step ([FR-426](../../functional/protocol/FR-426-apply-protocol-steps.md)), and the body's binders are in no `In` set a guard or `visible` entry reads |
 | `await` | `In(event)` is `In(await)`; `In(then)` is `Out(event)`; `In(timeout)` is `In(await)`; `Out(await)` is `In(await)`: the matched event is readable on `then` only |
 | `send`, `receive`, `attempt`, `effect`, `event`, `commit` | `constraint` and `related` read `In(n)` and the node's `binder`; `Out(n)` is `In(n)` and the `binder` |
 | `check`, `fence` | `check` reads `In(check)`; `Out` is `In` |
@@ -320,7 +342,7 @@ checks at FR-464 step 6):
 | FR-466-AC-2 | A `sequence` holds its children in execution order and may hold none; reordering two children changes the node key; a child that is not a `control` node refuses `invalid_model_binding`/`malformed-declaration` at the target, a child that is a node absent from `dependencies` `invalid_semantic_graph` at the `sequence` node's `/dependencies` (graph stage, FR-322-AC-96), and a child that names no node `missing_declaration`/`missing-name`. | Test (TC-948) |
 | FR-466-AC-3 | A `choice` is admitted with an owning role, a `visible` set and at least two labelled cases sorted by label; one case, equal labels, cases out of label order, a guard that reads model state and a guard that reads `over` refuse (`malformed_wire`, `ambiguous_declaration`/`ambiguous-name`, `invalid_semantic_graph`, `ill_typed`/`operator-ineligible` at the read); a non-Boolean guard refuses `ill_typed`/`non-boolean-root`; the guards' exhaustiveness is not re-proved. | Test (TC-948) |
 | FR-466-AC-4 | A `parallel` is admitted for each join policy; `all` naming every branch, `any` and `predicate` naming at least one and `quorum` with `1 <= count <=` the joined branches; a join naming a missing branch label refuses `missing_declaration`/`missing-name` at the label, `all` omitting a branch and `quorum` outside its range `invalid_package`/`invalid-value`, and a repeated or out-of-order joined label `invalid_semantic_graph`; branches are sorted ascending by label, and a branch list out of that order is `invalid_semantic_graph`. | Test (TC-948) |
-| FR-466-AC-5 | A `repeat` is admitted with a maximum and an `exhausted` control, with a `proof`, with both, and with neither; `exhausted` without `maximum` and `maximum` without `exhausted` refuse `malformed_wire`, a body that does not necessarily step refuses `unsupported_construct`/`declaration-form` (FR-464), and `maximum: 0` is admitted. | Test (TC-948) |
+| FR-466-AC-5 | A `repeat` is admitted with a maximum and an `exhausted` control, with a `proof`, with both, and with neither; `exhausted` without `maximum` and `maximum` without `exhausted` refuse `malformed_wire`, a body that does not necessarily step refuses `unsupported_construct`/`declaration-form` (FR-464), `maximum: 0` is admitted, and a `repeat` nested in another `repeat`'s body counts as a step in the enclosing progress only under the nested `repeat` rule (FR-464-AC-21, FR-464-AC-22, FR-464-AC-23). | Test (TC-948) |
 | FR-466-AC-6 | An `await` is admitted after an event node and after a compensation, awaiting a `receive`, an `effect` or an `event`; awaiting a `send` or an `attempt` refuses `unsupported_construct`/`declaration-form`; an anchor that is not a step control, or an `await` anchored at a control that follows it, refuses (`invalid_model_binding`/`malformed-declaration`, `invalid_package`/`definition-cycle`). | Test (TC-948) |
 | FR-466-AC-7 | A `send` and a `receive` are admitted over one channel with payload binders typed as the channel's `carries`; a binder of another type, a `receive` of a `send` on another channel and a `receive` whose `of` is not a `send` refuse as the reader order states; the pair in the wrong causal order refuses `invalid_package`/`definition-cycle`. | Test (TC-948) |
 | FR-466-AC-8 | An `attempt` is admitted with a role, an operation anchor, each memory ordering or none, and `contracts` that are the pre- and postconditions of that anchor; a `contracts` target anchored at another operation, an `invariant` clause and a non-clause node refuse `invalid_model_binding`/`malformed-declaration`; an empty `contracts` list is admitted. An `effect` is admitted of an `attempt` and refuses `invalid_model_binding`/`malformed-declaration` of any other control. | Test (TC-948) |
@@ -332,6 +354,8 @@ checks at FR-464 step 6):
 | FR-466-AC-14 | Decision facts: a `choice` owned by the `to` role of a channel decides on its `receive` record's Boolean field listed individually in `visible`; the other role's receive record, a `send`, `effect` or `commit` binder, a field of the protocol activation binder, an unlisted fact and a fact reachable only inside a composite entry each refuse `wrong_snapshot`/`wrong-observation` with `reason` `other-role`, `ineligible-kind` or `unlisted`; an attempt or event binder is eligible for the role it is `by`; a repeat's `visible` and guard follow the same rule; a binder not readable at the node refuses as an out-of-scope read first. | Test (TC-948) |
 | FR-466-AC-15 | A `predicate` join over `joined` `[east, west]` whose `function` node has two `boolean` parameters and a `boolean` result is admitted; the same join with a one-parameter function, a three-parameter function, a second parameter of an integer type, or an integer result refuses `ill_typed`/`type-mismatch` at `predicate`, retaining expected and actual. | Test (TC-948) |
 | FR-466-AC-16 | Refusal precedence in one `visible` entry or guard, which fixes FR-466-AC-14 and agrees with FR-464-AC-8 and FR-464-AC-12: a direct read of the protocol input `over` refuses `ill_typed`/`operator-ineligible` at the read, naming the slot, in a `choice` `visible` entry, a `choice` guard, a `repeat` `visible` entry and a `repeat` guard, and is never `wrong_snapshot`/`wrong-observation`; a field of the protocol activation binder, readable at the node, refuses `wrong_snapshot`/`wrong-observation` with `reason` `ineligible-kind`, while a bare read of that binder (or of any record binder) with no field projection refuses `ill_typed`/`operator-ineligible` at the read, naming the slot, in each of the four slots, and is never `wrong_snapshot` (a slot holding both a bare binder read and an in-scope ineligible field read refuses the bare read, `ill_typed`/`operator-ineligible`, whatever their order); a read of the finish binder, or of a binder a compensation template declares, from a `visible` entry or a guard refuses `missing_declaration`/`missing-name` (`read` `stage`, respectively `foreign`) and never `wrong_snapshot`, since neither is readable in a `run` slot; a slot that holds both a read of `over` and a binder read refuses the `over` read, and a slot that holds both an out-of-scope binder read and an in-scope ineligible one refuses the out-of-scope read. Reader evidence is owned by IR (IR-874, FR-038-AC-291/292); TC-948 DF6b and DF7d..DF7h are the published oracle. | Analysis |
+| FR-466-AC-17 | A `repeat` has no post-test form: a `repeat` guard and a `repeat` `visible` entry that read a field of a binder introduced in that `repeat`'s own body (an `attempt` or `event` binder `by` the owner, so eligible) each refuse `missing_declaration`/`missing-name` as an out-of-scope read, for a `repeat` with no `maximum`, with `maximum` 3 and with `maximum` 0, and are never admitted, never `wrong_snapshot`/`wrong-observation` and never `invalid_package`/`invalid-value`; the same `visible` entry and guard reading a binder in scope at the `repeat`'s entry are admitted. | Test (TC-948) |
+| FR-466-AC-18 | A `visible` entry is an `expression` node: an entry targeting a `value`/`literal` node and one targeting a record binder's `value`/`parameter` node each refuse `invalid_model_binding`/`malformed-declaration` at the target; an `expression`/`reference` entry to a record binder refuses `ill_typed`/`operator-ineligible` at the read; a `choice` and a `repeat` behave alike; an application over constants only, and one over a capture only, is admitted as a composite entry and lists no fact a guard may read (a guard reading a fact no individual entry lists still refuses `wrong_snapshot`/`wrong-observation`, `reason` `unlisted`). | Test (TC-948) |
 
 ## Dependencies
 

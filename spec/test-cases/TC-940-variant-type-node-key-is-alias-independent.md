@@ -1,6 +1,6 @@
 ---
 id: TC-940
-title: "Model-owned variant, tuple and union declaration nodes, their keys and their reads"
+title: "Model-owned variant, tuple and union declaration nodes, their keys and their reads; nominal rekey and refinement row nodes"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-322
@@ -8,7 +8,7 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-141
     type: verifies
 ---
-# TC-940: Model-owned variant, tuple and union declaration nodes, their keys and their reads
+# TC-940: Model-owned variant, tuple and union declaration nodes, their keys and their reads; nominal rekey and refinement row nodes
 
 ## Description
 
@@ -16,8 +16,12 @@ Verify the `model`/`variant_type` declaration node, the type a variant-typed
 member derives, and the identity of the node and of its cases (steps 1 to 5,
 independent of the alias), then the `model`/`tuple_value_type` node, the
 payload-bearing variant type read as a union, the application nodes over them
-and a cyclic pair of model types (steps 6 to 12). Scope: FR-322-AC-71,
-FR-141-AC-7 (steps 1 to 5); FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12).
+and a cyclic pair of model types (steps 6 to 12), then the nominal key stage
+and its placement among the key stages (steps 14 to 15) and the refinement row
+expression nodes: history read, whole-population value, `count`, `only` and
+`seq` (steps 16 to 18). Scope: FR-322-AC-71, FR-141-AC-7 (steps 1 to 5);
+FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12); FR-322-AC-160 to FR-322-AC-170
+(steps 14 to 19).
 
 ## Test Procedure
 
@@ -55,7 +59,8 @@ and a second variant type `Level` with cases `Gold` and `Silver`.
 
 ## Tuple value types and payload-bearing variant types (STD-519)
 
-Scope: FR-322-AC-140 to FR-322-AC-147. Use `model-tuple-union-vectors.json`:
+Scope: FR-322-AC-140 to FR-322-AC-147, FR-322-AC-151 to FR-322-AC-154 and FR-322-AC-181 to FR-322-AC-183 (payload and position types with no step 4 row: intake cases `TK-11` to `TK-35`, and the member refusal in TC-280). Use `model-tuple-union-vectors.json`
+and its selected document `domain-package-acme-shapes.json`:
 the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 `p1: Integer`), `Swap` (`p0: Integer`, `p1: Boolean`) and `Nest` (`p0: Pair`,
 `p1: Shape`), the variant type `Shape` (cases `Empty`, `Flag(Boolean)`,
@@ -86,6 +91,14 @@ the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 12. Declare `Cell` (`Integer`, `List`) and `List` (`Nil`, `Cons(Cell)`) and walk
     them; compare the keys of `Cell` and `List` with their owner-only preimages.
 
+13. Confirm the selected document's tuple construct uses FCD's `tuple` shape
+    and every tuple position has its schema-required `origin` (FR-322-AC-151;
+    filament-core-data FR-147-AC-2 and FR-147-AC-3). Derive the projection of
+    `domain-package-acme-shapes.json`, compare it with `domain_package`, and
+    hash the RFC 8785 bytes of the whole document against the lock row digest;
+    swap the position types of `Pair` and reorder two declarations in the
+    document.
+
 Expected results:
 
 6. The first is admitted with family `tuple`; the owner-less node, the
@@ -104,7 +117,66 @@ Expected results:
 10. Each refuses with the code and cause FR-322-AC-145 names, in the order
     "Intake refusal order" of FR-322 states.
 11. The unmutated package is admitted; each application node recomputes its
-    published application-node key; every wire case refuses with the code, cause
-    and locus its vector states, `TW-05` as `invalid_package`/`stale-node-key`.
+    published application-node key; every wire case refuses with the code, locus
+    and, for a code that carries a cause, the cause its vector states (a
+    `malformed_wire` or `invalid_semantic_graph` case states none, FR-322-AC-153),
+    `TW-05` as `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`, the
+    references dangling only through its rekey being deferred (FR-322-AC-154); `TW-18` to `TW-20` refuse at the
+    application node `/semantic_graph/nodes/31` (FR-322-AC-152).
 12. The cycle is admitted; neither node has a `recursion_group`; the walk and
     the empty leaf list are those of FR-322-AC-147.
+13. The tuple construct shape is `tuple` and each tuple position carries an
+    `origin`; the projection equals `domain_package`; the row digest equals the
+    SHA-256 of the whole document; both mutations change that digest
+    (FR-322-AC-151).
+
+## Nominal rekey and refinement row nodes (STD-536, STD-538)
+
+Scope: FR-322-AC-160 to FR-322-AC-162 (steps 14 to 15); FR-322-AC-169 to FR-322-AC-170 (step 19); FR-322-AC-163 to
+FR-322-AC-168 (steps 16 to 18). Use `nominal-rekey-vectors.json` with
+`fixtures/positive-compound-unit.json`, and `refinement-row-node-vectors.json`.
+
+14. Read `fixtures/positive-compound-unit.json`, then each case `NK-00` to
+    `NK-07` of `nominal-rekey-vectors.json`: a nominal Unit `U` rekeyed with a
+    dependent compound unit holding the new key, holding `U`'s old key, and
+    itself stale; only the compound stale; two stale units recomputing to one key;
+    `U` rekeyed beside an application node with a stale key; `U` rekeyed beside
+    an owner-join failure.
+15. Replace the target of the dangling references of `NK-01` and `NK-05` by a key
+    no stale node recomputes to.
+16. Recompute the key of each vector `VN-01` to `VN-06` (history read,
+    `pre` over it, whole-population value, `count`, `only`, `seq`) from the
+    recorded world nodes and preimages.
+17. Run each refusal case `RR-01` to `RR-09` through the refinement step and the
+    operation stage.
+18. Compare the catalog delta with the operations the vectors use and with its
+    exact entries (operator, operands, member kind, constraints).
+19. Run `NK-00` to `NK-14` and `TW-05` to `TW-09` through the key-and-join stages in
+    FR-322's one total order, then run the same vectors with each pair of
+    adjacent stages swapped.
+
+Expected results:
+
+14. The unmutated package is admitted; `NK-01` to `NK-03`, `NK-05` and `NK-07`
+    refuse `invalid_semantic_graph` (no cause) at the `node_id` of the first stale
+    nominal node by retained digest; `NK-04` refuses `invalid_package`/
+    `stale-node-key` at the compound and `NK-06` at the application node, the
+    application-node stage preceding the nominal one (FR-322-AC-160,
+    FR-322-AC-161).
+15. The dangling references of the published cases are all deferred; the
+    replaced target is not deferred (FR-322-AC-162).
+16. Every key equals the published digest; the history read carries no
+    refinement in its key (FR-322-AC-163, 165, 166, 167).
+17. Each case refuses with the code, cause and locus its vector states
+    (FR-322-AC-164, 165, 166, 167).
+18. The delta names exactly the three operations and the member kind `history`
+    the vectors use, with the exact entries the FR text states (FR-322-AC-168).
+19. `NK-08` refuses `invalid_package`/`stale-node-key` at the application node;
+    `NK-09` and `NK-13` refuse `missing_declaration`/`missing-selection` at
+    `/semantic_graph/nodes/4/node_id`; `NK-10` refuses `stale-node-key` at node 4;
+    `NK-11` refuses `invalid_package`/`invalid-derived-shape` at
+    `/semantic_graph/nodes/3/node_id`; `NK-12` refuses `invalid_semantic_graph`
+    at `/semantic_graph/nodes/4`; `NK-14` refuses `missing_declaration`/
+    `missing-name` at `/semantic_graph/nodes/4/semantic_type` (FR-340);
+    `TW-06` to `TW-09` keep their owner refusals at `/owner`. Each swap of adjacent
+    stages changes the outcome of a vector (FR-322-AC-169, FR-322-AC-170).

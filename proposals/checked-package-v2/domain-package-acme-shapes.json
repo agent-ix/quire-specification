@@ -1,0 +1,504 @@
+{
+  "canonicalization": {
+    "algorithm": "rfc8785-v1",
+    "digest": "sha256-jcs"
+  },
+  "constructs": [
+    {
+      "construct": {
+        "identity": "identified",
+        "meaning": "quire.meaning.model.object-type/v1",
+        "members": {
+          "fields": "optional",
+          "identityFields": "required",
+          "operations": "optional",
+          "relationships": "optional",
+          "supertypes": "optional"
+        },
+        "shape": "record"
+      },
+      "kind": {
+        "module": "acme/shapes",
+        "name": "entity"
+      },
+      "moduleVersion": "1.0.0"
+    },
+    {
+      "construct": {
+        "identity": "value",
+        "meaning": "quire.meaning.model.tuple-value-type/v1",
+        "members": {
+          "positions": "required"
+        },
+        "shape": "tuple"
+      },
+      "kind": {
+        "module": "acme/shapes",
+        "name": "tuple"
+      },
+      "moduleVersion": "1.0.0"
+    },
+    {
+      "construct": {
+        "identity": "value",
+        "meaning": "quire.meaning.model.variant-type/v1",
+        "members": {
+          "variants": "required"
+        },
+        "shape": "enumeration"
+      },
+      "kind": {
+        "module": "acme/shapes",
+        "name": "variant"
+      },
+      "moduleVersion": "1.0.0"
+    }
+  ],
+  "contractVersion": "2.0.0",
+  "extensions": [],
+  "occurrences": [],
+  "package": {
+    "identity": "acme/shapes",
+    "mappingVersions": [],
+    "profileVersions": [],
+    "version": "1.0.0"
+  },
+  "source": {
+    "dialect": "spec-bundle",
+    "identity": "ix://acme/shapes/spec",
+    "version": "1.0.0"
+  },
+  "types": [
+    {
+      "constraints": [],
+      "displayName": "Holder",
+      "extensions": [],
+      "fields": [
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/shapes/Holder/pair",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "pair",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "shapes/Holder.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://acme/shapes/Pair"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/shapes/Holder/shape",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "shape",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "shapes/Holder.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "optional",
+          "typeRef": "ix://acme/shapes/Shape"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/shapes/Holder/pairs",
+          "multiplicity": {
+            "lower": 0,
+            "ordered": true,
+            "unique": false,
+            "upper": 3
+          },
+          "name": "pairs",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "shapes/Holder.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://acme/shapes/Pair"
+        }
+      ],
+      "identity": "ix://acme/shapes/Holder",
+      "identityFields": [
+        "ix://acme/shapes/Holder/pair"
+      ],
+      "kind": {
+        "module": "acme/shapes",
+        "name": "entity"
+      },
+      "operations": [],
+      "origin": {
+        "source": {
+          "path": "shapes/Holder.md",
+          "sourceIdentity": "ix://acme/shapes/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "relationships": [],
+      "roles": [],
+      "supertypes": [],
+      "unknownPolicy": "reject"
+    },
+    {
+      "constraints": [],
+      "displayName": "Pair",
+      "extensions": [],
+      "identity": "ix://acme/shapes/Pair",
+      "kind": {
+        "module": "acme/shapes",
+        "name": "tuple"
+      },
+      "origin": {
+        "source": {
+          "path": "shapes/Pair.md",
+          "sourceIdentity": "ix://acme/shapes/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "positions": [
+        {
+          "identity": "ix://acme/shapes/Pair/p0",
+          "typeRef": "ix://quire/native/Boolean",
+          "origin": {
+            "source": {
+              "path": "shapes/Pair.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "identity": "ix://acme/shapes/Pair/p1",
+          "typeRef": "ix://quire/native/Integer",
+          "origin": {
+            "source": {
+              "path": "shapes/Pair.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        }
+      ],
+      "roles": [],
+      "unknownPolicy": "reject"
+    },
+    {
+      "constraints": [],
+      "displayName": "Swap",
+      "extensions": [],
+      "identity": "ix://acme/shapes/Swap",
+      "kind": {
+        "module": "acme/shapes",
+        "name": "tuple"
+      },
+      "origin": {
+        "source": {
+          "path": "shapes/Swap.md",
+          "sourceIdentity": "ix://acme/shapes/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "positions": [
+        {
+          "identity": "ix://acme/shapes/Swap/p0",
+          "typeRef": "ix://quire/native/Integer",
+          "origin": {
+            "source": {
+              "path": "shapes/Swap.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "identity": "ix://acme/shapes/Swap/p1",
+          "typeRef": "ix://quire/native/Boolean",
+          "origin": {
+            "source": {
+              "path": "shapes/Swap.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        }
+      ],
+      "roles": [],
+      "unknownPolicy": "reject"
+    },
+    {
+      "constraints": [],
+      "displayName": "Nest",
+      "extensions": [],
+      "identity": "ix://acme/shapes/Nest",
+      "kind": {
+        "module": "acme/shapes",
+        "name": "tuple"
+      },
+      "origin": {
+        "source": {
+          "path": "shapes/Nest.md",
+          "sourceIdentity": "ix://acme/shapes/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "positions": [
+        {
+          "identity": "ix://acme/shapes/Nest/p0",
+          "typeRef": "ix://acme/shapes/Pair",
+          "origin": {
+            "source": {
+              "path": "shapes/Nest.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "identity": "ix://acme/shapes/Nest/p1",
+          "typeRef": "ix://acme/shapes/Shape",
+          "origin": {
+            "source": {
+              "path": "shapes/Nest.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        }
+      ],
+      "roles": [],
+      "unknownPolicy": "reject"
+    },
+    {
+      "constraints": [],
+      "displayName": "Cell",
+      "extensions": [],
+      "identity": "ix://acme/shapes/Cell",
+      "kind": {
+        "module": "acme/shapes",
+        "name": "tuple"
+      },
+      "origin": {
+        "source": {
+          "path": "shapes/Cell.md",
+          "sourceIdentity": "ix://acme/shapes/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "positions": [
+        {
+          "identity": "ix://acme/shapes/Cell/p0",
+          "typeRef": "ix://quire/native/Integer",
+          "origin": {
+            "source": {
+              "path": "shapes/Cell.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "identity": "ix://acme/shapes/Cell/p1",
+          "typeRef": "ix://acme/shapes/List",
+          "origin": {
+            "source": {
+              "path": "shapes/Cell.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        }
+      ],
+      "roles": [],
+      "unknownPolicy": "reject"
+    },
+    {
+      "constraints": [],
+      "displayName": "Shape",
+      "extensions": [],
+      "identity": "ix://acme/shapes/Shape",
+      "kind": {
+        "module": "acme/shapes",
+        "name": "variant"
+      },
+      "origin": {
+        "source": {
+          "path": "shapes/Shape.md",
+          "sourceIdentity": "ix://acme/shapes/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "variants": [
+        {
+          "identity": "ix://acme/shapes/variant/Shape-flag",
+          "name": "Flag",
+          "origin": {
+            "source": {
+              "path": "shapes/Shape.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "payloadType": "ix://quire/native/Boolean"
+        },
+        {
+          "identity": "ix://acme/shapes/variant/Shape-empty",
+          "name": "Empty",
+          "origin": {
+            "source": {
+              "path": "shapes/Shape.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "identity": "ix://acme/shapes/variant/Shape-both",
+          "name": "Both",
+          "origin": {
+            "source": {
+              "path": "shapes/Shape.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "payloadType": "ix://acme/shapes/Pair"
+        }
+      ]
+    },
+    {
+      "constraints": [],
+      "displayName": "Color",
+      "extensions": [],
+      "identity": "ix://acme/shapes/Color",
+      "kind": {
+        "module": "acme/shapes",
+        "name": "variant"
+      },
+      "origin": {
+        "source": {
+          "path": "shapes/Color.md",
+          "sourceIdentity": "ix://acme/shapes/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "variants": [
+        {
+          "identity": "ix://acme/shapes/variant/Color-red",
+          "name": "Red",
+          "origin": {
+            "source": {
+              "path": "shapes/Color.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "identity": "ix://acme/shapes/variant/Color-green",
+          "name": "Green",
+          "origin": {
+            "source": {
+              "path": "shapes/Color.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "constraints": [],
+      "displayName": "List",
+      "extensions": [],
+      "identity": "ix://acme/shapes/List",
+      "kind": {
+        "module": "acme/shapes",
+        "name": "variant"
+      },
+      "origin": {
+        "source": {
+          "path": "shapes/List.md",
+          "sourceIdentity": "ix://acme/shapes/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "variants": [
+        {
+          "identity": "ix://acme/shapes/variant/List-nil",
+          "name": "Nil",
+          "origin": {
+            "source": {
+              "path": "shapes/List.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          }
+        },
+        {
+          "identity": "ix://acme/shapes/variant/List-cons",
+          "name": "Cons",
+          "origin": {
+            "source": {
+              "path": "shapes/List.md",
+              "sourceIdentity": "ix://acme/shapes/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "payloadType": "ix://acme/shapes/Cell"
+        }
+      ]
+    }
+  ]
+}

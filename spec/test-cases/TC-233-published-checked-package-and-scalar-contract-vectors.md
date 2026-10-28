@@ -248,6 +248,10 @@ QSL's emitter, which replaces the non-emittable placeholders, among them
 `positive-all-families.json`'s declared boolean `Example::Flag` and the
 nodes typed at it, and `positive-operation-identities.json`'s undeclared
 record node and its placeholder function `double` and model `Counter`.
+The operation fixture's `Set<Reference<Order>>` population type forwards
+to the single `Reference` node over the generated `Order` model declaration
+(FR-322-AC-62, FR-322-AC-65); it carries no `Reference` over the anonymous
+record node, whose target is not a model or relation.
 Two sets of nodes are hand authored. The first is each node of a kind QSL
 never writes (FR-093-AC-19), kept so that the all-families fixture carries
 all 15 node tags (FR-322-AC-13); it is keyed by FR-092/FR-094's rule, the
@@ -488,7 +492,7 @@ Rebuild each node's `dependencies` by FR-322's `dependencies` rules 1 to 4 (the 
 | --- | --- | --- | --- |
 | DP-01 | Every node of every published positive fixture | The written list equals the rebuilt list; each fixture's `package_id` recomputes | FR-322-AC-96 |
 | DP-02 | `positive-all-families.json`'s `expression`/`reference` node `7916…` and `correspondence`/`source_locus` node `eda3…` | Each lists `8a2a…`, its body target | FR-322-AC-96 |
-| DP-03 | `positive-all-families.json`'s `bounded_domain`/`integer_range` node `652c…`; `positive-operation-identities.json`'s `bounded_domain`/`model_population` node `1ffe…` | `652c…` lists `07f6…`, its `semantic_type`; `1ffe…` lists `0ec8…` alone | FR-322-AC-96 |
+| DP-03 | `positive-all-families.json`'s `bounded_domain`/`integer_range` node `652c…`; `positive-operation-identities.json`'s `bounded_domain`/`model_population` node `b4fe…` | `652c…` lists `07f6…`, its `semantic_type`; `b4fe…` lists `b8a0…` alone | FR-322-AC-96 |
 | DP-04 | DP-02's `expression`/`reference` node with `dependencies: []` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
 | DP-05 | DP-03's `integer_range` node with `dependencies: []` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
 | DP-06 | DP-03's `model_population` node with the Integer node `07f6…` added | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
@@ -528,6 +532,7 @@ model-only case (FR-322-AC-130).
 | `CCW-07` | Retarget `owner_model` to another selected model and recompute the clause node id and package id | Both schemas admit the closed local edge; the clause key changes and the reader returns the new owner identity unchanged. |
 | `CCW-08` | Memory entries `memory drain` for `ra`, `sc` and `tso`, each with `drain: store-buffer-flush`, and `memory flush` for `tso`, in that order | Both schemas admit each entry (a schema states shape, not order); the reader admits the canonical order and refuses a reordered or repeated (`class`, `memory_model`) pair as `invalid_semantic_graph` at the entry in step 2 (FR-322-AC-133). |
 | `CCW-09` | A declared class entry `{class: "activate P", node, binder_types}` on the concrete (`NodeRef`) and abstract (`RefinementKey`) side | Both schemas admit it as an ordinary declared class (FR-322-AC-133). |
+| `CCW-10` | The cases `CCF-01` to `CCF-15` of `proposals/checked-package-v2/class-catalog-vectors.json` (effect, commit, event, attempt, template `cend`, the three drain entries and `memory flush`) validated against the closed catalog definition, then read for canonical order, duplicates and the effect, commit and `cend` classes | `CCF-01` admitted; `CCF-02` to `CCF-06` (an entry without `node` or `binder_types`, an extra member, a memory entry with `node`, a drain without `drain`) refuse in the schema; `CCF-07` to `CCF-13` (one class dropped each: `Impl::E`, `Impl::K`, `cend`, each of the three drains, `memory flush`) are schema-valid and refuse in the reader as `omitted_class`, `CCF-14` (two drains swapped) as `misordered_class` and `CCF-15` (repeated `cend`) as `duplicate_class` (FR-375-AC-28). |
 
 ### Graph order vectors
 

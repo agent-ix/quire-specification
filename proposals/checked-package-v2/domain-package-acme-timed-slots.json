@@ -1,0 +1,466 @@
+{
+  "canonicalization": {
+    "algorithm": "rfc8785-v1",
+    "digest": "sha256-jcs"
+  },
+  "constructs": [
+    {
+      "construct": {
+        "identity": "identified",
+        "meaning": "quire.meaning.model.object-type/v1",
+        "members": {
+          "fields": "optional",
+          "identityFields": "required",
+          "operations": "optional",
+          "relationships": "optional",
+          "supertypes": "optional"
+        },
+        "shape": "record"
+      },
+      "kind": {
+        "module": "acme/orders",
+        "name": "entity"
+      },
+      "moduleVersion": "1.0.0"
+    },
+    {
+      "construct": {
+        "identity": "value",
+        "meaning": "quire.meaning.model.record-value-type/v1",
+        "members": {
+          "fields": "required"
+        },
+        "shape": "record"
+      },
+      "kind": {
+        "module": "acme/orders",
+        "name": "record"
+      },
+      "moduleVersion": "1.0.0"
+    }
+  ],
+  "contractVersion": "2.0.0",
+  "extensions": [],
+  "occurrences": [],
+  "package": {
+    "identity": "acme/orders",
+    "mappingVersions": [],
+    "profileVersions": [],
+    "version": "1.0.0"
+  },
+  "source": {
+    "dialect": "spec-bundle",
+    "identity": "ix://acme/orders/spec",
+    "version": "1.0.0"
+  },
+  "types": [
+    {
+      "constraints": [],
+      "displayName": "ClockMap",
+      "extensions": [],
+      "identity": "ix://acme/orders/ClockMap",
+      "kind": "map",
+      "origin": {
+        "source": {
+          "path": "orders/ClockMap.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "values": "ix://quire/native/Clock"
+    },
+    {
+      "constraints": [],
+      "displayName": "ClockRow",
+      "extensions": [],
+      "identity": "ix://acme/orders/ClockRow",
+      "kind": "sequence",
+      "origin": {
+        "source": {
+          "path": "orders/ClockRow.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "items": "ix://quire/native/Clock"
+    },
+    {
+      "constraints": [],
+      "displayName": "Order",
+      "extensions": [],
+      "identity": "ix://acme/orders/Order",
+      "kind": {
+        "module": "acme/orders",
+        "name": "entity"
+      },
+      "origin": {
+        "source": {
+          "path": "orders/Order.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "fields": [
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/sku",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "sku",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Integer"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/v",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "v",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "optional",
+          "typeRef": "ix://quire/native/Clock"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/ts",
+          "multiplicity": {
+            "lower": 0,
+            "ordered": true,
+            "unique": false,
+            "upper": 3
+          },
+          "name": "ts",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://acme/orders/Timer"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/c",
+          "multiplicity": {
+            "lower": 0,
+            "ordered": false,
+            "unique": true,
+            "upper": 5
+          },
+          "name": "c",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Clock"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/b",
+          "multiplicity": {
+            "lower": 0,
+            "ordered": false,
+            "unique": false,
+            "upper": 2
+          },
+          "name": "b",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Clock"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/o",
+          "multiplicity": {
+            "lower": 0,
+            "ordered": true,
+            "unique": true,
+            "upper": 5
+          },
+          "name": "o",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Clock"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/g",
+          "multiplicity": {
+            "lower": 0,
+            "ordered": true,
+            "unique": false
+          },
+          "name": "g",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://acme/orders/ClockRow"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/s",
+          "multiplicity": {
+            "lower": 0,
+            "ordered": true,
+            "unique": false
+          },
+          "name": "s",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Clock"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/q",
+          "multiplicity": {
+            "lower": 0,
+            "ordered": true,
+            "unique": false,
+            "upper": 2
+          },
+          "name": "q",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "optional",
+          "typeRef": "ix://quire/native/Clock"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Order/clock",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "clock",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://acme/orders/ClockMap"
+        }
+      ],
+      "identityFields": [
+        "ix://acme/orders/Order/sku"
+      ],
+      "operations": [
+        {
+          "identity": "ix://acme/orders/Order/size",
+          "name": "size",
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "params": [],
+          "post": [],
+          "pre": [],
+          "returns": {
+            "multiplicity": {
+              "lower": 1,
+              "ordered": false,
+              "unique": true,
+              "upper": 1
+            },
+            "nullable": false,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        }
+      ],
+      "relationships": [
+        {
+          "category": "structural",
+          "composite": false,
+          "direction": "bidirectional",
+          "identity": "ix://acme/orders/relationship/Order-order-Order",
+          "origin": {
+            "source": {
+              "path": "orders/Order.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "sourceEnd": {
+            "multiplicity": {
+              "lower": 0,
+              "ordered": false,
+              "unique": true
+            },
+            "role": "order",
+            "type": "ix://acme/orders/Order"
+          },
+          "targetEnd": {
+            "multiplicity": {
+              "lower": 1,
+              "ordered": false,
+              "unique": true,
+              "upper": 1
+            },
+            "role": "next",
+            "type": "ix://acme/orders/Order"
+          }
+        }
+      ],
+      "supertypes": []
+    },
+    {
+      "constraints": [],
+      "displayName": "Timer",
+      "extensions": [],
+      "identity": "ix://acme/orders/Timer",
+      "kind": {
+        "module": "acme/orders",
+        "name": "record"
+      },
+      "origin": {
+        "source": {
+          "path": "orders/Timer.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "fields": [
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Timer/x",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "x",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Timer.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Clock"
+        },
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Timer/n",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "n",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Timer.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Integer"
+        }
+      ]
+    }
+  ]
+}

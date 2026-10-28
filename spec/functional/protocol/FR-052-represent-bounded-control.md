@@ -53,7 +53,12 @@ cyclic causal dependencies, zero-progress loops and termination conditions
 that cannot be reached within the declared finite graph. Reachability of
 termination is structural: it reads the graph's edges, never a guard's value,
 so a `while { true }` loop with a progress edge, whose exit edge exists but is
-never taken, is admitted. A zero-progress loop, a
+never taken, is admitted. The one exception is a `repeat` nested in the body
+of another `repeat`: it counts as a step of the enclosing `repeat` only when
+its exit is infeasible, decided by the independent-atom abstraction of its guard
+([FR-464](../../objects/interfaces/FR-464-checked-package-protocol-node-bodies.md)
+"Progress", FR-464-AC-21); a nested `repeat` with a feasible exit, or with
+maximum 0, contributes no progress to the enclosing `repeat`. A zero-progress loop, a
 `repeat` with a cycle in its body graph that passes through no step node,
 such as a `choice` case with an empty or check-only body, refuses
 `unsupported_construct`/`declaration-form` at the `repeat`, naming the repeat
@@ -108,7 +113,7 @@ system ([FR-426](FR-426-apply-protocol-steps.md)):
 | --- | --- | --- |
 | FR-052-AC-1 | Split shipments S1 and S2 may interleave while each branch preserves its own order and both satisfy the authored join before completion. | Test (TC-052) |
 | FR-052-AC-2 | Reordering equal-time events does not add a causal edge absent from the protocol. | Test (TC-052) |
-| FR-052-AC-3 | A missing join input, causal cycle or zero-progress loop refuses admission, the zero-progress loop with `unsupported_construct`/`declaration-form` naming the repeat, including a repeat whose body holds a step in one `choice` case and an empty sequence in another; a repeat whose body holds a step is admitted with a maximum only, with an invariant and variant only, with both, and with neither. | Test (TC-052) |
+| FR-052-AC-3 | A missing join input, causal cycle or zero-progress loop refuses admission, the zero-progress loop with `unsupported_construct`/`declaration-form` naming the repeat, including a repeat whose body holds a step in one `choice` case and an empty sequence in another; a repeat whose body holds only a nested repeat is refused when the nested repeat's exit is feasible or its maximum is 0 and admitted when its exit is infeasible, its maximum is absent or at least 1 and its own body holds a step (FR-464-AC-21); a repeat whose body holds a step is admitted with a maximum only, with an invariant and variant only, with both, and with neither. | Test (TC-052) |
 | FR-052-AC-4 | Changing any admitted semantic graph content—including a node/control kind, edge, guard or constraint value graph and dependency, event kind or binding, channel/FIFO rule, await rule, compensation reference, finish rule, branch, join, iteration maximum, loop invariant and variant, or a `parallel`'s source `memory` clause—requires a different qualified protocol-definition identity, which is package identity, while a check's obligation identity reads the resolved memory model ([FR-434](../memory/FR-434-select-memory-models-for-parallel.md)); source loci remain provenance rather than graph-key members. | Test (TC-052) |
 | FR-052-AC-5 | Reusing one qualified protocol-definition identity with different complete typed graph content is an identity contradiction and refuses admission rather than selecting either graph. | Test (TC-052) |
 | FR-052-AC-6 | For the split-shipment protocol with two branches of two events each and all constraints true, the event projections of the explored behaviours are exactly the six linear extensions of the causal edges; adding a precondition that disables one order removes exactly the extensions that need it, and reordering source text or timestamps changes none. | Test (TC-379) |

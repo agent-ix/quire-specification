@@ -60,14 +60,22 @@ structures, but any external consumer receives only the contract.
   `union_value`, `enum_value`, `quire.op.tuple.project`, `case` and equality nodes
   over them, each keyed by its application-node or nominal preimage
   (FR-322 "Tuple value types and payload-bearing variant types", FR-440,
-  FR-441, TC-940). `model-tuple-union-vectors.json` publishes its selected
-  document (`domain_package`), the declaration node keys, the application-node
+  FR-441, TC-940). `domain-package-acme-shapes.json` is its selected document, a full FCD
+  semantic IR 2.0.0 domain package (FR-322-AC-151; its tuple `positions` depend on IR-1059 / FCD tuple support) and
+  `model-tuple-union-vectors.json` publishes its projection (`domain_package`, derived
+  from the document) and `selection_digest`, the RFC 8785 SHA-256 of the whole
+  document that the lock row pins, the declaration node keys, the application-node
   key vectors and the family, position, member, union-value, enum-value,
   equality, identity, recursion, intake and wire cases the QSpec test runs over
   them; `node-identity-vectors.json` carries the keys
   `model-tuple-value-type-pair` and `model-variant-type-shape-union` and the
   `union_member_vectors` `union-member-model-shape-both` and
   `union-member-model-shape-empty`.
+- `contract-package-selection-vectors.json` publishes the typed source-selection
+  rows `T`, `D` and `U` and the four compatibility cases of TC-935 (FR-330-AC-10)
+  as the authoritative machine-readable form, so a conformance test reads them
+  (for example through `QUIRE_SPECIFICATION_DIR`) rather than copying them; the QSpec
+  test asserts they equal the Markdown of TC-935 (FR-322-AC-180).
 - `extension-definitions.json` publishes the FR-467 extension definitions
   (`policy`, `quota`, `retention`) a reader holds when it reads these
   fixtures, each as `{reference, definition}` with `definition` exactly the
@@ -95,10 +103,20 @@ structures, but any external consumer receives only the contract.
   cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
   FR-342-AC-7 to AC-9). Its model declaration node keys are recomputed by the
   tests from each preimage.
+- `class-catalog-vectors.json` supplies the canonical `class_catalog` of TC-233 `CCW-10` (effect, commit, event, attempt, `cend`, the three drain entries and `memory flush`) with schema and reader mutations; node digests are `sha256("std-524/" + label)`.
 - `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
   `generated` `source_map` entries against its step rows, its `steps` order and
   whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). Cases `RS-18` to `RS-24` cover the closed, identity-excluded `refinement_step_rows` sidecar and its comparison with generated occurrences. The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node key.
+- `refinement-identity-vectors.json` supplies the refinement-name identity
+  vectors `RI-01` to `RI-04` (two names, two JCS SHA-256 node ids; a body
+  without `name` fails the closed preimage schema; an equal `name` is an
+  `ambiguous-name`), the operation-class `source_node` cases `SP-01` to
+  `SP-11` (the no-point `operation_anchor` of the declaring type, with and
+  without a class catalog) and the row-expression binder cases `BI-01` to
+  `BI-07` of FR-375-AC-29 to FR-375-AC-32, and the `selected_roots` section
+  (`SR-01` to `SR-13`, five selected model roots recomputed from their
+  selections, concrete-identity cases of FR-375-AC-33 and FR-375-AC-34).
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.
@@ -182,6 +200,14 @@ structures, but any external consumer receives only the contract.
   `dependencies`. Each records its refusal `outcome` and its `locus`, the JSON
   pointer FR-322 fixes for it in the mutated package; node keys and the
   `package_id` are recomputed after the patch.
+- `fixtures/positive-compound-unit.json` is a V2 package of four nodes: a
+  nominal `dimension` (`Length`), a nominal root `unit` `U` (`metre`), the
+  builtin `Integer`, and the structural `scalar_type`/`compound_unit` node
+  `metre^1` that holds `unit` = `reference(U)` and an exponent. It is the base
+  of `nominal-rekey-vectors.json` (`NK-00` to `NK-14`, RFC 6902 patches ending in
+  the recomputed `package_id`), whose cases rekey `U` and observe the nominal
+  key stage (FR-322-AC-160 to FR-322-AC-162) and the order of the key-and-join
+  stages (`NK-06` to `NK-14`, FR-322-AC-169, FR-322-AC-170).
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
@@ -200,8 +226,8 @@ structures, but any external consumer receives only the contract.
   FR-154-AC-16, and the reference equality, reference upcast and
   field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
-  of its `domain_package` member stands for the document's `sha256-jcs`
-  digest.
+  of the document `domain-package-acme-orders.json` is the `sha256-jcs` digest
+  the lock rows pin; `domain_package` is derived from it and not digested.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.
@@ -303,7 +329,17 @@ checks canonical bytes and all identity joins before exposing a graph, and
 reports malformed/stale/cross-domain/unknown-capability input as typed refusal.
 For a node form covered by the node-preimage schema, it reconstructs the closed
 preimage from the graph and lock, hashes its JCS bytes and requires exact
-`node_id` equality; stale nominal keys are `invalid_semantic_graph`, while a stale application-node key is `invalid_package` with cause `stale-node-key`.
+`node_id` equality; a stale nominal key is `invalid_semantic_graph` at that
+node's `node_id`, reported by the nominal key stage, which follows the
+application-node key stage and precedes the derived-shape key stage (so it
+precedes every structural `stale-node-key`), while a stale application-node or
+structural key is `invalid_package` with cause `stale-node-key`. A dangling
+`reference` whose target is the recomputed key of a stale nominal node is
+dependent on that rekey and is deferred to the nominal stage
+(`nominal-rekey-vectors.json`, FR-322-AC-160 and FR-322-AC-161).
+The node forms a refinement row reads (history read, whole-population value,
+`count`/`only`, `seq`) and their recomputed keys and refusals are in
+`refinement-row-node-vectors.json` (FR-322-AC-163 to FR-322-AC-168).
 Its outcome is the closed sum type admitted/refused/incomplete. It enforces
 caller-provided byte/node/edge/occurrence/diagnostic/work limits;
 exhaustion is incomplete, not an empty graph or a successful package. A node
@@ -460,6 +496,29 @@ part of the node identity. On a nominal node it equals the nominal
 and two nodes declaring one name refuse as `ambiguous-name`
 (`ambiguous_declaration`). Library exports resolve only through this member.
 - `fixtures/positive-integer-literal-references.json` is the reference form of the `three` application of `positive-two-owners-a.json` (its integer literal operands are references to `value`/`literal` nodes); the reader admits it under a node identity different from the inline form's.
+- `timed-slot-selector-vectors.json` publishes standalone `clock_place` nodes
+  for the slot selector of a template step (FR-322-AC-148..FR-322-AC-150,
+  TC-367 CK-26): positive collection kinds, refused selectors and the guard
+  cases, whose package-level mutations the tests replay. Its `presence`
+  section publishes the derived `presence_read` predicate over a clock place
+  (FR-322-AC-155..157), and `model_join` the `object_type` node of `Order`
+  with and without `v: Option<Clock>`. `domain-package-acme-timed-slots.json`
+  is the full selected document (FR-322-AC-240, FR-322-AC-241; it declares
+  the `Order-order-Order` relationship and the `size` operation that the
+  package's model-owned nodes 7 and 30 name) and
+  `fixtures/positive-timed-slot-nodes.json` the complete package that selects
+  it and carries the `SL`, `PR` and model nodes; the `GD-02` and `GD-03`
+  `patch` members are RFC 6902 patches on that package (FR-322-AC-242,
+  FR-322-AC-243). The case nodes are embedded both in the vectors file and
+  in the package fixture; their equality is enforced through `package_node`,
+  so the two copies cannot drift. Each node key is the SHA-256 of the
+  RFC 8785 structural or application preimage, and `SL-06` equals the
+  published fixture place. Its `aggregate_order` section publishes the
+  declared-order rule of the timed-root aggregates and the replayable
+  `AO-02`..`AO-04` patches that break it (FR-322-AC-260, TC-367 CK-30).
+- `clock-presence-frame-vectors.json` publishes the frame rule of FR-415-AC-21
+  (no implicit reset on a presence change) for an `Option<Clock>` place and a
+  union case place, paired case for case (TC-367 CK-31).
 
 ## Regenerating protocol fixture keys
 
