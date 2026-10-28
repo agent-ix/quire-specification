@@ -65,7 +65,7 @@ It states three facts: the initial symbolic state (the zero valuation, let
 time elapse unless the initial state is urgent, intersected with its time
 invariants) is covered by a node of the initial discrete state; each node's
 successor by each identity is covered by its named target under the aLU
-simulation for `bounds`; and no node is bad (a rejecting automaton state, or
+simulation for `bounds`; and no node is bad unless it is marked `locked` (a rejecting automaton state, or
 for the deadlock item a deadlocked valuation).
 
 ### Büchi emptiness certificate
@@ -129,14 +129,19 @@ and AC-5), and the encoding is a function of the value alone.
   `divergence`, `refinement`, `locked`) is omitted, never `null`; `locked` is
   present only as `true`. In an array a position is significant, so the one
   option inside an array, a `taken` entry that is `None`, is `null`.
-- **Embedded digests.** The certificate embeds no hash or digest of another
-  artifact: no digest of the certificate, a node, a zone, the package source,
-  the checker or a manifest, and no checksum member. The digests it carries are
-  identities that bind it to the exact content it proves and that its checker
-  reads: `identity` (FR-201's obligation identity); for a refinement form,
-  `refinement`, `concrete_package` and `abstract_package`, which QSL FR-149 and
-  FR-245 require it to name; and each `StateKey`, the discrete state's own
-  identity (FR-181), not a digest of a file.
+- **Embedded digests.** The certificate embeds no digest or hash of the
+  certificate itself, of a node or zone, of the checker, the producer or a
+  manifest, or of any run output, and has no checksum member. Every digest it
+  carries is an identity derived from the inputs both sides hold: `identity`
+  (FR-201's obligation identity), each `StateKey` (the discrete state's own
+  identity, FR-181) and, as the one stated exception, in a refinement form the
+  three input identities `refinement` (a node id), `concrete_package` and
+  `abstract_package` (package ids). QSL FR-244 lists them as members of
+  `RefinementPart` and FR-245 compares them with the item's to refuse
+  `stale_dependency`/`content-mismatch` (FR-144 "Certificate identity"), so
+  the wire carries them; they are references to the checker's own inputs,
+  never a hash of a produced artifact. Whether QSL should drop them is
+  tracked as STD-523.
 - **Vectors.** The worked certificates ZC-10 to ZC-12, with their bytes, are
   published in `proposals/backend-provider-v1/zone-certificate-vectors.json`
   (TC-371). Their state keys and digests are fixed illustrative values, not
@@ -188,7 +193,7 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 | FR-418-AC-7 | An index is a JSON integer in 0 to 2^53 − 1 and a scale or a bound an integer string; a bound written as a JSON number, with a leading zero, a `+` or `-0`, or a scale `0`, is not a `ZoneCertificate`, and a bound of 27 digits is carried exactly. | Test (TC-371) |
 | FR-418-AC-8 | An absent optional member is omitted: `components`, `reasons`, `divergence` or `refinement` as `null` is not a `ZoneCertificate`, `locked` is present only as `true`, and a `taken` entry that is absent is `null`. | Test (TC-371) |
 | FR-418-AC-9 | The only digest-bearing members of a certificate are `identity` and, in a refinement form, `refinement`, `concrete_package` and `abstract_package`; no member carries a digest, hash or checksum of the certificate or of another artifact. | Test (TC-371) |
-| FR-418-AC-10 | A refinement-form certificate lists `initials` (nonempty, `initials[0]` equal to `initial`), `positions` and `taken`; ZC-12's second initial node is a `locked` node with `automaton` equal to the number of positions, a refinement form whose `initials[i]` does not cover concrete initial state `i` is `initial-missing` at that state's State record, `admitted` may start at any positioned `initials[i]`, and a certificate without `initial` or `admitted` is not a `ZoneCertificate`. | Test (TC-371) |
+| FR-418-AC-10 | A refinement-form certificate lists `initials` (nonempty, `initials[0]` equal to `initial`), `positions` and `taken`; ZC-12's first initial node (`initials[0]`) is a `locked` node with `automaton` equal to the number of positions and its `admitted` starts at the positioned `initials[1]`, a refinement form whose `initials[i]` does not cover concrete initial state `i` is `initial-missing` at that state's State record (the locus is the discrete state; two initial states sharing one discrete state share the locus, and the checker reports the lowest failing index first), `admitted` may start at any positioned `initials[i]`, and a certificate without `initial` or `admitted` is not a `ZoneCertificate`. | Test (TC-371); the checker clauses by QSL TC-700 and TC-371 ZC-14 |
 
 ## Dependencies
 

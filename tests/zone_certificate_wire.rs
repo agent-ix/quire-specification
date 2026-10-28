@@ -83,6 +83,10 @@ fn tc_371_numbers_are_counts_or_integer_strings() {
     let mut number_bound = base.clone();
     number_bound["nodes"][1]["zone"][0][1]["bound"] = json!(-1);
     assert!(!valid.is_valid(&number_bound));
+    // A bare JSON number is not a DbmBound entry either.
+    let mut bare = base.clone();
+    bare["nodes"][0]["zone"][0][0] = json!(0);
+    assert!(!valid.is_valid(&bare));
     // A leading zero or a plus sign is not canonical.
     for spelling in ["01", "+1", "-0", "1.0"] {
         let mut bad = base.clone();
@@ -122,10 +126,10 @@ fn tc_371_an_absent_option_is_omitted_and_never_null() {
     assert!(!valid.is_valid(&null_refinement));
     // locked is present, as true, exactly on a locked node.
     let zc12 = vector("ZC-12")["document"].clone();
-    assert_eq!(zc12["nodes"][1]["locked"], json!(true));
-    assert!(zc12["nodes"][0].get("locked").is_none());
+    assert_eq!(zc12["nodes"][0]["locked"], json!(true));
+    assert!(zc12["nodes"][1].get("locked").is_none());
     let mut false_locked = zc12.clone();
-    false_locked["nodes"][0]["locked"] = json!(false);
+    false_locked["nodes"][1]["locked"] = json!(false);
     assert!(!valid.is_valid(&false_locked));
     // taken has one entry per edge; a null entry stands for no Taken.
     let mut with_null = zc10.clone();
@@ -184,7 +188,12 @@ fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_
     assert_eq!(initials.len(), 2);
     assert_eq!(initials[0], zc12["initial"], "initials[0] is the certificate's initial");
     let positions = part["positions"].as_array().unwrap().len() as u64;
-    let locked = &zc12["nodes"][initials[1].as_u64().unwrap() as usize];
+    let locked = &zc12["nodes"][initials[0].as_u64().unwrap() as usize];
+    // admitted starts at a positioned initial node, not at the locked initials[0].
+    let start = zc12["admitted"]["start"].as_u64().unwrap();
+    assert_eq!(start, initials[1].as_u64().unwrap());
+    assert!(zc12["nodes"][start as usize].get("locked").is_none());
+    assert!(zc12["nodes"][start as usize]["automaton"].as_u64().unwrap() < positions);
     assert_eq!(locked["locked"], json!(true));
     assert_eq!(locked["automaton"].as_u64().unwrap(), positions, "the reserved index names no position");
     assert_eq!(part["taken"], json!([]));
