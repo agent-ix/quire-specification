@@ -53,7 +53,12 @@ cyclic causal dependencies, zero-progress loops and termination conditions
 that cannot be reached within the declared finite graph. Reachability of
 termination is structural: it reads the graph's edges, never a guard's value,
 so a `while { true }` loop with a progress edge, whose exit edge exists but is
-never taken, is admitted. A zero-progress loop, a
+never taken, is admitted. The one exception is a `repeat` nested in the body
+of another `repeat`: it counts as a step of the enclosing `repeat` only when
+its exit is infeasible, decided by the independent-atom abstraction of its guard
+([FR-464](../../objects/interfaces/FR-464-checked-package-protocol-node-bodies.md)
+"Progress", FR-464-AC-21); a nested `repeat` with a feasible exit, or with
+maximum 0, contributes no progress to the enclosing `repeat`. A zero-progress loop, a
 `repeat` with a cycle in its body graph that passes through no step node,
 such as a `choice` case with an empty or check-only body, refuses
 `unsupported_construct`/`declaration-form` at the `repeat`, naming the repeat

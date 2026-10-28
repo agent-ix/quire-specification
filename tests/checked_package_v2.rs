@@ -2811,7 +2811,7 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
             .filter(|case| case["test_case"] == test_case)
             .count()
     });
-    assert_eq!(counts, [131, 88, 172]);
+    assert_eq!(counts, [136, 88, 172]);
     // Every vector id a QSpec table row names is published as a case: a row
     // the table adds without a vector (TC-946 K10, K14) fails here.
     for (test_case, table) in [
@@ -2885,59 +2885,108 @@ fn table_row(document: &str, id: &str) -> Option<Vec<String>> {
         })
 }
 
-/// The exact `Expected` of each STD-539 vector (test case, id, text).
-const STD_539_EXPECTED: [(&str, &str, &str); 9] = [
+/// The exact `Edit` and `Expected` of each STD-539 vector (test case, id, edit, text).
+const STD_539_VECTORS: [(&str, &str, &str, &str); 14] = [
     (
         "TC-946",
         "R13",
-        "`unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile (FR-464-AC-21)",
+        "`Poll`'s body is only a nested `repeat` whose guard is `true`, no `maximum`, around an `attempt`",
+        "admitted: the nested exit is infeasible and its body steps (FR-464-AC-21)",
     ),
     (
         "TC-946",
         "R14",
-        "`unsupported_construct`/`declaration-form` at the outer `repeat`; the guard is not evaluated (FR-464-AC-21)",
+        "`Poll`'s body is only a nested `repeat max 1` whose guard is the tautology `a or not a or b or not b`, around an `attempt`",
+        "admitted (FR-464-AC-21)",
     ),
     (
         "TC-946",
         "R15",
-        "each `unsupported_construct`/`declaration-form` at the outer `repeat`, the same refusal as R13 and R14 (FR-464-AC-21)",
+        "`Poll`'s body is only a nested `repeat` with `maximum` 0 around an `attempt`, whose guard is `true`; and the same with the tautology guard `a or not a`",
+        "each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the body is never entered (FR-464-AC-21)",
     ),
     (
         "TC-946",
         "R16",
-        "each admitted (a sibling step, the `parallel` and the `await` step) (FR-464-AC-21)",
+        "`Poll`'s body is only a nested `repeat` around an `attempt` whose guard is the single fact `a`; `not a`; `a and not a`; `false`; `a or b`; each with no `maximum` and with `maximum` 1",
+        "each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the exit is feasible (FR-464-AC-21)",
+    ),
+    (
+        "TC-946",
+        "R17",
+        "`Poll`'s body is a `sequence` of a nested `repeat` around an `attempt` and a second `attempt`; and a `parallel` with a `join` holding the nested `repeat` in one branch; and an `await` whose `then` is the nested `repeat`; the nested guard is `a`, a feasible exit",
+        "each admitted (a sibling step, the `parallel` and the `await` step) whatever the nested guard is (FR-464-AC-21)",
+    ),
+    (
+        "TC-946",
+        "R18",
+        "`Poll`'s body is only a nested `repeat` whose guard is `true` and whose own body is only a `check`",
+        "`unsupported_construct`/`declaration-form` at the first `repeat` in tree order, the outer `repeat`, naming it and the profile (FR-464-AC-21)",
+    ),
+    (
+        "TC-946",
+        "R19",
+        "`Poll`'s body is a `choice` with a nested `repeat` around an `attempt` in one case and an `attempt` in the other, the nested guard being `true`; and the same with the nested guard `a`",
+        "admitted; `unsupported_construct`/`declaration-form` at the outer `repeat` (FR-464-AC-21)",
+    ),
+    (
+        "TC-946",
+        "R20",
+        "`Poll`'s body is only a nested `repeat` around an `attempt` whose guard over two references `a` and `b` is `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(a, b)`; and the guard `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(b, a)`",
+        "admitted (one atom, infeasible exit); `unsupported_construct`/`declaration-form` at the outer `repeat` (two atoms, feasible exit) (FR-464-AC-22)",
+    ),
+    (
+        "TC-946",
+        "R21",
+        "R14 with `CheckedPackageReadLimits.work` set to the units charged before the nested `repeat`'s first valuation plus 3, and plus 4; and R16 with the guard `a or b` under the plus 1 limit; and a `Poll` that is no nested `repeat`, with a 30-atom guard, under the plus 3 limit",
+        "plus 3: `stage_limit_exceeded`/`work-budget-exceeded` (incomplete) at the nested `repeat`, no progress refusal; plus 4: admitted; `a or b` under plus 1: the refusal of R16, the first valuation makes the guard false; the 30-atom `Poll`: admitted, no valuation is charged (FR-464-AC-22)",
     ),
     (
         "TC-948",
         "DF14",
+        "a `repeat` owned by `Fulfillment` whose body holds an `attempt` `by Fulfillment` with binder `polled`, whose `visible` lists `polled.ok` and whose guard reads it; with no `maximum`, `maximum` 3 and `maximum` 0",
         "each `missing_declaration`/`missing-name` at the read (out-of-scope; a `repeat` has no post-test form); never admitted, never `wrong_snapshot`, never `invalid_package`/`invalid-value` (FR-466-AC-17)",
     ),
-    ("TC-948", "DF15", "admitted (FR-466-AC-17)"),
+    (
+        "TC-948",
+        "DF15",
+        "DF14 with the guard and `visible` entry reading `eastRes.ok`, in scope at the `repeat`'s entry",
+        "admitted (FR-466-AC-17)",
+    ),
     (
         "TC-948",
         "DF16",
+        "a `choice` `visible` entry and a `repeat` `visible` entry each target a `value`/`literal` node `true`; each target the `value`/`parameter` binder node `eastRes`",
         "each `invalid_model_binding`/`malformed-declaration` at the target (FR-466-AC-18)",
     ),
     (
         "TC-948",
         "DF17",
+        "a `choice` `visible` entry and a `repeat` `visible` entry each an `expression`/`reference` to the record binder `eastRes`",
         "each `ill_typed`/`operator-ineligible` at the read, naming the slot (FR-466-AC-18)",
     ),
     (
         "TC-948",
         "DF18",
+        "a `visible` entry that is an application over the constants `true` and `false` only, and one over the capture `order` only, with a guard reading `eastRes.ok` that no individual entry lists",
         "the entries are admitted as composite entries; the guard read refuses `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` (FR-466-AC-18)",
     ),
 ];
 
-const FR464_AC21_BODY: &str = "A `repeat` never counts as a step in an enclosing `repeat`'s progress: an outer `repeat` whose body is only a nested `repeat` that holds a step refuses `unsupported_construct`/`declaration-form` at the outer `repeat` whatever the nested guard is (`true`, the tautology `a or not a`, a non-tautological `a`, with or without a `maximum`, with `maximum` 0), the guard is never evaluated or compared, while a body that holds a step beside the nested `repeat` (a `sequence` with a stepping sibling) or a `parallel` or `await` around it is admitted.";
+const FR464_AC21_BODY: &str = "Repeat-through-repeat: an outer `repeat` whose body steps only through a nested `repeat` that necessarily steps (a stepping body, `maximum` absent or at least 1) is admitted when the nested guard's exit is infeasible over the independent atoms (the guard `true`, the tautology `a or not a or b or not b`, with or without a `maximum` of at least 1) and refuses `unsupported_construct`/`declaration-form` at the outer `repeat` when the exit is feasible (the guard `a`, `not a`, `a and not a`, `false`, `a or b`) or when the nested `maximum` is 0 whatever its guard is; a nested `repeat` that is the only stepping part of a `choice` case follows the same rule (the `choice` necessarily steps only when the nested `repeat` necessarily steps and every other case steps), and a nested `repeat` whose own body does not step refuses at the first such `repeat` in tree order; a body that holds a step beside the nested `repeat` (a `sequence` with a stepping sibling) or a `parallel` or `await` around it is admitted whatever the nested guard is.";
+const FR464_AC22_BODY: &str = "The exit-feasibility derivation adds no field and compares no guard: the atoms are the nested `repeat`'s listed `visible` entries and every other maximal non-connective, non-Boolean-literal subterm of its guard, equal subterms being one atom, and a `quire.op.boolean.eq` application, or a reference to an unlisted expression, is one atom as a whole (the guard `eq(a, b) or not eq(a, b)` has the one atom `eq(a, b)` and an infeasible exit, while `eq(a, b) or not eq(b, a)` has two atoms and a feasible one); a work charge of one unit is made before each valuation, so a guard over two atoms needs four units when its exit is infeasible and stops at the first false valuation when it is feasible; a valuation the `work` limit denies yields `stage_limit_exceeded`/`work-budget-exceeded` located at the nested `repeat` with no progress refusal for the enclosing `repeat`, a limit that admits the fourth valuation admits the package, and a `repeat` outside any other `repeat` is charged nothing.";
 const FR466_AC17_BODY: &str = "A `repeat` has no post-test form: a `repeat` guard and a `repeat` `visible` entry that read a field of a binder introduced in that `repeat`'s own body (an `attempt` or `event` binder `by` the owner, so eligible) each refuse `missing_declaration`/`missing-name` as an out-of-scope read, for a `repeat` with no `maximum`, with `maximum` 3 and with `maximum` 0, and are never admitted, never `wrong_snapshot`/`wrong-observation` and never `invalid_package`/`invalid-value`; the same `visible` entry and guard reading a binder in scope at the `repeat`'s entry are admitted.";
 const FR466_AC18_BODY: &str = "A `visible` entry is an `expression` node: an entry targeting a `value`/`literal` node and one targeting a record binder's `value`/`parameter` node each refuse `invalid_model_binding`/`malformed-declaration` at the target; an `expression`/`reference` entry to a record binder refuses `ill_typed`/`operator-ineligible` at the read; a `choice` and a `repeat` behave alike; an application over constants only, and one over a capture only, is admitted as a composite entry and lists no fact a guard may read (a guard reading a fact no individual entry lists still refuses `wrong_snapshot`/`wrong-observation`, `reason` `unlisted`).";
 
-/// FR-464's sentence that a `repeat` is never a step, even when its guard is
-/// `true`, a tautology or its `maximum` is 0.
-const FR464_NEVER_A_STEP: &str = "A `repeat` is never a step, whatever it nests and whatever its guard: progress reads the graph's edges, never a guard's value ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)), so a `repeat` that is the whole of an outer `repeat`'s body, or the only stepping part of a `choice` case, a `sequence` or another nested `repeat`, contributes no step to the outer `repeat`, even when its guard is `true`, a tautology or its `maximum` is 0;";
-const FR464_NO_GUARD_FEASIBILITY: &str = "a source checker that does so (a guard-feasibility proof) has no wire form: an outer `repeat` whose body steps only through a nested `repeat` is refused.";
+/// FR-464's progress paragraphs: the nested `repeat` rule, the independent-atom
+/// abstraction, the work charge and the soundness argument, whole.
+const FR464_PARAGRAPHS: [(&str, &str); 5] = [
+    ("FR-464 'Progress' paragraph", "**Progress.** A control *necessarily steps* when every path through it passes a step: `send`, `receive`, `attempt`, `effect`, `event`, `commit` and `fence` do; `await` and `parallel` do (the match or the `timeout` step, the `fork` and the `join`); a `sequence` does when some child does; a `choice` does when every case body does; `check` does not. A `repeat` is skipped when its guard is false at its entry, so it is a step in an enclosing obligation only when that exit cannot happen (the *nested `repeat` rule* below). A `repeat` whose body does not necessarily step refuses `unsupported_construct`/`declaration-form` at the `repeat` (the first such `repeat` in tree order), naming it and the selected protocol profile ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)-AC-3)."),
+    ("FR-464 'Nested repeat rule' paragraph", "**Nested `repeat` rule.** Repeat-through-repeat is a supported capability: a `repeat` whose body progresses only through a nested `repeat` is admitted when the nested `repeat` necessarily steps, and refused otherwise. A `repeat` that sits inside the body of another `repeat` (at any depth, through any control) *necessarily steps* for that enclosing `repeat` exactly when all three hold: 1. its exit is *infeasible*: its `guard`, read over the independent-atom abstraction below, is true under every valuation of its atoms; 2. its `maximum` is absent or at least 1 (a `repeat` with `maximum` 0 never enters its body, so it contributes nothing whatever its guard is); 3. its own `body` necessarily steps (a `repeat` whose own body does not is refused at the first such `repeat` in tree order, as above). A `repeat` whose exit is feasible, that is, whose guard is false under some valuation, contributes no step to an enclosing `repeat`: a feasible exit contributes no enclosing progress, and an infeasible exit derives the `repeat`'s contribution from the entered body's independently admitted progress (QSL FR-048, the source language's choreography requirement, in the repository agent-ix/quire-spec-language). The `exhausted` control is never counted. The encoding adds no field: the wire's `guard` term, its `visible` entries and its `maximum` are the whole input, and the reader derives the contribution from them."),
+    ("FR-464 independent-atom abstraction", "*Independent-atom abstraction.* The **atoms** of a nested `repeat`'s `guard` are, first, each node its `visible` set lists and, then, every other maximal subterm of the `guard` that is neither a `literal` term of `value_kind` `boolean` nor an application of `quire.op.boolean.not`, `.and`, `.or` or `.implies`: a `reference` (to a listed entry, an unlisted expression or a capture) and an application of any other operator (for example `quire.op.boolean.eq`) is one atom as a whole, its operands are not read. Two subterms that are the same node reference, or the same canonical term, are one atom. The atoms are independent: no valuation is excluded by any relation between them, so `a` and `a > 0` are two atoms and a guard over atoms that are in fact related is judged as if they were not. A **valuation** assigns `true` or `false` to each of the `n` distinct atoms; the guard is evaluated with the Boolean literals, `not`, `and`, `or` and `implies` taking their Boolean meaning. The exit is infeasible exactly when all `2^n` valuations make the guard true (`n` may be 0: the guard `true` is infeasible, `false` is feasible); the reader MAY stop at the first valuation that makes the guard false. No guard is ever compared with the body or with another guard, and an atom's value is never read from a binder, a capture or the model."),
+    ("FR-464 work charge", "*Work.* The check runs for every `repeat` that sits inside another `repeat`'s body, whatever its `maximum`, after the causal-cycle check and before the progress refusals. The reader charges one unit of the `work` limit (`CheckedPackageReadLimits.work`) before evaluating each valuation. A valuation whose charge the limit denies stops the read as the reader's `incomplete` result `stage_limit_exceeded`/`work-budget-exceeded` ([FR-330](FR-330-contract-package.md) \"Reader results as FR-272 diagnostics\"), located at the nested `repeat`'s node, and no progress refusal is reported for the enclosing `repeat`. There is no ceiling on the number of atoms other than the caller's `work` limit."),
+    ("FR-464 soundness", "**Soundness.** Progress stays structural: a `repeat` with a feasible exit adds no edge and no step to the enclosing cycle, so a cycle of the enclosing `repeat` passes a step only through a step that every path takes. An infeasible exit is the one case where the first guard test at the `repeat`'s entry is true on every valuation, so the entered body runs at least once (`maximum` at least 1 or absent) and its necessary step is taken before the enclosing back edge. A `repeat` is pre-test (FR-466 \"No post-test `repeat`\"), so its guard reads only binders in scope at its entry and the first test is the one the abstraction covers. The reader never decides that a feasible exit cannot happen, and never decides it from a binder's runtime value."),
+];
 /// FR-466's "No post-test `repeat`" paragraph, whole.
 const FR466_NO_POST_TEST: &str = "**No post-test `repeat`.** A `repeat` guard or `visible` entry that reads a binder introduced in that `repeat`'s own body, such as the most recently completed iteration's `attempt` binder, refuses `missing_declaration`/ `missing-name` as an out-of-scope read, whatever the binder's kind, its eligibility for the owner, the `maximum` (including 0) and whether the read is a field or bare. The wire has no post-test form: a `repeat` has no argument that runs the body once before its first guard, and FR-426 has no such move. A source language that defines post-test `repeat` semantics (QSL FR-218-AC-33) has no checked-package encoding until a requirement adds one.";
 
@@ -2952,7 +3001,7 @@ fn std_539_defects(
 ) -> Vec<String> {
     let mut defects = Vec::new();
     let cases = vectors["cases"].as_array().expect("cases are an array");
-    for (test_case, id, expected) in STD_539_EXPECTED {
+    for (test_case, id, edit_pin, expected) in STD_539_VECTORS {
         let vector = cases
             .iter()
             .find(|case| case["test_case"] == test_case && case["id"] == id);
@@ -2960,6 +3009,12 @@ fn std_539_defects(
             defects.push(format!("{test_case} {id} is not published"));
             continue;
         };
+        let edit_field = ["Edit", "Edit to the base"]
+            .iter()
+            .find_map(|field| vector[*field].as_str());
+        if edit_field != Some(edit_pin) {
+            defects.push(format!("{test_case} {id} Edit is not the ruled text"));
+        }
         if vector["Expected"].as_str() != Some(expected) {
             defects.push(format!("{test_case} {id} Expected is not the ruled text"));
         }
@@ -2992,6 +3047,7 @@ fn std_539_defects(
     }
     for (document, id, body) in [
         (fr464, "FR-464-AC-21", FR464_AC21_BODY),
+        (fr464, "FR-464-AC-22", FR464_AC22_BODY),
         (fr466, "FR-466-AC-17", FR466_AC17_BODY),
         (fr466, "FR-466-AC-18", FR466_AC18_BODY),
     ] {
@@ -3005,19 +3061,12 @@ fn std_539_defects(
             defects.push(format!("{id} row body is not the ruled text"));
         }
     }
-    for (document, sentence, name) in [
-        (
-            fr464,
-            FR464_NEVER_A_STEP,
-            "FR-464 'never a step ... even when its guard is true'",
-        ),
-        (
-            fr464,
-            FR464_NO_GUARD_FEASIBILITY,
-            "FR-464 no guard-feasibility form",
-        ),
-        (fr466, FR466_NO_POST_TEST, "FR-466 'No post-test repeat'"),
-    ] {
+    let mut paragraphs: Vec<(&str, &str, &str)> = FR464_PARAGRAPHS
+        .iter()
+        .map(|(name, text)| (fr464, *text, *name))
+        .collect();
+    paragraphs.push((fr466, FR466_NO_POST_TEST, "FR-466 'No post-test repeat'"));
+    for (document, sentence, name) in paragraphs {
         if !normalized(document).contains(&normalized(sentence)) {
             defects.push(format!("{name} paragraph is missing or changed"));
         }
@@ -3025,13 +3074,20 @@ fn std_539_defects(
     defects
 }
 
-/// STD-539: a nested `repeat` is never a step in an enclosing `repeat`'s
-/// progress (FR-464-AC-21), a `repeat` has no post-test form (FR-466-AC-17)
-/// and a `visible` entry is an `expression` node (FR-466-AC-18). The rulings
-/// are pinned by exact text in the criterion rows, the requirement
-/// paragraphs and the vectors with their table rows; each mutant below must
-/// produce a defect.
-#[trace("TC-946", "TC-948", "FR-464-AC-21", "FR-466-AC-17", "FR-466-AC-18")]
+/// STD-539: repeat-through-repeat is supported under the nested `repeat` rule
+/// (FR-464-AC-21, FR-464-AC-22), a `repeat` has no post-test form
+/// (FR-466-AC-17) and a `visible` entry is an `expression` node
+/// (FR-466-AC-18). The rulings are pinned by exact text in the criterion
+/// rows, the requirement paragraphs and the vectors with their table rows;
+/// each mutant below must produce a defect.
+#[trace(
+    "TC-946",
+    "TC-948",
+    "FR-464-AC-21",
+    "FR-464-AC-22",
+    "FR-466-AC-17",
+    "FR-466-AC-18"
+)]
 #[test]
 fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
     let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
@@ -3043,7 +3099,7 @@ fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
         Vec::<String>::new()
     );
 
-    let mutate_vector = |test_case: &str, id: &str, expected: &str| {
+    let mutate_vector = |test_case: &str, id: &str, field: &str, text: &str| {
         let mut mutated = vectors.clone();
         let case = mutated["cases"]
             .as_array_mut()
@@ -3051,7 +3107,7 @@ fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
             .iter_mut()
             .find(|case| case["test_case"] == test_case && case["id"] == id)
             .expect("vector is published");
-        case["Expected"] = Value::String(expected.to_string());
+        case[field] = Value::String(text.to_string());
         mutated
     };
     let replaced = |document: &str, from: &str, to: &str| {
@@ -3060,27 +3116,67 @@ fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
     };
 
     let mut mutants: Vec<(&str, Vec<String>)> = Vec::new();
-    // M2: R13's Expected becomes an admitted form that keeps the refusal
-    // substring.
-    let m2 = mutate_vector(
-        "TC-946",
-        "R13",
-        "admitted; `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile (FR-464-AC-21)",
+    // Vector Expected and Edit text.
+    for (name, test_case, id, field, text) in [
+        (
+            "R13 refused",
+            "TC-946",
+            "R13",
+            "Expected",
+            "`unsupported_construct`/`declaration-form` at the outer `repeat` (FR-464-AC-21)",
+        ),
+        (
+            "R15 admitted",
+            "TC-946",
+            "R15",
+            "Expected",
+            "admitted (FR-464-AC-21)",
+        ),
+        (
+            "R16 drops a feasible guard",
+            "TC-946",
+            "R16",
+            "Edit to the base",
+            "`Poll`'s body is only a nested `repeat` around an `attempt` whose guard is the single fact `a`; `not a`; `false`; `a or b`; each with no `maximum` and with `maximum` 1",
+        ),
+        (
+            "R21 work plus 3 admitted",
+            "TC-946",
+            "R21",
+            "Expected",
+            "admitted",
+        ),
+        (
+            "DF14 admitted",
+            "TC-948",
+            "DF14",
+            "Expected",
+            "admitted (FR-466-AC-17)",
+        ),
+        (
+            "DF18 Expected",
+            "TC-948",
+            "DF18",
+            "Expected",
+            "the entries are admitted as composite entries; the guard read is admitted (FR-466-AC-18)",
+        ),
+    ] {
+        let mutated = mutate_vector(test_case, id, field, text);
+        mutants.push((name, check(fr464, fr466, tc946, tc948, &mutated)));
+    }
+    // Criterion row bodies.
+    let ac21 = replaced(
+        fr464,
+        "(the guard `true`, the tautology",
+        "(the guard `false`, the tautology",
     );
-    mutants.push((
-        "M2 R13 admitted form",
-        check(fr464, fr466, tc946, tc948, &m2),
-    ));
-    // DF14 Expected loses the refusal; DF18 Expected loses its `unlisted`.
-    let df14 = mutate_vector("TC-948", "DF14", "admitted (FR-466-AC-17)");
-    mutants.push(("DF14 admitted", check(fr464, fr466, tc946, tc948, &df14)));
-    let df18 = mutate_vector(
-        "TC-948",
-        "DF18",
-        "the entries are admitted as composite entries; the guard read is admitted (FR-466-AC-18)",
+    mutants.push(("AC-21 body", check(&ac21, fr466, tc946, tc948, &vectors)));
+    let ac22 = replaced(
+        fr464,
+        "a work charge of one unit is made before each valuation",
+        "a work charge of two units is made before each valuation",
     );
-    mutants.push(("DF18 Expected", check(fr464, fr466, tc946, tc948, &df18)));
-    // AC-17 and AC-18 row bodies.
+    mutants.push(("AC-22 body", check(&ac22, fr466, tc946, tc948, &vectors)));
     let ac17 = replaced(
         fr466,
         "each refuse `missing_declaration`/`missing-name` as an out-of-scope read, for a `repeat` with no",
@@ -3093,17 +3189,11 @@ fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
         "an application over constants only is admitted",
     );
     mutants.push(("AC-18 body", check(fr464, &ac18, tc946, tc948, &vectors)));
-    let ac21 = replaced(
-        fr464,
-        "whatever the nested guard is (`true`,",
-        "whatever the nested guard is (",
-    );
-    mutants.push(("AC-21 body", check(&ac21, fr466, tc946, tc948, &vectors)));
     // TC table rows.
     let r13 = replaced(
         tc946,
-        "| R13 | `Poll`'s body is only a nested `repeat` (guard `true`) around an `attempt` | `unsupported",
-        "| R13 | `Poll`'s body is only a nested `repeat` (guard `true`) around an `attempt` | admitted; `unsupported",
+        "| R13 | `Poll`'s body is only a nested `repeat` whose guard is `true`, no `maximum`, around an `attempt` | admitted",
+        "| R13 | `Poll`'s body is only a nested `repeat` whose guard is `true`, no `maximum`, around an `attempt` | refused",
     );
     mutants.push(("TC-946 R13 row", check(fr464, fr466, &r13, tc948, &vectors)));
     let df18_row = replaced(
@@ -3124,16 +3214,47 @@ fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
         "TC-948 DF14 row",
         check(fr464, fr466, tc946, &df14_row, &vectors),
     ));
-    // Requirement paragraphs.
-    let never = replaced(
-        fr464,
-        "even when its guard is `true`, a\ntautology or its `maximum` is 0;",
-        "even when its guard is a tautology;",
-    );
-    mutants.push((
-        "FR-464 never a step",
-        check(&never, fr466, tc946, tc948, &vectors),
-    ));
+    // Requirement paragraphs: each clause of the rule.
+    for (name, from, to) in [
+        (
+            "rule: maximum 0 contributes",
+            "its `maximum` is absent or at least 1",
+            "its `maximum` is absent",
+        ),
+        (
+            "rule: exit infeasible",
+            "is true under every valuation of its atoms",
+            "is true under some valuation of its atoms",
+        ),
+        (
+            "rule: exhausted counted",
+            "The `exhausted` control is never counted.",
+            "The `exhausted` control is counted.",
+        ),
+        (
+            "atoms independent",
+            "The atoms are independent: no valuation is excluded",
+            "The atoms are related: a valuation is excluded",
+        ),
+        (
+            "work before each valuation",
+            "charges one unit of the `work` limit",
+            "charges no unit of the `work` limit",
+        ),
+        (
+            "work stop located at nested repeat",
+            "located at the nested `repeat`'s node",
+            "located at the enclosing `repeat`'s node",
+        ),
+        (
+            "soundness: pre-test",
+            "so its guard reads only binders in scope at its entry",
+            "so its guard reads any binder",
+        ),
+    ] {
+        let mutated = replaced(fr464, from, to);
+        mutants.push((name, check(&mutated, fr466, tc946, tc948, &vectors)));
+    }
     let post_test = replaced(
         fr466,
         "has no checked-package encoding until a requirement adds one.",
@@ -3146,6 +3267,215 @@ fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
     for (name, defects) in mutants {
         assert!(!defects.is_empty(), "mutant {name} is caught");
     }
+}
+
+/// A guard term over the independent atoms of FR-464 "Nested `repeat` rule".
+#[derive(Clone)]
+enum RepeatGuard {
+    Const(bool),
+    Atom(&'static str),
+    Not(Box<RepeatGuard>),
+    And(Box<RepeatGuard>, Box<RepeatGuard>),
+    Or(Box<RepeatGuard>, Box<RepeatGuard>),
+}
+
+impl RepeatGuard {
+    fn atoms(&self, found: &mut Vec<&'static str>) {
+        match self {
+            Self::Const(_) => {}
+            Self::Atom(name) => {
+                if !found.contains(name) {
+                    found.push(name);
+                }
+            }
+            Self::Not(inner) => inner.atoms(found),
+            Self::And(left, right) | Self::Or(left, right) => {
+                left.atoms(found);
+                right.atoms(found);
+            }
+        }
+    }
+
+    fn eval(&self, atoms: &[&'static str], valuation: u32) -> bool {
+        match self {
+            Self::Const(value) => *value,
+            Self::Atom(name) => {
+                let bit = atoms.iter().position(|atom| atom == name).expect("atom");
+                valuation >> bit & 1 == 1
+            }
+            Self::Not(inner) => !inner.eval(atoms, valuation),
+            Self::And(left, right) => left.eval(atoms, valuation) && right.eval(atoms, valuation),
+            Self::Or(left, right) => left.eval(atoms, valuation) || right.eval(atoms, valuation),
+        }
+    }
+}
+
+/// The rule's clauses; each `false`/`true` flip below is one mutant.
+#[derive(Clone, Copy)]
+struct NestedRule {
+    /// Clause 2: `maximum` 0 contributes nothing.
+    maximum_zero_blocks: bool,
+    /// The valuation search stops at the first false valuation.
+    stop_at_first_false: bool,
+    /// Clause 1 reads the guard (not: every guard is feasible).
+    reads_guard: bool,
+}
+
+const NESTED_RULE: NestedRule = NestedRule {
+    maximum_zero_blocks: true,
+    stop_at_first_false: true,
+    reads_guard: true,
+};
+
+/// (necessarily steps for the enclosing `repeat`, work units charged).
+fn nested_contribution(
+    rule: NestedRule,
+    guard: &RepeatGuard,
+    maximum: Option<u32>,
+    body_steps: bool,
+) -> (bool, u32) {
+    let mut atoms = Vec::new();
+    guard.atoms(&mut atoms);
+    let mut units = 0;
+    let mut infeasible = rule.reads_guard;
+    if rule.reads_guard {
+        for valuation in 0..1_u32 << atoms.len() {
+            units += 1;
+            if !guard.eval(&atoms, valuation) {
+                infeasible = false;
+                if rule.stop_at_first_false {
+                    break;
+                }
+            }
+        }
+    } else {
+        units = 0;
+        infeasible = false;
+    }
+    let blocked = rule.maximum_zero_blocks && maximum == Some(0);
+    (infeasible && !blocked && body_steps, units)
+}
+
+/// STD-539: an executable model of the nested `repeat` rule, with the guards,
+/// maxima and expected outcomes of TC-946 R13 to R16, R18, R20 and R21, so the
+/// vectors cannot drift from the rule; every clause flip is a mutant that must
+/// disagree with at least one vector.
+#[trace("TC-946", "FR-464-AC-21", "FR-464-AC-22")]
+#[test]
+fn std_539_nested_repeat_rule_model_agrees_with_the_vectors() {
+    use RepeatGuard::{And, Atom, Const, Not, Or};
+    let a = || Box::new(Atom("a"));
+    let b = || Box::new(Atom("b"));
+    let eq_ab = || Box::new(Atom("eq(a, b)"));
+    let eq_ba = || Box::new(Atom("eq(b, a)"));
+    let a_or_not_a = || Or(a(), Box::new(Not(a())));
+    let tautology = Or(
+        Box::new(Or(Box::new(a_or_not_a()), b())),
+        Box::new(Not(b())),
+    );
+    // (vector id, text the vector's Edit holds, guard, maximum, body steps,
+    // enclosing progress, work units).
+    let cases: Vec<(&str, &str, RepeatGuard, Option<u32>, bool, bool, u32)> = vec![
+        ("R13", "guard is `true`", Const(true), None, true, true, 1),
+        (
+            "R14",
+            "`a or not a or b or not b`",
+            tautology.clone(),
+            Some(1),
+            true,
+            true,
+            4,
+        ),
+        ("R15", "guard is `true`", Const(true), Some(0), true, false, 1),
+        ("R15", "`a or not a`", a_or_not_a(), Some(0), true, false, 2),
+        ("R16", "`a`;", Atom("a"), None, true, false, 1),
+        ("R16", "`a`;", Atom("a"), Some(1), true, false, 1),
+        ("R16", "`not a`", Not(a()), None, true, false, 2),
+        ("R16", "`a and not a`", And(a(), Box::new(Not(a()))), None, true, false, 1),
+        ("R16", "`false`", Const(false), Some(1), true, false, 1),
+        ("R16", "`a or b`", Or(a(), b()), None, true, false, 1),
+        ("R18", "own body is only a `check`", Const(true), None, false, false, 1),
+        (
+            "R20",
+            "quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(a, b)",
+            Or(eq_ab(), Box::new(Not(eq_ab()))),
+            None,
+            true,
+            true,
+            2,
+        ),
+        (
+            "R20",
+            "not quire.op.boolean.eq(b, a)",
+            Or(eq_ab(), Box::new(Not(eq_ba()))),
+            None,
+            true,
+            false,
+            3,
+        ),
+    ];
+    let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
+    let edit_of = |id: &str| {
+        vectors["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["test_case"] == "TC-946" && case["id"] == id)
+            .and_then(|case| case["Edit to the base"].as_str())
+            .unwrap_or_default()
+            .to_string()
+    };
+    let agree = |rule: NestedRule| {
+        cases
+            .iter()
+            .filter(|(_, _, guard, maximum, body, steps, units)| {
+                nested_contribution(rule, guard, *maximum, *body) != (*steps, *units)
+            })
+            .count()
+    };
+    for (id, text, ..) in &cases {
+        assert!(
+            edit_of(id).contains(text),
+            "vector {id} names the modelled case {text:?}"
+        );
+    }
+    assert_eq!(agree(NESTED_RULE), 0, "the rule reproduces every vector");
+    // The work totals of R21: four valuations for the two-atom tautology.
+    assert_eq!(
+        nested_contribution(NESTED_RULE, &tautology, Some(1), true),
+        (true, 4)
+    );
+    for (name, rule) in [
+        (
+            "maximum 0 contributes",
+            NestedRule {
+                maximum_zero_blocks: false,
+                ..NESTED_RULE
+            },
+        ),
+        (
+            "search does not stop",
+            NestedRule {
+                stop_at_first_false: false,
+                ..NESTED_RULE
+            },
+        ),
+        (
+            "guard is not read",
+            NestedRule {
+                reads_guard: false,
+                ..NESTED_RULE
+            },
+        ),
+    ] {
+        assert!(agree(rule) > 0, "mutant {name} disagrees with a vector");
+    }
+    // Atoms that are the same subterm are one atom: `eq(a, b)` twice is one
+    // atom, so two valuations, not four.
+    let same = Or(eq_ab(), Box::new(Not(eq_ab())));
+    let mut found = Vec::new();
+    same.atoms(&mut found);
+    assert_eq!(found, ["eq(a, b)"]);
 }
 
 /// FR-149 exact-conversion rows over declared numeric bounds.

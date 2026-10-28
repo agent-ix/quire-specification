@@ -420,23 +420,77 @@ the node array, timestamps, queue order or equal labels
 passes a step: `send`, `receive`, `attempt`, `effect`, `event`, `commit` and
 `fence` do; `await` and `parallel` do (the match or the `timeout` step, the
 `fork` and the `join`); a `sequence` does when some child does; a `choice`
-does when every case body does; `check` and `repeat` do not (a `repeat` can
-be skipped by a false guard). A `repeat` is never a step, whatever it
-nests and whatever its guard: progress reads the graph's edges, never a
-guard's value ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)),
-so a `repeat` that is the whole of an outer `repeat`'s body, or the only
-stepping part of a `choice` case, a `sequence` or another nested `repeat`,
-contributes no step to the outer `repeat`, even when its guard is `true`, a
-tautology or its `maximum` is 0; it is the steps inside the nested
-`repeat`'s own body that make the *nested* `repeat`'s own cycle progress
-(a `repeat` body that does not necessarily step is refused at that `repeat`).
-The reader does not decide, from a guard, that a nested `repeat` cannot be
-skipped, and a source checker that does so (a guard-feasibility proof) has no
-wire form: an outer `repeat` whose body steps only through a nested `repeat`
-is refused. A `repeat` whose body does not necessarily
-step refuses `unsupported_construct`/`declaration-form` at the `repeat`,
-naming it and the selected protocol profile
+does when every case body does; `check` does not. A `repeat` is skipped when
+its guard is false at its entry, so it is a step in an enclosing obligation
+only when that exit cannot happen (the *nested `repeat` rule* below). A
+`repeat` whose body does not necessarily step refuses
+`unsupported_construct`/`declaration-form` at the `repeat` (the first such
+`repeat` in tree order), naming it and the selected protocol profile
 ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)-AC-3).
+
+**Nested `repeat` rule.** Repeat-through-repeat is a supported capability: a
+`repeat` whose body progresses only through a nested `repeat` is admitted when
+the nested `repeat` necessarily steps, and refused otherwise. A `repeat` that
+sits inside the body of another `repeat` (at any depth, through any control)
+*necessarily steps* for that enclosing `repeat` exactly when all three hold:
+
+1. its exit is *infeasible*: its `guard`, read over the independent-atom
+   abstraction below, is true under every valuation of its atoms;
+2. its `maximum` is absent or at least 1 (a `repeat` with `maximum` 0 never
+   enters its body, so it contributes nothing whatever its guard is);
+3. its own `body` necessarily steps (a `repeat` whose own body does not is
+   refused at the first such `repeat` in tree order, as above).
+
+A `repeat` whose exit is feasible, that is, whose guard is false under some
+valuation, contributes no step to an enclosing `repeat`: a feasible exit
+contributes no enclosing progress, and an infeasible exit derives the
+`repeat`'s contribution from the entered body's independently admitted
+progress (QSL FR-048, the source language's choreography requirement, in the
+repository agent-ix/quire-spec-language). The `exhausted` control is never counted. The
+encoding adds no field: the wire's `guard` term, its `visible` entries and its
+`maximum` are the whole input, and the reader derives the contribution from
+them.
+
+*Independent-atom abstraction.* The **atoms** of a nested `repeat`'s `guard`
+are, first, each node its `visible` set lists and, then, every other maximal
+subterm of the `guard` that is neither a `literal` term of `value_kind`
+`boolean` nor an application of `quire.op.boolean.not`, `.and`, `.or` or
+`.implies`: a `reference` (to a listed entry, an unlisted expression or a
+capture) and an application of any other operator (for example
+`quire.op.boolean.eq`) is one atom as a whole, its operands are not read. Two
+subterms that are the same node reference, or the same canonical term, are
+one atom. The atoms are independent: no valuation is excluded by any relation
+between them, so `a` and `a > 0` are two atoms and a guard over atoms that
+are in fact related is judged as if they were not. A **valuation** assigns
+`true` or `false` to each of the `n` distinct atoms; the guard is evaluated
+with the Boolean literals, `not`, `and`, `or` and `implies` taking their
+Boolean meaning. The exit is infeasible exactly when all `2^n` valuations
+make the guard true (`n` may be 0: the guard `true` is infeasible, `false` is
+feasible); the reader MAY stop at the first valuation that makes the guard
+false. No guard is ever compared with the body or with another guard, and an
+atom's value is never read from a binder, a capture or the model.
+
+*Work.* The check runs for every `repeat` that sits inside another `repeat`'s
+body, whatever its `maximum`, after the causal-cycle check and before the
+progress refusals. The reader charges one unit of the `work` limit
+(`CheckedPackageReadLimits.work`) before evaluating each valuation. A
+valuation whose charge the limit denies stops the read as the reader's
+`incomplete` result `stage_limit_exceeded`/`work-budget-exceeded`
+([FR-330](FR-330-contract-package.md) "Reader results as FR-272 diagnostics"),
+located at the nested `repeat`'s node, and no progress refusal is reported
+for the enclosing `repeat`. There is no ceiling on the number of atoms other
+than the caller's `work` limit.
+
+**Soundness.** Progress stays structural: a `repeat` with a feasible exit
+adds no edge and no step to the enclosing cycle, so a cycle of the enclosing
+`repeat` passes a step only through a step that every path takes. An
+infeasible exit is the one case where the first guard test at the `repeat`'s
+entry is true on every valuation, so the entered body runs at least once
+(`maximum` at least 1 or absent) and its necessary step is taken before the
+enclosing back edge. A `repeat` is pre-test (FR-466 "No post-test `repeat`"),
+so its guard reads only binders in scope at its entry and the first test is
+the one the abstraction covers. The reader never decides that a feasible exit
+cannot happen, and never decides it from a binder's runtime value.
 
 ## Placement and profile fit
 
@@ -602,7 +656,7 @@ alternate cycle encoding.
 | FR-464-AC-7 | Binder levels run from the introducing construct's entry count in layout order: `over` `0`, the `each` trigger `1`, the captures `2` and up in order, a control's binder `size(In(n))`; a wrong level, a binder body of another shape and two readable binders of one name refuse (`invalid_semantic_graph`, `malformed_wire`, `ambiguous_declaration`/`ambiguous-name`). | Test (TC-946) |
 | FR-464-AC-8 | An expression that reads a binder or capture outside its stage's list refuses `missing_declaration`/`missing-name` at the node whose slot holds it, retaining name, stage, owner and `read` (`forward`, `foreign` or `stage`); a read of `over` in an activation guard, a trigger guard, a retry relation, a recovery predicate, a choice or repeat guard, a `visible` entry, a `check` condition or a FIFO key refuses `ill_typed`/`operator-ineligible` before any stage-table refusal, while a protocol, registration or activation capture, an event constraint and `finish` may read it; a `finish` constraint reading a binder of a branch not joined is refused `missing-name`; a slot that bars model state whose closure holds a model-state operation refuses `ill_typed`/`operator-ineligible` at the read; a non-Boolean guard refuses `ill_typed`/`non-boolean-root`. | Test (TC-946) |
 | FR-464-AC-9 | The derived causal relation is acyclic: a `receive` sequenced before the `send` it names, a send/receive pair in one sequence in the wrong order and an `await` anchored at a later control each refuse `invalid_package`/`definition-cycle` naming the controls on the cycle; the same pair on different branches of a `parallel` is admitted; a `repeat` back edge is not a cycle. | Test (TC-946) |
-| FR-464-AC-10 | A `repeat` whose body is only a `check`, or a `choice` with a step in one case and an empty `sequence` in the other, or a nested `repeat` in one case, refuses `unsupported_construct`/`declaration-form` at the `repeat`; a `repeat` whose body is a step, a `parallel` or an `await` is admitted with a maximum, with a loop proof, with both and with neither. | Test (TC-946) |
+| FR-464-AC-10 | A `repeat` whose body is only a `check`, or a `choice` with a step in one case and an empty `sequence` in the other, or a nested `repeat` with a feasible exit in one case, refuses `unsupported_construct`/`declaration-form` at the `repeat`; a `repeat` whose body is a step, a `parallel` or an `await` is admitted with a maximum, with a loop proof, with both and with neither. | Test (TC-946) |
 | FR-464-AC-11 | An operator the profile does not define refuses `operation-member-mismatch`; a protocol application with the law missing, of the temporal role or not the lock's row refuses as FR-322-AC-22 states; an `await` or `compensate` in a package whose lock selects no `temporal_profile` refuses `missing_declaration`/`missing-selection`. | Test (TC-946) |
 | FR-464-AC-12 | The protocol step runs after the state, temporal, abstraction and refinement steps and before the operation step and reports, in order, placement, operator, declaration, member, membership, clause and refinement class-catalog graph-join defects; within a clause the cycle and progress defects precede the slot checks, and within a slot the `over`/model-state refusal precedes the binder-scope refusal, which precedes the decision-fact refusal; a state-step defect and a protocol defect in one package report the state-step defect. | Test (TC-946, TC-310) |
 | FR-464-AC-13 | The activation relation of an admitted protocol is derived from its clause node's `activation` and `requirements` alone: `activation on each (opened)` with `requires temporal OrderClosureBounded` gives exactly one row, the clause key, `each` with `opened`'s node key and `OrderClosureBounded`'s node key; under `activation on origin` the one row carries `origin` and no trigger; a protocol with no requirement has no row; a second `requires temporal OrderClosureBounded` leaves one row; a second required temporal clause gives two rows in ascending node-id digest order; a temporal clause that shares the protocol's clock but is not required gives no row; a `requirements` entry or an `each` trigger that is a node absent from the clause's `dependencies` refuses `invalid_semantic_graph` at the clause's `/dependencies` (graph stage, FR-322-AC-96, before the protocol step) and one that names no node refuses `missing_declaration`/`missing-name` at the target, each with no relation. | Test (TC-946) |
@@ -613,7 +667,8 @@ alternate cycle encoding.
 | FR-464-AC-18 | A protocol clause retains `owner_model` as the owner model's object-type node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge, node preimage or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
 | FR-464-AC-19 | The protocol profile defines the operator `transition` for the `state`/`transition` form only: a `quire.op.state.transition` application naming `transition` is admitted by the operation step, a `quire.op.state.transition` application naming any operator of the protocol-node table (for example `sequence`) and a `quire.op.protocol.control` application naming `transition` fail the published schema and a complete reader refuses them `malformed_wire` at the application's `operation/member/operator`; the operation step run alone on the same documents refuses `invalid_package`/`operation-member-mismatch` (FR-341-AC-19). | Test (TC-233) |
 | FR-464-AC-20 | The `owner_model` target is checked in one phase ("Owner-model edge phase"), with a fail-closed outcome for each case: an omitted edge and an external key refuse `malformed_wire` at the node; a genuinely unselected `model`/`object_type` target (owner joining no selection row, or not declared as an object type by the selected document) refuses `missing_declaration`/`missing-selection` at the target's own `node_id` in FR-322's owner join before any body step and before the clause's edge is read; a target missing from the clause's `dependencies` refuses `invalid_semantic_graph` at `/dependencies`; a local target naming no node refuses `missing_declaration`/`missing-name`, and a model node of a selected declaration of another form, a selected package's `model_root` node, a non-model declared node with a source owner and a non-model node refuse `invalid_model_binding`/`malformed-declaration`, both at `/semantic_graph/nodes/{i}/owner_model` as the first check of the clause at step 6; a valid selected second `object_type` is admitted and is not compared with the `over` type. An earlier-stage fault wins when paired: the owner join of the target precedes every body step, the refinement-step defects and the step 4 and 5 defects precede the typed edge check, and the typed edge check precedes the same clause's activation, capture and slot defects. Reader evidence is owned by IR-1053 (IR FR-064-AC-4/TC-048); no QSpec reader test exists, so the vectors TC-946 OM-03, OM-05..OM-11 and O10..O12 are the published oracle. | Analysis |
-| FR-464-AC-21 | A `repeat` never counts as a step in an enclosing `repeat`'s progress: an outer `repeat` whose body is only a nested `repeat` that holds a step refuses `unsupported_construct`/`declaration-form` at the outer `repeat` whatever the nested guard is (`true`, the tautology `a or not a`, a non-tautological `a`, with or without a `maximum`, with `maximum` 0), the guard is never evaluated or compared, while a body that holds a step beside the nested `repeat` (a `sequence` with a stepping sibling) or a `parallel` or `await` around it is admitted. | Test (TC-946) |
+| FR-464-AC-21 | Repeat-through-repeat: an outer `repeat` whose body steps only through a nested `repeat` that necessarily steps (a stepping body, `maximum` absent or at least 1) is admitted when the nested guard's exit is infeasible over the independent atoms (the guard `true`, the tautology `a or not a or b or not b`, with or without a `maximum` of at least 1) and refuses `unsupported_construct`/`declaration-form` at the outer `repeat` when the exit is feasible (the guard `a`, `not a`, `a and not a`, `false`, `a or b`) or when the nested `maximum` is 0 whatever its guard is; a nested `repeat` that is the only stepping part of a `choice` case follows the same rule (the `choice` necessarily steps only when the nested `repeat` necessarily steps and every other case steps), and a nested `repeat` whose own body does not step refuses at the first such `repeat` in tree order; a body that holds a step beside the nested `repeat` (a `sequence` with a stepping sibling) or a `parallel` or `await` around it is admitted whatever the nested guard is. | Test (TC-946) |
+| FR-464-AC-22 | The exit-feasibility derivation adds no field and compares no guard: the atoms are the nested `repeat`'s listed `visible` entries and every other maximal non-connective, non-Boolean-literal subterm of its guard, equal subterms being one atom, and a `quire.op.boolean.eq` application, or a reference to an unlisted expression, is one atom as a whole (the guard `eq(a, b) or not eq(a, b)` has the one atom `eq(a, b)` and an infeasible exit, while `eq(a, b) or not eq(b, a)` has two atoms and a feasible one); a work charge of one unit is made before each valuation, so a guard over two atoms needs four units when its exit is infeasible and stops at the first false valuation when it is feasible; a valuation the `work` limit denies yields `stage_limit_exceeded`/`work-budget-exceeded` located at the nested `repeat` with no progress refusal for the enclosing `repeat`, a limit that admits the fourth valuation admits the package, and a `repeat` outside any other `repeat` is charged nothing. | Test (TC-946) |
 
 ## Published artifacts and the operation catalog
 

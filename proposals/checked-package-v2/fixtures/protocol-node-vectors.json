@@ -861,7 +861,7 @@
       "test_case": "TC-946",
       "section": "Causal relation and progress",
       "id": "R9",
-      "Edit to the base": "`Poll`'s body is a `choice` with an `attempt` in one case and a nested `repeat` around an `attempt` in the other",
+      "Edit to the base": "`Poll`'s body is a `choice` with an `attempt` in one case and a nested `repeat` around an `attempt` whose guard has a feasible exit in the other",
       "Expected": "`unsupported_construct`/`declaration-form` at the outer `repeat`"
     },
     {
@@ -889,29 +889,64 @@
       "test_case": "TC-946",
       "section": "Causal relation and progress",
       "id": "R13",
-      "Edit to the base": "`Poll`'s body is only a nested `repeat` (guard `true`) around an `attempt`",
-      "Expected": "`unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile (FR-464-AC-21)"
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` whose guard is `true`, no `maximum`, around an `attempt`",
+      "Expected": "admitted: the nested exit is infeasible and its body steps (FR-464-AC-21)"
     },
     {
       "test_case": "TC-946",
       "section": "Causal relation and progress",
       "id": "R14",
       "Edit to the base": "`Poll`'s body is only a nested `repeat max 1` whose guard is the tautology `a or not a or b or not b`, around an `attempt`",
-      "Expected": "`unsupported_construct`/`declaration-form` at the outer `repeat`; the guard is not evaluated (FR-464-AC-21)"
+      "Expected": "admitted (FR-464-AC-21)"
     },
     {
       "test_case": "TC-946",
       "section": "Causal relation and progress",
       "id": "R15",
-      "Edit to the base": "`Poll`'s body is only a nested `repeat` whose guard is the single fact `a` (not a tautology), around an `attempt`; and the same nested `repeat` with `maximum` 0",
-      "Expected": "each `unsupported_construct`/`declaration-form` at the outer `repeat`, the same refusal as R13 and R14 (FR-464-AC-21)"
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` with `maximum` 0 around an `attempt`, whose guard is `true`; and the same with the tautology guard `a or not a`",
+      "Expected": "each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the body is never entered (FR-464-AC-21)"
     },
     {
       "test_case": "TC-946",
       "section": "Causal relation and progress",
       "id": "R16",
-      "Edit to the base": "`Poll`'s body is a `sequence` of a nested `repeat` around an `attempt` and a second `attempt`; and a `parallel` with a `join` holding the nested `repeat` in one branch; and an `await` whose `then` is the nested `repeat`",
-      "Expected": "each admitted (a sibling step, the `parallel` and the `await` step) (FR-464-AC-21)"
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` around an `attempt` whose guard is the single fact `a`; `not a`; `a and not a`; `false`; `a or b`; each with no `maximum` and with `maximum` 1",
+      "Expected": "each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the exit is feasible (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R17",
+      "Edit to the base": "`Poll`'s body is a `sequence` of a nested `repeat` around an `attempt` and a second `attempt`; and a `parallel` with a `join` holding the nested `repeat` in one branch; and an `await` whose `then` is the nested `repeat`; the nested guard is `a`, a feasible exit",
+      "Expected": "each admitted (a sibling step, the `parallel` and the `await` step) whatever the nested guard is (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R18",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` whose guard is `true` and whose own body is only a `check`",
+      "Expected": "`unsupported_construct`/`declaration-form` at the first `repeat` in tree order, the outer `repeat`, naming it and the profile (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R19",
+      "Edit to the base": "`Poll`'s body is a `choice` with a nested `repeat` around an `attempt` in one case and an `attempt` in the other, the nested guard being `true`; and the same with the nested guard `a`",
+      "Expected": "admitted; `unsupported_construct`/`declaration-form` at the outer `repeat` (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R20",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` around an `attempt` whose guard over two references `a` and `b` is `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(a, b)`; and the guard `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(b, a)`",
+      "Expected": "admitted (one atom, infeasible exit); `unsupported_construct`/`declaration-form` at the outer `repeat` (two atoms, feasible exit) (FR-464-AC-22)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R21",
+      "Edit to the base": "R14 with `CheckedPackageReadLimits.work` set to the units charged before the nested `repeat`'s first valuation plus 3, and plus 4; and R16 with the guard `a or b` under the plus 1 limit; and a `Poll` that is no nested `repeat`, with a 30-atom guard, under the plus 3 limit",
+      "Expected": "plus 3: `stage_limit_exceeded`/`work-budget-exceeded` (incomplete) at the nested `repeat`, no progress refusal; plus 4: admitted; `a or b` under plus 1: the refusal of R16, the first valuation makes the guard false; the 30-atom `Poll`: admitted, no valuation is charged (FR-464-AC-22)"
     },
     {
       "test_case": "TC-946",

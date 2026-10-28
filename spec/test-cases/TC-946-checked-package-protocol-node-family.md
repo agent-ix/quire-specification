@@ -18,7 +18,7 @@ Schema and reader vectors for the `protocol` node family of
 body, the operator catalog, node keys, declaration paths, the clause body,
 membership and containment, binders and their scope, the derived causal
 relation and progress, placement, profile fit, the reader order and the
-activation relation. Scope: FR-464-AC-1 to FR-464-AC-15 and FR-464-AC-21.
+activation relation. Scope: FR-464-AC-1 to FR-464-AC-15, FR-464-AC-21 and FR-464-AC-22.
 
 ## Base package
 
@@ -212,14 +212,19 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | R6 | `Poll`'s back edge | not a cycle: admitted |
 | R7 | `Poll`'s body is only a `check` | `unsupported_construct`/`declaration-form` at `Poll`, naming it and the profile |
 | R8 | `Poll`'s body is a `choice` with an `attempt` in one case and an empty `sequence` in the other | `unsupported_construct`/`declaration-form` at `Poll` |
-| R9 | `Poll`'s body is a `choice` with an `attempt` in one case and a nested `repeat` around an `attempt` in the other | `unsupported_construct`/`declaration-form` at the outer `repeat` |
+| R9 | `Poll`'s body is a `choice` with an `attempt` in one case and a nested `repeat` around an `attempt` whose guard has a feasible exit in the other | `unsupported_construct`/`declaration-form` at the outer `repeat` |
 | R10 | `Poll`'s body is one `await` with a `timeout` control, or one `parallel` with a `join` | admitted |
 | R11 | `Poll` with a `maximum` only, a `proof` only, both and neither | admitted |
 | R12 | `Poll` with `maximum: 0` | admitted |
-| R13 | `Poll`'s body is only a nested `repeat` (guard `true`) around an `attempt` | `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile (FR-464-AC-21) |
-| R14 | `Poll`'s body is only a nested `repeat max 1` whose guard is the tautology `a or not a or b or not b`, around an `attempt` | `unsupported_construct`/`declaration-form` at the outer `repeat`; the guard is not evaluated (FR-464-AC-21) |
-| R15 | `Poll`'s body is only a nested `repeat` whose guard is the single fact `a` (not a tautology), around an `attempt`; and the same nested `repeat` with `maximum` 0 | each `unsupported_construct`/`declaration-form` at the outer `repeat`, the same refusal as R13 and R14 (FR-464-AC-21) |
-| R16 | `Poll`'s body is a `sequence` of a nested `repeat` around an `attempt` and a second `attempt`; and a `parallel` with a `join` holding the nested `repeat` in one branch; and an `await` whose `then` is the nested `repeat` | each admitted (a sibling step, the `parallel` and the `await` step) (FR-464-AC-21) |
+| R13 | `Poll`'s body is only a nested `repeat` whose guard is `true`, no `maximum`, around an `attempt` | admitted: the nested exit is infeasible and its body steps (FR-464-AC-21) |
+| R14 | `Poll`'s body is only a nested `repeat max 1` whose guard is the tautology `a or not a or b or not b`, around an `attempt` | admitted (FR-464-AC-21) |
+| R15 | `Poll`'s body is only a nested `repeat` with `maximum` 0 around an `attempt`, whose guard is `true`; and the same with the tautology guard `a or not a` | each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the body is never entered (FR-464-AC-21) |
+| R16 | `Poll`'s body is only a nested `repeat` around an `attempt` whose guard is the single fact `a`; `not a`; `a and not a`; `false`; `a or b`; each with no `maximum` and with `maximum` 1 | each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the exit is feasible (FR-464-AC-21) |
+| R17 | `Poll`'s body is a `sequence` of a nested `repeat` around an `attempt` and a second `attempt`; and a `parallel` with a `join` holding the nested `repeat` in one branch; and an `await` whose `then` is the nested `repeat`; the nested guard is `a`, a feasible exit | each admitted (a sibling step, the `parallel` and the `await` step) whatever the nested guard is (FR-464-AC-21) |
+| R18 | `Poll`'s body is only a nested `repeat` whose guard is `true` and whose own body is only a `check` | `unsupported_construct`/`declaration-form` at the first `repeat` in tree order, the outer `repeat`, naming it and the profile (FR-464-AC-21) |
+| R19 | `Poll`'s body is a `choice` with a nested `repeat` around an `attempt` in one case and an `attempt` in the other, the nested guard being `true`; and the same with the nested guard `a` | admitted; `unsupported_construct`/`declaration-form` at the outer `repeat` (FR-464-AC-21) |
+| R20 | `Poll`'s body is only a nested `repeat` around an `attempt` whose guard over two references `a` and `b` is `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(a, b)`; and the guard `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(b, a)` | admitted (one atom, infeasible exit); `unsupported_construct`/`declaration-form` at the outer `repeat` (two atoms, feasible exit) (FR-464-AC-22) |
+| R21 | R14 with `CheckedPackageReadLimits.work` set to the units charged before the nested `repeat`'s first valuation plus 3, and plus 4; and R16 with the guard `a or b` under the plus 1 limit; and a `Poll` that is no nested `repeat`, with a 30-atom guard, under the plus 3 limit | plus 3: `stage_limit_exceeded`/`work-budget-exceeded` (incomplete) at the nested `repeat`, no progress refusal; plus 4: admitted; `a or b` under plus 1: the refusal of R16, the first valuation makes the guard false; the 30-atom `Poll`: admitted, no valuation is charged (FR-464-AC-22) |
 
 ## Reader order
 
@@ -252,9 +257,10 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 4. C1 to C13a hold (FR-464-AC-5, FR-464-AC-6).
 5. M1 to M10 refuse as listed (FR-464-AC-4, FR-464-AC-6).
 6. B2 to B26 behave as listed (FR-464-AC-7, FR-464-AC-8).
-7. R2, R4, R5 refuse `definition-cycle`; R7 to R9 and R13 to R15
-   refuse `declaration-form`; R1, R3, R6, R10 to R12 and R16 are admitted
-   (FR-464-AC-9, FR-464-AC-10, FR-464-AC-21).
+7. R2, R4, R5 refuse `definition-cycle`; R7 to R9, R15, R16 and R18
+   refuse `declaration-form`; R1, R3, R6, R10 to R14 and R17 are admitted;
+   R19, R20 and R21 behave as listed (FR-464-AC-9, FR-464-AC-10,
+   FR-464-AC-21, FR-464-AC-22).
 8. O1 to O12 report the first defect in the reader order of FR-464
    (FR-464-AC-12, FR-464-AC-20).
 Assertions compare typed fields, causes and pointers, never message text.
