@@ -52,7 +52,7 @@ change ContractPackage members or identity.
 Use these exact FR-322 `Selection` rows (the short labels below denote typed
 values, never identifier-parsing rules). The authoritative machine-readable form
 is `proposals/checked-package-v2/contract-package-selection-vectors.json`
-(`selections` and `compatibility_cases`); a consumer reads that file and does not
+(`selections`, `compatibility_cases` with their expected results, and `repeat_controls`); a consumer reads that file and does not
 copy or redefine the rows, and the QSpec test fails if this block or the table
 below disagrees with it (FR-322-AC-180):
 
