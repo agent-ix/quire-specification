@@ -4794,10 +4794,10 @@ fn read_package_semantics_with(
     if let Some(node) = nodes.iter().find(|node| oracle.enum_value_is_refused(node)) {
         return Err(ReadRefusal::InvalidSemanticGraph(node["node_id"].clone()));
     }
-    if let Some((node, (code, cause, member))) = ordered.iter().find_map(|node| {
+    if let Some((node, (code, cause, member))) = nodes.iter().find_map(|node| {
         oracle
             .option_value_refusal(node)
-            .map(|refusal| (*node, refusal))
+            .map(|refusal| (node, refusal))
     }) {
         return Err(ReadRefusal::OptionValue(
             code,
