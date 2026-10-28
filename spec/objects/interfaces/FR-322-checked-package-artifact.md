@@ -460,7 +460,13 @@ boundary.
   from the digest of its preimage refuses as `invalid_package` with cause
   `stale-node-key`, after every graph-shape refusal and before any declaration,
   frame or operation refusal, at the first such node the reader visits in
-  ascending retained digest order. A frame body refusal, meaning-join or canonical-order
+  ascending retained digest order. A dangling `reference` whose target equals
+  the recomputed key of a node whose retained key is stale dangles only because
+  of that rekey: it is dependent on it and is not a graph-shape refusal, so the
+  stale-key stage reports the stale node instead (FR-322-AC-154). A dangling
+  `reference` whose target is no such recomputed key is independent and remains a
+  graph-shape refusal, preceding every stale-key refusal, and the stale nodes
+  keep their ascending retained digest order. A frame body refusal, meaning-join or canonical-order
   ([FR-340](FR-340-checked-package-frame-location.md)), is reported after
   every declaration refusal and before any state or operation refusal, at
   the first `state`/`frame` node, visiting them in ascending node-id digest order, that
@@ -1485,7 +1491,11 @@ no operation identity, and the published operation catalog is unchanged.
   `fixtures/positive-model-tuple-union.json`), and never at a member of it:
   not `/semantic_graph/nodes/<i>/body/operation/member`, nor its `/position` or
   `/declaration`. A `position` that is no `KeyOrdinal` fails the V2 schema and is
-  `malformed_wire` at the same node (FR-322-AC-152). A `typeRef` that names another tuple or a variant
+  `malformed_wire` at the same node (FR-322-AC-152): the node is the `locus` and
+  the offending field, `/semantic_graph/nodes/<i>/body/operation/member/position`,
+  is the `document_pointer`, as for the field-level cases of a tuple node. A
+  vector's `locus` is an RFC 6901 pointer into the package, the pointer FR-272's
+  `document_pointer` carries. A `typeRef` that names another tuple or a variant
   type gives that type's declaration node, so a tuple may nest tuples and
   unions. A `composite_type`/`tuple` node and a `model`/`tuple_value_type` node
   are two different type nodes even when their positions have equal types.
@@ -2700,6 +2710,7 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-151 | The selected document of the published `acme/shapes` package is `domain-package-acme-shapes.json`, a full FCD semantic IR 2.0.0 document (`contractVersion`, `package.identity`, `constructs`, `types`) with `Holder` an object type, `Pair`, `Swap`, `Nest` and `Cell` tuple value types with ordered `positions`, and `Shape`, `Color` and `List` variant types with `variants`; `domain_package` in `model-tuple-union-vectors.json` is exactly the projection of it that intake reads (types in document order, lists in declared order, multiplicity bounds as decimal strings, a tuple position's ordinal its index) and is not digested. `selection_digest`, the digest of the fixture's `model_selections` row and the input to its `model_root` key and `package_id`, is the SHA-256 of the RFC 8785 bytes of the whole document; the `model_root` key and the `package_id` recompute from it. Swapping the position types of `Pair` in the document, or reordering two declarations in its `types`, changes the document and so the row digest. | Test (TC-940) |
 | FR-322-AC-152 | The wire cases `TW-18` (position `2`), `TW-19` (the `declaration` is the tuple `Swap`) and `TW-20` (the beyond-safe `KeyOrdinal` string `9007199254740993`) of `model-tuple-union-vectors.json` each refuse `ill_typed`/`operator-ineligible` at the locus `/semantic_graph/nodes/31`, the `quire.op.tuple.project` application node, which is the position-0 projection over the `Pair`-typed parameter (node 14, result type the `Boolean` node), and not at `/semantic_graph/nodes/31/body/operation/member`, `/member/position` or `/member/declaration`; `TW-26` (position the string `0`) is `malformed_wire` at the same `/semantic_graph/nodes/31`. | Test (TC-940) |
 | FR-322-AC-153 | A wire case of `model-tuple-union-vectors.json` states a `cause` exactly when its code carries one: `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration` and `invalid_model_binding` rows state their cause (`TW-05`, `TW-06` to `TW-09`, `TW-11` to `TW-20`, `TW-23` to `TW-25`), and the admitted case `TW-00` and the rows of `malformed_wire` (`TW-01` to `TW-04`, `TW-10`, `TW-26`) and `invalid_semantic_graph` (`TW-21`, `TW-22`), codes that carry no cause (FR-272), state none. | Test (TC-940) |
+| FR-322-AC-154 | In `TW-05` (the `Pair` node keyed over a non-empty body) every `reference` to the published `Pair` key dangles, and each such target equals the recomputed key of the closed `ModelDeclarationNode` preimage of the rekeyed `Pair` node; they are dependent on the rekey, so the first refusal is `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`. A dangling `reference` whose target is no recomputed key of a stale-keyed node is a graph-shape refusal that precedes every stale-node-key refusal, and stale nodes keep ascending retained digest order. | Test (TC-940) |
 
 ## Dependencies
 
