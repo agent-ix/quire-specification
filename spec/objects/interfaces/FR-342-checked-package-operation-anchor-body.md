@@ -91,14 +91,15 @@ frame step, over every `state`/`operation_anchor` node in ascending node-id
 digest order and before any `state`/`state_clause` node. For one anchor,
 the checks run in this order and the first failing check is its defect:
 
-1. **Context.** The `context` target is a declared dependency of the anchor,
-   else `missing_declaration`/`missing-name`, that is a `model`/`object_type`,
+1. **Context.** The `context` target is a declared dependency of the anchor
+   (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-322-AC-96, before this step),
+   else `missing_declaration`/`missing-name` for a target that names no node, that is a `model`/`object_type`,
    `model`/`process` or `model`/`state_machine` node, else
    `invalid_model_binding`/`malformed-declaration`. A record value type, an
    event type, a persistence interface, a systems interface and every other
    node are not contexts. The locus is the target.
-2. **Frame.** The `frame` target is a declared dependency, else
-   `missing_declaration`/`missing-name`, that is a `state`/`frame` node,
+2. **Frame.** The `frame` target is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-322-AC-96, before this step), else
+   `missing_declaration`/`missing-name` for a target that names no node, that is a `state`/`frame` node,
    else `invalid_model_binding`/`malformed-declaration`. The locus is the
    target.
 3. **Types.** The anchor's `semantic_type` and the frame's `semantic_type`
