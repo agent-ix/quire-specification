@@ -33,6 +33,8 @@ const POSITIVE_TIMED_MODEL_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-timed-model-nodes.json");
 const POSITIVE_TICK_TIMED_MODEL_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-tick-timed-model-nodes.json");
+const TIMED_SLOT_SELECTOR_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/timed-slot-selector-vectors.json");
 const TIMED_MODEL_NODE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
 const FR322_BODY_STEPS: &str = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
@@ -20837,4 +20839,451 @@ fn tc_310_class_catalog_carries_effect_commit_and_cend_classes() {
         15,
         "every single-drop, misordered and duplicate case is present"
     );
+}
+
+/// Index of the node a vectors file names, looked up by role in `node_indexes`.
+fn timed_node_index(role: &str) -> usize {
+    let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).unwrap();
+    vectors["node_indexes"][role].as_u64().unwrap_or_else(|| panic!("node role {role}")) as usize
+}
+
+/// The scalar type node of a rendered type name, found by its semantic form.
+fn scalar_type_node<'a>(nodes: &'a [Value], form: &str) -> &'a str {
+    nodes
+        .iter()
+        .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == form)
+        .and_then(|node| node["node_id"]["digest"].as_str())
+        .unwrap_or_else(|| panic!("scalar_type/{form} node"))
+}
+
+/// The type node that selects a slot of `collection`: the Integer node for a
+/// sequence-like collection, and the key type's node for a map, read from the
+/// rendered `Map<K, V>` type of the step's resolved row. `None` for a key type
+/// with no node in the package.
+fn slot_domain_node<'a>(nodes: &'a [Value], collection: &str, map_type: &str) -> Option<&'a str> {
+    if collection != "map" {
+        return Some(scalar_type_node(nodes, "integer"));
+    }
+    let key = map_type.strip_prefix("Map<")?.split_once(", ")?.0;
+    let form = match key {
+        "Text" => "text",
+        "Integer" | "Int" => "integer",
+        _ => return None,
+    };
+    Some(scalar_type_node(nodes, form))
+}
+
+/// Whether every slot step of a `clock_place` selects by the symbolic selector.
+fn place_selectors_are_symbolic(place: &Value, nodes: &[Value]) -> bool {
+    let steps = place["body"]["members"][1]["value"]["members"].as_array().unwrap();
+    let rows = place["body"]["members"][2]["value"]["members"].as_array().unwrap();
+    steps.iter().enumerate().filter(|(_, step)| step["members"][0]["value"]["value"] == "slot").all(|(at, step)| {
+        let members = step["members"].as_array().unwrap();
+        let collection = members[1]["value"]["value"].as_str().unwrap();
+        let declaring = rows[at]["members"][1]["value"]["value"].as_str().unwrap();
+        let selector = &members[2]["value"];
+        slot_domain_node(nodes, collection, declaring)
+            .is_some_and(|want| selector["term"] == "reference" && selector["target"]["digest"] == want)
+    })
+}
+
+/// The guard and duplicate-place checks of FR-322 "Timed-model nodes" over a
+/// whole package, as the cause and code a reader gives (`None` when admitted).
+fn timed_guard_and_place_cause(package: &Value) -> Option<(&'static str, &'static str)> {
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let by_id = |id: &Value| nodes.iter().find(|node| node["node_id"] == *id).unwrap();
+    for root in nodes.iter().filter(|node| node["semantic_form"] == "timed_model") {
+        let binding = |name: &str| {
+            root["body"]["members"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|member| member["name"] == name)
+                .map(|member| member["value"]["members"].as_array().unwrap().clone())
+                .unwrap_or_else(|| panic!("root binding {name}"))
+        };
+        let places = binding("clock_places");
+        for (at, place) in places.iter().enumerate() {
+            let path = &by_id(&place["target"])["body"]["members"][1];
+            if places[..at].iter().any(|earlier| &by_id(&earlier["target"])["body"]["members"][1] == path) {
+                return Some(("invalid_package", "duplicate-clock-place"));
+            }
+        }
+        let listed = binding("guards");
+        let owned = nodes.iter().filter(|node| node["semantic_form"] == "clock_guard");
+        for guard in owned {
+            if !listed.iter().any(|entry| entry["target"] == guard["node_id"]) {
+                return Some(("invalid_package", "timed-node-reference"));
+            }
+        }
+    }
+    None
+}
+
+#[trace("TC-367", "FR-322-AC-148", "FR-322-AC-149", "FR-322-AC-150")]
+#[test]
+fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
+    let vectors: Value = serde_json::from_str(TIMED_SLOT_SELECTOR_VECTORS).expect("vectors JSON");
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("fixture JSON");
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let schema = parsed_fixture(SCHEMA);
+    let timed_schema = schema_for_def(&schema, "TimedModelNode");
+    assert_eq!(vectors["type_nodes"]["integer"], scalar_type_node(nodes, "integer"));
+    assert_eq!(vectors["type_nodes"]["text"], scalar_type_node(nodes, "text"));
+    let mut keys = BTreeSet::new();
+    let (mut positives, mut refusals) = (0, 0);
+    for case in vectors["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let node = &case["node"];
+        assert!(structural_node_key_is_current(node), "{id} key hashes its body");
+        assert_eq!(node["semantic_type"], node["node_id"], "{id} is self-typed");
+        assert_eq!(node["dependencies"], json!(body_reference_targets(&node["body"])), "{id}");
+        assert!(timed_schema.is_valid(node), "{id} matches the closed schema");
+        assert!(keys.insert(node["node_id"]["digest"].as_str().unwrap().to_owned()), "{id} key is distinct");
+        let symbolic = place_selectors_are_symbolic(node, nodes);
+        match case["expected"].as_str().unwrap() {
+            "admitted" => {
+                assert!(symbolic, "{id} carries symbolic selectors");
+                positives += 1;
+            }
+            "refused" => {
+                assert!(!symbolic, "{id} selector is refused");
+                assert_eq!(case["expected_cause"], "malformed-clock-place");
+                refusals += 1;
+            }
+            other => panic!("{id}: {other}"),
+        }
+        if let Some(role) = case["published_node"].as_str() {
+            assert_eq!(*node, nodes[timed_node_index(role)], "{id} is the published place");
+        }
+        let slots = node["body"]["members"][1]["value"]["members"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|step| step["members"][0]["value"]["value"] == "slot")
+            .count();
+        for instance in case["instances"].as_array().into_iter().flatten() {
+            assert_eq!(instance["slots"].as_array().unwrap().len(), slots, "{id}");
+        }
+    }
+    assert_eq!((positives, refusals), (8, 4));
+
+    // Guards never enter place identity: SL-07 and SL-08 share one path.
+    let cases = vectors["cases"].as_array().unwrap();
+    let by = |id: &str| cases.iter().find(|c| c["id"] == id).unwrap()["node"].clone();
+    assert_eq!(by("SL-07")["body"]["members"][1], by("SL-08")["body"]["members"][1]);
+    assert_ne!(by("SL-07")["node_id"], by("SL-08")["node_id"]);
+    assert!(by("SL-08")["body"]["members"][3]["value"]["members"].as_array().unwrap().is_empty());
+
+    // GD-01: the published tick root has empty clock aggregates.
+    let tick: Value = serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES).unwrap();
+    let tick_root = &tick["semantic_graph"]["nodes"][timed_node_index_of(&tick, "timed_model")];
+    for member in tick_root["body"]["members"].as_array().unwrap().iter().skip(3) {
+        assert!(member["value"]["members"].as_array().unwrap().is_empty(), "{}", member["name"]);
+    }
+    assert_eq!(timed_guard_and_place_cause(&tick), None);
+
+    // GD-02 and GD-03 replay as schema-valid package mutations with recomputed ids.
+    assert_eq!(timed_guard_and_place_cause(&package), None, "the published package is the control");
+    let validator = jsonschema::validator_for(&schema).unwrap();
+    for gd in vectors["guards"].as_array().unwrap().iter().filter(|g| g.get("mutation").is_some()) {
+        let mut adverse = package.clone();
+        let root_at = timed_node_index("timed_model");
+        match gd["mutation"].as_str().unwrap() {
+            "duplicate-place-different-guards" => {
+                let mut twin = nodes[timed_node_index("clock_place")].clone();
+                twin["body"]["members"][3]["value"]["members"] = json!([]);
+                twin["dependencies"] = json!(body_reference_targets(&twin["body"]));
+                let placeholder = json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": "ee".repeat(32)});
+                twin["node_id"] = placeholder.clone();
+                twin["semantic_type"] = placeholder.clone();
+                let graph = adverse["semantic_graph"]["nodes"].as_array_mut().unwrap();
+                graph.push(twin);
+                let root = &mut graph[root_at];
+                root["body"]["members"][3]["value"]["members"]
+                    .as_array_mut().unwrap()
+                    .push(json!({"term": "reference", "target": placeholder.clone()}));
+                root["dependencies"].as_array_mut().unwrap().push(placeholder);
+            }
+            "unlisted-clock-guard" => {
+                let guard = nodes[timed_node_index("clock_guard")]["node_id"].clone();
+                let root = &mut adverse["semantic_graph"]["nodes"][root_at];
+                let listed = root["body"]["members"][5]["value"]["members"].as_array_mut().unwrap();
+                listed.retain(|entry| entry["target"] != guard);
+                root["dependencies"].as_array_mut().unwrap().retain(|dep| *dep != guard);
+            }
+            other => panic!("unhandled guard vector {other}"),
+        }
+        rekey_stale_nodes(&mut adverse);
+        assert!(validator.is_valid(&adverse), "{} is a schema-valid semantic control", gd["id"]);
+        assert_eq!(
+            adverse["package_id"]["digest"],
+            unqualified_jcs_sha256(&package_id_preimage(&adverse)),
+            "{} retains the recomputed package id",
+            gd["id"]
+        );
+        let cause = timed_guard_and_place_cause(&adverse).expect("the mutation is refused");
+        assert_eq!(cause, (gd["expected_code"].as_str().unwrap(), gd["expected_cause"].as_str().unwrap()), "{}", gd["id"]);
+    }
+}
+
+/// Position of the first node of a package with the given semantic form.
+fn timed_node_index_of(package: &Value, form: &str) -> usize {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .position(|node| node["semantic_form"] == form)
+        .unwrap_or_else(|| panic!("{form} node"))
+}
+
+/// The reader-side checks of FR-322 "Presence" over one `presence_read` node,
+/// against the vectors' places and parameters: the cause and code, and the
+/// argument pointer, or `None` when the node is admitted.
+fn presence_cause(
+    case: &Value,
+    places: &BTreeMap<String, Value>,
+    parameters: &BTreeMap<String, Value>,
+    owner_type: &Value,
+    slot_type: &Value,
+) -> Option<(&'static str, &'static str, String)> {
+    let arguments = case["body"]["arguments"].as_array().unwrap();
+    let target = |k: usize| arguments[k]["target"]["digest"].as_str().unwrap();
+    let Some(place) = places.get(target(0)) else {
+        return Some(("ill_typed", "operator-ineligible", "/body/arguments/0".to_owned()));
+    };
+    let slots = place["body"]["members"][1]["value"]["members"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|step| step["members"][0]["value"]["value"] == "slot")
+        .count();
+    if arguments.len() != 2 + slots {
+        return Some(("ill_typed", "operator-ineligible", "/body/arguments".to_owned()));
+    }
+    let type_of = |k: usize| parameters.get(target(k)).map(|node| node["semantic_type"].clone());
+    if type_of(1).as_ref() != Some(owner_type) {
+        return Some(("ill_typed", "type-mismatch", "/body/arguments/1".to_owned()));
+    }
+    for k in 2..arguments.len() {
+        if type_of(k).as_ref() != Some(slot_type) {
+            return Some(("ill_typed", "type-mismatch", format!("/body/arguments/{k}")));
+        }
+    }
+    None
+}
+
+/// A hidden presence member anywhere in the presence vectors' model, place or
+/// parameter bodies, or a hidden presence field in the declared members.
+fn presence_hidden_member(vectors: &Value) -> Result<(), String> {
+    let hidden = |value: &Value| {
+        let text = serde_json::to_string(value).unwrap();
+        text.contains("\"presence\"") || text.contains("Option<Boolean>") || text.contains("Option<ix://quire/native/Boolean>")
+    };
+    let presence = &vectors["presence"];
+    for (name, place) in presence["places"].as_object().unwrap() {
+        if hidden(&place["node"]["body"]) {
+            return Err(format!("hidden member in place {name}"));
+        }
+    }
+    for (name, node) in presence["parameters"].as_object().unwrap() {
+        if hidden(&node["body"]) {
+            return Err(format!("hidden member in parameter {name}"));
+        }
+    }
+    let join = &vectors["model_join"];
+    if hidden(&join["node"]["body"]) {
+        return Err("hidden member in the object_type node".to_owned());
+    }
+    for declared in ["declared_without_v", "declared_with_v"] {
+        for field in join[declared]["fields"].as_array().unwrap() {
+            let ty = field["typeRef"].as_str().unwrap();
+            if field["name"] == "presence" || ty.contains("Boolean") && field["presence"] == "optional" {
+                return Err(format!("hidden field {} in {declared}", field["name"]));
+            }
+        }
+    }
+    let names = |declared: &str| -> Vec<String> {
+        join[declared]["fields"].as_array().unwrap().iter().map(|f| f["name"].as_str().unwrap().to_owned()).collect()
+    };
+    let (without, with) = (names("declared_without_v"), names("declared_with_v"));
+    if with.len() != without.len() + 1 || with[..without.len()] != without[..] || with.last().map(String::as_str) != Some("v") {
+        return Err("declared members are not exactly the baseline plus v".to_owned());
+    }
+    Ok(())
+}
+
+/// The `object_type` node is one node with and without `v`, and the `v`
+/// place's resolved row joins the declared field.
+fn presence_model_join(vectors: &Value, nodes: &[Value]) -> Result<(), String> {
+    let join = &vectors["model_join"];
+    let model = &join["node"];
+    if !structural_node_key_is_current(model) {
+        return Err("object_type key is stale".to_owned());
+    }
+    if !nodes.iter().any(|n| n == model) {
+        return Err("object_type node is not the published node".to_owned());
+    }
+    if model["body"] != json!({"members": [], "term": "aggregate"}) {
+        return Err("object_type body is not empty".to_owned());
+    }
+    let owner = join["declared_with_v"]["identity"].as_str().unwrap();
+    if join["declared_without_v"]["identity"] != owner || model["owner"]["node"] != owner {
+        return Err("declarations and node disagree on the owner".to_owned());
+    }
+    let field = join["declared_with_v"]["fields"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|f| f["name"] == "v")
+        .ok_or("no field v")?;
+    let place = &vectors["presence"]["places"]["v"]["node"];
+    if place["body"]["members"][0]["value"]["target"] != model["node_id"] {
+        return Err("the v place is not owned by the object_type node".to_owned());
+    }
+    let row = &place["body"]["members"][2]["value"]["members"][0]["members"];
+    let text = |at: usize| row[at]["value"]["value"].as_str().unwrap();
+    let declared = field["typeRef"].as_str().unwrap();
+    let rendered = if field["presence"] == "optional" { format!("Option<{declared}>") } else { declared.to_owned() };
+    if text(1) != owner || text(2) != field["identity"] || text(3) != rendered {
+        return Err("the resolved row does not join the declared field".to_owned());
+    }
+    Ok(())
+}
+
+/// The owner/slot parameter types resolve to nodes the vectors name.
+fn presence_type_nodes(vectors: &Value, nodes: &[Value]) -> Result<(), String> {
+    let digest = |value: &Value| value["digest"].as_str().map(str::to_owned);
+    let reference = vectors["type_nodes"]["owner_reference_type"].as_str().ok_or("no owner type")?;
+    let node = nodes
+        .iter()
+        .find(|n| n["node_id"]["digest"] == reference && n["node_tag"] == "composite_type" && n["semantic_form"] == "reference")
+        .ok_or("the owner reference type is not a published reference type node")?;
+    if node["body"]["members"][0]["target"] != vectors["model_join"]["node"]["node_id"] {
+        return Err("the owner reference type does not name the object_type node".to_owned());
+    }
+    let integer = scalar_type_node(nodes, "integer");
+    for (name, want) in [("self", reference), ("other", reference), ("i", integer), ("e", integer)] {
+        let ty = digest(&vectors["presence"]["parameters"][name]["semantic_type"]);
+        if ty.as_deref() != Some(want) {
+            return Err(format!("parameter {name} has the wrong type"));
+        }
+    }
+    Ok(())
+}
+
+#[trace("TC-367", "FR-322-AC-155", "FR-322-AC-156", "FR-322-AC-157")]
+#[test]
+fn tc_367_presence_over_a_clock_place_is_a_derived_predicate_not_a_field() {
+    let vectors: Value = serde_json::from_str(TIMED_SLOT_SELECTOR_VECTORS).expect("vectors JSON");
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).expect("fixture JSON");
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let schema = parsed_fixture(SCHEMA);
+    let place_schema = schema_for_def(&schema, "TimedModelNode");
+    let expression_schema = schema_for_def(&schema, "ExpressionNode");
+    // The hidden-member scan runs first and on its own, before any key check.
+    assert_eq!(presence_hidden_member(&vectors), Ok(()));
+    assert_eq!(presence_model_join(&vectors, nodes), Ok(()));
+    assert_eq!(presence_type_nodes(&vectors, nodes), Ok(()));
+    let presence = &vectors["presence"];
+    let mut places = BTreeMap::new();
+    for (name, place) in presence["places"].as_object().unwrap() {
+        let node = &place["node"];
+        assert!(structural_node_key_is_current(node), "place {name} key");
+        assert!(place_schema.is_valid(node), "place {name} schema");
+        assert!(place_selectors_are_symbolic(node, nodes), "place {name} selectors");
+        places.insert(node["node_id"]["digest"].as_str().unwrap().to_owned(), node.clone());
+    }
+    let mut parameters = BTreeMap::new();
+    for (name, node) in presence["parameters"].as_object().unwrap() {
+        assert!(structural_node_key_is_current(node), "parameter {name} key");
+        parameters.insert(node["node_id"]["digest"].as_str().unwrap().to_owned(), node.clone());
+    }
+    let self_node = nodes.iter().find(|n| n["node_id"] == presence["parameters"]["self"]["node_id"]).unwrap();
+    assert_eq!(*self_node, presence["parameters"]["self"], "self is the published parameter");
+    let owner_type = self_node["semantic_type"].clone();
+    let slot_type = nodes.iter().find(|n| n["node_tag"] == "scalar_type" && n["semantic_form"] == "integer").unwrap()["node_id"].clone();
+    let boolean = nodes.iter().find(|n| n["node_tag"] == "scalar_type" && n["semantic_form"] == "boolean").unwrap()["node_id"].clone();
+    let mut keys = BTreeSet::new();
+    for case in presence["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        let node = &case["node"];
+        assert_eq!(
+            node["node_id"]["digest"],
+            unqualified_jcs_sha256(&application_node_preimage(node, &[]).expect("application node")),
+            "{id} key hashes its application preimage"
+        );
+        assert!(application_node_shape_is_valid(node), "{id} shape");
+        assert!(expression_schema.is_valid(node), "{id} expression schema");
+        assert_eq!(node["semantic_form"], "presence_read");
+        assert_eq!(node["semantic_type"], boolean, "{id} is Boolean");
+        assert_eq!(node["body"]["operation"]["identity"], "quire.op.option.present");
+        assert!(keys.insert(node["node_id"]["digest"].as_str().unwrap().to_owned()), "{id} key is distinct");
+        let cause = presence_cause(node, &places, &parameters, &owner_type, &slot_type);
+        match case["expected"].as_str().unwrap() {
+            "admitted" => assert_eq!(cause, None, "{id}"),
+            _ => {
+                let (code, why, at) = cause.unwrap_or_else(|| panic!("{id} is refused"));
+                assert_eq!((code, why), (case["expected_code"].as_str().unwrap(), case["expected_cause"].as_str().unwrap()), "{id}");
+                assert!(at.ends_with(case["locus_suffix"].as_str().unwrap().trim_start_matches("body")), "{id} {at}");
+            }
+        }
+    }
+}
+
+/// Each assertion of the presence test fails on its own mutation.
+#[trace("TC-367", "FR-322-AC-155", "FR-322-AC-156", "FR-322-AC-157")]
+#[test]
+fn tc_367_presence_vector_assertions_each_fail_on_their_mutation() {
+    let vectors: Value = serde_json::from_str(TIMED_SLOT_SELECTOR_VECTORS).unwrap();
+    let package: Value = serde_json::from_str(POSITIVE_TIMED_MODEL_NODES).unwrap();
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let mutate = |edit: &dyn Fn(&mut Value)| {
+        let mut copy = vectors.clone();
+        edit(&mut copy);
+        copy
+    };
+    let hidden = |v: &Value| presence_hidden_member(v).expect_err("a hidden member is caught");
+    assert!(hidden(&mutate(&|v| {
+        v["presence"]["parameters"]["other"]["body"]["members"].as_array_mut().unwrap()
+            .push(json!({"name": "presence", "term": "binding", "value": {"term": "literal"}}));
+    })).contains("parameter other"));
+    assert!(hidden(&mutate(&|v| {
+        v["presence"]["places"]["v"]["node"]["body"]["members"].as_array_mut().unwrap()
+            .push(json!({"name": "presence", "term": "binding", "value": {"term": "literal"}}));
+    })).contains("place v"));
+    assert!(hidden(&mutate(&|v| {
+        v["model_join"]["node"]["body"]["members"].as_array_mut().unwrap()
+            .push(json!({"name": "flag", "value": "Option<Boolean>"}));
+    })).contains("object_type"));
+    assert!(hidden(&mutate(&|v| {
+        v["model_join"]["declared_with_v"]["fields"].as_array_mut().unwrap()
+            .push(json!({"name": "v_present", "presence": "optional", "typeRef": "ix://quire/native/Boolean", "identity": "x", "multiplicity": {}}));
+    })).contains("hidden field"));
+    assert!(hidden(&mutate(&|v| {
+        v["model_join"]["declared_with_v"]["fields"].as_array_mut().unwrap().pop();
+    })).contains("not exactly"));
+
+    let join = |v: &Value| presence_model_join(v, nodes).expect_err("the join is caught");
+    assert!(join(&mutate(&|v| v["model_join"]["node"]["owner"]["node"] = json!("ix://acme/orders/Other"))).contains("key is stale"));
+    assert!(join(&mutate(&|v| v["presence"]["places"]["v"]["node"]["body"]["members"][2]["value"]["members"][0]["members"][2]["value"]["value"] = json!("ix://acme/orders/Order/w"))).contains("does not join"));
+    assert!(join(&mutate(&|v| v["model_join"]["declared_with_v"]["fields"][1]["presence"] = json!("required"))).contains("does not join"));
+    assert!(join(&mutate(&|v| v["model_join"]["declared_with_v"]["identity"] = json!("ix://acme/orders/Other"))).contains("disagree"));
+    assert!(join(&mutate(&|v| v["presence"]["places"]["v"]["node"]["body"]["members"][0]["value"]["target"]["digest"] = json!("00".repeat(32)))).contains("not owned"));
+
+    let types = |v: &Value| presence_type_nodes(v, nodes).expect_err("the type join is caught");
+    assert!(types(&mutate(&|v| v["type_nodes"]["owner_reference_type"] = json!("00".repeat(32)))).contains("not a published"));
+    assert!(types(&mutate(&|v| v["presence"]["parameters"]["i"]["semantic_type"]["digest"] = json!("00".repeat(32)))).contains("parameter i"));
+
+    // The oracle refuses a presence_read with an argument dropped.
+    let places: BTreeMap<String, Value> = vectors["presence"]["places"].as_object().unwrap().values()
+        .map(|p| (p["node"]["node_id"]["digest"].as_str().unwrap().to_owned(), p["node"].clone())).collect();
+    let parameters: BTreeMap<String, Value> = vectors["presence"]["parameters"].as_object().unwrap().values()
+        .map(|p| (p["node_id"]["digest"].as_str().unwrap().to_owned(), p.clone())).collect();
+    let owner_type = vectors["presence"]["parameters"]["self"]["semantic_type"].clone();
+    let slot_type = json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": vectors["type_nodes"]["integer"]});
+    let mut pr02 = vectors["presence"]["cases"][1]["node"].clone();
+    assert_eq!(presence_cause(&pr02, &places, &parameters, &owner_type, &slot_type), None);
+    pr02["body"]["arguments"].as_array_mut().unwrap().pop();
+    assert!(presence_cause(&pr02, &places, &parameters, &owner_type, &slot_type).is_some());
 }
