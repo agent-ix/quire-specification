@@ -446,6 +446,13 @@
     },
     {
       "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K15",
+      "Edit to the base": "Add a state precondition on the operation named by `Charged`'s attempt, with accepted `Pre{operation: \"charge\"}`",
+      "Expected": "the attempt still references the no-point `operation_anchor`; the clause references a distinct point-bearing anchor; both anchors reference the same frame; the reader admits both nodes and each node key re-derives from its own body"
+    },
+    {
+      "test_case": "TC-946",
       "section": "Clause body",
       "id": "C1",
       "Edit to the base": "none",

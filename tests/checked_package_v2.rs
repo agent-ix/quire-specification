@@ -2612,7 +2612,7 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
             .filter(|case| case["test_case"] == test_case)
             .count()
     });
-    assert_eq!(counts, [126, 88, 167]);
+    assert_eq!(counts, [127, 88, 167]);
     // Every vector id a QSpec table row names is published as a case: a row
     // the table adds without a vector (TC-946 K10, K14) fails here.
     for (test_case, table) in [
