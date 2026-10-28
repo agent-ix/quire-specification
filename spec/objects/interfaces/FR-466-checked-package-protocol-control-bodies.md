@@ -276,7 +276,9 @@ checks at FR-464 step 6):
    the stated form (as "Per-operator checks" 1): `forward` an `effect`
    control, `role` a role of the clause, `operation` a `state`/
    `operation_anchor` node, `record_type` a `model` node of form
-   `record_value_type` or `event_type`, `commit` a `commit` control; the
+   `record_value_type` or `event_type` (a `tuple_value_type` is not of this form:
+   it declares positions and no fields, so a `record_type` names none),
+   `commit` a `commit` control; the
    target of an `await.after` of kind `compensation` and of
    `event.compensation` is a template of the same clause.
 2. **Types.** `forward_binder` has the `semantic_type` of the forward

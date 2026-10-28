@@ -94,8 +94,8 @@ The reader checks, for one role, in this order:
    `object_type`, `process`, `state_machine`, `systems_interface` or
    `persistence_interface`, else `invalid_model_binding`/
    `malformed-declaration`. A role is a participant contract: a
-   `record_value_type`, `event_type`, `variant_type` or any node that is not
-   a `model` node is not a role's model. The locus is the target.
+   `record_value_type`, `tuple_value_type`, `event_type`, `variant_type` or any
+   node that is not a `model` node is not a role's model. The locus is the target.
 2. **Replication shape.** `until` is present exactly when `lifetime` is
    `until`, else the layout is violated (`malformed_wire`). `max` is at least 1, else
    `ill_typed`/`type-mismatch` at `max`, retaining `expected` and `actual`.
@@ -147,7 +147,7 @@ The reader checks, for one channel, in this order:
 2. **Message type.** `carries` is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else
    `missing_declaration`/`missing-name` for a target that names no node, and a `scalar_type` node, a
    `composite_type` node, or a `model` node of form `record_value_type`,
-   `event_type` or `variant_type`, else `invalid_model_binding`/
+   `tuple_value_type`, `event_type` or `variant_type`, else `invalid_model_binding`/
    `malformed-declaration`.
 3. **Ordering.** For `fifo`, `binder` and `key` are present, else the
    layout is violated (`malformed_wire`); `binder` is a declared `value`/`parameter`
