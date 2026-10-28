@@ -470,7 +470,12 @@ and two nodes declaring one name refuse as `ambiguous-name`
   cases, whose package-level mutations the tests replay. Its `presence`
   section publishes the derived `presence_read` predicate over a clock place
   (FR-322-AC-155..157), and `model_join` the `object_type` node of `Order`
-  with and without `v: Option<Clock>`. Each node key is the SHA-256 of the
+  with and without `v: Option<Clock>`. `domain-package-acme-timed-slots.json`
+  is the full selected document (FR-322-AC-240, FR-322-AC-241) and
+  `fixtures/positive-timed-slot-nodes.json` the complete package that selects
+  it and carries the `SL`, `PR` and model nodes; the `GD-02` and `GD-03`
+  `patch` members are RFC 6902 patches on that package (FR-322-AC-242,
+  FR-322-AC-243). Each node key is the SHA-256 of the
   RFC 8785 structural or application preimage, and `SL-06` equals the
   published fixture place.
 
