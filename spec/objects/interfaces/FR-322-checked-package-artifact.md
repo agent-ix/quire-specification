@@ -503,6 +503,10 @@ boundary.
   re-keys nor refuses it. A `relation`/`refinement` node is keyed by its own
   `{version: "quire.refinement-node/v1", semantic_type, body}` preimage
   ([FR-375](../../functional/analysis/FR-375-declare-model-refinement.md));
+  its `body` carries the refinement's authored `name`, so the name is part of
+  the node's identity and two differently named refinements are two nodes
+  (FR-375-AC-29), while the node still carries no `declaration`, `owner` or
+  `nominal_identity_preimage`;
   when FR-375's `class_catalog` is present it is part of that exact `body`
   in both V2 wire and node-preimage schemas, and the same body enters the
   package identity projection. Its local class `node` and `binder_types`
@@ -2712,6 +2716,7 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-152 | The wire cases `TW-18` (position `2`), `TW-19` (the `declaration` is the tuple `Swap`) and `TW-20` (the beyond-safe `KeyOrdinal` string `9007199254740993`) of `model-tuple-union-vectors.json` each refuse `ill_typed`/`operator-ineligible` at the locus `/semantic_graph/nodes/31`, the `quire.op.tuple.project` application node, which is the position-0 projection over the `Pair`-typed parameter (node 14, result type the `Boolean` node), and not at `/semantic_graph/nodes/31/body/operation/member`, `/member/position` or `/member/declaration`; `TW-26` (position the string `0`) is `malformed_wire` at the same `/semantic_graph/nodes/31`. | Test (TC-940) |
 | FR-322-AC-153 | A wire case of `model-tuple-union-vectors.json` states a `cause` exactly when its code carries one: `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration` and `invalid_model_binding` rows state their cause (`TW-05`, `TW-06` to `TW-09`, `TW-11` to `TW-20`, `TW-23` to `TW-25`), and the admitted case `TW-00` and the rows of `malformed_wire` (`TW-01` to `TW-04`, `TW-10`, `TW-26`) and `invalid_semantic_graph` (`TW-21`, `TW-22`), codes that carry no cause (FR-272), state none. | Test (TC-940) |
 | FR-322-AC-154 | In `TW-05` (the `Pair` node keyed over a non-empty body) every `reference` to the published `Pair` key dangles, and each such target equals the recomputed key of the closed `ModelDeclarationNode` preimage of the rekeyed `Pair` node; they are dependent on the rekey, so the first refusal is `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`. A dangling `reference` whose target is no recomputed key of a stale-keyed node is a graph-shape refusal that precedes every stale-node-key refusal, and stale nodes keep ascending retained digest order. | Test (TC-940) |
+| FR-322-AC-200 | A `relation`/`refinement` node's closed `RefinementBody` requires `name`, an `Identifier`, in both V2 schemas; the node-identity preimage `{version: "quire.refinement-node/v1", semantic_type, body}` includes it. Two refinement nodes that differ only in `name` have different recomputed node ids (vectors `RI-01` and `RI-02` of `refinement-identity-vectors.json`); a body without `name` fails both schemas (`RI-03`); two nodes of one package with an equal `name` refuse `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name` (`RI-04`). | Test (TC-310) |
 
 ## Dependencies
 

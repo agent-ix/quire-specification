@@ -1,0 +1,540 @@
+{
+  "version": "quire.refinement-identity-vectors/v1",
+  "identity_cases": [
+    {
+      "name": "RI-01",
+      "preimage": {
+        "version": "quire.refinement-node/v1",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "body": {
+          "term": "refinement",
+          "abstract": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "profile": {
+            "authority": "agent-ix",
+            "identity": "quire.temporal.infinite-trace/v1"
+          },
+          "populations": [],
+          "objects": [],
+          "steps": [],
+          "histories": [],
+          "assume": [],
+          "ensure": [],
+          "name": "Alpha"
+        }
+      },
+      "sha256": "270b0643276e73e0acb5a6c9bafc94abebb2a5b903c70c32dea578c462d838d7"
+    },
+    {
+      "name": "RI-02",
+      "preimage": {
+        "version": "quire.refinement-node/v1",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "body": {
+          "term": "refinement",
+          "abstract": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "profile": {
+            "authority": "agent-ix",
+            "identity": "quire.temporal.infinite-trace/v1"
+          },
+          "populations": [],
+          "objects": [],
+          "steps": [],
+          "histories": [],
+          "assume": [],
+          "ensure": [],
+          "name": "Beta"
+        }
+      },
+      "sha256": "c86e0fe54021838d18731a57b00f99672e6ed4a4ee4f1ca7ad81983993acba64"
+    }
+  ],
+  "wire_cases": [
+    {
+      "name": "RI-03",
+      "preimage": {
+        "version": "quire.refinement-node/v1",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "body": {
+          "term": "refinement",
+          "abstract": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "profile": {
+            "authority": "agent-ix",
+            "identity": "quire.temporal.infinite-trace/v1"
+          },
+          "populations": [],
+          "objects": [],
+          "steps": [],
+          "histories": [],
+          "assume": [],
+          "ensure": []
+        }
+      },
+      "expected": "schema_refused"
+    },
+    {
+      "name": "RI-03b",
+      "preimage": {
+        "version": "quire.refinement-node/v1",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "body": {
+          "term": "refinement",
+          "abstract": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "profile": {
+            "authority": "agent-ix",
+            "identity": "quire.temporal.infinite-trace/v1"
+          },
+          "populations": [],
+          "objects": [],
+          "steps": [],
+          "histories": [],
+          "assume": [],
+          "ensure": [],
+          "name": "1bad"
+        }
+      },
+      "expected": "schema_refused"
+    },
+    {
+      "name": "RI-04",
+      "nodes": [
+        {
+          "name": "Alpha",
+          "preimage": {
+            "version": "quire.refinement-node/v1",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "body": {
+              "term": "refinement",
+              "abstract": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+              },
+              "profile": {
+                "authority": "agent-ix",
+                "identity": "quire.temporal.infinite-trace/v1"
+              },
+              "populations": [],
+              "objects": [],
+              "steps": [],
+              "histories": [],
+              "assume": [],
+              "ensure": [],
+              "name": "Alpha"
+            }
+          }
+        },
+        {
+          "name": "Alpha",
+          "preimage": {
+            "version": "quire.refinement-node/v1",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "body": {
+              "term": "refinement",
+              "abstract": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+              },
+              "profile": {
+                "authority": "agent-ix",
+                "identity": "quire.temporal.infinite-trace/v2"
+              },
+              "populations": [],
+              "objects": [],
+              "steps": [],
+              "histories": [],
+              "assume": [],
+              "ensure": [],
+              "name": "Alpha"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name",
+          "at_member": "body/name",
+          "node": "later-by-digest"
+        }
+      }
+    }
+  ],
+  "step_provenance": {
+    "types": {
+      "Counter": {
+        "declares": [
+          "beginA",
+          "commitA"
+        ],
+        "owner": "concrete"
+      },
+      "Base": {
+        "declares": [
+          "reset"
+        ],
+        "owner": "concrete"
+      },
+      "Sub": {
+        "declares": [],
+        "supertypes": [
+          "Base"
+        ],
+        "owner": "concrete"
+      },
+      "Other": {
+        "declares": [
+          "beginA"
+        ],
+        "owner": "foreign"
+      }
+    },
+    "anchors": {
+      "AN-Counter-beginA": {
+        "context": "Counter",
+        "operation": "beginA",
+        "point": null
+      },
+      "AN-Counter-commitA": {
+        "context": "Counter",
+        "operation": "commitA",
+        "point": null
+      },
+      "AN-Counter-commitA-post": {
+        "context": "Counter",
+        "operation": "commitA",
+        "point": "post"
+      },
+      "AN-Base-reset": {
+        "context": "Base",
+        "operation": "reset",
+        "point": null
+      },
+      "AN-Other-beginA": {
+        "context": "Other",
+        "operation": "beginA",
+        "point": null
+      }
+    },
+    "non_anchor_nodes": [
+      "MODEL-ROOT",
+      "MODEL-OWNER-Counter",
+      "PROTOCOL-CLAUSE-P"
+    ],
+    "cases": [
+      {
+        "name": "SP-01f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Counter-beginA",
+        "expected": "admitted"
+      },
+      {
+        "name": "SP-02f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "MODEL-ROOT",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-03f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "MODEL-OWNER-Counter",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-04f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Counter-commitA",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-05f",
+        "class_catalog": false,
+        "source_class": "Counter::commitA",
+        "source_node": "AN-Counter-commitA-post",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-06f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": null,
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-07f",
+        "class_catalog": false,
+        "source_class": "Counter::nope",
+        "source_node": "AN-Counter-beginA",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-08f",
+        "class_catalog": false,
+        "source_class": "Base::reset",
+        "source_node": "AN-Base-reset",
+        "expected": "admitted"
+      },
+      {
+        "name": "SP-09f",
+        "class_catalog": false,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Other-beginA",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-01c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Counter-beginA",
+        "expected": "admitted"
+      },
+      {
+        "name": "SP-02c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "MODEL-ROOT",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-03c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "MODEL-OWNER-Counter",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-04c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Counter-commitA",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-05c",
+        "class_catalog": true,
+        "source_class": "Counter::commitA",
+        "source_node": "AN-Counter-commitA-post",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-06c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": null,
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-07c",
+        "class_catalog": true,
+        "source_class": "Counter::nope",
+        "source_node": "AN-Counter-beginA",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-08c",
+        "class_catalog": true,
+        "source_class": "Base::reset",
+        "source_node": "AN-Base-reset",
+        "expected": "admitted"
+      },
+      {
+        "name": "SP-09c",
+        "class_catalog": true,
+        "source_class": "Counter::beginA",
+        "source_node": "AN-Other-beginA",
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "SP-10f",
+        "class_catalog": false,
+        "source_class": "Other::beginA",
+        "source_node": "AN-Other-beginA",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-11f",
+        "class_catalog": false,
+        "source_class": "Sub::reset",
+        "source_node": "AN-Base-reset",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-10c",
+        "class_catalog": true,
+        "source_class": "Other::beginA",
+        "source_node": "AN-Other-beginA",
+        "expected": "missing_declaration/missing-name"
+      },
+      {
+        "name": "SP-11c",
+        "class_catalog": true,
+        "source_class": "Sub::reset",
+        "source_node": "AN-Base-reset",
+        "expected": "missing_declaration/missing-name"
+      }
+    ]
+  },
+  "row_binders": {
+    "operation": {
+      "declaring_type": "Counter",
+      "parameters": [
+        {
+          "name": "n",
+          "type": "Integer"
+        },
+        {
+          "name": "m",
+          "type": "Integer"
+        }
+      ]
+    },
+    "cases": [
+      {
+        "name": "BI-01",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "n",
+            "level": 1,
+            "type": "Integer"
+          },
+          {
+            "name": "m",
+            "level": 2,
+            "type": "Integer"
+          }
+        ],
+        "expected": "admitted"
+      },
+      {
+        "name": "BI-02",
+        "kind": "object",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          }
+        ],
+        "expected": "admitted"
+      },
+      {
+        "name": "BI-03",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "n",
+            "level": 2,
+            "type": "Integer"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "BI-04",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "k",
+            "level": 1,
+            "type": "Integer"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "BI-05",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Other>"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "BI-06",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "result",
+            "level": 1,
+            "type": "Integer"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      },
+      {
+        "name": "BI-07",
+        "kind": "step",
+        "refs": [
+          {
+            "name": "self",
+            "level": 0,
+            "type": "Reference<Counter>"
+          },
+          {
+            "name": "n",
+            "level": 1,
+            "type": "Boolean"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration"
+      }
+    ]
+  }
+}
