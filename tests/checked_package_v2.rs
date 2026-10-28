@@ -20848,6 +20848,278 @@ fn tc_310_class_catalog_carries_effect_commit_and_cend_classes() {
     );
 }
 
+const REFINEMENT_IDENTITY_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/refinement-identity-vectors.json");
+
+/// FR-375 "Step-row provenance": the refusal (or `admitted`) for one operation
+/// class row over the vector's abstract graph of types, anchors and catalog.
+/// The class is resolved first, then `source_node` is joined: to the catalog
+/// entry when the case carries a `class_catalog`, to the declaring type's
+/// no-point anchor when it does not.
+fn operation_class_row_outcome(graph: &Value, case: &Value) -> String {
+    const WRONG: &str = "invalid_model_binding/malformed-declaration";
+    const MISSING: &str = "missing_declaration/missing-name";
+    let class = case["source_class"].as_str().expect("class");
+    let (type_name, operation) = class.split_once("::").expect("T::op");
+    let types = &graph["types"];
+    let declares = types[type_name]["declares"]
+        .as_array()
+        .is_some_and(|ops| ops.iter().any(|op| op == operation));
+    if types[type_name]["owner"] != "concrete" || !declares {
+        return MISSING.to_owned();
+    }
+    let node = case["source_node"].as_str();
+    if case["class_catalog"] == true {
+        let entry = graph["catalog"]
+            .as_array()
+            .expect("catalog")
+            .iter()
+            .find(|entry| entry["class"] == class);
+        return match (entry, node) {
+            (None, _) => MISSING.to_owned(),
+            (Some(entry), Some(node)) if entry["node"] == node => "admitted".to_owned(),
+            _ => WRONG.to_owned(),
+        };
+    }
+    let Some(node) = node else {
+        return WRONG.to_owned();
+    };
+    let anchor = &graph["anchors"][node];
+    let admitted = anchor.is_object()
+        && anchor["context"] == type_name
+        && anchor["operation"] == operation
+        && anchor["point"].is_null();
+    if admitted {
+        "admitted".to_owned()
+    } else {
+        WRONG.to_owned()
+    }
+}
+
+/// An anchor no clause, attempt or transition names carries exactly one
+/// `anchor` occurrence; a named one carries one per naming node.
+fn anchor_occurrence_outcome(case: &Value) -> String {
+    let occurrences = case["occurrences"].as_array().expect("occurrences");
+    if occurrences.is_empty() {
+        "refused:no-occurrence".to_owned()
+    } else if case["named_by_clause"] == false && occurrences.len() != 1 {
+        "refused:unnamed-anchor-has-exactly-one-occurrence".to_owned()
+    } else {
+        "admitted".to_owned()
+    }
+}
+
+/// FR-375 "Row-expression binders": the outcome for the `value`/`parameter`
+/// references one row reads.
+fn row_binder_outcome(operation: &Value, case: &Value) -> String {
+    let declaring = operation["declaring_type"].as_str().expect("type");
+    let parameters = operation["parameters"].as_array().expect("parameters");
+    let step = case["kind"] == "step";
+    let mut expected = vec![("self".to_owned(), 0_i64, format!("Reference<{declaring}>"))];
+    if step {
+        for (index, parameter) in parameters.iter().enumerate() {
+            expected.push((
+                parameter["name"].as_str().expect("name").to_owned(),
+                i64::try_from(index).expect("small") + 1,
+                parameter["type"].as_str().expect("type").to_owned(),
+            ));
+        }
+    }
+    let read: Vec<(String, i64, String)> = case["refs"]
+        .as_array()
+        .expect("refs")
+        .iter()
+        .map(|binder| {
+            (
+                binder["name"].as_str().expect("name").to_owned(),
+                binder["level"].as_i64().expect("level"),
+                binder["type"].as_str().expect("type").to_owned(),
+            )
+        })
+        .collect();
+    let every_read_is_a_binder = read.iter().all(|binder| expected.contains(binder));
+    if every_read_is_a_binder {
+        "admitted".to_owned()
+    } else {
+        "invalid_model_binding/malformed-declaration".to_owned()
+    }
+}
+
+#[trace(
+    "TC-310",
+    "FR-322-AC-200",
+    "FR-375-AC-29",
+    "FR-375-AC-30",
+    "FR-375-AC-31",
+    "FR-375-AC-32"
+)]
+#[test]
+fn tc_310_refinement_name_is_identity_and_step_rows_use_declaring_type_anchors() {
+    let vectors = parsed_fixture(REFINEMENT_IDENTITY_VECTORS);
+    let defs = parsed_fixture(SCHEMA)["$defs"].clone();
+    let node_schema = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/node-identity-preimage.schema.json"
+    ));
+    let preimage_validator = jsonschema::validator_for(&json!({
+        "$ref": "#/$defs/RefinementNode",
+        "$defs": node_schema["$defs"].clone()
+    }))
+    .expect("preimage schema");
+    let wire_validator = jsonschema::validator_for(&json!({
+        "$ref": "#/$defs/RefinementBody",
+        "$defs": defs
+    }))
+    .expect("wire schema");
+
+    // RI-01, RI-02: the name is identity, and the recorded keys are the JCS digests.
+    let identities = vectors["identity_cases"]
+        .as_array()
+        .expect("identity cases");
+    assert_eq!(identities.len(), 2);
+    let mut digests = BTreeSet::new();
+    for case in identities {
+        let name = case["name"].as_str().expect("name");
+        assert!(
+            preimage_validator.is_valid(&case["preimage"]),
+            "{name}: preimage schema"
+        );
+        assert!(
+            wire_validator.is_valid(&case["preimage"]["body"]),
+            "{name}: wire schema"
+        );
+        assert_eq!(
+            unqualified_jcs_sha256(&case["preimage"]),
+            case["sha256"].as_str().expect("sha256"),
+            "{name}"
+        );
+        digests.insert(case["sha256"].as_str().expect("sha256").to_owned());
+    }
+    assert_eq!(digests.len(), 2, "two names are two node ids");
+    let mut renamed = identities[0]["preimage"].clone();
+    renamed["body"]["name"] = identities[1]["preimage"]["body"]["name"].clone();
+    assert_eq!(
+        unqualified_jcs_sha256(&renamed),
+        identities[1]["sha256"].as_str().expect("sha256"),
+        "the name is the only difference"
+    );
+
+    // RI-03, RI-04: a body without a valid name fails; an equal name is ambiguous.
+    for case in vectors["wire_cases"].as_array().expect("wire cases") {
+        let name = case["name"].as_str().expect("name");
+        if case["expected"] == "schema_refused" {
+            assert!(!preimage_validator.is_valid(&case["preimage"]), "{name}");
+            assert!(
+                !wire_validator.is_valid(&case["preimage"]["body"]),
+                "{name}"
+            );
+            continue;
+        }
+        let mut nodes: Vec<(String, String)> = case["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .map(|node| {
+                assert!(preimage_validator.is_valid(&node["preimage"]), "{name}");
+                (
+                    unqualified_jcs_sha256(&node["preimage"]),
+                    node["preimage"]["body"]["name"]
+                        .as_str()
+                        .expect("name")
+                        .to_owned(),
+                )
+            })
+            .collect();
+        nodes.sort();
+        let later = nodes
+            .windows(2)
+            .find(|pair| pair[0].1 == pair[1].1)
+            .map(|pair| &pair[1]);
+        assert!(later.is_some(), "{name}: equal names are ambiguous");
+        assert_eq!(
+            case["expected"]["refused"]["cause"], "ambiguous-name",
+            "{name}"
+        );
+        assert_eq!(
+            case["expected"]["refused"]["at_member"], "body/name",
+            "{name}"
+        );
+    }
+
+    // SP-*: the operation class's source_node is the declaring type's no-point anchor.
+    let provenance = &vectors["step_provenance"];
+    let cases = provenance["cases"].as_array().expect("cases");
+    assert_eq!(cases.len(), 22);
+    let with_catalog = cases
+        .iter()
+        .filter(|case| case["class_catalog"] == true)
+        .count();
+    assert_eq!(
+        with_catalog * 2,
+        cases.len(),
+        "every case runs with and without a catalog"
+    );
+    for case in cases {
+        let twin = cases
+            .iter()
+            .find(|other| {
+                other["class_catalog"] != case["class_catalog"]
+                    && other["source_class"] == case["source_class"]
+                    && other["source_node"] == case["source_node"]
+            })
+            .expect("a catalog twin");
+        assert_eq!(
+            twin["expected"], case["expected"],
+            "{}: catalog parity",
+            case["name"]
+        );
+        assert_eq!(
+            operation_class_row_outcome(provenance, case),
+            case["expected"].as_str().expect("expected"),
+            "{}",
+            case["name"]
+        );
+    }
+
+    // OC-*: the occurrence of an anchor no clause names. The expected
+    // outcomes are restated here, independent of the fixture's own field.
+    let occurrence_cases = provenance["anchor_occurrences"]
+        .as_array()
+        .expect("occurrences");
+    let names: Vec<&str> = occurrence_cases
+        .iter()
+        .map(|case| case["name"].as_str().expect("name"))
+        .collect();
+    assert_eq!(names, ["OC-01", "OC-02", "OC-03", "OC-04"]);
+    let independent = [
+        "admitted",
+        "refused:no-occurrence",
+        "refused:unnamed-anchor-has-exactly-one-occurrence",
+        "admitted",
+    ];
+    for (case, expected) in occurrence_cases.iter().zip(independent) {
+        assert_eq!(case["expected"], expected, "{}", case["name"]);
+    }
+    for case in occurrence_cases {
+        assert_eq!(
+            anchor_occurrence_outcome(case),
+            case["expected"].as_str().expect("expected"),
+            "{}",
+            case["name"]
+        );
+    }
+
+    // BI-*: self at level 0 and the parameters at levels 1..n, by declared name.
+    let binders = &vectors["row_binders"];
+    for case in binders["cases"].as_array().expect("cases") {
+        assert_eq!(
+            row_binder_outcome(&binders["operation"], case),
+            case["expected"].as_str().expect("expected"),
+            "{}",
+            case["name"]
+        );
+    }
+}
+
 /// Index of the node a vectors file names, looked up by role in `node_indexes`.
 fn timed_node_index(role: &str) -> usize {
     let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).unwrap();
