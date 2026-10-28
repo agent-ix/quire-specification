@@ -107,8 +107,13 @@ an artifact-type document that also carries `object:` (such as `FR-204` with
 and skips an artifact-type document even if it carries `object:`, so `object:`
 never lifts a document or names a model node (FR-154-AC-30). A model-declaring
 object artifact may use the same id spelling, including `FR-204`; intake
-decides from the emitted node and its meaning, not from the id's visual
-similarity to an artifact-type id.
+examines emitted IR nodes, not source documents. FCD extraction selects source
+documents by document `type`, so `type: FR` emits no model node regardless of
+its id or `object:` value. For an emitted `TypeDefinition` or population node,
+intake reads the final identity segment as its artifact id, applies FR-154's
+object-id rule, and resolves its `{module, name}` kind through the package
+`constructs` table to obtain its meaning under FR-208. It does not classify
+the emitted node using the source document's `type`, `object:` or `id`.
 
 A declaration's identity is its artifact id. Every type definition is declared
 by its own artifact: an object type, value type, variant type, population,
