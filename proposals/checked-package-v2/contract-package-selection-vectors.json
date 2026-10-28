@@ -1,0 +1,24 @@
+{
+  "version": "quire.contract-package-selection-vectors/v1",
+  "note": "STD-537. The authoritative machine-readable form of the typed source-selection vectors of TC-935 (FR-330-AC-10). `selections` are exact FR-322 `Selection` rows; the short labels T, D and U denote these typed values, never identifier-parsing rules. `compatibility_cases` give, per TC-935 table case, the `required_source_selections` and the input `lock.profile_selections` as lists of labels, in order. A consumer reads this file (for example through QUIRE_SPECIFICATION_DIR) and never copies or redefines the rows; the QSpec test asserts they equal the fenced JSON block and table of spec/test-cases/TC-935-contract-package-profile.md.",
+  "selections": {
+    "T": {
+      "role": "temporal_profile",
+      "definition": {"authority": "agent-ix", "identity": "quire.temporal.infinite-trace/v1"}
+    },
+    "D": {
+      "role": "temporal_profile",
+      "definition": {"authority": "agent-ix", "identity": "quire.temporal.event-position.false-extension/v1"}
+    },
+    "U": {
+      "role": "protocol_profile",
+      "definition": {"authority": "agent-ix", "identity": "quire.protocol.finite-global/v1"}
+    }
+  },
+  "compatibility_cases": [
+    {"case": "matching", "required_source_selections": ["T"], "lock_profile_selections": ["T"]},
+    {"case": "missing", "required_source_selections": ["T"], "lock_profile_selections": []},
+    {"case": "differing identity", "required_source_selections": ["T"], "lock_profile_selections": ["D"]},
+    {"case": "unrelated selection", "required_source_selections": ["T"], "lock_profile_selections": ["U", "T"]}
+  ]
+}

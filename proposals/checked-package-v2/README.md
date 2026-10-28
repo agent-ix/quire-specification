@@ -71,6 +71,11 @@ structures, but any external consumer receives only the contract.
   `model-tuple-value-type-pair` and `model-variant-type-shape-union` and the
   `union_member_vectors` `union-member-model-shape-both` and
   `union-member-model-shape-empty`.
+- `contract-package-selection-vectors.json` publishes the typed source-selection
+  rows `T`, `D` and `U` and the four compatibility cases of TC-935 (FR-330-AC-10)
+  as the authoritative machine-readable form, so a conformance test reads them
+  (for example through `QUIRE_SPECIFICATION_DIR`) rather than copying them; the QSpec
+  test asserts they equal the Markdown of TC-935 (FR-322-AC-180).
 - `extension-definitions.json` publishes the FR-467 extension definitions
   (`policy`, `quota`, `retention`) a reader holds when it reads these
   fixtures, each as `{reference, definition}` with `definition` exactly the

@@ -20838,3 +20838,113 @@ fn tc_310_class_catalog_carries_effect_commit_and_cend_classes() {
         "every single-drop, misordered and duplicate case is present"
     );
 }
+
+const CONTRACT_PACKAGE_SELECTION_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/contract-package-selection-vectors.json");
+const TC935_CONTRACT_PACKAGE_PROFILE: &str =
+    include_str!("../spec/test-cases/TC-935-contract-package-profile.md");
+
+/// The labels of a table cell such as `[U, T]`, in order.
+fn tc935_labels(cell: &str) -> Vec<String> {
+    cell.trim()
+        .trim_matches('`')
+        .trim_start_matches('[')
+        .trim_end_matches(']')
+        .split(',')
+        .map(|label| label.trim().to_owned())
+        .filter(|label| !label.is_empty())
+        .collect()
+}
+
+/// FR-322-AC-180: the machine-readable TC-935 selection vector is the
+/// authoritative form, and the Markdown of TC-935 (its fenced JSON block and
+/// its case table) equals it exactly.
+#[trace("TC-935", "FR-322-AC-180")]
+#[test]
+fn tc_935_selection_vectors_are_published_and_agree_with_the_markdown() {
+    tc935_agreement(CONTRACT_PACKAGE_SELECTION_VECTORS, TC935_CONTRACT_PACKAGE_PROFILE);
+}
+
+fn tc935_agreement(vector_text: &str, markdown: &str) {
+    let vectors: Value = serde_json::from_str(vector_text).expect("vector file is JSON");
+    assert_eq!(vectors["version"], "quire.contract-package-selection-vectors/v1");
+
+    // The fenced JSON block under "Typed source-selection vectors".
+    let section = markdown
+        .split("## Typed source-selection vectors")
+        .nth(1)
+        .expect("TC-935 has the typed source-selection section");
+    let fence = section
+        .split("```json\n")
+        .nth(1)
+        .and_then(|rest| rest.split("\n```").next())
+        .expect("the section has a fenced JSON block");
+    let block: Value = serde_json::from_str(fence).expect("the fenced block is JSON");
+    assert_eq!(block, vectors["selections"], "the fenced block equals `selections`");
+
+    let selections = vectors["selections"].as_object().expect("selections");
+    assert_eq!(
+        selections.keys().map(String::as_str).collect::<BTreeSet<_>>(),
+        BTreeSet::from(["T", "D", "U"])
+    );
+    for (label, row) in selections {
+        assert_eq!(
+            row.as_object().expect("row").keys().map(String::as_str).collect::<Vec<_>>(),
+            ["definition", "role"],
+            "{label}: a closed Selection row"
+        );
+        let mut definition: Vec<&str> =
+            row["definition"].as_object().expect("definition").keys().map(String::as_str).collect();
+        definition.sort_unstable();
+        assert_eq!(definition, ["authority", "identity"], "{label}: closed definition");
+    }
+
+    // The case table: `| Case | required | lock | Expected |` rows.
+    let rows: Vec<Vec<&str>> = section
+        .lines()
+        .filter(|line| line.starts_with("| "))
+        .map(|line| line.trim_matches('|').split('|').map(str::trim).collect())
+        .filter(|cells: &Vec<&str>| cells.len() == 4 && cells[0] != "Case" && !cells[0].starts_with("---"))
+        .collect();
+    let cases = vectors["compatibility_cases"].as_array().expect("cases");
+    assert_eq!(rows.len(), cases.len(), "one table row per published case");
+    for (cells, case) in rows.iter().zip(cases) {
+        let labels = |key: &str| -> Vec<String> {
+            case[key]
+                .as_array()
+                .expect(key)
+                .iter()
+                .map(|label| label.as_str().expect("label").to_owned())
+                .collect()
+        };
+        assert_eq!(cells[0], case["case"].as_str().expect("case"));
+        assert_eq!(tc935_labels(cells[1]), labels("required_source_selections"), "{}", cells[0]);
+        assert_eq!(tc935_labels(cells[2]), labels("lock_profile_selections"), "{}", cells[0]);
+        for label in labels("required_source_selections")
+            .into_iter()
+            .chain(labels("lock_profile_selections"))
+        {
+            assert!(selections.contains_key(&label), "{}: label {label} is published", cells[0]);
+        }
+    }
+}
+
+/// Mutation check for FR-322-AC-180: a changed identity, a swapped lock order
+/// and a renamed case each make the agreement assertion fail.
+#[trace("TC-935", "FR-322-AC-180")]
+#[test]
+fn tc_935_selection_vector_disagreement_is_detected() {
+    let mutations: [(&str, &str); 3] = [
+        ("quire.temporal.infinite-trace/v1", "quire.temporal.infinite-trace/v2"),
+        (r#""lock_profile_selections": ["U", "T"]"#, r#""lock_profile_selections": ["T", "U"]"#),
+        ("\"unrelated selection\"", "\"unrelated\""),
+    ];
+    for (from, to) in mutations {
+        assert!(CONTRACT_PACKAGE_SELECTION_VECTORS.contains(from), "{from}");
+        let mutated = CONTRACT_PACKAGE_SELECTION_VECTORS.replacen(from, to, 1);
+        let outcome = std::panic::catch_unwind(|| {
+            tc935_agreement(&mutated, TC935_CONTRACT_PACKAGE_PROFILE)
+        });
+        assert!(outcome.is_err(), "mutation `{to}` must be detected");
+    }
+}
