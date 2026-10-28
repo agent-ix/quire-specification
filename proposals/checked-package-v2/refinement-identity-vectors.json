@@ -605,29 +605,65 @@
     ]
   },
   "selected_roots": {
-    "note": "FR-375-AC-33. Two selected model roots; the concrete identity is the owner identity of the root named by semantic_type; each concrete key is checked against it.",
+    "note": "FR-375-AC-33, FR-375-AC-34. Five selected model roots. Each root node is the structural model_root key of its selection (identity, digest), recomputed by the test; the selection digests are labels, no selected document is published. Cases are graph cases, not wire packages. `semantic_type` names the concrete root; the abstract root is always RA.",
     "roots": {
       "RA": {
         "identity": "acme/spec",
-        "node": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+        "digest": "4706a1cd0b467ba2bd85f158f86e896f35d4e9d2b44793baab74f34bbd50abc7",
+        "node": "78920d7fbea1d340be76e1bc3236cf3a46c8de3236e4072e69ff1b82949214ae",
+        "derived_concrete_classes": [
+          "Spec::Tick"
+        ]
       },
       "RB": {
         "identity": "acme/impl",
-        "node": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+        "digest": "72940eef4217c2889abe93daf2adc3d03e188779e4a042091d577758c40ad883",
+        "node": "9280040317d34160eb1763d745966188e56ff138ec4cf498a8e7d48e5fa2ffb0",
+        "derived_concrete_classes": [
+          "Impl::Do"
+        ]
+      },
+      "RC": {
+        "identity": "acme/other",
+        "digest": "33b1eff36dc1e15ca206432ce2a1dcc551be0bfb877c5edcb761f9acb878ab78",
+        "node": "83d62faa4b2f9a233c1fc928300e7b7bd3c239f860f30db0a6e902941a24d6de",
+        "derived_concrete_classes": [
+          "Other::Go"
+        ]
+      },
+      "RD": {
+        "identity": "acme/bare",
+        "digest": "8f7780defcd8f1cbd502ff04802eb7e58b512a19b7115f220215d656f73ef584",
+        "node": "8b3cef44525b95961031bc9b35471d43f6090d13f5eb72ebd3bc275b43a492dc",
+        "derived_concrete_classes": []
+      },
+      "RF": {
+        "identity": "acme/plain",
+        "digest": "c4f23338dbf67b73e8b6cd0d932c36032576cb6faf64ba7d9613b373f99fb6dc",
+        "node": "c6c72df767df9ed249de2d411f3227f00309366e88723defcd9534a388f17866",
+        "derived_concrete_classes": []
       }
     },
     "cases": [
       {
         "name": "SR-01",
-        "description": "valid: semantic_type is the concrete root RB and every concrete key is owned by acme/impl",
+        "description": "valid: semantic_type is RB, the catalog and every concrete key belong to acme/impl; keys are listed in non-spec order",
         "semantic_type": "RB",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
+        ],
         "concrete_keys": [
           {
-            "locus": "body/steps/0/source_node",
+            "array": "steps",
+            "index": 0,
+            "member": "source_node",
             "owner": "acme/impl"
           },
           {
-            "locus": "body/objects/0/concrete_type",
+            "array": "objects",
+            "index": 0,
+            "member": "concrete_type",
             "owner": "acme/impl"
           }
         ],
@@ -635,15 +671,23 @@
       },
       {
         "name": "SR-02",
-        "description": "the swap: semantic_type replaced by the other selected root RA, every key and the package id recomputed, concrete keys unchanged",
-        "semantic_type": "RA",
+        "description": "swap RB to RC with rows kept: the first foreign key in array order (objects before steps) refuses",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
+        ],
         "concrete_keys": [
           {
-            "locus": "body/objects/0/concrete_type",
+            "array": "steps",
+            "index": 0,
+            "member": "source_node",
             "owner": "acme/impl"
           },
           {
-            "locus": "body/steps/0/source_node",
+            "array": "objects",
+            "index": 0,
+            "member": "concrete_type",
             "owner": "acme/impl"
           }
         ],
@@ -651,61 +695,136 @@
       },
       {
         "name": "SR-03",
-        "description": "swap detected only by a catalog class: no rows, one concrete catalog node owned by acme/impl; the catalog is checked before the rows",
-        "semantic_type": "RA",
-        "concrete_keys": [
-          {
-            "locus": "body/class_catalog/concrete/0/node",
-            "owner": "acme/impl"
-          }
+        "description": "row-empty protocol subject, swap RB to RC: the concrete catalog lists Impl::Do, which RC does not derive",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
         ],
-        "expected": "invalid_model_binding/malformed-declaration at body/class_catalog/concrete/0/node"
+        "concrete_keys": [],
+        "expected": "invalid_semantic_graph at body/class_catalog/concrete/0"
       },
       {
         "name": "SR-04",
-        "description": "semantic_type is RB but the second concrete key is owned by the abstract model's package",
-        "semantic_type": "RB",
-        "concrete_keys": [
-          {
-            "locus": "body/objects/0/concrete_type",
-            "owner": "acme/impl"
-          },
-          {
-            "locus": "body/histories/0/concrete_type",
-            "owner": "acme/spec"
-          }
-        ],
-        "expected": "invalid_model_binding/malformed-declaration at body/histories/0/concrete_type"
-      },
-      {
-        "name": "SR-05",
-        "description": "row-empty refinement, semantic_type RB: no concrete key",
-        "semantic_type": "RB",
+        "description": "row-empty protocol subject over RD, which derives no class, with an empty concrete catalog: admitted",
+        "semantic_type": "RD",
+        "subject": "protocol",
+        "catalog": [],
         "concrete_keys": [],
         "expected": "admitted"
       },
       {
-        "name": "SR-06",
-        "description": "row-empty refinement, semantic_type swapped to RA: nothing on the wire is independent of semantic_type, so it is admitted as a different node",
-        "semantic_type": "RA",
+        "name": "SR-05",
+        "description": "SR-04 with semantic_type swapped to RC, which owns Other::Go: the empty catalog omits it",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [],
         "concrete_keys": [],
+        "expected": "invalid_semantic_graph at body/class_catalog/concrete"
+      },
+      {
+        "name": "SR-06",
+        "description": "SR-04 swapped to RF, which derives the same (empty) class set: undetectable, admitted as a different node",
+        "semantic_type": "RF",
+        "subject": "protocol",
+        "catalog": [],
+        "concrete_keys": [],
+        "expected": "admitted"
+      },
+      {
+        "name": "SR-07",
+        "description": "row-empty model subject (no catalog), swap RB to RC: no concrete key and no catalog, admitted as a different node",
+        "semantic_type": "RC",
+        "subject": "model",
+        "catalog": null,
+        "concrete_keys": [],
+        "expected": "admitted"
+      },
+      {
+        "name": "SR-08",
+        "description": "a foreign catalog class and a foreign row key together: the row join (step 5) precedes the step 7 catalog comparison",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
+        ],
+        "concrete_keys": [
+          {
+            "array": "steps",
+            "index": 0,
+            "member": "source_node",
+            "owner": "acme/impl"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration at body/steps/0/source_node"
+      },
+      {
+        "name": "SR-09",
+        "description": "a protocol subject whose catalog is absent and a foreign row key: the presence check precedes the row joins",
+        "semantic_type": "RC",
+        "subject": "protocol",
+        "catalog": null,
+        "concrete_keys": [
+          {
+            "array": "steps",
+            "index": 0,
+            "member": "source_node",
+            "owner": "acme/impl"
+          }
+        ],
+        "expected": "invalid_semantic_graph at body/class_catalog"
+      },
+      {
+        "name": "SR-10",
+        "description": "row key owned by another model while semantic_type is right: histories updates operation",
+        "semantic_type": "RB",
+        "subject": "protocol",
+        "catalog": [
+          "Impl::Do"
+        ],
+        "concrete_keys": [
+          {
+            "array": "histories",
+            "index": 0,
+            "member": "updates/0/operation",
+            "owner": "acme/other"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration at body/histories/0/updates/0/operation"
+      },
+      {
+        "name": "SR-11",
+        "description": "reflexive refinement (FR-375-AC-34): semantic_type is the abstract root RA itself; keys and catalog belong to acme/spec",
+        "semantic_type": "RA",
+        "subject": "protocol",
+        "catalog": [
+          "Spec::Tick"
+        ],
+        "concrete_keys": [
+          {
+            "array": "objects",
+            "index": 0,
+            "member": "concrete_type",
+            "owner": "acme/spec"
+          }
+        ],
         "expected": "admitted"
       }
     ],
     "row_empty_identities": [
       {
-        "name": "SR-05",
+        "name": "SR-07",
         "preimage": {
           "version": "quire.refinement-node/v1",
           "semantic_type": {
             "domain": "quire.checked-semantic-node/v1",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+            "digest": "9280040317d34160eb1763d745966188e56ff138ec4cf498a8e7d48e5fa2ffb0"
           },
           "body": {
             "term": "refinement",
             "abstract": {
               "domain": "quire.checked-semantic-node/v1",
-              "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+              "digest": "78920d7fbea1d340be76e1bc3236cf3a46c8de3236e4072e69ff1b82949214ae"
             },
             "profile": {
               "authority": "agent-ix",
@@ -720,21 +839,21 @@
             "name": "Alpha"
           }
         },
-        "sha256": "dc9dab5dac59cd7b039679289af79181a3a2004d9d2c41a6cf920d860e9ea737"
+        "sha256": "b70129c4dc1f6567547e0edffcd62896e1b9ef74ccbb6b7ccc7fefc54388ce7f"
       },
       {
-        "name": "SR-06",
+        "name": "SR-07-swapped",
         "preimage": {
           "version": "quire.refinement-node/v1",
           "semantic_type": {
             "domain": "quire.checked-semantic-node/v1",
-            "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+            "digest": "83d62faa4b2f9a233c1fc928300e7b7bd3c239f860f30db0a6e902941a24d6de"
           },
           "body": {
             "term": "refinement",
             "abstract": {
               "domain": "quire.checked-semantic-node/v1",
-              "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+              "digest": "78920d7fbea1d340be76e1bc3236cf3a46c8de3236e4072e69ff1b82949214ae"
             },
             "profile": {
               "authority": "agent-ix",
@@ -749,7 +868,7 @@
             "name": "Alpha"
           }
         },
-        "sha256": "240608f2a371de030316b908eb63df555c70ac020b4a84448abe1dcf3ec3879f"
+        "sha256": "f43bf0f85c4481eaa431f47df4a42f0b11a8a49474fae7234ed1dbea75e99997"
       }
     ]
   }

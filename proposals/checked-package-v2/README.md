@@ -114,7 +114,9 @@ structures, but any external consumer receives only the contract.
   `ambiguous-name`), the operation-class `source_node` cases `SP-01` to
   `SP-11` (the no-point `operation_anchor` of the declaring type, with and
   without a class catalog) and the row-expression binder cases `BI-01` to
-  `BI-07` of FR-375-AC-29 to FR-375-AC-32.
+  `BI-07` of FR-375-AC-29 to FR-375-AC-32, and the `selected_roots` section
+  (`SR-01` to `SR-11`, five selected model roots recomputed from their
+  selections, concrete-identity cases of FR-375-AC-33 and FR-375-AC-34).
 - `node-identity-vectors.json` supplies known JCS SHA-256 vectors for those
   preimages, plus `operation_vectors` and `operation_mutations` for
   application-node preimages.

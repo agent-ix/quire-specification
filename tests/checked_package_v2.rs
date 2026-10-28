@@ -22698,67 +22698,124 @@ fn tc_310_refinement_name_is_identity_and_step_rows_use_declaring_type_anchors()
     }
 }
 
-/// FR-375 reader steps 3 to 5: the concrete identity is the owner identity of
-/// the root `semantic_type` names; the first concrete key (catalog before
-/// rows, in the order the vector lists them) owned by another model refuses.
+/// FR-375 reader order for the concrete identity (AC-33, AC-34): the
+/// catalog presence check, then the row joins in the fixed array order of
+/// step 2 (not the order a vector lists them), then the step 7 comparison of
+/// the concrete catalog with the classes the concrete model derives.
 fn selected_root_outcome(roots: &Value, case: &Value) -> String {
-    let root = case["semantic_type"].as_str().expect("root");
-    let concrete = roots[root]["identity"].as_str().expect("identity");
-    case["concrete_keys"]
+    const WRONG: &str = "invalid_model_binding/malformed-declaration";
+    const GRAPH: &str = "invalid_semantic_graph";
+    let concrete = &roots[case["semantic_type"].as_str().expect("root")];
+    let identity = concrete["identity"].as_str().expect("identity");
+    let protocol = case["subject"] == "protocol";
+    let catalog = case["catalog"].as_array();
+    if protocol && catalog.is_none() {
+        return format!("{GRAPH} at body/class_catalog");
+    }
+    if !protocol && catalog.is_some() {
+        return format!("{GRAPH} at body/class_catalog");
+    }
+    let rank = |array: &str| {
+        ["populations", "objects", "steps", "histories", "assume"]
+            .iter()
+            .position(|name| *name == array)
+            .expect("row array")
+    };
+    let mut keys: Vec<&Value> = case["concrete_keys"]
         .as_array()
         .expect("keys")
         .iter()
-        .find(|key| key["owner"] != concrete)
-        .map_or_else(
-            || "admitted".to_owned(),
-            |key| {
-                format!(
-                    "invalid_model_binding/malformed-declaration at {}",
-                    key["locus"].as_str().expect("locus")
-                )
-            },
+        .collect();
+    keys.sort_by_key(|key| {
+        (
+            rank(key["array"].as_str().expect("array")),
+            key["index"].as_u64().expect("index"),
+            key["member"].as_str().expect("member").to_owned(),
         )
+    });
+    if let Some(key) = keys.iter().find(|key| key["owner"] != identity) {
+        return format!(
+            "{WRONG} at body/{}/{}/{}",
+            key["array"].as_str().expect("array"),
+            key["index"],
+            key["member"].as_str().expect("member")
+        );
+    }
+    if !protocol {
+        // A model-only refinement carries no catalog to compare.
+        return "admitted".to_owned();
+    }
+    let derived: Vec<&str> = concrete["derived_concrete_classes"]
+        .as_array()
+        .expect("derived")
+        .iter()
+        .map(|class| class.as_str().expect("class"))
+        .collect();
+    let listed: Vec<&str> = catalog
+        .map(|entries| {
+            entries
+                .iter()
+                .map(|class| class.as_str().expect("class"))
+                .collect()
+        })
+        .unwrap_or_default();
+    if let Some(extra) = listed.iter().position(|class| !derived.contains(class)) {
+        return format!("{GRAPH} at body/class_catalog/concrete/{extra}");
+    }
+    if derived.iter().any(|class| !listed.contains(class)) {
+        return format!("{GRAPH} at body/class_catalog/concrete");
+    }
+    "admitted".to_owned()
 }
 
-#[trace("TC-310", "FR-375-AC-33")]
+#[trace("TC-310", "FR-375-AC-33", "FR-375-AC-34")]
 #[test]
 fn tc_310_concrete_identity_is_checked_against_the_owner_of_every_concrete_key() {
     let vectors = parsed_fixture(REFINEMENT_IDENTITY_VECTORS);
     let selected = &vectors["selected_roots"];
     let roots = &selected["roots"];
-    assert_ne!(
-        roots["RA"]["identity"], roots["RB"]["identity"],
-        "two selected models"
-    );
-    // The expected outcomes are restated here, independent of the fixture.
+    let mut identities = BTreeSet::new();
+    for (name, root) in roots.as_object().expect("roots") {
+        identities.insert(root["identity"].as_str().expect("identity").to_owned());
+        // The root node is the structural model_root key of its selection.
+        let derived = derived_model_root(&json!({
+            "identity": root["identity"],
+            "digest": root["digest"],
+        }));
+        assert_eq!(derived["node_id"]["digest"], root["node"], "{name}");
+    }
+    assert_eq!(identities.len(), 5, "five distinct selected models");
+    // Expected outcomes are restated here, independent of the fixture.
+    let wrong = "invalid_model_binding/malformed-declaration";
+    let graph = "invalid_semantic_graph";
     let independent = [
-        ("SR-01", "admitted"),
+        ("SR-01", "admitted".to_owned()),
+        ("SR-02", format!("{wrong} at body/objects/0/concrete_type")),
+        ("SR-03", format!("{graph} at body/class_catalog/concrete/0")),
+        ("SR-04", "admitted".to_owned()),
+        ("SR-05", format!("{graph} at body/class_catalog/concrete")),
+        ("SR-06", "admitted".to_owned()),
+        ("SR-07", "admitted".to_owned()),
+        ("SR-08", format!("{wrong} at body/steps/0/source_node")),
+        ("SR-09", format!("{graph} at body/class_catalog")),
         (
-            "SR-02",
-            "invalid_model_binding/malformed-declaration at body/objects/0/concrete_type",
+            "SR-10",
+            format!("{wrong} at body/histories/0/updates/0/operation"),
         ),
-        (
-            "SR-03",
-            "invalid_model_binding/malformed-declaration at body/class_catalog/concrete/0/node",
-        ),
-        (
-            "SR-04",
-            "invalid_model_binding/malformed-declaration at body/histories/0/concrete_type",
-        ),
-        ("SR-05", "admitted"),
-        ("SR-06", "admitted"),
+        ("SR-11", "admitted".to_owned()),
     ];
     let cases = selected["cases"].as_array().expect("cases");
     assert_eq!(cases.len(), independent.len());
-    for (case, (name, expected)) in cases.iter().zip(independent) {
-        assert_eq!(case["name"], name);
-        assert_eq!(case["expected"], expected, "{name}");
-        assert_eq!(selected_root_outcome(roots, case), expected, "{name}");
+    for (case, (name, expected)) in cases.iter().zip(&independent) {
+        assert_eq!(case["name"], *name);
+        assert_eq!(case["expected"], *expected, "{name}");
+        assert_eq!(selected_root_outcome(roots, case), *expected, "{name}");
     }
-    // Row-empty swap: admitted, and the two nodes differ by semantic_type alone.
-    let identities = selected["row_empty_identities"]
-        .as_array()
-        .expect("identities");
+    // SR-11 is the reflexive case: the concrete root is the abstract root.
+    assert_eq!(cases[10]["semantic_type"], "RA");
+    // SR-07: a row-empty swap is admitted as a node that differs by
+    // semantic_type alone, and its recorded ids are the JCS digests.
+    let pair = selected["row_empty_identities"].as_array().expect("pair");
     let node_schema = parsed_fixture(include_str!(
         "../proposals/checked-package-v2/node-identity-preimage.schema.json"
     ));
@@ -22767,7 +22824,7 @@ fn tc_310_concrete_identity_is_checked_against_the_owner_of_every_concrete_key()
         "$defs": node_schema["$defs"].clone()
     }))
     .expect("preimage schema");
-    for case in identities {
+    for case in pair {
         assert!(validator.is_valid(&case["preimage"]), "{}", case["name"]);
         assert_eq!(
             unqualified_jcs_sha256(&case["preimage"]),
@@ -22776,14 +22833,41 @@ fn tc_310_concrete_identity_is_checked_against_the_owner_of_every_concrete_key()
             case["name"]
         );
     }
-    assert_ne!(identities[0]["sha256"], identities[1]["sha256"]);
-    let mut swapped = identities[0]["preimage"].clone();
-    swapped["semantic_type"] = identities[1]["preimage"]["semantic_type"].clone();
-    assert_eq!(swapped, identities[1]["preimage"], "semantic_type is the only difference");
+    assert_ne!(pair[0]["sha256"], pair[1]["sha256"]);
     assert_eq!(
-        identities[0]["preimage"]["semantic_type"]["digest"],
+        pair[0]["preimage"]["semantic_type"]["digest"],
         roots["RB"]["node"]
     );
+    assert_eq!(
+        pair[1]["preimage"]["semantic_type"]["digest"],
+        roots["RC"]["node"]
+    );
+    let mut swapped = pair[0]["preimage"].clone();
+    swapped["semantic_type"] = pair[1]["preimage"]["semantic_type"].clone();
+    assert_eq!(
+        swapped, pair[1]["preimage"],
+        "semantic_type is the only difference"
+    );
+
+    // The normative text and the vectors agree: AC-33 and AC-34 state the
+    // codes the vectors expect, and TC-310 names every vector.
+    let spec = include_str!("../spec/functional/analysis/FR-375-declare-model-refinement.md");
+    let ac = |id: &str| {
+        spec.lines()
+            .find(|line| line.starts_with(&format!("| {id} |")))
+            .unwrap_or_else(|| panic!("{id} row"))
+    };
+    for text in [ac("FR-375-AC-33"), ac("FR-375-AC-34")] {
+        assert!(text.contains("TC-310"));
+    }
+    let ac33 = ac("FR-375-AC-33");
+    assert!(ac33.contains("`invalid_model_binding`/`malformed-declaration`"));
+    assert!(ac33.contains("`invalid_semantic_graph`"));
+    assert!(ac33.contains("identical class set"));
+    let tc = include_str!("../spec/test-cases/TC-310-refinement-declaration-admission.md");
+    for (name, _) in &independent {
+        assert!(tc.contains(name), "TC-310 names {name}");
+    }
 }
 
 /// Index of the node a vectors file names, looked up by role in `node_indexes`.
