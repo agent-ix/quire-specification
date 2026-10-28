@@ -257,10 +257,8 @@ A frame node whose `semantic_type` names no node of the package refuses
 `model`/`object_type`, `model`/`process` or `model`/`state_machine` refuses
 `invalid_model_binding`/`malformed-declaration`, with that `semantic_type` as
 the locus. An entry
-reference outside the graph refuses `missing_declaration`/`missing-name`; one
-naming a node of the graph that is no declared dependency of the frame node is
-refused `invalid_semantic_graph` at the graph stage (FR-322-AC-96, before this
-step). An entry reference
+reference outside the graph, or naming no declared dependency of the frame
+node, refuses `missing_declaration`/`missing-name`. An entry reference
 naming a declared dependency of a meaning the entry cannot carry refuses
 `invalid_model_binding`/`malformed-declaration`. These are exactly
 `model-complete.md`'s Frames row causes. The locus of an entry's refusal is
@@ -306,7 +304,7 @@ The frame step runs before the state step of
 | --- | --- | --- |
 | FR-340-AC-1 | `modifies`, `creates` and `deletes` may each independently be the empty array; an all-empty frame body and the published fixture's fully-populated frame body are both admitted with no defect. | Test (TC-233) |
 | FR-340-AC-2 | Every relationship entry of `modifies` names a declared dependency of the frame node that is a `relation`/`relationship` node; every field entry's `declaration` names a declared dependency that is a `model`/`object_type`, `model`/`record_value_type`, `model`/`process` or `model`/`state_machine` node; every `creates`/`deletes` entry names a declared dependency that is a `model`/`object_type` or `model`/`process` node. | Test (TC-233) |
-| FR-340-AC-3 | An entry naming no node of the package refuses `missing_declaration`/`missing-name`, and one naming a node of the graph absent from the frame node's `dependencies` is refused `invalid_semantic_graph` at the graph stage (FR-322-AC-96, before this step); an entry naming a declared dependency of any other meaning -- a relationship entry naming an object type or a literal, a field entry on a relationship, a persistence interface or a systems node, a `creates` entry naming a relationship, and every `model`/`*_type`, `model`/`namespace` or `model`/`persistence_interface` form an entry cannot carry, and a `creates` or `deletes` entry naming a `model`/`state_machine` -- refuses `invalid_model_binding`/`malformed-declaration`, with the entry's declaring node key as the locus. | Test (TC-233) |
+| FR-340-AC-3 | An entry naming no node of the package, or no declared dependency of the frame node, refuses `missing_declaration`/`missing-name`; an entry naming a declared dependency of any other meaning -- a relationship entry naming an object type or a literal, a field entry on a relationship, a persistence interface or a systems node, a `creates` entry naming a relationship, and every `model`/`*_type`, `model`/`namespace` or `model`/`persistence_interface` form an entry cannot carry, and a `creates` or `deletes` entry naming a `model`/`state_machine` -- refuses `invalid_model_binding`/`malformed-declaration`, with the entry's declaring node key as the locus. | Test (TC-233) |
 | FR-340-AC-4 | Each of `modifies`, `creates` and `deletes` is duplicate-free and sorted ascending by entry order key (declaring node digest, then field name as UTF-8 bytes, then scope with `every-object` first); a duplicated entry fails the schema, and a misordered array, including two field entries of one declaring node in descending name order, refuses `invalid_semantic_graph`. | Test (TC-233) |
 | FR-340-AC-5 | The frame body shape validates only as a `state`/`frame` node's `body`; a `value` node's `body` carrying this shape, and a `state`/`frame` node's `body` carrying an ordinary `SemanticTerm` shape, both fail the published schema. | Test (TC-233) |
 | FR-340-AC-6 | When one frame node carries a meaning-join defect and a canonical-order defect at once, the reported diagnostic is the meaning-join refusal the precedence rule selects, with its exact code, cause and locus, regardless of which member carries which defect; two field entries of one declaring node tie on the digest and break by field name; the same frame node reports that same selected diagnostic regardless of collection or scan order. | Test (TC-233) |
