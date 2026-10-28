@@ -60,8 +60,10 @@ structures, but any external consumer receives only the contract.
   `union_value`, `enum_value`, `quire.op.tuple.project`, `case` and equality nodes
   over them, each keyed by its application-node or nominal preimage
   (FR-322 "Tuple value types and payload-bearing variant types", FR-440,
-  FR-441, TC-940). `model-tuple-union-vectors.json` publishes its selected
-  document (`domain_package`), the declaration node keys, the application-node
+  FR-441, TC-940). `domain-package-acme-shapes.json` is its selected document, a full FCD
+  semantic IR 2.0.0 domain package (FR-322-AC-148), and
+  `model-tuple-union-vectors.json` publishes its projection (`domain_package`,
+  whose JCS SHA-256 is the `selection_digest` the lock row pins), the declaration node keys, the application-node
   key vectors and the family, position, member, union-value, enum-value,
   equality, identity, recursion, intake and wire cases the QSpec test runs over
   them; `node-identity-vectors.json` carries the keys

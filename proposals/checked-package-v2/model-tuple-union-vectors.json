@@ -1,7 +1,8 @@
 {
   "version": "quire.model-tuple-union-vectors/v1",
-  "note": "STD-519 (review round 1: package-level nodes, recursion, application-node keys). The selected document of fixtures/positive-model-tuple-union.json is domain_package (a projection of the FCD IR 2.0.0 declarations FR-154 reads, as in model-owner-form-vectors.json: tuple_types carry ordered positions, variant_types carry cases). Cases are evaluated by the QSpec test over domain_package; wire_cases are RFC 6902 patches over the fixture, each ending by replacing package_id with the recomputed package id. Node names are the declaration_nodes names.",
+  "note": "STD-519 (review round 1: package-level nodes, recursion, application-node keys). The selected document of fixtures/positive-model-tuple-union.json is the full FCD semantic IR 2.0.0 domain-package-acme-shapes.json (STD-529, FR-322-AC-148); domain_package is its projection, the declarations FR-154 reads (tuple_types carry ordered positions, variant_types carry cases, all in document order), and selection_digest is the JCS SHA-256 of domain_package, the digest the lock row pins (not the document own digest). Cases are evaluated by the QSpec test over domain_package; wire_cases are RFC 6902 patches over the fixture, each ending by replacing package_id with the recomputed package id. Node names are the declaration_nodes names.",
   "base": "fixtures/positive-model-tuple-union.json",
+  "selected_document": "domain-package-acme-shapes.json",
   "domain_package": {
     "identity": "acme/shapes",
     "version": "1.0.0",
