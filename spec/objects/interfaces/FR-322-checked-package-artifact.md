@@ -465,7 +465,9 @@ boundary.
   ascending retained digest order. A dangling `reference` whose target equals
   the recomputed key of a node whose retained key is stale dangles only because
   of that rekey: it is dependent on it and is not a graph-shape refusal, so the
-  stale-key stage reports the stale node instead (FR-322-AC-154). A dangling
+  stage that owns that node's key reports the stale node instead: this
+  stale-key stage for a node it owns (FR-322-AC-154), the nominal key stage
+  below for a nominal node (FR-322-AC-160). A dangling
   `reference` whose target is no such recomputed key is independent and remains a
   graph-shape refusal, preceding every stale-key refusal, and the stale nodes
   keep their ascending retained digest order. A frame body refusal, meaning-join or canonical-order
@@ -488,7 +490,32 @@ boundary.
   step (FR-481), the timed-model step (FR-230), the protocol step (FR-464)
   and the schedulability step (FR-482). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
-- derived-shape key stage — after the application-node key refusal above and
+- nominal key stage — after the application-node key refusal above and before
+  the derived-shape key stage below (so before its owner join and before every
+  structural `stale-node-key`), the reader recomputes the JCS SHA-256 of the
+  `nominal_identity_preimage` of every node that carries one, visiting them in
+  ascending retained node-id digest order, and refuses the first node whose
+  retained key differs as `invalid_semantic_graph`, with no cause, at that
+  node's `node_id` (`/semantic_graph/nodes/{n}/node_id`). The stage owns a
+  rekey of a nominal node (an enum declaration or member, a dimension, a
+  dimension equivalence or a unit) and no other, and the stale-key stages own
+  the rekey of every other node, so a nominal node is never reported
+  `stale-node-key`. A dangling `reference` whose target equals the recomputed
+  key of a stale nominal node dangles only because of that rekey, as the
+  stale-key paragraph above says of any rekey: it is deferred, and the first
+  refusal is this stage's, at the nominal node, not a graph-shape refusal at
+  the reference and not a refusal at the node that holds the reference. For a
+  nominal root unit `U` rekeyed while a `scalar_type`/`compound_unit` node
+  holds `unit` = `reference(U)`, the refusal is
+  `invalid_semantic_graph` at `U`'s `node_id`, whether the compound node holds
+  `U`'s retained (stale) key or its recomputed key. The deferral is a membership
+  test over the recomputed keys of all stale nodes, so when two stale nodes
+  recompute to one key a reference to that key is still dependent, is deferred
+  without choosing a target, and each stage reports its first stale node in
+  ascending retained digest order (FR-322-AC-161). An independent dangling
+  `reference`, one whose target is no recomputed key of a stale node, remains a
+  graph-shape refusal and precedes this stage.
+- derived-shape key stage — after the nominal key stage above and
   before any declaration, frame, state or operation refusal, the reader
   re-derives by QSL FR-092's `quire.structural-node/v1` preimage the key of
   every **structural node**: a node with no `nominal_identity_preimage` and
@@ -869,7 +896,10 @@ boundary.
   lock selection. Qualified-name segments, decimal-string integers, normalized
   rationals and sorted/ordered member/term rules are fixed by that contract. A
   strict reader reconstructs each applicable preimage and refuses a mismatched
-  `quire.checked-semantic-node/v1` digest as `invalid_semantic_graph`. It also
+  `quire.checked-semantic-node/v1` digest as `invalid_semantic_graph` at that
+  node's `node_id`, in the nominal key stage above, which sits after the
+  application-node key refusal and before the derived-shape key stage
+  (FR-322-AC-160). It also
   joins enum member declaration/case to `semantic_type`, dependency and literal
   body; dimension terms to self-type/dependencies; a dimension equivalence's
   two keys to self-type/dependencies; and unit dimension/target to
@@ -2066,6 +2096,143 @@ the declared population itself.
   ([FR-451](FR-451-checked-package-abstraction-relation-body.md)) targets this
   node, so the entry's key is the declaration key.
 
+### Refinement row expressions
+
+A `relation`/`refinement` body ([FR-375](../../functional/analysis/FR-375-declare-model-refinement.md))
+holds each row expression (a field row, a step receiver or argument, a history
+update) as a `SemanticTerm`: a `literal`, or a `reference` to a node whose body
+root is an application, every composite subterm being its own node ("Body
+grammar"). A **row node** of a refinement is a node that a chain of `reference`
+terms, through application arguments and binding values, reaches from one of
+that refinement's row expressions. The three forms below are application nodes
+(`node_tag: "expression"`) keyed by `quire.application-node/v1`: they add no
+member to the refinement body, no node form and no preimage version, and the
+refinement node's `dependencies` already list their row expression targets. The
+vectors are `refinement-row-node-vectors.json`, over the concrete model
+`acme/counter` (object type `Counter`, population `counters`, and the history
+row `history Counter.seen: Int[0, 9] = 0`).
+
+- **History read.** A history field is declared by one entry of the body's
+  `histories` (`concrete_type`, `name`, `type`). It is no member of the concrete
+  type: the type's declaration node keeps the body `aggregate{[]}` and declares
+  no field of that name ([FR-375](../../functional/analysis/FR-375-declare-model-refinement.md)
+  "History rows"), and no `field` member names it, so FR-378's "one field to
+  every object" is a field of the refinement's analysis state and not of the
+  concrete declaration. A read of it is the application with `operator` `query`
+  (`semantic_form` `query`), identity `quire.op.refinement.history`,
+  `laws` `[]`, `mode` `null`, `leaves` `[]`, and `member`
+  `{kind: "history", declaration, name}`, where `declaration` is the model
+  declaration node of the history's `concrete_type` and `name` its name.
+  `arguments` is `[ref(r)]` for one term `r` of family `reference`, the
+  receiver (the `self` parameter node of the row, or any other `Reference<T>`
+  term), and `result_type` is the node of the history's declared `type`. The
+  pre-state value of the field, `pre(seen)` of an update, is
+  `quire.op.state.pre` (`pre_read`) over the read, as for any value. Its key is
+  the application-node preimage alone: the operation identity, the member's
+  declaration key and name, the receiver and the result type enter it, and
+  neither the refinement node's key nor the history's initial value or updates
+  does, because the refinement's key hashes the body that reaches this node and a
+  key that held it would be circular. A node is therefore shared by every
+  refinement that declares the same history of the same type. The vectors are
+  `VN-01` (`seen` read at `self`) and `VN-02` (`pre(seen)`).
+- **Population value.** A concrete population `C::p` that a row names is read
+  as `allInstances<T>(C::p)`, the node `quire.op.model.all_instances` over the
+  `relation`/`population` node of "Population references", whose owner is the
+  population of the selected concrete model package; it is not a
+  population-family term in any other position (a population is a binding, not
+  a collection, "Quantifier domain"). `member` is `type_argument{declaration: T's
+  model node}`. In a refinement row the `result_type` SHALL be the
+  `collection_bounds` `[0, n]` node over `Set<Reference<T>>`, `n` the maximum the
+  unit authors for the population (QSL FR-380): FR-376 types the form
+  `Set<Reference<T>>[0, n]` and derives the bounds of `count` and `sum` from `n`,
+  so the unbounded `Set<Reference<T>>` of "Population references" is not a
+  population value of a row and refuses `ill_typed`/`operator-ineligible` at the
+  application. The vector is `VN-03`. The other forms of
+  [FR-376](../../functional/analysis/FR-376-evaluate-population-valued-mapping-expressions.md)
+  lower over that node, each binder `x` being a `value`/`parameter` node of type
+  `Reference<T>` and an omitted `where` the `boolean` literal `true`:
+
+  | FR-376 form | Nodes |
+  | --- | --- |
+  | `count(x in P where c)` | `quire.op.collection.count` over the population value, binder body `c`, `type_argument` and `result_type` the `Int[0, n]` node (`VN-04`) |
+  | `exists(x in P where c)` | `quire.op.collection.exists` over the population value, binder body `c` |
+  | `all(x in P where c)` | `quire.op.collection.forall` over the population value, binder body `c` |
+  | `sum(x in P where c: e)` | `quire.op.collection.sum.<family>` over `F`, binder body `e`, `type_argument` and `result_type` the bounded type FR-376 derives |
+  | `only(x in P where c: e)` | `quire.op.collection.only` over `F`, binder body `e`, `type_argument` and `result_type` the type node of `e` (`VN-05`) |
+
+  where `F` is the population value when `where` is omitted and otherwise the
+  `quire.op.collection.filter` application over it with binder body `c`.
+  `quire.op.collection.only` takes one `collection_kind` operand and one binder,
+  has a `result_type` equal to its `type_argument` member and to the bound of its
+  binder (the `bound_is_member` constraint), and is defined at a collection of
+  exactly one element; for any other collection the value is undefined with the
+  reason `only-not-one` (FR-376). It does not lower through `map`, because
+  `map` over a set collapses equal values and would count two objects with one
+  value as one. A member other than the bound's type refuses
+  `ill_typed`/`operator-ineligible`.
+- **seq.** `seq(i in lo .. hi: e)` is the application with `operator` `collection`
+  (`semantic_form` `collection`), identity `quire.op.collection.seq`, `member`
+  `type_argument{declaration: E}` for `E` the type node of `e`, and `arguments`
+  `[ref(lo), ref(hi), binding{name: i, value: ref(e)}]`, where `lo` and `hi`
+  are terms of family `integer` whose type nodes are `integer_range` nodes with
+  bounds `[lo_min, lo_max]` and `[hi_min, hi_max]`, and the binder `i` is a
+  `value`/`parameter` node of type the `integer_range` node `[lo_min, hi_max]`
+  (FR-376). The `result_type` is the `collection_bounds` `[0, m]` node over
+  `Sequence<E>` with `m = max(0, hi_max - lo_min + 1)`. A bound whose type is not
+  an `integer_range` node (an unbounded `Integer` has no `lo_min` or `hi_max`),
+  or a `result_type` that is another node, refuses `ill_typed`/`operator-ineligible`
+  at the application. The vector is `VN-06`, `seq(i in 0 .. 3: i)`, whose `m` is
+  `4`.
+- **Operation catalog.** The forms need three entries of
+  `quire.checked-operation-catalog/v1` and one member kind, published exactly as
+  `catalog_delta` of `refinement-row-node-vectors.json` gives them:
+  `quire.op.refinement.history` (operator `query`, one `reference` operand,
+  result `member`, member kind `history`), `quire.op.collection.only` (operator
+  `collection`, operands `collection_kind` and `binder`, result `member`, member
+  `type_argument`, constraint `bound_is_member` on operand 1) and
+  `quire.op.collection.seq` (operator `collection`, operands `integer`,
+  `integer` and `binder`, result `sequence`, member `type_argument`, constraint
+  `bound_is_member` on operand 2); the `history` member is `{kind: "history",
+  declaration, name}` beside the `field` member of the closed `OperationMember`
+  schema. The catalog, both V2 schemas' `OperationIdentity` and `OperationMember`
+  and the node-preimage schema enumerate them together or not at all
+  (FR-322-AC-17), so a reader that does not yet hold the entries refuses these
+  identities `unknown-operation` and no earlier.
+- **Refusals.** In the refinement step's row check
+  ([FR-375](../../functional/analysis/FR-375-declare-model-refinement.md)
+  "Reader order" step 5), a row node holding a `quire.op.refinement.history`
+  application whose member (`declaration`, `name`) equals no entry of this
+  refinement's `histories` (`concrete_type`, `name`) refuses
+  `missing_declaration`/`missing-name` at the application's
+  `/semantic_graph/nodes/{n}/body/operation/member/name`, and one whose
+  `result_type` is not that entry's `type` refuses `ill_typed`/`type-mismatch` at
+  `/semantic_graph/nodes/{n}/body/result_type`; both precede every operation
+  refusal. In the operation stage a history read whose receiver is not a
+  `reference` to the member's declaring type (or a type that conforms to it,
+  "Reference conformance"), or that no refinement reaches as a row node,
+  refuses `ill_typed`/`operator-ineligible` at the application. The
+  operation-stage refusals of `quire.op.collection.only`, `quire.op.collection.seq`
+  and the population value (`RR-05` to `RR-09`) are at the application node
+  too, `/semantic_graph/nodes/{n}`, even when the operand they examine is the
+  `result_type` or the member, which a generic result-type check would locate at
+  `/body/result_type`. The
+  `RR-01` to `RR-09` cases of the vectors state each refusal's code, cause and
+  locus.
+- **Relation to QSL FR-093 and FR-376.** FR-093's lowering table already has
+  rows for `count`, `sum` and the population value (`AllInstances`), so those
+  need no new row; it lacks exactly three: the history read, `only` and `seq`
+  (an addition). The one new requirement on a row it already has is that the
+  `result_type` of a population value in a refinement row is bounded `[0, n]`.
+  Three statements conflict with the forms and are ruled here: FR-376's type `Set<Reference<T>>[0, n]`
+  with `n` the universe size against "Population references"' optional authored
+  bound (ruled: required in a row, and `n` is the authored bound, so the universe
+  of FR-377 is the authored maximum); "Quantifier domain"'s population that is a
+  binding and not a collection against FR-376's population name that denotes a set
+  (ruled: the name is the `all_instances` application, never a population term in
+  an operand position); and FR-378's history field "of every object" against a
+  model declaration that holds no field of that name (ruled: a history is
+  declared by the refinement alone, and read only through the history read).
+
 ## Structural leaf walk
 
 The leaf walk of a compared type starts at that type with the empty path
@@ -2803,12 +2970,26 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-152 | The wire cases `TW-18` (position `2`), `TW-19` (the `declaration` is the tuple `Swap`) and `TW-20` (the beyond-safe `KeyOrdinal` string `9007199254740993`) of `model-tuple-union-vectors.json` each refuse `ill_typed`/`operator-ineligible` at the locus `/semantic_graph/nodes/31`, the `quire.op.tuple.project` application node, which is the position-0 projection over the `Pair`-typed parameter (node 14, result type the `Boolean` node), and not at `/semantic_graph/nodes/31/body/operation/member`, `/member/position` or `/member/declaration`; `TW-26` (position the string `0`) is `malformed_wire` at the same `/semantic_graph/nodes/31`. | Test (TC-940) |
 | FR-322-AC-153 | A wire case of `model-tuple-union-vectors.json` states a `cause` exactly when its code carries one: `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration` and `invalid_model_binding` rows state their cause (`TW-05`, `TW-06` to `TW-09`, `TW-11` to `TW-20`, `TW-23` to `TW-25`), and the admitted case `TW-00` and the rows of `malformed_wire` (`TW-01` to `TW-04`, `TW-10`, `TW-26`) and `invalid_semantic_graph` (`TW-21`, `TW-22`), codes that carry no cause (FR-272), state none. | Test (TC-940) |
 | FR-322-AC-154 | In `TW-05` (the `Pair` node keyed over a non-empty body) every `reference` to the published `Pair` key dangles, and each such target equals the recomputed key of the closed `ModelDeclarationNode` preimage of the rekeyed `Pair` node; they are dependent on the rekey, so the first refusal is `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`. A dangling `reference` whose target is no recomputed key of a stale-keyed node is a graph-shape refusal that precedes every stale-node-key refusal, and stale nodes keep ascending retained digest order. | Test (TC-940) |
+| FR-322-AC-154 | In `TW-05` (the `Pair` node keyed over a non-empty body) every `reference` to the published `Pair` key dangles, and each such target equals the recomputed key of the closed `ModelDeclarationNode` preimage of the rekeyed `Pair` node; they are dependent on the rekey, so the first refusal is `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`. A dangling `reference` whose target is no recomputed key of a stale-keyed node is a graph-shape refusal that precedes every stale-node-key refusal, and stale nodes keep ascending retained digest order. This deferral to the stale-key stage applies only to a rekey that stage owns; a dangling reference dependent on the rekey of a nominal node is deferred to the nominal key stage instead (FR-322-AC-160). | Test (TC-940) |
+| FR-322-AC-155 | `present(other.v)` over `v: Option<Clock>`, `present(self.q[i])` over `q: Sequence<Option<Clock>>[0, 2]`, and the body `present(e)` of `forall(e in self.q: ...)` are each one `presence_read` application of `quire.op.option.present`, typed Boolean, with the arguments the place template, the owner term (`other`, `self`) and, for `q`, one slot term (the parameter `i`; the binder parameter `e`); the three nodes have distinct keys, the place nodes are the same templates for every owner, and no place, parameter or model node carries a `presence` member or an `Option<Boolean>`. | Test (TC-367; CK-27; PR-01..PR-03) |
 | FR-322-AC-155 | `present(other.v)` over `v: Option<Clock>`, `present(self.q[i])` over `q: Sequence<Option<Clock>>[0, 2]`, and the body `present(e)` of `forall(e in self.q: ...)` are each one `presence_read` application of `quire.op.option.present`, typed Boolean, with the arguments the place template, the owner term (`other`, `self`) and, for `q`, one slot term (the parameter `i`; the binder parameter `e`); the three nodes have distinct keys, the place nodes are the same templates for every owner, and no place, parameter or model node carries a `presence` member or an `Option<Boolean>`. | Test (TC-367; CK-27; PR-01..PR-03) |
 | FR-322-AC-156 | A `presence_read` with no slot term over `q` refuses `ill_typed`/`operator-ineligible` at `/body/arguments`; one whose owner term is an Integer parameter refuses `ill_typed`/`type-mismatch` at `/body/arguments/1`; one whose first argument is no `clock_place` node refuses `ill_typed`/`operator-ineligible` at `/body/arguments/0`. | Test (TC-367; CK-27; PR-04..PR-06) |
+| FR-322-AC-156 | A `presence_read` with no slot term over `q` refuses `ill_typed`/`operator-ineligible` at `/body/arguments`; one whose owner term is an Integer parameter refuses `ill_typed`/`type-mismatch` at `/body/arguments/1`; one whose first argument is no `clock_place` node refuses `ill_typed`/`operator-ineligible` at `/body/arguments/0`. | Test (TC-367; CK-27; PR-04..PR-06) |
 | FR-322-AC-157 | The `clock_place` of `v: Option<Clock>` has the single path step `field(v)` and one `resolved_path` row whose member type is `Option<ix://quire/native/Clock>`, and the `Option` wrapper adds no step. The row joins the declared field `v` of the `Order` declaration by identity, declared presence `optional` and type `Clock`, and terminates at `Clock` once the wrapper is removed; the `object_type` node of `Order` has one key with and without `v`, and its declared members are exactly the declared fields. The place of `q: Sequence<Option<Clock>>` has a `field` and a `slot` step whose row type is that `Option` type and is checked for its schema and symbolic selector only. | Test (TC-367; CK-27; PR-01..PR-03, model_join) |
+| FR-322-AC-157 | The `clock_place` of `v: Option<Clock>` has the single path step `field(v)` and one `resolved_path` row whose member type is `Option<ix://quire/native/Clock>`, and the `Option` wrapper adds no step. The row joins the declared field `v` of the `Order` declaration by identity, declared presence `optional` and type `Clock`, and terminates at `Clock` once the wrapper is removed; the `object_type` node of `Order` has one key with and without `v`, and its declared members are exactly the declared fields. The place of `q: Sequence<Option<Clock>>` has a `field` and a `slot` step whose row type is that `Option` type and is checked for its schema and symbolic selector only. | Test (TC-367; CK-27; PR-01..PR-03, model_join) |
+| FR-322-AC-160 | The nominal key stage sits after the application-node key refusal and before the derived-shape key stage. In `nominal-rekey-vectors.json` over `fixtures/positive-compound-unit.json` (the nominal root unit `U` and the `scalar_type`/`compound_unit` node `metre^1` holding `unit` = `reference(U)`), `NK-00` is admitted. When `U`'s preimage is rekeyed and its retained key kept, the first refusal is `invalid_semantic_graph`, no cause, at `/semantic_graph/nodes/1/node_id`, whether the compound unit retains `U`'s old key (`NK-02`: nothing dangles) or holds `U`'s recomputed key (`NK-01`: that reference dangles only because of the rekey, is deferred, and is not a graph-shape refusal). It is not `invalid_package`/`stale-node-key` at `U` or at the compound unit. With the compound unit also stale (`NK-03`) the refusal is still at `U`, because the nominal key stage precedes every structural stale-key refusal; with only the compound unit stale (`NK-04`) it is `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/3/node_id`. The application-node key stage precedes the nominal key stage: with `U` rekeyed and an application node whose retained key is stale (`NK-06`, an added node `7 * -3` over `Integer` keeping the key of `7 * -2`) the refusal is `invalid_package`/`stale-node-key` at that node, `/semantic_graph/nodes/4/node_id`, and not at `U`; and the nominal key stage precedes the owner join: with `U` rekeyed and an added function node `Example::double` owned by a source the lock does not select (`NK-07`) the refusal is `invalid_semantic_graph` at `U`, `/semantic_graph/nodes/1/node_id`. | Test (TC-940) |
+| FR-322-AC-161 | When two stale nodes recompute to one key `K1` and a compound unit holds `reference(K1)` (`NK-05`), that reference is still dependent on the rekey: it is deferred without choosing a target, and the nominal key stage reports the stale node of lowest retained digest, here `/semantic_graph/nodes/4/node_id` although `/semantic_graph/nodes/1` precedes it in graph order. | Test (TC-940) |
+| FR-322-AC-162 | The deferral of a dangling `reference` to a stale-key stage is a membership test over the recomputed keys of all stale nodes, nominal or not: a dangling `reference` whose target is the recomputed key of a stale node is dependent on that rekey and is deferred, one whose target is no such key is not deferred, in a package with a stale nominal node as in one without. The dangling references of `NK-01` and `NK-05` are each such a recomputed key, so none of them is undeferred; replacing a target by a key no stale node recomputes to leaves it undeferred. | Test (TC-940) |
+| FR-322-AC-163 | A history read is the application node of `quire.op.refinement.history` with member `{kind: "history", declaration, name}`, one `reference` argument and the history's declared `type` as `result_type`: `VN-01` (`seen` of `Counter` at `self`) and `VN-02` (`pre(seen)`, `quire.op.state.pre` over it) recompute their published keys from their recorded `quire.application-node/v1` preimages, their `dependencies` are exactly the reference targets and the member declaration in ascending digest order, and the preimage names no refinement, so two refinements declaring the same history share the node. | Test (TC-940) |
+| FR-322-AC-164 | In the refinement step's row check a history read whose member names no `histories` entry of the refinement refuses `missing_declaration`/`missing-name` at `/body/operation/member/name` (`RR-01`), one whose `result_type` is not the history's `type` refuses `ill_typed`/`type-mismatch` at `/body/result_type` (`RR-02`), and in the operation stage a history read that no refinement row reaches (`RR-03`) or whose receiver is not a reference to the declaring type (`RR-04`) refuses `ill_typed`/`operator-ineligible` at the application. | Test (TC-940) |
+| FR-322-AC-165 | The population value `counters` of a refinement row is `quire.op.model.all_instances` over the `relation`/`population` node with `result_type` the `collection_bounds` `[0, 3]` node over `Set<Reference<Counter>>` (`VN-03`, its published key recomputing from its preimage); the same application with the unbounded `Set<Reference<Counter>>` as `result_type` refuses `ill_typed`/`operator-ineligible` in a row (`RR-07`). | Test (TC-940) |
+| FR-322-AC-166 | `count(x in counters)` is `quire.op.collection.count` over the population value with the `boolean` literal `true` as binder body and the `Int[0, 3]` node as `type_argument` and `result_type` (`VN-04`), and `only(x in counters: x)` is `quire.op.collection.only` over it with the binder as body and `Reference<Counter>` as `type_argument` and `result_type` (`VN-05`); each recomputes its published key, and an `only` whose member is not the type of its binder bound refuses `ill_typed`/`operator-ineligible` (`RR-08`). The row table of "Refinement row expressions" gives `exists`, `all`, `sum` and `where`. | Test (TC-940) |
+| FR-322-AC-167 | `seq(i in 0 .. 3: i)` is `quire.op.collection.seq` over the literals `0` and `3` typed `Int[0, 0]` and `Int[3, 3]` and the binder `i` of type `Int[0, 3]`, with `type_argument` `Int[0, 3]` and `result_type` the `[0, 4]` bound over `Sequence<Int[0, 3]>` (`VN-06`, recomputing its published key), because `max(0, 3 - 0 + 1)` is `4`; a bound typed the unbounded `Integer` (`RR-05`) and a `result_type` bounded `[0, 5]` (`RR-06`) refuse `ill_typed`/`operator-ineligible`, and so does a `member` declaration that is not the element type of the result's sequence (`RR-09`, the Boolean node against the `Int[0, 3]` element). | Test (TC-940) |
+| FR-322-AC-168 | The `catalog_delta` of `refinement-row-node-vectors.json` is the exact catalog change the three forms need (`quire.op.refinement.history`, `quire.op.collection.only`, `quire.op.collection.seq` and the member kind `history`): every identity the vectors use is a `catalog_delta` entry or a catalog entry equal to it, and each entry the catalog already publishes is identical to the delta's. | Test (TC-940) |
 | FR-322-AC-181 | A variant case whose `payloadType` is the native `Rational`, the native `Decimal`, the native `Text` (bare), or a package value type bound as `Text` without `min`, `max` and `profile`, refuses `unsupported_construct`/`declaration-form` at `Variant.payloadType` in step 1, at stage `package_read`, with FR-154's code and no graph refusal; a package value type that aliases one of them (a value type bound as `Decimal[0, 9]` or as `Rational`, or as `Text` without bounds) refuses the same (`TK-11` to `TK-14`, `TK-21`, `TK-22`). The cases whose `payloadType` is `Float32`, `Float64`, `Bytes`, `JsonObject`, `String`, `UUID`, `Timestamp`, `Duration`, a `Text[0, 8; nfc]` value type, or a declared tuple or variant type are admitted, so unbounded `Bytes` and `JsonObject` are not refused (`TK-20`, `TK-26`). | Test (TC-940) |
 | FR-322-AC-182 | A tuple position whose `typeRef` is the native `Rational`, the native `Decimal`, a bare native `Text`, or a package value type bound as `Text` without bounds refuses `invalid_model_binding`/`malformed-declaration` at the position in step 1, at stage `package_read`, as `ix://quire/native/Clock` does and ahead of the `missing-name` check of a later position; a position typed `Float32`, `Float64`, `String`, `UUID`, `Timestamp`, `Duration`, `Bytes` or a `Text[0, 8; nfc]` value type is admitted, and a value type bound as `Decimal[0, 9]` or `Rational` is refused (`TK-15` to `TK-19`, `TK-23` to `TK-25`). | Test (TC-940) |
 | FR-322-AC-183 | A field, an operation parameter or an operation result typed `Rational`, `Decimal` or bare `Text` is admitted by FR-154 intake and gives the member no type: the application that resolves it refuses `ill_typed`/`operator-ineligible`, never a mapping to a `scalar_type` node, whether the declared type is the native or a package value type bound as `Decimal[...]` or `Rational`. The four types of FR-322-AC-181 have no node mapping and no identity rule, and no operation lookup is reached for them. | Test (TC-280) |
+| FR-322-AC-200 | A `relation`/`refinement` node's closed `RefinementBody` requires `name`, an `Identifier`, in both V2 schemas; the node-identity preimage `{version: "quire.refinement-node/v1", semantic_type, body}` includes it. Two refinement nodes that differ only in `name` have different recomputed node ids (vectors `RI-01` and `RI-02` of `refinement-identity-vectors.json`); a body without `name` fails both schemas (`RI-03`); two nodes of one package with an equal `name` refuse `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name` (`RI-04`). | Test (TC-310) |
 | FR-322-AC-200 | A `relation`/`refinement` node's closed `RefinementBody` requires `name`, an `Identifier`, in both V2 schemas; the node-identity preimage `{version: "quire.refinement-node/v1", semantic_type, body}` includes it. Two refinement nodes that differ only in `name` have different recomputed node ids (vectors `RI-01` and `RI-02` of `refinement-identity-vectors.json`); a body without `name` fails both schemas (`RI-03`); two nodes of one package with an equal `name` refuse `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name` (`RI-04`). | Test (TC-310) |
 
 ## Dependencies
