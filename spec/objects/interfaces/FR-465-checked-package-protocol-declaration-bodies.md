@@ -89,8 +89,8 @@ The reader checks, for one role, in this order:
    the clause's `over` type. Its `replication` Group is empty, else
    `invalid_model_binding`/`malformed-declaration` at the role node. A
    `model` that is neither a reference nor a text violates the layout
-   (`malformed_wire`). A reference `model` target is a declared dependency, else
-   `missing_declaration`/`missing-name`, and a `model` node of form
+   (`malformed_wire`). A reference `model` target is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else
+   `missing_declaration`/`missing-name` for a target that names no node, and a `model` node of form
    `object_type`, `process`, `state_machine`, `systems_interface` or
    `persistence_interface`, else `invalid_model_binding`/
    `malformed-declaration`. A role is a participant contract: a
@@ -99,8 +99,8 @@ The reader checks, for one role, in this order:
 2. **Replication shape.** `until` is present exactly when `lifetime` is
    `until`, else the layout is violated (`malformed_wire`). `max` is at least 1, else
    `ill_typed`/`type-mismatch` at `max`, retaining `expected` and `actual`.
-3. **Binder.** The `binder` target is a declared dependency, else
-   `missing_declaration`/`missing-name`, and a `value`/`parameter` node, else
+3. **Binder.** The `binder` target is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else
+   `missing_declaration`/`missing-name` for a target that names no node, and a `value`/`parameter` node, else
    `invalid_model_binding`/`malformed-declaration`; its `semantic_type` is the
    `composite_type`/`reference` node over the `model` target, else
    `ill_typed`/`type-mismatch` at the role node, retaining `expected` and
@@ -140,13 +140,12 @@ order:
 
 The reader checks, for one channel, in this order:
 
-1. **Endpoints.** `from` and `to` are declared dependencies, else
-   `missing_declaration`/`missing-name`, and `protocol`/`role` nodes of the
+1. **Endpoints.** `from` and `to` are declared dependencies (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else `missing_declaration`/`missing-name` for a target that names no node, and `protocol`/`role` nodes of the
    same clause, else `invalid_model_binding`/`malformed-declaration`; a node
    that is a `queue`, a model component or an endpoint is not a role. The
    locus is the target.
-2. **Message type.** `carries` is a declared dependency, else
-   `missing_declaration`/`missing-name`, and a `scalar_type` node, a
+2. **Message type.** `carries` is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else
+   `missing_declaration`/`missing-name` for a target that names no node, and a `scalar_type` node, a
    `composite_type` node, or a `model` node of form `record_value_type`,
    `event_type` or `variant_type`, else `invalid_model_binding`/
    `malformed-declaration`.
@@ -189,7 +188,7 @@ behaviour of one channel and has four arguments, in this order:
   is admitted: an overflow loss is not a transport loss.
 
 The reader checks, for one queue: the `channel` target is a declared
-dependency, else `missing_declaration`/`missing-name`, and a
+dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else `missing_declaration`/`missing-name` for a target that names no node, and a
 `protocol`/`channel` node of the same clause, else
 `invalid_model_binding`/`malformed-declaration`; then `capacity` has `value`
 for `literal` and `name` for `symbolic` and no other member, else the
@@ -218,7 +217,7 @@ predicate and has two arguments, in this order:
   type is the type the source declares and no check constrains it.
 
 The reader checks that `binder` is a declared `value`/`parameter`
-dependency, else `missing_declaration`/`missing-name` or
+dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else `missing_declaration`/`missing-name` for a target that names no node or
 `invalid_model_binding`/`malformed-declaration`; and that `constraint` is a
 Boolean term, else `ill_typed`/`non-boolean-root` at the node. Its reads are
 a slot check (FR-464 step 6, stage `finish`). A clause names
@@ -285,7 +284,7 @@ runtime dimension of the control's key and are not a member of any node.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-465-AC-1 | A static role is admitted with an empty `replication` Group and a `model` target that is an object type, process, state machine, systems interface or persistence interface; a role on a `record_value_type`, `event_type`, `variant_type` or non-`model` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and an absent target `missing_declaration`/`missing-name`. | Test (TC-947) |
+| FR-465-AC-1 | A static role is admitted with an empty `replication` Group and a `model` target that is an object type, process, state machine, systems interface or persistence interface; a role on a `record_value_type`, `event_type`, `variant_type` or non-`model` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a target that names no node `missing_declaration`/`missing-name`; a target absent from `dependencies` refuses `invalid_semantic_graph` at the role's `/dependencies` (graph stage, FR-322-AC-96). | Test (TC-947) |
 | FR-465-AC-2 | A replicated role is admitted with `population`, `max` of at least 1, a `binder` of type `Reference<model>` and each lifetime; `until` is present exactly with `lifetime: until`; `max: 0` refuses `ill_typed`/`type-mismatch`, a binder of another type `ill_typed`/`type-mismatch`, a non-Boolean `until` `ill_typed`/`non-boolean-root`, and an `until` term reading a run-tree binder `missing_declaration`/`missing-name`. | Test (TC-947) |
 | FR-465-AC-3 | A channel is admitted with two roles of its clause, a message type, `unordered` or `fifo` with its message binder and key, and one of the four delivery premises; an endpoint that is not a role of the clause, a message type that is not a type node, a FIFO binder of a type other than `carries` (`ill_typed`/`type-mismatch`), a key that reads a capture (`missing_declaration`/`missing-name`), `over` or model state (`ill_typed`/`operator-ineligible`), a key of a type without stable equality (a float or a type holding one or an event) such as a `float64`, a `fifo` without `key` and an `unordered` with one refuse as the reader order states. | Test (TC-947) |
 | FR-465-AC-4 | No channel premise defaults: a channel missing `delivery`, `ordering`, `from`, `to` or `carries` refuses `malformed_wire`; `exactly-once-premise` and `unknown` are distinct admitted spellings, and another delivery spelling refuses `malformed_wire`. | Test (TC-947) |
