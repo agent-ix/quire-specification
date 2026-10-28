@@ -61,6 +61,20 @@
     "Rational": {"$ref": "urn:quire:checked-package:v2#/$defs/Rational"},
     "HexDigest": {"$ref": "urn:quire:checked-package:v2#/$defs/HexDigest"},
     "PackageId": {"$ref": "urn:quire:checked-package:v2#/$defs/PackageId"},
+    "StalePackageIdentity": {
+      "description": "FR-331: a package semantic identity carried by stale-dependency; it is not a repository or checkout pin.",
+      "type": "object",
+      "required": ["kind", "package_id"],
+      "properties": {"kind": {"const": "package"}, "package_id": {"$ref": "#/$defs/PackageId"}},
+      "additionalProperties": false
+    },
+    "StaleRefinementIdentity": {
+      "description": "QSL FR-149: a refinement name carried by stale-dependency.",
+      "type": "object",
+      "required": ["kind", "name"],
+      "properties": {"kind": {"const": "refinement"}, "name": {"$ref": "#/$defs/Nonempty"}},
+      "additionalProperties": false
+    },
     "NodeId": {"$ref": "urn:quire:checked-package:v2#/$defs/NodeId"},
     "Occurrence": {"$ref": "urn:quire:checked-package:v2#/$defs/Occurrence"},
     "Identifier": {"$ref": "urn:quire:checked-package:v2#/$defs/Identifier"},
@@ -837,7 +851,10 @@
         {"properties": {"type": {"const": "premise-unproved"}, "premise": {"$ref": "#/$defs/Count"}, "result": {"$ref": "#/$defs/ResultValue"}}, "required": ["type", "premise", "result"], "additionalProperties": false},
         {"description": "FR-468: hypothesis is the invariant clause's checked-package node; result is the result of its unproved item.", "properties": {"type": {"const": "hypotheses-not-established"}, "hypothesis": {"$ref": "#/$defs/NodeId"}, "result": {"$ref": "#/$defs/ResultValue"}}, "required": ["type", "hypothesis", "result"], "additionalProperties": false},
         {"description": "FR-439: limit is the request member that raises the budget.", "properties": {"type": {"const": "memory-bound-reached"}, "limit": {"enum": ["max_store_buffer", "max_messages"]}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "limit", "value", "states"], "additionalProperties": false},
-        {"description": "FR-331: a replay or certificate check that recompiled another package; requested is the request's or the certificate's package_id, recompiled the recompiled one.", "properties": {"type": {"const": "stale-dependency"}, "requested": {"$ref": "#/$defs/PackageId"}, "recompiled": {"$ref": "#/$defs/PackageId"}}, "required": ["type", "requested", "recompiled"], "additionalProperties": false},
+        {"description": "FR-331: a replay or certificate check that found a stale identity. Package identity pairs retain package_id values; QSL FR-149 refinement-name pairs retain names. The two sides have the same identity kind.", "oneOf": [
+          {"properties": {"type": {"const": "stale-dependency"}, "requested": {"$ref": "#/$defs/StalePackageIdentity"}, "recompiled": {"$ref": "#/$defs/StalePackageIdentity"}}, "required": ["type", "requested", "recompiled"], "additionalProperties": false},
+          {"properties": {"type": {"const": "stale-dependency"}, "requested": {"$ref": "#/$defs/StaleRefinementIdentity"}, "recompiled": {"$ref": "#/$defs/StaleRefinementIdentity"}}, "required": ["type", "requested", "recompiled"], "additionalProperties": false}
+        ]},
         {"description": "FR-428-AC-1: limit names max_live_instances, the member that raises the bound.", "properties": {"type": {"const": "instance-bound-reached"}, "limit": {"const": "max_live_instances"}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "limit", "value", "states"], "additionalProperties": false},
         {"description": "QSL FR-127: a protocol liveness lasso found only after an explicit request to ignore memory fairness; this is diagnostic and never a refuted or proved result.", "properties": {"type": {"const": "refuted-ignoring-constraints"}}, "required": ["type"], "additionalProperties": false}
       ]
