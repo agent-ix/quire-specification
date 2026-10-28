@@ -1,0 +1,25 @@
+{
+  "version": "quire.option-absent-literal-vectors/v1",
+  "note": "STD-531. FR-143 'The absent Option literal': the literal `absent` (and its `none` spelling) is typed by the unique expected type of its position. `position` is the expected type: null (none), an Option, the optional-slot of a `?` field, or another type. `lookup_tail` cases give the tokens after the closing parenthesis of a lookup.",
+  "typing_cases": [
+    {"name": "AB-01", "criterion": "FR-143-AC-18", "position": "write self.v = absent, v: Option<Clock>", "expected_type": {"kind": "Option", "of": "Clock"}, "outcome": {"type": "Option<Clock>"}},
+    {"name": "AB-02", "criterion": "FR-143-AC-18", "position": "write self.v = absent, v: Option<Integer>", "expected_type": {"kind": "Option", "of": "Integer"}, "outcome": {"type": "Option<Integer>"}},
+    {"name": "AB-03", "criterion": "FR-143-AC-18", "position": "argument for an Option<Integer> parameter", "expected_type": {"kind": "Option", "of": "Integer"}, "outcome": {"type": "Option<Integer>"}},
+    {"name": "AB-04", "criterion": "FR-143-AC-18", "position": "record field v: absent, v: Option<Integer>", "expected_type": {"kind": "Option", "of": "Integer"}, "outcome": {"type": "Option<Integer>"}},
+    {"name": "AB-05", "criterion": "FR-143-AC-18", "position": "other operand of = is Option<Integer>", "expected_type": {"kind": "Option", "of": "Integer"}, "outcome": {"type": "Option<Integer>"}},
+    {"name": "AB-06", "criterion": "FR-143-AC-18", "position": "other operand of = is lookup absent empty over Reference<M::A>", "expected_type": {"kind": "Option", "of": "Reference<M::A>"}, "outcome": {"type": "Option<Reference<M::A>>"}},
+    {"name": "AB-07", "criterion": "FR-143-AC-19", "position": "both operands of =", "expected_type": null, "outcome": {"refused": {"code": "ill_typed", "cause": "ambiguous-literal"}}},
+    {"name": "AB-08", "criterion": "FR-143-AC-19", "position": "right side of an unannotated let", "expected_type": null, "outcome": {"refused": {"code": "ill_typed", "cause": "ambiguous-literal"}}},
+    {"name": "AB-09", "criterion": "FR-143-AC-19", "position": "operand of present or value", "expected_type": null, "outcome": {"refused": {"code": "ill_typed", "cause": "ambiguous-literal"}}},
+    {"name": "AB-10", "criterion": "FR-143-AC-19", "position": "Integer field", "expected_type": {"kind": "Integer"}, "outcome": {"refused": {"code": "ill_typed", "cause": "type-mismatch"}}},
+    {"name": "AB-11", "criterion": "FR-143-AC-19", "position": "Reference<M::A> position", "expected_type": {"kind": "Reference", "of": "M::A"}, "outcome": {"refused": {"code": "ill_typed", "cause": "type-mismatch"}}},
+    {"name": "AB-12", "criterion": "FR-143-AC-19", "position": "Set<Integer>[0,2] position", "expected_type": {"kind": "Set", "of": "Integer"}, "outcome": {"refused": {"code": "ill_typed", "cause": "type-mismatch"}}},
+    {"name": "AB-13", "criterion": "FR-143-AC-20", "position": "record field b: absent, b: Integer? slot", "expected_type": {"kind": "OptionalSlot", "of": "Integer"}, "outcome": {"refused": {"code": "ill_typed", "cause": "type-mismatch"}}}
+  ],
+  "lookup_tail_cases": [
+    {"name": "AB-14", "criterion": "FR-143-AC-20", "tail": ["absent", "undefined"], "outcome": {"mode": "undefined"}},
+    {"name": "AB-15", "criterion": "FR-143-AC-20", "tail": ["absent", "empty"], "outcome": {"mode": "empty"}},
+    {"name": "AB-16", "criterion": "FR-143-AC-20", "tail": ["absent", "refused"], "outcome": {"mode": "refused"}},
+    {"name": "AB-17", "criterion": "FR-143-AC-20", "tail": ["absent", "absent"], "outcome": {"refused": {"code": "invalid_syntax", "cause": "unexpected-token"}}}
+  ]
+}
