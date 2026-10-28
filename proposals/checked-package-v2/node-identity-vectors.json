@@ -115,12 +115,24 @@
       "name": "model-root-counter-cas",
       "preimage": {"version":"quire.structural-node/v1","node_tag":"model","semantic_form":"model_root","semantic_type":null,"declaration":null,"recursion":null,"owner":{"kind":"model_root","identity":"example/counter-cas","digest":"0000000000000000000000000000000000000000000000000000000000000000"},"body":{"term":"aggregate","members":[]}},
       "sha256": "d6ee4495e48811c9e3c7551c768cba73391f8bac1cd14c05bfff37c0af67f757"
+    },
+    {
+      "name": "model-tuple-value-type-pair",
+      "preimage": {"version":"quire.structural-node/v1","node_tag":"model","semantic_form":"tuple_value_type","semantic_type":null,"declaration":null,"recursion":null,"owner":{"kind":"model","identity":"acme/shapes","node":"ix://acme/shapes/Pair"},"body":{"term":"aggregate","members":[]}},
+      "sha256": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344"
+    },
+    {
+      "name": "model-variant-type-shape-union",
+      "preimage": {"version":"quire.structural-node/v1","node_tag":"model","semantic_form":"variant_type","semantic_type":null,"declaration":null,"recursion":null,"owner":{"kind":"model","identity":"acme/shapes","node":"ix://acme/shapes/Shape"},"body":{"term":"aggregate","members":[]}},
+      "sha256": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
     }
   ],
   "union_member_vectors": [
     {"name":"union-member-u1-circle","preimage":{"version":"quire.union-member-node/v1","declaration_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"},"member":"Circle"},"sha256":"05592dfb3975b157f2db52dafb4473e94087e77151674909aa18d3527b492dc9"},
     {"name":"union-member-u1-empty","preimage":{"version":"quire.union-member-node/v1","declaration_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173"},"member":"Empty"},"sha256":"da73f21b5ade700e44aa1daf13df5cb138be6a9ecc1f6253e37f99c90dc41f30"},
-    {"name":"union-member-u2-circle","preimage":{"version":"quire.union-member-node/v1","declaration_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"e96b8de8d4a48b5f8ec25e1ac855b2241afaf46b3b7634c7bff9834652e3d6ec"},"member":"Circle"},"sha256":"13c540c64745302d0774ab6d25097aedf5abacba6ac6cef6a0b67e9042dc7591"}
+    {"name":"union-member-u2-circle","preimage":{"version":"quire.union-member-node/v1","declaration_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"e96b8de8d4a48b5f8ec25e1ac855b2241afaf46b3b7634c7bff9834652e3d6ec"},"member":"Circle"},"sha256":"13c540c64745302d0774ab6d25097aedf5abacba6ac6cef6a0b67e9042dc7591"},
+    {"name":"union-member-model-shape-both","preimage":{"version":"quire.union-member-node/v1","declaration_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"},"member":"Both"},"sha256":"13960bceb27e0fc3b9ec79b0000d7b5dd7b739291370bf0bf441dd31ff6f2c7b"},
+    {"name":"union-member-model-shape-empty","preimage":{"version":"quire.union-member-node/v1","declaration_node_id":{"domain":"quire.checked-semantic-node/v1","digest":"2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"},"member":"Empty"},"sha256":"d032c8d4ecd0dc1833de0f1ebd001f9f1fa0f08ecb0dd233ba090185ee8841af"}
   ],
   "invalid_mutations": [
     {"name":"enum-member-stale-case","kind":"stale_key","base":"enum-status-ready","patch":[{"op":"replace","path":"/case","value":"DONE"}],"retained_sha256":"42ba51e7e622d99f292a5e6dcc196bd216efb98b33755910e54af4d65078d032","expected_code":"invalid_semantic_graph"},
