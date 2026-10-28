@@ -87,10 +87,13 @@ the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 12. Declare `Cell` (`Integer`, `List`) and `List` (`Nil`, `Cons(Cell)`) and walk
     them; compare the keys of `Cell` and `List` with their owner-only preimages.
 
-13. Derive the projection of `domain-package-acme-shapes.json`, compare it with
-    `domain_package`, and hash the RFC 8785 bytes of the whole document against
-    the lock row digest; swap the position types of `Pair` and reorder two
-    declarations in the document.
+13. Confirm the selected document's tuple construct uses FCD's `tuple` shape
+    and every tuple position has its schema-required `origin` (FR-322-AC-151;
+    filament-core-data FR-147-AC-2 and FR-147-AC-3). Derive the projection of
+    `domain-package-acme-shapes.json`, compare it with `domain_package`, and
+    hash the RFC 8785 bytes of the whole document against the lock row digest;
+    swap the position types of `Pair` and reorder two declarations in the
+    document.
 
 Expected results:
 
@@ -118,5 +121,7 @@ Expected results:
     application node `/semantic_graph/nodes/31` (FR-322-AC-152).
 12. The cycle is admitted; neither node has a `recursion_group`; the walk and
     the empty leaf list are those of FR-322-AC-147.
-13. The projection equals `domain_package`; the row digest equals the SHA-256 of
-    the whole document; both mutations change that digest (FR-322-AC-151).
+13. The tuple construct shape is `tuple` and each tuple position carries an
+    `origin`; the projection equals `domain_package`; the row digest equals the
+    SHA-256 of the whole document; both mutations change that digest
+    (FR-322-AC-151).

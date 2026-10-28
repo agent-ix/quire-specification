@@ -82,7 +82,7 @@
     },
     "model_selections": [
       {
-        "digest": "654cccb233bb191e39deec01fe5fd05afc273aaa03cebfe1714baf4f135fe4ed",
+        "digest": "16a50417f0a811044b5e9c52e9a2ece20631dc4777daa62353a60e64568b8c29",
         "digest_domain": "sha256-jcs",
         "identity": "acme/shapes"
       }
@@ -162,7 +162,7 @@
     },
     "model_selections": [
       {
-        "digest": "654cccb233bb191e39deec01fe5fd05afc273aaa03cebfe1714baf4f135fe4ed",
+        "digest": "16a50417f0a811044b5e9c52e9a2ece20631dc4777daa62353a60e64568b8c29",
         "digest_domain": "sha256-jcs",
         "identity": "acme/shapes"
       }
@@ -182,7 +182,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "7acdff313087cf731d647ecc8e01029303380bde31f9b5987e191b86f1a78051",
+    "digest": "4d959d2b8fb7434a6647bacdf304ea27d9300bcaa85205509abc5922cfcd0506",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -1838,7 +1838,7 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "3866259c41d413147d12438f73e79b5d41ee04f0017871aa89b1a85cf5a7fbba",
+          "digest": "4f419113ca673d2cdf8b3cd332152eb1ac30c4284cd45ed62f6f215381a47f96",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "model",
@@ -1849,14 +1849,14 @@
           }
         ],
         "owner": {
-          "digest": "654cccb233bb191e39deec01fe5fd05afc273aaa03cebfe1714baf4f135fe4ed",
+          "digest": "16a50417f0a811044b5e9c52e9a2ece20631dc4777daa62353a60e64568b8c29",
           "identity": "acme/shapes",
           "kind": "model_root"
         },
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "model_root",
         "semantic_type": {
-          "digest": "3866259c41d413147d12438f73e79b5d41ee04f0017871aa89b1a85cf5a7fbba",
+          "digest": "4f419113ca673d2cdf8b3cd332152eb1ac30c4284cd45ed62f6f215381a47f96",
           "domain": "quire.checked-semantic-node/v1"
         }
       }
@@ -2605,7 +2605,7 @@
     },
     {
       "node_id": {
-        "digest": "3866259c41d413147d12438f73e79b5d41ee04f0017871aa89b1a85cf5a7fbba",
+        "digest": "4f419113ca673d2cdf8b3cd332152eb1ac30c4284cd45ed62f6f215381a47f96",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
