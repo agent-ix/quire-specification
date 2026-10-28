@@ -19678,7 +19678,7 @@ const MODEL_TUPLE_UNION_VECTORS: &str =
 const SHAPES_DOCUMENT: &str =
     include_str!("../proposals/checked-package-v2/domain-package-acme-shapes.json");
 
-/// FR-322-AC-148: the projection FR-154 intake reads from the `acme/shapes`
+/// FR-322-AC-151: the projection FR-154 intake reads from the `acme/shapes`
 /// document, in document order: for each object type its supertypes and fields
 /// (multiplicities as decimal strings), for each tuple its positions by ordinal
 /// and for each variant type its cases in declared order.
@@ -20004,11 +20004,11 @@ fn expected_refusal(expected: &Value) -> Option<(String, Option<String>)> {
     ))
 }
 
-/// FR-322-AC-148: the selected document of `acme/shapes` is a full FCD
+/// FR-322-AC-151: the selected document of `acme/shapes` is a full FCD
 /// semantic IR; the vectors' `domain_package` is exactly its projection, and
 /// the row digest the lock pins is the JCS SHA-256 of that projection, not of
 /// the document's own bytes.
-#[trace("TC-940", "FR-322-AC-148")]
+#[trace("TC-940", "FR-322-AC-151")]
 #[test]
 fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_pinned() {
     let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
@@ -20071,7 +20071,7 @@ fn tc_940_tuple_and_payload_variant_declarations_are_model_declaration_nodes() {
     assert_eq!(
         vectors["selection_digest"],
         unqualified_jcs_sha256(&vectors["domain_package"]),
-        "the row digest is the JCS digest of the projection (FR-322-AC-148)"
+        "the row digest is the JCS digest of the projection (FR-322-AC-151)"
     );
     assert_eq!(
         package["lock"]["model_selections"][0]["digest"], vectors["selection_digest"],

@@ -61,7 +61,11 @@ structures, but any external consumer receives only the contract.
   over them, each keyed by its application-node or nominal preimage
   (FR-322 "Tuple value types and payload-bearing variant types", FR-440,
   FR-441, TC-940). `domain-package-acme-shapes.json` is its selected document, a full FCD
-  semantic IR 2.0.0 domain package (FR-322-AC-148), and
+  semantic IR 2.0.0 domain package (FR-322-AC-151; its `positions` member on
+  a tuple type is not yet in the FCD semantic IR schema, an upstream gap; the
+  package `lockDigest`, `manifestDigest` and `source.digest` members are opaque
+  carry-overs copied from `domain-package-acme-orders.json`, identify nothing
+  of this package and are bound by no check), and
   `model-tuple-union-vectors.json` publishes its projection (`domain_package`,
   whose JCS SHA-256 is the `selection_digest` the lock row pins), the declaration node keys, the application-node
   key vectors and the family, position, member, union-value, enum-value,
@@ -202,8 +206,8 @@ structures, but any external consumer receives only the contract.
   FR-154-AC-16, and the reference equality, reference upcast and
   field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
-  of its `domain_package` member stands for the document's `sha256-jcs`
-  digest.
+  of its `domain_package` member is the row digest the lock pins; the
+  document's own digest is different (FR-322-AC-32).
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.

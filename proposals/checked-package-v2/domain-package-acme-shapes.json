@@ -21,7 +21,7 @@
         "module": "acme/shapes",
         "name": "entity"
       },
-      "manifestDigest": "sha256:80336b533d10d9767d578672d92c788c39df98b9ef023d76c0ba924eb68807f1",
+      "manifestDigest": "sha256:d45302167f31a89183c042ad58fe240171b20e44188a34dd19fee0874b60c048",
       "moduleVersion": "1.0.0"
     },
     {
@@ -170,6 +170,7 @@
       "unknownPolicy": "reject"
     },
     {
+      "constraints": [],
       "displayName": "Pair",
       "extensions": [],
       "identity": "ix://acme/shapes/Pair",
@@ -194,9 +195,12 @@
           "identity": "ix://acme/shapes/Pair/p1",
           "typeRef": "ix://quire/native/Integer"
         }
-      ]
+      ],
+      "roles": [],
+      "unknownPolicy": "reject"
     },
     {
+      "constraints": [],
       "displayName": "Swap",
       "extensions": [],
       "identity": "ix://acme/shapes/Swap",
@@ -221,9 +225,12 @@
           "identity": "ix://acme/shapes/Swap/p1",
           "typeRef": "ix://quire/native/Boolean"
         }
-      ]
+      ],
+      "roles": [],
+      "unknownPolicy": "reject"
     },
     {
+      "constraints": [],
       "displayName": "Nest",
       "extensions": [],
       "identity": "ix://acme/shapes/Nest",
@@ -248,9 +255,12 @@
           "identity": "ix://acme/shapes/Nest/p1",
           "typeRef": "ix://acme/shapes/Shape"
         }
-      ]
+      ],
+      "roles": [],
+      "unknownPolicy": "reject"
     },
     {
+      "constraints": [],
       "displayName": "Cell",
       "extensions": [],
       "identity": "ix://acme/shapes/Cell",
@@ -275,9 +285,12 @@
           "identity": "ix://acme/shapes/Cell/p1",
           "typeRef": "ix://acme/shapes/List"
         }
-      ]
+      ],
+      "roles": [],
+      "unknownPolicy": "reject"
     },
     {
+      "constraints": [],
       "displayName": "Shape",
       "extensions": [],
       "identity": "ix://acme/shapes/Shape",
@@ -293,6 +306,8 @@
           "startLine": 1
         }
       },
+      "roles": [],
+      "unknownPolicy": "reject",
       "variants": [
         {
           "identity": "ix://acme/shapes/variant/Shape-flag",
@@ -335,6 +350,7 @@
       ]
     },
     {
+      "constraints": [],
       "displayName": "Color",
       "extensions": [],
       "identity": "ix://acme/shapes/Color",
@@ -350,6 +366,8 @@
           "startLine": 1
         }
       },
+      "roles": [],
+      "unknownPolicy": "reject",
       "variants": [
         {
           "identity": "ix://acme/shapes/variant/Color-red",
@@ -378,6 +396,7 @@
       ]
     },
     {
+      "constraints": [],
       "displayName": "List",
       "extensions": [],
       "identity": "ix://acme/shapes/List",
@@ -393,6 +412,8 @@
           "startLine": 1
         }
       },
+      "roles": [],
+      "unknownPolicy": "reject",
       "variants": [
         {
           "identity": "ix://acme/shapes/variant/List-nil",

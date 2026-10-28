@@ -55,7 +55,7 @@ and a second variant type `Level` with cases `Gold` and `Silver`.
 
 ## Tuple value types and payload-bearing variant types (STD-519)
 
-Scope: FR-322-AC-140 to FR-322-AC-148. Use `model-tuple-union-vectors.json`
+Scope: FR-322-AC-140 to FR-322-AC-147 and FR-322-AC-151. Use `model-tuple-union-vectors.json`
 and its selected document `domain-package-acme-shapes.json`:
 the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 `p1: Integer`), `Swap` (`p0: Integer`, `p1: Boolean`) and `Nest` (`p0: Pair`,
@@ -116,4 +116,4 @@ Expected results:
     the empty leaf list are those of FR-322-AC-147.
 13. The projection equals `domain_package`; the row digest equals its SHA-256
     and differs from the document's own; both mutations change the projection
-    digest (FR-322-AC-148).
+    digest (FR-322-AC-151).
