@@ -21,7 +21,7 @@ Accept valid zone certificates and reject or refuse invalid ones, recomputing ev
 
 ## Test Procedure
 
-Run each vector through the real local Rust boundary of the frontend or provider named by the requirement, and compare the complete typed result (value, cause and payload) with the expected result. Mutations start from ZC-01's certificate.
+Run each vector through the real local Rust boundary of the frontend or provider named by the requirement, and compare the complete typed result (value, cause and payload) with the expected result. Mutations start from ZC-01's certificate. ZC-10 to ZC-13 check the certificate's wire and canonical bytes (FR-418 "Canonical bytes") against the `ZoneCertificate` definition of the FR-331 schema and the vectors in `proposals/backend-provider-v1/zone-certificate-vectors.json`; they run in `tests/zone_certificate_wire.rs`. Tag those tests `#[trace("TC-371", "FR-418-AC-n")]`.
 
 ## Models
 
@@ -42,6 +42,10 @@ The models below are defined here in full; the citation names the QSL design rec
 | ZC-07 | The `Rpc` time-lock-freedom certificate | Every node states a reachable time-divergent target, and the checker verifies each |
 | ZC-08 | The certificate of `NoLateReply` with `T = 4 ms`, with the node covering the initial symbolic state removed | `inconclusive`, `certificate-rejected` with rule `initial-missing` at `{domain, digest}`, the State record of the initial discrete state |
 | ZC-09 | The `Rpc` time-lock-freedom certificate with one node's named target replaced by a node that is not a reachable time-divergent target | `certificate-rejected` with rule `witness-fails` at `{node}`, that node's position |
+| ZC-10 | The refinement-form certificate of FR-430-AC-1's `TReq` safety half (two positions, two nodes, two edges) | Valid `ZoneCertificate`; its RFC 8785 bytes equal `ZC-10`'s published `bytes_hex` (2350 bytes) |
+| ZC-11 | A time-lock-freedom certificate with a component index per node, two reasons (`missing-acceptance`, `weak-fairness`) and a divergence target per node | Valid; bytes equal `ZC-11`'s published `bytes_hex` (1429 bytes) |
+| ZC-12 | A refinement form with two initial states, the second a `locked` node with the reserved index | Valid; bytes equal `ZC-12`'s published `bytes_hex` (1624 bytes); `taken` is `[]` |
+| ZC-13 | ZC-10 with a bound as the JSON number `-1`, a bound `"01"`, `scale` `"0"`, `components` as `null`, `locked` `false` or `initial` removed | Each is not a `ZoneCertificate` |
 
 ## Expected Results
 

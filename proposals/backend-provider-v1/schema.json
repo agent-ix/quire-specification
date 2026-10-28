@@ -1049,18 +1049,46 @@
     },
     "DbmBound": {"description": "FR-418: one DBM entry: a scaled integer bound with its strictness, or infinity.", "oneOf": [{"const": "infinity"}, {"type": "object", "required": ["bound", "strict"], "properties": {"bound": {"$ref": "#/$defs/IntegerString"}, "strict": {"type": "boolean"}}, "additionalProperties": false}]},
     "ZoneCertificate": {
-      "description": "FR-418 zone certificate; components, reasons and divergence carry the Buchi emptiness extension.",
+      "description": "FR-418 zone certificate, serialized as RFC 8785 bytes (FR-418 \"Canonical bytes\"). components, reasons and divergence carry the Buchi emptiness extension; locked, initial, admitted and refinement carry QSL FR-244's additive members. An absent optional member is omitted, never null.",
       "type": "object",
-      "required": ["identity", "scale", "bounds", "nodes", "edges"],
+      "required": ["identity", "scale", "bounds", "nodes", "edges", "initial", "admitted"],
       "properties": {
         "identity": {"$ref": "#/$defs/CertificateIdentity"},
         "scale": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"},
-        "bounds": {"type": "array", "items": {"type": "object", "required": ["state", "clock", "lower", "upper"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "clock": {"$ref": "#/$defs/Nonempty"}, "lower": {"$ref": "#/$defs/DbmBound"}, "upper": {"$ref": "#/$defs/DbmBound"}}, "additionalProperties": false}},
-        "nodes": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "automaton", "zone"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "automaton": {"$ref": "#/$defs/Count"}, "zone": {"type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}}}, "additionalProperties": false}},
+        "bounds": {"description": "FR-418: the LU bounds (QSL lu_bounds), one entry per discrete state and clock, ordered by the state's first node in nodes then by clock index; an absent bound is infinity.", "type": "array", "items": {"type": "object", "required": ["state", "clock", "lower", "upper"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "clock": {"$ref": "#/$defs/Nonempty"}, "lower": {"$ref": "#/$defs/DbmBound"}, "upper": {"$ref": "#/$defs/DbmBound"}}, "additionalProperties": false}},
+        "nodes": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "automaton", "zone"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "automaton": {"description": "FR-418: a claim-automaton state; in a refinement form an index into refinement.positions, the reserved index positions.len() naming no position (QSL FR-244).", "$ref": "#/$defs/Count"}, "locked": {"description": "FR-418: present, as true, exactly on a locked node; never false.", "const": true}, "zone": {"description": "FR-418: the canonical DBM as rows, entry [i][j] bounding x_i - x_j, index 0 the reference clock.", "type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}}}, "additionalProperties": false}},
         "edges": {"type": "array", "items": {"type": "object", "required": ["node", "transition", "target"], "properties": {"node": {"$ref": "#/$defs/Count"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "target": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
-        "components": {"type": "array", "items": {"$ref": "#/$defs/Count"}},
-        "reasons": {"description": "FR-418: per component, its reason.", "type": "array", "items": {"type": "object", "required": ["type"], "properties": {"type": {"enum": ["missing-acceptance", "weak-fairness", "strong-fairness"]}}}},
-        "divergence": {"description": "FR-418: per node, a reachable time-divergent target node.", "type": "array", "items": {"$ref": "#/$defs/Count"}}
+        "initial": {"description": "FR-418: the position in nodes of the node covering the initial symbolic state (QSL initial).", "$ref": "#/$defs/Count"},
+        "admitted": {"description": "FR-418: the ADR-026 TD-6 witness: the start node and the positions in edges of a path of certificate edges.", "type": "object", "required": ["start", "edges"], "properties": {"start": {"$ref": "#/$defs/Count"}, "edges": {"type": "array", "items": {"$ref": "#/$defs/Count"}}}, "additionalProperties": false},
+        "components": {"description": "FR-418: per node, its component index.", "type": "array", "items": {"$ref": "#/$defs/Count"}},
+        "reasons": {"description": "FR-418: per component, its reason.", "type": "array", "items": {"$ref": "#/$defs/ComponentReason"}},
+        "divergence": {"description": "FR-418: per node, a reachable time-divergent target node.", "type": "array", "items": {"$ref": "#/$defs/Count"}},
+        "refinement": {"$ref": "#/$defs/RefinementPart"}
+      },
+      "additionalProperties": false
+    },
+    "ComponentReason": {
+      "description": "FR-418: one component's reason. A strong fairness constraint states its reason by a nested numbering of the component's nodes that do not enable it.",
+      "oneOf": [
+        {"properties": {"type": {"const": "missing-acceptance"}, "set": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "set"], "additionalProperties": false},
+        {"properties": {"type": {"const": "weak-fairness"}, "constraint": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "constraint"], "additionalProperties": false},
+        {"properties": {"type": {"const": "strong-fairness"}, "constraint": {"$ref": "#/$defs/Nonempty"}, "nested": {"type": "object", "required": ["nodes", "components", "reasons"], "properties": {"nodes": {"type": "array", "items": {"$ref": "#/$defs/Count"}}, "components": {"type": "array", "items": {"$ref": "#/$defs/Count"}}, "reasons": {"type": "array", "items": {"$ref": "#/$defs/ComponentReason"}}}, "additionalProperties": false}}, "required": ["type", "constraint", "nested"], "additionalProperties": false}
+      ]
+    },
+    "RefinementPart": {
+      "description": "FR-418: QSL FR-244's RefinementPart. initials[0] equals the certificate's initial; taken has one entry per edge in order, null for an edge into or inside the locked region.",
+      "type": "object",
+      "required": ["refinement", "concrete_package", "abstract_package", "initials", "positions", "taken"],
+      "properties": {
+        "refinement": {"$ref": "#/$defs/NodeId"},
+        "concrete_package": {"$ref": "#/$defs/PackageId"},
+        "abstract_package": {"$ref": "#/$defs/PackageId"},
+        "initials": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Count"}},
+        "positions": {"type": "array", "items": {"type": "object", "required": ["concrete", "history", "abstract_states"], "properties": {"concrete": {"$ref": "#/$defs/StateKey"}, "history": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}, "abstract_states": {"type": "array", "items": {"$ref": "#/$defs/StateKey"}}}, "additionalProperties": false}},
+        "taken": {"type": "array", "items": {"oneOf": [{"type": "null"}, {"oneOf": [
+          {"properties": {"type": {"const": "stutter"}}, "required": ["type"], "additionalProperties": false},
+          {"properties": {"type": {"const": "abstract"}, "transitions": {"type": "array", "items": {"$ref": "#/$defs/TransitionIdentity"}}}, "required": ["type", "transitions"], "additionalProperties": false}
+        ]}]}}
       },
       "additionalProperties": false
     },
