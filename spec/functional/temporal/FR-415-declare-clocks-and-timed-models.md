@@ -122,6 +122,21 @@ collection are live only while the collection holds the element (below).
   carries FR-146's presence obligation: a `value(p)` without `present(p)`
   established by the guard or by the time invariant's predicate refuses
   `undefined_expression`/`unproved-presence` at the read.
+- **Presence is derived.** `present(p)` of a guarded place `p` is a Boolean
+  data predicate, never a clock read, whose value at a state is the presence of
+  the place that `p` denotes: the instance named by the owner object, the
+  template node and the slots (QSL FR-230 "Place identity"). It is read from
+  the state's data (the case the value on the path holds, the collection
+  holding the slot) or, for an `Option<Clock>` place, from its runtime state bit, which is
+  not a package member.
+  The model declares no `Option<Boolean>` field, member or type for it, and
+  the checked package carries none (FR-322 "Timed-model nodes", Presence). `p`
+  may denote a place of another object of the universe or a parameter
+  (`present(other.v)` reads `other`'s presence, so two objects of one type have
+  independent presences), and `present(e)` in the body of `forall(e in q: B)`
+  or `exists(e in q: B)` is read at each live slot `e` binds, so the
+  quantifier is the conjunction (`forall`, true on no live slot) or the
+  disjunction (`exists`, false on none) of the presences of its live slots.
 - A place under several guards (an `Option<Timer>` field, a `Sequence` slot of
   `Option<Clock>`, a union case of an optional field) is present exactly when
   every guard on its path holds, and `value(p)` carries the conjunction of
@@ -226,6 +241,10 @@ and a clock advances with time.
   occurrence order for a `Sequence` and an `OrderedSet`, ascending key for a
   `Map`, and ascending canonical key of the element's data part (FR-144) for a
   `Set` and a `Bag`, copies of one data part in the order they were created.
+  That position (or key) is the selector of an **instance** of the place. The
+  checked package holds one template `clock_place` node for the path, whose slot
+  step carries a symbolic element selector and no index (FR-322 "Timed-model
+  nodes").
   The **data part** of a clock-bearing value is the value with every clock
   component removed.
 - **Uniqueness.** A `Set`, `OrderedSet` or `Bag` of a clock-bearing element
@@ -367,6 +386,8 @@ its value and the request setting that raises it.
 | FR-415-AC-16 | A constraint `max "3"` whose `appliesTo` is the alias `Timeout` of `Clock` is the time invariant `x <= 3` on every place typed `Timeout` and on no other clock; with `appliesTo` `Clock` it bounds every clock place; `min "1"` refuses `invalid_timed_model`/`time-invariant-shape`; the keyword `minLength` refuses `invalid_model_binding`/`malformed-declaration`; the same constraint under `time tick` refuses `clock-without-dense-time`. | Test (TC-367) |
 | FR-415-AC-17 | A checked package for a dense model with a clock at `Call.t.0.x`, a reset, a guard, an invariant and `urgent when self.ready` emits a `timed_model` root plus source, place, reset, guard, invariant, urgency and normalized clock-constraint nodes. The place path records owner `Call` and the field, collection slot and field steps; no node represents `Clock` as a value or type. Changing in turn the source unit, tick period, place path or guard, reset, invariant, urgency and constraint bound changes the corresponding timed-node key and package identity; reordering source spans without changing semantics changes neither. | Test (TC-367) |
 | FR-415-AC-18 | Checked-package V2 read-back admits a source only when its unit's `dimension_node_id` is the exact base `Time` node named by the timed root; source units in `Length`, derived non-Time and nominal derived-Time dimensions refuse `ill_typed`/`invalid-time-quantity` at the `time_source.unit` reference for dense and tick forms. A tick source with any `Clock` place refuses `invalid_package`/`clock-without-dense-time` at the place node's `model` reference; S3 retains the `invalid_timed_model` cause at the source clock declaration. | Test (TC-367; FR-322-AC-126, FR-322-AC-127; TM-23..TM-29) |
+| FR-415-AC-19 | The places `ts.0.x`, `ts.1.x` and `ts.2.x` of a three-element `Sequence<Timer>` are three instances of one template `clock_place` in the checked package, whose slot step carries the symbolic element selector, and the template holds no element count, and a collection of another kind or depth changes only its slot steps (FR-322-AC-148..FR-322-AC-150). An empty `guards` aggregate is admitted when the model has no guard, and a guard that exists is listed, never dropped. | Test (TC-367; CK-26) |
+| FR-415-AC-20 | With `v: Option<Clock>` and `q: Sequence<Option<Clock>>[0, 2]` on two objects `c1`, `c2`, `present(other.v)` reads the presence of `v` of `other`, so `present(c1.v)` can be true while `present(c2.v)` is false; `forall(e in self.q: present(e))` is true on an empty `q` and otherwise the conjunction of the presences of its live slots, `exists(e in self.q: present(e))` is false on an empty `q` and otherwise their disjunction; none of these declares a field or changes any object's data, and each is a data predicate that never reads a clock value (FR-322-AC-155..FR-322-AC-157). | Test (TC-367; CK-27) |
 
 ## Dependencies
 
