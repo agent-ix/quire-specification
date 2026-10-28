@@ -198,6 +198,13 @@ structures, but any external consumer receives only the contract.
   `dependencies`. Each records its refusal `outcome` and its `locus`, the JSON
   pointer FR-322 fixes for it in the mutated package; node keys and the
   `package_id` are recomputed after the patch.
+- `fixtures/positive-compound-unit.json` is a V2 package of four nodes: a
+  nominal `dimension` (`Length`), a nominal root `unit` `U` (`metre`), the
+  builtin `Integer`, and the structural `scalar_type`/`compound_unit` node
+  `metre^1` that holds `unit` = `reference(U)` and an exponent. It is the base
+  of `nominal-rekey-vectors.json` (`NK-00` to `NK-07`, RFC 6902 patches ending in
+  the recomputed `package_id`), whose cases rekey `U` and observe the nominal
+  key stage (FR-322-AC-160 to FR-322-AC-162).
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
@@ -319,7 +326,17 @@ checks canonical bytes and all identity joins before exposing a graph, and
 reports malformed/stale/cross-domain/unknown-capability input as typed refusal.
 For a node form covered by the node-preimage schema, it reconstructs the closed
 preimage from the graph and lock, hashes its JCS bytes and requires exact
-`node_id` equality; stale nominal keys are `invalid_semantic_graph`, while a stale application-node key is `invalid_package` with cause `stale-node-key`.
+`node_id` equality; a stale nominal key is `invalid_semantic_graph` at that
+node's `node_id`, reported by the nominal key stage, which follows the
+application-node key stage and precedes the derived-shape key stage (so it
+precedes every structural `stale-node-key`), while a stale application-node or
+structural key is `invalid_package` with cause `stale-node-key`. A dangling
+`reference` whose target is the recomputed key of a stale nominal node is
+dependent on that rekey and is deferred to the nominal stage
+(`nominal-rekey-vectors.json`, FR-322-AC-160 and FR-322-AC-161).
+The node forms a refinement row reads (history read, whole-population value,
+`count`/`only`, `seq`) and their recomputed keys and refusals are in
+`refinement-row-node-vectors.json` (FR-322-AC-163 to FR-322-AC-168).
 Its outcome is the closed sum type admitted/refused/incomplete. It enforces
 caller-provided byte/node/edge/occurrence/diagnostic/work limits;
 exhaustion is incomplete, not an empty graph or a successful package. A node
