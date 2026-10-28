@@ -4443,6 +4443,10 @@ fn application_node_is_valid(node: &Value, nodes: &[Value]) -> bool {
 #[derive(Clone, Debug, PartialEq)]
 enum ReadRefusal {
     GraphShape(Value),
+    /// `invalid_package`/`invalid-derived-shape` at the `node_id` of a derived
+    /// shape (reference, population, compound unit) whose body is not well
+    /// formed and whose key is current (FR-322 "Derived type forms").
+    DerivedShape(Value),
     /// `invalid_model_binding`/`malformed-declaration` at `package_read`: a
     /// `populations` entry of the selected document that is no FCD population.
     /// The locus is the selection row (`/lock/model_selections/<i>`).
@@ -4504,6 +4508,206 @@ fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRe
     read_package_semantics_with(package, catalog, &[])
 }
 
+/// The key-and-join stages of the checked-package reader, before every
+/// declaration, frame, state and operation refusal (FR-322-AC-169). The
+/// order is `KEY_STAGE_ORDER`; the mutation test permutes it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum KeyStage {
+    /// Application-node shape.
+    GraphShape,
+    /// An independent dangling `reference` term: one whose target is no node
+    /// and no key a stale node recomputes to.
+    DanglingReference,
+    ApplicationKey,
+    NominalKey,
+    OwnerJoin,
+    StructuralKey,
+    /// Semantic checks of the derived-shape stage, after key freshness.
+    DerivedShape,
+    /// A `semantic_type` or `dependencies` entry that names no node.
+    EdgeExistence,
+}
+
+/// The order the public reader runs. The two edge-existence stages are not in
+/// it: the harness reader leaves a dangling edge to the later stage that reads
+/// it, and `VECTOR_STAGE_ORDER` adds them for the stage-order vectors.
+const KEY_STAGE_ORDER: [KeyStage; 6] = [
+    KeyStage::GraphShape,
+    KeyStage::ApplicationKey,
+    KeyStage::NominalKey,
+    KeyStage::OwnerJoin,
+    KeyStage::StructuralKey,
+    KeyStage::DerivedShape,
+];
+
+/// FR-322-AC-169: the one total order of the key-and-join stages.
+const VECTOR_STAGE_ORDER: [KeyStage; 8] = [
+    KeyStage::GraphShape,
+    KeyStage::DanglingReference,
+    KeyStage::ApplicationKey,
+    KeyStage::NominalKey,
+    KeyStage::OwnerJoin,
+    KeyStage::StructuralKey,
+    KeyStage::DerivedShape,
+    KeyStage::EdgeExistence,
+];
+
+/// Every key that a stale node recomputes to, whatever stage owns the node.
+fn rekey_dependent_keys(nodes: &[Value]) -> BTreeSet<String> {
+    let mut keys = BTreeSet::new();
+    for node in nodes {
+        let current = node["node_id"]["digest"].as_str();
+        let preimage = if let Some(nominal) = node.get("nominal_identity_preimage") {
+            Some(nominal.clone())
+        } else if is_application_node(node) {
+            application_node_preimage(node, nodes)
+        } else {
+            structural_node_preimage(node)
+        };
+        if let Some(preimage) = preimage {
+            let key = unqualified_jcs_sha256(&preimage);
+            if current != Some(key.as_str()) {
+                keys.insert(key);
+            }
+        }
+        if is_model_declaration(node) && !model_declaration_key_is_current(node) {
+            let mut empty = node.clone();
+            empty["body"] = json!({"term": "aggregate", "members": []});
+            if let Some(preimage) = structural_node_preimage(&empty) {
+                keys.insert(unqualified_jcs_sha256(&preimage));
+            }
+        }
+    }
+    keys
+}
+
+fn stage_reference_targets(term: &Value, out: &mut Vec<String>) {
+    match term {
+        Value::Object(map) => {
+            if map.get("term").and_then(Value::as_str) == Some("reference")
+                && let Some(target) = map.get("target").and_then(|t| t["digest"].as_str())
+            {
+                out.push(target.to_owned());
+            }
+            map.values().for_each(|inner| stage_reference_targets(inner, out));
+        }
+        Value::Array(items) => items.iter().for_each(|inner| stage_reference_targets(inner, out)),
+        _ => {}
+    }
+}
+
+/// FR-322-AC-169 stage 7 covers a node of a form with no step of its own: the
+/// `semantic_type` and `dependencies` of a `state`, `temporal`, `protocol`,
+/// `relation`, `claim`, `correspondence`, `extension`, `hybrid` or
+/// `timed_model` node are read by the step that owns that form (FR-340,
+/// FR-341 and FR-342 refuse a frame, anchor or clause target that names no node
+/// as `missing_declaration`/`missing-name`).
+fn edge_stage_owns(node: &Value) -> bool {
+    matches!(
+        node["node_tag"].as_str(),
+        Some("scalar_type" | "composite_type" | "bounded_domain" | "value" | "expression" | "function" | "model")
+    )
+}
+
+fn nodes_by_digest(nodes: &[Value]) -> Vec<&Value> {
+    let mut ordered = nodes.iter().collect::<Vec<_>>();
+    ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
+    ordered
+}
+
+fn key_stage_refusal(
+    package: &Value,
+    nodes: &[Value],
+    stage: KeyStage,
+) -> Result<(), ReadRefusal> {
+    let present: BTreeSet<&str> = nodes
+        .iter()
+        .filter_map(|node| node["node_id"]["digest"].as_str())
+        .collect();
+    let applications = nodes_by_digest(nodes)
+        .into_iter()
+        .filter(|node| is_application_node(node))
+        .collect::<Vec<_>>();
+    match stage {
+        KeyStage::GraphShape => {
+            if let Some(node) = applications
+                .iter()
+                .find(|node| !application_node_shape_is_valid(node))
+            {
+                return Err(ReadRefusal::GraphShape(node["node_id"].clone()));
+            }
+        }
+        KeyStage::DanglingReference => {
+            let dependent = rekey_dependent_keys(nodes);
+            if let Some(node) = nodes_by_digest(nodes).into_iter().find(|node| {
+                let mut targets = Vec::new();
+                stage_reference_targets(&node["body"], &mut targets);
+                targets
+                    .iter()
+                    .any(|t| !present.contains(t.as_str()) && !dependent.contains(t))
+            }) {
+                return Err(ReadRefusal::GraphShape(node["node_id"].clone()));
+            }
+        }
+        KeyStage::ApplicationKey => {
+            if let Some(node) = applications
+                .iter()
+                .find(|node| !application_node_key_is_current(node, nodes))
+            {
+                return Err(ReadRefusal::StaleNodeKey(node["node_id"].clone()));
+            }
+        }
+        KeyStage::NominalKey => {
+            if let Some(node) = stale_nominal_node(nodes) {
+                return Err(ReadRefusal::NominalKey(node["node_id"].clone()));
+            }
+        }
+        KeyStage::OwnerJoin => owner_join_refusal(package, nodes)?,
+        KeyStage::StructuralKey => {
+            if let Some(node) = stale_derived_shape_node(nodes) {
+                return Err(ReadRefusal::StaleNodeKey(node["node_id"].clone()));
+            }
+        }
+        KeyStage::DerivedShape => {
+            if let Some(node) = derived_shape_semantic_refusal(nodes) {
+                return Err(ReadRefusal::DerivedShape(node["node_id"].clone()));
+            }
+        }
+        KeyStage::EdgeExistence => {
+            if let Some(node) = nodes_by_digest(nodes).into_iter().find(|node| {
+                if !edge_stage_owns(node) {
+                    return false;
+                }
+                let mut edges = vec![node["semantic_type"]["digest"].clone()];
+                edges.extend(
+                    node["dependencies"]
+                        .as_array()
+                        .into_iter()
+                        .flatten()
+                        .map(|d| d["digest"].clone()),
+                );
+                edges
+                    .iter()
+                    .filter_map(Value::as_str)
+                    .any(|digest| !present.contains(digest))
+            }) {
+                return Err(ReadRefusal::GraphShape(node["node_id"].clone()));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn key_stages_refusal(
+    package: &Value,
+    nodes: &[Value],
+    order: &[KeyStage],
+) -> Result<(), ReadRefusal> {
+    order
+        .iter()
+        .try_for_each(|stage| key_stage_refusal(package, nodes, *stage))
+}
+
 /// Whether a node that carries a `nominal_identity_preimage` retains a key
 /// other than the JCS SHA-256 of that preimage.
 fn nominal_key_is_stale(node: &Value) -> bool {
@@ -4551,33 +4755,7 @@ fn read_package_semantics_with(
     let nodes = package["semantic_graph"]["nodes"]
         .as_array()
         .expect("package nodes are an array");
-    let mut ordered = nodes
-        .iter()
-        .filter(|node| is_application_node(node))
-        .collect::<Vec<_>>();
-    ordered.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
-    if let Some(node) = ordered
-        .iter()
-        .find(|node| !application_node_shape_is_valid(node))
-    {
-        return Err(ReadRefusal::GraphShape(node["node_id"].clone()));
-    }
-    if let Some(node) = ordered
-        .iter()
-        .find(|node| !application_node_key_is_current(node, nodes))
-    {
-        return Err(ReadRefusal::StaleNodeKey(node["node_id"].clone()));
-    }
-    if let Some(node) = stale_nominal_node(nodes) {
-        return Err(ReadRefusal::NominalKey(node["node_id"].clone()));
-    }
-    owner_join_refusal(package, nodes)?;
-    if let Some(node) = stale_derived_shape_node(nodes) {
-        return Err(ReadRefusal::StaleNodeKey(node["node_id"].clone()));
-    }
-    if let Some(node) = derived_shape_semantic_refusal(nodes) {
-        return Err(ReadRefusal::GraphShape(node["node_id"].clone()));
-    }
+    key_stages_refusal(package, nodes, &KEY_STAGE_ORDER)?;
     let oracle = OperationOracle::for_package_with(catalog, package, &dependencies);
     if let Some(node) = nodes.iter().find(|node| oracle.enum_value_is_refused(node)) {
         return Err(ReadRefusal::InvalidSemanticGraph(node["node_id"].clone()));
@@ -14209,7 +14387,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     rekey_stale_nodes(&mut wrong_reference);
     assert_eq!(
         read_package_semantics(&wrong_reference, &catalog),
-        Err(ReadRefusal::GraphShape(
+        Err(ReadRefusal::DerivedShape(
             wrong_reference["semantic_graph"]["nodes"][reference_index]["node_id"].clone()
         )),
         "recomputed reference target is rejected"
@@ -14241,7 +14419,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         rekey_stale_nodes(&mut candidate);
         assert_eq!(
             read_package_semantics(&candidate, &catalog),
-            Err(ReadRefusal::GraphShape(
+            Err(ReadRefusal::DerivedShape(
                 candidate["semantic_graph"]["nodes"][index]["node_id"].clone()
             )),
             "recomputed {label} is rejected"
@@ -14300,7 +14478,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .clone();
     assert_eq!(
         read_package_semantics(&wrong_population, &catalog),
-        Err(ReadRefusal::GraphShape(population_id)),
+        Err(ReadRefusal::DerivedShape(population_id)),
         "recomputed negative population bound is rejected"
     );
 
@@ -14362,7 +14540,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     refresh_package_id(&mut arbitrary_set_population);
     assert_eq!(
         read_package_semantics(&arbitrary_set_population, &catalog),
-        Err(ReadRefusal::GraphShape(
+        Err(ReadRefusal::DerivedShape(
             arbitrary_set_population["semantic_graph"]["nodes"][population_index]["node_id"]
                 .clone()
         )),
@@ -14508,7 +14686,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let compound_id = wrong_compound["semantic_graph"]["nodes"][compound_index]["node_id"].clone();
     assert_eq!(
         read_package_semantics(&wrong_compound, &catalog),
-        Err(ReadRefusal::GraphShape(compound_id)),
+        Err(ReadRefusal::DerivedShape(compound_id)),
         "recomputed noncanonical compound-unit order is rejected"
     );
 
@@ -14530,7 +14708,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     refresh_package_id(&mut non_self_typed);
     assert_eq!(
         read_package_semantics(&non_self_typed, &catalog),
-        Err(ReadRefusal::GraphShape(
+        Err(ReadRefusal::DerivedShape(
             non_self_typed["semantic_graph"]["nodes"][compound_index]["node_id"].clone()
         )),
         "a non-self-typed compound unit is rejected"
@@ -14554,7 +14732,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     refresh_package_id(&mut non_root);
     assert_eq!(
         read_package_semantics(&non_root, &catalog),
-        Err(ReadRefusal::GraphShape(
+        Err(ReadRefusal::DerivedShape(
             non_root["semantic_graph"]["nodes"][non_root_index]["node_id"].clone()
         )),
         "a compound term naming a non-unit root is rejected"
@@ -15841,7 +16019,7 @@ fn tc_233_a_model_population_with_no_max_is_the_unbounded_population() {
                 );
                 assert_eq!(
                     outcome,
-                    Err(ReadRefusal::GraphShape(population["node_id"].clone())),
+                    Err(ReadRefusal::DerivedShape(population["node_id"].clone())),
                     "{id}: refused at the population node"
                 );
             }
@@ -21799,6 +21977,10 @@ fn tc_940_nominal_rekey_vectors_run_from_the_published_vectors() {
     let mut seen = BTreeSet::new();
     for case in vectors["wire_cases"].as_array().expect("wire cases") {
         let id = case["id"].as_str().expect("id");
+        if id > "NK-07" {
+            // NK-08 to NK-13 are the stage-order vectors of FR-322-AC-169.
+            continue;
+        }
         assert!(seen.insert(id), "case ids are unique");
         let package = nominal_rekey_package(&vectors, &base, id);
         assert_eq!(
@@ -21912,6 +22094,9 @@ fn tc_940_the_deferral_is_a_membership_test_over_the_recomputed_keys_of_stale_no
     let foreign = "ff".repeat(32);
     for case in vectors["wire_cases"].as_array().expect("wire cases") {
         let id = case["id"].as_str().expect("id");
+        if id > "NK-07" {
+            continue; // the stage-order vectors of FR-322-AC-169
+        }
         let mut package = nominal_rekey_package(&vectors, &base, id);
         assert!(
             undeferred_dangling_targets(&package).is_empty(),
@@ -24376,4 +24561,242 @@ fn tc_367_every_fixture_model_owned_node_is_declared_by_its_selected_document() 
     let mut renamed = package.clone();
     renamed["semantic_graph"]["nodes"][53]["owner"]["node"] = json!("ix://acme/orders/Missing");
     assert_eq!(model_owner_declaration_defect(&renamed, selected), Some("/semantic_graph/nodes/53".to_owned()));
+}
+
+
+/// The wire spelling of a stage refusal: `outcome:cause:locus`.
+fn stage_outcome(package: &Value, order: &[KeyStage]) -> String {
+    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let position = |id: &Value| nodes.iter().position(|node| node["node_id"] == *id).unwrap();
+    match key_stages_refusal(package, nodes, order) {
+        Ok(()) => match read_package_semantics(package, &parsed_fixture(OPERATION_CATALOG)) {
+            Ok(()) => "admitted".to_owned(),
+            Err(ReadRefusal::Frame(FrameRefusal::MissingName, locus)) => {
+                let at = nodes
+                    .iter()
+                    .position(|node| node["semantic_type"] == locus)
+                    .expect("the frame whose semantic_type names no node");
+                format!(
+                    "refused:missing_declaration:missing-name:/semantic_graph/nodes/{at}/semantic_type"
+                )
+            }
+            Err(other) => panic!("unexpected reader refusal {other:?}"),
+        },
+        Err(ReadRefusal::NominalKey(id)) => format!(
+            "refused:invalid_semantic_graph::/semantic_graph/nodes/{}/node_id",
+            position(&id)
+        ),
+        Err(ReadRefusal::StaleNodeKey(id)) => format!(
+            "refused:invalid_package:stale-node-key:/semantic_graph/nodes/{}/node_id",
+            position(&id)
+        ),
+        Err(ReadRefusal::OwnerSelection(id)) => {
+            // A `ModelOwner` refusal of a tuple or variant model type is at
+            // the node's `owner`; every other owner refusal at its `node_id`.
+            let at = position(&id);
+            let member = if matches!(
+                nodes[at]["semantic_form"].as_str(),
+                Some("tuple_value_type" | "variant_type")
+            ) {
+                "owner"
+            } else {
+                "node_id"
+            };
+            format!("refused:missing_declaration:missing-selection:/semantic_graph/nodes/{at}/{member}")
+        }
+        Err(ReadRefusal::GraphShape(id)) => format!(
+            "refused:invalid_semantic_graph::/semantic_graph/nodes/{}",
+            position(&id)
+        ),
+        Err(ReadRefusal::DerivedShape(id)) => format!(
+            "refused:invalid_package:invalid-derived-shape:/semantic_graph/nodes/{}/node_id",
+            position(&id)
+        ),
+        Err(other) => panic!("unexpected stage refusal {other:?}"),
+    }
+}
+
+fn expected_outcome(case: &Value) -> String {
+    match case["outcome"].as_str().unwrap() {
+        "admitted" => "admitted".to_owned(),
+        refused => format!(
+            "{refused}:{}:{}",
+            case["cause"].as_str().unwrap_or(""),
+            case["locus"].as_str().unwrap()
+        ),
+    }
+}
+
+/// Every vector whose first refusal is one of the key-and-join stages: NK-00 to
+/// NK-13 over the compound-unit package, and TW-05 to TW-09 over the tuple
+/// package (a stale `Pair` key and four owner refusals whose old `Pair` key
+/// dangles through `semantic_type` and `dependencies`).
+fn stage_order_cases() -> Vec<(String, Value, String)> {
+    let nominal = parsed_fixture(NOMINAL_REKEY_VECTORS);
+    let compound = parsed_fixture(POSITIVE_COMPOUND_UNIT);
+    let tuple = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
+    let tuple_base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
+    ));
+    let mut cases = Vec::new();
+    for case in nominal["wire_cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        cases.push((
+            id.to_owned(),
+            nominal_rekey_package(&nominal, &compound, id),
+            expected_outcome(case),
+        ));
+    }
+    for case in tuple["wire_cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        if !matches!(id, "TW-05" | "TW-06" | "TW-07" | "TW-08" | "TW-09") {
+            continue;
+        }
+        let mut package = tuple_base.clone();
+        for patch in case["patch"].as_array().unwrap() {
+            apply_json_patch(&mut package, patch);
+        }
+        cases.push((id.to_owned(), package, expected_outcome(case)));
+    }
+    cases
+}
+
+/// FR-322-AC-169 and FR-322-AC-170: the published stage-order vectors run
+/// through the one total order, and a dangling `semantic_type` or
+/// `dependencies` edge (TW-06 to TW-09, NK-13) never outranks an owner defect.
+#[trace("TC-940", "FR-322-AC-169", "FR-322-AC-170")]
+#[test]
+fn tc_940_the_key_and_join_stage_order_vectors_run_in_one_total_order() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let cases = stage_order_cases();
+    assert_eq!(cases.len(), 15 + 5, "every published stage-order case ran");
+    for (id, package, expected) in &cases {
+        assert_eq!(
+            unqualified_jcs_sha256(&package_id_preimage(package)),
+            package["package_id"]["digest"].as_str().unwrap(),
+            "{id}: the case carries the recomputed package_id"
+        );
+        assert!(schema.is_valid(package), "{id}: schema-valid");
+        assert_eq!(&stage_outcome(package, &VECTOR_STAGE_ORDER), expected, "{id}");
+    }
+    // The cases keep their isolated defects: NK-08/NK-09/NK-13 owner and NK-11 key.
+    let nodes = |id: &str| {
+        cases.iter().find(|case| case.0 == id).unwrap().1["semantic_graph"]["nodes"].clone()
+    };
+    for id in ["NK-08", "NK-09", "NK-13"] {
+        let owned = nodes(id)[4 + usize::from(id == "NK-08")].clone();
+        assert!(owned.get("owner").is_some() && structural_node_key_is_current(&owned), "{id}");
+    }
+    // NK-13 and TW-06 carry a dangling edge that is no `reference` term and is
+    // not dependent on a stale node's recomputed key.
+    for id in ["NK-13", "TW-06", "TW-07", "TW-08", "TW-09"] {
+        let package = &cases.iter().find(|case| case.0 == id).unwrap().1;
+        assert!(!undeferred_dangling_targets(package).is_empty(), "{id}: an edge dangles");
+        let mut references = Vec::new();
+        package["semantic_graph"]["nodes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .for_each(|node| stage_reference_targets(&node["body"], &mut references));
+        let present: BTreeSet<&str> = package["semantic_graph"]["nodes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter_map(|node| node["node_id"]["digest"].as_str())
+            .collect();
+        assert!(
+            references.iter().all(|target| present.contains(target.as_str())),
+            "{id}: no `reference` term dangles"
+        );
+    }
+    // The AC rows name every vector.
+    let fr322 = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
+    let row = |name: &str| {
+        fr322
+            .lines()
+            .find(|line| line.starts_with(&format!("| {name} |")))
+            .unwrap_or_else(|| panic!("{name} row"))
+    };
+    for id in ["NK-08", "NK-09", "NK-10", "NK-11", "NK-12", "NK-13", "NK-14", "TW-06", "TW-09"] {
+        assert!(row("FR-322-AC-169").contains(id) || row("FR-322-AC-170").contains(id), "{id}");
+    }
+}
+
+/// FR-322-AC-169 mutation check: moving any stage across its neighbour (the two
+/// graph-shape checks are one stage) changes the first refusal of at least one
+/// published vector, and the vector that catches each move is the one named.
+#[trace("TC-940", "FR-322-AC-169")]
+#[test]
+fn tc_940_swapping_any_two_adjacent_key_and_join_stages_fails_a_vector() {
+    let cases = stage_order_cases();
+    let groups: Vec<Vec<KeyStage>> = vec![
+        vec![KeyStage::GraphShape, KeyStage::DanglingReference],
+        vec![KeyStage::ApplicationKey],
+        vec![KeyStage::NominalKey],
+        vec![KeyStage::OwnerJoin],
+        vec![KeyStage::StructuralKey],
+        vec![KeyStage::DerivedShape],
+        vec![KeyStage::EdgeExistence],
+    ];
+    let flatten = |groups: &[Vec<KeyStage>]| groups.concat();
+    let canonical = flatten(&groups);
+    assert_eq!(canonical, VECTOR_STAGE_ORDER);
+    // The production order is the vector order without the two edge-existence
+    // stages, so a swap of the stages both share is caught by these vectors.
+    let production: Vec<KeyStage> = VECTOR_STAGE_ORDER
+        .iter()
+        .copied()
+        .filter(|stage| !matches!(stage, KeyStage::DanglingReference | KeyStage::EdgeExistence))
+        .collect();
+    assert_eq!(production, KEY_STAGE_ORDER);
+    // NK-14: the frame is outside stage 7's scope, though its edge dangles.
+    let frame = cases.iter().find(|case| case.0 == "NK-14").unwrap();
+    assert!(!edge_stage_owns(&frame.1["semantic_graph"]["nodes"][4]));
+    assert!(!undeferred_dangling_targets(&frame.1).is_empty());
+    let expected_killers: [&[&str]; 6] = [
+        &["NK-12"],
+        &["NK-06"],
+        &["NK-07"],
+        &["NK-09"],
+        &["NK-10"],
+        &["NK-11"],
+    ];
+    for at in 0..groups.len() - 1 {
+        let mut swapped = groups.clone();
+        swapped.swap(at, at + 1);
+        let order = flatten(&swapped);
+        let killers = cases
+            .iter()
+            .filter(|(_, package, expected)| &stage_outcome(package, &order) != expected)
+            .map(|(id, _, _)| id.as_str())
+            .collect::<Vec<_>>();
+        assert!(!killers.is_empty(), "swap at {at} ({order:?}) fails no vector");
+        for named in expected_killers[at] {
+            assert!(killers.contains(named), "swap at {at} must fail {named}: {killers:?}");
+        }
+    }
+    // Moving the edge-existence stage ahead of the owner join (the reading the
+    // ticket reports) fails TW-06 to TW-09 and NK-13.
+    let mut early = canonical.clone();
+    early.retain(|stage| *stage != KeyStage::EdgeExistence);
+    let owner = early.iter().position(|stage| *stage == KeyStage::OwnerJoin).unwrap();
+    early.insert(owner, KeyStage::EdgeExistence);
+    let killers = cases
+        .iter()
+        .filter(|(_, package, expected)| &stage_outcome(package, &early) != expected)
+        .map(|(id, _, _)| id.as_str())
+        .collect::<Vec<_>>();
+    for named in ["NK-13", "TW-06", "TW-07", "TW-08", "TW-09"] {
+        assert!(killers.contains(&named), "early edge stage must fail {named}: {killers:?}");
+    }
+    // Moving the owner join ahead of the application key stage fails NK-08.
+    let mut owner_first = canonical.clone();
+    owner_first.retain(|stage| *stage != KeyStage::OwnerJoin);
+    owner_first.insert(2, KeyStage::OwnerJoin);
+    assert!(
+        cases
+            .iter()
+            .any(|(id, package, expected)| id == "NK-08"
+                && &stage_outcome(package, &owner_first) != expected)
+    );
 }

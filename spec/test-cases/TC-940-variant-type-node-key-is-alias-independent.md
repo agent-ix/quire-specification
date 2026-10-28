@@ -20,8 +20,8 @@ and a cyclic pair of model types (steps 6 to 12), then the nominal key stage
 and its placement among the key stages (steps 14 to 15) and the refinement row
 expression nodes: history read, whole-population value, `count`, `only` and
 `seq` (steps 16 to 18). Scope: FR-322-AC-71, FR-141-AC-7 (steps 1 to 5);
-FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12); FR-322-AC-160 to FR-322-AC-168
-(steps 14 to 18).
+FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12); FR-322-AC-160 to FR-322-AC-170
+(steps 14 to 19).
 
 ## Test Procedure
 
@@ -132,7 +132,7 @@ Expected results:
 
 ## Nominal rekey and refinement row nodes (STD-536, STD-538)
 
-Scope: FR-322-AC-160 to FR-322-AC-162 (steps 14 to 15); FR-322-AC-163 to
+Scope: FR-322-AC-160 to FR-322-AC-162 (steps 14 to 15); FR-322-AC-169 to FR-322-AC-170 (step 19); FR-322-AC-163 to
 FR-322-AC-168 (steps 16 to 18). Use `nominal-rekey-vectors.json` with
 `fixtures/positive-compound-unit.json`, and `refinement-row-node-vectors.json`.
 
@@ -151,6 +151,9 @@ FR-322-AC-168 (steps 16 to 18). Use `nominal-rekey-vectors.json` with
     operation stage.
 18. Compare the catalog delta with the operations the vectors use and with its
     exact entries (operator, operands, member kind, constraints).
+19. Run `NK-00` to `NK-14` and `TW-05` to `TW-09` through the key-and-join stages in
+    FR-322's one total order, then run the same vectors with each pair of
+    adjacent stages swapped.
 
 Expected results:
 
@@ -168,3 +171,12 @@ Expected results:
     (FR-322-AC-164, 165, 166, 167).
 18. The delta names exactly the three operations and the member kind `history`
     the vectors use, with the exact entries the FR text states (FR-322-AC-168).
+19. `NK-08` refuses `invalid_package`/`stale-node-key` at the application node;
+    `NK-09` and `NK-13` refuse `missing_declaration`/`missing-selection` at
+    `/semantic_graph/nodes/4/node_id`; `NK-10` refuses `stale-node-key` at node 4;
+    `NK-11` refuses `invalid_package`/`invalid-derived-shape` at
+    `/semantic_graph/nodes/3/node_id`; `NK-12` refuses `invalid_semantic_graph`
+    at `/semantic_graph/nodes/4`; `NK-14` refuses `missing_declaration`/
+    `missing-name` at `/semantic_graph/nodes/4/semantic_type` (FR-340);
+    `TW-06` to `TW-09` keep their owner refusals at `/owner`. Each swap of adjacent
+    stages changes the outcome of a vector (FR-322-AC-169, FR-322-AC-170).

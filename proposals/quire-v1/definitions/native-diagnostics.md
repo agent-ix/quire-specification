@@ -155,7 +155,9 @@ order):
    application-node check above and precedes the derived-shape key stage of
    FR-322, so it precedes every structural `stale-node-key` and the owner
    join; a dangling `reference` whose target is the recomputed key of a
-   stale nominal node is deferred to it (FR-322-AC-160);
+   stale nominal node is deferred to it (FR-322-AC-160). The owner join and
+   the structural `stale-node-key` follow it, in that order, and a dangling
+   `semantic_type` or `dependencies` edge follows both (FR-322-AC-169);
 6. `declaration-nominal-mismatch` (`invalid_package`), nodes in ascending
    node-id digest order;
 7. `ambiguous-name` (`ambiguous_declaration`), at the first node in ascending
