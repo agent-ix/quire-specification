@@ -4877,7 +4877,7 @@
         "/request/items/6/temporal/item_kind": "FR-368",
         "/request/items/6/temporal/fairness": "FR-368"
       },
-      "description": "FR-368 Item kinds, claim, extent, position, shared limits and the refinement item's abstract_subject (an illustrative package id: the vector carries no dependencies). Items 0 and 1 are the caller's authored clauses over two subjects, item 2 a refinement item over subject 1 (its node id is an illustrative value: the package fixture holds no refinement node); items 3 to 6 are the derived items, grouped by subject in order of first occurrence and, within a subject, deadlock-freedom, time-lock-freedom, race-freedom. Anchors are the fixture's Example::Session model node and Example::Handshake protocol clause node, each with its declaration occurrence at ordinal 0.",
+      "description": "FR-368 Item kinds, claim, extent, position, shared limits and the refinement item's abstract_subject (the abstract package is the request's one dependency, whose bytes here are a placeholder, as the refinement node id is). Items 0 and 1 are the caller's authored clauses over two subjects, item 2 a refinement item over subject 1 (its node id is an illustrative value: the package fixture holds no refinement node); items 3 to 6 are the derived items, grouped by subject in order of first occurrence and, within a subject, deadlock-freedom, time-lock-freedom, race-freedom. Anchors are the fixture's Example::Session model node and Example::Handshake protocol clause node, each with its declaration occurrence at ordinal 0.",
       "document": {
         "contract_version": "quire.backend-provider/v1",
         "capability_vocabulary": "quire.capability-kind/v1",
@@ -4926,6 +4926,16 @@
           }
         ],
         "request": {
+          "dependencies": [
+            {
+              "package_id": {
+                "domain": "quire.package.semantic/v2",
+                "algorithm": "sha256",
+                "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+              },
+              "package": "e30"
+            }
+          ],
           "deadline_ms": 600000,
           "provision": [
             {

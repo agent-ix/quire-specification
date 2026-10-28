@@ -166,7 +166,7 @@ fn tc_371_the_certificate_embeds_no_digest_but_the_identities_it_names() {
         digest_bearing_pointers(&row["document"], "", &mut found);
         found.sort();
         let allowed: &[&str] = if row["document"].get("refinement").is_some() {
-            &["/identity", "/refinement/abstract_package", "/refinement/concrete_package", "/refinement/refinement"]
+            &["/identity", "/refinement/abstract_package", "/refinement/concrete_package", "/refinement/node"]
         } else {
             &["/identity"]
         };
@@ -199,7 +199,7 @@ fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_
     assert_eq!(locked["automaton"].as_u64().unwrap(), positions, "the reserved index names no position");
     assert_eq!(part["taken"], json!([]));
     // initials is required and nonempty; a refinement without positions is malformed.
-    for member in ["positions", "taken", "refinement", "concrete_package", "abstract_package"] {
+    for member in ["positions", "taken", "node", "concrete_package", "abstract_package"] {
         let mut bad = zc12.clone();
         bad["refinement"].as_object_mut().unwrap().remove(member);
         assert!(!valid.is_valid(&bad), "{member} is required");
@@ -213,6 +213,12 @@ fn tc_371_refinement_form_lists_every_initial_node_and_a_locked_entry_node_uses_
     let mut alias = zc12.clone();
     alias["initial"] = json!(0);
     assert!(!valid.is_valid(&alias), "initial is not a member");
+    let mut old_name = zc12.clone();
+    let node = old_name["refinement"]["node"].clone();
+    old_name["refinement"].as_object_mut().unwrap().remove("node");
+    assert!(!valid.is_valid(&old_name), "node is required");
+    old_name["refinement"]["refinement"] = node;
+    assert!(!valid.is_valid(&old_name), "the part's node id is `node`, not `refinement`");
     let mut inner = zc12.clone();
     inner["refinement"]["initials"] = json!([0, 1]);
     assert!(!valid.is_valid(&inner), "the part carries no initials");

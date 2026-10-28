@@ -1757,8 +1757,8 @@ fn tc_431_zone_loci_admit_the_refinement_form_rules_and_the_added_members() {
     }
     let members = ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale",
         "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement",
-        "concrete_package", "abstract_package", "positions", "taken"];
-    assert_eq!(members.len(), 20);
+        "node", "concrete_package", "abstract_package", "positions", "taken"];
+    assert_eq!(members.len(), 21);
     for member in members {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
         assert!(rejection.is_valid(&cause), "{member} is a member");
@@ -1835,6 +1835,30 @@ fn tc_431_abstract_subject_is_present_exactly_on_a_refinement_item() {
     assert!(!temporal.is_valid(&bare));
     assert_ne!(abstract_subject()["initial_states"], items[2]["temporal"]["subject"]["initial_states"],
         "the abstract subject's states are its own, not the concrete subject's");
+}
+
+/// FR-368-AC-19 and FR-331-AC-47: the abstract subject's `package_id` names a
+/// package of `request.dependencies`. The schema cannot say so (it relates two
+/// members), so this is the reader obligation, checked against the positive
+/// vector and refused for a package id the request does not carry.
+#[trace("TC-431", "FR-368-AC-19")]
+#[trace("TC-431", "FR-331-AC-47")]
+#[test]
+fn tc_431_abstract_subject_package_is_one_of_the_request_dependencies() {
+    let in_dependencies = |document: &Value| {
+        let wanted = &document["request"]["items"][2]["temporal"]["abstract_subject"]["package_id"];
+        document["request"]["dependencies"].as_array().is_some_and(|all| all.iter().any(|d| &d["package_id"] == wanted))
+    };
+    let document = composed(&positive("derived-items-request"));
+    assert_eq!(errors(&validator(), &document), Vec::<String>::new());
+    assert!(in_dependencies(&document), "the positive vector's abstract package is a dependency");
+    let mut other = document.clone();
+    other["request"]["items"][2]["temporal"]["abstract_subject"]["package_id"]["digest"] = serde_json::json!("6".repeat(64));
+    assert_eq!(errors(&validator(), &other), Vec::<String>::new(), "the schema admits it: the reader refuses");
+    assert!(!in_dependencies(&other), "a package id outside request.dependencies is refused by the reader");
+    let mut none = document.clone();
+    none["request"].as_object_mut().unwrap().remove("dependencies");
+    assert!(!in_dependencies(&none), "a request with no dependencies has no abstract package");
 }
 
 /// FR-368-AC-20: one set of limits and one `max_depth` for the whole request.
