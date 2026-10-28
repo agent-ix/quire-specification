@@ -19723,11 +19723,33 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                     adverse["semantic_graph"]["nodes"][5]["node_id"].clone();
             }
             "duplicate-clock-place" => {
+                // A DISTINCT second place of the same path (its guards aggregate empty, so a
+                // different body and key), listed after the first and starting after every
+                // published place: in declared order, so only the repeated path is refused
+                // (FR-322-AC-260 does not apply). Repeating one node reference would repeat
+                // its order key and refuse as an order defect first.
                 let root = if is_tick { 45 } else { 52 };
-                let places = adverse["semantic_graph"]["nodes"][root]["body"]["members"][3]["value"]["members"]
-                    .as_array_mut().unwrap();
-                let duplicate = places[0].clone();
-                places.push(duplicate);
+                let mut second = adverse["semantic_graph"]["nodes"][45].clone();
+                second["body"]["members"][3]["value"]["members"] = json!([]);
+                second["dependencies"] = json!(body_reference_targets(&second["body"]));
+                let key = unqualified_jcs_sha256(&structural_node_preimage(&second).unwrap());
+                second["node_id"]["digest"] = json!(key);
+                second["semantic_type"]["digest"] = json!(key);
+                let id = second["node_id"].clone();
+                let mut entry = adverse["source_map"].as_array().unwrap().iter()
+                    .find(|entry| entry["node_id"] == adverse["semantic_graph"]["nodes"][45]["node_id"]).unwrap().clone();
+                entry["node_id"] = id.clone();
+                entry["regions"][0]["start"] = json!(9000);
+                entry["regions"][0]["end"] = json!(9001);
+                let nodes = adverse["semantic_graph"]["nodes"].as_array_mut().unwrap();
+                let at = nodes.len() - 1;
+                nodes.insert(at, second);
+                let places = &mut nodes[root];
+                places["body"]["members"][3]["value"]["members"]
+                    .as_array_mut().unwrap().push(json!({"term": "reference", "target": id.clone()}));
+                places["dependencies"].as_array_mut().unwrap().push(id);
+                places["dependencies"].as_array_mut().unwrap().sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
+                adverse["source_map"].as_array_mut().unwrap().push(entry);
             }
             "noncanonical-place-path" => {
                 adverse["semantic_graph"]["nodes"][45]["body"]["members"][1]["value"]["members"][0]["members"][1]["value"]["value"] = json!("not-clock");
@@ -19879,6 +19901,11 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
         assert_eq!(row["expected_code"], expected.0);
         assert_eq!(row["expected_cause"], expected.1);
         assert_eq!(row["locus"], expected.2);
+        if row["mutation"] == "duplicate-clock-place" {
+            assert_eq!(timed_aggregate_order_refusal(&adverse), None, "TM-12 is in declared order, so only the repeated path is refused");
+            let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"].as_array().unwrap();
+            assert_ne!(places[0], places[1], "the repeated path is a distinct node, not a repeated reference");
+        }
     }
 }
 
@@ -22867,16 +22894,22 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
 }
 
 /// FR-322-AC-260: the locus of the first aggregate member (a timed root's six
-/// reference aggregates, then each place's `guards`) whose order key, the first
-/// region of its `source_map` entry as (source identity, start, end), is not
-/// strictly above its predecessor's, or `None` when every aggregate is in
+/// reference aggregates, then each place's `guards`) whose order key, the
+/// minimum (source identity, start, end) over every region of every
+/// `source_map` entry of the member node, is not strictly above its predecessor's, or `None` when every aggregate is in
 /// declared order.
 fn timed_aggregate_order_refusal(package: &Value) -> Option<String> {
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
     let key = |id: &Value| {
-        let entry = package["source_map"].as_array().unwrap().iter().find(|entry| entry["node_id"] == *id).expect("a source_map entry");
-        let region = &entry["regions"][0];
-        (region["source"]["identity"].as_str().unwrap().to_owned(), region["start"].as_u64().unwrap(), region["end"].as_u64().unwrap())
+        package["source_map"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|entry| entry["node_id"] == *id)
+            .flat_map(|entry| entry["regions"].as_array().unwrap())
+            .map(|region| (region["source"]["identity"].as_str().unwrap().to_owned(), region["start"].as_u64().unwrap(), region["end"].as_u64().unwrap()))
+            .min()
+            .expect("a source_map region")
     };
     let first_out_of_order = |members: &[Value]| {
         (1..members.len()).find(|at| key(&members[*at]["target"]) <= key(&members[at - 1]["target"]))
@@ -22927,8 +22960,8 @@ fn tc_367_timed_aggregates_list_their_members_in_declared_order() {
     }
     let cases = section["cases"].as_array().unwrap();
     let ids: Vec<_> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
-    assert_eq!(ids, ["AO-01", "AO-02", "AO-03", "AO-04"]);
-    let mut refused = 0;
+    assert_eq!(ids, ["AO-01", "AO-02", "AO-03", "AO-04", "AO-05", "AO-06", "AO-07"]);
+    let (mut refused, mut admitted_patched) = (0, 0);
     for case in cases {
         let id = case["id"].as_str().unwrap();
         assert_eq!(case["fixture"], vectors["selected_package"], "{id}");
@@ -22936,6 +22969,16 @@ fn tc_367_timed_aggregates_list_their_members_in_declared_order() {
             assert_eq!(case["expected"], "admitted", "{id}");
             continue;
         };
+        if case["expected"] == "admitted" {
+            let mut admitted = selected.clone();
+            for operation in patch.as_array().unwrap() {
+                apply_json_patch(&mut admitted, operation);
+            }
+            assert!(validator.is_valid(&admitted), "{id} is schema-valid");
+            assert_eq!(timed_aggregate_order_refusal(&admitted), None, "{id} is in order");
+            admitted_patched += 1;
+            continue;
+        }
         let mut adverse = selected.clone();
         for operation in patch.as_array().unwrap() {
             apply_json_patch(&mut adverse, operation);
@@ -22954,7 +22997,7 @@ fn tc_367_timed_aggregates_list_their_members_in_declared_order() {
         assert!(locus.ends_with(case["locus_suffix"].as_str().unwrap()), "{id}");
         refused += 1;
     }
-    assert_eq!(refused, 3);
+    assert_eq!((refused, admitted_patched), (5, 1));
     // AO-03 is exactly the digest-ordered listing.
     let digest_case = cases.iter().find(|case| case["id"] == "AO-03").unwrap();
     let mut listed = selected.clone();
@@ -23628,76 +23671,106 @@ const CLOCK_PRESENCE_FRAME_VECTORS: &str =
 const FR415_DECLARE_CLOCKS: &str =
     include_str!("../spec/functional/temporal/FR-415-declare-clocks-and-timed-models.md");
 
+/// The whole FR-415-AC-21 row, pinned exactly.
+const FR415_AC21_ROW: &str = "| FR-415-AC-21 | With `v: Option<Clock>` and `st: Mode` where `Mode` is a union of `Idle` and `Armed { x: Clock }`, both in the frame of an operation: a postcondition that requires `present(self.v)` of an absent `v`, or `present(self.st.Armed)` of an `Idle` `st`, with no write of the clock has no successor (no implicit reset to 0), and refuses `invalid_timed_model`/`clock-presence-unwritten` when the precondition establishes the place absent; with the write `self.v = 5 ms` or the constructor `self.st = Armed { x: 5 ms }` it has one successor in which the place is present with the clock `5 ms`; a write of `absent` or of `Idle` drops the place; a requirement is never a write, so `not present(self.v)` of a present, unwritten `v` has no successor, while `not present(self.st.Armed)` of an `Armed` `st` has the successor with `st` an `Idle`; an unwritten `Armed` `st` with no requirement keeps its clock and also admits the `Idle` successor, and an unwritten present `v` only keeps it. The vectors `FP-01`..`FP-14` of `clock-presence-frame-vectors.json` pair each `Option` vector with its union twin and state which pairs agree and which differ only because a union can leave its case. | Test (TC-367; CK-31; FP-01..FP-14) |";
+
+/// The sentences of the FR-415 frame paragraphs that the vectors realize.
+const FR415_FRAME_SENTENCES: [&str; 5] = [
+    "A place becomes present only by a write of its clock value, for an `Option<Clock>` place and for a union case alike.",
+    "does not select an `Armed` successor with a clock of 0: nothing writes the clock, so there is no successor, exactly as `present(self.v)` alone from an absent `v` has none.",
+    "refuses `invalid_timed_model`/`clock-presence-unwritten` at the `present(...)` requirement, naming the place.",
+    "A requirement is a constraint, never a write: `not present(p)` does not write `absent` or `Idle`.",
+    "they differ only because a union can leave a case and an `Option<Clock>` bit does not change.",
+];
+
 /// How an oracle reads a place that becomes present with no write of its clock.
 #[derive(Clone, Copy, PartialEq)]
 enum UnwrittenPresence {
-    /// FR-415-AC-21: there is no successor.
+    /// FR-415-AC-21: there is no successor (or the static refusal).
     NoSuccessor,
     /// The defect STD-542 rules out: an implicit reset to 0.
     ImplicitReset,
 }
 
-/// The successors of one frame vector: the pre-state normalised to (present,
-/// clock), the optional write, then the optional presence requirement. The
-/// `Option<Clock>` bit and the union case are read alike.
-fn frame_successors(case: &Value, unwritten: UnwrittenPresence) -> Value {
-    let (mut present, mut clock) = match case["form"].as_str().unwrap() {
+/// The outcome of one frame vector under the one rule: a write fixes the
+/// place; with no write an `Option<Clock>` keeps its state and a union also
+/// admits the clockless case; the requirement then filters the candidates and
+/// is never itself a write.
+fn frame_outcome(case: &Value, unwritten: UnwrittenPresence) -> Value {
+    let (present, clock) = match case["form"].as_str().unwrap() {
         "option" => (case["pre"]["present"].as_bool().unwrap(), case["pre"]["clock"].clone()),
         "union" => (case["pre"]["case"] == "Armed", case["pre"]["clock"].clone()),
         other => panic!("form {other}"),
     };
-    let was_present = present;
+    let requires = case["requires"].as_str();
+    let wants_present = requires.map(|text| !text.starts_with("not "));
     let write = &case["write"];
+    let kept = json!({"present": present, "clock": clock});
+    let dropped = json!({"present": false, "clock": null});
+    let mut candidates = Vec::new();
     if write.is_null() {
-        // A required presence that nothing writes: no implicit reset.
-        if case["requires"].is_string() && !present {
-            match unwritten {
-                UnwrittenPresence::NoSuccessor => return json!([]),
-                UnwrittenPresence::ImplicitReset => {
-                    present = true;
-                    clock = json!("0 ms");
-                }
+        if wants_present == Some(true) && !present {
+            if case["precondition_establishes_absent"] == true {
+                return json!({"refused": {"code": "invalid_timed_model", "cause": "clock-presence-unwritten"}});
+            }
+            if unwritten == UnwrittenPresence::ImplicitReset {
+                return json!([{"present": true, "clock": "0 ms"}]);
             }
         }
+        candidates.push(kept.clone());
+        if case["form"] == "union" && dropped != kept {
+            candidates.push(dropped);
+        }
     } else if write.get("absent").is_some() || write["constructor"] == "Idle" {
-        present = false;
-        clock = Value::Null;
+        candidates.push(dropped);
     } else {
-        present = true;
-        clock = write["clock"].clone();
+        candidates.push(json!({"present": true, "clock": write["clock"]}));
     }
-    assert!(!was_present || present || !write.is_null(), "a present place is dropped only by a write");
-    if case["requires"].is_string() && !present {
-        return json!([]);
-    }
-    json!([{"present": present, "clock": clock}])
+    Value::Array(
+        candidates
+            .into_iter()
+            .filter(|candidate| wants_present.is_none_or(|wanted| candidate["present"] == wanted))
+            .collect(),
+    )
 }
 
 /// Every way the FR-415-AC-21 frame vectors or its pinned text disagree with the rule.
 fn frame_defects(vectors: &Value, fr415: &str, unwritten: UnwrittenPresence) -> Vec<String> {
     let mut defects = Vec::new();
     let cases = vectors["cases"].as_array().unwrap();
+    let mut differing = Vec::new();
     for case in cases {
         let id = case["id"].as_str().unwrap();
-        if frame_successors(case, unwritten) != case["expected"] {
-            defects.push(format!("{id} successors differ from the rule"));
+        if frame_outcome(case, unwritten) != case["expected"] {
+            defects.push(format!("{id} outcome differs from the rule"));
         }
-        let twin = cases.iter().find(|other| other["id"] == case["equivalent_to"]);
+        let twin = cases.iter().find(|other| other["id"] == case["pair"]["with"]);
         match twin {
-            Some(twin) if twin["equivalent_to"] == case["id"] && twin["form"] != case["form"] && twin["expected"] == case["expected"] => {}
-            _ => defects.push(format!("{id} has no agreeing twin of the other form")),
+            Some(twin) if twin["pair"]["with"] == case["id"] && twin["form"] != case["form"] && twin["pair"]["outcome"] == case["pair"]["outcome"] => {
+                let agree = twin["expected"] == case["expected"];
+                match case["pair"]["outcome"].as_str() {
+                    Some("same") if agree => {}
+                    Some("differs") if !agree => differing.push(id.to_owned()),
+                    _ => defects.push(format!("{id} and its twin do not {}", case["pair"]["outcome"])),
+                }
+            }
+            _ => defects.push(format!("{id} has no paired twin of the other form")),
         }
+    }
+    differing.sort();
+    if differing != ["FP-05", "FP-06", "FP-13", "FP-14"] {
+        defects.push(format!("the differing pairs are {differing:?}"));
     }
     let ids: Vec<_> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
-    if ids != ["FP-01", "FP-02", "FP-03", "FP-04", "FP-05", "FP-06", "FP-07", "FP-08", "FP-09", "FP-10"] {
-        defects.push("the vector ids are not FP-01..FP-10".to_owned());
+    if ids != ["FP-01", "FP-02", "FP-03", "FP-04", "FP-05", "FP-06", "FP-07", "FP-08", "FP-09", "FP-10", "FP-11", "FP-12", "FP-13", "FP-14"] {
+        defects.push("the vector ids are not FP-01..FP-14".to_owned());
     }
     let text = normalized(fr415);
-    for pinned in [
-        "A place becomes present only by a write of its clock value, for an `Option<Clock>` place and for a union case alike.",
-        "does not select an `Armed` successor with a clock of 0: nothing writes the clock, so there is no successor, exactly as `present(self.v)` alone from an absent `v` has none.",
-        "| FR-415-AC-21 | With `v: Option<Clock>` and `st: Mode` where `Mode` is a union of `Idle` and `Armed { x: Clock }`",
-    ] {
+    let row = fr415.lines().find(|line| line.starts_with("| FR-415-AC-21 |"));
+    if row != Some(FR415_AC21_ROW) {
+        defects.push("the FR-415-AC-21 row is not the pinned row".to_owned());
+    }
+    for pinned in FR415_FRAME_SENTENCES {
         if !text.contains(&normalized(pinned)) {
             defects.push(format!("FR-415 does not state: {pinned}"));
         }
@@ -23707,12 +23780,18 @@ fn frame_defects(vectors: &Value, fr415: &str, unwritten: UnwrittenPresence) -> 
 
 /// FR-415-AC-21 (STD-542): under an operation's frame a place becomes present
 /// only by a write of its clock value, `Option<Clock>` and union case alike;
-/// there is no implicit reset.
+/// there is no implicit reset, a requirement is never a write.
 #[trace("TC-367", "FR-415-AC-21")]
 #[test]
 fn tc_367_a_place_becomes_present_only_by_a_write_of_its_clock() {
     let vectors = parsed_fixture(CLOCK_PRESENCE_FRAME_VECTORS);
     assert_eq!(frame_defects(&vectors, FR415_DECLARE_CLOCKS, UnwrittenPresence::NoSuccessor), Vec::<String>::new());
+    for diagnostics in [NATIVE_DIAGNOSTICS, TYPED_DIAGNOSTIC_CAUSE] {
+        assert!(
+            diagnostic_row_causes(diagnostics, "invalid_timed_model").contains("clock-presence-unwritten"),
+            "the cause is catalogued"
+        );
+    }
 }
 
 /// Each reading of the rule fails on its mutation: an implicit reset, a vector
@@ -23722,7 +23801,6 @@ fn tc_367_a_place_becomes_present_only_by_a_write_of_its_clock() {
 fn tc_367_frame_presence_vectors_fail_on_each_mutation() {
     let vectors = parsed_fixture(CLOCK_PRESENCE_FRAME_VECTORS);
     let defects = |vectors: &Value, fr415: &str, unwritten| frame_defects(vectors, fr415, unwritten);
-    // The implicit-reset oracle is caught by both forms.
     let reset = defects(&vectors, FR415_DECLARE_CLOCKS, UnwrittenPresence::ImplicitReset);
     assert!(reset.iter().any(|d| d.starts_with("FP-01 ")) && reset.iter().any(|d| d.starts_with("FP-02 ")), "{reset:?}");
     let edit = |change: &dyn Fn(&mut Value)| {
@@ -23730,21 +23808,23 @@ fn tc_367_frame_presence_vectors_fail_on_each_mutation() {
         change(&mut copy);
         defects(&copy, FR415_DECLARE_CLOCKS, UnwrittenPresence::NoSuccessor)
     };
-    // The union twin gains an implicit reset in the vector.
     assert!(!edit(&|v| v["cases"][1]["expected"] = json!([{"present": true, "clock": "0 ms"}])).is_empty());
-    // The Option twin keeps no clock.
     assert!(!edit(&|v| v["cases"][4]["expected"] = json!([{"present": true, "clock": null}])).is_empty());
-    // A written value is not the constant it gives.
     assert!(!edit(&|v| v["cases"][2]["write"]["clock"] = json!("6 ms")).is_empty());
-    // A twin that is not its pair's twin.
-    assert!(!edit(&|v| v["cases"][3]["equivalent_to"] = json!("FP-05")).is_empty());
-    // A dropped vector.
+    assert!(!edit(&|v| v["cases"][3]["pair"]["with"] = json!("FP-05")).is_empty());
     assert!(!edit(&|v| { v["cases"].as_array_mut().unwrap().pop(); }).is_empty());
-    // The pinned text removed.
-    for pinned in [
-        "A place becomes present only by a write of its clock value, for an `Option<Clock>` place and for a union case alike.",
-        "so there is no successor, exactly as `present(self.v)` alone from an absent `v` has none.",
-    ] {
+    // `not present` read as a write of absent for the Option bit, or the union kept.
+    assert!(!edit(&|v| v["cases"][12]["expected"] = json!([{"present": false, "clock": null}])).is_empty());
+    assert!(!edit(&|v| v["cases"][13]["expected"] = json!([])).is_empty());
+    // The static refusal dropped or renamed.
+    assert!(!edit(&|v| v["cases"][10]["expected"] = json!([])).is_empty());
+    assert!(!edit(&|v| v["cases"][11]["expected"]["refused"]["cause"] = json!("clock-write")).is_empty());
+    // A differing pair declared the same.
+    assert!(!edit(&|v| { v["cases"][5]["pair"]["outcome"] = json!("same"); v["cases"][4]["pair"]["outcome"] = json!("same"); }).is_empty());
+    // The pinned row and sentences edited or removed.
+    let edited = FR415_DECLARE_CLOCKS.replacen("`FP-01`..`FP-14`", "`FP-01`..`FP-12`", 1);
+    assert!(!defects(&vectors, &edited, UnwrittenPresence::NoSuccessor).is_empty());
+    for pinned in FR415_FRAME_SENTENCES {
         let words: Vec<&str> = pinned.split_whitespace().collect();
         let mutated = replace_words(FR415_DECLARE_CLOCKS, &words, "").expect("the sentence is in FR-415");
         assert!(!defects(&vectors, &mutated, UnwrittenPresence::NoSuccessor).is_empty(), "{pinned}");
