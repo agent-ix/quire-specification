@@ -76,9 +76,11 @@ structures, but any external consumer receives only the contract.
   as the authoritative machine-readable form, so a conformance test reads them
   (for example through `QUIRE_SPECIFICATION_DIR`) rather than copying them; the QSpec
   test asserts they equal the Markdown of TC-935 (FR-322-AC-180).
-- `option-value-vectors.json` publishes positive application-node preimages
-  and closed-body refusal shapes for present `option_value` nodes (FR-322,
-  TC-971); the qualification test recomputes each digest from its preimage.
+- `option-value-vectors.json` selects an option element type and checked
+  payload from published package fixtures, plus closed-body and reader
+  refusal mutations for present `option_value` nodes (FR-322, TC-971); the
+  qualification test derives the complete preimages and keys from those
+  fixture nodes instead of copying node digests.
 - `extension-definitions.json` publishes the FR-467 extension definitions
   (`policy`, `quota`, `retention`) a reader holds when it reads these
   fixtures, each as `{reference, definition}` with `definition` exactly the

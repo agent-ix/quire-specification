@@ -1569,6 +1569,34 @@ impl<'a> OperationOracle<'a> {
         fits().is_none().then_some(OperationRefusal::TypeMismatch)
     }
 
+    /// FR-322 present-option reader join: `semantic_type` is exactly an
+    /// option node and its one `value` reference names a checked value of the
+    /// option's element type. The locus is the first member that fails.
+    fn option_value_refusal(&self, node: &Value) -> Option<(&'static str, Option<&'static str>, &'static str)> {
+        if node["node_tag"] != "value" || node["semantic_form"] != "option_value" {
+            return None;
+        }
+        let Some(semantic_type) = self.node(&node["semantic_type"]) else {
+            return Some(("invalid_semantic_graph", None, "semantic_type"));
+        };
+        if semantic_type["node_tag"] != "composite_type"
+            || semantic_type["semantic_form"] != "option"
+        {
+            return Some(("invalid_semantic_graph", None, "semantic_type"));
+        }
+        let element_type = self.inner_type(&node["semantic_type"])?;
+        let payload = Self::binding(node, "value")?;
+        let Some(payload_node) = self.node(&payload["target"]) else {
+            return Some(("ill_typed", Some("type-mismatch"), "body/members/0/value"));
+        };
+        if payload_node["node_tag"] != "value" {
+            return Some(("ill_typed", Some("type-mismatch"), "body/members/0/value"));
+        }
+        let payload_type = self.descriptor(payload)?.ty?;
+        (!self.same_type(&payload_type, element_type))
+            .then_some(("ill_typed", Some("type-mismatch"), "body/members/0/value"))
+    }
+
     /// FR-322 "Strict reader" enum member join over a `model`/`variant_type`:
     /// an `enum_value` whose `semantic_type` is a variant type names a case
     /// the selected document declares, and the variant type is of family
@@ -4479,6 +4507,9 @@ enum ReadRefusal {
     /// (FR-322): its code, cause and JSON-pointer locus.
     Dependency(&'static str, &'static str, String),
     Operation(OperationRefusal),
+    /// Option-value semantic validation: a closed semantic type or a payload
+    /// whose checked type differs from the option element type.
+    OptionValue(&'static str, Option<&'static str>, Value, &'static str),
 }
 
 impl ReadRefusal {
@@ -4762,6 +4793,18 @@ fn read_package_semantics_with(
     let oracle = OperationOracle::for_package_with(catalog, package, &dependencies);
     if let Some(node) = nodes.iter().find(|node| oracle.enum_value_is_refused(node)) {
         return Err(ReadRefusal::InvalidSemanticGraph(node["node_id"].clone()));
+    }
+    if let Some((node, (code, cause, member))) = ordered.iter().find_map(|node| {
+        oracle
+            .option_value_refusal(node)
+            .map(|refusal| (*node, refusal))
+    }) {
+        return Err(ReadRefusal::OptionValue(
+            code,
+            cause,
+            node["node_id"].clone(),
+            member,
+        ));
     }
     package_declaration_refusal(package)
         .map_err(|(refusal, node)| ReadRefusal::Declaration(refusal, node))?;
@@ -24810,6 +24853,9 @@ fn tc_940_swapping_any_two_adjacent_key_and_join_stages_fails_a_vector() {
 #[test]
 fn tc_971_option_value_body_is_closed_and_its_preimage_covers_type_and_payload() {
     let schema_document: Value = serde_json::from_str(SCHEMA).expect("published schema is JSON");
+    let preimage_schema = parsed_fixture(NODE_PREIMAGE_SCHEMA);
+    let preimage_validator = jsonschema::validator_for(&preimage_schema)
+        .expect("the node-identity preimage schema is valid");
     let node_schema = json!({
         "$schema": schema_document["$schema"],
         "$defs": schema_document["$defs"],
@@ -24818,6 +24864,8 @@ fn tc_971_option_value_body_is_closed_and_its_preimage_covers_type_and_payload()
     let schema = jsonschema::validator_for(&node_schema).expect("semantic-node schema is valid");
     let vectors = parsed_fixture(OPTION_VALUE_VECTORS);
     let fixture = parsed_fixture(POSITIVE_INTEGER_LITERAL_REFERENCES);
+    let boolean_fixture = parsed_fixture(POSITIVE_CONTROL_OPERATIONS);
+    let catalog = parsed_fixture(OPERATION_CATALOG);
     let template = fixture["semantic_graph"]["nodes"]
         .as_array()
         .expect("fixture nodes are an array")
@@ -24825,32 +24873,100 @@ fn tc_971_option_value_body_is_closed_and_its_preimage_covers_type_and_payload()
         .find(|node| node["node_tag"] == "value" && node["semantic_form"] == "literal")
         .expect("fixture has a literal node")
         .clone();
+    let select = |from: &Value, selector: &Value| {
+        from["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("fixture nodes are an array")
+            .iter()
+            .filter(|node| {
+                node["node_tag"] == selector["node_tag"]
+                    && node["semantic_form"] == selector["semantic_form"]
+                    && selector
+                        .get("value_kind")
+                        .is_none_or(|kind| node["body"]["value_kind"] == *kind)
+                    && selector
+                        .get("value")
+                        .is_none_or(|value| node["body"]["value"] == *value)
+            })
+            .nth(selector["ordinal"].as_u64().expect("selector ordinal") as usize)
+            .unwrap_or_else(|| panic!("fixture node selector resolves: {selector}"))
+            .clone()
+    };
+    let build_node = |type_id: &Value, payload_id: &Value| {
+        let preimage = json!({
+            "version": "quire.application-node/v1",
+            "node_tag": "value",
+            "semantic_form": "option_value",
+            "semantic_type": type_id,
+            "declaration": null,
+            "recursion": null,
+            "body": {"term":"aggregate","members":[{"term":"binding","name":"value","value":{"term":"reference","target":payload_id}}]}
+        });
+        let digest = unqualified_jcs_sha256(&preimage);
+        let mut node = template.clone();
+        node["node_tag"] = json!("value");
+        node["semantic_form"] = json!("option_value");
+        node["semantic_type"] = type_id.clone();
+        node["node_id"]["digest"] = json!(digest);
+        node["body"] = preimage["body"].clone();
+        node["dependencies"] = json!([payload_id]);
+        (node, preimage, digest)
+    };
+    let build_option_type = |element_type_id: &Value| {
+        let preimage = json!({
+            "version": "quire.structural-node/v1",
+            "node_tag": "composite_type",
+            "semantic_form": "option",
+            "semantic_type": null,
+            "declaration": null,
+            "recursion": null,
+            "body": {"term":"aggregate","members":[{"term":"reference","target":element_type_id}]}
+        });
+        let digest = unqualified_jcs_sha256(&preimage);
+        let id = json!({"domain":"quire.checked-semantic-node/v1","digest":digest});
+        let node = json!({
+            "schema_version":"quire.checked-semantic-graph/v2",
+            "node_tag":"composite_type",
+            "semantic_form":"option",
+            "node_id":id,
+            "semantic_type":id,
+            "occurrences":[{"role":"generated","ordinal":0}],
+            "dependencies":[element_type_id],
+            "body":preimage["body"]
+        });
+        (node, preimage)
+    };
+    let install = |package: &mut Value, node: Value| {
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array_mut()
+            .expect("package nodes are an array");
+        nodes.push(node);
+        nodes.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default().to_owned());
+    };
 
     let positives = vectors["positive"]
         .as_array()
         .expect("positive vectors are an array");
     let mut observed_keys = BTreeSet::new();
+    let mut valid_package = None;
+    let mut selected_type = None;
+    let mut selected_payload = None;
     for vector in positives {
-        let preimage = &vector["preimage"];
-        let digest = unqualified_jcs_sha256(preimage);
+        let element_type = select(&fixture, &vector["element_type_selector"]);
+        let payload_node = select(&fixture, &vector["payload_selector"]);
+        let (type_node, type_preimage) = build_option_type(&element_type["node_id"]);
         assert_eq!(
-            digest,
-            vector["sha256"].as_str().unwrap_or_default(),
-            "{}",
+            structural_node_preimage(&type_node),
+            Some(type_preimage),
+            "{} option type key derives from the fixture element type",
             vector["id"]
         );
+        let (node, preimage, digest) = build_node(&type_node["node_id"], &payload_node["node_id"]);
         assert!(
             observed_keys.insert(digest.clone()),
             "positive keys are distinct"
         );
-
-        let mut node = template.clone();
-        node["node_tag"] = json!("value");
-        node["semantic_form"] = json!("option_value");
-        node["semantic_type"] = preimage["semantic_type"].clone();
-        node["node_id"]["digest"] = json!(digest);
-        node["body"] = preimage["body"].clone();
-        node["dependencies"] = json!([preimage["body"]["members"][0]["value"]["target"]]);
+        assert!(preimage_validator.is_valid(&preimage), "{} preimage", vector["id"]);
         assert!(
             schema.is_valid(&node),
             "{} is a closed option-value node",
@@ -24858,9 +24974,23 @@ fn tc_971_option_value_body_is_closed_and_its_preimage_covers_type_and_payload()
         );
         assert_eq!(
             application_node_preimage(&node, &[]).as_ref(),
-            Some(preimage),
+            Some(&preimage),
             "the whole option-value body and semantic type enter its application preimage"
         );
+        let mut package = fixture.clone();
+        install(&mut package, type_node.clone());
+        install(&mut package, node);
+        assert_eq!(
+            read_package_semantics(&package, &catalog),
+            Ok(()),
+            "{} is admitted by the strict reader",
+            vector["id"]
+        );
+        if vector["id"] == "OV-01" {
+            valid_package = Some(package);
+            selected_type = Some(type_node);
+            selected_payload = Some(payload_node);
+        }
     }
     assert_eq!(
         observed_keys.len(),
@@ -24868,28 +24998,157 @@ fn tc_971_option_value_body_is_closed_and_its_preimage_covers_type_and_payload()
         "payload identity changes option identity"
     );
 
-    let option_preimage = &positives[0]["preimage"];
-    let mut other_type = option_preimage.clone();
-    other_type["semantic_type"]["digest"] =
-        json!("1111111111111111111111111111111111111111111111111111111111111111");
-    assert_ne!(
-        unqualified_jcs_sha256(&other_type),
-        positives[0]["sha256"].as_str().unwrap()
-    );
-
-    for refusal in vectors["refusal_bodies"]
+    let base_package = valid_package.expect("OV-01 package");
+    let type_node = selected_type.expect("OV-01 option type");
+    let payload_node = selected_payload.expect("OV-01 payload");
+    let boolean_type = boolean_fixture["semantic_graph"]["nodes"]
         .as_array()
-        .expect("refusal vectors are an array")
+        .expect("Boolean fixture nodes are an array")
+        .iter()
+        .find(|candidate| {
+            candidate["node_tag"] == "scalar_type" && candidate["semantic_form"] == "boolean"
+        })
+        .expect("Boolean fixture has its scalar type");
+    let (other_option_type, _) = build_option_type(&boolean_type["node_id"]);
+    let (_, original_preimage, original_digest) =
+        build_node(&type_node["node_id"], &payload_node["node_id"]);
+    let (_, changed_type_preimage, changed_type_digest) =
+        build_node(&other_option_type["node_id"], &payload_node["node_id"]);
+    assert_ne!(original_digest, changed_type_digest);
+    assert_ne!(original_preimage["semantic_type"], changed_type_preimage["semantic_type"]);
+
+    for refusal in vectors["schema_refusals"]
+        .as_array()
+        .expect("schema refusal vectors are an array")
     {
-        let mut node = template.clone();
-        node["node_tag"] = json!("value");
-        node["semantic_form"] = json!("option_value");
-        node["semantic_type"] = option_preimage["semantic_type"].clone();
-        node["body"] = refusal["body"].clone();
+        let (mut node, _, _) = build_node(&type_node["node_id"], &payload_node["node_id"]);
+        let binding = &mut node["body"]["members"];
+        match refusal["mutation"].as_str() {
+            Some("empty-members") => *binding = json!([]),
+            Some("wrong-binding-name") => binding[0]["name"] = json!("payload"),
+            Some("inline-literal") => binding[0]["value"] = payload_node["body"].clone(),
+            Some("multiple-bindings") => {
+                let members = binding.as_array_mut().expect("binding members are an array");
+                members.push(members[0].clone());
+            }
+            other => panic!("unknown schema mutation: {other:?}"),
+        }
         assert!(
             !schema.is_valid(&node),
             "{} is refused by OptionValueBody",
             refusal["id"]
         );
+    }
+
+    let reader_refusals = vectors["reader_refusals"]
+        .as_array()
+        .expect("reader refusal vectors are an array");
+    for refusal in reader_refusals {
+        let mut package = base_package.clone();
+        let index = node_index_where(&package, |node| node["semantic_form"] == "option_value");
+        let mut node = package["semantic_graph"]["nodes"][index].clone();
+        match refusal["mutation"].as_str() {
+            Some("semantic-type-is-payload-node") => {
+                node["semantic_type"] = payload_node["node_id"].clone();
+            }
+            Some("semantic-type-is-composite-non-option") => {
+                let composite_type = select(
+                    &fixture,
+                    &json!({
+                        "node_tag": "composite_type",
+                        "semantic_form": "record",
+                        "ordinal": 0
+                    }),
+                );
+                node["semantic_type"] = composite_type["node_id"].clone();
+            }
+            Some("payload-target-is-option-type-node") => {
+                node["body"]["members"][0]["value"]["target"] = type_node["node_id"].clone();
+                node["dependencies"] = json!([type_node["node_id"]]);
+            }
+            Some("payload-target-is-boolean-literal") => {
+                let boolean_payload = select(&boolean_fixture, &refusal["payload_selector"]);
+                let boolean_type = boolean_fixture["semantic_graph"]["nodes"]
+                    .as_array()
+                    .expect("Boolean fixture nodes are an array")
+                    .iter()
+                    .find(|candidate| {
+                        candidate["node_tag"] == "scalar_type"
+                            && candidate["semantic_form"] == "boolean"
+                    })
+                    .expect("Boolean fixture has its scalar type")
+                    .clone();
+                install(&mut package, boolean_type);
+                install(&mut package, boolean_payload.clone());
+                node["body"]["members"][0]["value"]["target"] = boolean_payload["node_id"].clone();
+                node["dependencies"] = json!([boolean_payload["node_id"]]);
+            }
+            Some("dependencies-have-extra-target") => {
+                let element_type = select(
+                    &fixture,
+                    &json!({
+                        "node_tag": "scalar_type",
+                        "semantic_form": "integer",
+                        "ordinal": 0
+                    }),
+                );
+                node["dependencies"] = json!([
+                    payload_node["node_id"].clone(),
+                    element_type["node_id"].clone()
+                ]);
+            }
+            other => panic!("unknown reader mutation: {other:?}"),
+        }
+        if refusal["mutation"] != "dependencies-have-extra-target" {
+            let (_, preimage, digest) = build_node(
+                &node["semantic_type"],
+                &node["body"]["members"][0]["value"]["target"],
+            );
+            node["node_id"]["digest"] = json!(digest);
+            assert_eq!(
+                application_node_preimage(
+                    &node,
+                    package["semantic_graph"]["nodes"]
+                        .as_array()
+                        .expect("package nodes are an array"),
+                ),
+                Some(preimage),
+                "mutated identity preimage is current"
+            );
+        }
+        let replacement_index = node_index_where(&package, |candidate| {
+            candidate["semantic_form"] == "option_value"
+        });
+        package["semantic_graph"]["nodes"][replacement_index] = node;
+        package["semantic_graph"]["nodes"]
+            .as_array_mut()
+            .unwrap()
+            .sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default().to_owned());
+        let result = read_package_semantics(&package, &catalog);
+        let (code, cause, locus, index) = match result {
+            Err(ReadRefusal::GraphShape(id)) => {
+                let index = node_index_where(&package, |node| node["node_id"] == id);
+                let member = application_node_shape_locus(&package["semantic_graph"]["nodes"][index])
+                    .expect("a graph-shape refusal has a member locus");
+                (
+                    "invalid_semantic_graph",
+                    None,
+                    format!("/semantic_graph/nodes/{index}{member}"),
+                    index,
+                )
+            }
+            Err(ReadRefusal::OptionValue(code, cause, id, member)) => {
+                let index = node_index_where(&package, |node| node["node_id"] == id);
+                (code, cause, format!("/semantic_graph/nodes/{index}/{member}"), index)
+            }
+            other => panic!("{} had unexpected reader result: {other:?}", refusal["id"]),
+        };
+        assert_eq!(code, refusal["expected_code"], "{} code", refusal["id"]);
+        assert_eq!(cause, refusal["expected_cause"].as_str(), "{} cause", refusal["id"]);
+        let expected_locus = refusal["expected_locus"]
+            .as_str()
+            .expect("expected locus")
+            .replace("{index}", &index.to_string());
+        assert_eq!(locus, expected_locus, "{} locus", refusal["id"]);
     }
 }
