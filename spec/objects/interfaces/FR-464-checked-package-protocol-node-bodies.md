@@ -421,7 +421,19 @@ passes a step: `send`, `receive`, `attempt`, `effect`, `event`, `commit` and
 `fence` do; `await` and `parallel` do (the match or the `timeout` step, the
 `fork` and the `join`); a `sequence` does when some child does; a `choice`
 does when every case body does; `check` and `repeat` do not (a `repeat` can
-be skipped by a false guard). A `repeat` whose body does not necessarily
+be skipped by a false guard). A `repeat` is never a step, whatever it
+nests and whatever its guard: progress reads the graph's edges, never a
+guard's value ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)),
+so a `repeat` that is the whole of an outer `repeat`'s body, or the only
+stepping part of a `choice` case, a `sequence` or another nested `repeat`,
+contributes no step to the outer `repeat`, even when its guard is `true`, a
+tautology or its `maximum` is 0; it is the steps inside the nested
+`repeat`'s own body that make the *nested* `repeat`'s own cycle progress
+(a `repeat` body that does not necessarily step is refused at that `repeat`).
+The reader does not decide, from a guard, that a nested `repeat` cannot be
+skipped, and a source checker that does so (a guard-feasibility proof) has no
+wire form: an outer `repeat` whose body steps only through a nested `repeat`
+is refused. A `repeat` whose body does not necessarily
 step refuses `unsupported_construct`/`declaration-form` at the `repeat`,
 naming it and the selected protocol profile
 ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)-AC-3).
@@ -601,6 +613,7 @@ alternate cycle encoding.
 | FR-464-AC-18 | A protocol clause retains `owner_model` as the owner model's object-type node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge, node preimage or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
 | FR-464-AC-19 | The protocol profile defines the operator `transition` for the `state`/`transition` form only: a `quire.op.state.transition` application naming `transition` is admitted by the operation step, a `quire.op.state.transition` application naming any operator of the protocol-node table (for example `sequence`) and a `quire.op.protocol.control` application naming `transition` fail the published schema and a complete reader refuses them `malformed_wire` at the application's `operation/member/operator`; the operation step run alone on the same documents refuses `invalid_package`/`operation-member-mismatch` (FR-341-AC-19). | Test (TC-233) |
 | FR-464-AC-20 | The `owner_model` target is checked in one phase ("Owner-model edge phase"), with a fail-closed outcome for each case: an omitted edge and an external key refuse `malformed_wire` at the node; a genuinely unselected `model`/`object_type` target (owner joining no selection row, or not declared as an object type by the selected document) refuses `missing_declaration`/`missing-selection` at the target's own `node_id` in FR-322's owner join before any body step and before the clause's edge is read; a target missing from the clause's `dependencies` refuses `invalid_semantic_graph` at `/dependencies`; a local target naming no node refuses `missing_declaration`/`missing-name`, and a model node of a selected declaration of another form, a selected package's `model_root` node, a non-model declared node with a source owner and a non-model node refuse `invalid_model_binding`/`malformed-declaration`, both at `/semantic_graph/nodes/{i}/owner_model` as the first check of the clause at step 6; a valid selected second `object_type` is admitted and is not compared with the `over` type. An earlier-stage fault wins when paired: the owner join of the target precedes every body step, the refinement-step defects and the step 4 and 5 defects precede the typed edge check, and the typed edge check precedes the same clause's activation, capture and slot defects. Reader evidence is owned by IR-1053 (IR FR-064-AC-4/TC-048); no QSpec reader test exists, so the vectors TC-946 OM-03, OM-05..OM-11 and O10..O12 are the published oracle. | Analysis |
+| FR-464-AC-21 | A `repeat` never counts as a step in an enclosing `repeat`'s progress: an outer `repeat` whose body is only a nested `repeat` that holds a step refuses `unsupported_construct`/`declaration-form` at the outer `repeat` whatever the nested guard is (`true`, the tautology `a or not a`, a non-tautological `a`, with or without a `maximum`, with `maximum` 0), the guard is never evaluated or compared, while a body that holds a step beside the nested `repeat` (a `sequence` with a stepping sibling) or a `parallel` or `await` around it is admitted. | Test (TC-946) |
 
 ## Published artifacts and the operation catalog
 

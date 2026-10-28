@@ -2809,7 +2809,7 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
             .filter(|case| case["test_case"] == test_case)
             .count()
     });
-    assert_eq!(counts, [127, 88, 167]);
+    assert_eq!(counts, [131, 88, 172]);
     // Every vector id a QSpec table row names is published as a case: a row
     // the table adds without a vector (TC-946 K10, K14) fails here.
     for (test_case, table) in [
@@ -2856,6 +2856,92 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
                 .iter()
                 .any(|field| case[*field].as_str().is_some_and(|edit| !edit.is_empty()))
         );
+    }
+}
+
+const FR466_PROTOCOL_CONTROLS: &str =
+    include_str!("../spec/objects/interfaces/FR-466-checked-package-protocol-control-bodies.md");
+
+/// The published protocol vector with this test case and id.
+fn protocol_vector<'a>(cases: &'a [Value], test_case: &str, id: &str) -> &'a Value {
+    cases
+        .iter()
+        .find(|case| case["test_case"] == test_case && case["id"] == id)
+        .unwrap_or_else(|| panic!("{test_case} {id} is published"))
+}
+
+/// A vector's Expected text names this refusal: its code and cause pair,
+/// stated as the one backticked `code`/`cause` token the vectors use.
+fn expects_refusal(vector: &Value, pair: &str) -> bool {
+    vector["Expected"]
+        .as_str()
+        .is_some_and(|expected| expected.contains(&format!("`{pair}`")))
+}
+
+/// STD-539: a nested `repeat` is never a step in an enclosing `repeat`'s
+/// progress (FR-464-AC-21), a `repeat` has no post-test form (FR-466-AC-17)
+/// and a `visible` entry is an `expression` node (FR-466-AC-18). The rulings
+/// are pinned in the requirement text, the criterion rows and the vectors; each
+/// pin is then mutated and the mutation must be caught.
+#[trace("TC-946", "TC-948", "FR-464-AC-21", "FR-466-AC-17", "FR-466-AC-18")]
+#[test]
+fn std_539_repeat_progress_post_test_and_visible_entry_rulings_are_pinned() {
+    let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
+    let cases = vectors["cases"].as_array().expect("cases are an array");
+    let declaration_form = "unsupported_construct`/`declaration-form";
+    let missing_name = "missing_declaration`/`missing-name";
+    let malformed = "invalid_model_binding`/`malformed-declaration";
+    let operator_ineligible = "ill_typed`/`operator-ineligible";
+
+    // (test case, vector, refusal pair it must name)
+    let refusing = [
+        ("TC-946", "R13", declaration_form),
+        ("TC-946", "R14", declaration_form),
+        ("TC-946", "R15", declaration_form),
+        ("TC-948", "DF14", missing_name),
+        ("TC-948", "DF16", malformed),
+        ("TC-948", "DF17", operator_ineligible),
+    ];
+    for (test_case, id, pair) in refusing {
+        let vector = protocol_vector(cases, test_case, id);
+        assert!(expects_refusal(vector, pair), "{test_case} {id} names {pair}");
+        // Mutation: swapping the cause for another is caught.
+        let mutated = serde_json::json!({
+            "Expected": vector["Expected"].as_str().unwrap().replace(pair, "invalid_package`/`invalid-value")
+        });
+        assert!(!expects_refusal(&mutated, pair), "{test_case} {id} mutation is caught");
+    }
+    // The admitted vectors say admitted, and a refusing vector never does.
+    for (test_case, id) in [("TC-946", "R16"), ("TC-948", "DF15")] {
+        let expected = protocol_vector(cases, test_case, id)["Expected"].as_str().unwrap();
+        assert!(expected.contains("admitted"), "{test_case} {id} is admitted");
+    }
+    for (test_case, id, _) in refusing {
+        let expected = protocol_vector(cases, test_case, id)["Expected"].as_str().unwrap();
+        assert!(!expected.starts_with("admitted"), "{test_case} {id} is a refusal");
+    }
+    // DF14 covers a repeat with no maximum, maximum 3 and maximum 0.
+    let df14 = protocol_vector(cases, "TC-948", "DF14")["Edit"].as_str().unwrap();
+    assert!(df14.contains("no `maximum`") && df14.contains("`maximum` 3") && df14.contains("`maximum` 0"));
+
+    // Requirement-text pins, each with a mutation that removes the pinned
+    // sentence and must be caught.
+    let pins: [(&str, &str, &str); 5] = [
+        (FR464_PROTOCOL_NODES, "A `repeat` is never a step, whatever it\nnests and whatever its guard", "never a step"),
+        (FR464_PROTOCOL_NODES, "| FR-464-AC-21 | A `repeat` never counts as a step", "AC-21 row"),
+        (FR466_PROTOCOL_CONTROLS, "**No post-test `repeat`.**", "no post-test"),
+        (FR466_PROTOCOL_CONTROLS, "| FR-466-AC-17 | A `repeat` has no post-test form", "AC-17 row"),
+        (FR466_PROTOCOL_CONTROLS, "**A `visible` entry is an `expression` node.**", "visible entry form"),
+    ];
+    for (document, pin, name) in pins {
+        assert!(document.contains(pin), "{name} is pinned in the requirement");
+        let mutated = document.replace(pin, "");
+        assert!(!mutated.contains(pin), "{name} mutation is caught");
+    }
+    assert!(FR466_PROTOCOL_CONTROLS.contains("| FR-466-AC-18 | A `visible` entry is an `expression` node"));
+    // The old guard-feasibility exception must not reappear in either text.
+    for document in [FR464_PROTOCOL_NODES, FR466_PROTOCOL_CONTROLS] {
+        assert!(!document.contains("skip edge is absent"));
     }
 }
 

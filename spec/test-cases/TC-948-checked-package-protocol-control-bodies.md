@@ -16,7 +16,7 @@ relationships:
 Schema and reader vectors for the thirteen `protocol`/`control` operators and
 the `protocol`/`compensation` node: argument layouts, labels, joins,
 progress, binder scope and the compensation checks. Scope: FR-466-AC-1 to
-FR-466-AC-15.
+FR-466-AC-18.
 
 ## Test Procedure
 
@@ -186,6 +186,11 @@ FR-466-AC-15.
 | DF11 | a guard reads the binder of a `repeat` body from the repeat's own guard | `missing_declaration`/`missing-name` (out-of-scope read, before the decision-fact check) |
 | DF12 | a `repeat` owned by `Fulfillment` whose `visible` lists `eastRes.ok` and whose guard reads it | admitted |
 | DF13 | an `event` binder `by Payments`, read by a choice owned by `Payments`, and by one owned by `Orders` | admitted; `wrong_snapshot`/`wrong-observation`, `reason` `other-role` |
+| DF14 | a `repeat` owned by `Fulfillment` whose body holds an `attempt` `by Fulfillment` with binder `polled`, whose `visible` lists `polled.ok` and whose guard reads it; with no `maximum`, `maximum` 3 and `maximum` 0 | each `missing_declaration`/`missing-name` at the read (out-of-scope; a `repeat` has no post-test form); never admitted, never `wrong_snapshot`, never `invalid_package`/`invalid-value` (FR-466-AC-17) |
+| DF15 | DF14 with the guard and `visible` entry reading `eastRes.ok`, in scope at the `repeat`'s entry | admitted (FR-466-AC-17) |
+| DF16 | a `choice` `visible` entry and a `repeat` `visible` entry each target a `value`/`literal` node `true`; each target the `value`/`parameter` binder node `eastRes` | each `invalid_model_binding`/`malformed-declaration` at the target (FR-466-AC-18) |
+| DF17 | a `choice` `visible` entry and a `repeat` `visible` entry each an `expression`/`reference` to the record binder `eastRes` | each `ill_typed`/`operator-ineligible` at the read, naming the slot (FR-466-AC-18) |
+| DF18 | a `visible` entry that is an application over the constants `true` and `false` only, and one over the capture `order` only, with a guard reading `eastRes.ok` that no individual entry lists | the entries are admitted as composite entries; the guard read refuses `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` (FR-466-AC-18) |
 
 ## Compensation vectors
 
@@ -248,7 +253,7 @@ FR-466-AC-15.
 7. E1 to E22 behave as listed (FR-466-AC-7, FR-466-AC-8, FR-466-AC-9).
 8. BS1 to BS11 behave as listed (FR-466-AC-10).
 9. CP1 to CP37 (with CP9b to CP9f and CP10b) behave as listed (FR-466-AC-11, FR-466-AC-12).
-10. DF1 to DF13 (with DF6b and DF7b to DF7h) behave as listed (FR-466-AC-14, FR-466-AC-16).
+10. DF1 to DF18 (with DF6b and DF7b to DF7h) behave as listed (FR-466-AC-14, FR-466-AC-16, FR-466-AC-17, FR-466-AC-18).
 11. Every admitted vector's node keys are unchanged by reformatting the source
     and by a second reference to the protocol, and change with any retargeted
     reference, renamed control, reordered child or changed literal

@@ -887,6 +887,34 @@
     },
     {
       "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R13",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` (guard `true`) around an `attempt`",
+      "Expected": "`unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R14",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat max 1` whose guard is the tautology `a or not a or b or not b`, around an `attempt`",
+      "Expected": "`unsupported_construct`/`declaration-form` at the outer `repeat`; the guard is not evaluated (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R15",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` whose guard is the single fact `a` (not a tautology), around an `attempt`; and the same nested `repeat` with `maximum` 0",
+      "Expected": "each `unsupported_construct`/`declaration-form` at the outer `repeat`, the same refusal as R13 and R14 (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R16",
+      "Edit to the base": "`Poll`'s body is a `sequence` of a nested `repeat` around an `attempt` and a second `attempt`; and a `parallel` with a `join` holding the nested `repeat` in one branch; and an `await` whose `then` is the nested `repeat`",
+      "Expected": "each admitted (a sibling step, the `parallel` and the `await` step) (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
       "section": "Reader order",
       "id": "O1",
       "Edit to the base": "a `state`/`state_clause` defect and `V7`",
@@ -2529,6 +2557,41 @@
       "id": "DF13",
       "Edit": "an `event` binder `by Payments`, read by a choice owned by `Payments`, and by one owned by `Orders`",
       "Expected": "admitted; `wrong_snapshot`/`wrong-observation`, `reason` `other-role`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF14",
+      "Edit": "a `repeat` owned by `Fulfillment` whose body holds an `attempt` `by Fulfillment` with binder `polled`, whose `visible` lists `polled.ok` and whose guard reads it; with no `maximum`, `maximum` 3 and `maximum` 0",
+      "Expected": "each `missing_declaration`/`missing-name` at the read (out-of-scope; a `repeat` has no post-test form); never admitted, never `wrong_snapshot`, never `invalid_package`/`invalid-value` (FR-466-AC-17)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF15",
+      "Edit": "DF14 with the guard and `visible` entry reading `eastRes.ok`, in scope at the `repeat`'s entry",
+      "Expected": "admitted (FR-466-AC-17)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF16",
+      "Edit": "a `choice` `visible` entry and a `repeat` `visible` entry each target a `value`/`literal` node `true`; each target the `value`/`parameter` binder node `eastRes`",
+      "Expected": "each `invalid_model_binding`/`malformed-declaration` at the target (FR-466-AC-18)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF17",
+      "Edit": "a `choice` `visible` entry and a `repeat` `visible` entry each an `expression`/`reference` to the record binder `eastRes`",
+      "Expected": "each `ill_typed`/`operator-ineligible` at the read, naming the slot (FR-466-AC-18)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF18",
+      "Edit": "a `visible` entry that is an application over the constants `true` and `false` only, and one over the capture `order` only, with a guard reading `eastRes.ok` that no individual entry lists",
+      "Expected": "the entries are admitted as composite entries; the guard read refuses `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` (FR-466-AC-18)"
     },
     {
       "test_case": "TC-948",
