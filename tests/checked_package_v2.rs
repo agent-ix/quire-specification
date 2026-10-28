@@ -19836,6 +19836,24 @@ fn shapes_intake_refusal(document: &Value) -> Option<(&'static str, &'static str
         "Boolean", "Integer", "Text", "String", "UUID", "Timestamp", "Bytes", "JsonObject",
         "Float32", "Float64", "Duration", "Rational", "Decimal",
     ];
+    // An FR-154 alias is read through to its target (chains included) before
+    // the payload and position tests.
+    let read_through = |reference: &str| -> String {
+        let mut current = reference.to_owned();
+        for _ in 0..16 {
+            let next = document["aliases"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .find(|alias| alias["node"] == current.as_str())
+                .map(|alias| alias["target"].as_str().expect("alias target").to_owned());
+            match next {
+                Some(target) => current = target,
+                None => break,
+            }
+        }
+        current
+    };
     let value_type = |reference: &str| {
         document["value_types"]
             .as_array()
@@ -19843,10 +19861,11 @@ fn shapes_intake_refusal(document: &Value) -> Option<(&'static str, &'static str
             .flatten()
             .find(|candidate| candidate["node"] == reference)
     };
-    let resolves = |reference: &str| match reference.strip_prefix("ix://quire/native/") {
+    let resolves = |reference: &str| match read_through(reference).strip_prefix("ix://quire/native/") {
         Some(native) => natives.contains(&native),
         None => {
-            value_type(reference).is_some()
+            let reference = read_through(reference);
+            value_type(&reference).is_some()
                 || reference.strip_prefix("ix://acme/shapes/").is_some_and(|name| {
                     shapes_declared(document, "tuple_types", name).is_some()
                         || shapes_declared(document, "variant_types", name).is_some()
@@ -19855,13 +19874,12 @@ fn shapes_intake_refusal(document: &Value) -> Option<(&'static str, &'static str
     };
     // FR-322 "Admitted payload and position types": the four declared types
     // with no step 4 row are refused at intake (FR-322-AC-181, -182).
-    // A package value type is the package's named alias of a native: it is
-    // refused when its native is `Rational` or `Decimal`, or `Text` without
+    // A package value type is refused when its native is `Rational` or `Decimal`, or `Text` without
     // the flat `lower`, `upper` and `profile` members (FR-154's value type
     // shape, as `model-member-type-vectors.json` publishes it).
-    let unmapped = |reference: &str| match reference.strip_prefix("ix://quire/native/") {
+    let unmapped = |reference: &str| match read_through(reference).strip_prefix("ix://quire/native/") {
         Some(native) => matches!(native, "Rational" | "Decimal" | "Text"),
-        None => value_type(reference).is_some_and(|found| {
+        None => value_type(&read_through(reference)).is_some_and(|found| {
             match found["native"].as_str().and_then(|native| native.strip_prefix("ix://quire/native/")) {
                 Some("Rational" | "Decimal") => true,
                 Some("Text") => ["lower", "upper", "profile"].iter().any(|member| found.get(member).is_none()),
@@ -20442,7 +20460,10 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
         }
         let observed = shapes_intake_refusal(&changed);
         match expected_refusal(&case["expected"]) {
-            None => assert_eq!(observed, None, "{}", case["name"]),
+            None => {
+                assert_eq!(case["expected"]["admitted"], true, "{}: an admitted case says so", case["name"]);
+                assert_eq!(observed, None, "{}", case["name"]);
+            }
             Some((code, cause)) => {
                 let (observed_code, observed_cause, at) = observed.unwrap_or_else(|| panic!("{} is refused", case["name"]));
                 assert_eq!(observed_code, code, "{}", case["name"]);
@@ -20465,7 +20486,7 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
     ]
     .map(|list| vectors[list].as_array().expect(list).len());
     assert_eq!(names.len(), published.iter().sum::<usize>(), "every published case ran");
-    assert_eq!(published, [5, 7, 3, 1, 8, 4, 5, 4, 4, 26], "no published case was dropped");
+    assert_eq!(published, [5, 7, 3, 1, 8, 4, 5, 4, 4, 34], "no published case was dropped");
 }
 
 /// FR-322-AC-140 and FR-322-AC-146: the wire cases over the fixture.
