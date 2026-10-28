@@ -55,7 +55,7 @@ and a second variant type `Level` with cases `Gold` and `Silver`.
 
 ## Tuple value types and payload-bearing variant types (STD-519)
 
-Scope: FR-322-AC-140 to FR-322-AC-147, FR-322-AC-151 to FR-322-AC-154 and FR-322-AC-181 to FR-322-AC-183 (payload and position types with no step 4 row: intake cases `TK-11` to `TK-20`, and the member refusal in TC-280). Use `model-tuple-union-vectors.json`
+Scope: FR-322-AC-140 to FR-322-AC-147, FR-322-AC-151 to FR-322-AC-154 and FR-322-AC-181 to FR-322-AC-183 (payload and position types with no step 4 row: intake cases `TK-11` to `TK-26`, and the member refusal in TC-280). Use `model-tuple-union-vectors.json`
 and its selected document `domain-package-acme-shapes.json`:
 the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 `p1: Integer`), `Swap` (`p0: Integer`, `p1: Boolean`) and `Nest` (`p0: Pair`,

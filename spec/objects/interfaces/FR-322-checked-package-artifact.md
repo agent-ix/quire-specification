@@ -289,7 +289,9 @@ boundary.
   [FR-441](FR-441-union-member-key.md) specifies. A
   `value` node with `semantic_form: "parameter"` stands for a value a binder
   binds (a function parameter; a `let`, query, `count` or `sum` binder; a
-  `fold` or `reduce` accumulator or element binder; or the `self`, `result`
+  `fold` or `reduce` accumulator or element binder; a `forall` or `exists` binder over a clock
+  collection, which binds the element place's slot position (or key), typed by the selector's
+  domain ("Presence" below); or the `self`, `result`
   and operation parameters of a state clause; or a continuous variable of a
   hybrid model, [FR-481](FR-481-checked-package-hybrid-model-nodes.md)), and
   its `semantic_type` is the bound value's type. It carries no `declaration` and no `owner`, and its
@@ -503,6 +505,10 @@ boundary.
   re-keys nor refuses it. A `relation`/`refinement` node is keyed by its own
   `{version: "quire.refinement-node/v1", semantic_type, body}` preimage
   ([FR-375](../../functional/analysis/FR-375-declare-model-refinement.md));
+  its `body` carries the refinement's authored `name`, so the name is part of
+  the node's identity and two differently named refinements are two nodes
+  (FR-375-AC-29), while the node still carries no `declaration`, `owner` or
+  `nominal_identity_preimage`;
   when FR-375's `class_catalog` is present it is part of that exact `body`
   in both V2 wire and node-preimage schemas, and the same body enters the
   package identity projection. Its local class `node` and `binder_types`
@@ -1531,10 +1537,11 @@ no operation identity, and the published operation catalog is unchanged.
   payload `aggregate`, never an `enum_value` node. The text leaves of a model
   union are those of its payload types under `member:<Name>` then `position:0`.
 - **Admitted payload and position types.** A tuple position `typeRef` and a variant
-  case `payloadType` is typed by the step 4 table as a field of presence `required`
-  and multiplicity `[1, 1]`, and it is admitted exactly when a row of that table gives
-  its `typeRef` a type: the natives `Boolean`, `Integer`, `String`, `UUID`, `Timestamp`,
-  `Bytes`, `JsonObject`, `Duration`, `Float32` and `Float64`, a unit, and the package
+  case `payloadType` are typed by the step 4 table as a field of presence `required`
+  and multiplicity `[1, 1]`, and each is admitted exactly when a row of that table gives
+  its `typeRef` a type (a `Reference<O>` row for an object type `O` of the package, a
+  `Quantity<u>` row for a unit `u`, or a row for a native or value type): the natives `Boolean`, `Integer`, `String`, `UUID`, `Timestamp`,
+  `Bytes`, `JsonObject`, `Duration`, `Float32` and `Float64`, a unit, an object type of the package (typed `Reference<O>`), and the package
   record, tuple and variant types and bounded value types. Four declared types have no
   row, and each is refused (not mapped, and never inferred): the native
   `ix://quire/native/Rational`, the native `ix://quire/native/Decimal`, the native
@@ -2545,7 +2552,61 @@ reader joins every row to its path step and to the root model's selected
 declaration; absence, disagreement or an undeclared member is a malformed
 clock place. Its nonempty path has ordered `field(name)`,
 `tuple(index)`, `union(case)` or `slot(collection, selector, minimum,
-maximum)` entries, and guards is a reference aggregate. A `clock_reset` is
+maximum)` entries, and guards is a reference aggregate.
+
+A `clock_place` is a **template**: one node for each distinct clock path of
+the model, however many elements a collection holds in a state, and its key is
+the key of its complete body. The `selector` of a `slot` step is therefore the
+**symbolic element selector**, a `reference` to the type node of the selector's
+domain: the package's `Integer` type node for a `Sequence`, `Set`, `Bag` or
+`OrderedSet` (the element's zero-based position, FR-415 "Element places"), and
+the node of the key type for a `Map`. Only a scalar key type is ruled here: a tuple or
+record key is out of scope until a vector exercises it, and a reader that cannot resolve it
+refuses the place `malformed-clock-place`.
+A `Map` that is the element of a `Sequence`, `Set`, `Bag` or `OrderedSet` adds
+a second slot step, so a path may carry several. A slot step whose selector is
+an integer literal, a reference to any other node, or a reference to the type
+node of another domain refuses `invalid_package`/`malformed-clock-place` at that
+path step; the integer literal arm of the `selector` binding stays in both
+closed schemas for wire compatibility and is not admitted in a `clock_place`.
+The concrete position or key exists only on a place instantiated at analysis or
+run time, which no node represents: every instance of a template shares its
+node key, and no node field depends on how many elements a state holds. Guards
+never enter place identity, so two `clock_place` nodes with one path and
+different `guards` are a repeated place (`duplicate-clock-place`). A `guards`
+aggregate, on a `clock_place` and on the `timed_model` root, may be empty; it
+is empty exactly when the model has no guard to list. A guard that exists is
+never absent from its aggregate: a `clock_guard` node that the root's `guards`
+does not list refuses `invalid_package`/`timed-node-reference`, and a producer
+that cannot yet write the guards of a model refuses to emit that model rather
+than write an empty aggregate.
+
+**Presence.** `present(p)` over a clock place is a derived Boolean predicate
+and is the application of `quire.op.option.present` (form `presence_read`,
+result type Boolean). The existing form over one Option-typed operand is
+unchanged, with the same body and so the same node key; the place form has the
+arguments, in order: a reference to the
+`clock_place` template node of `p`; the owner term, an expression of the
+place's owner object type (`self`, another object such as `other`, a parameter
+or a bound variable); and one term for each `slot` step of the path in path
+order, of the selector's domain (an Integer position, or a key for a `Map`).
+The place identity (owner, `clock_place` node key, slots; QSL FR-230 "Place
+identity") is the whole operand, so no record, tuple, model, type or
+`clock_place` node carries a presence bit or an `Option<Boolean>`, and the
+`object_type` node of the owner, a function of its `owner` and its empty body, is the
+same node with or without an `Option<Clock>` member. A quantifier over a clock
+collection (`forall(e in p: ...)`, `exists`) binds `e` as a `parameter` of the
+selector's domain (the one case in which a parameter's `semantic_type` is the
+slot's selector domain and not the element's value type), and `present(e)` and every other read of the element place
+take that parameter as the slot term. The reader refuses
+`ill_typed`/`operator-ineligible` at `/body/arguments` an argument count other
+than two plus the number of slot steps, and at `/body/arguments/0` a first
+argument that is neither a `clock_place` node nor an Option-typed term; and
+`ill_typed`/`type-mismatch` at the argument an owner term not of the owner type
+or a slot term not of the selector's domain. An `Option` or `?` wrapper adds no
+path step: the `resolved_path` row of the field carries the rendered declared
+type `Option<T>`, and the terminal row is the one whose type is `Clock` once
+the wrapper is removed. A `clock_reset` is
 exactly `place`, `value`; `clock_guard` and `time_invariant` are each exactly
 `predicate`. An `urgency` is exactly `kind`, `predicate` for `when`, or
 `kind`, `model`, `operation_name` for `operation`. A `clock_constraint` is
@@ -2735,13 +2796,20 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-145 | A selected document with a tuple that has no position, a gap in its position ordinals, a position without `typeRef`, or a field, identity field, operation, supertype or clause refuses `invalid_model_binding`/`malformed-declaration` at stage `package_read`; a position `typeRef` naming no package type refuses `missing_declaration`/`missing-name`; two positions with one ordinal refuse `invalid_model_binding`/`conflicting-binding`; a variant case whose `payloadType` is unresolved or is `ix://quire/native/Clock` refuses `unsupported_construct`/`declaration-form`. Each is the first refusal in FR-154's report order, in the order "Intake refusal order" states, and precedes every graph refusal. | Test (TC-940) |
 | FR-322-AC-146 | `model-tuple-union-vectors.json` publishes the declarations, the cases of FR-322-AC-141 to FR-322-AC-145 the recursion cases of FR-322-AC-147, the application-node key vectors of FR-322-AC-144 and the wire cases of FR-322-AC-140 and FR-322-AC-144; `node-identity-vectors.json` publishes `model-tuple-value-type-pair`, `model-variant-type-shape-union` and the `union_member_vectors` `union-member-model-shape-both` and `union-member-model-shape-empty`, each recomputing its JCS SHA-256 and validating against the closed preimage schema; and `fixtures/positive-model-tuple-union.json` is a schema-valid package with a recomputed `package_id`, one `model_root` per selection and a tuple node and a payload-bearing variant node whose owners join the published document. The QSpec test runs all three from the files. | Test (TC-940) |
 | FR-322-AC-147 | A selected document in which the tuple `Cell` (positions `Integer`, `List`) and the variant type `List` (cases `Nil`, `Cons(Cell)`) refer to one another is admitted by intake. The `Cell` and `List` nodes carry no `recursion_group`, each key is the closed `ModelDeclarationNode` preimage digest of its owner alone, and `List` has family `union` and `Cell` family `tuple`. The structural walk out of `List` has the one step `member:Cons`, `position:0` to `Cell`, and out of `Cell` the steps `position:0` to `Integer` and `position:1` to `List`; `quire.op.structural.eq` over two `List` operands, which re-enters `List` and reaches no text, has no leaf and is admitted with the empty `leaves`, and one that supplies a leaf refuses `invalid_package`/`operation-law-mismatch`. A `union_value` of `List` with the case `Cons` and a `Cell` payload term, and with `Nil` and none, is admitted. | Test (TC-940) |
+| FR-322-AC-148 | The slot selector of a template step is symbolic. For `ts: Sequence<Timer>[0, 3]` with `Timer { x: Clock; n: Int }`, the place `ts.0.x` is the one `clock_place` whose path is `field(ts)`, `slot(sequence, <Integer type node>, 0, 3)`, `field(x)`; `Set`, `Bag` and `OrderedSet` differ only in the `collection` literal and the key, `Sequence<Sequence<Clock>>` carries one Integer-typed slot step for each level, and `Map<Text, Clock>` carries the Text type node (the published fixture place). A slot selector that is an integer literal, a reference to the Text type node under a `Sequence`, a reference to an expression node, or a reference to the Integer type node under a `Map<Text, _>` refuses `invalid_package`/`malformed-clock-place` at the path step `/semantic_graph/nodes/{i}/body/members/1/value/members/{j}`. | Test (TC-367; CK-26; SL-01..SL-06, SR-01..SR-04) |
+| FR-322-AC-149 | One template node serves every instance. The places `ts.0.x`, `ts.1.x` and `ts.2.x` of AC-148 are instances of the one node of `SL-01`; no node carries an index and no node field depends on how many elements a state holds. Two `clock_place` nodes with one path and different `guards` refuse `invalid_package`/`duplicate-clock-place`. | Test (TC-367; CK-26; SL-01, SL-07, SL-08, GD-02) |
+| FR-322-AC-150 | An empty `guards` aggregate is admitted on a `clock_place` (`SL-08`) and on a `timed_model` root (the published tick fixture) when the model has no guard, and the same place with a guard predicate listed (`SL-07`) is admitted with a different key. A `clock_guard` node that the root's `guards` does not list refuses `invalid_package`/`timed-node-reference` and is never read as absent (`GD-03`), and two places of one path with different guards refuse `invalid_package`/`duplicate-clock-place` (`GD-02`); the vectors publish both as replayable package mutations. | Test (TC-367; CK-26; GD-01..GD-03) |
 | FR-322-AC-151 | The selected document of the published `acme/shapes` package is `domain-package-acme-shapes.json`, a full FCD semantic IR 2.0.0 document (`contractVersion`, `package.identity`, `constructs`, `types`) with `Holder` an object type, `Pair`, `Swap`, `Nest` and `Cell` tuple value types with ordered `positions` (the tuple construct uses FCD's `tuple` shape and each position carries its schema-required `origin`, per filament-core-data FR-147-AC-2 and FR-147-AC-3), and `Shape`, `Color` and `List` variant types with `variants`; `domain_package` in `model-tuple-union-vectors.json` is exactly the projection of it that intake reads (types in document order, lists in declared order, multiplicity bounds as decimal strings, a tuple position's ordinal its index) and is not digested. `selection_digest`, the digest of the fixture's `model_selections` row and the input to its `model_root` key and `package_id`, is the SHA-256 of the RFC 8785 bytes of the whole document; the `model_root` key and the `package_id` recompute from it. Swapping the position types of `Pair` in the document, or reordering two declarations in its `types`, changes the document and so the row digest. | Test (TC-940) |
 | FR-322-AC-152 | The wire cases `TW-18` (position `2`), `TW-19` (the `declaration` is the tuple `Swap`) and `TW-20` (the beyond-safe `KeyOrdinal` string `9007199254740993`) of `model-tuple-union-vectors.json` each refuse `ill_typed`/`operator-ineligible` at the locus `/semantic_graph/nodes/31`, the `quire.op.tuple.project` application node, which is the position-0 projection over the `Pair`-typed parameter (node 14, result type the `Boolean` node), and not at `/semantic_graph/nodes/31/body/operation/member`, `/member/position` or `/member/declaration`; `TW-26` (position the string `0`) is `malformed_wire` at the same `/semantic_graph/nodes/31`. | Test (TC-940) |
 | FR-322-AC-153 | A wire case of `model-tuple-union-vectors.json` states a `cause` exactly when its code carries one: `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration` and `invalid_model_binding` rows state their cause (`TW-05`, `TW-06` to `TW-09`, `TW-11` to `TW-20`, `TW-23` to `TW-25`), and the admitted case `TW-00` and the rows of `malformed_wire` (`TW-01` to `TW-04`, `TW-10`, `TW-26`) and `invalid_semantic_graph` (`TW-21`, `TW-22`), codes that carry no cause (FR-272), state none. | Test (TC-940) |
 | FR-322-AC-154 | In `TW-05` (the `Pair` node keyed over a non-empty body) every `reference` to the published `Pair` key dangles, and each such target equals the recomputed key of the closed `ModelDeclarationNode` preimage of the rekeyed `Pair` node; they are dependent on the rekey, so the first refusal is `invalid_package`/`stale-node-key` at `/semantic_graph/nodes/0/node_id`. A dangling `reference` whose target is no recomputed key of a stale-keyed node is a graph-shape refusal that precedes every stale-node-key refusal, and stale nodes keep ascending retained digest order. | Test (TC-940) |
-| FR-322-AC-181 | A variant case whose `payloadType` is the native `Rational`, the native `Decimal`, the native `Text` (bare), or a package value type bound as `Text` without `min`, `max` and `profile`, refuses `unsupported_construct`/`declaration-form` at `Variant.payloadType` in step 1, at stage `package_read`, with FR-154's code and no graph refusal; an alias of any of them refuses the same. The cases whose `payloadType` is `Float32`, `Float64`, `Bytes`, `JsonObject`, `String`, `UUID`, `Timestamp`, `Duration`, a `Text[0, 8; nfc]` value type, or a declared tuple or variant type are admitted, so unbounded `Bytes` and `JsonObject` are not refused. | Test (TC-940) |
-| FR-322-AC-182 | A tuple position whose `typeRef` is the native `Rational`, the native `Decimal`, a bare native `Text`, or a package value type bound as `Text` without bounds refuses `invalid_model_binding`/`malformed-declaration` at the position in step 1, at stage `package_read`, as `ix://quire/native/Clock` does and ahead of the `missing-name` check of a later position; a position typed `Float64`, `Bytes` or a `Text[0, 8; nfc]` value type is admitted. | Test (TC-940) |
-| FR-322-AC-183 | A field, an operation parameter or an operation result typed `Rational`, `Decimal` or bare `Text` is admitted by FR-154 intake and gives the member no type: the application that resolves it refuses `ill_typed`/`operator-ineligible`, never a mapping to a `scalar_type` node. The four types of FR-322-AC-181 have no node mapping and no identity rule, and no operation lookup is reached for them. | Test (TC-940) |
+| FR-322-AC-155 | `present(other.v)` over `v: Option<Clock>`, `present(self.q[i])` over `q: Sequence<Option<Clock>>[0, 2]`, and the body `present(e)` of `forall(e in self.q: ...)` are each one `presence_read` application of `quire.op.option.present`, typed Boolean, with the arguments the place template, the owner term (`other`, `self`) and, for `q`, one slot term (the parameter `i`; the binder parameter `e`); the three nodes have distinct keys, the place nodes are the same templates for every owner, and no place, parameter or model node carries a `presence` member or an `Option<Boolean>`. | Test (TC-367; CK-27; PR-01..PR-03) |
+| FR-322-AC-156 | A `presence_read` with no slot term over `q` refuses `ill_typed`/`operator-ineligible` at `/body/arguments`; one whose owner term is an Integer parameter refuses `ill_typed`/`type-mismatch` at `/body/arguments/1`; one whose first argument is no `clock_place` node refuses `ill_typed`/`operator-ineligible` at `/body/arguments/0`. | Test (TC-367; CK-27; PR-04..PR-06) |
+| FR-322-AC-157 | The `clock_place` of `v: Option<Clock>` has the single path step `field(v)` and one `resolved_path` row whose member type is `Option<ix://quire/native/Clock>`, and the `Option` wrapper adds no step. The row joins the declared field `v` of the `Order` declaration by identity, declared presence `optional` and type `Clock`, and terminates at `Clock` once the wrapper is removed; the `object_type` node of `Order` has one key with and without `v`, and its declared members are exactly the declared fields. The place of `q: Sequence<Option<Clock>>` has a `field` and a `slot` step whose row type is that `Option` type and is checked for its schema and symbolic selector only. | Test (TC-367; CK-27; PR-01..PR-03, model_join) |
+| FR-322-AC-181 | A variant case whose `payloadType` is the native `Rational`, the native `Decimal`, the native `Text` (bare), or a package value type bound as `Text` without `min`, `max` and `profile`, refuses `unsupported_construct`/`declaration-form` at `Variant.payloadType` in step 1, at stage `package_read`, with FR-154's code and no graph refusal; a package value type that aliases one of them (a value type bound as `Decimal[0, 9]` or as `Rational`, or as `Text` without bounds) refuses the same (`TK-11` to `TK-14`, `TK-21`, `TK-22`). The cases whose `payloadType` is `Float32`, `Float64`, `Bytes`, `JsonObject`, `String`, `UUID`, `Timestamp`, `Duration`, a `Text[0, 8; nfc]` value type, or a declared tuple or variant type are admitted, so unbounded `Bytes` and `JsonObject` are not refused (`TK-20`, `TK-26`). | Test (TC-940) |
+| FR-322-AC-182 | A tuple position whose `typeRef` is the native `Rational`, the native `Decimal`, a bare native `Text`, or a package value type bound as `Text` without bounds refuses `invalid_model_binding`/`malformed-declaration` at the position in step 1, at stage `package_read`, as `ix://quire/native/Clock` does and ahead of the `missing-name` check of a later position; a position typed `Float32`, `Float64`, `String`, `UUID`, `Timestamp`, `Duration`, `Bytes` or a `Text[0, 8; nfc]` value type is admitted, and a value type bound as `Decimal[0, 9]` or `Rational` is refused (`TK-15` to `TK-19`, `TK-23` to `TK-25`). | Test (TC-940) |
+| FR-322-AC-183 | A field, an operation parameter or an operation result typed `Rational`, `Decimal` or bare `Text` is admitted by FR-154 intake and gives the member no type: the application that resolves it refuses `ill_typed`/`operator-ineligible`, never a mapping to a `scalar_type` node, whether the declared type is the native or a package value type bound as `Decimal[...]` or `Rational`. The four types of FR-322-AC-181 have no node mapping and no identity rule, and no operation lookup is reached for them. | Test (TC-280) |
+| FR-322-AC-200 | A `relation`/`refinement` node's closed `RefinementBody` requires `name`, an `Identifier`, in both V2 schemas; the node-identity preimage `{version: "quire.refinement-node/v1", semantic_type, body}` includes it. Two refinement nodes that differ only in `name` have different recomputed node ids (vectors `RI-01` and `RI-02` of `refinement-identity-vectors.json`); a body without `name` fails both schemas (`RI-03`); two nodes of one package with an equal `name` refuse `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name` (`RI-04`). | Test (TC-310) |
 
 ## Dependencies
 

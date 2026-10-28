@@ -1044,17 +1044,14 @@
           "value": [
             {
               "node": "ix://acme/shapes/Label",
-              "native": "ix://quire/native/Text",
-              "bounds": null
+              "native": "ix://quire/native/Text"
             },
             {
               "node": "ix://acme/shapes/Code",
               "native": "ix://quire/native/Text",
-              "bounds": {
-                "min": 0,
-                "max": 8,
-                "profile": "nfc"
-              }
+              "lower": "0",
+              "upper": "8",
+              "profile": "nfc"
             }
           ]
         },
@@ -1136,17 +1133,14 @@
           "value": [
             {
               "node": "ix://acme/shapes/Label",
-              "native": "ix://quire/native/Text",
-              "bounds": null
+              "native": "ix://quire/native/Text"
             },
             {
               "node": "ix://acme/shapes/Code",
               "native": "ix://quire/native/Text",
-              "bounds": {
-                "min": 0,
-                "max": 8,
-                "profile": "nfc"
-              }
+              "lower": "0",
+              "upper": "8",
+              "profile": "nfc"
             }
           ]
         },
@@ -1197,17 +1191,14 @@
           "value": [
             {
               "node": "ix://acme/shapes/Label",
-              "native": "ix://quire/native/Text",
-              "bounds": null
+              "native": "ix://quire/native/Text"
             },
             {
               "node": "ix://acme/shapes/Code",
               "native": "ix://quire/native/Text",
-              "bounds": {
-                "min": 0,
-                "max": 8,
-                "profile": "nfc"
-              }
+              "lower": "0",
+              "upper": "8",
+              "profile": "nfc"
             }
           ]
         },
@@ -1230,6 +1221,194 @@
           "op": "replace",
           "path": "/variant_types/0/cases/2/payloadType",
           "value": "ix://quire/native/JsonObject"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TK-21",
+      "criterion": "FR-322-AC-181",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/value_types",
+          "value": [
+            {
+              "node": "ix://acme/shapes/Money",
+              "native": "ix://quire/native/Decimal",
+              "lower": "0",
+              "upper": "9"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": "ix://acme/shapes/Money"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "declaration-form",
+          "at": "/variant_types/0/cases/0/payloadType"
+        }
+      }
+    },
+    {
+      "name": "TK-22",
+      "criterion": "FR-322-AC-181",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/value_types",
+          "value": [
+            {
+              "node": "ix://acme/shapes/Ratio",
+              "native": "ix://quire/native/Rational",
+              "lower": "0",
+              "upper": "9"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": "ix://acme/shapes/Ratio"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "declaration-form",
+          "at": "/variant_types/0/cases/0/payloadType"
+        }
+      }
+    },
+    {
+      "name": "TK-23",
+      "criterion": "FR-322-AC-182",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/value_types",
+          "value": [
+            {
+              "node": "ix://acme/shapes/Money",
+              "native": "ix://quire/native/Decimal",
+              "lower": "0",
+              "upper": "9"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/typeRef",
+          "value": "ix://acme/shapes/Money"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0/positions/1"
+        }
+      }
+    },
+    {
+      "name": "TK-24",
+      "criterion": "FR-322-AC-182",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/value_types",
+          "value": [
+            {
+              "node": "ix://acme/shapes/Ratio",
+              "native": "ix://quire/native/Rational",
+              "lower": "0",
+              "upper": "9"
+            }
+          ]
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/0/typeRef",
+          "value": "ix://acme/shapes/Ratio"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0/positions/0"
+        }
+      }
+    },
+    {
+      "name": "TK-25",
+      "criterion": "FR-322-AC-182",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/0/typeRef",
+          "value": "ix://quire/native/Float32"
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/typeRef",
+          "value": "ix://quire/native/String"
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/1/positions/0/typeRef",
+          "value": "ix://quire/native/UUID"
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/1/positions/1/typeRef",
+          "value": "ix://quire/native/Timestamp"
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/2/positions/0/typeRef",
+          "value": "ix://quire/native/Duration"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TK-26",
+      "criterion": "FR-322-AC-181",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": "ix://quire/native/Float32"
+        },
+        {
+          "op": "add",
+          "path": "/variant_types/0/cases/1/payloadType",
+          "value": "ix://quire/native/String"
+        },
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/2/payloadType",
+          "value": "ix://quire/native/UUID"
+        },
+        {
+          "op": "add",
+          "path": "/variant_types/2/cases/0/payloadType",
+          "value": "ix://quire/native/Timestamp"
+        },
+        {
+          "op": "replace",
+          "path": "/variant_types/2/cases/1/payloadType",
+          "value": "ix://quire/native/Duration"
         }
       ],
       "expected": {

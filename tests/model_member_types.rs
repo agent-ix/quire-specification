@@ -734,32 +734,74 @@ fn tc_280_member_types_follow_declared_type_multiplicity_and_presence() {
     assert_member_cases(&parsed(VECTORS), "FR-322-AC-31");
 }
 
-/// FR-322-AC-183: a field typed `Rational`, `Decimal` or bare `Text` is
-/// declared by the package and gives the member no type. The `label` field of
-/// the published package is retyped in turn; the control types it `Boolean`,
-/// which resolves, so the refusal is the declared type's and not a missing
-/// field.
+/// FR-322-AC-183: a field, an operation parameter or an operation result typed
+/// `Rational`, `Decimal` or bare `Text`, or typed by a package value type bound
+/// as `Decimal[...]` or `Rational`, is declared by the package and gives the
+/// member no type. Each member of `Order` is retyped in turn; the control
+/// types it `Boolean`, which resolves, so the refusal is the declared type's
+/// and not a missing member.
 #[trace("TC-280", "FR-322-AC-183")]
 #[test]
 fn tc_280_rational_decimal_and_bare_text_members_have_no_type() {
     let vectors = parsed(VECTORS);
     let nodes = array(&vectors, "model_declaration_nodes");
-    let member = json!({"kind": "field", "declaration": "M1", "name": "label"});
-    let retyped = |native: &str| {
+    let cases = array(&vectors, "member_cases");
+    let operation_case = |name: &str| {
+        cases
+            .iter()
+            .find(|case| {
+                case["member"]["declaration"] == "M1"
+                    && case["member"]["kind"] == "operation"
+                    && case["member"]["name"] == name
+            })
+            .unwrap_or_else(|| panic!("a published M1 operation case for {name}"))["member"]
+            .clone()
+    };
+    let field = json!({"kind": "field", "declaration": "M1", "name": "label"});
+    let size = operation_case("size");
+    let scaled = operation_case("scaled");
+    // `typeRef` of the field `label`, the result of `size` and the parameter
+    // `n` of `scaled` of `Order`, set to `type_ref`; `argument` replaces
+    // the argument list the parameter case applies.
+    let retyped = |member: &Value, type_ref: &str, argument: Option<Value>| {
         let mut package = vectors["domain_package"].clone();
+        package["value_types"].as_array_mut().expect("value types").extend([
+            json!({"node": "ix://acme/orders/Dec", "native": "ix://quire/native/Decimal", "lower": "0", "upper": "9"}),
+            json!({"node": "ix://acme/orders/Rat", "native": "ix://quire/native/Rational", "lower": "0", "upper": "9"}),
+        ]);
         let order = package["object_types"]
             .as_array_mut()
             .expect("object types")
             .iter_mut()
             .find(|candidate| text(candidate, "node") == "ix://acme/orders/Order")
             .expect("Order");
-        let field = order["fields"]
-            .as_array_mut()
-            .expect("fields")
-            .iter_mut()
-            .find(|candidate| text(candidate, "name") == "label")
-            .expect("label");
-        field["typeRef"] = json!(native);
+        let slot = match text(member, "kind") {
+            "field" => order["fields"]
+                .as_array_mut()
+                .expect("fields")
+                .iter_mut()
+                .find(|candidate| text(candidate, "name") == "label")
+                .expect("label"),
+            _ if member["name"] == "size" => order["operations"]
+                .as_array_mut()
+                .expect("operations")
+                .iter_mut()
+                .find(|candidate| candidate["name"] == "size")
+                .map(|operation| &mut operation["result"])
+                .expect("size result"),
+            _ => order["operations"]
+                .as_array_mut()
+                .expect("operations")
+                .iter_mut()
+                .find(|candidate| candidate["name"] == "scaled")
+                .map(|operation| &mut operation["parameters"][0])
+                .expect("scaled parameter"),
+        };
+        slot["typeRef"] = json!(type_ref);
+        let mut member = member.clone();
+        if let Some(argument) = argument {
+            member["arguments"] = json!([argument]);
+        }
         derive(&package, nodes, &member)
     };
     let refused = json!({"refused": {"code": "ill_typed", "cause": "operator-ineligible"}});
@@ -767,16 +809,32 @@ fn tc_280_rational_decimal_and_bare_text_members_have_no_type() {
         "ix://quire/native/Rational",
         "ix://quire/native/Decimal",
         "ix://quire/native/Text",
+        "ix://acme/orders/Dec",
+        "ix://acme/orders/Rat",
     ] {
-        assert_eq!(retyped(native), refused, "{native}");
+        assert_eq!(retyped(&field, native, None), refused, "field {native}");
+        assert_eq!(retyped(&size, native, None), refused, "result {native}");
+        // The parameter's declared type has no type, so no argument matches it.
+        assert_eq!(
+            retyped(&scaled, native, Some(json!({"type": "Integer"}))),
+            refused,
+            "parameter {native}"
+        );
     }
     assert_eq!(
-        retyped("ix://quire/native/Boolean"),
-        json!({
-            "resolves": "ix://acme/orders/Order/label",
-            "member_type": {"type": "Boolean"}
-        }),
-        "the control resolves"
+        retyped(&field, "ix://quire/native/Boolean", None),
+        json!({"resolves": "ix://acme/orders/Order/label", "member_type": {"type": "Boolean"}}),
+        "the field control resolves"
+    );
+    assert_eq!(
+        retyped(&size, "ix://quire/native/Boolean", None),
+        json!({"resolves": "ix://acme/orders/Order/size", "member_type": {"type": "Boolean"}}),
+        "the result control resolves"
+    );
+    assert_eq!(
+        retyped(&scaled, "ix://quire/native/Boolean", Some(json!({"type": "Boolean"}))),
+        json!({"resolves": "ix://acme/orders/Order/scaled", "member_type": {"type": "Integer"}}),
+        "the parameter control resolves"
     );
 }
 
