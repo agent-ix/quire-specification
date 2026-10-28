@@ -67,7 +67,7 @@ the parent's continuation; at a `choice`, enter the one case whose guard is
 true; at a `repeat` with a maximum, enter the body when the guard is true and the
 counter is below the maximum, enter `exhausted` when the guard is true at the
 maximum, leave when the guard is false, and advance the counter on each
-re-entry; at a `repeat` with no maximum, enter the body when the guard is true
+re-entry, the counter being 0 on each entry from outside the `repeat`; at a `repeat` with no maximum, enter the body when the guard is true
 and leave when it is false; at a
 `check`, continue when its value is true and rest there when it is false; at
 the end of a branch body, set the disposition `completed` and rest at end; at

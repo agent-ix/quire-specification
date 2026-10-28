@@ -451,35 +451,54 @@ encoding adds no field: the wire's `guard` term, its `visible` entries and its
 `maximum` are the whole input, and the reader derives the contribution from
 them.
 
-*Independent-atom abstraction.* The **atoms** of a nested `repeat`'s `guard`
-are, first, each node its `visible` set lists and, then, every other maximal
-subterm of the `guard` that is neither a `literal` term of `value_kind`
-`boolean` nor an application of `quire.op.boolean.not`, `.and`, `.or` or
-`.implies`: a `reference` (to a listed entry, an unlisted expression or a
-capture) and an application of any other operator (for example
-`quire.op.boolean.eq`) is one atom as a whole, its operands are not read. Two
-subterms that are the same node reference, or the same canonical term, are
-one atom. The atoms are independent: no valuation is excluded by any relation
+*Independent-atom abstraction.* A **Boolean constant** is a `literal` term of
+`value_kind` `boolean`, written inline or reached by a `reference` to a
+`value`/`literal` node of that kind; it is a constant and never an atom. The
+**atoms** of a nested `repeat`'s `guard` are, first, each node its `visible`
+set lists, in the set's order, whether or not the `guard` reads it, and then
+every other maximal subterm of the `guard` that is neither a Boolean constant
+nor an application of `quire.op.boolean.not`, `.and`, `.or` or `.implies`,
+in order of first occurrence in a depth-first walk that visits the last
+operand of a connective first. A node that is one of the listed entries is an
+atom and the walk does not descend into it: with the entry `E` listing
+`a and b`, the guard `E or not a or not b` has the three atoms `E`, `a`
+and `b`, and a feasible exit. A `reference` (to a listed entry, an unlisted
+expression or a capture) and an application of any other operator (for
+example `quire.op.boolean.eq`) is one atom as a whole, its operands are not
+read; two subterms that are the same node (the same node id, which is
+content-keyed) are one atom, and `quire.op.boolean.eq(a, b)` and
+`quire.op.boolean.eq(b, a)` are two atoms, the reader being commutativity-
+unaware. The atoms are independent: no valuation is excluded by any relation
 between them, so `a` and `a > 0` are two atoms and a guard over atoms that
 are in fact related is judged as if they were not. A **valuation** assigns
-`true` or `false` to each of the `n` distinct atoms; the guard is evaluated
-with the Boolean literals, `not`, `and`, `or` and `implies` taking their
-Boolean meaning. The exit is infeasible exactly when all `2^n` valuations
-make the guard true (`n` may be 0: the guard `true` is infeasible, `false` is
-feasible); the reader MAY stop at the first valuation that makes the guard
-false. No guard is ever compared with the body or with another guard, and an
-atom's value is never read from a binder, a capture or the model.
+`true` or `false` to each of the `n` distinct atoms. Valuations are
+enumerated from the all-false valuation as a little-endian binary counter
+over the atoms in the order above (the first atom is the least significant
+bit, each step adds one), and the guard is evaluated with the Boolean
+constants, `not`, `and`, `or` and `implies` taking their Boolean meaning. The
+exit is infeasible exactly when all `2^n` valuations make the guard true (`n`
+may be 0: the guard `true` is infeasible, `false` is feasible); the reader
+stops at the first valuation that makes the guard false. No guard is ever
+compared with the body or with another guard, and an atom's value is never
+read from a binder, a capture or the model. Collecting and comparing atoms
+charges nothing.
 
-*Work.* The check runs for every `repeat` that sits inside another `repeat`'s
-body, whatever its `maximum`, after the causal-cycle check and before the
-progress refusals. The reader charges one unit of the `work` limit
-(`CheckedPackageReadLimits.work`) before evaluating each valuation. A
-valuation whose charge the limit denies stops the read as the reader's
-`incomplete` result `stage_limit_exceeded`/`work-budget-exceeded`
+*Work.* The check runs for every `repeat` that sits inside the `body` of
+another `repeat` (a `repeat` inside an `exhausted` control is not), whatever
+its `maximum`, after the causal-cycle check and before the progress refusals.
+The reader charges one unit of the `work` limit
+(`CheckedPackageReadLimits.work`) before evaluating each valuation, and
+nothing else for the check. A valuation whose charge the limit denies stops
+the read as the reader's `incomplete` result
+`stage_limit_exceeded`/`work-budget-exceeded`
 ([FR-330](FR-330-contract-package.md) "Reader results as FR-272 diagnostics"),
 located at the nested `repeat`'s node, and no progress refusal is reported
-for the enclosing `repeat`. There is no ceiling on the number of atoms other
-than the caller's `work` limit.
+for the enclosing `repeat`. Let *V* be the reader's total `work` consumption
+through the last valuation charge of the nested `repeat` and *T* its total
+consumption for the whole package: a limit of *V* minus 1 or less that denies
+a valuation's charge yields the incomplete result above, and a limit of *T*
+admits the package. There is no ceiling on the number of atoms other than the
+caller's `work` limit.
 
 **Soundness.** Progress stays structural: a `repeat` with a feasible exit
 adds no edge and no step to the enclosing cycle, so a cycle of the enclosing
@@ -489,8 +508,13 @@ entry is true on every valuation, so the entered body runs at least once
 (`maximum` at least 1 or absent) and its necessary step is taken before the
 enclosing back edge. A `repeat` is pre-test (FR-466 "No post-test `repeat`"),
 so its guard reads only binders in scope at its entry and the first test is
-the one the abstraction covers. The reader never decides that a feasible exit
-cannot happen, and never decides it from a binder's runtime value.
+the one the abstraction covers. A nested `repeat`'s iteration counter is
+reset to 0 on each entry from outside it (FR-425, FR-426), so each entry
+reaches its first guard test with the counter below any `maximum` of at least
+1: `repeat max 1 while true { attempt }` nested in an outer `repeat` takes its
+`attempt` on every iteration of the outer `repeat`, and is a step of the
+outer `repeat`. The reader never decides that a feasible exit cannot happen,
+and never decides it from a binder's runtime value.
 
 ## Placement and profile fit
 
@@ -668,7 +692,8 @@ alternate cycle encoding.
 | FR-464-AC-19 | The protocol profile defines the operator `transition` for the `state`/`transition` form only: a `quire.op.state.transition` application naming `transition` is admitted by the operation step, a `quire.op.state.transition` application naming any operator of the protocol-node table (for example `sequence`) and a `quire.op.protocol.control` application naming `transition` fail the published schema and a complete reader refuses them `malformed_wire` at the application's `operation/member/operator`; the operation step run alone on the same documents refuses `invalid_package`/`operation-member-mismatch` (FR-341-AC-19). | Test (TC-233) |
 | FR-464-AC-20 | The `owner_model` target is checked in one phase ("Owner-model edge phase"), with a fail-closed outcome for each case: an omitted edge and an external key refuse `malformed_wire` at the node; a genuinely unselected `model`/`object_type` target (owner joining no selection row, or not declared as an object type by the selected document) refuses `missing_declaration`/`missing-selection` at the target's own `node_id` in FR-322's owner join before any body step and before the clause's edge is read; a target missing from the clause's `dependencies` refuses `invalid_semantic_graph` at `/dependencies`; a local target naming no node refuses `missing_declaration`/`missing-name`, and a model node of a selected declaration of another form, a selected package's `model_root` node, a non-model declared node with a source owner and a non-model node refuse `invalid_model_binding`/`malformed-declaration`, both at `/semantic_graph/nodes/{i}/owner_model` as the first check of the clause at step 6; a valid selected second `object_type` is admitted and is not compared with the `over` type. An earlier-stage fault wins when paired: the owner join of the target precedes every body step, the refinement-step defects and the step 4 and 5 defects precede the typed edge check, and the typed edge check precedes the same clause's activation, capture and slot defects. Reader evidence is owned by IR-1053 (IR FR-064-AC-4/TC-048); no QSpec reader test exists, so the vectors TC-946 OM-03, OM-05..OM-11 and O10..O12 are the published oracle. | Analysis |
 | FR-464-AC-21 | Repeat-through-repeat: an outer `repeat` whose body steps only through a nested `repeat` that necessarily steps (a stepping body, `maximum` absent or at least 1) is admitted when the nested guard's exit is infeasible over the independent atoms (the guard `true`, the tautology `a or not a or b or not b`, with or without a `maximum` of at least 1) and refuses `unsupported_construct`/`declaration-form` at the outer `repeat` when the exit is feasible (the guard `a`, `not a`, `a and not a`, `false`, `a or b`) or when the nested `maximum` is 0 whatever its guard is; a nested `repeat` that is the only stepping part of a `choice` case follows the same rule (the `choice` necessarily steps only when the nested `repeat` necessarily steps and every other case steps), and a nested `repeat` whose own body does not step refuses at the first such `repeat` in tree order; a body that holds a step beside the nested `repeat` (a `sequence` with a stepping sibling) or a `parallel` or `await` around it is admitted whatever the nested guard is. | Test (TC-946) |
-| FR-464-AC-22 | The exit-feasibility derivation adds no field and compares no guard: the atoms are the nested `repeat`'s listed `visible` entries and every other maximal non-connective, non-Boolean-literal subterm of its guard, equal subterms being one atom, and a `quire.op.boolean.eq` application, or a reference to an unlisted expression, is one atom as a whole (the guard `eq(a, b) or not eq(a, b)` has the one atom `eq(a, b)` and an infeasible exit, while `eq(a, b) or not eq(b, a)` has two atoms and a feasible one); a work charge of one unit is made before each valuation, so a guard over two atoms needs four units when its exit is infeasible and stops at the first false valuation when it is feasible; a valuation the `work` limit denies yields `stage_limit_exceeded`/`work-budget-exceeded` located at the nested `repeat` with no progress refusal for the enclosing `repeat`, a limit that admits the fourth valuation admits the package, and a `repeat` outside any other `repeat` is charged nothing. | Test (TC-946) |
+| FR-464-AC-22 | The exit-feasibility derivation adds no field and compares no guard. Atoms: every listed `visible` entry, in set order and read or not, then every other maximal subterm that is neither a Boolean constant (an inline Boolean `literal` or a reference to a Boolean `value`/`literal` node) nor an application of `quire.op.boolean.not`, `.and`, `.or` or `.implies`, by first occurrence in a depth-first walk visiting the last operand first; a node equal to a listed entry is an atom and is not descended into (the entry `E` listing `a and b` with the guard `E or not a or not b` has three atoms and a feasible exit, so the outer `repeat` refuses); equal nodes are one atom and `quire.op.boolean.eq(a, b)` and `quire.op.boolean.eq(b, a)` are two (`eq(a, b) or not eq(a, b)` is infeasible, `eq(a, b) or not eq(b, a)` is feasible); a guard `true` written as a reference to a Boolean literal node is the constant, as an inline literal is. Valuations are enumerated from the all-false valuation as a little-endian counter over the atoms in that order. One `work` unit is charged before each valuation: a two-atom tautology charges four units, a feasible guard stops at its first false valuation (`a or b` charges one), a nested `repeat` is charged whatever its `maximum`, a `repeat` that is not inside another `repeat`'s `body` is charged nothing (its total consumption equals that with the guard `true`) and the collection and comparison of atoms charges nothing. With *V* the total consumption through the nested `repeat`'s last valuation charge and *T* the total for the package, a limit of *V* minus 1 that denies a valuation yields `stage_limit_exceeded`/`work-budget-exceeded` located at the nested `repeat` with no progress refusal for the enclosing `repeat`, and a limit of *T* admits the package. | Test (TC-946) |
+| FR-464-AC-23 | A nested `repeat`'s counter is reset on each entry from outside it, so `repeat max 1 while true { attempt }` with an `exhausted` control, nested as the only body of an outer `repeat`, is admitted: its exit is infeasible, its `maximum` is 1 and its body steps, and the outer `repeat` takes a step on every iteration. A nested `repeat` is never counted through its `exhausted` control: a nested `repeat max 1 while true` whose body is only a `check` and whose `exhausted` control is an `attempt` leaves the outer `repeat` refused (`unsupported_construct`/`declaration-form` at the first `repeat` in tree order, the outer one). | Test (TC-946) |
 
 ## Published artifacts and the operation catalog
 
