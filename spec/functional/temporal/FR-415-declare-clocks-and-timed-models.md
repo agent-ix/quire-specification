@@ -164,7 +164,8 @@ collection are live only while the collection holds the element (below).
   write: it is admitted only as the right side of a reset (`self.t =
   Timer { x: 0 ms, n: 3 }`), each of its clock components an exact
   non-negative rational time constant. A write of a constant to a guarded
-  place makes it present with that clock, and a write of `absent`, or of
+  place makes it present with that clock, and a write of `absent` (the Option
+  literal of FR-143, typed `Option<Clock>` by the place it is written to), or of
   another union case, drops it.
   Elsewhere it refuses `invalid_timed_model`/`clock-write`.
 - A clock-bearing value that is read whole, as an operand of `=`, a function
