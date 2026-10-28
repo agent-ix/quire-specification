@@ -861,7 +861,7 @@
       "test_case": "TC-946",
       "section": "Causal relation and progress",
       "id": "R9",
-      "Edit to the base": "`Poll`'s body is a `choice` with an `attempt` in one case and a nested `repeat` around an `attempt` in the other",
+      "Edit to the base": "`Poll`'s body is a `choice` with an `attempt` in one case and a nested `repeat` around an `attempt` whose guard has a feasible exit in the other",
       "Expected": "`unsupported_construct`/`declaration-form` at the outer `repeat`"
     },
     {
@@ -884,6 +884,90 @@
       "id": "R12",
       "Edit to the base": "`Poll` with `maximum: 0`",
       "Expected": "admitted"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R13",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` whose guard is `true`, no `maximum`, around an `attempt`",
+      "Expected": "admitted: the nested exit is infeasible and its body steps (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R14",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat max 1` with an `exhausted` `check` (FR-466-AC-5), `visible` listing `a` then `b`, whose guard is the tautology `a or not a or b or not b`, around an `attempt`",
+      "Expected": "admitted (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R15",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` with `maximum` 0 and an `exhausted` `check` around an `attempt`, whose guard is `true`; and the same with `visible` listing `a` and the tautology guard `a or not a`",
+      "Expected": "each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the body is never entered (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R16",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` around an `attempt`, `visible` listing `a` then `b`, whose guard is the single fact `a`; `not a`; `a and not a`; `false`; `a or b`; each with no `maximum` and with `maximum` 1 and an `exhausted` `check`",
+      "Expected": "each `unsupported_construct`/`declaration-form` at the outer `repeat`, naming it and the profile: the exit is feasible (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R17",
+      "Edit to the base": "`Poll`'s body is a `sequence` of a nested `repeat` around an `attempt` and a second `attempt`, in either order; and a `parallel` with a `join` holding the nested `repeat` in one branch; and an `await` whose `then` is the nested `repeat`; the nested guard is `a`, a feasible exit, with `visible` listing `a`",
+      "Expected": "each admitted (a sibling step, the `parallel` and the `await` step) whatever the nested guard is (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R18",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` whose guard is `true` and whose own body is only a `check`; and the same with `maximum` 1, an `exhausted` `attempt` and the own body only a `check`",
+      "Expected": "each `unsupported_construct`/`declaration-form` at the first `repeat` in tree order, the outer `repeat`, naming it and the profile: the nested body does not step and its `exhausted` control is never counted (FR-464-AC-21, FR-464-AC-23)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R19",
+      "Edit to the base": "`Poll`'s body is a `choice` with a nested `repeat` around an `attempt` in one case and an `attempt` in the other, the nested guard being `true`; and the same with the nested guard `a` and `visible` listing `a`",
+      "Expected": "admitted; `unsupported_construct`/`declaration-form` at the outer `repeat` (FR-464-AC-21)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R20",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` around an `attempt`, `visible` listing the entry `quire.op.boolean.eq(a, b)`, whose guard is `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(a, b)`; and `visible` listing the entries `quire.op.boolean.eq(a, b)` then `quire.op.boolean.eq(b, a)`, whose guard is `quire.op.boolean.eq(a, b) or not quire.op.boolean.eq(b, a)`",
+      "Expected": "admitted (one atom, infeasible exit); `unsupported_construct`/`declaration-form` at the outer `repeat` (two atoms, no commutativity, feasible exit) (FR-464-AC-22)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R21",
+      "Edit to the base": "R14 under `CheckedPackageReadLimits.work` set to *V* minus 1, to *V* and to *T*, with *V* the reader's total consumption through the nested `repeat`'s fourth valuation charge and *T* its total for the package; R16's `a or b`, whose valuation charges are exactly one unit; and a `Poll` that is not nested in another `repeat`'s body, with `visible` listing 30 atoms and a guard over them, whose total consumption equals that of the same package with the guard `true`",
+      "Expected": "*V* minus 1: `stage_limit_exceeded`/`work-budget-exceeded` (incomplete) at the nested `repeat`, no progress refusal; *V*: the same incomplete result at a later charge, never at the nested `repeat`; *T*: admitted; `a or b`: the one valuation unit is charged (all-false is the first valuation) and the refusal of R16; the 30-atom `Poll`: no valuation is charged (FR-464-AC-22)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R22",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` around an `attempt`, `visible` listing the entry `E` (the expression `a and b`), then `a`, then `b`, whose guard is `E or not a or not b`",
+      "Expected": "`unsupported_construct`/`declaration-form` at the outer `repeat`: `E` is an atom and is not descended into, so the exit is feasible (FR-464-AC-22)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R23",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat` around an `attempt` whose guard is a `reference` to a Boolean `value`/`literal` node `true`; and the guard `a or true` with `visible` listing `a` and the `true` written as that reference",
+      "Expected": "each admitted: a Boolean constant, inline or by reference, is never an atom (FR-464-AC-22)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Causal relation and progress",
+      "id": "R24",
+      "Edit to the base": "`Poll`'s body is only a nested `repeat max 1` with an `exhausted` `check`, whose guard is `true`, around an `attempt`",
+      "Expected": "admitted: the nested counter is reset on each entry from outside, so the `attempt` is taken on every iteration of `Poll` (FR-464-AC-23)"
     },
     {
       "test_case": "TC-946",
@@ -2529,6 +2613,41 @@
       "id": "DF13",
       "Edit": "an `event` binder `by Payments`, read by a choice owned by `Payments`, and by one owned by `Orders`",
       "Expected": "admitted; `wrong_snapshot`/`wrong-observation`, `reason` `other-role`"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF14",
+      "Edit": "a `repeat` owned by `Fulfillment` whose body holds an `attempt` `by Fulfillment` with binder `polled`, whose `visible` lists `polled.ok` and whose guard reads it; with no `maximum`, `maximum` 3 and `maximum` 0",
+      "Expected": "each `missing_declaration`/`missing-name` at the read (out-of-scope; a `repeat` has no post-test form); never admitted, never `wrong_snapshot`, never `invalid_package`/`invalid-value` (FR-466-AC-17)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF15",
+      "Edit": "DF14 with the guard and `visible` entry reading `eastRes.ok`, in scope at the `repeat`'s entry",
+      "Expected": "admitted (FR-466-AC-17)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF16",
+      "Edit": "a `choice` `visible` entry and a `repeat` `visible` entry each target a `value`/`literal` node `true`; each target the `value`/`parameter` binder node `eastRes`",
+      "Expected": "each `invalid_model_binding`/`malformed-declaration` at the target (FR-466-AC-18)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF17",
+      "Edit": "a `choice` `visible` entry and a `repeat` `visible` entry each an `expression`/`reference` to the record binder `eastRes`",
+      "Expected": "each `ill_typed`/`operator-ineligible` at the read, naming the slot (FR-466-AC-18)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Decision facts",
+      "id": "DF18",
+      "Edit": "a `visible` entry that is an application over the constants `true` and `false` only, and one over the capture `order` only, with a guard reading `eastRes.ok` that no individual entry lists",
+      "Expected": "the entries are admitted as composite entries; the guard read refuses `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` (FR-466-AC-18)"
     },
     {
       "test_case": "TC-948",
