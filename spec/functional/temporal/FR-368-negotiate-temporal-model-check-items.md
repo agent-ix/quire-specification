@@ -52,11 +52,12 @@ request:
   snapshots as byte-provision references; `universes`, the universe of each
   population the subject reads; and `proof_bounds`, any substituted proof
   bounds ([FR-361](FR-361-read-model-behaviours-as-temporal-traces.md));
-- `item_kind` — `formula` for an authored clause, or `deadlock-freedom` for the
-  derived item ([FR-366](FR-366-check-deadlock-freedom.md));
+- `item_kind` — one of `formula`, `deadlock-freedom`, `time-lock-freedom`,
+  `race-freedom` and `refinement` ("Item kinds" below); no other spelling is a
+  kind, and one refuses before consumption;
 - `fairness` — the resolved fairness set
   ([FR-362](FR-362-apply-fairness-constraints.md)), empty for a
-  deadlock-freedom item;
+  `deadlock-freedom`, `time-lock-freedom` or `race-freedom` item;
 - `max_depth` — the bounded-search horizon `k`, a method parameter of a
   bounded search that the result states
   ([FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md)); absent for
@@ -81,6 +82,122 @@ wall-clock member `max_solver_time`, and `smt_encoding`. A different
 horizon or budget can produce a different result, so a result is reused only
 for a request with the same request identity, and a result produced under one
 `max_depth` or `limits` value is never reused for a request with another.
+
+### Item kinds
+
+The `item_kind` of a `temporal-satisfaction` item over a model subject is
+exactly one of these five spellings, each owned by the requirement that
+defines the item:
+
+| `item_kind` | Item | Owner | Subject | Anchor (`claim.node`) | `fairness` |
+| --- | --- | --- | --- | --- | --- |
+| `formula` | an authored temporal clause | [FR-370](../../objects/interfaces/FR-370-checked-package-temporal-clause-body.md) | a model or protocol subject | the clause's own claim node | the clause's resolved set |
+| `deadlock-freedom` | derived | [FR-366](FR-366-check-deadlock-freedom.md) for a model subject, [FR-429](../protocol/FR-429-report-protocol-deadlocks.md) for a protocol subject | that subject | the subject's anchor | empty |
+| `time-lock-freedom` | derived | [FR-417](FR-417-settle-time-lock-freedom.md) | a timed model subject | the subject's anchor | empty |
+| `race-freedom` | derived | [FR-438](../memory/FR-438-report-data-races.md) | a protocol subject with a weak `parallel` | the subject's anchor | empty |
+| `refinement` | requested, one per refinement declaration checked | [FR-377](../analysis/FR-377-decide-model-refinement.md) | the concrete subject | the refinement node | the concrete fairness set `F_C` (the `assume` rows, [FR-375](../analysis/FR-375-declare-model-refinement.md) "Fairness rows"); `F_A` is read from the refinement node |
+
+The three derived kinds have no authored clause, so no `fair` constraint
+resolves for them ([FR-362](FR-362-apply-fairness-constraints.md)
+"Syntax and resolution"): their fairness set is the empty set, which admits
+every behaviour. A `deadlock-freedom` item over a protocol subject and one
+over a model subject are the same kind; the subject tells them apart. Each
+kind is part of the obligation identity (above), so the five never share a
+verdict.
+
+### Claim and anchor of a derived or refinement item
+
+A derived item has no authored claim and no source construct that is its own,
+but the request still names a claim for every item
+([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md)
+"Items"), and so does the `refinement` item. The claim of an item whose kind is
+not `formula` is `{node, occurrence}` as follows, with nothing left to the
+reader's choice:
+
+- **Anchor node.** For a `refinement` item, the refinement node (FR-375). For a
+  derived item over a protocol subject, the subject's checked protocol clause
+  node ([FR-425](../protocol/FR-425-define-protocol-subjects-and-state-keys.md)
+  "Protocol subject"). For a derived item over any other model subject, the
+  `model` node of the model alias the subject's items name, the node
+  [FR-476](../../objects/interfaces/FR-476-checked-package-model-terminal-declaration-body.md)
+  `model` member and FR-402's `subjects` binding reference. The
+  deadlock-freedom and time-lock-freedom items of one model subject therefore
+  share a claim node, and the `timed_model` root ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
+  "Timed-model nodes"), owned by that model, is not a second anchor.
+- **Occurrence.** The anchor node's occurrence of role `declaration` and
+  ordinal 0 when it has one, otherwise its occurrence of role `expression` and
+  ordinal 0 (a model declaration node carries no `declaration` member and its
+  one occurrence has role `expression`, FR-322 "Occurrence roles"). The
+  anchor node of every kind above has one of the two, so the pair always
+  names a `source_map` entry. The choice depends on the node alone, not on the
+  order of the node's `occurrences` array.
+
+The pair is the `locus` of every `where` and payload that names the item
+(FR-331), and the package source map gives its regions, so a derived item's
+result is located at the model, protocol or refinement declaration that it
+reports on. The claim enters the request identity with the item's other
+members (FR-331 "Request identity").
+
+### Extent and domains of a derived or refinement item
+
+A derived item is the reachable-state invariant `always holds(I)` of
+[FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md) "Property forms",
+which that table puts under `quire.temporal.infinite-trace/v1`; a
+`refinement` item reads its behaviours as FR-377 "Model subjects and
+behaviours" does, maximal paths with a terminal stutter step, which is the
+infinite-trace reading. So each classifies `unbounded` by "Extent" above,
+with no opt-out. Its `extent` is `{classification: "unbounded", domains,
+finite_bound_available: false}` and nothing else:
+
+- `domains` holds the `infinite-trace` domain `{type: "node", node: <the
+  claim's node>, path: []}` with kind `infinite-trace`, the same form an
+  authored item carries for its own claim node, followed by the population
+  domains that the item's subject reads without a maximum, as the boundedness
+  architecture lists them for an authored item over the same subject
+  (quire-spec-language#222, QSL ADR-014 §4). The infinite-trace domain is
+  never boundable, so `finite_bound_available` is false.
+- The item has no `extent.bounds` and no result bound of its own: the
+  substitutions for the subject's populations are the subject's
+  `proof_bounds`, which belong to the subject and are not moved into the
+  extent (FR-331 "Items"). A derived item carries the same `subject` as the
+  items it is derived from, `proof_bounds` included.
+
+### Position of derived items in the request
+
+`request_index` is the item's zero-based position (FR-331 "Items"), and
+FR-360 joins a result to its item by it, so the position is part of the wire.
+The request writer SHALL order the items by structure alone, never by a
+digest, a hash or a map's iteration order:
+
+1. The items the caller requested, authored and `refinement`, first, in the
+   caller's order. Adding or removing a derived item, as a `terminal any`
+   declaration does, never moves one of them.
+2. Then the derived items, grouped by subject in the order in which each
+   subject first occurs among the subjects of the items in step 1, and,
+   within one subject, in the order `deadlock-freedom`, `time-lock-freedom`,
+   `race-freedom`. A model subject and a protocol subject over the same model
+   are two subjects. The time-lock-freedom item thus stands beside the
+   deadlock-freedom item of its subject ([FR-417](FR-417-settle-time-lock-freedom.md)
+   "The derived item").
+
+Each subject has at most one item of each derived kind, so the order is total.
+A subject with no item in step 1 has no derived item.
+
+### Negotiation of a derived or refinement item
+
+Each item of the five kinds is one item of kind `temporal-satisfaction`
+([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)). It carries
+neither `hybrid` nor `requirements`, since its dynamics are `discrete`
+(FR-331 `manifest`: a descriptor with no `dynamics` decides `discrete` only),
+and it routes through FR-290's candidate, domain-kind and advertised-mode
+tables exactly as an authored `unbounded` item does. A `time-lock-freedom`
+item over a dense subject is still a `discrete` item: clocks are the model's
+(FR-415), not hybrid dynamics. Its fairness check ("Fairness kinds") never
+trips for an empty set. The item reads its `limits` (`max_clocks` included
+for a timed subject), `max_depth` and `smt_encoding` as any temporal item
+does; an absent member takes the routed provider's published default, and
+this requirement states no rule that copies an authored item's value to a
+derived one.
 
 ### SMT solver budgets
 
@@ -238,6 +355,12 @@ infinite-trace formula that no registered candidate decides.
 | FR-368-AC-10 | A manifest descriptor on the wire whose temporal `fairness_kinds` is absent, not a list, holds an unknown label or repeats a label fails the FR-331 schema, and so does a `fairness_kinds` member on a descriptor advertising no `temporal-satisfaction`. | Test (TC-431) |
 | FR-368-AC-11 | A temporal item whose `limits` carry `max_solver_steps` 1000 and `max_solver_time` 5 is admitted, and its solver stops settle as FR-363-AC-11 states; two requests that differ only in `max_solver_time` have equal request identity and cache key bytes, two that differ only in `max_solver_steps` differ, and a result stopped by `max_solver_time` is stored by neither request; a `max_solver_time` of 1.5 on the wire, and either member at 0, is refused before consumption. | Test (TC-302) |
 | FR-368-AC-12 | A temporal item carrying `smt_encoding` `{max_constants: 7}` is admitted, and its encoder stop settles as FR-363-AC-11 states; two requests that differ only in `smt_encoding.max_constants` (7 and 8) have different request identities and cache keys, and a result recorded for one is not reused for the other; an empty `smt_encoding`, an unknown member, a `max_constants` of 0 and one of 1.5 are each refused before consumption. A completed result produced under `max_solver_time` 5 and reused for a request that sets 10 states 5. | Test (TC-302) |
+| FR-368-AC-13 | The `item_kind` of a temporal item is one of `formula`, `deadlock-freedom`, `time-lock-freedom`, `race-freedom` and `refinement`; each of the five is admitted, and `time-lock`, `race`, `deadlock`, `refine` and `Formula` are each refused before consumption. | Test (TC-431) |
+| FR-368-AC-14 | The claim of a `deadlock-freedom`, `time-lock-freedom` or `race-freedom` item names its subject's anchor node and that node's `declaration` occurrence at ordinal 0, or its `expression` occurrence at ordinal 0 when it has no `declaration` occurrence: the protocol clause node for a protocol subject, the `model` node of the alias for any other model subject, and the refinement node for a `refinement` item. The deadlock-freedom and time-lock-freedom items of one model subject name the same node and occurrence. | Test (TC-431) |
+| FR-368-AC-15 | A `deadlock-freedom`, `time-lock-freedom` or `race-freedom` item whose `fairness` holds a constraint is refused before consumption; a `refinement` item carries the concrete fairness set. | Test (TC-431) |
+| FR-368-AC-16 | A derived or `refinement` item classifies `unbounded` with `finite_bound_available` false, an `infinite-trace` domain keyed by the claim's node with the empty path, and no `extent.bounds`; the same item with a `bounded` extent, or with no `infinite-trace` domain, is refused. | Test (TC-431) |
+| FR-368-AC-17 | In a request, the caller's items come first in the caller's order and the derived items follow, grouped by subject in order of the subject's first occurrence among the caller's items and, within a subject, as `deadlock-freedom`, `time-lock-freedom`, `race-freedom`; `request_index` is the position. Exchanging two derived items of one subject, or moving a derived item before a caller's item, breaks the order. | Test (TC-302, TC-431) |
+| FR-368-AC-18 | A derived or `refinement` item is a `temporal-satisfaction` item with no `hybrid` and no `requirements`, routed by FR-290's tables; a request that gains a derived item changes no caller's item's `request_index`. | Test (TC-302) |
 
 ## Dependencies
 

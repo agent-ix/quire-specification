@@ -245,6 +245,7 @@
         "hybrid": {"$ref": "#/$defs/Hybrid"}
       },
       "allOf": [
+        {"description": "FR-368 Extent and domains of a derived or refinement item: unbounded, with an infinite-trace domain. That the domain's node is the claim's node is a producer obligation.", "if": {"properties": {"temporal": {"properties": {"item_kind": {"enum": ["deadlock-freedom", "time-lock-freedom", "race-freedom", "refinement"]}}, "required": ["item_kind"]}}, "required": ["temporal"]}, "then": {"properties": {"extent": {"properties": {"classification": {"const": "unbounded"}, "domains": {"contains": {"properties": {"kind": {"const": "infinite-trace"}}, "required": ["kind"]}}}}}}},
         {"description": "FR-193: requirements belong to a temporal-satisfaction item only.", "if": {"required": ["requirements"]}, "then": {"required": ["kind"], "properties": {"kind": {"const": "temporal-satisfaction"}}}},
         {"description": "FR-193: an item carrying hybrid solver budgets carries the hybrid-dynamics requirement.", "if": {"required": ["hybrid"]}, "then": {"required": ["requirements"], "properties": {"requirements": {"contains": {"const": "hybrid-dynamics"}}}}}
       ],
@@ -375,14 +376,17 @@
           },
           "additionalProperties": false
         },
-        "item_kind": {"description": "FR-368, FR-366.", "enum": ["formula", "deadlock-freedom"]},
-        "fairness": {"description": "FR-368, FR-362: the resolved fairness set, empty for deadlock-freedom.", "type": "array", "items": {"$ref": "#/$defs/Fairness"}},
+        "item_kind": {"description": "FR-368 \"Item kinds\": an authored clause, the derived items of FR-366/FR-429, FR-417 and FR-438, and the refinement item of FR-377.", "enum": ["formula", "deadlock-freedom", "time-lock-freedom", "race-freedom", "refinement"]},
+        "fairness": {"description": "FR-368, FR-362: the resolved fairness set, empty for deadlock-freedom, time-lock-freedom and race-freedom.", "type": "array", "items": {"$ref": "#/$defs/Fairness"}},
         "max_depth": {"description": "FR-368, FR-363: the bounded-search horizon; absent for an exhaustive search.", "$ref": "#/$defs/Count"},
         "limits": {"$ref": "#/$defs/TemporalLimits"},
         "smt_encoding": {"$ref": "#/$defs/SmtEncodingLimits"},
         "witness_samples": {"description": "FR-392: absent takes the provider's published default; 0 turns sampling off.", "$ref": "#/$defs/Count"},
         "seed": {"description": "FR-392: absent takes the provider's published default.", "$ref": "#/$defs/Decimal"}
       },
+      "allOf": [
+        {"description": "FR-368 Item kinds: a derived item has no authored clause, so its fairness set is empty.", "if": {"properties": {"item_kind": {"enum": ["deadlock-freedom", "time-lock-freedom", "race-freedom"]}}, "required": ["item_kind"]}, "then": {"properties": {"fairness": {"maxItems": 0}}}}
+      ],
       "additionalProperties": false
     },
     "StatisticalLimits": {
@@ -795,10 +799,11 @@
         {"description": "QSL FR-149 SimulationStep{position, edge: None, verdict: None}, as QSL writes it with null edge and verdict, for an initial, successors, undecided-state or certificate-shape rule.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-mismatch", "successors-differ", "bad-state", "malformed"]}, "at": {"type": "object", "required": ["position", "edge", "verdict"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "edge": {"type": "null"}, "verdict": {"type": "null"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "QSL FR-149 SimulationStep{position, edge, verdict: None} for post-differs.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "post-differs"}, "at": {"type": "object", "required": ["position", "edge", "verdict"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "edge": {"$ref": "#/$defs/U64String"}, "verdict": {"type": "null"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "QSL FR-149 SimulationStep{position, edge, verdict} for step-fails.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "step-fails"}, "at": {"type": "object", "required": ["position", "edge", "verdict"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "edge": {"$ref": "#/$defs/U64String"}, "verdict": {"$ref": "#/$defs/StepVerdict"}}, "additionalProperties": false}}, "additionalProperties": false},
-        {"description": "FR-418: a node, its position in the certificate's nodes.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["successor-missing", "bad-state", "witness-fails"]}, "at": {"type": "object", "required": ["node"], "properties": {"node": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
-        {"description": "FR-418: an edge, its position in the certificate's edges.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "backward-edge"}, "at": {"type": "object", "required": ["edge"], "properties": {"edge": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
+        {"description": "FR-418: a node, its position in the certificate's nodes.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["successor-missing", "bad-state", "witness-fails", "initial-mismatch"]}, "at": {"type": "object", "required": ["node"], "properties": {"node": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
+        {"description": "FR-418, QSL FR-245 post-differs: an edge, its position in the certificate's edges.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["backward-edge", "post-differs"]}, "at": {"type": "object", "required": ["edge"], "properties": {"edge": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
+        {"description": "QSL FR-245 step-fails: an edge and the failing step verdict, both present.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "step-fails"}, "at": {"type": "object", "required": ["edge", "verdict"], "properties": {"edge": {"$ref": "#/$defs/Count"}, "verdict": {"$ref": "#/$defs/StepVerdict"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "FR-418: a component, its index.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "witness-fails"}, "at": {"type": "object", "required": ["component"], "properties": {"component": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
-        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence"]}}, "additionalProperties": false}}, "additionalProperties": false}
+        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence", "initial", "admitted", "refinement", "concrete_package", "abstract_package", "initials", "positions", "taken"]}}, "additionalProperties": false}}, "additionalProperties": false}
       ]
     },
     "InconclusiveCause": {

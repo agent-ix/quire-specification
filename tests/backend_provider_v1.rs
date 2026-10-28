@@ -1663,3 +1663,132 @@ fn tc_431_context_pairs_are_admitted_by_shape_alone() {
         assert!(rejection.is_valid(&cause), "{rule} at {at} is a well-formed pair");
     }
 }
+
+/// FR-368 "Claim and anchor", "Extent and domains" and "Position": the
+/// producer obligations the schema cannot state, checked against the package
+/// the request carries. Anchors are found in the fixture, the occurrence is
+/// derived from the anchor's own occurrences, and the order is recomputed from
+/// the items' subjects.
+#[trace("TC-431", "FR-368-AC-14")]
+#[trace("TC-431", "FR-368-AC-16")]
+#[trace("TC-431", "FR-368-AC-17")]
+#[test]
+fn tc_431_derived_items_name_their_anchor_and_follow_the_structural_order() {
+    const DERIVED: [&str; 3] = ["deadlock-freedom", "time-lock-freedom", "race-freedom"];
+    let package = parsed(PACKAGE_FIXTURE);
+    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let document = composed(&positive("derived-items-request"));
+    assert_eq!(errors(&validator(), &document), Vec::<String>::new());
+    let items = document["request"]["items"].as_array().expect("items");
+    let kind = |item: &Value| item["temporal"]["item_kind"].as_str().expect("kind").to_owned();
+    let derived_from = items.iter().position(|item| DERIVED.contains(&kind(item).as_str())).expect("a derived item");
+    for (index, item) in items.iter().enumerate() {
+        assert_eq!(item["request_index"], index, "request_index is the position");
+        assert_eq!(DERIVED.contains(&kind(item).as_str()), index >= derived_from,
+            "the caller's items precede every derived item");
+        if kind(item) == "formula" {
+            continue;
+        }
+        let claim = &item["claim"];
+        let domain = item["extent"]["domains"]
+            .as_array()
+            .and_then(|domains| domains.iter().find(|domain| domain["kind"] == "infinite-trace"))
+            .expect("an infinite-trace domain");
+        assert_eq!(domain["domain"]["node"], claim["node"], "the domain is keyed by the claim node");
+        assert_eq!(domain["domain"]["path"], serde_json::json!([]));
+        assert_eq!(item["extent"]["finite_bound_available"], false);
+        assert!(item["extent"].get("bounds").is_none(), "no extent bounds");
+        if kind(item) == "refinement" {
+            // The fixture holds no refinement node; the rule is a constant.
+            assert_eq!(claim["occurrence"], serde_json::json!({"role": "declaration", "ordinal": 0}));
+            continue;
+        }
+        let anchor = nodes.iter().find(|node| node["node_id"] == claim["node"]).expect("anchor node in the package");
+        let protocol = item["temporal"]["subject"] == document["request"]["items"][1]["temporal"]["subject"];
+        let expected_tag = if protocol { ("protocol", "protocol_clause") } else { ("model", "") };
+        assert_eq!(anchor["node_tag"], expected_tag.0, "anchor of item {index}");
+        if protocol {
+            assert_eq!(anchor["semantic_form"], expected_tag.1);
+        }
+        let has = |role: &str| {
+            anchor["occurrences"].as_array().expect("occurrences").iter()
+                .any(|occurrence| occurrence["role"] == role && occurrence["ordinal"] == 0)
+        };
+        let role = if has("declaration") { "declaration" } else { "expression" };
+        assert!(has(role), "the anchor has the occurrence the rule picks");
+        assert_eq!(claim["occurrence"], serde_json::json!({"role": role, "ordinal": 0}));
+    }
+    // Position: subjects by first occurrence among the caller's items, then the kind order.
+    let subject_rank = |item: &Value| {
+        items[..derived_from].iter().position(|first| first["temporal"]["subject"] == item["temporal"]["subject"])
+            .expect("a derived item's subject occurs among the caller's items")
+    };
+    let kind_rank = |item: &Value| DERIVED.iter().position(|name| *name == kind(item)).expect("derived kind");
+    let keys: Vec<(usize, usize)> = items[derived_from..].iter().map(|item| (subject_rank(item), kind_rank(item))).collect();
+    let mut sorted = keys.clone();
+    sorted.sort();
+    sorted.dedup();
+    assert_eq!(keys, sorted, "derived items are in subject then kind order, once each");
+    // Deadlock-freedom and time-lock-freedom of one model subject share their claim.
+    let claim_of = |name: &str| items.iter().find(|item| kind(item) == name).expect(name)["claim"].clone();
+    assert_eq!(claim_of("deadlock-freedom"), claim_of("time-lock-freedom"));
+}
+
+/// FR-331 zone loci for QSL FR-245's refinement-form rules, and the
+/// certificate members FR-418 adds, as an independent matrix.
+#[trace("TC-431", "FR-331-AC-45")]
+#[trace("TC-431", "FR-331-AC-46")]
+#[test]
+fn tc_431_zone_loci_admit_the_refinement_form_rules_and_the_added_members() {
+    let rejection = definition("CertificateRejected");
+    let verdict = serde_json::json!({"kind": "NoAbstractMatch", "position": "1"});
+    let loci: [(Value, &[&str]); 5] = [
+        (serde_json::json!({"node": 2}), &["successor-missing", "bad-state", "witness-fails", "initial-mismatch"]),
+        (serde_json::json!({"edge": 2}), &["backward-edge", "post-differs"]),
+        (serde_json::json!({"edge": 2, "verdict": verdict}), &["step-fails"]),
+        (serde_json::json!({"edge": 2, "verdict": null}), &[]),
+        (serde_json::json!({"component": 2}), &["witness-fails"]),
+    ];
+    for (at, rules) in &loci {
+        for rule in CERTIFICATE_RULES {
+            let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
+            assert_eq!(rejection.is_valid(&cause), rules.contains(&rule), "rule {rule} at {at}");
+        }
+    }
+    let members = ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale",
+        "bounds", "nodes", "edges", "reasons", "divergence", "initial", "admitted", "refinement",
+        "concrete_package", "abstract_package", "initials", "positions", "taken"];
+    assert_eq!(members.len(), 21);
+    for member in members {
+        let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
+        assert!(rejection.is_valid(&cause), "{member} is a member");
+    }
+    for member in ["initials[0]", "position", "refinement_name", "", "Initial"] {
+        let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
+        assert!(!rejection.is_valid(&cause), "{member} is not a member");
+    }
+}
+
+/// FR-368-AC-13 and AC-15: the five spellings, and an empty fairness set on a
+/// derived item, stated independently of the vectors.
+#[trace("TC-431", "FR-368-AC-13")]
+#[trace("TC-431", "FR-368-AC-15")]
+#[test]
+fn tc_431_item_kinds_are_the_five_spellings_and_derived_items_carry_no_fairness() {
+    let temporal = definition("Temporal");
+    let base = composed(&positive("derived-items-request"))["request"]["items"][3]["temporal"].clone();
+    let fair = serde_json::json!([{"kind": "weak", "operation": "Example::Session::step", "granularity": "whole"}]);
+    for (kind, derived) in [("formula", false), ("deadlock-freedom", true), ("time-lock-freedom", true),
+        ("race-freedom", true), ("refinement", false)] {
+        let mut item = base.clone();
+        item["item_kind"] = kind.into();
+        assert!(temporal.is_valid(&item), "{kind} with no fairness");
+        item["fairness"] = fair.clone();
+        assert_eq!(temporal.is_valid(&item), !derived, "{kind} with a fairness constraint");
+    }
+    for kind in ["time-lock", "race", "deadlock", "refine", "Formula", "", "deadlock_freedom"] {
+        let mut item = base.clone();
+        item["item_kind"] = kind.into();
+        assert!(!temporal.is_valid(&item), "{kind} is no kind");
+    }
+}

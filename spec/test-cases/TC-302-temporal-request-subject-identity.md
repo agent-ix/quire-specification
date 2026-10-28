@@ -29,7 +29,10 @@ of the claim); the fairness set (`each` in place of `whole`); the limits
 (`max_automaton_states` 50). Also derive two bounded-search forms of `Q`
 that differ only in `max_depth` (5 and 10). Run `Q` and settle its item, then present that
 verdict to each derived request. Submit `Q` with `max_automaton_states`
-omitted. Derive from `Q` a request whose `limits` add `max_solver_steps`
+omitted. Build a request of two authored items over two subjects and a refinement
+item over the first, add the derived items, and record the `request_index`
+order with and without a `terminal any` declaration on the first subject.
+Derive from `Q` a request whose `limits` add `max_solver_steps`
 1000 and `max_solver_time` 5, then two that differ from it only in
 `max_solver_time` (5 and 10) and two that differ only in `max_solver_steps`
 (1000 and 2000); settle a `max_solver_time` stop for one of them and offer
@@ -67,3 +70,8 @@ empty object, the unknown member, the 0 and the 1.5 are refused before
 consumption (FR-368-AC-12; vectors `temporal-smt-encoding-empty`,
 `temporal-smt-encoding-unknown-member`, `temporal-smt-encoding-zero` and
 `temporal-smt-encoding-fractional`).
+
+The caller's items keep their `request_index` 0 to 2 whether or not the
+deadlock-freedom item of the first subject exists, and the derived items follow
+in subject-then-kind order, each of kind `temporal-satisfaction` with no
+`hybrid` and no `requirements` (FR-368-AC-17, FR-368-AC-18).
