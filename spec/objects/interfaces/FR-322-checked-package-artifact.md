@@ -1566,6 +1566,34 @@ no operation identity, and the published operation catalog is unchanged.
   operand. A nullary case of a union is a `union_value` node with the empty
   payload `aggregate`, never an `enum_value` node. The text leaves of a model
   union are those of its payload types under `member:<Name>` then `position:0`.
+- **Admitted payload and position types.** A tuple position `typeRef` and a variant
+  case `payloadType` are typed by the step 4 table as a field of presence `required`
+  and multiplicity `[1, 1]`, and each is admitted exactly when a row of that table gives
+  its `typeRef` a type (a `Reference<O>` row for an object type `O` of the package, a
+  `Quantity<u>` row for a unit `u`, or a row for a native or value type): the natives `Boolean`, `Integer`, `String`, `UUID`, `Timestamp`,
+  `Bytes`, `JsonObject`, `Duration`, `Float32` and `Float64`, a unit, an object type of the package (typed `Reference<O>`), and the package
+  record, tuple and variant types and bounded value types. Four declared types have no
+  row, and each is refused (not mapped, and never inferred): the native
+  `ix://quire/native/Rational`, the native `ix://quire/native/Decimal`, the native
+  `ix://quire/native/Text` with no `Text[min, max; profile]` bound (a bare `Text`, or a
+  package value type bound as `Text` without `min`, `max` and `profile`), and any other
+  package value type that no row binds (so a value type bound as a `Decimal[...]` or
+  `Rational` domain is refused too until a row maps it; a later row is additive). An alias
+  is read through to its target before this test. `Bytes` and `JsonObject` are unbounded
+  octet and JSON values but have rows, so they are admitted; the refused set is the four
+  types above, not "unbounded" as a class. The refusal is raised in step 1, at stage
+  `package_read`, before any graph refusal and with FR-154's codes for the same site, and
+  FR-154 itself admits these natives (FR-154-AC-17), so the refusal is this reader's: a
+  `payloadType` of one is `unsupported_construct`/`declaration-form` at
+  `Variant.payloadType`, a position `typeRef` of one is
+  `invalid_model_binding`/`malformed-declaration` at the position, exactly as for
+  `ix://quire/native/Clock`. A consumer of the selected document (the semantic IR intake,
+  the FCD reader) that admits such a `typeRef` as a payload or position refuses at its
+  intake with the same code and locus; it never carries the type on to an operation
+  lookup. A *member* (field, parameter or result) of one of the four types is not an
+  intake refusal: it gives the member no type and the application refuses
+  `ill_typed`/`operator-ineligible` ("A declared type outside the table"), as a bare `Text`
+  field does (FR-322-AC-31).
 - **Refusals.** In FR-322's order: the closed V2 schema refuses (`malformed_wire`)
   a `tuple_value_type` node with no `owner`, with a `SourceOwner` and no
   `declaration`, with a `declaration` beside a `ModelOwner`, or with a
@@ -1592,11 +1620,11 @@ no operation identity, and the published operation catalog is unchanged.
   ordinal, `conflicting-binding` at the later position; then (2) no position, or a
   tuple member other than `node` and `positions`, `malformed-declaration` at the
   tuple; then (3) the first position whose ordinal is not its index or whose
-  `typeRef` is absent or `ix://quire/native/Clock`, `malformed-declaration` at the
-  position; then (4) the first position whose `typeRef` names no package type or
+  `typeRef` is absent, `ix://quire/native/Clock` or one of the four refused types above,
+  `malformed-declaration` at the position; then (4) the first position whose `typeRef` names no package type or
   native, `missing-name` at the position; then each variant of `variant_types` in
-  document order, the first case whose `payloadType` is unresolved or
-  `ix://quire/native/Clock`, `unsupported_construct`/`declaration-form` at
+  document order, the first case whose `payloadType` is unresolved,
+  `ix://quire/native/Clock` or one of the four refused types above, `unsupported_construct`/`declaration-form` at
   `payloadType`. The tuples are all read before any variant type, so a document
   with a defect of each kind reports the tuple's.
 - **Recursion.** Model types may refer to one another and to themselves through
@@ -3010,6 +3038,9 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-167 | `seq(i in 0 .. 3: i)` is `quire.op.collection.seq` over the literals `0` and `3` typed `Int[0, 0]` and `Int[3, 3]` and the binder `i` of type `Int[0, 3]`, with `type_argument` `Int[0, 3]` and `result_type` the `[0, 4]` bound over `Sequence<Int[0, 3]>` (`VN-06`, recomputing its published key), because `max(0, 3 - 0 + 1)` is `4`; a bound typed the unbounded `Integer` (`RR-05`) and a `result_type` bounded `[0, 5]` (`RR-06`) refuse `ill_typed`/`operator-ineligible`, and so does a `member` declaration that is not the element type of the result's sequence (`RR-09`, the Boolean node against the `Int[0, 3]` element). | Test (TC-940) |
 | FR-322-AC-168 | The `catalog_delta` of `refinement-row-node-vectors.json` is the exact catalog change the three forms need (`quire.op.refinement.history`, `quire.op.collection.only`, `quire.op.collection.seq` and the member kind `history`): every identity the vectors use is a `catalog_delta` entry or a catalog entry equal to it, and each entry the catalog already publishes is identical to the delta's. | Test (TC-940) |
 | FR-322-AC-180 | `contract-package-selection-vectors.json` publishes the typed source-selection rows `T`, `D` and `U` of TC-935 (`selections`, each an exact FR-322 `Selection` with its `role` and closed `{authority, identity}` `definition`) and the four compatibility cases `matching`, `missing`, `differing identity` and `unrelated selection` (`compatibility_cases`, each stating its `required_source_selections` and `lock_profile_selections` as ordered label lists). It is the authoritative machine-readable form: a consumer reads it (for example through `QUIRE_SPECIFICATION_DIR`) and neither copies nor redefines the rows. The fenced JSON block and the case table of TC-935 equal it exactly, and the QSpec test fails when either differs in any row, role, authority, identity, case name or label order. | Test (TC-935) |
+| FR-322-AC-181 | A variant case whose `payloadType` is the native `Rational`, the native `Decimal`, the native `Text` (bare), or a package value type bound as `Text` without `min`, `max` and `profile`, refuses `unsupported_construct`/`declaration-form` at `Variant.payloadType` in step 1, at stage `package_read`, with FR-154's code and no graph refusal; a package value type bound to `Decimal[0, 9]`, to `Rational` or to `Text` without bounds refuses the same (`TK-14`, `TK-21`, `TK-22`), and so does an FR-154 alias declaration whose `target` is one of the four types, directly or through a chain of aliases that each resolve (`TK-27` to `TK-29`, `TK-33`). The cases whose `payloadType` is an alias of `Float64`, also through a chain of aliases (`TK-34`, `TK-35`), `Float32`, `Float64`, `Bytes`, `JsonObject`, `String`, `UUID`, `Timestamp`, `Duration`, a `Text[0, 8; nfc]` value type, or a declared tuple or variant type are admitted, so unbounded `Bytes` and `JsonObject` are not refused (`TK-20`, `TK-26`). | Test (TC-940) |
+| FR-322-AC-182 | A tuple position whose `typeRef` is the native `Rational`, the native `Decimal`, a bare native `Text`, or a package value type bound as `Text` without bounds refuses `invalid_model_binding`/`malformed-declaration` at the position in step 1, at stage `package_read`, as `ix://quire/native/Clock` does and ahead of the `missing-name` check of a later position; a position typed `Float32`, `Float64`, `String`, `UUID`, `Timestamp`, `Duration`, `Bytes` or a `Text[0, 8; nfc]` value type is admitted, a package value type bound to `Decimal[0, 9]` or `Rational` is refused (`TK-18`, `TK-23`, `TK-24`), and so is an FR-154 alias whose `target` is `Rational`, `Decimal` or a bare `Text` (`TK-30` to `TK-32`); an alias of `Float64` is admitted (`TK-34`, `TK-35`). The other refused positions are `TK-15` to `TK-17` and `TK-19`, and `TK-25` is admitted. | Test (TC-940) |
+| FR-322-AC-183 | A field, an operation parameter or an operation result typed `Rational`, `Decimal` or bare `Text` is admitted by FR-154 intake and gives the member no type: the application that resolves it refuses `ill_typed`/`operator-ineligible`, never a mapping to a `scalar_type` node, whether the declared type is the native or a package value type bound as `Decimal[...]` or `Rational`. The four types of FR-322-AC-181 have no node mapping and no identity rule, and no operation lookup is reached for them. | Test (TC-280) |
 | FR-322-AC-240 | The slot vectors name a complete selected package. `domain-package-acme-timed-slots.json` is a full FCD semantic IR 2.0.0 document of `acme/orders` (built as FR-322-AC-151: no `lockDigest`, `manifestDigest` or `source.digest`, the whole document digested and no projection) declaring the object type `Order` with the fields `sku`, `v`, `ts`, `c`, `b`, `o`, `g`, `s`, `q` and `clock`, the record value type `Timer` (clock field `x`, data field `n`), the `sequence` type `ClockRow` and the `map` type `ClockMap`. `fixtures/positive-timed-slot-nodes.json` is the dense timed fixture with `SL-01` to `SL-05`, `SL-06` (the published place) and `SL-07`, the places `v` and `q`, the parameters `other`, `i` and `e` and `PR-01` and `PR-03` added before the model root and every place listed by the timed root. The package's `model_selections` row digest, the vectors' `selection_digest`, the owner digest of its `model_root` and its `package_id` all derive from the SHA-256 of the RFC 8785 bytes of the whole document; each `package_node` index of a vector names the published node; the rows of every place recompute from the document alone; and changing any declaration or reordering two types changes the digest, so the row stops pinning it. The Bag and OrderedSet places `SL-03` and `SL-04` declare the fields `b` and `o` (their keys changed from the earlier `c`), every other published key is unchanged. | Test (TC-367; CK-28; SL-01..SL-07, PR-01, PR-03) |
 | FR-322-AC-241 | The nested collection `g: Sequence<Sequence<Clock>>` of `SL-05` is declared by FCD members alone: the `Order` field `g` has `typeRef` `ix://acme/orders/ClockRow`, presence `required` and multiplicity `{lower: 0, ordered: true, unique: false}` (no `upper`), and `ix://acme/orders/ClockRow` is a type definition of kind `sequence` whose `items` is `ix://quire/native/Clock`. The `sequence` definition gives the inner `Sequence<ix://quire/native/Clock>` and the multiplicity the outer level, so the member type renders `Sequence<Sequence<ix://quire/native/Clock>>` and the rows 0, 1 and 2 of the place are `g` (kind `sequence`, bounds `0` and `unbounded`), `Sequence<Sequence<ix://quire/native/Clock>>[slot]` (declaring type `Sequence<ix://quire/native/Clock>`, member type `Sequence<ix://quire/native/Clock>`, kind `sequence`, `0`, `unbounded`) and `Sequence<ix://quire/native/Clock>[slot]` (declaring type and member type `ix://quire/native/Clock`, kind `none`). The map place `clock` is declared the same way by the `map` definition `ClockMap` (`values` `Clock`) under multiplicity `{1, 1}`. A `typeRef` that is a rendered string, a type definition without `items` or `values`, and a bound on the definition are not FCD members and no encoding is read from them. | Test (TC-367; CK-28; SL-05, SL-06) |
 | FR-322-AC-242 | `GD-02` and `GD-03` publish `patch`, an RFC 6902 array of `add`, `remove` and `replace` operations on `fixtures/positive-timed-slot-nodes.json` that ends with the replaced root key (`node_id` and `semantic_type`), its `source_map` entry and the recomputed `package_id`. The patched package is valid under the V2 schema and every key and the package id are current; the reader refuses it with the vector's `expected_code`, `expected_cause` and `locus` and no other. The unmutated package is the control and is admitted. | Test (TC-367; CK-29; GD-02, GD-03) |
