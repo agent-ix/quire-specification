@@ -135,9 +135,8 @@ dependencies. The compiler that implements the standard is
 
 ## Building and testing
 
-Build, test, and qualification checks run locally. The hosted language-boundary
-workflow checks pull requests for new non-Rust executables and publishes its
-status; the CLA workflow handles contributor agreement administration.
+Build, test, and qualification checks run locally. The CLA workflow handles
+contributor agreement administration.
 
 ```sh
 cargo test --locked
