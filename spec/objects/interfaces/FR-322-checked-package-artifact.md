@@ -2499,18 +2499,19 @@ maximum)` entries, and guards is a reference aggregate.
 A `clock_place` is a **template**: one node for each distinct clock path of
 the model, however many elements a collection holds in a state, and its key is
 the key of its complete body. The `selector` of a `slot` step is therefore the
-**symbolic element selector**, a `reference` to the scalar type node of the
-selector's domain: the package's `Integer` type node for a `Sequence`, `Set`,
-`Bag` or `OrderedSet` (the element's zero-based position, FR-415 "Element
-places"), and the scalar type node of the key type for a `Map`. A slot step
-whose selector is an integer literal, a reference to any other node, or a
-reference to the type node of another domain refuses
-`invalid_package`/`malformed-clock-place` at that path step; the integer
-literal arm of the `selector` binding stays in both closed schemas for wire
-compatibility and is not admitted in a `clock_place`. The concrete position or
-key exists only on a place instantiated at analysis or run time, which no node
-represents: every instance of a template shares its node key, and adding,
-removing or moving an element changes no node key and no `package_id`. Guards
+**symbolic element selector**, a `reference` to the type node of the selector's
+domain: the package's `Integer` type node for a `Sequence`, `Set`, `Bag` or
+`OrderedSet` (the element's zero-based position, FR-415 "Element places"), and
+the node of the key type for a `Map` (a scalar, tuple or record key type alike).
+A `Map` that is the element of a `Sequence`, `Set`, `Bag` or `OrderedSet` adds
+a second slot step, so a path may carry several. A slot step whose selector is
+an integer literal, a reference to any other node, or a reference to the type
+node of another domain refuses `invalid_package`/`malformed-clock-place` at that
+path step; the integer literal arm of the `selector` binding stays in both
+closed schemas for wire compatibility and is not admitted in a `clock_place`.
+The concrete position or key exists only on a place instantiated at analysis or
+run time, which no node represents: every instance of a template shares its
+node key, and no node field depends on how many elements a state holds. Guards
 never enter place identity, so two `clock_place` nodes with one path and
 different `guards` are a repeated place (`duplicate-clock-place`). A `guards`
 aggregate, on a `clock_place` and on the `timed_model` root, may be empty; it
@@ -2709,8 +2710,8 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-146 | `model-tuple-union-vectors.json` publishes the declarations, the cases of FR-322-AC-141 to FR-322-AC-145 the recursion cases of FR-322-AC-147, the application-node key vectors of FR-322-AC-144 and the wire cases of FR-322-AC-140 and FR-322-AC-144; `node-identity-vectors.json` publishes `model-tuple-value-type-pair`, `model-variant-type-shape-union` and the `union_member_vectors` `union-member-model-shape-both` and `union-member-model-shape-empty`, each recomputing its JCS SHA-256 and validating against the closed preimage schema; and `fixtures/positive-model-tuple-union.json` is a schema-valid package with a recomputed `package_id`, one `model_root` per selection and a tuple node and a payload-bearing variant node whose owners join the published document. The QSpec test runs all three from the files. | Test (TC-940) |
 | FR-322-AC-147 | A selected document in which the tuple `Cell` (positions `Integer`, `List`) and the variant type `List` (cases `Nil`, `Cons(Cell)`) refer to one another is admitted by intake. The `Cell` and `List` nodes carry no `recursion_group`, each key is the closed `ModelDeclarationNode` preimage digest of its owner alone, and `List` has family `union` and `Cell` family `tuple`. The structural walk out of `List` has the one step `member:Cons`, `position:0` to `Cell`, and out of `Cell` the steps `position:0` to `Integer` and `position:1` to `List`; `quire.op.structural.eq` over two `List` operands, which re-enters `List` and reaches no text, has no leaf and is admitted with the empty `leaves`, and one that supplies a leaf refuses `invalid_package`/`operation-law-mismatch`. A `union_value` of `List` with the case `Cons` and a `Cell` payload term, and with `Nil` and none, is admitted. | Test (TC-940) |
 | FR-322-AC-148 | The slot selector of a template step is symbolic. For `ts: Sequence<Timer>[0, 3]` with `Timer { x: Clock; n: Int }`, the place `ts.0.x` is the one `clock_place` whose path is `field(ts)`, `slot(sequence, <Integer type node>, 0, 3)`, `field(x)`; `Set`, `Bag` and `OrderedSet` differ only in the `collection` literal and the key, `Sequence<Sequence<Clock>>` carries one Integer-typed slot step for each level, and `Map<Text, Clock>` carries the Text type node (the published fixture place). A slot selector that is an integer literal, a reference to the Text type node under a `Sequence`, a reference to an expression node, or a reference to the Integer type node under a `Map<Text, _>` refuses `invalid_package`/`malformed-clock-place` at the path step `/semantic_graph/nodes/{i}/body/members/1/value/members/{j}`. | Test (TC-367; CK-26; SL-01..SL-06, SR-01..SR-04) |
-| FR-322-AC-149 | One template node serves every instance. The places `ts.0.x`, `ts.1.x` and `ts.2.x` of AC-148 are instances of the one node of `SL-01`; no node carries an index, and a package that differs only in how many elements a state holds has the same node keys and `package_id`. Two `clock_place` nodes with one path and different `guards` refuse `invalid_package`/`duplicate-clock-place`. | Test (TC-367; CK-26; SL-01, SL-07, SL-08, GD-02) |
-| FR-322-AC-150 | An empty `guards` aggregate is admitted on a `clock_place` (`SL-08`) and on a `timed_model` root (the published tick fixture) when the model has no guard, and the same place with a guard predicate listed (`SL-07`) is admitted with a different key. A `clock_guard` node that the root's `guards` does not list refuses `invalid_package`/`timed-node-reference` and is never read as absent (`GD-03`). | Test (TC-367; CK-26; GD-01..GD-03) |
+| FR-322-AC-149 | One template node serves every instance. The places `ts.0.x`, `ts.1.x` and `ts.2.x` of AC-148 are instances of the one node of `SL-01`; no node carries an index and no node field depends on how many elements a state holds. Two `clock_place` nodes with one path and different `guards` refuse `invalid_package`/`duplicate-clock-place`. | Test (TC-367; CK-26; SL-01, SL-07, SL-08, GD-02) |
+| FR-322-AC-150 | An empty `guards` aggregate is admitted on a `clock_place` (`SL-08`) and on a `timed_model` root (the published tick fixture) when the model has no guard, and the same place with a guard predicate listed (`SL-07`) is admitted with a different key. A `clock_guard` node that the root's `guards` does not list refuses `invalid_package`/`timed-node-reference` and is never read as absent (`GD-03`), and two places of one path with different guards refuse `invalid_package`/`duplicate-clock-place` (`GD-02`); the vectors publish both as replayable package mutations. | Test (TC-367; CK-26; GD-01..GD-03) |
 
 ## Dependencies
 

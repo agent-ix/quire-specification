@@ -460,6 +460,11 @@ part of the node identity. On a nominal node it equals the nominal
 and two nodes declaring one name refuse as `ambiguous-name`
 (`ambiguous_declaration`). Library exports resolve only through this member.
 - `fixtures/positive-integer-literal-references.json` is the reference form of the `three` application of `positive-two-owners-a.json` (its integer literal operands are references to `value`/`literal` nodes); the reader admits it under a node identity different from the inline form's.
+- `timed-slot-selector-vectors.json` publishes standalone `clock_place` nodes
+  for the slot selector of a template step (FR-322-AC-148..FR-322-AC-150,
+  TC-367 CK-26): positive collection kinds, refused selectors and the guard
+  cases, whose package-level mutations the tests replay. Each node key is the SHA-256 of the RFC 8785 structural preimage and
+  `SL-06` equals the published fixture place.
 
 ## Regenerating protocol fixture keys
 
@@ -498,9 +503,3 @@ differently on purpose.
    never replace them with a fixture's own package id (a test checks this).
 6. Node-position loci follow the fixture: a vector whose mutation appends a
    node (`timed-model-node-vectors.json` TM-23) names the new fixture length.
-
-- `timed-slot-selector-vectors.json` publishes standalone `clock_place` nodes
-  for the slot selector of a template step (FR-322-AC-148..FR-322-AC-150,
-  TC-367 CK-26): positive collection kinds, refused selectors and the guard
-  cases. Each node key is the SHA-256 of the RFC 8785 structural preimage and
-  `SL-06` equals the published fixture place.

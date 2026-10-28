@@ -20449,14 +20449,83 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
     assert_eq!(ids.len(), 27, "every published wire case ran");
 }
 
-/// The slot-selector oracle of FR-322 "Timed-model nodes": a reference to the
-/// Integer type node (sequence-like) or the Text key type node (map).
-fn slot_selector_is_symbolic(step: &Value, integer: &str, text: &str) -> bool {
-    let members = step["members"].as_array().expect("slot step members");
-    let collection = members[1]["value"]["value"].as_str().expect("collection");
-    let selector = &members[2]["value"];
-    let want = if collection == "map" { text } else { integer };
-    selector["term"] == "reference" && selector["target"]["digest"] == want
+/// Index of the node a vectors file names, looked up by role in `node_indexes`.
+fn timed_node_index(role: &str) -> usize {
+    let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).unwrap();
+    vectors["node_indexes"][role].as_u64().unwrap_or_else(|| panic!("node role {role}")) as usize
+}
+
+/// The scalar type node of a rendered type name, found by its semantic form.
+fn scalar_type_node<'a>(nodes: &'a [Value], form: &str) -> &'a str {
+    nodes
+        .iter()
+        .find(|node| node["node_tag"] == "scalar_type" && node["semantic_form"] == form)
+        .and_then(|node| node["node_id"]["digest"].as_str())
+        .unwrap_or_else(|| panic!("scalar_type/{form} node"))
+}
+
+/// The type node that selects a slot of `collection`: the Integer node for a
+/// sequence-like collection, and the key type's node for a map, read from the
+/// rendered `Map<K, V>` type of the step's resolved row. `None` for a key type
+/// with no node in the package.
+fn slot_domain_node<'a>(nodes: &'a [Value], collection: &str, map_type: &str) -> Option<&'a str> {
+    if collection != "map" {
+        return Some(scalar_type_node(nodes, "integer"));
+    }
+    let key = map_type.strip_prefix("Map<")?.split_once(", ")?.0;
+    let form = match key {
+        "Text" => "text",
+        "Integer" | "Int" => "integer",
+        _ => return None,
+    };
+    Some(scalar_type_node(nodes, form))
+}
+
+/// Whether every slot step of a `clock_place` selects by the symbolic selector.
+fn place_selectors_are_symbolic(place: &Value, nodes: &[Value]) -> bool {
+    let steps = place["body"]["members"][1]["value"]["members"].as_array().unwrap();
+    let rows = place["body"]["members"][2]["value"]["members"].as_array().unwrap();
+    steps.iter().enumerate().filter(|(_, step)| step["members"][0]["value"]["value"] == "slot").all(|(at, step)| {
+        let members = step["members"].as_array().unwrap();
+        let collection = members[1]["value"]["value"].as_str().unwrap();
+        let declaring = rows[at]["members"][1]["value"]["value"].as_str().unwrap();
+        let selector = &members[2]["value"];
+        slot_domain_node(nodes, collection, declaring)
+            .is_some_and(|want| selector["term"] == "reference" && selector["target"]["digest"] == want)
+    })
+}
+
+/// The guard and duplicate-place checks of FR-322 "Timed-model nodes" over a
+/// whole package, as the cause and code a reader gives (`None` when admitted).
+fn timed_guard_and_place_cause(package: &Value) -> Option<(&'static str, &'static str)> {
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let by_id = |id: &Value| nodes.iter().find(|node| node["node_id"] == *id).unwrap();
+    for root in nodes.iter().filter(|node| node["semantic_form"] == "timed_model") {
+        let binding = |name: &str| {
+            root["body"]["members"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|member| member["name"] == name)
+                .map(|member| member["value"]["members"].as_array().unwrap().clone())
+                .unwrap_or_else(|| panic!("root binding {name}"))
+        };
+        let places = binding("clock_places");
+        for (at, place) in places.iter().enumerate() {
+            let path = &by_id(&place["target"])["body"]["members"][1];
+            if places[..at].iter().any(|earlier| &by_id(&earlier["target"])["body"]["members"][1] == path) {
+                return Some(("invalid_package", "duplicate-clock-place"));
+            }
+        }
+        let listed = binding("guards");
+        let owned = nodes.iter().filter(|node| node["semantic_form"] == "clock_guard");
+        for guard in owned {
+            if !listed.iter().any(|entry| entry["target"] == guard["node_id"]) {
+                return Some(("invalid_package", "timed-node-reference"));
+            }
+        }
+    }
+    None
 }
 
 #[trace("TC-367", "FR-322-AC-148", "FR-322-AC-149", "FR-322-AC-150")]
@@ -20467,13 +20536,10 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
     let schema = parsed_fixture(SCHEMA);
     let timed_schema = schema_for_def(&schema, "TimedModelNode");
-    let integer = vectors["type_nodes"]["integer"].as_str().unwrap();
-    let text = vectors["type_nodes"]["text"].as_str().unwrap();
-    assert_eq!(nodes[24]["node_id"]["digest"], integer);
-    assert_eq!(nodes[23]["node_id"]["digest"], text);
+    assert_eq!(vectors["type_nodes"]["integer"], scalar_type_node(nodes, "integer"));
+    assert_eq!(vectors["type_nodes"]["text"], scalar_type_node(nodes, "text"));
     let mut keys = BTreeSet::new();
-    let mut positives = 0;
-    let mut refusals = 0;
+    let (mut positives, mut refusals) = (0, 0);
     for case in vectors["cases"].as_array().unwrap() {
         let id = case["id"].as_str().unwrap();
         let node = &case["node"];
@@ -20482,11 +20548,7 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
         assert_eq!(node["dependencies"], json!(body_reference_targets(&node["body"])), "{id}");
         assert!(timed_schema.is_valid(node), "{id} matches the closed schema");
         assert!(keys.insert(node["node_id"]["digest"].as_str().unwrap().to_owned()), "{id} key is distinct");
-        let steps = node["body"]["members"][1]["value"]["members"].as_array().unwrap();
-        let symbolic = steps
-            .iter()
-            .filter(|step| step["members"][0]["value"]["value"] == "slot")
-            .all(|step| slot_selector_is_symbolic(step, integer, text));
+        let symbolic = place_selectors_are_symbolic(node, nodes);
         match case["expected"].as_str().unwrap() {
             "admitted" => {
                 assert!(symbolic, "{id} carries symbolic selectors");
@@ -20499,34 +20561,86 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
             }
             other => panic!("{id}: {other}"),
         }
-        if let Some(index) = case["published_node_index"].as_u64() {
-            assert_eq!(*node, nodes[index as usize], "{id} is the published place");
+        if let Some(role) = case["published_node"].as_str() {
+            assert_eq!(*node, nodes[timed_node_index(role)], "{id} is the published place");
         }
-        if let Some(instances) = case["instances"].as_array() {
-            let slots = steps
-                .iter()
-                .filter(|step| step["members"][0]["value"]["value"] == "slot")
-                .count();
-            for instance in instances {
-                assert_eq!(instance["slots"].as_array().unwrap().len(), slots, "{id}");
-            }
+        let slots = node["body"]["members"][1]["value"]["members"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|step| step["members"][0]["value"]["value"] == "slot")
+            .count();
+        for instance in case["instances"].as_array().into_iter().flatten() {
+            assert_eq!(instance["slots"].as_array().unwrap().len(), slots, "{id}");
         }
     }
     assert_eq!((positives, refusals), (8, 4));
+
     // Guards never enter place identity: SL-07 and SL-08 share one path.
     let cases = vectors["cases"].as_array().unwrap();
     let by = |id: &str| cases.iter().find(|c| c["id"] == id).unwrap()["node"].clone();
     assert_eq!(by("SL-07")["body"]["members"][1], by("SL-08")["body"]["members"][1]);
     assert_ne!(by("SL-07")["node_id"], by("SL-08")["node_id"]);
     assert!(by("SL-08")["body"]["members"][3]["value"]["members"].as_array().unwrap().is_empty());
+
     // GD-01: the published tick root has empty clock aggregates.
     let tick: Value = serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES).unwrap();
-    for index in 3..9 {
-        assert!(tick["semantic_graph"]["nodes"][45]["body"]["members"][index]["value"]["members"].as_array().unwrap().is_empty());
+    let tick_root = &tick["semantic_graph"]["nodes"][timed_node_index_of(&tick, "timed_model")];
+    for member in tick_root["body"]["members"].as_array().unwrap().iter().skip(3) {
+        assert!(member["value"]["members"].as_array().unwrap().is_empty(), "{}", member["name"]);
     }
-    // GD-03: every clock_guard of the dense fixture is listed by the root.
-    let root = &nodes[52]["body"]["members"][5]["value"]["members"];
-    for guard in nodes.iter().filter(|n| n["semantic_form"] == "clock_guard") {
-        assert!(root.as_array().unwrap().iter().any(|r| r["target"] == guard["node_id"]));
+    assert_eq!(timed_guard_and_place_cause(&tick), None);
+
+    // GD-02 and GD-03 replay as schema-valid package mutations with recomputed ids.
+    assert_eq!(timed_guard_and_place_cause(&package), None, "the published package is the control");
+    let validator = jsonschema::validator_for(&schema).unwrap();
+    for gd in vectors["guards"].as_array().unwrap().iter().filter(|g| g.get("mutation").is_some()) {
+        let mut adverse = package.clone();
+        let root_at = timed_node_index("timed_model");
+        match gd["mutation"].as_str().unwrap() {
+            "duplicate-place-different-guards" => {
+                let mut twin = nodes[timed_node_index("clock_place")].clone();
+                twin["body"]["members"][3]["value"]["members"] = json!([]);
+                twin["dependencies"] = json!(body_reference_targets(&twin["body"]));
+                let placeholder = json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": "ee".repeat(32)});
+                twin["node_id"] = placeholder.clone();
+                twin["semantic_type"] = placeholder.clone();
+                let graph = adverse["semantic_graph"]["nodes"].as_array_mut().unwrap();
+                graph.push(twin);
+                let root = &mut graph[root_at];
+                root["body"]["members"][3]["value"]["members"]
+                    .as_array_mut().unwrap()
+                    .push(json!({"term": "reference", "target": placeholder.clone()}));
+                root["dependencies"].as_array_mut().unwrap().push(placeholder);
+            }
+            "unlisted-clock-guard" => {
+                let guard = nodes[timed_node_index("clock_guard")]["node_id"].clone();
+                let root = &mut adverse["semantic_graph"]["nodes"][root_at];
+                let listed = root["body"]["members"][5]["value"]["members"].as_array_mut().unwrap();
+                listed.retain(|entry| entry["target"] != guard);
+                root["dependencies"].as_array_mut().unwrap().retain(|dep| *dep != guard);
+            }
+            other => panic!("unhandled guard vector {other}"),
+        }
+        rekey_stale_nodes(&mut adverse);
+        assert!(validator.is_valid(&adverse), "{} is a schema-valid semantic control", gd["id"]);
+        assert_eq!(
+            adverse["package_id"]["digest"],
+            unqualified_jcs_sha256(&package_id_preimage(&adverse)),
+            "{} retains the recomputed package id",
+            gd["id"]
+        );
+        let cause = timed_guard_and_place_cause(&adverse).expect("the mutation is refused");
+        assert_eq!(cause, (gd["expected_code"].as_str().unwrap(), gd["expected_cause"].as_str().unwrap()), "{}", gd["id"]);
     }
+}
+
+/// Position of the first node of a package with the given semantic form.
+fn timed_node_index_of(package: &Value, form: &str) -> usize {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .position(|node| node["semantic_form"] == form)
+        .unwrap_or_else(|| panic!("{form} node"))
 }

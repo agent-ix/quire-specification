@@ -7,7 +7,7 @@
     "predicate_expression": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
     "model": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"
   },
-  "rule": "FR-322-AC-148..FR-322-AC-150; a clock_place is one template node for each clock path; the slot selector is a reference to the scalar type node of the selector domain (Integer for Sequence, Set, Bag and OrderedSet, the key type for Map); a concrete position or key exists only on an instantiated place and enters no node",
+  "rule": "FR-322-AC-148..FR-322-AC-150; a clock_place is one template node for each clock path; the slot selector is a reference to the type node of the selector domain (Integer for Sequence, Set, Bag and OrderedSet, the key type for Map); a concrete position or key exists only on an instantiated place and enters no node",
   "node_key": "sha256 over the RFC 8785 bytes of {version, node_tag, semantic_form, semantic_type: null (self-typed), declaration: null, recursion: null, body}",
   "cases": [
     {
@@ -2547,7 +2547,7 @@
       },
       "declared": "clock: Map<Text, Clock>",
       "expected": "admitted",
-      "published_node_index": 45,
+      "published_node": "clock_place",
       "note": "byte-identical to the published place of fixtures/positive-timed-model-nodes.json; the key selector is the Text type node"
     },
     {
@@ -4798,17 +4798,21 @@
       "id": "GD-01",
       "subject": "published tick fixture root",
       "fixture": "fixtures/positive-tick-timed-model-nodes.json",
-      "root_index": 45,
       "expected": "all of clock_places, resets, guards, invariants, urgencies and constraints are empty aggregates and the package is admitted"
     },
     {
       "id": "GD-02",
       "subject": "SL-08 against SL-07",
-      "expected": "SL-08 (empty guards) admitted; SL-07 (one guard predicate) admitted; both listed in one root refuse invalid_package/duplicate-clock-place because guards never enter place identity"
+      "mutation": "duplicate-place-different-guards",
+      "fixture": "fixtures/positive-timed-model-nodes.json",
+      "expected_code": "invalid_package",
+      "expected_cause": "duplicate-clock-place",
+      "expected": "the published place gets a second place node of the same path with empty guards (SL-08 shape); both listed in the root refuse at the second root entry because guards never enter place identity"
     },
     {
       "id": "GD-03",
       "subject": "a clock_guard node of the dense fixture removed from the root guards aggregate",
+      "mutation": "unlisted-clock-guard",
       "fixture": "fixtures/positive-timed-model-nodes.json",
       "expected_code": "invalid_package",
       "expected_cause": "timed-node-reference",
