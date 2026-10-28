@@ -23342,8 +23342,8 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
 
 /// The place path key of FR-322-AC-265: the steps of a `clock_place` path in
 /// order, each as (kind rank, name bytes, first number, second number), where
-/// kind ranks `field`, `tuple`, `union`, `slot`; a `field` or `union` step is
-/// its name, a `tuple` step its index, a `slot` step its collection, minimum
+/// kind ranks `field`, `tuple`, `union`, `slot`; a `field` step is
+/// its `name`, a `union` step its `case`, a `tuple` step its index, a `slot` step its collection, minimum
 /// and maximum (`unbounded` above every integer). Neither the selector nor
 /// `resolved_path` is read.
 fn timed_place_path_key(place: &Value) -> Vec<(u8, Vec<u8>, u64, u64)> {
@@ -23366,6 +23366,111 @@ fn timed_place_path_key(place: &Value) -> Vec<(u8, Vec<u8>, u64, u64)> {
         .collect()
 }
 
+/// A comparable part of an order key (FR-322-AC-265). A rational is compared by
+/// cross multiplication, so no digest and no rendering enters a key.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct KeyRational(u128, u128);
+
+impl Ord for KeyRational {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        (self.0 * other.1).cmp(&(other.0 * self.1))
+    }
+}
+
+impl PartialOrd for KeyRational {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+enum KeyAtom {
+    Int(u64),
+    Bytes(Vec<u8>),
+    Region(String, u64, u64),
+    Fraction(KeyRational),
+    List(Vec<KeyAtom>),
+}
+
+/// The second part of the order key of a timed aggregate member (FR-322-AC-265),
+/// after its minimum region triple. A `clock_place` is its place path key. With
+/// `member_key`, the other forms are keyed so that nodes of one source atom are
+/// totally ordered: a `clock_constraint` and a `clock_reset` of kind `place` by
+/// (0, referenced place path key, owner term region, slot term regions, comparison
+/// rank, bound or value), of kind `parameter` by (1, operation name, parameter
+/// name, comparison rank, bound or value); a `time_invariant` by the key of its
+/// first bound; a `clock_guard` by its operation name; an `urgency` by its kind
+/// word and operation name. The comparison rank is `lt`, `le`, `eq`, `ge`, `gt`.
+fn timed_member_key(package: &Value, id: &Value, path_key: bool, member_key: bool) -> KeyAtom {
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let find = |id: &Value| nodes.iter().find(|node| node["node_id"] == *id);
+    let region = |id: &Value| {
+        package["source_map"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|entry| entry["node_id"] == *id)
+            .flat_map(|entry| entry["regions"].as_array().unwrap())
+            .map(|region| (region["source"]["identity"].as_str().unwrap_or("").to_owned(), region["start"].as_u64().unwrap_or(0), region["end"].as_u64().unwrap_or(0)))
+            .min()
+            .map_or(KeyAtom::Region(String::new(), 0, 0), |(source, start, end)| KeyAtom::Region(source, start, end))
+    };
+    let path_atoms = |place: &Value| -> KeyAtom {
+        match find(place).filter(|node| node["semantic_form"] == "clock_place") {
+            Some(node) if path_key => KeyAtom::List(
+                timed_place_path_key(node)
+                    .into_iter()
+                    .map(|(kind, name, first, second)| {
+                        KeyAtom::List(vec![KeyAtom::Int(kind.into()), KeyAtom::Bytes(name), KeyAtom::Int(first), KeyAtom::Int(second)])
+                    })
+                    .collect(),
+            ),
+            _ => KeyAtom::List(Vec::new()),
+        }
+    };
+    let node = find(id);
+    let form = node.and_then(|node| node["semantic_form"].as_str()).unwrap_or("");
+    if form == "clock_place" {
+        return path_atoms(id);
+    }
+    let empty = KeyAtom::List(Vec::new());
+    let (true, Some(node)) = (member_key, node) else { return empty };
+    let member = |at: usize| &node["body"]["members"][at]["value"];
+    let text = |value: &Value| KeyAtom::Bytes(value["value"].as_str().unwrap_or("").as_bytes().to_vec());
+    let operation_name = |anchor: &Value| find(anchor).map_or(KeyAtom::Bytes(Vec::new()), |anchor| text(&anchor["body"]["members"][1]["value"]));
+    let rank = |value: &Value| {
+        KeyAtom::Int(["lt", "le", "eq", "ge", "gt"].iter().position(|word| Some(*word) == value["value"].as_str()).unwrap_or(5) as u64)
+    };
+    let fraction = |value: &Value| {
+        let (numerator, denominator) = value["value"].as_str().unwrap_or("0/1").split_once('/').unwrap_or(("0", "1"));
+        KeyAtom::Fraction(KeyRational(numerator.parse().unwrap_or(0), denominator.parse().unwrap_or(1)))
+    };
+    let regions_of = |list: &Value| {
+        KeyAtom::List(list["members"].as_array().into_iter().flatten().map(|slot| region(&slot["target"])).collect())
+    };
+    match (form, member(0)["value"].as_str().unwrap_or("")) {
+        ("clock_constraint", "place") => KeyAtom::List(vec![
+            KeyAtom::Int(0), path_atoms(&member(1)["target"]), region(&member(2)["target"]), regions_of(member(3)), rank(member(4)), fraction(member(5)),
+        ]),
+        ("clock_constraint", _) => KeyAtom::List(vec![
+            KeyAtom::Int(1), operation_name(&member(1)["target"]), text(member(2)), rank(member(3)), fraction(member(4)),
+        ]),
+        ("clock_reset", "place") => KeyAtom::List(vec![
+            KeyAtom::Int(0), path_atoms(&member(2)["target"]), region(&member(3)["target"]), regions_of(member(4)), fraction(member(7)),
+        ]),
+        ("clock_reset", _) => KeyAtom::List(vec![KeyAtom::Int(1), operation_name(&member(1)["target"]), text(member(2)), fraction(member(3))]),
+        ("time_invariant", _) => member(1)["members"][0]["target"]
+            .as_object()
+            .map_or(empty, |_| timed_member_key(package, &member(1)["members"][0]["target"], path_key, member_key)),
+        ("clock_guard", _) => operation_name(&member(0)["target"]),
+        ("urgency", kind) => KeyAtom::List(vec![
+            KeyAtom::Bytes(kind.as_bytes().to_vec()),
+            if kind == "operation" { text(member(2)) } else { KeyAtom::Bytes(Vec::new()) },
+        ]),
+        _ => empty,
+    }
+}
+
 /// FR-322-AC-260 and FR-322-AC-265: the locus of the first aggregate member
 /// (a timed root's six reference aggregates, each place's `guards`, the
 /// constraints of each guard part and the bounds of an invariant) whose order
@@ -23374,7 +23479,7 @@ fn timed_place_path_key(place: &Value) -> Vec<(u8, Vec<u8>, u64, u64)> {
 /// identity, start, end) over every region of every `source_map` entry of the
 /// member node and, when `path_key` is on, the place path key after it;
 /// `nested` reads the lists the clause forms nest.
-fn timed_aggregate_order_refusal_ruled(package: &Value, path_key: bool, nested: bool) -> Option<String> {
+fn timed_aggregate_order_refusal_ruled(package: &Value, path_key: bool, member_key: bool, nested: bool) -> Option<String> {
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
     let key = |id: &Value| {
         let region = package["source_map"]
@@ -23386,13 +23491,7 @@ fn timed_aggregate_order_refusal_ruled(package: &Value, path_key: bool, nested: 
             .map(|region| (region["source"]["identity"].as_str().unwrap().to_owned(), region["start"].as_u64().unwrap(), region["end"].as_u64().unwrap()))
             .min()
             .expect("a source_map region");
-        let path = nodes
-            .iter()
-            .find(|node| node["node_id"] == *id && node["semantic_form"] == "clock_place")
-            .filter(|_| path_key)
-            .map(timed_place_path_key)
-            .unwrap_or_default();
-        (region, path)
+        (region, timed_member_key(package, id, path_key, member_key))
     };
     let first_out_of_order = |members: &[Value]| {
         (1..members.len()).find(|at| key(&members[*at]["target"]) <= key(&members[at - 1]["target"]))
@@ -23431,7 +23530,7 @@ fn timed_aggregate_order_refusal_ruled(package: &Value, path_key: bool, nested: 
 }
 
 fn timed_aggregate_order_refusal(package: &Value) -> Option<String> {
-    timed_aggregate_order_refusal_ruled(package, true, true)
+    timed_aggregate_order_refusal_ruled(package, true, true, true)
 }
 
 #[trace("TC-367", "FR-322-AC-260")]
@@ -23535,7 +23634,7 @@ fn tc_367_aggregate_order_oracle_fails_on_each_mutation() {
     // One region is one minimum triple; the two paths differ, so the place path key orders them (AO-08).
     assert_eq!(timed_aggregate_order_refusal(&equal), None);
     assert_eq!(
-        timed_aggregate_order_refusal_ruled(&equal, false, true),
+        timed_aggregate_order_refusal_ruled(&equal, false, true, true),
         Some(format!("/semantic_graph/nodes/{root_at}/body/members/3/value/members/1")),
         "without the path key a shared region is an equal key"
     );
@@ -25226,6 +25325,13 @@ fn tc_971_option_value_body_is_closed_and_its_preimage_covers_type_and_payload()
     }
 }
 
+/// Every switch of the clause oracle; the mutation test pins each to a vector.
+const TIMED_CLAUSE_RULES: [&str; 22] = [
+    "path-key", "member-key", "unlisted", "place-guards", "nested-order", "anchor-kind", "anchor-model", "no-point", "parameter-declared", "parameter-clock",
+    "owner-type", "slot-count", "slot-domain", "part-predicate", "same-anchor",
+    "invariant-predicate", "invariant-bound", "frame-modifies", "binders", "condition", "one-guard", "root-constraints",
+];
+
 /// The refusal of FR-322 "Clause nodes" over a package whose root lists timed
 /// clauses, as (code, cause, RFC 6901 locus), or `None` when admitted. The
 /// order of the aggregates is read first (FR-322-AC-265), then the joins in
@@ -25238,8 +25344,11 @@ fn timed_clause_refusal(
     skip: &str,
 ) -> Option<(&'static str, Option<&'static str>, String)> {
     const REF: &str = "timed-node-reference";
-    let on = |rule: &str| skip != rule;
-    if let Some(locus) = timed_aggregate_order_refusal_ruled(package, on("path-key"), on("nested-order")) {
+    let on = |rule: &str| {
+        assert!(TIMED_CLAUSE_RULES.contains(&rule), "{rule} is a published switch of the clause oracle");
+        skip != rule
+    };
+    if let Some(locus) = timed_aggregate_order_refusal_ruled(package, on("path-key"), on("member-key"), on("nested-order")) {
         return Some(("invalid_semantic_graph", None, locus));
     }
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
@@ -25256,7 +25365,7 @@ fn timed_clause_refusal(
     let listed = |name: &str| -> Vec<String> {
         bound(root, name)["members"].as_array().unwrap().iter().map(&target).collect()
     };
-    let (guards, resets, invariants, constraints) = (listed("guards"), listed("resets"), listed("invariants"), listed("constraints"));
+    let (guards, constraints) = (listed("guards"), listed("constraints"));
     let places = listed("clock_places");
     let first_fields: BTreeSet<String> = places
         .iter()
@@ -25342,16 +25451,40 @@ fn timed_clause_refusal(
         }
         None
     };
+    // Every timed node the root does not represent refuses at its own `body` (FR-322-AC-243 for a guard).
+    let mut represented: BTreeSet<&Value> = BTreeSet::from([&root["node_id"]]);
+    for binding in &root["body"]["members"].as_array().unwrap()[2..] {
+        match binding["value"]["term"].as_str() {
+            Some("reference") => {
+                represented.insert(&binding["value"]["target"]);
+            }
+            _ => represented.extend(binding["value"]["members"].as_array().into_iter().flatten().map(|entry| &entry["target"])),
+        }
+    }
+    let mut unlisted: Vec<usize> =
+        (0..nodes.len()).filter(|at| nodes[*at]["node_tag"] == "timed_model" && !represented.contains(&nodes[*at]["node_id"])).collect();
+    unlisted.sort_by_key(|at| nodes[*at]["node_id"]["digest"].as_str().unwrap().to_owned());
+    if on("unlisted") {
+        if let Some(at) = unlisted.first() {
+            return Some(("invalid_package", Some(REF), format!("/semantic_graph/nodes/{at}/body")));
+        }
+    }
     let mut used = BTreeSet::new();
     let mut order: Vec<usize> = (0..nodes.len()).filter(|at| nodes[*at]["node_tag"] == "timed_model").collect();
     order.sort_by_key(|at| nodes[*at]["node_id"]["digest"].as_str().unwrap().to_owned());
     for at in order {
         let clause = &nodes[at];
-        let digest = clause["node_id"]["digest"].as_str().unwrap();
         let body = |tail: String| format!("/semantic_graph/nodes/{at}/body{tail}");
         let refuse = |tail: String| Some(("invalid_package", Some(REF), body(tail)));
         match clause["semantic_form"].as_str().unwrap() {
-            "clock_constraint" if constraints.iter().any(|d| d == digest) => {
+            "clock_place" => {
+                for (k, guard) in clause["body"]["members"][3]["value"]["members"].as_array().unwrap().iter().enumerate() {
+                    if on("place-guards") && !boolean(&target(guard)) {
+                        return refuse(format!("/members/3/value/members/{k}/target"));
+                    }
+                }
+            }
+            "clock_constraint" => {
                 if word(clause, 0) == "place" {
                     if let Some(refusal) = place_use(at, clause, 1) {
                         return Some(refusal);
@@ -25366,7 +25499,7 @@ fn timed_clause_refusal(
                     }
                 }
             }
-            "clock_guard" if guards.iter().any(|d| d == digest) => {
+            "clock_guard" => {
                 let anchor = target(&clause["body"]["members"][0]["value"]);
                 if !anchor_ok(&anchor) {
                     return refuse("/members/0/value/target".into());
@@ -25380,7 +25513,7 @@ fn timed_clause_refusal(
                         let constraint = target(member);
                         let at_member = format!("/members/1/value/members/{part}/members/{k}/target");
                         let named = node(&constraint).filter(|n| n["semantic_form"] == "clock_constraint");
-                        let Some(named) = named.filter(|_| !on("constraint-listed") || constraints.contains(&constraint)) else {
+                        let Some(named) = named else {
                             return refuse(at_member);
                         };
                         used.insert(constraint);
@@ -25390,7 +25523,7 @@ fn timed_clause_refusal(
                     }
                 }
             }
-            "time_invariant" if invariants.iter().any(|d| d == digest) => {
+            "time_invariant" => {
                 if on("invariant-predicate") && !boolean(&target(&clause["body"]["members"][0]["value"])) {
                     return refuse("/members/0/value/target".into());
                 }
@@ -25398,7 +25531,7 @@ fn timed_clause_refusal(
                     let constraint = target(member);
                     let at_member = format!("/members/1/value/members/{k}/target");
                     let named = node(&constraint).filter(|n| n["semantic_form"] == "clock_constraint");
-                    let Some(named) = named.filter(|_| !on("constraint-listed") || constraints.contains(&constraint)) else {
+                    let Some(named) = named else {
                         return refuse(at_member);
                     };
                     used.insert(constraint);
@@ -25407,7 +25540,7 @@ fn timed_clause_refusal(
                     }
                 }
             }
-            "clock_reset" if resets.iter().any(|d| d == digest) => {
+            "clock_reset" => {
                 let anchor = target(&clause["body"]["members"][1]["value"]);
                 if !anchor_ok(&anchor) {
                     return refuse("/members/1/value/target".into());
@@ -25614,7 +25747,7 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
 fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let ids: Vec<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected: Vec<String> = (1..=20).map(|n| format!("CL-{n:02}")).collect();
+    let expected: Vec<String> = (1..=32).map(|n| format!("CL-{n:02}")).collect();
     assert_eq!(ids, expected.iter().map(String::as_str).collect::<Vec<_>>());
     assert_eq!(timed_clause_vector_defects(""), Vec::<String>::new());
 }
@@ -25624,11 +25757,14 @@ fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
 #[trace("TC-367", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265")]
 #[test]
 fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
-    for (rule, vector) in [
+    let pinned = [
         ("anchor-kind", "CL-02"),
         ("no-point", "CL-03"),
         ("one-guard", "CL-04"),
-        ("constraint-listed", "CL-05"),
+        ("unlisted", "CL-05"),
+        ("unlisted", "CL-26"),
+        ("place-guards", "CL-27"),
+        ("member-key", "CL-29"),
         ("root-constraints", "CL-06"),
         ("invariant-bound", "CL-07"),
         ("owner-type", "CL-08"),
@@ -25640,7 +25776,16 @@ fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
         ("parameter-declared", "CL-14"),
         ("parameter-clock", "CL-15"),
         ("nested-order", "CL-16"),
-    ] {
+        ("same-anchor", "CL-21"),
+        ("part-predicate", "CL-22"),
+        ("invariant-predicate", "CL-23"),
+        ("invariant-bound", "CL-24"),
+        ("anchor-model", "CL-25"),
+    ];
+    // Every switch but the path key (pinned by AO-08, tc_367_place_path_key_decides_a_shared_region) has a vector.
+    let covered: BTreeSet<&str> = pinned.iter().map(|(rule, _)| *rule).chain(["path-key"]).collect();
+    assert_eq!(covered, TIMED_CLAUSE_RULES.into_iter().collect::<BTreeSet<_>>());
+    for (rule, vector) in pinned {
         let defects = timed_clause_vector_defects(rule);
         assert!(
             defects.iter().any(|defect| defect.starts_with(vector)),
@@ -25668,7 +25813,7 @@ fn tc_367_place_path_key_decides_a_shared_region() {
     };
     let (ordered, _) = case_package("AO-08");
     assert_eq!(timed_aggregate_order_refusal(&ordered), None, "AO-08: a shared region in path order is admitted");
-    assert!(timed_aggregate_order_refusal_ruled(&ordered, false, true).is_some(), "without the path key the shared region is an equal key");
+    assert!(timed_aggregate_order_refusal_ruled(&ordered, false, true, true).is_some(), "without the path key the shared region is an equal key");
     let (unordered, locus) = case_package("AO-09");
     assert_eq!(timed_aggregate_order_refusal(&unordered), locus, "AO-09");
     let (repeated, locus) = case_package("AO-10");
@@ -25713,7 +25858,8 @@ fn tc_367_timed_clause_criteria_and_vectors_are_published() {
     assert_eq!(FR342_OPERATION_ANCHOR.matches("| FR-342-AC-11 |").count(), 1);
     assert_eq!(FR415_DECLARE_CLOCKS.matches("| FR-415-AC-22 |").count(), 1);
     assert_eq!(FR415_DECLARE_CLOCKS.matches("| FR-415-AC-23 |").count(), 1);
-    for id in ["CK-32", "CK-33", "CK-34", "CK-35", "CK-36"] {
+    assert_eq!(FR415_DECLARE_CLOCKS.matches("| FR-415-AC-24 |").count(), 1);
+    for id in ["CK-32", "CK-33", "CK-34", "CK-35", "CK-36", "CK-37"] {
         assert_eq!(TC367_CLOCK_DECLARATIONS.matches(&format!("| {id} |")).count(), 1, "{id} is one vector");
     }
     for cell in ["`AO-08`", "`AO-09`", "`AO-10`", "FR-322-AC-265"] {
@@ -25724,7 +25870,13 @@ fn tc_367_timed_clause_criteria_and_vectors_are_published() {
         "one `clock_guard` for each operation anchor",
         "a bare reference, not a binding",
         "place path key",
-        "`eq` is the relation FR-415",
+        "`eq` is the relation FR-415 writes `=`",
+        "a union step by those of its `case`",
+        "never a `clock_guard` (a cycle in a content-addressed graph)",
+        "A conditional reset of a `Clock` parameter does not exist",
+        "STD-554",
+        "STD-555",
+        "Every timed node the root does not list",
     ] {
         assert!(
             FR322_BODY_STEPS.contains(sentence) || FR322_BODY_STEPS.replace('\n', " ").contains(sentence),
@@ -25732,6 +25884,13 @@ fn tc_367_timed_clause_criteria_and_vectors_are_published() {
         );
     }
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
+    for q in vectors["quantified_out_of_scope"]["cases"].as_array().unwrap() {
+        assert_eq!(q["expected_code"], "unsupported_construct");
+        assert_eq!(q["expected_cause"], "not-yet-implemented");
+        assert!(FR322_BODY_STEPS.contains(&format!("`{}`", q["id"].as_str().unwrap())));
+        assert!(TC367_CLOCK_DECLARATIONS.contains(q["id"].as_str().unwrap()));
+    }
+    assert!(FR342_OPERATION_ANCHOR.contains("STD-555"));
     for case in vectors["cases"].as_array().unwrap().iter().skip(1) {
         let id = case["id"].as_str().unwrap();
         let cited = FR322_BODY_STEPS.contains(&format!("`{id}`")) || FR342_OPERATION_ANCHOR.contains(&format!("`{id}`"));

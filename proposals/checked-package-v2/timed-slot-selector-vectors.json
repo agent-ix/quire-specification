@@ -6534,7 +6534,7 @@
     }
   ],
   "aggregate_order": {
-    "rule": "FR-322-AC-260, FR-322-AC-265: the six reference aggregates of a timed_model root (clock_places, resets, guards, invariants, urgencies, constraints), the guards of a clock_place, the constraints of every guard part and the bounds of a time_invariant list their members in declared order, the strictly ascending order of the member node's order key: the minimum (source.identity, start, end) over every region of every source_map entry of the node, compared in that order, and, when two members have one minimum triple, the place path key of a clock_place (step by step; field and union by name bytes, tuple by index, slot by collection name bytes, then minimum, then maximum with unbounded last). No digest enters the order. A member that is not above its predecessor refuses invalid_semantic_graph, with no cause, at that member.",
+    "rule": "FR-322-AC-260, FR-322-AC-265: the six reference aggregates of a timed_model root (clock_places, resets, guards, invariants, urgencies, constraints), the guards of a clock_place, the constraints of every guard part and the bounds of a time_invariant list their members in declared order, the strictly ascending order of the member node's order key: the minimum (source.identity, start, end) over every region of every source_map entry of the node, compared in that order, and, when two members have one minimum triple, the place path key of a clock_place (step by step; field by name bytes, union by case bytes, tuple by index, slot by collection name bytes, then minimum, then maximum with unbounded last). No digest enters the order. A member that is not above its predecessor refuses invalid_semantic_graph, with no cause, at that member.",
     "order_key": "the pair (minimum (source.identity, start, end) over all regions of all source_map entries of the member node, place path key); the path key of a node that is not a clock_place is empty",
     "cases": [
       {
@@ -7355,7 +7355,7 @@
         "union",
         "slot"
       ],
-      "field_and_union": "UTF-8 bytes of the name",
+      "field_and_union": "UTF-8 bytes of the field name, or of the union case",
       "tuple": "the index as an integer",
       "slot": "UTF-8 bytes of the collection kind, then the minimum as an integer, then the maximum as an integer with unbounded above every integer; the selector, a reference, never enters the key",
       "note": "A place with no region of its own carries the region of its model's declaration (a source_map entry has at least one region, and the selected model document is not a source artifact), so several such places share one minimum triple and the path orders them. resolved_path is not read: it is derived from the path and the document."

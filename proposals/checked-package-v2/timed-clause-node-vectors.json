@@ -11191,8 +11191,8 @@
       "expected": "refused",
       "expected_code": "invalid_package",
       "expected_cause": "timed-node-reference",
-      "locus": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/1/target",
-      "locus_suffix": "members/1/value/members/0/members/1/target"
+      "locus": "/semantic_graph/nodes/76/body",
+      "locus_suffix": "body"
     },
     {
       "id": "CL-06",
@@ -24102,6 +24102,1416 @@
       "rule": "FR-322-AC-261",
       "expected": "refused-by-schema",
       "locus": "/semantic_graph/nodes/86/body"
+    },
+    {
+      "id": "CL-21",
+      "subject": "a guard part that names a parameter constraint of another operation: the guard of arm moved to touch",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "ad876354c76204e671b91c8a0f4dbf7bbb35218365d08fda3114cd5df204bbdb"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/5/value/members/1/target/digest",
+          "value": "55ee485a2277bae2589614c71f7abd859bcfba6b89a6ded352b5c3be0075e2e8"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/6/digest",
+          "value": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/7/digest",
+          "value": "279ac759e128022c397173b23ad59d15441a999895828677b5a94314221b71c1"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/8/digest",
+          "value": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/9/digest",
+          "value": "3d0d503247b8528bbde993ba6d144eb0f485f326745a8287986d1982bcee6b0f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/10/digest",
+          "value": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/11/digest",
+          "value": "5306493957ff12de86d103cc5ac7d37aea983dee39d7d7ab24680a16e0cdd809"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/12/digest",
+          "value": "55ee485a2277bae2589614c71f7abd859bcfba6b89a6ded352b5c3be0075e2e8"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "956a42918e0c24f2129a7a995c8357dd175270bfb6e32fc70ad8f81135c1d195"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "956a42918e0c24f2129a7a995c8357dd175270bfb6e32fc70ad8f81135c1d195"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/86/body/members/0/value/target/digest",
+          "value": "50769bf84da9adbdbd48c3802ff874b500da658b7009267b117d6b435ebc759c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/86/dependencies/0/digest",
+          "value": "50769bf84da9adbdbd48c3802ff874b500da658b7009267b117d6b435ebc759c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/86/dependencies/1/digest",
+          "value": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/86/dependencies/2/digest",
+          "value": "7c1f93d40e8d08c41cd378f2b79d1a4cde08fe6d93400213fb5915d1edff556e"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/86/node_id/digest",
+          "value": "55ee485a2277bae2589614c71f7abd859bcfba6b89a6ded352b5c3be0075e2e8"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/86/semantic_type/digest",
+          "value": "55ee485a2277bae2589614c71f7abd859bcfba6b89a6ded352b5c3be0075e2e8"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "956a42918e0c24f2129a7a995c8357dd175270bfb6e32fc70ad8f81135c1d195"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/86/node_id/digest",
+          "value": "55ee485a2277bae2589614c71f7abd859bcfba6b89a6ded352b5c3be0075e2e8"
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-262",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/86/body/members/1/value/members/0/members/1/target",
+      "locus_suffix": "members/1/value/members/0/members/1/target"
+    },
+    {
+      "id": "CL-22",
+      "subject": "a guard part whose predicate is a Text literal, not a Boolean",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "4f06d911c0ff1ab9a7e7827f8c4accde2a99f4a6dd34b79ed8887fe143182f8b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/0/value/target/digest",
+          "value": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/dependencies/0/digest",
+          "value": "50769bf84da9adbdbd48c3802ff874b500da658b7009267b117d6b435ebc759c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/dependencies/1/digest",
+          "value": "5f4aa8bd0df7b776a985031bec1f41548b797fb939e435934db4ac400d0ca6bc"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/dependencies/2/digest",
+          "value": "77a82b76325738fc5cac2f6d01c31c576b4efc44089e8adfcea1cbebacb6b67b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/dependencies/3/digest",
+          "value": "783b3e5db5927ff7dab085d2d21c390e29e45f7e4598db47c43d5828953839b2"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/dependencies/4/digest",
+          "value": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/dependencies/5/digest",
+          "value": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/node_id/digest",
+          "value": "2efc8528695d86ccfa51ba4983139b47e0d1ba63242a1956166f4c58adb2b8ed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/semantic_type/digest",
+          "value": "2efc8528695d86ccfa51ba4983139b47e0d1ba63242a1956166f4c58adb2b8ed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/5/value/members/0/target/digest",
+          "value": "2efc8528695d86ccfa51ba4983139b47e0d1ba63242a1956166f4c58adb2b8ed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/9/digest",
+          "value": "2efc8528695d86ccfa51ba4983139b47e0d1ba63242a1956166f4c58adb2b8ed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/10/digest",
+          "value": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/11/digest",
+          "value": "3d0d503247b8528bbde993ba6d144eb0f485f326745a8287986d1982bcee6b0f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/12/digest",
+          "value": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/13/digest",
+          "value": "5306493957ff12de86d103cc5ac7d37aea983dee39d7d7ab24680a16e0cdd809"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/14/digest",
+          "value": "587d090168212dae371a5f9e2eea7f5c82bb4c2ab1f6308c546fd5d9107ff457"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/15/digest",
+          "value": "5f4aa8bd0df7b776a985031bec1f41548b797fb939e435934db4ac400d0ca6bc"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/16/digest",
+          "value": "61bf845b51f4dec60a6d1e840abae8bae5ef6326c7c0319ef4d3adb5a22d2d3c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/17/digest",
+          "value": "63ad6f8b01af751ae549129cb44ec19f64a194db4c2497eb0fe2827bf16e87f0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/18/digest",
+          "value": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/19/digest",
+          "value": "70f2f16ff7eeacb0124bb2c03d8ad2d538810e9df906d8d992bb511bbd97b389"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/20/digest",
+          "value": "74fba01546ec827b0adbf65da00b0870e2ccbf03aef118b958b8516ee8558870"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/21/digest",
+          "value": "7547e5ef24547d0bed58119d07404dc4979c6d0d833e7b3b404726980ff805d5"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/22/digest",
+          "value": "77a82b76325738fc5cac2f6d01c31c576b4efc44089e8adfcea1cbebacb6b67b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/23/digest",
+          "value": "783b3e5db5927ff7dab085d2d21c390e29e45f7e4598db47c43d5828953839b2"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/24/digest",
+          "value": "7c1f93d40e8d08c41cd378f2b79d1a4cde08fe6d93400213fb5915d1edff556e"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/25/digest",
+          "value": "9a18ee606d48a6f1b96826db9e1cc14b0a8287fcfb6ab35bb36a500793a009c0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/26/digest",
+          "value": "a26279caa47a7fc05578fb7a35a099e277d321ddeb0cae27db8eff4d16fe08f6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/27/digest",
+          "value": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "1be6ef67f7e074ef691d83e1b4b02bd303bedda48ef368df41babed30fc83d81"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "1be6ef67f7e074ef691d83e1b4b02bd303bedda48ef368df41babed30fc83d81"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "1be6ef67f7e074ef691d83e1b4b02bd303bedda48ef368df41babed30fc83d81"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/49/node_id/digest",
+          "value": "2efc8528695d86ccfa51ba4983139b47e0d1ba63242a1956166f4c58adb2b8ed"
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-262",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/47/body/members/1/value/members/0/members/0/value/target",
+      "locus_suffix": "members/1/value/members/0/members/0/value/target"
+    },
+    {
+      "id": "CL-23",
+      "subject": "an invariant whose predicate is a Text literal, not a Boolean",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "60d46c957330172b161589f54daec093b847645037d47e7f6bb8a13d3dbef467"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/body/members/0/value/target/digest",
+          "value": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/dependencies/0/digest",
+          "value": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/dependencies/1/digest",
+          "value": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/node_id/digest",
+          "value": "9bb0554acd3495119efcdefd7e90e35c53fa5ec0b2348b90a45b97aaf673be9a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/semantic_type/digest",
+          "value": "9bb0554acd3495119efcdefd7e90e35c53fa5ec0b2348b90a45b97aaf673be9a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/6/value/members/0/target/digest",
+          "value": "9bb0554acd3495119efcdefd7e90e35c53fa5ec0b2348b90a45b97aaf673be9a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/11/digest",
+          "value": "5306493957ff12de86d103cc5ac7d37aea983dee39d7d7ab24680a16e0cdd809"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/12/digest",
+          "value": "587d090168212dae371a5f9e2eea7f5c82bb4c2ab1f6308c546fd5d9107ff457"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/13/digest",
+          "value": "5f4aa8bd0df7b776a985031bec1f41548b797fb939e435934db4ac400d0ca6bc"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/14/digest",
+          "value": "61bf845b51f4dec60a6d1e840abae8bae5ef6326c7c0319ef4d3adb5a22d2d3c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/15/digest",
+          "value": "63ad6f8b01af751ae549129cb44ec19f64a194db4c2497eb0fe2827bf16e87f0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/16/digest",
+          "value": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/17/digest",
+          "value": "70f2f16ff7eeacb0124bb2c03d8ad2d538810e9df906d8d992bb511bbd97b389"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/18/digest",
+          "value": "74fba01546ec827b0adbf65da00b0870e2ccbf03aef118b958b8516ee8558870"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/19/digest",
+          "value": "7547e5ef24547d0bed58119d07404dc4979c6d0d833e7b3b404726980ff805d5"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/20/digest",
+          "value": "77a82b76325738fc5cac2f6d01c31c576b4efc44089e8adfcea1cbebacb6b67b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/21/digest",
+          "value": "783b3e5db5927ff7dab085d2d21c390e29e45f7e4598db47c43d5828953839b2"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/22/digest",
+          "value": "7c1f93d40e8d08c41cd378f2b79d1a4cde08fe6d93400213fb5915d1edff556e"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/23/digest",
+          "value": "9a18ee606d48a6f1b96826db9e1cc14b0a8287fcfb6ab35bb36a500793a009c0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/24/digest",
+          "value": "9bb0554acd3495119efcdefd7e90e35c53fa5ec0b2348b90a45b97aaf673be9a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "c93f9dcc32054e18f6368e62805dc5ee9650e8ea285c3e67d32000463690a46e"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "c93f9dcc32054e18f6368e62805dc5ee9650e8ea285c3e67d32000463690a46e"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/16/node_id/digest",
+          "value": "9bb0554acd3495119efcdefd7e90e35c53fa5ec0b2348b90a45b97aaf673be9a"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "c93f9dcc32054e18f6368e62805dc5ee9650e8ea285c3e67d32000463690a46e"
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-262",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/48/body/members/0/value/target",
+      "locus_suffix": "members/0/value/target"
+    },
+    {
+      "id": "CL-24",
+      "subject": "an invariant bound compared with eq",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "411d4085a3a7a9ecfbf531a30513d7dffc48400cd6cb5a3ca5ff43d2484b9158"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/body/members/1/value/members/0/target/digest",
+          "value": "afb56178fbf2d2a6eb77735d3890b4a21aa5dccf6e2c68db0839b88f8ff838d6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/dependencies/1/digest",
+          "value": "afb56178fbf2d2a6eb77735d3890b4a21aa5dccf6e2c68db0839b88f8ff838d6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/node_id/digest",
+          "value": "0a911dc6a9fbc1d6b82a8e9fba91ce9c142c67698624d3589810b73480ea730d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/semantic_type/digest",
+          "value": "0a911dc6a9fbc1d6b82a8e9fba91ce9c142c67698624d3589810b73480ea730d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/51/body/members/4/value/value",
+          "value": "eq"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/51/node_id/digest",
+          "value": "afb56178fbf2d2a6eb77735d3890b4a21aa5dccf6e2c68db0839b88f8ff838d6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/51/semantic_type/digest",
+          "value": "afb56178fbf2d2a6eb77735d3890b4a21aa5dccf6e2c68db0839b88f8ff838d6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/6/value/members/0/target/digest",
+          "value": "0a911dc6a9fbc1d6b82a8e9fba91ce9c142c67698624d3589810b73480ea730d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/8/value/members/0/target/digest",
+          "value": "afb56178fbf2d2a6eb77735d3890b4a21aa5dccf6e2c68db0839b88f8ff838d6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/3/digest",
+          "value": "0a911dc6a9fbc1d6b82a8e9fba91ce9c142c67698624d3589810b73480ea730d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/4/digest",
+          "value": "0cbef5be8c4497fa1b32239c2aea7399fce67b3d8419bce70ebbb1a06c412084"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/5/digest",
+          "value": "0e6a1a648372bd8b01ed556a0914ca2238d0fcedebab6a59e5759258976467a6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/6/digest",
+          "value": "14b1e7371ef8209e0af57016ecc3e4d3c95a2c6fec02b096702e6c622fc07ece"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/7/digest",
+          "value": "1c1883b74074a1c45dbf8b71d5dab00a82463b14fcd5a91fccee2c9e54e810c3"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/8/digest",
+          "value": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/9/digest",
+          "value": "279ac759e128022c397173b23ad59d15441a999895828677b5a94314221b71c1"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/10/digest",
+          "value": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/11/digest",
+          "value": "3d0d503247b8528bbde993ba6d144eb0f485f326745a8287986d1982bcee6b0f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/26/digest",
+          "value": "afb56178fbf2d2a6eb77735d3890b4a21aa5dccf6e2c68db0839b88f8ff838d6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "e18ed375ae3e683bb93492250b28a916c31228ab22314d24d932be4bb33e3fc7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "e18ed375ae3e683bb93492250b28a916c31228ab22314d24d932be4bb33e3fc7"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/16/node_id/digest",
+          "value": "0a911dc6a9fbc1d6b82a8e9fba91ce9c142c67698624d3589810b73480ea730d"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/44/node_id/digest",
+          "value": "afb56178fbf2d2a6eb77735d3890b4a21aa5dccf6e2c68db0839b88f8ff838d6"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "e18ed375ae3e683bb93492250b28a916c31228ab22314d24d932be4bb33e3fc7"
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-262",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/48/body/members/1/value/members/0/target",
+      "locus_suffix": "members/1/value/members/0/target"
+    },
+    {
+      "id": "CL-25",
+      "subject": "a reset whose operation anchor belongs to another model",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "c08301f3dd2a49cf27f4dcc5e26f9377622af5a188c5b34d45277ebc78dbd4b5"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/body/members/1/value/target/digest",
+          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/dependencies/4/digest",
+          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/node_id/digest",
+          "value": "fe2c6113228f482669eb3574a302307a354b698677d9d073994760f803536b53"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/semantic_type/digest",
+          "value": "fe2c6113228f482669eb3574a302307a354b698677d9d073994760f803536b53"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/4/value/members/0/target/digest",
+          "value": "fe2c6113228f482669eb3574a302307a354b698677d9d073994760f803536b53"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/8/digest",
+          "value": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/9/digest",
+          "value": "3d0d503247b8528bbde993ba6d144eb0f485f326745a8287986d1982bcee6b0f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/10/digest",
+          "value": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/11/digest",
+          "value": "5306493957ff12de86d103cc5ac7d37aea983dee39d7d7ab24680a16e0cdd809"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/12/digest",
+          "value": "587d090168212dae371a5f9e2eea7f5c82bb4c2ab1f6308c546fd5d9107ff457"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/13/digest",
+          "value": "5f4aa8bd0df7b776a985031bec1f41548b797fb939e435934db4ac400d0ca6bc"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/14/digest",
+          "value": "61bf845b51f4dec60a6d1e840abae8bae5ef6326c7c0319ef4d3adb5a22d2d3c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/15/digest",
+          "value": "63ad6f8b01af751ae549129cb44ec19f64a194db4c2497eb0fe2827bf16e87f0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/16/digest",
+          "value": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/17/digest",
+          "value": "70f2f16ff7eeacb0124bb2c03d8ad2d538810e9df906d8d992bb511bbd97b389"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/18/digest",
+          "value": "74fba01546ec827b0adbf65da00b0870e2ccbf03aef118b958b8516ee8558870"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/19/digest",
+          "value": "7547e5ef24547d0bed58119d07404dc4979c6d0d833e7b3b404726980ff805d5"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/20/digest",
+          "value": "77a82b76325738fc5cac2f6d01c31c576b4efc44089e8adfcea1cbebacb6b67b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/21/digest",
+          "value": "783b3e5db5927ff7dab085d2d21c390e29e45f7e4598db47c43d5828953839b2"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/22/digest",
+          "value": "7c1f93d40e8d08c41cd378f2b79d1a4cde08fe6d93400213fb5915d1edff556e"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/23/digest",
+          "value": "9a18ee606d48a6f1b96826db9e1cc14b0a8287fcfb6ab35bb36a500793a009c0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/24/digest",
+          "value": "a26279caa47a7fc05578fb7a35a099e277d321ddeb0cae27db8eff4d16fe08f6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/25/digest",
+          "value": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/26/digest",
+          "value": "c15b70cce6cbadbd91fa0131caa26d44f5e55a4219ae5b1baceacf1046017836"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/27/digest",
+          "value": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/28/digest",
+          "value": "cfe44326312d7ed29a0d3d1adecbb9cfccf638789895151a31a2ef400a2b9844"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/29/digest",
+          "value": "fe2c6113228f482669eb3574a302307a354b698677d9d073994760f803536b53"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "0854238a4de48a9f88fca9c469e05bf5451ddab6567600cfbfba1d5af1cec3bd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "0854238a4de48a9f88fca9c469e05bf5451ddab6567600cfbfba1d5af1cec3bd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/body/members/0/value/target/digest",
+          "value": "44054fe93ad60c95983336dd537cc3510def5f715359e7f8b3baa8fcaaca23b7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/dependencies/0/digest",
+          "value": "44054fe93ad60c95983336dd537cc3510def5f715359e7f8b3baa8fcaaca23b7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/node_id/digest",
+          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/semantic_type/digest",
+          "value": "44054fe93ad60c95983336dd537cc3510def5f715359e7f8b3baa8fcaaca23b7"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/11/node_id/digest",
+          "value": "fe2c6113228f482669eb3574a302307a354b698677d9d073994760f803536b53"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "0854238a4de48a9f88fca9c469e05bf5451ddab6567600cfbfba1d5af1cec3bd"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/70/node_id/digest",
+          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-342-AC-11",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/46/body/members/1/value/target",
+      "locus_suffix": "members/1/value/target"
+    },
+    {
+      "id": "CL-26",
+      "subject": "a reset the root does not list",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "e5345cc315ee5fe314a934e2eb973dfff2ff1ea837fb3ef0b0aab8b84604edbe"
+        },
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/52/body/members/4/value/members/4"
+        },
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/52/dependencies/10"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "7f3cdf63b6154f7548224ed8b9a4e805d7d3a4ec579a78c4e4e197770cc8078f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "7f3cdf63b6154f7548224ed8b9a4e805d7d3a4ec579a78c4e4e197770cc8078f"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "7f3cdf63b6154f7548224ed8b9a4e805d7d3a4ec579a78c4e4e197770cc8078f"
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-263",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/85/body",
+      "locus_suffix": "body"
+    },
+    {
+      "id": "CL-27",
+      "subject": "a place guard that is a Text literal, not a Boolean expression",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "b7809154a99f973c2297f1d16c79e6a6578e5a2d3b39e8eced9a73f047236a9f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/45/body/members/3/value/members/0/target/digest",
+          "value": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/45/dependencies/2/digest",
+          "value": "b1a66d7f739b5ab89382e0717f812565b09faf92253e0dd1797521a10e9a690a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/45/node_id/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/45/semantic_type/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/body/members/2/value/target/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/dependencies/1/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/node_id/digest",
+          "value": "a93c168ee20a845b9a493b8da9e089b29534ff9802270db94b749fe0da5b55d0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/semantic_type/digest",
+          "value": "a93c168ee20a845b9a493b8da9e089b29534ff9802270db94b749fe0da5b55d0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/body/members/1/value/members/1/members/1/target/digest",
+          "value": "6795a55c56c64b7b16a2747bffc943575a0255e0c07e6cf80937fb47febe44cd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/dependencies/3/digest",
+          "value": "6795a55c56c64b7b16a2747bffc943575a0255e0c07e6cf80937fb47febe44cd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/node_id/digest",
+          "value": "deea3b6cabba21b8b89fe43e2803aaba66149e65f28605c982bfa01e771daa2f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/47/semantic_type/digest",
+          "value": "deea3b6cabba21b8b89fe43e2803aaba66149e65f28605c982bfa01e771daa2f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/body/members/1/value/members/0/target/digest",
+          "value": "542e63d27feb671b908cd09fcf8b2865ff88576c69fd6e58911b02d600a4e355"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/dependencies/0/digest",
+          "value": "542e63d27feb671b908cd09fcf8b2865ff88576c69fd6e58911b02d600a4e355"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/dependencies/1/digest",
+          "value": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/node_id/digest",
+          "value": "ea8c6786702b9935ce996a6d6be59e260513754ab5af9e1ad52d23c0a9fdc0de"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/48/semantic_type/digest",
+          "value": "ea8c6786702b9935ce996a6d6be59e260513754ab5af9e1ad52d23c0a9fdc0de"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/51/body/members/1/value/target/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/51/dependencies/1/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/51/node_id/digest",
+          "value": "542e63d27feb671b908cd09fcf8b2865ff88576c69fd6e58911b02d600a4e355"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/51/semantic_type/digest",
+          "value": "542e63d27feb671b908cd09fcf8b2865ff88576c69fd6e58911b02d600a4e355"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/3/value/members/0/target/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/4/value/members/0/target/digest",
+          "value": "a93c168ee20a845b9a493b8da9e089b29534ff9802270db94b749fe0da5b55d0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/5/value/members/0/target/digest",
+          "value": "deea3b6cabba21b8b89fe43e2803aaba66149e65f28605c982bfa01e771daa2f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/6/value/members/0/target/digest",
+          "value": "ea8c6786702b9935ce996a6d6be59e260513754ab5af9e1ad52d23c0a9fdc0de"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/8/value/members/0/target/digest",
+          "value": "542e63d27feb671b908cd09fcf8b2865ff88576c69fd6e58911b02d600a4e355"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/8/value/members/3/target/digest",
+          "value": "6795a55c56c64b7b16a2747bffc943575a0255e0c07e6cf80937fb47febe44cd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/7/digest",
+          "value": "32d9dd3d0fae592f8493cf099cc2130f12625926b65b2c176ff0a61c1e8451bd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/8/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/9/digest",
+          "value": "3d0d503247b8528bbde993ba6d144eb0f485f326745a8287986d1982bcee6b0f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/10/digest",
+          "value": "5306493957ff12de86d103cc5ac7d37aea983dee39d7d7ab24680a16e0cdd809"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/11/digest",
+          "value": "542e63d27feb671b908cd09fcf8b2865ff88576c69fd6e58911b02d600a4e355"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/12/digest",
+          "value": "587d090168212dae371a5f9e2eea7f5c82bb4c2ab1f6308c546fd5d9107ff457"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/13/digest",
+          "value": "5f4aa8bd0df7b776a985031bec1f41548b797fb939e435934db4ac400d0ca6bc"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/14/digest",
+          "value": "61bf845b51f4dec60a6d1e840abae8bae5ef6326c7c0319ef4d3adb5a22d2d3c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/15/digest",
+          "value": "63ad6f8b01af751ae549129cb44ec19f64a194db4c2497eb0fe2827bf16e87f0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/16/digest",
+          "value": "6795a55c56c64b7b16a2747bffc943575a0255e0c07e6cf80937fb47febe44cd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/21/digest",
+          "value": "783b3e5db5927ff7dab085d2d21c390e29e45f7e4598db47c43d5828953839b2"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/22/digest",
+          "value": "7c1f93d40e8d08c41cd378f2b79d1a4cde08fe6d93400213fb5915d1edff556e"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/23/digest",
+          "value": "9a18ee606d48a6f1b96826db9e1cc14b0a8287fcfb6ab35bb36a500793a009c0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/24/digest",
+          "value": "a26279caa47a7fc05578fb7a35a099e277d321ddeb0cae27db8eff4d16fe08f6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/25/digest",
+          "value": "a93c168ee20a845b9a493b8da9e089b29534ff9802270db94b749fe0da5b55d0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/26/digest",
+          "value": "c2419a57518503f962555d1ee5c050b2efb520de00ad345991e944147a20128f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/27/digest",
+          "value": "cfe44326312d7ed29a0d3d1adecbb9cfccf638789895151a31a2ef400a2b9844"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/28/digest",
+          "value": "deea3b6cabba21b8b89fe43e2803aaba66149e65f28605c982bfa01e771daa2f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/29/digest",
+          "value": "ea8c6786702b9935ce996a6d6be59e260513754ab5af9e1ad52d23c0a9fdc0de"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "d7482eb1be82f7a929ad2fe7f50f3682126ad7ed422af8b2a76a402c53def9e7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "d7482eb1be82f7a929ad2fe7f50f3682126ad7ed422af8b2a76a402c53def9e7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/78/body/members/1/value/target/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/78/dependencies/0/digest",
+          "value": "23e33e2b6131ae979386e3f8687d0e60fd573b7b4f423e1b804a7a035414bc60"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/78/dependencies/1/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/78/node_id/digest",
+          "value": "6795a55c56c64b7b16a2747bffc943575a0255e0c07e6cf80937fb47febe44cd"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/78/semantic_type/digest",
+          "value": "6795a55c56c64b7b16a2747bffc943575a0255e0c07e6cf80937fb47febe44cd"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/7/node_id/digest",
+          "value": "3cb5004af1e303b5be319b2b1e446946c10eb2d1f4fba3597d98ceb0abc3dcc9"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/11/node_id/digest",
+          "value": "a93c168ee20a845b9a493b8da9e089b29534ff9802270db94b749fe0da5b55d0"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/16/node_id/digest",
+          "value": "ea8c6786702b9935ce996a6d6be59e260513754ab5af9e1ad52d23c0a9fdc0de"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/44/node_id/digest",
+          "value": "542e63d27feb671b908cd09fcf8b2865ff88576c69fd6e58911b02d600a4e355"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "d7482eb1be82f7a929ad2fe7f50f3682126ad7ed422af8b2a76a402c53def9e7"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/49/node_id/digest",
+          "value": "deea3b6cabba21b8b89fe43e2803aaba66149e65f28605c982bfa01e771daa2f"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/78/node_id/digest",
+          "value": "6795a55c56c64b7b16a2747bffc943575a0255e0c07e6cf80937fb47febe44cd"
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-263",
+      "expected": "refused",
+      "expected_code": "invalid_package",
+      "expected_cause": "timed-node-reference",
+      "locus": "/semantic_graph/nodes/45/body/members/3/value/members/0/target",
+      "locus_suffix": "members/3/value/members/0/target"
+    },
+    {
+      "id": "CL-28",
+      "subject": "a parameter reset with a condition: a conditional reset of a Clock parameter does not exist",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "56cb3696e3ec48822984f9b1c0d63b5c2f17c6bf3a8c5c88a7279d1907b58c1c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/4/value/members/4/target/digest",
+          "value": "524da0667b878170364f1929cdcf685f15826289ab443f178899e2e7b58d220b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/10/digest",
+          "value": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/11/digest",
+          "value": "524da0667b878170364f1929cdcf685f15826289ab443f178899e2e7b58d220b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "c572b0cec9fe1edd9349e221ee4921d67d7dab422dd153dfeaea5d68378cca9c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "c572b0cec9fe1edd9349e221ee4921d67d7dab422dd153dfeaea5d68378cca9c"
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/85/body/members/3",
+          "value": {
+            "name": "condition",
+            "term": "binding",
+            "value": {
+              "target": {
+                "digest": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              "term": "reference"
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/85/dependencies/0",
+          "value": {
+            "digest": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
+            "domain": "quire.checked-semantic-node/v1"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/85/node_id/digest",
+          "value": "524da0667b878170364f1929cdcf685f15826289ab443f178899e2e7b58d220b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/85/semantic_type/digest",
+          "value": "524da0667b878170364f1929cdcf685f15826289ab443f178899e2e7b58d220b"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "c572b0cec9fe1edd9349e221ee4921d67d7dab422dd153dfeaea5d68378cca9c"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/85/node_id/digest",
+          "value": "524da0667b878170364f1929cdcf685f15826289ab443f178899e2e7b58d220b"
+        }
+      ],
+      "schema": "invalid",
+      "rule": "FR-322-AC-261",
+      "expected": "refused-by-schema",
+      "locus": "/semantic_graph/nodes/85/body"
+    },
+    {
+      "id": "CL-29",
+      "subject": "three constraints of one region listed in key order (clock, ts, v): admitted",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "b4b6f5c3ca92f2341ecc24921f759765a7ab7c967f21186e2f26003330753d67"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/8/value/members/1/target/digest",
+          "value": "77a82b76325738fc5cac2f6d01c31c576b4efc44089e8adfcea1cbebacb6b67b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/8/value/members/2/target/digest",
+          "value": "783b3e5db5927ff7dab085d2d21c390e29e45f7e4598db47c43d5828953839b2"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/8/value/members/3/target/digest",
+          "value": "5f4aa8bd0df7b776a985031bec1f41548b797fb939e435934db4ac400d0ca6bc"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "8afa5c8b977ecc0b53331a2d7a01f1acc0fe4fa330a65aff8702c6cd43a12bda"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "8afa5c8b977ecc0b53331a2d7a01f1acc0fe4fa330a65aff8702c6cd43a12bda"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "8afa5c8b977ecc0b53331a2d7a01f1acc0fe4fa330a65aff8702c6cd43a12bda"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/77/regions/0/end",
+          "value": 3005
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/77/regions/0/start",
+          "value": 3004
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/78/regions/0/end",
+          "value": 3005
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/78/regions/0/start",
+          "value": 3004
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-265",
+      "expected": "admitted"
+    },
+    {
+      "id": "CL-30",
+      "subject": "the same three constraints of one region listed in the order of their regions only: out of key order",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/source_map/77/regions/0/end",
+          "value": 3005
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/77/regions/0/start",
+          "value": 3004
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/78/regions/0/end",
+          "value": 3005
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/78/regions/0/start",
+          "value": 3004
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-265",
+      "expected": "refused",
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "locus": "/semantic_graph/nodes/52/body/members/8/value/members/3",
+      "locus_suffix": "members/8/value/members/3"
+    },
+    {
+      "id": "CL-31",
+      "subject": "two invariants of one region listed in key order (first bound clock, then v): admitted",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/source_map/87/regions/0/end",
+          "value": 1013
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/87/regions/0/start",
+          "value": 1012
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-265",
+      "expected": "admitted"
+    },
+    {
+      "id": "CL-32",
+      "subject": "the same two invariants of one region swapped: out of key order",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "c7ae7422e7809fc1d66cd1b77ea4f83ee9f6e6d171f1199361fb540dcd4f3d44"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/6/value/members/0/target/digest",
+          "value": "61bf845b51f4dec60a6d1e840abae8bae5ef6326c7c0319ef4d3adb5a22d2d3c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/6/value/members/1/target/digest",
+          "value": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "1ad1b172ac9afb92e3c317f7252767ba8fe87c469b076eaf324554b821d3e05b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "1ad1b172ac9afb92e3c317f7252767ba8fe87c469b076eaf324554b821d3e05b"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "1ad1b172ac9afb92e3c317f7252767ba8fe87c469b076eaf324554b821d3e05b"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/87/regions/0/end",
+          "value": 1013
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/87/regions/0/start",
+          "value": 1012
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-265",
+      "expected": "refused",
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "locus": "/semantic_graph/nodes/52/body/members/6/value/members/1",
+      "locus_suffix": "members/6/value/members/1"
     }
-  ]
+  ],
+  "quantified_out_of_scope": {
+    "ticket": "STD-554",
+    "rule": "FR-322-AC-263",
+    "cases": [
+      {
+        "id": "QN-01",
+        "source": "guard: forall(e in self.ts: e.x < 5 ms)",
+        "expected": "refused",
+        "expected_code": "unsupported_construct",
+        "expected_cause": "not-yet-implemented",
+        "locus": "the quantifier"
+      },
+      {
+        "id": "QN-02",
+        "source": "invariant: exists(e in self.ts: e.x <= 5 ms)",
+        "expected": "refused",
+        "expected_code": "unsupported_construct",
+        "expected_cause": "not-yet-implemented",
+        "locus": "the quantifier"
+      }
+    ]
+  }
 }
