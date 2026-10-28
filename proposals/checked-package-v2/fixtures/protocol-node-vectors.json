@@ -532,7 +532,14 @@
       "test_case": "TC-946",
       "section": "Clause body",
       "id": "C13",
-      "Edit to the base": "`compensations` names a node that is not in the clause's `dependencies`",
+      "Edit to the base": "`compensations` names a node of the graph that is not in the clause's `dependencies`",
+      "Expected": "`invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the clause node (graph stage, FR-322-AC-96, before any body step)"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Clause body",
+      "id": "C13a",
+      "Edit to the base": "`compensations` names a local node id that is no node of the graph",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {
@@ -1008,14 +1015,28 @@
       "test_case": "TC-946",
       "section": "Activation relation",
       "id": "A8",
-      "Edit to the base": "the `requirements` entry names a `temporal_clause` node absent from the clause's `dependencies`",
+      "Edit to the base": "the `requirements` entry names a `temporal_clause` node of the graph that is absent from the clause's `dependencies`",
+      "Expected": "`invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the clause node (graph stage, FR-322-AC-96, before any body step); no relation"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A8a",
+      "Edit to the base": "the `requirements` entry names a local node id that is no node of the graph",
       "Expected": "`missing_declaration`/`missing-name` at the target; no relation"
     },
     {
       "test_case": "TC-946",
       "section": "Activation relation",
       "id": "A9",
-      "Edit to the base": "the `each` `trigger` names a `value`/`parameter` node absent from the clause's `dependencies`",
+      "Edit to the base": "the `each` `trigger` names a `value`/`parameter` node of the graph that is absent from the clause's `dependencies`",
+      "Expected": "`invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the clause node (graph stage, FR-322-AC-96, before any body step); no relation"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Activation relation",
+      "id": "A9a",
+      "Edit to the base": "the `each` `trigger` names a local node id that is no node of the graph",
       "Expected": "`missing_declaration`/`missing-name` at the target; no relation"
     },
     {
@@ -1064,7 +1085,14 @@
       "test_case": "TC-947",
       "section": "Role vectors",
       "id": "RL7",
-      "Edit": "`model` names a node absent from `dependencies`",
+      "Edit": "`model` names a node of the graph that is absent from `dependencies`",
+      "Expected": "`invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the role node (graph stage, FR-322-AC-96, before any body step)"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Role vectors",
+      "id": "RL7a",
+      "Edit": "`model` names a local node id that is no node of the graph",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {
@@ -1295,7 +1323,14 @@
       "test_case": "TC-947",
       "section": "Channel vectors",
       "id": "CH10",
-      "Edit": "`to` is absent from `dependencies`",
+      "Edit": "`to` names a node of the graph that is absent from `dependencies`",
+      "Expected": "`invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the channel node (graph stage, FR-322-AC-96, before any body step)"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Channel vectors",
+      "id": "CH10a",
+      "Edit": "`to` names a local node id that is no node of the graph",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {
@@ -1421,7 +1456,14 @@
       "test_case": "TC-947",
       "section": "Queue vectors",
       "id": "QU9",
-      "Edit": "`channel` absent from `dependencies`",
+      "Edit": "`channel` names a node of the graph that is absent from `dependencies`",
+      "Expected": "`invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the queue node (graph stage, FR-322-AC-96, before any body step)"
+    },
+    {
+      "test_case": "TC-947",
+      "section": "Queue vectors",
+      "id": "QU9a",
+      "Edit": "`channel` names a local node id that is no node of the graph",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {
@@ -1764,7 +1806,14 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "id": "S3",
-      "Edit": "a child of `Main` that is absent from `dependencies`",
+      "Edit": "a child of `Main` that is a node of the graph absent from `dependencies`",
+      "Expected": "`invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the `Main` node (graph stage, FR-322-AC-96, before any body step)"
+    },
+    {
+      "test_case": "TC-948",
+      "section": "Sequence, choice and parallel",
+      "id": "S3a",
+      "Edit": "a child of `Main` that is a local node id no node of the graph carries",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {

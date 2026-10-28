@@ -40,7 +40,8 @@ FR-465-AC-9.
 | RL4 | a role on a `model`/`event_type` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | RL5 | a role on a `model`/`variant_type` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | RL6 | `model` names a `value` node | `invalid_model_binding`/`malformed-declaration` at the target |
-| RL7 | `model` names a node absent from `dependencies` | `missing_declaration`/`missing-name` at the target |
+| RL7 | `model` names a node of the graph that is absent from `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the role node (graph stage, FR-322-AC-96, before any body step) |
+| RL7a | `model` names a local node id that is no node of the graph | `missing_declaration`/`missing-name` at the target |
 | RL8 | the replicated role with `lifetime` `workflow`, `scope` and `until` | admitted; `binder` is the `value`/`parameter` node named `w`, of type `Reference<M::Worker>` |
 | RL9 | `until` present with `lifetime: workflow` | refuses `malformed_wire` |
 | RL10 | `until` absent with `lifetime: until` | refuses `malformed_wire` |
@@ -78,7 +79,8 @@ FR-465-AC-9.
 | CH7d | `key` has type `text`, `integer`, `uuid`, `enum`, `Reference<T>`, a record of integers | admitted: equality-stable (FR-322) |
 | CH8 | `from` names the `Charges` queue node | `invalid_model_binding`/`malformed-declaration` at the target |
 | CH9 | `from` names a role of another protocol | `invalid_model_binding`/`malformed-declaration` at the target |
-| CH10 | `to` is absent from `dependencies` | `missing_declaration`/`missing-name` at the target |
+| CH10 | `to` names a node of the graph that is absent from `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the channel node (graph stage, FR-322-AC-96, before any body step) |
+| CH10a | `to` names a local node id that is no node of the graph | `missing_declaration`/`missing-name` at the target |
 | CH11 | `carries` names a `model`/`record_value_type`, a `model`/`event_type`, a `model`/`variant_type`, a `composite_type` and a `scalar_type` node, one each | admitted |
 | CH12 | `carries` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | CH13 | `delivery` is each of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise` | admitted: four distinct node keys |
@@ -101,7 +103,8 @@ FR-465-AC-9.
 | QU6b | `overflow` is `reject` or `block` with a `loss` member | refuses `malformed_wire` |
 | QU7 | `literal` capacity `-1` | `invalid_package`/`invalid-value` at the value, at strict wire validation |
 | QU8 | `channel` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
-| QU9 | `channel` absent from `dependencies` | `missing_declaration`/`missing-name` at the target |
+| QU9 | `channel` names a node of the graph that is absent from `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the queue node (graph stage, FR-322-AC-96, before any body step) |
+| QU9a | `channel` names a local node id that is no node of the graph | `missing_declaration`/`missing-name` at the target |
 | QU11 | `at-least-once` delivery with overflow `loss` | admitted: overflow governs a full queue and delivery policy governs transport duplication and loss; an overflow loss is not a transport `lose` step |
 | QU10 | the queue's occurrence has role `declaration` | refuses `malformed_wire` |
 
@@ -145,9 +148,10 @@ FR-465-AC-9.
 1. RL1, RL2, RL8, RL14, CH1, CH2, CH7, CH7d, CH11, CH13, QU1 to QU3, QU11, FN1, FN3, FN3b, TM1, TM11,
    TM2, TM9, TM13, RT1 and RT4 are admitted with the stated keys (FR-465-AC-1 to
    FR-465-AC-8).
-2. RL3 to RL7, RL13, CH8 to CH10, CH12, QU8, QU9, FN5, FN6 and TM8 refuse
-   `invalid_model_binding`/`malformed-declaration` or `missing_declaration`/
-   `missing-name` at the target, as listed (FR-465-AC-1, FR-465-AC-3,
+2. RL3 to RL7a, RL13, CH8 to CH10a, CH12, QU8, QU9a, FN5, FN6 and TM8 refuse
+   `invalid_model_binding`/`malformed-declaration`, `missing_declaration`/
+   `missing-name` at the target, or (RL7, CH10, QU9) `invalid_semantic_graph`
+   at the node's `/dependencies` at the graph stage, as listed (FR-465-AC-1, FR-465-AC-3,
    FR-465-AC-5, FR-465-AC-6, FR-465-AC-7).
 3. RL9, RL10, RL17 to RL19, CH3, CH4, CH14 to CH16, QU4 to QU6b, QU10, TM3, TM4
    and RT2 refuse `malformed_wire` (FR-465-AC-2, FR-465-AC-4,
