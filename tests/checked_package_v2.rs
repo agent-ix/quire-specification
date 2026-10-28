@@ -22170,7 +22170,6 @@ fn tc_367_presence_vector_assertions_each_fail_on_their_mutation() {
     assert!(presence_cause(&pr02, &places, &parameters, &owner_type, &slot_type).is_some());
 }
 
-
 const CONTRACT_PACKAGE_SELECTION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/contract-package-selection-vectors.json");
 const TC935_CONTRACT_PACKAGE_PROFILE: &str =
