@@ -511,8 +511,11 @@ protocol clause. The rule is the same with and without a `class_catalog`:
 The producer SHALL emit the no-point anchor and its frame node
 ([FR-340](../../objects/interfaces/FR-340-checked-package-frame-location.md))
 for every operation class a step row names, even when no clause, attempt or
-transition names that operation. The row is not an occurrence of the anchor;
-its provenance is the `refinement_step_rows` sidecar. A memory class has no
+transition names that operation. Such an anchor carries exactly one `anchor`
+occurrence, the source region of the operation's declaration (so FR-322's
+every-node-has-an-occurrence rule holds), and FR-342 states the same. The row
+is not an occurrence of the anchor; its provenance is the
+`refinement_step_rows` sidecar. A memory class has no
 `source_node`. The abstract operation target's `operation` key names, by the
 same rule, the no-point anchor of (the abstract declaring type, the abstract
 operation), as a local `NodeRef` or a `PackageNodeKey`. A `source_node` that is
@@ -520,8 +523,15 @@ an anchor of another operation, a point-qualified anchor, an anchor of a type
 the selected concrete model does not own, or not an `operation_anchor`, or
 a missing `source_node` on an operation class, refuses
 `invalid_model_binding`/`malformed-declaration` at that `source_node` (or at the
-step entry when absent); a `source_class` naming no operation of `T` refuses
-`missing_declaration`/`missing-name` at `source_class`.
+step entry when absent); a `source_class` naming no operation that `T` itself declares refuses
+`missing_declaration`/`missing-name` at `source_class`. The class spelling
+resolves among DECLARED operations only, so the spelling of an inherited
+operation under the inheriting type (`Sub::reset`) is a missing class, not
+FR-342-AC-4's anchor refusal. The class is resolved before `source_node` is
+examined: an unresolvable class refuses at `source_class` whatever
+`source_node` holds. A package is one unit of compilation (a supplied library
+is compiled as its own package), so the reader's package-level equal-`name`
+check and the unit-scoped source check cover the same set of declarations.
 
 **Row-expression binders.** In a row expression, `self` and the concrete
 operation's arguments are encoded in the style of
@@ -803,7 +813,7 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-28 | A protocol refinement's concrete and abstract catalogs carry one declared entry for each `effect` node and each `commit` node of the selected subject, with `class` the bare node path (the `event` step kind), `node` that node and `binder_types` its binder record, and one `cend <protocol>::<template>` entry for each template, with `node` the template node and empty `binder_types`, whether or not a step row names them; a protocol with none of these nodes carries none of these entries. Each of these independent mutations of a valid catalog refuses as stated: dropping the `effect`, the `commit` or the `cend` entry refuses `invalid_semantic_graph` at the `concrete` (or `abstract`) catalog array; repeating one of those entries refuses `invalid_semantic_graph` at the later duplicate entry; an entry of one of those classes for a node that is not such a node (a `cend` of an attempt, or a path naming no node) refuses `invalid_semantic_graph` at that entry; and associating the `commit` entry with the `effect` node, or changing a binder type, refuses `invalid_model_binding`/`malformed-declaration` at the entry. | Test (TC-310, TC-233) |
 | FR-375-AC-29 | The refinement's authored `ident` is the body's `name`. Two declarations in one unit whose abstract model, protocol, profile, concrete model and rows are equal and whose names differ (`Alpha` and `Beta`) are admitted as two `relation`/`refinement` nodes with different node ids, each with its own declaration occurrence and source-map entry; the producer emits no internal failure for them. Renaming one refinement changes its node id, the `package_id` and the obligation identity of an item citing it; renaming a model or profile alias changes none. A body without `name`, or with a non-`Identifier` `name`, fails both V2 schemas. | Test (TC-310) |
 | FR-375-AC-30 | Two refinement declarations of one unit with the same name refuse `ambiguous_declaration`/`ambiguous-name` at the second declaration's name token, whatever their rows; a package whose two refinement nodes carry equal `body.name` refuses `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name` in ascending node-id order, after identity recomputation. | Test (TC-310) |
-| FR-375-AC-31 | For an operation class `T::op`, `source_node` is the no-point `state`/`operation_anchor` of (`T`, `op`) whose `context` is the declaring type `T`, with and without a `class_catalog`; a catalog entry for the class carries that anchor as `node`. A `source_node` naming the concrete model root, the model-owner node, an anchor of another operation or type, or a point-qualified anchor, or a missing `source_node` on an operation class, refuses `invalid_model_binding`/`malformed-declaration`; a `source_class` naming no operation of `T` refuses `missing_declaration`/`missing-name`. An operation is the class of its declaring type only: an inherited operation is spelled and anchored at the type that declares it, and a class naming a type that does not declare the operation refuses `missing_declaration`/`missing-name`. The abstract operation target's `operation` key names the abstract declaring type's no-point anchor by the same rule. | Test (TC-310) |
+| FR-375-AC-31 | For an operation class `T::op`, `source_node` is the no-point `state`/`operation_anchor` of (`T`, `op`) whose `context` is the declaring type `T`, with and without a `class_catalog`; a catalog entry for the class carries that anchor as `node`. A `source_node` naming the concrete model root, the model-owner node, an anchor of another operation or type, or a point-qualified anchor, or a missing `source_node` on an operation class, refuses `invalid_model_binding`/`malformed-declaration`; a `source_class` naming no operation that `T` itself declares (including an inherited operation spelled under the inheriting type), checked before `source_node`, refuses `missing_declaration`/`missing-name` at `source_class`. A no-point anchor no clause names carries one `anchor` occurrence, the operation's declaration region. An operation is the class of its declaring type only: an inherited operation is spelled and anchored at the type that declares it, and a class naming a type that does not declare the operation refuses `missing_declaration`/`missing-name`. The abstract operation target's `operation` key names the abstract declaring type's no-point anchor by the same rule. | Test (TC-310) |
 | FR-375-AC-32 | A step row's `self` and concrete operation arguments are `reference` terms to FR-341 `value`/`parameter` nodes: `self` named `"self"` at level 0 with `Reference<C>`, then each parameter by declared name at levels 1..n in declared order; a step row has no `result` binder and an object row has `self` alone; the nodes are those of the operation's precondition clause. A reference to a node with a wrong name, level or type refuses `invalid_model_binding`/`malformed-declaration` at the reference. | Test (TC-310) |
 
 ## Dependencies

@@ -404,6 +404,73 @@
         "source_node": "AN-Base-reset",
         "expected": "missing_declaration/missing-name"
       }
+    ],
+    "catalog": [
+      {
+        "class": "Base::reset",
+        "node": "AN-Base-reset"
+      },
+      {
+        "class": "Counter::beginA",
+        "node": "AN-Counter-beginA"
+      },
+      {
+        "class": "Counter::commitA",
+        "node": "AN-Counter-commitA"
+      }
+    ],
+    "anchor_occurrences": [
+      {
+        "name": "OC-01",
+        "anchor": "AN-Counter-beginA",
+        "named_by_clause": false,
+        "occurrences": [
+          {
+            "role": "anchor",
+            "region": "declaration of Counter::beginA"
+          }
+        ],
+        "expected": "admitted"
+      },
+      {
+        "name": "OC-02",
+        "anchor": "AN-Counter-beginA",
+        "named_by_clause": false,
+        "occurrences": [],
+        "expected": "refused:no-occurrence"
+      },
+      {
+        "name": "OC-03",
+        "anchor": "AN-Counter-beginA",
+        "named_by_clause": false,
+        "occurrences": [
+          {
+            "role": "anchor",
+            "region": "declaration of Counter::beginA"
+          },
+          {
+            "role": "anchor",
+            "region": "declaration of Counter::beginA"
+          }
+        ],
+        "expected": "refused:unnamed-anchor-has-exactly-one-occurrence"
+      },
+      {
+        "name": "OC-04",
+        "anchor": "AN-Counter-beginA",
+        "named_by_clause": true,
+        "occurrences": [
+          {
+            "role": "anchor",
+            "region": "clause 1"
+          },
+          {
+            "role": "anchor",
+            "region": "clause 2"
+          }
+        ],
+        "expected": "admitted"
+      }
     ]
   },
   "row_binders": {

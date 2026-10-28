@@ -53,7 +53,11 @@ below.
   protocol attempt or `state`/`transition` node
   ([FR-341](FR-341-checked-package-state-clause-body.md)) that names the
   operation and resolves to this exact point-qualified anchor. A transition
-  names the no-point anchor.
+  names the no-point anchor. A no-point anchor that no clause, attempt or
+  transition names, which a refinement step row requires
+  ([FR-375](../../functional/analysis/FR-375-declare-model-refinement.md)
+  "Step-row provenance"), carries exactly one `anchor` occurrence: the source
+  region of the operation's declaration.
 - **dependencies** — `C` and `F`, the two nodes the body references.
 
 One `operation_anchor` node stands for one (declaring type, operation name,
