@@ -20523,6 +20523,45 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
     assert_eq!(ids.len(), 27, "every published wire case ran");
 }
 
+/// FR-322-AC-152 and FR-322-AC-153: the tuple.project wire cases refuse at the
+/// application node, and a wire case states a `cause` exactly when its code
+/// carries one.
+#[trace("TC-940", "FR-322-AC-152", "FR-322-AC-153")]
+#[test]
+fn tc_940_wire_case_loci_and_causes_follow_the_refusal_vocabulary() {
+    let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
+    let base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
+    ));
+    let carries_cause = [
+        "invalid_package",
+        "ill_typed",
+        "ambiguous_declaration",
+        "missing_declaration",
+        "invalid_model_binding",
+    ];
+    let node = &base["semantic_graph"]["nodes"][31];
+    assert_eq!(node["body"]["operation"]["identity"], "quire.op.tuple.project");
+    assert_eq!(node["body"]["operation"]["member"]["position"], 0);
+    let operand = &node["body"]["arguments"][0]["target"];
+    let nodes = base["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let operand_node = nodes.iter().find(|n| n["node_id"] == *operand).expect("operand");
+    assert_eq!(operand_node["semantic_form"], "parameter", "the Pair-typed parameter");
+    for vector in vectors["wire_cases"].as_array().expect("wire cases") {
+        let id = vector["id"].as_str().expect("id");
+        let code = vector["outcome"].as_str().and_then(|o| o.strip_prefix("refused:"));
+        let has_cause = vector.get("cause").is_some();
+        assert_eq!(
+            has_cause,
+            code.is_some_and(|code| carries_cause.contains(&code)),
+            "{id}: a cause is stated exactly when the code carries one"
+        );
+        if matches!(id, "TW-18" | "TW-19" | "TW-20" | "TW-26") {
+            assert_eq!(vector["locus"], "/semantic_graph/nodes/31", "{id}: the application node");
+        }
+    }
+}
+
 
 const CLASS_CATALOG_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/class-catalog-vectors.json");

@@ -55,7 +55,7 @@ and a second variant type `Level` with cases `Gold` and `Silver`.
 
 ## Tuple value types and payload-bearing variant types (STD-519)
 
-Scope: FR-322-AC-140 to FR-322-AC-147 and FR-322-AC-151. Use `model-tuple-union-vectors.json`
+Scope: FR-322-AC-140 to FR-322-AC-147 and FR-322-AC-151 to FR-322-AC-153. Use `model-tuple-union-vectors.json`
 and its selected document `domain-package-acme-shapes.json`:
 the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 `p1: Integer`), `Swap` (`p0: Integer`, `p1: Boolean`) and `Nest` (`p0: Pair`,
@@ -110,8 +110,11 @@ Expected results:
 10. Each refuses with the code and cause FR-322-AC-145 names, in the order
     "Intake refusal order" of FR-322 states.
 11. The unmutated package is admitted; each application node recomputes its
-    published application-node key; every wire case refuses with the code, cause
-    and locus its vector states, `TW-05` as `invalid_package`/`stale-node-key`.
+    published application-node key; every wire case refuses with the code, locus
+    and, for a code that carries a cause, the cause its vector states (a
+    `malformed_wire` or `invalid_semantic_graph` case states none, FR-322-AC-153),
+    `TW-05` as `invalid_package`/`stale-node-key`; `TW-18` to `TW-20` refuse at the
+    application node `/semantic_graph/nodes/31` (FR-322-AC-152).
 12. The cycle is admitted; neither node has a `recursion_group`; the walk and
     the empty leaf list are those of FR-322-AC-147.
 13. The projection equals `domain_package`; the row digest equals the SHA-256 of
