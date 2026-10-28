@@ -248,6 +248,10 @@ QSL's emitter, which replaces the non-emittable placeholders, among them
 `positive-all-families.json`'s declared boolean `Example::Flag` and the
 nodes typed at it, and `positive-operation-identities.json`'s undeclared
 record node and its placeholder function `double` and model `Counter`.
+The operation fixture's `Set<Reference<Order>>` population type forwards
+to the single `Reference` node over the generated `Order` model declaration
+(FR-322-AC-62, FR-322-AC-65); it carries no `Reference` over the anonymous
+record node, whose target is not a model or relation.
 Two sets of nodes are hand authored. The first is each node of a kind QSL
 never writes (FR-093-AC-19), kept so that the all-families fixture carries
 all 15 node tags (FR-322-AC-13); it is keyed by FR-092/FR-094's rule, the
