@@ -101,6 +101,7 @@ structures, but any external consumer receives only the contract.
   cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
   FR-342-AC-7 to AC-9). Its model declaration node keys are recomputed by the
   tests from each preimage.
+- `class-catalog-vectors.json` supplies the canonical `class_catalog` of TC-233 `CCW-10` (effect, commit, event, attempt, `cend`, the three drain entries and `memory flush`) with schema and reader mutations; node digests are `sha256("std-524/" + label)`.
 - `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
   `generated` `source_map` entries against its step rows, its `steps` order and

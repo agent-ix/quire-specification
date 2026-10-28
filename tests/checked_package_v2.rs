@@ -5925,41 +5925,6 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
     panic!("rekeying does not settle within {limit} renames");
 }
 
-/// The operation fixture predates the derived `Reference<O>` rule and points
-/// its generic reference at a record. Rebind that fixture to its published
-/// model declaration before semantic-reader tests, then rekey the complete
-/// dependency closure so the resulting package is an ordinary valid vector.
-fn modelize_legacy_record_reference(package: &mut Value) -> BTreeMap<String, String> {
-    let nodes = package["semantic_graph"]["nodes"]
-        .as_array()
-        .expect("fixture nodes are an array");
-    let index = nodes
-        .iter()
-        .position(|node| {
-            node["node_tag"] == "composite_type"
-                && node["semantic_form"] == "reference"
-                && nodes.iter().any(|target| {
-                    target["node_id"] == node["body"]["members"][0]["target"]
-                        && target["node_tag"] == "composite_type"
-                        && target["semantic_form"] == "record"
-                })
-        })
-        .expect("legacy generic record reference");
-    let model_id = nodes
-        .iter()
-        .find(|node| is_model_declaration(node))
-        .expect("fixture model declaration")["node_id"]
-        .clone();
-    replace_node_field_in_graph(
-        package,
-        index,
-        "/body/members/0/target",
-        model_id.clone(),
-    );
-    replace_node_field_in_graph(package, index, "/dependencies", json!([model_id]));
-    rekey_stale_nodes(package)
-}
-
 /// Append a structural node to a fixture, bind its current key and recompute
 /// the package id. The caller supplies the complete wire body and cross-fields;
 /// this helper is used only by reader qualification vectors.
@@ -8671,7 +8636,7 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
     let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
     let mutations = &vectors["operation_mutations"];
     let mut package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    let renames = modelize_legacy_record_reference(&mut package);
+    let renames = BTreeMap::<String, String>::new();
     let causes = mutations
         .as_array()
         .expect("mutations are an array")
@@ -9028,8 +8993,7 @@ fn tc_233_operation_and_declaration_causes_pair_with_one_catalogued_code() {
 }
 
 fn published_v2_packages() -> [(&'static str, Value); 7] {
-    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut operation);
+    let operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     [
         ("operation-identities", operation),
         ("all-families", parsed_fixture(POSITIVE_ALL_FAMILIES)),
@@ -13066,8 +13030,7 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
     let mutations = adverse["derived_shape_key_mutations"]
         .as_array()
         .expect("derived-shape mutations are an array");
-    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut operation);
+    let operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     let bases = BTreeMap::from([
         (
             "positive-all-families",
@@ -13297,8 +13260,7 @@ fn tc_322_derived_form_key_mutations() {
 #[test]
 fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
-    let mut base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut base);
+    let base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
 
     let mut wrong_reference = base.clone();
     let reference_index = wrong_reference["semantic_graph"]["nodes"]
@@ -13365,11 +13327,11 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     }
 
     let mut wrong_population = base.clone();
-    let mut population_reference = wrong_population["semantic_graph"]["nodes"][43].clone();
+    let mut population_reference = wrong_population["semantic_graph"]["nodes"][58].clone();
     population_reference["body"]["members"][0]["target"] =
-        wrong_population["semantic_graph"]["nodes"][58]["node_id"].clone();
+        wrong_population["semantic_graph"]["nodes"][57]["node_id"].clone();
     population_reference["dependencies"] =
-        json!([wrong_population["semantic_graph"]["nodes"][58]["node_id"]]);
+        json!([wrong_population["semantic_graph"]["nodes"][57]["node_id"]]);
     append_rekeyed_structural_node(&mut wrong_population, population_reference);
     let population_reference_id = wrong_population["semantic_graph"]["nodes"]
         .as_array()
@@ -13387,7 +13349,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .last()
         .unwrap()["node_id"]
         .clone();
-    let mut population = wrong_population["semantic_graph"]["nodes"][51].clone();
+    let mut population = wrong_population["semantic_graph"]["nodes"][50].clone();
     population["semantic_form"] = json!("model_population");
     population["semantic_type"] = population_set_id.clone();
     population["body"] = json!({
@@ -13829,8 +13791,7 @@ const POSITIVE_TWO_OWNERS_B: &str =
 
 /// Every published positive fixture, by name.
 fn positive_fixtures() -> [(&'static str, Value); 12] {
-    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut operation);
+    let operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     [
         (
             "positive-nominal-identities",
@@ -20555,4 +20516,111 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
         assert_eq!(observed, expected, "{id}");
     }
     assert_eq!(ids.len(), 27, "every published wire case ran");
+}
+
+
+const CLASS_CATALOG_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/class-catalog-vectors.json");
+
+/// The concrete classes of the CCF-01 subject, in canonical order, each as
+/// (class, memory model): declared classes, `cend`, three drains, then `flush`.
+const EXPECTED_CONCRETE_CLASSES: [(&str, &str); 10] = [
+    ("Impl::Do", ""),
+    ("Impl::E", ""),
+    ("Impl::K", ""),
+    ("Impl::T", ""),
+    ("Impl::ev", ""),
+    ("cend Impl::T", ""),
+    ("memory drain", "ra"),
+    ("memory drain", "sc"),
+    ("memory drain", "tso"),
+    ("memory flush", "tso"),
+];
+
+/// Reader-level class-catalog check over a schema-valid catalog: canonical
+/// order by (class UTF-8 bytes, memory model), no duplicate catalog key, and
+/// the effect, commit and cend classes the producer must catalogue.
+fn class_catalog_reader_refusal(catalog: &Value) -> Option<&'static str> {
+    for side in ["concrete", "abstract"] {
+        let entries = catalog[side].as_array().expect("catalog side");
+        let keys: Vec<(String, String)> = entries
+            .iter()
+            .map(|entry| {
+                (
+                    entry["class"].as_str().expect("class").to_owned(),
+                    entry["memory_model"].as_str().unwrap_or("").to_owned(),
+                )
+            })
+            .collect();
+        for pair in keys.windows(2) {
+            if pair[0] == pair[1] {
+                return Some("duplicate_class");
+            }
+            if pair[0] > pair[1] {
+                return Some("misordered_class");
+            }
+        }
+    }
+    let present: BTreeSet<(String, String)> = catalog["concrete"]
+        .as_array()
+        .expect("concrete")
+        .iter()
+        .map(|entry| {
+            (
+                entry["class"].as_str().expect("class").to_owned(),
+                entry["memory_model"].as_str().unwrap_or("").to_owned(),
+            )
+        })
+        .collect();
+    for (class, model) in EXPECTED_CONCRETE_CLASSES {
+        if !present.contains(&(class.to_owned(), model.to_owned())) {
+            return Some("omitted_class");
+        }
+    }
+    None
+}
+
+#[trace("TC-310", "FR-375-AC-28")]
+#[test]
+fn tc_310_class_catalog_carries_effect_commit_and_cend_classes() {
+    let defs = parsed_fixture(SCHEMA)["$defs"].clone();
+    let wrapper = json!({"$ref": "#/$defs/RefinementClassCatalog", "$defs": defs});
+    let validator = jsonschema::validator_for(&wrapper).expect("catalog schema is valid");
+    let vectors = parsed_fixture(CLASS_CATALOG_VECTORS);
+    let mut admitted = 0;
+    for case in vectors["cases"].as_array().expect("cases") {
+        let name = case["name"].as_str().expect("name");
+        let catalog = &case["catalog"];
+        let observed = if !validator.is_valid(catalog) {
+            "schema_refused"
+        } else {
+            class_catalog_reader_refusal(catalog).unwrap_or("admitted")
+        };
+        assert_eq!(observed, case["expected"].as_str().expect("expected"), "{name}");
+        if observed == "admitted" {
+            admitted += 1;
+            let concrete: Vec<(&str, &str)> = catalog["concrete"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|entry| {
+                    (
+                        entry["class"].as_str().unwrap(),
+                        entry["memory_model"].as_str().unwrap_or(""),
+                    )
+                })
+                .collect();
+            assert_eq!(
+                concrete,
+                EXPECTED_CONCRETE_CLASSES,
+                "{name}: the canonical concrete class order"
+            );
+        }
+    }
+    assert_eq!(admitted, 1, "exactly the positive vector is admitted");
+    assert_eq!(
+        vectors["cases"].as_array().unwrap().len(),
+        15,
+        "every single-drop, misordered and duplicate case is present"
+    );
 }
