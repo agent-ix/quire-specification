@@ -772,6 +772,10 @@ refinement node, the reader checks in this order and reports its first defect:
    declared `type` or `result_type`) does not conform to its row's abstract target type
    refuses `ill_typed`/`type-mismatch` at the expression. An `open` term
    outside a step target's `arguments` fails the V2 schema before this step.
+   A row expression that reads a history field, a whole population or
+   `seq` is a node form FR-322 "Refinement row expressions" defines; a
+   history read is joined to the refinement's `histories` here, before the
+   operation stage.
 
 The step does not recompile source or infer an alternate key from a row's
 source position. An admitted wire target is checked against the selected
