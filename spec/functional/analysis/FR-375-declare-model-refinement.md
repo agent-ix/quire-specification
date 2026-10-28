@@ -500,7 +500,15 @@ and is catalogued when a source `parallel` selects `tso`; it removes the
 oldest buffered write for one thread. Other memory entries
 are admitted only when the source-default model defines their named step
 (FR-434, FR-436, FR-437).
-FR-432's closed class table determines the spellings and node associations:
+FR-432's closed class table determines the spellings and node associations.
+Every concrete step class of that table is a catalog class, and so is every
+abstract class: this includes the `effect` and `commit` classes (each the
+`event` step kind of its node, spelled by the bare node path, `node` the effect
+or commit node, `binder_types` its binder record) and the `cend` class of each
+template (`cend <protocol>::<template>`, `node` the template node, no binder
+types). A catalog without them omits a class and refuses as an omitted class
+below; an abstract `protocol_step` target naming an `effect` or `commit` node
+resolves against the abstract entry of that node. Further:
 `fork` and `join` are two classes of one `parallel` node, and a memory class
 has no node. The `activate` class of a protocol clause with activation
 `on each` is a declared class entry whose `class` is the alias-free
@@ -710,6 +718,7 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-25 | For a selected model with any number of object types and state machines, including none, the producer derives exactly one identity-bound model root from the selected package identity and digest; it does not choose a declaration as a representative. Model-subject `abstract` keys and refinement `semantic_type` keys name that root, and protocol-subject `abstract` keys name that root while `protocol` names the exact clause. Changing a source alias leaves the root identity unchanged; changing selected package content changes its digest and therefore the root identity. The model root is derived from existing selection state and requires no FCD declaration or new selection field. | Test (TC-310) |
 | FR-375-AC-26 | A catalog is unique and ordered by catalog key. Over a subject whose source `parallel` controls default to `sc`, `tso` and `ra`, `concrete` holds `memory drain` three times, once per model, in the order `ra`, `sc`, `tso`, each with `drain: store-buffer-flush`, and `memory flush` once for `tso`, after the three drains; every such catalog is admitted. The same models selected by two `parallel` controls produce one entry per model, not two. Reordering the three drains, repeating a `(memory drain, memory_model)` pair, or repeating a declared class spelling refuses `invalid_semantic_graph` at the first out-of-order or later duplicate array entry. | Test (TC-310, TC-233) |
 | FR-375-AC-27 | A concrete protocol clause with activation `on each (x: T)` carries one catalog entry `{class: "activate <protocol>", node: <clause node>, binder_types: [...]}` where `binder_types` is `[T]` for a non-record `T` and one key per field of `T`, in effective field order, for a record `T`; the abstract catalog carries the same entry with `RefinementKey`s for a selected abstract clause with that activation. A clause with activation `on origin` carries none. A catalog that associates `activate` with a node other than its clause, or lists a wrong or reordered binder type, refuses `invalid_model_binding`/`malformed-declaration` at the catalog entry in FR-464 step 7; one that drops the entry refuses `invalid_semantic_graph` at the catalog array, and one that adds an `origin` clause's entry refuses `invalid_semantic_graph` at that extra entry (the omitted or extra class rule above). | Test (TC-310) |
+| FR-375-AC-28 | A protocol refinement's concrete and abstract catalogs carry one declared entry for each `effect` node and each `commit` node of the selected subject, with `class` the bare node path (the `event` step kind), `node` that node and `binder_types` its binder record, and one `cend <protocol>::<template>` entry for each template, with `node` the template node and empty `binder_types`; the catalog is the same whether or not a step row names them. A catalog that drops one refuses `invalid_semantic_graph` at the catalog array, one that adds an `effect`, `commit` or `cend` entry for a node that is not one refuses `invalid_semantic_graph` at that entry, and a changed node association or binder type refuses `invalid_model_binding`/`malformed-declaration` at the entry. A protocol with none of these nodes carries no such entry. | Test (TC-310) |
 
 ## Dependencies
 
