@@ -20832,6 +20832,12 @@ fn tc_940_nominal_rekey_vectors_run_from_the_published_vectors() {
             "{id}: the case carries the recomputed package_id"
         );
         assert!(schema.is_valid(&package), "{id}: schema-valid");
+        if id == "NK-07" {
+            // The owner-join defect is isolated: the added function node's
+            // structural key is current.
+            let owned = package["semantic_graph"]["nodes"][4].clone();
+            assert!(owned.get("owner").is_some() && structural_node_key_is_current(&owned), "{id}");
+        }
         let position = |node_id: &Value| {
             package["semantic_graph"]["nodes"]
                 .as_array()

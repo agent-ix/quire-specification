@@ -402,7 +402,7 @@
     },
     {
       "id": "NK-07",
-      "summary": "U is rekeyed and an added function node `Example::double` names a source owner the lock does not select: the nominal key stage precedes the owner join, so U is reported and not the owner-join refusal.",
+      "summary": "U is rekeyed and an added function node `Example::double` names a source owner the lock does not select (its structural key is current, so the owner and U's rekey are its only defects): the nominal key stage precedes the owner join, so U is reported and not the owner-join refusal.",
       "patch": [
         {
           "op": "replace",
@@ -436,7 +436,7 @@
             },
             "dependencies": [],
             "node_id": {
-              "digest": "ba834b0067068c2e58aa9fcf9edd94ffe971687f41ea469749715fa2b42031b9",
+              "digest": "7056b4ee2150d5a8589e1972bb0714ec90b40c07a8021596ead425127e6a0018",
               "domain": "quire.checked-semantic-node/v1"
             },
             "node_tag": "function",
@@ -462,7 +462,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "056ee993de8a68164ff4459db65f717ca3075c807a7eb29369e0584526280412"
+          "value": "60a7934157d57595eeaf36288d3964d357a212e81198b85e2c2545950886f2b5"
         }
       ],
       "outcome": "refused:invalid_semantic_graph",
