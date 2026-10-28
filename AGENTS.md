@@ -8,7 +8,7 @@ Read README.md, LICENSE (`AGPL-3.0-or-later`) and the owning issue before editin
 - Do not infer licensing from process or repository boundaries.
 - Keep private research, traces and issue links out of public releases. No public posting, visibility change, or source relicensing without explicit approval.
 - Use isolated worktrees for concurrent code sessions; preserve unrelated edits.
-- Owner directive: build, test, and qualification checks run locally until stable. Hosted workflows for those checks must be manual-dispatch only (`workflow_dispatch`); do not add automatic triggers or dispatch a run without explicit direction. Only `.github/workflows/language-boundary.yml` may use `pull_request_target` to call the trusted Rust language-boundary checker and report status on the pull request head without executing its code. The existing CLA workflow may continue its automatic administration.
+- Owner directive: build, test, and qualification checks run locally until stable. Hosted workflows for those checks must be manual-dispatch only (`workflow_dispatch`); do not add automatic triggers or dispatch a run without explicit direction. The existing CLA workflow may continue its automatic administration.
 - Prototype workflow: maintain one current draft and use Git for working history.
   Update existing artifacts, record material decisions, and review at PR
   readiness; avoid repeated status logs, intermediate reviews and speculative
