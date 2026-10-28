@@ -248,6 +248,10 @@ QSL's emitter, which replaces the non-emittable placeholders, among them
 `positive-all-families.json`'s declared boolean `Example::Flag` and the
 nodes typed at it, and `positive-operation-identities.json`'s undeclared
 record node and its placeholder function `double` and model `Counter`.
+The operation fixture's `Set<Reference<Order>>` population type forwards
+to the single `Reference` node over the generated `Order` model declaration
+(FR-322-AC-62, FR-322-AC-65); it carries no `Reference` over the anonymous
+record node, whose target is not a model or relation.
 Two sets of nodes are hand authored. The first is each node of a kind QSL
 never writes (FR-093-AC-19), kept so that the all-families fixture carries
 all 15 node tags (FR-322-AC-13); it is keyed by FR-092/FR-094's rule, the
@@ -488,7 +492,7 @@ Rebuild each node's `dependencies` by FR-322's `dependencies` rules 1 to 4 (the 
 | --- | --- | --- | --- |
 | DP-01 | Every node of every published positive fixture | The written list equals the rebuilt list; each fixture's `package_id` recomputes | FR-322-AC-96 |
 | DP-02 | `positive-all-families.json`'s `expression`/`reference` node `7916…` and `correspondence`/`source_locus` node `eda3…` | Each lists `8a2a…`, its body target | FR-322-AC-96 |
-| DP-03 | `positive-all-families.json`'s `bounded_domain`/`integer_range` node `652c…`; `positive-operation-identities.json`'s `bounded_domain`/`model_population` node `1ffe…` | `652c…` lists `07f6…`, its `semantic_type`; `1ffe…` lists `0ec8…` alone | FR-322-AC-96 |
+| DP-03 | `positive-all-families.json`'s `bounded_domain`/`integer_range` node `652c…`; `positive-operation-identities.json`'s `bounded_domain`/`model_population` node `b4fe…` | `652c…` lists `07f6…`, its `semantic_type`; `b4fe…` lists `b8a0…` alone | FR-322-AC-96 |
 | DP-04 | DP-02's `expression`/`reference` node with `dependencies: []` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
 | DP-05 | DP-03's `integer_range` node with `dependencies: []` | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |
 | DP-06 | DP-03's `model_population` node with the Integer node `07f6…` added | `invalid_semantic_graph` at the node's `/dependencies` | FR-322-AC-96 |

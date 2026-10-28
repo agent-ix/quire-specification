@@ -53,6 +53,21 @@ structures, but any external consumer receives only the contract.
   that are bare variable references, and a `hybrid` variable whose rate is
   the literal `1`) as its fifteenth (FR-481, TC-966). `node-identity-preimage.schema.json` defines the
   `ExtensionFormNode` preimage that keys it.
+- `fixtures/positive-model-tuple-union.json` is a V2 package that selects the
+  domain package `acme/shapes` (tuples `Pair`, `Swap`, `Nest`, `Cell`; variant
+  types `Shape`, `Color`, `List`): its `model`/`tuple_value_type` and
+  `model`/`variant_type` declaration nodes, the `model_root`, and the
+  `union_value`, `enum_value`, `quire.op.tuple.project`, `case` and equality nodes
+  over them, each keyed by its application-node or nominal preimage
+  (FR-322 "Tuple value types and payload-bearing variant types", FR-440,
+  FR-441, TC-940). `model-tuple-union-vectors.json` publishes its selected
+  document (`domain_package`), the declaration node keys, the application-node
+  key vectors and the family, position, member, union-value, enum-value,
+  equality, identity, recursion, intake and wire cases the QSpec test runs over
+  them; `node-identity-vectors.json` carries the keys
+  `model-tuple-value-type-pair` and `model-variant-type-shape-union` and the
+  `union_member_vectors` `union-member-model-shape-both` and
+  `union-member-model-shape-empty`.
 - `extension-definitions.json` publishes the FR-467 extension definitions
   (`policy`, `quota`, `retention`) a reader holds when it reads these
   fixtures, each as `{reference, definition}` with `definition` exactly the

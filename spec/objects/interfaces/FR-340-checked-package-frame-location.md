@@ -97,6 +97,7 @@ node key. This wire encoding is the V2 carrier of that existing model.
   `model`/`state_machine`; a `creates` or `deletes` entry naming a node that
   is not `model`/`object_type` or `model`/`process`. A `value` literal, an
   `expression`, and every other `model` form (`value_type`, `variant_type`,
+  `tuple_value_type`, which declares positions and no field,
   `event_type`, `persistence_interface`, `namespace`, `model_import` and the
   five systems forms) has no frame meaning at all. A state machine is a field
   entry's declaring node but never a `creates` or `deletes` entry: it has no
@@ -132,7 +133,7 @@ defect:
 No `model` node stands for a field, an operation or a clause member on its
 own. `ModelNode`'s `semantic_form` names FR-208's business type kinds
 individually (`object_type`, `value_type`, `variant_type`,
-`record_value_type`, `event_type`, `state_machine`, `process`,
+`record_value_type`, `tuple_value_type`, `event_type`, `state_machine`, `process`,
 `persistence_interface`, `namespace`), `model_import`, and FR-208's five
 systems meanings (`systems_part`, `systems_port`, `systems_interface`,
 `systems_connection` and `systems_allocation`, one per
