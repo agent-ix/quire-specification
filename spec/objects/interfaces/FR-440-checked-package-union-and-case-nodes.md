@@ -51,7 +51,11 @@ whose joins below do not hold with the refusal this requirement names, in
   byte order of case name, each of payload arity 0 or 1, read from the selected
   document by [FR-322](FR-322-checked-package-artifact.md) "Tuple value types
   and payload-bearing variant types"; every union value, case and leaf rule below
-  applies to it with those members in place of the body bindings.
+  applies to it with those members in place of the body bindings. A model union
+  may be recursive through a model tuple or another model union
+  (`List { Nil, Cons(Cell) }` with `Cell(Integer, List)`): it carries no
+  `recursion_group`, and the leaf walk re-enters it as FR-322 "Tuple value types
+  and payload-bearing variant types", "Recursion" states.
 - **Union value node** — `node_tag: "value"`, `semantic_form: "union_value"`.
   It is the construction `U::m` or `U::m(e, ...)` of
   [FR-143](../../functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md).

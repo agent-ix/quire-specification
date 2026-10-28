@@ -119,6 +119,12 @@ fn integer(value: &Value) -> Option<BigInt> {
     (number.to_string() == spelling).then_some(number)
 }
 
+/// A `KeyOrdinal`: a JSON integer, or a canonical decimal string beyond the
+/// safe integer range.
+fn key_ordinal(value: &Value) -> Option<BigInt> {
+    value.as_u64().map(BigInt::from).or_else(|| integer(value))
+}
+
 /// Whether a decimal-string member denotes exactly `expected`.
 fn integer_is(value: &Value, expected: i32) -> bool {
     integer(value) == Some(BigInt::from(expected))
@@ -1023,6 +1029,10 @@ enum OperationRefusal {
     /// `invalid_package`/`invalid-value`: a `string`, `uuid` or `timestamp`
     /// literal whose `value` is not the canonical payload spelling.
     InvalidValue,
+    /// `ill_typed`/`type-mismatch`: a `union_value` whose case or payload does
+    /// not fit its union (FR-440; FR-322 "Tuple value types and
+    /// payload-bearing variant types").
+    TypeMismatch,
 }
 
 impl OperationRefusal {
@@ -1052,12 +1062,13 @@ impl OperationRefusal {
             Self::MissingName => "missing-name",
             Self::AmbiguousName => "ambiguous-name",
             Self::InvalidValue => "invalid-value",
+            Self::TypeMismatch => "type-mismatch",
         }
     }
 
     fn code(self) -> &'static str {
         match self {
-            Self::OperatorIneligible => "ill_typed",
+            Self::OperatorIneligible | Self::TypeMismatch => "ill_typed",
             Self::MissingName => "missing_declaration",
             Self::AmbiguousName => "ambiguous_declaration",
             Self::UnknownOperation
@@ -1075,7 +1086,12 @@ impl OperationRefusal {
     fn from_cause(cause: &str) -> Option<Self> {
         // `MissingName` and `AmbiguousName` are the relationship-end refusals, outside the nine
         // operation causes whose pairing and mutations the tests enumerate.
-        for outside in [Self::MissingName, Self::AmbiguousName, Self::InvalidValue] {
+        for outside in [
+            Self::MissingName,
+            Self::AmbiguousName,
+            Self::InvalidValue,
+            Self::TypeMismatch,
+        ] {
             if cause == outside.cause() {
                 return Some(outside);
             }
@@ -1371,6 +1387,21 @@ impl<'a> OperationOracle<'a> {
                 ("composite_type", "record") => "record",
                 ("composite_type", "tuple") => "tuple",
                 ("composite_type", "union") => "union",
+                // FR-322 "Tuple value types and payload-bearing variant types":
+                // the family of a model variant type is read from the selected
+                // document, `union` when some case carries a payload.
+                ("model", "tuple_value_type") => "tuple",
+                ("model", "variant_type") => {
+                    if self
+                        .variant_cases(node)?
+                        .iter()
+                        .any(|(_, payload)| payload.is_some())
+                    {
+                        "union"
+                    } else {
+                        "enum"
+                    }
+                }
                 ("composite_type", "sequence") => "sequence",
                 ("composite_type", "set") => "set",
                 ("composite_type", "bag") => "bag",
@@ -1383,6 +1414,168 @@ impl<'a> OperationOracle<'a> {
                 _ => return None,
             },
         )
+    }
+
+    /// The cases of a `model`/`variant_type` node as the selected document
+    /// declares them, in ascending UTF-8 byte order of case name, each with its
+    /// `payloadType`.
+    fn variant_cases(&self, node: &Value) -> Option<Vec<(String, Option<String>)>> {
+        (node["node_tag"] == "model" && node["semantic_form"] == "variant_type").then_some(())?;
+        let identity = node["owner"]["identity"].as_str()?;
+        let owner = node["owner"]["node"].as_str()?;
+        let declared = self
+            .documents
+            .iter()
+            .filter(|document| document["identity"] == identity)
+            .filter_map(|document| document["variant_types"].as_array())
+            .flatten()
+            .find(|declared| declared["node"] == owner)?;
+        let mut cases = declared["cases"]
+            .as_array()?
+            .iter()
+            .map(|case| {
+                Some((
+                    case["name"].as_str()?.to_owned(),
+                    case["payloadType"].as_str().map(str::to_owned),
+                ))
+            })
+            .collect::<Option<Vec<_>>>()?;
+        cases.sort_by(|left, right| left.0.as_bytes().cmp(right.0.as_bytes()));
+        Some(cases)
+    }
+
+    /// The `typeRef` of each position of a `model`/`tuple_value_type` node, in
+    /// position order, as the selected document declares them.
+    fn tuple_positions(&self, node: &Value) -> Option<Vec<String>> {
+        (node["node_tag"] == "model" && node["semantic_form"] == "tuple_value_type")
+            .then_some(())?;
+        let identity = node["owner"]["identity"].as_str()?;
+        let owner = node["owner"]["node"].as_str()?;
+        let declared = self
+            .documents
+            .iter()
+            .filter(|document| document["identity"] == identity)
+            .filter_map(|document| document["tuple_types"].as_array())
+            .flatten()
+            .find(|declared| declared["node"] == owner)?;
+        let mut positions = declared["positions"]
+            .as_array()?
+            .iter()
+            .map(|position| Some((position["ordinal"].as_u64()?, position["typeRef"].as_str()?)))
+            .collect::<Option<Vec<_>>>()?;
+        positions.sort_by_key(|(ordinal, _)| *ordinal);
+        Some(positions.into_iter().map(|(_, r)| r.to_owned()).collect())
+    }
+
+    /// The type node a member `typeRef` of the selected document derives
+    /// (FR-322 "Model-owned members" step 4, for a required single-valued
+    /// member): a native `Boolean` or `Integer` is its scalar node, a tuple or
+    /// variant type of the package is its model declaration node.
+    fn type_ref_node(&self, reference: &str) -> Option<&'a Value> {
+        match reference.strip_prefix("ix://quire/native/") {
+            Some(native @ ("Boolean" | "Integer")) => {
+                let form = native.to_lowercase();
+                self.nodes.iter().find(|node| {
+                    node["node_tag"] == "scalar_type" && node["semantic_form"] == form.as_str()
+                })
+            }
+            Some(_) => None,
+            None => self.nodes.iter().find(|node| {
+                node["node_tag"] == "model"
+                    && matches!(
+                        node["semantic_form"].as_str(),
+                        Some("tuple_value_type" | "variant_type")
+                    )
+                    && node["owner"]["node"] == reference
+            }),
+        }
+    }
+
+    /// The members of a union type, in member declaration order, each with the
+    /// type nodes of its payload positions: the bindings of a
+    /// `composite_type`/`union` body (FR-440), or the cases of a
+    /// `model`/`variant_type` node of family `union`, which the selected
+    /// document declares in ascending UTF-8 byte order of case name.
+    fn union_members(&self, id: &Value) -> Option<Vec<(String, Vec<&'a Value>)>> {
+        let node = self.resolve(id)?;
+        (self.type_family(id)? == "union").then_some(())?;
+        if node["node_tag"] == "model" {
+            return self
+                .variant_cases(node)?
+                .into_iter()
+                .map(|(name, payload)| {
+                    let types = match payload {
+                        None => Vec::new(),
+                        Some(reference) => vec![&self.type_ref_node(&reference)?["node_id"]],
+                    };
+                    Some((name, types))
+                })
+                .collect();
+        }
+        node["body"]["members"]
+            .as_array()?
+            .iter()
+            .map(|binding| {
+                let payloads = binding["value"]["members"]
+                    .as_array()?
+                    .iter()
+                    .map(Self::reference_target)
+                    .collect::<Option<Vec<_>>>()?;
+                Some((binding["name"].as_str()?.to_owned(), payloads))
+            })
+            .collect()
+    }
+
+    /// FR-322 "Tuple value types and payload-bearing variant types", "Union
+    /// reads over a model union": a `union_value` whose `semantic_type` is a
+    /// `model`/`variant_type` node names one case of it with one payload term
+    /// of the payload type for a payload case and none for a nullary case;
+    /// over a variant type of family `enum` it is refused. A union value of
+    /// another type is FR-440's and is not read here.
+    fn union_value_refusal(&self, node: &Value) -> Option<OperationRefusal> {
+        if node["node_tag"] != "value" || node["semantic_form"] != "union_value" {
+            return None;
+        }
+        self.node(&node["semantic_type"])
+            .filter(|declared| {
+                declared["node_tag"] == "model" && declared["semantic_form"] == "variant_type"
+            })?;
+        let fits = || {
+            let members = self.union_members(&node["semantic_type"])?;
+            let [binding] = node["body"]["members"].as_array()?.as_slice() else {
+                return None;
+            };
+            let (_, payload_types) = members
+                .iter()
+                .find(|(name, _)| binding["name"] == name.as_str())?;
+            let terms = binding["value"]["members"].as_array()?;
+            (terms.len() == payload_types.len()
+                && terms.iter().zip(payload_types).all(|(term, payload_type)| {
+                    self.descriptor(term)
+                        .and_then(|descriptor| descriptor.ty)
+                        .is_some_and(|ty| self.same_type(&ty, payload_type))
+                }))
+            .then_some(())
+        };
+        fits().is_none().then_some(OperationRefusal::TypeMismatch)
+    }
+
+    /// FR-322 "Strict reader" enum member join over a `model`/`variant_type`:
+    /// an `enum_value` whose `semantic_type` is a variant type names a case
+    /// the selected document declares, and the variant type is of family
+    /// `enum`, else the node is refused `invalid_semantic_graph`.
+    fn enum_value_is_refused(&self, node: &Value) -> bool {
+        if node["semantic_form"] != "enum_value" {
+            return false;
+        }
+        let Some(cases) = self
+            .node(&node["semantic_type"])
+            .and_then(|declared| self.variant_cases(declared))
+        else {
+            return false;
+        };
+        cases.iter().any(|(_, payload)| payload.is_some())
+            || !cases.iter().any(|(name, _)| node["body"]["value"] == name.as_str())
     }
 
     fn typed(&self, id: &Value) -> Option<Descriptor> {
@@ -1665,7 +1858,13 @@ impl<'a> OperationOracle<'a> {
             "position" => {
                 let tuple = self.resolve(declaration)?;
                 (self.type_family(declaration)? == "tuple").then_some(())?;
-                let position = usize::try_from(member["position"].as_u64()?).ok()?;
+                // A `KeyOrdinal` is an integer or a decimal string beyond the safe
+                // integer range; one past the last position matches none.
+                let position = usize::try_from(key_ordinal(&member["position"])?).ok()?;
+                if tuple["node_tag"] == "model" {
+                    let positions = self.tuple_positions(tuple)?;
+                    return self.typed(&self.type_ref_node(positions.get(position)?)?["node_id"]);
+                }
                 self.typed(Self::reference_target(
                     tuple["body"]["members"].as_array()?.get(position)?,
                 )?)
@@ -1852,6 +2051,17 @@ impl<'a> OperationOracle<'a> {
                     ))
                 })
                 .collect::<Option<_>>()?,
+            "tuple" if node["node_tag"] == "model" => self
+                .tuple_positions(node)?
+                .iter()
+                .enumerate()
+                .map(|(index, reference)| {
+                    Some((
+                        vec![format!("position:{index}")],
+                        &self.type_ref_node(reference)?["node_id"],
+                    ))
+                })
+                .collect::<Option<_>>()?,
             "tuple" => members()?
                 .iter()
                 .enumerate()
@@ -1864,14 +2074,11 @@ impl<'a> OperationOracle<'a> {
                 .collect::<Option<_>>()?,
             "union" => {
                 let mut children = Vec::new();
-                for binding in members()? {
-                    let name = binding["name"].as_str()?;
-                    for (index, payload) in
-                        binding["value"]["members"].as_array()?.iter().enumerate()
-                    {
+                for (name, payloads) in self.union_members(id)? {
+                    for (index, payload) in payloads.into_iter().enumerate() {
                         children.push((
                             vec![format!("member:{name}"), format!("position:{index}")],
-                            Self::reference_target(payload)?,
+                            payload,
                         ));
                     }
                 }
@@ -2013,33 +2220,23 @@ impl<'a> OperationOracle<'a> {
     /// binder aggregate holding as many parameter references as the member's
     /// payload arity, each binder's `semantic_type` the payload type there.
     fn union_arms_hold(&self, union: &Value, arms: &[Value]) -> bool {
-        let Some(members) = self
-            .resolve(union)
-            .filter(|node| node["semantic_form"] == "union")
-            .and_then(|node| node["body"]["members"].as_array())
-        else {
+        let Some(members) = self.union_members(union) else {
             return false;
         };
         members.len() == arms.len()
-            && members.iter().zip(arms).all(|(member, arm)| {
-                let payloads = member["value"]["members"].as_array().map(Vec::as_slice);
+            && members.iter().zip(arms).all(|((name, payloads), arm)| {
                 let arm_members = arm["value"]["members"].as_array().map(Vec::as_slice);
                 let binders = arm_members
                     .filter(|parts| parts.len() == 2)
                     .and_then(|parts| parts[0]["members"].as_array());
                 arm["term"] == "binding"
-                    && arm["name"] == member["name"]
-                    && payloads.zip(binders).is_some_and(|(payloads, binders)| {
+                    && arm["name"] == name.as_str()
+                    && binders.is_some_and(|binders| {
                         payloads.len() == binders.len()
-                            && payloads.iter().zip(binders).all(|(payload, binder)| {
-                                Self::reference_target(payload)
-                                    .zip(self.resolve(&binder["target"]))
-                                    .is_some_and(|(payload_type, parameter)| {
-                                        binder["term"] == "reference"
-                                            && self.same_type(
-                                                payload_type,
-                                                &parameter["semantic_type"],
-                                            )
+                            && payloads.iter().zip(binders).all(|(payload_type, binder)| {
+                                binder["term"] == "reference"
+                                    && self.resolve(&binder["target"]).is_some_and(|parameter| {
+                                        self.same_type(payload_type, &parameter["semantic_type"])
                                     })
                             })
                     })
@@ -2721,6 +2918,9 @@ fn package_operations_refusal_with(
     let mut nodes = oracle.nodes.iter().collect::<Vec<_>>();
     nodes.sort_by_key(|node| node["node_id"]["digest"].as_str().unwrap_or_default());
     nodes.into_iter().try_for_each(|node| {
+        if let Some(refusal) = oracle.union_value_refusal(node) {
+            return Err(refusal);
+        }
         application_terms(&node["body"])
             .into_iter()
             .try_for_each(|term| oracle.classify_in(node, term).map(drop))
@@ -3440,6 +3640,10 @@ enum ReadRefusal {
     /// region names a source other than its declared node's `SourceOwner`.
     InvalidOwnerValue(String),
     StaleNodeKey(Value),
+    /// `invalid_semantic_graph` at an `enum_value` node over a
+    /// `model`/`variant_type` whose case the selected document does not
+    /// declare or whose variant type is of family `union`.
+    InvalidSemanticGraph(Value),
     Declaration(DeclarationRefusal, Value),
     Frame(FrameRefusal, Value),
     State(StateRefusal, Value),
@@ -3535,6 +3739,10 @@ fn read_package_semantics_with(
     }
     if let Some(node) = derived_shape_semantic_refusal(nodes) {
         return Err(ReadRefusal::GraphShape(node["node_id"].clone()));
+    }
+    let oracle = OperationOracle::for_package_with(catalog, package, &dependencies);
+    if let Some(node) = nodes.iter().find(|node| oracle.enum_value_is_refused(node)) {
+        return Err(ReadRefusal::InvalidSemanticGraph(node["node_id"].clone()));
     }
     package_declaration_refusal(package)
         .map_err(|(refusal, node)| ReadRefusal::Declaration(refusal, node))?;
@@ -11237,6 +11445,7 @@ fn tc_395_malformed_union_bodies_fail_the_published_schema() {
 #[trace("TC-396", "FR-441-AC-1")]
 #[trace("TC-396", "FR-441-AC-2")]
 #[trace("TC-396", "FR-441-AC-3")]
+#[trace("TC-396", "FR-441-AC-4")]
 #[test]
 fn tc_396_union_member_keys_recompute_and_differ_across_unions() {
     let schema = jsonschema::validator_for(&parsed_fixture(NODE_PREIMAGE_SCHEMA))
@@ -11259,7 +11468,20 @@ fn tc_396_union_member_keys_recompute_and_differ_across_unions() {
         );
         assert!(digests.insert(digest), "{name} has its own member key");
     }
-    assert_eq!(digests.len(), 3);
+    assert_eq!(digests.len(), 5, "three composite-union members and two model-union members");
+    let model_union = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
+    let shape = &model_union["declaration_nodes"][3];
+    assert_eq!(shape["name"], "Shape");
+    for name in ["union-member-model-shape-both", "union-member-model-shape-empty"] {
+        let vector = vectors
+            .iter()
+            .find(|vector| vector["name"] == name)
+            .unwrap_or_else(|| panic!("{name} is published"));
+        assert_eq!(
+            vector["preimage"]["declaration_node_id"]["digest"], shape["sha256"],
+            "{name}: the member of a model union is keyed by the variant type's node, payload or not"
+        );
+    }
     let mut renamed = vectors[0]["preimage"].clone();
     renamed["member"] = json!("circle");
     assert_ne!(
@@ -19515,9 +19737,10 @@ fn shapes_refusal(code: &str, cause: &str) -> Value {
 fn shapes_position(document: &Value, tuple: &str, position: &Value) -> Value {
     let declared = shapes_declared(document, "tuple_types", tuple).expect("declared tuple");
     let positions = declared["positions"].as_array().expect("positions");
-    let matched = position
-        .as_u64()
-        .and_then(|index| positions.get(usize::try_from(index).ok()?).map(|found| (index, found)));
+    let matched = key_ordinal(position).and_then(|index| {
+        let slot = usize::try_from(&index).ok()?;
+        positions.get(slot).map(|found| (index, found))
+    });
     match matched {
         Some((index, found)) => json!({
             "resolves": format!("{}/p{index}", declared["node"].as_str().expect("node")),
@@ -19615,6 +19838,99 @@ fn shapes_intake_refusal(document: &Value) -> Option<(&'static str, &'static str
     None
 }
 
+/// The key a producer derives for the model declaration node of `name` from
+/// the selected `document`: the JCS SHA-256 of the closed `ModelDeclarationNode`
+/// preimage built from the declaring list the document holds `name` in and
+/// its owner. Nothing else of the document is read.
+fn declaration_key(document: &Value, name: &str) -> String {
+    let (form, declared) = if let Some(tuple) = shapes_declared(document, "tuple_types", name) {
+        ("tuple_value_type", tuple)
+    } else {
+        (
+            "variant_type",
+            shapes_declared(document, "variant_types", name).expect("declared variant type"),
+        )
+    };
+    unqualified_jcs_sha256(&json!({
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": form,
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {"kind": "model", "identity": document["identity"], "node": declared["node"]},
+        "body": {"term": "aggregate", "members": []},
+    }))
+}
+
+/// Whether an identity case holds of `document`: the key of its node, the
+/// selection digest and the `model_root` key, each derived from the patched
+/// document, agree with every field the case states.
+fn identity_case_holds(document: &Value, case: &Value) -> bool {
+    let node = case["node"].as_str().expect("identity node");
+    let mut changed = document.clone();
+    for patch in case["patch"].as_array().expect("patch") {
+        apply_json_patch(&mut changed, patch);
+    }
+    let expected = &case["expected"];
+    let selection_of = |candidate: &Value| {
+        json!({
+            "identity": candidate["identity"],
+            "digest": unqualified_jcs_sha256(candidate),
+        })
+    };
+    let states = |field: &str, observed: bool| expected[field].as_bool() == Some(observed);
+    states(
+        "node_key_unchanged",
+        declaration_key(&changed, node) == declaration_key(document, node),
+    ) && states(
+        "selection_digest_changes",
+        unqualified_jcs_sha256(&changed) != unqualified_jcs_sha256(document),
+    ) && states(
+        "root_key_changes",
+        derived_model_root(&selection_of(&changed))["node_id"]
+            != derived_model_root(&selection_of(document))["node_id"],
+    ) && expected["family"]
+        .as_str()
+        .is_none_or(|family| shapes_family(&changed, node) == family)
+        && expected["members_unchanged"].as_bool().is_none_or(|unchanged| {
+            (shapes_members(&changed, node) == shapes_members(document, node)) == unchanged
+        })
+}
+
+/// Whether `name` reaches itself through the position `typeRef`s and the
+/// `payloadType`s of the document's tuples and variant types.
+fn shapes_reaches_itself(document: &Value, name: &str) -> bool {
+    let successors = |current: &str| -> Vec<String> {
+        let mut found = Vec::new();
+        if let Some(tuple) = shapes_declared(document, "tuple_types", current) {
+            found.extend(tuple["positions"].as_array().into_iter().flatten().filter_map(
+                |position| position["typeRef"].as_str().map(str::to_owned),
+            ));
+        }
+        if let Some(variant) = shapes_declared(document, "variant_types", current) {
+            found.extend(variant["cases"].as_array().into_iter().flatten().filter_map(
+                |case| case["payloadType"].as_str().map(str::to_owned),
+            ));
+        }
+        found
+            .into_iter()
+            .filter_map(|reference| reference.strip_prefix("ix://acme/shapes/").map(str::to_owned))
+            .collect()
+    };
+    let mut seen = BTreeSet::new();
+    let mut pending = successors(name);
+    while let Some(current) = pending.pop() {
+        if current == name {
+            return true;
+        }
+        if seen.insert(current.clone()) {
+            pending.extend(successors(&current));
+        }
+    }
+    false
+}
+
 fn expected_refusal(expected: &Value) -> Option<(String, Option<String>)> {
     let refused = expected.get("refused")?;
     Some((
@@ -19706,13 +20022,58 @@ fn tc_940_tuple_and_payload_variant_declarations_are_model_declaration_nodes() {
             "{name}: recomputes"
         );
     }
-    // The two new forms are enumerated by both V2 schemas.
-    for form in ["tuple_value_type"] {
-        let mut candidate = package.clone();
-        candidate["semantic_graph"]["nodes"][0]["semantic_form"] = json!("not_a_form");
-        assert!(!schema.is_valid(&candidate), "an unknown model form fails the schema");
-        assert!(schema.is_valid(&package), "{form} is a model form");
+    // An unknown model form fails the schema, so the two new forms are
+    // admitted by enumeration, not by a pattern.
+    let mut candidate = package.clone();
+    candidate["semantic_graph"]["nodes"][0]["semantic_form"] = json!("not_a_form");
+    assert!(!schema.is_valid(&candidate), "an unknown model form fails the schema");
+
+    // FR-322-AC-141, FR-322-AC-143, FR-322-AC-144: the package carries the
+    // application nodes over the body-less declaration nodes, each keyed by
+    // its application-node preimage, which is published.
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let all_preimages = jsonschema::validator_for(&preimage_schema).expect("preimage schema");
+    let keyed = vectors["application_key_vectors"].as_array().expect("application key vectors");
+    let mut vector_names = BTreeSet::new();
+    for vector in keyed {
+        let name = vector["name"].as_str().expect("name");
+        assert!(vector_names.insert(name), "application key vector names are unique");
+        assert!(all_preimages.is_valid(&vector["preimage"]), "{name}: closed preimage");
+        assert_eq!(
+            unqualified_jcs_sha256(&vector["preimage"]),
+            vector["sha256"].as_str().unwrap(),
+            "{name}: key"
+        );
+        let node = nodes
+            .iter()
+            .find(|node| node["node_id"]["digest"] == vector["sha256"])
+            .unwrap_or_else(|| panic!("{name}: the fixture carries the node"));
+        assert_eq!(application_node_preimage(node, nodes), Some(vector["preimage"].clone()), "{name}");
+        assert!(application_node_key_is_current(node, nodes), "{name}: key is current");
     }
+    let count_of = |tag: &str, form: &str| {
+        nodes
+            .iter()
+            .filter(|node| node["node_tag"] == tag && node["semantic_form"] == form)
+            .count()
+    };
+    assert_eq!(count_of("value", "union_value"), 5, "union values over Shape and List");
+    assert_eq!(count_of("value", "enum_value"), 1, "an enum value of Color");
+    assert_eq!(count_of("expression", "query"), 2, "two position projections");
+    assert_eq!(count_of("expression", "case"), 1, "one case over Shape");
+    assert_eq!(count_of("expression", "binary"), 3, "three equalities");
+    assert_eq!(keyed.len(), 5 + 2 + 1 + 3, "every application node is a published key vector");
+    let union_value_over_shape = |case: &str| {
+        keyed.iter().find(|vector| {
+            vector["preimage"]["semantic_form"] == "union_value"
+                && vector["preimage"]["semantic_type"]["digest"] == vectors["declaration_nodes"][3]["sha256"]
+                && vector["preimage"]["body"]["members"][0]["name"] == case
+        })
+    };
+    let shape_keys = ["Empty", "Flag", "Both"].map(|case| {
+        union_value_over_shape(case).unwrap_or_else(|| panic!("a Shape value of {case} is vectored"))["sha256"].clone()
+    });
+    assert_eq!(shape_keys.iter().map(Value::to_string).collect::<BTreeSet<_>>().len(), 3, "the three Shape values key apart");
 }
 
 /// FR-322-AC-141 to FR-322-AC-145: family, position, field, member, union
@@ -19740,6 +20101,9 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
     }
     for case in vectors["position_cases"].as_array().unwrap() {
         seen(&case["name"]);
+        // A refused position is a well-formed KeyOrdinal that matches none,
+        // never one the reader fails to parse.
+        assert!(key_ordinal(&case["position"]).is_some(), "{}: a KeyOrdinal", case["name"]);
         assert_eq!(
             shapes_position(document, case["tuple"].as_str().unwrap(), &case["position"]),
             case["expected"],
@@ -19813,11 +20177,6 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
         let observed = if admitted { json!({"admitted": true}) } else { shapes_refusal("ill_typed", "operator-ineligible") };
         assert_eq!(observed, case["expected"], "{}", case["name"]);
     }
-    let selection_of = |candidate: &Value| json!({
-        "identity": candidate["identity"],
-        "digest": unqualified_jcs_sha256(candidate),
-    });
-    let base_root = derived_model_root(&selection_of(document))["node_id"].clone();
     let key_of = |name: &str| {
         vectors["declaration_nodes"]
             .as_array()
@@ -19827,46 +20186,100 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
             .map(|declared| declared["sha256"].clone())
             .unwrap()
     };
+    for declared in vectors["declaration_nodes"].as_array().unwrap() {
+        let name = declared["name"].as_str().unwrap();
+        if name == "Holder" {
+            continue;
+        }
+        assert_eq!(
+            declaration_key(document, name),
+            declared["sha256"].as_str().unwrap(),
+            "{name}: a producer deriving the key from the document gets the published key"
+        );
+    }
     for case in vectors["identity_cases"].as_array().unwrap() {
         seen(&case["name"]);
         if let Some(pair) = case["nodes"].as_array() {
             assert_ne!(key_of(pair[0].as_str().unwrap()), key_of(pair[1].as_str().unwrap()), "{}", case["name"]);
+            assert_ne!(
+                declaration_key(document, pair[0].as_str().unwrap()),
+                declaration_key(document, pair[1].as_str().unwrap()),
+                "{}",
+                case["name"]
+            );
             continue;
         }
-        let mut changed = document.clone();
-        for patch in case["patch"].as_array().unwrap() {
-            apply_json_patch(&mut changed, patch);
+        assert!(identity_case_holds(document, case), "{}", case["name"]);
+        // The case can fail: each boolean it states, flipped, is false of the
+        // patched document, so the node key is not read back from the case.
+        for field in ["node_key_unchanged", "selection_digest_changes", "root_key_changes"] {
+            let mut flipped = case.clone();
+            let stated = flipped["expected"][field].as_bool().expect("a stated boolean");
+            flipped["expected"][field] = json!(!stated);
+            assert!(!identity_case_holds(document, &flipped), "{}: flipping {field} fails", case["name"]);
         }
-        let node = case["node"].as_str().unwrap();
-        let expected = &case["expected"];
-        assert!(
-            shapes_declared(&changed, "tuple_types", node).is_some()
-                || shapes_declared(&changed, "variant_types", node).is_some(),
-            "{}: the node is still declared",
-            case["name"]
-        );
-        let owner = |changed: &Value| {
-            let _ = changed;
-            key_of(node)
+    }
+    // A key that did read the positions would change with them: the patched
+    // document keys another declaration apart from the published one.
+    let mut other = document.clone();
+    other["tuple_types"][0]["node"] = json!("ix://acme/shapes/Renamed");
+    assert_ne!(declaration_key(&other, "Renamed"), key_of("Pair"), "the owner is the key's input");
+    for case in vectors["recursion_cases"].as_array().unwrap() {
+        seen(&case["name"]);
+        let package = parsed_fixture(include_str!(
+            "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
+        ));
+        let catalog = parsed_fixture(OPERATION_CATALOG);
+        let oracle = OperationOracle::for_package(&catalog, &package);
+        let node_of = |name: &str| {
+            oracle
+                .nodes
+                .iter()
+                .find(|node| node["owner"]["node"] == format!("ix://acme/shapes/{name}").as_str())
+                .unwrap_or_else(|| panic!("{}: the fixture carries {name}", case["name"]))
         };
-        assert_eq!(owner(&changed), key_of(node), "{}: the node key is a function of the owner", case["name"]);
-        assert_eq!(
-            unqualified_jcs_sha256(&changed) != unqualified_jcs_sha256(document),
-            expected["selection_digest_changes"] == true,
-            "{}",
-            case["name"]
-        );
-        assert_eq!(
-            derived_model_root(&selection_of(&changed))["node_id"] != base_root,
-            expected["root_key_changes"] == true,
-            "{}",
-            case["name"]
-        );
-        if let Some(family) = expected["family"].as_str() {
-            assert_eq!(shapes_family(&changed, node), family, "{}", case["name"]);
-        }
-        if expected["members_unchanged"] == true {
-            assert_eq!(shapes_members(&changed, node), shapes_members(document, node), "{}", case["name"]);
+        let type_name = |node: &Value| match node["node_tag"].as_str() {
+            Some("model") => node["owner"]["node"].as_str().unwrap().rsplit('/').next().unwrap().to_owned(),
+            _ => {
+                let form = node["semantic_form"].as_str().unwrap();
+                form[..1].to_uppercase() + &form[1..]
+            }
+        };
+        match case["name"].as_str().unwrap() {
+            "TR-01" => {
+                assert_eq!(shapes_intake_refusal(document), None, "{}", case["name"]);
+                for name in case["expected"]["cycle"].as_array().unwrap() {
+                    assert!(shapes_reaches_itself(document, name.as_str().unwrap()), "{name} is on a cycle");
+                }
+                assert!(!shapes_reaches_itself(document, "Pair"), "Pair is on none");
+            }
+            "TR-02" => {
+                for name in case["nodes"].as_array().unwrap() {
+                    let name = name.as_str().unwrap();
+                    let node = node_of(name);
+                    assert!(node.get("recursion_group").is_none(), "{name}: no recursion group");
+                    assert_eq!(node["node_id"]["digest"], declaration_key(document, name), "{name}");
+                    assert!(structural_node_key_is_current(node), "{name}");
+                }
+            }
+            "TR-03" => {
+                for (name, steps) in case["expected"].as_object().unwrap() {
+                    let node = node_of(name);
+                    let observed = oracle
+                        .leaf_children(&node["node_id"])
+                        .expect("a walk out of a model type")
+                        .into_iter()
+                        .map(|(path, child)| json!({"path": path, "type": type_name(oracle.node(child).unwrap())}))
+                        .collect::<Vec<_>>();
+                    assert_eq!(Value::Array(observed), *steps, "{name}");
+                }
+            }
+            "TR-04" => {
+                let leaves = oracle.expected_leaves(&node_of(case["type"].as_str().unwrap())["node_id"]);
+                assert!(matches!(leaves, Some(ref found) if found.is_empty()), "{}", case["name"]);
+                assert!(read_package_semantics(&package, &catalog).is_ok(), "the full reader admits it");
+            }
+            other => panic!("unexpected recursion case {other}"),
         }
     }
     for case in vectors["intake_cases"].as_array().unwrap() {
@@ -19886,7 +20299,21 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
             }
         }
     }
-    assert_eq!(names.len(), 3 + 7 + 3 + 1 + 8 + 4 + 5 + 4 + 10, "every published case ran");
+    let published = [
+        "family_cases",
+        "position_cases",
+        "field_type_cases",
+        "member_cases",
+        "union_value_cases",
+        "enum_value_cases",
+        "equality_cases",
+        "identity_cases",
+        "recursion_cases",
+        "intake_cases",
+    ]
+    .map(|list| vectors[list].as_array().expect(list).len());
+    assert_eq!(names.len(), published.iter().sum::<usize>(), "every published case ran");
+    assert_eq!(published, [5, 7, 3, 1, 8, 4, 5, 4, 4, 10], "no published case was dropped");
 }
 
 /// FR-322-AC-140 and FR-322-AC-146: the wire cases over the fixture.
@@ -19952,16 +20379,58 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
                         format!("/semantic_graph/nodes/{position}/node_id"),
                     ))
                 }
-                Err(_) => panic!("{id}: unexpected reader refusal"),
+                Err(ReadRefusal::InvalidSemanticGraph(id)) => {
+                    let position = package["semantic_graph"]["nodes"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .position(|node| node["node_id"] == id)
+                        .unwrap();
+                    Some((
+                        "invalid_semantic_graph".to_owned(),
+                        String::new(),
+                        format!("/semantic_graph/nodes/{position}"),
+                    ))
+                }
+                Err(ReadRefusal::Operation(refusal)) => {
+                    let oracle = OperationOracle::for_package(&catalog, &package);
+                    let mut ordered = oracle.nodes.iter().enumerate().collect::<Vec<_>>();
+                    ordered.sort_by_key(|(_, node)| node["node_id"]["digest"].as_str().unwrap_or_default());
+                    let (position, _) = ordered
+                        .into_iter()
+                        .find(|(_, node)| {
+                            oracle.union_value_refusal(node).is_some()
+                                || application_terms(&node["body"])
+                                    .into_iter()
+                                    .any(|term| oracle.classify_in(node, term).is_err())
+                        })
+                        .unwrap_or_else(|| panic!("{id}: a refusing node"));
+                    Some((
+                        refusal.code().to_owned(),
+                        refusal.cause().to_owned(),
+                        format!("/semantic_graph/nodes/{position}"),
+                    ))
+                }
+                Err(other) => panic!("{id}: unexpected reader refusal {other:?}"),
             }
         } else {
             let locus = vector["locus"].as_str().expect("locus");
             let node = &package["semantic_graph"]["nodes"][position_of(locus)];
-            let preimage = structural_node_preimage(node).expect("structural node");
-            assert!(
-                !preimage_validator.is_valid(&preimage),
-                "{id}: the closed node-preimage schema refuses it too"
-            );
+            if is_model_declaration(node) {
+                let preimage = structural_node_preimage(node).expect("structural node");
+                assert!(
+                    !preimage_validator.is_valid(&preimage),
+                    "{id}: the closed node-preimage schema refuses it too"
+                );
+            } else {
+                let node_pointer = format!("/semantic_graph/nodes/{}", position_of(locus));
+                assert!(
+                    schema
+                        .iter_errors(&package)
+                        .any(|error| error.instance_path().to_string().starts_with(&node_pointer)),
+                    "{id}: the V2 schema refuses the node"
+                );
+            }
             Some(("malformed_wire".to_owned(), String::new(), locus.to_owned()))
         };
         let expected = match vector["outcome"].as_str().expect("outcome") {
@@ -19974,5 +20443,5 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
         };
         assert_eq!(observed, expected, "{id}");
     }
-    assert_eq!(ids.len(), 11, "every published wire case ran");
+    assert_eq!(ids.len(), 27, "every published wire case ran");
 }

@@ -37,6 +37,7 @@ compare the unprefixed lowercase hex digest.
 | K03 | `U2`, `Circle` | digest `611ebd3f928ce6ca8713c9400e4725af94e51d96f0aaa5ef437ebed8c88ae75c`, unequal to K01 |
 | K04 | the enum member `Circle` under `quire.enum-member-node/v1` | a digest unequal to K01 and K03 |
 | K05 | K01's preimage with `member` changed to `circle`; K01's preimage with `declaration_node_id` changed to `U2`'s | a digest unequal to K01; exactly K03's digest |
+| K06 | the member `Both` and the nullary member `Empty` of the model union `Shape` (a `model`/`variant_type` node, key `2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46`) | digests `13960bceb27e0fc3b9ec79b0000d7b5dd7b739291370bf0bf441dd31ff6f2c7b` and `d032c8d4ecd0dc1833de0f1ebd001f9f1fa0f08ecb0dd233ba090185ee8841af`, unequal to each other and to K01 to K03 |
 
 ## Expected Results
 

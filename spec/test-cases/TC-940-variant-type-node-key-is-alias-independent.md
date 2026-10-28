@@ -1,6 +1,6 @@
 ---
 id: TC-940
-title: "A model-owned variant type node and its case keys do not depend on the alias"
+title: "Model-owned variant, tuple and union declaration nodes, their keys and their reads"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-322
@@ -8,13 +8,16 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-141
     type: verifies
 ---
-# TC-940: A model-owned variant type node and its case keys do not depend on the alias
+# TC-940: Model-owned variant, tuple and union declaration nodes, their keys and their reads
 
 ## Description
 
 Verify the `model`/`variant_type` declaration node, the type a variant-typed
-member derives, and the identity of the node and of its cases. Scope:
-FR-322-AC-71, FR-141-AC-7 (steps 1 to 5); FR-322-AC-140 to FR-322-AC-146 (steps 6 to 10).
+member derives, and the identity of the node and of its cases (steps 1 to 5,
+independent of the alias), then the `model`/`tuple_value_type` node, the
+payload-bearing variant type read as a union, the application nodes over them
+and a cyclic pair of model types (steps 6 to 12). Scope: FR-322-AC-71,
+FR-141-AC-7 (steps 1 to 5); FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12).
 
 ## Test Procedure
 
@@ -52,7 +55,7 @@ and a second variant type `Level` with cases `Gold` and `Silver`.
 
 ## Tuple value types and payload-bearing variant types (STD-519)
 
-Scope: FR-322-AC-140 to FR-322-AC-146. Use `model-tuple-union-vectors.json`:
+Scope: FR-322-AC-140 to FR-322-AC-147. Use `model-tuple-union-vectors.json`:
 the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 `p1: Integer`), `Swap` (`p0: Integer`, `p1: Boolean`) and `Nest` (`p0: Pair`,
 `p1: Shape`), the variant type `Shape` (cases `Empty`, `Flag(Boolean)`,
@@ -72,6 +75,16 @@ the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 10. Present a tuple with no position, a gap, an absent `typeRef`, a field, an
     unresolved `typeRef`, a repeated ordinal, and a case with an unresolved
     `payloadType` and one typed `ix://quire/native/Clock`.
+11. Read `fixtures/positive-model-tuple-union.json` with the full reader: the
+    `union_value`, `enum_value`, `quire.op.tuple.project`, `case` and equality
+    nodes it carries over `Pair`, `Shape`, `Color` and `List`, then each wire case
+    `TW-11` to `TW-26` (a wrong case, payload or arity, a `union_value` over an
+    enumeration, a missing or reordered `case` arm, a position beyond the tuple, a
+    foreign `declaration`, a beyond-safe `KeyOrdinal` string, an `enum_value`
+    over a union or with a foreign case, `enum.eq` over a union, `structural.eq`
+    over an enumeration, a leaf supplied for a type that reaches no text).
+12. Declare `Cell` (`Integer`, `List`) and `List` (`Nil`, `Cons(Cell)`) and walk
+    them; compare the keys of `Cell` and `List` with their owner-only preimages.
 
 Expected results:
 
@@ -88,4 +101,10 @@ Expected results:
    the `union_value` nodes are admitted or refused as FR-322-AC-144 states; the
    `enum_value` refuses `invalid_semantic_graph`; structural equality is admitted
    over `Shape` and enum equality refuses.
-10. Each refuses with the code and cause FR-322-AC-145 names.
+10. Each refuses with the code and cause FR-322-AC-145 names, in the order
+    "Intake refusal order" of FR-322 states.
+11. The unmutated package is admitted; each application node recomputes its
+    published application-node key; every wire case refuses with the code, cause
+    and locus its vector states, `TW-05` as `invalid_package`/`stale-node-key`.
+12. The cycle is admitted; neither node has a `recursion_group`; the walk and
+    the empty leaf list are those of FR-322-AC-147.
