@@ -1,0 +1,489 @@
+{
+  "capability_report": [
+    {
+      "disposition": "available",
+      "feature": "quire.value.complete/v1"
+    }
+  ],
+  "contract_version": "quire.checked-package/v2",
+  "diagnostics": {
+    "catalog": {
+      "authority": "agent-ix",
+      "identity": "quire.native.diagnostics/v1"
+    },
+    "entries": []
+  },
+  "identity_preimage": {
+    "definition_selections": [
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.complete/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.accounting/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit.schema/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit.vectors/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.package-contract/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.shared-grammar/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.ad-005/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-140/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-141/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-142/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-147/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-148/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-149/v1"
+      }
+    ],
+    "dependency_selections": [],
+    "edition": {
+      "definition": {
+        "authority": "agent-ix",
+        "identity": "ix:native"
+      },
+      "role": "edition"
+    },
+    "model_selections": [
+      {
+        "digest": "c8728751ce59bc964c1af777afde36dd7b56af6866bc856d2ddc102d3b427539",
+        "digest_domain": "sha256-jcs",
+        "identity": "acme/shapes"
+      }
+    ],
+    "profile_selections": [],
+    "required_features": [
+      "quire.value.complete/v1"
+    ],
+    "version": "quire.checked-package-id/v2"
+  },
+  "lock": {
+    "definition_selections": [
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.complete/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.accounting/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit.schema/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.value.compound-unit.vectors/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.package-contract/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.shared-grammar/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.ad-005/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-140/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-141/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-142/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-147/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-148/v1"
+      },
+      {
+        "authority": "agent-ix",
+        "identity": "quire.rule.fr-149/v1"
+      }
+    ],
+    "dependency_selections": [],
+    "edition": {
+      "definition": {
+        "authority": "agent-ix",
+        "identity": "ix:native"
+      },
+      "role": "edition"
+    },
+    "model_selections": [
+      {
+        "digest": "c8728751ce59bc964c1af777afde36dd7b56af6866bc856d2ddc102d3b427539",
+        "digest_domain": "sha256-jcs",
+        "identity": "acme/shapes"
+      }
+    ],
+    "profile_selections": [],
+    "required_features": [
+      "quire.value.complete/v1"
+    ],
+    "sources": [
+      {
+        "authority": "agent-ix",
+        "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "digest_domain": "quire.source.bytes/v1",
+        "identity": "example"
+      }
+    ]
+  },
+  "package_id": {
+    "algorithm": "sha256",
+    "digest": "89c2cf63610d6c312402c90fe18c8fb41c4ec76e4ed4c654fcfb55511edcaf09",
+    "domain": "quire.package.semantic/v2"
+  },
+  "semantic_graph": {
+    "graph_version": "quire.checked-semantic-graph/v2",
+    "nodes": [
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "model",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "owner": {
+          "identity": "acme/shapes",
+          "kind": "model",
+          "node": "ix://acme/shapes/Pair"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": {
+          "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "model",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "owner": {
+          "identity": "acme/shapes",
+          "kind": "model",
+          "node": "ix://acme/shapes/Swap"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": {
+          "digest": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "6cb9af1911fc38c0360147c7bfbf08ebfab6ee35e9f2577d073ab49bba409f03",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "model",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "owner": {
+          "identity": "acme/shapes",
+          "kind": "model",
+          "node": "ix://acme/shapes/Nest"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": {
+          "digest": "6cb9af1911fc38c0360147c7bfbf08ebfab6ee35e9f2577d073ab49bba409f03",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "model",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "owner": {
+          "identity": "acme/shapes",
+          "kind": "model",
+          "node": "ix://acme/shapes/Shape"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "variant_type",
+        "semantic_type": {
+          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "model",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "expression"
+          }
+        ],
+        "owner": {
+          "identity": "acme/shapes",
+          "kind": "model",
+          "node": "ix://acme/shapes/Color"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "variant_type",
+        "semantic_type": {
+          "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      },
+      {
+        "body": {
+          "members": [],
+          "term": "aggregate"
+        },
+        "dependencies": [],
+        "node_id": {
+          "digest": "3050b7ddae3eadea369ee60d794c785467fd470ec168afae4424642c53587f75",
+          "domain": "quire.checked-semantic-node/v1"
+        },
+        "node_tag": "model",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "generated"
+          }
+        ],
+        "owner": {
+          "digest": "c8728751ce59bc964c1af777afde36dd7b56af6866bc856d2ddc102d3b427539",
+          "identity": "acme/shapes",
+          "kind": "model_root"
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "model_root",
+        "semantic_type": {
+          "digest": "3050b7ddae3eadea369ee60d794c785467fd470ec168afae4424642c53587f75",
+          "domain": "quire.checked-semantic-node/v1"
+        }
+      }
+    ]
+  },
+  "source_map": [
+    {
+      "node_id": {
+        "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 1028,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 1024
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 1036,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 1032
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "6cb9af1911fc38c0360147c7bfbf08ebfab6ee35e9f2577d073ab49bba409f03",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 1044,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 1040
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 1052,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 1048
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 1060,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 1056
+        }
+      ],
+      "role": "expression"
+    },
+    {
+      "node_id": {
+        "digest": "3050b7ddae3eadea369ee60d794c785467fd470ec168afae4424642c53587f75",
+        "domain": "quire.checked-semantic-node/v1"
+      },
+      "ordinal": 0,
+      "regions": [
+        {
+          "end": 1,
+          "source": {
+            "authority": "agent-ix",
+            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+            "digest_domain": "quire.source.bytes/v1",
+            "identity": "example"
+          },
+          "start": 0
+        }
+      ],
+      "role": "generated"
+    }
+  ]
+}

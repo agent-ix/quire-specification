@@ -1,0 +1,1307 @@
+{
+  "version": "quire.model-tuple-union-vectors/v1",
+  "note": "STD-519. The selected document of fixtures/positive-model-tuple-union.json is domain_package (a projection of the FCD IR 2.0.0 declarations FR-154 reads, as in model-owner-form-vectors.json: tuple_types carry ordered positions, variant_types carry cases). Cases are evaluated by the QSpec test over domain_package; wire_cases are RFC 6902 patches over the fixture, each ending by replacing package_id with the recomputed package id. Node names are the declaration_nodes names.",
+  "base": "fixtures/positive-model-tuple-union.json",
+  "domain_package": {
+    "identity": "acme/shapes",
+    "version": "1.0.0",
+    "object_types": [
+      {
+        "node": "ix://acme/shapes/Holder",
+        "interfaceFeatures": null,
+        "supertypes": [],
+        "fields": [
+          {
+            "name": "pair",
+            "typeRef": "ix://acme/shapes/Pair",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "shape",
+            "typeRef": "ix://acme/shapes/Shape",
+            "presence": "optional",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "pairs",
+            "typeRef": "ix://acme/shapes/Pair",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "3",
+              "ordered": true,
+              "unique": false
+            },
+            "redefines": null
+          }
+        ],
+        "operations": []
+      }
+    ],
+    "tuple_types": [
+      {
+        "node": "ix://acme/shapes/Pair",
+        "positions": [
+          {
+            "ordinal": 0,
+            "typeRef": "ix://quire/native/Boolean"
+          },
+          {
+            "ordinal": 1,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/shapes/Swap",
+        "positions": [
+          {
+            "ordinal": 0,
+            "typeRef": "ix://quire/native/Integer"
+          },
+          {
+            "ordinal": 1,
+            "typeRef": "ix://quire/native/Boolean"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/shapes/Nest",
+        "positions": [
+          {
+            "ordinal": 0,
+            "typeRef": "ix://acme/shapes/Pair"
+          },
+          {
+            "ordinal": 1,
+            "typeRef": "ix://acme/shapes/Shape"
+          }
+        ]
+      }
+    ],
+    "variant_types": [
+      {
+        "node": "ix://acme/shapes/Shape",
+        "cases": [
+          {
+            "name": "Flag",
+            "payloadType": "ix://quire/native/Boolean"
+          },
+          {
+            "name": "Empty",
+            "payloadType": null
+          },
+          {
+            "name": "Both",
+            "payloadType": "ix://acme/shapes/Pair"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/shapes/Color",
+        "cases": [
+          {
+            "name": "Red",
+            "payloadType": null
+          },
+          {
+            "name": "Green",
+            "payloadType": null
+          }
+        ]
+      }
+    ]
+  },
+  "selection_digest": "c8728751ce59bc964c1af777afde36dd7b56af6866bc856d2ddc102d3b427539",
+  "declaration_nodes": [
+    {
+      "name": "Pair",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Pair"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344"
+    },
+    {
+      "name": "Swap",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Swap"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54"
+    },
+    {
+      "name": "Nest",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Nest"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "6cb9af1911fc38c0360147c7bfbf08ebfab6ee35e9f2577d073ab49bba409f03"
+    },
+    {
+      "name": "Shape",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "variant_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Shape"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+    },
+    {
+      "name": "Color",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "variant_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Color"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1"
+    },
+    {
+      "name": "Holder",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "object_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Holder"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "74797d140cd391726c81632c350b452bdd7b2618c10514a3fdb571549340ebe4"
+    }
+  ],
+  "family_cases": [
+    {
+      "name": "TF-01",
+      "criterion": "FR-322-AC-140",
+      "node": "Pair",
+      "expected": "tuple"
+    },
+    {
+      "name": "TF-02",
+      "criterion": "FR-322-AC-143",
+      "node": "Shape",
+      "expected": "union"
+    },
+    {
+      "name": "TF-03",
+      "criterion": "FR-322-AC-143",
+      "node": "Color",
+      "expected": "enum"
+    }
+  ],
+  "position_cases": [
+    {
+      "name": "TP-01",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Pair",
+      "position": 0,
+      "expected": {
+        "member_type": {
+          "type": "Boolean"
+        },
+        "resolves": "ix://acme/shapes/Pair/p0"
+      }
+    },
+    {
+      "name": "TP-02",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Pair",
+      "position": 1,
+      "expected": {
+        "member_type": {
+          "type": "Integer"
+        },
+        "resolves": "ix://acme/shapes/Pair/p1"
+      }
+    },
+    {
+      "name": "TP-03",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Pair",
+      "position": 2,
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "TP-04",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Swap",
+      "position": 0,
+      "expected": {
+        "member_type": {
+          "type": "Integer"
+        },
+        "resolves": "ix://acme/shapes/Swap/p0"
+      }
+    },
+    {
+      "name": "TP-05",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Nest",
+      "position": 0,
+      "expected": {
+        "member_type": {
+          "declaration": "Pair"
+        },
+        "resolves": "ix://acme/shapes/Nest/p0"
+      }
+    },
+    {
+      "name": "TP-06",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Nest",
+      "position": 1,
+      "expected": {
+        "member_type": {
+          "declaration": "Shape"
+        },
+        "resolves": "ix://acme/shapes/Nest/p1"
+      }
+    },
+    {
+      "name": "TP-07",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Pair",
+      "position": "9007199254740993",
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    }
+  ],
+  "field_type_cases": [
+    {
+      "name": "TT-01",
+      "criterion": "FR-322-AC-141",
+      "object": "Holder",
+      "field": "pair",
+      "expected": {
+        "declaration": "Pair"
+      }
+    },
+    {
+      "name": "TT-02",
+      "criterion": "FR-322-AC-143",
+      "object": "Holder",
+      "field": "shape",
+      "expected": {
+        "option": {
+          "declaration": "Shape"
+        }
+      }
+    },
+    {
+      "name": "TT-03",
+      "criterion": "FR-322-AC-141",
+      "object": "Holder",
+      "field": "pairs",
+      "expected": {
+        "sequence": {
+          "declaration": "Pair"
+        },
+        "min": "0",
+        "max": "3"
+      }
+    }
+  ],
+  "member_cases": [
+    {
+      "name": "TM-01",
+      "criterion": "FR-322-AC-143",
+      "union": "Shape",
+      "expected": [
+        {
+          "case": "Both",
+          "arity": 1,
+          "payload": {
+            "declaration": "Pair"
+          }
+        },
+        {
+          "case": "Empty",
+          "arity": 0,
+          "payload": null
+        },
+        {
+          "case": "Flag",
+          "arity": 1,
+          "payload": {
+            "type": "Boolean"
+          }
+        }
+      ]
+    }
+  ],
+  "union_value_cases": [
+    {
+      "name": "TU-01",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Empty",
+      "payload": [],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TU-02",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Flag",
+      "payload": [
+        {
+          "type": "Boolean"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TU-03",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Both",
+      "payload": [
+        {
+          "declaration": "Pair"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TU-04",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Flag",
+      "payload": [
+        {
+          "type": "Integer"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    },
+    {
+      "name": "TU-05",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Flag",
+      "payload": [],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    },
+    {
+      "name": "TU-06",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Empty",
+      "payload": [
+        {
+          "type": "Boolean"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    },
+    {
+      "name": "TU-07",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Missing",
+      "payload": [],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    },
+    {
+      "name": "TU-08",
+      "criterion": "FR-322-AC-144",
+      "union": "Color",
+      "case": "Red",
+      "payload": [],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    }
+  ],
+  "enum_value_cases": [
+    {
+      "name": "TE-01",
+      "criterion": "FR-322-AC-144",
+      "type": "Color",
+      "case": "Red",
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TE-02",
+      "criterion": "FR-322-AC-144",
+      "type": "Color",
+      "case": "Blue",
+      "expected": {
+        "refused": {
+          "code": "invalid_semantic_graph",
+          "cause": null
+        }
+      }
+    },
+    {
+      "name": "TE-03",
+      "criterion": "FR-322-AC-144",
+      "type": "Shape",
+      "case": "Empty",
+      "expected": {
+        "refused": {
+          "code": "invalid_semantic_graph",
+          "cause": null
+        }
+      }
+    },
+    {
+      "name": "TE-04",
+      "criterion": "FR-322-AC-144",
+      "type": "Shape",
+      "case": "Flag",
+      "expected": {
+        "refused": {
+          "code": "invalid_semantic_graph",
+          "cause": null
+        }
+      }
+    }
+  ],
+  "equality_cases": [
+    {
+      "name": "TQ-01",
+      "criterion": "FR-322-AC-144",
+      "operation": "quire.op.structural.eq",
+      "type": "Shape",
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TQ-02",
+      "criterion": "FR-322-AC-144",
+      "operation": "quire.op.enum.eq",
+      "type": "Shape",
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "TQ-03",
+      "criterion": "FR-322-AC-144",
+      "operation": "quire.op.enum.eq",
+      "type": "Color",
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TQ-04",
+      "criterion": "FR-322-AC-144",
+      "operation": "quire.op.structural.eq",
+      "type": "Color",
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "TQ-05",
+      "criterion": "FR-322-AC-140",
+      "operation": "quire.op.structural.eq",
+      "type": "Pair",
+      "expected": {
+        "admitted": true
+      }
+    }
+  ],
+  "identity_cases": [
+    {
+      "name": "TI-01",
+      "criterion": "FR-322-AC-142",
+      "description": "swap the position types of Pair",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/0/typeRef",
+          "value": "ix://quire/native/Integer"
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/typeRef",
+          "value": "ix://quire/native/Boolean"
+        }
+      ],
+      "node": "Pair",
+      "expected": {
+        "node_key_unchanged": true,
+        "selection_digest_changes": true,
+        "root_key_changes": true
+      }
+    },
+    {
+      "name": "TI-02",
+      "criterion": "FR-322-AC-143",
+      "description": "reorder the variants of Shape",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases",
+          "value": [
+            {
+              "name": "Both",
+              "payloadType": "ix://acme/shapes/Pair"
+            },
+            {
+              "name": "Empty",
+              "payloadType": null
+            },
+            {
+              "name": "Flag",
+              "payloadType": "ix://quire/native/Boolean"
+            }
+          ]
+        }
+      ],
+      "node": "Shape",
+      "expected": {
+        "node_key_unchanged": true,
+        "selection_digest_changes": true,
+        "root_key_changes": true,
+        "members_unchanged": true
+      }
+    },
+    {
+      "name": "TI-03",
+      "criterion": "FR-322-AC-143",
+      "description": "Shape gains no payload: Flag loses its payloadType, so Shape is an enumeration",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/2/payloadType",
+          "value": null
+        }
+      ],
+      "node": "Shape",
+      "expected": {
+        "node_key_unchanged": true,
+        "selection_digest_changes": true,
+        "root_key_changes": true,
+        "family": "enum"
+      }
+    },
+    {
+      "name": "TI-04",
+      "criterion": "FR-322-AC-142",
+      "description": "a tuple of the same shape and another name has another key",
+      "nodes": [
+        "Pair",
+        "Swap"
+      ],
+      "expected": {
+        "keys_differ": true
+      }
+    }
+  ],
+  "intake_cases": [
+    {
+      "name": "TK-01",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions",
+          "value": []
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0"
+        }
+      }
+    },
+    {
+      "name": "TK-02",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/ordinal",
+          "value": 2
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0/positions/1"
+        }
+      }
+    },
+    {
+      "name": "TK-03",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/tuple_types/0/positions/1/typeRef"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0/positions/1"
+        }
+      }
+    },
+    {
+      "name": "TK-04",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/tuple_types/0/fields",
+          "value": []
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0"
+        }
+      }
+    },
+    {
+      "name": "TK-05",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/typeRef",
+          "value": "ix://acme/shapes/Missing"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name",
+          "at": "/tuple_types/0/positions/1"
+        }
+      }
+    },
+    {
+      "name": "TK-06",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/ordinal",
+          "value": 0
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "conflicting-binding",
+          "at": "/tuple_types/0/positions/1"
+        }
+      }
+    },
+    {
+      "name": "TK-07",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": "ix://acme/shapes/Missing"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "declaration-form",
+          "at": "/variant_types/0/cases/0/payloadType"
+        }
+      }
+    },
+    {
+      "name": "TK-08",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": "ix://quire/native/Clock"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "declaration-form",
+          "at": "/variant_types/0/cases/0/payloadType"
+        }
+      }
+    },
+    {
+      "name": "TK-09",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/0/typeRef",
+          "value": "ix://quire/native/Clock"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0/positions/0"
+        }
+      }
+    },
+    {
+      "name": "TK-10",
+      "criterion": "FR-322-AC-145",
+      "patch": [],
+      "expected": {
+        "admitted": true
+      }
+    }
+  ],
+  "wire_cases": [
+    {
+      "id": "TW-00",
+      "description": "the published package, unmutated",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "89c2cf63610d6c312402c90fe18c8fb41c4ec76e4ed4c654fcfb55511edcaf09"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "admitted"
+    },
+    {
+      "id": "TW-01",
+      "description": "the Pair tuple node without owner",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/0/owner"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "20b67c1aaea882ef45da596aee4e1086b14096bbf0ce2a8afdb453b762b09b45"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/0"
+    },
+    {
+      "id": "TW-02",
+      "description": "the Pair tuple node with a SourceOwner and no declaration",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0/owner",
+          "value": {
+            "kind": "source",
+            "authority": "agent-ix",
+            "identity": "example"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "5d31be7066205af275ab64e92dcf96949b1671b99b57887bd6f27fb2b2330bc9"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/0/owner"
+    },
+    {
+      "id": "TW-03",
+      "description": "the Pair tuple node with a declaration beside its ModelOwner",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/0/declaration",
+          "value": {
+            "qualified_name": [
+              "Pair"
+            ]
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "e3113fdb61c46a8da10f34889bade425db9315f5fa3cef03e4b597ee701d05af"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/0/owner"
+    },
+    {
+      "id": "TW-04",
+      "description": "the Pair tuple node whose ModelOwner carries a version label",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/0/owner/version",
+          "value": "1.0.0"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "b9af3432954a8dd45ae1e1b5d04cdeb7790d4f15cbc6d14d0caa913b85ba3009"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/0/owner"
+    },
+    {
+      "id": "TW-05",
+      "description": "the Pair tuple node with a non-empty body and the key recomputed over it",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0",
+          "value": {
+            "body": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1"
+                  }
+                }
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "06010a3ea673c8fb5fcd61866942150f8945359629bc3a563752fb26840da0c8"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Pair"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "tuple_value_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "06010a3ea673c8fb5fcd61866942150f8945359629bc3a563752fb26840da0c8"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/0/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "06010a3ea673c8fb5fcd61866942150f8945359629bc3a563752fb26840da0c8"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "3415172e7a77650a28ca3893a98ffc05781802ece27c52e025054f025340ff03"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:invalid_package",
+      "locus": "/semantic_graph/nodes/0/node_id",
+      "cause": "stale-node-key"
+    },
+    {
+      "id": "TW-06",
+      "description": "the Pair tuple node owned by the variant type Color",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "7f1513ae6afcdfa09613362b464f1654faa07252f99bc4490bf9b442e981a5a4"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Color"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "tuple_value_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "7f1513ae6afcdfa09613362b464f1654faa07252f99bc4490bf9b442e981a5a4"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/0/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "7f1513ae6afcdfa09613362b464f1654faa07252f99bc4490bf9b442e981a5a4"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "9856a07d5f7fd0bcc76f7d4b6000761cfb83c11c8d97ae6be050f5e8b98254e5"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/0/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "TW-07",
+      "description": "the Pair tuple node owned by the object type Holder",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "a8a1adc0219cfe67dcaa83bdce492b05d8a2a8a28e8db54dcd9411c3807aca1a"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Holder"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "tuple_value_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "a8a1adc0219cfe67dcaa83bdce492b05d8a2a8a28e8db54dcd9411c3807aca1a"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/0/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "a8a1adc0219cfe67dcaa83bdce492b05d8a2a8a28e8db54dcd9411c3807aca1a"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "6b3561fa9c59370b445d05106cebb10c38bbad862bcffa75a734dfe4f459d0cd"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/0/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "TW-08",
+      "description": "the Pair tuple node owned by a node the document does not declare",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "573d5ab40df3f9e2bb0b97ae0d51db514cef1dc4832ed910683a5062a4c947cd"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Missing"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "tuple_value_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "573d5ab40df3f9e2bb0b97ae0d51db514cef1dc4832ed910683a5062a4c947cd"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/0/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "573d5ab40df3f9e2bb0b97ae0d51db514cef1dc4832ed910683a5062a4c947cd"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "c91feca752f9a4622c76773dfbc55631b2a9919332fa3f7f7091943c5985671a"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/0/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "TW-09",
+      "description": "the Shape variant type node owned by the tuple Pair",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "8eb45c8a9f1f460362c0e1d18239cc26df653802cd2d5c6c318d546975d14cb1"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Pair"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "variant_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "8eb45c8a9f1f460362c0e1d18239cc26df653802cd2d5c6c318d546975d14cb1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/3/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "8eb45c8a9f1f460362c0e1d18239cc26df653802cd2d5c6c318d546975d14cb1"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "d921d8d0d5f372808f50b10b0a0110f67a6d07c72d13915c55ae592dde563476"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/3/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "TW-10",
+      "description": "the Shape variant type node without owner",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/3/owner"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "b92b64959ee81c59b593aa7d9e659eb2962ceea00933777eb0df6284aff699c3"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/3"
+    }
+  ]
+}

@@ -821,7 +821,8 @@ boundary.
   structural node (no `nominal_identity_preimage`, and a body whose root is
   not an `application`) that either carries a `declaration` or is a
   **model-owned node** (QSL FR-094) carrying none: a model declaration node
-  (`model`/`model_root`, `model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`,
+  (`model`/`model_root`, `model`/`object_type`, `model`/`record_value_type`,
+  `model`/`tuple_value_type`, `model`/`event_type`,
   `model`/`variant_type`, `model`/`state_machine`, `model`/`process`,
   `model`/`persistence_interface`, `model`/`systems_interface`,
   `relation`/`relationship` or `relation`/`population`) or a clause function
@@ -867,6 +868,11 @@ boundary.
   `quire.meaning.model.variant-type/v1` in the admitted document, FR-208), else
   the reader refuses `invalid_semantic_graph` at the `enum_value` node, as it
   does for a scalar enum whose case is not among its declaration's members.
+  An `enum_value` node whose `semantic_type` is a `model`/`variant_type` node
+  of family `union` (one of whose cases carries a `payloadType`) refuses
+  `invalid_semantic_graph` at the node, whichever case it names: a member of
+  a union is constructed by a `union_value` node, a nullary one included
+  ("Tuple value types and payload-bearing variant types").
   The `case` of such a node and of its member preimage is the declared case
   name, any non-empty string, matched byte for byte as UTF-8; the identifier
   requirement of the member preimage holds for a `scalar_type`/`enum` member
@@ -1179,7 +1185,7 @@ neither model-owned row, so it falls in the last row and carries none.
 | --- | --- |
 | structural, carries `declaration` | required, `SourceOwner` |
 | structural, no `declaration`, `node_tag`/`semantic_form` `model`/`model_root` | required, `ModelRootOwner` |
-| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`state_machine`, `model`/`process`, `model`/`persistence_interface`, `model`/`systems_interface`, `relation`/`relationship` or `relation`/`population` | required, `ModelOwner` |
+| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`tuple_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`state_machine`, `model`/`process`, `model`/`persistence_interface`, `model`/`systems_interface`, `relation`/`relationship` or `relation`/`population` | required, `ModelOwner` |
 | structural, no `declaration`, `node_tag` `function` | required, `ModelOwner` |
 | every other node | absent |
 
@@ -1242,9 +1248,12 @@ constraints ("Reference conformance" below).
    `node`, and of the kind the node's `node_tag`/`semantic_form` names: an
    object type with no `interfaceFeatures` for `model`/`object_type`, a
    record value type of FR-208's `quire.meaning.model.record-value-type/v1`
-   for `model`/`record_value_type`, an event type of FR-208's
+   for `model`/`record_value_type`, a tuple value type of FR-208's
+   `quire.meaning.model.tuple-value-type/v1` for `model`/`tuple_value_type`, an
+   event type of FR-208's
    `quire.meaning.model.event-type/v1` for `model`/`event_type`, a variant type of
-   FR-208's `quire.meaning.model.variant-type/v1` for `model`/`variant_type`, a
+   FR-208's `quire.meaning.model.variant-type/v1`, with or without case
+   payloads, for `model`/`variant_type`, a
    state machine of FR-208's `quire.meaning.model.state-machine/v1` for
    `model`/`state_machine`, a process of FR-208's
    `quire.meaning.model.process/v1` for `model`/`process`, a persistence
@@ -1275,7 +1284,13 @@ constraints ("Reference conformance" below).
    member's name hides nothing. A `field` member considers the
    field members and an `operation` member the operation members. A member
    matches when the last `/` segment of its IR node identity equals `name`,
-   byte for byte. Exactly one match resolves the member; two or more refuse
+   byte for byte. A `position` member of a `model`/`tuple_value_type` node
+   resolves among the positions of `T` and matches when its `position`
+   equals the zero-based index `i` of a position of `T`, whose identity is
+   `<T's node identity>/p<i>` ("Tuple value types and payload-bearing variant
+   types"); positions have no names, so there is no ambiguity, and a
+   `position` at or above the number of positions of `T` matches none.
+   Exactly one match resolves the member; two or more refuse
    `ambiguous_declaration`/`ambiguous-name`, including a supertype's
    operation and a subtype's operation of one name with no `redefines`
    between them, which FR-150's effective view
@@ -1302,7 +1317,9 @@ constraints ("Reference conformance" below).
    | a value type (FR-208 `quire.meaning.model.value-type/v1`) of the same domain package bound as `Int[lo, hi]`, `lo <= hi`, as TC-196's `Count` and `Small` and TC-197's `Count` are | `Int[lo, hi]` | `bounded_domain`/`integer_range` with bounds `lo` and `hi` over the `Integer` node |
    | a value type of the same domain package bound as `Text[min, max; profile]`, `0 <= min <= max`, with `profile` one of FR-141's `unicode-scalars`, `nfc`, `nfd`, `nfkc`, `nfkd` and `binary-utf8` | `Text[min, max; profile]`, whose length, bounds and comparison are FR-141's under `profile` | `bounded_domain`/`text_bounds` with bounds `min` and `max` and `text_profile` `profile` over the `scalar_type`/`text` node |
    | a record value type `R` of the same domain package, admitted under FR-208 | `R`, a value with no object identity | the self-typed `model`/`record_value_type` declaration node owned by `R`; no `composite_type`/`reference` is introduced |
-   | a variant type `V` of the same domain package, admitted under FR-208 | `V`, an unordered enumeration whose cases are the case names of `V` | the self-typed `model`/`variant_type` declaration node owned by `V`; no `composite_type`/`reference` and no unit-owned `scalar_type`/`enum` node is introduced |
+   | a tuple value type `P` of the same domain package, admitted under FR-208 | `P`, an identity-free ordered product of the types of its positions `p0` to `pN-1` | the self-typed `model`/`tuple_value_type` declaration node owned by `P`; no `composite_type`/`tuple` and no `composite_type`/`reference` is introduced |
+   | a variant type `V` of the same domain package, admitted under FR-208, none of whose cases carries a `payloadType` | `V`, an unordered enumeration whose cases are the case names of `V` | the self-typed `model`/`variant_type` declaration node owned by `V`, family `enum`; no `composite_type`/`reference` and no unit-owned `scalar_type`/`enum` node is introduced |
+   | a variant type `V` of the same domain package, admitted under FR-208, at least one of whose cases carries a resolving `payloadType` | `V`, a union whose members are the cases of `V` in ascending UTF-8 byte order of case name, a case with a `payloadType` being a member of one payload position and a case without one a nullary member | the same self-typed `model`/`variant_type` declaration node owned by `V`, family `union` ("Tuple value types and payload-bearing variant types"); no `composite_type`/`union` node is introduced |
    | `ix://quire/unit/<name>`, naming either a unit the unit of compilation declares, by its qualified declaration name with its segments joined by `/` and never a dimension segment (`unit ms : Time` is `ix://quire/unit/ms`), or a unit an admitted domain package declares, by its FCD identity's package identity and `name` (`ms` in the `units` of `acme/rpc`, FCD identity `ix://acme/rpc/unit/ms`, is `ix://quire/unit/acme/rpc/ms`) | `Quantity<u>`, the type of a quantity in unit `u`, whether the unit of compilation or an admitted domain package declares `u` | the `scalar_type`/`unit` node of `u` (family `quantity`); no node is introduced, and a `min` or `max` constraint on the unit (FR-154 "Unit bounds") adds none: the member's node stays this node, its bounded type `Quantity<u>[min, max]` is the checker's refinement, and the checker reads the bound from the admitted document |
    | a `reference` type whose `target` is `ix://quire/native/Clock` or an alias of it | `Reference<Clock>`, a data value naming one clock place (FR-415 "Clock places"); compared by place, never by clock value | none: no node stands for the clock or for the reference; the checker reads `ref` and `deref` over it and the state key holds the place id (FR-415 "Clock places") |
    | an object type `O` of the same domain package | `Reference<O>` | `composite_type`/`reference` over `O`'s model declaration node |
@@ -1401,11 +1418,119 @@ constraints ("Reference conformance" below).
    give the member no type, and the application refuses
    `ill_typed`/`operator-ineligible`.
 
-   Each node the tables name has no `declaration`; the record value type is
-   model-owned, while the other derived types are anonymous structural nodes,
+   Each node the tables name has no `declaration`; the record value type, the
+   tuple value type and the variant type are model-owned, while the other
+   derived types are anonymous structural nodes,
    exactly as QSL FR-092 and FR-094 key them. The node that
    stands for a type, and every application node id that references it, is
    canonical.
+
+### Tuple value types and payload-bearing variant types
+
+FR-154 admits a tuple value type (FR-208 `quire.meaning.model.tuple-value-type/v1`)
+and a variant case with a resolving `payloadType` (FR-154-AC-11, FR-154-AC-25,
+FR-154-AC-33; FR-208-AC-15, FR-208-AC-19). This section is their V2 wire shape.
+It adds one node form, `model`/`tuple_value_type`, and changes the meaning of
+one, `model`/`variant_type`; it adds no wire member, no `composite_type` node and
+no operation identity, and the published operation catalog is unchanged.
+
+- **Tuple declaration node.** `node_tag: "model"`, `semantic_form:
+  "tuple_value_type"`. It is a model declaration node ("Model-owned members"
+  step 2) in every respect of `record_value_type`: no `declaration`,
+  `nominal_identity_preimage` or `recursion_group`; `semantic_type` its own
+  `node_id`; the body `{term: "aggregate", members: []}`; empty `dependencies`;
+  and an `owner`, a `ModelOwner` `{kind: "model", identity, node}` whose
+  `identity` is the `model_selections` identity of the domain package that
+  declares the tuple and whose `node` is the tuple's owner-nested IR node
+  identity `ix://<package identity>/<tuple name>`. Its family is `tuple`. The node
+  holds no position: the positions `p0` to `pN-1` (`N` at least one), the
+  position identities `<tuple node identity>/p<i>` and each position's
+  `typeRef` are read from the selected document, as a record's fields are. A
+  position is not a node: it has no `owner`, no `node_id`, no occurrence and no
+  `source_map` key (an occurrence key is `node_id`, role, ordinal), and a
+  tuple node's occurrences and `source_map` entries follow the rule that
+  governs every other model declaration node.
+- **Tuple identity.** The node key is the JCS SHA-256 of the closed
+  `ModelDeclarationNode` preimage with `semantic_form` `tuple_value_type`, so it
+  is a function of `owner` alone: the same value for every alias, and two tuples
+  of one shape and two names have two keys. FR-208-AC-19's tuple type identity,
+  the ordered ordinal/type pairs, is carried by the selected document, not by the
+  node key. Reordering a tuple's position/type pairs changes the document, so it
+  changes the `model_selections` row's digest, the `model_root` key and the
+  `package_id`, and leaves the tuple node key (FR-208's declaration identity)
+  unchanged. A consumer SHALL therefore take the type identity of a tuple node as
+  the pair of its key and the `model_selections` row of its `owner`'s `identity`
+  (FR-321 admits one row per `identity`), never the key alone across packages.
+- **Position member.** A position is read by `quire.op.tuple.project`, whose
+  operand has family `tuple` and whose `member` is `{kind: "position",
+  declaration, position}`, `declaration` naming the tuple's node and `position`
+  a `KeyOrdinal`. `member_of` holds when operand 0 resolves to that node. Step 3
+  resolves the position and step 4 derives its type from the position's
+  `typeRef` as a field of presence `required` and multiplicity `[1, 1]` (a
+  position has no presence, multiplicity or name, so a position type is never an
+  `Option`, a collection or a `Reference`): `p0: Boolean`, `p1: Integer` of the
+  tuple `Pair` give `quire.op.tuple.project` over a `Pair` value with position
+  `0` the `Boolean` node and with position `1` the `Integer` node. A `position`
+  that is not a position of the tuple refuses `ill_typed`/`operator-ineligible`
+  at the application's `member`. A `typeRef` that names another tuple or a variant
+  type gives that type's declaration node, so a tuple may nest tuples and
+  unions. A `composite_type`/`tuple` node and a `model`/`tuple_value_type` node
+  are two different type nodes even when their positions have equal types.
+- **Payload-bearing variant types.** `model`/`variant_type` remains the one node
+  form of a FR-208 variant type, with the unchanged declaration node, key and
+  owner join. Its family is read from the selected document: `enum` when no case
+  carries a `payloadType`, `union` when at least one does (the mixed type
+  `U { a, b(Boolean) }` is a union with a nullary member `a` and a one-position
+  member `b`). The members of the union are the cases in ascending UTF-8 byte
+  order of case name. This is the member declaration order that FR-440 and the
+  structural leaf walk use for a model union, because FR-208 gives the order of
+  `variants` no meaning. A member has payload arity 0 without a `payloadType`
+  and 1 with one, its payload type at position `0` being the step 4 type of the
+  `payloadType` as a member of presence `required` and multiplicity `[1, 1]`.
+  The key does not name a case or a payload, so a type that gains or loses its
+  first payload case changes the selected document, the `model_root` key and the
+  `package_id`, and not the key of the `variant_type` node.
+- **Union reads over a model union.** Where FR-440 reads the bindings of a
+  `composite_type`/`union` body, the reader reads the members, arities and
+  payload types of a `model`/`variant_type` node of family `union` from the
+  selected document as above, and applies FR-440's joins otherwise unchanged: a
+  `value`/`union_value` node whose `semantic_type` is such a node names one of its
+  cases with one payload term of the payload type for a payload case and none for
+  a nullary case, else it refuses `ill_typed`/`type-mismatch`; a `union_value`
+  whose `semantic_type` is a `variant_type` node of family `enum` refuses
+  `ill_typed`/`type-mismatch`; an `expression`/`case` over such a union has one
+  arm per case in member order, each arm binder having the payload type; and
+  `quire.op.structural.eq` and `quire.op.structural.ne` are admitted for two
+  values of one such node, while the `enum` operations refuse
+  `ill_typed`/`operator-ineligible`, as they refuse a `composite_type`/`union`
+  operand. A nullary case of a union is a `union_value` node with the empty
+  payload `aggregate`, never an `enum_value` node. The text leaves of a model
+  union are those of its payload types under `member:<Name>` then `position:0`.
+- **Refusals.** In FR-322's order: the closed V2 schema refuses (`malformed_wire`)
+  a `tuple_value_type` node with no `owner`, with a `SourceOwner` and no
+  `declaration`, with a `declaration` beside a `ModelOwner`, or with a
+  `ModelOwner` carrying `version`. Step 1 refuses every intake defect with
+  FR-154's code at `package_read`: no position, a gap, an absent or unsupported
+  position `typeRef`, or a tuple that declares fields, identity fields,
+  operations, supertypes or clauses is `invalid_model_binding`/`malformed-declaration`;
+  an unresolved position `typeRef` is `missing_declaration`/`missing-name`; two
+  positions of one ordinal are `invalid_model_binding`/`conflicting-binding`; an
+  unresolved or unsupported `payloadType` is `unsupported_construct`/`declaration-form`
+  at `Variant.payloadType`. The derived-shape key stage refuses a retained key that
+  differs from the key of the preimage, or a non-empty body, as it does for any
+  model declaration node. The owner join refuses a `tuple_value_type` node whose
+  owner `node` the document does not declare as a tuple value type (a record value
+  type, an object type or an absent node) `missing_declaration`/`missing-selection`
+  at the node.
+- **Model root.** A tuple, a variant type or a payload adds no `model_root` node
+  and changes none: a selection still has exactly one root, determined by its
+  identity and digest alone (FR-322-AC-132).
+
+The published vectors are `model-tuple-union-vectors.json` (the declarations,
+the position, family, member, union-read and intake cases and the wire cases),
+the two `node-identity-vectors.json` entries `model-tuple-value-type-pair` and
+`model-variant-type-shape-union`, and the package fixture
+`fixtures/positive-model-tuple-union.json`.
 
 ### Derived type forms and forwarding
 
@@ -1842,7 +1967,11 @@ The leaf walk of a compared type starts at that type with the empty path
 and visits types in declaration pre-order:
 
 - A text type is a **leaf**: it lists one entry at the current path.
-- A record, a tuple and each member of a union are **anchors**. A record
+- A record, a tuple and each member of a union are **anchors**; a
+  `model`/`record_value_type`, `model`/`tuple_value_type` and a
+  `model`/`variant_type` of family `union` are walked as the record, tuple and
+  union they stand for, from the selected document ("Tuple value types and
+  payload-bearing variant types"). A record
   visits each field's type in field declaration order under `field:<name>`.
   A tuple visits each position's type under `position:<i>`. A union visits
   its members in member declaration order, and each member's ordered
@@ -1967,8 +2096,9 @@ A type node's **family** is read from the type the node resolves to through its
 ordered and `enum` otherwise; `composite_type` forms `option`, `record`,
 `tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set` and `reference` are
 their own family; a `model`/`record_value_type` or `model`/`event_type`
-declaration is `record`, a `model`/`variant_type` declaration is `enum` (never
-`ordered_enum`), and
+declaration is `record`, a `model`/`tuple_value_type` declaration is `tuple`, a
+`model`/`variant_type` declaration is `enum` (never `ordered_enum`) when none of
+its cases carries a `payloadType` and `union` when one does, and
 a model declaration node whose `semantic_form` is `object_type`, `process`,
 `state_machine` or `systems_interface` is `object`. A `relation` node and a `model` node of any
 other form have no family, so a term they type fits no operand position. An
@@ -2499,6 +2629,13 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-137 | The model-root vector recomputes from the selection it names, and every published selected-model package contains the node and source-map entry a producer derives from each of its rows, last in graph order and last in the source map; a producer conformance run compares its emitted root for a row with that node. | Test (TC-310) |
 | FR-322-AC-138 | `model-root-vectors.json` publishes the controls `MR-00` (unmutated, admitted), `MR-01` to `MR-03` (schema-invalid, `malformed_wire`), `MR-04` (unjoined owner, one defect), `MR-06` (no root) and `MR-09` (repeated root) as RFC 6902 patches with recomputed `package_id`, schema validity and the refusal code, cause and pointer; the QSpec test runs them from the file. | Test (TC-310) |
 | FR-322-AC-139 | Dimension-equivalence wire precedes graph (resolves the FR-322-AC-118 versus schema conflict): the V2 schemas require `root_scale` and exactly two `dimension_node_ids`, type `numerator` and `denominator` as positive integer strings and forbid a `declaration` member on a node whose occurrences hold no `declaration` role, so a `scalar_type`/`dimension_equivalence` node with a missing `root_scale`, a `root_scale` `numerator` or `denominator` of `0` or `-1`, a `dimension_node_ids` list of one entry, or a `declaration` member refuses `malformed_wire` at the node, and the same node with a schema-valid but unreduced `root_scale` (`2000/2`), a pair naming a unit or a non-dimension node, a stale `root_scale` or inconsistent ratios refuses `invalid_semantic_graph` at the node. The published `node-identity-vectors.json` mutations `dimension-equivalence-zero-scale`, `-negative-scale`, `-missing-scale` and `-one-id` name `refused_by` `schema` and `expected_code` `malformed_wire`; `-unreduced-scale`, `-descending-ids` and `-same-node-twice` stay `semantic` and `invalid_semantic_graph`. The same rule applies to every `invalid_mutations` entry with `refused_by` `schema`: `expected_code` is `malformed_wire` for `dimension-negative-zero-exponent`, `unit-negative-zero-scale` and `unit-negative-zero-offset` (a `-0` spelling fails the integer-string pattern) and for `model-owner-carries-version` (FR-322-AC-51), and `invalid_semantic_graph` for every entry with `refused_by` `semantic`, `stale_key` or `owner_join`. | Test (TC-233, TC-280) |
+| FR-322-AC-140 | A selected domain package that declares the tuple value type `Pair` (positions `p0: Boolean`, `p1: Integer`) admits a self-typed `model`/`tuple_value_type` declaration node owned by `Pair`, with a `ModelOwner` whose `node` is `ix://acme/shapes/Pair`, no `declaration`, the empty aggregate body, empty `dependencies` and the closed `ModelDeclarationNode` preimage; its family is `tuple`, and no position is a node, an owner or a `source_map` key. Both V2 schemas enumerate `tuple_value_type` in the owner-presence rule, the model forms and the `ModelDeclarationNode` preimage. A `tuple_value_type` node with no `owner`, with a `SourceOwner` and no `declaration`, with a `declaration` beside a `ModelOwner` or with a `version` in its owner fails the V2 schema (`malformed_wire`), one with a non-empty body or a stale key refuses at the derived-shape key stage as any model declaration node does, and one owned by a record value type, an object type, a variant type or a node the document does not declare refuses `missing_declaration`/`missing-selection` in the owner join. | Test (TC-940) |
+| FR-322-AC-141 | `quire.op.tuple.project` over a value of the `Pair` node with the member `{kind: "position", declaration: Pair, position: 0}` has result type the `Boolean` node and with position `1` the `Integer` node; a position equal to or above the number of positions, and a `declaration` that is not the operand's tuple node, refuse `ill_typed`/`operator-ineligible`. A position whose `typeRef` names a tuple, a variant type or a record value type has that type's declaration node as its type (a tuple `Nest` with positions `Pair` and `Shape` projects the `Pair` node and the `Shape` node), a position is never typed `Option`, a collection or a `Reference`, and a `field` field typed `Pair` derives the `Pair` node, never a `composite_type`/`tuple` node. | Test (TC-940) |
+| FR-322-AC-142 | The tuple node key is a function of `owner` alone. Swapping the position types of `Pair` (positions `Integer`, `Boolean`) leaves the key of the `Pair` node unchanged and changes the selected document's digest, hence the `model_selections` row, the `model_root` key and the `package_id`; two tuples with equal positions and different names have different keys; the same package selected under two model aliases derives one `Pair` key. The type identity of a tuple node is the pair of its key and the `model_selections` row of its owner's `identity`. | Test (TC-940) |
+| FR-322-AC-143 | A variant type `Shape` with the nullary case `Empty` and the payload cases `Flag(Boolean)` and `Both(Pair)` is admitted as the same self-typed `model`/`variant_type` declaration node and owner join as an enumeration, and its family is `union`: its members are `Both`, `Empty`, `Flag` in ascending UTF-8 byte order of case name regardless of the order of `variants`, with payload arities 1, 0, 1 and payload types the `Pair` node, none and the `Boolean` node. A variant type none of whose cases carries a `payloadType` keeps family `enum`. A field, parameter, result, tuple position or payload typed `Shape` derives the `Shape` node. The `Shape` node key is the same whether `Shape` declares only `Empty` or also `Flag`; the two documents differ in digest, `model_root` key and `package_id`. | Test (TC-940) |
+| FR-322-AC-144 | A `value`/`union_value` node whose `semantic_type` is the `Shape` node is admitted with the case `Empty` and the empty payload `aggregate`, with `Flag` and one `Boolean` payload term, and with `Both` and one `Pair` payload term; the case `Flag` with an `Integer` payload term, with no payload term or with two, and a case `Missing`, refuse `ill_typed`/`type-mismatch`. A `union_value` over the enumeration `Color` refuses `ill_typed`/`type-mismatch`, and an `enum_value` over `Shape` naming `Empty` or `Flag` refuses `invalid_semantic_graph` at the node. `quire.op.structural.eq` over two `Shape` operands is admitted and `quire.op.enum.eq` refuses `ill_typed`/`operator-ineligible`; a `case` over a `Shape` operand has one arm per member in the member order above. | Test (TC-940) |
+| FR-322-AC-145 | A selected document with a tuple that has no position, a gap in its position ordinals, a position without `typeRef`, or a field, identity field, operation, supertype or clause refuses `invalid_model_binding`/`malformed-declaration` at stage `package_read`; a position `typeRef` naming no package type refuses `missing_declaration`/`missing-name`; two positions with one ordinal refuse `invalid_model_binding`/`conflicting-binding`; a variant case whose `payloadType` is unresolved or is `ix://quire/native/Clock` refuses `unsupported_construct`/`declaration-form`. Each is the first refusal in FR-154's report order and precedes every graph refusal. | Test (TC-940) |
+| FR-322-AC-146 | `model-tuple-union-vectors.json` publishes the declarations, the cases of FR-322-AC-141 to FR-322-AC-145 and the wire cases of FR-322-AC-140; `node-identity-vectors.json` publishes `model-tuple-value-type-pair` and `model-variant-type-shape-union`, each recomputing its JCS SHA-256 and validating against the closed preimage schema; and `fixtures/positive-model-tuple-union.json` is a schema-valid package with a recomputed `package_id`, one `model_root` per selection and a tuple node and a payload-bearing variant node whose owners join the published document. The QSpec test runs all three from the files. | Test (TC-940) |
 
 ## Dependencies
 

@@ -14,7 +14,7 @@ relationships:
 
 Verify the `model`/`variant_type` declaration node, the type a variant-typed
 member derives, and the identity of the node and of its cases. Scope:
-FR-322-AC-71, FR-141-AC-7.
+FR-322-AC-71, FR-141-AC-7 (steps 1 to 5); FR-322-AC-140 to FR-322-AC-146 (steps 6 to 10).
 
 ## Test Procedure
 
@@ -49,3 +49,43 @@ and a second variant type `Level` with cases `Gold` and `Silver`.
 4. `Basic` has a new key and `Standard` has none; the `Tier` key and the `Gold` key are unchanged (the node preimage names no case), and `Level`'s keys are unchanged.
 5. The first three refuse `missing_declaration`/`missing-selection` in the owner
    join; the last fails the V2 schema (`malformed_wire`).
+
+## Tuple value types and payload-bearing variant types (STD-519)
+
+Scope: FR-322-AC-140 to FR-322-AC-146. Use `model-tuple-union-vectors.json`:
+the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
+`p1: Integer`), `Swap` (`p0: Integer`, `p1: Boolean`) and `Nest` (`p0: Pair`,
+`p1: Shape`), the variant type `Shape` (cases `Empty`, `Flag(Boolean)`,
+`Both(Pair)`), the enumeration `Color` and the object `Holder`.
+
+6. Validate a `model`/`tuple_value_type` node owned by `Pair` against both V2
+   schemas and the `ModelDeclarationNode` preimage; remove its `owner`, give it a
+   `SourceOwner`, a `declaration`, a `version` in its owner and a non-empty body.
+   Own it by `Color`, by `Holder` and by an undeclared node.
+7. Project position 0, position 1 and position 2 of `Pair`; project positions of
+   `Nest`; read a `Holder` field typed `Pair`.
+8. Select the package with `Swap` replacing `Pair` and with the positions of
+   `Pair` swapped; compare node keys, the selection digest and the root key.
+9. Read the family and members of `Shape` and `Color`, with `variants` reordered;
+   build `union_value` nodes for `Empty`, `Flag` and `Both`, an `enum_value`
+   over `Shape`, and structural and enum equality over `Shape`.
+10. Present a tuple with no position, a gap, an absent `typeRef`, a field, an
+    unresolved `typeRef`, a repeated ordinal, and a case with an unresolved
+    `payloadType` and one typed `ix://quire/native/Clock`.
+
+Expected results:
+
+6. The first is admitted with family `tuple`; the owner-less node, the
+   `SourceOwner` node, the `declaration` node and the versioned owner fail the V2
+   schema (`malformed_wire`); the non-empty body is refused; the three owners
+   refuse `missing_declaration`/`missing-selection` in the owner join.
+7. Position 0 is `Boolean`, position 1 `Integer`, position 2 refuses
+   `ill_typed`/`operator-ineligible`; `Nest` gives the `Pair` and `Shape`
+   nodes; the field is the `Pair` node.
+8. The `Pair` key is unchanged by the swap; the selection digest, the root key
+   and the `package_id` change; `Swap` has a key different from `Pair`.
+9. `Shape` is `union` with members `Both`, `Empty`, `Flag`; `Color` is `enum`;
+   the `union_value` nodes are admitted or refused as FR-322-AC-144 states; the
+   `enum_value` refuses `invalid_semantic_graph`; structural equality is admitted
+   over `Shape` and enum equality refuses.
+10. Each refuses with the code and cause FR-322-AC-145 names.
