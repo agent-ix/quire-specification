@@ -742,7 +742,10 @@ refinement node, the reader checks in this order and reports its first defect:
    array entry. A duplicate first key or tied row that violates the same
    total order refuses at the later entry.
 3. **Header joins.** Resolve `semantic_type` to the unique local model root
-   whose owner joins the selected concrete model package, then `abstract` to
+   whose owner joins the selected concrete model package. The `identity` of
+   that root's `model_root` owner is the refinement's **concrete identity**;
+   `semantic_type` is the only header member that carries it, and the wire has
+   no other concrete-selection field (FR-375-AC-25). Then resolve `abstract` to
    the selected abstract model root,
    then optional `protocol` to a protocol clause of that abstract model,
    and `profile` to the selected infinite-trace profile. Resolve a local
@@ -767,7 +770,21 @@ refinement node, the reader checks in this order and reports its first defect:
    entry shape specified in the row table. A missing target refuses
    `missing_declaration`/`missing-name` at that key; a present target of the
    wrong kind or subject refuses `invalid_model_binding`/
-   `malformed-declaration` at that key; an expression whose checked result
+   `malformed-declaration` at that key. A key is a **concrete key** when it
+   is a local `NodeRef` of a `populations[].concrete`, `objects[].concrete_type`
+   (and the field-set `state_machine` equivalent), `steps[].source_node`,
+   `histories[].concrete_type` or `histories[].updates[].operation`,
+   `assume[].operation` or `class_catalog.concrete[].node` entry; its subject
+   is correct only when the declaration it names is owned (`ModelOwner`
+   `identity`) by the concrete identity, an anchor taking the owner of its
+   `context` declaration and a protocol clause the owner of its `owner_model`
+   object type. A concrete key owned by another selected model, even one of
+   the right kind, is a wrong subject. The independent authority for the
+   concrete selection is therefore the owner identity of the concrete keys,
+   checked against the `semantic_type` root; where a refinement has no
+   concrete key, nothing on the wire is independent of `semantic_type`, so a
+   root of another selected model is not distinguishable and the refinement is
+   a different, valid node (FR-375-AC-7); an expression whose checked result
    type (the referenced node's `semantic_type`, or the inline term's
    declared `type` or `result_type`) does not conform to its row's abstract target type
    refuses `ill_typed`/`type-mismatch` at the expression. An `open` term
@@ -819,6 +836,7 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-30 | Two refinement declarations of one unit with the same name refuse `ambiguous_declaration`/`ambiguous-name` at the second declaration's name token, whatever their rows; a package whose two refinement nodes carry equal `body.name` refuses `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name` in ascending node-id order, after identity recomputation. | Test (TC-310) |
 | FR-375-AC-31 | For an operation class `T::op`, `source_node` is the no-point `state`/`operation_anchor` of (`T`, `op`) whose `context` is the declaring type `T`, with and without a `class_catalog`; a catalog entry for the class carries that anchor as `node`. A `source_node` naming the concrete model root, the model-owner node, an anchor of another operation or type, or a point-qualified anchor, or a missing `source_node` on an operation class, refuses `invalid_model_binding`/`malformed-declaration`; a `source_class` naming no operation that `T` itself declares (including an inherited operation spelled under the inheriting type), checked before `source_node`, refuses `missing_declaration`/`missing-name` at `source_class`. A no-point anchor no clause names carries one `anchor` occurrence, the operation's declaration region. An operation is the class of its declaring type only: an inherited operation is spelled and anchored at the type that declares it, and a class naming a type that does not declare the operation refuses `missing_declaration`/`missing-name`. The abstract operation target's `operation` key names the abstract declaring type's no-point anchor by the same rule. | Test (TC-310) |
 | FR-375-AC-32 | A step row's `self` and concrete operation arguments are `reference` terms to FR-341 `value`/`parameter` nodes: `self` named `"self"` at level 0 with `Reference<C>`, then each parameter by declared name at levels 1..n in declared order; a step row has no `result` binder and an object row has `self` alone; the nodes are those of the operation's precondition clause. A reference to a node with a wrong name, level or type refuses `invalid_model_binding`/`malformed-declaration` at the reference. | Test (TC-310) |
+| FR-375-AC-33 | The refinement's concrete identity is the `identity` of the `model_root` owner joined by its `semantic_type`. A refinement whose `semantic_type` names the root of a selected model other than the one that owns its concrete keys (`populations[].concrete`, `objects[].concrete_type`, `steps[].source_node`, `histories`, `assume[].operation` and `class_catalog.concrete[].node`; an anchor owned through its `context`, a clause through its `owner_model`) refuses `invalid_model_binding`/`malformed-declaration` at the first such key, the catalog before the rows in the order of reader steps 4 and 5; a package of two selected model roots in which a valid refinement's `semantic_type` is swapped to the other root, with the concrete keys unchanged and every key and the package id recomputed, therefore refuses. A refinement with no concrete key (every row array and the concrete catalog empty) has no wire member independent of `semantic_type`: the same swap is admitted as a different node whose id differs by `semantic_type` (FR-375-AC-7). No `model_selections` or wire field is added. | Test (TC-310) |
 
 ## Dependencies
 

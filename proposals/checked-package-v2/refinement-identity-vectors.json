@@ -603,5 +603,154 @@
         "expected": "invalid_model_binding/malformed-declaration"
       }
     ]
+  },
+  "selected_roots": {
+    "note": "FR-375-AC-33. Two selected model roots; the concrete identity is the owner identity of the root named by semantic_type; each concrete key is checked against it.",
+    "roots": {
+      "RA": {
+        "identity": "acme/spec",
+        "node": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+      },
+      "RB": {
+        "identity": "acme/impl",
+        "node": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+      }
+    },
+    "cases": [
+      {
+        "name": "SR-01",
+        "description": "valid: semantic_type is the concrete root RB and every concrete key is owned by acme/impl",
+        "semantic_type": "RB",
+        "concrete_keys": [
+          {
+            "locus": "body/steps/0/source_node",
+            "owner": "acme/impl"
+          },
+          {
+            "locus": "body/objects/0/concrete_type",
+            "owner": "acme/impl"
+          }
+        ],
+        "expected": "admitted"
+      },
+      {
+        "name": "SR-02",
+        "description": "the swap: semantic_type replaced by the other selected root RA, every key and the package id recomputed, concrete keys unchanged",
+        "semantic_type": "RA",
+        "concrete_keys": [
+          {
+            "locus": "body/objects/0/concrete_type",
+            "owner": "acme/impl"
+          },
+          {
+            "locus": "body/steps/0/source_node",
+            "owner": "acme/impl"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration at body/objects/0/concrete_type"
+      },
+      {
+        "name": "SR-03",
+        "description": "swap detected only by a catalog class: no rows, one concrete catalog node owned by acme/impl; the catalog is checked before the rows",
+        "semantic_type": "RA",
+        "concrete_keys": [
+          {
+            "locus": "body/class_catalog/concrete/0/node",
+            "owner": "acme/impl"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration at body/class_catalog/concrete/0/node"
+      },
+      {
+        "name": "SR-04",
+        "description": "semantic_type is RB but the second concrete key is owned by the abstract model's package",
+        "semantic_type": "RB",
+        "concrete_keys": [
+          {
+            "locus": "body/objects/0/concrete_type",
+            "owner": "acme/impl"
+          },
+          {
+            "locus": "body/histories/0/concrete_type",
+            "owner": "acme/spec"
+          }
+        ],
+        "expected": "invalid_model_binding/malformed-declaration at body/histories/0/concrete_type"
+      },
+      {
+        "name": "SR-05",
+        "description": "row-empty refinement, semantic_type RB: no concrete key",
+        "semantic_type": "RB",
+        "concrete_keys": [],
+        "expected": "admitted"
+      },
+      {
+        "name": "SR-06",
+        "description": "row-empty refinement, semantic_type swapped to RA: nothing on the wire is independent of semantic_type, so it is admitted as a different node",
+        "semantic_type": "RA",
+        "concrete_keys": [],
+        "expected": "admitted"
+      }
+    ],
+    "row_empty_identities": [
+      {
+        "name": "SR-05",
+        "preimage": {
+          "version": "quire.refinement-node/v1",
+          "semantic_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+          },
+          "body": {
+            "term": "refinement",
+            "abstract": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+            },
+            "profile": {
+              "authority": "agent-ix",
+              "identity": "quire.temporal.infinite-trace/v1"
+            },
+            "populations": [],
+            "objects": [],
+            "steps": [],
+            "histories": [],
+            "assume": [],
+            "ensure": [],
+            "name": "Alpha"
+          }
+        },
+        "sha256": "dc9dab5dac59cd7b039679289af79181a3a2004d9d2c41a6cf920d860e9ea737"
+      },
+      {
+        "name": "SR-06",
+        "preimage": {
+          "version": "quire.refinement-node/v1",
+          "semantic_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+          },
+          "body": {
+            "term": "refinement",
+            "abstract": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+            },
+            "profile": {
+              "authority": "agent-ix",
+              "identity": "quire.temporal.infinite-trace/v1"
+            },
+            "populations": [],
+            "objects": [],
+            "steps": [],
+            "histories": [],
+            "assume": [],
+            "ensure": [],
+            "name": "Alpha"
+          }
+        },
+        "sha256": "240608f2a371de030316b908eb63df555c70ac020b4a84448abe1dcf3ec3879f"
+      }
+    ]
   }
 }

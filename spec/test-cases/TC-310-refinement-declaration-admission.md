@@ -279,6 +279,21 @@ Mutations, each applied alone to the positive unit:
     For the binder vectors, `self` at level 0 and the parameters at levels
     1..n by declared name are admitted; a wrong name, level or type, and a
     step row with a `result` binder, are refused (FR-375-AC-32).
+31. **Two selected model roots (SR-01 to SR-06).** Select two models,
+    `acme/spec` (root `RA`, abstract) and `acme/impl` (root `RB`, concrete),
+    and admit a refinement of `RA` whose `semantic_type` is `RB` and whose
+    concrete keys (`objects[].concrete_type`, `steps[].source_node`) are owned
+    by `acme/impl` (SR-01). Replace only `semantic_type` with `RA`, recompute
+    the node key and package id: the reader refuses
+    `invalid_model_binding`/`malformed-declaration` at the first concrete key
+    (SR-02), at the concrete `class_catalog` node when only the catalog names
+    one (SR-03), and at a single key owned by another model while
+    `semantic_type` is right (SR-04). A refinement with every row array and
+    the concrete catalog empty is admitted under either root, as two nodes
+    whose recomputed ids differ by `semantic_type` alone (SR-05, SR-06): it
+    carries no concrete key, so nothing on the wire is independent of
+    `semantic_type` (FR-375-AC-33). The vectors are the `selected_roots`
+    section of `refinement-identity-vectors.json`.
 
 ## Expected Results
 

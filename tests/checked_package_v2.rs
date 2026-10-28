@@ -22698,6 +22698,94 @@ fn tc_310_refinement_name_is_identity_and_step_rows_use_declaring_type_anchors()
     }
 }
 
+/// FR-375 reader steps 3 to 5: the concrete identity is the owner identity of
+/// the root `semantic_type` names; the first concrete key (catalog before
+/// rows, in the order the vector lists them) owned by another model refuses.
+fn selected_root_outcome(roots: &Value, case: &Value) -> String {
+    let root = case["semantic_type"].as_str().expect("root");
+    let concrete = roots[root]["identity"].as_str().expect("identity");
+    case["concrete_keys"]
+        .as_array()
+        .expect("keys")
+        .iter()
+        .find(|key| key["owner"] != concrete)
+        .map_or_else(
+            || "admitted".to_owned(),
+            |key| {
+                format!(
+                    "invalid_model_binding/malformed-declaration at {}",
+                    key["locus"].as_str().expect("locus")
+                )
+            },
+        )
+}
+
+#[trace("TC-310", "FR-375-AC-33")]
+#[test]
+fn tc_310_concrete_identity_is_checked_against_the_owner_of_every_concrete_key() {
+    let vectors = parsed_fixture(REFINEMENT_IDENTITY_VECTORS);
+    let selected = &vectors["selected_roots"];
+    let roots = &selected["roots"];
+    assert_ne!(
+        roots["RA"]["identity"], roots["RB"]["identity"],
+        "two selected models"
+    );
+    // The expected outcomes are restated here, independent of the fixture.
+    let independent = [
+        ("SR-01", "admitted"),
+        (
+            "SR-02",
+            "invalid_model_binding/malformed-declaration at body/objects/0/concrete_type",
+        ),
+        (
+            "SR-03",
+            "invalid_model_binding/malformed-declaration at body/class_catalog/concrete/0/node",
+        ),
+        (
+            "SR-04",
+            "invalid_model_binding/malformed-declaration at body/histories/0/concrete_type",
+        ),
+        ("SR-05", "admitted"),
+        ("SR-06", "admitted"),
+    ];
+    let cases = selected["cases"].as_array().expect("cases");
+    assert_eq!(cases.len(), independent.len());
+    for (case, (name, expected)) in cases.iter().zip(independent) {
+        assert_eq!(case["name"], name);
+        assert_eq!(case["expected"], expected, "{name}");
+        assert_eq!(selected_root_outcome(roots, case), expected, "{name}");
+    }
+    // Row-empty swap: admitted, and the two nodes differ by semantic_type alone.
+    let identities = selected["row_empty_identities"]
+        .as_array()
+        .expect("identities");
+    let node_schema = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/node-identity-preimage.schema.json"
+    ));
+    let validator = jsonschema::validator_for(&json!({
+        "$ref": "#/$defs/RefinementNode",
+        "$defs": node_schema["$defs"].clone()
+    }))
+    .expect("preimage schema");
+    for case in identities {
+        assert!(validator.is_valid(&case["preimage"]), "{}", case["name"]);
+        assert_eq!(
+            unqualified_jcs_sha256(&case["preimage"]),
+            case["sha256"].as_str().expect("sha256"),
+            "{}",
+            case["name"]
+        );
+    }
+    assert_ne!(identities[0]["sha256"], identities[1]["sha256"]);
+    let mut swapped = identities[0]["preimage"].clone();
+    swapped["semantic_type"] = identities[1]["preimage"]["semantic_type"].clone();
+    assert_eq!(swapped, identities[1]["preimage"], "semantic_type is the only difference");
+    assert_eq!(
+        identities[0]["preimage"]["semantic_type"]["digest"],
+        roots["RB"]["node"]
+    );
+}
+
 /// Index of the node a vectors file names, looked up by role in `node_indexes`.
 fn timed_node_index(role: &str) -> usize {
     let vectors: Value = serde_json::from_str(TIMED_MODEL_NODE_VECTORS).unwrap();
