@@ -482,7 +482,9 @@ and two nodes declaring one name refuse as `ambiguous-name`
   `fixtures/positive-timed-slot-nodes.json` the complete package that selects
   it and carries the `SL`, `PR` and model nodes; the `GD-02` and `GD-03`
   `patch` members are RFC 6902 patches on that package (FR-322-AC-242,
-  FR-322-AC-243). Each node key is the SHA-256 of the
+  FR-322-AC-243). The case nodes are embedded both in the vectors file and
+  in the package fixture; their equality is enforced through `package_node`,
+  so the two copies cannot drift. Each node key is the SHA-256 of the
   RFC 8785 structural or application preimage, and `SL-06` equals the
   published fixture place.
 
