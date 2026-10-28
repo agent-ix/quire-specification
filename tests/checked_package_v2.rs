@@ -23340,6 +23340,12 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
     assert_eq!(replayed, 2, "GD-02 and GD-03 are machine-readable patches");
 }
 
+thread_local! {
+    /// A deliberate defect in the CONTENTS of an order key, for the mutation tests only
+    /// (`""` is the key as published).
+    static KEY_FAULT: std::cell::Cell<&'static str> = const { std::cell::Cell::new("") };
+}
+
 /// The place path key of FR-322-AC-265: the steps of a `clock_place` path in
 /// order, each as (kind rank, name bytes, first number, second number), where
 /// kind ranks `field`, `tuple`, `union`, `slot`; a `field` step is
@@ -23347,6 +23353,7 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
 /// and maximum (`unbounded` above every integer). Neither the selector nor
 /// `resolved_path` is read.
 fn timed_place_path_key(place: &Value) -> Vec<(u8, Vec<u8>, u64, u64)> {
+    let fault = KEY_FAULT.with(|fault| fault.get());
     place["body"]["members"][1]["value"]["members"]
         .as_array()
         .unwrap()
@@ -23356,10 +23363,15 @@ fn timed_place_path_key(place: &Value) -> Vec<(u8, Vec<u8>, u64, u64)> {
             let text = |at: usize| members[at]["value"]["value"].as_str().unwrap().as_bytes().to_vec();
             let int = |at: usize| members[at]["value"]["value"].as_u64().unwrap();
             match members[0]["value"]["value"].as_str().unwrap() {
-                "field" => (0, text(1), 0, 0),
-                "tuple" => (1, Vec::new(), int(1), 0),
-                "union" => (2, text(1), 0, 0),
-                "slot" => (3, text(1), int(3), members[4]["value"]["value"].as_u64().unwrap_or(u64::MAX)),
+                "field" => (0, if fault == "field-name" { Vec::new() } else { text(1) }, 0, 0),
+                "tuple" => (1, Vec::new(), if fault == "tuple-index" { 0 } else { int(1) }, 0),
+                "union" => (2, if fault == "union-case" { Vec::new() } else { text(1) }, 0, 0),
+                "slot" => (
+                    3,
+                    if fault == "slot-collection" { Vec::new() } else { text(1) },
+                    if fault == "slot-minimum" { 0 } else { int(3) },
+                    if fault == "slot-maximum" { 0 } else { members[4]["value"]["value"].as_u64().unwrap_or(u64::MAX) },
+                ),
                 other => panic!("path step {other}"),
             }
         })
@@ -23438,11 +23450,19 @@ fn timed_member_key(package: &Value, id: &Value, path_key: bool, member_key: boo
     let member = |at: usize| &node["body"]["members"][at]["value"];
     let text = |value: &Value| KeyAtom::Bytes(value["value"].as_str().unwrap_or("").as_bytes().to_vec());
     let operation_name = |anchor: &Value| find(anchor).map_or(KeyAtom::Bytes(Vec::new()), |anchor| text(&anchor["body"]["members"][1]["value"]));
+    let fault = KEY_FAULT.with(|fault| fault.get());
+    let ranks = if fault == "comparison-rank" { ["lt", "eq", "le", "ge", "gt"] } else { ["lt", "le", "eq", "ge", "gt"] };
     let rank = |value: &Value| {
-        KeyAtom::Int(["lt", "le", "eq", "ge", "gt"].iter().position(|word| Some(*word) == value["value"].as_str()).unwrap_or(5) as u64)
+        KeyAtom::Int(ranks.iter().position(|word| Some(*word) == value["value"].as_str()).unwrap_or(5) as u64)
     };
     let fraction = |value: &Value| {
         let (numerator, denominator) = value["value"].as_str().unwrap_or("0/1").split_once('/').unwrap_or(("0", "1"));
+        if fault == "bound" {
+            return KeyAtom::Fraction(KeyRational(0, 1));
+        }
+        if fault == "bound-text" {
+            return KeyAtom::Bytes(numerator.as_bytes().to_vec());
+        }
         KeyAtom::Fraction(KeyRational(numerator.parse().unwrap_or(0), denominator.parse().unwrap_or(1)))
     };
     let regions_of = |list: &Value| {
@@ -25747,7 +25767,7 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
 fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let ids: Vec<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected: Vec<String> = (1..=32).map(|n| format!("CL-{n:02}")).collect();
+    let expected: Vec<String> = (1..=36).map(|n| format!("CL-{n:02}")).collect();
     assert_eq!(ids, expected.iter().map(String::as_str).collect::<Vec<_>>());
     assert_eq!(timed_clause_vector_defects(""), Vec::<String>::new());
 }
@@ -25781,6 +25801,8 @@ fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
         ("invariant-predicate", "CL-23"),
         ("invariant-bound", "CL-24"),
         ("anchor-model", "CL-25"),
+        ("member-key", "CL-33"),
+        ("member-key", "CL-35"),
     ];
     // Every switch but the path key (pinned by AO-08, tc_367_place_path_key_decides_a_shared_region) has a vector.
     let covered: BTreeSet<&str> = pinned.iter().map(|(rule, _)| *rule).chain(["path-key"]).collect();
@@ -25791,6 +25813,54 @@ fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
             defects.iter().any(|defect| defect.starts_with(vector)),
             "switching off {rule} must be caught by {vector}: {defects:?}"
         );
+    }
+}
+
+/// The key CONTENTS of FR-322-AC-265 are mutated too: each sub-key, read wrongly, must change the
+/// verdict of a published vector (or, for a path step no fixture document can declare, of the
+/// synthetic ordering below).
+#[trace("TC-367", "FR-322-AC-265")]
+#[test]
+fn tc_367_timed_key_contents_are_pinned_by_vectors() {
+    let by_vector = [("comparison-rank", "CL-33"), ("bound", "CL-35"), ("bound-text", "CL-35")];
+    for (fault, vector) in by_vector {
+        KEY_FAULT.with(|cell| cell.set(fault));
+        let defects = timed_clause_vector_defects("");
+        KEY_FAULT.with(|cell| cell.set(""));
+        assert!(defects.iter().any(|defect| defect.starts_with(vector)), "key fault {fault} must be caught by {vector}: {defects:?}");
+    }
+    assert!(timed_clause_vector_defects("").is_empty(), "the key as published passes every vector");
+    // Place steps: the AO vectors fix the slot sub-keys on the slot fixture; tuple, union and field steps are
+    // ordered by the synthetic paths below, which no document of the fixtures can declare.
+    let slot = |collection: &str, minimum: u64, maximum: Value| {
+        json!({"members": [
+            {"value": {"value": "slot"}}, {"value": {"value": collection}}, {"value": {}},
+            {"value": {"value": minimum}}, {"value": {"value": maximum}}]})
+    };
+    let step = |kind: &str, text: &str, number: u64| match kind {
+        "tuple" => json!({"members": [{"value": {"value": "tuple"}}, {"value": {"value": number}}]}),
+        other => json!({"members": [{"value": {"value": other}}, {"value": {"value": text}}]}),
+    };
+    let place = |steps: Vec<Value>| json!({"body": {"members": [{}, {"value": {"members": steps}}]}});
+    let ascending = |paths: Vec<Vec<Value>>| {
+        let keys: Vec<_> = paths.into_iter().map(|steps| timed_place_path_key(&place(steps))).collect();
+        keys.windows(2).all(|pair| pair[0] < pair[1])
+    };
+    let orderings = [
+        ("tuple-index", vec![vec![step("tuple", "", 2)], vec![step("tuple", "", 10)]]),
+        ("union-case", vec![vec![step("union", "Armed", 0)], vec![step("union", "Idle", 0)]]),
+        ("field-name", vec![vec![step("field", "a", 0)], vec![step("field", "b", 0)]]),
+        ("slot-collection", vec![vec![slot("bag", 0, json!(1))], vec![slot("set", 0, json!(1))]]),
+        ("slot-minimum", vec![vec![slot("set", 0, json!(1))], vec![slot("set", 1, json!(1))]]),
+        ("slot-maximum", vec![vec![slot("set", 0, json!(1))], vec![slot("set", 0, json!(2))]]),
+        ("kind-rank", vec![vec![step("field", "z", 0)], vec![step("tuple", "", 0)], vec![step("union", "A", 0)]]),
+    ];
+    for (fault, paths) in orderings {
+        assert!(ascending(paths.clone()), "{fault}: the published key orders {paths:?}");
+        KEY_FAULT.with(|cell| cell.set(fault));
+        let still = ascending(paths);
+        KEY_FAULT.with(|cell| cell.set(""));
+        assert!(fault == "kind-rank" || !still, "key fault {fault} must break the synthetic ordering");
     }
 }
 
