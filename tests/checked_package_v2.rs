@@ -35,6 +35,10 @@ const POSITIVE_TICK_TIMED_MODEL_NODES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-tick-timed-model-nodes.json");
 const TIMED_SLOT_SELECTOR_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/timed-slot-selector-vectors.json");
+const SELECTED_TIMED_SLOT_DOCUMENT: &str =
+    include_str!("../proposals/checked-package-v2/domain-package-acme-timed-slots.json");
+const POSITIVE_TIMED_SLOT_NODES: &str =
+    include_str!("../proposals/checked-package-v2/fixtures/positive-timed-slot-nodes.json");
 const TIMED_MODEL_NODE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/timed-model-node-vectors.json");
 const FR322_BODY_STEPS: &str = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
@@ -19443,6 +19447,9 @@ fn apply_json_patch(package: &mut Value, patch: &Value) {
     let target = package.pointer_mut(parent).expect("patch parent exists");
     match (patch["op"].as_str().expect("patch op"), target) {
         ("add", Value::Array(items)) if member == "-" => items.push(patch["value"].clone()),
+        ("add", Value::Array(items)) => {
+            items.insert(member.parse::<usize>().expect("index"), patch["value"].clone());
+        }
         ("add", Value::Object(map)) => {
             map.insert(member.to_owned(), patch["value"].clone());
         }
@@ -21770,11 +21777,16 @@ fn place_selectors_are_symbolic(place: &Value, nodes: &[Value]) -> bool {
 }
 
 /// The guard and duplicate-place checks of FR-322 "Timed-model nodes" over a
-/// whole package, as the cause and code a reader gives (`None` when admitted).
-fn timed_guard_and_place_cause(package: &Value) -> Option<(&'static str, &'static str)> {
+/// whole package, as the code, cause and RFC 6901 locus a reader gives (`None`
+/// when admitted): a repeated path refuses at the later reference of the
+/// root's `clock_places` (FR-322-AC-120), and a `clock_guard` node that no
+/// root's `guards` lists refuses at that node's own `body` (FR-322-AC-243),
+/// the first such node in ascending node-id digest order.
+fn timed_guard_and_place_refusal(package: &Value) -> Option<(&'static str, &'static str, String)> {
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
-    let by_id = |id: &Value| nodes.iter().find(|node| node["node_id"] == *id).unwrap();
-    for root in nodes.iter().filter(|node| node["semantic_form"] == "timed_model") {
+    let position = |id: &Value| nodes.iter().position(|node| node["node_id"] == *id).unwrap();
+    let mut listed_guards = Vec::new();
+    for (root_at, root) in nodes.iter().enumerate().filter(|(_, node)| node["semantic_form"] == "timed_model") {
         let binding = |name: &str| {
             root["body"]["members"]
                 .as_array()
@@ -21786,20 +21798,27 @@ fn timed_guard_and_place_cause(package: &Value) -> Option<(&'static str, &'stati
         };
         let places = binding("clock_places");
         for (at, place) in places.iter().enumerate() {
-            let path = &by_id(&place["target"])["body"]["members"][1];
-            if places[..at].iter().any(|earlier| &by_id(&earlier["target"])["body"]["members"][1] == path) {
-                return Some(("invalid_package", "duplicate-clock-place"));
+            let path = &nodes[position(&place["target"])]["body"]["members"][1];
+            if places[..at].iter().any(|earlier| &nodes[position(&earlier["target"])]["body"]["members"][1] == path) {
+                return Some((
+                    "invalid_package",
+                    "duplicate-clock-place",
+                    format!("/semantic_graph/nodes/{root_at}/body/members/3/value/members/{at}"),
+                ));
             }
         }
-        let listed = binding("guards");
-        let owned = nodes.iter().filter(|node| node["semantic_form"] == "clock_guard");
-        for guard in owned {
-            if !listed.iter().any(|entry| entry["target"] == guard["node_id"]) {
-                return Some(("invalid_package", "timed-node-reference"));
-            }
-        }
+        listed_guards.extend(binding("guards").into_iter().map(|entry| entry["target"].clone()));
     }
-    None
+    let mut owned: Vec<usize> = (0..nodes.len()).filter(|at| nodes[*at]["semantic_form"] == "clock_guard").collect();
+    owned.sort_by_key(|at| nodes[*at]["node_id"]["digest"].as_str().unwrap().to_owned());
+    owned
+        .into_iter()
+        .find(|at| !listed_guards.contains(&nodes[*at]["node_id"]))
+        .map(|at| ("invalid_package", "timed-node-reference", format!("/semantic_graph/nodes/{at}/body")))
+}
+
+fn timed_guard_and_place_cause(package: &Value) -> Option<(&'static str, &'static str)> {
+    timed_guard_and_place_refusal(package).map(|(code, cause, _)| (code, cause))
 }
 
 #[trace("TC-367", "FR-322-AC-148", "FR-322-AC-149", "FR-322-AC-150")]
@@ -21865,38 +21884,19 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
     }
     assert_eq!(timed_guard_and_place_cause(&tick), None);
 
-    // GD-02 and GD-03 replay as schema-valid package mutations with recomputed ids.
-    assert_eq!(timed_guard_and_place_cause(&package), None, "the published package is the control");
+    // GD-02 and GD-03 replay from their published RFC 6902 patches (FR-322-AC-242).
+    let selected: Value = serde_json::from_str(POSITIVE_TIMED_SLOT_NODES).expect("selected package JSON");
+    assert_eq!(vectors["selected_package"], "fixtures/positive-timed-slot-nodes.json");
+    assert_eq!(timed_guard_and_place_refusal(&selected), None, "the selected package is the control");
     let validator = jsonschema::validator_for(&schema).unwrap();
-    for gd in vectors["guards"].as_array().unwrap().iter().filter(|g| g.get("mutation").is_some()) {
-        let mut adverse = package.clone();
-        let root_at = timed_node_index("timed_model");
-        match gd["mutation"].as_str().unwrap() {
-            "duplicate-place-different-guards" => {
-                let mut twin = nodes[timed_node_index("clock_place")].clone();
-                twin["body"]["members"][3]["value"]["members"] = json!([]);
-                twin["dependencies"] = json!(body_reference_targets(&twin["body"]));
-                let placeholder = json!({"domain": SEMANTIC_NODE_DOMAIN, "digest": "ee".repeat(32)});
-                twin["node_id"] = placeholder.clone();
-                twin["semantic_type"] = placeholder.clone();
-                let graph = adverse["semantic_graph"]["nodes"].as_array_mut().unwrap();
-                graph.push(twin);
-                let root = &mut graph[root_at];
-                root["body"]["members"][3]["value"]["members"]
-                    .as_array_mut().unwrap()
-                    .push(json!({"term": "reference", "target": placeholder.clone()}));
-                root["dependencies"].as_array_mut().unwrap().push(placeholder);
-            }
-            "unlisted-clock-guard" => {
-                let guard = nodes[timed_node_index("clock_guard")]["node_id"].clone();
-                let root = &mut adverse["semantic_graph"]["nodes"][root_at];
-                let listed = root["body"]["members"][5]["value"]["members"].as_array_mut().unwrap();
-                listed.retain(|entry| entry["target"] != guard);
-                root["dependencies"].as_array_mut().unwrap().retain(|dep| *dep != guard);
-            }
-            other => panic!("unhandled guard vector {other}"),
+    let mut replayed = 0;
+    for gd in vectors["guards"].as_array().unwrap().iter().filter(|g| g.get("patch").is_some()) {
+        let mut adverse = selected.clone();
+        for operation in gd["patch"].as_array().unwrap() {
+            apply_json_patch(&mut adverse, operation);
         }
-        rekey_stale_nodes(&mut adverse);
+        assert_eq!(gd["fixture"], vectors["selected_package"], "{} patches the selected package", gd["id"]);
+        assert_eq!(gd["schema"], "valid");
         assert!(validator.is_valid(&adverse), "{} is a schema-valid semantic control", gd["id"]);
         assert_eq!(
             adverse["package_id"]["digest"],
@@ -21904,9 +21904,25 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
             "{} retains the recomputed package id",
             gd["id"]
         );
-        let cause = timed_guard_and_place_cause(&adverse).expect("the mutation is refused");
-        assert_eq!(cause, (gd["expected_code"].as_str().unwrap(), gd["expected_cause"].as_str().unwrap()), "{}", gd["id"]);
+        let mut recomputed = adverse.clone();
+        rekey_stale_nodes(&mut recomputed);
+        assert_eq!(recomputed, adverse, "{} patch ends with every key and the package id current", gd["id"]);
+        let (code, cause, locus) = timed_guard_and_place_refusal(&adverse).expect("the mutation is refused");
+        assert_eq!(
+            (code, cause, locus.as_str()),
+            (
+                gd["expected_code"].as_str().unwrap(),
+                gd["expected_cause"].as_str().unwrap(),
+                gd["locus"].as_str().unwrap()
+            ),
+            "{}",
+            gd["id"]
+        );
+        let node_pointer = locus.split('/').take(4).collect::<Vec<_>>().join("/");
+        assert_eq!(locus, format!("{node_pointer}/{}", gd["locus_suffix"].as_str().unwrap()), "{}", gd["id"]);
+        replayed += 1;
     }
+    assert_eq!(replayed, 2, "GD-02 and GD-03 are machine-readable patches");
 }
 
 /// Position of the first node of a package with the given semantic form.
@@ -22169,6 +22185,329 @@ fn tc_367_presence_vector_assertions_each_fail_on_their_mutation() {
     pr02["body"]["arguments"].as_array_mut().unwrap().pop();
     assert!(presence_cause(&pr02, &places, &parameters, &owner_type, &slot_type).is_some());
 }
+
+/// The type definition of `identity` in a selected FCD document.
+fn selected_type<'a>(document: &'a Value, identity: &str) -> Option<&'a Value> {
+    document["types"].as_array()?.iter().find(|declared| declared["identity"] == identity)
+}
+
+/// The element type FR-322 "Member type" derives from a `typeRef`: a `sequence`
+/// type definition renders as `Sequence<` its `items` `>` and a `map` one as
+/// `Map<Text, ` its `values` `>`, any other reference as its own identity.
+fn selected_element(document: &Value, type_ref: &str) -> String {
+    match selected_type(document, type_ref) {
+        Some(declared) if declared["kind"] == "sequence" => {
+            format!("Sequence<{}>", selected_element(document, declared["items"].as_str().expect("items")))
+        }
+        Some(declared) if declared["kind"] == "map" => {
+            format!("Map<Text, {}>", selected_element(document, declared["values"].as_str().expect("values")))
+        }
+        _ => type_ref.to_owned(),
+    }
+}
+
+/// A field's `resolved_path` row members after the step index: declared type,
+/// member identity, rendered member type, collection kind, minimum, maximum.
+/// A clock field of presence `optional` has the element `Option<Clock>`, and the
+/// multiplicity then gives the collection (FR-322 "Member type" table).
+fn selected_field_row(document: &Value, owner: &str, name: &str) -> Vec<String> {
+    let declared = selected_type(document, owner).unwrap_or_else(|| panic!("type {owner}"));
+    let field = declared["fields"]
+        .as_array()
+        .and_then(|fields| fields.iter().find(|field| field["name"] == name))
+        .unwrap_or_else(|| panic!("field {owner}/{name}"));
+    let type_ref = field["typeRef"].as_str().unwrap();
+    let mut element = selected_element(document, type_ref);
+    if field["presence"] == "optional" {
+        assert_eq!(type_ref, "ix://quire/native/Clock", "only the clock member shape is ruled");
+        element = format!("Option<{element}>");
+    }
+    let multiplicity = &field["multiplicity"];
+    let (lower, upper) = (multiplicity["lower"].as_u64().unwrap(), multiplicity["upper"].as_u64());
+    let (kind, rendered, min, max) = if (lower, upper) == (1, Some(1)) {
+        match selected_type(document, type_ref).map(|declared| declared["kind"].as_str().unwrap()) {
+            Some(collection @ ("sequence" | "map")) => (collection.to_owned(), element, "0".to_owned(), "unbounded".to_owned()),
+            _ => ("none".to_owned(), element, String::new(), String::new()),
+        }
+    } else {
+        let (kind, spelling) = match (multiplicity["ordered"].as_bool().unwrap(), multiplicity["unique"].as_bool().unwrap()) {
+            (true, false) => ("sequence", "Sequence"),
+            (false, true) => ("set", "Set"),
+            (false, false) => ("bag", "Bag"),
+            (true, true) => ("ordered_set", "OrderedSet"),
+        };
+        (
+            kind.to_owned(),
+            format!("{spelling}<{element}>"),
+            lower.to_string(),
+            upper.map_or_else(|| "unbounded".to_owned(), |upper| upper.to_string()),
+        )
+    };
+    vec![owner.to_owned(), field["identity"].as_str().unwrap().to_owned(), rendered, kind, min, max]
+}
+
+/// The inner type of a rendered collection type, and whether it is a map.
+fn rendered_inner(rendered: &str) -> Option<(String, bool)> {
+    if rendered.starts_with("Map<") && rendered.ends_with('>') {
+        return Some((rendered.to_owned(), true));
+    }
+    ["Sequence<", "Set<", "Bag<", "OrderedSet<"].into_iter().find_map(|prefix| {
+        rendered.strip_prefix(prefix).and_then(|rest| rest.strip_suffix('>')).map(|inner| (inner.to_owned(), false))
+    })
+}
+
+/// Every `resolved_path` row a place needs, derived from the selected document
+/// alone: the `field` steps join the declared fields and the `slot` steps the
+/// collection types they select from.
+fn selected_document_rows(document: &Value, place: &Value, model: &str) -> Result<Vec<Vec<String>>, String> {
+    let steps = place["body"]["members"][1]["value"]["members"].as_array().unwrap();
+    let mut owner = model.to_owned();
+    let mut previous: Option<Vec<String>> = None;
+    let mut rows = Vec::new();
+    for step in steps {
+        let text = |at: usize| step["members"][at]["value"]["value"].clone();
+        let row = match text(0).as_str().unwrap() {
+            "field" => {
+                let name = text(1).as_str().unwrap().to_owned();
+                let row = selected_field_row(document, &owner, &name);
+                owner.clone_from(&row[2]);
+                row
+            }
+            "slot" => {
+                let parent = previous.as_ref().ok_or("a slot step needs a collection row")?;
+                let (inner, is_map) = rendered_inner(&parent[2]).ok_or("a slot step selects from a collection type")?;
+                let (declaring, element) = if is_map {
+                    let value = inner.strip_suffix('>').unwrap().split_once(", ").unwrap().1.to_owned();
+                    (inner.clone(), value)
+                } else {
+                    (inner.clone(), inner)
+                };
+                let (kind, min, max) = match rendered_inner(&element) {
+                    Some((_, true)) => ("map", "0", "unbounded"),
+                    Some(_) => ("sequence", "0", "unbounded"),
+                    None => ("none", "", ""),
+                };
+                let slot_kind = text(1);
+                if slot_kind != parent[3] || text(3).to_string().trim_matches('"') != parent[4] || text(4).to_string().trim_matches('"') != parent[5] {
+                    return Err("the slot step does not carry its collection's kind and bounds".to_owned());
+                }
+                owner.clone_from(&element);
+                vec![declaring, format!("{}[slot]", parent[2]), element, kind.to_owned(), min.to_owned(), max.to_owned()]
+            }
+            other => return Err(format!("unexpected step {other}")),
+        };
+        previous = Some(row.clone());
+        rows.push(row);
+    }
+    Ok(rows)
+}
+
+/// The rows a place carries, as the same vectors of text.
+fn place_rows(place: &Value) -> Vec<Vec<String>> {
+    place["body"]["members"][2]["value"]["members"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|row| {
+            (1..7)
+                .map(|at| row["members"][at]["value"]["value"].as_str().unwrap().to_owned())
+                .collect()
+        })
+        .collect()
+}
+
+/// The selected-package checks of FR-322-AC-240 over the vectors, the
+/// document and the package, as the first defect found (`Ok` when admitted).
+fn selected_timed_slot_defect(vectors: &Value, document: &Value, package: &Value) -> Result<(), String> {
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let digest = unqualified_jcs_sha256(document);
+    let row = &package["lock"]["model_selections"][0];
+    if row["identity"] != document["package"]["identity"] || row["digest"] != digest.as_str() {
+        return Err("the row does not pin the whole document".to_owned());
+    }
+    if vectors["selection_digest"] != digest.as_str() || package["identity_preimage"]["model_selections"][0] != *row {
+        return Err("the vectors or the identity preimage disagree with the document digest".to_owned());
+    }
+    let root = nodes.iter().find(|node| node["semantic_form"] == "model_root").ok_or("no model_root")?;
+    if *root != derived_model_root(row) {
+        return Err("the model_root is not derived from the row".to_owned());
+    }
+    for pointer in ["/source/digest", "/package/lockDigest", "/package/manifestDigest"] {
+        if document.pointer(pointer).is_some() {
+            return Err(format!("the document copies {pointer}"));
+        }
+    }
+    let model = "ix://acme/orders/Order";
+    let mut positioned = Vec::new();
+    for case in vectors["cases"].as_array().unwrap() {
+        if let Some(at) = case["package_node"].as_u64() {
+            positioned.push((case["id"].as_str().unwrap().to_owned(), at as usize, case["node"].clone()));
+        }
+    }
+    for (name, place) in vectors["presence"]["places"].as_object().unwrap() {
+        positioned.push((format!("place {name}"), place["package_node"].as_u64().unwrap() as usize, place["node"].clone()));
+    }
+    for (name, parameter) in vectors["presence"]["parameters"].as_object().unwrap() {
+        let at = vectors["presence"]["parameter_package_nodes"][name].as_u64().unwrap() as usize;
+        positioned.push((format!("parameter {name}"), at, parameter.clone()));
+    }
+    for case in vectors["presence"]["cases"].as_array().unwrap() {
+        if let Some(at) = case["package_node"].as_u64() {
+            positioned.push((case["id"].as_str().unwrap().to_owned(), at as usize, case["node"].clone()));
+        }
+    }
+    let mut listed_places = BTreeSet::new();
+    if let Some(root) = nodes.iter().find(|node| node["semantic_form"] == "timed_model") {
+        let places = root["body"]["members"][3]["value"]["members"].as_array().unwrap();
+        listed_places.extend(places.iter().map(|entry| entry["target"]["digest"].as_str().unwrap().to_owned()));
+    }
+    for (name, at, node) in &positioned {
+        if nodes.get(*at) != Some(node) {
+            return Err(format!("{name} is not the published node at {at}"));
+        }
+        if node["semantic_form"] == "clock_place" {
+            if !listed_places.contains(node["node_id"]["digest"].as_str().unwrap()) {
+                return Err(format!("{name} is not listed by the timed root"));
+            }
+            let want = selected_document_rows(document, node, model)?;
+            if want != place_rows(node) {
+                return Err(format!("{name}: the rows do not join the selected document"));
+            }
+        }
+    }
+    let placed = nodes.iter().filter(|node| node["semantic_form"] == "clock_place").count();
+    if placed != listed_places.len() {
+        return Err("the timed root lists a different set of places than the graph holds".to_owned());
+    }
+    Ok(())
+}
+
+#[trace("TC-367", "FR-322-AC-240", "FR-322-AC-241")]
+#[test]
+fn tc_367_timed_slot_vectors_publish_a_complete_pinned_selected_package() {
+    let vectors = parsed_fixture(TIMED_SLOT_SELECTOR_VECTORS);
+    let document = parsed_fixture(SELECTED_TIMED_SLOT_DOCUMENT);
+    let package = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
+    let base = parsed_fixture(POSITIVE_TIMED_MODEL_NODES);
+    assert_eq!(vectors["selected_document"], "domain-package-acme-timed-slots.json");
+    assert_eq!(vectors["selected_package"], "fixtures/positive-timed-slot-nodes.json");
+    assert_eq!(document["contractVersion"], "2.0.0");
+    assert_eq!(document["package"]["identity"], "acme/orders");
+    assert_eq!(selected_timed_slot_defect(&vectors, &document, &package), Ok(()));
+
+    // The package is complete, schema-valid and recomputes from its members.
+    let schema = parsed_fixture(SCHEMA);
+    assert!(jsonschema::validator_for(&schema).unwrap().is_valid(&package));
+    assert_eq!(package["package_id"]["digest"], unqualified_jcs_sha256(&package_id_preimage(&package)));
+    assert_eq!(vectors["selected_package_id"], package["package_id"]["digest"]);
+    let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+    let ids: BTreeSet<_> = nodes.iter().map(|node| node["node_id"]["digest"].as_str().unwrap()).collect();
+    assert_eq!(ids.len(), nodes.len(), "node keys are unique");
+    for (at, node) in nodes.iter().enumerate() {
+        assert!(
+            structural_node_key_is_current(node) || application_node_key_is_current(node, nodes) || node.get("nominal_identity_preimage").is_some() || node.get("recursion_group").is_some() || node["node_tag"] == "correspondence",
+            "node {at} key"
+        );
+        let entries = package["source_map"].as_array().unwrap().iter().filter(|entry| entry["node_id"] == node["node_id"]).count();
+        assert_eq!(entries, 1, "node {at} has one source_map entry");
+    }
+    // Every published base node is unchanged except the timed root and the model root.
+    let base_nodes = base["semantic_graph"]["nodes"].as_array().unwrap();
+    for (at, node) in base_nodes.iter().enumerate().filter(|(at, _)| ![52, 57].contains(at)) {
+        assert_eq!(nodes[at], *node, "base node {at} is unchanged");
+    }
+    assert_eq!(nodes.last().unwrap()["semantic_form"], "model_root", "the root is last");
+
+    // The vectors' places SL-01..SL-07 equal their published cases and are all admitted nodes.
+    for id in ["SL-01", "SL-02", "SL-03", "SL-04", "SL-05", "SL-06", "SL-07"] {
+        let case = vectors["cases"].as_array().unwrap().iter().find(|case| case["id"] == id).unwrap();
+        assert_eq!(nodes[case["package_node"].as_u64().unwrap() as usize], case["node"], "{id}");
+    }
+
+    // AC-241: the nested Sequence is declared by FCD fields alone.
+    let nested = &vectors["nested_collection"];
+    let field = selected_type(&document, "ix://acme/orders/Order").unwrap()["fields"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|field| field["identity"] == nested["field"])
+        .expect("field g");
+    assert_eq!(field["typeRef"], nested["typeRef"]);
+    assert_eq!(field["multiplicity"], nested["multiplicity"]);
+    let definition = selected_type(&document, nested["typeRef"].as_str().unwrap()).unwrap();
+    assert_eq!(definition["kind"], "sequence");
+    assert_eq!(definition["items"], "ix://quire/native/Clock");
+    assert_eq!(json!(definition["items"]), nested["type_definition"]["items"]);
+    assert_eq!(selected_field_row(&document, "ix://acme/orders/Order", "g")[2], nested["rendered"].as_str().unwrap());
+    // Only FCD typeDefinition and field members appear in the new definitions.
+    for declared in document["types"].as_array().unwrap() {
+        let allowed: &[&str] = match declared["kind"].as_str() {
+            Some("sequence") => &["constraints", "displayName", "extensions", "identity", "items", "kind", "origin", "roles", "unknownPolicy"],
+            Some("map") => &["constraints", "displayName", "extensions", "identity", "values", "kind", "origin", "roles", "unknownPolicy"],
+            _ => &["constraints", "displayName", "extensions", "fields", "identity", "identityFields", "kind", "operations", "origin", "relationships", "roles", "supertypes", "unknownPolicy"],
+        };
+        for member in declared.as_object().unwrap().keys() {
+            assert!(allowed.contains(&member.as_str()), "{} has no FCD member {member}", declared["identity"]);
+        }
+    }
+}
+
+#[trace("TC-367", "FR-322-AC-240", "FR-322-AC-241")]
+#[test]
+fn tc_367_selected_package_assertions_each_fail_on_their_mutation() {
+    let vectors = parsed_fixture(TIMED_SLOT_SELECTOR_VECTORS);
+    let document = parsed_fixture(SELECTED_TIMED_SLOT_DOCUMENT);
+    let package = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
+    let defect = |vectors: &Value, document: &Value, package: &Value| {
+        selected_timed_slot_defect(vectors, document, package).expect_err("the mutation is caught")
+    };
+    let edit_document = |edit: &dyn Fn(&mut Value)| {
+        let mut copy = document.clone();
+        edit(&mut copy);
+        copy
+    };
+    // Any change to the document changes its digest, so the row no longer pins it.
+    assert!(defect(&vectors, &edit_document(&|d| d["types"].as_array_mut().unwrap().swap(0, 1)), &package).contains("does not pin"));
+    assert!(defect(&vectors, &edit_document(&|d| d["package"]["lockDigest"] = json!("sha256:00")), &package).contains("does not pin"));
+    // Pinning a changed document makes the join fail where the declaration changed.
+    let pin = |changed: &Value| {
+        let mut pinned = package.clone();
+        let digest = unqualified_jcs_sha256(changed);
+        let mut text = serde_json::to_string(&pinned).unwrap();
+        text = text.replace(package["lock"]["model_selections"][0]["digest"].as_str().unwrap(), &digest);
+        pinned = serde_json::from_str(&text).unwrap();
+        let root_at = pinned["semantic_graph"]["nodes"].as_array().unwrap().len() - 1;
+        pinned["semantic_graph"]["nodes"][root_at] = derived_model_root(&pinned["lock"]["model_selections"][0]);
+        let mut repinned = vectors.clone();
+        repinned["selection_digest"] = json!(digest);
+        (repinned, pinned)
+    };
+    let swapped_items = edit_document(&|d| {
+        d["types"].as_array_mut().unwrap().iter_mut().find(|t| t["identity"] == "ix://acme/orders/ClockRow").unwrap()["items"] = json!("ix://quire/native/Integer");
+    });
+    let found = { let (v, p) = pin(&swapped_items); defect(&v, &swapped_items, &p) };
+    assert!(found.contains("do not join"), "the nested typeRef shape decides the g rows: {found}");
+    let flat_g = edit_document(&|d| {
+        let order = d["types"].as_array_mut().unwrap().iter_mut().find(|t| t["identity"] == "ix://acme/orders/Order").unwrap();
+        order["fields"].as_array_mut().unwrap().iter_mut().find(|f| f["name"] == "g").unwrap()["typeRef"] = json!("ix://quire/native/Clock");
+    });
+    assert!({ let (v, p) = pin(&flat_g); defect(&v, &flat_g, &p) }.contains("slot step selects from a collection"));
+    let wrong_bound = edit_document(&|d| {
+        let order = d["types"].as_array_mut().unwrap().iter_mut().find(|t| t["identity"] == "ix://acme/orders/Order").unwrap();
+        order["fields"].as_array_mut().unwrap().iter_mut().find(|f| f["name"] == "ts").unwrap()["multiplicity"]["upper"] = json!(4);
+    });
+    assert!({ let (v, p) = pin(&wrong_bound); defect(&v, &wrong_bound, &p) }.contains("slot step does not carry"));
+    // The vectors and the package.
+    let mut other = vectors.clone();
+    other["selection_digest"] = json!("00".repeat(32));
+    assert!(defect(&other, &document, &package).contains("disagree"));
+    let mut moved = vectors.clone();
+    moved["cases"][4]["package_node"] = json!(2);
+    assert!(defect(&moved, &document, &package).contains("not the published node"));
+    let mut unlisted = package.clone();
+    let root_at = unlisted["semantic_graph"]["nodes"].as_array().unwrap().iter().position(|n| n["semantic_form"] == "timed_model").unwrap();
+    unlisted["semantic_graph"]["nodes"][root_at]["body"]["members"][3]["value"]["members"].as_array_mut().unwrap().remove(0);
+    assert!(defect(&vectors, &document, &unlisted).contains("not listed"));
 
 const CONTRACT_PACKAGE_SELECTION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/contract-package-selection-vectors.json");
