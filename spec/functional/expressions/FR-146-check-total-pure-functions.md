@@ -137,8 +137,9 @@ The result type is decided as follows:
    neither the first arm body's type nor, when the first arm body's type is
    `Integer` or `Int[..]`, an `Integer` or `Int[..]` type, is
    `refused { code: ill_typed, cause: type-mismatch }`. An arm body that has
-   no type without an expected type, such as a collection literal, is refused
-   by its own rule (`ill_typed`, cause `ambiguous-literal`).
+   no type without an expected type, such as a collection literal or the
+   `absent` Option literal (FR-143), is refused by its own rule (`ill_typed`,
+   cause `ambiguous-literal`).
 
 The arm bodies are checked in source arm order, which is independent of the
 member declaration order a checked package lowers the arms in (FR-440).

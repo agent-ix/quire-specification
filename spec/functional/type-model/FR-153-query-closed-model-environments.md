@@ -108,6 +108,12 @@ maximum `N`, a selected count above `N` is
 charge is `incomplete` with no collection. An unbounded `p` admits every
 selected count and never returns `cardinality_out_of_bound`.
 
+The `absent` of `lookup<T>(p, r) absent m` is the absence-mode keyword of the
+`lookup` primary, not the `absent` Option literal of FR-143: it follows the
+closing parenthesis and is followed by a mode, and the literal stands only where
+a `primary` starts, so `lookup<T>(p, r) absent empty = absent` is the lookup, `=`,
+and the literal.
+
 `lookup<T>(p, r) absent m` requires the same population binding and a key
 `r: Reference<S>` with `S` conforming to `T`, otherwise `ill_typed`/`type-mismatch`.
 After `lookup.key`, a key whose universe differs
@@ -118,7 +124,7 @@ query and is never inferred from the result type:
 | Mode | Static type | Present | Absent |
 | --- | --- | --- | --- |
 | `undefined` | `Reference<T>` | the member reference | `undefined` with the catalogued reason `absent-key` |
-| `empty` | `Option<Reference<T>>` | the present option | `none` |
+| `empty` | `Option<Reference<T>>` | the present option | `none`, the value the literal `absent` denotes at that type (FR-143 "The `absent` Option literal") |
 | `refused` | `Reference<T>` | the member reference | `refused { code: invalid_runtime_input, cause: absent-key }` |
 
 A function names a population binding through a `Population<T>[N]` or
