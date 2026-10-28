@@ -79,8 +79,8 @@ bypass the operation's frame.
 
 **Per-operator checks.** The reader checks, for one control, in this order:
 
-1. **References.** Every reference is a declared dependency, else
-   `missing_declaration`/`missing-name`, and names a node of the form its
+1. **References.** Every reference is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else
+   `missing_declaration`/`missing-name` for a target that names no node, and names a node of the form its
    layout states, else `invalid_model_binding`/`malformed-declaration`; both
    located at the target. Where a layout names a control of a given operator,
    the target's operator is that operator: `receive.of` a `send`,
@@ -272,11 +272,13 @@ registration captures, the trigger binder, the activation captures,
 The reader checks, for one template, in this order (the scope checks are slot
 checks at FR-464 step 6):
 
-1. **References.** Every reference is a declared dependency and names a node of
+1. **References.** Every reference is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else `missing_declaration`/`missing-name` for a target that names no node, and names a node of
    the stated form (as "Per-operator checks" 1): `forward` an `effect`
    control, `role` a role of the clause, `operation` a `state`/
    `operation_anchor` node, `record_type` a `model` node of form
-   `record_value_type` or `event_type`, `commit` a `commit` control; the
+   `record_value_type` or `event_type` (a `tuple_value_type` is not of this form:
+   it declares positions and no fields, so a `record_type` names none),
+   `commit` a `commit` control; the
    target of an `await.after` of kind `compensation` and of
    `event.compensation` is a template of the same clause.
 2. **Types.** `forward_binder` has the `semantic_type` of the forward
@@ -315,7 +317,7 @@ checks at FR-464 step 6):
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-466-AC-1 | Each of the thirteen control operators is admitted with exactly its layout; the arguments reordered, a missing or surplus binding, an unknown operator spelling and an enumerated value outside its set (`memory`, `outstanding`, `policy`, `ordering`, `kind`) refuse `malformed_wire` or refuse `operation-member-mismatch`. | Test (TC-948) |
-| FR-466-AC-2 | A `sequence` holds its children in execution order and may hold none; reordering two children changes the node key; a child that is not a `control` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a child absent from `dependencies` `missing_declaration`/`missing-name`. | Test (TC-948) |
+| FR-466-AC-2 | A `sequence` holds its children in execution order and may hold none; reordering two children changes the node key; a child that is not a `control` node refuses `invalid_model_binding`/`malformed-declaration` at the target, a child that is a node absent from `dependencies` `invalid_semantic_graph` at the `sequence` node's `/dependencies` (graph stage, FR-322-AC-96), and a child that names no node `missing_declaration`/`missing-name`. | Test (TC-948) |
 | FR-466-AC-3 | A `choice` is admitted with an owning role, a `visible` set and at least two labelled cases sorted by label; one case, equal labels, cases out of label order, a guard that reads model state and a guard that reads `over` refuse (`malformed_wire`, `ambiguous_declaration`/`ambiguous-name`, `invalid_semantic_graph`, `ill_typed`/`operator-ineligible` at the read); a non-Boolean guard refuses `ill_typed`/`non-boolean-root`; the guards' exhaustiveness is not re-proved. | Test (TC-948) |
 | FR-466-AC-4 | A `parallel` is admitted for each join policy; `all` naming every branch, `any` and `predicate` naming at least one and `quorum` with `1 <= count <=` the joined branches; a join naming a missing branch label refuses `missing_declaration`/`missing-name` at the label, `all` omitting a branch and `quorum` outside its range `invalid_package`/`invalid-value`, and a repeated or out-of-order joined label `invalid_semantic_graph`; branches are sorted ascending by label, and a branch list out of that order is `invalid_semantic_graph`. | Test (TC-948) |
 | FR-466-AC-5 | A `repeat` is admitted with a maximum and an `exhausted` control, with a `proof`, with both, and with neither; `exhausted` without `maximum` and `maximum` without `exhausted` refuse `malformed_wire`, a body that does not necessarily step refuses `unsupported_construct`/`declaration-form` (FR-464), and `maximum: 0` is admitted. | Test (TC-948) |

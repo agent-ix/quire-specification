@@ -135,7 +135,8 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | C10 | `requirements` names a `state`/`state_clause` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | C11 | `relationships` names a `protocol`/`role` node | `invalid_model_binding`/`wrong-export` at the target, retaining required kind `relationship`, the actual kind and both keys |
 | C12 | `run` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
-| C13 | `compensations` names a node that is not in the clause's `dependencies` | `missing_declaration`/`missing-name` at the target |
+| C13 | `compensations` names a node of the graph that is not in the clause's `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the clause node (graph stage, FR-322-AC-96, before any body step) |
+| C13a | `compensations` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target |
 
 ## Clause model owner edge
 
@@ -149,7 +150,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | OM-06 | Retarget `owner_model` to a selected declaration's model node of another form (a `state_machine`), then a `process`, a `record_value_type`, and the selected package's `model_root` node | each `invalid_model_binding`/`malformed-declaration` at `/semantic_graph/nodes/{i}/owner_model` after the refinement step, as the clause's first step 6 check |
 | OM-07 | Retarget `owner_model` to a non-model declared node with a source `owner` (a source-local declaration such as `Config::ConfigVersion`), then to a non-model node without one (a model-tagged node with a `SourceOwner` is `malformed_wire`, FR-322-AC-51) | each `invalid_model_binding`/`malformed-declaration` at `/semantic_graph/nodes/{i}/owner_model` |
 | OM-08 | Retarget `owner_model` to the object-type node of a second selected declaration that the `over` type does not name | Admitted as a different clause identity; the reader does not compare the target with the `over` type |
-| OM-09 | Retarget `owner_model` to a local node id that is no node of the graph; separately drop only the target from the clause's `dependencies` | `missing_declaration`/`missing-name` at `/semantic_graph/nodes/{i}/owner_model`; `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` (graph stage, before any body step) |
+| OM-09 | Retarget `owner_model` to a local node id that is no node of the graph, and list that id in the clause's `dependencies` (body target and dependency change together); separately drop only the target from the clause's `dependencies` | `missing_declaration`/`missing-name` at `/semantic_graph/nodes/{i}/owner_model`; `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` (graph stage, before any body step) |
 | OM-10 | An unselected `model`/`object_type` target (OM-05) and a protocol-body defect in the same package | The unselected target's owner-join refusal is reported |
 | OM-11 | A selected wrong-kind target (OM-06) with a refinement row/catalog-shape defect; then with a step 4 member defect; then with a binder-scope defect in the same clause's slot | The refinement-step defect; the step 4 member defect; the `invalid_model_binding`/`malformed-declaration` edge refusal before the slot defect |
 
@@ -244,7 +245,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 3. K2 to K4 change exactly the keys stated; K7 to K12 refuse as listed;
    K15 is admitted with the two expected point-distinct anchors
    (FR-464-AC-3, FR-464-AC-4).
-4. C1 to C13 hold (FR-464-AC-5, FR-464-AC-6).
+4. C1 to C13a hold (FR-464-AC-5, FR-464-AC-6).
 5. M1 to M10 refuse as listed (FR-464-AC-4, FR-464-AC-6).
 6. B2 to B26 behave as listed (FR-464-AC-7, FR-464-AC-8).
 7. R2, R4, R5 refuse `definition-cycle`; R7 to R9 refuse `declaration-form`;
@@ -267,5 +268,7 @@ Each vector derives the activation relation from the admitted package
 | A5 | a second temporal clause `OrderPaidBounded` and `requires temporal OrderPaidBounded` | two rows, in ascending node-id digest order of the two temporal clause nodes |
 | A6 | a temporal clause `RefundBounded` on the clock `refund-clock`, which `Refund` reads, not required by the protocol | the relation equals A1's: no row for `RefundBounded` |
 | A7 | K1's reformatting, comment and second protocol reference | the relation equals A1's |
-| A8 | the `requirements` entry names a `temporal_clause` node absent from the clause's `dependencies` | `missing_declaration`/`missing-name` at the target; no relation |
-| A9 | the `each` `trigger` names a `value`/`parameter` node absent from the clause's `dependencies` | `missing_declaration`/`missing-name` at the target; no relation |
+| A8 | the `requirements` entry names a `temporal_clause` node of the graph that is absent from the clause's `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the clause node (graph stage, FR-322-AC-96, before any body step); no relation |
+| A8a | the `requirements` entry names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target; no relation |
+| A9 | the `each` `trigger` names a `value`/`parameter` node of the graph that is absent from the clause's `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the clause node (graph stage, FR-322-AC-96, before any body step); no relation |
+| A9a | the `each` `trigger` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target; no relation |

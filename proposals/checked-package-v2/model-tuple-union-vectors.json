@@ -1,0 +1,3284 @@
+{
+  "version": "quire.model-tuple-union-vectors/v1",
+  "note": "STD-519 (review round 1: package-level nodes, recursion, application-node keys). The selected document of fixtures/positive-model-tuple-union.json is domain_package (a projection of the FCD IR 2.0.0 declarations FR-154 reads, as in model-owner-form-vectors.json: tuple_types carry ordered positions, variant_types carry cases). Cases are evaluated by the QSpec test over domain_package; wire_cases are RFC 6902 patches over the fixture, each ending by replacing package_id with the recomputed package id. Node names are the declaration_nodes names.",
+  "base": "fixtures/positive-model-tuple-union.json",
+  "domain_package": {
+    "identity": "acme/shapes",
+    "version": "1.0.0",
+    "object_types": [
+      {
+        "node": "ix://acme/shapes/Holder",
+        "interfaceFeatures": null,
+        "supertypes": [],
+        "fields": [
+          {
+            "name": "pair",
+            "typeRef": "ix://acme/shapes/Pair",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "shape",
+            "typeRef": "ix://acme/shapes/Shape",
+            "presence": "optional",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "pairs",
+            "typeRef": "ix://acme/shapes/Pair",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "3",
+              "ordered": true,
+              "unique": false
+            },
+            "redefines": null
+          }
+        ],
+        "operations": []
+      }
+    ],
+    "tuple_types": [
+      {
+        "node": "ix://acme/shapes/Pair",
+        "positions": [
+          {
+            "ordinal": 0,
+            "typeRef": "ix://quire/native/Boolean"
+          },
+          {
+            "ordinal": 1,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/shapes/Swap",
+        "positions": [
+          {
+            "ordinal": 0,
+            "typeRef": "ix://quire/native/Integer"
+          },
+          {
+            "ordinal": 1,
+            "typeRef": "ix://quire/native/Boolean"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/shapes/Nest",
+        "positions": [
+          {
+            "ordinal": 0,
+            "typeRef": "ix://acme/shapes/Pair"
+          },
+          {
+            "ordinal": 1,
+            "typeRef": "ix://acme/shapes/Shape"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/shapes/Cell",
+        "positions": [
+          {
+            "ordinal": 0,
+            "typeRef": "ix://quire/native/Integer"
+          },
+          {
+            "ordinal": 1,
+            "typeRef": "ix://acme/shapes/List"
+          }
+        ]
+      }
+    ],
+    "variant_types": [
+      {
+        "node": "ix://acme/shapes/Shape",
+        "cases": [
+          {
+            "name": "Flag",
+            "payloadType": "ix://quire/native/Boolean"
+          },
+          {
+            "name": "Empty",
+            "payloadType": null
+          },
+          {
+            "name": "Both",
+            "payloadType": "ix://acme/shapes/Pair"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/shapes/Color",
+        "cases": [
+          {
+            "name": "Red",
+            "payloadType": null
+          },
+          {
+            "name": "Green",
+            "payloadType": null
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/shapes/List",
+        "cases": [
+          {
+            "name": "Nil",
+            "payloadType": null
+          },
+          {
+            "name": "Cons",
+            "payloadType": "ix://acme/shapes/Cell"
+          }
+        ]
+      }
+    ]
+  },
+  "selection_digest": "1c30be09c32a7fccbcd93b55eaa19ac1304f0a5d8f5a8113208e7903b62f368b",
+  "declaration_nodes": [
+    {
+      "name": "Pair",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Pair"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344"
+    },
+    {
+      "name": "Swap",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Swap"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54"
+    },
+    {
+      "name": "Nest",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Nest"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "6cb9af1911fc38c0360147c7bfbf08ebfab6ee35e9f2577d073ab49bba409f03"
+    },
+    {
+      "name": "Shape",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "variant_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Shape"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+    },
+    {
+      "name": "Color",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "variant_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Color"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1"
+    },
+    {
+      "name": "Cell",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "tuple_value_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Cell"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "887b32c65277454f77bf672ea95a9cfddb6ad4d18b872f02148f156e873c44a2"
+    },
+    {
+      "name": "List",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "variant_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/List"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442"
+    },
+    {
+      "name": "Holder",
+      "preimage": {
+        "version": "quire.structural-node/v1",
+        "node_tag": "model",
+        "semantic_form": "object_type",
+        "semantic_type": null,
+        "declaration": null,
+        "recursion": null,
+        "owner": {
+          "kind": "model",
+          "identity": "acme/shapes",
+          "node": "ix://acme/shapes/Holder"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "sha256": "74797d140cd391726c81632c350b452bdd7b2618c10514a3fdb571549340ebe4"
+    }
+  ],
+  "family_cases": [
+    {
+      "name": "TF-01",
+      "criterion": "FR-322-AC-140",
+      "node": "Pair",
+      "expected": "tuple"
+    },
+    {
+      "name": "TF-02",
+      "criterion": "FR-322-AC-143",
+      "node": "Shape",
+      "expected": "union"
+    },
+    {
+      "name": "TF-03",
+      "criterion": "FR-322-AC-143",
+      "node": "Color",
+      "expected": "enum"
+    },
+    {
+      "name": "TF-04",
+      "criterion": "FR-322-AC-147",
+      "node": "List",
+      "expected": "union"
+    },
+    {
+      "name": "TF-05",
+      "criterion": "FR-322-AC-147",
+      "node": "Cell",
+      "expected": "tuple"
+    }
+  ],
+  "position_cases": [
+    {
+      "name": "TP-01",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Pair",
+      "position": 0,
+      "expected": {
+        "member_type": {
+          "type": "Boolean"
+        },
+        "resolves": "ix://acme/shapes/Pair/p0"
+      }
+    },
+    {
+      "name": "TP-02",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Pair",
+      "position": 1,
+      "expected": {
+        "member_type": {
+          "type": "Integer"
+        },
+        "resolves": "ix://acme/shapes/Pair/p1"
+      }
+    },
+    {
+      "name": "TP-03",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Pair",
+      "position": 2,
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "TP-04",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Swap",
+      "position": 0,
+      "expected": {
+        "member_type": {
+          "type": "Integer"
+        },
+        "resolves": "ix://acme/shapes/Swap/p0"
+      }
+    },
+    {
+      "name": "TP-05",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Nest",
+      "position": 0,
+      "expected": {
+        "member_type": {
+          "declaration": "Pair"
+        },
+        "resolves": "ix://acme/shapes/Nest/p0"
+      }
+    },
+    {
+      "name": "TP-06",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Nest",
+      "position": 1,
+      "expected": {
+        "member_type": {
+          "declaration": "Shape"
+        },
+        "resolves": "ix://acme/shapes/Nest/p1"
+      }
+    },
+    {
+      "name": "TP-07",
+      "criterion": "FR-322-AC-141",
+      "tuple": "Pair",
+      "position": "9007199254740993",
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    }
+  ],
+  "field_type_cases": [
+    {
+      "name": "TT-01",
+      "criterion": "FR-322-AC-141",
+      "object": "Holder",
+      "field": "pair",
+      "expected": {
+        "declaration": "Pair"
+      }
+    },
+    {
+      "name": "TT-02",
+      "criterion": "FR-322-AC-143",
+      "object": "Holder",
+      "field": "shape",
+      "expected": {
+        "option": {
+          "declaration": "Shape"
+        }
+      }
+    },
+    {
+      "name": "TT-03",
+      "criterion": "FR-322-AC-141",
+      "object": "Holder",
+      "field": "pairs",
+      "expected": {
+        "sequence": {
+          "declaration": "Pair"
+        },
+        "min": "0",
+        "max": "3"
+      }
+    }
+  ],
+  "member_cases": [
+    {
+      "name": "TM-01",
+      "criterion": "FR-322-AC-143",
+      "union": "Shape",
+      "expected": [
+        {
+          "case": "Both",
+          "arity": 1,
+          "payload": {
+            "declaration": "Pair"
+          }
+        },
+        {
+          "case": "Empty",
+          "arity": 0,
+          "payload": null
+        },
+        {
+          "case": "Flag",
+          "arity": 1,
+          "payload": {
+            "type": "Boolean"
+          }
+        }
+      ]
+    }
+  ],
+  "union_value_cases": [
+    {
+      "name": "TU-01",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Empty",
+      "payload": [],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TU-02",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Flag",
+      "payload": [
+        {
+          "type": "Boolean"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TU-03",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Both",
+      "payload": [
+        {
+          "declaration": "Pair"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TU-04",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Flag",
+      "payload": [
+        {
+          "type": "Integer"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    },
+    {
+      "name": "TU-05",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Flag",
+      "payload": [],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    },
+    {
+      "name": "TU-06",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Empty",
+      "payload": [
+        {
+          "type": "Boolean"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    },
+    {
+      "name": "TU-07",
+      "criterion": "FR-322-AC-144",
+      "union": "Shape",
+      "case": "Missing",
+      "payload": [],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    },
+    {
+      "name": "TU-08",
+      "criterion": "FR-322-AC-144",
+      "union": "Color",
+      "case": "Red",
+      "payload": [],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "type-mismatch"
+        }
+      }
+    }
+  ],
+  "enum_value_cases": [
+    {
+      "name": "TE-01",
+      "criterion": "FR-322-AC-144",
+      "type": "Color",
+      "case": "Red",
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TE-02",
+      "criterion": "FR-322-AC-144",
+      "type": "Color",
+      "case": "Blue",
+      "expected": {
+        "refused": {
+          "code": "invalid_semantic_graph",
+          "cause": null
+        }
+      }
+    },
+    {
+      "name": "TE-03",
+      "criterion": "FR-322-AC-144",
+      "type": "Shape",
+      "case": "Empty",
+      "expected": {
+        "refused": {
+          "code": "invalid_semantic_graph",
+          "cause": null
+        }
+      }
+    },
+    {
+      "name": "TE-04",
+      "criterion": "FR-322-AC-144",
+      "type": "Shape",
+      "case": "Flag",
+      "expected": {
+        "refused": {
+          "code": "invalid_semantic_graph",
+          "cause": null
+        }
+      }
+    }
+  ],
+  "equality_cases": [
+    {
+      "name": "TQ-01",
+      "criterion": "FR-322-AC-144",
+      "operation": "quire.op.structural.eq",
+      "type": "Shape",
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TQ-02",
+      "criterion": "FR-322-AC-144",
+      "operation": "quire.op.enum.eq",
+      "type": "Shape",
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "TQ-03",
+      "criterion": "FR-322-AC-144",
+      "operation": "quire.op.enum.eq",
+      "type": "Color",
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "TQ-04",
+      "criterion": "FR-322-AC-144",
+      "operation": "quire.op.structural.eq",
+      "type": "Color",
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "TQ-05",
+      "criterion": "FR-322-AC-140",
+      "operation": "quire.op.structural.eq",
+      "type": "Pair",
+      "expected": {
+        "admitted": true
+      }
+    }
+  ],
+  "identity_cases": [
+    {
+      "name": "TI-01",
+      "criterion": "FR-322-AC-142",
+      "description": "swap the position types of Pair",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/0/typeRef",
+          "value": "ix://quire/native/Integer"
+        },
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/typeRef",
+          "value": "ix://quire/native/Boolean"
+        }
+      ],
+      "node": "Pair",
+      "expected": {
+        "node_key_unchanged": true,
+        "selection_digest_changes": true,
+        "root_key_changes": true
+      }
+    },
+    {
+      "name": "TI-02",
+      "criterion": "FR-322-AC-143",
+      "description": "reorder the variants of Shape",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases",
+          "value": [
+            {
+              "name": "Both",
+              "payloadType": "ix://acme/shapes/Pair"
+            },
+            {
+              "name": "Empty",
+              "payloadType": null
+            },
+            {
+              "name": "Flag",
+              "payloadType": "ix://quire/native/Boolean"
+            }
+          ]
+        }
+      ],
+      "node": "Shape",
+      "expected": {
+        "node_key_unchanged": true,
+        "selection_digest_changes": true,
+        "root_key_changes": true,
+        "members_unchanged": true
+      }
+    },
+    {
+      "name": "TI-03",
+      "criterion": "FR-322-AC-143",
+      "description": "Shape gains no payload: Flag loses its payloadType, so Shape is an enumeration",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": null
+        },
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/2/payloadType",
+          "value": null
+        }
+      ],
+      "node": "Shape",
+      "expected": {
+        "node_key_unchanged": true,
+        "selection_digest_changes": true,
+        "root_key_changes": true,
+        "family": "enum"
+      }
+    },
+    {
+      "name": "TI-04",
+      "criterion": "FR-322-AC-142",
+      "description": "a tuple of the same shape and another name has another key",
+      "nodes": [
+        "Pair",
+        "Swap"
+      ],
+      "expected": {
+        "keys_differ": true
+      }
+    }
+  ],
+  "intake_cases": [
+    {
+      "name": "TK-01",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions",
+          "value": []
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0"
+        }
+      }
+    },
+    {
+      "name": "TK-02",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/ordinal",
+          "value": 2
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0/positions/1"
+        }
+      }
+    },
+    {
+      "name": "TK-03",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/tuple_types/0/positions/1/typeRef"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0/positions/1"
+        }
+      }
+    },
+    {
+      "name": "TK-04",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/tuple_types/0/fields",
+          "value": []
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0"
+        }
+      }
+    },
+    {
+      "name": "TK-05",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/typeRef",
+          "value": "ix://acme/shapes/Missing"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name",
+          "at": "/tuple_types/0/positions/1"
+        }
+      }
+    },
+    {
+      "name": "TK-06",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/1/ordinal",
+          "value": 0
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "conflicting-binding",
+          "at": "/tuple_types/0/positions/1"
+        }
+      }
+    },
+    {
+      "name": "TK-07",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": "ix://acme/shapes/Missing"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "declaration-form",
+          "at": "/variant_types/0/cases/0/payloadType"
+        }
+      }
+    },
+    {
+      "name": "TK-08",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/variant_types/0/cases/0/payloadType",
+          "value": "ix://quire/native/Clock"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "declaration-form",
+          "at": "/variant_types/0/cases/0/payloadType"
+        }
+      }
+    },
+    {
+      "name": "TK-09",
+      "criterion": "FR-322-AC-145",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/tuple_types/0/positions/0/typeRef",
+          "value": "ix://quire/native/Clock"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration",
+          "at": "/tuple_types/0/positions/0"
+        }
+      }
+    },
+    {
+      "name": "TK-10",
+      "criterion": "FR-322-AC-145",
+      "patch": [],
+      "expected": {
+        "admitted": true
+      }
+    }
+  ],
+  "application_key_vectors": [
+    {
+      "name": "uv-shape-empty",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "value",
+        "semantic_form": "union_value",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "Empty",
+              "value": {
+                "term": "aggregate",
+                "members": []
+              }
+            }
+          ]
+        }
+      },
+      "sha256": "c38e0b9349a1974bc271b1fd67f9833a9c7daeb938ce22b2ea7aa60bcc4e927e"
+    },
+    {
+      "name": "uv-shape-flag",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "value",
+        "semantic_form": "union_value",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "Flag",
+              "value": {
+                "term": "aggregate",
+                "members": [
+                  {
+                    "term": "reference",
+                    "target": {
+                      "domain": "quire.checked-semantic-node/v1",
+                      "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "sha256": "96ea484476eab7c369e23cb11ccb8243bd20b8bda74d535bc646424096a76a1d"
+    },
+    {
+      "name": "uv-shape-both",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "value",
+        "semantic_form": "union_value",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "Both",
+              "value": {
+                "term": "aggregate",
+                "members": [
+                  {
+                    "term": "reference",
+                    "target": {
+                      "domain": "quire.checked-semantic-node/v1",
+                      "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "sha256": "b9ea1540ec12b80405c5ea76a6102287fab3b801c8f2215292bfa744ccfea55b"
+    },
+    {
+      "name": "uv-list-nil",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "value",
+        "semantic_form": "union_value",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "Nil",
+              "value": {
+                "term": "aggregate",
+                "members": []
+              }
+            }
+          ]
+        }
+      },
+      "sha256": "cf82e5577ce3001598614a326071d866a62d6c30d39713a574fc70604d96acce"
+    },
+    {
+      "name": "uv-list-cons",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "value",
+        "semantic_form": "union_value",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "Cons",
+              "value": {
+                "term": "aggregate",
+                "members": [
+                  {
+                    "term": "reference",
+                    "target": {
+                      "domain": "quire.checked-semantic-node/v1",
+                      "digest": "e8f313a0868f5516512cf1a7bb00aecf573300807b8a9009a89de45c23d8e051"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "sha256": "8196c67a49dfda3ad2c708f0bf202d5c7728598befd0389b84e07b1f941db540"
+    },
+    {
+      "name": "project-pair-0",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "expression",
+        "semantic_form": "query",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "application",
+          "operator": "query",
+          "operation": {
+            "identity": "quire.op.tuple.project",
+            "laws": [],
+            "leaves": [],
+            "member": {
+              "declaration": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344"
+              },
+              "kind": "position",
+              "position": 0
+            },
+            "mode": null
+          },
+          "arguments": [
+            {
+              "term": "reference",
+              "target": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f"
+              }
+            }
+          ],
+          "result_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+          }
+        }
+      },
+      "sha256": "a16e36344e60b6a2bccd6efc64e42a428420a93b55174669a2f0390eb11912a8"
+    },
+    {
+      "name": "project-pair-1",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "expression",
+        "semantic_form": "query",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "application",
+          "operator": "query",
+          "operation": {
+            "identity": "quire.op.tuple.project",
+            "laws": [],
+            "leaves": [],
+            "member": {
+              "declaration": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344"
+              },
+              "kind": "position",
+              "position": 1
+            },
+            "mode": null
+          },
+          "arguments": [
+            {
+              "term": "reference",
+              "target": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f"
+              }
+            }
+          ],
+          "result_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+          }
+        }
+      },
+      "sha256": "2daf200a9b18a755955dd36af4bd65d439fe8ab3d223fa6d61d6470e7f37c88d"
+    },
+    {
+      "name": "case-shape",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "expression",
+        "semantic_form": "case",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "application",
+          "operator": "case",
+          "operation": {
+            "identity": "quire.op.control.case",
+            "laws": [],
+            "leaves": [],
+            "member": null,
+            "mode": null
+          },
+          "arguments": [
+            {
+              "term": "reference",
+              "target": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "b4f1a9bc733e81180a1e5a52949ae7d4c5fc1b111bbfef1eb704a6fce835cc93"
+              }
+            },
+            {
+              "term": "binding",
+              "name": "Both",
+              "value": {
+                "term": "aggregate",
+                "members": [
+                  {
+                    "term": "aggregate",
+                    "members": [
+                      {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "e8fb2661007246ad812224853516472fa8e3bed49e2168865b8f9d4acaf1f2e1"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "term": "reference",
+                    "target": {
+                      "domain": "quire.checked-semantic-node/v1",
+                      "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "term": "binding",
+              "name": "Empty",
+              "value": {
+                "term": "aggregate",
+                "members": [
+                  {
+                    "term": "aggregate",
+                    "members": []
+                  },
+                  {
+                    "term": "reference",
+                    "target": {
+                      "domain": "quire.checked-semantic-node/v1",
+                      "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "term": "binding",
+              "name": "Flag",
+              "value": {
+                "term": "aggregate",
+                "members": [
+                  {
+                    "term": "aggregate",
+                    "members": [
+                      {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "6079f748d67b01a942928e5d43a72a300b5b188c8a098b5c31177a23cf1e5e50"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "term": "reference",
+                    "target": {
+                      "domain": "quire.checked-semantic-node/v1",
+                      "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "result_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+          }
+        }
+      },
+      "sha256": "4ea005a164150dcb6137a3811a691b4d6f53d7f45a7faf46e38f0aae63ec7c11"
+    },
+    {
+      "name": "eq-shape",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "expression",
+        "semantic_form": "binary",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "application",
+          "operator": "binary",
+          "operation": {
+            "identity": "quire.op.structural.eq",
+            "laws": [],
+            "leaves": [],
+            "member": null,
+            "mode": null
+          },
+          "arguments": [
+            {
+              "term": "reference",
+              "target": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "d71da0484abd839a708480abf5f722f01cce85eb0b1fdc7306423a98ba0ae305"
+              }
+            },
+            {
+              "term": "reference",
+              "target": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "86af6a8f52d222c86cac9266bb4438fdf3b0fc778d120f6eb48e2c95025493e2"
+              }
+            }
+          ],
+          "result_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+          }
+        }
+      },
+      "sha256": "407a2cf949f9c76736c81d42181422148418eecfe15ea7e537735afef4e20cbc"
+    },
+    {
+      "name": "eq-list",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "expression",
+        "semantic_form": "binary",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "application",
+          "operator": "binary",
+          "operation": {
+            "identity": "quire.op.structural.eq",
+            "laws": [],
+            "leaves": [],
+            "member": null,
+            "mode": null
+          },
+          "arguments": [
+            {
+              "term": "reference",
+              "target": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "096d226dd1d145034b5902a46a721b40fe602d99b51769d4ad18e666f8439059"
+              }
+            },
+            {
+              "term": "reference",
+              "target": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "714049cde40c3daa10e66a67fbb5c102786f7607f11afcfbb5ef26f05fcc670d"
+              }
+            }
+          ],
+          "result_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+          }
+        }
+      },
+      "sha256": "e19d17a4ad91e7dc9caee0c06a59b959d80492948284ab578be428cf7c6d9a99"
+    },
+    {
+      "name": "eq-color",
+      "preimage": {
+        "version": "quire.application-node/v1",
+        "node_tag": "expression",
+        "semantic_form": "binary",
+        "semantic_type": {
+          "domain": "quire.checked-semantic-node/v1",
+          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+        },
+        "declaration": null,
+        "recursion": null,
+        "body": {
+          "term": "application",
+          "operator": "binary",
+          "operation": {
+            "identity": "quire.op.enum.eq",
+            "laws": [],
+            "leaves": [],
+            "member": null,
+            "mode": null
+          },
+          "arguments": [
+            {
+              "term": "reference",
+              "target": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "c5feaacf8adf6cf744ad4edc8ad579dfda398c16f9a2b2184f0e7e4d5c3d8a67"
+              }
+            },
+            {
+              "term": "reference",
+              "target": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "babb4d17c0628b17af76e9335757dc2bd42ed53262c1581d655e8412d875da98"
+              }
+            }
+          ],
+          "result_type": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+          }
+        }
+      },
+      "sha256": "0bfeb08ccdfdbeac96cb45d9c578ad4b4d73f1f6d4ac1a3966b24bc271754d1f"
+    }
+  ],
+  "recursion_cases": [
+    {
+      "name": "TR-01",
+      "criterion": "FR-322-AC-147",
+      "description": "Cell(Integer, List) and List{Nil, Cons(Cell)} reference one another: the document is admitted by intake",
+      "expected": {
+        "admitted": true,
+        "cycle": [
+          "Cell",
+          "List"
+        ]
+      }
+    },
+    {
+      "name": "TR-02",
+      "criterion": "FR-322-AC-147",
+      "description": "the two declaration nodes carry no recursion_group and are keyed by their owner alone",
+      "nodes": [
+        "Cell",
+        "List"
+      ],
+      "expected": {
+        "recursion_group": null,
+        "key_from_owner_only": true
+      }
+    },
+    {
+      "name": "TR-03",
+      "criterion": "FR-322-AC-147",
+      "description": "the structural walk out of List and Cell, by the position and member segments of FR-440",
+      "expected": {
+        "List": [
+          {
+            "path": [
+              "member:Cons",
+              "position:0"
+            ],
+            "type": "Cell"
+          }
+        ],
+        "Cell": [
+          {
+            "path": [
+              "position:0"
+            ],
+            "type": "Integer"
+          },
+          {
+            "path": [
+              "position:1"
+            ],
+            "type": "List"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TR-04",
+      "criterion": "FR-322-AC-147",
+      "description": "structural.eq over two List values: the walk re-enters List and Cell, reaches no text, and so has no leaf",
+      "operation": "quire.op.structural.eq",
+      "type": "List",
+      "expected": {
+        "leaves": []
+      }
+    }
+  ],
+  "wire_cases": [
+    {
+      "id": "TW-00",
+      "description": "the published package, unmutated",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "47655d5ecd78d1a370ffd50c79bdf035baebcb8007138801ed0ebc51e9091414"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "admitted"
+    },
+    {
+      "id": "TW-01",
+      "description": "the Pair tuple node without owner",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/0/owner"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "ce8896278ca23098c0a5e66091d5cda9d12e3e21440d12be413eeb4f55fae5a7"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/0"
+    },
+    {
+      "id": "TW-02",
+      "description": "the Pair tuple node with a SourceOwner and no declaration",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0/owner",
+          "value": {
+            "kind": "source",
+            "authority": "agent-ix",
+            "identity": "example"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "d71a011bfdb98b373ed9db66ff3fd8534383b2261bb89befe65df253c4c0ab49"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/0/owner"
+    },
+    {
+      "id": "TW-03",
+      "description": "the Pair tuple node with a declaration beside its ModelOwner",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/0/declaration",
+          "value": {
+            "qualified_name": [
+              "Pair"
+            ]
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "68490154f05f15145c3044267f35801c8c036b5ce3f4d4b469f89e4d0436fa96"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/0/owner"
+    },
+    {
+      "id": "TW-04",
+      "description": "the Pair tuple node whose ModelOwner carries a version label",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/0/owner/version",
+          "value": "1.0.0"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "d2d740593b253f8f85cbc6a90d996996929e3a6a6ce811b410f940a6ff6ccc4b"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/0/owner"
+    },
+    {
+      "id": "TW-05",
+      "description": "the Pair tuple node with a non-empty body and the key recomputed over it: the retained key is not the key of the closed ModelDeclarationNode preimage, whose body is empty",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0",
+          "value": {
+            "body": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1"
+                  }
+                }
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "06010a3ea673c8fb5fcd61866942150f8945359629bc3a563752fb26840da0c8"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Pair"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "tuple_value_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "06010a3ea673c8fb5fcd61866942150f8945359629bc3a563752fb26840da0c8"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/0/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "06010a3ea673c8fb5fcd61866942150f8945359629bc3a563752fb26840da0c8"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "d7a0cc6159d39287326a6a8c56c9b1de1794a10a0f71f0e945be1b31bcc59bb2"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:invalid_package",
+      "locus": "/semantic_graph/nodes/0/node_id",
+      "cause": "stale-node-key"
+    },
+    {
+      "id": "TW-06",
+      "description": "the Pair tuple node owned by the variant type Color",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "7f1513ae6afcdfa09613362b464f1654faa07252f99bc4490bf9b442e981a5a4"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Color"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "tuple_value_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "7f1513ae6afcdfa09613362b464f1654faa07252f99bc4490bf9b442e981a5a4"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/0/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "7f1513ae6afcdfa09613362b464f1654faa07252f99bc4490bf9b442e981a5a4"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "7644a2b5ff095d06e498ebc57a2f2c999dc65c68114254d16782fd5a81b1dfae"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/0/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "TW-07",
+      "description": "the Pair tuple node owned by the object type Holder",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "a8a1adc0219cfe67dcaa83bdce492b05d8a2a8a28e8db54dcd9411c3807aca1a"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Holder"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "tuple_value_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "a8a1adc0219cfe67dcaa83bdce492b05d8a2a8a28e8db54dcd9411c3807aca1a"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/0/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "a8a1adc0219cfe67dcaa83bdce492b05d8a2a8a28e8db54dcd9411c3807aca1a"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "5906f005fe4b3c9ebf4972e1fa8f15d0191a6d72a94643b9b8fff4ce96c6efb5"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/0/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "TW-08",
+      "description": "the Pair tuple node owned by a node the document does not declare",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "573d5ab40df3f9e2bb0b97ae0d51db514cef1dc4832ed910683a5062a4c947cd"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Missing"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "tuple_value_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "573d5ab40df3f9e2bb0b97ae0d51db514cef1dc4832ed910683a5062a4c947cd"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/0/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "573d5ab40df3f9e2bb0b97ae0d51db514cef1dc4832ed910683a5062a4c947cd"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "d05a88eb94cfc57831fc1d0fc61828861dcf084a0ecc52550dcffc015adb0d68"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/0/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "TW-09",
+      "description": "the Shape variant type node owned by the tuple Pair",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "8eb45c8a9f1f460362c0e1d18239cc26df653802cd2d5c6c318d546975d14cb1"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "kind": "model",
+              "identity": "acme/shapes",
+              "node": "ix://acme/shapes/Pair"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "variant_type",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "8eb45c8a9f1f460362c0e1d18239cc26df653802cd2d5c6c318d546975d14cb1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/3/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "8eb45c8a9f1f460362c0e1d18239cc26df653802cd2d5c6c318d546975d14cb1"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "a45a02514910e163355b8540791aac3f6aa156db72de7a4e53a7dd14c2408d1b"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/3/owner",
+      "cause": "missing-selection"
+    },
+    {
+      "id": "TW-10",
+      "description": "the Shape variant type node without owner",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/3/owner"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "c5c63a47297a29428d0bcaf1f7cc3c65460ec8e4e5b444549f111637830fde09"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/3"
+    },
+    {
+      "id": "TW-11",
+      "description": "a Shape value of the case Flag with an Integer payload term",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/26",
+          "value": {
+            "body": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "binding",
+                  "name": "Flag",
+                  "value": {
+                    "term": "aggregate",
+                    "members": [
+                      {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "67482b06f6862ed4326b7794828dabb49af6b3ba98519dcddd01dca4cd7c9984"
+            },
+            "node_tag": "value",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "union_value",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/26/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "67482b06f6862ed4326b7794828dabb49af6b3ba98519dcddd01dca4cd7c9984"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "58139ce26c13dd03a95915500d061c835d2ce0d4e491151daea267ac7a820adb"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/26",
+      "cause": "type-mismatch"
+    },
+    {
+      "id": "TW-12",
+      "description": "a Shape value of the case Flag with no payload term",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/26",
+          "value": {
+            "body": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "binding",
+                  "name": "Flag",
+                  "value": {
+                    "term": "aggregate",
+                    "members": []
+                  }
+                }
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "35e4de80ac13254b6ac548e1edbbddc0bce5054a6ca1da6ac53dba3a4237ce45"
+            },
+            "node_tag": "value",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "union_value",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/26/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "35e4de80ac13254b6ac548e1edbbddc0bce5054a6ca1da6ac53dba3a4237ce45"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "0be931ff84c0f232adc414cc4589fbc2763cf6d0204703a3cf69de50712de64f"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/26",
+      "cause": "type-mismatch"
+    },
+    {
+      "id": "TW-13",
+      "description": "a Shape value of the nullary case Empty with a payload term",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/25",
+          "value": {
+            "body": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "binding",
+                  "name": "Empty",
+                  "value": {
+                    "term": "aggregate",
+                    "members": [
+                      {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "d1cb38d0f770f7bbb3352b1f3278b57a77293367b7a61981fddae411cb1056ba"
+            },
+            "node_tag": "value",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "union_value",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/25/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "d1cb38d0f770f7bbb3352b1f3278b57a77293367b7a61981fddae411cb1056ba"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "e7dc202151b36aee6132c1d0e54491d7a6103c4fedc2851ad061833e0cf58ddb"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/25",
+      "cause": "type-mismatch"
+    },
+    {
+      "id": "TW-14",
+      "description": "a Shape value of a case Shape does not declare",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/25",
+          "value": {
+            "body": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "binding",
+                  "name": "Missing",
+                  "value": {
+                    "term": "aggregate",
+                    "members": []
+                  }
+                }
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "ec2095efd9c71985e0e585e7328d8e671eca851e23a40b71ca6cd4d17d63ac94"
+            },
+            "node_tag": "value",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "union_value",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/25/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "ec2095efd9c71985e0e585e7328d8e671eca851e23a40b71ca6cd4d17d63ac94"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "84f17b5c2087b4c434989ec45068213767b83a675c86c2350cf3781ad20d6782"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/25",
+      "cause": "type-mismatch"
+    },
+    {
+      "id": "TW-15",
+      "description": "a union_value whose semantic_type is the enumeration Color",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/25",
+          "value": {
+            "body": {
+              "term": "aggregate",
+              "members": [
+                {
+                  "term": "binding",
+                  "name": "Red",
+                  "value": {
+                    "term": "aggregate",
+                    "members": []
+                  }
+                }
+              ]
+            },
+            "dependencies": [],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "5865b4b37749242c65ff0abb40a61a822f8aecfa2c0618a6c974bd57e38214fc"
+            },
+            "node_tag": "value",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "union_value",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/25/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "5865b4b37749242c65ff0abb40a61a822f8aecfa2c0618a6c974bd57e38214fc"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "19b56841a6edddf87aa8d6b0fcac74a5ce0b9743e379262f8e14770709063629"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/25",
+      "cause": "type-mismatch"
+    },
+    {
+      "id": "TW-16",
+      "description": "a case over Shape with no arm for Flag",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/33",
+          "value": {
+            "body": {
+              "term": "application",
+              "operator": "case",
+              "operation": {
+                "identity": "quire.op.control.case",
+                "laws": [],
+                "leaves": [],
+                "member": null,
+                "mode": null
+              },
+              "arguments": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "b4f1a9bc733e81180a1e5a52949ae7d4c5fc1b111bbfef1eb704a6fce835cc93"
+                  }
+                },
+                {
+                  "term": "binding",
+                  "name": "Both",
+                  "value": {
+                    "term": "aggregate",
+                    "members": [
+                      {
+                        "term": "aggregate",
+                        "members": [
+                          {
+                            "term": "reference",
+                            "target": {
+                              "domain": "quire.checked-semantic-node/v1",
+                              "digest": "e8fb2661007246ad812224853516472fa8e3bed49e2168865b8f9d4acaf1f2e1"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "term": "binding",
+                  "name": "Empty",
+                  "value": {
+                    "term": "aggregate",
+                    "members": [
+                      {
+                        "term": "aggregate",
+                        "members": []
+                      },
+                      {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "result_type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+              }
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "b4f1a9bc733e81180a1e5a52949ae7d4c5fc1b111bbfef1eb704a6fce835cc93"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "e8fb2661007246ad812224853516472fa8e3bed49e2168865b8f9d4acaf1f2e1"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "66766ad06f52ae639856d429294654063e06145ef5680719f5f7663896738666"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "case",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/33/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "66766ad06f52ae639856d429294654063e06145ef5680719f5f7663896738666"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "5cf6b74f7ea8178d09320c38e5604ce0c822c5bea3f5563241bac0bc1984055b"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/33",
+      "cause": "operator-ineligible"
+    },
+    {
+      "id": "TW-17",
+      "description": "a case over Shape with its arms in declaration order Flag, Empty, Both instead of the member order Both, Empty, Flag",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/33",
+          "value": {
+            "body": {
+              "term": "application",
+              "operator": "case",
+              "operation": {
+                "identity": "quire.op.control.case",
+                "laws": [],
+                "leaves": [],
+                "member": null,
+                "mode": null
+              },
+              "arguments": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "b4f1a9bc733e81180a1e5a52949ae7d4c5fc1b111bbfef1eb704a6fce835cc93"
+                  }
+                },
+                {
+                  "term": "binding",
+                  "name": "Flag",
+                  "value": {
+                    "term": "aggregate",
+                    "members": [
+                      {
+                        "term": "aggregate",
+                        "members": [
+                          {
+                            "term": "reference",
+                            "target": {
+                              "domain": "quire.checked-semantic-node/v1",
+                              "digest": "6079f748d67b01a942928e5d43a72a300b5b188c8a098b5c31177a23cf1e5e50"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "term": "binding",
+                  "name": "Empty",
+                  "value": {
+                    "term": "aggregate",
+                    "members": [
+                      {
+                        "term": "aggregate",
+                        "members": []
+                      },
+                      {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "term": "binding",
+                  "name": "Both",
+                  "value": {
+                    "term": "aggregate",
+                    "members": [
+                      {
+                        "term": "aggregate",
+                        "members": [
+                          {
+                            "term": "reference",
+                            "target": {
+                              "domain": "quire.checked-semantic-node/v1",
+                              "digest": "e8fb2661007246ad812224853516472fa8e3bed49e2168865b8f9d4acaf1f2e1"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "term": "reference",
+                        "target": {
+                          "domain": "quire.checked-semantic-node/v1",
+                          "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "result_type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+              }
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "6079f748d67b01a942928e5d43a72a300b5b188c8a098b5c31177a23cf1e5e50"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "b4f1a9bc733e81180a1e5a52949ae7d4c5fc1b111bbfef1eb704a6fce835cc93"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "e8fb2661007246ad812224853516472fa8e3bed49e2168865b8f9d4acaf1f2e1"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "98f1d983a797abcd3df90be7f959d45fb83a97f5295a7d8be975b2aca330771c"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "case",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/33/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "98f1d983a797abcd3df90be7f959d45fb83a97f5295a7d8be975b2aca330771c"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "025bcb1a9a001c602c709729fce8fddc7c1be72367aea01dbfc7993397de22f0"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/33",
+      "cause": "operator-ineligible"
+    },
+    {
+      "id": "TW-18",
+      "description": "a tuple.project over Pair at position 2",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/31",
+          "value": {
+            "body": {
+              "term": "application",
+              "operator": "query",
+              "operation": {
+                "identity": "quire.op.tuple.project",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344"
+                  },
+                  "kind": "position",
+                  "position": 2
+                },
+                "mode": null
+              },
+              "arguments": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f"
+                  }
+                }
+              ],
+              "result_type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+              }
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "7718caea8e11891ab62f6b6d0c2f4f81025689ed156ac998c5fe620f24e9f760"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "query",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/31/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "7718caea8e11891ab62f6b6d0c2f4f81025689ed156ac998c5fe620f24e9f760"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "ed869b75501400895aabc2b26e8330285b16ee0faabd2c14e2eb96c9bdeda30e"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/31",
+      "cause": "operator-ineligible"
+    },
+    {
+      "id": "TW-19",
+      "description": "a tuple.project over a Pair value whose member names the tuple Swap",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/31",
+          "value": {
+            "body": {
+              "term": "application",
+              "operator": "query",
+              "operation": {
+                "identity": "quire.op.tuple.project",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54"
+                  },
+                  "kind": "position",
+                  "position": 0
+                },
+                "mode": null
+              },
+              "arguments": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f"
+                  }
+                }
+              ],
+              "result_type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+              }
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "5b91b23b32d9d71f6afd9aa38e2e7feeb8fdf238723596503947cd022283bc0a"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "query",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/31/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "5b91b23b32d9d71f6afd9aa38e2e7feeb8fdf238723596503947cd022283bc0a"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "1968155d49e9135700d959a4d60185cf177f6b1f92c7f88f7003376c6bfe9dfe"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/31",
+      "cause": "operator-ineligible"
+    },
+    {
+      "id": "TW-20",
+      "description": "a tuple.project whose position is the beyond-safe KeyOrdinal string 9007199254740993",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/31",
+          "value": {
+            "body": {
+              "term": "application",
+              "operator": "query",
+              "operation": {
+                "identity": "quire.op.tuple.project",
+                "laws": [],
+                "leaves": [],
+                "member": {
+                  "declaration": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344"
+                  },
+                  "kind": "position",
+                  "position": "9007199254740993"
+                },
+                "mode": null
+              },
+              "arguments": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f"
+                  }
+                }
+              ],
+              "result_type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+              }
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "54a0260f0f43e1311f36c4df53fae33d2dd39d56e7248a94e29278068fb40e9f"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "query",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/31/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "54a0260f0f43e1311f36c4df53fae33d2dd39d56e7248a94e29278068fb40e9f"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "4f32bbe115fd0ad4cb88a86c89cfc7d03c9ee67da31b28f8dba7f3bca3bb7f5a"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/31",
+      "cause": "operator-ineligible"
+    },
+    {
+      "id": "TW-21",
+      "description": "an enum_value of Color whose case Blue is not a case of Color",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/30",
+          "value": {
+            "body": {
+              "term": "literal",
+              "type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1"
+              },
+              "value": "Blue",
+              "value_kind": "enum"
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "10be01c39de568de26c90d04ff49165509db5f9d769d1cb1b381ee5307f4448e"
+            },
+            "node_tag": "value",
+            "nominal_identity_preimage": {
+              "version": "quire.enum-member-node/v1",
+              "declaration_node_id": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1"
+              },
+              "case": "Blue"
+            },
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "enum_value",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/30/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "10be01c39de568de26c90d04ff49165509db5f9d769d1cb1b381ee5307f4448e"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "fe4490943396a5d8a69a33424459844833bdd89ca901fd32cc01c49f9a511aed"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/30"
+    },
+    {
+      "id": "TW-22",
+      "description": "an enum_value over the union Shape, which a nullary member never is",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/30",
+          "value": {
+            "body": {
+              "term": "literal",
+              "type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+              },
+              "value": "Empty",
+              "value_kind": "enum"
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "fb126abc6f7411a21430f55716d0fd55d508163a013c1e24d5b3bb4efbf6481e"
+            },
+            "node_tag": "value",
+            "nominal_identity_preimage": {
+              "version": "quire.enum-member-node/v1",
+              "declaration_node_id": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+              },
+              "case": "Empty"
+            },
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "declaration"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "enum_value",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/30/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "fb126abc6f7411a21430f55716d0fd55d508163a013c1e24d5b3bb4efbf6481e"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "847d74d87acf8963c60664e42b7a543840a587f676cf891ec557870f302ea8c1"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:invalid_semantic_graph",
+      "locus": "/semantic_graph/nodes/30"
+    },
+    {
+      "id": "TW-23",
+      "description": "an enum.eq over two Shape values",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/34",
+          "value": {
+            "body": {
+              "term": "application",
+              "operator": "binary",
+              "operation": {
+                "identity": "quire.op.enum.eq",
+                "laws": [],
+                "leaves": [],
+                "member": null,
+                "mode": null
+              },
+              "arguments": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "d71da0484abd839a708480abf5f722f01cce85eb0b1fdc7306423a98ba0ae305"
+                  }
+                },
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "86af6a8f52d222c86cac9266bb4438fdf3b0fc778d120f6eb48e2c95025493e2"
+                  }
+                }
+              ],
+              "result_type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+              }
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "86af6a8f52d222c86cac9266bb4438fdf3b0fc778d120f6eb48e2c95025493e2"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "d71da0484abd839a708480abf5f722f01cce85eb0b1fdc7306423a98ba0ae305"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "d227c177638dc53ec4e1551dcd2527fd13445f06f17e35e7865eed91547c8e44"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "binary",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/34/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "d227c177638dc53ec4e1551dcd2527fd13445f06f17e35e7865eed91547c8e44"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "f3f13d9283601446fac7f0428ac1f755f79ed13126f1342e83953dee877158b7"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/34",
+      "cause": "operator-ineligible"
+    },
+    {
+      "id": "TW-24",
+      "description": "a structural.eq over two Color values",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/36",
+          "value": {
+            "body": {
+              "term": "application",
+              "operator": "binary",
+              "operation": {
+                "identity": "quire.op.structural.eq",
+                "laws": [],
+                "leaves": [],
+                "member": null,
+                "mode": null
+              },
+              "arguments": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "c5feaacf8adf6cf744ad4edc8ad579dfda398c16f9a2b2184f0e7e4d5c3d8a67"
+                  }
+                },
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "babb4d17c0628b17af76e9335757dc2bd42ed53262c1581d655e8412d875da98"
+                  }
+                }
+              ],
+              "result_type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+              }
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "babb4d17c0628b17af76e9335757dc2bd42ed53262c1581d655e8412d875da98"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "c5feaacf8adf6cf744ad4edc8ad579dfda398c16f9a2b2184f0e7e4d5c3d8a67"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "98e5034a24c6d382f658f29a51af7b899fc8152d9bb099ee2842329091237efe"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "binary",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/36/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "98e5034a24c6d382f658f29a51af7b899fc8152d9bb099ee2842329091237efe"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "fae07d091de27a74ac687073c5b45e80ea9251f30079d390197098d66be7eca7"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:ill_typed",
+      "locus": "/semantic_graph/nodes/36",
+      "cause": "operator-ineligible"
+    },
+    {
+      "id": "TW-25",
+      "description": "a structural.eq over two List values that supplies a leaf: the recursive List reaches no text, so its walk has none",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/35",
+          "value": {
+            "body": {
+              "term": "application",
+              "operator": "binary",
+              "operation": {
+                "identity": "quire.op.structural.eq",
+                "laws": [],
+                "leaves": [
+                  {
+                    "path": [
+                      "recursion:0"
+                    ],
+                    "laws": [],
+                    "mode": null
+                  }
+                ],
+                "member": null,
+                "mode": null
+              },
+              "arguments": [
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "096d226dd1d145034b5902a46a721b40fe602d99b51769d4ad18e666f8439059"
+                  }
+                },
+                {
+                  "term": "reference",
+                  "target": {
+                    "domain": "quire.checked-semantic-node/v1",
+                    "digest": "714049cde40c3daa10e66a67fbb5c102786f7607f11afcfbb5ef26f05fcc670d"
+                  }
+                }
+              ],
+              "result_type": {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+              }
+            },
+            "dependencies": [
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "096d226dd1d145034b5902a46a721b40fe602d99b51769d4ad18e666f8439059"
+              },
+              {
+                "domain": "quire.checked-semantic-node/v1",
+                "digest": "714049cde40c3daa10e66a67fbb5c102786f7607f11afcfbb5ef26f05fcc670d"
+              }
+            ],
+            "node_id": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "0167d212aea78a136ba86376527453b62848b4a404b5f7eff9a5984203dd5ed4"
+            },
+            "node_tag": "expression",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "binary",
+            "semantic_type": {
+              "domain": "quire.checked-semantic-node/v1",
+              "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa"
+            }
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/35/node_id",
+          "value": {
+            "domain": "quire.checked-semantic-node/v1",
+            "digest": "0167d212aea78a136ba86376527453b62848b4a404b5f7eff9a5984203dd5ed4"
+          }
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "a2e418429aa1ad67e08f918d29b34356e1c5f7e60fcc90f83aa4038791c0112d"
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:invalid_package",
+      "locus": "/semantic_graph/nodes/35",
+      "cause": "operation-law-mismatch"
+    },
+    {
+      "id": "TW-26",
+      "description": "a tuple.project whose position is the string 0, which is no KeyOrdinal",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/31/body/operation/member/position",
+          "value": "0"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "9e0ad0d30e3ed3305b7e45c6c379f77201913c09f70bd0d6883bb495f5095fcb"
+        }
+      ],
+      "schema": "invalid",
+      "outcome": "refused:malformed_wire",
+      "locus": "/semantic_graph/nodes/31"
+    }
+  ]
+}
