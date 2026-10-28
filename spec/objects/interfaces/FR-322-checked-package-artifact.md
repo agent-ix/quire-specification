@@ -2846,13 +2846,19 @@ triple, and the order key of a `clock_place` is the pair (that triple, its
 **place path key**). The path key compares the steps of `path` in order and
 ends the comparison at the shorter path when it is a prefix of the other: a
 step is ordered first by its kind (`field`, `tuple`, `union`, `slot`), then a
-`field` step by the UTF-8 bytes of its `name`, a `union` step by those of its `case`, a `tuple` step by its
+`field` step by the UTF-8 bytes of its `name`, a union step by those of its `case`, a `tuple` step by its
 index, and a `slot` step by the UTF-8 bytes of its `collection`, then its
 `minimum`, then its `maximum`, `unbounded` above every integer. The `selector`
 of a slot step is a reference to a node and the `resolved_path` is derived from
 the path and the document, so neither enters the key; a member that is not a
-`clock_place` has the empty path key. The key is a function of the source
-region and the declared path alone. Two places with one triple and one path
+`clock_place` is ordered, when it shares its minimum triple with a neighbour,
+by a member key and never by a digest: the referenced place path key, then the
+owner and slot terms, then the comparison (`lt`, `le`, `eq`, `ge`, `gt`), then
+the bound for a `clock_constraint` or the value for a `clock_reset` (a
+`parameter` constraint or reset by operation name, parameter name, then the
+same); a `time_invariant` by the key of its first bound, a `clock_guard` by its
+operation name and an `urgency` by kind and operation name. The key is a
+function of the source region and the declared path alone. Two places with one triple and one path
 are one repeated path and are refused as out of order, before
 `duplicate-clock-place`. The same strict order holds in the lists the clause
 forms nest: the `constraints` of each `parts` entry of a `clock_guard` and the

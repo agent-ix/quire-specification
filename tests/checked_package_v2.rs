@@ -25452,17 +25452,17 @@ fn timed_clause_refusal(
         None
     };
     // Every timed node the root does not represent refuses at its own `body` (FR-322-AC-243 for a guard).
-    let mut represented: BTreeSet<&Value> = BTreeSet::from([&root["node_id"]]);
+    let mut represented: BTreeSet<String> = BTreeSet::from([root["node_id"]["digest"].as_str().unwrap().to_owned()]);
     for binding in &root["body"]["members"].as_array().unwrap()[2..] {
         match binding["value"]["term"].as_str() {
             Some("reference") => {
-                represented.insert(&binding["value"]["target"]);
+                represented.insert(binding["value"]["target"]["digest"].as_str().unwrap().to_owned());
             }
-            _ => represented.extend(binding["value"]["members"].as_array().into_iter().flatten().map(|entry| &entry["target"])),
+            _ => represented.extend(binding["value"]["members"].as_array().into_iter().flatten().map(|entry| entry["target"]["digest"].as_str().unwrap().to_owned())),
         }
     }
     let mut unlisted: Vec<usize> =
-        (0..nodes.len()).filter(|at| nodes[*at]["node_tag"] == "timed_model" && !represented.contains(&nodes[*at]["node_id"])).collect();
+        (0..nodes.len()).filter(|at| nodes[*at]["node_tag"] == "timed_model" && !represented.contains(nodes[*at]["node_id"]["digest"].as_str().unwrap())).collect();
     unlisted.sort_by_key(|at| nodes[*at]["node_id"]["digest"].as_str().unwrap().to_owned());
     if on("unlisted") {
         if let Some(at) = unlisted.first() {
