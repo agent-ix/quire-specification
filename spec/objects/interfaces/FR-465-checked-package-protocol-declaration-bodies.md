@@ -140,8 +140,7 @@ order:
 
 The reader checks, for one channel, in this order:
 
-1. **Endpoints.** `from` and `to` are declared dependencies, else
-   `missing_declaration`/`missing-name`, and `protocol`/`role` nodes of the
+1. **Endpoints.** `from` and `to` are declared dependencies (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else `missing_declaration`/`missing-name` for a target that names no node, and `protocol`/`role` nodes of the
    same clause, else `invalid_model_binding`/`malformed-declaration`; a node
    that is a `queue`, a model component or an endpoint is not a role. The
    locus is the target.

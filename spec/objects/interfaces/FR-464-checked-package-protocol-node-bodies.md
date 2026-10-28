@@ -307,8 +307,8 @@ target. A reference whose target is a node of the graph that is not among the
 referencing node's `dependencies` is a graph-stage defect: it refuses
 `invalid_semantic_graph` at the referencing node's `/semantic_graph/nodes/{i}/dependencies` (graph stage, FR-322-AC-96, before the protocol step), as for every other node form (FR-322 `dependencies`), and no
 protocol step runs. A reference that names no node of the graph refuses
-`missing_declaration`/`missing-name`, located at the target. These are the same joins FR-341 states for a state clause's
-parameters.
+`missing_declaration`/`missing-name`, located at the target. The same graph-stage join precedes FR-341's state clause steps (FR-341
+"Reader order").
 
 ## Binders
 
@@ -465,8 +465,9 @@ the checks each member runs and defer the order to this section. The
 node absent from the referencing node's `dependencies` refuses
 `invalid_semantic_graph` at that node's `/dependencies` and no protocol step
 runs, as the `owner_model` target does (AC-20). `missing_declaration`/
-`missing-name` is left to a name that resolves to no node and to an
-out-of-scope binder read. The protocol
+`missing-name` is left to a name that resolves to no node, to an
+out-of-scope binder read and to a list-membership miss (FR-466-AC-4,
+FR-466-AC-9). The protocol
 step runs after the state step ([FR-341](FR-341-checked-package-state-clause-body.md)
 "Reader order") and every other body step of FR-322 "Body steps" (the
 state-graph, temporal ([FR-370](FR-370-checked-package-temporal-clause-body.md))

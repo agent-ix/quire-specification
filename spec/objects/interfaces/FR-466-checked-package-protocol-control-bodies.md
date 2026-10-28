@@ -272,7 +272,7 @@ registration captures, the trigger binder, the activation captures,
 The reader checks, for one template, in this order (the scope checks are slot
 checks at FR-464 step 6):
 
-1. **References.** Every reference is a declared dependency and names a node of
+1. **References.** Every reference is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-464 "Reader order"), else `missing_declaration`/`missing-name` for a target that names no node, and names a node of
    the stated form (as "Per-operator checks" 1): `forward` an `effect`
    control, `role` a role of the clause, `operation` a `state`/
    `operation_anchor` node, `record_type` a `model` node of form

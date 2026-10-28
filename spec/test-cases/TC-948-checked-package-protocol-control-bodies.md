@@ -62,7 +62,7 @@ FR-466-AC-15.
 | S1 | swap `Requested` and `Charged` in `Main`'s `children` | `Main`'s node key and the `package_id` change; the reader refuses `definition-cycle` for the `receive`/`send` edge (`Requested` and `Received`) |
 | S2 | a child of `Main` that is a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | S3 | a child of `Main` that is a node of the graph absent from `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the `Main` node (graph stage, FR-322-AC-96, before any body step) |
-| S3a | a child of `Main` that is a local node id no node of the graph carries | `missing_declaration`/`missing-name` at the target |
+| S3a | a child of `Main` that is a local node id no node of the graph carries, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target |
 | CE1 | `Outcome` with one case | refuses `malformed_wire` (at least two cases) |
 | CE2 | two cases labelled `shipped` | `ambiguous_declaration`/`ambiguous-name` at `Outcome`, naming the label |
 | CE3 | the `shipped` guard dereferences a model object | `ill_typed`/`operator-ineligible` at the read |

@@ -255,12 +255,12 @@ Reader order for transition nodes: the state step checks every
 `state`/`transition` node after every `state`/`state_clause` node, in
 ascending node-id digest order, and the first failing check is its defect:
 
-1. **Anchor.** The `anchor` target is a declared dependency, else
-   `missing_declaration`/`missing-name`, and a `state`/`operation_anchor` node,
+1. **Anchor.** The `anchor` target is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-322-AC-96, before this step), else
+   `missing_declaration`/`missing-name` for a target that names no node, and a `state`/`operation_anchor` node,
    else `invalid_model_binding`/`malformed-declaration`. The locus is the
    target.
-2. **Subject.** The `subject` target is a declared dependency, else
-   `missing_declaration`/`missing-name`, with the shape above (a field
+2. **Subject.** The `subject` target is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-322-AC-96, before this step), else
+   `missing_declaration`/`missing-name` for a target that names no node, with the shape above (a field
    projection of a dereferenced `self` whose `member.declaration` is the
    declaring node of a field of the anchor's context and whose `self` is of
    type `Reference<C>` for the anchor's context `C`) and a field the anchor's
@@ -268,13 +268,13 @@ ascending node-id digest order, and the first failing check is its defect:
    subject whose `semantic_type` is not the `scalar_type`/`boolean` node
    refuses `ill_typed`/`operator-ineligible` at the transition node. The
    locus is the subject's target, except for the type refusal.
-3. **Inputs.** Each `inputs` target is a declared dependency, else
-   `missing_declaration`/`missing-name`, and a `value`/`parameter` node, else
+3. **Inputs.** Each `inputs` target is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-322-AC-96, before this step), else
+   `missing_declaration`/`missing-name` for a target that names no node, and a `value`/`parameter` node, else
    `invalid_model_binding`/`malformed-declaration`; the list equals the
    resolved operation's parameters in declared order, each Boolean, else
    `ill_typed`/`operator-ineligible` at the transition node.
-4. **Clauses.** Each of `pre` and `post` targets a declared dependency, else
-   `missing_declaration`/`missing-name`, that is a `state`/`state_clause` node
+4. **Clauses.** Each of `pre` and `post` targets a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-322-AC-96, before this step), else
+   `missing_declaration`/`missing-name` for a target that names no node, that is a `state`/`state_clause` node
    of clause `precondition` and `postcondition` respectively and satisfies
    "clause joins", else `invalid_model_binding`/`malformed-declaration` at its
    target.
@@ -355,7 +355,7 @@ order; then every `state`/`transition` node, in ascending node-id digest order
 this order and the first failing check is its defect:
 
 1. **Anchor.** The anchor's target is a declared dependency of the clause
-   node, else `missing_declaration`/`missing-name`; for an invariant or a
+   node (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-322-AC-96, before this step), else `missing_declaration`/`missing-name` for a target that names no node; for an invariant or a
    constraint it is a `model`/`object_type`, `model`/`process` or
    `model`/`state_machine` node and
    for a precondition or postcondition a `state`/`operation_anchor` node, else

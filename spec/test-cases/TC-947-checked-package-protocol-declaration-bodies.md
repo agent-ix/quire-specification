@@ -41,7 +41,7 @@ FR-465-AC-9.
 | RL5 | a role on a `model`/`variant_type` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | RL6 | `model` names a `value` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | RL7 | `model` names a node of the graph that is absent from `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the role node (graph stage, FR-322-AC-96, before any body step) |
-| RL7a | `model` names a local node id that is no node of the graph | `missing_declaration`/`missing-name` at the target |
+| RL7a | `model` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target |
 | RL8 | the replicated role with `lifetime` `workflow`, `scope` and `until` | admitted; `binder` is the `value`/`parameter` node named `w`, of type `Reference<M::Worker>` |
 | RL9 | `until` present with `lifetime: workflow` | refuses `malformed_wire` |
 | RL10 | `until` absent with `lifetime: until` | refuses `malformed_wire` |
@@ -80,7 +80,7 @@ FR-465-AC-9.
 | CH8 | `from` names the `Charges` queue node | `invalid_model_binding`/`malformed-declaration` at the target |
 | CH9 | `from` names a role of another protocol | `invalid_model_binding`/`malformed-declaration` at the target |
 | CH10 | `to` names a node of the graph that is absent from `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the channel node (graph stage, FR-322-AC-96, before any body step) |
-| CH10a | `to` names a local node id that is no node of the graph | `missing_declaration`/`missing-name` at the target |
+| CH10a | `to` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target |
 | CH11 | `carries` names a `model`/`record_value_type`, a `model`/`event_type`, a `model`/`variant_type`, a `composite_type` and a `scalar_type` node, one each | admitted |
 | CH12 | `carries` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | CH13 | `delivery` is each of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise` | admitted: four distinct node keys |
@@ -104,7 +104,7 @@ FR-465-AC-9.
 | QU7 | `literal` capacity `-1` | `invalid_package`/`invalid-value` at the value, at strict wire validation |
 | QU8 | `channel` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | QU9 | `channel` names a node of the graph that is absent from `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the queue node (graph stage, FR-322-AC-96, before any body step) |
-| QU9a | `channel` names a local node id that is no node of the graph | `missing_declaration`/`missing-name` at the target |
+| QU9a | `channel` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target |
 | QU11 | `at-least-once` delivery with overflow `loss` | admitted: overflow governs a full queue and delivery policy governs transport duplication and loss; an overflow loss is not a transport `lose` step |
 | QU10 | the queue's occurrence has role `declaration` | refuses `malformed_wire` |
 

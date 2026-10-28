@@ -546,7 +546,7 @@
       "test_case": "TC-946",
       "section": "Clause body",
       "id": "C13a",
-      "Edit to the base": "`compensations` names a local node id that is no node of the graph",
+      "Edit to the base": "`compensations` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96)",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {
@@ -1029,7 +1029,7 @@
       "test_case": "TC-946",
       "section": "Activation relation",
       "id": "A8a",
-      "Edit to the base": "the `requirements` entry names a local node id that is no node of the graph",
+      "Edit to the base": "the `requirements` entry names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96)",
       "Expected": "`missing_declaration`/`missing-name` at the target; no relation"
     },
     {
@@ -1043,7 +1043,7 @@
       "test_case": "TC-946",
       "section": "Activation relation",
       "id": "A9a",
-      "Edit to the base": "the `each` `trigger` names a local node id that is no node of the graph",
+      "Edit to the base": "the `each` `trigger` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96)",
       "Expected": "`missing_declaration`/`missing-name` at the target; no relation"
     },
     {
@@ -1099,7 +1099,7 @@
       "test_case": "TC-947",
       "section": "Role vectors",
       "id": "RL7a",
-      "Edit": "`model` names a local node id that is no node of the graph",
+      "Edit": "`model` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96)",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {
@@ -1337,7 +1337,7 @@
       "test_case": "TC-947",
       "section": "Channel vectors",
       "id": "CH10a",
-      "Edit": "`to` names a local node id that is no node of the graph",
+      "Edit": "`to` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96)",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {
@@ -1470,7 +1470,7 @@
       "test_case": "TC-947",
       "section": "Queue vectors",
       "id": "QU9a",
-      "Edit": "`channel` names a local node id that is no node of the graph",
+      "Edit": "`channel` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96)",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {
@@ -1820,7 +1820,7 @@
       "test_case": "TC-948",
       "section": "Sequence, choice and parallel",
       "id": "S3a",
-      "Edit": "a child of `Main` that is a local node id no node of the graph carries",
+      "Edit": "a child of `Main` that is a local node id no node of the graph carries, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96)",
       "Expected": "`missing_declaration`/`missing-name` at the target"
     },
     {
@@ -2891,7 +2891,7 @@
       "test_case": "TC-946",
       "section": "Clause model owner edge",
       "id": "OM-09",
-      "Edit to the base": "Retarget `owner_model` to a local node id that is no node of the graph; separately drop only the target from the clause's `dependencies`",
+      "Edit to the base": "Retarget `owner_model` to a local node id that is no node of the graph, and list that id in the clause's `dependencies` (body target and dependency change together); separately drop only the target from the clause's `dependencies`",
       "Expected": "`missing_declaration`/`missing-name` at `/semantic_graph/nodes/{i}/owner_model`; `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` (graph stage, before any body step)"
     },
     {
