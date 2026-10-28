@@ -5925,41 +5925,6 @@ fn rekey_stale_nodes(package: &mut Value) -> BTreeMap<String, String> {
     panic!("rekeying does not settle within {limit} renames");
 }
 
-/// The operation fixture predates the derived `Reference<O>` rule and points
-/// its generic reference at a record. Rebind that fixture to its published
-/// model declaration before semantic-reader tests, then rekey the complete
-/// dependency closure so the resulting package is an ordinary valid vector.
-fn modelize_legacy_record_reference(package: &mut Value) -> BTreeMap<String, String> {
-    let nodes = package["semantic_graph"]["nodes"]
-        .as_array()
-        .expect("fixture nodes are an array");
-    let index = nodes
-        .iter()
-        .position(|node| {
-            node["node_tag"] == "composite_type"
-                && node["semantic_form"] == "reference"
-                && nodes.iter().any(|target| {
-                    target["node_id"] == node["body"]["members"][0]["target"]
-                        && target["node_tag"] == "composite_type"
-                        && target["semantic_form"] == "record"
-                })
-        })
-        .expect("legacy generic record reference");
-    let model_id = nodes
-        .iter()
-        .find(|node| is_model_declaration(node))
-        .expect("fixture model declaration")["node_id"]
-        .clone();
-    replace_node_field_in_graph(
-        package,
-        index,
-        "/body/members/0/target",
-        model_id.clone(),
-    );
-    replace_node_field_in_graph(package, index, "/dependencies", json!([model_id]));
-    rekey_stale_nodes(package)
-}
-
 /// Append a structural node to a fixture, bind its current key and recompute
 /// the package id. The caller supplies the complete wire body and cross-fields;
 /// this helper is used only by reader qualification vectors.
@@ -8671,7 +8636,7 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
     let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
     let mutations = &vectors["operation_mutations"];
     let mut package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    let renames = modelize_legacy_record_reference(&mut package);
+    let renames = BTreeMap::<String, String>::new();
     let causes = mutations
         .as_array()
         .expect("mutations are an array")
@@ -9028,8 +8993,7 @@ fn tc_233_operation_and_declaration_causes_pair_with_one_catalogued_code() {
 }
 
 fn published_v2_packages() -> [(&'static str, Value); 7] {
-    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut operation);
+    let operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     [
         ("operation-identities", operation),
         ("all-families", parsed_fixture(POSITIVE_ALL_FAMILIES)),
@@ -13066,8 +13030,7 @@ fn tc_233_tampered_derived_shape_nodes_refuse_stale_node_key() {
     let mutations = adverse["derived_shape_key_mutations"]
         .as_array()
         .expect("derived-shape mutations are an array");
-    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut operation);
+    let operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     let bases = BTreeMap::from([
         (
             "positive-all-families",
@@ -13297,8 +13260,7 @@ fn tc_322_derived_form_key_mutations() {
 #[test]
 fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
-    let mut base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut base);
+    let base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
 
     let mut wrong_reference = base.clone();
     let reference_index = wrong_reference["semantic_graph"]["nodes"]
@@ -13365,11 +13327,11 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
     }
 
     let mut wrong_population = base.clone();
-    let mut population_reference = wrong_population["semantic_graph"]["nodes"][43].clone();
+    let mut population_reference = wrong_population["semantic_graph"]["nodes"][58].clone();
     population_reference["body"]["members"][0]["target"] =
-        wrong_population["semantic_graph"]["nodes"][58]["node_id"].clone();
+        wrong_population["semantic_graph"]["nodes"][57]["node_id"].clone();
     population_reference["dependencies"] =
-        json!([wrong_population["semantic_graph"]["nodes"][58]["node_id"]]);
+        json!([wrong_population["semantic_graph"]["nodes"][57]["node_id"]]);
     append_rekeyed_structural_node(&mut wrong_population, population_reference);
     let population_reference_id = wrong_population["semantic_graph"]["nodes"]
         .as_array()
@@ -13387,7 +13349,7 @@ fn tc_322_recomputed_derived_forms_refuse_semantic_mutations() {
         .last()
         .unwrap()["node_id"]
         .clone();
-    let mut population = wrong_population["semantic_graph"]["nodes"][51].clone();
+    let mut population = wrong_population["semantic_graph"]["nodes"][50].clone();
     population["semantic_form"] = json!("model_population");
     population["semantic_type"] = population_set_id.clone();
     population["body"] = json!({
@@ -13829,8 +13791,7 @@ const POSITIVE_TWO_OWNERS_B: &str =
 
 /// Every published positive fixture, by name.
 fn positive_fixtures() -> [(&'static str, Value); 12] {
-    let mut operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
-    modelize_legacy_record_reference(&mut operation);
+    let operation = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     [
         (
             "positive-nominal-identities",
