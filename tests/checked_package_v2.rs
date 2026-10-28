@@ -22508,6 +22508,7 @@ fn tc_367_selected_package_assertions_each_fail_on_their_mutation() {
     let root_at = unlisted["semantic_graph"]["nodes"].as_array().unwrap().iter().position(|n| n["semantic_form"] == "timed_model").unwrap();
     unlisted["semantic_graph"]["nodes"][root_at]["body"]["members"][3]["value"]["members"].as_array_mut().unwrap().remove(0);
     assert!(defect(&vectors, &document, &unlisted).contains("not listed"));
+}
 
 const CONTRACT_PACKAGE_SELECTION_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/contract-package-selection-vectors.json");
