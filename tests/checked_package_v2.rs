@@ -20084,7 +20084,8 @@ fn tc_940_tuple_and_payload_variant_declarations_are_model_declaration_nodes() {
     "FR-322-AC-142",
     "FR-322-AC-143",
     "FR-322-AC-144",
-    "FR-322-AC-145"
+    "FR-322-AC-145",
+    "FR-322-AC-147"
 )]
 #[test]
 fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
