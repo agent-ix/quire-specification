@@ -19440,3 +19440,89 @@ fn tc_310_published_roots_are_the_producer_oracle() {
         }
     }
 }
+
+const CLASS_CATALOG_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/class-catalog-vectors.json");
+
+/// Reader-level class-catalog check over a schema-valid catalog: canonical
+/// order by (class UTF-8 bytes, memory model), no duplicate catalog key, and
+/// the effect, commit and cend classes the producer must catalogue.
+fn class_catalog_reader_refusal(catalog: &Value) -> Option<&'static str> {
+    for side in ["concrete", "abstract"] {
+        let entries = catalog[side].as_array().expect("catalog side");
+        let keys: Vec<(String, String)> = entries
+            .iter()
+            .map(|entry| {
+                (
+                    entry["class"].as_str().expect("class").to_owned(),
+                    entry["memory_model"].as_str().unwrap_or("").to_owned(),
+                )
+            })
+            .collect();
+        for pair in keys.windows(2) {
+            if pair[0] == pair[1] {
+                return Some("duplicate_class");
+            }
+            if pair[0] > pair[1] {
+                return Some("misordered_class");
+            }
+        }
+    }
+    let classes: BTreeSet<&str> = catalog["concrete"]
+        .as_array()
+        .expect("concrete")
+        .iter()
+        .map(|entry| entry["class"].as_str().expect("class"))
+        .collect();
+    for required in ["Impl::E", "Impl::K", "cend Impl::T"] {
+        if !classes.contains(required) {
+            return Some("omitted_class");
+        }
+    }
+    None
+}
+
+#[trace("TC-310", "FR-375-AC-28")]
+#[test]
+fn tc_310_class_catalog_carries_effect_commit_and_cend_classes() {
+    let defs = parsed_fixture(SCHEMA)["$defs"].clone();
+    let wrapper = json!({"$ref": "#/$defs/RefinementClassCatalog", "$defs": defs});
+    let validator = jsonschema::validator_for(&wrapper).expect("catalog schema is valid");
+    let vectors = parsed_fixture(CLASS_CATALOG_VECTORS);
+    let mut admitted = 0;
+    for case in vectors["cases"].as_array().expect("cases") {
+        let name = case["name"].as_str().expect("name");
+        let catalog = &case["catalog"];
+        let observed = if !validator.is_valid(catalog) {
+            "schema_refused"
+        } else {
+            class_catalog_reader_refusal(catalog).unwrap_or("admitted")
+        };
+        assert_eq!(observed, case["expected"].as_str().expect("expected"), "{name}");
+        if observed == "admitted" {
+            admitted += 1;
+            let concrete: Vec<&str> = catalog["concrete"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|entry| entry["class"].as_str().unwrap())
+                .collect();
+            assert_eq!(
+                concrete,
+                [
+                    "Impl::Do",
+                    "Impl::E",
+                    "Impl::K",
+                    "Impl::T",
+                    "Impl::ev",
+                    "cend Impl::T",
+                    "memory drain",
+                    "memory drain",
+                    "memory drain"
+                ],
+                "{name}: the canonical concrete class order"
+            );
+        }
+    }
+    assert_eq!(admitted, 1, "exactly the positive vector is admitted");
+}

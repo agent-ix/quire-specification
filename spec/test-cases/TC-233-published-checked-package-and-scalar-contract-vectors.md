@@ -528,6 +528,7 @@ model-only case (FR-322-AC-130).
 | `CCW-07` | Retarget `owner_model` to another selected model and recompute the clause node id and package id | Both schemas admit the closed local edge; the clause key changes and the reader returns the new owner identity unchanged. |
 | `CCW-08` | Memory entries `memory drain` for `ra`, `sc` and `tso`, each with `drain: store-buffer-flush`, and `memory flush` for `tso`, in that order | Both schemas admit each entry (a schema states shape, not order); the reader admits the canonical order and refuses a reordered or repeated (`class`, `memory_model`) pair as `invalid_semantic_graph` at the entry in step 2 (FR-322-AC-133). |
 | `CCW-09` | A declared class entry `{class: "activate P", node, binder_types}` on the concrete (`NodeRef`) and abstract (`RefinementKey`) side | Both schemas admit it as an ordinary declared class (FR-322-AC-133). |
+| `CCW-10` | The cases `CCF-01` to `CCF-08` of `proposals/checked-package-v2/class-catalog-vectors.json` (effect, commit, event, attempt, template `cend` and the three drain entries) validated against the closed catalog definition, then read for canonical order, duplicates and the effect, commit and `cend` classes | `CCF-01` admitted; `CCF-02` to `CCF-06` (an entry without `node` or `binder_types`, an extra member, a memory entry with `node`, a drain without `drain`) refuse in the schema; `CCF-07` (classes dropped) and `CCF-08` (repeated `cend`) are schema-valid and refuse in the reader as `omitted_class` and `duplicate_class` (FR-375-AC-28). |
 
 ### Graph order vectors
 
