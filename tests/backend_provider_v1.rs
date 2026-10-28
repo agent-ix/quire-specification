@@ -1768,15 +1768,20 @@ fn tc_431_zone_loci_admit_the_refinement_form_rules_and_the_added_members() {
             assert_eq!(rejection.is_valid(&cause), rules.contains(&rule), "rule {rule} at {at}");
         }
     }
-    let members = ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale",
-        "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement",
-        "refinement_node", "concrete_package", "abstract_package", "positions", "taken", "locked", "start", "nested"];
-    assert_eq!(members.len(), 24);
-    for member in members {
+    // The names are exactly the property names, at any depth, of the two certificates and
+    // the certificate-owned definitions they reference (FR-331 "Certificate member").
+    let walked = certificate_member_names();
+    assert_eq!(walked.len(), 50);
+    let enumerated: std::collections::BTreeSet<String> = parsed(SCHEMA)["$defs"]["CertificateRejected"]["oneOf"]
+        .as_array().expect("causes").iter()
+        .filter_map(|cause| cause["properties"]["at"]["properties"]["member"]["enum"].as_array())
+        .flatten().map(|name| name.as_str().expect("name").to_owned()).collect();
+    assert_eq!(enumerated, walked, "the {{member}} enum is the walked member set");
+    for member in &walked {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
         assert!(rejection.is_valid(&cause), "{member} is a member");
     }
-    for member in ["initial", "initials[0]", "position", "refinement_name", "node", "", "Initial"] {
+    for member in ["initial", "initials[0]", "position", "refinement_name", "refinement.node", "", "Initial"] {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
         assert!(!rejection.is_valid(&cause), "{member} is not a member");
     }
@@ -1889,18 +1894,99 @@ fn tc_431_a_derived_item_takes_provider_defaults_and_inherits_no_limits() {
         let kind = t["item_kind"].as_str().expect("kind");
         if ["deadlock-freedom", "time-lock-freedom", "race-freedom"].contains(&kind) {
             derived += 1;
-            assert!(t.get("max_depth").is_none() && t.get("limits").is_none() && t.get("smt_encoding").is_none(), "{kind}");
-            // A caller's FR-461 setting may still be written; a horizon may not.
+            assert!(t.get("max_depth").is_none() && t.get("smt_encoding").is_none(), "{kind}");
             let mut set = t.clone();
             set["limits"] = serde_json::json!({"max_states": 250000});
             assert!(temporal.is_valid(&set), "{kind} with a caller setting");
+            // The limits meaningful for an exhaustive check are admitted, one at a time.
+            for name in ["max_states", "max_transitions", "max_clocks", "max_store_buffer", "max_messages",
+                "max_live_instances", "max_solver_steps", "max_solver_time"] {
+                set["limits"] = serde_json::json!({ name: 7 });
+                assert!(temporal.is_valid(&set), "{kind} with {name}");
+            }
+            // The automaton, sampling and hyper limits are unknown members of a derived item's limits.
+            for name in ["max_automaton_states", "max_walk_steps", "max_witness_set", "max_relation_tuples", "max_samples"] {
+                set["limits"] = serde_json::json!({ name: 7 });
+                assert!(!temporal.is_valid(&set), "{kind} with {name}");
+            }
+            set["limits"] = serde_json::json!({"max_states": 250000});
             set["max_depth"] = 40.into();
             assert!(!temporal.is_valid(&set), "{kind} with a max_depth");
         } else {
             assert!(t.get("max_depth").is_some() && t.get("limits").is_some(), "{kind} carries the caller's settings");
+            // An authored or refinement item is not restricted to the exhaustive-check names.
+            let mut set = t.clone();
+            set["limits"] = serde_json::json!({"max_automaton_states": 7});
+            assert!(temporal.is_valid(&set), "{kind} with max_automaton_states");
         }
     }
     assert_eq!(derived, 4);
+}
+
+/// The property names, at any depth, of the FR-412 and FR-418 certificates and
+/// of the certificate-owned definitions they reference. The shared value types
+/// (`StateKey`, `TransitionIdentity`, `Rational`, `NodeId`, `PackageId`,
+/// `Count`) are named by their type and contribute none.
+fn certificate_member_names() -> std::collections::BTreeSet<String> {
+    const OWNED: [&str; 5] = ["CertificateIdentity", "DbmBound", "ComponentReason", "RefinementPart", "ProbabilityProductKey"];
+    fn walk(node: &Value, defs: &Value, names: &mut std::collections::BTreeSet<String>, seen: &mut Vec<String>) {
+        match node {
+            Value::Object(map) => {
+                if let Some(target) = map.get("$ref").and_then(Value::as_str).and_then(|r| r.strip_prefix("#/$defs/")) {
+                    if OWNED.contains(&target) && !seen.iter().any(|s| s == target) {
+                        seen.push(target.to_owned());
+                        walk(&defs[target], defs, names, seen);
+                    }
+                }
+                for (key, value) in map {
+                    if key == "properties" {
+                        for (name, property) in value.as_object().expect("properties") {
+                            names.insert(name.clone());
+                            walk(property, defs, names, seen);
+                        }
+                    } else {
+                        walk(value, defs, names, seen);
+                    }
+                }
+            }
+            Value::Array(items) => items.iter().for_each(|item| walk(item, defs, names, seen)),
+            _ => {}
+        }
+    }
+    let schema = parsed(SCHEMA);
+    let defs = &schema["$defs"];
+    let mut names = std::collections::BTreeSet::new();
+    for root in ["ProbabilityCertificate", "ZoneCertificate"] {
+        walk(&defs[root], defs, &mut names, &mut vec![root.to_owned()]);
+    }
+    names
+}
+
+/// FR-368-AC-22: a derived item over a model subject that reads more than one
+/// `model_selections` row has no stated anchor and is settled `unsupported` by
+/// the producer, which writes no request item for it. The anchor is the one
+/// `model_root` of the package; two roots are refused with the FR-331
+/// producer-side settlement cause.
+#[trace("TC-431", "FR-368-AC-22")]
+#[test]
+fn tc_431_a_model_subject_over_several_selections_has_no_derived_item() {
+    fn anchor(package: &Value) -> Result<Value, (&'static str, &'static str)> {
+        let roots: Vec<&Value> = package["semantic_graph"]["nodes"].as_array().expect("nodes").iter()
+            .filter(|node| node["semantic_form"] == "model_root").collect();
+        match roots.as_slice() {
+            [root] => Ok(root["node_id"].clone()),
+            _ => Err(("unsupported_projection", "unsupported-requested-capability")),
+        }
+    }
+    let package = parsed(PACKAGE_FIXTURE);
+    let document = composed(&positive("derived-items-request"));
+    let item = &document["request"]["items"][3];
+    assert_eq!(anchor(&package), Ok(item["claim"]["node"].clone()), "one selection: the anchor is the model_root");
+    let mut two = package.clone();
+    let nodes = two["semantic_graph"]["nodes"].as_array_mut().expect("nodes");
+    let root = nodes.iter().find(|node| node["semantic_form"] == "model_root").expect("root").clone();
+    nodes.push(root);
+    assert_eq!(anchor(&two), Err(("unsupported_projection", "unsupported-requested-capability")));
 }
 
 /// FR-368-AC-16, AC-20, AC-21 and FR-331-AC-44: the adverse vectors that pin
@@ -1926,7 +2012,9 @@ fn tc_431_the_derived_item_adverse_vectors_cover_every_kind() {
             assert!(adverse.contains(&name), "adverse vector {name}");
         }
     }
-    for name in ["deadlock-freedom-with-max-depth", "time-lock-freedom-with-max-depth", "race-freedom-with-max-depth", "item-kind-transfer"] {
+    for name in ["deadlock-freedom-with-max-depth", "time-lock-freedom-with-max-depth", "race-freedom-with-max-depth", "item-kind-transfer",
+        "deadlock-freedom-with-max-automaton-states", "time-lock-freedom-with-max-walk-steps",
+        "deadlock-freedom-protocol-with-max-witness-set", "race-freedom-with-max-relation-tuples"] {
         assert!(adverse.contains(&name.to_owned()), "adverse vector {name}");
     }
 }

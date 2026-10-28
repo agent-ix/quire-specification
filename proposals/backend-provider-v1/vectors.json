@@ -5229,7 +5229,11 @@
                   "proof_bounds": []
                 },
                 "item_kind": "time-lock-freedom",
-                "fairness": []
+                "fairness": [],
+                "limits": {
+                  "max_states": 250000,
+                  "max_clocks": 1024
+                }
               }
             },
             {
@@ -8477,6 +8481,10 @@
     {"name": "deadlock-freedom-with-max-depth", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/3/temporal/max_depth", "value": 40}]},
     {"name": "time-lock-freedom-with-max-depth", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/4/temporal/max_depth", "value": 40}]},
     {"name": "race-freedom-with-max-depth", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/6/temporal/max_depth", "value": 40}]},
+    {"name": "deadlock-freedom-with-max-automaton-states", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/3/temporal/limits", "value": {"max_automaton_states": 5}}]},
+    {"name": "time-lock-freedom-with-max-walk-steps", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/4/temporal/limits/max_walk_steps", "value": 10}]},
+    {"name": "deadlock-freedom-protocol-with-max-witness-set", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/5/temporal/limits", "value": {"max_witness_set": 2}}]},
+    {"name": "race-freedom-with-max-relation-tuples", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/6/temporal/limits", "value": {"max_relation_tuples": 1}}]},
     {"name": "initial-mismatch-at-edge", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": {"edge": 0}}]},
     {"name": "post-differs-at-node", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": {"node": 1}}]},
     {"name": "post-differs-with-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": {"edge": 1, "verdict": {"kind": "AbstractStepRejected", "position": "2", "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []}, "cause": {"kind": "Postcondition"}}}}]},
