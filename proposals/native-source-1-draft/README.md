@@ -23,7 +23,7 @@ grammar.
 The `proposals/state-core` profile and rule files define `state-finite/0-draft`.
 They cannot be used to identify this amendment. Final adoption must select this
 definition by identity, plus every inherited rule definition and
-its precedence; the resolver derives and records content identity in the lock.
+its precedence.
 No complete inheritance closure is fixed by this review draft. An unavailable selection refuses; it cannot silently fall back to
 0-draft. Historical reports keep their original meaning and identity. Recompiling
 under a replacement definition requires a new explicitly bound derivation.
@@ -73,8 +73,7 @@ not introduce presence syntax by inference.
 
 Each clause has one stable identity and exactly one editable source: a selected
 native inline region or a selected local-file region, never both. Bind the
-path and the half-open byte span; any content identity is derived by the
-resolver into the lock. A floating URL is insufficient. Multi-clause files bind each clause separately. Preserve
+path and the half-open byte span. A floating URL is insufficient. Multi-clause files bind each clause separately. Preserve
 source/profile, clause/requirement identity, declaration closure, tool versions and
 anchor inputs independently of the source-free semantic identity. Duplicate
 authorities, ambiguous names and conflicting declarations refuse
