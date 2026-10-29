@@ -26,9 +26,9 @@ effects and receipt observations SHALL remain distinct. A receipt refers to a de
 it is not the message, receive occurrence or delivery itself. A duplicate receipt SHALL NOT establish a second business effect. A refund is admitted only with its
 compensated effect and order relationship; a telemetry trace ID or shared
 provider identity does not establish either relationship.
-The correlation service SHALL refuse a missing domain package identity, a
-relationship declaration or kind outside the checked package, a missing digest
-domain, or a declaration digest mismatch rather than reconstructing a relationship
+The correlation service SHALL refuse a missing domain package identity or version, a
+relationship declaration or kind outside the checked package, or a declaration key
+that does not name a declaration of the selected package rather than reconstructing a relationship
 from a foreign key, trace ID, provider name, or ambient configuration.
 
 ## Acceptance Criteria
@@ -38,7 +38,7 @@ from a foreign key, trace ID, provider name, or ambient configuration.
 | FR-111-AC-1 | A refund linked to O1 is refused for O2 even when both orders share a provider or trace infrastructure. | Test (TC-141) |
 | FR-111-AC-2 | Missing, conflicting and ambiguous required relationships yield three distinct non-success outcomes; missing is incomplete, while conflicting and ambiguous refuse. `unknown` is not a relationship outcome. | Test (TC-141) |
 | FR-111-AC-3 | Repeated delivery is retained as a delivery and cannot alone create a second attempt or effect. | Test (TC-141) |
-| FR-111-AC-4 | A missing relationship declaration key, a declaration outside the checked package, or a declaration digest mismatch is refused without reconstructing a relationship. | Test (TC-141) |
+| FR-111-AC-4 | A missing relationship declaration key, a declaration outside the checked package, or a declaration key naming a different domain package identity or version is refused without reconstructing a relationship. | Test (TC-141) |
 | FR-111-AC-5 | Each endpoint retains its complete FR-287 key in authored source/target order; reversing, sorting, emptying, foreign-qualifying or substituting an endpoint refuses. | Test (TC-141) |
 | FR-111-AC-6 | Exact replay of one complete relationship value is idempotent, while multiple distinct admitted values satisfying one required slot are ambiguous. | Test (TC-141) |
 | FR-111-AC-7 | A receipt observation, delivery, receive occurrence and message remain non-interchangeable even when they share transport data. | Test (TC-141) |
@@ -46,7 +46,7 @@ from a foreign key, trace ID, provider name, or ambient configuration.
 ## Dependencies
 
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
-- [AD-006](../../assurance/AD-006-model-graph-state-contracts.md): relationship declarations are spec-declared and keyed by domain package identity, IR node identity and `sha256-jcs`; B owns protocol subject meaning.
+- [AD-006](../../assurance/AD-006-model-graph-state-contracts.md): relationship declarations are spec-declared and keyed by domain package identity and IR node identity (the package selection carries identity and version); B owns protocol subject meaning.
 - [FR-287](../../objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md)
   supplies each ordered endpoint key.
 

@@ -17,7 +17,7 @@ relationships:
 
 ## Description
 
-When a window is selected, the assessment service SHALL include an exactly listed or digested member at `start` and exclude one at `end`.
+When a window is selected, the assessment service SHALL include an exactly listed member at `start` and exclude one at `end`.
 
 FR-112 Behavior states the window as `[start, end)` and adds that the excluded
 member "can participate only in a separately selected later window". FR-113
@@ -66,12 +66,7 @@ through that boundary."
   ambient default (FR-112 Behavior, FR-112-AC-4). A window with no admitted
   member is not the same as a window whose membership is unknown: "Unknown
   required membership ... cannot establish aggregate success" (FR-112 Behavior).
-- **Digest domain** — the prose names no window digest in FR-112 or FR-113. The
-  [observation binding contract](../../../proposals/quire-v1/observation-contract.md)
-  names a "selected window identity/digest" retained by a selected
-  `quire.observation.range/v1` definition; where such a digest is carried, its
-  domain is selected under `ix://agent-ix/quire-specification/FR-201`, and an
-  identity crossing domains is unequal regardless of byte equality.
+- **Digest domain** — not applicable; a window carries no digest.
 
 ## Acceptance Criteria
 
@@ -90,8 +85,6 @@ through that boundary."
   restricts progress and closure to `start <= instant < end` and forbids
   timestamp-derived causality.
 - [FR-265](FR-265-selected-snapshot.md) types the other selected bounds subject.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
