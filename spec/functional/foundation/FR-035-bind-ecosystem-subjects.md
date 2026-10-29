@@ -39,13 +39,13 @@ by a currently activated obligation are distinct prerequisites.
 Runtime binding checks the package contract's stage-specific prerequisites
 against the already linked selections. A prior successful type-check cannot
 supply missing required runtime scope or authority. The domain package
-`sha256-jcs` digest and native raw-byte digests remain separate; a runtime input
+identity and version and native raw-byte digests remain separate; a runtime input
 cannot override the linked domain package or profile.
 
 Every concrete runtime subject SHALL be identified by one authority-qualified
 opaque reference consisting of the exact selected binding authority identity,
 the subject kind given as its effective declaration key (domain package
-identity, IR node identity, `sha256-jcs`), and the exact non-empty
+identity, IR node identity), and the exact non-empty
 object-identity bytes supplied by the runtime input. Equality and hashing are
 componentwise over that tuple without parsing, trimming, normalization or
 reconstruction. The binding requirement names the typed slot and authority; it

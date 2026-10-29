@@ -30,8 +30,9 @@ by id `B` titled `Beta`, `C` by id `C` titled `Gamma` and `D` by id `D` titled
 row. Rows N04 and N05 admit package bytes: their ModelSelection is
 `{test/orders, version}` with the version read from the document supplied under the identity `test/orders`. Every
 other row enters at the normalization boundary with a fixed placeholder
-ModelSelection: F1 selects version `1`, F2 version `2`, and F1 republished selects version `3`. The
-published vectors use these placeholder selections.
+ModelSelection: F1 selects version `1`, F1 republished version `2` and F2 version `3`. The
+published vectors use these placeholder selections; until the checked-package-v2 vector re-key lands their `model_selection` members still have the digest shape and
+the rows below state the version shape the re-keyed vectors carry.
 Effective identities are written as the first eight hex digits of the full
 digests in
 [`model-effective-declaration-vectors.json`](../../proposals/checked-package-v2/model-effective-declaration-vectors.json).

@@ -311,7 +311,7 @@ node with no `declaration`, owned by the `ModelOwner` of the operation member
 `ix://acme/orders/Order/size` and whose body holds the one `clause` binding
 `precondition` (QSL FR-094); `model-member-type-vectors.json`'s
 `domain_package` projection (derived from the selected document `domain-package-acme-orders.json`,
-which every model-selecting fixture selects by its JCS digest) declares
+which every fixture selecting it names by identity and version) declares
 `Order-order-Order` with the ends `order` and `next` (`bidirectional`) and `Order-invoiced-Invoice`
 with the one end `invoiced` (no `targetEnd.role`, `source-to-target`) and
 `Order-follows-Order` (`source-to-target`, ends `follows` and `followedBy`).

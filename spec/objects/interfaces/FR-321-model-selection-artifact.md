@@ -42,7 +42,6 @@ Missing required properties, duplicate keys, out-of-domain values and non-canoni
 | FR-321-AC-3 | A declaration key is fixed by the domain package identity and the IR node identity; the checker never mints, renames or merges one. | Analysis |
 | FR-321-AC-4 | The key components map exactly to the domain package identity and IR node identity, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
 | FR-321-AC-5 | A second selection of an already-selected domain-package `identity` refuses `duplicate_selection`/`duplicate-identity` before name binding, retaining the repeated identity and both selected versions; a second selection of a distinct `identity` is unaffected. | Analysis |
-
 | FR-321-AC-6 | A ModelSelection row is created only by the resolver, which reads its `version` from the supplied document; on replay a document whose `version` differs from its lock row's identity-and-version refuses `stale_dependency`/`content-mismatch`. | Test (TC-234) |
 
 ## Dependencies

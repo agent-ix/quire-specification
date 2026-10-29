@@ -13,7 +13,7 @@ relationships:
 
 Show that an FR-323 replay request's `byte_provision` supplies every source and
 definition input the replay recompiles, keyed by declared
-digest domain and digest, and every domain-package document, keyed by identity and `version`, and that the `package` reference's `RawSourceRef`
+digest domain and digest, and every domain-package document, keyed by identity, with the lock row's version checked against the document's, and that the `package` reference's `RawSourceRef`
 digests are exactly the digests the executor recomputes and compares, per
 QSL ADR-013 O-26 and QC-1.
 
@@ -35,7 +35,7 @@ recompilation outcome.
 
 | Vector | Mutation | Expected result | Criteria |
 | --- | --- | --- | --- |
-| BP-01 | A `byte_provision` naming every source and definition input by matching digest domain and digest and every domain-package document by its identity and `version` | Recompilation proceeds; no missing-input refusal | FR-323-AC-5 |
+| BP-01 | A `byte_provision` naming every source and definition input by matching digest domain and digest and every domain-package document by its identity, the document's `version` equal to its lock row's | Recompilation proceeds; no missing-input refusal | FR-323-AC-5 |
 | BP-02 | A `byte_provision` missing one input the `package` reference's `RawSourceRef` digests name | Refused `missing_import`/`missing-selection` naming the requested digest record (domain and digest) and the `package` member that names it, before recompilation | FR-323-AC-5 |
 | BP-03 | A `byte_provision` entry under the raw-byte domain `quire.source.bytes/v1` whose bytes do not match its declared digest | Refused `stale_dependency`/`byte-digest-mismatch` naming the declared digest and the digest of the supplied bytes, before recompilation | FR-323-AC-5 |
 | BP-04 | A `byte_provision` entry under the wrong declared digest domain | Refused `stale_dependency`/`digest-domain-mismatch` | FR-323-AC-5 |
@@ -46,7 +46,7 @@ recompilation outcome.
 | BP-09 | BP-06 with one `dependencies` entry removed | Refused `missing_import`/`missing-selection` at the import the entry supplied | FR-323-AC-7 |
 | BP-11 | BP-06 with one entry's `package_id` changed and its sources intact | Refused `stale_dependency`/`content-mismatch` naming that entry's `identity`, its `package_id` and the recompiled one; no result | FR-323-AC-7 |
 | BP-12 | BP-06 with a second entry whose source has the authority and identity of the first entry's source | Refused `invalid_package`/`conflicting-definition` naming both entries, before any recompile | FR-323-AC-7 |
-| BP-13 | A `byte_provision` domain-package document for the identity of a lock row whose `version` differs from the row's | Refused `stale_dependency`/`content-mismatch` naming the recorded and the supplied version, before recompilation | FR-323-AC-5 |
+| BP-13 | A `byte_provision` domain-package document supplied under the identity of a lock row, its `version` differing from the row's | Refused `stale_dependency`/`content-mismatch` naming the recorded and the supplied version, before recompilation | FR-323-AC-5 |
 | BP-14 | BP-06 with the transitive-only entry C's sources edited by an edit B's recompile admits so they recompile to a new `package_id`, and C's declared `package_id` updated to match, while the selecting dependency B's sources and declared `package_id` stay unchanged | B recompiles against the edited C to a `package_id` different from B's declared `package_id`; refused `stale_dependency`/`content-mismatch` naming B's `identity`, B's declared `package_id` and its recompiled one; no result | FR-323-AC-7 |
 | BP-15 | BP-06 with the proved package a unit whose lock carries `refinement_internals` (`R`: `Spec::Twice::finish`) and one dependency whose own lock carries one; the `package` reference and that `dependencies` entry carry the lock values; then each of: `package.refinement_internals` removed; the dependency entry's member removed; a spelling changed to another resolving class; a spelling naming no node; then the same in the dependency's own member | The first replay reaches the proved `package_id`. The removed unit member and the changed spelling each refuse `stale_dependency`/`content-mismatch` naming the request's `package_id` and the recompiled one; the removed dependency member names that entry's `identity`, `package_id` and the recompiled one; the unresolving spelling refuses `missing_declaration`/`missing-name` in the recompile at `/package/refinement_internals/<pointer>`, and in the dependency's member at `/package/dependencies/<n>/refinement_internals/<pointer>`; no result | FR-323-AC-17 |
 

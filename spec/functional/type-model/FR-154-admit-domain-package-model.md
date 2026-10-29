@@ -82,7 +82,12 @@ document; a supplier states no digest. At most one document is supplied per
 identity, so one identity never selects among several versions; a second
 document supplied under an identity already supplied is
 `refused { code: invalid_package, cause: conflicting-definition }` before intake
-runs, whether or not the two have one version, naming both. Intake looks up the
+runs, whether or not the two have one version, naming both. One document per
+identity is the rule: a package that needs two versions of one domain package
+is not supported in v1, and a source that selects one identity twice is
+`duplicate_selection`/`duplicate-identity` (FR-321-AC-5). Which version a
+supplier offers under an identity is chosen by the supplier or resolver outside the
+compiler; the compiler records what it is given. Intake looks up the
 document by the selection's identity and compares the document's own identity
 with the selection. Intake then reads the document's `version` member, a
 non-empty string, and records the selection as the `model_selections` row

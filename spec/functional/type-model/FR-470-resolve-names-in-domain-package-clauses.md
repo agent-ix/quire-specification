@@ -52,9 +52,7 @@ A domain clause is exactly one clause expression of the shared grammar. It
 carries no `quire` header, `profile`, `import`, `model` or declaration form: a
 clause whose text begins with one of these refuses
 `invalid_syntax`/`unexpected-token` at that token. The domain package is the
-only model a domain clause can name, so it needs no import, and an import of
-the package's own identity and digest could not be written: the digest is
-computed over bytes that contain the clause.
+only model a domain clause can name, so it needs no import and a clause carries no `model` selection of its own package.
 
 ### Self alias
 
