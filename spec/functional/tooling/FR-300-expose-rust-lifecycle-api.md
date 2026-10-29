@@ -50,7 +50,7 @@ a clock, or silently performs a later stage.
 | Operation | Role | Input | Output |
 | --- | --- | --- | --- |
 | `parse` | Read source into syntax | source bytes, source identity, S1 and S2 limits | the parsed source |
-| `select` | Admit the domain packages a unit's `model` declarations select (FR-154) | domain package documents keyed by digest, the unit's model selections | the admitted models |
+| `select` | Admit the domain packages a unit's `model` declarations select (FR-154) | domain package documents keyed by domain package identity (one per identity), the unit's model selections (identity only) | the admitted models |
 | `check` | Check and link | the parsed source, the admitted models, the dependency input, the lock evidence | the checked package |
 | `package` | Emit the checked package (FR-322) | the checked package | the emitted `quire.checked-package/v2` bytes with their source provision |
 | `execute` | Call a checked function or evaluate a checked clause | the checked package, the selected entry, arguments, objects, accounting limits, the selected execution backend (FR-306) | the evaluation or a typed call failure |

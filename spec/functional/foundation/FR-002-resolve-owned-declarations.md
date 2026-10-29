@@ -14,7 +14,7 @@ When a native import is linked, the linker shall resolve its domain type names t
 
 ## Inputs
 
-Package identity, domain package identity and `sha256-jcs` digest, lock, qualified domain type names and declaration keys.
+Package identity, domain package identity, lock (whose `model_selections` row records the identity and version of each domain package), qualified domain type names and declaration keys.
 
 ## Outputs
 
@@ -22,7 +22,7 @@ Unique resolved declaration handles or import diagnostics.
 
 ## Behavior
 
-The spec's artifacts declare the domain model. The domain package lifted from them is the only source of domain declarations. Import aliases are lexical names. Package identity uses the owner/name contract; a declaration key (domain package identity, IR node identity, `sha256-jcs`) is separate from it. The linker checks the lock and transitive closure independently of the domain package digest.
+The spec's artifacts declare the domain model. The domain package lifted from them is the only source of domain declarations. Import aliases are lexical names. Package identity uses the owner/name contract; a declaration key (domain package identity, IR node identity) is separate from it. The source names a domain package by identity alone and states no digest; the linker checks the lock and transitive closure, and the lock row's recorded version against the version of the supplied document.
 
 ## Acceptance Criteria
 
@@ -31,7 +31,7 @@ The spec's artifacts declare the domain model. The domain package lifted from th
 | FR-002-AC-1 | An exact import resolves a qualified domain type name to its stable declaration key. | Test |
 | FR-002-AC-2 | An absent package receives missing_import. | Test |
 | FR-002-AC-3 | Two declarations with the same selected qualified name receive ambiguous_declaration. | Test |
-| FR-002-AC-4 | A changed selected dependency receives stale_dependency. | Test |
+| FR-002-AC-4 | A changed selected dependency, including a domain package whose supplied `version` differs from the version its lock row records, receives stale_dependency. | Test |
 | FR-002-AC-5 | An undeclared authority receives foreign_reference. | Test |
 
 ## Dependencies

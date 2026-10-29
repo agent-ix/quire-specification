@@ -1,7 +1,7 @@
 // Synthetic operation; pre and post belong to one invocation.
 language "ix:native" edition "0-draft";
 profile "state-finite/0-draft";
-model M = "example/config" digest "unresolved-model-package";
+model M = "example/config";
 pre CanAttemptUpdate on M::ConfigVersion::attemptUpdate {
   self.versionNumber < 1000
 }

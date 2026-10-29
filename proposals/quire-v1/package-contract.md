@@ -26,12 +26,13 @@ independent declarations whose names and dependencies are established.
 | Sources | Exact authority, identity and byte digest per unit; original source regions and clause/declaration identities. Two editable authorities for one clause refuse. |
 | Language | Exact language/edition and supplied definition artifact; no implementation-version default. |
 | Profiles | Each declaration's selected root definition identity, exact required definition closure and the meaning owned by each dependency. |
-| Models | Domain package imported by identity and `sha256-jcs` digest; its effective declaration keys and exact manifest/lock/dependency closure. |
+| Models | Domain package imported by identity alone; the resolver records its identity and version in the lock's `model_selections` row; its effective declaration keys and exact manifest/lock/dependency closure. |
 | Native dependencies | Resolved predicate, operation-contract and temporal-obligation references with their defining source, model and profile selections; typed anchors and capture requirements. |
 | Binding requirements | Typed roles, selected model/observation contracts and clock/scope premises described below. Concrete runtime instances are not inserted here. |
 
-The native `model` import names a domain package by identity and
-`sha256-jcs` digest. The domain package is the semantic IR document lifted from the imported
+The native `model` import names a domain package by identity alone and states
+no digest and no version; the resolver reads the document's `version` and
+records identity and version in the lock. The domain package is the semantic IR document lifted from the imported
 spec's artifacts. Manifest/lock digests, package fingerprints and source digests
 remain separate. The domain package identity and its declarations must match the
 supplied document and its validated closure. A transitively reachable type is

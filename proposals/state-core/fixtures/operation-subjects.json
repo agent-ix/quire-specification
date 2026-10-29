@@ -28,19 +28,19 @@
         "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab",
         "spanConvention": "utf8-half-open-scalar-column/0-draft",
         "expressionSpan": {
-          "startByte": 257,
+          "startByte": 223,
           "startLine": 6,
           "startColumn": 3,
-          "endByte": 282,
+          "endByte": 248,
           "endLine": 6,
           "endColumn": 28
         },
         "expectedExpression": "self.versionNumber < 1000",
         "clauseSpan": {
-          "startByte": 197,
+          "startByte": 163,
           "startLine": 5,
           "startColumn": 1,
-          "endByte": 284,
+          "endByte": 250,
           "endLine": 7,
           "endColumn": 2
         },
@@ -97,19 +97,19 @@
         "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab",
         "spanConvention": "utf8-half-open-scalar-column/0-draft",
         "expressionSpan": {
-          "startByte": 346,
+          "startByte": 312,
           "startLine": 9,
           "startColumn": 3,
-          "endByte": 390,
+          "endByte": 356,
           "endLine": 9,
           "endColumn": 47
         },
         "expectedExpression": "self.versionNumber = pre(self.versionNumber)",
         "clauseSpan": {
-          "startByte": 285,
+          "startByte": 251,
           "startLine": 8,
           "startColumn": 1,
-          "endByte": 392,
+          "endByte": 358,
           "endLine": 10,
           "endColumn": 2
         },
