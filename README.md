@@ -61,7 +61,7 @@ proposal ships a rule and a set of snapshots to run it on. The rule is
 ```
 language "ix:native" edition "0-draft";
 profile "state-finite/0-draft";
-model M = "example/config";
+model M = "example/config" digest "unresolved-model-package";
 invariant ParentPrecedes on M::ConfigVersion at current {
   present(self.parent) implies deref(value(self.parent)).versionNumber < self.versionNumber
 }
@@ -81,8 +81,9 @@ each must produce. The cases from that file:
 | `duplicate-object` | refused, `duplicate_object` |
 | `incomplete-population` | incomplete, `incomplete_population` |
 
-The file's status is `manually-authored-expectations-not-evaluator-output`.
-These are the draft's authored expectations; no program has produced them as results yet.
+The file's status is `manually-authored-expectations-not-evaluator-output`, and
+the fixture's model digest is unresolved. These are the draft's authored
+expectations; no program has produced them as results yet.
 
 ## Rust library
 

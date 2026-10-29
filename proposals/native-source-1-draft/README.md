@@ -22,7 +22,7 @@ grammar.
 
 The `proposals/state-core` profile and rule files define `state-finite/0-draft`.
 They cannot be used to identify this amendment. Final adoption must select this
-definition by identity and version, plus every inherited rule definition and
+definition by identity, plus every inherited rule definition and
 its precedence; the resolver derives and records content identity in the lock.
 No complete inheritance closure is fixed by this review draft. An unavailable selection refuses; it cannot silently fall back to
 0-draft. Historical reports keep their original meaning and identity. Recompiling
@@ -72,12 +72,12 @@ not introduce presence syntax by inference.
 ## Source authority and evaluation anchors
 
 Each clause has one stable identity and exactly one editable source: a selected
-native inline region or a selected local-file region, never both. Bind SHA-256
-of the exact bytes and the half-open byte span. A path or floating
-URL is insufficient. Multi-clause files bind each clause separately. Preserve
+native inline region or a selected local-file region, never both. Bind the
+path and the half-open byte span; any content identity is derived by the
+resolver into the lock. A floating URL is insufficient. Multi-clause files bind each clause separately. Preserve
 source/profile, clause/requirement revision, declaration closure, tool versions and
 anchor inputs independently of the source-free semantic identity. Duplicate
-authorities, stale digests, ambiguous names and conflicting declarations refuse
+authorities, ambiguous names and conflicting declarations refuse
 before lowering. Extraction treats the native body as opaque.
 
 | Clause | Exact binding | Ordinary self | Historical-state access |

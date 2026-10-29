@@ -209,7 +209,7 @@ into an executed Boolean.
 ### 4.5 Model and state semantics
 
 The model universe is a closed selection of one or more domain packages, each
-lifted from spec artifacts and selected by identity and version. QSL model intake
+lifted from spec artifacts and pinned by `sha256-jcs` digest. QSL model intake
 constructs a read-only model view containing original
 and effective declaration IDs, inheritance/conformance edges, redefinitions,
 parts, ports, interfaces, connections, allocations, operations and
@@ -483,7 +483,7 @@ Names are architectural roles; Rust names may follow repository idioms.
 | --- | --- | --- |
 | I01 Source document | editor/filesystem -> QSL | Exact bytes, unit identity and bounded read outcome. |
 | I02 Parsed source | QSL parser -> formatter/linker/editor | Lossless CST, recoveries, tokens/spans and edition; not semantically admitted. |
-| I03 Model selection | FCD extraction-frontend lift -> QSL/QObs | Domain package identity and version, declaration keys, declarations and relationships lifted from spec artifacts. |
+| I03 Model selection | FCD extraction-frontend lift -> QSL/QObs | Domain package identity, `sha256-jcs` digest, declaration keys, declarations and relationships lifted from spec artifacts. |
 | I04 Checked package | QSL -> all semantic consumers | Immutable semantic graph, package lock, feature report, source map and diagnostics. |
 | I05 Native runtime input/result | caller/S6 <-> QSL | Typed state anchors, objects, frames, bounds and independent results. |
 | I06 Native temporal artifact/result | QSL/S6 <-> TL/QSL | Typed atoms/formula, clocks/history/captures, partial valuations and progress. |
