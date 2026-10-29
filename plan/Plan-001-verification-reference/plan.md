@@ -15,7 +15,7 @@ relationships:
 
 Produce the versioned schema/vector handoff requested by B on PR8. This plan
 does not include B's consumer implementation or A's later native compiler work.
-Readiness is established by SR-009–016 at f446a64 over specification 9244dcc.
+Readiness is established by SR-009–016.
 
 ## Dependency Graph
 
@@ -35,19 +35,19 @@ consumer acceptance. Preserve the existing adopted state-core bytes exactly.
 ## Execution and Gates
 
 Task-001: authored fixture bytes and a Rust qualification-only test crate calling
-B's pinned public JCS API plus a Rust JSON Schema validator. Gate: exact golden
-bytes, actual schema positive/negative controls, bounded input failures, local
+B's public JCS API plus a Rust JSON Schema validator. Gate: canonical output
+conforming to JCS on the authored vectors, actual schema positive/negative controls, bounded input failures, local
 Rust formatting/Clippy/tests and retained dependency rights.
 
-Task-002: code/Rust review, scoped gap record, final validation, exact commit push
+Task-002: code/Rust review, scoped gap record, final validation, commit push
 and private B handoff. Gate: the retained artifacts accurately distinguish
 producer checks from planned independent reader/report observations.
-Specification PR #8 merged at `8ab058b`. Independent consumer adoption remains
+Specification PR #8 merged. Independent consumer adoption remains
 outside this plan exactly as declared in Scope and Test Plan.
 
 ## Limits
 
 The test crate is not a production shared-reference reader or report assembler.
-Its dependency pin is immutable; a Cargo git checkout at the exact B revision
-satisfies IT-003's selected clean source requirement without editing B's workspace.
+Its dependency on B is a Cargo git dependency, recorded only in Cargo.toml and
+Cargo.lock, which satisfies IT-003's selected clean source requirement without editing B's workspace.
 No new executable language or hosted workflow is introduced.

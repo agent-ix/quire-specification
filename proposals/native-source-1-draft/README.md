@@ -20,12 +20,11 @@ old tuple into that hierarchy. Exact rational spelling changes the composed
 edition contract and therefore does not reinterpret the historical `0-draft`
 grammar.
 
-The `proposals/state-core` profile and rule files define `state-finite/0-draft`;
-its fixtures pin their current bytes. Their digests cannot
-be used to identify this amendment. Final adoption must select this definition's
-exact SHA-256 plus every inherited rule definition and
-its precedence. No final digest or complete inheritance closure is frozen by this
-review draft. An unavailable selection refuses; it cannot silently fall back to
+The `proposals/state-core` profile and rule files define `state-finite/0-draft`.
+They cannot be used to identify this amendment. Final adoption must select this
+definition by identity and version, plus every inherited rule definition and
+its precedence; the resolver derives and records content identity in the lock.
+No complete inheritance closure is fixed by this review draft. An unavailable selection refuses; it cannot silently fall back to
 0-draft. Historical reports keep their original meaning and identity. Recompiling
 under a replacement definition requires a new explicitly bound derivation.
 
@@ -76,8 +75,8 @@ Each clause has one stable identity and exactly one editable source: a selected
 native inline region or a selected local-file region, never both. Bind SHA-256
 of the exact bytes and the half-open byte span. A path or floating
 URL is insufficient. Multi-clause files bind each clause separately. Preserve
-source/profile, clause/requirement revision, declaration closure, tool pins and
-anchor inputs independently of a source-free semantic digest. Duplicate
+source/profile, clause/requirement revision, declaration closure, tool versions and
+anchor inputs independently of the source-free semantic identity. Duplicate
 authorities, stale digests, ambiguous names and conflicting declarations refuse
 before lowering. Extraction treats the native body as opaque.
 
@@ -143,5 +142,5 @@ preserved/conditional/unrepresented/refused loss reports. Parsing emitted text
 does not prove equivalence. No Java/JVM/Maven/Eclipse/Electron production or
 qualification dependency is authorized; any such dependency requires its own
 owner decision. Temporal remains behind a separately specified tl-* bridge.
-The pinned SysML pilot license correction remains LGPL-3.0-or-later. Standard
+The SysML pilot license correction remains LGPL-3.0-or-later. Standard
 artifact licensing and public release are still separate decisions.

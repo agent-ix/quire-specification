@@ -8,18 +8,17 @@ description: "Chronological log of changes to the Plan-002 bundle."
 ## History
 
 * **2026-09-14** — Reconciled stale owner-lane statuses against default-branch
-  code. Observation Task-003 completed through Plan-001 / PR #19 (`9ac80e9`),
+  code. Observation Task-003 completed through Plan-001 / PR #19,
   with declaration-keyed subject/topology adoption still in #18/#13.
   Predicate-projection Task-004 completed through qcir PRs #67/#68/#77
-  (`202210c`). Public TL syntax/parser/evaluator/rewrite APIs are merged at
-  `842d825`, `00c1b8d`, `2286218` and `fe03f29`; qcir #71 is therefore the sole
+  Public TL syntax/parser/evaluator/rewrite APIs are merged; qcir #71 is therefore the sole
   active native-correspondence composition item rather than blocked work.
   Task-007 remains unexecuted pending that implementation.
 
 * **2026-09-13** — Reconciled the plan against merged default branches under
   quire-specification #33. Task-001 is complete at specification PR #15
-  (`4d6230e`). Task-002's compiler-owned `/2` boundary is complete through
-  quire-spec-language PRs #75/#77/#82 and release `v0.2.0` (`6eccb05`).
+  Task-002's compiler-owned `/2` boundary is complete through
+  quire-spec-language PRs #75/#77/#82 and release `v0.2.0`.
   Task-003 and Task-005 are active under the observation residual plan and TL
   Plan-010. Task-004 remains blocked on Contract-IR implementation #70;
   Task-006 remains blocked on Contract-IR PR #68, implementation #71 and the

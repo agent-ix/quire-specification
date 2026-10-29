@@ -32,7 +32,7 @@ relationships:
 ## Dependency Graph
 
 - `FR-090 -> FR-091, FR-092, FR-093, FR-094, FR-095`: the selected
-  digest-addressed profile and tagged clock establish the meaning of every
+  profile and tagged clock establish the meaning of every
   later temporal input and result.
 - `FR-093 + FR-094 -> FR-091, FR-092`: a monitor needs authenticated
   activation/captures and history/progress before it can settle a truth result.
@@ -44,7 +44,7 @@ relationships:
 ### Shared dependencies
 
 - **`quire.compiled-protocol/2` selection record** is the single compiler-to-
-  runtime admission seam. It must authenticate the temporal definition digest
+  runtime admission seam. It must carry the temporal definition identity and version
   and tagged clock configuration while keeping `/1` readable.
 - **Observation/progress assertion** is the single runtime seam: it supplies
   event/correlation identity, causal order, completeness and monotonic progress.
@@ -65,7 +65,7 @@ relationships:
 
 ### Admission and compiler tests
 
-- [ ] **TC-110**: exact profile, digest and clock selection; `/2` missing or
+- [ ] **TC-110**: profile and clock selection by identity and version; `/2` missing or
   mismatched temporal fields refuse while `/1` remains strictly readable.
 - [ ] **TC-113**: event-position, fixed-sample and timestamped-event clock
   identities remain distinct; no implicit conversion or ingestion-order tie break.
@@ -93,18 +93,17 @@ relationships:
 ### Delivered foundations
 
 - **Task-001 is done.** The cross-repository architecture and correspondence
-  ownership were accepted by specification PR #15 (`4d6230e`) and its composed
+  ownership were accepted by specification PR #15 and its composed
   base-plus-seven review. No replacement architecture review is required.
 - **Task-002 is done for its compiler-owned boundary.** `quire-spec-language`
   PRs #75, #77 and #82 deliver strict compiled-protocol `/2` temporal selection,
   authenticated evaluation/mapping inputs and the corrected closure selector.
   The independent Contract-IR/TL bridge remains Task-004/Task-006 work.
 - **Task-003 is done for its declared authority seam.** `quire-observation`
-  Plan-001 and PR #19 (`9ac80e9`) deliver typed observation, completeness,
+  Plan-001 and PR #19 deliver typed observation, completeness,
   progress, replay and resource contracts. Declaration-keyed subject/topology
   adoption remains separately tracked by observation #18/#13.
-- **Task-004 is done.** `quire-contract-ir` PRs #67, #68 and #77 (current
-  accepted implementation `202210c`) deliver strict total-Boolean projection
+- **Task-004 is done.** `quire-contract-ir` PRs #67, #68 and #77 deliver strict total-Boolean projection
   and the selected temporal correspondence contract. Runtime composition is
   Task-006 / qcir #71.
 
@@ -135,10 +134,10 @@ delivered TL owner APIs ──────────────────�
 
 | Task | Track | Owns | Verified by | Status |
 | --- | --- | --- | --- | --- |
-| Task-001 | A | FR-090, FR-095 | TC-110, TC-113, TC-117 | done — PR #15 / `4d6230e` |
+| Task-001 | A | FR-090, FR-095 | TC-110, TC-113, TC-117 | done — PR #15 |
 | Task-002 | A | FR-090 | TC-110, TC-113 | done — SL PRs #75/#77/#82 |
-| Task-003 | B | FR-093, FR-094 | TC-114, TC-115, TC-116 | done — observation Plan-001 / PR #19 / `9ac80e9` |
-| Task-004 | B | FR-095 | TC-038, TC-117 | done — qcir PRs #67/#68/#77 / `202210c` |
+| Task-003 | B | FR-093, FR-094 | TC-114, TC-115, TC-116 | done — observation Plan-001 / PR #19 |
+| Task-004 | B | FR-095 | TC-038, TC-117 | done — qcir PRs #67/#68/#77 |
 | Task-005 | A | FR-091, FR-092, FR-093, FR-094, NFR-040 | TC-111, TC-112, TC-114, TC-115, TC-116, TC-118 | in progress — TL owner APIs merged; native composition remains qcir #71 |
 | Task-006 | C | FR-095 | TC-039, TC-113, TC-117 | in progress — qcir #71; required owner APIs are merged |
 | Task-007 | A | FR-090 through FR-095, NFR-040 | TC-110 through TC-118 | not_started |

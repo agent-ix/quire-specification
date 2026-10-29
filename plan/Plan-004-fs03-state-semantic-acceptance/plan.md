@@ -103,4 +103,4 @@ serial. No implementation lane is delegated.
   instruction to update it applies only where relevant, and it is not relevant.
 - Do not mark planned conformance rows passed from QSL's partial implementation.
 - After merge, close FS03 #4 and immediately update QS #1, ledger #9 and qcir #69
-  with the accepted revision and exact open implementation boundary.
+  with the open implementation boundary.

@@ -27,7 +27,7 @@ tool authors use it as the shared reference.
 | Path | What it holds |
 | --- | --- |
 | `spec/` | The requirements and everything that hangs off them, as Markdown artifacts. See the chart below. |
-| `proposals/` | Draft grammar, profiles, JSON schemas and the vector and fixture files that pin them down. One folder per proposal. |
+| `proposals/` | Draft grammar, profiles, JSON schemas and the vector and fixture files that specify them. One folder per proposal. |
 | `docs/` | [The atomic V1 capability inventory](docs/v1-capability-inventory.md), which is the binding statement of scope, and [the complete architecture](docs/v1-complete-architecture.md). |
 | `plan/`, `reviews/` | Delivery plans and review records for the work above. |
 | `src/lib.rs` | A dependency-free Rust library that exposes three authored documents as constants: the value definition lock, its selection vectors and the native diagnostics catalog. |
@@ -61,7 +61,7 @@ proposal ships a rule and a set of snapshots to run it on. The rule is
 ```
 language "ix:native" edition "0-draft";
 profile "state-finite/0-draft";
-model M = "example/config" digest "unresolved-model-package";
+model M = "example/config";
 invariant ParentPrecedes on M::ConfigVersion at current {
   present(self.parent) implies deref(value(self.parent)).versionNumber < self.versionNumber
 }
@@ -81,9 +81,8 @@ each must produce. The cases from that file:
 | `duplicate-object` | refused, `duplicate_object` |
 | `incomplete-population` | incomplete, `incomplete_population` |
 
-The file's status is `manually-authored-expectations-not-evaluator-output`, and
-the fixture's model digest is unresolved. These are the draft's authored
-expectations; no program has produced them as results yet.
+The file's status is `manually-authored-expectations-not-evaluator-output`.
+These are the draft's authored expectations; no program has produced them as results yet.
 
 ## Rust library
 
