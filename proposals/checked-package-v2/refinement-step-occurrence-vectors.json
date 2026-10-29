@@ -281,8 +281,8 @@
           }
         ],
         "steps": [
-          "R0",
-          "R1"
+          "R1",
+          "R0"
         ]
       },
       "refinement_step_rows": [
@@ -297,12 +297,12 @@
           },
           "ordinal": 0,
           "region": {
-            "end": 20,
+            "end": 40,
             "source": {
               "authority": "agent-ix",
               "identity": "example"
             },
-            "start": 10
+            "start": 30
           }
         },
         {
@@ -316,12 +316,12 @@
           },
           "ordinal": 1,
           "region": {
-            "end": 40,
+            "end": 20,
             "source": {
               "authority": "agent-ix",
               "identity": "example"
             },
-            "start": 30
+            "start": 10
           }
         }
       ],
@@ -382,12 +382,12 @@
           "ordinal": 1,
           "regions": [
             {
-              "end": 20,
+              "end": 40,
               "source": {
                 "authority": "agent-ix",
                 "identity": "example"
               },
-              "start": 10
+              "start": 30
             }
           ],
           "role": "generated"
@@ -404,12 +404,12 @@
           "ordinal": 2,
           "regions": [
             {
-              "end": 40,
+              "end": 20,
               "source": {
                 "authority": "agent-ix",
                 "identity": "example"
               },
-              "start": 30
+              "start": 10
             }
           ],
           "role": "generated"
@@ -4549,6 +4549,6 @@
       ]
     }
   ],
-  "note": "The refinement members are illustrative; each row sidecar entry uses the closed RefinementStepRowRegion shape of schema.json. A published package uses the closed RefinementBody and compares its retained node id and canonical steps order against this sidecar.",
+  "note": "The refinement members are illustrative; each row sidecar entry uses the closed RefinementStepRowRegion shape of schema.json. A published package uses the closed RefinementBody and compares its retained node id and steps in declaration order against this sidecar.",
   "version": "quire.refinement-step-occurrences/v1"
 }
