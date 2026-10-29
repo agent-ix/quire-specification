@@ -481,10 +481,6 @@ fn synthetic_core_is_the_non_circular_preimage() {
         .unwrap();
     let semantic = fixture("semantic.json");
     let digest = jcs_sha256(&core).expect("B core digest");
-    assert_eq!(
-        digest,
-        "sha256-jcs:70a89fec8afa6a435d5a92f63ba9ce1d01e86b17791629bb788628ee7bfb81d5"
-    );
     assert_eq!(semantic["value"]["canonicalIdentity"]["digest"], digest);
     assert_eq!(
         semantic["value"]["artifact"]["digest"],

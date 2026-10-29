@@ -104,8 +104,8 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   raw-byte digest domain such as `quire.source.bytes/v1` whose bytes do not
   match its declared digest refuses `stale_dependency`/`byte-digest-mismatch`,
   naming the declared digest and the digest of the supplied bytes (FR-323-AC-28). A changed
-  domain-package document is caught by the recomputed `package_id`
-  (FR-323-AC-24); a domain-package entry no recompiled source selects is not
+  domain-package document under an unchanged identity is not detected: no
+  refusal stands in for it (FR-323-AC-24 is withdrawn); a domain-package entry no recompiled source selects is not
   read and has no effect (FR-323-AC-26). A domain-package document has no
   digest to recompute.
 - `selection` — ordered clause/function identifiers.
@@ -545,11 +545,11 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-21 | A `state_clause` is resolved after dependency rule 5: with a stale proved `package_id` the rule 5 refusal is reported; with a current one, a `state_clause` naming a declared invariant, precondition or postcondition resolves to that clause, and one naming no declaration or naming a function refuses `missing_declaration`/`missing-name` naming the target. | Test (TC-278) |
 | FR-323-AC-22 | A `function` replay request with no `occurrence_key` refuses `invalid_runtime_input`/`missing-member` at `/replay/occurrence_key` at decode, before the byte-provision rule and any recompile, so the same request with a byte-provision entry removed reports the same refusal. The occurrence key selects the claim the replay decides (QSL FR-098). | Test (TC-278) |
 | FR-323-AC-23 | A replay whose recompiled sources select a domain package that `byte_provision` carries no entry for refuses `missing_import`/`missing-selection` naming the requested domain-package identity when the recompile reaches that selection, after the source and definition inputs of FR-323-AC-5 are present and before any result is produced. | Test (TC-277) |
-| FR-323-AC-24 | A replay supplied a domain-package document of the selected identity in which one declaration differs from the document the proved package compiled against recompiles to another `package_id` and refuses `stale_dependency`/`content-mismatch` naming the proved and the recomputed `package_id`, whether or not the document's `version` member differs; no model-specific comparison runs. | Test (TC-277) |
+| FR-323-AC-24 | Withdrawn: a changed domain-package document is not detected by intake or replay. | Withdrawn |
 | FR-323-AC-25 | A `byte_provision` carrying two domain-package entries that declare one identity refuses `invalid_package`/`conflicting-definition` naming both entries at decode, before any recompile, whichever `package.version` members the two documents state (a document's own member; no version is compared); `duplicate_selection`/`duplicate-identity` applies only to a source that selects one identity twice (FR-321-AC-5). | Test (TC-277) |
-| FR-323-AC-26 | A domain-package entry of `byte_provision` that no recompiled source selects is not read: no refusal and no effect on the recomputed `package_id`. | Test (TC-277) |
+| FR-323-AC-26 | A domain-package entry of `byte_provision` that no recompiled source selects is not read: no refusal. | Test (TC-277) |
 | FR-323-AC-27 | The executor reads no recompilation input by path, environment variable or search location: every source, definition and domain-package input comes from `byte_provision`. | Test (TC-277) |
-| FR-323-AC-28 | A `byte_provision` entry under a raw-byte digest domain such as `quire.source.bytes/v1` whose bytes do not match its declared digest refuses `stale_dependency`/`byte-digest-mismatch` naming the declared digest and the digest of the supplied bytes, and an entry under another declared digest domain than the requested one refuses `stale_dependency`/`digest-domain-mismatch`, before any recompile. | Test (TC-277) |
+| FR-323-AC-28 | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan: the `byte-digest-mismatch` and `digest-domain-mismatch` causes exist only for `RawSourceRef` / `quire.source.bytes/v1` source and definition digests, which STD-583 removes.) A `byte_provision` entry under a raw-byte digest domain such as `quire.source.bytes/v1` whose bytes do not match its declared digest refuses `stale_dependency`/`byte-digest-mismatch` naming the declared digest and the digest of the supplied bytes, and an entry under another declared digest domain than the requested one refuses `stale_dependency`/`digest-domain-mismatch`, at decode and before any recompile; the duplicate domain-package identity check of FR-323-AC-25 runs after it, also at decode. | Test (TC-277) |
 
 ## Dependencies
 

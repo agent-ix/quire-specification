@@ -71,7 +71,6 @@ Fixtures:
 | I29 | `model M = ;`, `model M = 7;`, `model M = "test/orders"` ending the source, and `model M "test/orders";` | `refused { code: invalid_syntax, cause: unexpected-token }` at the offending token for the first, second and fourth, `unexpected-end` at the end of the source for the third; no declaration is dropped without its diagnostic (FR-154-AC-35) |
 | I30 | Admit K1 under S1, and read the package's `model_root` nodes | one node of identity `test/orders`; no lock row, digest and no version appears in the lock or in any input of the run (FR-154-AC-36) |
 | I31 | K1 and K1 with one field value changed, both supplied under `test/orders`; then S1 with only a document supplied under `test/other` | `refused { code: invalid_package, cause: conflicting-definition }` naming both supplied documents before intake; then `refused { code: missing_import, cause: missing-selection }` at the identity string (FR-154-AC-37) |
-| I32 | The package of I30 replayed with K1 in which one field value is changed, supplied under `test/orders`, its `version` member unchanged | `refused { code: stale_dependency, cause: content-mismatch }` naming the proved and the recomputed `package_id`; no model-specific comparison runs (FR-154-AC-38) |
 
 ## Expected Results
 

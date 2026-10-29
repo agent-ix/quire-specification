@@ -12,7 +12,7 @@ BLOCKED-BY STD-583 (owner: planner titan:QSL:plan): the `package_id`,
 vectors of this directory are kept only because each is a node or package
 identity input of a fixture that must keep validating; they regenerate when
 the structural identity lands. This PR adds no recompute or known-answer test.
-The same ticket owns the remaining digest machinery, which this PR does not
+The same ticket owns the `byte-digest-mismatch` and `digest-domain-mismatch` causes of FR-323-AC-28 and TC-277 BP-03 and BP-04, which exist only for `RawSourceRef` / `quire.source.bytes/v1`, and the remaining digest machinery, which this PR does not
 remove: `package_id`, structural node keys, `quire.cache-key/v1`,
 `RawSourceRef` and `quire.source.bytes/v1`, definition digests, the library
 `package_id` binding, state keys, observation and protocol result digests,

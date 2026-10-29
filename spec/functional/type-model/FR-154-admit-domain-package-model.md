@@ -93,12 +93,9 @@ document's own identity with the selection, then records the selection as the
 
 The lock holds no model record. The `model_root` node of the identity is the only
 record of the selection. No lock row, digest, version or staleness comparison of a model
-exists. A changed domain package needs no model-specific check, because the
-declaration nodes of the checked package derive from the document's contents:
-a replay recompiles against the supplied document and the recomputed
-`package_id` differs from the proved one, which FR-323 refuses
-`stale_dependency`/`content-mismatch`, whether or not the document's `version`
-member changed. The package document's own `version` member is not read by intake
+exists. Intake does not detect a changed domain package: an edit of the document
+under an unchanged identity goes undetected, and no check or refusal stands in
+for it. The package document's own `version` member is not read by intake
 and is not recorded.
 
 Intake keeps the authored order of every type's `fields` and `supertypes`
@@ -653,7 +650,7 @@ Admission checks are decided before the first charge.
 | FR-154-AC-35 | A `model` whose identity string is absent, is not a string, or is followed by the end of the source, refuses `invalid_syntax` (`unexpected-token` at the offending token, `unexpected-end` at the end of the source) and is never dropped without a diagnostic. | Test (TC-234) |
 | FR-154-AC-36 | Admitting the document supplied under `test/orders` yields the `model_root` node of identity `test/orders` and no lock row; no source, input, lock or expected value states a digest or a version; the supplied document's own `package.version` member is data of that document and is never compared. | Test (TC-234) |
 | FR-154-AC-37 | Two documents supplied under one domain package identity, whether or not they differ, refuse `invalid_package`/`conflicting-definition` before intake, naming both; a selection whose identity no supplied document has refuses `missing_import`/`missing-selection` at the identity string. | Test (TC-234) |
-| FR-154-AC-38 | A package compiled against a document, replayed with a document of the same identity in which one field differs, recompiles to another `package_id` and refuses `stale_dependency`/`content-mismatch` naming the proved and the recomputed `package_id` (FR-323), and does so whether or not the two documents' `version` members differ; no model-specific comparison runs. | Test (TC-234) |
+| FR-154-AC-38 | Withdrawn: a changed domain-package document is not detected by intake. | Withdrawn |
 
 ## Dependencies
 
