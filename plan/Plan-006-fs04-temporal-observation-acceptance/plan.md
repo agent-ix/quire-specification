@@ -96,4 +96,4 @@ continues owning TL-* libraries; this plan changes no TL repository.
   controls or external component evidence.
 - Do not close qcir #71 or QObs #18/#13 through FS04.
 - After merge, close FS04 #5 and immediately update QS #1, ledger #9, qcir #71
-  and the stale QObs dependency descriptions with the accepted revision.
+  and the stale QObs dependency descriptions.

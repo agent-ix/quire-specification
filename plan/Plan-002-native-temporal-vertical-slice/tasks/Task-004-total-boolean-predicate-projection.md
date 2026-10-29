@@ -30,5 +30,4 @@ mapping and its non-value decisions.
 ## Notes
 
 - No hardcoded proposition or Boolean default is permitted before this lands.
-- Completed by `quire-contract-ir` PRs #67, #68 and #77 (accepted default
-  implementation `202210c`). Task-006 / qcir #71 owns runtime composition.
+- Completed by `quire-contract-ir` PRs #67, #68 and #77. Task-006 / qcir #71 owns runtime composition.

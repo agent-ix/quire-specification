@@ -46,7 +46,7 @@ every criterion to be formalized.
 | Separate #54 reference/bounds decision | Preserve the gate but state #54 is closed. Any later reference environment or IR extension needs its own ticket; neither is admitted by this first profile. |
 | OCL, SysML and FRETish profile sections | Output mapping contracts under FS06, with explicit loss/refusal and semantic-correspondence obligations. They are not source frontends and require no foreign-runtime qualification. |
 | ConfigVersion example | Reference native compiler FR-032, retain the minimum-only/parent gate, and separate the bounded native example from the original declaration. |
-| Tool table | Keep inspected pins and license facts as historical research. Foreign CLI/build commands are not runnable qualification prerequisites. Retain the pilot's LGPL-3.0-or-later correction. |
+| Tool table | Keep inspected tool versions and license facts as historical research. Foreign CLI/build commands are not runnable qualification prerequisites. Retain the pilot's LGPL-3.0-or-later correction. |
 
 Public promotion of this private packet, its links or rationale is not implied.
 Contract-IR owns future ADR amendments; FS01 retains only the language/profile
