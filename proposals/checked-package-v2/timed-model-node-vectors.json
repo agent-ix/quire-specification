@@ -251,6 +251,14 @@
       "expected_code": "ill_typed",
       "expected_cause": "invalid-time-quantity",
       "locus": "/semantic_graph/nodes/44/body/members/1/value/target"
+    },
+    {
+      "id": "TM-30",
+      "mutation": "repeated-clock-place-reference",
+      "subject": "one clock_place node reference listed twice in the timed root's places list (the first place's reference appended again): the repeated member repeats its predecessor's order key, so it is the FR-322-AC-260 refusal invalid_semantic_graph with no cause at the repeated member, not duplicate-clock-place (TM-12 is the distinct same-path place node)",
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "locus": "/semantic_graph/nodes/52/body/members/3/value/members/1"
     }
   ],
   "tick_fixture": "fixtures/positive-tick-timed-model-nodes.json",
