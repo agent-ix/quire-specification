@@ -7,7 +7,7 @@ reverse dependency on that root.
 ## Limit object
 
 Every complete-value request carries `ScalarLimitsV1` with exact unsigned
-64-bit (`u64`) limits for `integer_bits`, `decimal_digits`, `scale_expansion`,
+64-bit (`u64`) limits for, in this field order, `integer_bits`, `decimal_digits`, `scale_expansion`,
 `text_input_bytes`, `text_scalars`, `normalized_scalars`, `unit_edges`,
 `value_occurrences`, `work_units` and `result_units`. Omission is a refused
 request. Every consumed counter is also an exact `u64`; a semantic size or next

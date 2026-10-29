@@ -29,3 +29,11 @@ pub const NATIVE_DIAGNOSTICS: &str =
 /// its own `ChargePoint` set with this list.
 pub const VALUE_ACCOUNTING_CHARGE_POINT_VECTORS: &str =
     include_str!("../proposals/quire-v1/definitions/value-accounting-charge-point-vectors.json");
+
+/// `proposals/quire-v1/definitions/value-accounting-limit-kind-vectors.json`:
+/// the complete `ScalarLimitsV1` counter spelling list of
+/// `quire.value.accounting/v1` (the `limit_kind` vocabulary), in field order,
+/// with spellings the definition does not declare. A kernel compares its own
+/// `LimitKind` set with this list.
+pub const VALUE_ACCOUNTING_LIMIT_KIND_VECTORS: &str =
+    include_str!("../proposals/quire-v1/definitions/value-accounting-limit-kind-vectors.json");

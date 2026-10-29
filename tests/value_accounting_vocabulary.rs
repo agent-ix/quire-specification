@@ -170,3 +170,99 @@ fn a_one_sided_change_to_either_list_is_detected() {
     assert_ne!(edited, DEFINITION);
     assert!(compare(&published, &edited).is_err());
 }
+
+// ---- `limit_kind` vocabulary (FR-461-AC-11) ----
+
+use quire_specification::VALUE_ACCOUNTING_LIMIT_KIND_VECTORS;
+
+/// The `ScalarLimitsV1` counters the Limit object section names, in the order
+/// it lists them: backtick-quoted lowercase words joined by underscores.
+fn limit_kind_vocabulary(definition: &str) -> Vec<String> {
+    let section = definition
+        .split("## Limit object")
+        .nth(1)
+        .expect("Limit object section is present")
+        .split("\n## ")
+        .next()
+        .expect("section body");
+    let mut found = Vec::new();
+    for (index, part) in section.split('`').enumerate() {
+        let word = !part.is_empty()
+            && !part.starts_with('_')
+            && !part.ends_with('_')
+            && part.bytes().all(|b| b.is_ascii_lowercase() || b == b'_');
+        if index % 2 == 1 && word && part != "u64" {
+            found.push(part.to_owned());
+        }
+    }
+    found
+}
+
+fn compare_limit_kinds(published: &[String], definition: &str) -> Result<(), String> {
+    if published == limit_kind_vocabulary(definition) {
+        Ok(())
+    } else {
+        Err("published list and Limit object differ".to_owned())
+    }
+}
+
+#[test]
+#[trace("TC-426", "FR-461-AC-11")]
+fn published_limit_kind_list_equals_the_limit_object() {
+    let vectors: Value = serde_json::from_str(VALUE_ACCOUNTING_LIMIT_KIND_VECTORS).expect("JSON");
+    let published = strings(&vectors["limit_kinds"]);
+    assert_eq!(compare_limit_kinds(&published, DEFINITION), Ok(()));
+    // The count is derived from the definition, never written down.
+    let derived = limit_kind_vocabulary(DEFINITION);
+    assert!(!derived.is_empty());
+    assert_eq!(published.len(), derived.len());
+    let unique: BTreeSet<_> = derived.iter().collect();
+    assert_eq!(unique.len(), derived.len(), "a counter is named once");
+    // Every cumulative or size counter the amount table charges is a kind.
+    let kinds: BTreeSet<_> = derived.iter().cloned().collect();
+    for required in [
+        "work_units",
+        "result_units",
+        "integer_bits",
+        "value_occurrences",
+    ] {
+        assert!(kinds.contains(required), "{required} is declared");
+    }
+    assert!(
+        vectors.get("count").is_none() && vectors.get("digest").is_none(),
+        "no frozen count or digest"
+    );
+}
+
+#[test]
+#[trace("TC-426", "FR-461-AC-11")]
+fn undeclared_limit_kinds_are_not_in_the_vocabulary() {
+    let vectors: Value = serde_json::from_str(VALUE_ACCOUNTING_LIMIT_KIND_VECTORS).expect("JSON");
+    let declared: BTreeSet<_> = limit_kind_vocabulary(DEFINITION).into_iter().collect();
+    let undeclared = strings(&vectors["undeclared"]);
+    assert!(!undeclared.is_empty());
+    for spelling in undeclared {
+        assert!(
+            !declared.contains(&spelling),
+            "{spelling:?} must stay undeclared"
+        );
+    }
+}
+
+#[test]
+#[trace("TC-426", "FR-461-AC-11")]
+fn a_one_sided_limit_kind_change_is_detected() {
+    let vectors: Value = serde_json::from_str(VALUE_ACCOUNTING_LIMIT_KIND_VECTORS).expect("JSON");
+    let published = strings(&vectors["limit_kinds"]);
+    assert!(compare_limit_kinds(&published[1..], DEFINITION).is_err());
+    let mut added = published.clone();
+    added.push("work_unit".to_owned());
+    assert!(compare_limit_kinds(&added, DEFINITION).is_err());
+    let mut swapped = published.clone();
+    swapped.swap(0, 1);
+    assert!(compare_limit_kinds(&swapped, DEFINITION).is_err());
+    let victim = format!("`{}`", published[3]);
+    let edited = DEFINITION.replacen(&victim, "`edited_away`", 1);
+    assert_ne!(edited, DEFINITION);
+    assert!(compare_limit_kinds(&published, &edited).is_err());
+}
