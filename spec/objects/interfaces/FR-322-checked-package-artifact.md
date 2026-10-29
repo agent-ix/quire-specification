@@ -558,9 +558,10 @@ boundary.
   (`TW-06` to `TW-09`, `NK-13`).
   **Locus of an owner-join refusal.** `missing_declaration`/`missing-selection`
   is at the node's `/semantic_graph/nodes/{n}/node_id`, except a `ModelOwner`
-  refusal of a `model`/`tuple_value_type` or `model`/`variant_type` node and a
-  `ModelRootOwner` refusal of a `model_root`, which are at the node's
-  `/semantic_graph/nodes/{n}/owner` (`TW-06` to `TW-09`, `MR` vectors).
+  refusal of a `model`/`tuple_value_type` or `model`/`variant_type` node, which
+  is at the node's `/semantic_graph/nodes/{n}/owner` (`TW-06` to `TW-09`). A
+  `ModelRootOwner` refusal of a `model_root` is `missing_import`/`missing-selection`
+  at `/semantic_graph/nodes/{n}/owner/identity` (`MR` vectors).
 - nominal key stage — after the application-node key refusal above and before
   the derived-shape key stage below (so before its owner join and before every
   structural `stale-node-key`), the reader recomputes the JCS SHA-256 of the
@@ -679,7 +680,7 @@ boundary.
     `ModelRootOwner` on another form fail the schema (owner-presence table
     below) and a reader refuses them `malformed_wire` at the node's `owner`
     (FR-322-AC-51); a root whose owner does not join a selected model package
-    refuses `missing_declaration`/`missing-selection` at the node's `owner`.
+    refuses `missing_import`/`missing-selection` at the node's `owner/identity`.
     The root has exactly one `generated` occurrence at ordinal zero, whose
     source-map region is the existing source occurrence that selected this
     model package; the root has no declaration occurrence of its own.
@@ -689,10 +690,9 @@ boundary.
     shape; they cannot join one node to a supplied document, so the join is a
     reader rule. A reader refuses a root whose owner identity names no supplied
     document `missing_import`/`missing-selection` at
-    `/semantic_graph/nodes/{i}/owner/identity`. A second root for one identity has the same key; a
-    repeated `node_id` refuses `invalid_semantic_graph` at the second node's
-    `/semantic_graph/nodes/{i}/node_id`, in the graph-shape pass before any
-    owner join. **Order.** The owner join runs in the
+    `/semantic_graph/nodes/{i}/owner/identity`. A second root for one identity has the same key; it
+    refuses `invalid_semantic_graph` at the second node's
+    `/semantic_graph/nodes/{i}/owner`, because the owner is the invalid member. **Order.** The owner join runs in the
     owner-join step above (ascending node-id digest, after the application and
     nominal key stages); the declaration-name checks run after the nominal-node keys. A package that
     breaks both reports the owner join. The vectors `MR-04` and
@@ -3345,7 +3345,7 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-132 | For each selected domain-package identity, a package contains exactly one self-typed `model`/`model_root` node with the closed `{kind: "model_root", identity}` owner, one `generated` occurrence at ordinal zero mapped to the existing model-selection source region, and the closed `ModelDeclarationNode` preimage; this form exists regardless of declaration count and its key is determined by the selected identity, never by a model alias or representative declaration. The V2 schema rejects a root without `ModelRootOwner`, a `ModelRootOwner` on another node form and an extra owner member; the join of the owner's identity to a supplied document is a reader rule, not a schema rule (FR-322-AC-135). The published model-root vector recomputes from its canonical preimage, and the reader admits it without a new FCD declaration or selection field. | Test |
 | FR-322-AC-133 | A refinement `class_catalog` is unique and ordered by catalog key (FR-375): a declared class by its alias-free `class` spelling, a memory class by (`class`, `memory_model`), compared by `class` bytes then `memory_model` bytes. Both closed V2 schemas admit three `memory drain` entries for `sc`, `tso` and `ra` (schemas cannot state order or uniqueness); the reader refuses a drain entry reordered from `ra`, `sc`, `tso`, or a repeated (`class`, `memory_model`) pair, as `invalid_semantic_graph` at the offending array entry in refinement step 2. A concrete or abstract declared entry `activate <protocol>` is admitted as an ordinary declared class (`node` and `binder_types`), with no schema change. | Test (TC-233, TC-310) |
 | FR-322-AC-134 | Every published positive package that selects a domain package carries exactly one `model`/`model_root` node per selected identity, appended after its other nodes, equal to the node derived from the identity alone, with its key, owner, empty aggregate body, empty dependencies, self `semantic_type` and `package_id` recomputed, and one `source_map` entry for it (role `generated`, ordinal zero) appended after the other entries; packages with equal rows carry the same root key. | Test (TC-310) |
-| FR-322-AC-135 | The V2 schemas reject a root without an owner, with an extra owner member and a `ModelRootOwner` on an object type, and admit a root whose owner names no supplied document. The reader refuses the first three `malformed_wire`, an owner naming no supplied document `missing_declaration`/`missing-selection` at `/semantic_graph/nodes/{i}/owner` and a repeated root `invalid_semantic_graph` at the second node's `node_id`. | Test (TC-310) |
+| FR-322-AC-135 | The V2 schemas reject a root without an owner, with an extra owner member and a `ModelRootOwner` on an object type, and admit a root whose owner names no supplied document. The reader refuses the first three `malformed_wire`, an owner naming no supplied document `missing_import`/`missing-selection` at `/semantic_graph/nodes/{i}/owner/identity` and a repeated root `invalid_semantic_graph` at the second node's `owner`. | Test (TC-310) |
 | FR-322-AC-136 | Each root has one source-map entry, role `generated`, ordinal zero, with at least one non-empty region, each naming a `lock.sources` entry. The entry is the producer-asserted selection-to-source relation; no reader verifies that a region is the selecting occurrence and the published one-byte regions are placeholders. | Test (TC-310) |
 | FR-322-AC-137 | The model-root vector recomputes from the selection it names, and every published selected-model package contains the node and source-map entry a producer derives from each selected identity, last in graph order and last in the source map; a producer conformance run compares its emitted root for an identity with that node. | Test (TC-310) |
 | FR-322-AC-138 | `model-root-vectors.json` publishes the controls `MR-00` (unmutated, admitted), `MR-01` to `MR-03` (schema-invalid, `malformed_wire`), `MR-04` (unjoined owner, one defect) and `MR-09` (repeated root) as RFC 6902 patches with recomputed `package_id`, schema validity and the refusal code, cause and pointer; the QSpec test runs them from the file. | Test (TC-310) |

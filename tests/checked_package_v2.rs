@@ -20304,7 +20304,7 @@ fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static 
             return Some((
                 "invalid_semantic_graph",
                 "",
-                format!("/semantic_graph/nodes/{position}/node_id"),
+                format!("/semantic_graph/nodes/{position}/owner"),
             ));
         }
     }

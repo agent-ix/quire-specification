@@ -249,7 +249,7 @@ Mutations, each applied alone to the positive unit:
     selecting range (`MR-07`, FR-322-AC-136); recompute the published
     model-root vector from its selection (`MR-08`, FR-322-AC-137); repeat the
     root, which the reader refuses `invalid_semantic_graph` at the second
-    node's `node_id` (`MR-09`). `MR-04` refuses
+    node's `owner` (`MR-09`). `MR-04` refuses
     `missing_import`/`missing-selection` at
     `/semantic_graph/nodes/{i}/owner/identity` and is schema-valid. The model-root
     vector is a structural preimage, not a nominal one, so the nominal-vector
