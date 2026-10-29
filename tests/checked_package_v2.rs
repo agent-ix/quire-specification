@@ -20304,7 +20304,7 @@ fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static 
             return Some((
                 "invalid_semantic_graph",
                 "",
-                format!("/semantic_graph/nodes/{position}/node_id"),
+                format!("/semantic_graph/nodes/{position}/owner"),
             ));
         }
     }
@@ -20316,9 +20316,9 @@ fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static 
             .is_some_and(|identity| selected_model_document(package, identity).is_some());
         if !supplied {
             return Some((
-                "missing_declaration",
+                "missing_import",
                 "missing-selection",
-                format!("/semantic_graph/nodes/{position}/owner"),
+                format!("/semantic_graph/nodes/{position}/owner/identity"),
             ));
         }
     }
