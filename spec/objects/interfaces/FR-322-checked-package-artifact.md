@@ -2875,7 +2875,7 @@ its predicate); a `clock_guard`, its operation name; an `urgency`, its kind and
 operation name. The comparison ranks `lt`, `le`, `eq`, `ge`, `gt`, bounds and
 values compare as rationals, and a shorter list is below a longer one it is a
 prefix of. The key is a
-function of the source region and the declared path alone. Two places with one triple and one path
+function of the source region, the declared path and the member's own structure (the structure of its terms, its operation and parameter names, comparison, bound and value), never of a digest. Two places with one triple and one path
 are one repeated path and are refused as out of order, before
 `duplicate-clock-place`. The same strict order holds in the lists the clause
 forms nest: the `constraints` of each `parts` entry of a `clock_guard` and the
