@@ -27,7 +27,7 @@ When a package imports a domain package for native linking, the checker SHALL us
 ## Identity and validation
 
 The key is (`identity`, `digest_domain`, `digest`): the domain package identity and its content digest. Two selections with equal identity and different digests are unequal.
-A digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`. Intake reads the package bytes supplied under the selection's identity and derives that digest (FR-154); a lock row whose digest differs from the digest derived from the supplied document is `stale_dependency`/`content-mismatch`.
+A digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`. Intake reads the package bytes supplied under the selection's identity and derives that digest (FR-154); on replay (FR-323 `byte_provision`) a lock row whose digest differs from the digest derived from the supplied document is `stale_dependency`/`content-mismatch`.
 A package selects at most one domain package per `identity`; intake
 refuses a second selection of an already-selected `identity`, before name
 binding, as `duplicate_selection`/`duplicate-identity` (QSL ADR-013 O-01,
@@ -44,7 +44,7 @@ Missing required properties, duplicate keys, out-of-domain values and non-canoni
 | FR-321-AC-4 | The key components map exactly to the domain package identity and its `sha256-jcs` digest, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
 | FR-321-AC-5 | A second selection of an already-selected domain-package `identity` refuses `duplicate_selection`/`duplicate-identity` before name binding, retaining the repeated identity and both selected digests; a second selection of a distinct `identity` is unaffected. | Analysis |
 
-| FR-321-AC-6 | A ModelSelection row is created only by the resolver, which derives its `digest` from the supplied document; a lock row whose digest differs from the digest derived from the document supplied under its identity refuses `stale_dependency`/`content-mismatch`. | Test (TC-234) |
+| FR-321-AC-6 | A ModelSelection row is created only by the resolver, which derives its `digest` from the supplied document; on replay a lock row whose digest differs from the digest derived from the document supplied under its identity refuses `stale_dependency`/`content-mismatch`. | Test (TC-234) |
 
 ## Dependencies
 

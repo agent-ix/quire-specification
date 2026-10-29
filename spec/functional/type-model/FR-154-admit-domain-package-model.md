@@ -92,11 +92,13 @@ row binds the model's content, as the lock's `package_id` selection binds a
 library's.
 
 A source never states the digest, so no comparison at intake detects an edited
-document. A changed document is caught against the lock: replay and the
-checked-package reader take the lock row's digest, and a document whose freshly
+document. A changed document is caught against the lock: replay keys its
+`byte_provision` by the lock row's digest, and a document whose freshly
 derived `sha256-jcs` digest differs from the row's refuses
 `stale_dependency`/`content-mismatch` naming the recorded and the derived
-digest (FR-323 `byte_provision`; FR-322 "Selection evidence"). The lock row also
+digest (FR-323 `byte_provision`). The checked-package reader receives each
+lock-selected document under the row's recorded digest and does not recompute
+it (FR-322-AC-32); that digest is a lock-recorded value, never source text. The lock row also
 changes the package's `package_id`, so a changed model is visible in the
 package identity. The digest domain of a lock row other than `sha256-jcs`
 refuses `stale_dependency`/`digest-domain-mismatch`.

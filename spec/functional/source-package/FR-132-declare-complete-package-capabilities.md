@@ -41,7 +41,7 @@ typed reference without including runtime observations in static identity.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-132-AC-2 | Substituting a domain package `sha256-jcs` digest, package digest or generated-artifact digest across identity domains refuses. | Test (TC-182) |
+| FR-132-AC-2 | Substituting a lock-recorded domain package `sha256-jcs` digest, package digest or generated-artifact digest across identity domains refuses. | Test (TC-182) |
 | FR-132-AC-3 | Every atomic required capability is discoverable and an unknown required capability refuses rather than being dropped. | Test (TC-182) |
 
 ## Dependencies

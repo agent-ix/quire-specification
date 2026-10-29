@@ -154,7 +154,7 @@ reports a refusal ends checking. Exhaustion ends checking as
 | --- | --- | --- |
 | FR-150-AC-1 | An inherited/redefined member links its normalized identity to every contributing original declaration and rule. | Test (TC-195) |
 | FR-150-AC-2 | Two equal effective shapes from distinct original identities remain distinguishable. | Test (TC-195) |
-| FR-150-AC-3 | A wrong digest domain or a conflicting phase 4 derivation refuses normalization with its named cause, and a supplied document whose own canonical digest differs from the selected digest is admitted. | Test (TC-195) |
+| FR-150-AC-3 | A wrong digest domain or a conflicting phase 4 derivation refuses normalization with its named cause, and a supplied document whose own canonical digest differs from the lock row's recorded digest is admitted at the normalization boundary, which does not recompute it (replay does, FR-323). | Test (TC-195) |
 | FR-150-AC-4 | Replaying the ordered derivation from the same domain package reproduces the `quire.model.effective-view/v2` identity, independent of IR node order. | Test (TC-195) |
 | FR-150-AC-5 | Conflicting derivations report both rule paths and expose no chosen effective member. | Test (TC-195) |
 | FR-150-AC-6 | Diamond paths reaching one original declaration collapse to one effective member with one inherit fact per direct parent, whose expansion lists every path, and each effective identity equals its published vector. | Test (TC-195) |
