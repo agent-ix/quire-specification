@@ -80,15 +80,17 @@ If the arm cannot decide whether the goal holds for a form it has accepted, then
 
 ### Proof evidence
 
-An arm outcome `supported` settles `proved` with the proof basis its method has in the [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) closed list, and no other basis:
+An arm outcome `supported` settles `proved` with exactly one proof basis from the [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) closed list ("Wire spellings of result causes and proof bases"), fixed by the method that discharged the item. [FR-354](FR-354-record-proof-trust-basis.md) fixes the certification of an SMT proof, not its basis; this table fixes both for every method:
 
 | Method | Basis | Certification |
 | --- | --- | --- |
 | evaluation of every assignment of a finite domain | `exhaustive` | `uncertified`, because the method has no core certificate checker (FR-331 "Certification") |
-| Kani harness whose SUCCESS check count is positive | `bounded-proof{checks}` | `certified` |
-| refutation of the negated goal by the SMT backend | the basis [FR-354](../ir-proof/FR-354-record-proof-trust-basis.md) assigns | the value FR-354 assigns |
+| Kani harness whose SUCCESS check count is positive | `bounded-proof{checks}`, `checks` the SUCCESS count | `certified` |
+| refutation of the negated goal by the SMT backend, `bounded` extent | `bounded-complete{depth}` | `certified` when the core checker verifies the certificate, `uncertified` when no certificate arrives or a step uses a rule outside the checked set (FR-354); a rejected certificate settles `inconclusive` `certificate-rejected{rule, at}` instead |
+| the same, `unbounded` extent | `inductive{depth}` | as the row above |
+| any method, in a backend loaded as a plugin ([FR-305](../tooling/FR-305-load-explicit-rust-plugins.md)) | a basis that is not core-only ([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) "Result entries"), such as `exhaustive` | `trusted` |
 
-A backend loaded as a plugin ([FR-305](../tooling/FR-305-load-explicit-rust-plugins.md)) reports `trusted`, and no core-only basis ([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) "Result entries").
+For an SMT basis, `depth` is the number of transition steps in the encoded query: 0 for a `value-validity` item and 1 for an `operation-contract` item, whose query reads one step `(s, s')` or one independent execution per relation variable. No other basis is a `value-validity` or `operation-contract` basis.
 
 ### Counterexample and evidence kind
 
@@ -103,6 +105,8 @@ The arm SHALL replay the candidate counterexample through the native evaluator o
 
 A plugin's counterexample entry carries `assignments` for a `value-validity` item and `contract-counterexample` for an `operation-contract` item, and no `transcript`.
 
+The replay of `assignments` is [FR-197](FR-197-replay-backend-counterexamples.md)'s `Input`-arm replay. The replay of a `contract-counterexample` is owned by [FR-485](FR-485-check-operation-contract-items.md) "Replay"; FR-197 does not own it.
+
 ### Unknown and stopped runs
 
 | Stop | Result | Cause |
@@ -113,7 +117,7 @@ A plugin's counterexample entry carries `assignments` for a `value-validity` ite
 | the provider's own wall-clock budget ends | `incomplete` | `timed-out` |
 | the caller cancels or the caller's `deadline_ms` ends the run | `incomplete` | `cancelled{source}`, `source` `requested` or `deadline` |
 
-An item's `max_cases` is the decimal string under the key `max_cases` of its `options` when present, and otherwise the descriptor's published default under the same key in `bounds` ([FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md)). A positive count is the only valid value; a value that is not a positive decimal count settles the item `declined` with cause `invalid-input`. The count includes every examined assignment or pre-state tuple.
+An item's `max_cases` is its `check.limits.max_cases`, a dedicated limits member of the request item beside `hybrid.limits` and `temporal.limits`, a `PositiveCount` that only a `value-validity` or `operation-contract` item may carry; an absent member takes the descriptor's published default under the key `max_cases` in `bounds` ([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) "Items"). The setting names are `value_check.max_cases` and `contract_check.max_cases`, each the engine name, a dot and the member as [FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md) fixes, so the CLI raises one with `--limit value_check.max_cases=<n>`. `check.limits` is part of request identity, because a different case budget can produce a different result. A `max_cases` that is zero or not a count is refused before consumption by the wire schema. The count is the number of cases the engine examined, where one case is one assignment or pre-state tuple evaluated, one solver query, or one Kani harness run.
 
 ### Refusal dispositions
 
@@ -125,24 +129,25 @@ Every way an item stops short of a check has one settlement, and none is reporte
 | no registered backend advertises the kind, or the named backend does not | negotiation | `unsupported`, `unsupported_projection`/`unsupported-requested-capability` |
 | a compared domain kind the candidate's `domains` lacks | negotiation | `unsupported`, `unsupported_projection`/`unsupported-requested-capability` |
 | `unbounded` extent and a `bounded`-only candidate | negotiation | `requires-bound` when a finite bound is available, otherwise `unsupported`, `unsupported_projection`/`unbounded-extent` |
-| claim selects no form, missing node, invalid `max_cases` | the arm | `declined`, `invalid-input` or `incomplete-input` |
+| claim selects no form (`invalid-input`) or the package lacks a node the form requires (`incomplete-input`) | the arm | `declined` |
+| `check.limits.max_cases` zero or not a count, or `check` on another kind | the wire reader | refused before consumption |
 | form or element the arm does not decide | the arm | `unsupported` result with the diagnostic above |
 | premises satisfied by no assignment | the arm | `inconclusive`, `kani_vacuous_proof` |
 | tool absent after routing | the adapter | `unsupported`, `unsupported_projection`/`tool-unavailable` ([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) "Tool absence") |
 
 ### Descriptor modes, domains and registration
 
-A backend that advertises `value-validity` or `operation-contract` SHALL have a check arm that implements this requirement and the kind's section ([FR-484](FR-484-check-value-validity-items.md), [FR-485](FR-485-check-operation-contract-items.md)). The registration is the [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) descriptor under the [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) rules, and no other registration rule applies to these kinds. A registry SHALL hold no descriptor that advertises a kind for which no arm exists, and no descriptor stands in for a provider that does not exist: the registry's snapshot has no candidate for the kind until a provider registers.
+A backend that advertises `value-validity` or `operation-contract` SHALL have a check arm that implements this requirement and the kind's section ([FR-484](FR-484-check-value-validity-items.md), [FR-485](FR-485-check-operation-contract-items.md)). The registration is the [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) descriptor under the [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) rules, and no other registration rule applies to these kinds. A provider SHALL NOT register a descriptor that advertises a kind for which it has no arm, and no descriptor stands in for a provider that does not exist: a registry snapshot composed from linked providers has no candidate for the kind until such a provider is linked.
 
 A descriptor advertises the mode its arm decides:
 
-- `bounded` when the arm decides items whose every domain is finite under the item's bounds, with `domains` the boundable kinds the arm can substitute: a subset of {`collection`, `integer`, `recursive`} for `value-validity`, and of {`collection`, `population`, `integer`, `recursive`} for `operation-contract`. A `value-validity` descriptor lists `population` in no case, because a value clause has no population.
+- `bounded` when the arm decides items whose every domain is finite under the item's bounds, with `domains` the boundable kinds the arm can substitute, a nonempty subset of {`collection`, `population`, `integer`, `recursive`} as [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) "Advertised mode" requires. A descriptor lists `population` for either kind only when its arm binds a population by cardinality; an item whose extent holds a `population` domain that the single candidate's `domains` lacks settles `unsupported` at the domain-kind check ([FR-290-AC-13](../../objects/protocol/FR-290-protocol-claim-kind.md), TC-271 NG-18), so the arm never receives it.
 - `unbounded` when the arm decides the claim over the declared type without bounds, as an inductive or symbolic engine does.
 - Both pairs when the arm decides in both ways.
 
 An arm SHALL NOT report `proved` for an `unbounded` item unless its descriptor advertises `unbounded` for the kind.
 
-The descriptor's `bounds` holds the default `max_cases` count under the key `max_cases` ([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) "Items").
+The descriptor's `bounds` holds the default `max_cases` count under the key `max_cases`.
 
 ### Independence
 
@@ -153,13 +158,13 @@ Each item has its own check input, its own result and its own terminal record. A
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-483-AC-1 | The four arm outcomes map to exactly `proved`, `refuted`, `inconclusive` or `incomplete`, and `unsupported`; an arm outcome `unsupported` leaves the item's disposition `supported`, and no outcome yields `tested`, `measured` or `failed`. | Test (TC-972) |
-| FR-483-AC-2 | A `supported` outcome settles `proved` with `exhaustive` and `uncertified` for finite-domain evaluation, with `bounded-proof{checks}` and `certified` for a Kani harness, and with `trusted` for a plugin; an outcome whose premises no assignment satisfies settles `inconclusive` with `kani_vacuous_proof`, never `proved`. | Test (TC-972) |
+| FR-483-AC-2 | A `supported` outcome settles `proved` with the basis and certification of the proof-evidence table: `exhaustive` and `uncertified` for finite-domain evaluation, `bounded-proof{checks}` and `certified` for a Kani harness, `bounded-complete{depth}` for an SMT proof of a `bounded` item and `inductive{depth}` for an `unbounded` one (`certified` only when the certificate verifies, otherwise `uncertified`), and `trusted` for a plugin; an outcome whose premises no assignment satisfies settles `inconclusive` with `kani_vacuous_proof`, never `proved`. | Test (TC-972) |
 | FR-483-AC-3 | A `violation` settles `refuted` with one counterexample of the item kind's type that the native replay reproduces; a candidate the replay does not reproduce settles `inconclusive` with `replay-parity` and records no counterexample; an undefined goal also carries `undefined-evaluation{where, cause}`. | Test (TC-972) |
-| FR-483-AC-4 | An engine `unknown` settles `inconclusive` `solver-inconclusive`; reaching `max_cases` settles `incomplete` `limit-reached` naming `max_cases`, its value and the setting `value_check.max_cases` or `contract_check.max_cases`; the item's `options` key `max_cases` replaces the descriptor default, and a non-positive or non-decimal value settles `declined` `invalid-input`. | Test (TC-972) |
+| FR-483-AC-4 | An engine `unknown` settles `inconclusive` `solver-inconclusive`; a rejected certificate settles `inconclusive` `certificate-rejected{rule, at}`; reaching `max_cases` settles `incomplete` `limit-reached` naming `max_cases`, its value and the setting `value_check.max_cases` or `contract_check.max_cases`; the provider's own time limit settles `incomplete` `timed-out` and the caller's deadline `incomplete` `cancelled{source: deadline}`; the item's `check.limits.max_cases` replaces the descriptor default, and a zero or non-count value, or `check` on another kind, is refused by the wire schema. | Test (TC-972) |
 | FR-483-AC-5 | A claim that selects no form or no package node settles `declined` `invalid-input`; a missing required node settles `declined` `incomplete-input`; neither runs a check. | Test (TC-972) |
 | FR-483-AC-6 | A bounded item's `proved` states the claim over the item's bounded domain only; an `unbounded` item reaches the arm only on a candidate that advertises `unbounded`, and a `bounded`-only candidate gets `requires-bound` or `unsupported`/`unbounded-extent` from negotiation, never a result. | Test (TC-972) |
-| FR-483-AC-7 | A registry with no descriptor that advertises `value-validity` has an empty candidate set for a `value-validity` item and settles it `unsupported`, `unsupported_projection`/`unsupported-requested-capability`; a descriptor advertising a kind without an arm is not registered. | Test (TC-972) |
-| FR-483-AC-8 | A `value-validity` descriptor whose `domains` lists `population` is refused as an arm defect, and an `operation-contract` descriptor may list all four boundable kinds. | Test (TC-972) |
+| FR-483-AC-7 | A registry with no descriptor that advertises `value-validity` has an empty candidate set for a `value-validity` item and settles it `unsupported`, `unsupported_projection`/`unsupported-requested-capability`; the registry snapshot of a production source holds a descriptor for a kind only when an arm for it is linked, so a kind with no arm has no descriptor and no candidate. | Test (TC-972) |
+| FR-483-AC-8 | An item whose extent holds a `population` domain settles `unsupported` at the domain-kind check under a candidate whose `domains` lacks `population`, and reaches the arm under a candidate that lists it, for both kinds. | Test (TC-972) |
 | FR-483-AC-9 | Two items with one claim node and different kinds, and two items with the same claim and kind, have separate terminal records, and the `proved` of one is no premise of the other. | Test (TC-972) |
 
 ## Dependencies
@@ -169,5 +174,6 @@ Each item has its own check input, its own result and its own terminal record. A
 - [FR-462](../tooling/FR-462-speak-the-plugin-wire.md) owns the process-provider frames that carry the request and the outcome.
 - [FR-197](FR-197-replay-backend-counterexamples.md) owns the replay of a canonical assignment.
 - [FR-354](FR-354-record-proof-trust-basis.md) owns the SMT proof bases and their certification.
+- [FR-485](FR-485-check-operation-contract-items.md) "Replay" owns the replay of a `contract-counterexample`.
 - [FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md) owns the limit and setting naming.
 - [FR-484](FR-484-check-value-validity-items.md) and [FR-485](FR-485-check-operation-contract-items.md) own the two kinds' input mappings.
