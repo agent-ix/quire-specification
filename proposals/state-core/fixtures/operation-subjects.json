@@ -25,7 +25,7 @@
       "source": {
         "identity": "ix://example/config/source/version-update",
         "path": "version-update.native",
-        "digest": "sha256:73a2b8cb3d30cec511f7dd3de25a6424ebc4488dc5b50f1f71eae730a05b659b",
+        "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab",
         "spanConvention": "utf8-half-open-scalar-column/0-draft",
         "expressionSpan": {
           "startByte": 223,
@@ -62,7 +62,7 @@
       "reviewArtifacts": [
         {
           "path": "version-update.native",
-          "digest": "sha256:73a2b8cb3d30cec511f7dd3de25a6424ebc4488dc5b50f1f71eae730a05b659b"
+          "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab"
         },
         {
           "path": "model-expectations.json",
@@ -94,7 +94,7 @@
       "source": {
         "identity": "ix://example/config/source/version-update",
         "path": "version-update.native",
-        "digest": "sha256:73a2b8cb3d30cec511f7dd3de25a6424ebc4488dc5b50f1f71eae730a05b659b",
+        "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab",
         "spanConvention": "utf8-half-open-scalar-column/0-draft",
         "expressionSpan": {
           "startByte": 312,
@@ -131,7 +131,7 @@
       "reviewArtifacts": [
         {
           "path": "version-update.native",
-          "digest": "sha256:73a2b8cb3d30cec511f7dd3de25a6424ebc4488dc5b50f1f71eae730a05b659b"
+          "digest": "sha256:becc2d091938449d91a8d05308ffbc91da1143bffd412c68610a7a51ef9357ab"
         },
         {
           "path": "model-expectations.json",

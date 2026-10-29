@@ -30,8 +30,8 @@ relationships:
 ## Description
 
 When a package imports a domain package, QSL model intake SHALL admit the
-package selected by its identity, SHALL derive the package's `sha256-jcs`
-digest, record it in the package lock and SHALL build one Quire
+package selected by its identity, SHALL record the identity and the document's
+`version` in the package lock and SHALL build one Quire
 model declaration for each IR node, refusing any invalid node with its IR node identity and
 `origin`.
 
@@ -43,7 +43,7 @@ definition.
 ## Outputs
 
 The original declarations of one ModelSelection (FR-321), each keyed by
-`(domain package identity, IR node identity, sha256-jcs)`, or located refusals.
+`(domain package identity, IR node identity)`, or located refusals.
 
 ## Behavior
 
@@ -57,8 +57,7 @@ chain is:
    yields field, relationship, operation, frame, clause, population and systems
    declarations with source spans.
 3. **Lift.** The FCD extraction-frontend lowers the extracted declarations into
-   one semantic IR 2.0.0 domain package, serialized with RFC 8785 JCS and
-   fingerprinted with `sha256-jcs`.
+   one semantic IR 2.0.0 domain package, serialized with RFC 8785 JCS.
 4. **Admission.** Rule `quire.model.normalize.intake/v1` checks the selection
    and the package bytes in the order the selected definition fixes.
 5. **Declarations.** Intake builds one original declaration per IR node,
@@ -78,30 +77,30 @@ token, or any other token after the identity string, is
 token, or `unexpected-end` at the end of the source; the declaration is never
 dropped without a diagnostic. A digest is not part of the grammar.
 
-The package input maps each domain package identity to the bytes of one domain
-package document, a supplier never stating a digest. At most one document is
-supplied per identity; a second supplied under an identity already supplied is
+The package input maps each domain package identity to one domain package
+document; a supplier states no digest. At most one document is supplied per
+identity, so one identity never selects among several versions; a second
+document supplied under an identity already supplied is
 `refused { code: invalid_package, cause: conflicting-definition }` before intake
-runs, whether or not the two differ, naming both. Intake looks up the bytes by
-the selection's identity and compares the package's own identity with the
-selection. Intake then derives the document's `sha256-jcs` digest, SHA-256 over
-the RFC 8785 bytes of the whole document, and that digest is the content
-identity member of the ModelSelection (FR-321) and its row in the package lock's
-`model_selections`: `{identity, digest_domain: "sha256-jcs", digest}`. The lock
-row binds the model's content, as the lock's `package_id` selection binds a
-library's.
+runs, whether or not the two have one version, naming both. Intake looks up the
+document by the selection's identity and compares the document's own identity
+with the selection. Intake then reads the document's `version` member, a
+non-empty string, and records the selection as the `model_selections` row
+`{identity, version}` of the package lock (FR-321, FR-322); a document with no
+`version` or a non-string `version` is `invalid_model_binding`/`malformed-declaration`
+at the document's `version` member. The package document's `version` is its
+release label: a published release does not change its nodes, and a changed
+document is published under a new `version`.
 
-A source never states the digest, so no comparison at intake detects an edited
-document. A changed document is caught against the lock: replay keys its
-`byte_provision` by the lock row's digest, and a document whose freshly
-derived `sha256-jcs` digest differs from the row's refuses
-`stale_dependency`/`content-mismatch` naming the recorded and the derived
-digest (FR-323 `byte_provision`). The checked-package reader receives each
-lock-selected document under the row's recorded digest and does not recompute
-it (FR-322-AC-32); that digest is a lock-recorded value, never source text. The lock row also
-changes the package's `package_id`, so a changed model is visible in the
-package identity. The digest domain of a lock row other than `sha256-jcs`
-refuses `stale_dependency`/`digest-domain-mismatch`.
+No digest of the document exists in source, input, lock or key. Staleness is
+decided by identity and version against the lock: replay recompiles against the
+document supplied under the row's identity, and a document whose `version`
+differs from the row's refuses `stale_dependency`/`content-mismatch` naming the
+recorded and the supplied version. A document edited without a new `version` is
+not detected; that is the cost of identity-and-version resolution, which
+`import` does not share because a library's `package_id` is derived from its
+compiled content. A different version changes the row and so the package's
+`package_id`, so a different release is visible in the package identity.
 
 Intake keeps the authored order of every type's `fields` and `supertypes`
 arrays (FR-208 "Effective field order" reads it). FR-150's sorting by identity
@@ -608,9 +607,9 @@ embedded `constructs` table; that entry's `meaning` is a Quire meaning id
 (FR-208). The kind name and module select the construct entry only and never
 select a meaning.
 
-A declaration key carries no digest. Two domain package documents with equal nodes yield
-equal declaration keys. The ModelSelection, which binds the digest, separates
-them.
+A declaration key carries no digest and no digest domain. Two domain package
+documents with equal nodes yield equal declaration keys. The ModelSelection row,
+which binds the version, separates them.
 
 Intake charges `normalize.record` under `ModelNormalizationLimitsV1` of
 `quire.value.accounting/v1` once per declaration, ascending by declaration key.
@@ -621,9 +620,9 @@ Admission checks are decided before the first charge.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-154-AC-1 | An artifact bundle whose extraction and lift yield a valid domain package is admitted, and intake builds exactly one original declaration per IR node, keyed by package identity and IR node identity. | Test (TC-234) |
-| FR-154-AC-2 | A missing package and a package whose identity differs each refuse with its named cause before any declaration is built, a package supplied under the selection's identity and carrying it is admitted, and the admitted document's `sha256-jcs` digest is derived by intake and recorded in the `model_selections` row. | Test (TC-234) |
+| FR-154-AC-2 | A missing package and a package whose identity differs each refuse with its named cause before any declaration is built, a package supplied under the selection's identity and carrying it is admitted, and the admitted document's identity and `version` are recorded in the `model_selections` row. | Test (TC-234) |
 | FR-154-AC-3 | A malformed IR node or a dangling reference refuses with the IR node identity and its `origin`, and every such refusal is reported in node order. | Test (TC-234) |
-| FR-154-AC-4 | Publishing a domain package document with equal nodes and a different digest leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
+| FR-154-AC-4 | Publishing a domain package document with equal nodes and a different `version` leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
 | FR-154-AC-6 | Retitling an artifact leaves every declaration key unchanged. Changing an artifact's id changes the declaration key of the type it declares and of that type's members, leaves every other declaration key unchanged, and a reference to the old key refuses `missing_declaration`/`missing-name`. | Test (TC-234) |
 | FR-154-AC-7 | A type definition or population node whose kind names no construct entry, or whose construct has no Quire meaning id or an id outside FR-208, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity and its `origin`, and no meaning is inferred from its kind name. | Test (TC-234) |
@@ -652,11 +651,11 @@ Admission checks are decided before the first charge.
 | FR-154-AC-31 | With the unit `ms`, an alias `Level` of `ms` and a `min` `0` and a `max` `10` constraint on `Level`, `Level` is the type `Quantity<ms>[0, 10]`: the literals `0 ms`, `5 ms` and `10 ms` check at a call argument for a `Level` parameter, an annotated `let x: Level` and a postcondition assignment to a `Level` field (a unit member has no default, so no default position exists), and `11 ms` refuses `ill_typed`/`type-mismatch` at the literal at each of those positions, naming the member path or alias, the constraint identity, its keyword, its bound, the refusal site and the expected type `Quantity<ms>[0, 10]`; `-1 ms` refuses at the negation expression `-1 ms` (unary minus on the literal `1 ms`, FR-142-AC-25), not at `1 ms`, and `4 ms + 7 ms` refuses at the sum; `Sequence<Level>` and `Option<Level>` members hold `Level` elements and payloads and `sequence[5 ms, 11 ms]` refuses at `11 ms`; with only `min` `0` `-1 ms` refuses and `1000000 ms` checks, with only `max` `10` `-1000000 ms` checks and `11 ms` refuses; `5 s` for a `Level` position refuses as FR-142 refuses a unit mismatch; a `Level` value is read as `Quantity<ms>` (`self.d + 1 ms` is a plain `Quantity<ms>`, `convert<Quantity<s>>(self.d)` checks) and `self.d < 11 ms` and `self.d = 11 ms` as comparison operands are not refused; a `Level` value flows to a `Quantity<ms>[0, 20]` position with no refusal and a plain `Quantity<ms>` value is admitted by the checker to a `Level` position, left to the run-time invariant of FR-154-AC-28; a plain `ms` member is not typed `Quantity<ms>[0, 10]`; `min` `5` with `max` `3` refuses as FR-154-AC-29, and under `min` `5` with a `max` `3` on an alias and its parent every literal at that position refuses. | Test (TC-234) |
 | FR-154-AC-32 | Admitting a type whose `fields` are written `b`, `a` and whose `supertypes` are written `Q`, `P`, then rewriting the document with the identity-sorted order of the same fields and supertypes, gives admitted types whose retained `fields` and `supertypes` arrays equal the authored order in each case, and effective field orders (FR-208) that differ accordingly. | Test (TC-386) |
 | FR-154-AC-33 | A tuple type with declaration identity `<package identity>/Pair` and positions `p0: Boolean`, `p1: Integer` is admitted as one tuple declaration plus two ordered position declarations; swapping the position types keeps the declaration identity but changes which type is bound to each position identity, and therefore changes the tuple's type identity and product order; an empty positions list, a gap, absent `typeRef` or unsupported type, or an extra field, identity field, operation, supertype or clause refuses `invalid_model_binding`/`malformed-declaration`; an unresolved package `typeRef` refuses `missing_declaration`/`missing-name`; two positions with one `pN` identity refuse `invalid_model_binding`/`conflicting-binding` at the later position. | Test (TC-234) |
-| FR-154-AC-34 | `model M = "test/orders";` is a source selection of identity `test/orders` and no other: it carries no version and no digest. The same declaration followed by a `version` or a `digest` token, or by any token other than `;`, refuses `invalid_syntax`/`unexpected-token` at that token. | Test (TC-234) |
+| FR-154-AC-34 | `model M = "test/orders";` is a source selection of identity `test/orders` and no other: it carries no version and no digest. The version of the selection is the supplied document's `version` member. The same declaration followed by a `version` or a `digest` token, or by any token other than `;`, refuses `invalid_syntax`/`unexpected-token` at that token. | Test (TC-234) |
 | FR-154-AC-35 | A `model` whose identity string is absent, is not a string, or is followed by the end of the source, refuses `invalid_syntax` (`unexpected-token` at the offending token, `unexpected-end` at the end of the source) and is never dropped without a diagnostic. | Test (TC-234) |
-| FR-154-AC-36 | Admitting the document supplied under `test/orders` yields a `model_selections` row `{identity: test/orders, digest_domain: sha256-jcs, digest}` whose digest is the SHA-256 of the document's RFC 8785 bytes; no source, input or expected value states that digest. | Test (TC-234) |
+| FR-154-AC-36 | Admitting the document supplied under `test/orders` yields a `model_selections` row `{identity: test/orders, version}` whose `version` is the document's `version` member; no source, input or expected value states a digest. | Test (TC-234) |
 | FR-154-AC-37 | Two documents supplied under one domain package identity, whether or not they differ, refuse `invalid_package`/`conflicting-definition` before intake, naming both; a selection whose identity no supplied document has refuses `missing_import`/`missing-selection` at the identity string. | Test (TC-234) |
-| FR-154-AC-38 | A lock whose `model_selections` row records the digest of one document, replayed with a document of the same identity whose derived `sha256-jcs` digest differs, refuses `stale_dependency`/`content-mismatch` naming the recorded and the derived digest; the changed document's row changes the package's `package_id`. | Test (TC-234) |
+| FR-154-AC-38 | A lock whose `model_selections` row records version `1`, replayed with a document of the same identity and version `2`, refuses `stale_dependency`/`content-mismatch` naming the recorded and the supplied version; the version `2` row changes the package's `package_id`. | Test (TC-234) |
 
 ## Dependencies
 

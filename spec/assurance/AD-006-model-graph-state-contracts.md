@@ -65,7 +65,7 @@ object: entity
 flowchart TD
   A[Spec artifacts: object entity, domain, ...] --> X[quire-rs semantic extraction]
   X --> L[FCD extraction-frontend lift]
-  L --> D[Domain package: semantic IR, sha256-jcs]
+  L --> D[Domain package: semantic IR]
   D --> I[QSL model intake]
   I --> M[Internal structural model view and original inventory]
   M --> CF[Source resolution and checked-fact admission]
@@ -88,7 +88,7 @@ flowchart TD
    embeds each kind's construct with its Quire meaning id. The
    lowering is deterministic, serialized with RFC 8785 and fingerprinted with
    `sha256-jcs`.
-3. **Intake.** QSL admits the domain package supplied under a selected identity, derives its `sha256-jcs` digest and records it in the package lock,
+3. **Intake.** QSL admits the domain package supplied under a selected identity, reads its `version` and records identity and version in the package lock,
    and builds Quire model declarations from its IR nodes. It checks every model rule in
    this document. A domain package that fails a rule refuses with a located
    diagnostic that retains the node's IR identity and `origin`.
@@ -126,9 +126,9 @@ never evaluated or used as proof obligations.
 ## Language surface
 
 - A Quire package imports a domain package by identity alone, as it imports a
-  library (FR-307). The resolver derives the package's `sha256-jcs` digest and
-  records it in the lock's `model_selections` row; the row is part of the
-  package identity and the source states no digest.
+  library (FR-307). The resolver reads the package document's `version` and
+  records identity and version in the lock's `model_selections` row; the row is
+  part of the package identity and no digest of the document exists.
 - Clauses name domain types by qualified name over their IR node identity, for
   example `Orders::Order` for the artifact with id `Order`.
 - Native `record`, `enum` and `tuple` declarations remain the way to write value
@@ -142,8 +142,7 @@ dispatch sets, parts, ports, connections, allocations, operations and
 relationships. Ambiguous precedence or dispatch refuses at checking rather than
 selecting by source or registration order.
 
-An original declaration is keyed by (domain package identity, IR node identity,
-fixed digest domain `sha256-jcs`), not the selected content digest. The immutable
+An original declaration is keyed by (domain package identity, IR node identity); it carries no digest and no digest domain. The immutable
 selection inventory retains every original and its FCD origin; effective
 entries exist only where the selected normalization rules derive them.
 An effective declaration has its own `quire.model.effective-declaration/v2`
@@ -185,6 +184,6 @@ adds no normalization rule or effective-identity member.
 | Risk | Control |
 | --- | --- |
 | An artifact declares a feature its module manifest cannot extract | Extraction refuses with the artifact, section and span. No feature is inferred. |
-| Generated types and the model view drift | Both read one domain package, pinned by the `sha256-jcs` digest the lock's `model_selections` row records in the CheckedPackage. |
+| Generated types and the model view drift | Both read one domain package, selected by the identity and version the lock's `model_selections` row records in the CheckedPackage. |
 | Dynamic dispatch becomes open-world | Dispatch requires the closed subtype set and reports ambiguity or incompleteness. |
 | Graph bounds are mistaken for semantic truncation | Exhaustion is incomplete; no cutoff returns false. |

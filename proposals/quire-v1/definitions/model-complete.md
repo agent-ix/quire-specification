@@ -38,7 +38,7 @@ declares one domain object, such as `Order`, and its module object type, such
 as `entity`, fixes the artifact's shape. quire-rs extracts the declarations.
 The FCD extraction-frontend lifts the extracted declarations of one spec
 package into one semantic IR document, the **domain package**. It is
-serialized with RFC 8785 JCS and fingerprinted with `sha256-jcs`.
+serialized with RFC 8785 JCS.
 
 A package imports a domain package with a `model` declaration:
 
@@ -47,9 +47,9 @@ model Orders = "acme/orders";
 ```
 
 The source names the domain package identity only: no version and no digest
-(FR-154 "Model selection in source"). The resolver derives the digest and
+(FR-154 "Model selection in source"). The resolver reads the version and
 records the import as a ModelSelection (FR-321) row of the package lock:
-`{identity, digest_domain: "sha256-jcs", digest}`. The row is part of the
+`{identity, version}`, the version being the document's own `version` member. The row is part of the
 package identity. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
 declaration. Clauses of a unit name a declaration by qualified name: the model alias,
@@ -67,7 +67,7 @@ the rule.
 
 Rule `quire.model.normalize.intake/v1` admits one domain package. The package
 input is a map from domain package identity to package bytes, one document per identity. Intake first checks the selection's identity, then looks up the
-bytes by that identity, derives the `sha256-jcs` digest of the supplied document and reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
+bytes by that identity, reads the document's `version` and the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
 
 | Check | Refusal |
 | --- | --- |
@@ -195,8 +195,8 @@ than every finite value. `ordered` and `unique` are booleans.
 
 ## Identity domains
 
-An original declaration key is `{package, node, digest_domain: "sha256-jcs"}`:
-the domain package identity, the IR node identity and the fixed digest domain.
+An original declaration key is `{package, node}`:
+the domain package identity and the IR node identity.
 QSL derives the following identities in its own domains. Their exact preimage
 shapes are
 [`model-effective-declaration.schema.json`](../../checked-package-v2/model-effective-declaration.schema.json)
@@ -204,9 +204,9 @@ and their known vectors are
 [`model-effective-declaration-vectors.json`](../../checked-package-v2/model-effective-declaration-vectors.json).
 Each identity is SHA-256 over the RFC 8785 JCS bytes of its schema-valid
 preimage, written as `{domain, digest}` with a lowercase 64-hex digest. Each
-domain string differs from `sha256-jcs`, from `quire.checked-semantic-node/v1`
-and from every other QSL domain, so no QSL identity can equal a domain package
-digest or an I04 node key, even with equal digest bytes.
+domain string differs from `quire.checked-semantic-node/v1`
+and from every other QSL domain, so no QSL identity can equal an I04 node key,
+even with equal digest bytes.
 
 Only these three identity domains and the inherit, subset and redefine rule
 identities (`quire.model.normalize.inherit/v2`, `.subset/v2`, `.redefine/v2`)
@@ -247,8 +247,7 @@ effective declaration. An operation's `Pre:` and `Post:` contract clause is not 
 declaration: it is not retained and is never qualified. Effective entries and their fact input
 keys reference only that retained inventory. Retention adds no derivation,
 effective-declaration or hash charge and changes no effective identity
-preimage. The fixed `digest_domain: "sha256-jcs"` discriminator in an original
-key is not the selected package's content digest.
+preimage. An original key carries no digest and no digest domain.
 
 After structural normalization, the accounting definition orders systems
 checks, source resolution and structural assembly, checked-fact admission,
