@@ -128,7 +128,7 @@ authority is divided as follows:
 All shared identities are opaque validated newtypes. Equality is allowed only
 within the same identity domain. At minimum the kernel distinguishes:
 
-- source bytes, source digest, source unit and lexical span;
+- source bytes, source unit and lexical span;
 - edition, semantic profile, wire profile and requested feature bundle;
 - package, dependency manifest, declaration, type and semantic definition;
 - domain package, model declaration key, effective specialization and
@@ -142,9 +142,7 @@ within the same identity domain. At minimum the kernel distinguishes:
 - generated artifact, tool/toolchain/options set, evidence record and human
   decision.
 
-A digest is always computed over a named canonical domain and version. Source
-byte digests, semantic digests, artifact digests and evidence digests cannot be
-compared as bare bytes. An
+An
 effective model declaration never replaces its original declaration identity.
 
 ### 4.2 Selection axes

@@ -103,8 +103,8 @@ relationships:
   Plan-001 and PR #19 deliver typed observation, completeness,
   progress, replay and resource contracts. Declaration-keyed subject/topology
   adoption remains separately tracked by observation #18/#13.
-- **Task-004 is done.** `quire-contract-ir` PRs #67, #68 and #77 deliver strict total-Boolean projection
-  and the selected temporal correspondence contract. Runtime composition is
+- **Task-004 is done.** `quire-contract-ir` PRs #67, #68 and #77 deliver strict total-Boolean
+  projection and the selected temporal correspondence contract. Runtime composition is
   Task-006 / qcir #71.
 
 ### Track A: Critical Path (serial)

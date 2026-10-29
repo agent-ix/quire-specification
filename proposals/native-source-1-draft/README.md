@@ -75,7 +75,7 @@ Each clause has one stable identity and exactly one editable source: a selected
 native inline region or a selected local-file region, never both. Bind the
 path and the half-open byte span; any content identity is derived by the
 resolver into the lock. A floating URL is insufficient. Multi-clause files bind each clause separately. Preserve
-source/profile, clause/requirement revision, declaration closure, tool versions and
+source/profile, clause/requirement identity, declaration closure, tool versions and
 anchor inputs independently of the source-free semantic identity. Duplicate
 authorities, ambiguous names and conflicting declarations refuse
 before lowering. Extraction treats the native body as opaque.
