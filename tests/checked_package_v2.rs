@@ -19956,14 +19956,17 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                     adverse["semantic_graph"]["nodes"][5]["node_id"].clone();
             }
             "duplicate-clock-place" => {
-                // A DISTINCT second place of the same path (its guards aggregate empty, so a
-                // different body and key), listed after the first and starting after every
+                // A DISTINCT second place of the same path (a clock place has no field but its
+                // path, its model and its derived `resolved_path`, so only that table can differ:
+                // a different body and key), listed after the first and starting after every
                 // published place: in declared order, so only the repeated path is refused
                 // (FR-322-AC-260 does not apply). Repeating one node reference would repeat
                 // its order key and refuse as an order defect first.
                 let root = if is_tick { 45 } else { 52 };
                 let mut second = adverse["semantic_graph"]["nodes"][45].clone();
-                second["body"]["members"][3]["value"]["members"] = json!([]);
+                let rows = second["body"]["members"][2]["value"]["members"].as_array_mut().unwrap();
+                let identity = rows.last_mut().unwrap()["members"][2]["value"]["value"].as_str().unwrap().to_owned();
+                rows.last_mut().unwrap()["members"][2]["value"]["value"] = json!(format!("{identity}#again"));
                 second["dependencies"] = json!(body_reference_targets(&second["body"]));
                 let key = unqualified_jcs_sha256(&structural_node_preimage(&second).unwrap());
                 second["node_id"]["digest"] = json!(key);
@@ -23282,14 +23285,13 @@ fn tc_367_slot_selector_vectors_are_symbolic_template_nodes() {
             assert_eq!(instance["slots"].as_array().unwrap().len(), slots, "{id}");
         }
     }
-    assert_eq!((positives, refusals), (8, 4));
+    assert_eq!((positives, refusals), (7, 4));
 
-    // Guards never enter place identity: SL-07 and SL-08 share one path.
-    let cases = vectors["cases"].as_array().unwrap();
-    let by = |id: &str| cases.iter().find(|c| c["id"] == id).unwrap()["node"].clone();
-    assert_eq!(by("SL-07")["body"]["members"][1], by("SL-08")["body"]["members"][1]);
-    assert_ne!(by("SL-07")["node_id"], by("SL-08")["node_id"]);
-    assert!(by("SL-08")["body"]["members"][3]["value"]["members"].as_array().unwrap().is_empty());
+    // A `clock_place` has exactly `model`, `path` and `resolved_path`: no case carries a `guards` binding.
+    for case in vectors["cases"].as_array().unwrap() {
+        let names: Vec<_> = case["node"]["body"]["members"].as_array().unwrap().iter().map(|m| m["name"].as_str().unwrap()).collect();
+        assert_eq!(names, ["model", "path", "resolved_path"], "{}", case["id"]);
+    }
 
     // GD-01: the published tick root has empty clock aggregates.
     let tick: Value = serde_json::from_str(POSITIVE_TICK_TIMED_MODEL_NODES).unwrap();
@@ -23404,29 +23406,66 @@ enum KeyAtom {
     List(Vec<KeyAtom>),
 }
 
+/// The structural key of a term node (FR-322-AC-265): its form and the shape of its body, a
+/// reference replaced by the key of its target, a literal by its kind and value. No digest,
+/// no source region and no `type` reference enters it, so a term shared by many nodes keys
+/// each of them the same wherever else it is used.
+fn timed_term_key(nodes: &[Value], id: &Value, depth: u8) -> KeyAtom {
+    let empty = KeyAtom::List(Vec::new());
+    let Some(node) = nodes.iter().find(|node| node["node_id"] == *id) else { return empty };
+    if depth == 0 {
+        return empty;
+    }
+    KeyAtom::List(vec![
+        KeyAtom::Bytes(node["semantic_form"].as_str().unwrap_or("").as_bytes().to_vec()),
+        timed_term_shape(nodes, &node["body"], depth - 1),
+    ])
+}
+
+fn timed_term_shape(nodes: &[Value], value: &Value, depth: u8) -> KeyAtom {
+    let bytes = |text: &Value| KeyAtom::Bytes(text.as_str().unwrap_or("").as_bytes().to_vec());
+    match value["term"].as_str() {
+        Some("reference") => timed_term_key(nodes, &value["target"], depth),
+        Some("literal") => KeyAtom::List(vec![
+            bytes(&value["value_kind"]),
+            KeyAtom::Bytes(value["value"].as_str().map_or_else(|| value["value"].to_string(), str::to_owned).into_bytes()),
+        ]),
+        Some("aggregate") => KeyAtom::List(value["members"].as_array().into_iter().flatten().map(|member| timed_term_shape(nodes, member, depth)).collect()),
+        Some("binding") => KeyAtom::List(vec![bytes(&value["name"]), timed_term_shape(nodes, &value["value"], depth)]),
+        Some("application") => KeyAtom::List(vec![
+            bytes(&value["operator"]),
+            KeyAtom::List(value["arguments"].as_array().into_iter().flatten().map(|argument| timed_term_shape(nodes, argument, depth)).collect()),
+        ]),
+        _ => KeyAtom::List(Vec::new()),
+    }
+}
+
+/// Order inverted, for the mutation test that reads a term key descending.
+fn timed_key_inverted(atom: KeyAtom) -> KeyAtom {
+    match atom {
+        KeyAtom::Int(n) => KeyAtom::Int(!n),
+        KeyAtom::Bytes(bytes) => KeyAtom::Bytes(bytes.into_iter().map(|byte| 255 - byte).collect()),
+        KeyAtom::List(items) => KeyAtom::List(items.into_iter().map(timed_key_inverted).collect()),
+        other => other,
+    }
+}
+
 /// The second part of the order key of a timed aggregate member (FR-322-AC-265),
 /// after its minimum region triple. A `clock_place` is its place path key. With
 /// `member_key`, the other forms are keyed so that nodes of one source atom are
-/// totally ordered: a `clock_constraint` and a `clock_reset` of kind `place` by
-/// (0, referenced place path key, owner term region, slot term regions, comparison
-/// rank, bound or value), of kind `parameter` by (1, operation name, parameter
-/// name, comparison rank, bound or value); a `time_invariant` by the key of its
-/// first bound; a `clock_guard` by its operation name; an `urgency` by its kind
-/// word and operation name. The comparison rank is `lt`, `le`, `eq`, `ge`, `gt`.
+/// totally ordered, and by structure only (`timed_term_key`):
+/// a `clock_constraint` of kind `place` by (0, referenced place path key, owner term,
+/// slot terms, comparison rank, bound), of kind `parameter` by (1, operation name,
+/// parameter name, comparison rank, bound); a `clock_reset` of kind `place` by (0, place
+/// path key, operation name, condition, binders, owner term, slot terms, value), of kind
+/// `parameter` by (1, operation name, parameter name, value); a `time_invariant` by
+/// (all of its bounds' keys in order, predicate); a `clock_guard` by its operation name; an
+/// `urgency` by its kind word and operation name. The comparison rank is `lt`, `le`, `eq`,
+/// `ge`, `gt`.
 fn timed_member_key(package: &Value, id: &Value, path_key: bool, member_key: bool) -> KeyAtom {
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
     let find = |id: &Value| nodes.iter().find(|node| node["node_id"] == *id);
-    let region = |id: &Value| {
-        package["source_map"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .filter(|entry| entry["node_id"] == *id)
-            .flat_map(|entry| entry["regions"].as_array().unwrap())
-            .map(|region| (region["source"]["identity"].as_str().unwrap_or("").to_owned(), region["start"].as_u64().unwrap_or(0), region["end"].as_u64().unwrap_or(0)))
-            .min()
-            .map_or(KeyAtom::Region(String::new(), 0, 0), |(source, start, end)| KeyAtom::Region(source, start, end))
-    };
+    let fault = KEY_FAULT.with(|fault| fault.get());
     let path_atoms = |place: &Value| -> KeyAtom {
         match find(place).filter(|node| node["semantic_form"] == "clock_place") {
             Some(node) if path_key => KeyAtom::List(
@@ -23449,12 +23488,14 @@ fn timed_member_key(package: &Value, id: &Value, path_key: bool, member_key: boo
     let (true, Some(node)) = (member_key, node) else { return empty };
     let member = |at: usize| &node["body"]["members"][at]["value"];
     let text = |value: &Value| KeyAtom::Bytes(value["value"].as_str().unwrap_or("").as_bytes().to_vec());
-    let operation_name = |anchor: &Value| find(anchor).map_or(KeyAtom::Bytes(Vec::new()), |anchor| text(&anchor["body"]["members"][1]["value"]));
-    let fault = KEY_FAULT.with(|fault| fault.get());
-    let ranks = if fault == "comparison-rank" { ["lt", "eq", "le", "ge", "gt"] } else { ["lt", "le", "eq", "ge", "gt"] };
-    let rank = |value: &Value| {
-        KeyAtom::Int(ranks.iter().position(|word| Some(*word) == value["value"].as_str()).unwrap_or(5) as u64)
+    let operation_name = |anchor: &Value| {
+        if fault == "operation" {
+            return KeyAtom::Bytes(Vec::new());
+        }
+        find(anchor).map_or(KeyAtom::Bytes(Vec::new()), |anchor| text(&anchor["body"]["members"][1]["value"]))
     };
+    let ranks = if fault == "comparison-rank" { ["lt", "eq", "le", "ge", "gt"] } else { ["lt", "le", "eq", "ge", "gt"] };
+    let rank = |value: &Value| KeyAtom::Int(ranks.iter().position(|word| Some(*word) == value["value"].as_str()).unwrap_or(5) as u64);
     let fraction = |value: &Value| {
         let (numerator, denominator) = value["value"].as_str().unwrap_or("0/1").split_once('/').unwrap_or(("0", "1"));
         if fault == "bound" {
@@ -23465,23 +23506,49 @@ fn timed_member_key(package: &Value, id: &Value, path_key: bool, member_key: boo
         }
         KeyAtom::Fraction(KeyRational(numerator.parse().unwrap_or(0), denominator.parse().unwrap_or(1)))
     };
-    let regions_of = |list: &Value| {
-        KeyAtom::List(list["members"].as_array().into_iter().flatten().map(|slot| region(&slot["target"])).collect())
+    let term = |reference: &Value, fault_name: &str| {
+        if !fault_name.is_empty() && fault == fault_name {
+            return KeyAtom::List(Vec::new());
+        }
+        if fault == "term-region" {
+            let at = package["source_map"].as_array().unwrap().iter().filter(|entry| entry["node_id"] == reference["target"]);
+            let region = at
+                .flat_map(|entry| entry["regions"].as_array().unwrap())
+                .map(|region| (region["source"]["identity"].as_str().unwrap_or("").to_owned(), region["start"].as_u64().unwrap_or(0), region["end"].as_u64().unwrap_or(0)))
+                .min()
+                .map_or(KeyAtom::List(Vec::new()), |(source, start, end)| KeyAtom::Region(source, start, end));
+            return region;
+        }
+        let key = timed_term_key(nodes, &reference["target"], 8);
+        if fault == "term-order" { timed_key_inverted(key) } else { key }
     };
+    let terms = |list: &Value, fault_name: &str| {
+        if !fault_name.is_empty() && fault == fault_name {
+            return KeyAtom::List(Vec::new());
+        }
+        KeyAtom::List(list["members"].as_array().into_iter().flatten().map(|entry| term(entry, "")).collect())
+    };
+    let value_of = |value: &Value| if fault == "reset-value" { KeyAtom::List(Vec::new()) } else { fraction(value) };
     match (form, member(0)["value"].as_str().unwrap_or("")) {
         ("clock_constraint", "place") => KeyAtom::List(vec![
-            KeyAtom::Int(0), path_atoms(&member(1)["target"]), region(&member(2)["target"]), regions_of(member(3)), rank(member(4)), fraction(member(5)),
+            KeyAtom::Int(0), path_atoms(&member(1)["target"]), term(member(2), "owner-term"), terms(member(3), "slot-terms"), rank(member(4)), fraction(member(5)),
         ]),
         ("clock_constraint", _) => KeyAtom::List(vec![
             KeyAtom::Int(1), operation_name(&member(1)["target"]), text(member(2)), rank(member(3)), fraction(member(4)),
         ]),
         ("clock_reset", "place") => KeyAtom::List(vec![
-            KeyAtom::Int(0), path_atoms(&member(2)["target"]), region(&member(3)["target"]), regions_of(member(4)), fraction(member(7)),
+            KeyAtom::Int(0), path_atoms(&member(2)["target"]), operation_name(&member(1)["target"]), term(member(6), "condition"),
+            terms(member(5), "binders"), term(member(3), "owner-term"), terms(member(4), "slot-terms"), value_of(member(7)),
         ]),
-        ("clock_reset", _) => KeyAtom::List(vec![KeyAtom::Int(1), operation_name(&member(1)["target"]), text(member(2)), fraction(member(3))]),
-        ("time_invariant", _) => member(1)["members"][0]["target"]
-            .as_object()
-            .map_or(empty, |_| timed_member_key(package, &member(1)["members"][0]["target"], path_key, member_key)),
+        ("clock_reset", _) => KeyAtom::List(vec![KeyAtom::Int(1), operation_name(&member(1)["target"]), text(member(2)), value_of(member(3))]),
+        ("time_invariant", _) => {
+            let bounds = member(1)["members"].as_array().cloned().unwrap_or_default();
+            let keep = if fault == "second-bound" { 1 } else { bounds.len() };
+            KeyAtom::List(vec![
+                KeyAtom::List(bounds.iter().take(keep).map(|bound| timed_member_key(package, &bound["target"], path_key, member_key)).collect()),
+                term(member(0), "predicate"),
+            ])
+        }
         ("clock_guard", _) => operation_name(&member(0)["target"]),
         ("urgency", kind) => KeyAtom::List(vec![
             KeyAtom::Bytes(kind.as_bytes().to_vec()),
@@ -23525,9 +23592,6 @@ fn timed_aggregate_order_refusal_ruled(package: &Value, path_key: bool, member_k
                 for binding in 3..=8 {
                     lists.push((format!("/semantic_graph/nodes/{at}/body/members/{binding}/value/members"), members_of(binding), 0));
                 }
-            }
-            Some("clock_place") => {
-                lists.push((format!("/semantic_graph/nodes/{at}/body/members/3/value/members"), members_of(3), 0));
             }
             Some("clock_guard") if nested => {
                 for (part, entry) in members_of(1).iter().enumerate() {
@@ -23573,7 +23637,7 @@ fn tc_367_timed_aggregates_list_their_members_in_declared_order() {
     let mut by_digest = control.clone();
     by_digest.sort();
     assert_ne!(control, by_digest, "the published order is not a hash-derived order");
-    // GD-02 appends SL-08 last: in order, so it refuses only as a repeated place.
+    // GD-02 appends its second place last: in order, so it refuses only as a repeated place.
     for gd in vectors["guards"].as_array().unwrap().iter().filter(|g| g["id"] == "GD-02") {
         let mut adverse = selected.clone();
         for operation in gd["patch"].as_array().unwrap() {
@@ -23678,21 +23742,6 @@ fn tc_367_aggregate_order_oracle_fails_on_each_mutation() {
     assert_eq!(
         timed_aggregate_order_refusal(&repeated),
         Some(format!("/semantic_graph/nodes/{root_at}/body/members/7/value/members/1"))
-    );
-    // A place whose `guards` lists two guards in reverse of their regions refuses at that place.
-    let mut guarded = selected.clone();
-    let place = guarded["semantic_graph"]["nodes"].as_array().unwrap().iter().position(|n| n["semantic_form"] == "clock_place").unwrap();
-    let guard = guarded["semantic_graph"]["nodes"][root_at]["body"]["members"][5]["value"]["members"][0].clone();
-    let other = guarded["semantic_graph"]["nodes"][root_at]["body"]["members"][6]["value"]["members"][0].clone();
-    let (ga, gb) = (entry_of(&mut guarded, &guard["target"]), entry_of(&mut guarded, &other["target"]));
-    let (ka, kb) = (guarded["source_map"][ga]["regions"][0].clone(), guarded["source_map"][gb]["regions"][0].clone());
-    assert!(ka["start"].as_u64() < kb["start"].as_u64());
-    guarded["semantic_graph"]["nodes"][place]["body"]["members"][3]["value"]["members"] = json!([guard.clone(), other.clone()]);
-    assert_eq!(timed_aggregate_order_refusal(&guarded), None, "ascending guards of a place are in order");
-    guarded["semantic_graph"]["nodes"][place]["body"]["members"][3]["value"]["members"] = json!([other, guard]);
-    assert_eq!(
-        timed_aggregate_order_refusal(&guarded),
-        Some(format!("/semantic_graph/nodes/{place}/body/members/3/value/members/1"))
     );
 }
 
@@ -25346,8 +25395,8 @@ fn tc_971_option_value_body_is_closed_and_its_preimage_covers_type_and_payload()
 }
 
 /// Every switch of the clause oracle; the mutation test pins each to a vector.
-const TIMED_CLAUSE_RULES: [&str; 22] = [
-    "path-key", "member-key", "unlisted", "place-guards", "nested-order", "anchor-kind", "anchor-model", "no-point", "parameter-declared", "parameter-clock",
+const TIMED_CLAUSE_RULES: [&str; 21] = [
+    "path-key", "member-key", "unlisted", "nested-order", "anchor-kind", "anchor-model", "no-point", "parameter-declared", "parameter-clock",
     "owner-type", "slot-count", "slot-domain", "part-predicate", "same-anchor",
     "invariant-predicate", "invariant-bound", "frame-modifies", "binders", "condition", "one-guard", "root-constraints",
 ];
@@ -25497,13 +25546,6 @@ fn timed_clause_refusal(
         let body = |tail: String| format!("/semantic_graph/nodes/{at}/body{tail}");
         let refuse = |tail: String| Some(("invalid_package", Some(REF), body(tail)));
         match clause["semantic_form"].as_str().unwrap() {
-            "clock_place" => {
-                for (k, guard) in clause["body"]["members"][3]["value"]["members"].as_array().unwrap().iter().enumerate() {
-                    if on("place-guards") && !boolean(&target(guard)) {
-                        return refuse(format!("/members/3/value/members/{k}/target"));
-                    }
-                }
-            }
             "clock_constraint" => {
                 if word(clause, 0) == "place" {
                     if let Some(refusal) = place_use(at, clause, 1) {
@@ -25767,7 +25809,7 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
 fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let ids: Vec<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected: Vec<String> = (1..=36).map(|n| format!("CL-{n:02}")).collect();
+    let expected: Vec<String> = (1..=53).map(|n| format!("CL-{n:02}")).collect();
     assert_eq!(ids, expected.iter().map(String::as_str).collect::<Vec<_>>());
     assert_eq!(timed_clause_vector_defects(""), Vec::<String>::new());
 }
@@ -25783,7 +25825,6 @@ fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
         ("one-guard", "CL-04"),
         ("unlisted", "CL-05"),
         ("unlisted", "CL-26"),
-        ("place-guards", "CL-27"),
         ("member-key", "CL-29"),
         ("root-constraints", "CL-06"),
         ("invariant-bound", "CL-07"),
@@ -25822,7 +25863,21 @@ fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
 #[trace("TC-367", "FR-322-AC-265")]
 #[test]
 fn tc_367_timed_key_contents_are_pinned_by_vectors() {
-    let by_vector = [("comparison-rank", "CL-33"), ("bound", "CL-35"), ("bound-text", "CL-35")];
+    let by_vector = [
+        ("comparison-rank", "CL-33"),
+        ("bound", "CL-35"),
+        ("bound-text", "CL-35"),
+        ("owner-term", "CL-37"),
+        ("term-order", "CL-37"),
+        ("term-region", "CL-37"),
+        ("slot-terms", "CL-39"),
+        ("operation", "CL-41"),
+        ("condition", "CL-43"),
+        ("second-bound", "CL-45"),
+        ("reset-value", "CL-48"),
+        ("binders", "CL-50"),
+        ("predicate", "CL-52"),
+    ];
     for (fault, vector) in by_vector {
         KEY_FAULT.with(|cell| cell.set(fault));
         let defects = timed_clause_vector_defects("");
@@ -25942,7 +25997,10 @@ fn tc_367_timed_clause_criteria_and_vectors_are_published() {
         "place path key",
         "`eq` is the relation FR-415 writes `=`",
         "a union step by those of its `case`",
-        "never a `clock_guard` (a cycle in a content-addressed graph)",
+        "would be a cycle in a graph whose keys hash their dependencies",
+        "never by a digest or by a source region of a shared term",
+        "no `guards` field",
+        "**structure**",
         "A conditional reset of a `Clock` parameter does not exist",
         "STD-554",
         "STD-555",

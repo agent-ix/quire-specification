@@ -108,7 +108,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "4ffd54e3237f86b036c58ddf56120c118ff8e3a6fafe51125f2ee9f4d8e3fcb6",
+    "digest": "9af0f7a610566f346eef105857762eadfceb16cfa07425c0871d7a85fc5b9b95",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -2735,22 +2735,6 @@
                 ],
                 "term": "aggregate"
               }
-            },
-            {
-              "name": "guards",
-              "term": "binding",
-              "value": {
-                "members": [
-                  {
-                    "target": {
-                      "digest": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
-                      "domain": "quire.checked-semantic-node/v1"
-                    },
-                    "term": "reference"
-                  }
-                ],
-                "term": "aggregate"
-              }
             }
           ],
           "term": "aggregate"
@@ -2763,14 +2747,10 @@
           {
             "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
             "domain": "quire.checked-semantic-node/v1"
-          },
-          {
-            "digest": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
-            "domain": "quire.checked-semantic-node/v1"
           }
         ],
         "node_id": {
-          "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
+          "digest": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -2783,7 +2763,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "clock_place",
         "semantic_type": {
-          "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
+          "digest": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -2819,7 +2799,7 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
+                  "digest": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977",
                   "domain": "quire.checked-semantic-node/v1"
                 },
                 "term": "reference"
@@ -2893,11 +2873,11 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
+            "digest": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "7916594432599ef67ed6ae2cf24658efb71aeb896d38ea84981961c5c5dd1399",
+            "digest": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -2910,7 +2890,7 @@
           }
         ],
         "node_id": {
-          "digest": "279ac759e128022c397173b23ad59d15441a999895828677b5a94314221b71c1",
+          "digest": "bb0f4f36c315becd0c6076bfdb8775a9876e285458fde25c8cf58a4c57e87c6c",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -2923,7 +2903,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "clock_reset",
         "semantic_type": {
-          "digest": "279ac759e128022c397173b23ad59d15441a999895828677b5a94314221b71c1",
+          "digest": "bb0f4f36c315becd0c6076bfdb8775a9876e285458fde25c8cf58a4c57e87c6c",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -2961,7 +2941,7 @@
                       },
                       {
                         "target": {
-                          "digest": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811",
+                          "digest": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14",
                           "domain": "quire.checked-semantic-node/v1"
                         },
                         "term": "reference"
@@ -2982,7 +2962,7 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811",
+            "digest": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -2991,7 +2971,7 @@
           }
         ],
         "node_id": {
-          "digest": "578e17417bd08fc9a8117934420f4b1236c308509a7df752450d8529a4570098",
+          "digest": "92da86c09b379626e7cedbed320c6223ea81cace6c79c407a20071eab401c4f4",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -3004,7 +2984,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "clock_guard",
         "semantic_type": {
-          "digest": "578e17417bd08fc9a8117934420f4b1236c308509a7df752450d8529a4570098",
+          "digest": "92da86c09b379626e7cedbed320c6223ea81cace6c79c407a20071eab401c4f4",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -3029,7 +3009,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811",
+                      "digest": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3047,12 +3027,12 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811",
+            "digest": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14",
             "domain": "quire.checked-semantic-node/v1"
           }
         ],
         "node_id": {
-          "digest": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07",
+          "digest": "c883bc73298724751bfe1f3810dd6829dc525ca24b6718d8fa34e8cc13d2dbd0",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -3065,7 +3045,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "time_invariant",
         "semantic_type": {
-          "digest": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07",
+          "digest": "c883bc73298724751bfe1f3810dd6829dc525ca24b6718d8fa34e8cc13d2dbd0",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -3211,7 +3191,7 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
+                  "digest": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977",
                   "domain": "quire.checked-semantic-node/v1"
                 },
                 "term": "reference"
@@ -3279,7 +3259,7 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
+            "digest": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -3288,7 +3268,7 @@
           }
         ],
         "node_id": {
-          "digest": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811",
+          "digest": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -3301,7 +3281,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "clock_constraint",
         "semantic_type": {
-          "digest": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811",
+          "digest": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -3348,7 +3328,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
+                      "digest": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3364,7 +3344,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "279ac759e128022c397173b23ad59d15441a999895828677b5a94314221b71c1",
+                      "digest": "bb0f4f36c315becd0c6076bfdb8775a9876e285458fde25c8cf58a4c57e87c6c",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3380,7 +3360,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "578e17417bd08fc9a8117934420f4b1236c308509a7df752450d8529a4570098",
+                      "digest": "92da86c09b379626e7cedbed320c6223ea81cace6c79c407a20071eab401c4f4",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3396,7 +3376,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07",
+                      "digest": "c883bc73298724751bfe1f3810dd6829dc525ca24b6718d8fa34e8cc13d2dbd0",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3435,7 +3415,7 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811",
+                      "digest": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14",
                       "domain": "quire.checked-semantic-node/v1"
                     },
                     "term": "reference"
@@ -3463,23 +3443,11 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          {
-            "digest": "279ac759e128022c397173b23ad59d15441a999895828677b5a94314221b71c1",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          {
-            "digest": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          {
-            "digest": "578e17417bd08fc9a8117934420f4b1236c308509a7df752450d8529a4570098",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          {
             "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "92da86c09b379626e7cedbed320c6223ea81cace6c79c407a20071eab401c4f4",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
@@ -3487,16 +3455,28 @@
             "domain": "quire.checked-semantic-node/v1"
           },
           {
+            "digest": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
             "digest": "a26279caa47a7fc05578fb7a35a099e277d321ddeb0cae27db8eff4d16fe08f6",
             "domain": "quire.checked-semantic-node/v1"
           },
           {
-            "digest": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811",
+            "digest": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "bb0f4f36c315becd0c6076bfdb8775a9876e285458fde25c8cf58a4c57e87c6c",
+            "domain": "quire.checked-semantic-node/v1"
+          },
+          {
+            "digest": "c883bc73298724751bfe1f3810dd6829dc525ca24b6718d8fa34e8cc13d2dbd0",
             "domain": "quire.checked-semantic-node/v1"
           }
         ],
         "node_id": {
-          "digest": "35707f803ed9e11335c8fa0046e7bb141323f80dbb70473b35ef010fa78f681e",
+          "digest": "753b994fcc099bbedd98057abe916e07c5f1eda0f2d514946754b24cec006a58",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "timed_model",
@@ -3514,7 +3494,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "timed_model",
         "semantic_type": {
-          "digest": "35707f803ed9e11335c8fa0046e7bb141323f80dbb70473b35ef010fa78f681e",
+          "digest": "753b994fcc099bbedd98057abe916e07c5f1eda0f2d514946754b24cec006a58",
           "domain": "quire.checked-semantic-node/v1"
         }
       },
@@ -4034,7 +4014,7 @@
     },
     {
       "node_id": {
-        "digest": "1db9f5be0a1b0b1cec78016149278caab360f3b4966fa8c12807ba1121d54141",
+        "digest": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -4114,7 +4094,7 @@
     },
     {
       "node_id": {
-        "digest": "279ac759e128022c397173b23ad59d15441a999895828677b5a94314221b71c1",
+        "digest": "bb0f4f36c315becd0c6076bfdb8775a9876e285458fde25c8cf58a4c57e87c6c",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -4214,7 +4194,7 @@
     },
     {
       "node_id": {
-        "digest": "43a2fa477cbce8132d7326cded2b732092c4b2377600514434af79fe17b75a07",
+        "digest": "c883bc73298724751bfe1f3810dd6829dc525ca24b6718d8fa34e8cc13d2dbd0",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -4774,7 +4754,7 @@
     },
     {
       "node_id": {
-        "digest": "a64a5367e8729958e81f5c6d0f7dbce81babbce9ddbaec13a1940e1f6b44b811",
+        "digest": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -4834,7 +4814,7 @@
     },
     {
       "node_id": {
-        "digest": "35707f803ed9e11335c8fa0046e7bb141323f80dbb70473b35ef010fa78f681e",
+        "digest": "753b994fcc099bbedd98057abe916e07c5f1eda0f2d514946754b24cec006a58",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,
@@ -4874,7 +4854,7 @@
     },
     {
       "node_id": {
-        "digest": "578e17417bd08fc9a8117934420f4b1236c308509a7df752450d8529a4570098",
+        "digest": "92da86c09b379626e7cedbed320c6223ea81cace6c79c407a20071eab401c4f4",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,

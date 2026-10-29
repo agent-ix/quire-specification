@@ -525,8 +525,8 @@ and two nodes declaring one name refuse as `ambiguous-name`
 - `timed-clause-node-vectors.json` publishes the clause forms (`clock_guard`,
   `clock_reset`, `time_invariant`, `clock_constraint`, in both kinds) of
   FR-322 "Clause nodes" as the `forms` field tables and the replayable
-  `CL-01`..`CL-36` cases and the `QN-01`, `QN-02` quantified refusals (FR-322-AC-261..FR-322-AC-266, FR-342-AC-11, TC-367
-  CK-32..CK-36). `fixtures/positive-timed-clause-nodes.json` is the complete
+  `CL-01`..`CL-53` cases and the `QN-01`, `QN-02` quantified refusals (FR-322-AC-261..FR-322-AC-266, FR-342-AC-11, TC-367
+  CK-32..CK-37). A `clock_place` is exactly `model`, `path` and `resolved_path` (the `guards` field is removed; `CL-27` refuses a `guards` binding). The member keys that order nodes of one source region are structural (a term is keyed by its form and body shape, never by a digest or a source region), and `CL-33`..`CL-53` pin each component. `fixtures/positive-timed-clause-nodes.json` is the complete
   package that carries one node of each form and `domain-package-acme-timed-clauses.json`
   its selected document; the cases are RFC 6902 patches on that package.
 - `clock-presence-frame-vectors.json` publishes the frame rule of FR-415-AC-21
