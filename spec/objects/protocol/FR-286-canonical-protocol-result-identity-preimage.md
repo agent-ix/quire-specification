@@ -38,16 +38,12 @@ or wire token. RFC 8785 is applied to the JSON object on the right-hand side of
 `:=`; the notation itself is not hashed. The preimage includes every other
 result member and excludes only `resultId`.
 Unknown or duplicate result members are refused by the closed result contract
-before identity computation. The enclosing artifact digest is separate: it is
-computed over the complete canonical result bytes including `resultId`, lives in
-the enclosing reference outside those bytes, and does not equal or replace the
-result identity merely because both select `quire.verification.jcs`.
+before identity computation. No separate enclosing artifact digest is computed or compared.
 
 ## Reader order and comparison
 
 A strict reader SHALL validate in this order: (1) closed result shape,
-`contractVersion` and `kind`; (2) recompute and compare `resultId`; (3) recompute
-and compare the enclosing artifact digest; (4) validate cross-field combination
+`contractVersion` and `kind`; (2) recompute and compare `resultId`; (3) validate cross-field combination
 and lineage rules. The reader SHALL refuse the first failed boundary and SHALL
 NOT repair, approximate or reseal the result.
 
@@ -73,7 +69,7 @@ unchanged result.
 | --- | --- | --- |
 | FR-286-AC-1 | Independent RFC 8785/SHA-256 computation over the exact versioned preimage yields the emitted `resultId`. | Test (TC-061) |
 | FR-286-AC-2 | Any change to a result member other than `resultId` changes the recomputed identity; object-member presentation permutations do not. | Test (TC-061) |
-| FR-286-AC-3 | The enclosing digest covers complete canonical result bytes including `resultId`, remains outside those bytes and is validated after `resultId`. | Test (TC-061) |
+| FR-286-AC-3 | Withdrawn: it existed only for the enclosing artifact digest, which is no longer computed or validated. | Withdrawn |
 | FR-286-AC-4 | Same `resultId` with different canonical result bytes, a missing identity or an identity from another domain is refused. | Test (TC-061) |
 | FR-286-AC-5 | A superseding or invalidating result preserves the earlier bytes, has a newly derived identity and carries explicit lineage. | Test (TC-061) |
 

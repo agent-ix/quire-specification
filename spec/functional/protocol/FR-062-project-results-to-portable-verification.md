@@ -53,9 +53,8 @@ or `finding-loss`, plus the affected exact identity.
 
 ## Behavior
 
-The projection adapter SHALL validate the canonical protocol result and
-recompute its `sha256-jcs` digest before mapping it. An invalid source or a
-recomputed source digest mismatch SHALL yield `invalid-source-result`. After
+The projection adapter SHALL validate the canonical protocol result
+before mapping it. An invalid source SHALL yield `invalid-source-result`. After
 source acceptance, a missing/conflicting target-context identity or a derived
 projection identity that disagrees with its exact preimage SHALL yield
 `identity-mismatch`. The adapter SHALL preserve
@@ -67,7 +66,7 @@ adequacy as E02 observation adequacy or as an evidence-sufficiency decision.
 
 The derived `TechniqueResult.resultId` SHALL be distinct from the canonical
 protocol-result identity and stable for the exact tuple of canonical result
-identity and digest, target obligation and execution-binding identities, target
+identity, target obligation and execution-binding identities, target
 contract version, and adapter identity and version. Changing any member of that
 tuple SHALL change the derived result identity. The result ID is
 `sha256-jcs:<lowercase-hex>` over this RFC 8785 canonical identity preimage:
@@ -75,7 +74,7 @@ tuple SHALL change the derived result identity. The result ID is
 ```json
 {
   "identityVersion": "quire.protocol.e02-projection-identity/v1-draft.1",
-  "sourceResultRef": { "identity": "<exact-result-id>", "digest": "<sha256-jcs>" },
+  "sourceResultRef": { "identity": "<exact-result-id>" },
   "targetContractVersion": "quire-verification/e02-draft-2",
   "targetBinding": {
     "propertyRef": "<exact-artifact-reference>",
@@ -95,7 +94,7 @@ The angle-bracket strings describe typed values rather than literal wire text;
 the preimage contains their complete JSON values. `bindingRefs` uses the selected
 E02 semantic order and SHALL NOT be resorted by presentation text.
 `nativeArtifacts` SHALL contain
-exactly one canonical-result entry with the source URI, recomputed digest and
+exactly one canonical-result entry with the source URI and
 media type
 `application/vnd.agent-ix.quire-protocol-result+json;version=1-draft.1`.
 `provenance` SHALL identify the protocol producer plus this adapter and their
@@ -146,9 +145,9 @@ another repository.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-062-AC-1 | Every source-state row maps to the selected E02 contract and retains every simultaneous independent FR-007 finding with no sufficiency decision. | Test (TC-064) |
-| FR-062-AC-2 | Every projected result has a distinct deterministic identity, exact target execution binding and retained URI/digest/media-type reference to unchanged canonical protocol-result bytes; substituting any identity or digest refuses the projection. | Test (TC-064) |
+| FR-062-AC-2 | Every projected result has a distinct deterministic identity, exact target execution binding and retained URI/media-type reference to unchanged canonical protocol-result bytes; substituting any identity refuses the projection. | Test (TC-064) |
 | FR-062-AC-3 | E02 adequacy is derived only from observation adequacy; protocol adequacy remains in the canonical result and neither adequacy domain can establish the other or an evidence-sufficiency decision. | Test (TC-064) |
-| FR-062-AC-4 | An invalid source or recomputed source digest mismatch yields `invalid-source-result`; an invalid derived projection identity or exact target-context mismatch yields `identity-mismatch`; unknown revisions/features, unrepresented states and finding loss yield their corresponding stable codes, all without a `TechniqueResult`. | Test (TC-064) |
+| FR-062-AC-4 | An invalid source yields `invalid-source-result`; an invalid derived projection identity or exact target-context mismatch yields `identity-mismatch`; unknown revisions/features, unrepresented states and finding loss yield their corresponding stable codes, all without a `TechniqueResult`. | Test (TC-064) |
 
 ## Dependencies
 

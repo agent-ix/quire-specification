@@ -20,19 +20,17 @@ When a linked protocol definition is used as an identity qualifier, the linker S
 ## Properties
 
 - **authored source document key** — the exact FR-202 document identity
-  and raw-byte digest of the source owning the declaration.
+  of the source owning the declaration.
 - **admitted declaration handle** — the source-inventory-qualified handle of
   the protocol declaration. A wire table index is a local representation of
   this handle and is comparable only inside the same admitted package.
 - **formal owner and clause** — the exact requirement package, requirement
   identity, requirement revision and clause identity retained by FR-049.
 - **semantic selection closure** — the exact language edition, protocol profile
-  definition identity, domain package selections (identity and `sha256-jcs`
-  digest) retained by FR-030. Resource-only execution
+  definition identity, domain package selections (identity and version) retained by FR-030. Resource-only execution
   controls and runtime observations are excluded.
 
-These properties form a structured key. This artifact does not prescribe a new
-hash, rehash a producer identity or permit a package artifact digest to stand in
+These properties form a structured key. This artifact does not prescribe a hash or permit a package artifact digest to stand in
 for any member. Implementations may retain compact package-local handles, but an
 exchanged handle is incomplete unless its admitted package selection supplies
 every qualifier above.
@@ -53,14 +51,12 @@ every qualifier above.
   closure is present. Missing, ambiguous, foreign or conflicting qualifiers
   refuse the dependent definition; none is defaulted from a current package,
   ambient profile, declaration name or table position.
-- **Digest domain** — each carried digest retains its own FR-201 domain. Equal
-  bytes in different domains are unequal and cannot substitute for one another.
+- **Digest domain** — not applicable; the key carries no digest.
 
 Display names, paths, spans, build provenance, runtime configuration values and
 observations are not standalone key members and cannot substitute for one.
 Changing external rendering metadata while preserving the authored source key
-changes no key member; editing a display name inside the retained source changes
-that source's raw-byte digest and therefore its document key. Changing the
+changes no key member; editing a display name inside the retained source does not change its document key. Changing the
 authored source key, declaration handle, formal owner or semantic dependency
 selection changes the definition identity.
 
