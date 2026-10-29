@@ -138,7 +138,7 @@ The evaluator keeps the window's values. `max_window_values` is a run limit
 the caller sets per run, with a published default. A window that exceeds it
 yields `incomplete`, `limit-reached` naming `max_window_values`, its value
 and the request setting that raises it, never a truth value. Evaluation charges
-one unit of clause work per window position visited, whether or not the filter
+one unit of clause work at `temporal.visit` (`quire.value.accounting/v1`) per window position visited, whether or not the filter
 admits it, and under a stop at an undefined position, the positions visited
 up to and including it.
 
