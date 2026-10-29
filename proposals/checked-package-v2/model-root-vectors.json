@@ -1,90 +1,13 @@
 {
   "base": "fixtures/positive-all-families.json",
-  "note": "RFC 6902 patches applied to the base; each patch ends by replacing package_id with the recomputed package id. A schema of invalid fails the V2 schema and a reader refuses it malformed_wire at the locus; a schema of valid passes it. Outcomes are the first reader refusal.",
+  "note": "RFC 6902 patches applied to the base. A schema of invalid fails the V2 schema and a reader refuses it malformed_wire at the locus; a schema of valid passes it. Outcomes are the first reader refusal.",
   "vectors": [
     {
       "id": "MR-00",
       "description": "the published package, unmutated",
-      "patch": [
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
-        }
-      ],
+      "patch": [],
       "schema": "valid",
       "outcome": "admitted"
-    },
-    {
-      "id": "MR-04",
-      "description": "an extra root whose owner identity names no supplied domain package; the package keeps its own root, so this is the only defect",
-      "patch": [
-        {
-          "op": "add",
-          "path": "/semantic_graph/nodes/-",
-          "value": {
-            "body": {
-              "members": [],
-              "term": "aggregate"
-            },
-            "dependencies": [],
-            "node_id": {
-              "domain": "quire.checked-semantic-node/v1",
-              "digest": "33c1a40235a4a0904a3af6be1b53182b5032e145c2d4424f6e86d4853f61bd4c"
-            },
-            "node_tag": "model",
-            "occurrences": [
-              {
-                "ordinal": 0,
-                "role": "generated"
-              }
-            ],
-            "owner": {
-              "kind": "model_root",
-              "identity": "acme/unselected"
-            },
-            "schema_version": "quire.checked-semantic-graph/v2",
-            "semantic_form": "model_root",
-            "semantic_type": {
-              "domain": "quire.checked-semantic-node/v1",
-              "digest": "33c1a40235a4a0904a3af6be1b53182b5032e145c2d4424f6e86d4853f61bd4c"
-            }
-          }
-        },
-        {
-          "op": "add",
-          "path": "/source_map/-",
-          "value": {
-            "node_id": {
-              "domain": "quire.checked-semantic-node/v1",
-              "digest": "33c1a40235a4a0904a3af6be1b53182b5032e145c2d4424f6e86d4853f61bd4c"
-            },
-            "ordinal": 0,
-            "regions": [
-              {
-                "end": 1,
-                "source": {
-                  "authority": "agent-ix",
-                  "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-                  "digest_domain": "quire.source.bytes/v1",
-                  "identity": "example"
-                },
-                "start": 0
-              }
-            ],
-            "role": "generated"
-          }
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "54e5c44541f967cd1f840d437611463a4cb5a4c6f0ca83c29925feaa1c9086c9"
-        }
-      ],
-      "schema": "valid",
-      "outcome": "refused:missing_declaration",
-      "locus": "/semantic_graph/nodes/47/owner",
-      "cause": "missing-selection"
     },
     {
       "id": "MR-09",
@@ -100,8 +23,12 @@
             },
             "dependencies": [],
             "node_id": {
-              "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
             },
             "node_tag": "model",
             "occurrences": [
@@ -117,15 +44,14 @@
             "schema_version": "quire.checked-semantic-graph/v2",
             "semantic_form": "model_root",
             "semantic_type": {
-              "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
             }
           }
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "279eb05f5fef998b70b2c2d22ece0018b5d7fad307bcbacb00c4645916c15612"
         }
       ],
       "schema": "valid",
@@ -139,11 +65,6 @@
         {
           "op": "remove",
           "path": "/semantic_graph/nodes/46/owner"
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "7203328a3f4d39ddf05950a743ed7dc238ec3ee96a1e1fb38d7adcfc68dfa365"
         }
       ],
       "schema": "invalid",
@@ -158,11 +79,6 @@
           "op": "add",
           "path": "/semantic_graph/nodes/46/owner/version",
           "value": "1"
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "a3f5dc016122d5a70d74a8d0a03624946bd0feb2b299f72cfcf8a409e626bfb2"
         }
       ],
       "schema": "invalid",
@@ -177,15 +93,9 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/13/owner",
           "value": {
-            "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
             "identity": "acme/orders",
             "kind": "model_root"
           }
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "4b4ae7dbbbbeefd00fff65a1a5e2d4af8462dc5be0bcec3c0d3226e863155d48"
         }
       ],
       "schema": "invalid",

@@ -13,22 +13,6 @@
     },
     "entries": []
   },
-  "identity_preimage": {
-    "definition_selections": [],
-    "dependency_selections": [],
-    "edition": {
-      "definition": {
-        "authority": "agent-ix",
-        "identity": "quire-edition"
-      },
-      "role": "edition"
-    },
-    "profile_selections": [],
-    "required_features": [
-      "quire.value.complete/v1"
-    ],
-    "version": "quire.checked-package-id/v2"
-  },
   "lock": {
     "definition_selections": [],
     "dependency_selections": [],
@@ -46,17 +30,11 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-        "digest_domain": "quire.source.bytes/v1",
         "identity": "example"
       }
     ]
   },
-  "package_id": {
-    "algorithm": "sha256",
-    "digest": "7722df5c3a3905770ad0884e6072a4393cfeb1310634b63a95dd67edd8063321",
-    "domain": "quire.package.semantic/v2"
-  },
+  "name": "example",
   "semantic_graph": {
     "graph_version": "quire.checked-semantic-graph/v2",
     "nodes": [
@@ -67,8 +45,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -80,24 +62,44 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "boolean",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
           },
           "value": true,
           "value_kind": "boolean"
         },
         "dependencies": [],
         "node_id": {
-          "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -109,8 +111,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
@@ -118,22 +124,58 @@
           "arguments": [
             {
               "target": {
-                "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "literal",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "boolean"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             },
             {
               "target": {
-                "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "literal",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "boolean"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             },
             {
               "target": {
-                "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "literal",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "boolean"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             }
@@ -147,20 +189,66 @@
           },
           "operator": "conditional",
           "result_type": {
-            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "boolean"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "b013165702e7d30e3da875a69b3eb998bcba75aa1cd76d4c7292258f872fffcc",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "conditional",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "boolean"
+                  ]
+                }
+              ]
+            },
+            "quire.op.control.if",
+            "conditional",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -172,8 +260,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "conditional",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
@@ -183,8 +275,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -196,24 +292,45 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "integer",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "value": "1",
           "value_kind": "integer"
         },
         "dependencies": [],
         "node_id": {
-          "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "1"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -225,8 +342,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -234,22 +355,60 @@
           "arguments": [
             {
               "target": {
-                "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "literal",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "boolean"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             },
             {
               "target": {
-                "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "literal",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "1"
+                ]
               },
               "term": "reference"
             },
             {
               "target": {
-                "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "literal",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "1"
+                ]
               },
               "term": "reference"
             }
@@ -263,24 +422,100 @@
           },
           "operator": "conditional",
           "result_type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "boolean"
+                ]
+              }
+            ]
           },
           {
-            "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
           }
         ],
         "node_id": {
-          "digest": "86413fedec5873be9d133c9868092788f4d25bd7e0fa1b4e995b62691bb9785b",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "conditional",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "boolean"
+                  ]
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "1"
+              ]
+            },
+            "quire.op.control.if",
+            "conditional",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -292,8 +527,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "conditional",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       }
     ]
@@ -301,8 +540,12 @@
   "source_map": [
     {
       "node_id": {
-        "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "boolean"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -310,8 +553,6 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 0
@@ -321,8 +562,20 @@
     },
     {
       "node_id": {
-        "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "literal",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -330,8 +583,6 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1
@@ -341,8 +592,38 @@
     },
     {
       "node_id": {
-        "digest": "b013165702e7d30e3da875a69b3eb998bcba75aa1cd76d4c7292258f872fffcc",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "conditional",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "boolean"
+                ]
+              }
+            ]
+          },
+          "quire.op.control.if",
+          "conditional",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -350,8 +631,6 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 2
@@ -361,8 +640,12 @@
     },
     {
       "node_id": {
-        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "integer"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -370,8 +653,6 @@
           "end": 8,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 7
@@ -381,8 +662,21 @@
     },
     {
       "node_id": {
-        "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "literal",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "1"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -390,8 +684,6 @@
           "end": 9,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 8
@@ -401,8 +693,55 @@
     },
     {
       "node_id": {
-        "digest": "86413fedec5873be9d133c9868092788f4d25bd7e0fa1b4e995b62691bb9785b",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "conditional",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "boolean"
+                ]
+              }
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
+          },
+          "quire.op.control.if",
+          "conditional",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -410,8 +749,6 @@
           "end": 10,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 9

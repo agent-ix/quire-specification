@@ -59,22 +59,7 @@
     "Decimal": {"description": "A non-negative decimal string: 0 or [1-9][0-9]* (FR-392 seed, FR-393 and FR-400 decimals).", "$ref": "urn:quire:checked-package:v2#/$defs/NonNegativeIntegerString"},
     "IntegerString": {"$ref": "urn:quire:checked-package:v2#/$defs/IntegerString"},
     "Rational": {"$ref": "urn:quire:checked-package:v2#/$defs/Rational"},
-    "HexDigest": {"$ref": "urn:quire:checked-package:v2#/$defs/HexDigest"},
-    "PackageId": {"$ref": "urn:quire:checked-package:v2#/$defs/PackageId"},
-    "StalePackageIdentity": {
-      "description": "FR-331: a package semantic identity carried by stale-dependency; it is not a repository or checkout pin.",
-      "type": "object",
-      "required": ["kind", "package_id"],
-      "properties": {"kind": {"const": "package"}, "package_id": {"$ref": "#/$defs/PackageId"}},
-      "additionalProperties": false
-    },
-    "StaleRefinementIdentity": {
-      "description": "QSL FR-149: a refinement name carried by stale-dependency.",
-      "type": "object",
-      "required": ["kind", "name"],
-      "properties": {"kind": {"const": "refinement"}, "name": {"$ref": "#/$defs/Nonempty"}},
-      "additionalProperties": false
-    },
+    "Package": {"description": "FR-331 (defined): a checked package named by its identity string, the package name member; two packages are the same exactly when their JSON values are equal.", "$ref": "#/$defs/Nonempty"},
     "NodeId": {"$ref": "urn:quire:checked-package:v2#/$defs/NodeId"},
     "Occurrence": {"$ref": "urn:quire:checked-package:v2#/$defs/Occurrence"},
     "Identifier": {"$ref": "urn:quire:checked-package:v2#/$defs/Identifier"},
@@ -91,7 +76,7 @@
     "Mode": {"description": "FR-290: an advertised mode.", "enum": ["bounded", "unbounded"]},
     "LimitName": {"description": "FR-461: a limit member name, such as max_states.", "type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
     "SettingName": {"description": "FR-461: the dotted setting name that raises a limit, such as model_check.max_states.", "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"},
-    "StateKey": {"description": "FR-181: a quire.simulation.state-key/v1 digest.", "$ref": "#/$defs/HexDigest"},
+    "State": {"description": "FR-181: a model state as its typed canonical value, compared structurally and never keyed by a hash.", "$ref": "#/$defs/TypedValue"},
     "Locus": {
       "description": "FR-331 (defined): the source locus of an expression, named by the checked-package node and its occurrence; the package source map gives its regions.",
       "type": "object",
@@ -100,17 +85,17 @@
       "additionalProperties": false
     },
     "ProvisionRef": {
-      "description": "FR-364, FR-368: a document held in the request's byte provision, named by its sha256-jcs digest.",
+      "description": "FR-364, FR-368: a document held in the request's byte provision, located by its identity.",
       "type": "object",
-      "required": ["digest_domain", "digest"],
-      "properties": {"digest_domain": {"const": "sha256-jcs"}, "digest": {"$ref": "#/$defs/HexDigest"}},
+      "required": ["identity"],
+      "properties": {"identity": {"$ref": "#/$defs/Nonempty"}},
       "additionalProperties": false
     },
     "ProvisionEntry": {
-      "description": "FR-331 (defined): one byte-provision document: its sha256-jcs digest and its bytes.",
+      "description": "FR-331 (defined): one byte-provision document: its identity and its bytes.",
       "type": "object",
-      "required": ["digest_domain", "digest", "bytes"],
-      "properties": {"digest_domain": {"const": "sha256-jcs"}, "digest": {"$ref": "#/$defs/HexDigest"}, "bytes": {"$ref": "#/$defs/Base64Url"}},
+      "required": ["identity", "bytes"],
+      "properties": {"identity": {"$ref": "#/$defs/Nonempty"}, "bytes": {"$ref": "#/$defs/Base64Url"}},
       "additionalProperties": false
     },
     "StringMap": {"description": "A nonempty map of string values; absence means no entries.", "type": "object", "minProperties": 1, "additionalProperties": {"type": "string"}},
@@ -135,7 +120,7 @@
         {"properties": {"type": {"const": "tuple"}, "name": {"$ref": "#/$defs/Nonempty"}, "components": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}}, "required": ["type", "name", "components"], "additionalProperties": false},
         {"properties": {"type": {"const": "enum"}, "name": {"$ref": "#/$defs/Nonempty"}, "member": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "name", "member"], "additionalProperties": false},
         {"properties": {"type": {"const": "union"}, "name": {"$ref": "#/$defs/Nonempty"}, "member": {"$ref": "#/$defs/Nonempty"}, "components": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}}, "required": ["type", "name", "member", "components"], "additionalProperties": false},
-        {"properties": {"type": {"const": "reference"}, "universe": {"$ref": "#/$defs/HexDigest"}, "object_type": {"$ref": "#/$defs/HexDigest"}, "identity": {"type": "string", "pattern": "^([0-9a-f]{2})*$"}}, "required": ["type", "universe", "object_type", "identity"], "additionalProperties": false}
+        {"properties": {"type": {"const": "reference"}, "universe": {"$ref": "#/$defs/NodeId"}, "object_type": {"$ref": "#/$defs/NodeId"}, "identity": {"type": "string", "pattern": "^([0-9a-f]{2})*$"}}, "required": ["type", "universe", "object_type", "identity"], "additionalProperties": false}
       ]
     },
     "TransitionIdentity": {
@@ -167,9 +152,9 @@
       "properties": {
         "position": {"$ref": "#/$defs/Count"},
         "positions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Count"}},
-        "state_key": {"$ref": "#/$defs/StateKey"},
-        "state_keys": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}},
-        "document": {"$ref": "#/$defs/HexDigest"},
+        "state_key": {"$ref": "#/$defs/State"},
+        "state_keys": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/State"}},
+        "document": {"$ref": "#/$defs/Nonempty"},
         "locus": {"$ref": "#/$defs/Locus"},
         "transition": {"$ref": "#/$defs/TransitionIdentity"},
         "predicate": {"enum": ["P", "Q", "X", "Y"]},
@@ -178,7 +163,7 @@
         "trace_index": {"$ref": "#/$defs/Decimal"},
         "initial_state": {"$ref": "#/$defs/Count"},
         "binding": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
-        "product_state": {"$ref": "#/$defs/StateKey"},
+        "product_state": {"$ref": "#/$defs/State"},
         "row": {"$ref": "#/$defs/Nonempty"}
       },
       "required": ["locus"],
@@ -193,14 +178,13 @@
     },
 
     "Manifest": {"description": "FR-331: one backend descriptor per registered backend.", "type": "array", "minItems": 1, "items": {"$ref": "#/$defs/BackendDescriptor"}},
-    "BackendTool": {"description": "FR-331: the code that decides a backend's results: exact UTF-8 name and version, and the content identity of the build inputs of the provider code that implements the backend.", "type": "object", "required": ["name", "version", "build"], "properties": {"name": {"$ref": "#/$defs/Nonempty"}, "version": {"$ref": "#/$defs/Nonempty"}, "build": {"$ref": "#/$defs/BuildDigest"}}, "additionalProperties": false},
-    "BuildDigest": {"description": "FR-331, FR-201: SHA-256 over the RFC 8785 bytes of the build-input record of the provider code that implements a backend, computed by the build that compiles it; the FR-322 digest-record shape.", "type": "object", "required": ["domain", "algorithm", "digest"], "properties": {"domain": {"const": "quire.build-inputs/v1"}, "algorithm": {"const": "sha256"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
+    "BackendTool": {"description": "FR-331: the code that decides a backend's results: exact UTF-8 name and version.", "type": "object", "required": ["name", "version"], "properties": {"name": {"$ref": "#/$defs/Nonempty"}, "version": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
     "BackendDescriptor": {
       "type": "object",
       "required": ["backend", "tool", "advertises"],
       "properties": {
         "backend": {"description": "FR-290: backend identity.", "$ref": "#/$defs/BackendId"},
-        "tool": {"description": "FR-331: required on every descriptor: the code that decides the backend's results, by name and version. An external tool: the executable it invokes and the version that executable reports when the descriptor is built. A pure in-process engine: the crate that implements it and that crate's version in the producer's build. In both, build is the content identity of the provider code's build inputs, so a code change with an unchanged version changes the descriptor. Part of the manifest digest preimage and never of the backend identity.", "$ref": "#/$defs/BackendTool"},
+        "tool": {"description": "FR-331: required on every descriptor: the code that decides the backend's results, by name and version. An external tool: the executable it invokes and the version that executable reports when the descriptor is built. A pure in-process engine: the crate that implements it and that crate's version in the producer's build. Never part of the backend identity.", "$ref": "#/$defs/BackendTool"},
         "advertises": {"description": "FR-290: advertised (kind, mode) pairs. A hello refused here for an absent or unknown kind or mode, or for missing or unknown evidence kinds, is an FR-290 registration refusal, not an FR-462 wire failure.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "object", "required": ["kind", "mode"], "properties": {"kind": {"$ref": "#/$defs/Kind"}, "mode": {"$ref": "#/$defs/Mode"}}, "additionalProperties": false}},
         "domains": {"description": "FR-331: the ADR-014 domain kinds for which the backend accepts a finite bound. FR-290 rule: on every descriptor, a present domains that is empty, holds another kind or repeats a kind is refused; an absent domains is refused only when the descriptor advertises a bounded mode, so an unbounded-only descriptor may omit it. Either refusal is the FR-290 registration refusal invalid_capability/invalid-domains.", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["collection", "population", "integer", "recursive"]}},
         "options": {"description": "FR-331 (defined): the backend's published option defaults (FR-196 options).", "$ref": "#/$defs/StringMap"},
@@ -229,12 +213,11 @@
     "Request": {
       "description": "FR-331 request: contract-package items, requested claims, domains and limits.",
       "type": "object",
-      "required": ["package", "package_id", "deadline_ms", "items"],
+      "required": ["package", "deadline_ms", "items"],
       "properties": {
         "package": {"description": "FR-331, FR-462: the RFC 8785 bytes of the quire.checked-package/v2 document, unpadded base64url.", "$ref": "#/$defs/Base64Url"},
-        "package_id": {"description": "FR-331, FR-462, FR-305: the package's package_id; the reader decodes package and refuses a recomputed package_id that differs, stale_dependency/content-mismatch.", "$ref": "#/$defs/PackageId"},
-        "dependencies": {"description": "FR-331 (defined): the v2 bytes of each package in the proved package's recursively derived dependency closure, including transitive-only packages, ordered by package_id digest.", "type": "array", "minItems": 1, "items": {"type": "object", "required": ["package_id", "package"], "properties": {"package_id": {"$ref": "#/$defs/PackageId"}, "package": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false}},
-        "provision": {"description": "FR-364, FR-368: the byte provision; entries ordered by digest, each digest once.", "type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ProvisionEntry"}},
+        "dependencies": {"description": "FR-331 (defined): the v2 bytes of each package in the proved package's recursively derived dependency closure, including transitive-only packages, ordered by identity bytes.", "type": "array", "minItems": 1, "items": {"type": "object", "required": ["identity", "package"], "properties": {"identity": {"$ref": "#/$defs/Package"}, "package": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false}},
+        "provision": {"description": "FR-364, FR-368: the byte provision; entries ordered by identity bytes, each identity once.", "type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ProvisionEntry"}},
         "deadline_ms": {"description": "FR-462, FR-305: the provider deadline in milliseconds.", "$ref": "#/$defs/PositiveCount"},
         "memory": {"description": "FR-434: memory-model selections of outermost parallel controls.", "type": "array", "minItems": 1, "items": {"type": "object", "required": ["parallel", "model"], "properties": {"parallel": {"$ref": "#/$defs/Nonempty"}, "model": {"enum": ["sc", "tso", "ra"]}}, "additionalProperties": false}},
         "items": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/RequestItem"}}
@@ -394,11 +377,11 @@
           "additionalProperties": false
         },
         "abstract_subject": {
-          "description": "FR-368, FR-377: the abstract subject of a refinement item: its package's id (a package of request.dependencies, a reader obligation) and its initial-state snapshots, spelled as subject.initial_states. Present exactly on a refinement item.",
+          "description": "FR-368, FR-377: the abstract subject of a refinement item: its package's identity (a package of request.dependencies, a reader obligation) and its initial-state snapshots, spelled as subject.initial_states. Present exactly on a refinement item.",
           "type": "object",
-          "required": ["package_id", "initial_states"],
+          "required": ["identity", "initial_states"],
           "properties": {
-            "package_id": {"$ref": "#/$defs/PackageId"},
+            "identity": {"$ref": "#/$defs/Package"},
             "initial_states": {"type": "array", "items": {"$ref": "#/$defs/ProvisionRef"}}
           },
           "additionalProperties": false
@@ -539,7 +522,7 @@
       "required": ["transition", "post_state"],
       "properties": {
         "transition": {"oneOf": [{"$ref": "#/$defs/TransitionIdentity"}, {"type": "object", "required": ["type"], "properties": {"type": {"const": "terminal-stutter"}}, "additionalProperties": false}]},
-        "post_state": {"$ref": "#/$defs/StateKey"},
+        "post_state": {"$ref": "#/$defs/State"},
         "delay": {"description": "FR-181, FR-417: the delay of a timed step.", "$ref": "#/$defs/Rational"}
       },
       "additionalProperties": false
@@ -596,7 +579,7 @@
     "TraceStep": {
       "oneOf": [
         {"$ref": "#/$defs/ModelStep"},
-        {"description": "FR-364: an observed-arm step.", "type": "object", "required": ["document"], "properties": {"document": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false}
+        {"description": "FR-364: an observed-arm step.", "type": "object", "required": ["document"], "properties": {"document": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false}
       ]
     },
     "RefinementFailure": {
@@ -615,7 +598,7 @@
         {"properties": {"kind": {"const": "Undefined"}, "position": {"$ref": "#/$defs/Count"}, "row": {"$ref": "#/$defs/Nonempty"}}, "required": ["kind", "position", "row"], "additionalProperties": false}
       ]
     },
-    "GraphStep": {"description": "FR-393: a model trace step.", "type": "object", "required": ["type", "transition", "post_state"], "properties": {"type": {"const": "step"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_state": {"$ref": "#/$defs/StateKey"}}, "additionalProperties": false},
+    "GraphStep": {"description": "FR-393: a model trace step.", "type": "object", "required": ["type", "transition", "post_state"], "properties": {"type": {"const": "step"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_state": {"$ref": "#/$defs/State"}}, "additionalProperties": false},
     "ModelPath": {"description": "FR-393 ModelPath.", "type": "object", "required": ["type", "initial", "steps"], "properties": {"type": {"const": "model-path"}, "initial": {"$ref": "#/$defs/Decimal"}, "steps": {"type": "array", "items": {"$ref": "#/$defs/GraphStep"}}}, "additionalProperties": false},
     "WitnessSource": {
       "description": "FR-393 WitnessSource.",
@@ -645,7 +628,7 @@
       "type": "object",
       "required": ["type"],
       "oneOf": [
-        {"properties": {"type": {"const": "step"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_state": {"$ref": "#/$defs/StateKey"}, "mark": {"enum": ["skipped", "visible"]}}, "required": ["type", "transition", "post_state"], "additionalProperties": false},
+        {"properties": {"type": {"const": "step"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_state": {"$ref": "#/$defs/State"}, "mark": {"enum": ["skipped", "visible"]}}, "required": ["type", "transition", "post_state"], "additionalProperties": false},
         {"properties": {"type": {"const": "terminal-stutter"}, "mark": {"enum": ["skipped", "visible"]}}, "required": ["type"], "additionalProperties": false}
       ]
     },
@@ -677,7 +660,7 @@
       "required": ["transition", "post_state", "random"],
       "properties": {
         "transition": {"$ref": "#/$defs/TransitionIdentity"},
-        "post_state": {"$ref": "#/$defs/StateKey"},
+        "post_state": {"$ref": "#/$defs/State"},
         "random": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}},
         "delay": {"$ref": "#/$defs/Rational"}
       },
@@ -691,7 +674,7 @@
         "initial_state": {"$ref": "#/$defs/Count"},
         "binding": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
         "bound": {"description": "FR-407 owns the bound and its threshold.", "type": "object", "minProperties": 1},
-        "scheduler": {"description": "FR-413 WitnessScheduler{entries}.", "type": "object", "required": ["entries"], "properties": {"entries": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "choice"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "choice": {"description": "FR-413: a choice, or a distribution over choices with exact rational probabilities under a fairness set."}}, "additionalProperties": false}}}, "additionalProperties": false},
+        "scheduler": {"description": "FR-413 WitnessScheduler{entries}.", "type": "object", "required": ["entries"], "properties": {"entries": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "choice"], "properties": {"state": {"$ref": "#/$defs/State"}, "choice": {"description": "FR-413: a choice, or a distribution over choices with exact rational probabilities under a fairness set."}}, "additionalProperties": false}}}, "additionalProperties": false},
         "evidence": {
           "type": "object",
           "required": ["type"],
@@ -839,15 +822,15 @@
     "AutomatonStateKey": {"description": "FR-331 transport of QSL FR-338 / ADR-018 PC-3 complete RFC 8785 UTF-8 octets: [quire.automaton-state-key/v1, context, state]. Reader admission must check the owner's closed algebra, actual property context and exact canonical bytes; base64url syntax alone is not semantic admission. No index, digest or opaque residual substitute.", "$ref": "#/$defs/Base64Url"},
     "ProbabilityProductKey": {"description": "FR-331 transport of QSL FR-196 / ADR-028 PR-4 complete RFC 8785 UTF-8 octets: [quire.probability-product-key/v1, model, monitor, accumulator, pending]. All components are present; actual None is null, not omission/default. Full model body, formula monitor array, accumulators including both sums, digital tail/clock data and pending schedule/draw must satisfy the owner algebra in actual context. Reader checks canonical byte equality; no model digest/index substitute.", "$ref": "#/$defs/Base64Url"},
     "ProbabilityProductStateLocus": {"description": "FR-331 / FR-412: actual complete probabilistic product identity, disjoint from model-only StateLocus.", "type": "object", "required": ["product_key"], "properties": {"product_key": {"$ref": "#/$defs/ProbabilityProductKey"}}, "additionalProperties": false},
-    "ProductStateLocus": {"description": "FR-331: QSL FR-338's ProductState(ProductStateRef) as QSL writes it: the model state's digest record and the complete canonical automaton octets.", "type": "object", "required": ["model_state", "automaton_state"], "properties": {"model_state": {"$ref": "#/$defs/ModelStateDigest"}, "automaton_state": {"$ref": "#/$defs/AutomatonStateKey"}}, "additionalProperties": false},
+    "ProductStateLocus": {"description": "FR-331: QSL FR-338's ProductState(ProductStateRef) as QSL writes it: the model state and the complete canonical automaton octets.", "type": "object", "required": ["model_state", "automaton_state"], "properties": {"model_state": {"$ref": "#/$defs/State"}, "automaton_state": {"$ref": "#/$defs/AutomatonStateKey"}}, "additionalProperties": false},
     "HyperProductStateLocus": {
       "description": "FR-331, QSL FR-163, ADR-023 HC-2: state keys in variable order; HP-3 states is the universal tuple, which may be present and empty, and witness_set retains the actual sorted existential tuple/automaton-key pairs. An empty universal tuple requires automaton_state and witness_set; every supplied existential tuple then has at least two states (n=0, n+m>=2). Nonempty tuples cover other hyper forms too: the originating checked claim determines form, exact arity, required HP-3 witness_set and key applicability. Absence differs from emptiness. Automaton octets follow FR-338; actual translation/claim admission remains a reader obligation.",
       "type": "object",
       "required": ["states"],
       "properties": {
-        "states": {"type": "array", "items": {"$ref": "#/$defs/StateKey"}},
+        "states": {"type": "array", "items": {"$ref": "#/$defs/State"}},
         "automaton_state": {"$ref": "#/$defs/AutomatonStateKey"},
-        "witness_set": {"type": "array", "items": {"type": "object", "required": ["states", "automaton_state"], "properties": {"states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}}, "automaton_state": {"$ref": "#/$defs/AutomatonStateKey"}}, "additionalProperties": false}}
+        "witness_set": {"type": "array", "items": {"type": "object", "required": ["states", "automaton_state"], "properties": {"states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/State"}}, "automaton_state": {"$ref": "#/$defs/AutomatonStateKey"}}, "additionalProperties": false}}
       },
       "additionalProperties": false,
       "allOf": [
@@ -872,9 +855,9 @@
             "type": "object",
             "required": ["pre_state", "transition", "post_state", "result"],
             "properties": {
-              "pre_state": {"$ref": "#/$defs/StateKey"},
+              "pre_state": {"$ref": "#/$defs/State"},
               "transition": {"allOf": [{"$ref": "#/$defs/TransitionIdentity"}, {"properties": {"type": {"const": "transition"}}}]},
-              "post_state": {"$ref": "#/$defs/StateKey"},
+              "post_state": {"$ref": "#/$defs/State"},
               "result": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]}
             },
             "additionalProperties": false
@@ -883,11 +866,9 @@
       },
       "additionalProperties": false
     },
-    "StateLocus": {"description": "FR-331: QSL FR-169's ModelState as QSL writes it, the model state's digest record; also FR-418's initial discrete model state. Never an FR-412 probabilistic product projection.", "$ref": "#/$defs/ModelStateDigest"},
-    "ModelStateDigest": {"description": "FR-331: a model state as QSL writes it in a certificate locus (QSL qsl-replay DigestWire): the quire.simulation.state-key/v1 domain and the state's StateKey digest.", "type": "object", "required": ["domain", "digest"], "properties": {"domain": {"const": "quire.simulation.state-key/v1"}, "digest": {"$ref": "#/$defs/StateKey"}}, "additionalProperties": false},
-    "MalformedStateLocus": {"description": "FR-331: a model state record for the malformed rule, as QSL FR-169 writes it: the digest record of the closure entry, whose domain is any FR-201 digest domain, because FR-169 rejects an entry whose digest is outside the state-key domain at that entry. Every other rule at a model state carries StateLocus.", "type": "object", "required": ["domain", "digest"], "properties": {"domain": {"$ref": "#/$defs/Nonempty"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
+    "StateLocus": {"description": "FR-331: QSL FR-169's ModelState as QSL writes it, the model state; also FR-418's initial discrete model state. Never an FR-412 probabilistic product projection.", "$ref": "#/$defs/State"},
     "EntryLocus": {"description": "FR-331: QSL FR-169's Entry{index}, a state-graph certificate entry whose closure index names no closure state, written {entry} with the index as a canonical u64 decimal.", "type": "object", "required": ["entry"], "properties": {"entry": {"$ref": "#/$defs/U64String"}}, "additionalProperties": false},
-    "StepVerdict": {"description": "FR-331: QSL FR-149's StepFails verdict in QSL's wire form, a check_step verdict that judges the relation: a refinement failure, an undefined evaluation or an undetermined step, tagged by kind, unsigned integers as canonical u64 decimals.", "type": "object", "required": ["kind"], "oneOf": [{"properties": {"kind": {"const": "InitialNotAbstract"}, "initial": {"$ref": "#/$defs/U64String"}}, "required": ["kind", "initial"], "additionalProperties": false}, {"properties": {"kind": {"enum": ["StutterChanged", "NoAbstractMatch"]}, "position": {"$ref": "#/$defs/U64String"}}, "required": ["kind", "position"], "additionalProperties": false}, {"properties": {"kind": {"const": "AbstractStepRejected"}, "position": {"$ref": "#/$defs/U64String"}, "transition": {"allOf": [{"$ref": "#/$defs/TransitionIdentity"}, {"properties": {"type": {"const": "transition"}}}]}, "cause": {"oneOf": [{"type": "object", "required": ["kind", "clause"], "properties": {"kind": {"const": "Precondition"}, "clause": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false}, {"type": "object", "required": ["kind", "code"], "properties": {"kind": {"const": "Frame"}, "code": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false}, {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "Postcondition"}}, "additionalProperties": false}]}}, "required": ["kind", "position", "transition", "cause"], "additionalProperties": false}, {"properties": {"kind": {"const": "UndefinedEvaluation"}, "where": {"type": "object", "required": ["position", "state_key", "locus"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "state_key": {"$ref": "#/$defs/ModelStateDigest"}, "locus": {"enum": ["atom", "activation", "contract", "terminal", "constraint", "protocol", "mapping", "claim-predicate"]}}, "additionalProperties": false}, "cause": {"enum": ["kernel", "family", "insufficient-data"]}}, "required": ["kind", "where", "cause"], "additionalProperties": false}, {"properties": {"kind": {"const": "Undetermined"}, "cause": {"enum": ["MappingUndetermined", "UndecidedSuccessor"]}, "evaluation": {"oneOf": [{"type": "object", "required": ["outcome"], "properties": {"outcome": {"const": "refused"}}, "additionalProperties": false}, {"type": "object", "required": ["outcome", "limit"], "properties": {"outcome": {"const": "incomplete"}, "limit": {"type": "string", "pattern": "^[a-z][a-z0-9]*([-_][a-z0-9]+)*$"}}, "additionalProperties": false}]}}, "required": ["kind", "cause", "evaluation"], "additionalProperties": false}]},
+    "StepVerdict": {"description": "FR-331: QSL FR-149's StepFails verdict in QSL's wire form, a check_step verdict that judges the relation: a refinement failure, an undefined evaluation or an undetermined step, tagged by kind, unsigned integers as canonical u64 decimals.", "type": "object", "required": ["kind"], "oneOf": [{"properties": {"kind": {"const": "InitialNotAbstract"}, "initial": {"$ref": "#/$defs/U64String"}}, "required": ["kind", "initial"], "additionalProperties": false}, {"properties": {"kind": {"enum": ["StutterChanged", "NoAbstractMatch"]}, "position": {"$ref": "#/$defs/U64String"}}, "required": ["kind", "position"], "additionalProperties": false}, {"properties": {"kind": {"const": "AbstractStepRejected"}, "position": {"$ref": "#/$defs/U64String"}, "transition": {"allOf": [{"$ref": "#/$defs/TransitionIdentity"}, {"properties": {"type": {"const": "transition"}}}]}, "cause": {"oneOf": [{"type": "object", "required": ["kind", "clause"], "properties": {"kind": {"const": "Precondition"}, "clause": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false}, {"type": "object", "required": ["kind", "code"], "properties": {"kind": {"const": "Frame"}, "code": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false}, {"type": "object", "required": ["kind"], "properties": {"kind": {"const": "Postcondition"}}, "additionalProperties": false}]}}, "required": ["kind", "position", "transition", "cause"], "additionalProperties": false}, {"properties": {"kind": {"const": "UndefinedEvaluation"}, "where": {"type": "object", "required": ["position", "state_key", "locus"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "state_key": {"$ref": "#/$defs/State"}, "locus": {"enum": ["atom", "activation", "contract", "terminal", "constraint", "protocol", "mapping", "claim-predicate"]}}, "additionalProperties": false}, "cause": {"enum": ["kernel", "family", "insufficient-data"]}}, "required": ["kind", "where", "cause"], "additionalProperties": false}, {"properties": {"kind": {"const": "Undetermined"}, "cause": {"enum": ["MappingUndetermined", "UndecidedSuccessor"]}, "evaluation": {"oneOf": [{"type": "object", "required": ["outcome"], "properties": {"outcome": {"const": "refused"}}, "additionalProperties": false}, {"type": "object", "required": ["outcome", "limit"], "properties": {"outcome": {"const": "incomplete"}, "limit": {"type": "string", "pattern": "^[a-z][a-z0-9]*([-_][a-z0-9]+)*$"}}, "additionalProperties": false}]}}, "required": ["kind", "cause", "evaluation"], "additionalProperties": false}]},
     "CertificateRejected": {
       "description": "FR-331 certificate-rejected{rule, at}: closed structural rule/locus pairs. Actual request/claim/checker applicability and full canonical key-body admission are mandatory reader checks (AC-26/27), not established by this global shape union.",
       "type": "object",
@@ -898,8 +879,7 @@
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "bad-state", "not-partition", "backward-edge", "witness-fails", "shape-mismatch"]}, "at": {"$ref": "#/$defs/ProductStateLocus"}}, "additionalProperties": false},
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "not-partition", "backward-edge", "witness-fails", "malformed", "undefined-member", "violating-member"]}, "at": {"$ref": "#/$defs/HyperProductStateLocus"}}, "additionalProperties": false},
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["undefined-member", "violating-member"]}, "at": {"$ref": "#/$defs/HyperTransitionTupleLocus"}}, "additionalProperties": false},
-        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "bad-state", "predicate-undefined", "rank-missing", "rank-broken", "order-broken", "count-broken"]}, "at": {"$ref": "#/$defs/StateLocus"}}, "additionalProperties": false},
-        {"description": "QSL FR-169 Malformed at a closure entry whose digest is outside the state-key domain: the record is written with the domain it carries.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"$ref": "#/$defs/MalformedStateLocus"}}, "additionalProperties": false},
+        {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-missing", "successor-missing", "bad-state", "predicate-undefined", "rank-missing", "rank-broken", "order-broken", "count-broken", "malformed"]}, "at": {"$ref": "#/$defs/StateLocus"}}, "additionalProperties": false},
         {"description": "QSL FR-169 Entry{index} for a malformed state-graph entry.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"$ref": "#/$defs/EntryLocus"}}, "additionalProperties": false},
         {"properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["inequality-fails", "rank-missing", "rank-broken", "threshold-missed"]}, "at": {"$ref": "#/$defs/ProbabilityProductStateLocus"}}, "additionalProperties": false},
         {"description": "QSL FR-149 SimulationStep{position, edge: None, verdict: None}, as QSL writes it with null edge and verdict, for an initial, successors, undecided-state or certificate-shape rule.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["initial-mismatch", "successors-differ", "bad-state", "malformed"]}, "at": {"type": "object", "required": ["position", "edge", "verdict"], "properties": {"position": {"$ref": "#/$defs/U64String"}, "edge": {"type": "null"}, "verdict": {"type": "null"}}, "additionalProperties": false}}, "additionalProperties": false},
@@ -909,11 +889,11 @@
         {"description": "FR-418, QSL FR-245 post-differs: an edge, its position in the certificate's edges.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"enum": ["backward-edge", "post-differs"]}, "at": {"type": "object", "required": ["edge"], "properties": {"edge": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "QSL FR-245 step-fails: an edge and the failing step verdict, both present.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "step-fails"}, "at": {"type": "object", "required": ["edge", "verdict"], "properties": {"edge": {"$ref": "#/$defs/Count"}, "verdict": {"$ref": "#/$defs/StepVerdict"}}, "additionalProperties": false}}, "additionalProperties": false},
         {"description": "FR-418: a component, its index.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "witness-fails"}, "at": {"type": "object", "required": ["component"], "properties": {"component": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}}, "additionalProperties": false},
-        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement", "refinement_node", "concrete_package", "abstract_package", "positions", "taken", "locked", "start", "nested", "abstract_states", "algorithm", "automaton", "bias", "bound", "choice", "clock", "concrete", "constraint", "digest", "domain", "gain", "history", "lower", "node", "rank", "set", "state", "strict", "target", "transition", "transitions", "type", "upper", "value", "zone"]}}, "additionalProperties": false}}, "additionalProperties": false}
+        {"description": "FR-412, FR-418: a malformed certificate member, named as its certificate names it; QSL FR-163 also owns components for absent HP-2/HP-3 structure, including empty closure, before recomputation. The originating checked claim selects the owning member vocabulary; this branch does not authorize borrowing another checker's members.", "properties": {"type": {"const": "certificate-rejected"}, "rule": {"const": "malformed"}, "at": {"type": "object", "required": ["member"], "properties": {"member": {"enum": ["identity", "node_id", "model", "ordinal", "objective", "kind", "values", "ranking", "policy", "components", "scale", "bounds", "nodes", "edges", "reasons", "divergence", "initials", "admitted", "refinement", "refinement_node", "concrete_package", "abstract_package", "positions", "taken", "locked", "start", "nested", "abstract_states", "automaton", "bias", "bound", "choice", "clock", "concrete", "constraint", "gain", "history", "lower", "node", "rank", "set", "state", "strict", "target", "transition", "transitions", "type", "upper", "value", "zone"]}}, "additionalProperties": false}}, "additionalProperties": false}
       ]
     },
     "InconclusiveCause": {
-      "description": "Closed inconclusive causes: FR-331 table (stale-dependency and refuted-ignoring-constraints included), FR-363, FR-385, FR-399, FR-401, FR-379, FR-380, FR-468, FR-428, FR-439, AD-016 (kani_vacuous_proof).",
+      "description": "Closed inconclusive causes: FR-331 table (refuted-ignoring-constraints included), FR-363, FR-385, FR-399, FR-401, FR-379, FR-380, FR-468, FR-428, FR-439, AD-016 (kani_vacuous_proof).",
       "type": "object",
       "required": ["type"],
       "oneOf": [
@@ -927,15 +907,11 @@
         {"properties": {"type": {"const": "symmetry-broken"}, "population": {"$ref": "#/$defs/Nonempty"}, "initial": {"$ref": "#/$defs/Count"}, "generator": {"type": "object", "required": ["type", "keys"], "properties": {"type": {"enum": ["transposition", "cycle"]}, "keys": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/TypedValue"}}}, "additionalProperties": false}}, "required": ["type", "population", "initial", "generator"], "additionalProperties": false},
         {"properties": {"type": {"const": "constraint-reached"}, "boundary_states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "boundary_states"], "additionalProperties": false},
         {"properties": {"type": {"const": "reduction-horizon"}, "max_depth": {"$ref": "#/$defs/Count"}}, "required": ["type", "max_depth"], "additionalProperties": false},
-        {"properties": {"type": {"const": "mapping-undetermined"}, "row": {"$ref": "#/$defs/Nonempty"}, "state_key": {"$ref": "#/$defs/StateKey"}, "prefix": {"type": "array", "items": {"$ref": "#/$defs/ModelStep"}}}, "required": ["type", "row", "state_key", "prefix"], "additionalProperties": false},
+        {"properties": {"type": {"const": "mapping-undetermined"}, "row": {"$ref": "#/$defs/Nonempty"}, "state_key": {"$ref": "#/$defs/State"}, "prefix": {"type": "array", "items": {"$ref": "#/$defs/ModelStep"}}}, "required": ["type", "row", "state_key", "prefix"], "additionalProperties": false},
         {"properties": {"type": {"const": "transfer-not-preserving"}, "reason": {"enum": ["fragment", "fairness", "stutter-closure"]}, "operator": {"$ref": "#/$defs/Nonempty"}, "constraint": {"$ref": "#/$defs/Fairness"}}, "required": ["type", "reason"], "additionalProperties": false},
         {"properties": {"type": {"const": "premise-unproved"}, "premise": {"$ref": "#/$defs/Count"}, "result": {"$ref": "#/$defs/ResultValue"}}, "required": ["type", "premise", "result"], "additionalProperties": false},
         {"description": "FR-468: hypothesis is the invariant clause's checked-package node; result is the result of its unproved item.", "properties": {"type": {"const": "hypotheses-not-established"}, "hypothesis": {"$ref": "#/$defs/NodeId"}, "result": {"$ref": "#/$defs/ResultValue"}}, "required": ["type", "hypothesis", "result"], "additionalProperties": false},
         {"description": "FR-439: limit is the request member that raises the budget.", "properties": {"type": {"const": "memory-bound-reached"}, "limit": {"enum": ["max_store_buffer", "max_messages"]}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "limit", "value", "states"], "additionalProperties": false},
-        {"description": "FR-331: a replay or certificate check that found a stale identity. Package identity pairs retain package_id values; QSL FR-149 refinement-name pairs retain names. The two sides have the same identity kind.", "oneOf": [
-          {"properties": {"type": {"const": "stale-dependency"}, "requested": {"$ref": "#/$defs/StalePackageIdentity"}, "recompiled": {"$ref": "#/$defs/StalePackageIdentity"}}, "required": ["type", "requested", "recompiled"], "additionalProperties": false},
-          {"properties": {"type": {"const": "stale-dependency"}, "requested": {"$ref": "#/$defs/StaleRefinementIdentity"}, "recompiled": {"$ref": "#/$defs/StaleRefinementIdentity"}}, "required": ["type", "requested", "recompiled"], "additionalProperties": false}
-        ]},
         {"description": "FR-428-AC-1: limit names max_live_instances, the member that raises the bound.", "properties": {"type": {"const": "instance-bound-reached"}, "limit": {"const": "max_live_instances"}, "value": {"$ref": "#/$defs/PositiveCount"}, "states": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "limit", "value", "states"], "additionalProperties": false},
         {"description": "QSL FR-127: a protocol liveness lasso found only after an explicit request to ignore memory fairness; this is diagnostic and never a refuted or proved result.", "properties": {"type": {"const": "refuted-ignoring-constraints"}}, "required": ["type"], "additionalProperties": false}
       ]
@@ -957,14 +933,14 @@
       "required": ["type"],
       "oneOf": [
         {"properties": {"type": {"enum": ["missing-confidence", "every-scheduler", "exact-only-form", "confidence-beyond-precision", "stopwatch-required"]}}, "required": ["type"], "additionalProperties": false},
-        {"properties": {"type": {"const": "not-markov"}, "state": {"$ref": "#/$defs/StateKey"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_states": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/StateKey"}}}, "required": ["type", "state", "transition", "post_states"], "additionalProperties": false},
-        {"properties": {"type": {"const": "not-stochastic"}, "state": {"$ref": "#/$defs/StateKey"}, "identity": {"$ref": "#/$defs/TransitionIdentity"}}, "required": ["type", "state", "identity"], "additionalProperties": false},
-        {"properties": {"type": {"const": "time-locked-sample"}, "state": {"$ref": "#/$defs/StateKey"}}, "required": ["type", "state"], "additionalProperties": false},
+        {"properties": {"type": {"const": "not-markov"}, "state": {"$ref": "#/$defs/State"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_states": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/State"}}}, "required": ["type", "state", "transition", "post_states"], "additionalProperties": false},
+        {"properties": {"type": {"const": "not-stochastic"}, "state": {"$ref": "#/$defs/State"}, "identity": {"$ref": "#/$defs/TransitionIdentity"}}, "required": ["type", "state", "identity"], "additionalProperties": false},
+        {"properties": {"type": {"const": "time-locked-sample"}, "state": {"$ref": "#/$defs/State"}}, "required": ["type", "state"], "additionalProperties": false},
         {"properties": {"type": {"const": "total-above-draw-range"}, "total": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"}}, "required": ["type", "total"], "additionalProperties": false},
-        {"properties": {"type": {"const": "zero-weight-component"}, "component": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}}}, "required": ["type", "component"], "additionalProperties": false},
+        {"properties": {"type": {"const": "zero-weight-component"}, "component": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/State"}}}, "required": ["type", "component"], "additionalProperties": false},
         {"properties": {"type": {"const": "delay-distribution"}, "operation": {"$ref": "#/$defs/Nonempty"}}, "required": ["type", "operation"], "additionalProperties": false},
         {"properties": {"type": {"enum": ["strict-clock-constraint", "timed-form-shape", "punctual-interval"]}, "locus": {"$ref": "#/$defs/Locus"}}, "required": ["type", "locus"], "additionalProperties": false},
-        {"properties": {"type": {"const": "zero-delay-cycle"}, "states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/StateKey"}}}, "required": ["type", "states"], "additionalProperties": false},
+        {"properties": {"type": {"const": "zero-delay-cycle"}, "states": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/State"}}}, "required": ["type", "states"], "additionalProperties": false},
         {"properties": {"type": {"const": "weak-access-shape"}, "site": {"$ref": "#/$defs/Locus"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "shape": {"oneOf": [
           {"type": "object", "required": ["type", "locations"], "properties": {"type": {"const": "multi-location"}, "locations": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/TypedValue"}}}, "additionalProperties": false},
           {"type": "object", "required": ["type"], "properties": {"type": {"const": "join-policy"}}, "additionalProperties": false},
@@ -1135,7 +1111,7 @@
       "properties": {
         "test": {"$ref": "#/$defs/Count"},
         "trace_index": {"$ref": "#/$defs/Decimal"},
-        "steps": {"type": "array", "items": {"type": "object", "required": ["transition", "post_state", "scheduled", "random"], "properties": {"transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_state": {"$ref": "#/$defs/StateKey"}, "scheduled": {"$ref": "#/$defs/TypedValue"}, "random": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}, "delay": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}},
+        "steps": {"type": "array", "items": {"type": "object", "required": ["transition", "post_state", "scheduled", "random"], "properties": {"transition": {"$ref": "#/$defs/TransitionIdentity"}, "post_state": {"$ref": "#/$defs/State"}, "scheduled": {"$ref": "#/$defs/TypedValue"}, "random": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}, "delay": {"$ref": "#/$defs/Rational"}}, "additionalProperties": false}},
         "probability": {"$ref": "#/$defs/Rational"},
         "value": {"oneOf": [
           {"type": "object", "required": ["type", "value"], "properties": {"type": {"const": "event"}, "value": {"type": "boolean"}}, "additionalProperties": false},
@@ -1145,7 +1121,7 @@
       },
       "additionalProperties": false
     },
-    "CertificateIdentity": {"description": "FR-201: the canonical identity digest that binds a certificate to the obligation it proves.", "type": "object", "required": ["domain", "algorithm", "digest"], "properties": {"domain": {"$ref": "#/$defs/Nonempty"}, "algorithm": {"const": "sha256"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
+    "CertificateIdentity": {"description": "FR-201: the structural identity that binds a certificate to the obligation it proves: the obligation node, the model identity that owns it and an ordinal, compared componentwise.", "type": "object", "required": ["node_id", "model", "ordinal"], "properties": {"node_id": {"$ref": "#/$defs/NodeId"}, "model": {"$ref": "#/$defs/Nonempty"}, "ordinal": {"$ref": "#/$defs/Count"}}, "additionalProperties": false},
     "ProbabilityCertificate": {
       "description": "FR-412 ProbabilityCertificate{identity, objective, kind, values, ranking, policy, components}.",
       "type": "object",
@@ -1169,8 +1145,8 @@
       "properties": {
         "identity": {"$ref": "#/$defs/CertificateIdentity"},
         "scale": {"$ref": "urn:quire:checked-package:v2#/$defs/PositiveIntegerString"},
-        "bounds": {"description": "FR-418: the LU bounds (QSL lu_bounds), one entry per discrete state and clock, ordered by the state's first node in nodes then by clock index; an absent bound is infinity.", "type": "array", "items": {"type": "object", "required": ["state", "clock", "lower", "upper"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "clock": {"$ref": "#/$defs/Nonempty"}, "lower": {"$ref": "#/$defs/DbmBound"}, "upper": {"$ref": "#/$defs/DbmBound"}}, "additionalProperties": false}},
-        "nodes": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "automaton", "zone"], "properties": {"state": {"$ref": "#/$defs/StateKey"}, "automaton": {"description": "FR-418: a claim-automaton state; in a refinement form an index into refinement.positions, the reserved index positions.len() naming no position (QSL FR-244).", "$ref": "#/$defs/Count"}, "locked": {"description": "FR-418: present, as true, exactly on a locked node; never false.", "const": true}, "zone": {"description": "FR-418: the canonical DBM as rows, entry [i][j] bounding x_i - x_j, index 0 the reference clock.", "type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}}}, "additionalProperties": false}},
+        "bounds": {"description": "FR-418: the LU bounds (QSL lu_bounds), one entry per discrete state and clock, ordered by the state's first node in nodes then by clock index; an absent bound is infinity.", "type": "array", "items": {"type": "object", "required": ["state", "clock", "lower", "upper"], "properties": {"state": {"$ref": "#/$defs/State"}, "clock": {"$ref": "#/$defs/Nonempty"}, "lower": {"$ref": "#/$defs/DbmBound"}, "upper": {"$ref": "#/$defs/DbmBound"}}, "additionalProperties": false}},
+        "nodes": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["state", "automaton", "zone"], "properties": {"state": {"$ref": "#/$defs/State"}, "automaton": {"description": "FR-418: a claim-automaton state; in a refinement form an index into refinement.positions, the reserved index positions.len() naming no position (QSL FR-244).", "$ref": "#/$defs/Count"}, "locked": {"description": "FR-418: present, as true, exactly on a locked node; never false.", "const": true}, "zone": {"description": "FR-418: the canonical DBM as rows, entry [i][j] bounding x_i - x_j, index 0 the reference clock.", "type": "array", "items": {"type": "array", "items": {"$ref": "#/$defs/DbmBound"}}}}, "additionalProperties": false}},
         "edges": {"type": "array", "items": {"type": "object", "required": ["node", "transition", "target"], "properties": {"node": {"$ref": "#/$defs/Count"}, "transition": {"$ref": "#/$defs/TransitionIdentity"}, "target": {"$ref": "#/$defs/Count"}}, "additionalProperties": false}},
         "initials": {"description": "FR-418: the position in nodes of the initial node of each initial state, in the subject's initial-state order.", "type": "array", "minItems": 1, "items": {"$ref": "#/$defs/Count"}},
         "admitted": {"description": "FR-418: the ADR-026 TD-6 witness: the start node and the positions in edges of a path of certificate edges.", "type": "object", "required": ["start", "edges"], "properties": {"start": {"$ref": "#/$defs/Count"}, "edges": {"type": "array", "items": {"$ref": "#/$defs/Count"}}}, "additionalProperties": false},
@@ -1195,9 +1171,9 @@
       "required": ["refinement_node", "concrete_package", "abstract_package", "positions", "taken"],
       "properties": {
         "refinement_node": {"description": "FR-418: the refinement node's id.", "$ref": "#/$defs/NodeId"},
-        "concrete_package": {"$ref": "#/$defs/PackageId"},
-        "abstract_package": {"$ref": "#/$defs/PackageId"},
-        "positions": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["concrete", "history", "abstract_states"], "properties": {"concrete": {"$ref": "#/$defs/StateKey"}, "history": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}, "abstract_states": {"type": "array", "items": {"$ref": "#/$defs/StateKey"}}}, "additionalProperties": false}},
+        "concrete_package": {"$ref": "#/$defs/Package"},
+        "abstract_package": {"$ref": "#/$defs/Package"},
+        "positions": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["concrete", "history", "abstract_states"], "properties": {"concrete": {"$ref": "#/$defs/State"}, "history": {"type": "array", "items": {"$ref": "#/$defs/TypedValue"}}, "abstract_states": {"type": "array", "items": {"$ref": "#/$defs/State"}}}, "additionalProperties": false}},
         "taken": {"type": "array", "items": {"oneOf": [{"type": "null"}, {"oneOf": [
           {"properties": {"type": {"const": "stutter"}}, "required": ["type"], "additionalProperties": false},
           {"properties": {"type": {"const": "abstract"}, "transitions": {"type": "array", "items": {"$ref": "#/$defs/TransitionIdentity"}}}, "required": ["type", "transitions"], "additionalProperties": false}

@@ -560,176 +560,6 @@
       "name": "FP-07"
     }
   ],
-  "model_declaration_nodes": [
-    {
-      "name": "P1",
-      "preimage": {
-        "body": {
-          "members": [],
-          "term": "aggregate"
-        },
-        "declaration": null,
-        "node_tag": "model",
-        "owner": {
-          "identity": "acme/runs",
-          "kind": "model",
-          "node": "ix://acme/runs/Counter"
-        },
-        "recursion": null,
-        "semantic_form": "object_type",
-        "semantic_type": null,
-        "version": "quire.structural-node/v1"
-      },
-      "sha256": "97cd6336a0aa59330c19c1b464a09d24d33bcbd3405df02f0c5f65ec01f5e4c0"
-    },
-    {
-      "name": "P2",
-      "preimage": {
-        "body": {
-          "members": [],
-          "term": "aggregate"
-        },
-        "declaration": null,
-        "node_tag": "model",
-        "owner": {
-          "identity": "acme/runs",
-          "kind": "model",
-          "node": "ix://acme/runs/Flow"
-        },
-        "recursion": null,
-        "semantic_form": "process",
-        "semantic_type": null,
-        "version": "quire.structural-node/v1"
-      },
-      "sha256": "d45b9b6afd5f650bbc01586f5432cf56c49045df73a7b1f86f28852e5de86044"
-    },
-    {
-      "name": "P3",
-      "preimage": {
-        "body": {
-          "members": [],
-          "term": "aggregate"
-        },
-        "declaration": null,
-        "node_tag": "model",
-        "owner": {
-          "identity": "acme/runs",
-          "kind": "model",
-          "node": "ix://acme/runs/SubFlow"
-        },
-        "recursion": null,
-        "semantic_form": "process",
-        "semantic_type": null,
-        "version": "quire.structural-node/v1"
-      },
-      "sha256": "a41cb4325779916d7f4ce7f10035174b0801b2f52464acdab5650199798d50a5"
-    },
-    {
-      "name": "P4",
-      "preimage": {
-        "body": {
-          "members": [],
-          "term": "aggregate"
-        },
-        "declaration": null,
-        "node_tag": "model",
-        "owner": {
-          "identity": "acme/runs",
-          "kind": "model",
-          "node": "ix://acme/runs/Gate"
-        },
-        "recursion": null,
-        "semantic_form": "state_machine",
-        "semantic_type": null,
-        "version": "quire.structural-node/v1"
-      },
-      "sha256": "b06ac3fd86832c0be6bbbb2ec5f4cc7978e65852aab18aaba77b5aa1c2ce73e1"
-    },
-    {
-      "name": "P5",
-      "preimage": {
-        "body": {
-          "members": [],
-          "term": "aggregate"
-        },
-        "declaration": null,
-        "node_tag": "model",
-        "owner": {
-          "identity": "acme/runs",
-          "kind": "model",
-          "node": "ix://acme/runs/Store"
-        },
-        "recursion": null,
-        "semantic_form": "persistence_interface",
-        "semantic_type": null,
-        "version": "quire.structural-node/v1"
-      },
-      "sha256": "f6ff449a3500730bbd2c742cef8ea3b65eafc8250abe80ca84f9d7292f3d8170"
-    },
-    {
-      "name": "P6",
-      "preimage": {
-        "body": {
-          "members": [],
-          "term": "aggregate"
-        },
-        "declaration": null,
-        "node_tag": "model",
-        "owner": {
-          "identity": "acme/runs",
-          "kind": "model",
-          "node": "ix://acme/runs/Plug"
-        },
-        "recursion": null,
-        "semantic_form": "systems_interface",
-        "semantic_type": null,
-        "version": "quire.structural-node/v1"
-      },
-      "sha256": "8cea4f1407b1390d4f91bf7a880a6f80486fcb9627aa4a87e9bc182be6fc9102"
-    },
-    {
-      "name": "P7",
-      "preimage": {
-        "body": {
-          "members": [],
-          "term": "aggregate"
-        },
-        "declaration": null,
-        "node_tag": "relation",
-        "owner": {
-          "identity": "acme/runs",
-          "kind": "model",
-          "node": "ix://acme/runs/counters"
-        },
-        "recursion": null,
-        "semantic_form": "population",
-        "semantic_type": null,
-        "version": "quire.structural-node/v1"
-      },
-      "sha256": "15ed74b124665e2fb9375dc02e715243dce2eb0d7d63d1f36c52f5fa1241a91a"
-    },
-    {
-      "name": "P8",
-      "preimage": {
-        "body": {
-          "members": [],
-          "term": "aggregate"
-        },
-        "declaration": null,
-        "node_tag": "relation",
-        "owner": {
-          "identity": "acme/runs",
-          "kind": "model",
-          "node": "ix://acme/runs/archive"
-        },
-        "recursion": null,
-        "semantic_form": "population",
-        "semantic_type": null,
-        "version": "quire.structural-node/v1"
-      },
-      "sha256": "cc575f3d64f43a4bf787f5febdc73fbc9f2212617393877fa00371611204be24"
-    }
-  ],
   "owner_cases": [
     {
       "expected": {
@@ -1020,5 +850,159 @@
       "owner_form": "state_machine"
     }
   ],
-  "version": "quire.model-owner-form-vectors/v1"
+  "version": "quire.model-owner-form-vectors/v1",
+  "model_declaration_nodes": [
+    {
+      "name": "P1",
+      "node_id": {
+        "package": "acme/runs",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/runs/Counter"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/runs",
+        "kind": "model",
+        "node": "ix://acme/runs/Counter"
+      }
+    },
+    {
+      "name": "P2",
+      "node_id": {
+        "package": "acme/runs",
+        "path": [
+          "model",
+          "process",
+          "ix://acme/runs/Flow"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "process",
+      "owner": {
+        "identity": "acme/runs",
+        "kind": "model",
+        "node": "ix://acme/runs/Flow"
+      }
+    },
+    {
+      "name": "P3",
+      "node_id": {
+        "package": "acme/runs",
+        "path": [
+          "model",
+          "process",
+          "ix://acme/runs/SubFlow"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "process",
+      "owner": {
+        "identity": "acme/runs",
+        "kind": "model",
+        "node": "ix://acme/runs/SubFlow"
+      }
+    },
+    {
+      "name": "P4",
+      "node_id": {
+        "package": "acme/runs",
+        "path": [
+          "model",
+          "state_machine",
+          "ix://acme/runs/Gate"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "state_machine",
+      "owner": {
+        "identity": "acme/runs",
+        "kind": "model",
+        "node": "ix://acme/runs/Gate"
+      }
+    },
+    {
+      "name": "P5",
+      "node_id": {
+        "package": "acme/runs",
+        "path": [
+          "model",
+          "persistence_interface",
+          "ix://acme/runs/Store"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "persistence_interface",
+      "owner": {
+        "identity": "acme/runs",
+        "kind": "model",
+        "node": "ix://acme/runs/Store"
+      }
+    },
+    {
+      "name": "P6",
+      "node_id": {
+        "package": "acme/runs",
+        "path": [
+          "model",
+          "systems_interface",
+          "ix://acme/runs/Plug"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "systems_interface",
+      "owner": {
+        "identity": "acme/runs",
+        "kind": "model",
+        "node": "ix://acme/runs/Plug"
+      }
+    },
+    {
+      "name": "P7",
+      "node_id": {
+        "package": "acme/runs",
+        "path": [
+          "relation",
+          "population",
+          "ix://acme/runs/counters"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "relation",
+      "semantic_form": "population",
+      "owner": {
+        "identity": "acme/runs",
+        "kind": "model",
+        "node": "ix://acme/runs/counters"
+      }
+    },
+    {
+      "name": "P8",
+      "node_id": {
+        "package": "acme/runs",
+        "path": [
+          "relation",
+          "population",
+          "ix://acme/runs/archive"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "relation",
+      "semantic_form": "population",
+      "owner": {
+        "identity": "acme/runs",
+        "kind": "model",
+        "node": "ix://acme/runs/archive"
+      }
+    }
+  ]
 }

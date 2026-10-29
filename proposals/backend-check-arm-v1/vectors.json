@@ -1,9 +1,5 @@
 {
-  "note": "STD-562: end-to-end vectors of the FR-483 check arm. Node ids are written $node:<label> and the harness derives each NodeId from the label, so no digest is frozen here. 'registry' is the descriptors, 'item' the request item as FR-290 reads it (a simulation item may also carry the harness-only member 'refinement_step_simulable', false when the claim refinement declares a hidden field, a history field or an any row, the arm's own derivation from the refinement node, never a wire member), 'negotiation' the FR-290 disposition, 'arm' the arm outcome and result for an item negotiated supported, 'outcome' the FR-331 outcome stage the provider writes, 'model' a value-validity claim the harness evaluates by enumeration, 'candidate' the assignment an engine reports as a violation, and 'replay' whether the native replay reproduces a refutation.",
-  "rekey": {
-    "derivation": "SHA-256 over the UTF-8 bytes of the domain, a zero byte and the label, as lowercase hex",
-    "domain": "quire.checked-semantic-node/v1"
-  },
+  "note": "STD-562: end-to-end vectors of the FR-483 check arm. Node ids are written $node:<label> and the harness maps each label to the structural NodeId {package: arm, path: [label], ordinal: 0}. 'registry' is the descriptors, 'item' the request item as FR-290 reads it (a simulation item may also carry the harness-only member 'refinement_step_simulable', false when the claim refinement declares a hidden field, a history field or an any row, the arm's own derivation from the refinement node, never a wire member), 'negotiation' the FR-290 disposition, 'arm' the arm outcome and result for an item negotiated supported, 'outcome' the FR-331 outcome stage the provider writes, 'model' a value-validity claim the harness evaluates by enumeration, 'candidate' the assignment an engine reports as a violation, and 'replay' whether the native replay reproduces a refutation.",
   "provider_obligations": [
     "FR-484-AC-3",
     "FR-485-AC-2",

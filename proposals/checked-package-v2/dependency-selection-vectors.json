@@ -8,23 +8,12 @@
   "base": "fixtures/positive-all-families.json",
   "dependency_selections": [
     {
-      "identity": "test/geometry",
-      "package_id": {
-        "domain": "quire.package.semantic/v2",
-        "algorithm": "sha256",
-        "digest": "3333333333333333333333333333333333333333333333333333333333333333"
-      }
+      "identity": "test/geometry"
     },
     {
-      "identity": "test/units",
-      "package_id": {
-        "domain": "quire.package.semantic/v2",
-        "algorithm": "sha256",
-        "digest": "4444444444444444444444444444444444444444444444444444444444444444"
-      }
+      "identity": "test/units"
     }
   ],
-  "package_id": "08040b49b35f5d13c9295599557a4ed65cb431417e7708bab4b55015fa24a2aa",
   "entry_mutations": [
     {
       "id": "definition-selection-shape",
@@ -46,42 +35,10 @@
       "outcome": "refused:malformed_wire"
     },
     {
-      "id": "missing-package-id",
-      "entry": {
-        "identity": "test/geometry"
-      },
-      "outcome": "refused:malformed_wire"
-    },
-    {
-      "id": "bare-digest-package-id",
-      "entry": {
-        "identity": "test/geometry",
-        "package_id": "3333333333333333333333333333333333333333333333333333333333333333"
-      },
-      "outcome": "refused:malformed_wire"
-    },
-    {
-      "id": "source-bytes-package-id",
-      "entry": {
-        "identity": "test/geometry",
-        "package_id": {
-          "domain": "quire.source.bytes/v1",
-          "algorithm": "sha256",
-          "digest": "3333333333333333333333333333333333333333333333333333333333333333"
-        }
-      },
-      "outcome": "refused:digest_domain_mismatch"
-    },
-    {
       "id": "selection-carries-version",
       "entry": {
         "identity": "test/geometry",
-        "version": "1.0.0",
-        "package_id": {
-          "domain": "quire.package.semantic/v2",
-          "algorithm": "sha256",
-          "digest": "3333333333333333333333333333333333333333333333333333333333333333"
-        }
+        "version": "1.0.0"
       },
       "outcome": "refused:unknown_member"
     }
@@ -91,20 +48,10 @@
       "id": "utf8-byte-order",
       "dependency_selections": [
         {
-          "identity": "test/｡",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "6666666666666666666666666666666666666666666666666666666666666666"
-          }
+          "identity": "test/｡"
         },
         {
-          "identity": "test/😀",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "7777777777777777777777777777777777777777777777777777777777777777"
-          }
+          "identity": "test/😀"
         }
       ],
       "outcome": "admitted",
@@ -114,28 +61,13 @@
       "id": "duplicate-identity",
       "dependency_selections": [
         {
-          "identity": "test/geometry",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "3333333333333333333333333333333333333333333333333333333333333333"
-          }
+          "identity": "test/geometry"
         },
         {
-          "identity": "test/geometry",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "5555555555555555555555555555555555555555555555555555555555555555"
-          }
+          "identity": "test/geometry"
         },
         {
-          "identity": "test/units",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "4444444444444444444444444444444444444444444444444444444444444444"
-          }
+          "identity": "test/units"
         }
       ],
       "outcome": "refused:invalid_package/conflicting-definition",
@@ -148,20 +80,10 @@
       "id": "misordered",
       "dependency_selections": [
         {
-          "identity": "test/units",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "4444444444444444444444444444444444444444444444444444444444444444"
-          }
+          "identity": "test/units"
         },
         {
-          "identity": "test/geometry",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "3333333333333333333333333333333333333333333333333333333333333333"
-          }
+          "identity": "test/geometry"
         }
       ],
       "outcome": "refused:invalid_package/invalid-value",
@@ -202,36 +124,6 @@
       "locus": "/lock/dependency_selections/1"
     },
     {
-      "id": "first-stale-second-absent",
-      "entries": [
-        {
-          "identity": "test/a",
-          "supply": "stale"
-        },
-        {
-          "identity": "test/b",
-          "supply": "absent"
-        }
-      ],
-      "outcome": "refused:stale_dependency/content-mismatch",
-      "locus": "/lock/dependency_selections/0"
-    },
-    {
-      "id": "first-absent-second-stale",
-      "entries": [
-        {
-          "identity": "test/a",
-          "supply": "absent"
-        },
-        {
-          "identity": "test/b",
-          "supply": "stale"
-        }
-      ],
-      "outcome": "refused:missing_import/missing-selection",
-      "locus": "/lock/dependency_selections/0"
-    },
-    {
       "id": "all-bound",
       "entries": [
         {
@@ -244,107 +136,6 @@
         }
       ],
       "outcome": "admitted"
-    }
-  ],
-  "closure_vectors": [
-    {
-      "id": "diamond-conflict-across-dependency-locks",
-      "direct_dependencies": [
-        {
-          "identity": "test/a",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "a2623cda1628e514ea2c4c05c2115bc613ab83e6cdccd82926dfb020a8369a88"
-          }
-        },
-        {
-          "identity": "test/b",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "c52570699781cb2ab3bf6f5f22dfef7b7a574a88011cc51e1622f015d16fb804"
-          }
-        }
-      ],
-      "dependency_locks": [
-        {
-          "identity": "test/a",
-          "base": "fixtures/positive-all-families.json",
-          "dependency_selections": [
-            {
-              "identity": "test/leaf",
-              "package_id": {
-                "domain": "quire.package.semantic/v2",
-                "algorithm": "sha256",
-                "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
-              }
-            }
-          ]
-        },
-        {
-          "identity": "test/b",
-          "base": "fixtures/positive-clause-operations.json",
-          "dependency_selections": [
-            {
-              "identity": "test/leaf",
-              "package_id": {
-                "domain": "quire.package.semantic/v2",
-                "algorithm": "sha256",
-                "digest": "1de01e7806547db4250237dc2b951ac722989602e453b980e0967bb34c5f53b2"
-              }
-            }
-          ]
-        }
-      ],
-      "outcome": "refused:invalid_package/conflicting-definition",
-      "loci": [
-        "/lock/dependency_selections/0/lock/dependency_selections/0",
-        "/lock/dependency_selections/1/lock/dependency_selections/0"
-      ]
-    },
-    {
-      "id": "transitive-only-dependency-reference",
-      "direct_dependencies": [
-        {
-          "identity": "test/a",
-          "package_id": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "a2623cda1628e514ea2c4c05c2115bc613ab83e6cdccd82926dfb020a8369a88"
-          }
-        }
-      ],
-      "dependency_locks": [
-        {
-          "identity": "test/a",
-          "base": "fixtures/positive-all-families.json",
-          "dependency_selections": [
-            {
-              "identity": "test/leaf",
-              "package_id": {
-                "domain": "quire.package.semantic/v2",
-                "algorithm": "sha256",
-                "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
-              }
-            }
-          ]
-        }
-      ],
-      "dependency_reference": {
-        "term": "dependency_reference",
-        "package": {
-          "domain": "quire.package.semantic/v2",
-          "algorithm": "sha256",
-          "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
-        },
-        "node": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "ac15b477899ce4bf720e32ff29a6418e565c693028b4ed4451a4a6f4b2d4b368"
-        }
-      },
-      "use": "callee of quire.op.function.call",
-      "outcome": "refused:missing_declaration/missing-selection"
     }
   ]
 }

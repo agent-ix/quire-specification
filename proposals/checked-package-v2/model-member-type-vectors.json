@@ -132,15 +132,114 @@
               "min": "0"
             }
           },
-          {"name": "parent", "typeRef": "ix://acme/orders/Order", "presence": "optional", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "origin", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "prior", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "3", "ordered": true, "unique": false}, "redefines": null},
-          {"name": "peers", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "3", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "trail", "typeRef": "ix://acme/orders/Order", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": true, "unique": false}, "redefines": null},
-          {"name": "sku", "typeRef": "ix://acme/orders/Code", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "alias", "typeRef": "ix://acme/orders/Inverted", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "slug", "typeRef": "ix://acme/orders/Folded", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "clock", "typeRef": "Map<Text, ix://quire/native/Clock>", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
+          {
+            "name": "parent",
+            "typeRef": "ix://acme/orders/Order",
+            "presence": "optional",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "origin",
+            "typeRef": "ix://acme/orders/Order",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "prior",
+            "typeRef": "ix://acme/orders/Order",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "3",
+              "ordered": true,
+              "unique": false
+            },
+            "redefines": null
+          },
+          {
+            "name": "peers",
+            "typeRef": "ix://acme/orders/Order",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "3",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "trail",
+            "typeRef": "ix://acme/orders/Order",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "unbounded",
+              "ordered": true,
+              "unique": false
+            },
+            "redefines": null
+          },
+          {
+            "name": "sku",
+            "typeRef": "ix://acme/orders/Code",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "alias",
+            "typeRef": "ix://acme/orders/Inverted",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "slug",
+            "typeRef": "ix://acme/orders/Folded",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "clock",
+            "typeRef": "Map<Text, ix://quire/native/Clock>",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          }
         ],
         "operations": [
           {
@@ -364,21 +463,36 @@
             "name": "id",
             "typeRef": "ix://quire/native/Integer",
             "presence": "required",
-            "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
             "redefines": null
           },
           {
             "name": "on",
             "typeRef": "ix://quire/native/Boolean",
             "presence": "required",
-            "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
             "redefines": null
           },
           {
             "name": "level",
             "typeRef": "ix://quire/native/Integer",
             "presence": "required",
-            "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
             "redefines": null
           }
         ],
@@ -389,7 +503,12 @@
               {
                 "name": "flag",
                 "typeRef": "ix://quire/native/Boolean",
-                "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}
+                "multiplicity": {
+                  "lower": "1",
+                  "upper": "1",
+                  "ordered": false,
+                  "unique": true
+                }
               }
             ],
             "result": null,
@@ -405,15 +524,88 @@
         "lower": "0",
         "upper": "9"
       },
-      {"node": "ix://acme/orders/Code", "native": "ix://quire/native/Text", "lower": "0", "upper": "64", "profile": "nfc"},
-      {"node": "ix://acme/orders/Inverted", "native": "ix://quire/native/Text", "lower": "5", "upper": "2", "profile": "nfc"},
-      {"node": "ix://acme/orders/Folded", "native": "ix://quire/native/Text", "lower": "0", "upper": "64", "profile": "casefold"}
+      {
+        "node": "ix://acme/orders/Code",
+        "native": "ix://quire/native/Text",
+        "lower": "0",
+        "upper": "64",
+        "profile": "nfc"
+      },
+      {
+        "node": "ix://acme/orders/Inverted",
+        "native": "ix://quire/native/Text",
+        "lower": "5",
+        "upper": "2",
+        "profile": "nfc"
+      },
+      {
+        "node": "ix://acme/orders/Folded",
+        "native": "ix://quire/native/Text",
+        "lower": "0",
+        "upper": "64",
+        "profile": "casefold"
+      }
     ],
     "relationships": [
-      {"node": "ix://acme/orders/relationship/Order-order-Order", "direction": "bidirectional", "ends": [{"role": "order", "type": "ix://acme/orders/Order", "end": "source"}, {"role": "next", "type": "ix://acme/orders/Order", "end": "target"}]},
-      {"node": "ix://acme/orders/relationship/Order-invoiced-Invoice", "direction": "source-to-target", "ends": [{"role": "invoiced", "type": "ix://acme/orders/Order", "end": "source"}]},
-      {"node": "ix://acme/orders/relationship/Order-follows-Order", "direction": "source-to-target", "ends": [{"role": "follows", "type": "ix://acme/orders/Order", "end": "source"}, {"role": "followedBy", "type": "ix://acme/orders/Order", "end": "target"}]},
-      {"node": "ix://acme/orders/relationship/Order-twin-Order", "direction": "bidirectional", "ends": [{"role": "twin", "type": "ix://acme/orders/Order", "end": "source"}, {"role": "twin", "type": "ix://acme/orders/Order", "end": "target"}]}
+      {
+        "node": "ix://acme/orders/relationship/Order-order-Order",
+        "direction": "bidirectional",
+        "ends": [
+          {
+            "role": "order",
+            "type": "ix://acme/orders/Order",
+            "end": "source"
+          },
+          {
+            "role": "next",
+            "type": "ix://acme/orders/Order",
+            "end": "target"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/orders/relationship/Order-invoiced-Invoice",
+        "direction": "source-to-target",
+        "ends": [
+          {
+            "role": "invoiced",
+            "type": "ix://acme/orders/Order",
+            "end": "source"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/orders/relationship/Order-follows-Order",
+        "direction": "source-to-target",
+        "ends": [
+          {
+            "role": "follows",
+            "type": "ix://acme/orders/Order",
+            "end": "source"
+          },
+          {
+            "role": "followedBy",
+            "type": "ix://acme/orders/Order",
+            "end": "target"
+          }
+        ]
+      },
+      {
+        "node": "ix://acme/orders/relationship/Order-twin-Order",
+        "direction": "bidirectional",
+        "ends": [
+          {
+            "role": "twin",
+            "type": "ix://acme/orders/Order",
+            "end": "source"
+          },
+          {
+            "role": "twin",
+            "type": "ix://acme/orders/Order",
+            "end": "target"
+          }
+        ]
+      }
     ]
   },
   "timing_package": {
@@ -425,236 +617,4451 @@
         "interfaceFeatures": null,
         "supertypes": [],
         "fields": [
-          {"name": "window", "typeRef": "ix://quire/unit/ms", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "waits", "typeRef": "ix://quire/unit/ms", "presence": "required", "multiplicity": {"lower": "0", "upper": "unbounded", "ordered": false, "unique": true}, "redefines": null},
-          {"name": "ghost", "typeRef": "ix://quire/unit/ghost", "presence": "required", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}, "redefines": null}
+          {
+            "name": "window",
+            "typeRef": "ix://quire/unit/ms",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "waits",
+            "typeRef": "ix://quire/unit/ms",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "0",
+              "upper": "unbounded",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          },
+          {
+            "name": "ghost",
+            "typeRef": "ix://quire/unit/ghost",
+            "presence": "required",
+            "multiplicity": {
+              "lower": "1",
+              "upper": "1",
+              "ordered": false,
+              "unique": true
+            },
+            "redefines": null
+          }
         ],
         "operations": [
-          {"name": "wait", "parameters": [{"name": "d", "typeRef": "ix://quire/unit/ms", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}], "result": {"typeRef": "ix://quire/native/Integer", "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true}}, "redefines": null}
+          {
+            "name": "wait",
+            "parameters": [
+              {
+                "name": "d",
+                "typeRef": "ix://quire/unit/ms",
+                "multiplicity": {
+                  "lower": "1",
+                  "upper": "1",
+                  "ordered": false,
+                  "unique": true
+                }
+              }
+            ],
+            "result": {
+              "typeRef": "ix://quire/native/Integer",
+              "multiplicity": {
+                "lower": "1",
+                "upper": "1",
+                "ordered": false,
+                "unique": true
+              }
+            },
+            "redefines": null
+          }
         ]
       }
     ],
     "value_types": [],
     "relationships": []
   },
-  "checked_units": [["ms"], ["s"]],
-  "timing_declaration_nodes": [
-    {"name": "T1", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/timing", "kind": "model", "node": "ix://acme/timing/Timer"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "b732da5a25ec6b3b0c495b725e4eecd33a99d215a9744ca34802c5628b4e2f0d"}
-  ],
-  "model_declaration_nodes": [
-    {"name": "M1", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Order"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"},
-    {"name": "M2", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/billing", "kind": "model", "node": "ix://acme/billing/Order"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "d4940a1a4f70ced5672eaaec2b62fe2b97c7c0b1c886777d85043cdbbcd5abc7"},
-    {"name": "M3", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Invoice"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"},
-    {"name": "M4", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "relation", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/relationship/Order-order-Order"}, "recursion": null, "semantic_form": "relationship", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "229bb0bceb84003f47ef63ff5422532f268716ffadecdf435b49a45a9eba0e9a"},
-    {"name": "M10", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "relation", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/relationship/Order-invoiced-Invoice"}, "recursion": null, "semantic_form": "relationship", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "412bfe3904306536ca7ec08e31c6107a3e52f8b0757e3f9584d6de7ed086dd34"},
-    {"name": "M11", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "relation", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/relationship/Order-follows-Order"}, "recursion": null, "semantic_form": "relationship", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "6c535907e6177a4e9507161c8fbb25bef816b3579dc2232e9f8ab1f93dd5aa47"},
-    {"name": "M12", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "relation", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/relationship/Order-twin-Order"}, "recursion": null, "semantic_form": "relationship", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "e35ee63a523470b005860d99bb7f385623acad982386324956b745b02b2a5305"},
-    {"name": "M5", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Sub"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "c4df362db09cab29d75d4fda10da8c1ba4fe91e1a285721a78198dbfb1b5429d"},
-    {"name": "M6", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Both"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "2019855db357eb17136be84b037f89702ab0d1fd571b4ac1d1e4db07d25e116f"},
-    {"name": "M7", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/SubSub"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "aeffbb97c8c85a4545e04c2739688053231cf3b1ca5ec946b5f5c648301cae28"},
-    {"name": "M8", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Flow"}, "recursion": null, "semantic_form": "systems_interface", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "36d21580d52c7feb25fc4322ce2e0ec34b3fd7637c05f8c201c64a1454d78887"},
-    {"name": "M9", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Tagged"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "ed853dde975d1f18235ee7616cde312f718eb78d6b3d22089c140afd75e9dd76"},
-    {"name": "M13", "preimage": {"body": {"members": [], "term": "aggregate"}, "declaration": null, "node_tag": "model", "owner": {"identity": "acme/orders", "kind": "model", "node": "ix://acme/orders/Coded"}, "recursion": null, "semantic_form": "object_type", "semantic_type": null, "version": "quire.structural-node/v1"}, "sha256": "c6d5063f60c29ad6b4f370283a68fbd8cd8b3417eedb8c649cadb3e587b8c6c3"}
+  "checked_units": [
+    [
+      "ms"
+    ],
+    [
+      "s"
+    ]
   ],
   "member_cases": [
-    {"name": "MT-01", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "total"}, "expected": {"resolves": "ix://acme/orders/Order/total", "member_type": {"type": "Int", "min": "0", "max": "9"}}},
-    {"name": "MT-02", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"resolves": "ix://acme/orders/Order/total", "member_type": {"type": "Int", "min": "0", "max": "9"}}},
-    {"name": "MT-03", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "note"}, "expected": {"resolves": "ix://acme/orders/Order/note", "member_type": {"type": "Option", "inner": {"type": "Boolean"}}}},
-    {"name": "MT-04", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "lines"}, "expected": {"resolves": "ix://acme/orders/Order/lines", "member_type": {"type": "Set", "min": "0", "max": "3", "element": {"type": "Integer"}}}},
-    {"name": "MT-05", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "history"}, "expected": {"resolves": "ix://acme/orders/Order/history", "member_type": {"type": "Sequence", "min": "0", "max": "5", "element": {"type": "Integer"}}}},
-    {"name": "MT-06", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "invoice"}, "expected": {"resolves": "ix://acme/orders/Order/invoice", "member_type": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}}},
-    {"name": "MT-07", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "size", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": []}, "expected": {"resolves": "ix://acme/orders/Order/size", "member_type": {"type": "Integer"}}},
-    {"name": "MT-08", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M5", "name": "size", "receiver": {"type": "Reference", "target": "c4df362db09cab29d75d4fda10da8c1ba4fe91e1a285721a78198dbfb1b5429d"}, "arguments": []}, "expected": {"resolves": "ix://acme/orders/Sub/size", "member_type": {"type": "Integer"}}},
-    {"name": "MT-09", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M5", "name": "scaled", "receiver": {"type": "Reference", "target": "c4df362db09cab29d75d4fda10da8c1ba4fe91e1a285721a78198dbfb1b5429d"}, "arguments": [{"type": "Integer"}]}, "expected": {"resolves": "ix://acme/orders/Sub/scaled", "member_type": {"type": "Integer"}}},
-    {"name": "MT-10", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M7", "name": "size", "receiver": {"type": "Reference", "target": "aeffbb97c8c85a4545e04c2739688053231cf3b1ca5ec946b5f5c648301cae28"}, "arguments": []}, "expected": {"resolves": "ix://acme/orders/SubSub/size", "member_type": {"type": "Integer"}}},
-    {"name": "MT-11", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": [{"type": "Integer"}]}, "expected": {"resolves": "ix://acme/orders/Order/scaled", "member_type": {"type": "Integer"}}},
-    {"name": "MT-12", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "floor"}, "expected": {"resolves": "ix://acme/orders/Order/floor", "member_type": {"type": "Integer"}}},
-    {"name": "MT-13", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "tags"}, "expected": {"resolves": "ix://acme/orders/Order/tags", "member_type": {"type": "Set", "element": {"type": "Integer"}}}},
-    {"name": "MT-14", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "pick"}, "expected": {"resolves": "ix://acme/orders/Order/pick", "member_type": {"type": "Set", "min": "0", "max": "1", "element": {"type": "Integer"}}}},
-    {"name": "MA-01", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M1", "name": "missing"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-02", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M1", "name": "size"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-03", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M1", "name": "total", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-04", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M4", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-05", "criterion": "FR-322-AC-29", "member": {"kind": "field", "declaration": "M2", "name": "total"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MA-06", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "label"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-07", "criterion": "FR-322-AC-31", "member": {"kind": "field", "declaration": "M1", "name": "backlog"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-08", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "reset", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-09", "criterion": "FR-322-AC-30", "member": {"kind": "field", "declaration": "M6", "name": "code"}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
-    {"name": "MA-10", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-11", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "scaled", "receiver": {"type": "Reference", "target": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "arguments": [{"type": "Boolean"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-12", "criterion": "FR-322-AC-30", "member": {"kind": "operation", "declaration": "M8", "name": "rate", "receiver": {"type": "Reference", "target": "36d21580d52c7feb25fc4322ce2e0ec34b3fd7637c05f8c201c64a1454d78887"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-13", "criterion": "FR-322-AC-31", "member": {"kind": "operation", "declaration": "M1", "name": "size", "receiver": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}, "arguments": []}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MT-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "sku"}, "expected": {"resolves": "ix://acme/orders/Order/sku", "member_type": {"type": "Text", "min": "0", "max": "64", "profile": "nfc"}}},
-    {"name": "MA-14", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "alias"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MA-15", "criterion": "FR-322-AC-44", "member": {"kind": "field", "declaration": "M1", "name": "slug"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MU-01", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "field", "declaration": "T1", "name": "window"}, "expected": {"resolves": "ix://acme/timing/Timer/window", "member_type": {"type": "Quantity", "unit": "ms"}}},
-    {"name": "MU-02", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "field", "declaration": "T1", "name": "waits"}, "expected": {"resolves": "ix://acme/timing/Timer/waits", "member_type": {"type": "Set", "element": {"type": "Quantity", "unit": "ms"}}}},
-    {"name": "MU-03", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "operation", "declaration": "T1", "name": "wait", "receiver": {"type": "Reference", "target": "b732da5a25ec6b3b0c495b725e4eecd33a99d215a9744ca34802c5628b4e2f0d"}, "arguments": [{"type": "Quantity", "unit": "ms"}]}, "expected": {"resolves": "ix://acme/timing/Timer/wait", "member_type": {"type": "Integer"}}},
-    {"name": "MU-04", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "field", "declaration": "T1", "name": "ghost"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
-    {"name": "MU-05", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "operation", "declaration": "T1", "name": "wait", "receiver": {"type": "Reference", "target": "b732da5a25ec6b3b0c495b725e4eecd33a99d215a9744ca34802c5628b4e2f0d"}, "arguments": [{"type": "Quantity", "unit": "s"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "MU-06", "criterion": "FR-322-AC-80", "package": "timing", "member": {"kind": "operation", "declaration": "T1", "name": "wait", "receiver": {"type": "Reference", "target": "b732da5a25ec6b3b0c495b725e4eecd33a99d215a9744ca34802c5628b4e2f0d"}, "arguments": [{"type": "Integer"}]}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RE-ends-1", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M4", "name": "order"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-order-Order", "role": "order"}}},
-    {"name": "RE-ends-2", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M4", "name": "next"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-order-Order", "role": "next"}}},
-    {"name": "RE-ends-3", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M10", "name": "invoiced"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-invoiced-Invoice", "role": "invoiced"}}},
-    {"name": "RE-ends-4", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M10", "name": "next"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name", "at": "member.name"}}},
-    {"name": "RE-ends-5", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M10", "name": "invoice"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name", "at": "member.name"}}},
-    {"name": "RE-ends-6", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M1", "name": "order"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.declaration"}}},
-    {"name": "RE-ends-7", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M11", "name": "follows"}, "expected": {"resolves_end": {"relationship": "ix://acme/orders/relationship/Order-follows-Order", "role": "follows"}}},
-    {"name": "RE-ends-8", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M11", "name": "followedBy"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}},
-    {"name": "RE-ends-9", "criterion": "FR-322-AC-56", "member": {"kind": "relationship_end", "declaration": "M12", "name": "twin"}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name", "at": "member.name"}}}
+    {
+      "name": "MT-01",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "total"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/total",
+        "member_type": {
+          "type": "Int",
+          "min": "0",
+          "max": "9"
+        }
+      }
+    },
+    {
+      "name": "MT-02",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/total",
+        "member_type": {
+          "type": "Int",
+          "min": "0",
+          "max": "9"
+        }
+      }
+    },
+    {
+      "name": "MT-03",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "note"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/note",
+        "member_type": {
+          "type": "Option",
+          "inner": {
+            "type": "Boolean"
+          }
+        }
+      }
+    },
+    {
+      "name": "MT-04",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "lines"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/lines",
+        "member_type": {
+          "type": "Set",
+          "min": "0",
+          "max": "3",
+          "element": {
+            "type": "Integer"
+          }
+        }
+      }
+    },
+    {
+      "name": "MT-05",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "history"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/history",
+        "member_type": {
+          "type": "Sequence",
+          "min": "0",
+          "max": "5",
+          "element": {
+            "type": "Integer"
+          }
+        }
+      }
+    },
+    {
+      "name": "MT-06",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "invoice"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/invoice",
+        "member_type": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Invoice"
+            ],
+            "ordinal": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "MT-07",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "operation",
+        "declaration": "M1",
+        "name": "size",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/size",
+        "member_type": {
+          "type": "Integer"
+        }
+      }
+    },
+    {
+      "name": "MT-08",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "operation",
+        "declaration": "M5",
+        "name": "size",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Sub"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Sub/size",
+        "member_type": {
+          "type": "Integer"
+        }
+      }
+    },
+    {
+      "name": "MT-09",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "operation",
+        "declaration": "M5",
+        "name": "scaled",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Sub"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": [
+          {
+            "type": "Integer"
+          }
+        ]
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Sub/scaled",
+        "member_type": {
+          "type": "Integer"
+        }
+      }
+    },
+    {
+      "name": "MT-10",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "operation",
+        "declaration": "M7",
+        "name": "size",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/SubSub"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/SubSub/size",
+        "member_type": {
+          "type": "Integer"
+        }
+      }
+    },
+    {
+      "name": "MT-11",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "operation",
+        "declaration": "M1",
+        "name": "scaled",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": [
+          {
+            "type": "Integer"
+          }
+        ]
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/scaled",
+        "member_type": {
+          "type": "Integer"
+        }
+      }
+    },
+    {
+      "name": "MT-12",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "floor"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/floor",
+        "member_type": {
+          "type": "Integer"
+        }
+      }
+    },
+    {
+      "name": "MT-13",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "tags"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/tags",
+        "member_type": {
+          "type": "Set",
+          "element": {
+            "type": "Integer"
+          }
+        }
+      }
+    },
+    {
+      "name": "MT-14",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "pick"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/pick",
+        "member_type": {
+          "type": "Set",
+          "min": "0",
+          "max": "1",
+          "element": {
+            "type": "Integer"
+          }
+        }
+      }
+    },
+    {
+      "name": "MA-01",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "missing"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-02",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "size"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-03",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "operation",
+        "declaration": "M1",
+        "name": "total",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-04",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "field",
+        "declaration": "M4",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-05",
+      "criterion": "FR-322-AC-29",
+      "member": {
+        "kind": "field",
+        "declaration": "M2",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MA-06",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "label"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-07",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "backlog"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-08",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "operation",
+        "declaration": "M1",
+        "name": "reset",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-09",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "field",
+        "declaration": "M6",
+        "name": "code"
+      },
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name"
+        }
+      }
+    },
+    {
+      "name": "MA-10",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "operation",
+        "declaration": "M1",
+        "name": "scaled",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-11",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "operation",
+        "declaration": "M1",
+        "name": "scaled",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": [
+          {
+            "type": "Boolean"
+          }
+        ]
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-12",
+      "criterion": "FR-322-AC-30",
+      "member": {
+        "kind": "operation",
+        "declaration": "M8",
+        "name": "rate",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "systems_interface",
+              "ix://acme/orders/Flow"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-13",
+      "criterion": "FR-322-AC-31",
+      "member": {
+        "kind": "operation",
+        "declaration": "M1",
+        "name": "size",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Invoice"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MT-15",
+      "criterion": "FR-322-AC-44",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "sku"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/sku",
+        "member_type": {
+          "type": "Text",
+          "min": "0",
+          "max": "64",
+          "profile": "nfc"
+        }
+      }
+    },
+    {
+      "name": "MA-14",
+      "criterion": "FR-322-AC-44",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "alias"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MA-15",
+      "criterion": "FR-322-AC-44",
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "slug"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MU-01",
+      "criterion": "FR-322-AC-80",
+      "package": "timing",
+      "member": {
+        "kind": "field",
+        "declaration": "T1",
+        "name": "window"
+      },
+      "expected": {
+        "resolves": "ix://acme/timing/Timer/window",
+        "member_type": {
+          "type": "Quantity",
+          "unit": "ms"
+        }
+      }
+    },
+    {
+      "name": "MU-02",
+      "criterion": "FR-322-AC-80",
+      "package": "timing",
+      "member": {
+        "kind": "field",
+        "declaration": "T1",
+        "name": "waits"
+      },
+      "expected": {
+        "resolves": "ix://acme/timing/Timer/waits",
+        "member_type": {
+          "type": "Set",
+          "element": {
+            "type": "Quantity",
+            "unit": "ms"
+          }
+        }
+      }
+    },
+    {
+      "name": "MU-03",
+      "criterion": "FR-322-AC-80",
+      "package": "timing",
+      "member": {
+        "kind": "operation",
+        "declaration": "T1",
+        "name": "wait",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/timing",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/timing/Timer"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": [
+          {
+            "type": "Quantity",
+            "unit": "ms"
+          }
+        ]
+      },
+      "expected": {
+        "resolves": "ix://acme/timing/Timer/wait",
+        "member_type": {
+          "type": "Integer"
+        }
+      }
+    },
+    {
+      "name": "MU-04",
+      "criterion": "FR-322-AC-80",
+      "package": "timing",
+      "member": {
+        "kind": "field",
+        "declaration": "T1",
+        "name": "ghost"
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name"
+        }
+      }
+    },
+    {
+      "name": "MU-05",
+      "criterion": "FR-322-AC-80",
+      "package": "timing",
+      "member": {
+        "kind": "operation",
+        "declaration": "T1",
+        "name": "wait",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/timing",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/timing/Timer"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": [
+          {
+            "type": "Quantity",
+            "unit": "s"
+          }
+        ]
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "MU-06",
+      "criterion": "FR-322-AC-80",
+      "package": "timing",
+      "member": {
+        "kind": "operation",
+        "declaration": "T1",
+        "name": "wait",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/timing",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/timing/Timer"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": [
+          {
+            "type": "Integer"
+          }
+        ]
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RE-ends-1",
+      "criterion": "FR-322-AC-56",
+      "member": {
+        "kind": "relationship_end",
+        "declaration": "M4",
+        "name": "order"
+      },
+      "expected": {
+        "resolves_end": {
+          "relationship": "ix://acme/orders/relationship/Order-order-Order",
+          "role": "order"
+        }
+      }
+    },
+    {
+      "name": "RE-ends-2",
+      "criterion": "FR-322-AC-56",
+      "member": {
+        "kind": "relationship_end",
+        "declaration": "M4",
+        "name": "next"
+      },
+      "expected": {
+        "resolves_end": {
+          "relationship": "ix://acme/orders/relationship/Order-order-Order",
+          "role": "next"
+        }
+      }
+    },
+    {
+      "name": "RE-ends-3",
+      "criterion": "FR-322-AC-56",
+      "member": {
+        "kind": "relationship_end",
+        "declaration": "M10",
+        "name": "invoiced"
+      },
+      "expected": {
+        "resolves_end": {
+          "relationship": "ix://acme/orders/relationship/Order-invoiced-Invoice",
+          "role": "invoiced"
+        }
+      }
+    },
+    {
+      "name": "RE-ends-4",
+      "criterion": "FR-322-AC-56",
+      "member": {
+        "kind": "relationship_end",
+        "declaration": "M10",
+        "name": "next"
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RE-ends-5",
+      "criterion": "FR-322-AC-56",
+      "member": {
+        "kind": "relationship_end",
+        "declaration": "M10",
+        "name": "invoice"
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RE-ends-6",
+      "criterion": "FR-322-AC-56",
+      "member": {
+        "kind": "relationship_end",
+        "declaration": "M1",
+        "name": "order"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "member.declaration"
+        }
+      }
+    },
+    {
+      "name": "RE-ends-7",
+      "criterion": "FR-322-AC-56",
+      "member": {
+        "kind": "relationship_end",
+        "declaration": "M11",
+        "name": "follows"
+      },
+      "expected": {
+        "resolves_end": {
+          "relationship": "ix://acme/orders/relationship/Order-follows-Order",
+          "role": "follows"
+        }
+      }
+    },
+    {
+      "name": "RE-ends-8",
+      "criterion": "FR-322-AC-56",
+      "member": {
+        "kind": "relationship_end",
+        "declaration": "M11",
+        "name": "followedBy"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RE-ends-9",
+      "criterion": "FR-322-AC-56",
+      "member": {
+        "kind": "relationship_end",
+        "declaration": "M12",
+        "name": "twin"
+      },
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name",
+          "at": "member.name"
+        }
+      }
+    }
   ],
   "wire_cases": [
-    {"name": "MW-01", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": []}, "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"}}, "expected": {"recovers": "ix://acme/orders/Order"}},
-    {"name": "MW-02", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": [{"term": "binding", "name": "total", "value": {"term": "aggregate", "members": []}}]}, "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"}}, "expected": {"refused": {"code": "invalid_package", "cause": "stale-node-key"}}},
-    {"name": "MW-03", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": []}, "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"}, "declaration": {"qualified_name": ["M", "Order"]}}, "expected": {"refused": {"code": "malformed_wire"}}},
-    {"name": "MW-04", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "229bb0bceb84003f47ef63ff5422532f268716ffadecdf435b49a45a9eba0e9a"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": []}, "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"}}, "expected": {"refused": {"code": "invalid_package", "cause": "stale-node-key"}}},
-    {"name": "MW-05", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": []}, "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"}, "recursion_group": "g"}, "expected": {"refused": {"code": "invalid_package", "cause": "stale-node-key"}}},
-    {"name": "MW-06", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "229bb0bceb84003f47ef63ff5422532f268716ffadecdf435b49a45a9eba0e9a"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "229bb0bceb84003f47ef63ff5422532f268716ffadecdf435b49a45a9eba0e9a"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": []}, "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/relationship/Order-order-Order"}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-07", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "180613bcd180fa2d340724371b61ab475ecc29f9d0bc1d1f2de29779e5a1d7ac"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "180613bcd180fa2d340724371b61ab475ecc29f9d0bc1d1f2de29779e5a1d7ac"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": []}, "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/relationship/Order-order-Order"}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-08", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "d4940a1a4f70ced5672eaaec2b62fe2b97c7c0b1c886777d85043cdbbcd5abc7"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "d4940a1a4f70ced5672eaaec2b62fe2b97c7c0b1c886777d85043cdbbcd5abc7"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": []}, "owner": {"kind": "model", "identity": "acme/billing", "node": "ix://acme/billing/Order"}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-09", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": []}}, "expected": {"refused": {"code": "malformed_wire"}}},
-    {"name": "MW-10", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "1aa0ac06be2922158a1f19e25a1b7552241cce59abd87b32121db38446adeb04"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "1aa0ac06be2922158a1f19e25a1b7552241cce59abd87b32121db38446adeb04"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "body": {"term": "aggregate", "members": []}, "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Nope"}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-11", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "5e19014037e0f2f272c01cadc99d022856d0eca9c746ffdfeaedf9bb8ad87b47"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order/size"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "precondition", "value_kind": "text"}}]}}, "expected": {"passes": "owner-join"}},
-    {"name": "MW-12", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "8e5bcc79fcc179b97f045e0c92bbf4bb456e975f716e19d5efd5730624d0154e"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "invariant", "value_kind": "text"}}]}}, "expected": {"passes": "owner-join"}},
-    {"name": "MW-13", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "34165a90236a420cbad849ce2fa8fd27dcd1d32e4ee0ad1bae778ce8be785146"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order/missing"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "precondition", "value_kind": "text"}}]}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-14", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "9aa86a9429a58f49b731f8e2704795d70747450ec08dea50431935d4d5ca59d1"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order/total"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "precondition", "value_kind": "text"}}]}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-15", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "229bb0bceb84003f47ef63ff5422532f268716ffadecdf435b49a45a9eba0e9a"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "model", "semantic_form": "object_type", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "229bb0bceb84003f47ef63ff5422532f268716ffadecdf435b49a45a9eba0e9a"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"}, "body": {"term": "aggregate", "members": []}}, "expected": {"refused": {"code": "invalid_package", "cause": "stale-node-key"}}},
-    {"name": "MW-16", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "5a9f657a3930537b634eac1a581e55e5bdbfedeb0ce00ba8ca61298ad0e11cb6"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "precondition", "value_kind": "text"}}]}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-17", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "0e309c40bcda399adf176be058a89554adafd693e645bfb30c6c515137fdfc4a"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order/size"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "body", "value_kind": "text"}}]}}, "expected": {"passes": "owner-join"}},
-    {"name": "MW-18", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "f27cdb3622c77a7c9b9858fe8ca17fe78ee773bd3bf4f097458df2d2f85d3607"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order/size"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "invariant", "value_kind": "text"}}]}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-19", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "2d7014ac13e470f83bed30177df4bacb963ef1a0e486dc18476dddbc632577bf"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order/size"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "postcondition", "value_kind": "text"}}]}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-20", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "a825ad2614bc91559ed9ce9bcc7a4870a67ccd6489746be1610ff16bbb406925"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order/size"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "body", "value_kind": "text"}}, {"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "body", "value_kind": "text"}}]}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-21", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "de1506f00d1f541f061b4f66abdc1102baccf2cb1c2f0ddc7f276e61a9cdc9b3"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Order/size"}, "body": {"term": "aggregate", "members": []}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "MW-22", "node": {"node_id": {"domain": "quire.checked-semantic-node/v1", "digest": "718cf6db006d7bd31575411d5f9e431de704ba622534a07d01141b79c3dbfa41"}, "schema_version": "quire.checked-semantic-graph/v2", "node_tag": "function", "semantic_form": "pure_function", "semantic_type": {"domain": "quire.checked-semantic-node/v1", "digest": "aa6bd61341d1df03206f34b2c59db35eb67fcbf6ebe5152487b3da2e1d1e90e4"}, "dependencies": [], "occurrences": [{"role": "generated", "ordinal": 0}], "owner": {"kind": "model", "identity": "acme/orders", "node": "ix://acme/orders/Flow"}, "body": {"term": "aggregate", "members": [{"term": "binding", "name": "clause", "value": {"term": "literal", "type": {"domain": "quire.checked-semantic-node/v1", "digest": "807e31e4feece7c656a8a8433d017384deab6adb86eeeabacb014d5592645b28"}, "value": "invariant", "value_kind": "text"}}]}}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}}
-  ],
-  "selection_cases": [
-    {"name": "MS-01", "selection": {"identity": "acme/orders"}, "supplied": [{"under": "acme/orders", "patch": []}], "expected": {"admission": "passed"}},
-    {"name": "MS-02", "selection": {"identity": "acme/orders"}, "supplied": [], "expected": {"refused": {"code": "missing_import", "cause": "missing-selection"}}},
-    {"name": "MS-03", "selection": {"identity": "acme/orders"}, "supplied": [{"under": "acme/orders", "patch": [{"path": "/types/8/constraints/1/operands/value", "value": "8"}]}], "expected": {"admission": "passed"}},
-    {"name": "MS-06", "selection": {"identity": "acme/invoices"}, "supplied": [{"under": "acme/invoices", "patch": []}], "expected": {"refused": {"code": "invalid_model_binding", "cause": "wrong-model-selection"}}}
+    {
+      "name": "MW-01",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/Order"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "object_type",
+        "semantic_type": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/Order"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "body": {
+          "term": "aggregate",
+          "members": []
+        },
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order"
+        }
+      },
+      "expected": {
+        "recovers": "ix://acme/orders/Order"
+      }
+    },
+    {
+      "name": "MW-03",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/Order"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "object_type",
+        "semantic_type": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/Order"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "body": {
+          "term": "aggregate",
+          "members": []
+        },
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order"
+        },
+        "declaration": {
+          "qualified_name": [
+            "M",
+            "Order"
+          ]
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "malformed_wire"
+        }
+      }
+    },
+    {
+      "name": "MW-06",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/relationship/Order-order-Order"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "object_type",
+        "semantic_type": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/relationship/Order-order-Order"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "body": {
+          "term": "aggregate",
+          "members": []
+        },
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/relationship/Order-order-Order"
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-07",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/relationship/Order-order-Order"
+          ],
+          "ordinal": 1
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "object_type",
+        "semantic_type": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/relationship/Order-order-Order"
+          ],
+          "ordinal": 1
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "body": {
+          "term": "aggregate",
+          "members": []
+        },
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/relationship/Order-order-Order"
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-08",
+      "node": {
+        "node_id": {
+          "package": "acme/billing",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/billing/Order"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "object_type",
+        "semantic_type": {
+          "package": "acme/billing",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/billing/Order"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "body": {
+          "term": "aggregate",
+          "members": []
+        },
+        "owner": {
+          "kind": "model",
+          "identity": "acme/billing",
+          "node": "ix://acme/billing/Order"
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-09",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/Order"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "object_type",
+        "semantic_type": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/Order"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "malformed_wire"
+        }
+      }
+    },
+    {
+      "name": "MW-10",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/Nope"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "model",
+        "semantic_form": "object_type",
+        "semantic_type": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/Nope"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "body": {
+          "term": "aggregate",
+          "members": []
+        },
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Nope"
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-11",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order/size"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order/size"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "precondition",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "passes": "owner-join"
+      }
+    },
+    {
+      "name": "MW-12",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "invariant",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "passes": "owner-join"
+      }
+    },
+    {
+      "name": "MW-13",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order/missing"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order/missing"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "precondition",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-14",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order/total"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order/total"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "precondition",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-16",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order"
+          ],
+          "ordinal": 1
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "precondition",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-17",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order/size"
+          ],
+          "ordinal": 1
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order/size"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "body",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "passes": "owner-join"
+      }
+    },
+    {
+      "name": "MW-18",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order/size"
+          ],
+          "ordinal": 2
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order/size"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "invariant",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-19",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order/size"
+          ],
+          "ordinal": 3
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order/size"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "postcondition",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-20",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order/size"
+          ],
+          "ordinal": 4
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order/size"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "body",
+                "value_kind": "text"
+              }
+            },
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "body",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-21",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Order/size"
+          ],
+          "ordinal": 5
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Order/size"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "MW-22",
+      "node": {
+        "node_id": {
+          "package": "acme/orders",
+          "path": [
+            "function",
+            "pure_function",
+            "ix://acme/orders/Flow"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "function",
+        "semantic_form": "pure_function",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "generated",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "model",
+          "identity": "acme/orders",
+          "node": "ix://acme/orders/Flow"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": [
+            {
+              "term": "binding",
+              "name": "clause",
+              "value": {
+                "term": "literal",
+                "type": {
+                  "package": "example",
+                  "path": [
+                    "unresolved",
+                    "1"
+                  ],
+                  "ordinal": 0
+                },
+                "value": "invariant",
+                "value_kind": "text"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    }
   ],
   "operation_redefinition_cases": [
-    {"name": "MA-16", "criterion": "FR-154-AC-16", "patch": [{"op": "remove", "path": "/types/@Sub/operations/@size/redefines"}], "member": {"kind": "operation", "declaration": "M5", "name": "size", "receiver": {"type": "Reference", "target": "c4df362db09cab29d75d4fda10da8c1ba4fe91e1a285721a78198dbfb1b5429d"}, "arguments": []}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
-    {"name": "MA-17a", "criterion": "FR-154-AC-16", "patch": [{"op": "remove", "path": "/types/@Sub/operations/@size/redefines"}, {"op": "add", "path": "/types/@Sub/extensions/-", "value": {"identity": "ix://acme/orders/extension/redefines-operation", "payload": {"redefines": [{"operation": "ix://acme/orders/Sub/size", "target": "ix://acme/orders/Order/size"}]}, "required": false, "version": "1.0.0"}}], "member": {"kind": "operation", "declaration": "M5", "name": "size", "receiver": {"type": "Reference", "target": "c4df362db09cab29d75d4fda10da8c1ba4fe91e1a285721a78198dbfb1b5429d"}, "arguments": []}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
-    {"name": "MA-17b", "criterion": "FR-154-AC-16", "patch": [{"op": "remove", "path": "/types/@Sub/operations/@size/redefines"}, {"op": "add", "path": "/types/@Sub/extensions/-", "value": {"identity": "ix://acme/orders/extension/redefines-operation", "payload": {"redefines": [{"operation": "ix://acme/orders/Sub/size", "target": "ix://acme/orders/Order/size"}]}, "required": true, "version": "1.0.0"}}], "member": {"kind": "operation", "declaration": "M5", "name": "size", "receiver": {"type": "Reference", "target": "c4df362db09cab29d75d4fda10da8c1ba4fe91e1a285721a78198dbfb1b5429d"}, "arguments": []}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
-    {"name": "MA-18", "criterion": "FR-154-AC-16", "patch": [{"op": "replace", "path": "/types/@Sub/operations/@size/redefines", "value": "ix://acme/orders/Order/missing"}], "member": {"kind": "operation", "declaration": "M5", "name": "size", "receiver": {"type": "Reference", "target": "c4df362db09cab29d75d4fda10da8c1ba4fe91e1a285721a78198dbfb1b5429d"}, "arguments": []}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name", "at": "ix://acme/orders/Sub/size", "path": "Operation.redefines"}}}
+    {
+      "name": "MA-16",
+      "criterion": "FR-154-AC-16",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/types/@Sub/operations/@size/redefines"
+        }
+      ],
+      "member": {
+        "kind": "operation",
+        "declaration": "M5",
+        "name": "size",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Sub"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name"
+        }
+      }
+    },
+    {
+      "name": "MA-17a",
+      "criterion": "FR-154-AC-16",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/types/@Sub/operations/@size/redefines"
+        },
+        {
+          "op": "add",
+          "path": "/types/@Sub/extensions/-",
+          "value": {
+            "identity": "ix://acme/orders/extension/redefines-operation",
+            "payload": {
+              "redefines": [
+                {
+                  "operation": "ix://acme/orders/Sub/size",
+                  "target": "ix://acme/orders/Order/size"
+                }
+              ]
+            },
+            "required": false,
+            "version": "1.0.0"
+          }
+        }
+      ],
+      "member": {
+        "kind": "operation",
+        "declaration": "M5",
+        "name": "size",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Sub"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name"
+        }
+      }
+    },
+    {
+      "name": "MA-17b",
+      "criterion": "FR-154-AC-16",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/types/@Sub/operations/@size/redefines"
+        },
+        {
+          "op": "add",
+          "path": "/types/@Sub/extensions/-",
+          "value": {
+            "identity": "ix://acme/orders/extension/redefines-operation",
+            "payload": {
+              "redefines": [
+                {
+                  "operation": "ix://acme/orders/Sub/size",
+                  "target": "ix://acme/orders/Order/size"
+                }
+              ]
+            },
+            "required": true,
+            "version": "1.0.0"
+          }
+        }
+      ],
+      "member": {
+        "kind": "operation",
+        "declaration": "M5",
+        "name": "size",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Sub"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name"
+        }
+      }
+    },
+    {
+      "name": "MA-18",
+      "criterion": "FR-154-AC-16",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Sub/operations/@size/redefines",
+          "value": "ix://acme/orders/Order/missing"
+        }
+      ],
+      "member": {
+        "kind": "operation",
+        "declaration": "M5",
+        "name": "size",
+        "receiver": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Sub"
+            ],
+            "ordinal": 0
+          }
+        },
+        "arguments": []
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name",
+          "at": "ix://acme/orders/Sub/size",
+          "path": "Operation.redefines"
+        }
+      }
+    }
   ],
   "reference_equality_cases": [
-    {"name": "RC-01", "operation": "quire.op.reference.eq", "operands": [{"reference": "M5"}, {"reference": "M1"}], "expected": {"admitted": true}},
-    {"name": "RC-02", "operation": "quire.op.reference.eq", "operands": [{"reference": "M1"}, {"reference": "M5"}], "expected": {"admitted": true}},
-    {"name": "RC-03", "operation": "quire.op.reference.eq", "operands": [{"reference": "M7"}, {"reference": "M1"}], "expected": {"admitted": true}},
-    {"name": "RC-04", "operation": "quire.op.reference.eq", "operands": [{"reference": "M1"}, {"reference": "M1"}], "expected": {"admitted": true}},
-    {"name": "RC-05", "operation": "quire.op.reference.ne", "operands": [{"reference": "M5"}, {"reference": "M1"}], "expected": {"admitted": true}},
-    {"name": "RC-06", "operation": "quire.op.reference.eq", "operands": [{"reference": "M1"}, {"reference": "M3"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RC-07", "operation": "quire.op.reference.ne", "operands": [{"reference": "M5"}, {"reference": "M6"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RC-08", "operation": "quire.op.reference.eq", "operands": [{"reference": "M1"}, {"reference": "M4"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RC-09", "operation": "quire.op.reference.eq", "operands": [{"reference": "M2"}, {"reference": "M1"}], "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "RC-10", "operation": "quire.op.reference.eq", "operands": [{"object": "M1"}, {"reference": "M1"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RC-11", "operation": "quire.op.reference.eq", "operands": [{"reference": "M4"}, {"reference": "M4"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RC-12", "operation": "quire.op.reference.eq", "operands": [{"reference": "M2"}, {"reference": "M2"}], "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "RC-13", "operation": "quire.op.reference.eq", "operands": [{"reference": "M6"}, {"reference": "M9"}], "expected": {"admitted": true}},
-    {"name": "RC-14", "operation": "quire.op.reference.ne", "operands": [{"reference": "M9"}, {"reference": "M6"}], "expected": {"admitted": true}},
-    {"name": "RC-15", "operation": "quire.op.reference.eq", "operands": [{"reference": "M8"}, {"reference": "M1"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RC-16", "operation": "quire.op.reference.eq", "operands": [{"reference": "M8"}, {"reference": "M8"}], "expected": {"admitted": true}}
+    {
+      "name": "RC-01",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M5"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RC-02",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M5"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RC-03",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M7"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RC-04",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RC-05",
+      "operation": "quire.op.reference.ne",
+      "operands": [
+        {
+          "reference": "M5"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RC-06",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M3"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RC-07",
+      "operation": "quire.op.reference.ne",
+      "operands": [
+        {
+          "reference": "M5"
+        },
+        {
+          "reference": "M6"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RC-08",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M4"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RC-09",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M2"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "RC-10",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "object": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RC-11",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M4"
+        },
+        {
+          "reference": "M4"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RC-12",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M2"
+        },
+        {
+          "reference": "M2"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "RC-13",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M6"
+        },
+        {
+          "reference": "M9"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RC-14",
+      "operation": "quire.op.reference.ne",
+      "operands": [
+        {
+          "reference": "M9"
+        },
+        {
+          "reference": "M6"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RC-15",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M8"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RC-16",
+      "operation": "quire.op.reference.eq",
+      "operands": [
+        {
+          "reference": "M8"
+        },
+        {
+          "reference": "M8"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    }
   ],
   "reference_upcast_cases": [
-    {"name": "RU-01", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M5"}], "type_argument": {"reference": "M1"}, "expected": {"admitted": true}},
-    {"name": "RU-02", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M7"}], "type_argument": {"reference": "M1"}, "expected": {"admitted": true}},
-    {"name": "RU-03", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M1"}, "expected": {"admitted": true}},
-    {"name": "RU-04", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M6"}], "type_argument": {"reference": "M9"}, "expected": {"admitted": true}},
-    {"name": "RU-05", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M5"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RU-06", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M3"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RU-07", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M5"}], "type_argument": {"reference": "M6"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RU-08", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M8"}], "type_argument": {"reference": "M1"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RU-09", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M4"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RU-10", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M2"}], "type_argument": {"reference": "M1"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "RU-11", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M1"}], "type_argument": {"reference": "M2"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "RU-12", "operation": "quire.op.reference.upcast", "operands": [{"object": "M1"}], "type_argument": {"reference": "M1"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RU-13", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M6"}], "type_argument": {"reference": "M13"}, "expected": {"admitted": true}},
-    {"name": "RU-14", "operation": "quire.op.reference.upcast", "operands": [{"reference": "M4"}], "type_argument": {"reference": "M1"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+    {
+      "name": "RU-01",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M5"
+        }
+      ],
+      "type_argument": {
+        "reference": "M1"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RU-02",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M7"
+        }
+      ],
+      "type_argument": {
+        "reference": "M1"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RU-03",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M1"
+        }
+      ],
+      "type_argument": {
+        "reference": "M1"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RU-04",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M6"
+        }
+      ],
+      "type_argument": {
+        "reference": "M9"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RU-05",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M1"
+        }
+      ],
+      "type_argument": {
+        "reference": "M5"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RU-06",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M1"
+        }
+      ],
+      "type_argument": {
+        "reference": "M3"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RU-07",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M5"
+        }
+      ],
+      "type_argument": {
+        "reference": "M6"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RU-08",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M8"
+        }
+      ],
+      "type_argument": {
+        "reference": "M1"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RU-09",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M1"
+        }
+      ],
+      "type_argument": {
+        "reference": "M4"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RU-10",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M2"
+        }
+      ],
+      "type_argument": {
+        "reference": "M1"
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "RU-11",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M1"
+        }
+      ],
+      "type_argument": {
+        "reference": "M2"
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "RU-12",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "object": "M1"
+        }
+      ],
+      "type_argument": {
+        "reference": "M1"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RU-13",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M6"
+        }
+      ],
+      "type_argument": {
+        "reference": "M13"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RU-14",
+      "operation": "quire.op.reference.upcast",
+      "operands": [
+        {
+          "reference": "M4"
+        }
+      ],
+      "type_argument": {
+        "reference": "M1"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    }
   ],
   "projection_cases": [
-    {"name": "RP-01", "result_type": {"type": "Int", "min": "0", "max": "9"}, "operand": {"deref": {"reference": "M5"}, "result_type": "M5"}, "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"resolves": "ix://acme/orders/Order/total", "member_type": {"type": "Int", "min": "0", "max": "9"}}},
-    {"name": "RP-02", "result_type": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}, "operand": {"deref": {"reference": "M1"}, "result_type": "M1"}, "member": {"kind": "field", "declaration": "M1", "name": "invoice"}, "expected": {"resolves": "ix://acme/orders/Order/invoice", "member_type": {"type": "Reference", "target": "4b07c3fd269e699bdd4bc1065acc80d2de047cc01e20fcd8bcf27fe404f79583"}}},
-    {"name": "RP-03", "result_type": {"type": "Int", "min": "0", "max": "9"}, "operand": {"reference": "M5"}, "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RP-04", "result_type": {"type": "Int", "min": "0", "max": "9"}, "operand": {"deref": {"reference": "M5"}, "result_type": "M5"}, "member": {"kind": "field", "declaration": "M1", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RP-05", "result_type": {"type": "Int", "min": "0", "max": "9"}, "operand": {"deref": {"reference": "M5"}, "result_type": "M1"}, "member": {"kind": "field", "declaration": "M1", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RP-06", "result_type": {"type": "Int", "min": "0", "max": "9"}, "operand": {"deref": {"reference": "M4"}, "result_type": "M4"}, "member": {"kind": "field", "declaration": "M4", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RP-07", "result_type": {"type": "Int", "min": "0", "max": "9"}, "operand": {"deref": {"reference": "M2"}, "result_type": "M2"}, "member": {"kind": "field", "declaration": "M2", "name": "total"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "RP-08", "result_type": {"type": "Integer"}, "operand": {"deref": {"reference": "M5"}, "result_type": "M5"}, "member": {"kind": "field", "declaration": "M5", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+    {
+      "name": "RP-01",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M5"
+        },
+        "result_type": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/total",
+        "member_type": {
+          "type": "Int",
+          "min": "0",
+          "max": "9"
+        }
+      }
+    },
+    {
+      "name": "RP-02",
+      "result_type": {
+        "type": "Reference",
+        "target": {
+          "package": "acme/orders",
+          "path": [
+            "model",
+            "object_type",
+            "ix://acme/orders/Invoice"
+          ],
+          "ordinal": 0
+        }
+      },
+      "operand": {
+        "deref": {
+          "reference": "M1"
+        },
+        "result_type": "M1"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "invoice"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/invoice",
+        "member_type": {
+          "type": "Reference",
+          "target": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Invoice"
+            ],
+            "ordinal": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "RP-03",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "reference": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RP-04",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M5"
+        },
+        "result_type": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RP-05",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M5"
+        },
+        "result_type": "M1"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RP-06",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M4"
+        },
+        "result_type": "M4"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M4",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RP-07",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M2"
+        },
+        "result_type": "M2"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M2",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "RP-08",
+      "result_type": {
+        "type": "Integer"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M5"
+        },
+        "result_type": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    }
   ],
   "reaches_cases": [
-    {"name": "RE-01", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"admitted": true}},
-    {"name": "RE-02", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "prior"}, "expected": {"admitted": true}},
-    {"name": "RE-03", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "origin"}, "expected": {"admitted": true}},
-    {"name": "RE-04", "operands": [{"reference": "M5"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M5", "name": "parent"}, "expected": {"admitted": true}},
-    {"name": "RE-05", "operands": [{"reference": "M1"}, {"reference": "M7"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"admitted": true}},
-    {"name": "RE-06", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "peers"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RE-07", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "trail"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RE-08", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "invoice"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RE-09", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "total"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RE-10", "operands": [{"reference": "M1"}, {"reference": "M3"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RE-11", "operands": [{"reference": "M5"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RE-12", "operands": [{"reference": "M2"}, {"reference": "M2"}], "member": {"kind": "field", "declaration": "M2", "name": "parent"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "RE-13", "operands": [{"reference": "M1"}, {"reference": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "missing"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "RE-14", "operands": [{"reference": "M6"}, {"reference": "M6"}], "member": {"kind": "field", "declaration": "M6", "name": "code"}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
-    {"name": "RE-15", "operands": [{"reference": "M1"}, {"object": "M1"}], "member": {"kind": "field", "declaration": "M1", "name": "parent"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+    {
+      "name": "RE-01",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "parent"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RE-02",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "prior"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RE-03",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "origin"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RE-04",
+      "operands": [
+        {
+          "reference": "M5"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "parent"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RE-05",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M7"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "parent"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RE-06",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "peers"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RE-07",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "trail"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RE-08",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "invoice"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RE-09",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RE-10",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M3"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "parent"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RE-11",
+      "operands": [
+        {
+          "reference": "M5"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "parent"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RE-12",
+      "operands": [
+        {
+          "reference": "M2"
+        },
+        {
+          "reference": "M2"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M2",
+        "name": "parent"
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "RE-13",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "reference": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "missing"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RE-14",
+      "operands": [
+        {
+          "reference": "M6"
+        },
+        {
+          "reference": "M6"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M6",
+        "name": "code"
+      },
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name"
+        }
+      }
+    },
+    {
+      "name": "RE-15",
+      "operands": [
+        {
+          "reference": "M1"
+        },
+        {
+          "object": "M1"
+        }
+      ],
+      "member": {
+        "kind": "field",
+        "declaration": "M1",
+        "name": "parent"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    }
   ],
   "frame_field_cases": [
-    {"name": "FF-01", "declaration": "M1", "field": "total", "expected": {"resolves": "ix://acme/orders/Order/total"}},
-    {"name": "FF-02", "declaration": "M5", "field": "total", "expected": {"resolves": "ix://acme/orders/Order/total"}},
-    {"name": "FF-03", "declaration": "M1", "field": "missing", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
-    {"name": "FF-04", "declaration": "M1", "field": "size", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
-    {"name": "FF-05", "declaration": "M6", "field": "code", "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name"}}},
-    {"name": "FF-06", "declaration": "M2", "field": "total", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}}
+    {
+      "name": "FF-01",
+      "declaration": "M1",
+      "field": "total",
+      "expected": {
+        "resolves": "ix://acme/orders/Order/total"
+      }
+    },
+    {
+      "name": "FF-02",
+      "declaration": "M5",
+      "field": "total",
+      "expected": {
+        "resolves": "ix://acme/orders/Order/total"
+      }
+    },
+    {
+      "name": "FF-03",
+      "declaration": "M1",
+      "field": "missing",
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name"
+        }
+      }
+    },
+    {
+      "name": "FF-04",
+      "declaration": "M1",
+      "field": "size",
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name"
+        }
+      }
+    },
+    {
+      "name": "FF-05",
+      "declaration": "M6",
+      "field": "code",
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name"
+        }
+      }
+    },
+    {
+      "name": "FF-06",
+      "declaration": "M2",
+      "field": "total",
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    }
   ],
   "anchor_cases": [
-    {"name": "AN-01", "context": "M1", "operation": "scaled", "expected": {"resolves": "ix://acme/orders/Order/scaled"}},
-    {"name": "AN-02", "context": "M5", "operation": "size", "expected": {"resolves": "ix://acme/orders/Sub/size"}},
-    {"name": "AN-03", "context": "M5", "operation": "reset", "expected": {"refused": {"code": "invalid_model_binding", "cause": "malformed-declaration"}}},
-    {"name": "AN-04", "context": "M1", "operation": "missing", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
-    {"name": "AN-05", "context": "M1", "operation": "total", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name"}}},
-    {"name": "AN-06", "context": "M2", "operation": "size", "expected": {"refused": {"code": "missing_declaration", "cause": "missing-selection"}}},
-    {"name": "AN-07", "context": "M8", "operation": "rate", "expected": {"refused": {"code": "invalid_model_binding", "cause": "malformed-declaration"}}}
+    {
+      "name": "AN-01",
+      "context": "M1",
+      "operation": "scaled",
+      "expected": {
+        "resolves": "ix://acme/orders/Order/scaled"
+      }
+    },
+    {
+      "name": "AN-02",
+      "context": "M5",
+      "operation": "size",
+      "expected": {
+        "resolves": "ix://acme/orders/Sub/size"
+      }
+    },
+    {
+      "name": "AN-03",
+      "context": "M5",
+      "operation": "reset",
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration"
+        }
+      }
+    },
+    {
+      "name": "AN-04",
+      "context": "M1",
+      "operation": "missing",
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name"
+        }
+      }
+    },
+    {
+      "name": "AN-05",
+      "context": "M1",
+      "operation": "total",
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name"
+        }
+      }
+    },
+    {
+      "name": "AN-06",
+      "context": "M2",
+      "operation": "size",
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-selection"
+        }
+      }
+    },
+    {
+      "name": "AN-07",
+      "context": "M8",
+      "operation": "rate",
+      "expected": {
+        "refused": {
+          "code": "invalid_model_binding",
+          "cause": "malformed-declaration"
+        }
+      }
+    }
   ],
   "clause_signature_cases": [
-    {"name": "CS-01", "clause": "precondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}, {"type": "Integer"}], "expected": {"admitted": true}},
-    {"name": "CS-02", "clause": "postcondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}, {"type": "Integer"}, {"type": "Integer"}], "expected": {"admitted": true}},
-    {"name": "CS-03", "clause": "postcondition", "context": "M1", "operation": "reset", "parameters": [{"reference": "M1"}], "expected": {"admitted": true}},
-    {"name": "CS-04", "clause": "precondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "CS-05", "clause": "postcondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}, {"type": "Integer"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "CS-06", "clause": "precondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M5"}, {"type": "Integer"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "CS-07", "clause": "precondition", "context": "M1", "operation": "scaled", "parameters": [{"reference": "M1"}, {"type": "Boolean"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}},
-    {"name": "CS-08", "clause": "invariant", "context": "M1", "operation": null, "parameters": [{"reference": "M1"}], "expected": {"admitted": true}},
-    {"name": "CS-09", "clause": "invariant", "context": "M1", "operation": null, "parameters": [{"reference": "M1"}, {"type": "Integer"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible"}}}
+    {
+      "name": "CS-01",
+      "clause": "precondition",
+      "context": "M1",
+      "operation": "scaled",
+      "parameters": [
+        {
+          "reference": "M1"
+        },
+        {
+          "type": "Integer"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "CS-02",
+      "clause": "postcondition",
+      "context": "M1",
+      "operation": "scaled",
+      "parameters": [
+        {
+          "reference": "M1"
+        },
+        {
+          "type": "Integer"
+        },
+        {
+          "type": "Integer"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "CS-03",
+      "clause": "postcondition",
+      "context": "M1",
+      "operation": "reset",
+      "parameters": [
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "CS-04",
+      "clause": "precondition",
+      "context": "M1",
+      "operation": "scaled",
+      "parameters": [
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "CS-05",
+      "clause": "postcondition",
+      "context": "M1",
+      "operation": "scaled",
+      "parameters": [
+        {
+          "reference": "M1"
+        },
+        {
+          "type": "Integer"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "CS-06",
+      "clause": "precondition",
+      "context": "M1",
+      "operation": "scaled",
+      "parameters": [
+        {
+          "reference": "M5"
+        },
+        {
+          "type": "Integer"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "CS-07",
+      "clause": "precondition",
+      "context": "M1",
+      "operation": "scaled",
+      "parameters": [
+        {
+          "reference": "M1"
+        },
+        {
+          "type": "Boolean"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "CS-08",
+      "clause": "invariant",
+      "context": "M1",
+      "operation": null,
+      "parameters": [
+        {
+          "reference": "M1"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "CS-09",
+      "clause": "invariant",
+      "context": "M1",
+      "operation": null,
+      "parameters": [
+        {
+          "reference": "M1"
+        },
+        {
+          "type": "Integer"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible"
+        }
+      }
+    }
   ],
   "relationship_navigation_cases": [
-    {"name": "RN-01", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M4", "role": "order", "receiver": "M1", "result": {"kind": "Reference", "of": "ix://acme/orders/Order"}, "expected": {"admitted": true}},
-    {"name": "RN-02", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M4", "role": "next", "receiver": "M1", "result": {"kind": "Set", "of": "ix://acme/orders/Order", "min": "0", "max": "3"}, "expected": {"refused": {"code": "unsupported_construct", "cause": "expression-form", "at": "member.name"}}},
-    {"name": "RN-03", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M4", "role": "next", "receiver": "M1", "result": {"kind": "Set", "of": "ix://acme/orders/Order", "min": "0", "max": "3"}, "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/sourceEnd/multiplicity/upper", "value": 3}], "expected": {"admitted": true}},
-    {"name": "RN-04", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M4", "role": "next", "receiver": "M1", "result": {"kind": "Bag", "of": "ix://acme/orders/Order", "min": "0", "max": "3"}, "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/sourceEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/sourceEnd/multiplicity/unique", "value": false}], "expected": {"admitted": true}},
-    {"name": "RN-05", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M4", "role": "order", "receiver": "M1", "result": {"kind": "Option", "of": "ix://acme/orders/Order"}, "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"admitted": true}},
-    {"name": "RN-06", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M4", "role": "order", "receiver": "M5", "result": {"kind": "Reference", "of": "ix://acme/orders/Order"}, "expected": {"admitted": true}},
-    {"name": "RN-07", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M4", "role": "order", "receiver": "M3", "result": {"kind": "Reference", "of": "ix://acme/orders/Order"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "arguments/0"}}},
-    {"name": "RN-08", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M4", "role": "order", "receiver": "M1", "result": {"kind": "Option", "of": "ix://acme/orders/Order"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "result_type"}}},
-    {"name": "RN-09", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M11", "role": "follows", "receiver": "M1", "result": {"kind": "Reference", "of": "ix://acme/orders/Order"}, "expected": {"admitted": true}},
-    {"name": "RN-10", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M11", "role": "followedBy", "receiver": "M1", "result": {"kind": "Set", "of": "ix://acme/orders/Order", "min": "0", "max": "3"}, "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-follows-Order/sourceEnd/multiplicity/upper", "value": 3}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}},
-    {"name": "RN-11", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M10", "role": "next", "receiver": "M3", "result": {"kind": "Option", "of": "ix://acme/orders/Order"}, "expected": {"refused": {"code": "missing_declaration", "cause": "missing-name", "at": "member.name"}}},
-    {"name": "RN-12", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M12", "role": "twin", "receiver": "M1", "result": {"kind": "Reference", "of": "ix://acme/orders/Order"}, "expected": {"refused": {"code": "ambiguous_declaration", "cause": "ambiguous-name", "at": "member.name"}}},
-    {"name": "RN-13", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M1", "role": "order", "receiver": "M1", "result": {"kind": "Reference", "of": "ix://acme/orders/Order"}, "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.declaration"}}},
-    {"name": "RN-14", "criterion": "FR-322-AC-57", "operation": "navigate", "relationship": "M10", "role": "invoiced", "receiver": "M1", "result": {"kind": "Reference", "of": "ix://acme/orders/Invoice"}, "expected": {"admitted": true}},
-    {"name": "RN-15", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "expected": {"admitted": true}},
-    {"name": "RN-16", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M3"], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "arguments/1"}}},
-    {"name": "RN-17", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"admitted": true}},
-    {"name": "RN-18", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"admitted": true}},
-    {"name": "RN-19", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M10", "role": "invoiced", "operands": ["M1", "M1"], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}},
-    {"name": "RN-20", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/unique", "value": false}], "expected": {"admitted": true}},
-    {"name": "RN-21", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M5"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"admitted": true}},
-    {"name": "RN-22", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M3"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "arguments/1"}}},
-    {"name": "RN-23", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}, {"op": "remove", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper"}], "expected": {"refused": {"code": "unsupported_construct", "cause": "expression-form", "at": "member.name"}}},
-    {"name": "RN-24", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M4", "role": "order", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper", "value": 3}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower", "value": 0}, {"op": "replace", "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/ordered", "value": true}], "expected": {"refused": {"code": "unsupported_construct", "cause": "expression-form", "at": "member.name"}}},
-    {"name": "RN-25", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M10", "role": "invoiced", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-invoiced-Invoice/targetEnd/multiplicity/upper", "value": 3}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}},
-    {"name": "RN-26", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M10", "role": "invoiced", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-invoiced-Invoice/targetEnd/multiplicity/lower", "value": 0}, {"op": "remove", "path": "/types/@Order/relationships/@Order-invoiced-Invoice/targetEnd/multiplicity/upper"}], "expected": {"refused": {"code": "unsupported_construct", "cause": "expression-form", "at": "member.name"}}},
-    {"name": "RN-27", "criterion": "FR-322-AC-57", "operation": "reaches", "relationship": "M11", "role": "followedBy", "operands": ["M1", "M1"], "patch": [{"op": "replace", "path": "/types/@Order/relationships/@Order-follows-Order/sourceEnd/multiplicity/lower", "value": 0}, {"op": "remove", "path": "/types/@Order/relationships/@Order-follows-Order/sourceEnd/multiplicity/upper"}], "expected": {"refused": {"code": "ill_typed", "cause": "operator-ineligible", "at": "member.name"}}}
+    {
+      "name": "RN-01",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M4",
+      "role": "order",
+      "receiver": "M1",
+      "result": {
+        "kind": "Reference",
+        "of": "ix://acme/orders/Order"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-02",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M4",
+      "role": "next",
+      "receiver": "M1",
+      "result": {
+        "kind": "Set",
+        "of": "ix://acme/orders/Order",
+        "min": "0",
+        "max": "3"
+      },
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "expression-form",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RN-03",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M4",
+      "role": "next",
+      "receiver": "M1",
+      "result": {
+        "kind": "Set",
+        "of": "ix://acme/orders/Order",
+        "min": "0",
+        "max": "3"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/sourceEnd/multiplicity/upper",
+          "value": 3
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-04",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M4",
+      "role": "next",
+      "receiver": "M1",
+      "result": {
+        "kind": "Bag",
+        "of": "ix://acme/orders/Order",
+        "min": "0",
+        "max": "3"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/sourceEnd/multiplicity/upper",
+          "value": 3
+        },
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/sourceEnd/multiplicity/unique",
+          "value": false
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-05",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M4",
+      "role": "order",
+      "receiver": "M1",
+      "result": {
+        "kind": "Option",
+        "of": "ix://acme/orders/Order"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower",
+          "value": 0
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-06",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M4",
+      "role": "order",
+      "receiver": "M5",
+      "result": {
+        "kind": "Reference",
+        "of": "ix://acme/orders/Order"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-07",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M4",
+      "role": "order",
+      "receiver": "M3",
+      "result": {
+        "kind": "Reference",
+        "of": "ix://acme/orders/Order"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "arguments/0"
+        }
+      }
+    },
+    {
+      "name": "RN-08",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M4",
+      "role": "order",
+      "receiver": "M1",
+      "result": {
+        "kind": "Option",
+        "of": "ix://acme/orders/Order"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "result_type"
+        }
+      }
+    },
+    {
+      "name": "RN-09",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M11",
+      "role": "follows",
+      "receiver": "M1",
+      "result": {
+        "kind": "Reference",
+        "of": "ix://acme/orders/Order"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-10",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M11",
+      "role": "followedBy",
+      "receiver": "M1",
+      "result": {
+        "kind": "Set",
+        "of": "ix://acme/orders/Order",
+        "min": "0",
+        "max": "3"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-follows-Order/sourceEnd/multiplicity/upper",
+          "value": 3
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RN-11",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M10",
+      "role": "next",
+      "receiver": "M3",
+      "result": {
+        "kind": "Option",
+        "of": "ix://acme/orders/Order"
+      },
+      "expected": {
+        "refused": {
+          "code": "missing_declaration",
+          "cause": "missing-name",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RN-12",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M12",
+      "role": "twin",
+      "receiver": "M1",
+      "result": {
+        "kind": "Reference",
+        "of": "ix://acme/orders/Order"
+      },
+      "expected": {
+        "refused": {
+          "code": "ambiguous_declaration",
+          "cause": "ambiguous-name",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RN-13",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M1",
+      "role": "order",
+      "receiver": "M1",
+      "result": {
+        "kind": "Reference",
+        "of": "ix://acme/orders/Order"
+      },
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "member.declaration"
+        }
+      }
+    },
+    {
+      "name": "RN-14",
+      "criterion": "FR-322-AC-57",
+      "operation": "navigate",
+      "relationship": "M10",
+      "role": "invoiced",
+      "receiver": "M1",
+      "result": {
+        "kind": "Reference",
+        "of": "ix://acme/orders/Invoice"
+      },
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-15",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M4",
+      "role": "order",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-16",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M4",
+      "role": "order",
+      "operands": [
+        "M1",
+        "M3"
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "arguments/1"
+        }
+      }
+    },
+    {
+      "name": "RN-17",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M4",
+      "role": "order",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower",
+          "value": 0
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-18",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M4",
+      "role": "order",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper",
+          "value": 3
+        },
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower",
+          "value": 0
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-19",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M10",
+      "role": "invoiced",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RN-20",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M4",
+      "role": "order",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper",
+          "value": 3
+        },
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower",
+          "value": 0
+        },
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/unique",
+          "value": false
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-21",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M4",
+      "role": "order",
+      "operands": [
+        "M1",
+        "M5"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper",
+          "value": 3
+        },
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower",
+          "value": 0
+        }
+      ],
+      "expected": {
+        "admitted": true
+      }
+    },
+    {
+      "name": "RN-22",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M4",
+      "role": "order",
+      "operands": [
+        "M1",
+        "M3"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper",
+          "value": 3
+        },
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower",
+          "value": 0
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "arguments/1"
+        }
+      }
+    },
+    {
+      "name": "RN-23",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M4",
+      "role": "order",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower",
+          "value": 0
+        },
+        {
+          "op": "remove",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "expression-form",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RN-24",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M4",
+      "role": "order",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/upper",
+          "value": 3
+        },
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/lower",
+          "value": 0
+        },
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-order-Order/targetEnd/multiplicity/ordered",
+          "value": true
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "expression-form",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RN-25",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M10",
+      "role": "invoiced",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-invoiced-Invoice/targetEnd/multiplicity/upper",
+          "value": 3
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RN-26",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M10",
+      "role": "invoiced",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-invoiced-Invoice/targetEnd/multiplicity/lower",
+          "value": 0
+        },
+        {
+          "op": "remove",
+          "path": "/types/@Order/relationships/@Order-invoiced-Invoice/targetEnd/multiplicity/upper"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "unsupported_construct",
+          "cause": "expression-form",
+          "at": "member.name"
+        }
+      }
+    },
+    {
+      "name": "RN-27",
+      "criterion": "FR-322-AC-57",
+      "operation": "reaches",
+      "relationship": "M11",
+      "role": "followedBy",
+      "operands": [
+        "M1",
+        "M1"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/types/@Order/relationships/@Order-follows-Order/sourceEnd/multiplicity/lower",
+          "value": 0
+        },
+        {
+          "op": "remove",
+          "path": "/types/@Order/relationships/@Order-follows-Order/sourceEnd/multiplicity/upper"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "code": "ill_typed",
+          "cause": "operator-ineligible",
+          "at": "member.name"
+        }
+      }
+    }
+  ],
+  "model_declaration_nodes": [
+    {
+      "name": "M1",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/orders/Order"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/Order"
+      }
+    },
+    {
+      "name": "M2",
+      "node_id": {
+        "package": "acme/billing",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/billing/Order"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/billing",
+        "kind": "model",
+        "node": "ix://acme/billing/Order"
+      }
+    },
+    {
+      "name": "M3",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/orders/Invoice"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/Invoice"
+      }
+    },
+    {
+      "name": "M4",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "relation",
+          "relationship",
+          "ix://acme/orders/relationship/Order-order-Order"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "relation",
+      "semantic_form": "relationship",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/relationship/Order-order-Order"
+      }
+    },
+    {
+      "name": "M10",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "relation",
+          "relationship",
+          "ix://acme/orders/relationship/Order-invoiced-Invoice"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "relation",
+      "semantic_form": "relationship",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/relationship/Order-invoiced-Invoice"
+      }
+    },
+    {
+      "name": "M11",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "relation",
+          "relationship",
+          "ix://acme/orders/relationship/Order-follows-Order"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "relation",
+      "semantic_form": "relationship",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/relationship/Order-follows-Order"
+      }
+    },
+    {
+      "name": "M12",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "relation",
+          "relationship",
+          "ix://acme/orders/relationship/Order-twin-Order"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "relation",
+      "semantic_form": "relationship",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/relationship/Order-twin-Order"
+      }
+    },
+    {
+      "name": "M5",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/orders/Sub"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/Sub"
+      }
+    },
+    {
+      "name": "M6",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/orders/Both"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/Both"
+      }
+    },
+    {
+      "name": "M7",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/orders/SubSub"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/SubSub"
+      }
+    },
+    {
+      "name": "M8",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "model",
+          "systems_interface",
+          "ix://acme/orders/Flow"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "systems_interface",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/Flow"
+      }
+    },
+    {
+      "name": "M9",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/orders/Tagged"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/Tagged"
+      }
+    },
+    {
+      "name": "M13",
+      "node_id": {
+        "package": "acme/orders",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/orders/Coded"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/orders",
+        "kind": "model",
+        "node": "ix://acme/orders/Coded"
+      }
+    }
+  ],
+  "timing_declaration_nodes": [
+    {
+      "name": "T1",
+      "node_id": {
+        "package": "acme/timing",
+        "path": [
+          "model",
+          "object_type",
+          "ix://acme/timing/Timer"
+        ],
+        "ordinal": 0
+      },
+      "node_tag": "model",
+      "semantic_form": "object_type",
+      "owner": {
+        "identity": "acme/timing",
+        "kind": "model",
+        "node": "ix://acme/timing/Timer"
+      }
+    }
   ]
 }

@@ -4,7 +4,7 @@
 //! FR-483 to FR-485 check-arm vectors (TC-972 to TC-974).
 //!
 //! Node ids in the vectors are written `$node:<label>`; the harness derives
-//! each `NodeId` from its label, so no digest is frozen in the vector file.
+//! each `NodeId` from its label as `{package: "arm", path: [label], ordinal: 0}`.
 //! Each case's outcome stage is validated against the FR-331 schema, its
 //! negotiation disposition is recomputed from FR-290's rules, and its arm
 //! outcome is checked against FR-483's outcome mapping. Value-validity cases
@@ -16,7 +16,6 @@ use ix_trace_rs::trace;
 use serde_json::{Value, json};
 use std::cell::{Cell, RefCell};
 use std::collections::{BTreeSet, HashMap};
-use sha2::{Digest, Sha256};
 
 const SCHEMA: &str = include_str!("../proposals/backend-provider-v1/schema.json");
 const CHECKED_PACKAGE_SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
@@ -24,19 +23,13 @@ const VECTORS: &str = include_str!("../proposals/backend-check-arm-v1/vectors.js
 const TC_972: &str = include_str!("../spec/test-cases/TC-972-check-arm-outcome-contract.md");
 const TC_973: &str = include_str!("../spec/test-cases/TC-973-value-validity-check-input.md");
 const TC_974: &str = include_str!("../spec/test-cases/TC-974-operation-contract-check-input.md");
-const NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
 
 fn parsed(text: &str) -> Value {
     serde_json::from_str(text).expect("authored JSON is valid")
 }
 
 fn node_id(label: &str) -> Value {
-    let mut hasher = Sha256::new();
-    hasher.update(NODE_DOMAIN.as_bytes());
-    hasher.update([0]);
-    hasher.update(label.as_bytes());
-    let digest: String = hasher.finalize().iter().map(|b| format!("{b:02x}")).collect();
-    json!({"domain": NODE_DOMAIN, "digest": digest})
+    json!({"package": "arm", "path": [label], "ordinal": 0})
 }
 
 fn rekey(value: &mut Value) {
@@ -883,7 +876,7 @@ fn schema_refuses_a_malformed_contract_counterexample() {
 }
 
 #[test]
-fn the_vector_file_is_complete_and_freezes_no_digest() {
+fn the_vector_file_is_complete() {
     // A pinned case list: deleting a vector fails.
     let ids: Vec<String> = cases().iter().map(id).collect();
     assert_eq!(ids, REQUIRED.to_vec(), "the case list is exactly the pinned list");
@@ -904,9 +897,6 @@ fn the_vector_file_is_complete_and_freezes_no_digest() {
         assert!(text.contains(ac), "{ac} is named in its TC");
     }
     let _ = TC_972;
-    assert!(!VECTORS.contains("\"digest\": \""), "no digest is written in the vectors");
-    assert_eq!(node_id("a"), node_id("a"));
-    assert_ne!(node_id("a"), node_id("b"));
     let case = cases().into_iter().find(|c| c["id"] == "VV-02").unwrap();
     assert_eq!(composed(&case)["counterexamples"][0]["counterexample"]["values"][0]["parameter"], node_id("vv.x"));
 }
@@ -924,11 +914,10 @@ fn descriptors_for_these_kinds_must_publish_a_positive_max_cases() {
         .with_registry(&registry)
         .build(&json!({"$ref": "urn:quire:backend-provider:v1#/$defs/BackendDescriptor"}))
         .unwrap();
-    let build = node_id("build-inputs")["digest"].clone();
     let descriptor = |kind: &str, bounds: &Value| {
         let mut d = json!({
             "backend": "checker",
-            "tool": {"name": "checker", "version": "1.0.0", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": build}},
+            "tool": {"name": "checker", "version": "1.0.0"},
             "advertises": [{"kind": kind, "mode": "bounded"}],
             "domains": ["integer"]
         });

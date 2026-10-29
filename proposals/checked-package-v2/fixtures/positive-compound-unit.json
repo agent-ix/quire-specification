@@ -1,44 +1,14 @@
 {
   "contract_version": "quire.checked-package/v2",
-  "identity_preimage": {
-    "version": "quire.checked-package-id/v2",
-    "edition": {
-      "role": "edition",
-      "definition": {
-        "authority": "agent-ix",
-        "identity": "quire-edition"
-      }
-    },
-    "profile_selections": [],
-    "definition_selections": [
-      {
-        "authority": "agent-ix",
-        "identity": "example-model"
-      }
-    ],
-    "required_features": [
-      "quire.value.complete/v1"
-    ],
-    "dependency_selections": []
-  },
-  "package_id": {
-    "domain": "quire.package.semantic/v2",
-    "algorithm": "sha256",
-    "digest": "1b9f138d63e5e20aea1009bc87db97ae92f07344730fab5c933f20cb4672be69"
-  },
   "lock": {
     "sources": [
       {
         "authority": "agent-ix",
-        "identity": "example",
-        "digest_domain": "quire.source.bytes/v1",
-        "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+        "identity": "example"
       },
       {
         "authority": "agent-ix",
-        "identity": "example-units",
-        "digest_domain": "quire.source.bytes/v1",
-        "digest": "6666666666666666666666666666666666666666666666666666666666666666"
+        "identity": "example-units"
       }
     ],
     "edition": {
@@ -65,15 +35,23 @@
     "nodes": [
       {
         "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"
+          "package": "example",
+          "path": [
+            "Example",
+            "Length"
+          ],
+          "ordinal": 0
         },
         "schema_version": "quire.checked-semantic-graph/v2",
         "node_tag": "scalar_type",
         "semantic_form": "dimension",
         "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"
+          "package": "example",
+          "path": [
+            "Example",
+            "Length"
+          ],
+          "ordinal": 0
         },
         "declaration": {
           "qualified_name": [
@@ -88,18 +66,10 @@
             "ordinal": 0
           }
         ],
-        "nominal_identity_preimage": {
-          "version": "quire.dimension-node/v1",
-          "owner": {
-            "kind": "definition",
-            "authority": "agent-ix",
-            "identity": "example-model"
-          },
-          "qualified_declaration": [
-            "Example",
-            "Length"
-          ],
-          "terms": []
+        "owner": {
+          "kind": "definition",
+          "authority": "agent-ix",
+          "identity": "example-model"
         },
         "body": {
           "term": "aggregate",
@@ -108,15 +78,23 @@
       },
       {
         "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
+          "package": "example",
+          "path": [
+            "Example",
+            "metre"
+          ],
+          "ordinal": 0
         },
         "schema_version": "quire.checked-semantic-graph/v2",
         "node_tag": "scalar_type",
         "semantic_form": "unit",
         "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"
+          "package": "example",
+          "path": [
+            "Example",
+            "Length"
+          ],
+          "ordinal": 0
         },
         "declaration": {
           "qualified_name": [
@@ -126,8 +104,12 @@
         },
         "dependencies": [
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"
+            "package": "example",
+            "path": [
+              "Example",
+              "Length"
+            ],
+            "ordinal": 0
           }
         ],
         "occurrences": [
@@ -136,30 +118,10 @@
             "ordinal": 0
           }
         ],
-        "nominal_identity_preimage": {
-          "version": "quire.unit-node/v1",
-          "owner": {
-            "kind": "definition",
-            "authority": "agent-ix",
-            "identity": "example-model"
-          },
-          "qualified_declaration": [
-            "Example",
-            "metre"
-          ],
-          "dimension_node_id": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"
-          },
-          "target_unit_node_id": null,
-          "scale": {
-            "numerator": "1",
-            "denominator": "1"
-          },
-          "offset": {
-            "numerator": "0",
-            "denominator": "1"
-          }
+        "owner": {
+          "kind": "definition",
+          "authority": "agent-ix",
+          "identity": "example-model"
         },
         "body": {
           "term": "aggregate",
@@ -173,8 +135,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ],
+          "ordinal": 0
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -186,26 +152,80 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "integer",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ],
+          "ordinal": 0
         }
       },
       {
         "node_id": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "02df6b0ff98d087f2807cd502d84ac503dffe56d1a4af72067975a22f7be7023"
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "compound_unit",
+            "unit",
+            {
+              "package": "example",
+              "path": [
+                "Example",
+                "metre"
+              ],
+              "ordinal": 0
+            },
+            "exponent",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ],
+              "ordinal": 0
+            },
+            "1"
+          ],
+          "ordinal": 0
         },
         "schema_version": "quire.checked-semantic-graph/v2",
         "node_tag": "scalar_type",
         "semantic_form": "compound_unit",
         "semantic_type": {
-          "domain": "quire.checked-semantic-node/v1",
-          "digest": "02df6b0ff98d087f2807cd502d84ac503dffe56d1a4af72067975a22f7be7023"
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "compound_unit",
+            "unit",
+            {
+              "package": "example",
+              "path": [
+                "Example",
+                "metre"
+              ],
+              "ordinal": 0
+            },
+            "exponent",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ],
+              "ordinal": 0
+            },
+            "1"
+          ],
+          "ordinal": 0
         },
         "dependencies": [
           {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
+            "package": "example",
+            "path": [
+              "Example",
+              "metre"
+            ],
+            "ordinal": 0
           }
         ],
         "occurrences": [
@@ -226,8 +246,12 @@
                   "value": {
                     "term": "reference",
                     "target": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
+                      "package": "example",
+                      "path": [
+                        "Example",
+                        "metre"
+                      ],
+                      "ordinal": 0
                     }
                   }
                 },
@@ -237,8 +261,12 @@
                   "value": {
                     "term": "literal",
                     "type": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32"
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ],
+                      "ordinal": 0
                     },
                     "value": "1",
                     "value_kind": "integer"
@@ -254,8 +282,12 @@
   "source_map": [
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "b6cc14ab93b670cb0fc74a80dd18131ef7b06e3eee6a730e5ca092266314e22b"
+        "package": "example",
+        "path": [
+          "Example",
+          "Length"
+        ],
+        "ordinal": 0
       },
       "role": "declaration",
       "ordinal": 0,
@@ -263,9 +295,7 @@
         {
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
           "start": 0,
           "end": 1
@@ -274,8 +304,12 @@
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "79637623a46d29e884b62c6fa292aeb29d41e4ecc4e800b4d7ee910a3eaf23a4"
+        "package": "example",
+        "path": [
+          "Example",
+          "metre"
+        ],
+        "ordinal": 0
       },
       "role": "declaration",
       "ordinal": 0,
@@ -283,9 +317,7 @@
         {
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
           "start": 1,
           "end": 2
@@ -294,8 +326,12 @@
     },
     {
       "node_id": {
-        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-        "domain": "quire.checked-semantic-node/v1"
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "integer"
+        ],
+        "ordinal": 0
       },
       "role": "type",
       "ordinal": 0,
@@ -303,9 +339,7 @@
         {
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
           "start": 2,
           "end": 3
@@ -314,8 +348,31 @@
     },
     {
       "node_id": {
-        "domain": "quire.checked-semantic-node/v1",
-        "digest": "02df6b0ff98d087f2807cd502d84ac503dffe56d1a4af72067975a22f7be7023"
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "compound_unit",
+          "unit",
+          {
+            "package": "example",
+            "path": [
+              "Example",
+              "metre"
+            ],
+            "ordinal": 0
+          },
+          "exponent",
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ],
+            "ordinal": 0
+          },
+          "1"
+        ],
+        "ordinal": 0
       },
       "role": "type",
       "ordinal": 0,
@@ -323,9 +380,7 @@
         {
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
           "start": 3,
           "end": 4
@@ -345,5 +400,6 @@
       "identity": "catalog"
     },
     "entries": []
-  }
+  },
+  "name": "example"
 }

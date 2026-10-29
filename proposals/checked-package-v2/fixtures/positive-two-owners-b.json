@@ -13,79 +13,6 @@
     },
     "entries": []
   },
-  "identity_preimage": {
-    "definition_selections": [
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.complete/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.accounting/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.compound-unit/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.compound-unit.schema/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.compound-unit.vectors/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.package-contract/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.shared-grammar/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.ad-005/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-140/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-141/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-142/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-147/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-148/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-149/v1"
-      }
-    ],
-    "dependency_selections": [],
-    "edition": {
-      "definition": {
-        "authority": "agent-ix",
-        "identity": "ix:native"
-      },
-      "role": "edition"
-    },
-    "profile_selections": [],
-    "required_features": [
-      "quire.value.complete/v1"
-    ],
-    "version": "quire.checked-package-id/v2"
-  },
   "lock": {
     "definition_selections": [
       {
@@ -160,17 +87,11 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-        "digest_domain": "quire.source.bytes/v1",
         "identity": "example-b"
       }
     ]
   },
-  "package_id": {
-    "algorithm": "sha256",
-    "digest": "c8827de3f6ff1b43f07b3368007584e71d9e303f2d4a14a8a22c00cf79fc4269",
-    "domain": "quire.package.semantic/v2"
-  },
+  "name": "example-b",
   "semantic_graph": {
     "graph_version": "quire.checked-semantic-graph/v2",
     "nodes": [
@@ -179,8 +100,11 @@
           "members": [
             {
               "target": {
-                "digest": "fe1f4017fded24a1988489b0019736b3b0061e9d09199f1ac803784fa0923586",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example-b",
+                "path": [
+                  "List"
+                ]
               },
               "term": "reference"
             }
@@ -189,13 +113,27 @@
         },
         "dependencies": [
           {
-            "digest": "fe1f4017fded24a1988489b0019736b3b0061e9d09199f1ac803784fa0923586",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example-b",
+            "path": [
+              "List"
+            ]
           }
         ],
         "node_id": {
-          "digest": "434be633358c2331d00c7b7d137921101104e1f8e045ae928ae38c42e5dfd9db",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "composite_type",
+            "option",
+            {
+              "ordinal": 0,
+              "package": "example-b",
+              "path": [
+                "List"
+              ]
+            }
+          ]
         },
         "node_tag": "composite_type",
         "occurrences": [
@@ -204,12 +142,23 @@
             "role": "generated"
           }
         ],
-        "recursion_group": "6cc31da5ef7860ac1861daf679deb2c6a6f7ef8a098ed9203fd865826cebbe38",
+        "recursion_group": "List",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "option",
         "semantic_type": {
-          "digest": "434be633358c2331d00c7b7d137921101104e1f8e045ae928ae38c42e5dfd9db",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "composite_type",
+            "option",
+            {
+              "ordinal": 0,
+              "package": "example-b",
+              "path": [
+                "List"
+              ]
+            }
+          ]
         }
       },
       {
@@ -225,8 +174,19 @@
                     "term": "binding",
                     "value": {
                       "target": {
-                        "digest": "434be633358c2331d00c7b7d137921101104e1f8e045ae928ae38c42e5dfd9db",
-                        "domain": "quire.checked-semantic-node/v1"
+                        "ordinal": 0,
+                        "package": "example-b",
+                        "path": [
+                          "composite_type",
+                          "option",
+                          {
+                            "ordinal": 0,
+                            "package": "example-b",
+                            "path": [
+                              "List"
+                            ]
+                          }
+                        ]
                       },
                       "term": "reference"
                     }
@@ -245,13 +205,27 @@
         },
         "dependencies": [
           {
-            "digest": "434be633358c2331d00c7b7d137921101104e1f8e045ae928ae38c42e5dfd9db",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example-b",
+            "path": [
+              "composite_type",
+              "option",
+              {
+                "ordinal": 0,
+                "package": "example-b",
+                "path": [
+                  "List"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "fe1f4017fded24a1988489b0019736b3b0061e9d09199f1ac803784fa0923586",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "List"
+          ]
         },
         "node_tag": "composite_type",
         "occurrences": [
@@ -265,12 +239,15 @@
           "identity": "example-b",
           "kind": "source"
         },
-        "recursion_group": "6cc31da5ef7860ac1861daf679deb2c6a6f7ef8a098ed9203fd865826cebbe38",
+        "recursion_group": "List",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",
         "semantic_type": {
-          "digest": "fe1f4017fded24a1988489b0019736b3b0061e9d09199f1ac803784fa0923586",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "List"
+          ]
         }
       },
       {
@@ -280,8 +257,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -293,8 +274,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "integer",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -305,8 +290,12 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example-b",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "term": "reference"
               }
@@ -321,13 +310,20 @@
         },
         "dependencies": [
           {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example-b",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           }
         ],
         "node_id": {
-          "digest": "959d66d9622b8770afe924a6a467dec0f271c94cf383a52c4dbc5ba8adc4a58f",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "Point"
+          ]
         },
         "node_tag": "composite_type",
         "occurrences": [
@@ -344,8 +340,11 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",
         "semantic_type": {
-          "digest": "959d66d9622b8770afe924a6a467dec0f271c94cf383a52c4dbc5ba8adc4a58f",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "Point"
+          ]
         }
       },
       {
@@ -354,8 +353,12 @@
             {
               "term": "literal",
               "type": {
-                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example-b",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
               },
               "value": "1",
               "value_kind": "integer"
@@ -363,8 +366,12 @@
             {
               "term": "literal",
               "type": {
-                "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example-b",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
               },
               "value": "2",
               "value_kind": "integer"
@@ -379,8 +386,12 @@
           },
           "operator": "binary",
           "result_type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example-b",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "term": "application"
         },
@@ -391,8 +402,11 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "326cccf71e37b3ec778f266f8abcf8f2a2015db0d2f5ee36e11ca0f188298ced",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "three"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -404,8 +418,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example-b",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       }
     ]
@@ -413,8 +431,19 @@
   "source_map": [
     {
       "node_id": {
-        "digest": "434be633358c2331d00c7b7d137921101104e1f8e045ae928ae38c42e5dfd9db",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example-b",
+        "path": [
+          "composite_type",
+          "option",
+          {
+            "ordinal": 0,
+            "package": "example-b",
+            "path": [
+              "List"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -422,8 +451,6 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 0
@@ -433,8 +460,11 @@
     },
     {
       "node_id": {
-        "digest": "fe1f4017fded24a1988489b0019736b3b0061e9d09199f1ac803784fa0923586",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example-b",
+        "path": [
+          "List"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -442,8 +472,6 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 1
@@ -453,8 +481,12 @@
     },
     {
       "node_id": {
-        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example-b",
+        "path": [
+          "scalar_type",
+          "integer"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -462,8 +494,6 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 2
@@ -473,8 +503,11 @@
     },
     {
       "node_id": {
-        "digest": "959d66d9622b8770afe924a6a467dec0f271c94cf383a52c4dbc5ba8adc4a58f",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example-b",
+        "path": [
+          "Point"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -482,8 +515,6 @@
           "end": 6,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 5
@@ -493,8 +524,11 @@
     },
     {
       "node_id": {
-        "digest": "326cccf71e37b3ec778f266f8abcf8f2a2015db0d2f5ee36e11ca0f188298ced",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example-b",
+        "path": [
+          "three"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -502,8 +536,6 @@
           "end": 7,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 6

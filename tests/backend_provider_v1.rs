@@ -6,16 +6,15 @@
 //! The schema fixes the wire's structure; readers convert from it into their
 //! own types (QSL ADR-013 T-7). This test checks that every positive vector is
 //! admitted, that every adverse vector is refused, and that the request's
-//! `package` member carries exactly the checked package its `package_id`
-//! names. Reader behaviour beyond the schema (FR-290 negotiation, replay,
+//! `package` member carries the canonical v2 bytes of a checked package.
+//! Reader behaviour beyond the schema (FR-290 negotiation, replay,
 //! certificate checks) is not claimed here.
 
 use std::collections::BTreeSet;
 
 use ix_trace_rs::trace;
-use quire_verification_contracts::{jcs_canonicalize, jcs_sha256};
+use quire_verification_contracts::jcs_canonicalize;
 use serde_json::Value;
-use sha2::{Digest, Sha256};
 
 const SCHEMA: &str = include_str!("../proposals/backend-provider-v1/schema.json");
 const VECTORS: &str = include_str!("../proposals/backend-provider-v1/vectors.json");
@@ -33,6 +32,16 @@ fn parsed(text: &str) -> Value {
 }
 
 /// RFC 4648 section 5 base64url with no padding.
+/// A model state as its typed canonical value: states are compared
+/// structurally, never by a key derived from them.
+fn state(n: u32) -> Value {
+    serde_json::json!({
+        "type": "record",
+        "name": "State",
+        "fields": [{"name": "n", "value": {"type": "integer", "value": n.to_string()}}]
+    })
+}
+
 fn encode(bytes: &[u8]) -> String {
     let mut out = String::with_capacity(bytes.len().div_ceil(3) * 4);
     for chunk in bytes.chunks(3) {
@@ -149,7 +158,7 @@ fn spec_fr_ids() -> BTreeSet<String> {
 }
 
 /// A positive vector's document; a request-stage vector receives the
-/// package fixture's v2 bytes and `package_id` (README "Package bytes").
+/// package fixture's v2 bytes (README "Package bytes").
 fn composed(vector: &Value) -> Value {
     let mut document = vector["document"].clone();
     if vector["stage"] == "request" {
@@ -157,17 +166,13 @@ fn composed(vector: &Value) -> Value {
             .as_object_mut()
             .expect("request stage carries request");
         request.insert("package".into(), Value::String(encode(&package_bytes())));
-        request.insert(
-            "package_id".into(),
-            parsed(PACKAGE_FIXTURE)["package_id"].clone(),
-        );
         if vector["name"] == "derived-items-request" {
-            // The refinement item's abstract package is a dependency, with its own id and v2 bytes.
+            // The refinement item's abstract package is a dependency, with its own identity and v2 bytes.
             let dependency = parsed(DEPENDENCY_FIXTURE);
             request.insert(
                 "dependencies".into(),
                 serde_json::json!([{
-                    "package_id": dependency["package_id"].clone(),
+                    "identity": dependency["name"].clone(),
                     "package": encode(&jcs_canonicalize(&dependency).expect("dependency canonicalizes")),
                 }]),
             );
@@ -433,7 +438,7 @@ fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
     assert_eq!(apply(&mut actual, &vector["patch"][0]), Ok(()), "real removal applies");
     assert_eq!(actual["results"][4]["cause"]["at"], serde_json::json!({
         "states": [], "automaton_state": "AQ", "witness_set": [{
-            "states": ["1111111111111111111111111111111111111111111111111111111111111111"],
+            "states": [state(1)],
             "automaton_state": "Ag"
         }]
     }));
@@ -444,7 +449,7 @@ fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
         "refusal belongs to the changed witness tuple");
     assert_eq!(apply(&mut actual, &serde_json::json!({"op": "add",
         "path": "/results/4/cause/at/witness_set/0/states/1",
-        "value": "2222222222222222222222222222222222222222222222222222222222222222"})),
+        "value": state(2)})),
         Ok(()), "restoring insertion applies");
     assert_eq!(actual, base, "restoration changes no other component");
     assert!(whole.is_valid(&actual), "restored n=0, m=2 positive is admitted");
@@ -591,11 +596,10 @@ fn tc_431_adverse_vectors_are_refused() {
 }
 
 /// The request's `package` is the unpadded base64url of the checked package's
-/// RFC 8785 bytes, and the package identity recomputed from the decoded bytes
-/// is the request's `package_id`.
+/// RFC 8785 bytes.
 #[trace("TC-431", "FR-331-AC-18")]
 #[test]
-fn tc_431_package_member_carries_the_v2_bytes_of_its_package_id() {
+fn tc_431_package_member_carries_the_v2_bytes_of_its_package() {
     let request = composed(&positive("kani-request"));
     let text = request["request"]["package"]
         .as_str()
@@ -611,36 +615,6 @@ fn tc_431_package_member_carries_the_v2_bytes_of_its_package_id() {
         "the bytes are already canonical"
     );
     assert_eq!(package["contract_version"], "quire.checked-package/v2");
-    // FR-322: the package-id preimage is the shipped `identity_preimage` with
-    // the identity projection derived from the graph, every node in graph
-    // order without its source occurrences.
-    let mut preimage = package["identity_preimage"].clone();
-    preimage["identity_projection"] = Value::Array(
-        package["semantic_graph"]["nodes"]
-            .as_array()
-            .expect("graph nodes are an array")
-            .iter()
-            .map(|node| {
-                let mut projected = node.clone();
-                projected
-                    .as_object_mut()
-                    .expect("node is an object")
-                    .remove("occurrences");
-                projected
-            })
-            .collect(),
-    );
-    let recomputed = jcs_sha256(&preimage).expect("preimage canonicalizes");
-    let recomputed = recomputed
-        .strip_prefix("sha256-jcs:")
-        .expect("canonicalizer retains its prefix");
-    let package_id = &request["request"]["package_id"];
-    assert_eq!(package_id["domain"], "quire.package.semantic/v2");
-    assert_eq!(package_id["algorithm"], "sha256");
-    assert_eq!(
-        package_id["digest"], recomputed,
-        "package_id is the identity recomputed from the carried bytes"
-    );
 }
 
 /// The strict decoder and the schema's `Base64Url` pattern agree: both refuse
@@ -671,11 +645,11 @@ fn tc_431_noncanonical_package_spellings_refuse() {
     }
 }
 
-/// Every base64url member of every positive vector decodes, and each
-/// byte-provision entry's digest is the sha256-jcs digest of its bytes.
+/// Every base64url member of every positive vector decodes, including each
+/// byte-provision entry's bytes.
 #[trace("TC-431", "FR-331-AC-18")]
 #[test]
-fn tc_431_vector_byte_members_decode_and_provision_digests_bind() {
+fn tc_431_vector_byte_members_decode() {
     for vector in positives() {
         let document = composed(&vector);
         for artifact in document["artifacts"].as_array().into_iter().flatten() {
@@ -687,13 +661,8 @@ fn tc_431_vector_byte_members_decode_and_provision_digests_bind() {
             .into_iter()
             .flatten()
         {
-            let bytes = decode(entry["bytes"].as_str().expect("provision bytes"))
+            decode(entry["bytes"].as_str().expect("provision bytes"))
                 .expect("provision bytes decode");
-            let digest = Sha256::digest(&bytes)
-                .iter()
-                .map(|byte| format!("{byte:02x}"))
-                .collect::<String>();
-            assert_eq!(entry["digest"], digest.as_str(), "provision digest binds");
         }
     }
 }
@@ -819,7 +788,7 @@ fn finite_kind(kind: &str) -> Option<&'static str> {
 #[test]
 fn tc_431_proof_bound_kind_and_bound_pair_as_adr_014_pairs_them() {
     let proof_bound = definition("ProofBound");
-    let domain = serde_json::json!({"type": "node", "node": {"domain": "quire.checked-semantic-node/v1", "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"}, "path": []});
+    let domain = serde_json::json!({"type": "node", "node": {"package": "example", "path": ["Example", "Account"], "ordinal": 0}, "path": []});
     let bounds = [
         (
             "cardinality",
@@ -891,7 +860,7 @@ fn tc_431_bounded_descriptors_carry_domains() {
     assert!(bounded > 0, "a bounded descriptor is exercised");
     let unbounded_only = serde_json::json!({
         "backend": "qsl-model-check",
-        "tool": {"name": "qsl-analyze", "version": "0.1.0", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}},
+        "tool": {"name": "qsl-analyze", "version": "0.1.0"},
         "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
         "fairness_kinds": ["weak"]
     });
@@ -964,8 +933,7 @@ fn tc_431_canonical_key_bindings_are_complete() {
     assert_eq!(admitted, 4);
     for rule in ["inequality-fails", "threshold-missed"] {
         assert!(!rejection.is_valid(&serde_json::json!({"type": "certificate-rejected",
-            "rule": rule, "at": {"domain": "quire.simulation.state-key/v1",
-                "digest": "1111111111111111111111111111111111111111111111111111111111111111"}})));
+            "rule": rule, "at": state(1)})));
     }
     let locus = definition("ProbabilityProductStateLocus");
     for invalid in [serde_json::json!({}), serde_json::json!({"product_key": "AQ=="}),
@@ -1060,8 +1028,8 @@ fn tc_431_hyper_loci_have_closed_shapes_and_rule_pairs() {
     let rejection = definition("CertificateRejected");
     let tuple_shape = definition("HyperTransitionTupleLocus");
     let state_shape = definition("HyperProductStateLocus");
-    let first = "1111111111111111111111111111111111111111111111111111111111111111";
-    let second = "2222222222222222222222222222222222222222222222222222222222222222";
+    let first = state(1);
+    let second = state(2);
     let tuple = serde_json::json!({"transitions": [
         {"pre_state": first, "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "0"}]}, "post_state": first, "result": null},
         {"pre_state": first, "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "1"}]}, "post_state": second, "result": null}
@@ -1191,8 +1159,7 @@ fn tc_431_hyper_loci_have_closed_shapes_and_rule_pairs() {
 /// and the vectors: a query part is `unrolling`, `base`, `step` or
 /// `step/<row>` (QSL FR-338's specified spelling); a proof step is `{part,
 /// index}`; a product state is `{model_state, automaton_state}`; a model
-/// state is its `{domain, digest}` record, in the state-key domain for every
-/// rule and in any domain for `malformed`; a state-graph entry is `{entry}`;
+/// state is its typed value; a state-graph entry is `{entry}`;
 /// a simulation step always carries `position`, `edge` and `verdict`, null
 /// when absent. Each rule is admitted exactly at the forms listed with it.
 #[trace("TC-431", "FR-331-AC-24", "FR-331-AC-25")]
@@ -1200,12 +1167,9 @@ fn tc_431_hyper_loci_have_closed_shapes_and_rule_pairs() {
 fn tc_431_certificate_loci_are_the_catalogued_spellings() {
     let rejection = definition("CertificateRejected");
     let part = definition("QueryPart");
-    let digest = "1111111111111111111111111111111111111111111111111111111111111111";
-    let model_state = serde_json::json!({"domain": "quire.simulation.state-key/v1", "digest": digest});
+    let model_state = state(1);
     let verdict = serde_json::json!({"kind": "NoAbstractMatch", "position": "1"});
-    let foreign_state = serde_json::json!({"domain": "package-fingerprint",
-        "digest": "3333333333333333333333333333333333333333333333333333333333333333"});
-    let loci: [(Value, &[&str]); 11] = [
+    let loci: [(Value, &[&str]); 9] = [
         (serde_json::json!("step/3"),
             &["query-mismatch", "shape-mismatch", "malformed", "not-refutation"]),
         (serde_json::json!({"part": "step/3", "index": "7"}),
@@ -1216,8 +1180,6 @@ fn tc_431_certificate_loci_are_the_catalogued_spellings() {
         (model_state.clone(),
             &["initial-missing", "successor-missing", "bad-state", "predicate-undefined",
               "rank-missing", "rank-broken", "order-broken", "count-broken", "malformed"]),
-        (foreign_state.clone(), &["malformed"]),
-        (serde_json::json!({"domain": "", "digest": digest}), &[]),
         (serde_json::json!({"entry": "2"}), &["malformed"]),
         (serde_json::json!({"position": "0", "edge": null, "verdict": null}),
             &["initial-mismatch", "successors-differ", "bad-state", "malformed"]),
@@ -1249,9 +1211,8 @@ fn tc_431_certificate_loci_are_the_catalogued_spellings() {
     }
     // The member names and nesting of other spellings are refused at every rule.
     for at in [
-        serde_json::json!({"state": digest, "automaton_state": "AQ"}),
-        serde_json::json!({"state": digest}),
-        serde_json::json!(digest),
+        serde_json::json!({"state": model_state, "automaton_state": "AQ"}),
+        serde_json::json!({"state": model_state}),
         serde_json::json!({"position": "0"}),
         serde_json::json!({"position": "0", "edge": "1"}),
         serde_json::json!({"entry": 2}),
@@ -1347,7 +1308,7 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     let descriptor = definition("BackendDescriptor");
     let base = serde_json::json!({
         "backend": "qsl-model-check",
-        "tool": {"name": "qsl-analyze", "version": "0.1.0", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"}},
+        "tool": {"name": "qsl-analyze", "version": "0.1.0"},
         "advertises": [{"kind": "temporal-satisfaction", "mode": "unbounded"}],
         "fairness_kinds": ["weak"]
     });
@@ -1370,7 +1331,7 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     );
     let mut other = serde_json::json!({
         "backend": "smt",
-        "tool": {"name": "z3", "version": "4.13.4", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1"}},
+        "tool": {"name": "z3", "version": "4.13.4"},
         "advertises": [{"kind": "operation-contract", "mode": "unbounded"}],
         "bounds": {"max_cases": 10000}
     });
@@ -1395,26 +1356,10 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     );
 }
 
-/// The `{domain, algorithm, digest}` record of a descriptor's FR-331
-/// `ManifestDigest`: SHA-256 over its RFC 8785 bytes in
-/// `quire.tool-manifest.jcs/v1`.
-fn manifest_digest(descriptor: &Value) -> Value {
-    let bytes = jcs_canonicalize(descriptor).expect("descriptor canonicalizes");
-    let digest: String = Sha256::digest(&bytes)
-        .iter()
-        .map(|byte| format!("{byte:02x}"))
-        .collect();
-    serde_json::json!({
-        "domain": "quire.tool-manifest.jcs/v1",
-        "algorithm": "sha256",
-        "digest": digest
-    })
-}
-
 /// FR-331-AC-37: every descriptor carries `tool` `{name, version}`: the
 /// executable a backend that fronts an external tool invokes, or the crate
-/// that implements a pure in-process engine; the member is inside the
-/// `ManifestDigest` preimage and outside the `BackendId`.
+/// that implements a pure in-process engine; the member is outside the
+/// `BackendId`.
 #[trace("TC-431", "FR-331-AC-37")]
 #[test]
 fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
@@ -1424,7 +1369,6 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
     let entry = hello["manifest"][0].clone();
     assert_eq!(entry["tool"]["name"], "kani");
     assert_eq!(entry["tool"]["version"], "0.56.0");
-    assert_eq!(entry["tool"]["build"]["domain"], "quire.build-inputs/v1");
 
     // The registry snapshot carries the kani descriptor as its hello gave it.
     let request = composed(&positive("kani-request"));
@@ -1434,14 +1378,10 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
     let mut upgraded = hello.clone();
     upgraded["manifest"][0]["tool"]["version"] = Value::String("0.57.0".into());
     assert!(whole.is_valid(&upgraded), "the upgraded hello is admitted");
-    let upgraded_entry = &upgraded["manifest"][0];
     assert_eq!(
-        upgraded_entry["backend"], entry["backend"],
+        upgraded["manifest"][0]["backend"], entry["backend"],
         "a tool-only change leaves the BackendId"
     );
-    let (before, after) = (manifest_digest(&entry), manifest_digest(upgraded_entry));
-    assert_eq!(before["domain"], after["domain"]);
-    assert_ne!(before, after, "a tool-only change moves the ManifestDigest");
 
     // A linked Kani descriptor in a request-stage snapshot without `tool`.
     let mut linked_without = request.clone();
@@ -1451,51 +1391,12 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
         .remove("tool");
     assert!(!whole.is_valid(&linked_without), "a snapshot descriptor requires tool");
 
-    // A pure in-process engine names its implementing crate and version; a
-    // release that changes that version moves the engine's ManifestDigest.
+    // A pure in-process engine names its implementing crate and version.
     let engine = composed(&positive("temporal-request"));
     let engine_entry = engine["manifest"][0].clone();
     assert_eq!(engine_entry["tool"]["name"], "qsl-analyze");
     assert_eq!(engine_entry["tool"]["version"], "0.1.0");
     assert!(whole.is_valid(&engine), "a pure engine's snapshot descriptor is admitted");
-    let mut released = engine_entry.clone();
-    released["tool"]["version"] = Value::String("0.3.0".into());
-    assert_eq!(released["backend"], engine_entry["backend"]);
-    assert_ne!(
-        manifest_digest(&released),
-        manifest_digest(&engine_entry),
-        "an engine release moves the ManifestDigest"
-    );
-    // Engine code changed while the crate version stayed: the build digest
-    // moves the ManifestDigest.
-    let mut rebuilt = engine_entry.clone();
-    rebuilt["tool"]["build"]["digest"] = Value::String("b6".repeat(32));
-    assert_eq!(rebuilt["tool"]["version"], engine_entry["tool"]["version"]);
-    let mut rebuilt_request = engine.clone();
-    rebuilt_request["manifest"][0] = rebuilt.clone();
-    assert!(whole.is_valid(&rebuilt_request), "the rebuilt engine is admitted");
-    assert_ne!(
-        manifest_digest(&rebuilt),
-        manifest_digest(&engine_entry),
-        "a code change with an unchanged version moves the ManifestDigest"
-    );
-    for build in [
-        Value::Null,
-        serde_json::json!("a5a5"),
-        serde_json::json!({"domain": "quire.build-inputs/v1", "algorithm": "sha256"}),
-        serde_json::json!({"domain": "quire.build-inputs/v1", "algorithm": "sha512", "digest": "a5".repeat(32)}),
-        serde_json::json!({"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": "a5".repeat(31)}),
-    ] {
-        let mut bad = engine.clone();
-        bad["manifest"][0]["tool"]["build"] = build.clone();
-        assert!(!whole.is_valid(&bad), "build {build} is refused");
-    }
-    let mut unbuilt = engine.clone();
-    unbuilt["manifest"][0]["tool"]
-        .as_object_mut()
-        .expect("tool")
-        .remove("build");
-    assert!(!whole.is_valid(&unbuilt), "an engine's tool requires build");
 
     for malformed in [
         serde_json::json!({"name": "kani"}),
@@ -1571,8 +1472,7 @@ fn tc_431_load_buffering_warning_carries_two_transition_identities() {
 }
 
 /// FR-361-AC-13: a universe provision is the RFC 8785 array of keys in list
-/// order, each exactly `universe` (64 lowercase hex) and `identity` (lowercase
-/// hex), named by its `sha256-jcs` digest.
+/// order, each exactly `universe` (a node id) and `identity` (lowercase hex).
 #[trace("TC-290", "FR-361-AC-13")]
 #[test]
 fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
@@ -1584,7 +1484,7 @@ fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
     let cases = vectors["universe_provision_vectors"]
         .as_array()
         .expect("universe provision vectors");
-    let mut digests = BTreeSet::new();
+    let node = definition("NodeId");
     for case in cases {
         let name = case["name"].as_str().expect("name");
         let keys = &case["keys"];
@@ -1596,9 +1496,8 @@ fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
                 .map(String::as_str)
                 .collect();
             assert_eq!(members, BTreeSet::from(["identity", "universe"]), "{name}");
-            let universe = key["universe"].as_str().expect("universe");
+            assert!(node.is_valid(&key["universe"]), "{name}: universe");
             let identity = key["identity"].as_str().expect("identity");
-            assert!(universe.len() == 64 && is_hex(universe), "{name}: universe");
             assert!(
                 !identity.is_empty() && identity.len() % 2 == 0 && is_hex(identity),
                 "{name}: identity"
@@ -1610,15 +1509,7 @@ fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
             case["jcs"].as_str().expect("jcs").as_bytes(),
             "{name}"
         );
-        let digest = jcs_sha256(keys).expect("digest");
-        assert_eq!(
-            digest.strip_prefix("sha256-jcs:").unwrap_or(&digest),
-            case["digest"].as_str().expect("digest"),
-            "{name}"
-        );
-        digests.insert(digest);
     }
-    assert_eq!(digests.len(), cases.len(), "list order changes the digest");
 }
 
 /// FR-364-AC-10: the observed-arm positive and the coupling adverse vectors
@@ -1671,10 +1562,9 @@ fn tc_431_the_arm_coupling_vectors_are_present() {
 #[test]
 fn tc_431_context_pairs_are_admitted_by_shape_alone() {
     let rejection = definition("CertificateRejected");
-    let digest = "1111111111111111111111111111111111111111111111111111111111111111";
     for (rule, at) in [
         ("inequality-fails", serde_json::json!({"product_key": "AQ"})),
-        ("successor-missing", serde_json::json!({"domain": "quire.simulation.state-key/v1", "digest": digest})),
+        ("successor-missing", state(1)),
     ] {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
         assert!(rejection.is_valid(&cause), "{rule} at {at} is a well-formed pair");
@@ -1853,31 +1743,31 @@ fn tc_431_abstract_subject_is_present_exactly_on_a_refinement_item() {
         assert!(!temporal.is_valid(&t), "{member} is not a member of abstract_subject");
     }
     let mut bare = items[2]["temporal"].clone();
-    bare["abstract_subject"]["package_id"] = serde_json::json!("5".repeat(64));
+    bare["abstract_subject"]["identity"] = serde_json::json!(5);
     assert!(!temporal.is_valid(&bare));
     assert_ne!(abstract_subject()["initial_states"], items[2]["temporal"]["subject"]["initial_states"],
         "the abstract subject's states are its own, not the concrete subject's");
 }
 
-/// FR-368-AC-19 and FR-331-AC-47: the abstract subject's `package_id` names a
+/// FR-368-AC-19 and FR-331-AC-47: the abstract subject's `identity` names a
 /// package of `request.dependencies`. The schema cannot say so (it relates two
 /// members), so this is the reader obligation, checked against the positive
-/// vector and refused for a package id the request does not carry.
+/// vector and refused for an identity the request does not carry.
 #[trace("TC-431", "FR-368-AC-19")]
 #[trace("TC-431", "FR-331-AC-47")]
 #[test]
 fn tc_431_abstract_subject_package_is_one_of_the_request_dependencies() {
     let in_dependencies = |document: &Value| {
-        let wanted = &document["request"]["items"][2]["temporal"]["abstract_subject"]["package_id"];
-        document["request"]["dependencies"].as_array().is_some_and(|all| all.iter().any(|d| &d["package_id"] == wanted))
+        let wanted = &document["request"]["items"][2]["temporal"]["abstract_subject"]["identity"];
+        document["request"]["dependencies"].as_array().is_some_and(|all| all.iter().any(|d| &d["identity"] == wanted))
     };
     let document = composed(&positive("derived-items-request"));
     assert_eq!(errors(&validator(), &document), Vec::<String>::new());
     assert!(in_dependencies(&document), "the positive vector's abstract package is a dependency");
     let mut other = document.clone();
-    other["request"]["items"][2]["temporal"]["abstract_subject"]["package_id"]["digest"] = serde_json::json!("6".repeat(64));
+    other["request"]["items"][2]["temporal"]["abstract_subject"]["identity"] = serde_json::json!("test/other");
     assert_eq!(errors(&validator(), &other), Vec::<String>::new(), "the schema admits it: the reader refuses");
-    assert!(!in_dependencies(&other), "a package id outside request.dependencies is refused by the reader");
+    assert!(!in_dependencies(&other), "an identity outside request.dependencies is refused by the reader");
     let mut none = document.clone();
     none["request"].as_object_mut().unwrap().remove("dependencies");
     assert!(!in_dependencies(&none), "a request with no dependencies has no abstract package");

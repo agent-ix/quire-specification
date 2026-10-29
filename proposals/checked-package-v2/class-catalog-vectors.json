@@ -6,40 +6,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -47,74 +71,118 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -147,40 +215,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -188,21 +280,33 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E"
@@ -210,48 +314,76 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -285,40 +417,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -326,66 +482,106 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -393,8 +589,12 @@
             "class": "cend Impl::T",
             "extra": 1,
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -428,40 +628,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -469,74 +693,118 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -544,8 +812,12 @@
             "drain": "store-buffer-flush",
             "memory_model": "ra",
             "node": {
-              "digest": "ac9621b4f2983375589d6450e3bb8f05a915c25747ffead577846c598ae84160",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "12"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -574,40 +846,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -615,68 +911,108 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -710,40 +1046,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -751,74 +1111,118 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -851,40 +1255,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -892,61 +1320,97 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -980,40 +1444,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -1021,61 +1509,97 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -1109,40 +1633,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -1150,66 +1698,106 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -1243,40 +1831,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -1284,74 +1896,118 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -1380,40 +2036,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -1421,74 +2101,118 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -1517,40 +2241,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -1558,74 +2306,118 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -1654,40 +2446,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -1695,74 +2511,118 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -1792,40 +2652,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -1833,74 +2717,118 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -1934,40 +2862,64 @@
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AE",
             "node": {
-              "digest": "9ceb77a04095ccfb4d1b0f15e30180d51b4a13152fb8465248fbb97bab34bcd6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "1"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "d785f430c702f82185ac27fd11670b3380f55cc13076ab300a638bca8ae95767",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "2"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::AK",
             "node": {
-              "digest": "01473eff51ee15091db3ff647379d276201fc76a337d032a2a20d98d6fb13cb8",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "3"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "f811d751f310e793fdc709db6570615116e07d2f0caec5b47a8e190a49136677",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "4"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Req::Ask",
             "node": {
-              "digest": "992d687e6e839d86294e993d0de6edb947141b105e912ce4df0433f02053d9c4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "5"
+              ],
+              "ordinal": 0
             }
           }
         ],
@@ -1975,82 +2927,130 @@
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::Do",
             "node": {
-              "digest": "372b238f6101ffc1740cbdbe6e080606bcf73d32a0373bd5d7671fe527048c60",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "7"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::E",
             "node": {
-              "digest": "626fc776a19fe17962bb82251b9a78e266439c34630633139455a0a2d4b9f790",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "8"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::K",
             "node": {
-              "digest": "0dd8a59430891d906248d1f9141e081235c792bfa8f852084bf40374aab8c390",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "9"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "7014dcbc1aaea070bc8a7b6c5d382fd603e99790c65275593a97df267f77bc31",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "6"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [
               {
-                "digest": "867074d5d2a74a880be3aedbf7ac53021b5e35a9c36c59a3a5043c0febd7bd39",
-                "domain": "quire.checked-semantic-node/v1"
+                "package": "example",
+                "path": [
+                  "unresolved",
+                  "0"
+                ],
+                "ordinal": 0
               }
             ],
             "class": "Impl::ev",
             "node": {
-              "digest": "b6b7ffade2049fbc5a2f7c9783fc45f499edad85c99ab692a0a6982888c005a4",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "11"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
             "binder_types": [],
             "class": "cend Impl::T",
             "node": {
-              "digest": "8e3ca4d7936420fa7ee4d629e63f4e47ed98e1af49033e4ecc47a0eedc95cef6",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "example",
+              "path": [
+                "unresolved",
+                "10"
+              ],
+              "ordinal": 0
             }
           },
           {
@@ -2079,5 +3079,5 @@
       "note": "cend entry duplicated (reader duplicate, schema-valid)"
     }
   ],
-  "description": "STD-524/STD-525 canonical class_catalog wire vectors (FR-375-AC-28, TC-310 CC-18, TC-233 CCW-10). Node digests are sha256('std-524/'+label); binder types: Boolean for E, K, ev, AE; Int[0, 9] for AK."
+  "description": "STD-524/STD-525 canonical class_catalog wire vectors (FR-375-AC-28, TC-310 CC-18, TC-233 CCW-10). Node ids are structural; binder types: Boolean for E, K, ev, AE; Int[0, 9] for AK."
 }
