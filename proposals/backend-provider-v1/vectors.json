@@ -2797,14 +2797,20 @@
             "cause": {
               "type": "stale-dependency",
               "requested": {
-                "domain": "quire.package.semantic/v2",
-                "algorithm": "sha256",
-                "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                "kind": "package",
+                "package_id": {
+                  "domain": "quire.package.semantic/v2",
+                  "algorithm": "sha256",
+                  "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
+                }
               },
               "recompiled": {
-                "domain": "quire.package.semantic/v2",
-                "algorithm": "sha256",
-                "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                "kind": "package",
+                "package_id": {
+                  "domain": "quire.package.semantic/v2",
+                  "algorithm": "sha256",
+                  "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"
+                }
               }
             }
           }
@@ -4790,14 +4796,20 @@
             "cause": {
               "type": "stale-dependency",
               "requested": {
-                "domain": "quire.package.semantic/v2",
-                "algorithm": "sha256",
-                "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+                "kind": "package",
+                "package_id": {
+                  "domain": "quire.package.semantic/v2",
+                  "algorithm": "sha256",
+                  "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
+                }
               },
               "recompiled": {
-                "domain": "quire.package.semantic/v2",
-                "algorithm": "sha256",
-                "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+                "kind": "package",
+                "package_id": {
+                  "domain": "quire.package.semantic/v2",
+                  "algorithm": "sha256",
+                  "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"
+                }
               }
             }
           },
@@ -4809,14 +4821,20 @@
             "cause": {
               "type": "stale-dependency",
               "requested": {
-                "domain": "quire.package.semantic/v2",
-                "algorithm": "sha256",
-                "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+                "kind": "package",
+                "package_id": {
+                  "domain": "quire.package.semantic/v2",
+                  "algorithm": "sha256",
+                  "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
+                }
               },
               "recompiled": {
-                "domain": "quire.package.semantic/v2",
-                "algorithm": "sha256",
-                "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+                "kind": "package",
+                "package_id": {
+                  "domain": "quire.package.semantic/v2",
+                  "algorithm": "sha256",
+                  "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"
+                }
               }
             }
           }
@@ -4850,6 +4868,50 @@
         "results": [{"request_index": 0, "backend": "qsl-analyze", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "refuted-ignoring-constraints"}}],
         "counterexamples": [],
         "accounting": [{"request_index": 0, "settled_by": "result"}]
+      }
+    },
+    {
+      "name": "refinement-stale-dependency-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause": "FR-331"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "refinement",
+            "result": "inconclusive",
+            "cause": {
+              "type": "stale-dependency",
+              "requested": {
+                "kind": "refinement",
+                "name": "OtherRefinement"
+              },
+              "recompiled": {
+                "kind": "refinement",
+                "name": "CasRefinesCounter"
+              }
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
       }
     },
     {
@@ -8493,7 +8555,31 @@
     {"name": "step-fails-verdict-other-kind", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/at/verdict", "value": {"kind": "Undefined", "position": "1"}}]},
     {"name": "backward-edge-with-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/4/cause/at", "value": {"edge": 3, "verdict": {"kind": "AbstractStepRejected", "position": "2", "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []}, "cause": {"kind": "Postcondition"}}}}]},
     {"name": "certificate-member-initials-index", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/10/cause/at/member", "value": "initials[0]"}]},
-    {"name": "certificate-member-refinement-name", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/7/cause/at/member", "value": "refinement_name"}]}
+    {"name": "certificate-member-refinement-name", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/7/cause/at/member", "value": "refinement_name"}]},
+    {
+      "name": "stale-dependency-mixed-identity-kinds",
+      "base": "refinement-stale-dependency-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/requested",
+          "value": {
+            "kind": "package",
+            "package_id": {
+              "domain": "quire.package.semantic/v2",
+              "algorithm": "sha256",
+              "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
+            }
+          }
+        }
+      ]
+    }
+    ,
+    {"name":"stale-dependency-unknown-kind","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"replace","path":"/results/0/cause/requested/kind","value":"future"}]},
+    {"name":"stale-dependency-missing-kind","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"remove","path":"/results/0/cause/requested/kind"}]},
+    {"name":"stale-dependency-missing-payload-member","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"remove","path":"/results/0/cause/requested/name"}]},
+    {"name":"stale-dependency-unrecognized-extra-member","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"add","path":"/results/0/cause/requested/extra","value":"unexpected"}]}
   ],
   "universe_provision_vectors": [
     {
