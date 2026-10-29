@@ -2493,7 +2493,8 @@ to one `literal` term with `value_kind` `none` whose `type` is a node of family
 `option`, the `composite_type`/`option` node of the `Option<T>` the position
 expects; the spelling is not carried. No type node stands for a clock, so for an
 `Option<Clock>` place no such literal exists in the package: `self.v = absent` over
-`v: Option<Clock>` is recorded by the timed model (FR-415), not carried in the package.
+`v: Option<Clock>` has no package form: it is the excluded drop ("Forms the package
+excludes", `CW-03`), refused by the producer and carried by no node.
 
 The fit rule has one exception besides record conformance ("Record
 conformance"), **event equality**: `quire.op.structural.eq` and
@@ -2839,7 +2840,7 @@ node listed twice repeats its order key and is the FR-322-AC-260 order refusal
 is empty exactly when the model has no guard to list. A guard that exists is
 never absent from its aggregate: a `clock_guard` node that the root's `guards`
 does not list refuses `invalid_package`/`timed-node-reference`, and a producer
-that cannot yet write the guards of a model refuses to emit that model rather
+that cannot write the guards of a model refuses to emit that model rather
 than write an empty aggregate.
 
 The refusal locus of an unlisted guard is the unlisted node itself: the
@@ -3053,6 +3054,70 @@ quantifier and names STD-554, the ticket that defines the binder form; it does
 not write an unquantified approximation. The vectors `QN-01` and `QN-02` of
 `timed-clause-node-vectors.json` publish it; TC-367 CK-37 and FR-415-AC-24 state it.
 
+**Forms the package excludes.** Three forms are excluded from the checked
+package by rule. For each, the producer refuses `unsupported_construct`/`expression-form`
+at the form, naming the construct (a guard disjunct that reads no clock, a clock
+write that is not a reset to a constant, a selection reset whose condition reads
+element data); it writes no clause node for the operation and no approximation
+of the form, and a reader never meets one. The
+reader rules do not change: each exclusion is the closed layout or the join
+written above, pinned by a package row. The producer-level cases are the
+`excluded_forms` of `timed-clause-node-vectors.json`.
+- **A guard disjunct that reads no clock** (`GJ-01`:
+  `self.x >= 1 ms or self.versionNumber > 0`). A part pairs a predicate with at
+  least one constraint (FR-322-AC-261, `CL-20`), so a disjunct is a part only
+  when it holds a clock constraint, and a part with no constraint is not a
+  form. Every disjunct that reads a clock is built, one part
+  each (`GJ-02`, the guard of node 47), and a disjunct whose source writes the
+  constraint `self.x >= 0 ms` builds it as written (`GJ-03`): the producer
+  never inserts a constraint to give a data-only disjunct one.
+- **A clock write that is not a reset to a constant.** The one write node is
+  the `clock_reset`, of kind `place` or `parameter`, whose `value` is a required
+  quantity. A drop is not a reset (`CW-03`: `self.v = absent`), so a reset
+  without a `value` is refused by both schemas (`CL-55`). A whole-collection write
+  (`CW-01`: `self.ts = sequence[Timer { x: 0 ms, n: 1 }]`; `CW-02`:
+  `self.ts = filter(e in self.ts: e.n > 1)`) creates, carries and removes slots,
+  and a reset names one place by its owner and exactly the slot terms its path
+  has slot steps for, so no reset names a collection as a whole (`CL-56`, the
+  slot count). The class is a write whose value is a collection of clock-bearing
+  elements: a `sequence[...]`, `set[...]`, `bag[...]` or map literal, `filter`,
+  `flatten`, concatenation, slicing, reordering, and a collection element
+  written as a literal (a map entry `self.m[k] = Timer { ... }` or an ordered
+  element `self.ts[i] = Timer { ... }`), each of which creates, carries or
+  removes slots. A write of a non-collection composite is not in the
+  class: `self.o = Timer { x: 0 ms, n: 3 }` is the reset of the place `o.x` to
+  `0 ms` (making an `Option<Timer>` place present) together with an ordinary data
+  write of `n`, and is built. The drop is the write `absent` to an `Option<Clock>`
+  place (or a slot of `Sequence<Option<Clock>>`), whose presence is a runtime
+  bit; `self.o = absent` over `o: Option<Timer>` is not that drop, because the
+  presence of `o.x` is derived from the data case of `o` (Presence, above), so it
+  is an ordinary data write that builds no clause node and ends the presence of
+  `o.x` with it. A constant write to a guarded place is a reset and makes the
+  place present (`CW-04`, node 82). A presence requirement is not a write
+  (`CW-05`): `present(p)` in a postcondition is a `presence_read` expression of
+  the postcondition and not a clause, so the package carries no node for it; a
+  place absent in the pre-state meets it only when a reset of the operation
+  writes the place (FR-415 "No implicit reset on a presence change"; `FP-01`,
+  `FP-09`, `FP-11`), and the source refusal `clock-presence-unwritten` is as
+  FR-415 states. An unwritten clock keeps its value, so a frame that names a
+  clock field imposes no write.
+
+  These exclusions concern what a package-producing frontend builds. The
+  language rules of FR-415 (AC-7, AC-11, AC-12, AC-14) are unchanged: they say
+  what the source forms mean, and a frontend that produces a checked package
+  refuses the forms listed here instead of building them.
+- **A selection reset whose condition reads element data** (`SD-01`:
+  `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)`). A binder is a
+  `parameter` node among the reset's slots, bound by slot position only (the
+  index of a `Sequence` or `OrderedSet`, the key of a `Map`, the canonical
+  position of a `Set` or `Bag`) and typed by the selector's domain (`CL-10`,
+  `CL-12`; no published row pins a read of element data, because no package can
+  carry one). The package has no expression that reads the data part of the
+  element at a binder, and the package defines none, so a `condition` reads no element data: it is a Boolean
+  expression over the owner, the operation's parameters, the state data of the
+  owner and the presence of the binder's place (`SD-02`, node 84:
+  `present(e)`), evaluated in the pre-state at each live slot.
+
 **Reader joins.** The reader checks, in this order: the aggregate order below
 for every aggregate of the package; the unlisted timed nodes; then each timed
 node in ascending node-id digest order, and within a node the joins of its form
@@ -3065,8 +3130,8 @@ unless another code is written.
 - `clock_place`: the rows of `resolved_path` join the path and the selected document (FR-322-AC-148); it has no clause to join.
 - `clock_constraint` of kind `place`: `place` is a `clock_place`; then an
   `owner` that is not of the owner type refuses `ill_typed`/`type-mismatch` at
-  `/body/members/3/value`; a `slots` count other than the number of `slot` steps
-  refuses `ill_typed`/`operator-ineligible` at `/body/members/4/value`; a slot
+  `/body/members/2/value`; a `slots` count other than the number of `slot` steps
+  refuses `ill_typed`/`operator-ineligible` at `/body/members/3/value`; a slot
   term not of the selector's domain refuses `ill_typed`/`type-mismatch` at that
   slot (the rules of `present(p)`).
 - `clock_constraint` of kind `parameter`: `operation` is a `state`/`operation_anchor`
@@ -3315,7 +3380,8 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-263 | Clause membership is derived on the clause side. The root lists every guard, reset, invariant and constraint and is the only list of `clock_guard` nodes; a constraint is a member through the guard part or invariant that names it; a `clock_place` has no `guards` field (it could only list the `clock_guard` nodes that reach it, a cycle in a content-addressed graph, or repeat their predicates unchecked; `CL-27`). Every timed node the root does not list refuses `invalid_package`/`timed-node-reference` at that node's own `body`, first by node-id digest (`CL-05`, a constraint; `CL-26`, a reset). A model has at most one `clock_guard` for each operation anchor (`CL-04` refuses the second at that guard node's own `operation` binding), and a constraint the root lists that no part and no invariant names refuses at the root's `constraints` member (`CL-06`). Quantified guards and invariants are out of scope (STD-554, `QN-01`, `QN-02`). | Test (TC-367; CK-34, CK-37; CL-04..CL-06, CL-26, QN-01, QN-02) |
 | FR-322-AC-264 | The terms of a place clause are typed as the terms of `present(p)`: an `owner` that is not of the place's owner type refuses `ill_typed`/`type-mismatch` at `/body/members/{k}/value` (`CL-08`), a slot term of another type than the selector's domain `ill_typed`/`type-mismatch` at that slot (`CL-10`), a `slots` count other than the number of `slot` steps `ill_typed`/`operator-ineligible` (`CL-09`); a reset of a place whose first field the operation's frame does not modify (`CL-11`), a `binders` member that is not a slot term or is out of slot order (`CL-12`) and a non-Boolean `condition` (`CL-13`) refuse `invalid_package`/`timed-node-reference`. | Test (TC-367; CK-35; CL-08..CL-13) |
 | FR-322-AC-265 | The strict aggregate order of FR-322-AC-260 holds in the lists the clause forms nest, the constraints of a guard part and the bounds of an invariant, under the same order key (`CL-16` swaps two constraints of one part and refuses `invalid_semantic_graph` with no cause at the second). Members that share a minimum region triple are ordered by a structural key and never by a digest or by a source region of a shared term: a `clock_place` by its place path key (field by name bytes, union by case bytes, tuple by index, slot by collection bytes then minimum then maximum with `unbounded` last; neither the selector nor `resolved_path` is read), a `clock_constraint` by (the place path key, owner term, slot terms, comparison `lt`, `le`, `eq`, `ge`, `gt`, bound), a `clock_reset` by (the place path key, operation name, condition, binders in order, owner, slots, value), a `parameter` constraint or reset by operation name, parameter name, then the same, a `time_invariant` by (every bound's key in order, predicate), a `clock_guard` by its operation name and an `urgency` by kind and operation name; a term is keyed by its structure (its form and the shape of its body, a reference replaced by the key of its target). `AO-08` lists two places of one region in path order and is admitted, `AO-09` lists them out of path order and `AO-10` repeats a path with its region, and both refuse `invalid_semantic_graph` at the member; `CL-29` lists three constraints of one region in key order (admitted) and `CL-30` in region order only (refused), `CL-31` and `CL-32` do the same for two invariants. `CL-33` and `CL-34` give two constraints of one place and region the comparisons `le` and `eq`, `CL-35` and `CL-36` one comparison and the bounds `9/1` and `10/1` (numeric, not text, order), `CL-37` and `CL-38` differ only in the owner term (`other`, `self`), `CL-39` and `CL-40` only in the slot term (`e`, `i`), `CL-41` and `CL-42` two resets only in the operation (`arm`, `touch`), `CL-43` and `CL-44` only in the condition, `CL-48` and `CL-49` only in the value, `CL-50` and `CL-51` only in the binders, `CL-45` and `CL-46` three invariants of one first bound only in the second bound, `CL-52` and `CL-53` two invariants only in the predicate; the first id of each pair is admitted in key order and the second, the reverse, refuses at the second member. `CL-47` is `CL-37` with an earlier region added to the shared term `other`, so that the order of the two terms' minimum regions flips: the package stays admitted, because a node's position does not change when another node uses a term it shares. The model document of a `model_selections` row is not a source artifact, so no location in it orders a place. | Test (TC-367; CK-30, CK-36; AO-08..AO-10, CL-16, CL-29..CL-53) |
-| FR-322-AC-266 | The clause fixture `fixtures/positive-timed-clause-nodes.json` selects `domain-package-acme-timed-clauses.json` (which declares the entity `Gadget` with the one operation `ping()` only so that `CL-25` can name an anchor of another model) and carries the clause forms in both kinds; every timed key is the SHA-256 of the RFC 8785 bytes of its structural-node preimage, its dependencies are the sorted references of its body, and the package id follows. The dense timed fixtures `positive-timed-model-nodes.json` and `positive-timed-slot-nodes.json` carry the same forms with keys and package ids recomputed the same way; the package ids are carried by the fixtures and the vectors, not by this text. The vectors `CL-01`..`CL-54` are replayed as RFC 6902 patches on the clause fixture and each patched package has every timed key and the package id current. | Test (TC-367; CK-32..CK-37; CL-01..CL-54, QN-01, QN-02) |
+| FR-322-AC-266 | The clause fixture `fixtures/positive-timed-clause-nodes.json` selects `domain-package-acme-timed-clauses.json` (which declares the entity `Gadget` with the one operation `ping()` only so that `CL-25` can name an anchor of another model) and carries the clause forms in both kinds; every timed key is the SHA-256 of the RFC 8785 bytes of its structural-node preimage, its dependencies are the sorted references of its body, and the package id follows. The dense timed fixtures `positive-timed-model-nodes.json` and `positive-timed-slot-nodes.json` carry the same forms with keys and package ids recomputed the same way; the package ids are carried by the fixtures and the vectors, not by this text. The vectors `CL-01`..`CL-56` are replayed as RFC 6902 patches on the clause fixture and each patched package has every timed key and the package id current. | Test (TC-367; CK-32..CK-37; CL-01..CL-56, QN-01, QN-02) |
+| FR-322-AC-267 | The checked package excludes three source forms by rule, each refused by the producer `unsupported_construct`/`expression-form` at the form and naming the construct (`proposals/checked-package-v2/timed-clause-node-vectors.json`, `excluded_forms`): a guard disjunct that reads no clock (`GJ-01`; every disjunct that reads a clock is built, `GJ-02`, `GJ-03`), a clock write that is not a reset to a constant, namely a whole-collection write (`CW-01`, `CW-02`) and the drop `self.v = absent` (`CW-03`), and a selection reset whose condition reads element data (`SD-01`). A constant write to a guarded place is a built reset (`CW-04`), a presence requirement is a postcondition predicate with no clause node (`CW-05`) and a condition over the binder's presence is built (`SD-02`). The reader rows are `CL-20` (a part with no constraint, refused by both schemas), `CL-55` (a place reset with no `value`, refused by both schemas at the node's `body`) and `CL-56` (a reset of a collection place with no slot term, `ill_typed`/`operator-ineligible` at `/semantic_graph/nodes/84/body/members/4/value`); no reader rule is added or relaxed. | Test (TC-367; CK-32, CK-38; CL-20, CL-55, CL-56, GJ-01..GJ-03, CW-01..CW-05, SD-01, SD-02) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture, forms each complete application-node preimage, and computes its key. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the computed key. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 
 ## Dependencies

@@ -25847,7 +25847,7 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
 fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let ids: Vec<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected: Vec<String> = (1..=54).map(|n| format!("CL-{n:02}")).collect();
+    let expected: Vec<String> = (1..=56).map(|n| format!("CL-{n:02}")).collect();
     assert_eq!(ids, expected.iter().map(String::as_str).collect::<Vec<_>>());
     assert_eq!(timed_clause_vector_defects(""), Vec::<String>::new());
 }
@@ -26011,6 +26011,82 @@ fn tc_367_place_path_key_decides_a_shared_region() {
     .map(timed_place_path_key)
     .collect();
     assert!(keys.windows(2).all(|pair| pair[0] < pair[1]), "slot keys ascend by collection, minimum, maximum with unbounded last");
+}
+
+#[trace("TC-367", "FR-322-AC-267", "FR-415-AC-25")]
+#[test]
+fn tc_367_excluded_clause_forms_are_published() {
+    let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
+    let unbuilt = &vectors["excluded_forms"];
+    assert!(unbuilt.get("ticket").is_none(), "an exclusion is a rule and names no ticket");
+    assert_eq!(unbuilt["rule"], "FR-322-AC-267");
+    assert_eq!(FR322_BODY_STEPS.matches("| FR-322-AC-267 |").count(), 1);
+    assert_eq!(FR415_DECLARE_CLOCKS.matches("| FR-415-AC-25 |").count(), 1);
+    assert_eq!(TC367_CLOCK_DECLARATIONS.matches("| CK-38 |").count(), 1);
+    let ids: Vec<&str> = unbuilt["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, ["GJ-01", "GJ-02", "GJ-03", "CW-01", "CW-02", "CW-03", "CW-04", "CW-05", "SD-01", "SD-02"]);
+    let case_ids: BTreeSet<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
+    let package = parsed_fixture(POSITIVE_TIMED_CLAUSE_NODES);
+    for case in unbuilt["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        assert!(FR322_BODY_STEPS.contains(&format!("`{id}`")), "FR-322 names {id}");
+        assert!(TC367_CLOCK_DECLARATIONS.contains(id), "TC-367 names {id}");
+        match case["expected"].as_str().unwrap() {
+            "refused" => {
+                assert_eq!(case["expected_code"], "unsupported_construct", "{id}");
+                assert_eq!(case["expected_cause"], "expression-form", "{id}");
+                match case["reader_row"].as_str() {
+                    Some(row) => assert!(case_ids.contains(row), "{id}: reader row {row} is a published case"),
+                    None => assert!(case["reader_row_note"].is_string(), "{id}: no reader row is stated and why"),
+                }
+            }
+            "built" => {
+                if case.get("node_index").is_none() {
+                    assert_eq!(id, "GJ-03", "only GJ-03 has no package row of its own");
+                    assert!(case["package_note"].is_string(), "{id}: says why it has no package row");
+                    continue;
+                }
+                assert_eq!(case["package_case"], "CL-01", "{id}");
+                let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+                let node = &nodes[case["node_index"].as_u64().unwrap() as usize];
+                let expect = &case["built_node"];
+                assert_eq!(node["semantic_form"], expect["form"], "{id}: the control is a built {}", expect["form"]);
+                let bound = |name: &str| node["body"]["members"].as_array().unwrap().iter().find(|m| m["name"] == name).unwrap()["value"].clone();
+                if expect["form"] == "clock_guard" {
+                    let parts = bound("parts")["members"].as_array().unwrap().clone();
+                    assert_eq!(parts.len() as u64, expect["parts"].as_u64().unwrap(), "{id}: parts");
+                    assert!(parts.iter().all(|part| part["members"].as_array().unwrap().len() >= 2), "{id}: every part holds a clock constraint");
+                } else {
+                    let place_digest = bound("place")["target"]["digest"].as_str().unwrap().to_owned();
+                    let place = nodes.iter().find(|n| n["node_id"]["digest"] == place_digest.as_str()).unwrap();
+                    let first = place["body"]["members"][1]["value"]["members"][0]["members"][1]["value"]["value"].as_str().unwrap();
+                    assert_eq!(first, expect["place_field"].as_str().unwrap(), "{id}: the reset writes the place that begins with the field");
+                    assert_eq!(bound("binders")["members"].as_array().unwrap().len() as u64, expect["binders"].as_u64().unwrap(), "{id}: binders");
+                }
+            }
+            other => assert_eq!((other, id), ("no-node", "CW-05")),
+        }
+    }
+    // The reader rows of the exclusions are refused by the replay (CL-20, CL-55 by schema, CL-56 by the slot count).
+    for (id, expected, locus) in [
+        ("CL-20", "refused-by-schema", "/semantic_graph/nodes/86/body"),
+        ("CL-55", "refused-by-schema", "/semantic_graph/nodes/82/body"),
+        ("CL-56", "refused", "/semantic_graph/nodes/84/body/members/4/value"),
+    ] {
+        let case = vectors["cases"].as_array().unwrap().iter().find(|c| c["id"] == id).unwrap();
+        assert_eq!(case["expected"], expected, "{id}");
+        assert_eq!(case["locus"], locus, "{id} locus");
+        let touched = |prefix: &str| case["patch"].as_array().unwrap().iter().any(|op| op["path"].as_str().unwrap().starts_with(prefix));
+        let node = locus.split('/').nth(3).unwrap();
+        assert!(touched(&format!("/semantic_graph/nodes/{node}/")), "{id}: the patch changes the node it is refused at");
+    }
+    let cl55 = vectors["cases"].as_array().unwrap().iter().find(|c| c["id"] == "CL-55").unwrap();
+    assert!(cl55["patch"].as_array().unwrap().iter().any(|op| op["op"] == "remove" && op["path"] == "/semantic_graph/nodes/82/body/members/7"), "CL-55 removes the value binding");
+    // FR-322 states the exclusions in its own words.
+    let text = FR322_BODY_STEPS.split_whitespace().collect::<Vec<_>>().join(" ");
+    for sentence in ["Forms the package excludes", "part pairs a predicate with at least one constraint", "drop is not a reset", "whole-collection write", "presence requirement is not a write", "reads no element data"] {
+        assert!(text.contains(sentence), "FR-322 says: {sentence}");
+    }
 }
 
 #[trace("TC-367", "FR-322-AC-261", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265", "FR-322-AC-266", "FR-342-AC-11", "FR-415-AC-22", "FR-415-AC-23")]

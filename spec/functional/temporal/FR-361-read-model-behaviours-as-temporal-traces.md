@@ -64,6 +64,28 @@ which names the operation, the receiver and the argument vector. The subject is
 part of every verdict's scope and of every obligation identity that reads it
 ([FR-368](FR-368-negotiate-temporal-model-check-items.md)).
 
+### Model selection of a subject
+
+A model subject reads exactly the `model_selections` rows
+([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) "Model
+root") of the domain packages that declare the populations of its universes; a
+subject over a refinement item reads the row of the refinement's concrete model.
+A subject whose universes name populations of one domain package reads one row,
+and its `model_root` node is the subject's anchor
+([FR-368](FR-368-negotiate-temporal-model-check-items.md) "Claim and anchor of
+a derived or refinement item"). A subject whose universes name populations of
+several domain packages reads several rows, and a subject that names no
+population of any selected domain package (an empty set of universes, or
+populations that no `model_selections` row selects) reads none. A subject that
+reads several rows or none has no `model_root` anchor, so the producer settles
+each derived item over it `unsupported` as FR-368 states and writes no request
+item for it. This settlement is the producer's and comes first for a derived
+item: the item is never written, so `requires-bound`, `no-initial-state`,
+`conflicting-identity` and `no-instance` (below) do not arise for it, whatever
+its universes hold, and a subject of zero universes reads no row. An authored
+`formula` item has its own claim anchor, so a subject that reads no row does not
+stop it, and it settles by the order below.
+
 The `requires-bound` classification below runs first. Only over bounded
 universes is an item with zero instances found, an item having zero
 instances when it has no admitted key (below): no population overlaps its
@@ -80,7 +102,7 @@ holding.
 An empty list of initial states holds no member record, so it admits no key
 and every item over that subject also has zero instances. The analyzer SHALL
 settle such an item `inconclusive` with cause `no-initial-state`, never
-`no-instance`. The order of these outcomes is: the `requires-bound`
+`no-instance`. This order applies to authored `formula` items; a derived item over a subject that reads no model selection or several settles per FR-361-AC-17 ("Model selection of a subject") and never reaches it. The order of these outcomes is: the `requires-bound`
 classification first, then `no-initial-state` for an empty list of initial
 states, then the cross-population `conflicting-identity` check below, then
 `no-instance`. So `no-instance` names an item whose subject has an initial
@@ -268,6 +290,7 @@ unguarded read, whatever the property.
 | FR-361-AC-14 | After the `requires-bound` classification, two member records with the universe and identity of `c` and different types, one in `all` as `Entity` and one in `counters` as `Counter`, in one initial state or in two initial states of the subject, refuse the item `invalid_runtime_input`/`conflicting-identity` before any instance is formed, as do two such records in one population; a population with no universe gives `requires-bound` first; one record per key with agreeing types in every initial state is admitted. | Test (TC-290) |
 | FR-361-AC-15 | The instance `e` (an `Entity` that is not a `Counter`) is bound to (`universe`, `Entity`, `e`) under `x: Reference<Counter>`, and an unguarded read through it is `absent-key`; after `drop` removes `d`, the instance `d` still carries `Counter` from its admitted record, every use of `x` other than the guard is `absent-key`, and a universe key that no member record of any initial state admits is not an instance; with `inc` disabled, `c` and `d` at value 0 and an operation `make` that creates a `Counter` with value 1 under such a key `z` of `counters`, `z` is still not an instance, the item's excluded keys are exactly [`z`], and `always holds(x.value = 0)` is checked for `c` and `d` only and settles `proved`, although `z`'s object has value 1 at a reachable position. | Test (TC-290) |
 | FR-361-AC-16 | A subject with an empty list of initial states and a bounded universe `counters = [c, d]`, whose item over `Counter` therefore has no admitted key, settles `inconclusive` with cause `no-initial-state`, never `no-instance`, `proved` or `refuted`; the same subject with an empty universe list for `counters` and with no population overlapping `Counter` each settles `no-initial-state` too; the same item over that subject with `counters` given no universe returns `requires-bound`, not `no-initial-state`. | Test (TC-294) |
+| FR-361-AC-17 | A model subject reads the `model_selections` rows of the domain packages that declare the populations of its universes (a refinement item: the row of its concrete model); one row is the subject's `model_root` anchor, and a subject that reads several rows or none has no anchor, so each derived item over it settles `unsupported`, `unsupported_projection`/`unsupported-requested-capability`, with no request item written, before any of `requires-bound`, `no-initial-state` or `no-instance`; an authored `formula` item over such a subject is not affected. As a consequence, a derived item over a zero-universe subject (which reads no row) is `unsupported` with no anchor and no request item, not `no-initial-state` or `requires-bound`. | Test (TC-290) |
 
 ## Dependencies
 
