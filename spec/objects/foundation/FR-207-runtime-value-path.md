@@ -157,9 +157,6 @@ carries ([FR-351](../protocol/FR-351-separating-witness-record.md)).
   a name-search match cannot masquerade as a located failure". An absent
   observation or an absent subject yields no path at all, rather than a rooted
   path with an absent component.
-- **Digest domain** — a runtime value path carries no digest. Where its root's
-  declared object identity is carried beside one, that digest's domain is
-  selected under [FR-201](FR-201-canonical-identity-domain.md).
 
 ## Canonical serialization
 

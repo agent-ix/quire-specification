@@ -9,6 +9,8 @@ schema-and-vector boundary. Each reader converts from this wire into its own
 types (QSL ADR-013 T-7): no shared Rust crate carries these types, and no
 consumer holds a copy of this schema.
 
+BLOCKED-BY STD-576 / STD-606 (owner: planner titan:QSL:plan): `schema.json` and `vectors.json` still carry the descriptor `tool.build` digest record, the `State` locus `digest` member (the spec has `{key}`), provision document `digest` members (the spec addresses documents by position), the `stale-dependency` `package` kind and the FR-364 `interval` member. The spec text in this directory describes the target wire.
+
 ## Contents
 
 - `schema.json` is the closed Draft 2020-12 schema
@@ -48,9 +50,7 @@ against (FR-290).
 
 Every descriptor carries `tool` (FR-331 "Backend tool"), a `{name, version}`
 object: the executable a backend that fronts an external tool invokes, or the
-crate that implements a pure in-process engine, with `build`, the
-`quire.build-inputs/v1` digest record of the provider code's build inputs,
-which that code's own build computes. A registry snapshot carries each
+crate that implements a pure in-process engine. A registry snapshot carries each
 descriptor as its provider gave it.
 
 ## Package bytes

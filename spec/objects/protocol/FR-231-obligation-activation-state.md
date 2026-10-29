@@ -89,8 +89,6 @@ once reported, so none is drawn here.
   absent activation state. Absence compares only to absence; it is never
   defaulted to `inactive`. FR-055 states that "The evaluator SHALL NOT treat an
   inactive or unknown obligation as satisfied or demonstrated."
-- **Digest domain** — not applicable; no key component of this object is a
-  digest.
 
 ## Acceptance Criteria
 

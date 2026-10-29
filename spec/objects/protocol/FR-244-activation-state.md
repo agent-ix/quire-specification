@@ -46,8 +46,6 @@ When a result reports whether an obligation activated, the strict reader SHALL m
 - **Absence** — an absent activation state compares only to absence. It is never
   defaulted to `inactive`, which is a positive assertion that the trigger scope is
   closed and complete without a trigger.
-- **Digest domain** — not applicable; this key contains no digest. See
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Cross-boundary activation spelling
 

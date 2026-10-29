@@ -8,8 +8,6 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-213
     type: references
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
   - target: ix://agent-ix/quire-specification/FR-287
     type: references
 ---
@@ -19,13 +17,13 @@ BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs
 
 ## Description
 
-When an observation is associated with a workflow subject, the correlation service SHALL select only an explicit typed relationship carrying its domain package identity, digest and declared digest domain, exact relationship declaration key, and ordered authority-qualified endpoints.
+When an observation is associated with a workflow subject, the correlation service SHALL select only an explicit typed relationship carrying its domain package identity, exact relationship declaration key, and ordered authority-qualified endpoints.
 
 FR-111 defines exactly `resolved`, `missing`, `conflicting` and `ambiguous`
 correlation outcomes, and states that the three non-success outcomes replace
 heuristic matching. It also states that the service refuses "a missing domain package identity, a
-relationship declaration or kind outside the checked package, a missing digest
-domain, or a declaration digest mismatch rather than reconstructing a
+relationship declaration or kind outside the checked package, or a declaration
+key naming a different domain package identity rather than reconstructing a
 relationship from a foreign key, trace ID, provider name, or ambient
 configuration".
 
@@ -34,9 +32,8 @@ configuration".
 | Property | Source | Note |
 | --- | --- | --- |
 | Relationship type | FR-111 Description | "an explicit typed relationship". |
-| Domain package identity | FR-111 Description | The domain package named by the checked package `model_root` node. |
-| Declaration digest | FR-111 Description | The exact digest and its explicitly declared FR-201 domain `sha256-jcs`; absence or mismatch refuses (FR-111-AC-4). |
-| Relationship declaration key | FR-111 | Exact (domain package identity, IR node identity, `sha256-jcs`) key of the spec-declared relationship; a kind label does not replace it. |
+| Domain package identity | FR-111 Description | The domain package identity named by a checked package `model_root` node's owner identity; absence or mismatch refuses (FR-111-AC-4). |
+| Relationship declaration key | FR-111 | Exact (domain package identity, IR node identity) key of the spec-declared relationship; a kind label does not replace it. |
 | Related instance endpoints | FR-111 Behavior | Ordered source and target, each carrying one complete FR-287 key and satisfying the relationship declaration's endpoint type/direction. |
 
 FR-111 Behavior states that "a telemetry trace ID or shared provider identity
@@ -49,10 +46,10 @@ infrastructure."
 - **Identity kind** — *value*. A relationship has no identity of its own; it is
   compared componentwise. It is not *derived*: FR-111 forbids reconstructing it
   "from a foreign key, trace ID, provider name, or ambient configuration".
-- **Key** — the relationship type, domain package identity, digest and
-  declared digest domain, exact relationship declaration key, and ordered
+- **Key** — the relationship type, domain package identity,
+  exact relationship declaration key, and ordered
   source and target FR-287 endpoint keys.
-  FR-111-AC-4 establishes the declaration key and digest as
+  FR-111-AC-4 establishes the declaration key as
   key-participating: a missing, unknown or mismatched one refuses rather than
   resolves. Equality is componentwise
   over the key and nothing else; display name, source path, span, message text,
@@ -73,9 +70,6 @@ infrastructure."
   refuse. Absence of any admitted candidate for a required slot is the distinct
   `missing` incomplete outcome, never a default relationship. A conflicting or
   ambiguous candidate refuses.
-- **Digest domain** — the declaration digest carries a selected domain under
-  `ix://agent-ix/quire-specification/FR-201`. An identity crossing domains is
-  unequal regardless of byte equality.
 
 ## Correlation outcomes and distinct subjects
 
@@ -97,12 +91,12 @@ the receive occurrence.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-262-AC-1 | A relationship declared between O1 and its refund does not resolve for O2 sharing a provider or trace infrastructure. | Analysis |
-| FR-262-AC-2 | A missing, foreign or digest-mismatched relationship declaration key does not resolve and is not reconstructed from a foreign key, trace ID, provider name or ambient configuration. | Analysis |
+| FR-262-AC-2 | A missing, foreign or identity-or-version-mismatched relationship declaration key does not resolve and is not reconstructed from a foreign key, trace ID, provider name or ambient configuration. | Analysis |
 | FR-262-AC-3 | `resolved`, `missing`, `conflicting` and `ambiguous` are the complete unequal outcome set; missing is incomplete, conflicting/ambiguous refuse, and a declaration outside the checked package is an admission refusal rather than another relationship outcome. | Test (TC-141) |
 | FR-262-AC-4 | Exact replay of one complete relationship value is idempotent and adds no causal edge; two distinct admitted values satisfying one required slot are ambiguous. | Test (TC-141) |
 | FR-262-AC-5 | Source and target each retain a complete FR-287 key in authored order; empty, wrong-kind, foreign, reversed or statically incompatible endpoints refuse. | Test (TC-141) |
 | FR-262-AC-6 | Message, receive occurrence, delivery and receipt observation remain non-interchangeable even when transport or display data match. | Test (TC-141) |
-| FR-262-AC-7 | The declaration digest carries an explicit declared domain; absence, cross-domain byte equality or digest mismatch refuses without reconstruction or defaulting. | Test (TC-141) |
+| FR-262-AC-7 | Withdrawn: it existed only for the declaration digest and its domain, which the relationship no longer carries. | Withdrawn |
 
 ## Dependencies
 
@@ -110,8 +104,6 @@ the receive occurrence.
   establishes the explicit typed relationship and its refusal cases.
 - [FR-213](../protocol/FR-213-workflow-instance.md) supplies the related
   instance subject and records that its key is unstated.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 - [FR-287](../protocol/FR-287-authority-qualified-runtime-subject-reference.md)

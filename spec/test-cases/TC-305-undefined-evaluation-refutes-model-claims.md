@@ -64,7 +64,7 @@ value 0, and the operation `drop` that removes `d` from `counters`. `rd` is a
 ## Expected Results
 
 1. `refuted`, basis `decisive-counterexample`, FR-331 result `refuted`, cause
-   `undefined-evaluation` with `where` naming position 1, the state-key digest
+   `undefined-evaluation` with `where` naming position 1, the state key
    of the state after `drop` and the locus of the `lookup`, and `cause`
    `absent-key` (FR-363-AC-8). The counterexample's `kind` is the envelope `{"type": "undefined-evaluation", "where", "cause"}` carrying the same `where` and `cause`, a
    prefix of the one `drop` step, an empty `loop` and `trace_position` 1
@@ -91,7 +91,7 @@ value 0, and the operation `drop` that removes `d` from `counters`. `rd` is a
    spelling of step 1 (FR-361-AC-6).
 8. After `drop`, the guard of `inc(c)` evaluates undefined: every item over the
    subject settles `refuted`, cause `undefined-evaluation`, with `where`
-   naming position 1, its state-key digest, the guard's locus and the
+   naming position 1, its state key, the guard's locus and the
    transition identity of `inc(c)`; `inc(c)` is never read as disabled. Replay
    evaluates that guard at the last state and reproduces the undefined value
    (FR-363-AC-9, FR-364-AC-8).
@@ -105,7 +105,7 @@ value 0, and the operation `drop` that removes `d` from `counters`. `rd` is a
     (FR-363-AC-9, FR-365-AC-6).
 11. The constraint evaluates undefined at the state after `drop`: the item
     settles `refuted`, cause `undefined-evaluation`, with `where` naming
-    position 1, its state-key digest and the constraint's locus. Replay
+    position 1, its state key and the constraint's locus. Replay
     re-evaluates the constraint at the state `where.state_key` names and
     reproduces the undefined value: `reproduced-with-evaluated-witness`
     (FR-363-AC-9, FR-364-AC-8).

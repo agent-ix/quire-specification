@@ -28,7 +28,6 @@ equality.
 | `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
 | `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
-| `quire.simulation.state-key/v1` | Simulator state-key identity. SHA-256 over the RFC 8785 canonical bytes of the typed canonical encoding of simulator state, control positions, queues, role lifetimes, observation progress and remaining bounds (FR-181). Distinct from every other identity/digest domain. BLOCKED-BY STD-606 (owner: planner titan:QSL:plan): StateKey digest, the `quire.simulation.state-key/v1` domain and its SHA-256 preimage (FR-181). |
 | `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
 | `quire.model.effective-declaration/v2` | QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from every other identity/digest domain. BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): effective-declaration hash and its `{version, owner_effective_type, original, derivation}` preimage (FR-150, model-complete.md). |
 | `quire.model.effective-view/v2` | QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): effective-view digest over effective-declaration identities. |
@@ -47,8 +46,6 @@ equality.
   `raw-artifact-digest` or to any other member.
 - **Causal order** — not applicable. A domain label participates in no causal
   structure.
-- **Digest domain** — not applicable to the label itself. This artifact *is* the
-  vocabulary of digest domains; it does not carry one.
 - **Cross-domain rule** — two identities bearing different domain labels are
   unequal. Byte equality of their digests does not make them equal. BLOCKED-BY QSpec #512: FR-018-AC-2 is withdrawn there.
 
@@ -59,10 +56,10 @@ equality.
 | FR-201-AC-1 | Each member's value equals the exact label string in the table, and an underscored spelling does not match a hyphenated one. | Inspection |
 | FR-201-AC-2 | Two identities with equal digest bytes and different domain labels compare unequal. | Analysis |
 | FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
-| FR-201-AC-4 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-201-AC-7 | The `quire_specification` library's `COMPLETE_VALUE_LOCK`, `COMPLETE_VALUE_SELECTION_VECTORS` and `NATIVE_DIAGNOSTICS` equal the exact bytes of `complete-value-lock.json`, `complete-value-selection-vectors.json` and `native-diagnostics.md`. | Test (TC-233) |
-| FR-201-AC-8 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-201-AC-9 | Every qualification-catalog entry of the complete-value and complete-model locks names an authored artifact under a unique role and identity, and package selection is exact: each complete-value catalog role occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`, every complete-model catalog role is always selected, and each accepted and refused selection vector is admitted or refused with exactly its recorded selection code. | Test (TC-233) |
+| FR-201-AC-4 | Withdrawn: the lock-file digest and package fingerprint domains are removed. | Withdrawn |
+| FR-201-AC-7 | Withdrawn: the byte-equality test of the exposed constants against their files is removed. | Withdrawn |
+| FR-201-AC-8 | Withdrawn: it existed only for the cache key, which is removed with the result cache. | Withdrawn |
+| FR-201-AC-9 | Package selection is exact under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`, and each accepted and refused selection vector is admitted or refused with exactly its recorded selection code. | Test (TC-233) |
 | FR-201-AC-10 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 
 ## Dependencies

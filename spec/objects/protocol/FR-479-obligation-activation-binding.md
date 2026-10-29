@@ -90,10 +90,6 @@ component of that key is taken from anywhere else.
 - **Obligation identity** — the structural triple (the claim or obligation
   `node_id`, the identity of the model that owns it, ordinal), compared
   componentwise; it is not hashed and carries no domain.
-- **Digest domain** — every carried definition, observation or
-  activation-result digest retains its owner-selected domain
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)). Equal bytes
-  from different domains compare unequal.
 
 ## Refusals
 

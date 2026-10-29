@@ -127,9 +127,6 @@ catalog).
   original bytes and available provenance. It cannot be recast as a known
   failure, an empty diagnostic list or a successful assessment" (proposed
   catalog).
-- **Digest domain** — a code carries no digest. The catalog that resolves it is
-  selected by its interpretation identity
-  ([FR-270](FR-270-diagnostic-catalog.md)).
 
 ## Scope: producer-minted codes
 

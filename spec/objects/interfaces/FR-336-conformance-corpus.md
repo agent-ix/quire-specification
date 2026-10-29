@@ -150,9 +150,9 @@ order; object maps retain their string keys.
 | `accounting_limits` | `ReplayRequestWire.accounting_limits`: complete FR-255 `ScalarLimitsV1`; every numeric member is an unsigned decimal string. |
 | `stage_limits` | `ReplayRequestWire.stage_limits`: string-keyed map of FR-255 setting names to unsigned decimal strings. |
 | `supplied_limits` | `ReplayRequestWire.supplied_limits`: `null` or complete FR-323 `limits.supplied` object `{admission_work_units, conversion_work_units, numeric_magnitude_bits}`. |
-| `object_environment` | `ReplayRequestWire.object_environment`: `null` or FR-106 reference `{identity, digest}`; identity has the four FR-001 labels and digest is the string `sha256-jcs:<64 lowercase hex digits>`. BLOCKED-BY STD-606 (owner: planner titan:QSL:plan): `object_environment` `{identity, digest}` reference member `digest` (its `sha256-jcs` domain is removed from FR-201). |
+| `object_environment` | `ReplayRequestWire.object_environment`: `null` or FR-106 reference `{identity}`; identity has the four FR-001 labels. |
 | `declared_domains` | `ReplayRequestWire.declared_domains`: ordered `DeclaredDomain` objects as specified below. |
-| `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows; the adapter reads each referenced sibling file as raw bytes and constructs `(authority, identity, bytes)`. |
+| `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows `{authority, identity, bytes_path}`; the adapter reads each referenced sibling file as raw bytes and constructs `(authority, identity, bytes)`. |
 
 #### FR-323 replay source and target
 

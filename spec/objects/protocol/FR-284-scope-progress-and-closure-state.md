@@ -112,8 +112,6 @@ No other label is a member of any of the four axes:
 - **Absence** — an absent axis compares only to absence. It is never defaulted to
   `open` or to `closed`: FR-061 requires that "A strict reader SHALL refuse an
   omitted required axis". Absence is not a member of this vocabulary.
-- **Digest domain** — not applicable; this key contains no digest. See
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Acceptance Criteria
 

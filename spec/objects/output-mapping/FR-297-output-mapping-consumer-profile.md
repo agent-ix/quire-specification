@@ -30,7 +30,9 @@ identity rather than by a display name or installed tool.
 - **Identity kind** — *value*. Equality is componentwise over every property
   except `observer_selection`, which is a separate downstream observation input.
 - **Key** — target family, ordered target references, mapping profile identity
-  and required capabilities. Missing members compare only to
+  (the name and version spelled by `mapping_profile_id`) and required capabilities.
+  No content digest of the profile or of a target standard is carried or compared;
+  the name and version are the identity. Missing members compare only to
   absence and make the profile invalid; no installed/default version is inferred.
 - **Key order** — none. Canonical serialization fixes byte order but carries no
   preference, support or causal meaning.
@@ -45,7 +47,7 @@ identity rather than by a display name or installed tool.
 | --- | --- | --- |
 | FR-297-AC-1 | Exactly one target family and matching mapping profile identity are selected before dispatch. | Test (TC-150) |
 | FR-297-AC-2 | A missing, unknown or cross-family profile member refuses without target output. | Test (TC-154) |
-| FR-297-AC-3 | Changing a target standard reference, the mapping profile identity or a requested capability changes profile equality. | Test (TC-150) |
+| FR-297-AC-3 | Changing a target standard reference, the mapping profile name or version, or a requested capability changes profile equality; no digest member exists to be compared. | Test (TC-150) |
 | FR-297-AC-4 | Adding or changing a structural observer selection does not change the semantic mapping profile or support claim. | Test (TC-155) |
 
 ## Dependencies

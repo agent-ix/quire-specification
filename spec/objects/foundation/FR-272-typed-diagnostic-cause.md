@@ -170,8 +170,6 @@ predicate" (`runtime_invariant`).
   for a repeated name". A missing payload component is never defaulted, and
   "Missing versus explicit null may not be collapsed into a generic absent
   value" for `invalid_model_binding`.
-- **Catalog** — the catalog that resolves the cause is itself selected by its
-  interpretation identity ([FR-270](FR-270-diagnostic-catalog.md)).
 
 ## Acceptance Criteria
 

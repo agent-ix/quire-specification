@@ -72,10 +72,6 @@ of its named correspondence axes, and FR-095-AC-4 holds that mutating that axis
   FR-055-AC-4 refuses a binding under a different evaluation anchor. An absent
   anchor is never defaulted to position zero, to the first record, or to the
   earliest timestamp.
-- **Digest domain** — an anchor component carried as a digest retains the domain
-  it was derived under
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
-  crossing domains is unequal regardless of byte equality.
 
 ## The anchor is not the history boundary
 
