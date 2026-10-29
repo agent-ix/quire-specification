@@ -48,8 +48,9 @@ key members.
 
 Two accepted observations with one key have equal canonical observation members.
 A correction preserves the predecessor's members, carries a new source ordinal
-and names the exact direct predecessor by key. The same key on unequal
-observation members is refused.
+and names the exact direct predecessor by key. The binder SHALL check this by comparing the members of each admitted
+observation with those of every earlier admitted observation that has an equal
+key, and SHALL refuse the later observation when any member differs.
 
 ## Acceptance Criteria
 
@@ -57,7 +58,7 @@ observation members is refused.
 | --- | --- | --- |
 | FR-296-AC-1 | Withdrawn: it existed only for the SHA-256 identity computed over the observation preimage, which is no longer computed. | Withdrawn |
 | FR-296-AC-2 | Changing any key member yields a different observation key; changing only an attribute member leaves the key unchanged; object-member presentation permutation changes neither. | Test (TC-140) |
-| FR-296-AC-3 | The same key on unequal observation members, and a missing or incomplete key, are refused. | Test (TC-140) |
+| FR-296-AC-3 | An observation whose key equals that of an earlier admitted observation but whose members differ is refused by member comparison, equal key and equal members is admitted once, and a missing or incomplete key is refused. | Test (TC-140) |
 | FR-296-AC-4 | Event time, ingestion time, display name, trace identifier and arrival order cannot independently substitute for the observation key or causal order. | Test (TC-140, TC-143) |
 | FR-296-AC-5 | A correction retains predecessor members, carries a new source ordinal and names the exact direct predecessor by key. | Test (TC-143) |
 

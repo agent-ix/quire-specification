@@ -15,29 +15,29 @@ relationships:
 
 ## Description
 
-When a canonical protocol result is projected to portable verification, the projection adapter SHALL derive the `TechniqueResult.resultId` from the exact tuple stated by FR-062 so that changing any member of that tuple changes the derived result ID.
+When a canonical protocol result is projected to portable verification, the projection adapter SHALL derive the `TechniqueResult.resultId` from the exact tuple stated by FR-062 so that changing any member of that tuple changes the derived `resultId` or the target binding.
 
 ## Properties
 
 | Property | Description |
 | --- | --- |
-| `resultId` | The RFC 8785 canonical JSON text of the derivation tuple stated by FR-062; no hash is computed. It is "distinct from the canonical protocol-result key and stable for the exact tuple of canonical result key, target obligation and execution-binding identities, target contract version, and adapter identity and version" (FR-062). |
-| `sourceResultRef` | The exact canonical result key (FR-062). The adapter validates the canonical protocol result before mapping it. |
+| `resultId` | The closed object `{sourceResultKey, adapter}` stated by FR-062: the FR-286 `resultKey` of the source and the adapter identity and version. It nests at most three levels, carries no hash and does not repeat the target binding. |
+| `sourceResultRef` | The exact canonical result key (FR-062), which is `resultId.sourceResultKey`. The adapter validates the canonical protocol result before mapping it. |
 | `targetContractVersion` | `quire-verification/e02-draft-2` (FR-062). |
-| `targetBinding` | `propertyRef`, `planId`, `taskId`, `runRef`, `profile`, `bindingRefs`, `dependencyClosure` and `executionScope`, each equal to its selected context; the adapter "SHALL NOT infer or substitute one from display text" (FR-062). |
+| `targetBinding` | `propertyRef`, `planId`, `taskId`, `runRef`, `profile`, `bindingRefs` and `executionScope`, each equal to its selected context; the adapter "SHALL NOT infer or substitute one from display text" (FR-062). |
 | `adapter` | The exact adapter identity and version (FR-062). |
 | `nativeArtifacts` | "Exactly one canonical-result entry with the source URI and media type `application/vnd.agent-ix.quire-protocol-result+json;version=1-draft.1`" (FR-062). |
 | `provenance` | Identifies the protocol producer plus this adapter and their versions (FR-062). |
 
 ## Identity and comparison
 
-- **Identity kind** — *derived*. The result ID is spelled structurally from the
-  tuple FR-062 states; it is not authored, and it
+- **Identity kind** — *derived*. The `resultId` is built structurally from the
+  source `resultKey` and the adapter; it is not authored, and it
   is distinct from the canonical protocol-result key
   ([FR-240](FR-240-canonical-protocol-result.md)).
-- **Key** — the derivation tuple: canonical result key, target
+- **Key** — the canonical result key, target
   obligation and execution-binding identities, target contract version, and
-  adapter identity and version. Equality is componentwise over that key and
+  adapter identity and version; `resultId` carries only the result key and adapter. Equality is componentwise over that key and
   nothing else. Display name, source path, span, message text, locale and
   rendering never participate; FR-062 forbids inferring or substituting a binding
   field "from display text", and FR-061 forbids inferring independence "from
@@ -91,8 +91,8 @@ emit a sufficiency decision."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-249-AC-1 | The derived result ID is distinct from the canonical protocol-result key and is stable for the exact derivation tuple. | Analysis |
-| FR-249-AC-2 | Changing any member of the derivation tuple changes the derived result ID. | Analysis |
+| FR-249-AC-1 | The derived result ID is distinct from the canonical protocol-result key and is stable for the exact source result key and adapter identity and version. | Analysis |
+| FR-249-AC-2 | Changing the source result key or the adapter identity or version changes the derived `resultId` or the target binding. | Analysis |
 | FR-249-AC-3 | `nativeArtifacts` carries exactly one canonical-result entry with source URI and the stated media type. | Inspection |
 | FR-249-AC-4 | `bindingRefs` retains the selected E02 semantic order and is not resorted by presentation text. | Analysis |
 | FR-249-AC-5 | Each refusal carries exactly one stable code from the table plus the affected exact identity, and no `TechniqueResult` is emitted with it. | Inspection |
@@ -101,7 +101,7 @@ emit a sufficiency decision."
 ## Dependencies
 
 - [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md)
-  establishes the derivation tuple, preimage, refusal codes and retention
+  establishes the `resultId` object, refusal codes and retention
   boundary.
 - [FR-240](FR-240-canonical-protocol-result.md) supplies the source canonical
   result.

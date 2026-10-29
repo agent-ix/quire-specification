@@ -32,8 +32,8 @@ with all, some and none of a non-empty required set participating, plus an
 `unknown` fact carrying known participants, missing dependencies and typed
 reasons. Mutate absent required sets, mixed variants, duplicate references and
 each E02 target label in the source fact.
-Project each result under one exact E02 obligation, plan, task, run, profile, binding,
-dependency closure and adapter identity, then assess the emitted
+Project each result under one exact E02 obligation, plan, task, run, profile, binding
+and adapter identity, then assess the emitted
 `TechniqueResult` with the quire-verification strict reader.
 
 For each case, mutate the canonical result key,

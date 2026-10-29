@@ -140,9 +140,8 @@ order; object maps retain their string keys.
 | JSON member | Rust field and value mapping |
 | --- | --- |
 | `profile_selections` | `ReplayRequestWire.profile_selections`: ordered `ProfileSelection` objects `{profile, value}`. |
-| `package_id` | `ReplayRequestWire.package_id`: FR-323 `package.package_id`, digest record `{domain, digest}`. |
-| `source_digests` | `ReplayRequestWire.source_digests`: ordered `SourceDigestWire` objects `{authority, identity, revision_namespace, revision, digest_domain, digest}`. |
-| `dependencies` | `ReplayRequestWire.dependencies`: ordered `DependencyEntryWire` objects `{identity, package_id, sources}`; digest and source values use FR-323 package/source shapes. |
+| `package` | `ReplayRequestWire.package`: the FR-323 package identity and version `{identity, version}`. |
+| `dependencies` | `ReplayRequestWire.dependencies`: ordered `DependencyEntryWire` objects `{identity, version}`. |
 | `replay_target` | `ReplayRequestWire.replay_target`: FR-323 target members under `members`, plus request fields `arguments`, `occurrence_key` and `over`. |
 | `source` | `ReplayRequestWire.source`: the FR-323 `ReplaySource`, one `witness` or `input` arm. |
 | `obligation_identity` | `ReplayRequestWire.obligation_identity`: 64 lowercase hexadecimal digits decoded to the 32-byte identity. |
@@ -190,8 +189,7 @@ copied from actual replay.
 | Rust type | Closed structural fields |
 | --- | --- |
 | `ProfileSelection` | `{profile, value}`; both strings. |
-| `SourceDigestWire` | `{authority, identity, revision_namespace, revision, digest_domain, digest}`; digest domain is string or null, digest is 64 lowercase hexadecimal digits. |
-| `DependencyEntryWire` | `{identity, package_id, sources}`; identity string, package id and source entries use the FR-323 shapes. |
+| `DependencyEntryWire` | `{identity, version}`; both strings. |
 | `ScalarLimits` | `integer_bits`, `decimal_digits`, `scale_expansion`, `text_input_bytes`, `text_scalars`, `normalized_scalars`, `unit_edges`, `value_occurrences`, `work_units`, `result_units`; each is an unsigned decimal string. |
 | `RequestTargetWire` | `{members, arguments, occurrence_key, over}` as described above. |
 | `ReplayOverBinding` | `{population, key}`, both strings. |

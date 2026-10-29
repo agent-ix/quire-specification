@@ -42,7 +42,8 @@ resource bounds.
 ## Inputs
 
 Checked package, initial state/population, environment choices, scheduler
-profile, seed/enumeration mode and bounds.
+profile, seed/enumeration mode, bounds and `max_state_key_bytes`, a positive
+limit on the length in octets of one canonical state key.
 
 ## Outputs
 
@@ -66,7 +67,10 @@ semantic state, control positions, queues, role lifetimes, observation
 progress and remaining bounds, serialized with RFC 8785 JCS. The state key is
 those canonical JCS bytes themselves; no hash of them is computed. Coalescing
 compares the full state-key bytes, and traces and frontier records carry the
-state key as that value.
+state key as that value. When the canonical state key of a reached state
+exceeds `max_state_key_bytes`, the simulator SHALL stop expanding that state, retain it in the
+unexplored frontier by position without its key, and report `incomplete` with
+cause `state-key-limit-exceeded`; it SHALL NOT truncate or hash the key.
 
 ### Typed canonical form
 
@@ -377,8 +381,8 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-11 | Timed replay checks each delay's admissibility, the guard at the delayed state, the post-state key over the discrete state and exact clock valuation, and the target's time invariants in exact rationals; a violated delay or guard refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-369) |
 | FR-181-AC-12 | Under `time tick O period p` a position's time stamp is `p` times the number of `O` steps up to it. | Test (TC-369) |
 | FR-181-AC-25 | Over a model with `ts: Sequence<Timer>[0, 3]` the discrete state key of a state ignores the clock values and holds the data parts of the elements, the size of a `Set<Clock>` field is in the key, the valuation of a state lists exactly the live places in object, field and slot order, a step that filters out the element at slot 0 moves the clock of the element at slot 1 to slot 0 with its value, a step that inserts a fresh element at the front gives it the literal's constant and moves the others up one slot, and the post-state key changes with the valuation and the live places. | Test (TC-369) |
-| FR-181-AC-14 | A sampled choice whose integer total `n` exceeds `2^256` stops the whole sampling run before any draw and settles `unsupported` with cause `total-above-draw-range{total}`, `total` being `n`; no digest is computed and the sampler does not loop. | Test (TC-354) |
-| FR-181-AC-15 | A sampled choice whose integer total is exactly `2^256` accepts the draw-0 digest and selects the least index `i` with `v mod n < w_0 + … + w_i`. | Test (TC-354) |
+| FR-181-AC-14 | A sampled choice whose integer total `n` exceeds `2^256` stops the whole sampling run before any draw and settles `unsupported` with cause `total-above-draw-range{total}`, `total` being `n`; no draw value is computed and the sampler does not loop. | Test (TC-354) |
+| FR-181-AC-15 | A sampled choice whose integer total is exactly `2^256` accepts the draw-0 value and selects the least index `i` with `v mod n < w_0 + … + w_i`. | Test (TC-354) |
 | FR-181-AC-16 | Two successors of one parent with equal transition identities and different post-states are visited in ascending order of their post-states' state-key bytes, whatever order the successor relation yields them in; two with equal transition identities and equal post-state keys are one successor. | Test (TC-210) |
 | FR-181-AC-17 | Initial states are visited and indexed in ascending order of their state-key bytes, with equal keys coalesced into one: supplying the same initial states in reversed order, or one of them twice, gives the same initial-state list, the same exploration and the same initial-state indices. | Test (TC-210) |
 | FR-181-AC-18 | With `k` initial states and no requirement naming the start, sampled trace `t` starts at the initial state with index `t mod k` and makes no draw to select it; with one initial state every trace starts there, and the draws of a trace are exactly those of its trace index. | Test (TC-210) |
@@ -392,6 +396,7 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-27 | As set elements, `Set<Bytes>` of `2000`, `00`, `10` and `0000` encodes as `{"elements":[{"type":"bytes","value":"00"},{"type":"bytes","value":"0000"},{"type":"bytes","value":"10"},{"type":"bytes","value":"2000"}],"type":"set"}`, ordered by encoded bytes, and `Set<JsonObject>` of `{}` and `[]` encodes `[]` before `{}`. Two states whose `Set<Bytes>` member holds the same octets inserted in two orders have equal state keys; two whose `JsonObject` field holds the one value `{"a":1,"b":2}`, one built from the member order `b`, `a` and one from `a`, `b`, have equal state keys, both encoding the text `{"a":1,"b":2}`, and two whose field holds `[1,2]` and `[2,1]` have different state keys. | Test (TC-210) |
 | FR-181-AC-28 | A timed state is terminal exactly when no discrete step is enabled at it or after any admissible delay, a delay of 0 included. | Test (TC-370) |
 | FR-181-AC-29 | A bounded-delay terminal state is a time-lock reported by the time-lock-freedom item and not by the deadlock-freedom item. | Test (TC-370) |
+| FR-181-AC-30 | A state whose canonical state key is longer than `max_state_key_bytes` stops expansion of that state and settles the exploration `incomplete` with cause `state-key-limit-exceeded`, naming the limit and its value; a state whose key is exactly `max_state_key_bytes` long is expanded; no truncated or hashed key appears in a trace or frontier. | Test (TC-210) |
 
 ## Dependencies
 

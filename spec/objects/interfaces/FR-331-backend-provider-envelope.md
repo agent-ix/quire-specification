@@ -262,8 +262,8 @@ inadmissible component, the reader SHALL refuse the certificate or rejection
 before consumption. Equality and sorting use complete decoded unsigned octets,
 never the base64url text's order, or a local index.
 
-Base64url only transports these owner-defined bytes and does not create a
-digest domain. Padded/aliased transport, non-JCS bodies, unknown tags,
+Base64url only transports these owner-defined bytes and does not create an
+identity. Padded/aliased transport, non-JCS bodies, unknown tags,
 missing/extra members and contextually invalid components SHALL refuse
 before consumption.
 
@@ -508,7 +508,7 @@ caller's frontend ends at its own deadline records `cancelled{source:
 deadline}`. The request writer rounds a fractional time budget up to the next
 whole second before writing it; a fractional value on the wire is refused
 before consumption. `max_solver_steps` is part of request identity;
-`max_solver_time` is a wall-clock setting and is outside it (FR-306). A
+`max_solver_time` is a wall-clock setting and is outside it. A
 descriptor whose `dynamics` holds `hybrid` carries both limits in its
 `bounds`; one that lacks either refuses before consumption.
 
@@ -758,7 +758,7 @@ probabilistic engine's is `exact_prob`.
 
 ## Identity and validation
 
-Request identity includes the capability vocabulary, manifest, package, the request's `memory` selections ([FR-434](../../functional/memory/FR-434-select-memory-models-for-parallel.md)), each item's claim, extent with its proof bounds, options and limits (a `value-validity` or `operation-contract` item's `check.limits`, FR-483), each item's kind, extent classification, `requirements`, named backend and candidates, each temporal item's subject, `abstract_subject`, item kind, fairness set, `max_depth`, `limits` and `smt_encoding` (FR-368), the `witness_samples` and `seed` of a state-graph item, and each item's symmetry declarations, partial-order selection and state constraint; the state constraint is also recorded in the item's terminal record. A different temporal horizon or deterministic budget can produce a different result, so a result is reused only for a request with the same request identity; a wall-clock setting, a hybrid item's `hybrid.limits.max_solver_time` or a temporal item's `temporal.limits.max_solver_time` (FR-368 "SMT solver budgets"), is outside it. Result identity includes artifacts and results.
+Request identity includes the capability vocabulary, manifest, package, the request's `memory` selections ([FR-434](../../functional/memory/FR-434-select-memory-models-for-parallel.md)), each item's claim, extent with its proof bounds, options and limits (a `value-validity` or `operation-contract` item's `check.limits`, FR-483), each item's kind, extent classification, `requirements`, named backend and candidates, each temporal item's subject, `abstract_subject`, item kind, fairness set, `max_depth`, `limits` and `smt_encoding` (FR-368), the `witness_samples` and `seed` of a state-graph item, and each item's symmetry declarations, partial-order selection and state constraint; the state constraint is also recorded in the item's terminal record. A different temporal horizon or deterministic budget can produce a different result, so a result belongs to exactly one request identity; a wall-clock setting, a hybrid item's `hybrid.limits.max_solver_time` or a temporal item's `temporal.limits.max_solver_time` (FR-368 "SMT solver budgets"), is outside it. Result identity includes artifacts and results.
 Unknown contract versions, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption; in a result entry or a `counterexamples` entry, a missing or unknown member and a value of the wrong kind or outside its domain refuse with the `invalid_result` causes of "Result entries". A `capability_vocabulary` other than `quire.capability-kind/v1`, or none, refuses the envelope as `invalid_capability`/`unknown-vocabulary`.
 

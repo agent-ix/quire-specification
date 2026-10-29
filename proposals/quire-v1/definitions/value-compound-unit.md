@@ -19,4 +19,4 @@ mathematical integer exponents written as canonical decimal strings (never
 `-0`), and are strictly ascending by canonical node
 key. Duplicate terms refuse internal construction. The empty list is the sole
 dimensionless identity. An evaluator constructs only the canonical preimage and
-does not accept a caller-supplied digest assertion.
+does not accept a caller-supplied identity assertion.

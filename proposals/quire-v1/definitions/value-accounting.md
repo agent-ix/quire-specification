@@ -564,7 +564,7 @@ conditions of FR-151 early and replace their causes or suppress sibling axes.
 One checking operation owns one model meter across all its selected models
 and these stages. The meter is transferred from intake to checking without
 reset, refund, cloning or repeated charges. Selections run in ascending
-(`identity`, `digest_domain`, `digest`) byte order, a proper prefix first;
+(`identity`, `version`) byte order, a proper prefix first;
 FR-321 rejects repeated identities before this order is consumed. Finish each
 stage across all selections before advancing any selection to the next stage.
 Failures of a completed stage are ordered by selection then local charge

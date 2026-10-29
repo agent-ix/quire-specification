@@ -49,7 +49,10 @@ separate artifact digest is computed or compared.
   reader default.
 
 Two accepted canonical results with one `resultKey` SHALL have equal result
-members. The same key with different members is an invalid result, not an
+members. The reader SHALL check this by comparing the members of each accepted
+result with those of every earlier accepted result of the same `request` that
+has an equal `resultKey`, and SHALL refuse the later result when any member differs.
+The same key with different members is an invalid result, not an
 alternate representation. A later contradiction emits a new result with a new
 `ordinal`, linked explicitly to the earlier unchanged result by its `resultKey`.
 
@@ -60,7 +63,7 @@ alternate representation. A later contradiction emits a new result with a new
 | FR-286-AC-1 | Withdrawn: it existed only for the SHA-256 identity computed over the result preimage, which is no longer computed. | Withdrawn |
 | FR-286-AC-2 | Changing any `resultKey` member yields a different key; changing only an attribute member leaves the key unchanged; object-member presentation permutations change neither. | Test (TC-061) |
 | FR-286-AC-3 | Withdrawn: it existed only for the enclosing artifact digest, which is no longer computed or validated. | Withdrawn |
-| FR-286-AC-4 | The same `resultKey` on different result members, and a missing or incomplete `resultKey`, are refused. | Test (TC-061) |
+| FR-286-AC-4 | A result whose `resultKey` equals that of an earlier accepted result of the same request but whose members differ is refused by member comparison, a result with equal key and equal members is accepted once, and a missing or incomplete `resultKey` is refused. | Test (TC-061) |
 | FR-286-AC-5 | A superseding or invalidating result preserves the earlier result, carries a new `ordinal` and names the earlier result by its `resultKey`. | Test (TC-061) |
 
 ## Dependencies

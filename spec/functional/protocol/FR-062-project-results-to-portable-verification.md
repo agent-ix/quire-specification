@@ -41,7 +41,7 @@ When a canonical protocol result is submitted for portable evidence assessment, 
 ## Inputs
 
 One FR-061 `quire.protocol.result/v1-draft.1` result plus one exact E02 evidence
-obligation, plan, task, run, profile, binding, dependency closure and adapter
+obligation, plan, task, run, profile, binding and adapter
 identity/version context.
 
 ## Outputs
@@ -64,41 +64,30 @@ describe protocol adequacy only in the canonical protocol result through the
 exact exercised protocol obligations and cases. It SHALL NOT represent protocol
 adequacy as E02 observation adequacy or as an evidence-sufficiency decision.
 
-The derived `TechniqueResult.resultId` SHALL be distinct from the canonical
-protocol-result key and stable for the exact tuple of canonical result
-key, target obligation and execution-binding identities, target
-contract version, and adapter identity and version. Changing any member of that
-tuple SHALL change the derived result ID. The result ID is
-the RFC 8785 canonical JSON text of this derivation tuple itself, with no hash
-computed:
+The projected `TechniqueResult` SHALL carry no derived identifier of its own.
+Its `resultId` member SHALL be the closed object
 
 ```json
 {
-  "sourceResultRef": { "resultKey": "<exact-result-key>" },
-  "targetContractVersion": "quire-verification/e02-draft-2",
-  "targetBinding": {
-    "propertyRef": "<exact-artifact-reference>",
-    "planId": "<exact-plan-id>",
-    "taskId": "<exact-task-id>",
-    "runRef": "<exact-artifact-reference>",
-    "profile": "<exact-profile>",
-    "bindingRefs": ["<ordered-exact-artifact-reference>"],
-    "dependencyClosure": ["<ordered-exact-identity-and-version>"],
-    "executionScope": "<exact-scope>"
-  },
+  "sourceResultKey": { "producer": { "identity": "<id>", "version": "<v>" }, "request": "<exact-request>", "ordinal": "<U64String>" },
   "adapter": { "identity": "<exact-adapter-id>", "version": "<exact-version>" }
 }
 ```
 
-The angle-bracket strings describe typed values rather than literal wire text;
-the tuple contains their complete JSON values. `bindingRefs` uses the selected
-E02 semantic order and SHALL NOT be resorted by presentation text.
+which nests at most three levels deep (`resultId`, `sourceResultKey`,
+`producer`) and is bounded by the FR-286 `resultKey` it contains. The target
+obligation and execution binding (`propertyRef`, `planId`, `taskId`, `runRef`,
+`profile`, `bindingRefs`, `executionScope`) are members of the `TechniqueResult`
+itself and are not part of `resultId`. `bindingRefs` uses the selected E02
+semantic order and SHALL NOT be resorted by presentation text. Projecting one
+canonical result under a different adapter identity or version yields a
+different `resultId`.
 `nativeArtifacts` SHALL contain
 exactly one canonical-result entry with the source URI and
 media type
 `application/vnd.agent-ix.quire-protocol-result+json;version=1-draft.1`.
 `provenance` SHALL identify the protocol producer plus this adapter and their
-versions. The E02 property, subject, profile, binding, dependency-closure,
+versions. The E02 property, subject, profile, binding,
 execution-scope, plan, task and run fields SHALL equal their selected context;
 the adapter SHALL NOT infer or substitute one from display text.
 

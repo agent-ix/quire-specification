@@ -1,39 +1,35 @@
 ---
 id: TC-226
-title: "AOT JIT native and cache parity"
+title: "AOT JIT native parity"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-306
-    type: verifies
-  - target: ix://agent-ix/quire-specification/FR-201
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-331
     type: verifies
 ---
 
-# TC-226: AOT JIT native and cache parity
+# TC-226: AOT JIT native parity
 
 ## Description
 
-Compares AOT and JIT runs with the interpreter and exercises the content-keyed
-cache. Planned.
+Compares AOT and JIT runs with the interpreter. Planned.
 
 ## Test Procedure
 
 | Row | Input | Expected | AC |
 | --- | --- | --- | --- |
 | EB-01 | Every entry of the conformance corpus and of generated programs through the interpreter, AOT and JIT, including undefined, refused and budget-exhausted runs | Each backend returns the interpreter's outcome, typed cause, location, loss records and `incomplete` charge point, and no outcome names a backend | FR-306-AC-1 |
-| EB-02 | A `prove` result cached, then the key recomputed after changing the operation, the `package_id`, a claim, a bound, a deterministic budget, the provider's `BackendId`, one descriptor member other than `backend` (an option default, then `tool.version`) with the same `BackendId`, and, for a `generate` result, the generation target; then after changing a path, a timestamp, a wall-clock deadline, the application version string and the execution backend | Each change of the first group changes the `quire.cache-key/v1` key and misses; each of the second group leaves the key unchanged and hits | FR-306-AC-2 |
-| EB-03 | An entry whose stored key differs from the requested key, one whose value fails the typed reader, and attempts to store an internal-failure, cancelled, deadline, time-limited, plugin and `tool-unavailable` result | Each read is a miss; none of the results is stored | FR-306-AC-3 |
+| EB-02 | Withdrawn: it existed only for the result cache, which is removed | Withdrawn | FR-306-AC-2 |
+| EB-03 | Withdrawn: it existed only for the result cache, which is removed | Withdrawn | FR-306-AC-3 |
 | EB-04 | `--engine fast`; `--engine jit` on a binary that does not link the JIT; an entry the JIT cannot translate | Exit `20` naming the argument; exit `21` before any stage; that entry settles `unsupported` and the interpreter is not run in its place | FR-306-AC-4 |
 | EB-05 | An injected JIT internal error; a JIT preparation over its code-size limit | Exit `30` with no verdict; a typed preparation limit failure naming the limit, its value and its setting | FR-306-AC-5 |
-| EB-06 | Withdrawn: it existed only for the relabelled cache-key digest domain | Withdrawn | FR-201-AC-8 |
-| EB-07 | A first-party linked provider fronting an external tool, whose descriptor carries `tool` `{name, version}`: a `prove` result stored; the same request read back with the unchanged descriptor; then read back with a descriptor that differs only in `tool.version` | The unchanged read hits and returns the stored value; the upgraded read computes a different manifest and key with the same `backend` member, misses, and does not return the stored result | FR-306-AC-6 |
-| EB-08 | A first-party linked Kani provider: one invocation builds its descriptor and stores a `prove` result; within that invocation the `kani` executable on the host is replaced by another version, with no descriptor source edited, and the item is run again; then a new invocation runs the same request | In the first invocation the second run's probe reads the new version, the item settles `unsupported` with `unsupported_projection`/`tool-unavailable` naming the kind, the backend, the descriptor's version and the probed version, no run starts, the stored result is not returned and nothing is stored; the new invocation's descriptor carries the new `tool.version`, its key differs with the same `backend` member, the read misses and Kani runs | FR-306-AC-7, FR-331-AC-38 |
-| EB-09 | A pure in-process engine (`qsl-model-check`, `tool` `{name: qsl-analyze, version: 0.1.0}`): an `analyze` result stored; the same request read back by the same build; then a build whose engine crate has version `0.3.0` runs the same request | The same build hits and returns the stored value; the new build's descriptor carries `tool.version` `0.3.0`, its manifest and key differ with the same `backend` member, the read misses and the engine runs | FR-306-AC-8 |
-| EB-10 | Withdrawn: it existed only for `tool.build`, which the descriptor no longer carries | Withdrawn | FR-306-AC-9 |
+| EB-06 | Withdrawn: it existed only for the result cache, which is removed | Withdrawn | FR-201-AC-8 |
+| EB-07 | Withdrawn: it existed only for the result cache, which is removed | Withdrawn | FR-306-AC-6 |
+| EB-08 | Withdrawn: it existed only for the result cache, which is removed | Withdrawn | FR-306-AC-7, FR-331-AC-38 |
+| EB-09 | Withdrawn: it existed only for the result cache, which is removed | Withdrawn | FR-306-AC-8 |
+| EB-10 | Withdrawn: it existed only for the result cache, which is removed | Withdrawn | FR-306-AC-9 |
 
 ## Expected Results
 
-Every backend returns the interpreter's exact outcome, and the cache misses on
-every meaning change and on nothing else.
+Every backend returns the interpreter's exact outcome.
