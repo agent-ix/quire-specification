@@ -46,6 +46,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-462
     type: references
+  - target: ix://agent-ix/quire-specification/FR-483
+    type: references
   - target: ix://agent-ix/quire-specification/FR-322
     type: references
   - target: ix://agent-ix/quire-specification/FR-196
@@ -629,7 +631,8 @@ certificate checker and makes its counterexample canonical assignments, so:
   (FR-399), `stale-dependency` and `kani_vacuous_proof` (AD-016). A plugin's
   entry carries none.
 - A plugin's `counterexamples` entry carries a `counterexample` whose `type`
-  is `assignments`, or `hybrid-counterexample` on the entry of a hybrid
+  is `assignments`, `contract-counterexample` on the entry of an
+  `operation-contract` item, or `hybrid-counterexample` on the entry of a hybrid
   item (FR-193 "Solver result on the wire"), and no `transcript`. A
   `hybrid-counterexample` settles the item only after the reader's exact
   replay (FR-193 "Trace replay"); on the entry of an item that is not a
@@ -756,8 +759,10 @@ probabilistic engine's is `exact_prob`.
   parameter node; an FR-364 `TemporalCounterexample`, whose timed steps carry
   `delay` and which carries `final_delay` for kind `time-lock` (FR-417) and
   `refinement_failure` for a refinement item (FR-379); an FR-413
-  `ProbabilisticCounterexample`; an FR-393 `GraphEvidence`; or an FR-400
-  `HyperCounterexample`. `backend` and `request_index` are the originating
+  `ProbabilisticCounterexample`; an FR-393 `GraphEvidence`; an FR-400
+  `HyperCounterexample`; or, on an `operation-contract` item, a
+  `contract-counterexample` ([FR-485](../../functional/ir-proof/FR-485-check-operation-contract-items.md)
+  "Counterexample"): `{type, obligation, violated, executions}`. `backend` and `request_index` are the originating
   run identity.
 - An accounting record is the item's terminal record:
   `{request_index, settled_by}`, `settled_by` `disposition` when its

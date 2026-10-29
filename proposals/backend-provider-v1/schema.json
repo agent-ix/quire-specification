@@ -704,8 +704,44 @@
         {"$ref": "#/$defs/ProbabilisticCounterexample"},
         {"$ref": "#/$defs/GraphEvidence"},
         {"$ref": "#/$defs/HyperCounterexample"},
-        {"$ref": "#/$defs/HybridCounterexample"}
+        {"$ref": "#/$defs/HybridCounterexample"},
+        {"$ref": "#/$defs/ContractCounterexample"}
       ]
+    },
+    "ContractCounterexample": {
+      "description": "FR-485 Counterexample: an operation-contract refutation; per execution its pre-state, arguments, result and post-state, replayed with no reachability prefix.",
+      "type": "object",
+      "required": ["type", "obligation", "violated", "executions"],
+      "properties": {
+        "type": {"const": "contract-counterexample"},
+        "obligation": {"enum": ["initial-state", "preservation", "definedness", "postcondition", "frame", "relation", "simulation-initial", "simulation-step"]},
+        "violated": {"$ref": "#/$defs/Locus"},
+        "executions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["operation", "pre_state", "arguments", "result", "post_state"],
+            "properties": {
+              "operation": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/NodeId"}]},
+              "pre_state": {"$ref": "#/$defs/TypedValue"},
+              "arguments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["parameter", "value"],
+                  "properties": {"parameter": {"$ref": "#/$defs/NodeId"}, "value": {"$ref": "#/$defs/TypedValue"}},
+                  "additionalProperties": false
+                }
+              },
+              "result": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
+              "post_state": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "CounterexampleEntry": {
       "description": "FR-331, QSL ADR-013 O-25: names exactly one of the transcript's artifacts entry or the canonical counterexample; backend and request_index are the originating run identity.",

@@ -1,0 +1,1934 @@
+{
+  "note": "STD-562: end-to-end vectors of the FR-483 check arm. Node ids are written $node:<label> and the harness derives each NodeId from the label, so no digest is frozen here. 'registry' is the candidate set's descriptors, 'item' the request item as FR-290 reads it, 'negotiation' the FR-290 disposition, 'arm' the arm outcome and result for an item negotiated supported, and 'outcome' the FR-331 outcome stage the provider writes.",
+  "rekey": {
+    "domain": "quire.checked-semantic-node/v1",
+    "derivation": "SHA-256 over the UTF-8 bytes of the domain, a zero byte and the label, as lowercase hex"
+  },
+  "cases": [
+    {
+      "id": "VV-01",
+      "name": "clause over a finite domain holds",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.clause",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "supported",
+        "result": "proved"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "kind": "value-validity",
+            "result": "proved",
+            "basis": {
+              "type": "exhaustive"
+            },
+            "certification": "uncertified"
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-02",
+      "name": "clause violated at the domain edge",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.clause",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "violation",
+        "result": "refuted"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "kind": "value-validity",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "counterexample": {
+              "type": "assignments",
+              "values": [
+                {
+                  "parameter": "$node:vv.x",
+                  "value": {
+                    "type": "integer",
+                    "value": "255"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-03",
+      "name": "unguarded scalar operation is undefined",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "scalar-operation",
+        "claim": "vv.div",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "violation",
+        "result": "refuted"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "kind": "value-validity",
+            "result": "refuted",
+            "counterexample": 0,
+            "cause": {
+              "type": "undefined-evaluation",
+              "where": {
+                "locus": {
+                  "node": "$node:vv.div",
+                  "occurrence": {
+                    "role": "expression",
+                    "ordinal": 1
+                  }
+                }
+              },
+              "cause": "quotient-outside-domain"
+            }
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "counterexample": {
+              "type": "assignments",
+              "values": [
+                {
+                  "parameter": "$node:vv.a",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                },
+                {
+                  "parameter": "$node:vv.b",
+                  "value": {
+                    "type": "integer",
+                    "value": "0"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-04",
+      "name": "path condition no assignment satisfies",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "scalar-operation",
+        "claim": "vv.dead",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "unknown",
+        "result": "inconclusive",
+        "note": "zero admissible assignments is vacuity, not proof"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "kind": "value-validity",
+            "result": "inconclusive",
+            "cause": {
+              "type": "kani_vacuous_proof"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-05",
+      "name": "unbounded item, bounded-only candidate, bound available",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.clause",
+        "extent": {
+          "classification": "unbounded",
+          "domain_kinds": [
+            "integer"
+          ],
+          "finite_bound_available": true
+        }
+      },
+      "negotiation": {
+        "disposition": "requires-bound"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "requires-bound"
+          }
+        ],
+        "artifacts": [],
+        "results": [],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "disposition"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-06",
+      "name": "unbounded item, bounded-only candidate, no bound available",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.clause",
+        "extent": {
+          "classification": "unbounded",
+          "domain_kinds": [
+            "integer"
+          ],
+          "finite_bound_available": false
+        }
+      },
+      "negotiation": {
+        "disposition": "unsupported",
+        "cause": "unbounded-extent"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "unsupported",
+            "diagnostic": {
+              "code": "unsupported_projection",
+              "cause": "unbounded-extent",
+              "detail": {
+                "kind": "value-validity"
+              }
+            }
+          }
+        ],
+        "artifacts": [],
+        "results": [],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "disposition"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-07",
+      "name": "unbounded item, unbounded candidate",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        },
+        {
+          "backend": "value-prover",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "unbounded"
+            }
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.clause",
+        "extent": {
+          "classification": "unbounded",
+          "domain_kinds": [
+            "integer"
+          ],
+          "finite_bound_available": false
+        },
+        "backend": "value-prover"
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "supported",
+        "result": "proved"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-prover",
+            "kind": "value-validity",
+            "result": "proved",
+            "basis": {
+              "type": "inductive",
+              "depth": 1
+            },
+            "certification": "uncertified"
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-08",
+      "name": "no provider advertises value-validity",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.clause",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "unsupported",
+        "cause": "unsupported-requested-capability"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "unsupported",
+            "diagnostic": {
+              "code": "unsupported_projection",
+              "cause": "unsupported-requested-capability",
+              "detail": {
+                "kind": "value-validity"
+              }
+            }
+          }
+        ],
+        "artifacts": [],
+        "results": [],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "disposition"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-09",
+      "name": "case-clause over a union, evaluation reaches max_cases",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "case-clause",
+        "claim": "vv.case",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "collection"
+          ]
+        },
+        "options": {
+          "max_cases": "1000"
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "unknown",
+        "result": "incomplete"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "kind": "value-validity",
+            "result": "incomplete",
+            "cause": {
+              "type": "limit-reached",
+              "limit": "max_cases",
+              "value": 1000,
+              "setting": "value_check.max_cases"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-10",
+      "name": "claim node is a range narrowing",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.narrow",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": null,
+        "result": "declined"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "kind": "value-validity",
+            "result": "declined",
+            "cause": {
+              "type": "invalid-input"
+            },
+            "diagnostic": {
+              "code": "invalid_runtime_input",
+              "cause": "invalid-value",
+              "detail": {
+                "node": "vv.narrow",
+                "kind": "value-validity"
+              }
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-11",
+      "name": "domain kind the candidate cannot bound",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.clause",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "population"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "unsupported",
+        "cause": "unsupported-requested-capability"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "unsupported",
+            "diagnostic": {
+              "code": "unsupported_projection",
+              "cause": "unsupported-requested-capability",
+              "detail": {
+                "kind": "value-validity"
+              }
+            }
+          }
+        ],
+        "artifacts": [],
+        "results": [],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "disposition"
+          }
+        ]
+      }
+    },
+    {
+      "id": "VV-12",
+      "name": "unknown from the engine",
+      "registry": [
+        {
+          "backend": "value-prover",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "unbounded"
+            }
+          ]
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.clause",
+        "extent": {
+          "classification": "unbounded",
+          "domain_kinds": [
+            "integer"
+          ],
+          "finite_bound_available": false
+        },
+        "backend": "value-prover"
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "unknown",
+        "result": "inconclusive"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-prover",
+            "kind": "value-validity",
+            "result": "inconclusive",
+            "cause": {
+              "type": "solver-inconclusive"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-01",
+      "name": "invariant violated by a preserving operation",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "invariant",
+        "claim": "oc.inv",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "violation",
+        "result": "refuted"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "counterexample": {
+              "type": "contract-counterexample",
+              "obligation": "preservation",
+              "violated": {
+                "node": "$node:oc.inv",
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              },
+              "executions": [
+                {
+                  "operation": "$node:oc.step",
+                  "pre_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "3"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "3"
+                        }
+                      }
+                    ]
+                  },
+                  "arguments": [
+                    {
+                      "parameter": "$node:oc.i",
+                      "value": {
+                        "type": "integer",
+                        "value": "1"
+                      }
+                    }
+                  ],
+                  "result": null,
+                  "post_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "5"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "3"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-02",
+      "name": "invariant holds initially and is preserved",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "invariant",
+        "claim": "oc.inv",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "supported",
+        "result": "proved"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "proved",
+            "basis": {
+              "type": "exhaustive"
+            },
+            "certification": "uncertified"
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-03",
+      "name": "frame item with no implementation binding",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "frame",
+        "claim": "oc.step.anchor",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "unsupported",
+        "result": "unsupported"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "unsupported",
+            "diagnostic": {
+              "code": "unsupported_projection",
+              "cause": "unsupported-requested-capability",
+              "detail": {
+                "kind": "operation-contract",
+                "form": "frame",
+                "reason": "no-contract-level-reading"
+              }
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-04",
+      "name": "bound item reads an element with no abstraction binding",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "clause",
+        "claim": "oc.post",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": null,
+        "result": "declined"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "declined",
+            "cause": {
+              "type": "incomplete-input"
+            },
+            "diagnostic": {
+              "code": "missing_declaration",
+              "cause": "missing-name",
+              "detail": {
+                "element": "acme/Vault",
+                "model": "acme/vault"
+              }
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-05",
+      "name": "unbounded simulation item meets a bounded-only candidate",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "simulation",
+        "claim": "oc.refinement",
+        "extent": {
+          "classification": "unbounded",
+          "domain_kinds": [
+            "population"
+          ],
+          "finite_bound_available": true
+        },
+        "occurrence": {
+          "role": "generated",
+          "ordinal": 2
+        }
+      },
+      "negotiation": {
+        "disposition": "requires-bound"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "requires-bound"
+          }
+        ],
+        "artifacts": [],
+        "results": [],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "disposition"
+          }
+        ]
+      },
+      "note": "the unbounded population root meets a bounded-only candidate"
+    },
+    {
+      "id": "OC-06",
+      "name": "simulation step with a cardinality bound",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "simulation",
+        "claim": "oc.refinement",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "population"
+          ]
+        },
+        "occurrence": {
+          "role": "generated",
+          "ordinal": 2
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "violation",
+        "result": "refuted"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "counterexample": {
+              "type": "contract-counterexample",
+              "obligation": "simulation-step",
+              "violated": {
+                "node": "$node:oc.refinement",
+                "occurrence": {
+                  "role": "generated",
+                  "ordinal": 2
+                }
+              },
+              "executions": [
+                {
+                  "operation": "$node:oc.step",
+                  "pre_state": {
+                    "type": "record",
+                    "name": "acme/Counter",
+                    "fields": [
+                      {
+                        "name": "value",
+                        "value": {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      }
+                    ]
+                  },
+                  "arguments": [],
+                  "result": null,
+                  "post_state": {
+                    "type": "record",
+                    "name": "acme/Counter",
+                    "fields": [
+                      {
+                        "name": "value",
+                        "value": {
+                          "type": "integer",
+                          "value": "3"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-07",
+      "name": "step relation over invariants no state satisfies",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "step-relation",
+        "claim": "oc.relation",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "unknown",
+        "result": "inconclusive",
+        "note": "vacuity"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "inconclusive",
+            "cause": {
+              "type": "kani_vacuous_proof"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-08",
+      "name": "determinism relation refuted, no reachability prefix",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "step-relation",
+        "claim": "oc.relation",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "violation",
+        "result": "refuted"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "counterexample": {
+              "type": "contract-counterexample",
+              "obligation": "relation",
+              "violated": {
+                "node": "$node:oc.relation",
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              },
+              "executions": [
+                {
+                  "operation": "$node:oc.step",
+                  "pre_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "2"
+                        }
+                      }
+                    ]
+                  },
+                  "arguments": [
+                    {
+                      "parameter": "$node:oc.i",
+                      "value": {
+                        "type": "integer",
+                        "value": "1"
+                      }
+                    }
+                  ],
+                  "result": null,
+                  "post_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "2"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "operation": "$node:oc.step",
+                  "pre_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "2"
+                        }
+                      }
+                    ]
+                  },
+                  "arguments": [
+                    {
+                      "parameter": "$node:oc.i",
+                      "value": {
+                        "type": "integer",
+                        "value": "1"
+                      }
+                    }
+                  ],
+                  "result": null,
+                  "post_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "2"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "2"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-09",
+      "name": "candidate counterexample does not replay",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "clause",
+        "claim": "oc.post",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "unknown",
+        "result": "inconclusive",
+        "note": "replay-parity: no counterexample recorded"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "inconclusive",
+            "cause": {
+              "type": "replay-parity"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-10",
+      "name": "postcondition undefined without a binding",
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "clause",
+        "claim": "oc.post",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "violation",
+        "result": "refuted"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "refuted",
+            "counterexample": 0,
+            "cause": {
+              "type": "undefined-evaluation",
+              "where": {
+                "locus": {
+                  "node": "$node:oc.post",
+                  "occurrence": {
+                    "role": "expression",
+                    "ordinal": 3
+                  }
+                }
+              },
+              "cause": "quotient-outside-domain"
+            }
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "counterexample": {
+              "type": "contract-counterexample",
+              "obligation": "definedness",
+              "violated": {
+                "node": "$node:oc.post",
+                "occurrence": {
+                  "role": "expression",
+                  "ordinal": 3
+                }
+              },
+              "executions": [
+                {
+                  "operation": "$node:oc.step",
+                  "pre_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "0"
+                        }
+                      }
+                    ]
+                  },
+                  "arguments": [
+                    {
+                      "parameter": "$node:oc.i",
+                      "value": {
+                        "type": "integer",
+                        "value": "1"
+                      }
+                    }
+                  ],
+                  "result": null,
+                  "post_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "0"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-11",
+      "name": "no provider advertises operation-contract",
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ]
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "invariant",
+        "claim": "oc.inv",
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        }
+      },
+      "negotiation": {
+        "disposition": "unsupported",
+        "cause": "unsupported-requested-capability"
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "unsupported",
+            "diagnostic": {
+              "code": "unsupported_projection",
+              "cause": "unsupported-requested-capability",
+              "detail": {
+                "kind": "operation-contract"
+              }
+            }
+          }
+        ],
+        "artifacts": [],
+        "results": [],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "disposition"
+          }
+        ]
+      }
+    }
+  ]
+}

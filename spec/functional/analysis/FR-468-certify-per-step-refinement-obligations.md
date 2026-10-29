@@ -17,6 +17,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-331
     type: references
+  - target: ix://agent-ix/quire-specification/FR-485
+    type: references
 ---
 
 # FR-468: Query and certify a refinement's per-step simulation obligations
@@ -46,7 +48,7 @@ The per-step obligations of [FR-377](FR-377-decide-model-refinement.md) (Engines
 
 Each query also requires every mapping row, receiver and argument it reads to be defined and determined at `s` and `s'`: a state satisfying the premises at which one is undefined or undetermined is a counterexample to the query.
 
-Each query is one `operation-contract` item ([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)) and is settled on its own. Each hypothesis (invariant clause) has its own `operation-contract` items, its initial-state item and its preservation item, which are *hypothesis items*; they are not part of the refinement's certificate.
+Each query is one `operation-contract` item ([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)) and is settled on its own. Each hypothesis (invariant clause) has its own `operation-contract` item, which carries both its initial-state obligation and its preservation obligation ([FR-485](../ir-proof/FR-485-check-operation-contract-items.md) "Invariant"; one claim node and kind is one obligation identity), and is a *hypothesis item*; they are not part of the refinement's certificate.
 
 ### Claim extent
 
