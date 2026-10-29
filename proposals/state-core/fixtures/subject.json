@@ -26,19 +26,19 @@
     "digest": "sha256:a889ed9465af43d83babc97910ec218886345c404a8135317ba34ee03f9ae49f",
     "spanConvention": "utf8-half-open-scalar-column/0-draft",
     "expressionSpan": {
-      "startByte": 268,
+      "startByte": 234,
       "startLine": 6,
       "startColumn": 3,
-      "endByte": 357,
+      "endByte": 323,
       "endLine": 6,
       "endColumn": 92
     },
     "expectedExpression": "present(self.parent) implies deref(value(self.parent)).versionNumber < self.versionNumber",
     "clauseSpan": {
-      "startByte": 208,
+      "startByte": 174,
       "startLine": 5,
       "startColumn": 1,
-      "endByte": 359,
+      "endByte": 325,
       "endLine": 7,
       "endColumn": 2
     },

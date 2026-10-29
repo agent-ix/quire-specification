@@ -31,8 +31,7 @@ rule document does not select itself through a copied candidate/digest table.
 Subject kinds, relationship declarations and population declarations are the
 effective domain declarations of the checked package. A spec declares them in
 its own artifacts ([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)).
-Each one is keyed by domain package identity, IR node identity and digest
-domain `sha256-jcs`. The checked package's `model_selections` name the domain
+Each one is keyed by domain package identity and IR node identity. The checked package's `model_root` nodes name the domain
 package. Closed population extents are declared in spec artifacts.
 
 Runtime observation records are assessment inputs. Their subject, relationship

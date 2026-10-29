@@ -37,7 +37,7 @@ The structural view is checking input, not a validated checked package.
 ## Behavior
 
 Each original declaration is keyed by `(domain package identity, IR node
-identity, sha256-jcs)`. Supertypes, subsets and redefines are members of the
+identity)`. Supertypes, subsets and redefines are members of the
 IR nodes, so every edge normalization reads is part of the admitted package.
 QSL derives effective declarations. It never mints, renames or merges a
 declaration key, and never derives an edge the package does not declare.
@@ -76,8 +76,8 @@ preimages, orders and vectors are defined by the selected
 [`model-effective-declaration.schema.json`](../../../proposals/checked-package-v2/model-effective-declaration.schema.json)
 and
 [`model-effective-declaration-vectors.json`](../../../proposals/checked-package-v2/model-effective-declaration-vectors.json).
-These domains differ from `sha256-jcs` and from the I04 node domain, so no
-derived identity equals a domain package digest or an I04 node key. The
+These domains differ from the I04 node domain, so no
+derived identity equals an I04 node key. The
 effective view is carried in the checked package as a `correspondence` node
 with semantic form `model_correspondence`.
 
@@ -130,9 +130,7 @@ A conflict is refused `invalid_model_binding`/`derivation-conflict` with both
 derivation paths and exposes no effective member for either. A redefinition
 whose target is not an inherited member is refused
 `invalid_model_binding`/`redefinition-target`. A supertype cycle is refused
-`invalid_model_binding`/`specialization-cycle`. A ModelSelection whose digest
-domain is not `sha256-jcs` is refused `stale_dependency`/`digest-domain-mismatch`; model intake does not
-recompute the digest of a supplied document. A model `variant` type
+`invalid_model_binding`/`specialization-cycle`. A ModelSelection row is `{identity}` and carries no digest or version (FR-154). A model `variant` type
 referenced by source is admitted (FR-208). Canonical ordering
 affects identity bytes only; it never changes a declaration key or resolves
 semantic ambiguity.
@@ -155,7 +153,7 @@ reports a refusal ends checking. Exhaustion ends checking as
 | --- | --- | --- |
 | FR-150-AC-1 | An inherited/redefined member links its normalized identity to every contributing original declaration and rule. | Test (TC-195) |
 | FR-150-AC-2 | Two equal effective shapes from distinct original identities remain distinguishable. | Test (TC-195) |
-| FR-150-AC-3 | A wrong digest domain or a conflicting phase 4 derivation refuses normalization with its named cause, and a supplied document whose own canonical digest differs from the selected digest is admitted. | Test (TC-195) |
+| FR-150-AC-3 | A conflicting phase 4 derivation refuses normalization with its named cause, and a supplied document is admitted at the normalization boundary under the identity its lock row records. | Test (TC-195) |
 | FR-150-AC-4 | Replaying the ordered derivation from the same domain package reproduces the `quire.model.effective-view/v2` identity, independent of IR node order. | Test (TC-195) |
 | FR-150-AC-5 | Conflicting derivations report both rule paths and expose no chosen effective member. | Test (TC-195) |
 | FR-150-AC-6 | Diamond paths reaching one original declaration collapse to one effective member with one inherit fact per direct parent, whose expansion lists every path, and each effective identity equals its published vector. | Test (TC-195) |

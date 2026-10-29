@@ -358,7 +358,7 @@ layer-owned with a total conversion.
 | Capability descriptions | Layer-owned: QSL `Capability` = language admission (FR-290 capability kinds); IR closed obligation-capability enum parsed at the wire edge | QSL / IR | Wire string ↔ enum total test |
 | Finite/unbounded bounds | Layer-owned | QSL `Extent`/`Population`; IR `bounded_domain`/`model_population` + single `requires-bound` predicate | v2 round trip; `requires-bound` table test |
 | Outcomes and stable diagnostic codes | Codes shared by catalog (QSpec `native-diagnostics.md`); typed causes layer-owned | Each layer: one `fn catalog_code(&self) -> CatalogCode`, exhaustive | Totality test against the QSpec catalog |
-| Domain-package and model references | Layer-owned | QSL `DomainPackageRef` (FR-321), `ModelRef` | Crosses to IR only as v2 wire strings |
+| Domain-package and model references | Layer-owned | QSL `DomainPackageRef` (FR-321) | Crosses to IR only as v2 wire strings |
 | Accounting/work categories | Shared via kernel `ChargePoint` (kernel type under D-2) = `quire.value.accounting/v1` (#129 Q9) | `quire-exact` (`ChargePoint`) | `ChargePoint` lives in RT `src/exact/accounting.rs` (kernel-bound, moves with D-2). CG charge emission maps to kernel charge points. `OPEN — decided in WP5b`: RT charge agreement vs kernel `ChargePoint`. |
 | FCD identities | Layer-owned | FCD | Translated only in QSL `model::intake`; FCD conformance fixtures → admitted `DeclarationKey` set |
 

@@ -18,16 +18,13 @@ When a package imports a domain package for native linking, the checker SHALL us
 
 ## Properties
 
-- `identity` — the domain package identity, such as `acme/orders`, named by the source `model` declaration.
-- `digest_domain` — exactly `sha256-jcs`.
-- `digest` — the lowercase 64-hex SHA-256 over the RFC 8785 JCS bytes of the domain package.
-- `declarations` — the original declarations that QSL model intake (FR-154) builds from the package's IR nodes. Each is keyed by `(domain package identity, IR node identity, sha256-jcs)` and keeps the IR node's FCD `origin` (FR-154).
+- `identity` — the domain package identity, such as `acme/orders`, named by the source `model` declaration and recorded by the package's `model_root` node only. There is no lock row, digest, digest domain or version. The source names the identity alone (FR-154 "Model selection in source").
+- `declarations` — the original declarations that QSL model intake (FR-154) builds from the package's IR nodes. Each is keyed by `(domain package identity, IR node identity)` and keeps the IR node's FCD `origin` (FR-154).
 - `effective_view` — the `quire.model.effective-view/v2` identity that QSL derives from those declarations under the selected `quire.model.complete/v1` definition.
 
 ## Identity and validation
 
-The key is (`identity`, `digest_domain`, `digest`): the domain package identity and its content digest. Two selections with equal identity and different digests are unequal.
-A digest domain other than `sha256-jcs` refuses `stale_dependency`/`digest-domain-mismatch`. Intake reads the package bytes supplied under the selection's digest and does not recompute that digest (FR-154).
+The key is `identity`. Nothing is recorded in the lock and nothing is gated; a changed domain package under an unchanged identity is not detected (FR-154).
 A package selects at most one domain package per `identity`; intake
 refuses a second selection of an already-selected `identity`, before name
 binding, as `duplicate_selection`/`duplicate-identity` (QSL ADR-013 O-01,
@@ -39,10 +36,11 @@ Missing required properties, duplicate keys, out-of-domain values and non-canoni
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-321-AC-1 | Every effective declaration names its original declaration and ordered derivation path. | Analysis |
-| FR-321-AC-2 | A wrong digest domain or a malformed declaration refuses before name binding. | Analysis |
+| FR-321-AC-2 | A domain package document with a malformed declaration refuses before name binding. | Analysis |
 | FR-321-AC-3 | A declaration key is fixed by the domain package identity and the IR node identity; the checker never mints, renames or merges one. | Analysis |
-| FR-321-AC-4 | The key components map exactly to the domain package identity and its `sha256-jcs` digest, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
-| FR-321-AC-5 | A second selection of an already-selected domain-package `identity` refuses `duplicate_selection`/`duplicate-identity` before name binding, retaining the repeated identity and both selected digests; a second selection of a distinct `identity` is unaffected. | Analysis |
+| FR-321-AC-4 | The key components map exactly to the domain package identity and IR node identity, and an effective identity is derived only in a QSL domain. | Test (TC-195) |
+| FR-321-AC-5 | A second selection of an already-selected domain-package `identity` refuses `duplicate_selection`/`duplicate-identity` before name binding, retaining the repeated identity and both selected documents; a second selection of a distinct `identity` is unaffected. | Analysis |
+| FR-321-AC-6 | A ModelSelection is its `identity` alone: the lock has no `model_selections` member and a lock carrying one fails the V2 schema. | Test (TC-234) |
 
 ## Dependencies
 

@@ -26,13 +26,12 @@ stated. Value types `Count` and `Small` are declared in the package by
 artifacts `Count` and `Small`, bound as `Int[0,9]` and `Int[0,5]`, and each
 names a construct whose meaning is `quire.meaning.model.value-type/v1`; every
 object type's construct meaning is `quire.meaning.model.object-type/v1`. Effective type identities are TC-195 N02's:
-`A` = `4531dd9e` < `D` = `9425c80d` < `C` = `aa1ab053` < `B` = `c5264509` in
+`A` = `31300374` < `B` = `9b4eff2b` < `D` = `a2fe6396` < `C` = `f59dccff` in
 ascending digest order.
 
 Fixtures:
 
-- **G** (domain package `test/orders`, version `g`, ModelSelection digest the
-  SHA-256 of the UTF-8 bytes `g`): F2's types and supertypes; `Count`;
+- **G** (domain package `test/orders`, ModelSelection `{test/orders}`): F2's types and supertypes; `Count`;
   operation `A/size` with receiver `A`, `params: []`, `returns: {type: Count,
   multiplicity: {1,1}}` and `frame: {modifies: [], creates: [], deletes: []}`;
   and operation `B/size` with the same signature, receiver `B` and
@@ -105,7 +104,7 @@ No unfinished-stage refusal or validated package is exposed.
 | C10 | A dispatch link whose redefinition-family walk and effective-precondition walks together follow n distinct `redefines` edges (a linear chain of n edges, every edge followed once by the family walk and again by the precondition walk), `family_steps` n and n-1; then zero on a nonempty family | At n a linked table; at n-1 exactly incomplete(family_steps,n-1,n-1,1,model.family-edge) and no table or ambiguity result; at zero consumed0/next_charge1 and no followed edge; each distinct edge is charged once, so the chain's n edges count n, not 2n, and a re-followed edge is neither charged nor denied; never a depth; stage `model-normalization` |
 
 For **C05**, use a separate closed domain package `test/parent-chain`, version
-1.0.0, selected by its actual canonical content digest, with object types A, B, C;
+1.0.0, selected by identity and version, with object types A, B, C;
 B.supertypes=[A] and C.supertypes=[B]. Declare value-type scalars DA=Int[0,9],
 DB=Int[0,5] and DC=Int[0,3] (exact bounds encoded as decimal strings), each
 with the same value-type construct meaning as R08's Count and Small.

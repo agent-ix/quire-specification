@@ -5,6 +5,19 @@ checked packages. It is intentionally a schema-and-vector boundary, not a
 native Rust package API: QSL remains free to use internal parser/CST/package
 structures, but any external consumer receives only the contract.
 
+## Identity regeneration pending STD-583
+
+BLOCKED-BY STD-583 (owner: planner titan:QSL:plan): the `package_id`,
+`node_id`, root-key, effective-id and view hex values in the fixtures and
+vectors of this directory are kept only because each is a node or package
+identity input of a fixture that must keep validating; they regenerate when
+the structural identity lands. This PR adds no recompute or known-answer test.
+The same ticket owns the `byte-digest-mismatch` and `digest-domain-mismatch` causes of FR-323-AC-28 and TC-277 BP-03 and BP-04, which exist only for `RawSourceRef` / `quire.source.bytes/v1`, and the remaining digest machinery, which this PR does not
+remove: `package_id`, structural node keys, `quire.cache-key/v1`,
+`RawSourceRef` and `quire.source.bytes/v1`, definition digests, the library
+`package_id` binding, state keys, observation and protocol result digests,
+FR-331 state digests and the FR-201 identity-domain rows.
+
 ## Contract contents
 
 - `schema.json` defines the closed `quire.checked-package/v2` wire shape.
@@ -63,8 +76,7 @@ structures, but any external consumer receives only the contract.
   FR-441, TC-940). `domain-package-acme-shapes.json` is its selected document, a full FCD
   semantic IR 2.0.0 domain package (FR-322-AC-151; its tuple `positions` depend on IR-1059 / FCD tuple support) and
   `model-tuple-union-vectors.json` publishes its projection (`domain_package`, derived
-  from the document) and `selection_digest`, the RFC 8785 SHA-256 of the whole
-  document that the lock row pins, the declaration node keys, the application-node
+  from the document); the `model_root` node names the document by identity, the declaration node keys, the application-node
   key vectors and the family, position, member, union-value, enum-value,
   equality, identity, recursion, intake and wire cases the QSpec test runs over
   them; `node-identity-vectors.json` carries the keys
@@ -151,15 +163,13 @@ structures, but any external consumer receives only the contract.
   identity preimage's `dependency_selections`, and entry mutations the schema
   refuses: a `Selection` or `DefinitionRef` shape, a missing `package_id`, a
   bare-digest `package_id`, a `package_id` in another digest domain and an
-  extra `version` member. Its `model_selections` entry and
-  `model_entry_mutations` pin the same rule for a `ModelRef`: one carrying
-  `version` fails the schema at that entry and a reader refuses it
-  `unknown_member`. Its `order_vectors` pin FR-322's order rule: entries in UTF-8 byte
+  extra `version` member. A lock with a `model_selections` member fails the schema (a model is recorded by its `model_root` node only; FR-322).
+  Its `order_vectors` pin FR-322's order rule: entries in UTF-8 byte
   order (where UTF-16 order differs) are admitted, a repeated identity
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
   The members its top-level `schema_only` lists (`dependency_selections`,
-  `entry_mutations`, `model_selections`, `model_entry_mutations`,
+  `entry_mutations`,
   `order_vectors` and `supply_vectors`) carry placeholder `package_id` or
   digest values, or symbolic supply states, that name no admitted package:
   they exercise the schema, the order rule and the supply order only, and a
@@ -232,7 +242,7 @@ structures, but any external consumer receives only the contract.
   field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
   of the document `domain-package-acme-orders.json` is the `sha256-jcs` digest
-  the lock rows pin; `domain_package` is derived from it and not digested.
+  the `model_root` nodes name; `domain_package` is derived from it and not digested.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.

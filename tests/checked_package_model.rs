@@ -4,7 +4,6 @@
 //! Effective-declaration vector qualification.
 
 use ix_trace_rs::trace;
-use quire_verification_contracts::jcs_sha256;
 use serde_json::Value;
 use std::collections::BTreeSet;
 
@@ -17,14 +16,6 @@ const EFFECTIVE_DECLARATION_DOMAIN: &str = "quire.model.effective-declaration/v2
 
 fn parsed_fixture(bytes: &str) -> Value {
     serde_json::from_str(bytes).expect("authored fixture is valid JSON")
-}
-
-fn unqualified_jcs_sha256(value: &Value) -> String {
-    jcs_sha256(value)
-        .expect("authored preimage is canonicalizable")
-        .strip_prefix("sha256-jcs:")
-        .expect("canonicalizer retains its selected prefix")
-        .to_owned()
 }
 
 fn str_at<'a>(value: &'a Value, pointer: &str) -> &'a str {
@@ -55,73 +46,6 @@ fn reference_key(entry: &Value) -> (Vec<u8>, Vec<u8>, Vec<u8>) {
     )
 }
 
-#[trace("TC-195", "FR-150-AC-6")]
-#[test]
-fn tc_195_effective_declaration_vectors_recompute_their_digests() {
-    let file = parsed_fixture(EFFECTIVE_DECLARATION_VECTORS);
-    let vectors = file["vectors"].as_array().expect("vectors is an array");
-    let mut names = BTreeSet::new();
-    for vector in vectors {
-        let name = str_at(vector, "/name");
-        assert!(names.insert(name), "vector names are unique");
-        assert_eq!(
-            unqualified_jcs_sha256(&vector["preimage"]),
-            str_at(vector, "/sha256"),
-            "{name} digest is the JCS SHA-256 of its preimage"
-        );
-    }
-
-    let digests = vectors
-        .iter()
-        .map(|vector| str_at(vector, "/sha256"))
-        .collect::<BTreeSet<_>>();
-    for view in ["n01-view", "n02-view", "n01v2-view"] {
-        let vector = vectors
-            .iter()
-            .find(|vector| vector["name"].as_str() == Some(view))
-            .unwrap_or_else(|| panic!("{view} is published"));
-        let declarations = vector["preimage"]["declarations"]
-            .as_array()
-            .expect("view declarations are an array");
-        let mut previous: Option<&str> = None;
-        for declaration in declarations {
-            let effective_id = str_at(declaration, "/effective_id/digest");
-            assert_eq!(
-                str_at(declaration, "/effective_id/domain"),
-                EFFECTIVE_DECLARATION_DOMAIN
-            );
-            assert_eq!(
-                unqualified_jcs_sha256(&declaration["preimage"]),
-                effective_id,
-                "{view} entry identity is recomputed from its preimage"
-            );
-            assert!(
-                digests.contains(effective_id),
-                "{view} entry is a published declaration vector"
-            );
-            assert!(
-                previous < Some(effective_id),
-                "{view} declarations ascend strictly by effective identity"
-            );
-            previous = Some(effective_id);
-        }
-    }
-
-    for mutation in file["invalid_mutations"]
-        .as_array()
-        .expect("invalid mutations are an array")
-    {
-        let name = str_at(mutation, "/name");
-        let base_name = str_at(mutation, "/base");
-        let base = vector_named(vectors, base_name);
-        assert_eq!(
-            str_at(mutation, "/retained_sha256"),
-            str_at(base, "/sha256"),
-            "{name} retains exactly its base vector {base_name}'s digest"
-        );
-    }
-}
-
 /// Every inherit fact links to the one-edge parent it names: a type fact to
 /// the type of its direct supertype, a member fact to the same original
 /// member in that supertype. A qualify fact links nothing, and no two inherit
@@ -131,7 +55,7 @@ fn tc_195_effective_declaration_vectors_recompute_their_digests() {
 fn tc_195_inherit_links_name_one_edge_parents() {
     let file = parsed_fixture(EFFECTIVE_DECLARATION_VECTORS);
     let vectors = file["vectors"].as_array().expect("vectors is an array");
-    for view in ["n01-view", "n02-view", "n01v2-view"] {
+    for view in ["n01-view", "n02-view"] {
         let declarations = vector_named(vectors, view)["preimage"]["declarations"]
             .as_array()
             .expect("view declarations are an array");
@@ -238,13 +162,9 @@ fn tc_234_declaration_keys_name_the_domain_package_and_ir_node_only() {
             .unwrap_or_else(|error| panic!("{name} preimage is schema-valid: {error}"));
     }
 
-    for view in ["n01-view", "n02-view", "n01v2-view"] {
+    for view in ["n01-view", "n02-view"] {
         let preimage = &vector_named(vectors, view)["preimage"];
         let package = str_at(preimage, "/model_selection/identity");
-        assert_eq!(
-            str_at(preimage, "/model_selection/digest_domain"),
-            "sha256-jcs"
-        );
         for declaration in preimage["declarations"]
             .as_array()
             .expect("view declarations are an array")
@@ -267,29 +187,4 @@ fn tc_234_declaration_keys_name_the_domain_package_and_ir_node_only() {
         }
     }
 
-    let first = &vector_named(vectors, "n01-view")["preimage"];
-    let second = &vector_named(vectors, "n01v2-view")["preimage"];
-    assert_eq!(
-        first["model_selection"]["identity"], second["model_selection"]["identity"],
-        "both views select one domain package identity"
-    );
-    assert_eq!(
-        first["declarations"], second["declarations"],
-        "equal nodes under a new package digest keep every declaration key and effective declaration"
-    );
-    assert_ne!(
-        str_at(first, "/model_selection/digest"),
-        str_at(second, "/model_selection/digest"),
-        "the two documents are selected by different digests"
-    );
-    assert_ne!(
-        str_at(vector_named(vectors, "n01-view"), "/sha256"),
-        str_at(vector_named(vectors, "n01v2-view"), "/sha256"),
-        "the effective view binds the ModelSelection"
-    );
-    assert_ne!(
-        str_at(vector_named(vectors, "n01-universe"), "/sha256"),
-        str_at(vector_named(vectors, "n01v2-universe"), "/sha256"),
-        "the object universe binds the ModelSelection"
-    );
 }

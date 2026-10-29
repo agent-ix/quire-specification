@@ -65,7 +65,7 @@ object: entity
 flowchart TD
   A[Spec artifacts: object entity, domain, ...] --> X[quire-rs semantic extraction]
   X --> L[FCD extraction-frontend lift]
-  L --> D[Domain package: semantic IR, sha256-jcs]
+  L --> D[Domain package: semantic IR]
   D --> I[QSL model intake]
   I --> M[Internal structural model view and original inventory]
   M --> CF[Source resolution and checked-fact admission]
@@ -88,7 +88,7 @@ flowchart TD
    embeds each kind's construct with its Quire meaning id. The
    lowering is deterministic, serialized with RFC 8785 and fingerprinted with
    `sha256-jcs`.
-3. **Intake.** QSL admits a domain package by identity and `sha256-jcs` digest
+3. **Intake.** QSL admits the domain package supplied under a selected identity, records its identity in the package lock,
    and builds Quire model declarations from its IR nodes. It checks every model rule in
    this document. A domain package that fails a rule refuses with a located
    diagnostic that retains the node's IR identity and `origin`.
@@ -125,8 +125,10 @@ never evaluated or used as proof obligations.
 
 ## Language surface
 
-- A Quire package imports a domain package by identity and
-  `sha256-jcs` digest. The import is part of the package identity.
+- A Quire package imports a domain package by identity alone, as it imports a
+  library (FR-307). The package's `model_root` node records the
+  identity; the row is
+  part of the package identity and no digest of the document exists.
 - Clauses name domain types by qualified name over their IR node identity, for
   example `Orders::Order` for the artifact with id `Order`.
 - Native `record`, `enum` and `tuple` declarations remain the way to write value
@@ -140,12 +142,11 @@ dispatch sets, parts, ports, connections, allocations, operations and
 relationships. Ambiguous precedence or dispatch refuses at checking rather than
 selecting by source or registration order.
 
-An original declaration is keyed by (domain package identity, IR node identity,
-fixed digest domain `sha256-jcs`), not the selected content digest. The immutable
+An original declaration is keyed by (domain package identity, IR node identity); it carries no digest and no digest domain. The immutable
 selection inventory retains every original and its FCD origin; effective
 entries exist only where the selected normalization rules derive them.
 An effective declaration has its own `quire.model.effective-declaration/v2`
-identity over original keys, derivation facts and the identities of its direct parents. CheckedPackage `model_selections` name the domain
+identity over original keys, derivation facts and the identities of its direct parents. CheckedPackage `model_root` nodes name the domain
 package. Runtime subject references in observation and protocol records use
 these declaration keys.
 

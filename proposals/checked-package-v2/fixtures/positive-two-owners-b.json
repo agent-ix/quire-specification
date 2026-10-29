@@ -80,7 +80,6 @@
       },
       "role": "edition"
     },
-    "model_selections": [],
     "profile_selections": [],
     "required_features": [
       "quire.value.complete/v1"
@@ -154,7 +153,6 @@
       },
       "role": "edition"
     },
-    "model_selections": [],
     "profile_selections": [],
     "required_features": [
       "quire.value.complete/v1"
@@ -170,7 +168,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "89ff2500793b6175c18c3c9dbbfce205689b5ccaa9f0d29554e1305ae24db530",
+    "digest": "c8827de3f6ff1b43f07b3368007584e71d9e303f2d4a14a8a22c00cf79fc4269",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {

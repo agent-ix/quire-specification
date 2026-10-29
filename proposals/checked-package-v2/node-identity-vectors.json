@@ -113,8 +113,8 @@
     },
     {
       "name": "model-root-counter-cas",
-      "preimage": {"version":"quire.structural-node/v1","node_tag":"model","semantic_form":"model_root","semantic_type":null,"declaration":null,"recursion":null,"owner":{"kind":"model_root","identity":"example/counter-cas","digest":"0000000000000000000000000000000000000000000000000000000000000000"},"body":{"term":"aggregate","members":[]}},
-      "sha256": "d6ee4495e48811c9e3c7551c768cba73391f8bac1cd14c05bfff37c0af67f757"
+      "preimage": {"version":"quire.structural-node/v1","node_tag":"model","semantic_form":"model_root","semantic_type":null,"declaration":null,"recursion":null,"owner":{"kind":"model_root","identity":"example/counter-cas"},"body":{"term":"aggregate","members":[]}},
+      "sha256": "5e8d8f77e52fdeb4f1b12b7da7d6467d932c5ed8ce4926accf31935f28912547"
     },
     {
       "name": "model-tuple-value-type-pair",

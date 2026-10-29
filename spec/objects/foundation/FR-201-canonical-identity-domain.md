@@ -28,7 +28,7 @@ equality.
 | `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
 | `ir-semantic` | IR semantic digest. Includes its prescribed domain separation (FR-015-AC-2). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
-| `sha256-jcs` | Domain package digest. SHA-256 over the RFC 8785 canonical bytes of the semantic IR domain package lifted from spec artifacts. Every V2 model selection carries it, and every declaration key names it as its digest domain (AD-006). It is distinct from package and source digests. |
+| `sha256-jcs` | JCS digest. SHA-256 over RFC 8785 canonical bytes. No model selection row of a lock and no declaration key carries it (FR-154, FR-321, AD-006); its remaining users are those that name it in their own requirement. It is distinct from package and source digests. |
 | `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from every other identity/digest domain. |
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
 | `quire.checked-semantic-node/v1` | Checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |

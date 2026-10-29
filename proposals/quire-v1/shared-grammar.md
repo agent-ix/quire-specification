@@ -52,8 +52,10 @@ Decimal/exponent number forms may be recognized for an unsupported numeric-form
 diagnostic; recognition does not admit floating point. Numeric value/range
 checking follows syntax and the selected scalar domain.
 
-Common reserved words for this candidate fragment are `language`, `edition`,
-`profile`, `digest`, `model`, `using`, `predicate`, `Boolean`,
+`digest` and `version` are not reserved words: a `digest` or `version` after a
+`model` or `import` identity string is an ordinary token that the declaration does
+not admit (`invalid_syntax`/`unexpected-token`). Common reserved words for this candidate fragment are `language`, `edition`,
+`profile`, `model`, `using`, `predicate`, `Boolean`,
 `invariant`, `pre`, `post`, `on`, `at`, `current`, `let`, `in`, `if`, `then`,
 `else`, `implies`, `or`, `and`, `not`, `self`, `result`, `true`, `false`,
 `present`, `value`, `deref`, `size`, `contains`, `forall`, `exists`, `filter`,
@@ -108,7 +110,7 @@ composed-unit = header, profile, { profile }, { model },
                declaration, { declaration }, EOF ;
 header       = 'language', string, 'edition', string, ';' ;
 profile      = 'profile', ident, '=', string, ';' ;
-model        = 'model', ident, '=', string, 'digest', string, ';' ;
+model        = 'model', ident, '=', string, ';' ;
 model-name   = ident, '::', member-name ;
 type-name    = model-name ;
 operation-name = type-name, '::', member-name ;
@@ -266,15 +268,22 @@ the declarations that use its alias are admitted under that layer's
 admitted-form set (FR-001).
 
 A `model` declaration imports one domain package. Its string names the domain
-package identity, and `digest` is the
-`sha256-jcs` digest of the domain package: SHA-256 over the RFC 8785 canonical
-bytes of the semantic IR document lifted from the imported spec's artifacts
-([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)). The
-import is part of the package identity. Clauses name domain types by qualified
-name through the model alias, for example `Orders::Order` after
-`model Orders = "acme/orders" digest "…";`. A qualified name
+package identity and nothing else, as the string of an `import` names a library
+identity and nothing else (FR-307): a `model` carries no version and no digest,
+and any token after the identity string other than `;`, a `version` or `digest`
+token included, is `refused { code: invalid_syntax, cause: unexpected-token }`
+at that token; a `model` whose identity string is absent or is not a string is
+`refused { code: invalid_syntax, cause: unexpected-token }` at the offending
+token, or `unexpected-end` at the end of the source, and never drops the
+declaration silently. The resolver records the identity of the semantic
+IR document lifted from the imported spec's artifacts
+([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)) that is
+supplied under it by a `model_root` node (FR-154, FR-321); no digest or
+version of the document is recorded. Clauses name
+domain types by qualified name through the model alias, for example
+`Orders::Order` after `model Orders = "acme/orders";`. A qualified name
 resolves to one effective declaration key (domain package identity, IR node
-identity, `sha256-jcs`). A name absent from the domain package refuses. The
+identity). A name absent from the domain package refuses. The
 three-segment name `Orders::Tier::Gold` names the case `Gold` of the variant
 type `Tier` (the grammar is unchanged; resolution is in
 [model-complete](definitions/model-complete.md)).

@@ -12,8 +12,8 @@
     "Nonempty": {"type": "string", "minLength": 1},
     "Ordinal": {"type": "string", "pattern": "^(0|[1-9][0-9]*)$"},
     "EffectiveId": {"type": "object", "required": ["domain", "digest"], "properties": {"domain": {"const": "quire.model.effective-declaration/v2"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
-    "DomainPackageRef": {"type": "object", "required": ["identity", "digest_domain", "digest"], "properties": {"identity": {"$ref": "#/$defs/Nonempty"}, "digest_domain": {"const": "sha256-jcs"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},
-    "DeclarationKey": {"type": "object", "required": ["package", "node", "digest_domain"], "properties": {"package": {"$ref": "#/$defs/Nonempty"}, "node": {"$ref": "#/$defs/Nonempty"}, "digest_domain": {"const": "sha256-jcs"}}, "additionalProperties": false},
+    "DomainPackageRef": {"type": "object", "required": ["identity"], "properties": {"identity": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
+    "DeclarationKey": {"type": "object", "required": ["package", "node"], "properties": {"package": {"$ref": "#/$defs/Nonempty"}, "node": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
     "RuleRef": {"type": "object", "required": ["identity"], "properties": {"identity": {"enum": ["quire.model.normalize.qualify/v1", "quire.model.normalize.inherit/v2", "quire.model.normalize.subset/v2", "quire.model.normalize.redefine/v2"]}}, "additionalProperties": false},
     "Parent": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/EffectiveId"}]},
     "Fact": {"type": "object", "required": ["ordinal", "rule", "inputs", "parent"], "properties": {"ordinal": {"$ref": "#/$defs/Ordinal"}, "rule": {"$ref": "#/$defs/RuleRef"}, "inputs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/DeclarationKey"}}, "parent": {"$ref": "#/$defs/Parent"}}, "additionalProperties": false, "allOf": [

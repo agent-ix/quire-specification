@@ -589,21 +589,10 @@ fn read_wire(package: &Value, node: &Value) -> Value {
     }
 }
 
-/// FR-322 step 1's admission checks over one selection case.
+/// FR-322 step 1's admission checks over one selection case: the document
+/// supplied under the selected identity must declare that identity.
 fn select(package: &Value, case: &Value) -> Value {
-    let document_digest = digest(package);
-    let resolve = |value: &str| {
-        if value == "$document" {
-            document_digest.clone()
-        } else {
-            value.to_owned()
-        }
-    };
     let selection = &case["selection"];
-    if text(selection, "digest_domain") != "sha256-jcs" {
-        return refused("stale_dependency", "digest-domain-mismatch");
-    }
-    let selected = resolve(text(selection, "digest"));
     let supplied: BTreeMap<String, Value> = array(case, "supplied")
         .iter()
         .map(|entry| {
@@ -613,10 +602,10 @@ fn select(package: &Value, case: &Value) -> Value {
                     .pointer_mut(text(patch, "path"))
                     .expect("a patch names an existing member") = patch["value"].clone();
             }
-            (resolve(text(entry, "under")), document)
+            (text(entry, "under").to_owned(), document)
         })
         .collect();
-    let Some(document) = supplied.get(&selected) else {
+    let Some(document) = supplied.get(text(selection, "identity")) else {
         return refused("missing_import", "missing-selection");
     };
     if document["package"]["identity"] != selection["identity"] {
@@ -852,7 +841,7 @@ fn tc_280_text_value_type_members_carry_their_bounds_and_profile() {
 
 #[trace("TC-280", "FR-322-AC-32")]
 #[test]
-fn tc_280_selected_domain_package_documents_are_admitted_by_digest_key_and_identity() {
+fn tc_280_selected_domain_package_documents_are_admitted_by_identity() {
     let vectors = parsed(VECTORS);
     let cases = array(&vectors, "selection_cases");
     let causes: BTreeSet<_> = cases
@@ -862,7 +851,6 @@ fn tc_280_selected_domain_package_documents_are_admitted_by_digest_key_and_ident
     assert_eq!(
         causes,
         BTreeSet::from([
-            "digest-domain-mismatch",
             "missing-selection",
             "wrong-model-selection"
         ])
