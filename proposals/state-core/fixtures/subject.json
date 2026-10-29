@@ -23,7 +23,6 @@
   "source": {
     "identity": "ix://example/config/source/parent-order",
     "path": "parent-order.native",
-    "digest": "sha256:608c405fff29a5e9a399733a96a40ae21a78673c9aef43ba96b39ce318cb5f0c",
     "spanConvention": "utf8-half-open-scalar-column/0-draft",
     "expressionSpan": {
       "startByte": 234,
@@ -41,9 +40,7 @@
       "endByte": 325,
       "endLine": 7,
       "endColumn": 2
-    },
-    "clauseDigest": "sha256:a618c6964a05947d0fd871778e7f45eee2cd8127d3c1ec214e23fb5bdccba04c",
-    "expressionDigest": "sha256:ebcf1bdbce5746d74e77b7c1da5b7dbfbb236b6b6a1a12dd90543cce0d195e8a"
+    }
   },
   "anchor": {
     "kind": "invariant",
@@ -58,12 +55,10 @@
   },
   "reviewArtifacts": [
     {
-      "path": "parent-order.native",
-      "digest": "sha256:608c405fff29a5e9a399733a96a40ae21a78673c9aef43ba96b39ce318cb5f0c"
+      "path": "parent-order.native"
     },
     {
-      "path": "model-expectations.json",
-      "digest": "sha256:1d3bd08a990aea0d5603475d558fbef054f7e1d01a957bab83cf96b50d4b2e8d"
+      "path": "model-expectations.json"
     }
   ]
 }

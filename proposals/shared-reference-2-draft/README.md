@@ -14,11 +14,11 @@ these two forms only. Existing source-map and migration envelopes keep their
 1-draft selection; this amendment supplies no inferred migration, decoder
 fallback or general extension bag.
 
-An artifact value selects `ix.artifact-ref/3-draft`. Its six mandatory fields
-are refVersion, kind, authority, identity, digest and wire. Wire has exactly identity
+An artifact value selects `ix.artifact-ref/3-draft`. Its five mandatory fields
+are refVersion, kind, authority, identity and wire. Wire has exactly identity
 and version (nonempty strings). Authority and identity are nonempty strings.
-Digest is exactly `sha256:` plus 64 lowercase hexadecimal digits, hashing all
-supplied artifact bytes with no normalization. Every record is closed.
+The reference stores no byte digest; the supplied artifact is located by path.
+Every record is closed.
 
 The fourteen prior kinds remain: source, model-package, linked-package,
 executable-projection, property, binding, snapshot, invocation,
@@ -36,10 +36,9 @@ dependency-closure. The six additional kinds have these exact roles:
 
 The consumer selects its expected role explicitly. A structurally valid nearby
 kind is an identity-mismatch for that role. No generic-kind fallback is permitted.
-Artifact identity is the exact tuple of kind, authority, identity, digest and
+Artifact identity is the exact tuple of kind, authority, identity and
 wire under its selected refVersion. Equal bytes alone cannot join different
-roles. Supplied bytes whose digest differs from the reference's digest remain
-identity-content-conflict. Changing versions requires a separately accepted
+roles. Changing versions requires a separately accepted
 mapping; an amendment's existence is not that mapping.
 
 ## Semantic reference and JCS identity
@@ -48,8 +47,7 @@ A semantic value has exactly artifact, language, semanticProfile,
 requiredFeatures and canonicalIdentity, preserving the prior field meanings.
 All are required; only language, semanticProfile and canonicalIdentity may be
 null. A null profile requires null language/canonicalIdentity and no required
-features. A non-null profile has exactly identity, version and definitionDigest;
-the digest is an exact byte digest. A non-null language has identity and edition.
+features. A non-null profile has exactly identity and version. A non-null language has identity and edition.
 
 requiredFeatures is a duplicate-free decoded set of nonempty Unicode scalar
 strings. Producers order it by UTF-8 bytes; readers accept reordered unique sets
@@ -57,20 +55,20 @@ and reject duplicate decoded members before comparison. Unknown required feature
 refuse interpretation. This rule does not sort arrays inside the referenced
 artifact's canonical preimage.
 
-CanonicalIdentity has exactly domain, version, algorithm and digest, with these
-closed alternatives:
+CanonicalIdentity has exactly domain, version and algorithm, with these
+closed alternatives. It names the canonicalization a consumer applies; it stores
+no computed value, and the consumer derives the identity at run time.
 
-| Domain | Version | Algorithm | Digest syntax |
-| --- | --- | --- | --- |
-| quire.contract.canonical-json | v1 | sha256 | 64 lowercase hex digits |
-| quire.contract.bound-identity | v1 | sha256 | 64 lowercase hex digits |
-| quire.verification.jcs | rfc8785-v1 | sha256 | sha256-jcs: followed by 64 lowercase hex digits |
+| Domain | Version | Algorithm |
+| --- | --- | --- |
+| quire.contract.canonical-json | v1 | sha256 |
+| quire.contract.bound-identity | v1 | sha256 |
+| quire.verification.jcs | rfc8785-v1 | sha256 |
 
 The first two alternatives retain their existing algorithms, including their
 different preimages. The new alternative preserves B's existing
 `contracts::jcs_sha256`: SHA-256 over RFC 8785 canonical UTF-8 bytes of the
-qualified structured value; prepend `sha256-jcs:` to the digest text afterward.
-The prefix is not included in the hashed bytes. The semantic profile defines
+qualified structured value. The semantic profile defines
 which validated value is selected. A caller cannot strip arbitrary fields,
 canonicalize arbitrary IR/source bytes or infer equivalence from a digest alone.
 
@@ -81,27 +79,24 @@ contracts that cannot admit binary64 round trips need a different selected
 representation. These rules follow [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785.html#section-3);
 no RFC implementation or example corpus is copied here.
 
-A raw byte digest cannot be converted by changing its prefix. Even if an artifact
-already contains canonical bytes and the hexadecimal hash happens to agree,
-byte identity and semantic identity still have different checked obligations.
+Byte identity and semantic identity have different checked obligations.
 Unknown domain/version/algorithm selections refuse with
-unsupported-canonicalization before interpretation; malformed digest syntax is
-invalid-wire, and a validly shaped incorrect digest is identity-mismatch.
+unsupported-canonicalization before interpretation.
 
 ## Non-circular automated-core correspondence
 
-B's report profile selects the complete validated automated core before hashing.
+B's report profile selects the complete validated automated core before canonicalizing.
 Neither the external disposition nor the outer wrapper belongs to that preimage.
-The disposition contains the exact resulting sha256-jcs core digest, and its
-ArtifactRef uses review-disposition with a separate digest over its actual bytes.
-Attaching a disposition cannot change the sealed core or its digest. A changed
-core requires a new matching disposition. A foreign digest, byte-digest
-substitution or nearby artifact kind refuses correspondence.
+The disposition names its core by path and stores no digest; its ArtifactRef
+uses review-disposition. A consumer derives the core's JCS identity at run time.
+Attaching a disposition cannot change the sealed core or its derived identity. A
+changed core derives a different identity and requires a new matching
+disposition. A foreign core or nearby artifact kind refuses correspondence.
 
 B owns all report-core fields, validation, reviewer/procedure/provenance checks,
 missing-disposition incompleteness and final result policy. The fixture here uses
-an explicitly synthetic fixture profile to demonstrate the projection and hash
-rule without claiming to define B's report payload or record a real review.
+an explicitly synthetic fixture profile to demonstrate the projection and
+correspondence rule without claiming to define B's report payload or record a real review.
 B qualifies the same rule against its actual report schema under IT-003-SC-03.
 
 ## Qualification boundary

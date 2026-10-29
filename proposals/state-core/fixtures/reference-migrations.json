@@ -10,7 +10,6 @@
     "kind": "source",
     "authority": "agent-a-review-fixtures",
     "identity": "ix://example/config/source/parent-order",
-    "digest": "sha256:608c405fff29a5e9a399733a96a40ae21a78673c9aef43ba96b39ce318cb5f0c",
     "wire": {
       "identity": "ix.native.source",
       "version": "0-draft"
@@ -21,7 +20,6 @@
     "kind": "source",
     "authority": "agent-a-review-fixtures",
     "identity": "ix://example/config/source/parent-order",
-    "digest": "sha256:608c405fff29a5e9a399733a96a40ae21a78673c9aef43ba96b39ce318cb5f0c",
     "wire": {
       "identity": "ix.native.source",
       "version": "0-draft"
@@ -31,7 +29,6 @@
     "kind",
     "authority",
     "identity",
-    "digest",
     "wire"
   ],
   "changedFields": [

@@ -11,13 +11,12 @@ reviewed domain package under that identity; the resolver derives its digest int
 lock, and the source is unchanged.
 
 `subject.json` supplies concrete authored/profile/source identities to the
-verification owner. Its model binding is explicitly unavailable. Exact SHA-256
-values bind the source and model-expectation file bytes; the expression span
+verification owner. Its model binding is explicitly unavailable. The expression span
 selects the original body bytes after a non-ASCII comment. It carries no
-method/plan/result envelope and no fabricated linked/projection digest.
+method/plan/result envelope and no fabricated linked/projection identity.
 
 `operation-subjects.json` supplies pre/post subjects for `version-update.native`,
-including exact clause and expression digests/spans and a stable operation ID.
+including exact clause and expression spans and a stable operation ID.
 `invocation-cases.json` pairs those subjects with immutable snapshots, invocation
 identities, creation/deletion inventories and proposed frame bindings. A changed
 version number is permitted by the frame so its adverse case actually violates
@@ -41,12 +40,9 @@ Reproduce the fixture source-span checks from this directory:
 
 ```sh
 python3 - <<'PY'
-import hashlib, json
+import json
 from pathlib import Path
 s = json.loads(Path('subject.json').read_text())
-for entry in s['reviewArtifacts']:
-    raw = Path(entry['path']).read_bytes()
-    assert 'sha256:' + hashlib.sha256(raw).hexdigest() == entry['digest']
 raw = Path(s['source']['path']).read_bytes()
 span = s['source']['expressionSpan']
 actual = raw[span['startByte']:span['endByte']].decode('utf-8')
@@ -56,20 +52,20 @@ for prefix in ('start', 'end'):
     assert span[prefix + 'Line'] == before.count('\n') + 1
     assert span[prefix + 'Column'] == len(before.rsplit('\n', 1)[-1]) + 1
 assert s['modelBinding']['state'] == 'unavailable'
-assert 'linkedPackageDigest' not in s and 'projectionDigest' not in s
-print('fixture digests and source span verified; no compiler executed')
+assert 'linkedPackageIdentity' not in s and 'projectionIdentity' not in s
+print('fixture source span verified; no compiler executed')
 PY
 ```
 
 The same source checks apply to each `subjects` entry in
-`operation-subjects.json`. Each source also supplies `clauseSpan`/`clauseDigest`
-and `expressionSpan`/`expressionDigest`; both digests cover their exact original
+`operation-subjects.json`. Each source also supplies `clauseSpan`
+and `expressionSpan`; both cover their exact original
 byte ranges. The clause region starts at its introducer and ends after its
 closing brace, excluding the trailing line ending. The expression region
 excludes surrounding indentation and line endings.
 
 The expanded source subject uses fixture version `agent-a-source-subject/1-draft`.
-It adds clause-region and expression digests/spans to the earlier `0-draft`
+It adds clause-region and expression spans to the earlier `0-draft`
 fixture. A consumer must explicitly support this version; neither version is
 frozen or registered. Source-language edition and semantic profile remain
 unchanged. Old fixture bytes and their identities stay associated with their
@@ -80,22 +76,20 @@ parser, linker, evaluator, generated backend and clean-consumer execution.
 
 Operation fixtures now use `agent-a-invocation-cases/1-draft`. Each case selects
 one exact invocation file. That file binds case-scoped immutable pre/post
-observation files and one frame file using `artifactRef` with authority, identity,
-SHA-256 of exact file bytes, and explicit fixture profile.
-Expected outcomes remain outside invocation bytes. Changes to any selected frame
-or snapshot digest therefore change the invocation artifact bytes and digest.
+observation files and one frame file using `artifactRef` with authority, identity
+and explicit fixture profile.
+Expected outcomes remain outside invocation bytes.
 No fixture contains a claimed evaluator result/evidence identity.
 
 Snapshots, frames and invocation inputs each have one authoritative payload file;
 there is no second inline copy to synchronize. Paths locate local bytes and are
-not identity. Changed content under one authority and identity is a different reference,
-because the digest is part of the reference. These are review
+not identity. These are review
 profiles, not registered production wire contracts. Model/operation binding
 remains unavailable. The source-subject fixture version stays unchanged.
 
 `reference-cases.json` supplies the separate ArtifactRef and
 SemanticRef around the existing exact source fixture. Its semantic profile
-points to the actual private candidate `../profile.md` digest; it claims no
+names the private candidate `../profile.md`; it claims no
 canonical semantic identity or bound model. Positive/adverse mutations are
 review expectations for B/C's independent consumers. The older operation/source
 wrapper versions are preserved; no implicit version conversion is performed.
@@ -104,7 +98,7 @@ wrapper versions are preserved; no implicit version conversion is performed.
 under explicit abstract type/input hypotheses. They cover guarded definedness,
 snapshot capture, numeric bounds and units, negative division/remainder, sequence
 order/duplicates, identity/cycles, validation failures and work exhaustion. They
-bind the proposed rule document by its exact digest. They are not a domain
+name the proposed rule document by path. They are not a domain
 package, a complete runtime population, typechecker/evaluator output, or accepted
 extensions of the earlier profile. The native parser can check their expression
 syntax separately; it cannot establish their expected typing or logical results.

@@ -10,9 +10,8 @@ use std::io::Read;
 use std::path::{Component, Path};
 
 use ix_trace_rs::trace;
-use quire_verification_contracts::{jcs_canonicalize, jcs_sha256};
+use quire_verification_contracts::jcs_canonicalize;
 use serde_json::{Value, json};
-use sha2::{Digest, Sha256};
 
 const ROOT: &str = concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -303,7 +302,7 @@ fn validator() -> jsonschema::Validator {
 
 #[test]
 #[trace("IT-003-SC-01")]
-fn six_role_shapes_and_actual_bytes() {
+fn six_role_shapes_and_located_files() {
     let schema = validator();
     let legacy = intake(include_bytes!(
         "../proposals/state-core/schemas/shared-reference-1-draft.schema.json"
@@ -318,11 +317,10 @@ fn six_role_shapes_and_actual_bytes() {
         let envelope = &role["envelope"];
         schema.validate(envelope).expect("positive role shape");
         let name = role["file"].as_str().expect("fixture filename");
-        let actual = bytes(&format!("fixtures/{name}")).expect("fixture within the byte limit");
-        assert_eq!(
-            envelope["value"]["digest"],
-            format!("sha256:{:x}", Sha256::digest(actual))
-        );
+        bytes(&format!("fixtures/{name}")).expect("fixture within the byte limit");
+        let mut stored = envelope.clone();
+        stored["value"]["digest"] = json!("any");
+        assert!(!schema.is_valid(&stored), "a reference stores no digest");
         assert_eq!(envelope["value"]["kind"], role["expectedRole"]);
         assert!(observed.insert(role["expectedRole"].as_str().expect("role")));
         let mut previous = envelope.clone();
@@ -431,11 +429,15 @@ fn structural_negatives_and_semantic_boundary() {
         "quire.contract.bound-identity",
     ] {
         let mut candidate = semantic.clone();
-        candidate["value"]["canonicalIdentity"] = json!({"domain":domain,"version":"v1","algorithm":"sha256","digest":"0000000000000000000000000000000000000000000000000000000000000000"});
+        candidate["value"]["canonicalIdentity"] =
+            json!({"domain":domain,"version":"v1","algorithm":"sha256"});
         assert!(schema.is_valid(&candidate));
-        candidate["value"]["canonicalIdentity"]["digest"] =
-            semantic["value"]["canonicalIdentity"]["digest"].clone();
+        candidate["value"]["canonicalIdentity"]["version"] =
+            semantic["value"]["canonicalIdentity"]["version"].clone();
         assert!(!schema.is_valid(&candidate));
+        let mut stored = semantic.clone();
+        stored["value"]["canonicalIdentity"]["digest"] = json!("any");
+        assert!(!schema.is_valid(&stored), "an identity stores no digest");
     }
 }
 
@@ -456,10 +458,6 @@ fn independently_authored_canonical_bytes_match_b() {
             "{}",
             vector["id"]
         );
-        assert_eq!(
-            jcs_sha256(&input).expect("B digest"),
-            format!("sha256-jcs:{:x}", Sha256::digest(expected))
-        );
     }
     assert_eq!(
         jcs_canonicalize(&json!({"a":1,"b":2})).unwrap(),
@@ -473,41 +471,23 @@ fn independently_authored_canonical_bytes_match_b() {
 
 #[test]
 #[trace("IT-003-SC-02")]
-fn synthetic_core_is_the_non_circular_preimage() {
+fn synthetic_core_is_named_by_path_not_digest() {
     let core = fixture("core.json");
     jsonschema::validator_for(&fixture("core.schema.json"))
         .unwrap()
         .validate(&core)
         .unwrap();
     let semantic = fixture("semantic.json");
-    let digest = jcs_sha256(&core).expect("B core digest");
     assert_eq!(
-        digest,
-        "sha256-jcs:70a89fec8afa6a435d5a92f63ba9ce1d01e86b17791629bb788628ee7bfb81d5"
-    );
-    assert_eq!(semantic["value"]["canonicalIdentity"]["digest"], digest);
-    assert_eq!(
-        semantic["value"]["artifact"]["digest"],
-        format!(
-            "sha256:{:x}",
-            Sha256::digest(bytes("fixtures/core.json").expect("fixture within the byte limit"))
-        )
-    );
-    assert_eq!(
-        semantic["value"]["semanticProfile"]["definitionDigest"],
-        format!(
-            "sha256:{:x}",
-            Sha256::digest(bytes("fixtures/profile.json").expect("fixture within the byte limit"))
-        )
+        semantic["value"]["canonicalIdentity"]["domain"],
+        "quire.verification.jcs"
     );
     let disposition = fixture("review-disposition.json");
-    assert_eq!(disposition["coreDigest"], digest);
-    let wrapper = json!({"automatedCore":core,"disposition":disposition});
-    assert_eq!(jcs_sha256(&wrapper["automatedCore"]).unwrap(), digest);
-    assert_ne!(jcs_sha256(&wrapper).unwrap(), digest);
-    let mut changed = wrapper["automatedCore"].clone();
-    changed["reportId"] = json!("foreign-core");
-    assert_ne!(jcs_sha256(&changed).unwrap(), digest);
+    assert_eq!(disposition["core"], "core.json");
+    assert_eq!(
+        fixture(disposition["core"].as_str().expect("core path")),
+        core
+    );
 }
 
 #[test]

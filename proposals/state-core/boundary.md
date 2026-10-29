@@ -14,7 +14,7 @@ exports and transitive lock closure. Do not choose the first duplicate or a
 reachable but undeclared package. Reject
 missing, ambiguous, stale, foreign, ill-typed and unsupported definitions with
 both reference and available declaration loci. Stable declaration IDs survive
-display-name changes; their meaning and dependency digest may change and
+display-name changes; their meaning and dependencies may change and
 invalidate a checked package.
 
 The domain package IR distinguishes required/optional presence from nullable
@@ -30,26 +30,26 @@ the observed sample. Exact domain limits are reviewed model/profile data.
 |---|---|
 | Authored requirement/criterion | Package namespace, requirement ID, positive authored revision, clause ID; retained when a derived file changes |
 | Declaration | Stable semantic URI and containing package lock entry; field and operation IDs distinct from display names |
-| Source unit | Source ID, exact UTF-8 digest, local path, byte region and coordinate convention |
+| Source unit | Source ID, local path, byte region and coordinate convention |
 | Language | Language tag and edition, independent from implementation version |
 | Semantic profile | Explicit profile identifier/version and required feature set |
 | Wire | Exact wire schema/version; an unknown version refuses |
-| Canonicalization | Named domain and canonical byte algorithm; no cross-profile digest substitution |
+| Canonicalization | Named domain and canonical byte algorithm; no cross-profile identity substitution |
 | Linked package | Static source/profile/model dependency closure and declaration/obligation graph; excludes runtime populations |
 | Executable projection | Existing bound-package identity plus explicit frontend/source/model derivation lineage; optional per-feature projection |
 | Runtime object | Universe ID, stable type ID and object ID; immutable observations are separately identified |
-| Snapshot/invocation | Population digest, current/pre/post role, universe, completeness and operation/invocation correspondence |
-| Artifact/run | Actual byte digest and producer version; distinct run ID and environment binding owned by the execution layer |
+| Snapshot/invocation | Population identity, current/pre/post role, universe, completeness and operation/invocation correspondence |
+| Artifact/run | Producer version; distinct run ID and environment binding owned by the execution layer |
 
-A source unit is identified by its source ID and exact content digest. A
+A source unit is identified by its source ID. A
 requirement's positive authored revision maps explicitly to the IR requirement
 revision; a missing mapping refuses the executable projection.
 
 ## Source reference proposal
 
-Exactly one editable source per clause: inline bytes or a digest-bound local
+Exactly one editable source per clause: inline bytes or a local
 file region. An external path is not enough. No network fetching is implicit.
-Preserve the complete source document digest and clause-region digest. Source
+Preserve the complete source document and clause region. Source
 spans are zero-based half-open UTF-8 byte offsets; lines and columns are one-based,
 with columns counting Unicode scalar values. Reject split UTF-8 boundaries,
 reversed/out-of-range offsets, source identity mismatch and coordinate mismatch.
@@ -58,35 +58,30 @@ not a configurable display width. EOF zero-width spans are valid diagnostics.
 
 Existing extraction locations cover the fence, while a native parser diagnoses
 the body. The adapter must verify the extracted body against the original
-digest-bound document and construct an explicit body-to-document byte map. It
+document and construct an explicit body-to-document byte map. It
 must retain extraction availability and diagnostics. A normalized or indented
 body needs a segment map; arithmetic offset addition is valid only after exact
 byte correspondence has been established. The extractor remains opaque to the
 expression. Namespaced `ix:native` currently travels as an unchecked language;
 that is not a parser/typechecker pass.
 
-## Proposed digest rules and strict reading
-
-The proposed fixture byte digest is `sha256:` plus lowercase SHA-256 of the
-exact named file bytes. It is a transport integrity binding, not a semantic
-canonical digest. No dummy digest represents verified content.
+## Linked identity and strict reading
 
 The future linked identity needs its own named canonical profile covering
 edition, semantic profile, required features, resolved declarations/obligations
 and exact static dependency closure. Source provenance and implementation
-lineage remain explicit even when a source-free expression digest is unchanged.
+lineage remain explicit even when the source-free expression is unchanged.
 Do not change existing `quire.contract.bound-identity/v1` or existing canonical
 profile bytes to accommodate a new source language. A migration reports old
 and new identities, mapping version and preserved/refused obligations; old
 evidence stays addressed to its original subject.
 
 Production readers must reject duplicate JSON keys before creating maps,
-unknown versions, unknown required features, unexpected closed-record members,
-digest mismatch and malformed source maps. Optional extensions need a named
+unknown versions, unknown required features, unexpected closed-record members
+and malformed source maps. Optional extensions need a named
 container and explicit nonsemantic treatment; they cannot alter meaning while
 claiming compatibility. Canonical encoding and an independently implemented
-strict consumer remain interchange acceptance work; raw-file digest checks do not
-complete them.
+strict consumer remain interchange acceptance work.
 
 ## Diagnostic boundary
 
@@ -121,27 +116,24 @@ after these checks succeed. If several known defects exist, retain deterministic
 diagnostics ordered by phase, source locus and code; no defect yields a Boolean
 result. The mutation cases isolate individual defects where practical.
 
-## Byte-bound operation review artifacts
+## Local operation review artifacts
 
 The amended operation fixture uses a local reference wrapper with `path` and
 `artifactRef`. The artifact reference has exactly the common dimensions under
-review with the verification owner: `authority`, `identity`, `digest` and
+review with the verification owner: `authority`, `identity` and
 `profile`. `profile` identifies the fixture encoding, independently of the
-language semantic profile. `digest` binds exact named file bytes. The path only
-locates those bytes.
+language semantic profile. The path locates the named file.
 
 Each invocation binds one immutable pre/post observation per available role and
 one exact frame contract. Populations and frame data live once in separate files;
 expected outcomes live outside invocation inputs. Case-scoped invocation and
 observation IDs remove accidental identity reuse across independent examples.
-The digest is part of the reference: changed content is a different reference,
-and an authority/identity/digest already bound to one profile cannot be rebound
-to another.
-Changing a selected frame or population reference changes the invocation bytes
-and digest, so downstream evidence must bind the new exact invocation artifact.
+An authority/identity already bound to one profile cannot be rebound to another.
+Changing a selected frame or population reference selects a different invocation
+artifact, so downstream evidence must bind the new invocation artifact.
 
 These are concrete `1-draft` review fixtures, not a registered FS05 schema or an
 accepted generic artifact resolver. Model/operation binding is still unavailable.
-The producer audit tests byte integrity and identity conflict refusal separately
+The producer audit tests identity conflict refusal separately
 from the manually expected predicate/frame/observation outcomes. Independent
 consumer qualification remains C's work; the portable result envelope remains B's.

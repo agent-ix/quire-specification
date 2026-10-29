@@ -3,9 +3,9 @@
 Status: proposed elaboration, `agent-a-fs03/1-draft`, for review against the
 approved implementation target in `profile.md`. This is not an implemented
 evaluator or an accepted addition to that profile. The profile file and all
-earlier fixture bytes retain their current digests. Accepting these refinements
+earlier fixtures are unchanged. Accepting these refinements
 requires a versioned profile-definition artifact and explicit reference
-adoption under FS02/FS05; a digest of the earlier profile file cannot silently
+adoption under FS02/FS05; the earlier profile file cannot silently
 cover a later semantic amendment.
 
 The accompanying `fixtures/typing-cases.json` contains independently authored

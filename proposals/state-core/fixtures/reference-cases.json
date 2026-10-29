@@ -10,7 +10,6 @@
       "kind": "source",
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/source/parent-order",
-      "digest": "sha256:608c405fff29a5e9a399733a96a40ae21a78673c9aef43ba96b39ce318cb5f0c",
       "wire": {
         "identity": "ix.native.source",
         "version": "0-draft"
@@ -22,8 +21,7 @@
     },
     "semanticProfile": {
       "identity": "state-finite",
-      "version": "0-draft",
-      "definitionDigest": "sha256:c9bf08f925104499f3a4a983e8a788ad5df9076f5331061a53d778f1e8fad6c6"
+      "version": "0-draft"
     },
     "requiredFeatures": [
       "bounded-integer",
@@ -102,14 +100,6 @@
         "value": "snapshot"
       },
       "expected": "identity_mismatch"
-    },
-    {
-      "id": "altered-byte-digest",
-      "mutation": {
-        "path": "artifact.digest",
-        "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
-      },
-      "expected": "digest_mismatch"
     },
     {
       "id": "duplicate-required-feature",
