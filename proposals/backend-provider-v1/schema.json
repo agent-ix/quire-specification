@@ -220,6 +220,7 @@
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"const": "temporal-satisfaction"}}}}}}, "else": {"not": {"required": ["dynamics"]}}},
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"const": "temporal-satisfaction"}}}}}}, "else": {"not": {"required": ["state_graph_forms"]}}},
         {"description": "FR-193 Routing a hybrid item: a backend that decides hybrid items publishes both hybrid solver budget defaults.", "if": {"required": ["dynamics"], "properties": {"dynamics": {"contains": {"const": "hybrid"}}}}, "then": {"required": ["bounds"], "properties": {"bounds": {"required": ["max_solver_steps", "max_solver_time"]}}}},
+        {"description": "FR-483: a backend that decides value-validity or operation-contract items publishes the default case budget max_cases, a positive count; an item without check.limits.max_cases takes it and there is no unlimited fallback.", "if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"enum": ["value-validity", "operation-contract"]}}, "required": ["kind"]}}}}, "then": {"required": ["bounds"], "properties": {"bounds": {"required": ["max_cases"], "properties": {"max_cases": {"$ref": "#/$defs/PositiveCount"}}}}}},
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"mode": {"const": "bounded"}}, "required": ["mode"]}}}}, "then": {"required": ["domains"]}}
       ],
       "additionalProperties": false
@@ -256,12 +257,14 @@
         "temporal": {"$ref": "#/$defs/Temporal"},
         "probabilistic": {"$ref": "#/$defs/Probabilistic"},
         "requirements": {"description": "FR-193 Routing a hybrid item, FR-290: the item's routing requirements; hybrid-dynamics on the item of every hybrid claim. Part of request identity (FR-306).", "type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["hybrid-dynamics"]}},
-        "hybrid": {"$ref": "#/$defs/Hybrid"}
+        "hybrid": {"$ref": "#/$defs/Hybrid"},
+        "check": {"$ref": "#/$defs/Check"}
       },
       "allOf": [
         {"description": "FR-368 Extent and domains of a derived or refinement item: unbounded, with an infinite-trace domain. That the domain's node is the claim's node is a producer obligation.", "if": {"properties": {"temporal": {"properties": {"item_kind": {"enum": ["deadlock-freedom", "time-lock-freedom", "race-freedom", "refinement"]}}, "required": ["item_kind"]}}, "required": ["temporal"]}, "then": {"properties": {"extent": {"properties": {"classification": {"const": "unbounded"}, "domains": {"contains": {"properties": {"kind": {"const": "infinite-trace"}}, "required": ["kind"]}}}}}}},
         {"description": "FR-193: requirements belong to a temporal-satisfaction item only.", "if": {"required": ["requirements"]}, "then": {"required": ["kind"], "properties": {"kind": {"const": "temporal-satisfaction"}}}},
-        {"description": "FR-193: an item carrying hybrid solver budgets carries the hybrid-dynamics requirement.", "if": {"required": ["hybrid"]}, "then": {"required": ["requirements"], "properties": {"requirements": {"contains": {"const": "hybrid-dynamics"}}}}}
+        {"description": "FR-193: an item carrying hybrid solver budgets carries the hybrid-dynamics requirement.", "if": {"required": ["hybrid"]}, "then": {"required": ["requirements"], "properties": {"requirements": {"contains": {"const": "hybrid-dynamics"}}}}},
+        {"description": "FR-483: the case budget belongs to a value-validity or operation-contract item only.", "if": {"required": ["check"]}, "then": {"required": ["kind"], "properties": {"kind": {"enum": ["value-validity", "operation-contract"]}}}}
       ],
       "additionalProperties": false
     },
@@ -446,6 +449,20 @@
         {"properties": {"type": {"enum": ["okamoto", "sprt", "clopper-pearson"]}}, "required": ["type"], "additionalProperties": false},
         {"properties": {"type": {"const": "regenerative"}, "min_cycles": {"$ref": "#/$defs/PositiveCount"}}, "required": ["type", "min_cycles"], "additionalProperties": false}
       ]
+    },
+    "Check": {
+      "description": "FR-483, FR-461: the case budget of a value-validity or operation-contract check arm. max_cases is part of request identity (FR-331).",
+      "type": "object",
+      "required": ["limits"],
+      "properties": {
+        "limits": {
+          "type": "object",
+          "required": ["max_cases"],
+          "properties": {"max_cases": {"$ref": "#/$defs/PositiveCount"}},
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     },
     "Hybrid": {
       "description": "FR-331, FR-193, FR-461: the limits of a hybrid item. max_solver_steps is a count of the provider's solver steps; max_solver_time is whole seconds of wall-clock time and is outside request identity (FR-306).",
@@ -704,8 +721,72 @@
         {"$ref": "#/$defs/ProbabilisticCounterexample"},
         {"$ref": "#/$defs/GraphEvidence"},
         {"$ref": "#/$defs/HyperCounterexample"},
-        {"$ref": "#/$defs/HybridCounterexample"}
+        {"$ref": "#/$defs/HybridCounterexample"},
+        {"$ref": "#/$defs/ContractCounterexample"}
       ]
+    },
+    "ContractCounterexample": {
+      "description": "FR-485 Counterexample: an operation-contract refutation; per execution its pre-state, arguments, result and post-state, replayed with no reachability prefix.",
+      "type": "object",
+      "required": ["type", "obligation", "violated", "bound", "executions"],
+      "properties": {
+        "type": {"const": "contract-counterexample"},
+        "obligation": {"enum": ["initial-state", "preservation", "definedness", "postcondition", "frame", "relation", "simulation-initial", "simulation-step"]},
+        "violated": {"$ref": "#/$defs/Locus"},
+        "bound": {"description": "FR-485: true when the oracle is a bound implementation, which every execution then records in concrete.", "type": "boolean"},
+        "executions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["operation", "pre_state", "arguments", "result", "post_state"],
+            "properties": {
+              "operation": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/NodeId"}]},
+              "pre_state": {"$ref": "#/$defs/TypedValue"},
+              "arguments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["parameter", "value"],
+                  "properties": {"parameter": {"$ref": "#/$defs/NodeId"}, "value": {"$ref": "#/$defs/TypedValue"}},
+                  "additionalProperties": false
+                }
+              },
+              "result": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
+              "post_state": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
+              "concrete": {
+                "description": "FR-485 Replay: the implementation state representations the bound implementation was run on and produced; pre_state, arguments, result and post_state above are their abstraction images.",
+                "type": "object",
+                "required": ["pre_state", "arguments", "result", "post_state"],
+                "properties": {
+                  "pre_state": {"$ref": "#/$defs/TypedValue"},
+                  "arguments": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["parameter", "value"],
+                      "properties": {"parameter": {"$ref": "#/$defs/NodeId"}, "value": {"$ref": "#/$defs/TypedValue"}},
+                      "additionalProperties": false
+                    }
+                  },
+                  "result": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]},
+                  "post_state": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/TypedValue"}]}
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "allOf": [
+        {"description": "FR-485 Counterexample: an initial-state or simulation-initial violation is one execution with no operation.", "if": {"properties": {"obligation": {"enum": ["initial-state", "simulation-initial"]}}}, "then": {"properties": {"executions": {"minItems": 1, "maxItems": 1, "items": {"properties": {"operation": {"type": "null"}}}}}}},
+        {"description": "FR-485 Counterexample: a relation violation names at least two executions, each of an operation.", "if": {"properties": {"obligation": {"const": "relation"}}}, "then": {"properties": {"executions": {"minItems": 2, "items": {"properties": {"operation": {"$ref": "#/$defs/NodeId"}}}}}}},
+        {"description": "FR-485 Counterexample: every other obligation is one execution of an operation.", "if": {"properties": {"obligation": {"enum": ["preservation", "definedness", "postcondition", "frame", "simulation-step"]}}}, "then": {"properties": {"executions": {"minItems": 1, "maxItems": 1, "items": {"properties": {"operation": {"$ref": "#/$defs/NodeId"}}}}}}},
+        {"if": {"properties": {"bound": {"const": true}}}, "then": {"properties": {"executions": {"items": {"required": ["concrete"]}}}}},
+        {"if": {"properties": {"bound": {"const": false}}}, "then": {"properties": {"executions": {"items": {"not": {"required": ["concrete"]}}}}}}
+      ],
+      "additionalProperties": false
     },
     "CounterexampleEntry": {
       "description": "FR-331, QSL ADR-013 O-25: names exactly one of the transcript's artifacts entry or the canonical counterexample; backend and request_index are the originating run identity.",

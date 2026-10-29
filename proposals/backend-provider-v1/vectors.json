@@ -63,6 +63,7 @@
               "population"
             ],
             "bounds": {
+              "max_cases": 10000,
               "max_input_bytes": 1048576,
               "max_objects": 64,
               "max_references": 256
@@ -120,6 +121,7 @@
               "population"
             ],
             "bounds": {
+              "max_cases": 10000,
               "max_input_bytes": 1048576,
               "max_objects": 64,
               "max_references": 256
@@ -250,7 +252,10 @@
               "integer",
               "population",
               "recursive"
-            ]
+            ],
+            "bounds": {
+              "max_cases": 10000
+            }
           }
         ],
         "request": {
@@ -6035,7 +6040,10 @@
                 "kind": "value-validity",
                 "mode": "bounded"
               }
-            ]
+            ],
+            "bounds": {
+              "max_cases": 10000
+            }
           }
         }
       ]

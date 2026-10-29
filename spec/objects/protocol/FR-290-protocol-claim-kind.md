@@ -32,6 +32,12 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-390
     type: references
+  - target: ix://agent-ix/quire-specification/FR-483
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-484
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-485
+    type: references
 ---
 # FR-290: Capability kind vocabulary
 
@@ -162,6 +168,15 @@ Unbounded quantification (FR-346), induction (FR-347), compositional discharge
 and the hyperproperty and step-relation forms (FR-396) are obligation forms
 inside a claim that has one kind from this table. The selected backend's negotiation arm
 settles the obligation forms it discharges.
+
+## Check arm
+
+After negotiation settles an item `supported`, the candidate's check arm
+decides the claim. [FR-483](../../functional/ir-proof/FR-483-settle-backend-items-at-the-check-arm.md)
+states the outcomes, evidence and refusals of the arm for `value-validity` and
+`operation-contract` items, [FR-484](../../functional/ir-proof/FR-484-check-value-validity-items.md)
+the input mapping of the first kind and [FR-485](../../functional/ir-proof/FR-485-check-operation-contract-items.md)
+that of the second.
 
 ## Advertised mode
 
