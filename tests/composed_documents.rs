@@ -68,15 +68,8 @@ fn a_composed_document_declares_no_node_and_an_object_type_declares_one() {
         let declares = document["declares_node"].as_bool().expect("flag");
         assert_eq!(lifted.is_some(), declares, "{case}");
         if declares {
-            assert_eq!(
-                lifted.as_deref(),
-                Some(text(document, "node_identity")),
-                "{case}"
-            );
-            assert!(
-                is_object_id(name_segment(&lifted.unwrap(), package)),
-                "{case}"
-            );
+            assert_eq!(lifted.as_deref(), Some(text(document, "node_identity")), "{case}");
+            assert!(is_object_id(name_segment(&lifted.unwrap(), package)), "{case}");
         }
     }
 }
@@ -88,14 +81,9 @@ fn no_document_of_an_artifact_type_is_lifted_and_no_lifted_name_has_a_hyphen() {
     let package = text(&v, "package_identity");
     let types = object_types(&v);
     let docs = array(&v, "documents");
-    let all: Vec<String> = docs
-        .iter()
-        .filter_map(|d| lifted_identity(d, package, &types))
-        .collect();
-    for document in docs
-        .iter()
-        .filter(|d| lifted_identity(d, package, &types).is_none())
-    {
+    let all: Vec<String> =
+        docs.iter().filter_map(|d| lifted_identity(d, package, &types)).collect();
+    for document in docs.iter().filter(|d| lifted_identity(d, package, &types).is_none()) {
         let id = format!("ix://{package}/{}", text(document, "id"));
         assert!(!all.contains(&id), "{}", text(document, "case"));
     }

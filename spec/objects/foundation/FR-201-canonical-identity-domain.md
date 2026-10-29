@@ -27,11 +27,9 @@ equality.
 | `ir-canonical` | Existing contract-IR canonical identity. Retains its original bare-hex syntax and algorithm; it does not adopt the JCS prefix or canonicalization (FR-018-AC-6). |
 | `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
 | `ir-semantic` | IR semantic digest. Includes its prescribed domain separation (FR-015-AC-2). |
-| `package-fingerprint` | Package fingerprint. A lock-file digest cannot substitute for it (FR-015-AC-3). |
-| `lock-file-digest` | Lock-file digest. Cannot substitute for `package-fingerprint` (FR-015-AC-3). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
 | `sha256-jcs` | Domain package digest. SHA-256 over the RFC 8785 canonical bytes of the semantic IR domain package lifted from spec artifacts. Every V2 model selection carries it, and every declaration key names it as its digest domain (AD-006). It is distinct from package and source digests. |
-| `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from package archive and lock-file bytes and from every other identity/digest domain. |
+| `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from every other identity/digest domain. |
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
 | `quire.checked-semantic-node/v1` | Checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
 | `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
@@ -86,14 +84,6 @@ Three requirements independently state what is inside the preimage under the
 This artifact records all three. It does not reconcile them; the selection of a
 preimage belongs to the requirement that selects it.
 
-## Definition bytes by reference
-
-The `quire_specification` library of this repository's Rust package exposes
-`COMPLETE_VALUE_SELECTION_VECTORS` and `NATIVE_DIAGNOSTICS`: the exact bytes of
-the package-selection vectors `complete-value-selection-vectors.json` and
-`proposals/quire-v1/definitions/native-diagnostics.md`.
-A consumer reads them instead of holding a copy.
-
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -101,8 +91,8 @@ A consumer reads them instead of holding a copy.
 | FR-201-AC-1 | Each member's value equals the exact label string in the table, and an underscored spelling does not match a hyphenated one. | Inspection |
 | FR-201-AC-2 | Two identities with equal digest bytes and different domain labels compare unequal. | Analysis |
 | FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
-| FR-201-AC-4 | A lock-file digest does not satisfy a comparison expecting a package fingerprint. | Analysis |
-| FR-201-AC-7 | The `quire_specification` library's `COMPLETE_VALUE_SELECTION_VECTORS` and `NATIVE_DIAGNOSTICS` equal the exact bytes of `complete-value-selection-vectors.json` and `native-diagnostics.md`. | Test (TC-233) |
+| FR-201-AC-4 | Withdrawn: the lock-file digest and package fingerprint domains are removed. | Withdrawn |
+| FR-201-AC-7 | Withdrawn: the byte-equality test of the exposed constants against their files is removed. | Withdrawn |
 | FR-201-AC-8 | A `quire.cache-key/v1` key computed over the same cached operation, `package_id`, canonical request, `BackendId`, `ManifestDigest` and generation target equals one computed by a second conformer that derives the `ManifestDigest` from the same descriptor independently, and compares unequal to a digest with equal bytes in any other domain. | Test (TC-226) |
 | FR-201-AC-9 | Package selection is exact under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`, and each accepted and refused selection vector is admitted or refused with exactly its recorded selection code. | Test (TC-233) |
 | FR-201-AC-10 | Two obligations of one clause, application, function, parity claim, function-value parity claim or per-step record whose records differ only in a member outside the preimage (`source_span`, a resource ceiling, an embedded oracle, a symbol, the subject path, the results, the solver, `unwind` or an option) have equal `quire.ir-proof.obligation-identity/v1` digests; changing the subject node id, the occurrence key's `role` or `ordinal`, the obligation kind, one argument's parameter node id or declared domain (for a parity claim, an operand, its position or its domain, an inline literal's value included; for a function-value parity claim, a parameter node id, its position or its declared type node) or a per-step record member gives a different digest; the per-step digest is unchanged by its occurrence key; and the digest compares unequal to a digest with equal bytes in any other domain. | Test (TC-952) |
@@ -122,12 +112,6 @@ A consumer reads them instead of holding a copy.
   [FR-196](../../functional/ir-proof/FR-196-generate-kani-contracts.md) and
   [FR-197](../../functional/ir-proof/FR-197-replay-backend-counterexamples.md)
   generate and replay the obligations it identifies.
-
-## Resolved domain boundary
-
-`package-fingerprint` is a Quire package identifier. `sha256-jcs` identifies a
-domain package. They are separate domains and never compare equal, even when
-digest bytes match. Neither may substitute for the other.
 
 ## Status
 

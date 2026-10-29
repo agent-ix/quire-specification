@@ -22,34 +22,22 @@ fn markdown_files(dir: &Path, out: &mut Vec<std::path::PathBuf>) {
 fn duplicates(text: &str) -> Vec<String> {
     let mut seen: BTreeMap<&str, usize> = BTreeMap::new();
     for line in text.lines() {
-        let Some(rest) = line.strip_prefix("| ") else {
-            continue;
-        };
-        let Some((id, _)) = rest.split_once(" |") else {
-            continue;
-        };
+        let Some(rest) = line.strip_prefix("| ") else { continue };
+        let Some((id, _)) = rest.split_once(" |") else { continue };
         let mut parts = id.split("-AC-");
-        let (Some(head), Some(number), None) = (parts.next(), parts.next(), parts.next()) else {
-            continue;
-        };
+        let (Some(head), Some(number), None) = (parts.next(), parts.next(), parts.next()) else { continue };
         if head.contains(' ') || number.is_empty() || !number.bytes().all(|b| b.is_ascii_digit()) {
             continue;
         }
         *seen.entry(id).or_default() += 1;
     }
-    seen.into_iter()
-        .filter(|(_, n)| *n > 1)
-        .map(|(id, _)| id.to_owned())
-        .collect()
+    seen.into_iter().filter(|(_, n)| *n > 1).map(|(id, _)| id.to_owned()).collect()
 }
 
 #[test]
 fn no_requirement_file_repeats_an_acceptance_criterion_id() {
     let mut files = Vec::new();
-    markdown_files(
-        &Path::new(env!("CARGO_MANIFEST_DIR")).join("spec"),
-        &mut files,
-    );
+    markdown_files(&Path::new(env!("CARGO_MANIFEST_DIR")).join("spec"), &mut files);
     assert!(files.len() > 100, "the spec tree was found");
     let mut repeated = Vec::new();
     for file in files {

@@ -304,12 +304,7 @@ fn unit_element_type(package: &Value, name: &str) -> Option<Value> {
         .iter()
         .any(|unit| {
             unit.as_array().is_some_and(|segments| {
-                segments
-                    .iter()
-                    .filter_map(Value::as_str)
-                    .collect::<Vec<_>>()
-                    .join("/")
-                    == name
+                segments.iter().filter_map(Value::as_str).collect::<Vec<_>>().join("/") == name
             })
         })
         .then(|| json!({"type": "Quantity", "unit": name}))
@@ -837,11 +832,7 @@ fn tc_280_rational_decimal_and_bare_text_members_have_no_type() {
         "the result control resolves"
     );
     assert_eq!(
-        retyped(
-            &scaled,
-            "ix://quire/native/Boolean",
-            Some(json!({"type": "Boolean"}))
-        ),
+        retyped(&scaled, "ix://quire/native/Boolean", Some(json!({"type": "Boolean"}))),
         json!({"resolves": "ix://acme/orders/Order/scaled", "member_type": {"type": "Integer"}}),
         "the parameter control resolves"
     );
