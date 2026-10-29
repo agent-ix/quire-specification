@@ -29,6 +29,8 @@ The harness checks the shape of every `contract-counterexample` against the sche
 
 The provider's own tests SHALL cover the criteria that need a real contract evaluator, through the real local Rust boundary: FR-485-AC-2 and FR-485-AC-3 (invariant initial-state and preservation over declared types), FR-485-AC-4 (definedness of an unbound clause), FR-485-AC-5 (a bound postcondition over every implementation outcome), FR-485-AC-6 (a bound frame write outside `modifies`), FR-485-AC-8 (the step relation and the determinism counterexample), FR-485-AC-10 (replay with the real contract evaluator and the real bound implementation; the harness here replays only the vector models) and FR-485-AC-11 (a violation visible in `concrete` alone). This repository qualifies the contract through the vectors.
 
+The harness-only item member `refinement_step_simulable` of OC-23 and OC-24 stands for the arm's own derivation: it is `false` when the refinement node the claim names declares a hidden field, a history field or an `any` row ([FR-468](../functional/analysis/FR-468-certify-per-step-refinement-obligations.md) "The queries", FR-468-AC-1; [FR-377](../functional/analysis/FR-377-decide-model-refinement.md) "Engines"), and the arm settles the item before any check. OC-16 is the positive half of FR-485-AC-14: the same form over a refinement with none of the three is checked and refuted.
+
 ## Vectors
 
 | Vector | Input | Expected result | Criteria |
@@ -48,13 +50,15 @@ The provider's own tests SHALL cover the criteria that need a real contract eval
 | OC-13 | step relation over invariants no state satisfies: kind `operation-contract`, form `step-relation` | `supported`; arm outcome `unknown`, result `inconclusive`, cause `kani_vacuous_proof` | FR-485-AC-8 |
 | OC-14 | determinism relation: two executions, no reachability prefix: kind `operation-contract`, form `step-relation` | `supported`; arm outcome `violation`, result `refuted` | FR-485-AC-8, FR-485-AC-10 |
 | OC-15 | simulation initial rule is ordinal 0: kind `operation-contract`, form `simulation` | `supported`; arm outcome `violation`, result `refuted` | FR-485-AC-9 |
-| OC-16 | simulation step row 1 is ordinal 2, refuted and never inconclusive: kind `operation-contract`, form `simulation` | `supported`; arm outcome `violation`, result `refuted` | FR-485-AC-9 |
+| OC-16 | simulation step row 1 is ordinal 2, refuted and never inconclusive: kind `operation-contract`, form `simulation` | `supported`; arm outcome `violation`, result `refuted` | FR-485-AC-9, FR-485-AC-14 |
 | OC-17 | unbounded population root meets a bounded-only candidate: kind `operation-contract`, form `simulation` | `requires-bound`; no result entry | FR-485-AC-12, FR-483-AC-6 |
 | OC-18 | the same item with a cardinality bound on the population: kind `operation-contract`, form `simulation` | `supported`; arm outcome `supported`, result `proved`, basis `exhaustive`, `uncertified` | FR-485-AC-12 |
 | OC-19 | candidate counterexample does not replay: kind `operation-contract`, form `clause` | `supported`; arm outcome `unknown`, result `inconclusive`, cause `replay-parity` | FR-485-AC-10, FR-483-AC-3 |
 | OC-20 | bound candidate whose concrete outcome the implementation does not produce: kind `operation-contract`, form `clause` | `supported`; arm outcome `unknown`, result `inconclusive`, cause `replay-parity` | FR-485-AC-10, FR-485-AC-5, FR-483-AC-3 |
 | OC-21 | reader with no implementation engine receives a bound counterexample: kind `operation-contract`, form `clause` | `supported`; arm outcome `unknown`, result `inconclusive`, cause `replay-refused` | FR-485-AC-13, FR-483-AC-3 |
 | OC-22 | the same bound counterexample with an implementation engine is replayed and reproduced: kind `operation-contract`, form `clause` | `supported`; arm outcome `violation`, result `refuted` | FR-485-AC-13, FR-485-AC-10, FR-483-AC-3 |
+| OC-23 | defensive path, step row at position 0 (ordinal 1): a simulation item over a refinement with a hidden field, a history field or an `any` row: kind `operation-contract`, form `simulation` | `supported`; arm outcome `unsupported`, result `unsupported`, reason `no-contract-level-reading` | FR-485-AC-14 |
+| OC-24 | defensive path, initial-state rule (ordinal 0): the same refinement: kind `operation-contract`, form `simulation` | `supported`; arm outcome `unsupported`, result `unsupported`, reason `no-contract-level-reading` | FR-485-AC-14 |
 
 ## Expected Results
 
