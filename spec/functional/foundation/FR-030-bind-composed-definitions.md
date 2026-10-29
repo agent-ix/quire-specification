@@ -31,7 +31,7 @@ cannot introduce a second editable authority. Runtime observations and changing
 monitor state do not participate in static package identity.
 
 The [package contract](../../../proposals/quire-v1/package-contract.md) defines the
-static components, the lock's recorded model identities and typed binding requirements. The
+static components, exact import identity and typed binding requirements. The
 compiler input inventory closes the native declaration namespace. Checked output
 retains per-declaration dependency dispositions; partial admission is not a
 complete package. Static subject identity differs from serialized artifact bytes

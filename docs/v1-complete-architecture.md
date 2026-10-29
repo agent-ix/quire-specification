@@ -207,7 +207,7 @@ into an executed Boolean.
 ### 4.5 Model and state semantics
 
 The model universe is a closed selection of one or more domain packages, each
-lifted from spec artifacts, selected by identity and recorded by its `model_root` node by identity. QSL model intake
+lifted from spec artifacts and selected by identity. QSL model intake
 constructs a read-only model view containing original
 and effective declaration IDs, inheritance/conformance edges, redefinitions,
 parts, ports, interfaces, connections, allocations, operations and
@@ -302,7 +302,7 @@ contracts. This is not a new top-level epic or semantic engine.
 
 The coordinator accepts one `ExecutionRequest` with exact package, model,
 profile, dependency, observation/population, bound and requested-claim
-identities. It validates the lock, dispatches independent state, temporal,
+identities. It validates the request, dispatches independent state, temporal,
 protocol or analysis producers, and emits an ordered `ExecutionBundle`. It
 never parses source, evaluates a clause itself or collapses producer outcomes.
 
@@ -481,7 +481,7 @@ Names are architectural roles; Rust names may follow repository idioms.
 | --- | --- | --- |
 | I01 Source document | editor/filesystem -> QSL | Exact bytes, unit identity and bounded read outcome. |
 | I02 Parsed source | QSL parser -> formatter/linker/editor | Lossless CST, recoveries, tokens/spans and edition; not semantically admitted. |
-| I03 Model selection | FCD extraction-frontend lift -> QSL/QObs | Domain package identity, identity recorded by the `model_root` node, declaration keys, declarations and relationships lifted from spec artifacts. |
+| I03 Model selection | FCD extraction-frontend lift -> QSL/QObs | Domain package identity, declaration keys, declarations and relationships lifted from spec artifacts. |
 | I04 Checked package | QSL -> all semantic consumers | Immutable semantic graph, package lock, feature report, source map and diagnostics. |
 | I05 Native runtime input/result | caller/S6 <-> QSL | Typed state anchors, objects, frames, bounds and independent results. |
 | I06 Native temporal artifact/result | QSL/S6 <-> TL/QSL | Typed atoms/formula, clocks/history/captures, partial valuations and progress. |

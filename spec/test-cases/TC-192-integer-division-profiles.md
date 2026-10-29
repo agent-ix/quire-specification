@@ -19,7 +19,7 @@ Select language `ix:native`, edition `1-draft`, and the
 `quire.value.complete/v1` definition. For `div`/`rem`,
 select exactly one of the three integer-division
 definitions in FR-147, through
-[`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
+[`value-complete.md`](../../proposals/quire-v1/definitions/value-complete.md).
 For `(a,b)` in
 `(7,3)`, `(7,-3)`, `(-7,3)` and `(-7,-3)`, evaluate `a div b` for `q` and
 `a rem b` for `r` as two separate expressions and compare `(q,r)` with this

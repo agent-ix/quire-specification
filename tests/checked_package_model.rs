@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Agent-IX
 
-//! Complete-model definition lock and effective-declaration vector qualification.
+//! Effective-declaration vector qualification.
 
 use ix_trace_rs::trace;
 use quire_verification_contracts::jcs_sha256;

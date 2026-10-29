@@ -24,7 +24,7 @@ Admit a domain package whose type definitions name each business model meaning o
 Use the subject and inputs named by FR-208 and FR-154. Execute each positive case and each explicit refusal mutation through the real local Rust boundary; compare the complete typed result and `normalize.record` accounting with the criterion.
 
 Select `quire.model.complete/v1` through
-[`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
+[`model-complete.md`](../../proposals/quire-v1/definitions/model-complete.md).
 Node names, declaration keys, the source `S1` and the admission of a
 re-digested package follow TC-234. Every type definition and population is
 declared by its own artifact, and its identity is `ix://test/orders/<artifact

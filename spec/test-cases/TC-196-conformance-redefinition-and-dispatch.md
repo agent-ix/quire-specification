@@ -18,7 +18,7 @@ Resolve valid specialization/dispatch and reject cycles, weakening and ambiguity
 Use the subject and inputs named by FR-151. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
 Select `quire.model.complete/v1` through
-[`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
+[`model-complete.md`](../../proposals/quire-v1/definitions/model-complete.md).
 Node names, declaration keys, package identity and default limits follow
 TC-195. Every multiplicity is written `{lower,upper}` with `ordered: false` and
 `unique: true` unless stated, and every field has presence `optional` unless

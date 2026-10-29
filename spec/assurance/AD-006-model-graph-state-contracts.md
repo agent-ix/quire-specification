@@ -184,6 +184,6 @@ adds no normalization rule or effective-identity member.
 | Risk | Control |
 | --- | --- |
 | An artifact declares a feature its module manifest cannot extract | Extraction refuses with the artifact, section and span. No feature is inferred. |
-| Generated types and the model view drift | Both read one domain package, selected by the identity its `model_root` node records in the CheckedPackage. |
+| Generated types and the model view drift | Both read one domain package, selected by identity in the CheckedPackage. |
 | Dynamic dispatch becomes open-world | Dispatch requires the closed subtype set and reports ambiguity or incompleteness. |
 | Graph bounds are mistaken for semantic truncation | Exhaustion is incomplete; no cutoff returns false. |

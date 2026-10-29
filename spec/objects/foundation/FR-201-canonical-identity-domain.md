@@ -27,14 +27,11 @@ equality.
 | `ir-canonical` | Existing contract-IR canonical identity. Retains its original bare-hex syntax and algorithm; it does not adopt the JCS prefix or canonicalization (FR-018-AC-6). |
 | `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
 | `ir-semantic` | IR semantic digest. Includes its prescribed domain separation (FR-015-AC-2). |
-| `package-fingerprint` | Package fingerprint. A lock-file digest cannot substitute for it (FR-015-AC-3). |
-| `lock-file-digest` | Lock-file digest. Cannot substitute for `package-fingerprint` (FR-015-AC-3). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
 | `sha256-jcs` | JCS digest. SHA-256 over RFC 8785 canonical bytes. No model selection row of a lock and no declaration key carries it (FR-154, FR-321, AD-006); its remaining users are those that name it in their own requirement. It is distinct from package and source digests. |
-| `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from package archive and lock-file bytes and from every other identity/digest domain. |
+| `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from every other identity/digest domain. |
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
 | `quire.checked-semantic-node/v1` | Checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
-| `quire.contract-ir.semantic/v1` | Generated Contract IR semantic identity; distinct from the checked source package that it lowers. |
 | `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
 | `quire.tool-manifest.jcs/v1` | RFC 8785 canonical tool/plugin/provider manifest bytes; a provider's FR-331 `ManifestDigest` is SHA-256 over its complete descriptor's bytes, `tool` included. |
 | `quire.build-inputs/v1` | Build-input identity of the provider code that implements a backend: SHA-256 over the RFC 8785 bytes of its FR-331 build-input record `{sources, dependencies, compiler, target, profile, options}`, computed by the build that compiles it (FR-331 "Backend tool"). Distinct from every other identity/digest domain. |
@@ -45,7 +42,7 @@ equality.
 | `quire.model.effective-declaration/v2` | QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from `sha256-jcs` and from the `quire.checked-semantic-node/v1` domain. |
 | `quire.model.effective-view/v2` | QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. |
 | `quire.model.object-universe/v2` | QSL-derived object-universe identity for a connected supertype component. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection and its sorted root effective-declaration identities (FR-150). Distinct from every other identity/digest domain. |
-| `quire.ir-proof.obligation-identity/v1` | CG obligation identity. SHA-256 over the RFC 8785 canonical bytes, through QSL ADR-013 §2's one encoder, of an object with exactly four members: the subject node id, the subject's occurrence key (`node_id`, `role`, `ordinal`), the obligation kind and `arguments`, except for a parity claim, whose whole preimage is the QSL ADR-013 O-09 parity preimage (members `arguments`, `node`, `obligation_kind` and `occurrence_key` = `{ordinal, role}`). The subject is a clause, an operation application, a function (occurrence role `declaration`) or the application node of a parity claim (occurrence role `expression`). For a clause, an application or a function, `arguments` holds one entry per parameter, each a parameter node id with its declared per-argument domain; for a parity claim it holds one entry per operand position, each `{operand, position, domain}`, as that preimage encodes it. A per-step protocol record is one other form: its object has exactly the members `subject_kind` (the string `protocol-refinement-step`) and `record` (the canonical `StepSimulationRecord`), and no occurrence key. A function-value parity claim (QSL FR-357, function level) is the other: its object has exactly the members `subject_kind` (the string `function-value-parity`), `node` (the function node id), `occurrence_key` (`{ordinal: 0, role: "declaration"}`) and `arguments` (one `{parameter, position, type}` entry per declared parameter in declared order, `type` the parameter node's `semantic_type`), with no obligation kind, as QSL FR-484 spells it. Every other member of the CG obligation record (resource ceilings, embedded oracles, module, harness and contract symbols, subject path, results, solver, unwind and options), `source_span` and every source region are outside the preimage, so changing any of them leaves the identity unchanged. CG mints the digest for the clause, application, function, parity and per-step forms; QSL recomputes the parity form from the same preimage, and QSL alone mints the function-value parity form (at `qsl_replay::call_site`) and recomputes it at replay. Distinct from `quire.checked-semantic-node/v1`, `quire.contract-ir.semantic/v1` and every other identity/digest domain. |
+| `quire.ir-proof.obligation-identity/v1` | CG obligation identity. SHA-256 over the RFC 8785 canonical bytes, through QSL ADR-013 §2's one encoder, of an object with exactly four members: the subject node id, the subject's occurrence key (`node_id`, `role`, `ordinal`), the obligation kind and `arguments`, except for a parity claim, whose whole preimage is the QSL ADR-013 O-09 parity preimage (members `arguments`, `node`, `obligation_kind` and `occurrence_key` = `{ordinal, role}`). The subject is a clause, an operation application, a function (occurrence role `declaration`) or the application node of a parity claim (occurrence role `expression`). For a clause, an application or a function, `arguments` holds one entry per parameter, each a parameter node id with its declared per-argument domain; for a parity claim it holds one entry per operand position, each `{operand, position, domain}`, as that preimage encodes it. A per-step protocol record is one other form: its object has exactly the members `subject_kind` (the string `protocol-refinement-step`) and `record` (the canonical `StepSimulationRecord`), and no occurrence key. A function-value parity claim (QSL FR-357, function level) is the other: its object has exactly the members `subject_kind` (the string `function-value-parity`), `node` (the function node id), `occurrence_key` (`{ordinal: 0, role: "declaration"}`) and `arguments` (one `{parameter, position, type}` entry per declared parameter in declared order, `type` the parameter node's `semantic_type`), with no obligation kind, as QSL FR-484 spells it. Every other member of the CG obligation record (resource ceilings, embedded oracles, module, harness and contract symbols, subject path, results, solver, unwind and options), `source_span` and every source region are outside the preimage, so changing any of them leaves the identity unchanged. CG mints the digest for the clause, application, function, parity and per-step forms; QSL recomputes the parity form from the same preimage, and QSL alone mints the function-value parity form (at `qsl_replay::call_site`) and recomputes it at replay. Distinct from `quire.checked-semantic-node/v1` and every other identity/digest domain. |
 
 ## Identity and comparison
 
@@ -87,17 +84,6 @@ Three requirements independently state what is inside the preimage under the
 This artifact records all three. It does not reconcile them; the selection of a
 preimage belongs to the requirement that selects it.
 
-## Definition bytes by reference
-
-The `quire_specification` library of this repository's Rust package exposes
-`COMPLETE_VALUE_LOCK`, `COMPLETE_VALUE_SELECTION_VECTORS` and
-`NATIVE_DIAGNOSTICS`: the exact bytes of
-`proposals/quire-v1/definitions/complete-value-lock.json`, its
-package-selection vectors `complete-value-selection-vectors.json` and
-`proposals/quire-v1/definitions/native-diagnostics.md`.
-A consumer reads the complete-value lock's catalog and selection vectors from
-them instead of holding a copy.
-
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
@@ -105,10 +91,10 @@ them instead of holding a copy.
 | FR-201-AC-1 | Each member's value equals the exact label string in the table, and an underscored spelling does not match a hyphenated one. | Inspection |
 | FR-201-AC-2 | Two identities with equal digest bytes and different domain labels compare unequal. | Analysis |
 | FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
-| FR-201-AC-4 | A lock-file digest does not satisfy a comparison expecting a package fingerprint. | Analysis |
-| FR-201-AC-7 | The `quire_specification` library's `COMPLETE_VALUE_LOCK`, `COMPLETE_VALUE_SELECTION_VECTORS` and `NATIVE_DIAGNOSTICS` equal the exact bytes of `complete-value-lock.json`, `complete-value-selection-vectors.json` and `native-diagnostics.md`. | Test (TC-233) |
+| FR-201-AC-4 | Withdrawn: the lock-file digest and package fingerprint domains are removed. | Withdrawn |
+| FR-201-AC-7 | Withdrawn: the byte-equality test of the exposed constants against their files is removed. | Withdrawn |
 | FR-201-AC-8 | A `quire.cache-key/v1` key computed over the same cached operation, `package_id`, canonical request, `BackendId`, `ManifestDigest` and generation target equals one computed by a second conformer that derives the `ManifestDigest` from the same descriptor independently, and compares unequal to a digest with equal bytes in any other domain. | Test (TC-226) |
-| FR-201-AC-9 | Every qualification-catalog entry of the complete-value and complete-model locks names an authored artifact under a unique role and identity, and package selection is exact: each complete-value catalog role occupies one always, trigger-conditional or exactly-one slot under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`, every complete-model catalog role is always selected, and each accepted and refused selection vector is admitted or refused with exactly its recorded selection code. | Test (TC-233) |
+| FR-201-AC-9 | Package selection is exact under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`, and each accepted and refused selection vector is admitted or refused with exactly its recorded selection code. | Test (TC-233) |
 | FR-201-AC-10 | Two obligations of one clause, application, function, parity claim, function-value parity claim or per-step record whose records differ only in a member outside the preimage (`source_span`, a resource ceiling, an embedded oracle, a symbol, the subject path, the results, the solver, `unwind` or an option) have equal `quire.ir-proof.obligation-identity/v1` digests; changing the subject node id, the occurrence key's `role` or `ordinal`, the obligation kind, one argument's parameter node id or declared domain (for a parity claim, an operand, its position or its domain, an inline literal's value included; for a function-value parity claim, a parameter node id, its position or its declared type node) or a per-step record member gives a different digest; the per-step digest is unchanged by its occurrence key; and the digest compares unequal to a digest with equal bytes in any other domain. | Test (TC-952) |
 
 ## Dependencies
@@ -126,12 +112,6 @@ them instead of holding a copy.
   [FR-196](../../functional/ir-proof/FR-196-generate-kani-contracts.md) and
   [FR-197](../../functional/ir-proof/FR-197-replay-backend-counterexamples.md)
   generate and replay the obligations it identifies.
-
-## Resolved domain boundary
-
-`package-fingerprint` is a Quire package identifier. `sha256-jcs` identifies a
-domain package. They are separate domains and never compare equal, even when
-digest bytes match. Neither may substitute for the other.
 
 ## Status
 

@@ -12,7 +12,7 @@ Every package that selects this root also selects:
 | Identity | Definition artifact |
 | --- | --- |
 | `ix:native` / `1-draft` | [Edition](edition.md) |
-| `quire.state.core/v1` | [State core](state-core.md), the layer this root requires (its `header_selectable_layers` row in the [complete-value lock](complete-value-lock.json)) |
+| `quire.state.core/v1` | [State core](state-core.md), the layer this root requires (one of the [header-selectable layers](README.md#header-selectable-layers)) |
 | `quire.value.accounting/v1` | [Scalar accounting](value-accounting.md) |
 | `quire.value.compound-unit/v1` | [Compound-unit value identity](value-compound-unit.md) |
 | `quire.value.compound-unit.schema/v1` | [Compound-unit schema](value-compound-unit.schema.json) |
@@ -42,17 +42,26 @@ Every selected artifact is named in the checked package by its own
 DefinitionRef; an identity string or installed library alone does not select
 meaning.
 
-## Qualification catalog and package selection
+## Package selection
 
-The canonical lock is [`complete-value-lock.json`](complete-value-lock.json).
-It separates two facts. Its `qualification_catalog` closes every artifact a
-package may select — always-selected, conditional, alternative and rule
-artifacts — by role, authority, identity and artifact path. Catalog membership
-is not selection. Its `package_selection` assigns
-each catalog role to exactly one slot: `always`, one `conditional` trigger slot,
-or one `exactly_one` alternative slot.
+A package selection assigns each selectable definition artifact a role and
+places that role in exactly one slot. Catalog membership is not selection.
 
-A package selection is admitted only when it names known triggers and catalog
+- Always roles: `edition`, `root`, `accounting`, `compound_unit`,
+  `compound_unit_schema`, `compound_unit_vectors`, `rule_package_contract`,
+  `rule_shared_grammar`, `rule_ad_005`, `rule_fr_140`, `rule_fr_141`,
+  `rule_fr_142`, `rule_fr_147`, `rule_fr_148` and `rule_fr_149`.
+- Conditional roles: `text_profile` when `text_bearing` is present and
+  `ieee_profile` when `ieee_operation` is present.
+- Exactly-one role: one of `integer_division_euclidean`,
+  `integer_division_floor` or `integer_division_truncating` (selector
+  `integer_division_profile`) when `integer_div_rem` is present.
+
+Each role names the definition artifact of the same name in the tables of this
+document. A unit that does not select this root selects only the `edition`
+role.
+
+A package selection is admitted only when it names known triggers and
 roles once each, includes every `always` role, and selects each conditional
 role exactly when its trigger is present and exactly one alternative exactly
 when the alternative trigger is present. A refused selection reports the first
@@ -66,7 +75,7 @@ are [`complete-value-selection-vectors.json`](complete-value-selection-vectors.j
 
 ## Selected rules
 
-Each rule below is a `rule_*` role of the lock's `qualification_catalog`.
+Each rule below is a `rule_*` role of the package selection.
 
 | Rule |
 | --- |

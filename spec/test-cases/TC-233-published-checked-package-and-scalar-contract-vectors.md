@@ -71,8 +71,7 @@ Qualify the published QSpec contract artifacts themselves: the V2
 checked-package schema and fixtures, the nominal node-identity preimage
 schema and vectors, the operation catalog including text-to-number identities,
 its clause and control operation identities, and the compound-unit value identity schema and
-vectors, and the complete-value and complete-model definition locks and
-package-selection vectors. This case proves producer-side schema closure,
+vectors, and the package-selection vectors. This case proves producer-side schema closure,
 digest recomputation, and operation-identity and diagnostic-cause closure
 through QSpec's Rust qualification. The dependency-closure reader outcomes
 below have implementation evidence in quire-contract-ir's
@@ -133,13 +132,9 @@ others `invalid_semantic_graph`, FR-322-AC-139),
 and require the semantic oracle itself to refuse `-0` and to refuse a repeated
 pair, a derived pair of unequal normalized maps or of a ratio the base roots do
 not fix, and a cycle of the `dimension-equivalence-` vectors whose ratios do not
-multiply to one (FR-322-AC-118). Require every qualification-catalog entry of both definition locks to name
-an authored artifact under a unique role and identity, require each
-complete-value catalog role to occupy exactly one always, conditional or
-exactly-one slot and each complete-model role the always slot, and evaluate
-every accepted and refused
+multiply to one (FR-322-AC-118). Evaluate every accepted and refused
 package-selection vector with an independent selection oracle. Check the
-operation catalog's closure against both V2 schemas and the value lock;
+operation catalog's closure against both V2 schemas;
 recompute every operation vector and application node key; classify every
 operation mutation, ordering case and declaration mutation with an
 independent operation and declaration oracle; check the published fixture's

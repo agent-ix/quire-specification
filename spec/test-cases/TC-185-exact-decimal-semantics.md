@@ -17,7 +17,7 @@ Evaluate exact, rounded and unrepresentable decimal vectors without binary-float
 
 Select language `ix:native`, edition `1-draft`, and the
 `quire.value.complete/v1` definition through
-[`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
+[`value-complete.md`](../../proposals/quire-v1/definitions/value-complete.md).
 Represent each decimal as `(coefficient, scale)` and
 run the following vectors through the real local Rust boundary without a binary
 floating-point conversion:

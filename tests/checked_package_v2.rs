@@ -7,7 +7,7 @@ use ix_trace_rs::trace;
 use num_bigint::BigInt;
 use num_integer::Integer;
 use quire_specification::{
-    COMPLETE_VALUE_LOCK, COMPLETE_VALUE_SELECTION_VECTORS, NATIVE_DIAGNOSTICS,
+    COMPLETE_VALUE_SELECTION_VECTORS, NATIVE_DIAGNOSTICS,
 };
 use quire_verification_contracts::jcs_sha256;
 use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
@@ -778,7 +778,7 @@ fn string_set<'a>(value: &'a Value, what: &str) -> BTreeSet<&'a str> {
     string_list(value, what).into_iter().collect()
 }
 
-/// Closed package-selection refusal vocabulary of the complete-value lock.
+/// Closed package-selection refusal vocabulary of the complete-value package selection.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum SelectionRefusal {
     UnknownTrigger,
@@ -817,7 +817,7 @@ impl SelectionRefusal {
     }
 }
 
-/// Per-package selection slots parsed from the complete-value lock.
+/// Per-package selection slots read from the package-selection vectors.
 struct PackageSelectionRules<'a> {
     trigger_vocabulary: BTreeSet<&'a str>,
     always: Vec<&'a str>,
@@ -826,8 +826,7 @@ struct PackageSelectionRules<'a> {
 }
 
 impl<'a> PackageSelectionRules<'a> {
-    fn from_lock(lock: &'a Value) -> Self {
-        let selection = &lock["package_selection"];
+    fn from_vectors(lock: &'a Value) -> Self {
         let text = |value: &'a Value, what: &str| {
             value
                 .as_str()
@@ -835,8 +834,8 @@ impl<'a> PackageSelectionRules<'a> {
         };
         Self {
             trigger_vocabulary: string_set(&lock["trigger_vocabulary"], "trigger vocabulary"),
-            always: string_list(&selection["always"], "always roles"),
-            conditional: selection["conditional"]
+            always: string_list(&lock["always_roles"], "always roles"),
+            conditional: lock["conditional"]
                 .as_array()
                 .expect("conditional slots are an array")
                 .iter()
@@ -847,7 +846,7 @@ impl<'a> PackageSelectionRules<'a> {
                     )
                 })
                 .collect(),
-            exactly_one: selection["exactly_one"]
+            exactly_one: lock["exactly_one"]
                 .as_array()
                 .expect("exactly-one slots are an array")
                 .iter()
@@ -8446,133 +8445,12 @@ fn tc_233_compound_unit_value_identities_have_exact_vectors_and_non_tautological
     }
 }
 
-#[trace("TC-233", "FR-201-AC-7")]
-#[test]
-fn tc_233_definition_library_exposes_the_exact_authored_bytes() {
-    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
-    for (exposed, path) in [
-        (
-            COMPLETE_VALUE_LOCK,
-            "proposals/quire-v1/definitions/complete-value-lock.json",
-        ),
-        (
-            COMPLETE_VALUE_SELECTION_VECTORS,
-            "proposals/quire-v1/definitions/complete-value-selection-vectors.json",
-        ),
-        (
-            NATIVE_DIAGNOSTICS,
-            "proposals/quire-v1/definitions/native-diagnostics.md",
-        ),
-    ] {
-        let on_disk = std::fs::read(root.join(path)).expect("authored file reads");
-        assert_eq!(exposed.as_bytes(), on_disk.as_slice(), "{path}");
-    }
-}
-
-#[trace("TC-233", "FR-201-AC-9")]
-#[test]
-fn tc_233_complete_value_lock_catalogs_every_artifact_and_separates_package_selection() {
-    let lock = parsed_fixture(COMPLETE_VALUE_LOCK);
-    assert_eq!(
-        lock["lock_version"].as_str(),
-        Some("quire.value.definition-lock/v1")
-    );
-    assert_eq!(lock["language_edition"].as_str(), Some("1-draft"));
-
-    let catalog = lock["qualification_catalog"]
-        .as_array()
-        .expect("qualification catalog is an array");
-    let mut roles = BTreeSet::new();
-    let mut identities = BTreeSet::new();
-    for entry in catalog {
-        assert_eq!(entry["definition"]["authority"].as_str(), Some("agent-ix"));
-        assert!(
-            roles.insert(entry["role"].as_str().expect("role is a string")),
-            "catalog roles are unique"
-        );
-        assert!(
-            identities.insert(
-                entry["definition"]["identity"]
-                    .as_str()
-                    .expect("definition identity is a string")
-            ),
-            "catalog identities are unique"
-        );
-    }
-
-    let selection = PackageSelectionRules::from_lock(&lock);
-    let expected_triggers = BTreeSet::from(["ieee_operation", "integer_div_rem", "text_bearing"]);
-    assert_eq!(selection.trigger_vocabulary, expected_triggers);
-    let used_triggers = selection
-        .conditional
-        .iter()
-        .map(|(trigger, _)| *trigger)
-        .chain(selection.exactly_one.iter().map(|(trigger, _, _)| *trigger))
-        .collect::<Vec<_>>();
-    assert_eq!(used_triggers.len(), expected_triggers.len());
-    assert_eq!(
-        used_triggers.into_iter().collect::<BTreeSet<_>>(),
-        expected_triggers,
-        "each closed trigger governs exactly one selection slot"
-    );
-    assert_eq!(
-        selection
-            .conditional
-            .iter()
-            .copied()
-            .collect::<BTreeSet<_>>(),
-        BTreeSet::from([
-            ("ieee_operation", "ieee_profile"),
-            ("text_bearing", "text_profile"),
-        ])
-    );
-    assert_eq!(selection.exactly_one.len(), 1);
-    let (division_trigger, division_selector, division_roles) = &selection.exactly_one[0];
-    assert_eq!(*division_trigger, "integer_div_rem");
-    assert_eq!(*division_selector, "integer_division_profile");
-    assert_eq!(
-        division_roles.iter().copied().collect::<BTreeSet<_>>(),
-        BTreeSet::from([
-            "integer_division_euclidean",
-            "integer_division_floor",
-            "integer_division_truncating",
-        ])
-    );
-
-    let mut occupancy = BTreeMap::<&str, usize>::new();
-    for role in selection.slot_roles() {
-        *occupancy.entry(role).or_default() += 1;
-    }
-    assert_eq!(
-        occupancy,
-        roles
-            .iter()
-            .map(|role| (*role, 1))
-            .collect::<BTreeMap<_, _>>(),
-        "every catalog entry occupies exactly one selection slot and no slot names an uncatalogued role"
-    );
-    assert_eq!(
-        string_set(&lock["selection_refusal_codes"], "selection refusal codes"),
-        SelectionRefusal::ALL
-            .into_iter()
-            .map(SelectionRefusal::code)
-            .collect::<BTreeSet<_>>(),
-        "the lock refusal vocabulary is exactly the oracle vocabulary"
-    );
-}
-
 #[trace("TC-233", "FR-201-AC-9")]
 #[test]
 fn tc_233_package_selection_vectors_admit_exact_conditional_and_alternative_profiles() {
-    let lock = parsed_fixture(COMPLETE_VALUE_LOCK);
-    let selection = PackageSelectionRules::from_lock(&lock);
     let vectors = parsed_fixture(COMPLETE_VALUE_SELECTION_VECTORS);
-    assert_eq!(vectors["lock"]["lock_version"], lock["lock_version"]);
-    let always = string_list(&vectors["always_roles"], "always roles");
-    assert_eq!(
-        always, selection.always,
-        "vectors select the lock's always slot"
-    );
+    let selection = PackageSelectionRules::from_vectors(&vectors);
+    let always = selection.always.clone();
 
     let check = |vector: &Value| {
         let omitted = vector
@@ -8789,11 +8667,10 @@ fn before_criteria(document: &str) -> &str {
 
 #[trace("TC-233", "FR-322-AC-17")]
 #[test]
-fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lock() {
+fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
     let package_schema = parsed_fixture(SCHEMA);
     let preimage_schema = parsed_fixture(NODE_PREIMAGE_SCHEMA);
-    let lock = parsed_fixture(COMPLETE_VALUE_LOCK);
     let entries = catalog["operations"]
         .as_array()
         .expect("catalog operations are an array");
@@ -8835,7 +8712,7 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
     let profile_roles = string_set(&catalog["profile_law_roles"], "profile law roles");
     assert!(
         profile_roles.iter().all(|role| !roles.contains_key(*role)),
-        "a profile law role names no fixed catalog definition: the package lock selects it"
+        "a profile law role names no fixed catalog definition: the package selection selects it"
     );
     assert_eq!(
         string_set(
@@ -8888,28 +8765,6 @@ fn tc_233_operation_catalog_is_closed_and_bound_to_both_schemas_and_the_value_lo
             .collect::<BTreeSet<_>>(),
         "every schema operator class has a catalogued operation and no other class does"
     );
-
-    let locked = lock["qualification_catalog"]
-        .as_array()
-        .expect("lock catalog is an array")
-        .iter()
-        .map(|entry| {
-            (
-                &entry["definition"]["authority"],
-                &entry["definition"]["identity"],
-            )
-        })
-        .collect::<Vec<_>>();
-    for (role, references) in roles {
-        let references = references.as_array().expect("role references are an array");
-        assert!(!references.is_empty(), "law role {role} names a definition");
-        for reference in references {
-            assert!(
-                locked.contains(&(&reference["authority"], &reference["identity"])),
-                "law role {role} definition {reference} is a complete-value lock definition"
-            );
-        }
-    }
 
     let families = string_set(&catalog["families"], "families");
     let groups = catalog["groups"].as_object().expect("groups are an object");
