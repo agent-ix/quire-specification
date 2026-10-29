@@ -150,7 +150,7 @@ model and ignore distributions.
 | FR-420-AC-4 | An identity with an unbounded window and `uniform`, or a state with bounded delay and no racing identity, settles `unsupported`, `not-stochastic{state, identity}`. | Test (TC-374) |
 | FR-420-AC-5 | A sample exceeding `max_sample_steps` stops the run with `incomplete`, `limit-reached` naming `max_sample_steps`, its value and how to raise it; an omitted `max_sample_steps` is `2^24`. | Test (TC-374) |
 | FR-420-AC-6 | With `reply` under `delay Call::reply ~ uniform;` the event's probability is 0, the statistical item settles `measured: accepted`, and the every-behaviour claim `NoLateReply` settles `refuted`. | Test (TC-374) |
-| FR-420-AC-7 | A sample that reaches a state with no admissible positive delay and no enabled transition identity before its horizon settles the item `unsupported`, `time-locked-sample{state}` naming that state, with no witness kept. | Test (TC-374) |
+| FR-420-AC-7 | A sample that reaches a local time-lock (FR-181 "Timed subjects": no admissible positive delay and no enabled transition identity) before its horizon settles the item `unsupported`, `time-locked-sample{state}` naming that state, with no witness kept. | Test (TC-374) |
 
 ## Dependencies
 

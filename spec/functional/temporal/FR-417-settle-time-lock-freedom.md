@@ -11,6 +11,10 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-181
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-361
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-366
+    type: references
   - target: ix://agent-ix/quire-specification/FR-426
     type: references
   - target: ix://agent-ix/quire-specification/FR-425
@@ -90,7 +94,7 @@ trap whose closure is its one state.
 ### Deadlocks and time-locks
 
 A timed state is **terminal** when no discrete step is enabled at it or after
-any admissible delay. A terminal state at a quiescent discrete state (no time
+any admissible delay. A terminal state ([FR-181](../runtime/FR-181-simulate-finite-executions.md) "Timed subjects") at a quiescent discrete state (no time
 invariant applies and it is not urgent) admits the idle tail of FR-161 and is
 a deadlock when it is not intended; the deadlock-freedom item reports it. A
 terminal state where delay is bounded is a local time-lock, reported by the
@@ -111,8 +115,7 @@ reachable, and settles only after the checker accepts it.
 | FR-417-AC-3 | A non-local time-lock settles `refuted` only after a fresh, unreduced exploration of the trap's forward closure completes with no target; a found target settles `inconclusive`, `replay-parity`. | Test (TC-370) |
 | FR-417-AC-4 | In the strict-guard variant the deadlock-freedom item settles `proved` and the time-lock is reported only by the time-lock-freedom item; with non-strict guards both settle `proved`. | Test (TC-370) |
 | FR-417-AC-5 | A time-lock-freedom proof settles only after its zone certificate is accepted. | Test (TC-370, TC-371) |
-| FR-417-AC-6 | A request with an item over a protocol subject whose model selection reads a timed model gains no time-lock-freedom item for that protocol subject. | Test (TC-370) |
-| FR-417-AC-7 | A timed model subject over the model that a protocol subject reads keeps its time-lock-freedom item. | Test (TC-370) |
+| FR-417-AC-6 | A timed model subject over the model that a protocol subject reads keeps its time-lock-freedom item. | Test (TC-370) |
 
 ## Dependencies
 

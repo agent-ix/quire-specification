@@ -143,8 +143,12 @@ because a model behaviour carries no sample period or timestamp.
 
 ### Terminal states
 
-A state at which no transition identity is enabled is **terminal**. Every
-terminal state reads by this rule, whether the model intends it or it is a
+A state at which no transition identity is enabled is **terminal**; over a
+timed subject a timed state is terminal as
+[FR-181](../runtime/FR-181-simulate-finite-executions.md) "Timed subjects"
+states (no discrete step enabled at it or after any admissible delay), so a
+local time-lock is terminal and is stutter-extended like any terminal state.
+Every terminal state reads by this rule, whether the model intends it or it is a
 deadlock ([FR-366](FR-366-check-deadlock-freedom.md)).
 
 - Under the event-position false-extension profile, a behaviour that reaches a

@@ -198,6 +198,7 @@ state key.
 | FR-429-AC-13 | A protocol whose compensation template has a step of its commit node occur after the compensation thread was created, with the thread still at its first compensation attempt and a finish record available, deadlocks with the compensation thread `commit-closed` naming the template and the root at `finish` `finish-waiting` naming that thread. | Test (TC-383) |
 | FR-429-AC-14 | A node owned by a replicated role `r` whose population universe is empty, or whose every object is retired, so that `r` has no live instance and no `spawn` is enabled, deadlocks with the thread `no-role-instance` naming `r`; when a `spawn` is enabled the thread is not waiting on the role. | Test (TC-383) |
 | FR-429-AC-15 | A thread at a `fence` whose memory model's fence rule is false (a `seq_cst` fence under `tso` with a non-empty buffer) has cause `gate` and no other cause when the cause function is evaluated at that state. A deadlock report never shows it under the built-in models, because `flush` is enabled while the buffer is non-empty, so the state is not terminal. | Test (TC-383) |
+| FR-429-AC-16 | The protocol system reads no clock, so no protocol state is time-locked. | Test (TC-370) |
 
 ## Dependencies
 

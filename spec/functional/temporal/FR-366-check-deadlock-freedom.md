@@ -7,6 +7,8 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-361
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-417
+    type: references
   - target: ix://agent-ix/quire-specification/FR-181
     type: references
   - target: ix://agent-ix/quire-specification/FR-363
@@ -115,8 +117,10 @@ neither as intended nor as a deadlock.
 
 Over a timed model subject a state is terminal as
 [FR-181](../runtime/FR-181-simulate-finite-executions.md) "Timed subjects"
-states: a timed state with no enabled discrete step and no admissible positive
-delay is a time-lock, reported by the time-lock-freedom item
+states: no discrete step is enabled at it or after any admissible delay. A
+terminal timed state in which time can pass without bound is read here as any
+terminal state is; one in which the admissible delay is bounded is a local
+time-lock, reported by the time-lock-freedom item
 ([FR-417](FR-417-settle-time-lock-freedom.md)) and not here.
 
 ### Claims read every terminal state the same way
@@ -142,6 +146,7 @@ A `terminal` declaration changes only the deadlock-freedom item.
 | FR-366-AC-7 | A state that satisfies `P` and enables a transition is not terminal and is never reported as a deadlock or as intended. | Test (TC-297) |
 | FR-366-AC-8 | A model whose `terminal when` predicate evaluates undefined at a reachable state with no enabled transition settles the deadlock-freedom item `refuted`, cause `undefined-evaluation`, with an undefined-evaluation counterexample ending at that state, never `proved` and never a `deadlock` counterexample. | Test (TC-305) |
 | FR-366-AC-9 | Over the Job subject with universe `{j, k}`, `terminal Finished using v on M when { self.status = done }` classifies a terminal state where both objects are `done` as intended, one where `j` is `done` and `k` is `stuck` as deadlocked, and, with universe `{}`, the initial terminal state as intended; a model whose populations cover two object types refuses `self` with `missing_declaration`/`missing-name` at `self`; a model with two populations that both cover `Job` refuses `self` with `ambiguous_declaration`/`ambiguous-name` at `self`, naming both populations. | Test (TC-297) |
+| FR-366-AC-10 | A terminal timed state in which the admissible delay is bounded is not reported by the deadlock-freedom item. | Test (TC-370) |
 
 ## Dependencies
 
