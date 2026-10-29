@@ -220,10 +220,8 @@ fn patch_token(token: &str) -> Result<String, PatchError> {
 }
 
 fn patch_index(member: &str) -> Result<usize, PatchError> {
-    if member.is_empty()
-        || (member.len() > 1 && member.starts_with('0'))
-        || !member.bytes().all(|byte| byte.is_ascii_digit())
-    {
+    if member.is_empty() || (member.len() > 1 && member.starts_with('0'))
+        || !member.bytes().all(|byte| byte.is_ascii_digit()) {
         return Err(PatchError::InvalidArrayIndex);
     }
     member.parse().map_err(|_| PatchError::InvalidArrayIndex)
@@ -235,17 +233,11 @@ fn patch_index(member: &str) -> Result<usize, PatchError> {
 /// Errors are fixture defects, never evidence of schema refusal. No missing
 /// value becomes null; invalid operations leave the document unchanged.
 fn apply(document: &mut Value, patch: &Value) -> Result<(), PatchError> {
-    let op = patch
-        .get("op")
-        .and_then(Value::as_str)
-        .ok_or(PatchError::InvalidOperation)?;
+    let op = patch.get("op").and_then(Value::as_str).ok_or(PatchError::InvalidOperation)?;
     if !matches!(op, "add" | "remove" | "replace") {
         return Err(PatchError::InvalidOperation);
     }
-    let path = patch
-        .get("path")
-        .and_then(Value::as_str)
-        .ok_or(PatchError::InvalidPath)?;
+    let path = patch.get("path").and_then(Value::as_str).ok_or(PatchError::InvalidPath)?;
     let tokens = path.strip_prefix('/').ok_or(PatchError::InvalidPath)?;
     for token in tokens.split('/') {
         patch_token(token)?;
@@ -257,10 +249,7 @@ fn apply(document: &mut Value, patch: &Value) -> Result<(), PatchError> {
     } else {
         Some(patch.get("value").ok_or(PatchError::MissingValue)?.clone())
     };
-    match document
-        .pointer_mut(parent)
-        .ok_or(PatchError::MissingParent)?
-    {
+    match document.pointer_mut(parent).ok_or(PatchError::MissingParent)? {
         Value::Object(object) => match op {
             "remove" => {
                 object.remove(&member).ok_or(PatchError::MissingTarget)?;
@@ -319,71 +308,45 @@ fn errors(validator: &jsonschema::Validator, document: &Value) -> Vec<String> {
 #[test]
 fn patch_operations_preserve_literal_results() {
     for (document, patch, expected) in [
-        (
-            serde_json::json!([10, 20, 30]),
+        (serde_json::json!([10, 20, 30]),
             serde_json::json!({"op": "remove", "path": "/1"}),
-            serde_json::json!([10, 30]),
-        ),
-        (
-            serde_json::json!([10, 20, 30]),
+            serde_json::json!([10, 30])),
+        (serde_json::json!([10, 20, 30]),
             serde_json::json!({"op": "remove", "path": "/0"}),
-            serde_json::json!([20, 30]),
-        ),
-        (
-            serde_json::json!([10, 20, 30]),
+            serde_json::json!([20, 30])),
+        (serde_json::json!([10, 20, 30]),
             serde_json::json!({"op": "remove", "path": "/2"}),
-            serde_json::json!([10, 20]),
-        ),
-        (
-            serde_json::json!([10, 30]),
+            serde_json::json!([10, 20])),
+        (serde_json::json!([10, 30]),
             serde_json::json!({"op": "add", "path": "/1", "value": 20}),
-            serde_json::json!([10, 20, 30]),
-        ),
-        (
-            serde_json::json!([20]),
+            serde_json::json!([10, 20, 30])),
+        (serde_json::json!([20]),
             serde_json::json!({"op": "add", "path": "/0", "value": 10}),
-            serde_json::json!([10, 20]),
-        ),
-        (
-            serde_json::json!([10]),
+            serde_json::json!([10, 20])),
+        (serde_json::json!([10]),
             serde_json::json!({"op": "add", "path": "/1", "value": 20}),
-            serde_json::json!([10, 20]),
-        ),
-        (
-            serde_json::json!([]),
+            serde_json::json!([10, 20])),
+        (serde_json::json!([]),
             serde_json::json!({"op": "add", "path": "/-", "value": null}),
-            serde_json::json!([null]),
-        ),
-        (
-            serde_json::json!([10, 20]),
+            serde_json::json!([null])),
+        (serde_json::json!([10, 20]),
             serde_json::json!({"op": "replace", "path": "/1", "value": null}),
-            serde_json::json!([10, null]),
-        ),
-        (
-            serde_json::json!({"keep": 1, "remove": null}),
+            serde_json::json!([10, null])),
+        (serde_json::json!({"keep": 1, "remove": null}),
             serde_json::json!({"op": "remove", "path": "/remove"}),
-            serde_json::json!({"keep": 1}),
-        ),
-        (
-            serde_json::json!({"keep": 1}),
+            serde_json::json!({"keep": 1})),
+        (serde_json::json!({"keep": 1}),
             serde_json::json!({"op": "add", "path": "/new", "value": null}),
-            serde_json::json!({"keep": 1, "new": null}),
-        ),
-        (
-            serde_json::json!({"keep": 1}),
+            serde_json::json!({"keep": 1, "new": null})),
+        (serde_json::json!({"keep": 1}),
             serde_json::json!({"op": "replace", "path": "/keep", "value": 2}),
-            serde_json::json!({"keep": 2}),
-        ),
-        (
-            serde_json::json!({"a/b": {"~key": [10, 20]}}),
+            serde_json::json!({"keep": 2})),
+        (serde_json::json!({"a/b": {"~key": [10, 20]}}),
             serde_json::json!({"op": "remove", "path": "/a~1b/~0key/0"}),
-            serde_json::json!({"a/b": {"~key": [20]}}),
-        ),
-        (
-            serde_json::json!({"a/b": 1, "~key": 2}),
+            serde_json::json!({"a/b": {"~key": [20]}})),
+        (serde_json::json!({"a/b": 1, "~key": 2}),
             serde_json::json!({"op": "remove", "path": "/a~1b"}),
-            serde_json::json!({"~key": 2}),
-        ),
+            serde_json::json!({"~key": 2})),
     ] {
         let mut actual = document;
         assert_eq!(apply(&mut actual, &patch), Ok(()), "literal patch applies");
@@ -398,103 +361,39 @@ fn invalid_patches_are_errors_and_leave_the_document_unchanged() {
     let original = serde_json::json!({"array": [10, 20], "empty": [],
         "object": {"existing": 1}, "scalar": 7});
     for (patch, expected) in [
-        (
-            serde_json::json!({"op": "remove", "path": "/object/missing"}),
-            PatchError::MissingTarget,
-        ),
-        (
-            serde_json::json!({"op": "replace", "path": "/object/missing", "value": 3}),
-            PatchError::MissingTarget,
-        ),
-        (
-            serde_json::json!({"op": "add", "path": "/object/existing", "value": 2}),
-            PatchError::ExistingTarget,
-        ),
-        (
-            serde_json::json!({"op": "remove", "path": "/array/2"}),
-            PatchError::IndexOutOfBounds,
-        ),
-        (
-            serde_json::json!({"op": "replace", "path": "/array/2", "value": 3}),
-            PatchError::IndexOutOfBounds,
-        ),
-        (
-            serde_json::json!({"op": "add", "path": "/array/3", "value": 3}),
-            PatchError::IndexOutOfBounds,
-        ),
-        (
-            serde_json::json!({"op": "remove", "path": "/empty/0"}),
-            PatchError::IndexOutOfBounds,
-        ),
-        (
-            serde_json::json!({"op": "replace", "path": "/empty/0", "value": 3}),
-            PatchError::IndexOutOfBounds,
-        ),
-        (
-            serde_json::json!({"op": "add", "path": "/empty/1", "value": 3}),
-            PatchError::IndexOutOfBounds,
-        ),
-        (
-            serde_json::json!({"op": "move", "path": "/array/0"}),
-            PatchError::InvalidOperation,
-        ),
-        (
-            serde_json::json!({"path": "/array/0"}),
-            PatchError::InvalidOperation,
-        ),
-        (
-            serde_json::json!({"op": 1, "path": "/array/0"}),
-            PatchError::InvalidOperation,
-        ),
+        (serde_json::json!({"op": "remove", "path": "/object/missing"}), PatchError::MissingTarget),
+        (serde_json::json!({"op": "replace", "path": "/object/missing", "value": 3}), PatchError::MissingTarget),
+        (serde_json::json!({"op": "add", "path": "/object/existing", "value": 2}), PatchError::ExistingTarget),
+        (serde_json::json!({"op": "remove", "path": "/array/2"}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "replace", "path": "/array/2", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "add", "path": "/array/3", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "remove", "path": "/empty/0"}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "replace", "path": "/empty/0", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "add", "path": "/empty/1", "value": 3}), PatchError::IndexOutOfBounds),
+        (serde_json::json!({"op": "move", "path": "/array/0"}), PatchError::InvalidOperation),
+        (serde_json::json!({"path": "/array/0"}), PatchError::InvalidOperation),
+        (serde_json::json!({"op": 1, "path": "/array/0"}), PatchError::InvalidOperation),
         (serde_json::json!({"op": "remove"}), PatchError::InvalidPath),
-        (
-            serde_json::json!({"op": "remove", "path": 1}),
-            PatchError::InvalidPath,
-        ),
-        (
-            serde_json::json!({"op": "remove", "path": "array/0"}),
-            PatchError::InvalidPath,
-        ),
-        (
-            serde_json::json!({"op": "remove", "path": ""}),
-            PatchError::InvalidPath,
-        ),
-        (
-            serde_json::json!({"op": "remove", "path": "/object/~"}),
-            PatchError::InvalidPath,
-        ),
-        (
-            serde_json::json!({"op": "remove", "path": "/object/~2"}),
-            PatchError::InvalidPath,
-        ),
-        (
-            serde_json::json!({"op": "remove", "path": "/bad~2/child"}),
-            PatchError::InvalidPath,
-        ),
+        (serde_json::json!({"op": "remove", "path": 1}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "array/0"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": ""}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "/object/~"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "/object/~2"}), PatchError::InvalidPath),
+        (serde_json::json!({"op": "remove", "path": "/bad~2/child"}), PatchError::InvalidPath),
     ] {
         let mut actual = original.clone();
-        assert_eq!(
-            apply(&mut actual, &patch),
-            Err(expected),
-            "fixture error for {patch}"
-        );
+        assert_eq!(apply(&mut actual, &patch), Err(expected), "fixture error for {patch}");
         assert_eq!(actual, original, "failed patch cannot mutate {patch}");
     }
     for op in ["add", "remove", "replace"] {
         for member in ["", "01", "+1", "-1", "one", "184467440737095516160"] {
-            let patch =
-                serde_json::json!({"op": op, "path": format!("/array/{member}"), "value": 3});
+            let patch = serde_json::json!({"op": op, "path": format!("/array/{member}"), "value": 3});
             let mut actual = original.clone();
-            assert_eq!(
-                apply(&mut actual, &patch),
-                Err(PatchError::InvalidArrayIndex)
-            );
+            assert_eq!(apply(&mut actual, &patch), Err(PatchError::InvalidArrayIndex));
             assert_eq!(actual, original);
         }
-        for (path, expected) in [
-            ("/missing/child", PatchError::MissingParent),
-            ("/scalar/child", PatchError::InvalidParent),
-        ] {
+        for (path, expected) in [("/missing/child", PatchError::MissingParent),
+            ("/scalar/child", PatchError::InvalidParent)] {
             let patch = serde_json::json!({"op": op, "path": path, "value": 3});
             let mut actual = original.clone();
             assert_eq!(apply(&mut actual, &patch), Err(expected));
@@ -503,26 +402,14 @@ fn invalid_patches_are_errors_and_leave_the_document_unchanged() {
     }
     for op in ["remove", "replace"] {
         let mut actual = original.clone();
-        assert_eq!(
-            apply(
-                &mut actual,
-                &serde_json::json!({"op": op,
-            "path": "/array/-", "value": 3})
-            ),
-            Err(PatchError::InvalidArrayIndex)
-        );
+        assert_eq!(apply(&mut actual, &serde_json::json!({"op": op,
+            "path": "/array/-", "value": 3})), Err(PatchError::InvalidArrayIndex));
         assert_eq!(actual, original);
     }
     for op in ["add", "replace"] {
         let mut actual = original.clone();
-        assert_eq!(
-            apply(
-                &mut actual,
-                &serde_json::json!({"op": op,
-            "path": "/array/0"})
-            ),
-            Err(PatchError::MissingValue)
-        );
+        assert_eq!(apply(&mut actual, &serde_json::json!({"op": op,
+            "path": "/array/0"})), Err(PatchError::MissingValue));
         assert_eq!(actual, original);
     }
 }
@@ -535,58 +422,32 @@ fn hp3_array_removal_is_refused_and_restoration_is_admitted() {
     let whole = validator();
     assert!(whole.is_valid(&base), "original positive is admitted");
     let adverse = parsed(VECTORS);
-    let vector = adverse["adverse"]
-        .as_array()
-        .expect("adverse vectors")
-        .iter()
+    let vector = adverse["adverse"].as_array().expect("adverse vectors").iter()
         .find(|vector| vector["name"] == "hp3-empty-universal-single-existential")
         .expect("original adverse vector retained");
     assert_eq!(vector["base"], "certificate-rejected-hyper-identities");
-    assert_eq!(
-        vector["patch"],
-        serde_json::json!([
-            {"op": "remove", "path": "/results/4/cause/at/witness_set/0/states/1"}
-        ])
-    );
+    assert_eq!(vector["patch"], serde_json::json!([
+        {"op": "remove", "path": "/results/4/cause/at/witness_set/0/states/1"}
+    ]));
     let mut actual = base.clone();
-    assert_eq!(
-        apply(&mut actual, &vector["patch"][0]),
-        Ok(()),
-        "real removal applies"
-    );
-    assert_eq!(
-        actual["results"][4]["cause"]["at"],
-        serde_json::json!({
-            "states": [], "automaton_state": "AQ", "witness_set": [{
-                "states": ["1111111111111111111111111111111111111111111111111111111111111111"],
-                "automaton_state": "Ag"
-            }]
-        })
-    );
+    assert_eq!(apply(&mut actual, &vector["patch"][0]), Ok(()), "real removal applies");
+    assert_eq!(actual["results"][4]["cause"]["at"], serde_json::json!({
+        "states": [], "automaton_state": "AQ", "witness_set": [{
+            "states": ["1111111111111111111111111111111111111111111111111111111111111111"],
+            "automaton_state": "Ag"
+        }]
+    }));
     assert!(!whole.is_valid(&actual), "n=0, m=1 is a real negative");
     let stage = definition("OutcomeStage");
-    assert!(
-        stage.iter_errors(&actual).any(|error| located_at_patch(
-            &error.instance_path().to_string(),
-            "/results/4/cause/at/witness_set/0/states/1"
-        )),
-        "refusal belongs to the changed witness tuple"
-    );
-    assert_eq!(
-        apply(
-            &mut actual,
-            &serde_json::json!({"op": "add",
+    assert!(stage.iter_errors(&actual).any(|error| located_at_patch(
+        &error.instance_path().to_string(), "/results/4/cause/at/witness_set/0/states/1")),
+        "refusal belongs to the changed witness tuple");
+    assert_eq!(apply(&mut actual, &serde_json::json!({"op": "add",
         "path": "/results/4/cause/at/witness_set/0/states/1",
-        "value": "2222222222222222222222222222222222222222222222222222222222222222"})
-        ),
-        Ok(()),
-        "restoring insertion applies"
-    );
+        "value": "2222222222222222222222222222222222222222222222222222222222222222"})),
+        Ok(()), "restoring insertion applies");
     assert_eq!(actual, base, "restoration changes no other component");
-    assert!(
-        whole.is_valid(&actual),
-        "restored n=0, m=2 positive is admitted"
-    );
+    assert!(whole.is_valid(&actual), "restored n=0, m=2 positive is admitted");
 }
 
 /// Every positive vector of every stage is admitted by the schema, and every
@@ -708,11 +569,7 @@ fn tc_431_adverse_vectors_are_refused() {
         let patch = vector["patch"].as_array().expect("patch list");
         assert_eq!(patch.len(), 1, "{name} changes one member");
         let mut document = composed(&base);
-        assert_eq!(
-            apply(&mut document, &patch[0]),
-            Ok(()),
-            "{name}: authored patch applies"
-        );
+        assert_eq!(apply(&mut document, &patch[0]), Ok(()), "{name}: authored patch applies");
         assert!(
             !whole.is_valid(&document),
             "{name} is refused by the schema"
@@ -936,14 +793,10 @@ fn tc_431_item_level_causes_reach_negotiation() {
     let document = composed(&positive("request-item-level-defects"));
     assert!(validator.is_valid(&document));
     let mut missing = document.clone();
-    assert_eq!(
-        apply(
-            &mut missing,
-            &serde_json::json!({"op": "remove", "path": "/request/items/0/candidates"}),
-        ),
-        Ok(()),
-        "candidate removal applies"
-    );
+    assert_eq!(apply(
+        &mut missing,
+        &serde_json::json!({"op": "remove", "path": "/request/items/0/candidates"}),
+    ), Ok(()), "candidate removal applies");
     assert!(!validator.is_valid(&missing));
 }
 
@@ -1084,73 +937,47 @@ fn tc_431_canonical_key_bindings_are_complete() {
     let schema = parsed(SCHEMA);
     let certificate = &schema["$defs"]["ProbabilityCertificate"]["properties"];
     for field in ["values", "ranking", "policy"] {
-        assert_eq!(
-            certificate[field]["items"]["properties"]["state"]["$ref"],
-            "#/$defs/ProbabilityProductKey",
-            "complete key for {field}"
-        );
+        assert_eq!(certificate[field]["items"]["properties"]["state"]["$ref"],
+            "#/$defs/ProbabilityProductKey", "complete key for {field}");
     }
-    assert_eq!(
-        certificate["components"]["items"]["properties"]["bias"]["items"]["properties"]["state"]["$ref"],
-        "#/$defs/ProbabilityProductKey"
-    );
-    assert_eq!(
-        certificate["policy"]["items"]["properties"]["choice"]["$ref"],
-        "#/$defs/TransitionIdentity"
-    );
+    assert_eq!(certificate["components"]["items"]["properties"]["bias"]
+        ["items"]["properties"]["state"]["$ref"], "#/$defs/ProbabilityProductKey");
+    assert_eq!(certificate["policy"]["items"]["properties"]["choice"]["$ref"],
+        "#/$defs/TransitionIdentity");
     for shape in ["ProductStateLocus", "HyperProductStateLocus"] {
-        assert_eq!(
-            schema["$defs"][shape]["properties"]["automaton_state"]["$ref"],
-            "#/$defs/AutomatonStateKey"
-        );
+        assert_eq!(schema["$defs"][shape]["properties"]["automaton_state"]["$ref"],
+            "#/$defs/AutomatonStateKey");
     }
-    assert_eq!(
-        schema["$defs"]["HyperProductStateLocus"]["properties"]["witness_set"]["items"]["properties"]
-            ["automaton_state"]["$ref"],
-        "#/$defs/AutomatonStateKey"
-    );
+    assert_eq!(schema["$defs"]["HyperProductStateLocus"]["properties"]["witness_set"]
+        ["items"]["properties"]["automaton_state"]["$ref"], "#/$defs/AutomatonStateKey");
 
     let rejection = definition("CertificateRejected");
     let mut admitted = 0;
     for rule in CERTIFICATE_RULES {
-        let expected = matches!(
-            rule,
-            "inequality-fails" | "rank-missing" | "rank-broken" | "threshold-missed"
-        );
+        let expected = matches!(rule,
+            "inequality-fails" | "rank-missing" | "rank-broken" | "threshold-missed");
         let candidate = serde_json::json!({"type": "certificate-rejected", "rule": rule,
             "at": {"product_key": "AQ"}});
-        assert_eq!(
-            rejection.is_valid(&candidate),
-            expected,
-            "probability locus / {rule}"
-        );
+        assert_eq!(rejection.is_valid(&candidate), expected, "probability locus / {rule}");
         admitted += usize::from(expected);
     }
     assert_eq!(admitted, 4);
     for rule in ["inequality-fails", "threshold-missed"] {
-        assert!(
-            !rejection.is_valid(&serde_json::json!({"type": "certificate-rejected",
+        assert!(!rejection.is_valid(&serde_json::json!({"type": "certificate-rejected",
             "rule": rule, "at": {"domain": "quire.simulation.state-key/v1",
-                "digest": "1111111111111111111111111111111111111111111111111111111111111111"}}))
-        );
+                "digest": "1111111111111111111111111111111111111111111111111111111111111111"}})));
     }
     let locus = definition("ProbabilityProductStateLocus");
-    for invalid in [
-        serde_json::json!({}),
-        serde_json::json!({"product_key": "AQ=="}),
-        serde_json::json!({"product_key": "AQ", "state": "AQ"}),
-    ] {
+    for invalid in [serde_json::json!({}), serde_json::json!({"product_key": "AQ=="}),
+        serde_json::json!({"product_key": "AQ", "state": "AQ"})] {
         assert!(!locus.is_valid(&invalid));
     }
 
     // Independent exact octet oracle: QSL TC-525's parameter-free Counter
     // deadlock-freedom safety key. Codec/JCS checks only, not translation.
     let octets = br#"["quire.automaton-state-key/v1",[["deadlock-freedom"],"quire.temporal.infinite-trace/v1","infinite",[]],["safety",[[[[[],"positive"]],[],[],[]]]]]"#;
-    assert_eq!(
-        jcs_canonicalize(&serde_json::from_slice::<Value>(octets).expect("literal canonical key"))
-            .expect("JCS"),
-        octets.to_vec()
-    );
+    assert_eq!(jcs_canonicalize(&serde_json::from_slice::<Value>(octets)
+        .expect("literal canonical key")).expect("JCS"), octets.to_vec());
     let spelling = encode(octets);
     assert_eq!(decode(&spelling), Some(octets.to_vec()));
     assert!(definition("AutomatonStateKey").is_valid(&serde_json::json!(spelling)));
@@ -1221,10 +1048,7 @@ fn tc_431_certificate_rules_have_positive_coverage() {
             admitted.insert(rule["const"].as_str().expect("single rule spelling"));
         }
     }
-    assert_eq!(
-        admitted, expected,
-        "schema retains the entire owned rule set"
-    );
+    assert_eq!(admitted, expected, "schema retains the entire owned rule set");
 }
 
 /// Independent finite rule/shape and required-field controls. These are
@@ -1242,8 +1066,7 @@ fn tc_431_hyper_loci_have_closed_shapes_and_rule_pairs() {
         {"pre_state": first, "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "0"}]}, "post_state": first, "result": null},
         {"pre_state": first, "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "1"}]}, "post_state": second, "result": null}
     ]});
-    let empty_witnesses =
-        serde_json::json!({"states": [], "automaton_state": "AQ", "witness_set": []});
+    let empty_witnesses = serde_json::json!({"states": [], "automaton_state": "AQ", "witness_set": []});
     let nonempty_witnesses = serde_json::json!({"states": [], "automaton_state": "AQ", "witness_set": [
         {"states": [first, second], "automaton_state": "Ag"}
     ]});
@@ -1378,135 +1201,50 @@ fn tc_431_certificate_loci_are_the_catalogued_spellings() {
     let rejection = definition("CertificateRejected");
     let part = definition("QueryPart");
     let digest = "1111111111111111111111111111111111111111111111111111111111111111";
-    let model_state =
-        serde_json::json!({"domain": "quire.simulation.state-key/v1", "digest": digest});
+    let model_state = serde_json::json!({"domain": "quire.simulation.state-key/v1", "digest": digest});
     let verdict = serde_json::json!({"kind": "NoAbstractMatch", "position": "1"});
     let foreign_state = serde_json::json!({"domain": "package-fingerprint",
         "digest": "3333333333333333333333333333333333333333333333333333333333333333"});
     let loci: [(Value, &[&str]); 11] = [
-        (
-            serde_json::json!("step/3"),
-            &[
-                "query-mismatch",
-                "shape-mismatch",
-                "malformed",
-                "not-refutation",
-            ],
-        ),
-        (
-            serde_json::json!({"part": "step/3", "index": "7"}),
-            &["proof-step-invalid", "not-refutation"],
-        ),
-        (
-            serde_json::json!({"model_state": model_state, "automaton_state": "AQ"}),
-            &[
-                "initial-missing",
-                "successor-missing",
-                "bad-state",
-                "not-partition",
-                "backward-edge",
-                "witness-fails",
-                "shape-mismatch",
-            ],
-        ),
-        (
-            model_state.clone(),
-            &[
-                "initial-missing",
-                "successor-missing",
-                "bad-state",
-                "predicate-undefined",
-                "rank-missing",
-                "rank-broken",
-                "order-broken",
-                "count-broken",
-                "malformed",
-            ],
-        ),
+        (serde_json::json!("step/3"),
+            &["query-mismatch", "shape-mismatch", "malformed", "not-refutation"]),
+        (serde_json::json!({"part": "step/3", "index": "7"}),
+            &["proof-step-invalid", "not-refutation"]),
+        (serde_json::json!({"model_state": model_state, "automaton_state": "AQ"}),
+            &["initial-missing", "successor-missing", "bad-state", "not-partition",
+              "backward-edge", "witness-fails", "shape-mismatch"]),
+        (model_state.clone(),
+            &["initial-missing", "successor-missing", "bad-state", "predicate-undefined",
+              "rank-missing", "rank-broken", "order-broken", "count-broken", "malformed"]),
         (foreign_state.clone(), &["malformed"]),
         (serde_json::json!({"domain": "", "digest": digest}), &[]),
         (serde_json::json!({"entry": "2"}), &["malformed"]),
-        (
-            serde_json::json!({"position": "0", "edge": null, "verdict": null}),
-            &[
-                "initial-mismatch",
-                "successors-differ",
-                "bad-state",
-                "malformed",
-            ],
-        ),
-        (
-            serde_json::json!({"position": "0", "edge": "1", "verdict": null}),
-            &["post-differs"],
-        ),
-        (
-            serde_json::json!({"position": "0", "edge": "1", "verdict": verdict}),
-            &["step-fails"],
-        ),
-        (
-            serde_json::json!("base"),
-            &[
-                "query-mismatch",
-                "shape-mismatch",
-                "malformed",
-                "not-refutation",
-            ],
-        ),
+        (serde_json::json!({"position": "0", "edge": null, "verdict": null}),
+            &["initial-mismatch", "successors-differ", "bad-state", "malformed"]),
+        (serde_json::json!({"position": "0", "edge": "1", "verdict": null}), &["post-differs"]),
+        (serde_json::json!({"position": "0", "edge": "1", "verdict": verdict}), &["step-fails"]),
+        (serde_json::json!("base"),
+            &["query-mismatch", "shape-mismatch", "malformed", "not-refutation"]),
     ];
     for (at, rules) in &loci {
         for rule in CERTIFICATE_RULES {
             let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
-            assert_eq!(
-                rejection.is_valid(&cause),
-                rules.contains(&rule),
-                "rule {rule} at {at}"
-            );
+            assert_eq!(rejection.is_valid(&cause), rules.contains(&rule), "rule {rule} at {at}");
         }
     }
-    for spelling in [
-        "unrolling",
-        "base",
-        "step",
-        "step/0",
-        "step/7",
-        "step/18446744073709551615",
-    ] {
-        assert!(
-            part.is_valid(&serde_json::json!(spelling)),
-            "{spelling} is a query part"
-        );
+    for spelling in ["unrolling", "base", "step", "step/0", "step/7", "step/18446744073709551615"] {
+        assert!(part.is_valid(&serde_json::json!(spelling)), "{spelling} is a query part");
     }
-    for spelling in [
-        "Step",
-        "loop",
-        "step/",
-        "step/01",
-        "step/-1",
-        "step/+1",
-        "step/1.0",
-        "step/ 1",
-        "step/1/2",
-        "step/18446744073709551616",
-        "base/0",
-        "unrolling/0",
-        "step3",
-    ] {
-        assert!(
-            !part.is_valid(&serde_json::json!(spelling)),
-            "{spelling} is not a query part"
-        );
+    for spelling in ["Step", "loop", "step/", "step/01", "step/-1", "step/+1", "step/1.0",
+        "step/ 1", "step/1/2", "step/18446744073709551616", "base/0", "unrolling/0", "step3"] {
+        assert!(!part.is_valid(&serde_json::json!(spelling)), "{spelling} is not a query part");
     }
     let maximum = u64::MAX.to_string();
     for length in 1..=maximum.len() + 1 {
         for row in [format!("1{}", "0".repeat(length - 1)), "9".repeat(length)] {
-            let canonical = row
-                .parse::<u64>()
-                .is_ok_and(|value| value.to_string() == row);
-            assert_eq!(
-                part.is_valid(&serde_json::json!(format!("step/{row}"))),
-                canonical,
-                "step/{row} is admitted exactly when {row} is a canonical u64"
-            );
+            let canonical = row.parse::<u64>().is_ok_and(|value| value.to_string() == row);
+            assert_eq!(part.is_valid(&serde_json::json!(format!("step/{row}"))), canonical,
+                "step/{row} is admitted exactly when {row} is a canonical u64");
         }
     }
     // The member names and nesting of other spellings are refused at every rule.
@@ -1520,10 +1258,7 @@ fn tc_431_certificate_loci_are_the_catalogued_spellings() {
     ] {
         for rule in CERTIFICATE_RULES {
             let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
-            assert!(
-                !rejection.is_valid(&cause),
-                "rule {rule} at {at} is refused"
-            );
+            assert!(!rejection.is_valid(&cause), "rule {rule} at {at} is refused");
         }
     }
     // FR-149's verdict is tagged by `kind`, with decimal-string integers.
@@ -1539,10 +1274,7 @@ fn tc_431_certificate_loci_are_the_catalogued_spellings() {
         serde_json::json!({"kind": "Undetermined", "cause": "UndecidedSuccessor",
             "evaluation": {"outcome": "incomplete", "limit": "integer_bits"}}),
     ] {
-        assert!(
-            step_verdict.is_valid(&admitted),
-            "{admitted} is a step verdict"
-        );
+        assert!(step_verdict.is_valid(&admitted), "{admitted} is a step verdict");
     }
     for refused in [
         serde_json::json!({"kind": "StutterChanged", "position": 2}),
@@ -1554,10 +1286,7 @@ fn tc_431_certificate_loci_are_the_catalogued_spellings() {
         serde_json::json!({"kind": "Undetermined", "cause": "UndecidedSuccessor",
             "evaluation": {"outcome": "incomplete"}}),
     ] {
-        assert!(
-            !step_verdict.is_valid(&refused),
-            "{refused} is not a step verdict"
-        );
+        assert!(!step_verdict.is_valid(&refused), "{refused} is not a step verdict");
     }
 }
 
@@ -1691,10 +1420,7 @@ fn manifest_digest(descriptor: &Value) -> Value {
 fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
     let whole = validator();
     let hello = positive("kani-hello")["document"].clone();
-    assert!(
-        whole.is_valid(&hello),
-        "the hello with its tool is admitted"
-    );
+    assert!(whole.is_valid(&hello), "the hello with its tool is admitted");
     let entry = hello["manifest"][0].clone();
     assert_eq!(entry["tool"]["name"], "kani");
     assert_eq!(entry["tool"]["version"], "0.56.0");
@@ -1702,14 +1428,8 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
 
     // The registry snapshot carries the kani descriptor as its hello gave it.
     let request = composed(&positive("kani-request"));
-    assert_eq!(
-        request["manifest"][0], entry,
-        "snapshot equals the hello descriptor"
-    );
-    assert!(
-        whole.is_valid(&request),
-        "the snapshot with its tool is admitted"
-    );
+    assert_eq!(request["manifest"][0], entry, "snapshot equals the hello descriptor");
+    assert!(whole.is_valid(&request), "the snapshot with its tool is admitted");
 
     let mut upgraded = hello.clone();
     upgraded["manifest"][0]["tool"]["version"] = Value::String("0.57.0".into());
@@ -1729,10 +1449,7 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
         .as_object_mut()
         .expect("descriptor")
         .remove("tool");
-    assert!(
-        !whole.is_valid(&linked_without),
-        "a snapshot descriptor requires tool"
-    );
+    assert!(!whole.is_valid(&linked_without), "a snapshot descriptor requires tool");
 
     // A pure in-process engine names its implementing crate and version; a
     // release that changes that version moves the engine's ManifestDigest.
@@ -1740,10 +1457,7 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
     let engine_entry = engine["manifest"][0].clone();
     assert_eq!(engine_entry["tool"]["name"], "qsl-analyze");
     assert_eq!(engine_entry["tool"]["version"], "0.1.0");
-    assert!(
-        whole.is_valid(&engine),
-        "a pure engine's snapshot descriptor is admitted"
-    );
+    assert!(whole.is_valid(&engine), "a pure engine's snapshot descriptor is admitted");
     let mut released = engine_entry.clone();
     released["tool"]["version"] = Value::String("0.3.0".into());
     assert_eq!(released["backend"], engine_entry["backend"]);
@@ -1759,10 +1473,7 @@ fn tc_431_tool_version_is_manifest_content_outside_the_backend_id() {
     assert_eq!(rebuilt["tool"]["version"], engine_entry["tool"]["version"]);
     let mut rebuilt_request = engine.clone();
     rebuilt_request["manifest"][0] = rebuilt.clone();
-    assert!(
-        whole.is_valid(&rebuilt_request),
-        "the rebuilt engine is admitted"
-    );
+    assert!(whole.is_valid(&rebuilt_request), "the rebuilt engine is admitted");
     assert_ne!(
         manifest_digest(&rebuilt),
         manifest_digest(&engine_entry),
@@ -1963,16 +1674,10 @@ fn tc_431_context_pairs_are_admitted_by_shape_alone() {
     let digest = "1111111111111111111111111111111111111111111111111111111111111111";
     for (rule, at) in [
         ("inequality-fails", serde_json::json!({"product_key": "AQ"})),
-        (
-            "successor-missing",
-            serde_json::json!({"domain": "quire.simulation.state-key/v1", "digest": digest}),
-        ),
+        ("successor-missing", serde_json::json!({"domain": "quire.simulation.state-key/v1", "digest": digest})),
     ] {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
-        assert!(
-            rejection.is_valid(&cause),
-            "{rule} at {at} is a well-formed pair"
-        );
+        assert!(rejection.is_valid(&cause), "{rule} at {at} is a well-formed pair");
     }
 }
 
@@ -1988,117 +1693,60 @@ fn tc_431_context_pairs_are_admitted_by_shape_alone() {
 fn tc_431_derived_items_name_their_anchor_and_follow_the_structural_order() {
     const DERIVED: [&str; 3] = ["deadlock-freedom", "time-lock-freedom", "race-freedom"];
     let package = parsed(PACKAGE_FIXTURE);
-    let nodes = package["semantic_graph"]["nodes"]
-        .as_array()
-        .expect("nodes");
+    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
     let document = composed(&positive("derived-items-request"));
     assert_eq!(errors(&validator(), &document), Vec::<String>::new());
     let items = document["request"]["items"].as_array().expect("items");
-    let kind = |item: &Value| {
-        item["temporal"]["item_kind"]
-            .as_str()
-            .expect("kind")
-            .to_owned()
-    };
-    let derived_from = items
-        .iter()
-        .position(|item| DERIVED.contains(&kind(item).as_str()))
-        .expect("a derived item");
+    let kind = |item: &Value| item["temporal"]["item_kind"].as_str().expect("kind").to_owned();
+    let derived_from = items.iter().position(|item| DERIVED.contains(&kind(item).as_str())).expect("a derived item");
     for (index, item) in items.iter().enumerate() {
-        assert_eq!(
-            item["request_index"], index,
-            "request_index is the position"
-        );
-        assert_eq!(
-            DERIVED.contains(&kind(item).as_str()),
-            index >= derived_from,
-            "the caller's items precede every derived item"
-        );
+        assert_eq!(item["request_index"], index, "request_index is the position");
+        assert_eq!(DERIVED.contains(&kind(item).as_str()), index >= derived_from,
+            "the caller's items precede every derived item");
         if kind(item) == "formula" {
             continue;
         }
         let claim = &item["claim"];
         let domain = item["extent"]["domains"]
             .as_array()
-            .and_then(|domains| {
-                domains
-                    .iter()
-                    .find(|domain| domain["kind"] == "infinite-trace")
-            })
+            .and_then(|domains| domains.iter().find(|domain| domain["kind"] == "infinite-trace"))
             .expect("an infinite-trace domain");
-        assert_eq!(
-            domain["domain"]["node"], claim["node"],
-            "the domain is keyed by the claim node"
-        );
+        assert_eq!(domain["domain"]["node"], claim["node"], "the domain is keyed by the claim node");
         assert_eq!(domain["domain"]["path"], serde_json::json!([]));
         assert_eq!(item["extent"]["finite_bound_available"], false);
         assert!(item["extent"].get("bounds").is_none(), "no extent bounds");
         if kind(item) == "refinement" {
             // The fixture holds no refinement node; the rule is a constant.
-            assert_eq!(
-                claim["occurrence"],
-                serde_json::json!({"role": "declaration", "ordinal": 0})
-            );
+            assert_eq!(claim["occurrence"], serde_json::json!({"role": "declaration", "ordinal": 0}));
             continue;
         }
-        let anchor = nodes
-            .iter()
-            .find(|node| node["node_id"] == claim["node"])
-            .expect("anchor node in the package");
-        let protocol =
-            item["temporal"]["subject"] == document["request"]["items"][1]["temporal"]["subject"];
-        let (tag, form, role) = if protocol {
-            ("protocol", "protocol_clause", "declaration")
-        } else {
-            ("model", "model_root", "generated")
-        };
+        let anchor = nodes.iter().find(|node| node["node_id"] == claim["node"]).expect("anchor node in the package");
+        let protocol = item["temporal"]["subject"] == document["request"]["items"][1]["temporal"]["subject"];
+        let (tag, form, role) = if protocol { ("protocol", "protocol_clause", "declaration") } else { ("model", "model_root", "generated") };
         assert_eq!(anchor["node_tag"], tag, "anchor of item {index}");
         assert_eq!(anchor["semantic_form"], form, "anchor of item {index}");
         // The occurrence is declaration ordinal 0, else expression ordinal 0, else generated ordinal 0.
         let has = |role: &str| {
-            anchor["occurrences"]
-                .as_array()
-                .expect("occurrences")
-                .iter()
+            anchor["occurrences"].as_array().expect("occurrences").iter()
                 .any(|occurrence| occurrence["role"] == role && occurrence["ordinal"] == 0)
         };
-        let picked = ["declaration", "expression", "generated"]
-            .into_iter()
-            .find(|role| has(role))
-            .expect("an occurrence");
+        let picked = ["declaration", "expression", "generated"].into_iter().find(|role| has(role)).expect("an occurrence");
         assert_eq!(picked, role);
-        assert_eq!(
-            claim["occurrence"],
-            serde_json::json!({"role": picked, "ordinal": 0})
-        );
+        assert_eq!(claim["occurrence"], serde_json::json!({"role": picked, "ordinal": 0}));
     }
     // Position: subjects by first occurrence among the caller's items, then the kind order.
     let subject_rank = |item: &Value| {
-        items[..derived_from]
-            .iter()
-            .position(|first| first["temporal"]["subject"] == item["temporal"]["subject"])
+        items[..derived_from].iter().position(|first| first["temporal"]["subject"] == item["temporal"]["subject"])
             .expect("a derived item's subject occurs among the caller's items")
     };
-    let kind_rank = |item: &Value| {
-        DERIVED
-            .iter()
-            .position(|name| *name == kind(item))
-            .expect("derived kind")
-    };
-    let keys: Vec<(usize, usize)> = items[derived_from..]
-        .iter()
-        .map(|item| (subject_rank(item), kind_rank(item)))
-        .collect();
+    let kind_rank = |item: &Value| DERIVED.iter().position(|name| *name == kind(item)).expect("derived kind");
+    let keys: Vec<(usize, usize)> = items[derived_from..].iter().map(|item| (subject_rank(item), kind_rank(item))).collect();
     let mut sorted = keys.clone();
     sorted.sort();
     sorted.dedup();
-    assert_eq!(
-        keys, sorted,
-        "derived items are in subject then kind order, once each"
-    );
+    assert_eq!(keys, sorted, "derived items are in subject then kind order, once each");
     // Deadlock-freedom and time-lock-freedom of one model subject share their claim.
-    let claim_of =
-        |name: &str| items.iter().find(|item| kind(item) == name).expect(name)["claim"].clone();
+    let claim_of = |name: &str| items.iter().find(|item| kind(item) == name).expect(name)["claim"].clone();
     assert_eq!(claim_of("deadlock-freedom"), claim_of("time-lock-freedom"));
 }
 
@@ -2111,68 +1759,32 @@ fn tc_431_zone_loci_admit_the_refinement_form_rules_and_the_added_members() {
     let rejection = definition("CertificateRejected");
     let verdict = serde_json::json!({"kind": "NoAbstractMatch", "position": "1"});
     let loci: [(Value, &[&str]); 5] = [
-        (
-            serde_json::json!({"node": 2}),
-            &[
-                "successor-missing",
-                "bad-state",
-                "witness-fails",
-                "initial-mismatch",
-            ],
-        ),
-        (
-            serde_json::json!({"edge": 2}),
-            &["backward-edge", "post-differs"],
-        ),
-        (
-            serde_json::json!({"edge": 2, "verdict": verdict}),
-            &["step-fails"],
-        ),
+        (serde_json::json!({"node": 2}), &["successor-missing", "bad-state", "witness-fails", "initial-mismatch"]),
+        (serde_json::json!({"edge": 2}), &["backward-edge", "post-differs"]),
+        (serde_json::json!({"edge": 2, "verdict": verdict}), &["step-fails"]),
         (serde_json::json!({"edge": 2, "verdict": null}), &[]),
         (serde_json::json!({"component": 2}), &["witness-fails"]),
     ];
     for (at, rules) in &loci {
         for rule in CERTIFICATE_RULES {
             let cause = serde_json::json!({"type": "certificate-rejected", "rule": rule, "at": at});
-            assert_eq!(
-                rejection.is_valid(&cause),
-                rules.contains(&rule),
-                "rule {rule} at {at}"
-            );
+            assert_eq!(rejection.is_valid(&cause), rules.contains(&rule), "rule {rule} at {at}");
         }
     }
     // The names are exactly the property names, at any depth, of the two certificates and
     // the certificate-owned definitions they reference (FR-331 "Certificate member").
     let walked = certificate_member_names();
     assert_eq!(walked.len(), 50);
-    let enumerated: std::collections::BTreeSet<String> =
-        parsed(SCHEMA)["$defs"]["CertificateRejected"]["oneOf"]
-            .as_array()
-            .expect("causes")
-            .iter()
-            .filter_map(|cause| {
-                cause["properties"]["at"]["properties"]["member"]["enum"].as_array()
-            })
-            .flatten()
-            .map(|name| name.as_str().expect("name").to_owned())
-            .collect();
-    assert_eq!(
-        enumerated, walked,
-        "the {{member}} enum is the walked member set"
-    );
+    let enumerated: std::collections::BTreeSet<String> = parsed(SCHEMA)["$defs"]["CertificateRejected"]["oneOf"]
+        .as_array().expect("causes").iter()
+        .filter_map(|cause| cause["properties"]["at"]["properties"]["member"]["enum"].as_array())
+        .flatten().map(|name| name.as_str().expect("name").to_owned()).collect();
+    assert_eq!(enumerated, walked, "the {{member}} enum is the walked member set");
     for member in &walked {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
         assert!(rejection.is_valid(&cause), "{member} is a member");
     }
-    for member in [
-        "initial",
-        "initials[0]",
-        "position",
-        "refinement_name",
-        "refinement.node",
-        "",
-        "Initial",
-    ] {
+    for member in ["initial", "initials[0]", "position", "refinement_name", "refinement.node", "", "Initial"] {
         let cause = serde_json::json!({"type": "certificate-rejected", "rule": "malformed", "at": {"member": member}});
         assert!(!rejection.is_valid(&cause), "{member} is not a member");
     }
@@ -2190,16 +1802,10 @@ fn abstract_subject() -> Value {
 #[test]
 fn tc_431_item_kinds_are_the_five_spellings_and_derived_items_carry_no_fairness() {
     let temporal = definition("Temporal");
-    let base =
-        composed(&positive("derived-items-request"))["request"]["items"][3]["temporal"].clone();
+    let base = composed(&positive("derived-items-request"))["request"]["items"][3]["temporal"].clone();
     let fair = serde_json::json!([{"kind": "weak", "operation": "Example::Session::step", "granularity": "whole"}]);
-    for (kind, derived) in [
-        ("formula", false),
-        ("deadlock-freedom", true),
-        ("time-lock-freedom", true),
-        ("race-freedom", true),
-        ("refinement", false),
-    ] {
+    for (kind, derived) in [("formula", false), ("deadlock-freedom", true), ("time-lock-freedom", true),
+        ("race-freedom", true), ("refinement", false)] {
         let mut item = base.clone();
         item["item_kind"] = kind.into();
         if kind == "refinement" {
@@ -2207,22 +1813,9 @@ fn tc_431_item_kinds_are_the_five_spellings_and_derived_items_carry_no_fairness(
         }
         assert!(temporal.is_valid(&item), "{kind} with no fairness");
         item["fairness"] = fair.clone();
-        assert_eq!(
-            temporal.is_valid(&item),
-            !derived,
-            "{kind} with a fairness constraint"
-        );
+        assert_eq!(temporal.is_valid(&item), !derived, "{kind} with a fairness constraint");
     }
-    for kind in [
-        "time-lock",
-        "race",
-        "deadlock",
-        "refine",
-        "Formula",
-        "",
-        "deadlock_freedom",
-        "transfer",
-    ] {
+    for kind in ["time-lock", "race", "deadlock", "refine", "Formula", "", "deadlock_freedom", "transfer"] {
         let mut item = base.clone();
         item["item_kind"] = kind.into();
         assert!(!temporal.is_valid(&item), "{kind} is no kind");
@@ -2242,12 +1835,7 @@ fn tc_431_abstract_subject_is_present_exactly_on_a_refinement_item() {
     for item in items {
         let t = &item["temporal"];
         let refinement = t["item_kind"] == "refinement";
-        assert_eq!(
-            t.get("abstract_subject").is_some(),
-            refinement,
-            "request_index {}",
-            item["request_index"]
-        );
+        assert_eq!(t.get("abstract_subject").is_some(), refinement, "request_index {}", item["request_index"]);
         assert!(temporal.is_valid(t));
         let mut flipped = t.clone();
         if refinement {
@@ -2255,33 +1843,20 @@ fn tc_431_abstract_subject_is_present_exactly_on_a_refinement_item() {
         } else {
             flipped["abstract_subject"] = abstract_subject();
         }
-        assert!(
-            !temporal.is_valid(&flipped),
-            "request_index {} with the member flipped",
-            item["request_index"]
-        );
+        assert!(!temporal.is_valid(&flipped), "request_index {} with the member flipped", item["request_index"]);
     }
-    for (member, value) in [
-        ("universes", serde_json::json!([])),
-        ("proof_bounds", serde_json::json!([])),
-    ] {
+    for (member, value) in [("universes", serde_json::json!([])), ("proof_bounds", serde_json::json!([]))] {
         let mut extra = abstract_subject();
         extra[member] = value;
         let mut t = items[2]["temporal"].clone();
         t["abstract_subject"] = extra;
-        assert!(
-            !temporal.is_valid(&t),
-            "{member} is not a member of abstract_subject"
-        );
+        assert!(!temporal.is_valid(&t), "{member} is not a member of abstract_subject");
     }
     let mut bare = items[2]["temporal"].clone();
     bare["abstract_subject"]["package_id"] = serde_json::json!("5".repeat(64));
     assert!(!temporal.is_valid(&bare));
-    assert_ne!(
-        abstract_subject()["initial_states"],
-        items[2]["temporal"]["subject"]["initial_states"],
-        "the abstract subject's states are its own, not the concrete subject's"
-    );
+    assert_ne!(abstract_subject()["initial_states"], items[2]["temporal"]["subject"]["initial_states"],
+        "the abstract subject's states are its own, not the concrete subject's");
 }
 
 /// FR-368-AC-19 and FR-331-AC-47: the abstract subject's `package_id` names a
@@ -2294,37 +1869,18 @@ fn tc_431_abstract_subject_is_present_exactly_on_a_refinement_item() {
 fn tc_431_abstract_subject_package_is_one_of_the_request_dependencies() {
     let in_dependencies = |document: &Value| {
         let wanted = &document["request"]["items"][2]["temporal"]["abstract_subject"]["package_id"];
-        document["request"]["dependencies"]
-            .as_array()
-            .is_some_and(|all| all.iter().any(|d| &d["package_id"] == wanted))
+        document["request"]["dependencies"].as_array().is_some_and(|all| all.iter().any(|d| &d["package_id"] == wanted))
     };
     let document = composed(&positive("derived-items-request"));
     assert_eq!(errors(&validator(), &document), Vec::<String>::new());
-    assert!(
-        in_dependencies(&document),
-        "the positive vector's abstract package is a dependency"
-    );
+    assert!(in_dependencies(&document), "the positive vector's abstract package is a dependency");
     let mut other = document.clone();
-    other["request"]["items"][2]["temporal"]["abstract_subject"]["package_id"]["digest"] =
-        serde_json::json!("6".repeat(64));
-    assert_eq!(
-        errors(&validator(), &other),
-        Vec::<String>::new(),
-        "the schema admits it: the reader refuses"
-    );
-    assert!(
-        !in_dependencies(&other),
-        "a package id outside request.dependencies is refused by the reader"
-    );
+    other["request"]["items"][2]["temporal"]["abstract_subject"]["package_id"]["digest"] = serde_json::json!("6".repeat(64));
+    assert_eq!(errors(&validator(), &other), Vec::<String>::new(), "the schema admits it: the reader refuses");
+    assert!(!in_dependencies(&other), "a package id outside request.dependencies is refused by the reader");
     let mut none = document.clone();
-    none["request"]
-        .as_object_mut()
-        .unwrap()
-        .remove("dependencies");
-    assert!(
-        !in_dependencies(&none),
-        "a request with no dependencies has no abstract package"
-    );
+    none["request"].as_object_mut().unwrap().remove("dependencies");
+    assert!(!in_dependencies(&none), "a request with no dependencies has no abstract package");
 }
 
 /// FR-368-AC-20: a derived item takes the provider defaults for `max_depth`
@@ -2341,35 +1897,18 @@ fn tc_431_a_derived_item_takes_provider_defaults_and_inherits_no_limits() {
         let kind = t["item_kind"].as_str().expect("kind");
         if ["deadlock-freedom", "time-lock-freedom", "race-freedom"].contains(&kind) {
             derived += 1;
-            assert!(
-                t.get("max_depth").is_none() && t.get("smt_encoding").is_none(),
-                "{kind}"
-            );
+            assert!(t.get("max_depth").is_none() && t.get("smt_encoding").is_none(), "{kind}");
             let mut set = t.clone();
             set["limits"] = serde_json::json!({"max_states": 250000});
             assert!(temporal.is_valid(&set), "{kind} with a caller setting");
             // The limits meaningful for an exhaustive check are admitted, one at a time.
-            for name in [
-                "max_states",
-                "max_transitions",
-                "max_clocks",
-                "max_store_buffer",
-                "max_messages",
-                "max_live_instances",
-                "max_solver_steps",
-                "max_solver_time",
-            ] {
+            for name in ["max_states", "max_transitions", "max_clocks", "max_store_buffer", "max_messages",
+                "max_live_instances", "max_solver_steps", "max_solver_time"] {
                 set["limits"] = serde_json::json!({ name: 7 });
                 assert!(temporal.is_valid(&set), "{kind} with {name}");
             }
             // The automaton, sampling and hyper limits are unknown members of a derived item's limits.
-            for name in [
-                "max_automaton_states",
-                "max_walk_steps",
-                "max_witness_set",
-                "max_relation_tuples",
-                "max_samples",
-            ] {
+            for name in ["max_automaton_states", "max_walk_steps", "max_witness_set", "max_relation_tuples", "max_samples"] {
                 set["limits"] = serde_json::json!({ name: 7 });
                 assert!(!temporal.is_valid(&set), "{kind} with {name}");
             }
@@ -2377,10 +1916,7 @@ fn tc_431_a_derived_item_takes_provider_defaults_and_inherits_no_limits() {
             set["max_depth"] = 40.into();
             assert!(!temporal.is_valid(&set), "{kind} with a max_depth");
         } else {
-            assert!(
-                t.get("max_depth").is_some() && t.get("limits").is_some(),
-                "{kind} carries the caller's settings"
-            );
+            assert!(t.get("max_depth").is_some() && t.get("limits").is_some(), "{kind} carries the caller's settings");
             // An authored or refinement item is not restricted to the exhaustive-check names.
             let mut set = t.clone();
             set["limits"] = serde_json::json!({"max_automaton_states": 7});
@@ -2395,26 +1931,11 @@ fn tc_431_a_derived_item_takes_provider_defaults_and_inherits_no_limits() {
 /// (`StateKey`, `TransitionIdentity`, `Rational`, `NodeId`, `PackageId`,
 /// `Count`) are named by their type and contribute none.
 fn certificate_member_names() -> std::collections::BTreeSet<String> {
-    const OWNED: [&str; 5] = [
-        "CertificateIdentity",
-        "DbmBound",
-        "ComponentReason",
-        "RefinementPart",
-        "ProbabilityProductKey",
-    ];
-    fn walk(
-        node: &Value,
-        defs: &Value,
-        names: &mut std::collections::BTreeSet<String>,
-        seen: &mut Vec<String>,
-    ) {
+    const OWNED: [&str; 5] = ["CertificateIdentity", "DbmBound", "ComponentReason", "RefinementPart", "ProbabilityProductKey"];
+    fn walk(node: &Value, defs: &Value, names: &mut std::collections::BTreeSet<String>, seen: &mut Vec<String>) {
         match node {
             Value::Object(map) => {
-                if let Some(target) = map
-                    .get("$ref")
-                    .and_then(Value::as_str)
-                    .and_then(|r| r.strip_prefix("#/$defs/"))
-                {
+                if let Some(target) = map.get("$ref").and_then(Value::as_str).and_then(|r| r.strip_prefix("#/$defs/")) {
                     if OWNED.contains(&target) && !seen.iter().any(|s| s == target) {
                         seen.push(target.to_owned());
                         walk(&defs[target], defs, names, seen);
@@ -2453,12 +1974,8 @@ fn certificate_member_names() -> std::collections::BTreeSet<String> {
 #[test]
 fn tc_431_a_model_subject_over_several_selections_has_no_derived_item() {
     fn anchor(package: &Value) -> Result<Value, (&'static str, &'static str)> {
-        let roots: Vec<&Value> = package["semantic_graph"]["nodes"]
-            .as_array()
-            .expect("nodes")
-            .iter()
-            .filter(|node| node["semantic_form"] == "model_root")
-            .collect();
+        let roots: Vec<&Value> = package["semantic_graph"]["nodes"].as_array().expect("nodes").iter()
+            .filter(|node| node["semantic_form"] == "model_root").collect();
         match roots.as_slice() {
             [root] => Ok(root["node_id"].clone()),
             _ => Err(("unsupported_projection", "unsupported-requested-capability")),
@@ -2467,25 +1984,12 @@ fn tc_431_a_model_subject_over_several_selections_has_no_derived_item() {
     let package = parsed(PACKAGE_FIXTURE);
     let document = composed(&positive("derived-items-request"));
     let item = &document["request"]["items"][3];
-    assert_eq!(
-        anchor(&package),
-        Ok(item["claim"]["node"].clone()),
-        "one selection: the anchor is the model_root"
-    );
+    assert_eq!(anchor(&package), Ok(item["claim"]["node"].clone()), "one selection: the anchor is the model_root");
     let mut two = package.clone();
-    let nodes = two["semantic_graph"]["nodes"]
-        .as_array_mut()
-        .expect("nodes");
-    let root = nodes
-        .iter()
-        .find(|node| node["semantic_form"] == "model_root")
-        .expect("root")
-        .clone();
+    let nodes = two["semantic_graph"]["nodes"].as_array_mut().expect("nodes");
+    let root = nodes.iter().find(|node| node["semantic_form"] == "model_root").expect("root").clone();
     nodes.push(root);
-    assert_eq!(
-        anchor(&two),
-        Err(("unsupported_projection", "unsupported-requested-capability"))
-    );
+    assert_eq!(anchor(&two), Err(("unsupported_projection", "unsupported-requested-capability")));
 }
 
 /// FR-368-AC-16, AC-20, AC-21 and FR-331-AC-44: the adverse vectors that pin
@@ -2497,46 +2001,23 @@ fn tc_431_a_model_subject_over_several_selections_has_no_derived_item() {
 #[trace("TC-431", "FR-331-AC-44")]
 #[test]
 fn tc_431_the_derived_item_adverse_vectors_cover_every_kind() {
-    let adverse: Vec<String> = parsed(VECTORS)["adverse"]
-        .as_array()
-        .expect("adverse")
-        .iter()
-        .map(|vector| vector["name"].as_str().expect("name").to_owned())
-        .collect();
-    for kind in [
-        "deadlock-freedom",
-        "time-lock-freedom",
-        "race-freedom",
-        "refinement",
-    ] {
-        let stem = kind
-            .strip_suffix("-freedom")
-            .map_or_else(|| "refinement-item".to_owned(), |_| kind.to_owned());
-        for name in [
-            format!("{stem}-bounded-extent"),
-            format!("{stem}-without-infinite-trace-domain"),
-        ] {
+    let adverse: Vec<String> = parsed(VECTORS)["adverse"].as_array().expect("adverse").iter()
+        .map(|vector| vector["name"].as_str().expect("name").to_owned()).collect();
+    for kind in ["deadlock-freedom", "time-lock-freedom", "race-freedom", "refinement"] {
+        let stem = kind.strip_suffix("-freedom").map_or_else(|| "refinement-item".to_owned(), |_| kind.to_owned());
+        for name in [format!("{stem}-bounded-extent"), format!("{stem}-without-infinite-trace-domain")] {
             // The deadlock-freedom pair predates the per-kind names.
             let name = match name.as_str() {
                 "deadlock-freedom-bounded-extent" => "derived-item-bounded-extent".to_owned(),
-                "deadlock-freedom-without-infinite-trace-domain" => {
-                    "derived-item-without-infinite-trace-domain".to_owned()
-                }
+                "deadlock-freedom-without-infinite-trace-domain" => "derived-item-without-infinite-trace-domain".to_owned(),
                 _ => name,
             };
             assert!(adverse.contains(&name), "adverse vector {name}");
         }
     }
-    for name in [
-        "deadlock-freedom-with-max-depth",
-        "time-lock-freedom-with-max-depth",
-        "race-freedom-with-max-depth",
-        "item-kind-transfer",
-        "deadlock-freedom-with-max-automaton-states",
-        "time-lock-freedom-with-max-walk-steps",
-        "deadlock-freedom-protocol-with-max-witness-set",
-        "race-freedom-with-max-relation-tuples",
-    ] {
+    for name in ["deadlock-freedom-with-max-depth", "time-lock-freedom-with-max-depth", "race-freedom-with-max-depth", "item-kind-transfer",
+        "deadlock-freedom-with-max-automaton-states", "time-lock-freedom-with-max-walk-steps",
+        "deadlock-freedom-protocol-with-max-witness-set", "race-freedom-with-max-relation-tuples"] {
         assert!(adverse.contains(&name.to_owned()), "adverse vector {name}");
     }
 }
@@ -2548,23 +2029,11 @@ fn tc_431_the_derived_item_adverse_vectors_cover_every_kind() {
 #[test]
 fn tc_431_the_request_has_a_memory_member_and_its_identity_includes_it() {
     let mut document = composed(&positive("derived-items-request"));
-    document["request"]["memory"] =
-        serde_json::json!([{"parallel": "Example::Session::par", "model": "tso"}]);
-    assert_eq!(
-        errors(&validator(), &document),
-        Vec::<String>::new(),
-        "a memory selection is a request member"
-    );
+    document["request"]["memory"] = serde_json::json!([{"parallel": "Example::Session::par", "model": "tso"}]);
+    assert_eq!(errors(&validator(), &document), Vec::<String>::new(), "a memory selection is a request member");
     document["request"]["memory"][0]["model"] = "weak".into();
-    assert_ne!(
-        errors(&validator(), &document),
-        Vec::<String>::new(),
-        "only sc, tso and ra are models"
-    );
+    assert_ne!(errors(&validator(), &document), Vec::<String>::new(), "only sc, tso and ra are models");
     let spec = include_str!("../spec/objects/interfaces/FR-331-backend-provider-envelope.md");
-    let identity = spec
-        .lines()
-        .find(|line| line.starts_with("Request identity includes"))
-        .expect("identity paragraph");
+    let identity = spec.lines().find(|line| line.starts_with("Request identity includes")).expect("identity paragraph");
     assert!(identity.contains("the request's `memory` selections"));
 }
