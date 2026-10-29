@@ -15722,6 +15722,34 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         .all(|node| path_embeds_an_operand(&node["node_id"])));
 }
 
+/// `NodeId.ordinal` is an integer in `0..=9007199254740991` (2^53 - 1): the
+/// limit is accepted, one over it and a negative or non-integer ordinal are
+/// malformed wire, at the node's `node_id`, in both a bare id and a package.
+#[trace("TC-233", "FR-322-AC-10")]
+#[test]
+fn tc_233_node_id_ordinal_is_bounded_by_two_to_the_53_minus_one() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let id = def_validator("NodeId");
+    let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    assert!(schema.is_valid(&package));
+    let cases: [(&str, Value, bool); 6] = [
+        ("zero", json!(0), true),
+        ("at the limit", json!(9007199254740991u64), true),
+        ("one over the limit", json!(9007199254740992u64), false),
+        ("far over the limit", json!(18446744073709551615u64), false),
+        ("negative", json!(-1), false),
+        ("fractional", json!(1.5), false),
+    ];
+    for (name, ordinal, admitted) in cases {
+        let mut node_id = package["semantic_graph"]["nodes"][0]["node_id"].clone();
+        node_id["ordinal"] = ordinal.clone();
+        assert_eq!(id.is_valid(&node_id), admitted, "{name}: bare node id");
+        let mut candidate = package.clone();
+        candidate["semantic_graph"]["nodes"][0]["node_id"]["ordinal"] = ordinal;
+        assert_eq!(schema.is_valid(&candidate), admitted, "{name}: in a package");
+    }
+}
+
 
 /// Every node body of every published V2 package is in the closed
 /// five-stratum body grammar.
