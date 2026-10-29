@@ -158,7 +158,7 @@ subject while changing raw bytes. Source-byte changes alter source correspondenc
 even if a typed-expression canonicalizer establishes equal expression meaning.
 Canonical identity is optional until its exact domain/version/algorithm is
 selected and qualified; structural comparison or ordinary JSON hashing cannot
-claim it. Existing ArtifactRef/SemanticRef, domain package `sha256-jcs` and IR domains
+claim it. Existing ArtifactRef/SemanticRef, domain package identity and IR domains
 retain their selected contracts.
 
 ## Admission examples
@@ -183,6 +183,5 @@ incompleteness.
 
 The FS05 reference/evolution rules are accepted; the remaining runtime and
 assessment rules stay in the [current shared draft](definitions/README.md).
-Further draft successor definitions or
-checksum publication are not prerequisites. Historical accepted selections
+Further draft successor definitions are not prerequisites. Historical accepted selections
 retain their original meaning.
