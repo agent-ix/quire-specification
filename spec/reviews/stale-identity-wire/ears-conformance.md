@@ -15,4 +15,4 @@ FR-331-AC-49 gives directly verifiable admission and refusal conditions for the 
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No issues found in the scoped requirement grammar. | FR-331-AC-49; TC-431 BP-39 |
+| FND-001 | low | No issues found in the scoped requirement grammar. | FR-331-AC-49; TC-431 BP-48 |
