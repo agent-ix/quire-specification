@@ -8,14 +8,10 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-261
     type: references
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
   - target: ix://agent-ix/quire-specification/FR-296
     type: references
 ---
 # FR-260: Admitted observation
-
-> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
 
 ## Description
 
@@ -41,9 +37,9 @@ and visibility provenance."
 
 ## Identity and comparison
 
-- **Identity kind** — *derived* under FR-296 from the complete closed canonical
-  observation with only `observationId` omitted.
-- **Key** — the complete `sha256-jcs:` observation identity. FR-110 also fixes what is
+- **Identity kind** — *entity* keyed structurally under FR-296.
+- **Key** — the FR-296 observation key (source schema identity and version,
+  binding identity and version, subject identity, source ordinal). FR-110 also fixes what is
   excluded: the binder "SHALL NOT substitute a signal name, endpoint, trace ID,
   or compatible-looking field for a declared entity, trigger, unit, or
   valuation" (FR-110 Behavior). Equality is componentwise over the key and
@@ -63,9 +59,6 @@ and visibility provenance."
   explicit for valuations: "A required absent valuation SHALL be incomplete or
   refused, never false or an implicit option-none." Absence never becomes a
   default, an empty value or an implicit option-none.
-- **Digest domain** — the observation identity uses `quire.verification.jcs`
-  under FR-296; an identity crossing domains is unequal regardless of byte
-  equality.
 
 ## Acceptance Criteria
 
@@ -74,7 +67,7 @@ and visibility provenance."
 | FR-260-AC-1 | A signal name, endpoint, trace ID or compatible-looking field supplied for a declared entity, trigger, unit or valuation does not resolve. | Test (TC-140) |
 | FR-260-AC-2 | A required absent valuation compares only to absence and does not compare equal to false or to an option-none. | Test (TC-140) |
 | FR-260-AC-3 | An internally recorded and an externally observed record remain distinguishable after admission. | Test (TC-140) |
-| FR-260-AC-4 | Observation identity is derived exactly under FR-296; same identity on unequal canonical bytes and any authored/default identity are refused. | Test (TC-140) |
+| FR-260-AC-4 | The observation key is the structural FR-296 tuple; the same key on unequal observation members and any missing or defaulted key member are refused. | Test (TC-140) |
 
 ## Dependencies
 
@@ -85,10 +78,8 @@ and visibility provenance."
   relationship between instances.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain rule.
 - [FR-296](FR-296-admitted-observation-identity-preimage.md) defines the exact
-  preimage, key and byte-uniqueness rule.
+  key and uniqueness rule.
 
 ## Status
 

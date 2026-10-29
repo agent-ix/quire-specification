@@ -11,8 +11,6 @@ relationships:
 ---
 # FR-287: Authority-qualified runtime subject reference
 
-> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
-
 ## Description
 
 When a concrete runtime subject is bound for assessment, the binder SHALL retain
@@ -24,7 +22,7 @@ without deriving identity from its relationships or presentation.
 | Property | Source | Note |
 | --- | --- | --- |
 | Authority identity | FR-035 | Exact identity of the selected binding authority. |
-| Subject kind | FR-035 | Exact typed discriminator; equal opaque bytes of different kinds remain unequal. For a domain object the kind is its effective declaration key (domain package identity, IR node identity, `sha256-jcs`) per AD-006. |
+| Subject kind | FR-035 | Exact typed discriminator; equal opaque bytes of different kinds remain unequal. For a domain object the kind is its effective declaration key (domain package identity, IR node identity) per AD-006. |
 | Authority-local object identity | FR-035 | Exact non-empty bytes retained without parsing, trimming, normalization or reconstruction. |
 
 The binding requirement identifies a typed slot and its expected authority. It

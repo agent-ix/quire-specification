@@ -207,7 +207,7 @@ members not listed for a kind being absent:
 | `memory_step` | `memory` | the identity its memory model gives |
 
 Several successors with one identity are told apart by their post-state's
-`quire.simulation.state-key/v1` digest. Successors are visited in ascending
+state key. Successors are visited in ascending
 JCS bytes of the identity, as FR-181 states for model transition identities.
 
 ## Acceptance Criteria
@@ -219,7 +219,7 @@ JCS bytes of the identity, as FR-181 states for model transition identities.
 | FR-426-AC-3 | A `fifo` channel delivers only the head of each key and an `unordered` channel any entry; `duplicate` and `lose` are enabled exactly under the delivery policies that admit them; a `block` send at capacity waits and a `reject` send at capacity records the rejection. | Test (TC-378) |
 | FR-426-AC-4 | Choice, repeat and check moves produce no transition identity and no position; a repeat at its maximum with a true guard enters `exhausted`; a false `check` leaves its thread waiting with no enabled step. | Test (TC-376) |
 | FR-426-AC-5 | An attempt never interleaves with another step: its precondition is read and its post-state written at one position, and its successors are exactly the FR-181 successors of that application with the binder constraint applied. | Test (TC-376) |
-| FR-426-AC-6 | Every step carries a protocol transition identity with exactly the members its kind lists; successors are visited in ascending JCS bytes of the identity, and two successors with one identity are distinguished by post-state digest. | Test (TC-376, TC-387) |
+| FR-426-AC-6 | Every step carries a protocol transition identity with exactly the members its kind lists; successors are visited in ascending JCS bytes of the identity, and two successors with one identity are distinguished by post-state key. | Test (TC-376, TC-387) |
 | FR-426-AC-7 | An `await` whose match is never enabled has its `timeout` step enabled at every state where it waits, with no clock read. | Test (TC-378) |
 | FR-426-AC-8 | A repeat with no maximum keeps no counter in `bounds`, re-enters its body while its guard is true and leaves it when the guard is false; a loop whose guard stays true closes a cycle through the state key, so its reachable state set is finite when its body's states are. | Test (TC-376) |
 | FR-426-AC-9 | `finish` is not enabled while a branch thread under `outstanding continue` or a compensation thread of the instance is `running`, even when a record satisfies the finish constraint; it is enabled once every such thread has left `running`. | Test (TC-377, TC-380) |
@@ -238,7 +238,7 @@ JCS bytes of the identity, as FR-181 states for model transition identities.
 - [FR-425](FR-425-define-protocol-subjects-and-state-keys.md) owns the
   protocol state, threads and paths.
 - [FR-181](../runtime/FR-181-simulate-finite-executions.md) owns the
-  application successor rule, digest and canonical order.
+  application successor rule, state key and canonical order.
 - [FR-170](FR-170-evaluate-channel-queue-semantics.md) and
   [FR-171](FR-171-evaluate-dynamic-control.md) own channel and join policy
   meaning.

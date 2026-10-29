@@ -25,8 +25,6 @@ relationships:
 
 # FR-353: Declare a model-to-implementation abstraction relation
 
-> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #517 lands.
-
 ## Description
 
 When a proof backend emits onto or verifies implementation code, the checked
@@ -55,8 +53,7 @@ exactly one implementation state representation, a population maps to exactly
 one implementation collection representation, and an operation frame maps to
 exactly one implementation function's parameters, result and framed state.
 A model object or population binding is keyed by the bound element's AD-006
-effective-declaration key (domain package identity, IR node identity, digest
-domain `sha256-jcs`). An operation frame binding is keyed by its operation
+effective-declaration key (domain package identity, IR node identity). An operation frame binding is keyed by its operation
 key: the AD-006 effective-declaration key of the object type that declares
 the operation, and the operation's identifier. An operation has one FR-013
 frame and one set of FR-012 pre/post/result anchors, so its frame identity

@@ -72,7 +72,6 @@ satisfy the other's binding.
   established effect has an absent related effect identity; FR-051-AC-3 states
   that it "remains an attempt and cannot activate effect-dependent compensation",
   and that absence is never compared to a default or empty effect identity.
-- **Digest domain** — FR-287 retains the authority digest and its FR-201 domain.
 
 ## Acceptance Criteria
 

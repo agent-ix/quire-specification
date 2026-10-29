@@ -12,8 +12,6 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-285
     type: verifies
 ---
-
-> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
 ## Description
 
 Verify the total, source-bound projection from one canonical protocol result to
@@ -34,16 +32,15 @@ with all, some and none of a non-empty required set participating, plus an
 `unknown` fact carrying known participants, missing dependencies and typed
 reasons. Mutate absent required sets, mixed variants, duplicate references and
 each E02 target label in the source fact.
-Project each result under one exact E02 obligation, plan, task, run, profile, binding,
-dependency closure and adapter identity, then assess the emitted
+Project each result under one exact E02 obligation, plan, task, run, profile, binding
+and adapter identity, then assess the emitted
 `TechniqueResult` with the quire-verification strict reader.
 
-For each case, mutate the canonical result identity, canonical byte digest,
+For each case, mutate the canonical result key,
 target obligation, execution binding, adapter version and one source state in
-turn. Exercise a stale enclosing digest over otherwise valid source bytes and a
-digest mismatch whose source bytes are also malformed. Separately preserve a
+turn. Separately preserve a
 strict-reader-accepted source result while corrupting only the target-context or
-derived-projection identity. Independently recompute the normative identity preimage and permute JSON
+derived-projection identity. Permute JSON
 object-member presentation while preserving the semantic `bindingRefs` order.
 Cross-wire protocol adequacy into E02 adequacy, remove the retained
 canonical-result artifact, label a shared oracle contribution independent,
@@ -62,17 +59,16 @@ in the canonical source artifact. Complete-global-conformance closure and its
 premises also remain unchanged only in that source artifact and cannot become an
 E02 finding or sufficiency decision. The derived identity is distinct and stable
 for identical inputs, changes for every
-identity/version/digest mutation, agrees with the independently recomputed
-`sha256-jcs` identity across object-member permutations, preserves binding order,
-and retains the exact URI, digest and media
+identity/version mutation, is unchanged across object-member permutations, preserves binding order,
+and retains the exact URI and media
 type of unchanged canonical bytes. Cross-wiring, invented oracle independence,
 missing source retention, unknown revisions/features and unrepresented source
 states are refused with the specified stable code and without a
-`TechniqueResult`. A recomputed source-byte digest mismatch is always
+`TechniqueResult`. An invalid source is always
 `invalid-source-result`, including when another source defect is present; it is
 never reported as `identity-mismatch`. `identity-mismatch` is emitted only after
 the source result is valid and a target-context or derived-projection identity
-does not match its normative preimage.
+does not match its normative tuple.
 Known participation derives `not-required`, `complete`, `partial` or
 `not-started` from the exact required and participating sets; unknown derives
 `unknown` while retaining every known participant, missing dependency and typed

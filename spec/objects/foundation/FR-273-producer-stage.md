@@ -73,8 +73,6 @@ it never chooses another list by label or rewrites the pair.
   wrapper's own stage. "Unavailable context is explicitly unavailable; byte
   zero, an empty path or a name-search match cannot masquerade as a located
   failure" (proposed catalog).
-- **Digest domain** — a stage label carries no digest. The catalog that carries
-  it is selected by identity ([FR-270](FR-270-diagnostic-catalog.md)).
 
 ## Acceptance Criteria
 

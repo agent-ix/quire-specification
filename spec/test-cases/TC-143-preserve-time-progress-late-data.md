@@ -40,7 +40,7 @@ Exercise point interval `[30,30]`, reversed bounds, end/watermark equality,
 foreign clocks, discrete successor at its maximum value, and non-discrete time
 without an explicit greater end. Independently use event-position and
 fixed-sample ranges without converting either to UTC timestamps.
-Derive authority and cutoff identities independently; mutate every authority
+Compare authority and cutoff keys componentwise; mutate every authority
 scope, clock, source-set, boundary and restoration component and every cutoff
 clock, instant and rule-identity component. Feed exact `on-time`, exact `late`,
 unknown, aliased and absent timing labels. Substitute clock uncertainty for the
@@ -63,8 +63,8 @@ clock and absent non-discrete greater end refuse without invented epsilon. The
 unrelated coverage remains incomplete. Event-position and fixed-sample controls
 retain their own selected clock identities and do not manufacture timestamp
 coverage.
-Every semantic mutation changes only its applicable derived identity. Unknown,
-aliased, absent or foreign-domain inputs refuse. Clock uncertainty remains a
+Every semantic mutation makes only its applicable key unequal. Unknown,
+aliased or absent inputs refuse. Clock uncertainty remains a
 value under the selected clock and cannot replace it. Exact `late` is retained
 without result mutation or coercion into completeness; exact `on-time` carries
 no implication of completeness or closure.

@@ -61,9 +61,6 @@ message/effect obligation".
   (FR-052-AC-2, FR-113).
 - **Absence** — an absent key component compares only to absence, never to a
   default or empty value.
-- **Digest domain** — no component of this key is a digest; a digest carried in
-  provenance carries the domain it was derived under,
-  `ix://agent-ix/quire-specification/FR-201`.
 
 ## Acceptance Criteria
 

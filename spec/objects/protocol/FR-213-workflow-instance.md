@@ -54,8 +54,6 @@ When a request names a workflow instance, the binder SHALL treat it as an author
   "Unknown required membership yields an explicitly incomplete assessment and
   cannot establish a successful aggregate" (FR-035-AC-4); absence never becomes
   a default, an empty value or an optional-none (FR-035-AC-8).
-- **Digest domain** — FR-287 retains the authority digest and its selected
-  FR-201 domain; equal bytes crossing domains are unequal.
 
 ## Acceptance Criteria
 

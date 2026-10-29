@@ -44,8 +44,6 @@ When a truth result is retained, the result producer SHALL carry exactly one set
 - **Absence** — an absent settlement basis compares only to absence. It is
   distinct from the supplied value `unavailable` and is never defaulted. FR-061
   requires "exactly one settlement basis" with every truth result.
-- **Digest domain** — not applicable; this key contains no digest. See
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Boundary correspondence
 

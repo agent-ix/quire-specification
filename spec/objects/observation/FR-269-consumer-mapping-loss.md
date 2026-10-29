@@ -49,11 +49,6 @@ is not reachable by omission.
   to `preserved`: "missing representation SHALL NOT be classified as preserved"
   (FR-116 Behavior). An incomplete, pending or refused outcome is likewise never
   promoted to a Boolean success (FR-116 Behavior, FR-116-AC-3).
-- **Digest domain** — not applicable; a classification label carries no digest.
-  The definition and profile identity selections it is emitted beside are
-  retained under FR-116 Behavior, which requires the adapter to "refuse a
-  definition or profile identity other than the selected one rather than emit a
-  mapping under a current default".
 
 ## Acceptance Criteria
 

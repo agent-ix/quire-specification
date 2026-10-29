@@ -58,9 +58,6 @@ states the channel's delivery policy.
   (FR-052, FR-052-AC-2, FR-113).
 - **Absence** — every FR-221 component is required. A send outside every bounded
   iteration carries a present zero-length ordinal sequence.
-- **Digest domain** — no component of this key is a digest. A digest carried
-  beside a send in provenance carries the domain it was derived under,
-  `ix://agent-ix/quire-specification/FR-201`.
 
 ## Acceptance Criteria
 

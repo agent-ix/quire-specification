@@ -40,7 +40,7 @@ runs.
     `{"type":"step","transition":<transition>,"post_state":"<64 lowercase hex>"}`,
     with `transition` the FR-181 typed canonical form of the step's
     transition identity and `post_state` the post-state's
-    `quire.simulation.state-key/v1` digest (FR-181).
+    state key (FR-181).
 - **Instance** — the `over` binding of the item's instance:
   `{"type":"instance","parameter":"<ident>","key":<encoded>}`, with `key`
   the bound object's universe key in FR-181 typed canonical form, or `null`
@@ -72,7 +72,7 @@ runs.
   undefined-evaluation envelope,
   `{"type":"undefined-evaluation","where":{...},"cause":<reason>}`, with the
   model-arm keys of FR-364: `position`, the stem's number of steps;
-  `state_key`, the `quire.simulation.state-key/v1` digest of the stem's last
+  `state_key`, the state key of the stem's last
   state; and `locus`, the source locus of the expression that has no value.
   For a predicate of the claim, a state-graph `where` also carries
   `predicate`, one of `"P"`, `"Q"`, `"X"` or `"Y"`, naming the predicate that
@@ -124,7 +124,7 @@ member:
 | FR-393-AC-1 | Each of the four arms serializes and reads back byte-identically under RFC 8785 JCS with exactly the members above. | Test (TC-335, TC-349) |
 | FR-393-AC-2 | A `witness` arm carries one entry per initial state in index order, each with its source; a `sampled` source names its seed and trace index. | Test (TC-331, TC-335) |
 | FR-393-AC-3 | An unknown arm, a missing or duplicate member, a witness arm with the wrong number or order of entries, an out-of-range initial index, a misplaced or out-of-range `loop_entry` and a mismatched instance each refuse as `invalid_runtime_input`/`invalid-value` before replay. | Test (TC-335) |
-| FR-393-AC-5 | An `undefined` arm carries its `undefined-evaluation` value (state-key digest, locus and catalogued reason, plus the predicate for a claim predicate or the FR-181 transition identity for a guard) and reads back with it; an `undefined` arm without it, with an uncatalogued reason, with both `predicate` and `transition`, with a `transition` not enabled-tested at the stem's last state, or an `undefined` member on another arm refuses before replay. | Test (TC-335, TC-349) |
+| FR-393-AC-5 | An `undefined` arm carries its `undefined-evaluation` value (state key, locus and catalogued reason, plus the predicate for a claim predicate or the FR-181 transition identity for a guard) and reads back with it; an `undefined` arm without it, with an uncatalogued reason, with both `predicate` and `transition`, with a `transition` not enabled-tested at the stem's last state, or an `undefined` member on another arm refuses before replay. | Test (TC-335, TC-349) |
 | FR-393-AC-4 | Two envelopes whose evidence is equal but whose subject or claim differs have different obligation identities. | Test (TC-335) |
 
 ## Dependencies

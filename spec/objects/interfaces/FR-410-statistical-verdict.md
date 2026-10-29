@@ -50,7 +50,7 @@ which the claim evaluates undefined (FR-408). It carries:
 
 - the test index and the trace index;
 - the steps, each as the FR-181 trace step content (transition identity,
-  post-state digest) plus its drawn scheduler choice, its drawn random
+  post-state key) plus its drawn scheduler choice, its drawn random
   argument values and, over a timed subject, its delay;
 - the path probability: the exact rational product of its step probabilities;
 - the event's value, or the measure's value, on the sample, or the undefined
@@ -65,7 +65,7 @@ run's counts set it.
 ### Witness replay
 
 A sampled witness replays by FR-181 replay (re-execution of each step through
-the native transition relation, successor selection by post-state digest, and
+the native transition relation, successor selection by post-state key, and
 evaluation of the event, which for an undefined witness reproduces the
 undefined value with its position, locus and reason), plus two checks:
 

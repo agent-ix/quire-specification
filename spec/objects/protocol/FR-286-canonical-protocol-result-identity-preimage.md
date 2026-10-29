@@ -1,6 +1,6 @@
 ---
 id: FR-286
-title: "Canonical protocol result identity preimage"
+title: "Canonical protocol result key"
 type: FR
 object: value_object
 relationships:
@@ -8,82 +8,72 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-240
     type: specifies
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
 ---
-# FR-286: Canonical protocol result identity preimage
-
-> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+# FR-286: Canonical protocol result key
 
 ## Description
 
-When a canonical `ProtocolResult` is produced or read, its `resultId` SHALL be
-derived from one exact versioned RFC 8785 preimage so that the identity cannot
-be authored independently of the complete closed result it names.
+When a canonical `ProtocolResult` is produced or read, the producer SHALL identify it by
+its structural `resultKey`, so that the identity cannot be authored
+independently of the run that produced the result. No hash of the result is
+computed.
 
 ## Properties
 
-For a complete closed result object `R`, let `R_without_resultId` be `R` with
-exactly its `resultId` member removed. The identity is the textual value
-`sha256-jcs:<hex>`, where `<hex>` is 64 lowercase hexadecimal digits of SHA-256
-over the RFC 8785 canonical UTF-8 bytes of exactly this value:
+`resultKey` is the closed object `{producer, request, ordinal}`:
 
-```text
-IdentityPreimage := {
-  "identityVersion": "quire.protocol.result-identity/v1-draft.1",
-  "result": R_without_resultId
-}
-```
+- `producer` — the protocol producer's identity and version (`{identity, version}`).
+- `request` — the exact request identity the result answers.
+- `ordinal` — a `U64String` position that the producer assigns to the result in
+  its own result stream for that request. The producer assigns each ordinal once
+  and never reuses it for different canonical result members.
 
-`R_without_resultId` denotes the JSON object value defined above, not a string
-or wire token. RFC 8785 is applied to the JSON object on the right-hand side of
-`:=`; the notation itself is not hashed. The preimage includes every other
-result member and excludes only `resultId`.
-Unknown or duplicate result members are refused by the closed result contract
-before identity computation. The result identity is the sole digest required by
-this result contract and is not an enclosing ArtifactRef seal.
+All other result members are attributes of the keyed result. Unknown or
+duplicate result members are refused by the closed result contract.
 
 ## Reader order and comparison
 
 A strict reader SHALL validate in this order: (1) closed result shape,
-`contractVersion` and `kind`; (2) recompute and compare `resultId`; (3) validate
-cross-field combination and lineage rules. The reader SHALL refuse the first
-failed boundary and SHALL NOT repair or approximate the result.
+`contractVersion` and `kind`; (2) the presence and completeness of `resultKey`;
+(3) cross-field combination and lineage rules. The reader SHALL refuse the first
+failed boundary and SHALL NOT repair or approximate the result. No
+separate artifact digest is computed or compared.
 
-- **Identity kind** — *derived* from the exact preimage above.
-- **Key** — the complete textual `resultId`, including its domain prefix.
+- **Identity kind** — *entity*. The key is structural and is not derived from the
+  result's bytes.
+- **Key** — `resultKey`, compared componentwise.
 - **Key order** — none. Lexicographic or timestamp order has no semantic force.
 - **Causal order** — only explicit supersession or invalidation lineage. It is
-  never inferred from identity, presentation order or time.
-- **Absence** — an absent `resultId` is refused and never computed as a reader
-  default.
-- **Digest domain** — `quire.verification.jcs` under FR-201. Equal digest bytes
-  under another domain are unequal.
+  never inferred from the key, presentation order or time.
+- **Absence** — an absent `resultKey` member is refused and never supplied as a
+  reader default.
 
-Two accepted canonical results with one `resultId` SHALL have byte-identical
-RFC 8785 canonical result bytes. Same identity with different canonical bytes is
-an invalid result, not an alternate representation. A later contradiction emits
-new bytes and therefore a new result identity, linked explicitly to the earlier
-unchanged result.
+Two accepted canonical results with one `resultKey` SHALL have equal result
+members. The reader SHALL check this by comparing the members of each accepted
+result with those of every earlier accepted result of the same `request` that
+has an equal `resultKey`, and SHALL refuse the later result when any member differs.
+The same key with different members is an invalid result, not an
+alternate representation. A later contradiction emits a new result with a new
+`ordinal`, linked explicitly to the earlier unchanged result by its `resultKey`.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-286-AC-1 | Independent RFC 8785/SHA-256 computation over the exact versioned preimage yields the emitted `resultId`. | Test (TC-061) |
-| FR-286-AC-2 | Any change to a result member other than `resultId` changes the recomputed identity; object-member presentation permutations do not. | Test (TC-061) |
-| FR-286-AC-4 | Same `resultId` with different canonical result bytes, a missing identity or an identity from another domain is refused. | Test (TC-061) |
-| FR-286-AC-5 | A superseding or invalidating result preserves the earlier bytes, has a newly derived identity and carries explicit lineage. | Test (TC-061) |
+| FR-286-AC-1 | Withdrawn: it existed only for the SHA-256 identity computed over the result preimage, which is no longer computed. | Withdrawn |
+| FR-286-AC-2 | Changing any `resultKey` member yields a different key; changing only an attribute member leaves the key unchanged; object-member presentation permutations change neither. | Test (TC-061) |
+| FR-286-AC-3 | Withdrawn: it existed only for the enclosing artifact digest, which is no longer computed or validated. | Withdrawn |
+| FR-286-AC-4 | A result whose `resultKey` equals that of an earlier accepted result of the same request but whose members differ is refused by member comparison, a result with equal key and equal members is accepted once, and a missing or incomplete `resultKey` is refused. | Test (TC-061) |
+| FR-286-AC-5 | A superseding or invalidating result preserves the earlier result, carries a new `ordinal` and names the earlier result by its `resultKey`. | Test (TC-061) |
 
 ## Dependencies
 
 - [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) owns the
   canonical result and its strict-reader rules.
 - [FR-240](FR-240-canonical-protocol-result.md) defines the closed result object.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) defines the selected
-  JCS digest domain.
 
 ## Status
 
-Accepted FS02 identity ruling. The preimage and reader order above are
-normative; producers and readers refuse deviations without approximation.
+Accepted FS02 identity ruling, revised to a structural key. The key and reader
+order above are normative; producers and readers refuse deviations without
+approximation.

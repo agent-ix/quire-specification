@@ -101,7 +101,7 @@ a transition enabled-tested at the node, the `terminal when` predicate at a
 node with no enabled transition, and a state constraint that restricts the
 explored states. When one of them evaluates undefined, the analyzer SHALL
 settle the item `refuted` with cause `undefined-evaluation`, whose `where`
-names the node's `quire.simulation.state-key/v1` digest and the locus of the
+names the node's state key and the locus of the
 expression that has no value, plus the predicate for a predicate of the claim
 and the FR-181 transition identity for a guard, and whose `cause` names the
 undefined value's catalogued reason. An undefined guard is never read as a
@@ -224,11 +224,11 @@ is concrete and carries no canonical state or permutation, so a witnessed
 | FR-391-AC-7 | Each state-graph result label matches exactly one FR-360 member with its exact FR-241, FR-242 and FR-243 combination. | Test (TC-334) |
 | FR-391-AC-8 | Each form admits symmetry, partial-order reduction and a state constraint exactly as its reductions row reads; a reduction it does not admit settles `inconclusive` with `reduction-not-preserving` before expansion. | Test (TC-334) |
 | FR-391-AC-9 | Two runs with the same subject, claim, limits and seed return the same result and the same evidence. | Test (TC-336) |
-| FR-391-AC-10 | A predicate of a `possible`, `always possible` or `unique path` claim that evaluates undefined at an explored node settles `refuted`, `decisive-counterexample`, cause `undefined-evaluation` naming the predicate, the node's state-key digest, the expression's locus and the catalogued reason, with an `undefined` arm that carries that value and replays to it, also when a witness exists. | Test (TC-349) |
+| FR-391-AC-10 | A predicate of a `possible`, `always possible` or `unique path` claim that evaluates undefined at an explored node settles `refuted`, `decisive-counterexample`, cause `undefined-evaluation` naming the predicate, the node's state key, the expression's locus and the catalogued reason, with an `undefined` arm that carries that value and replays to it, also when a witness exists. | Test (TC-349) |
 | FR-391-AC-11 | When an exploration finds a trap node, a node that counts 2 and a node with an undefined predicate, the item settles from the one first in FR-181 discovery order: a trap discovered before the undefined node settles `refuted`, `closed-scope`, and an undefined node discovered first settles `refuted` with cause `undefined-evaluation`. | Test (TC-349) |
 | FR-391-AC-12 | A `possible` item with a sampled witness for every initial state and an undefined predicate at a reachable node off every walk settles `refuted` with cause `undefined-evaluation`, the same verdict as with `witness_samples` 0. | Test (TC-336, TC-349) |
 | FR-391-AC-13 | A `possible` item with a witness for every initial state whose exploration a limit stops, or ends with open nodes, before refuting evidence is found settles `inconclusive` with cause `well-definedness-unchecked`, carrying the witnesses and stating that well-definedness was not checked; never `proved`. | Test (TC-334, TC-336) |
-| FR-391-AC-14 | A guard, the `terminal when` predicate or a state constraint of the subject that evaluates undefined at an explored node settles every `possible`, `always possible` and `unique path` item over the subject `refuted`, `decisive-counterexample`, cause `undefined-evaluation`, whose `where` carries the node's state-key digest and the expression's locus, plus the FR-181 transition identity for a guard, also when a witness exists for every initial state; an undefined guard is not read as a disabled transition. | Test (TC-349) |
+| FR-391-AC-14 | A guard, the `terminal when` predicate or a state constraint of the subject that evaluates undefined at an explored node settles every `possible`, `always possible` and `unique path` item over the subject `refuted`, `decisive-counterexample`, cause `undefined-evaluation`, whose `where` carries the node's state key and the expression's locus, plus the FR-181 transition identity for a guard, also when a witness exists for every initial state; an undefined guard is not read as a disabled transition. | Test (TC-349) |
 
 ## Dependencies
 

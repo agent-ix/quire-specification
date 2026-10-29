@@ -304,17 +304,15 @@ query of the item: a base, step, unrolling or search query.
 - `max_solver_steps` SHALL be a whole, positive count of solver steps as
   the solver counts its own deterministic resource steps. A report of it
   SHALL state the count as the solver counts it and SHALL NOT convert it to
-  time. It is deterministic, so it is part of the request identity and the
-  cache key ([FR-306](../tooling/FR-306-compile-and-cache-exactly.md)). Its
+  time. It is deterministic, so it is part of the request identity. Its
   setting is `smt.max_solver_steps`.
 - `max_solver_time` SHALL be a wall-clock budget for each query, in whole
   seconds, independent of the backend's own wall-clock limit and of the
   provider deadline `deadline_ms`. The request writer rounds a fractional
   duration up to the next whole second, and a fractional or otherwise
   non-canonical value on the wire is refused before consumption. It is a
-  wall-clock setting: the request identity and the cache key exclude it, no
-  member of a stored record records wall time, and a result it stops is not
-  cached or stored (FR-306). Its setting is `smt.max_solver_time`.
+  wall-clock setting: the request identity excludes it, no
+  member of a stored record records wall time, and a result it stops is not reused between invocations. Its setting is `smt.max_solver_time`.
 - A solver stopped by either settles FR-331 result `incomplete`,
   `limit-reached{limit, value, setting}` naming that member, its value and
   its setting, in the stop order of
@@ -360,7 +358,7 @@ object whose members are `PositiveCount`s, each a limit under
   member, a zero and a non-integer value refuse before consumption.
 - The values decide whether a query can be encoded at all, so they change
   the result (`limit-reached` against a proof) and are part of the request
-  identity and the cache key ([FR-306](../tooling/FR-306-compile-and-cache-exactly.md)).
+  identity .
 - An encoder stop at a member settles FR-331 result `incomplete`,
   `limit-reached{limit, value, setting}` naming the member, its value and
   its setting (FR-363 "Undecided k-induction runs", rule 3). A provider
@@ -447,8 +445,8 @@ infinite-trace formula that no registered candidate decides.
 | FR-368-AC-8 | A registration advertising `temporal-satisfaction` whose `fairness_kinds` is absent, is `"weak"` or `null`, holds `"fair"`, `1` or `null` as an element, or is [`weak`, `weak`] is refused `invalid_capability`/`invalid-fairness-kinds` retaining `absent`, `not-a-list` (for the non-list forms), `unknown-label` (naming the element) or `duplicate-label` (naming `weak`), keyed by backend identity; [`weak`, `strong`] and [] (a backend that decides no kind) are admitted. | Test (TC-301) |
 | FR-368-AC-9 | A registration holding both an unknown label and a repeated label reports `unknown-label`, naming the first unknown element in member order; a registration advertising only `value-validity` is admitted whatever its `fairness_kinds` holds, since the registry does not read it. | Test (TC-301) |
 | FR-368-AC-10 | A manifest descriptor on the wire whose temporal `fairness_kinds` is absent, not a list, holds an unknown label or repeats a label fails the FR-331 schema, and so does a `fairness_kinds` member on a descriptor advertising no `temporal-satisfaction`. | Test (TC-431) |
-| FR-368-AC-11 | A temporal item whose `limits` carry `max_solver_steps` 1000 and `max_solver_time` 5 is admitted, and its solver stops settle as FR-363-AC-11 states; two requests that differ only in `max_solver_time` have equal request identity and cache key bytes, two that differ only in `max_solver_steps` differ, and a result stopped by `max_solver_time` is stored by neither request; a `max_solver_time` of 1.5 on the wire, and either member at 0, is refused before consumption. | Test (TC-302) |
-| FR-368-AC-12 | A temporal item carrying `smt_encoding` `{max_constants: 7}` is admitted, and its encoder stop settles as FR-363-AC-11 states; two requests that differ only in `smt_encoding.max_constants` (7 and 8) have different request identities and cache keys, and a result recorded for one is not reused for the other; an empty `smt_encoding`, an unknown member, a `max_constants` of 0 and one of 1.5 are each refused before consumption. A completed result produced under `max_solver_time` 5 and reused for a request that sets 10 states 5. | Test (TC-302) |
+| FR-368-AC-11 | A temporal item whose `limits` carry `max_solver_steps` 1000 and `max_solver_time` 5 is admitted, and its solver stops settle as FR-363-AC-11 states; two requests that differ only in `max_solver_time` have equal request identity, two that differ only in `max_solver_steps` differ, and a result stopped by `max_solver_time` is reused by neither request; a `max_solver_time` of 1.5 on the wire, and either member at 0, is refused before consumption. | Test (TC-302) |
+| FR-368-AC-12 | A temporal item carrying `smt_encoding` `{max_constants: 7}` is admitted, and its encoder stop settles as FR-363-AC-11 states; two requests that differ only in `smt_encoding.max_constants` (7 and 8) have different request identities; an empty `smt_encoding`, an unknown member, a `max_constants` of 0 and one of 1.5 are each refused before consumption. A completed result produced under `max_solver_time` 5 and reused for a request that sets 10 states 5. | Test (TC-302) |
 | FR-368-AC-13 | The `item_kind` of a temporal item is one of `formula`, `deadlock-freedom`, `time-lock-freedom`, `race-freedom` and `refinement`; each of the five is admitted, and `time-lock`, `race`, `deadlock`, `refine` and `Formula` are each refused before consumption. | Test (TC-431) |
 | FR-368-AC-14 | The claim of a `deadlock-freedom`, `time-lock-freedom` or `race-freedom` item names its subject's anchor node and that node's `declaration` occurrence at ordinal 0, else its `expression` occurrence at ordinal 0, else its `generated` occurrence at ordinal 0: the protocol clause node (`declaration`) for a protocol subject, the `model_root` node (`generated`) for any other model subject, and the refinement node for a `refinement` item, except that a protocol subject of a unit that selects no protocol profile has no anchor (FR-368-AC-24). The deadlock-freedom and time-lock-freedom items of one model subject name the same node and occurrence. | Test (TC-431) |
 | FR-368-AC-15 | A `deadlock-freedom`, `time-lock-freedom` or `race-freedom` item whose `fairness` holds a constraint is refused before consumption; a `refinement` item carries the concrete fairness set. | Test (TC-431) |

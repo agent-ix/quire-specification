@@ -69,10 +69,6 @@ they consume without claiming another requirement's list is incomplete.
 - **Absence** — a reference whose subject kind is absent compares only to
   absence. It is never defaulted to `delivery`, to `effect` or to any other
   member; FR-051 forbids inferring an effect from a transport fact alone.
-- **Digest domain** — no member of this key is a digest. Where a protocol
-  identity is carried beside a digest in provenance, that digest's domain is
-  selected under `ix://agent-ix/quire-specification/FR-201`, and an identity
-  crossing domains is unequal regardless of byte equality.
 
 ## Not members of this vocabulary
 

@@ -18,7 +18,7 @@ relationships:
 
 # Domain model declared in spec artifacts
 
-> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #517 lands.
+> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` identity domain (FR-201); delete that wording when #517 lands.
 
 ## System Boundary
 

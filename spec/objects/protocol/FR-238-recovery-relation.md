@@ -71,9 +71,6 @@ arithmetic."
   population membership and attempts beyond the retry bound cannot produce
   recovery success". An absent target or achieved state is never compared to a
   default or empty state.
-- **Digest domain** — every digest carried by the FR-288 definition qualifier
-  retains its selected FR-201 domain. The local expression handle is not a
-  digest and claims no digest domain.
 
 ## Acceptance Criteria
 

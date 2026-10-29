@@ -52,9 +52,6 @@ distinct source-bound value."
 - **Absence** — a claim retained without a strength has an absent strength,
   which compares only to absence and is never defaulted to `observed` or to any
   other member.
-- **Digest domain** — not applicable; the source binding that establishes a
-  strength may carry a digest, whose domain is selected under
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Cardinality and relation
 

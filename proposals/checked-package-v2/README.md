@@ -1,6 +1,6 @@
 # CheckedPackage V2 public interchange
 
-> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #517 lands.
+> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` identity domain (FR-201); delete that wording when #517 lands.
 
 This directory is the normative public transport contract for I04 immutable
 checked packages. It is intentionally a schema-and-vector boundary, not a
@@ -180,7 +180,7 @@ FR-331 state digests and the FR-201 identity-domain rows.
   `closure_vectors`, whose digests are recomputed from real packages, and
   `dependency-call-vectors.json` name packages a reader can be supplied. Each `supply_vectors` entry lists the
   direct entries in lock order with a symbolic `supply` state (`bound`,
-  `stale` for a supplied package whose recomputed `package_id` differs, or
+  `stale` (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; library `package_id`) for a supplied package whose recomputed `package_id` differs, or
   `absent`) and the outcome FR-322-AC-84 requires.
   Its `closure_vectors` contain `direct_dependencies` of the importer and
   `dependency_locks` for those direct packages; each dependency lock names a

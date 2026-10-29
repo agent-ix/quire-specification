@@ -8,16 +8,12 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-264
     type: references
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
 ---
 # FR-263: Declared finite population
 
-> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
-
 ## Description
 
-When a population is assessed, the assessment request SHALL retain the selected domain package identity and digest, the population declaration key, the declared finite membership rule and digest, the population identity, the bounds, the observation sources, the configuration and closure identities and digests, and the completeness and progress dependencies.
+When a population is assessed, the assessment request SHALL retain the selected domain package identity, the population declaration key, the declared finite membership rule, the population key, the bounds, the observation sources, the configuration and closure identities and versions, and the completeness and progress dependencies.
 
 FR-112 states that list as the retained set for "a population or event-time
 window", and FR-112-AC-3 requires that "A complete bounded population retains
@@ -27,39 +23,38 @@ membership and closure provenance."
 
 | Property | Source | Note |
 | --- | --- | --- |
-| Population identity | FR-112 Description | Retained with the snapshot/window identity. |
-| Declared finite membership rule and digest | FR-112 Description | Typed by [FR-264](FR-264-membership-rule.md). |
+| Population key | FR-112 Description | The componentwise key below, retained with the snapshot/window key. |
+| Declared finite membership rule | FR-112 Description | Typed by [FR-264](FR-264-membership-rule.md). |
 | Bounds | FR-112 Description | For a window, the half-open bounds of [FR-266](FR-266-event-time-window.md). |
-| Domain package identity, digest and population declaration key | FR-112 Description, FR-112-AC-4 | A mismatch refuses "without ambient defaulting". The closed extent comes only from this spec-declared population declaration. |
+| Domain package identity, version and population declaration key | FR-112 Description, FR-112-AC-4 | A mismatch refuses "without ambient defaulting". The closed extent comes only from this spec-declared population declaration. |
 | Observation sources | FR-112 Description | Retained exactly. |
-| Configuration identity and digest | FR-112 Description, FR-112-AC-4 | A mismatch refuses. |
-| Closure identity and digest | FR-112 Description, FR-112-AC-4 | A mismatch refuses; E owns closure semantics (FR-112 Dependencies). |
+| Configuration identity and version | FR-112 Description, FR-112-AC-4 | A mismatch refuses. |
+| Closure identity and version | FR-112 Description, FR-112-AC-4 | A mismatch refuses; E owns closure semantics (FR-112 Dependencies). |
 | Completeness and progress dependencies | FR-112 Description | Retained exactly. |
 
-The v1 population identity preimage is the RFC 8785 canonical form of
-`{"identityVersion":"quire.observation.population-identity/v1-draft.1","declaration":...,"membershipRuleIdentity":...,"selection":...,"observationSources":[...],"configuration":...,"closure":...,"completenessDependencies":[...],"progressDependencies":[...]}`.
-Arrays that denote sets SHALL be sorted, distinct and bounded before identity
-derivation. `selection` SHALL contain exactly one FR-265 snapshot or FR-266
+The v1 population key is the tuple `(declaration, membershipRule, selection,
+observationSources[], configuration, closure, completenessDependencies[],
+progressDependencies[])`. Arrays that denote sets SHALL be sorted, distinct and
+bounded before comparison. `selection` SHALL contain exactly one FR-265 snapshot or FR-266
 event-time window. `declaration` holds the domain package identity and the
-population declaration key under `sha256-jcs`. Configuration and closure definition
-digests use FR-201 `raw-artifact-digest`; the derived population identity uses
-FR-201 `quire.verification.jcs`.
+population declaration key. `configuration` and `closure` each hold an identity
+and version. No digest is derived or retained.
 
 FR-112 Behavior states that "Unknown required membership, missing external-provider
 observations, or an absent declared closure input are incomplete/refused
 assessment causes and cannot establish aggregate success", and that a "declaration key
-outside the checked package, missing selected identity, digest mismatch, or
+outside the checked package, missing selected identity or version, identity or version mismatch, or
 ambient default" is refused "rather than supplying a population, membership,
 configuration, or closure input".
 
 ## Identity and comparison
 
-- **Identity kind** — *derived*. The identity is `sha256-jcs:<hex>` over the
-  exact versioned preimage above.
-- **Key** — the complete derived population identity. Every retained semantic
-  selection listed in the preimage participates; presentation never does.
+- **Identity kind** — *value*. The population is compared componentwise over
+  the key above; there is no derived content hash.
+- **Key** — the complete population key. Every retained semantic
+  selection listed above participates; presentation never does.
 - **Key order** — none. Because the key is not fixed, no total order over it is
-  stated and none is supplied here. Members are "exactly listed/digested"
+  stated and none is supplied here. Members are "exactly listed"
   (FR-112 Behavior), so a population is compared as a set under its declared
   membership rule rather than by a member order; any order later established
   would serve collection comparison only and would carry no causal meaning,
@@ -75,11 +70,6 @@ configuration, or closure input".
   reasons." A population with unknown membership is therefore neither an empty
   population nor a complete one, and an absent component is never supplied by an
   ambient default (FR-112 Behavior, FR-112-AC-4).
-- **Digest domain** — the population identity and membership-rule identity use
-  `quire.verification.jcs`. The domain package and population declaration key
-  use `sha256-jcs`. Configuration and closure definition-byte digests use
-  `raw-artifact-digest`. A crossing domain is
-  unequal regardless of byte equality.
 
 ## Acceptance Criteria
 
@@ -87,9 +77,9 @@ configuration, or closure input".
 | --- | --- | --- |
 | FR-263-AC-1 | Changing the declared snapshot, window or membership rule yields a different assessment subject. | Test (TC-142) |
 | FR-263-AC-2 | A population with unknown required membership compares unequal to both an empty population and a complete one. | Test (TC-142) |
-| FR-263-AC-3 | A mismatched declaration key, identity, membership digest, configuration digest or closure digest does not resolve and receives no ambient default. | Test (TC-142) |
-| FR-263-AC-4 | Independent derivation over the exact versioned preimage yields the population identity; mutation of any semantic key component changes it and presentation permutation does not. | Test (TC-142) |
-| FR-263-AC-5 | A population with neither or both snapshot/window selections, duplicate or unbounded set members, or a foreign/missing digest domain is refused before identity derivation. | Test (TC-142) |
+| FR-263-AC-3 | A mismatched declaration key, identity, version, membership rule, configuration or closure does not resolve and receives no ambient default. | Test (TC-142) |
+| FR-263-AC-4 | Two populations compare equal exactly when every key component is equal; mutation of any semantic key component makes them unequal and presentation permutation does not. | Test (TC-142) |
+| FR-263-AC-5 | A population with neither or both snapshot/window selections, or duplicate or unbounded set members is refused before comparison. | Test (TC-142) |
 
 ## Dependencies
 
@@ -98,8 +88,6 @@ configuration, or closure input".
 - [FR-264](FR-264-membership-rule.md) types the declared membership rule.
 - [FR-265](FR-265-selected-snapshot.md) and
   [FR-266](FR-266-event-time-window.md) type the two selected bounds subjects.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 
