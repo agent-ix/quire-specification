@@ -160,8 +160,6 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-        "digest_domain": "quire.source.bytes/v1",
         "identity": "example-b"
       }
     ]
@@ -422,8 +420,6 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 0
@@ -442,8 +438,6 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 1
@@ -462,8 +456,6 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 2
@@ -482,8 +474,6 @@
           "end": 6,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 5
@@ -502,8 +492,6 @@
           "end": 7,
           "source": {
             "authority": "agent-ix",
-            "digest": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-b"
           },
           "start": 6

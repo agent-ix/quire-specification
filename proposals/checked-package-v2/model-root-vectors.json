@@ -65,8 +65,6 @@
                 "end": 1,
                 "source": {
                   "authority": "agent-ix",
-                  "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-                  "digest_domain": "quire.source.bytes/v1",
                   "identity": "example"
                 },
                 "start": 0
