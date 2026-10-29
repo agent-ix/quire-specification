@@ -26,7 +26,7 @@ stated. Value types `Count` and `Small` are declared in the package by
 artifacts `Count` and `Small`, bound as `Int[0,9]` and `Int[0,5]`, and each
 names a construct whose meaning is `quire.meaning.model.value-type/v1`; every
 object type's construct meaning is `quire.meaning.model.object-type/v1`. Effective type identities are TC-195 N02's:
-`A` = `4531dd9e` < `D` = `9425c80d` < `C` = `aa1ab053` < `B` = `c5264509` in
+`A` = `31300374` < `B` = `9b4eff2b` < `D` = `a2fe6396` < `C` = `f59dccff` in
 ascending digest order.
 
 Fixtures:

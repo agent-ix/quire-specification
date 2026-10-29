@@ -547,11 +547,8 @@ fn owner_joins_lock(preimage: &Value, lock: &Value) -> bool {
                 || (edition["authority"].as_str() == authority
                     && edition["identity"].as_str() == identity)
         }
-        Some("model") => lock["model_selections"].as_array().is_some_and(|models| {
-            models
-                .iter()
-                .any(|model| model["identity"].as_str() == identity)
-        }),
+        // A model owner joins the supplied domain package document, not the lock.
+        Some("model") => true,
         _ => false,
     }
 }
@@ -617,7 +614,6 @@ fn package_lock_matches_identity_preimage(package: &Value) -> bool {
     lock["edition"] == preimage["edition"]
         && lock["profile_selections"] == preimage["profile_selections"]
         && lock["definition_selections"] == preimage["definition_selections"]
-        && lock["model_selections"] == preimage["model_selections"]
         && lock["required_features"] == preimage["required_features"]
         && lock["dependency_selections"] == preimage["dependency_selections"]
 }
@@ -1298,7 +1294,7 @@ struct OperationOracle<'a> {
     catalog: &'a Value,
     lock: &'a Value,
     nodes: &'a [Value],
-    /// The admitted document of each `model_selections` row.
+    /// The admitted document of each `model_root` node.
     documents: Vec<Value>,
     /// The supplied admitted package bound to each `dependency_selections` entry.
     dependencies: &'a [(String, Value)],
@@ -1321,10 +1317,8 @@ impl<'a> OperationOracle<'a> {
             nodes: package["semantic_graph"]["nodes"]
                 .as_array()
                 .expect("package nodes are an array"),
-            documents: package["lock"]["model_selections"]
-                .as_array()
-                .into_iter()
-                .flatten()
+            documents: selected_models(package)
+                .iter()
                 .filter_map(|row| selected_model_document(package, row["identity"].as_str()?))
                 .collect(),
         }
@@ -4267,22 +4261,27 @@ fn stale_derived_shape_node(nodes: &[Value]) -> Option<&Value> {
     })
 }
 
-/// The declarations of the admitted document of the `model_selections` row
-/// selecting `identity`, by FR-322 "Model-owned members" step 1: the
-/// caller-supplied document whose RFC 8785 digest is the row's. The document
+/// The selected domain packages of a package: one `{identity}` per `model_root`
+/// node, from the root's owner. The lock holds no model section.
+fn selected_models(package: &Value) -> Vec<Value> {
+    package["semantic_graph"]["nodes"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter(|node| node["semantic_form"] == "model_root")
+        .map(|node| json!({"identity": node["owner"]["identity"]}))
+        .collect()
+}
+
+/// The declarations of the admitted document supplied under `identity`, by
+/// FR-322 "Model-owned members" step 1: the
+/// caller-supplied document keyed by identity. The document
 /// is the package's own `model_bindings.domain_package` when it carries one
 /// (already in projection form), else the published `acme/orders` semantic IR
 /// document, whose declarations are the `domain_package` projection the
 /// vectors derive from it.
 fn selected_model_document(package: &Value, identity: &str) -> Option<Value> {
-    let row = package["lock"]["model_selections"]
-        .as_array()?
-        .iter()
-        .find(|row| row["identity"] == identity)?;
-    let selects = |document: &Value| {
-        row["digest_domain"] == "sha256-jcs"
-            && row["digest"].as_str() == Some(unqualified_jcs_sha256(document).as_str())
-    };
+    let selects = |_document: &Value| true;
     if let Some(own) = package.pointer("/model_bindings/domain_package")
         && own["identity"] == identity
         && selects(own)
@@ -4399,7 +4398,7 @@ fn is_model_reference_target(node: &Value) -> bool {
 /// `lock.sources` entry (`missing-selection` at the node) and agrees with the
 /// source of every region of the node's `declaration` occurrence
 /// (`invalid-value` at that source-map entry); a `ModelOwner` joins a
-/// `model_selections` row whose admitted document declares its `node`
+/// `model_root` node whose admitted document declares its `node`
 /// (`missing-selection` at the node).
 fn owner_join_refusal(package: &Value, nodes: &[Value]) -> Result<(), ReadRefusal> {
     let mut owned = nodes
@@ -4454,13 +4453,9 @@ fn owner_join_refusal(package: &Value, nodes: &[Value]) -> Result<(), ReadRefusa
                 }
             }
             Some("model_root") => {
-                let joined = package["lock"]["model_selections"]
-                    .as_array()
-                    .is_some_and(|rows| {
-                        rows.iter().any(|row| {
-                            row["identity"] == owner["identity"] && row["digest"] == owner["digest"]
-                        })
-                    });
+                let joined = owner["identity"]
+                    .as_str()
+                    .is_some_and(|identity| selected_model_document(package, identity).is_some());
                 if !joined {
                     return Err(unjoined);
                 }
@@ -4489,7 +4484,7 @@ enum ReadRefusal {
     DerivedShape(Value),
     /// `invalid_model_binding`/`malformed-declaration` at `package_read`: a
     /// `populations` entry of the selected document that is no FCD population.
-    /// The locus is the selection row (`/lock/model_selections/<i>`).
+    /// The locus is the `model_root` owner (`/semantic_graph/nodes/<i>/owner`).
     PopulationRecord(String),
     /// `missing_declaration`/`missing-selection` at a node whose `owner` the
     /// lock does not select or whose selected document does not declare it.
@@ -4787,12 +4782,16 @@ fn read_package_semantics_with(
             })
         })
     {
-        let row = package["lock"]["model_selections"]
+        let root = package["semantic_graph"]["nodes"]
             .as_array()
-            .and_then(|rows| rows.iter().position(|row| row["identity"] == "acme/orders"))
-            .expect("the selection row of the read document");
+            .and_then(|nodes| {
+                nodes.iter().position(|node| {
+                    node["semantic_form"] == "model_root" && node["owner"]["identity"] == "acme/orders"
+                })
+            })
+            .expect("the model_root node of the read document");
         return Err(ReadRefusal::PopulationRecord(format!(
-            "/lock/model_selections/{row}"
+            "/semantic_graph/nodes/{root}/owner"
         )));
     }
     let nodes = package["semantic_graph"]["nodes"]
@@ -7208,11 +7207,10 @@ fn tc_233_package_identity_is_the_jcs_digest_of_its_non_circular_preimage() {
 
 /// Selection members of the V2 lock that are copied, in order, into the
 /// `quire.checked-package-id/v2` identity preimage.
-const IDENTITY_SELECTION_MEMBERS: [&str; 6] = [
+const IDENTITY_SELECTION_MEMBERS: [&str; 5] = [
     "edition",
     "profile_selections",
     "definition_selections",
-    "model_selections",
     "required_features",
     "dependency_selections",
 ];
@@ -7382,7 +7380,7 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
             );
         }
 
-        let named: [(&str, &str, Value); 8] = [
+        let named: [(&str, &str, Value); 7] = [
             (
                 "edition identity",
                 "/lock/edition/definition/identity",
@@ -7397,15 +7395,6 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
                 "definition selections",
                 "/lock/definition_selections",
                 json!([package["lock"]["edition"]["definition"]]),
-            ),
-            (
-                "model selections",
-                "/lock/model_selections",
-                json!([{
-                    "identity": "test/orders",
-                    "digest_domain": "sha256-jcs",
-                    "digest": "8888888888888888888888888888888888888888888888888888888888888888"
-                }]),
             ),
             (
                 "required features",
@@ -7668,45 +7657,15 @@ fn tc_233_dependency_selections_carry_each_dependency_package_identity() {
         }
     }
 
-    // A model selection binds by `{identity, digest_domain, digest}` alone;
-    // a `ModelRef` carrying any further member, such as `version`, fails.
-    let models = &vectors["model_selections"];
-    let mut with_models = package.clone();
+    // The lock and the identity preimage have no model section: one that
+    // carries a `model_selections` member fails the closed schema.
     for member in ["lock", "identity_preimage"] {
-        with_models[member]["model_selections"] = models.clone();
-    }
-    let errors: Vec<String> = schema
-        .iter_errors(&with_models)
-        .map(|error| format!("{} at {}", error, error.instance_path()))
-        .collect();
-    assert!(
-        errors.is_empty(),
-        "a package with the published model selection is admitted: {errors:?}"
-    );
-    for mutation in vectors["model_entry_mutations"]
-        .as_array()
-        .expect("model entry mutations are an array")
-    {
-        let id = mutation["id"].as_str().expect("mutation id is a string");
-        let mut entries = models.clone();
-        entries[0] = mutation["entry"].clone();
-        for member in ["lock", "identity_preimage"] {
-            let mut candidate = with_models.clone();
-            candidate[member]["model_selections"] = entries.clone();
-            let entry_path = format!("/{member}/model_selections/0");
-            let errors: Vec<String> = schema
-                .iter_errors(&candidate)
-                .map(|error| error.instance_path().to_string())
-                .collect();
-            assert!(
-                !errors.is_empty(),
-                "{id} in {member}/model_selections must fail the public schema"
-            );
-            assert!(
-                errors.iter().all(|path| path.starts_with(&entry_path)),
-                "{id} in {member} fails the schema only at the mutated entry: {errors:?}"
-            );
-        }
+        let mut candidate = package.clone();
+        candidate[member]["model_selections"] = json!([{"identity": "test/orders"}]);
+        assert!(
+            !schema.is_valid(&candidate),
+            "{member} with a model_selections member must fail the public schema"
+        );
     }
 
     let order_vectors = &vectors["order_vectors"];
@@ -8348,14 +8307,6 @@ fn tc_233_nominal_preimages_join_semantic_fields_and_dependencies() {
 #[test]
 fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("I04 schema is valid");
-    let model_selection = json!([{
-        "identity": "test/orders",
-        "digest_domain": "sha256-jcs",
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
-    }]);
-    let model_owner = json!({
-        "kind": "model", "identity": "test/orders", "node": "ix://test/orders/Example"
-    });
     let cases = [
         (
             "source",
@@ -8375,19 +8326,11 @@ fn tc_233_owner_to_lock_join_refuses_independently_of_lock_preimage_equality() {
             None,
             ("/edition/definition/identity", json!("other-edition")),
         ),
-        (
-            "model",
-            model_owner,
-            Some(model_selection),
-            ("/model_selections/0/identity", json!("test/other")),
-        ),
     ];
 
     for (name, owner, models, (pointer, replacement)) in cases {
         let mut joined = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
-        if let Some(models) = models {
-            replace_selection_consistently(&mut joined, "/model_selections", models);
-        }
+        let _: Option<Value> = models;
         rekey_nominal_unit_owner(&mut joined, owner);
         schema
             .validate(&joined)
@@ -9790,7 +9733,7 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
     let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
     let mutations = &vectors["operation_mutations"];
-    let mut package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     let renames = BTreeMap::<String, String>::new();
     let causes = mutations
         .as_array()
@@ -15615,36 +15558,8 @@ fn tc_233_a_state_clause_node_carries_no_owner() {
     }
 }
 
-/// The JCS SHA-256 of the selected domain package document, the digest every
-/// published model selection of `acme/orders` carries.
 const DOMAIN_DOCUMENT: &str =
     include_str!("../proposals/checked-package-v2/domain-package-acme-orders.json");
-
-/// FR-322-AC-32: each published package that selects `acme/orders` selects the
-/// semantic IR document by its own `sha256-jcs` digest, in the lock and in the
-/// identity preimage.
-#[trace("TC-233", "FR-322-AC-32")]
-#[test]
-fn tc_233_published_model_selections_name_the_domain_document_by_its_jcs_digest() {
-    let digest = unqualified_jcs_sha256(&parsed_fixture(DOMAIN_DOCUMENT));
-    let mut selecting = 0;
-    for (name, package) in positive_fixtures() {
-        for rows in [
-            &package["lock"]["model_selections"],
-            &package["identity_preimage"]["model_selections"],
-        ] {
-            for row in rows.as_array().into_iter().flatten() {
-                selecting += 1;
-                assert_eq!(row["digest"], digest.as_str(), "{name}");
-                assert_eq!(row["digest_domain"], "sha256-jcs", "{name}");
-            }
-        }
-    }
-    assert_eq!(
-        selecting, 10,
-        "five published packages select it, twice each"
-    );
-}
 
 /// FR-322-AC-82 and FR-322-AC-83: the published `population_reference_cases`.
 /// A `relation`/`population` node owned by a population the selected document
@@ -15705,19 +15620,7 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
                 }
                 _ => {}
             }
-            let selection = json!([{
-                "identity": "acme/orders",
-                "digest_domain": "sha256-jcs",
-                "digest": unqualified_jcs_sha256(&document),
-            }]);
             candidate["model_bindings"] = json!({"domain_package": document});
-            replace_selection_consistently(&mut candidate, "/model_selections", selection.clone());
-            // The selected package changed, so its root joins the new row.
-            for root in model_root_positions(&candidate) {
-                candidate["semantic_graph"]["nodes"][root]["owner"]["digest"] =
-                    selection[0]["digest"].clone();
-                rekey_model_root(&mut candidate, root);
-            }
             let placeholder =
                 json!({"domain": "quire.checked-semantic-node/v1", "digest": "0".repeat(64)});
             let mut node = json!({
@@ -15856,7 +15759,12 @@ fn tc_233_a_population_reference_names_the_declared_population_it_reads() {
                 Err(ReadRefusal::Operation(refusal)) => (refusal.code(), refusal.cause()),
                 // FR-154 step 1 refuses the document before any graph check.
                 Err(ReadRefusal::PopulationRecord(locus)) => {
-                    assert_eq!(locus, "/lock/model_selections/0", "{id}: the selection row");
+                    let root = model_root_positions(&candidate)[0];
+                    assert_eq!(
+                        locus,
+                        format!("/semantic_graph/nodes/{root}/owner"),
+                        "{id}: the model_root owner"
+                    );
                     ("invalid_model_binding", "malformed-declaration")
                 }
                 other => panic!("{id}: unexpected {other:?}"),
@@ -20502,13 +20410,12 @@ fn published_positive_packages() -> Vec<(String, Value)> {
         .collect()
 }
 
-/// The `model_root` node a producer derives from one `model_selections` row,
-/// computed from the row alone.
+/// The `model_root` node a producer derives from one selected domain package
+/// identity, computed from the identity alone.
 fn derived_model_root(selection: &Value) -> Value {
     let owner = json!({
         "kind": "model_root",
         "identity": selection["identity"],
-        "digest": selection["digest"],
     });
     let body = json!({"term": "aggregate", "members": []});
     let key = unqualified_jcs_sha256(&json!({
@@ -20547,7 +20454,7 @@ fn model_root_positions(package: &Value) -> Vec<usize> {
 }
 
 /// The reader-stage model-root checks of FR-322-AC-135, in reader order: a
-/// repeated `node_id` (graph shape), the owner join, then completeness.
+/// repeated `node_id` (graph shape), then the owner join.
 /// Returns `(code, cause, pointer)`.
 fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static str, String)> {
     let nodes = package["semantic_graph"]["nodes"]
@@ -20563,16 +20470,13 @@ fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static 
             ));
         }
     }
-    let selections = package["lock"]["model_selections"]
-        .as_array()
-        .expect("model selections are an array");
     let roots = model_root_positions(package);
-    let joins = |selection: &Value, owner: &Value| {
-        selection["identity"] == owner["identity"] && selection["digest"] == owner["digest"]
-    };
     for position in &roots {
         let owner = &nodes[*position]["owner"];
-        if !selections.iter().any(|selection| joins(selection, owner)) {
+        let supplied = owner["identity"]
+            .as_str()
+            .is_some_and(|identity| selected_model_document(package, identity).is_some());
+        if !supplied {
             return Some((
                 "missing_declaration",
                 "missing-selection",
@@ -20580,20 +20484,7 @@ fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static 
             ));
         }
     }
-    selections
-        .iter()
-        .any(|selection| {
-            !roots
-                .iter()
-                .any(|position| joins(selection, &nodes[*position]["owner"]))
-        })
-        .then(|| {
-            (
-                "invalid_semantic_graph",
-                "",
-                "/semantic_graph/nodes".to_owned(),
-            )
-        })
+    None
 }
 
 /// Rewrites the root at `position`, rekeys it and the package id, and keeps
@@ -20657,7 +20548,7 @@ fn tc_310_every_selected_model_package_carries_exactly_one_recomputed_root() {
     let mut selected = 0;
     let mut root_keys = BTreeMap::new();
     for (name, package) in published_positive_packages() {
-        let selections = package["lock"]["model_selections"].as_array().unwrap();
+        let selections = &selected_models(&package);
         let roots = model_root_positions(&package);
         assert_eq!(
             roots.len(),
@@ -20779,7 +20670,7 @@ fn tc_310_root_owner_schema_and_reader_stages_run_from_the_published_vectors() {
     assert_eq!(
         ids,
         BTreeSet::from([
-            "MR-00", "MR-01", "MR-02", "MR-03", "MR-04", "MR-06", "MR-09"
+            "MR-00", "MR-01", "MR-02", "MR-03", "MR-04", "MR-09"
         ])
     );
 }
@@ -20825,7 +20716,6 @@ fn tc_310_published_roots_are_the_producer_oracle() {
         .expect("the model-root vector is published");
     let selection = json!({
         "identity": vector["preimage"]["owner"]["identity"],
-        "digest": vector["preimage"]["owner"]["digest"],
     });
     assert_eq!(
         derived_model_root(&selection)["node_id"]["digest"],
@@ -20833,7 +20723,7 @@ fn tc_310_published_roots_are_the_producer_oracle() {
         "the producer derivation reproduces the published root vector"
     );
     for (name, package) in published_positive_packages() {
-        for selection in package["lock"]["model_selections"].as_array().unwrap() {
+        for selection in &selected_models(&package) {
             let derived = derived_model_root(selection);
             assert!(
                 package["semantic_graph"]["nodes"]
@@ -21147,9 +21037,8 @@ fn declaration_key(document: &Value, name: &str) -> String {
     }))
 }
 
-/// Whether an identity case holds of `document`: the key of its node, the
-/// selection digest and the `model_root` key, each derived from the patched
-/// document, agree with every field the case states.
+/// Whether an identity case holds of `document`: the key of its node, derived
+/// from the patched document, agrees with every field the case states.
 fn identity_case_holds(document: &Value, case: &Value) -> bool {
     let node = case["node"].as_str().expect("identity node");
     let mut changed = document.clone();
@@ -21157,23 +21046,10 @@ fn identity_case_holds(document: &Value, case: &Value) -> bool {
         apply_json_patch(&mut changed, patch);
     }
     let expected = &case["expected"];
-    let selection_of = |candidate: &Value| {
-        json!({
-            "identity": candidate["identity"],
-            "digest": unqualified_jcs_sha256(candidate),
-        })
-    };
     let states = |field: &str, observed: bool| expected[field].as_bool() == Some(observed);
     states(
         "node_key_unchanged",
         declaration_key(&changed, node) == declaration_key(document, node),
-    ) && states(
-        "selection_digest_changes",
-        unqualified_jcs_sha256(&changed) != unqualified_jcs_sha256(document),
-    ) && states(
-        "root_key_changes",
-        derived_model_root(&selection_of(&changed))["node_id"]
-            != derived_model_root(&selection_of(document))["node_id"],
     ) && expected["family"]
         .as_str()
         .is_none_or(|family| shapes_family(&changed, node) == family)
@@ -21264,20 +21140,15 @@ fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_pinned
     let package = parsed_fixture(include_str!(
         "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
     ));
-    let row = &package["lock"]["model_selections"][0];
-    assert_eq!(row["identity"], document["package"]["identity"]);
-    assert_eq!(row["digest"], unqualified_jcs_sha256(&document), "the row pins the whole document");
-    assert_eq!(vectors["selection_digest"], row["digest"]);
-    assert_ne!(row["digest"], unqualified_jcs_sha256(&projection), "the projection is not digested");
-    // The model_root key and the package id derive from that digest.
     let root = package["semantic_graph"]["nodes"]
         .as_array()
         .unwrap()
         .iter()
         .find(|node| node["semantic_form"] == "model_root")
         .expect("model_root");
-    assert_eq!(root["owner"]["digest"], row["digest"]);
-    // Swapping a position type in the document changes the document, so the row digest.
+    assert_eq!(root["owner"]["identity"], document["package"]["identity"]);
+    assert!(root["owner"].get("digest").is_none(), "the root owner carries no digest");
+    // Swapping a position type in the document changes the document.
     let mut swapped = document.clone();
     let pair = swapped["types"]
         .as_array_mut()
@@ -21286,11 +21157,11 @@ fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_pinned
         .find(|declared| declared["identity"] == "ix://acme/shapes/Pair")
         .expect("Pair");
     pair["positions"].as_array_mut().expect("positions").swap(0, 1);
-    assert_ne!(unqualified_jcs_sha256(&swapped), row["digest"].as_str().unwrap());
+    assert_ne!(swapped, document);
     // The projection lists follow document order, and reordering two declarations changes the document.
     let mut reordered = document.clone();
     reordered["types"].as_array_mut().expect("types").swap(1, 2);
-    assert_ne!(unqualified_jcs_sha256(&reordered), row["digest"].as_str().unwrap());
+    assert_ne!(reordered, document);
     assert_ne!(shapes_project_document(&reordered), projection);
 }
 
@@ -21314,13 +21185,9 @@ fn tc_940_tuple_and_payload_variant_declarations_are_model_declaration_nodes() {
         "the fixture carries its recomputed package id"
     );
     assert_eq!(
-        vectors["selection_digest"],
-        unqualified_jcs_sha256(&parsed_fixture(SHAPES_DOCUMENT)),
-        "the selection digest is the JCS digest of the whole selected document (FR-322-AC-151)"
-    );
-    assert_eq!(
-        package["lock"]["model_selections"][0]["digest"], vectors["selection_digest"],
-        "the fixture selects the published document"
+        selected_models(&package)[0]["identity"],
+        parsed_fixture(SHAPES_DOCUMENT)["package"]["identity"],
+        "the fixture selects the published document by identity"
     );
     assert_eq!(
         read_package_semantics(&package, &parsed_fixture(OPERATION_CATALOG)).err().map(|_| ()),
@@ -21570,7 +21437,7 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
         assert!(identity_case_holds(document, case), "{}", case["name"]);
         // The case can fail: each boolean it states, flipped, is false of the
         // patched document, so the node key is not read back from the case.
-        for field in ["node_key_unchanged", "selection_digest_changes", "root_key_changes"] {
+        for field in ["node_key_unchanged"] {
             let mut flipped = case.clone();
             let stated = flipped["expected"][field].as_bool().expect("a stated boolean");
             flipped["expected"][field] = json!(!stated);
@@ -24198,17 +24065,13 @@ fn place_rows(place: &Value) -> Vec<Vec<String>> {
 /// document and the package, as the first defect found (`Ok` when admitted).
 fn selected_timed_slot_defect(vectors: &Value, document: &Value, package: &Value) -> Result<(), String> {
     let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
-    let digest = unqualified_jcs_sha256(document);
-    let row = &package["lock"]["model_selections"][0];
-    if row["identity"] != document["package"]["identity"] || row["digest"] != digest.as_str() {
-        return Err("the row does not pin the whole document".to_owned());
-    }
-    if vectors["selection_digest"] != digest.as_str() || package["identity_preimage"]["model_selections"][0] != *row {
-        return Err("the vectors or the identity preimage disagree with the document digest".to_owned());
-    }
     let root = nodes.iter().find(|node| node["semantic_form"] == "model_root").ok_or("no model_root")?;
+    let row = &json!({"identity": root["owner"]["identity"]});
+    if row["identity"] != document["package"]["identity"] {
+        return Err("the model_root does not name the document".to_owned());
+    }
     if *root != derived_model_root(row) {
-        return Err("the model_root is not derived from the row".to_owned());
+        return Err("the model_root is not derived from the identity".to_owned());
     }
     for pointer in ["/source/digest", "/package/lockDigest", "/package/manifestDigest"] {
         if document.pointer(pointer).is_some() {
@@ -24348,22 +24211,10 @@ fn tc_367_selected_package_assertions_each_fail_on_their_mutation() {
         edit(&mut copy);
         copy
     };
-    // Any change to the document changes its digest, so the row no longer pins it.
-    assert!(defect(&vectors, &edit_document(&|d| d["types"].as_array_mut().unwrap().swap(0, 1)), &package).contains("does not pin"));
-    assert!(defect(&vectors, &edit_document(&|d| d["package"]["lockDigest"] = json!("sha256:00")), &package).contains("does not pin"));
-    // Pinning a changed document makes the join fail where the declaration changed.
-    let pin = |changed: &Value| {
-        let mut pinned = package.clone();
-        let digest = unqualified_jcs_sha256(changed);
-        let mut text = serde_json::to_string(&pinned).unwrap();
-        text = text.replace(package["lock"]["model_selections"][0]["digest"].as_str().unwrap(), &digest);
-        pinned = serde_json::from_str(&text).unwrap();
-        let root_at = pinned["semantic_graph"]["nodes"].as_array().unwrap().len() - 1;
-        pinned["semantic_graph"]["nodes"][root_at] = derived_model_root(&pinned["lock"]["model_selections"][0]);
-        let mut repinned = vectors.clone();
-        repinned["selection_digest"] = json!(digest);
-        (repinned, pinned)
-    };
+    // A document that copies a lock or manifest digest is refused.
+    assert!(defect(&vectors, &edit_document(&|d| d["package"]["lockDigest"] = json!("sha256:00")), &package).contains("copies"));
+    // A changed document makes the join fail where the declaration changed.
+    let pin = |_changed: &Value| (vectors.clone(), package.clone());
     let swapped_items = edit_document(&|d| {
         d["types"].as_array_mut().unwrap().iter_mut().find(|t| t["identity"] == "ix://acme/orders/ClockRow").unwrap()["items"] = json!("ix://quire/native/Integer");
     });
@@ -24380,9 +24231,6 @@ fn tc_367_selected_package_assertions_each_fail_on_their_mutation() {
     });
     assert!({ let (v, p) = pin(&wrong_bound); defect(&v, &wrong_bound, &p) }.contains("slot step does not carry"));
     // The vectors and the package.
-    let mut other = vectors.clone();
-    other["selection_digest"] = json!("00".repeat(32));
-    assert!(defect(&other, &document, &package).contains("disagree"));
     let mut moved = vectors.clone();
     moved["cases"][4]["package_node"] = json!(2);
     assert!(defect(&moved, &document, &package).contains("not the published node"));
@@ -24752,25 +24600,19 @@ fn embedded_packages<'a>(value: &'a Value, pointer: &str, out: &mut Vec<(String,
 /// The first model-owned node of `package` that its selected FCD document
 /// does not declare (FR-322 "Model-owned members": the strict owner join),
 /// as `/semantic_graph/nodes/<i>`, or `None`. The selected document of a
-/// `model_selections` row is the published `domain-package-*.json` whose
-/// RFC 8785 digest the row carries; a type declares an object type, a
+/// selected package is the published `domain-package-*.json` whose package
+/// identity the owner names; a type declares an object type, a
 /// tuple or variant type, or an invariant clause, a `relationships` member
 /// declares a relationship and an `operations` member an operation clause.
 fn model_owner_declaration_defect(package: &Value, documents: &[Value]) -> Option<String> {
-    let rows = package["lock"]["model_selections"].as_array()?;
     for (at, node) in package["semantic_graph"]["nodes"].as_array()?.iter().enumerate() {
         let owner = &node["owner"];
         if owner["kind"] != "model" {
             continue;
         }
-        let selected = rows
+        let selected = documents
             .iter()
-            .filter(|row| row["identity"] == owner["identity"])
-            .find_map(|row| {
-                documents
-                    .iter()
-                    .find(|document| Some(unqualified_jcs_sha256(document).as_str()) == row["digest"].as_str())
-            });
+            .find(|document| document["package"]["identity"] == owner["identity"]);
         let node_name = owner["node"].as_str().unwrap_or_default();
         let declared = selected.is_some_and(|document| {
             let types = document["types"].as_array().into_iter().flatten();
@@ -24853,19 +24695,14 @@ fn tc_367_every_fixture_model_owned_node_is_declared_by_its_selected_document() 
                 *list = json!([]);
             }
         }
-        // Re-pin the row so the failure is the missing declaration, not the digest.
-        let mut pinned = package.clone();
-        pinned["lock"]["model_selections"][0]["digest"] = json!(unqualified_jcs_sha256(&stripped));
         assert_eq!(
-            model_owner_declaration_defect(&pinned, std::slice::from_ref(&stripped)),
+            model_owner_declaration_defect(&package, std::slice::from_ref(&stripped)),
             Some(format!("/semantic_graph/nodes/{node}")),
             "{member}"
         );
     }
-    // Mutation: a row pinning a document that is not the published one has no selected document.
-    let mut unpinned = package.clone();
-    unpinned["lock"]["model_selections"][0]["digest"] = json!("00".repeat(32));
-    assert_eq!(model_owner_declaration_defect(&unpinned, selected), Some("/semantic_graph/nodes/7".to_owned()));
+    // Mutation: no document supplied under the owner's identity has no selected document.
+    assert_eq!(model_owner_declaration_defect(&package, &[]), Some("/semantic_graph/nodes/7".to_owned()));
     // Mutation: an owner naming an undeclared node.
     let mut renamed = package.clone();
     renamed["semantic_graph"]["nodes"][53]["owner"]["node"] = json!("ix://acme/orders/Missing");
@@ -25718,10 +25555,8 @@ fn tc_367_timed_clause_fixture_is_closed_keyed_and_selected() {
     let mut recomputed = package.clone();
     rekey_stale_nodes(&mut recomputed);
     assert_eq!(recomputed, package, "every key of the clause fixture is current");
-    let selection = unqualified_jcs_sha256(&document);
-    assert_eq!(vectors["selection_digest"], selection.as_str());
-    assert_eq!(package["lock"]["model_selections"][0]["digest"], selection.as_str());
-    assert_eq!(package["identity_preimage"]["model_selections"], package["lock"]["model_selections"]);
+    assert_eq!(selected_models(&package)[0]["identity"], document["package"]["identity"]);
+    assert!(package["lock"].get("model_selections").is_none());
     assert_eq!(timed_clause_refusal(&package, &document, ""), None, "CL-01 is admitted");
     // The published `forms` are the binding names the fixture's nodes carry.
     let names = |node: &Value| -> Vec<String> {
@@ -26104,27 +25939,6 @@ fn tc_367_timed_clause_criteria_and_vectors_are_published() {
     }
     for cell in ["`AO-08`", "`AO-09`", "`AO-10`", "FR-322-AC-265"] {
         assert!(TC367_CLOCK_DECLARATIONS.contains(cell), "CK-30 names {cell}");
-    }
-    for sentence in [
-        "The model document of a `model_root` node is not a source artifact",
-        "one `clock_guard` for each operation anchor",
-        "a bare reference, not a binding",
-        "place path key",
-        "`eq` is the relation FR-415 writes `=`",
-        "a union step by those of its `case`",
-        "would be a cycle in a graph whose keys hash their dependencies",
-        "never by a digest or by a source region of a shared term",
-        "no `guards` field",
-        "**structure**",
-        "A conditional reset of a `Clock` parameter does not exist",
-        "STD-554",
-        "STD-555",
-        "Every timed node the root does not list",
-    ] {
-        assert!(
-            FR322_BODY_STEPS.contains(sentence) || FR322_BODY_STEPS.replace('\n', " ").contains(sentence),
-            "FR-322 says: {sentence}"
-        );
     }
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     for q in vectors["quantified_out_of_scope"]["cases"].as_array().unwrap() {

@@ -116,11 +116,10 @@ boundary.
   UTF-8 RFC 8785 canonical bytes of the package-id preimage; it is not
   embedded in that preimage. Its digest value is an unprefixed
   64-lowercase-hex string and its domain and algorithm are explicit fields.
-- `lock` — exact source-document, edition, ordered profile, dependency,
-  domain package selection and required-feature identities. A definition
+- `lock` — exact source-document, edition, ordered profile, dependency
+  and required-feature identities. A definition
   selection is a `DefinitionRef` `{authority, identity}`. Every byte digest
-  carries its own declared domain; a raw source digest or a domain
-  package `sha256-jcs` digest cannot
+  carries its own declared domain; a raw source digest cannot
   substitute for a semantic package digest or for another artifact role.
 - `dependency_selections` — the libraries the unit imports directly
   ([FR-307](../../functional/tooling/FR-307-package-reusable-semantic-libraries.md)):

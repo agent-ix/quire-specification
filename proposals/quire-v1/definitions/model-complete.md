@@ -47,9 +47,8 @@ model Orders = "acme/orders";
 ```
 
 The source names the domain package identity only: no version and no digest
-(FR-154 "Model selection in source"). The resolver records the import as a ModelSelection (FR-321) row of the package lock:
-`{identity}`. The row is part of the
-package identity. QSL model intake admits the domain package and builds the
+(FR-154 "Model selection in source"). The package records the import as a `model_root` node of identity
+(FR-321); the lock records nothing. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
 declaration. Clauses of a unit name a declaration by qualified name: the model alias,
 then the segments of its IR node identity after the package identity, such as
@@ -224,15 +223,12 @@ one, relabels it or derives one from the other.
 
 A declaration key carries no digest. An effective declaration identity binds
 declaration keys and derivation facts only. Two domain package documents
-with equal nodes and different digests therefore yield equal effective
-declaration identities, while their effective views and object universes
-differ: the vectors `n01v2-view` and `n01v2-universe` select F1's nodes under
-the digest `n01v2`, carry declarations
-byte-equal to `n01-view`'s, and differ from `n01-view` and `n01-universe`.
+with equal nodes yield equal effective
+declaration identities, effective views and object universes.
 Equal nodes in two different packages under one identity also share effective
 declaration identities, as `n01-type-A` and `n02-type-A` show. Every use that must separate selections pairs the effective
-declaration identity with the ModelSelection or with an object universe
-identity, which binds the selection.
+declaration identity with the selected domain package identity or with an object universe
+identity.
 
 Declaration keys compare by `package`, then `node`, as UTF-8 bytes, a proper
 prefix first.

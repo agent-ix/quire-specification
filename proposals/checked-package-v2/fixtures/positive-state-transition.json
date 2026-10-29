@@ -23,13 +23,6 @@
       },
       "role": "edition"
     },
-    "model_selections": [
-      {
-        "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
-        "digest_domain": "sha256-jcs",
-        "identity": "acme/orders"
-      }
-    ],
     "profile_selections": [
       {
         "definition": {
@@ -54,13 +47,6 @@
       },
       "role": "edition"
     },
-    "model_selections": [
-      {
-        "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
-        "digest_domain": "sha256-jcs",
-        "identity": "acme/orders"
-      }
-    ],
     "profile_selections": [
       {
         "definition": {
@@ -84,7 +70,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "1e7b8e065cce4c3e4850f2b1901de6fa2d0fad5e7cf24adaf494214fef9646a3",
+    "digest": "fdb6d2b7ab4a2066cd35a393814256f522edb6757dabc0cc3db0d81b5560de0b",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -931,7 +917,7 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+          "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "model",
@@ -942,14 +928,13 @@
           }
         ],
         "owner": {
-          "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
           "identity": "acme/orders",
           "kind": "model_root"
         },
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "model_root",
         "semantic_type": {
-          "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+          "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0",
           "domain": "quire.checked-semantic-node/v1"
         }
       }
@@ -1258,7 +1243,7 @@
     },
     {
       "node_id": {
-        "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+        "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,

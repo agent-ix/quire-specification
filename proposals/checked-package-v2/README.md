@@ -157,7 +157,7 @@ structures, but any external consumer receives only the contract.
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
   The members its top-level `schema_only` lists (`dependency_selections`,
-  `entry_mutations`, `model_selections`, `model_entry_mutations`,
+  `entry_mutations`,
   `order_vectors` and `supply_vectors`) carry placeholder `package_id` or
   digest values, or symbolic supply states, that name no admitted package:
   they exercise the schema, the order rule and the supply order only, and a

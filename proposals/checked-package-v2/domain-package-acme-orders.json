@@ -69,7 +69,6 @@
   },
   "source": {
     "dialect": "spec-bundle",
-    "digest": "sha256:41cf6794ba4200b839c53531555f0f3998df4cbb01a4d5cb0b94e3ca5e23947d",
     "identity": "ix://acme/orders/spec",
     "version": "1.0.0"
   },

@@ -481,7 +481,7 @@ Names are architectural roles; Rust names may follow repository idioms.
 | --- | --- | --- |
 | I01 Source document | editor/filesystem -> QSL | Exact bytes, unit identity and bounded read outcome. |
 | I02 Parsed source | QSL parser -> formatter/linker/editor | Lossless CST, recoveries, tokens/spans and edition; not semantically admitted. |
-| I03 Model selection | FCD extraction-frontend lift -> QSL/QObs | Domain package identity, lock-recorded identity, declaration keys, declarations and relationships lifted from spec artifacts. |
+| I03 Model selection | FCD extraction-frontend lift -> QSL/QObs | Domain package identity, identity recorded by the `model_root` node, declaration keys, declarations and relationships lifted from spec artifacts. |
 | I04 Checked package | QSL -> all semantic consumers | Immutable semantic graph, package lock, feature report, source map and diagnostics. |
 | I05 Native runtime input/result | caller/S6 <-> QSL | Typed state anchors, objects, frames, bounds and independent results. |
 | I06 Native temporal artifact/result | QSL/S6 <-> TL/QSL | Typed atoms/formula, clocks/history/captures, partial valuations and progress. |

@@ -75,7 +75,7 @@ fn tc_195_effective_declaration_vectors_recompute_their_digests() {
         .iter()
         .map(|vector| str_at(vector, "/sha256"))
         .collect::<BTreeSet<_>>();
-    for view in ["n01-view", "n02-view", "n01v2-view"] {
+    for view in ["n01-view", "n02-view"] {
         let vector = vectors
             .iter()
             .find(|vector| vector["name"].as_str() == Some(view))
@@ -131,7 +131,7 @@ fn tc_195_effective_declaration_vectors_recompute_their_digests() {
 fn tc_195_inherit_links_name_one_edge_parents() {
     let file = parsed_fixture(EFFECTIVE_DECLARATION_VECTORS);
     let vectors = file["vectors"].as_array().expect("vectors is an array");
-    for view in ["n01-view", "n02-view", "n01v2-view"] {
+    for view in ["n01-view", "n02-view"] {
         let declarations = vector_named(vectors, view)["preimage"]["declarations"]
             .as_array()
             .expect("view declarations are an array");
@@ -238,13 +238,9 @@ fn tc_234_declaration_keys_name_the_domain_package_and_ir_node_only() {
             .unwrap_or_else(|error| panic!("{name} preimage is schema-valid: {error}"));
     }
 
-    for view in ["n01-view", "n02-view", "n01v2-view"] {
+    for view in ["n01-view", "n02-view"] {
         let preimage = &vector_named(vectors, view)["preimage"];
         let package = str_at(preimage, "/model_selection/identity");
-        assert_eq!(
-            str_at(preimage, "/model_selection/digest_domain"),
-            "sha256-jcs"
-        );
         for declaration in preimage["declarations"]
             .as_array()
             .expect("view declarations are an array")
@@ -267,29 +263,4 @@ fn tc_234_declaration_keys_name_the_domain_package_and_ir_node_only() {
         }
     }
 
-    let first = &vector_named(vectors, "n01-view")["preimage"];
-    let second = &vector_named(vectors, "n01v2-view")["preimage"];
-    assert_eq!(
-        first["model_selection"]["identity"], second["model_selection"]["identity"],
-        "both views select one domain package identity"
-    );
-    assert_eq!(
-        first["declarations"], second["declarations"],
-        "equal nodes under a new package digest keep every declaration key and effective declaration"
-    );
-    assert_ne!(
-        str_at(first, "/model_selection/digest"),
-        str_at(second, "/model_selection/digest"),
-        "the two documents are selected by different digests"
-    );
-    assert_ne!(
-        str_at(vector_named(vectors, "n01-view"), "/sha256"),
-        str_at(vector_named(vectors, "n01v2-view"), "/sha256"),
-        "the effective view binds the ModelSelection"
-    );
-    assert_ne!(
-        str_at(vector_named(vectors, "n01-universe"), "/sha256"),
-        str_at(vector_named(vectors, "n01v2-universe"), "/sha256"),
-        "the object universe binds the ModelSelection"
-    );
 }
