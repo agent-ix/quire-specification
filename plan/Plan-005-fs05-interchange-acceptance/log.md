@@ -9,9 +9,9 @@ description: "Chronological log of changes to the Plan-005 bundle."
 
 * **2026-09-14** — Verified FS01 #2, FS02 #3 and FS03 #4 closed and reread FS05
   #6 from GitHub.
-* **2026-09-14** — Verified specification PR #8 merged at `8ab058b`, QSL's
-  strict producer/reader and digest-domain controls, and protocol #48 / PR #52's
-  independent `/2` consumer at `5ce7978`.
+* **2026-09-14** — Verified specification PR #8 merged, QSL's
+  strict producer/reader controls, and protocol #48 / PR #52's
+  independent `/2` consumer.
 * **2026-09-14** — Kept protocol #11 open for its distinct `/1` regression and
   retained IT-002/003 as Planned.
 * **2026-09-14** — Ran scoped `/specify`, then base/dependency/EARS self

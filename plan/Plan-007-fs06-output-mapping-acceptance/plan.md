@@ -93,7 +93,7 @@ historical native-v1 resource or release tag. IT-060 remains Planned.
 ### Track C: Control and handoff
 
 - **C1 = Task-003** Review, validate and route — exit: QSpec tracking and qcir
-  implementation tickets name the accepted revision without claiming execution.
+  implementation tickets name the accepted work without claiming execution.
 
 ## Parallel Execution Summary
 
@@ -126,4 +126,4 @@ The common QSpec boundary is the integration point, not shared target code.
 - Do not mark IT-060 passed from specification-only controls.
 - Do not close qcir #55/#56/#57 through FS06.
 - After merge, close FS06 #7 and immediately update QS #1, ledger #9 and each
-  qcir implementation ticket with the exact accepted merge revision.
+  qcir implementation ticket with the accepted outcome.

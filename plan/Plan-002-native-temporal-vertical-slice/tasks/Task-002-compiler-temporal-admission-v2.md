@@ -20,7 +20,7 @@ protocol `/2` envelope while preserving strict `/1` reading.
 
 ## Subtasks
 
-- [x] Carry exact temporal definition identity/revision/digest.
+- [x] Carry the temporal definition identity and version.
 - [x] Encode tagged event-position, fixed-sample and timestamped clock fields.
 - [x] Refuse absent, conflicting, stale or mismatched selections before lowering.
 - [x] Add strict reader, canonical round-trip and mutation tests.

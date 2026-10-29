@@ -96,4 +96,4 @@ continues owning TL-* libraries; no implementation lane is delegated here.
 
 - Do not close protocol #11, IT-002/003 or public-registration work through FS05.
 - After merge, close FS05 #6 and immediately update QS #1, ledger #9 and qcir
-  #69 with the accepted revision and exact remaining boundaries.
+  #69 with the remaining boundaries.
