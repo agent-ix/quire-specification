@@ -15661,6 +15661,67 @@ fn tc_310_refinement_body_requires_an_identifier_name() {
     assert!(!validator.is_valid(&json!({"term": "refinement"})), "a body without name fails");
 }
 
+/// A node-id path that embeds an operand: some path element is itself a node
+/// id rather than a declared-name segment.
+fn path_embeds_an_operand(node_id: &Value) -> bool {
+    node_id["path"]
+        .as_array()
+        .expect("path")
+        .iter()
+        .any(Value::is_object)
+}
+
+/// FR-322 recursion groups: a recursion-group member that is a declared
+/// record is identified by `{package, path, ordinal}` with `path` its declared
+/// name path and `ordinal` its position among nodes of that path; its id is
+/// never derived by embedding an operand node id.
+#[trace("TC-233", "FR-322-AC-53")]
+#[test]
+fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_RECURSIVE_RECORDS);
+    assert!(schema.is_valid(&package));
+    assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
+    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+    let members: Vec<(usize, &Value)> = nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| node["semantic_form"] == "record" && node.get("recursion_group").is_some())
+        .collect();
+    assert_eq!(members.len(), 2, "List and Tree are the recursive records");
+    for (position, node) in &members {
+        let id = &node["node_id"];
+        assert_eq!(id["package"], package["name"], "member {position}");
+        assert_eq!(
+            id["path"], node["declaration"]["qualified_name"],
+            "member {position}: the path is the declared name path"
+        );
+        assert_eq!(id["ordinal"], 0, "member {position}: one node of that path");
+        assert!(!path_embeds_an_operand(id), "member {position}: no operand is embedded");
+    }
+    // An id derived by embedding an operand is detected as such, and is not
+    // the id the group member carries.
+    let (_, list) = members[0];
+    let operand = nodes
+        .iter()
+        .find(|node| node["semantic_form"] == "integer")
+        .expect("integer node")["node_id"]
+        .clone();
+    let embedded = json!({
+        "package": list["node_id"]["package"],
+        "path": ["record", operand],
+        "ordinal": 0
+    });
+    assert!(path_embeds_an_operand(&embedded));
+    assert_ne!(embedded, list["node_id"]);
+    // The anonymous derived members of the group do embed their operand.
+    assert!(nodes
+        .iter()
+        .filter(|node| node.get("recursion_group").is_some() && node["semantic_form"] != "record")
+        .all(|node| path_embeds_an_operand(&node["node_id"])));
+}
+
 
 /// Every node body of every published V2 package is in the closed
 /// five-stratum body grammar.
