@@ -201,11 +201,11 @@ two never collide. A `typeRef` that begins `ix://quire/native/` and whose
 `invalid_model_binding`/`malformed-declaration`.
 
 `ix://quire/native/Clock` is admitted as a field `typeRef`, an operation
-parameter `typeRef`, an operation result `typeRef`, a variant case
-`payloadType` and an alias `target` (filament-core-data FR-146 "Clock
-members"). A field or parameter typed by an alias whose `target` chain reaches
-`Clock` is a clock member as well, and an alias of `Clock` builds no type
-declaration. A **clock member** is a field, parameter or result of the clock
+parameter `typeRef`, an operation result `typeRef` and an alias `target`
+(filament-core-data FR-146 "Clock members"). A field or parameter typed by an
+alias whose `target` chain reaches `Clock` is a clock member as well. An alias
+of `Clock` builds no type declaration. A **clock member** is a field, parameter
+or result of the clock
 type; it has the clock member shape: any multiplicity `{lower, upper, ordered,
 unique}` that the member rows of the package admit for any member (a multiplicity
 other than `{1, 1}` makes the member a clock collection, FR-415 "Clock
