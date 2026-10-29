@@ -146,9 +146,12 @@ because a model behaviour carries no sample period or timestamp.
 A state at which no transition identity is enabled is **terminal**; over a
 timed subject a timed state is terminal as
 [FR-181](../runtime/FR-181-simulate-finite-executions.md) "Timed subjects"
-states (no discrete step enabled at it or after any admissible delay), so a
-local time-lock is terminal and is stutter-extended like any terminal state.
-Every terminal state reads by this rule, whether the model intends it or it is a
+states (no discrete step enabled at it or after any admissible delay). Over a
+timed subject only a terminal state in which time can pass without bound (the
+idle tail of [FR-161](FR-161-analyze-infinite-trace-properties.md)) is
+stutter-extended; a bounded-delay terminal state has no time-divergent
+continuation, so no admitted infinite behaviour passes through it and claims at
+it hold vacuously (FR-161). Every other terminal state reads by this rule, whether the model intends it or it is a
 deadlock ([FR-366](FR-366-check-deadlock-freedom.md)).
 
 - Under the event-position false-extension profile, a behaviour that reaches a

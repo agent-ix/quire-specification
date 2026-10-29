@@ -94,11 +94,14 @@ trap whose closure is its one state.
 ### Deadlocks and time-locks
 
 A timed state is **terminal** when no discrete step is enabled at it or after
-any admissible delay. A terminal state ([FR-181](../runtime/FR-181-simulate-finite-executions.md) "Timed subjects") at a quiescent discrete state (no time
+any admissible delay ([FR-181](../runtime/FR-181-simulate-finite-executions.md)
+"Timed subjects"). A terminal state at a quiescent discrete state (no time
 invariant applies and it is not urgent) admits the idle tail of FR-161 and is
 a deadlock when it is not intended; the deadlock-freedom item reports it. A
-terminal state where delay is bounded is a local time-lock, reported by the
-time-lock-freedom item and not by the deadlock-freedom item.
+terminal state where the admissible delay is bounded, a **bounded-delay
+terminal state**, has no time-divergent behaviour, so it is a time-lock: local
+when no positive delay is admissible, non-local otherwise. The time-lock-freedom
+item reports it and the deadlock-freedom item does not.
 
 ### Proof
 

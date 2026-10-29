@@ -57,4 +57,4 @@ The models below are defined here in full; the citation names the QSL design rec
 
 ## Expected Results
 
-Every derived item and verdict is exactly as stated. TL-02 and TL-03 exercise FR-181-AC-28, FR-181-AC-29 and FR-366-AC-10: the strict-guard state after `send` at 0 is terminal with bounded delay, so it is a time-lock and not a deadlock.
+Every derived item and verdict is exactly as stated. TL-02 and TL-03 exercise FR-181-AC-28, FR-181-AC-29 and FR-366-AC-10: the strict-guard state after `send` at 0 is a bounded-delay terminal state, so it is a time-lock and not a deadlock; its stem ends at the local time-lock reached after the final delay 3.
