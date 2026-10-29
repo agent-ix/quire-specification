@@ -89,41 +89,25 @@ non-negative rational constant: `self.x = 0` or `self.x = c`. A clock in the
 frame that is not reset keeps its value. Reset is the one write to a clock;
 any other write refuses with `invalid_timed_model`/`clock-write`.
 
-**No implicit reset on a presence change.** A place becomes present only by a
-write of its clock value, for an `Option<Clock>` place and for a union case
-alike. Under an operation's frame, an `Option<Clock>` place keeps its presence
-bit and its clock unless the postcondition writes it (a constant write makes it
-present with that value, `absent` drops it), and a union case that holds a
-clock keeps its case and its clock unless the postcondition writes the union
-value (a constructor of the case, `Armed { x: c }` or a literal that contains
-the clock component, makes it present with the constant it gives; a case
-without the clock drops it). A union case has no bit, so a postcondition that
-requires only `present(self.state.Armed)` of a predecessor holding `Idle`
-does not select an `Armed` successor with a clock of 0: nothing writes the
-clock, so there is no successor, exactly as `present(self.v)` alone from an
-absent `v` has none. The one rule is that a successor in which a place is
+**No implicit reset on a presence change.** An `Option<Clock>` place keeps its
+presence bit and clock unless the postcondition writes it: a constant write
+makes it present with that value, and `absent` drops it. A clock collection
+place is live only while its slot exists; adding a slot makes its clock present
+only when the write supplies the clock value. A successor in which a place is
 present although it was absent in its predecessor exists only when the
-postcondition writes that place's clock value. A case switch that makes a clock
-live therefore writes the constructor. A postcondition that requires the
+postcondition writes that place's clock value. A postcondition that requires
 presence without the write has no successor; when the operation's precondition
-or an invariant establishes the place absent, the requirement is decided
-statically and refuses `invalid_timed_model`/`clock-presence-unwritten` at the
-`present(...)` requirement, naming the place. The rule adds no implicit write:
-a present place whose frame does not write it is unchanged, so its clock value
-is kept.
+establishes the place absent, the checker refuses
+`invalid_timed_model`/`clock-presence-unwritten` at the `present(...)`
+requirement, naming the place. A present place whose frame does not write it is
+unchanged, so its clock value is kept.
 
 **The same rule for absence.** A requirement is a constraint, never a write:
-`not present(p)` does not write `absent` or `Idle`. An `Option<Clock>` place
-keeps its bit unless written, so `not present(self.v)` of a present, unwritten
-`v` has no successor. A union value in the frame is not fixed by a bit: the
-frame admits any case, subject to the rule above that no clock becomes live
-without its write. `not present(self.state.Armed)` of an `Armed` predecessor
-therefore has the successor in which `state` is a clockless case (`Idle`) and
-the clock is dropped, and an unwritten union of an `Armed` predecessor with no
-requirement also admits that successor beside the unchanged one. The two forms
-follow the one rule (an unwritten clock keeps its value; a clock is live only
-by a write); they differ only because a union can leave a case and an
-`Option<Clock>` bit does not change.
+`not present(p)` does not write `absent`. An `Option<Clock>` place keeps its
+bit unless written, so `not present(self.v)` of a present, unwritten `v` has no
+successor. A collection slot can cease to be live when a write removes it; its
+dropped clock then has no value. In both forms, an unwritten clock keeps its
+value and a clock becomes live only by a write.
 
 ### Clock places
 
@@ -137,20 +121,20 @@ infer clock members from a spelling.
 
 A type is **clock-bearing** when it is `Clock`, an alias of a clock-bearing
 type, `Option` of one, a `Set`, `Bag`, `Sequence`, `OrderedSet` or `Map` whose
-element (for a map, value) type is clock-bearing, or a record, tuple or union
-with a field, element or case payload of a clock-bearing type. A member of a
+element (for a map, value) type is clock-bearing, or a record with a field of
+a clock-bearing type. A member of a
 clock-bearing type whose multiplicity is not `[1, 1]` is the collection of that
 type that FR-322 gives the multiplicity. A value of a clock-bearing type is not a
 data value: it denotes **clock places**, the clocks it contains, and a place
-is the pair of an object of a universe and the path of fields, tuple indexes,
-union cases and collection slots (below) from the object's field to a `Clock`.
+is the pair of an object of a universe and the path of fields and collection
+slots (below) from the object's field to a `Clock`.
 The clocks of a timed
 model are exactly the places of its objects. A place outside every collection
 exists in every state, so a model with no clock collection has a number of
 clocks fixed by the universe and the declared types; the places of a clock
 collection are live only while the collection holds the element (below).
 
-- A place under an `Option` or `?` field or a union case is **guarded**: it is
+- A place under an `Option` or `?` field is **guarded**: it is
   present at a discrete state exactly when the value on its path holds that
   case (`present(p)` for an optional place `p`), and its clock has a value
   only while it is present. A place that is not guarded is present in every
@@ -173,13 +157,12 @@ collection are live only while the collection holds the element (below).
   or `exists(e in q: B)` is read at each live slot `e` binds, so the
   quantifier is the conjunction (`forall`, true on no live slot) or the
   disjunction (`exists`, false on none) of the presences of its live slots.
-- A place under several guards (an `Option<Timer>` field, a `Sequence` slot of
-  `Option<Clock>`, a union case of an optional field) is present exactly when
+- A place under several guards (an `Option<Timer>` field or a `Sequence` slot
+  of `Option<Clock>`) is present exactly when
   every guard on its path holds, and `value(p)` carries the conjunction of
-  those presence tests as its obligation. `Option<Clock>` is a type like any
-  other clock-bearing type: a field, parameter, result, record or tuple
-  component, union payload, alias target and collection element may be
-  `Option<Clock>`. An operation with an `Option<Clock>` parameter has one
+  those presence tests as its obligation. `Option<Clock>` is a clock-bearing
+  type that may be a field, parameter, result, record component, alias target
+  or collection element. An operation with an `Option<Clock>` parameter has one
   instance for each guarded place of its range, the instance reads `value(c)`
   under the obligation of its place, and a reset of `c` to a constant makes
   the place present. A function whose result is `Option<Clock>` returns the
@@ -196,13 +179,13 @@ collection are live only while the collection holds the element (below).
   for each object or branch it can reach, each guarded by the data condition
   that selects it, so a clock constraint over it is the disjunction of those
   guarded constraints.
-- A record, tuple or union literal that contains a `Clock` component is a
-  write: it is admitted only as the right side of a reset (`self.t =
-  Timer { x: 0 ms, n: 3 }`), each of its clock components an exact
+- A record literal that contains a `Clock` component is a write: it is admitted
+  only as the right side of a reset (`self.t = Timer { x: 0 ms, n: 3 }`), each
+  of its clock components an exact
   non-negative rational time constant. A write of a constant to a guarded
   place makes it present with that clock, and a write of `absent` (the Option
-  literal of FR-143, typed `Option<Clock>` by the place it is written to), or of
-  another union case, drops it.
+  literal of FR-143, typed `Option<Clock>` by the place it is written to)
+  drops it.
   Elsewhere it refuses `invalid_timed_model`/`clock-write`.
 - A clock-bearing value that is read whole, as an operand of `=`, a function
   argument of data type, an assignment to a data field or a conversion, reads
@@ -268,7 +251,7 @@ clock-bearing type whose multiplicity is not `[1, 1]` (FR-322 gives it
 clock collection is admitted in every position a collection of its element type
 is admitted, with its clock rules below, including `Option` of a clock
 collection, a collection of `Option<Clock>`, a collection of collections and a
-record or union that holds one. A clock-bearing `Map` key refuses
+record that holds one. A clock-bearing `Map` key refuses
 `ill_typed`/`operator-ineligible`, because a key is an immutable lookup value
 and a clock advances with time.
 
@@ -425,9 +408,9 @@ its value and the request setting that raises it.
 | FR-415-AC-18 | Checked-package V2 read-back admits a source only when its unit's `dimension_node_id` is the exact base `Time` node named by the timed root; source units in `Length`, derived non-Time and nominal derived-Time dimensions refuse `ill_typed`/`invalid-time-quantity` at the `time_source.unit` reference for dense and tick forms. A tick source with any `Clock` place refuses `invalid_package`/`clock-without-dense-time` at the place node's `model` reference; S3 retains the `invalid_timed_model` cause at the source clock declaration. | Test (TC-367; FR-322-AC-126, FR-322-AC-127; TM-23..TM-29) |
 | FR-415-AC-19 | The places `ts.0.x`, `ts.1.x` and `ts.2.x` of a three-element `Sequence<Timer>` are three instances of one template `clock_place` in the checked package, whose slot step carries the symbolic element selector, and the template holds no element count, and a collection of another kind or depth changes only its slot steps (FR-322-AC-148..FR-322-AC-150). An empty `guards` aggregate is admitted when the model has no guard, and a guard that exists is listed, never dropped. | Test (TC-367; CK-26) |
 | FR-415-AC-20 | With `v: Option<Clock>` and `q: Sequence<Option<Clock>>[0, 2]` on two objects `c1`, `c2`, `present(other.v)` reads the presence of `v` of `other`, so `present(c1.v)` can be true while `present(c2.v)` is false; `forall(e in self.q: present(e))` is true on an empty `q` and otherwise the conjunction of the presences of its live slots, `exists(e in self.q: present(e))` is false on an empty `q` and otherwise their disjunction; none of these declares a field or changes any object's data, and each is a data predicate that never reads a clock value (FR-322-AC-155..FR-322-AC-157). | Test (TC-367; CK-27) |
-| FR-415-AC-21 | With `v: Option<Clock>` and `st: Mode` where `Mode` is a union of `Idle` and `Armed { x: Clock }`, both in the frame of an operation: a postcondition that requires `present(self.v)` of an absent `v`, or `present(self.st.Armed)` of an `Idle` `st`, with no write of the clock has no successor (no implicit reset to 0), and refuses `invalid_timed_model`/`clock-presence-unwritten` when the precondition establishes the place absent; with the write `self.v = 5 ms` or the constructor `self.st = Armed { x: 5 ms }` it has one successor in which the place is present with the clock `5 ms`; a write of `absent` or of `Idle` drops the place; a requirement is never a write, so `not present(self.v)` of a present, unwritten `v` has no successor, while `not present(self.st.Armed)` of an `Armed` `st` has the successor with `st` an `Idle`; an unwritten `Armed` `st` with no requirement keeps its clock and also admits the `Idle` successor, and an unwritten present `v` only keeps it. The vectors `FP-01`..`FP-14` of `clock-presence-frame-vectors.json` pair each `Option` vector with its union twin and state which pairs agree and which differ only because a union can leave its case. | Test (TC-367; CK-31; FP-01..FP-14) |
+| FR-415-AC-21 | With `v: Option<Clock>` in an operation's frame: requiring `present(self.v)` of an absent `v` without writing its clock has no successor and refuses `invalid_timed_model`/`clock-presence-unwritten` when the precondition establishes absence; writing `self.v = 5 ms` makes it present with `5 ms`; writing `absent` drops it; a requirement is never a write, so `not present(self.v)` of a present, unwritten `v` has no successor and an unwritten present `v` keeps its clock. The vectors FP-01, FP-03, FP-05, FP-07, FP-09, FP-11 and FP-13 of `clock-presence-frame-vectors.json` exercise these cases. | Test (TC-367; CK-31) |
 | FR-415-AC-22 | A checked package for a dense model emits one `clock_guard` for each operation that has guard clauses, whose `parts` each pair the guard predicate with the clock constraints it bounds; one `clock_reset` for each reset of a postcondition, of kind `place` (the place template, its owner term, the slot terms, the quantified slots as `binders`, the `when` condition and the exact value) or, for a `Clock` parameter, of kind `parameter` naming the operation and the parameter; one `time_invariant` for each invariant, whose `bounds` are upper bounds (`<`, `<=`) only; and the `clock_constraint` nodes they name, each with the relation word `lt`, `le`, `eq`, `ge` or `gt`. A lower bound or an equality in an invariant is the source refusal `time-invariant-shape`, and a package that carries one refuses `invalid_package`/`timed-node-reference` (`CL-07`). Each form is a vector of `timed-clause-node-vectors.json` (`CL-01`..`CL-25`). | Test (TC-367; CK-32..CK-36; CL-01..CL-25) |
-| FR-415-AC-23 | Two clock places of one model that no source region tells apart are listed in the order of their paths (field names, union cases, tuple indexes, slot collections with bounds), never by a hash, so two compilations of one model list its places identically (`AO-08`, `AO-09`); an element place in a clause (`self.ts[i].x`, `self.m[k].x`) is the template place with its owner term and slot terms, and a slot term of another type than the selector's domain refuses `ill_typed`/`type-mismatch` (`CL-10`). | Test (TC-367; CK-35, CK-36; AO-08..AO-10, CL-10) |
+| FR-415-AC-23 | Two clock places of one model that no source region tells apart are listed in the order of their paths (field names and slot collections with bounds), never by a hash, so two compilations of one model list its places identically (`AO-08`, `AO-09`); an element place in a clause (`self.ts[i].x`, `self.m[k].x`) is the template place with its owner term and slot terms, and a slot term of another type than the selector's domain refuses `ill_typed`/`type-mismatch` (`CL-10`). | Test (TC-367; CK-35, CK-36; AO-08..AO-10, CL-10) |
 | FR-415-AC-24 | A guard or an invariant whose body is `forall(e in p: B)` or `exists(e in p: B)` over clock places is refused `unsupported_construct`/`not-yet-implemented` at the quantifier and names STD-554, which defines the binder form; the checked package does not carry an unquantified approximation of it. | Test (TC-367; CK-37; QN-01, QN-02) |
 
 ## Dependencies
