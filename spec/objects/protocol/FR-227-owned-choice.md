@@ -63,9 +63,6 @@ distinguishing fact without reporting global conformance success"
 - **Absence** — an absent owner is refused rather than defaulted (FR-053); an
   absent distinguishing fact is refused rather than treated as false
   (FR-053-AC-2). An absent optional component compares only to absence.
-- **Digest domain** — no component of this key is a digest; a digest carried in
-  provenance carries the domain it was derived under,
-  `ix://agent-ix/quire-specification/FR-201`.
 
 ## Acceptance Criteria
 

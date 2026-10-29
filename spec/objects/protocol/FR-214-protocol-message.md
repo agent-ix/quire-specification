@@ -50,8 +50,6 @@ When a protocol binder binds a communication, the binder SHALL preserve the mess
 - **Absence** — an absent key component compares only to absence and is never
   defaulted to an empty payload, an empty label or an implicit option-none
   (FR-035-AC-8).
-- **Digest domain** — FR-287 retains the authority digest and its selected
-  FR-201 domain.
 
 ## Acceptance Criteria
 

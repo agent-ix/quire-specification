@@ -23,11 +23,10 @@ unit, trigger, and schema identity; remove a required field; and change
 internal/external visibility. Change the selected binding-contract definition
 identity, then separately change only the concrete mapping and admitted-record
 set under the original selected definition.
-Independently recompute the FR-296 identity; permute object-member presentation,
-mutate every semantic/provenance member, remove or stale the identity, change
-its digest domain, and pair one identity with unequal canonical bytes. Supply a
-correction with the exact immutable predecessor and then with missing,
-self-referential and digest-mismatched predecessors.
+Permute object-member presentation, mutate each FR-296 key member one at a time
+and then each attribute member, remove a key member, and pair one key with
+unequal observation members. Supply a correction with the exact immutable
+predecessor and then with missing, self-referential and unknown predecessors.
 
 ## Expected Results
 
@@ -36,8 +35,8 @@ typed refusal, missing value is incomplete/refused rather than false, and
 visibility remains retained. A changed binding-contract definition identity
 requires a newly linked subject; changed concrete mapping or records
 retain the same static subject and produce a distinct identified assessment input.
-Presentation permutation preserves the derived observation identity; every
-semantic/provenance mutation changes it. Missing/stale/cross-domain identities,
-same identity on unequal bytes and invalid predecessor relations refuse without
-a partial admitted observation. A valid correction preserves predecessor bytes
-and obtains a new identity.
+Presentation permutation preserves the observation key; every key-member
+mutation changes it and an attribute mutation does not. Missing keys, the same
+key on unequal members and invalid predecessor relations refuse without a
+partial admitted observation. A valid correction preserves predecessor members
+and carries a new source ordinal.

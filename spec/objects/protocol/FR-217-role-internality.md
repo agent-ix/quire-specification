@@ -47,9 +47,6 @@ When a protocol declares a role, the protocol linker SHALL apply the same identi
 - **Absence** — every static role requires exactly one member. Absence, an
   unknown member or another spelling refuses and is never defaulted to
   `internal`. Neither member alone establishes full observability or adequacy.
-- **Digest domain** — no member of this key is a digest. Where an internality
-  label is carried beside a digest in provenance, that digest's domain is
-  selected under `ix://agent-ix/quire-specification/FR-201`.
 
 ## Acceptance Criteria
 

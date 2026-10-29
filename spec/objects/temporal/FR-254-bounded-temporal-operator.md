@@ -101,9 +101,6 @@ timestamps never substitutes for it.
   return a non-Boolean disposition", and an unbounded operator admitted under
   the infinite-trace profile is a member of the FR-161 vocabulary rather than a
   member of this table with an absent bound.
-- **Digest domain** — not applicable; no key component of this object is a
-  digest. The profile identity it names carries one, under
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Acceptance Criteria
 

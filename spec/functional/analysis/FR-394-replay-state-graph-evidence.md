@@ -44,8 +44,7 @@ the claim and its instance, and the request's limits.
 Replay recompiles the package, re-admits the subject from the byte provision
 and trusts no engine claim. A `ModelPath` re-executes from the initial state its `initial` index names,
 through the FR-181 transition relation, one step at a time. A step is refused
-when its transition is not enabled at the current state or when no successor
-of that transition has the recorded post-state digest. The source of a witness
+when its transition is not enabled at the current state. The source of a witness
 changes no replay step: a sampled, explored or unrolled witness replays from
 its recorded steps, without re-running the sampler or the engine.
 
@@ -82,7 +81,7 @@ its recorded steps, without re-running the sampler or the engine.
 | FR-394-AC-1 | A witness whose every path re-executes and ends at a node where `P` holds reproduces, and the item then settles by FR-391: `proved` after a completed exploration with no undefined evaluation, else `inconclusive` with `well-definedness-unchecked`; a witness whose last node fails `P` settles `inconclusive`, `replay-parity`. | Test (TC-331, TC-335) |
 | FR-394-AC-2 | A trap whose stem re-executes and whose closure, explored afresh from its last node, holds no target node reproduces and settles the item `refuted`; a trap whose closure reaches the target settles `inconclusive`, `replay-parity`. | Test (TC-331, TC-332, TC-335) |
 | FR-394-AC-3 | A path pair whose two sequences each reach `Y` first at their last node and differ reproduces and settles `refuted`; a path pair whose sequences are equal settles `inconclusive`, `replay-parity`. | Test (TC-333, TC-335) |
-| FR-394-AC-4 | A step whose transition is not enabled, or whose recorded post-state digest matches no successor, settles `inconclusive`, `replay-parity`. | Test (TC-335) |
+| FR-394-AC-4 | A step whose transition is not enabled settles `inconclusive`, `replay-parity`. | Test (TC-335) |
 | FR-394-AC-5 | A sampled, an explored and an unrolled witness with the same steps replay identically, with no sampler or engine present. | Test (TC-335) |
 | FR-394-AC-6 | A trap's closure exploration that a limit stops settles `incomplete` with cause `limit-reached` naming the limit, its value and its setting; a cancelled replay settles `incomplete` with cause `cancelled`. | Test (TC-335) |
 | FR-394-AC-7 | An `undefined` arm whose stem re-executes and whose named expression (claim predicate, guard of the named transition, `terminal when` predicate or state constraint) evaluates at the last node to the arm's carried undefined value, with its state key, locus and reason, reproduces and settles `refuted`; a defined value there, or another locus or reason, settles `inconclusive`, `replay-parity`. | Test (TC-349) |

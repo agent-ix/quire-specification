@@ -94,9 +94,6 @@ profile shall quantify admitted past instants by inclusive clock distance."
   interval operator carries this object with the infinite-trace profile
   identity in its key, and an unbounded operator carries none
   ([FR-367](../../functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)).
-- **Digest domain** — not applicable; no key component of this object is a
-  digest. The profile identity it names carries one, under
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Emptiness is not falsity by default
 

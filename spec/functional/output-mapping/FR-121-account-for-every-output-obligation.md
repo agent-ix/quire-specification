@@ -29,7 +29,7 @@ whole-operation failure with no partial package.
 
 ## Behavior
 
-Each record SHALL retain source identity/digest/span, required semantic
+Each record SHALL retain source package identity and version, clause identity and span, required semantic
 and model dependencies, target profile, classification, exact conditions/causes
 and generated regions. `Preserved` requires every necessary source fact to be
 represented without a semantic condition. `Conditional` retains nonempty

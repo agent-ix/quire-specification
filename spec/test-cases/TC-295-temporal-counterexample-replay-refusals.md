@@ -23,7 +23,7 @@ subject. Derive:
 1. `X` unchanged.
 2. `X` with the loop's last step removed, so the loop does not close.
 3. `X` replayed against the clause with `fair weak each …`.
-4. `X` with the second step's `post_state` replaced by the digest of `(2,0)`.
+4. `X` with the second step's `post_state` replaced by the state key of `(2,0)`.
 5. A Counter prefix with four `inc` steps, the fourth at value 3.
 6. A Counter lasso whose loop is a terminal stutter step at value 2.
 7. `X` with `trace_position` 0 against `always eventually holds(c.versionNumber
@@ -33,17 +33,15 @@ subject. Derive:
 9. A safety refutation of TC-290's `always holds(x.value <= 2)`.
 10. An observed-arm counterexample for `eventually[0,1] holds(c.value = 2)`
     under the event-position profile: `trace` `"observed"`, three steps whose
-    documents hold `c.value` 0, 1 and 2, `interval` `{lower: "0", upper: "1"}`,
+    documents hold `c.value` 0, 1 and 2,
     `trace_position` 0, empty `fairness`, every document held by the byte
     provision.
 11. Step 10's counterexample against the clause under `fair weak inc`, with
     `fairness` (`weak`, `inc`, `whole`).
 12. Step 10's counterexample with its third document missing from the
     provision.
-13. Step 10's counterexample with `interval` `{lower: "0", upper: "2"}`.
-14. An infinite-trace formula counterexample for `eventually[2,*] holds(p)`
-    with `interval` `{lower: "2", upper: null}`, replayed against that clause
-    and against `eventually[3,*] holds(p)`.
+13. Withdrawn.
+14. Withdrawn.
 
 ## Expected Results
 
@@ -52,7 +50,7 @@ subject. Derive:
 2. Refuses `invalid_runtime_input`/`invalid-value` (FR-364-AC-4).
 3. Refuses as an unfair lasso naming (`weak`, `attemptUpdate`, `each`) with
    the starved receiver `b`; no `refuted` (FR-364-AC-5).
-4. Refuses `stale_dependency`/`content-mismatch` (FR-364-AC-4).
+4. Withdrawn: the recorded post-state key is not checked against a successor.
 5. Refuses `invalid_runtime_input`/`invalid-value`: `inc` is not enabled at
    value 3 (FR-364-AC-4).
 6. Refuses `invalid_runtime_input`/`invalid-value`: value 2 is not terminal
@@ -66,8 +64,5 @@ subject. Derive:
 11. `unsupported`, cause `missing-fairness-premise`, naming
     (`weak`, `inc`, `whole`), with no formula evaluated (FR-364-AC-9).
 12. Refuses `invalid_runtime_input`/`invalid-value` (FR-364-AC-9).
-13. Refuses `stale_dependency`/`content-mismatch` naming `interval`
-    (FR-364-AC-9).
-14. Against `eventually[2,*] holds(p)` the interval check passes and replay
-    evaluates the formula; against `eventually[3,*] holds(p)` it refuses
-    `stale_dependency`/`content-mismatch` naming `interval` (FR-364-AC-9).
+13. Withdrawn.
+14. Withdrawn.

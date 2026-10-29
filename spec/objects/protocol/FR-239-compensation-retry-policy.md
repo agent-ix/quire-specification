@@ -70,7 +70,6 @@ never repaired from key, timestamp, table or arrival order.
 - **Absence** — an absent retry bound compares only to absence. FR-058 admits
   only an authored finite bound, so absence is never compared to zero, to an
   unbounded policy or to an implicit default.
-- **Digest domain** — not applicable; the key is a finite bound, not a digest.
 
 ## Acceptance Criteria
 

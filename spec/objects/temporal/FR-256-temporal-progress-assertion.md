@@ -79,10 +79,6 @@ time passed."
   an incomplete input", and FR-113-AC-4 holds that "A mismatched assertion
   definition, scope, clock, source set, or restoration basis remains
   incomplete/refused and cannot settle or restart an assessment."
-- **Digest domain** — an assertion or binding component carried as a digest
-  retains the domain it was derived under
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
-  crossing domains is unequal regardless of byte equality.
 
 ## Cross-family boundary mapping
 

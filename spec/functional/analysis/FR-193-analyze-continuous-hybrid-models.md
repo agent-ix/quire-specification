@@ -127,8 +127,7 @@ model without hybrid dynamics, which has the same kind.
 - A hybrid item with no candidate SHALL settle `unsupported`,
   `unsupported_projection`/`unsupported-requested-capability`, the warning
   naming `temporal-satisfaction` and the requirement `hybrid-dynamics`.
-- `requirements` SHALL be part of the request identity and the cache key
-  (FR-306); `dynamics` is part of the descriptor, and so of its manifest
+- `requirements` SHALL be part of the request identity; `dynamics` is part of the descriptor, and so of its manifest
   digest.
 - A registration that advertises `temporal-satisfaction` SHALL be refused
   `invalid_capability`/`invalid-dynamics`, keyed by backend identity, when
@@ -470,8 +469,7 @@ defaulting a limit apply to both. Their setting names are
 - `max_solver_steps` SHALL be a whole, positive count of solver steps as
   the provider counts its own steps. A report of it SHALL state the count as
   the provider counts it and SHALL NOT convert it to time. It is
-  deterministic, so it SHALL be part of the request identity and the cache
-  key (FR-306).
+  deterministic, so it SHALL be part of the request identity.
 - `max_solver_time` SHALL be a wall-clock budget for the solver's run, in
   whole seconds, independent of the provider deadline `deadline_ms`. When the
   request writer writes a request for a caller that supplied a fractional
@@ -487,9 +485,8 @@ defaulting a limit apply to both. Their setting names are
   request SHALL always apply. Each provider publishes its own defaults, and
   this requirement states no number.
 - `max_solver_time` is a wall-clock setting. The request identity and the
-  cache key SHALL exclude it, no member of a stored record SHALL record wall
-  time, and a result it limits (`timed-out`) SHALL NOT be cached or stored
-  (FR-306). Two requests that differ only in `max_solver_time` SHALL have
+  request identity SHALL exclude it, no member of a stored record SHALL record wall
+  time, and a result it limits (`timed-out`) SHALL NOT be reused between invocations. Two requests that differ only in `max_solver_time` SHALL have
   equal request identity.
 
 A hybrid item settles `refuted` only through exact replay ("Trace
@@ -638,7 +635,7 @@ reads. The checks, in trace order:
 The outcome SHALL be `consistent`, or `inconsistent{at, check}` naming the
 pointer of the first failing check and its number. Static replay settles no
 value: the reader keeps the outcome with the trace as the `replay` member of
-the item's `solver-inconclusive` cause on its stored record (FR-306):
+the item's `solver-inconclusive` cause on its record:
 `{"static": s}` or `{"static": s, "exact": e}`, `s` `{"outcome":
 "consistent"}` or `{"outcome": "inconsistent", "at": p, "check": n}`, and `e`
 `{"outcome": "not-exact"}` or `{"outcome": "not-reproduced", "at": p,
@@ -716,7 +713,7 @@ when exact replay reproduces it.
 | FR-193-AC-6 | Each row of the verdict map settles its listed value and basis or cause; a sound solver result whose proof covers the claim settles `proved` with `bounded-solver{method, horizon, jumps, exhaustive}` or `inductive-solver{method}`, and no solver result settles `refuted`. | Test (TC-373) |
 | FR-193-AC-7 | A `hybrid-decl` whose every continuous variable has the rate literal `1` in every mode refuses `invalid_timed_model`/`rate-one-hybrid`; a hybrid item with no registered candidate settles `unsupported`. A `hybrid-decl` whose only variable `t` has the rate `2 - 1` in every mode is not refused and its `t` is hybrid dynamics. | Test (TC-373) |
 | FR-193-AC-8 | A solver stopped after 1,000 steps by a `max_solver_steps` of 1,000 settles `incomplete`, execution `resource-incomplete`, `limit-reached{limit: max_solver_steps, value: 1000, setting: hybrid.max_solver_steps}`, in steps and unconverted; a solver that exhausts `max_solver_time`, and a plugin provider that overruns `deadline_ms`, each settle `incomplete`, `resource-incomplete`, `timed-out`; a run the caller's frontend ends at the caller's own deadline settles `incomplete`, `cancelled{source: deadline}`, so no event has two causes. | Test (TC-373) |
-| FR-193-AC-9 | A caller's `max_solver_time` of 1.5 s is written as the wire integer 2, 2 s as 2 and 0.2 s as 1, and a wire value of 1.5 is refused before consumption; two requests that differ only in `max_solver_time` have equal request identity and cache key bytes, two that differ only in `max_solver_steps` differ, and a `timed-out` result is stored by neither request and holds no wall-time member. | Test (TC-373) |
+| FR-193-AC-9 | A caller's `max_solver_time` of 1.5 s is written as the wire integer 2, 2 s as 2 and 0.2 s as 1, and a wire value of 1.5 is refused before consumption; two requests that differ only in `max_solver_time` have equal request identity, two that differ only in `max_solver_steps` differ, and a `timed-out` result is reused by neither request and holds no wall-time member. | Test (TC-373) |
 | FR-193-AC-10 | A `solver-inconclusive` cause carrying a `HybridTrace` with a `start` in mode `Moving` and one jump by `transition` 0 to `Stopped`, and one carrying no `trace`, are each admitted and settle `inconclusive`, `solver-inconclusive`, the trace kept on the record and absent from `counterexamples`; a trace with an empty `enclosure`, and one with a member outside `start`, `jumps`, `delta` and `loop`, are refused by the schema at that member. The reader holding the checked model refuses `invalid_result`/`invalid-value` at the member a trace whose `mode` is `Halted`, one whose `start` is in `Stopped`, one whose jump names `transition` 1 of `Moving`, which has one transition, one whose jump by `transition` 0 reaches `Moving`, one whose `enclosure` omits `v`, one whose `enclosure` adds `w`, and one with an `Interval` whose `lower` exceeds its `upper`; a reader refuses `invalid_result`/`unknown-member` at `/cause/trace` a `trace` on the `solver-inconclusive` cause of an FR-468 refinement item. | Test (TC-373, TC-431) |
 | FR-193-AC-11 | `Braking` with `initial { mode Moving when { v = 20 and a >= 1 and a <= 2 and t = 0 }; mode Stopped when { v = 0 and t = 0 }; }` has two initial modes and the initial states those entries and the modes' invariants give; with no `initial` clause its initial states are `Moving`'s invariant at time 0, equal to those of `initial { mode Moving when { true }; }`; `initial { mode Halted when { true }; }` refuses `missing_declaration`/`missing-name`; a model whose initial set is empty settles `inconclusive`, `no-initial-state`. | Test (TC-373) |
 | FR-193-AC-12 | In a declaration over `v`, `a` and `x`, a flow `v' = -a * v`, a guard `v * v >= 2`, a flow `x' = if v > 1 then -1 else 0`, a flow `v' = drag(v)` calling a pure function `drag(s: Rational[-100, 100; 1, 1]): Rational[-1000, 0; 1, 10]` whose body is `- s * s / 10`, so that `v = 3/2` passes and `v = 101` has no value, a `let` and a `!=` are admitted; `v' = v div 2` and a call passing `v` to an `Integer` parameter refuse `ill_typed`/`type-mismatch`; a reachable state at which `1 / v` has `v = 0` is a violating state, so no provider proves a claim over a model that reaches it. | Test (TC-373) |

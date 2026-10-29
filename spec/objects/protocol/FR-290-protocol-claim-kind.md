@@ -415,7 +415,6 @@ backend identity, then by the manifest's RFC 8785 bytes.
   kind and the backend; the result `failed`, not the cause, distinguishes it
   from absence found at probe. No other candidate runs, no other mode runs,
   and nothing waits for the tool.
-- **Digest domain** — not applicable.
 
 ## Acceptance Criteria
 

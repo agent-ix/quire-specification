@@ -46,7 +46,7 @@ The models below are defined here in full; the citation names the QSL design rec
 | SW-02 | Replay of SW-01's first witness | Reproduced; it also refutes the every-behaviour claim `always (M <= 2 ms)` over the same subject |
 | SW-03 | SW-01's witness with `d = 4 ms`, outside the support | `invalid_runtime_input`/`invalid-value` |
 | SW-04 | SW-01's witness with its scheduled identity replaced by another enabled one | Recomputed draw disagrees: `inconclusive`, `replay-parity`; the item's `measured` decision is unchanged |
-| SW-05 | `Lookup` with statistical evidence, Okamoto | The run stops at the first sample in trace-index order that draws `ok = false`, and settles `measured: rejected`, cause `undefined-evaluation`: `where` names test 0, that trace index, the position after that draw, its state-key digest and the `lookup`'s locus; `cause` is `absent-key`. That sample is the first sampled witness, carrying the undefined value |
+| SW-05 | `Lookup` with statistical evidence, Okamoto | The run stops at the first sample in trace-index order that draws `ok = false`, and settles `measured: rejected`, cause `undefined-evaluation`: `where` names test 0, that trace index, the position after that draw, its state key and the `lookup`'s locus; `cause` is `absent-key`. That sample is the first sampled witness, carrying the undefined value |
 | SW-06 | Replay of SW-05's witness | Reproduced: the recomputed draws select `ok = false` at the recorded step and the claim evaluates undefined there with the `lookup`'s locus and reason `absent-key` |
 
 ## Expected Results

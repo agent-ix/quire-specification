@@ -50,7 +50,6 @@ A strict reader SHALL refuse a missing, cyclic or self-referential predecessor
 - **Absence** — a decision-support record retained without a dependence relation
   has an absent relation, which compares only to absence. It is never defaulted
   to `independent`; FR-061 forbids inferring independence.
-- **Digest domain** — not applicable.
 
 ## Acceptance Criteria
 

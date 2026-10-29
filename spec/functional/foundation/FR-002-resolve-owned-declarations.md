@@ -31,7 +31,7 @@ The spec's artifacts declare the domain model. The domain package lifted from th
 | FR-002-AC-1 | An exact import resolves a qualified domain type name to its stable declaration key. | Test |
 | FR-002-AC-2 | An absent package receives missing_import. | Test |
 | FR-002-AC-3 | Two declarations with the same selected qualified name receive ambiguous_declaration. | Test |
-| FR-002-AC-4 | A changed selected dependency, including a domain package whose declarations differ from those the proved package was compiled against, so that the recompiled `package_id` differs, receives stale_dependency. | Test |
+| FR-002-AC-4 | Withdrawn: it existed only for the `package_id` staleness comparison, which is removed. | Withdrawn |
 | FR-002-AC-5 | An undeclared authority receives foreign_reference. | Test |
 
 ## Dependencies

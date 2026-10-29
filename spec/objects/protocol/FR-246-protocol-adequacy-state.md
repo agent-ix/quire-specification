@@ -39,8 +39,6 @@ When a result states whether the exact declared obligation and case set was exer
 - **Absence** — an absent protocol adequacy compares only to absence. It is
   distinct from the supplied values `unknown` and `inapplicable` and is never
   defaulted to either.
-- **Digest domain** — not applicable; this key contains no digest. See
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Retention boundary
 
