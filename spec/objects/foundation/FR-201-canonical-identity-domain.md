@@ -60,8 +60,6 @@ equality.
   `raw-artifact-digest` or to any other member.
 - **Causal order** — not applicable. A domain label participates in no causal
   structure.
-- **Digest domain** — not applicable to the label itself. This artifact *is* the
-  vocabulary of digest domains; it does not carry one.
 - **Cross-domain rule** — two identities bearing different domain labels are
   unequal. Byte equality of their digests does not make them equal, and a raw
   `sha256` digest cannot substitute for `sha256-jcs` (FR-018-AC-2).
