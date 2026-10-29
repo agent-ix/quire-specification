@@ -2652,7 +2652,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "ps",
+                  "bq",
                   "level",
                   {
                     "package": "example",
@@ -2662,13 +2662,13 @@
                     ],
                     "ordinal": 0
                   },
-                  "1",
+                  "2",
                   {
                     "package": "acme/shapes",
                     "path": [
                       "model",
-                      "variant_type",
-                      "ix://acme/shapes/Shape"
+                      "tuple_value_type",
+                      "ix://acme/shapes/Pair"
                     ],
                     "ordinal": 0
                   }
@@ -2689,7 +2689,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "bq",
+                  "ps",
                   "level",
                   {
                     "package": "example",
@@ -2699,13 +2699,13 @@
                     ],
                     "ordinal": 0
                   },
-                  "2",
+                  "1",
                   {
                     "package": "acme/shapes",
                     "path": [
                       "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
+                      "variant_type",
+                      "ix://acme/shapes/Shape"
                     ],
                     "ordinal": 0
                   }
@@ -3269,6 +3269,40 @@
                 "package": "example",
                 "path": [
                   "value",
+                  "literal",
+                  {
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ],
+                    "ordinal": 0
+                  },
+                  "1"
+                ],
+                "ordinal": 0
+              },
+              {
+                "package": "example",
+                "path": [
+                  "value",
+                  "literal",
+                  {
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ],
+                    "ordinal": 0
+                  },
+                  "2"
+                ],
+                "ordinal": 0
+              },
+              {
+                "package": "example",
+                "path": [
+                  "value",
                   "parameter",
                   "name",
                   {
@@ -3305,7 +3339,18 @@
                 "package": "example",
                 "path": [
                   "value",
-                  "literal",
+                  "parameter",
+                  "name",
+                  {
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ],
+                    "ordinal": 0
+                  },
+                  "bq",
+                  "level",
                   {
                     "package": "example",
                     "path": [
@@ -3314,7 +3359,16 @@
                     ],
                     "ordinal": 0
                   },
-                  "1"
+                  "2",
+                  {
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "tuple_value_type",
+                      "ix://acme/shapes/Pair"
+                    ],
+                    "ordinal": 0
+                  }
                 ],
                 "ordinal": 0
               },
@@ -3349,60 +3403,6 @@
                       "model",
                       "variant_type",
                       "ix://acme/shapes/Shape"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
-              },
-              {
-                "package": "example",
-                "path": [
-                  "value",
-                  "literal",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "2"
-                ],
-                "ordinal": 0
-              },
-              {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "bq",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "2",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
                     ],
                     "ordinal": 0
                   }
@@ -3886,6 +3886,15 @@
             },
             "dependencies": [
               {
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ],
+                "ordinal": 0
+              },
+              {
                 "package": "example",
                 "path": [
                   "value",
@@ -3919,15 +3928,6 @@
                     ],
                     "ordinal": 0
                   }
-                ],
-                "ordinal": 0
-              },
-              {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "tuple_value_type",
-                  "ix://acme/shapes/Pair"
                 ],
                 "ordinal": 0
               }
@@ -4458,6 +4458,15 @@
             },
             "dependencies": [
               {
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ],
+                "ordinal": 0
+              },
+              {
                 "package": "example",
                 "path": [
                   "value",
@@ -4491,15 +4500,6 @@
                     ],
                     "ordinal": 0
                   }
-                ],
-                "ordinal": 0
-              },
-              {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "tuple_value_type",
-                  "ix://acme/shapes/Pair"
                 ],
                 "ordinal": 0
               }
@@ -4981,7 +4981,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "pshape2",
+                  "pshape1",
                   "level",
                   {
                     "package": "example",
@@ -4991,7 +4991,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "1",
+                  "0",
                   {
                     "package": "acme/shapes",
                     "path": [
@@ -5018,7 +5018,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "pshape1",
+                  "pshape2",
                   "level",
                   {
                     "package": "example",
@@ -5028,7 +5028,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "0",
+                  "1",
                   {
                     "package": "acme/shapes",
                     "path": [
@@ -5379,7 +5379,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "pc2",
+                  "pc1",
                   "level",
                   {
                     "package": "example",
@@ -5389,7 +5389,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "1",
+                  "0",
                   {
                     "package": "acme/shapes",
                     "path": [
@@ -5416,7 +5416,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "pc1",
+                  "pc2",
                   "level",
                   {
                     "package": "example",
@@ -5426,7 +5426,7 @@
                     ],
                     "ordinal": 0
                   },
-                  "0",
+                  "1",
                   {
                     "package": "acme/shapes",
                     "path": [

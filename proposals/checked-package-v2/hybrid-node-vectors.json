@@ -824,6 +824,23 @@
           "package": "example",
           "path": [
             "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "20"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
             "parameter",
             "name",
             {
@@ -853,23 +870,6 @@
               ],
               "ordinal": 0
             }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "20"
           ],
           "ordinal": 0
         }
@@ -1591,6 +1591,23 @@
           "package": "example",
           "path": [
             "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "1"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
             "parameter",
             "name",
             {
@@ -1620,23 +1637,6 @@
               ],
               "ordinal": 0
             }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "1"
           ],
           "ordinal": 0
         }
@@ -1998,77 +1998,6 @@
             {
               "package": "example",
               "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "a",
-                "level",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "1",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            {
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                },
-                "1"
-              ],
-              "ordinal": 0
-            },
-            "quire.op.rational.ge",
-            "binary",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "boolean"
-              ],
-              "ordinal": 0
-            }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "expression",
-            "binary",
-            {
-              "package": "example",
-              "path": [
                 "expression",
                 "binary",
                 {
@@ -2209,6 +2138,77 @@
               "ordinal": 0
             },
             "quire.op.boolean.and",
+            "binary",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ],
+                  "ordinal": 0
+                },
+                "a",
+                "level",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ],
+                  "ordinal": 0
+                },
+                "1",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                },
+                "1"
+              ],
+              "ordinal": 0
+            },
+            "quire.op.rational.ge",
             "binary",
             {
               "package": "example",
@@ -2625,6 +2625,23 @@
           "package": "example",
           "path": [
             "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "2"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
             "parameter",
             "name",
             {
@@ -2654,23 +2671,6 @@
               ],
               "ordinal": 0
             }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "2"
           ],
           "ordinal": 0
         }
@@ -3121,77 +3121,6 @@
             {
               "package": "example",
               "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "a",
-                "level",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "1",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            {
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                },
-                "2"
-              ],
-              "ordinal": 0
-            },
-            "quire.op.rational.le",
-            "binary",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "boolean"
-              ],
-              "ordinal": 0
-            }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "expression",
-            "binary",
-            {
-              "package": "example",
-              "path": [
                 "expression",
                 "binary",
                 {
@@ -3421,6 +3350,77 @@
               "ordinal": 0
             },
             "quire.op.boolean.and",
+            "binary",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ],
+                  "ordinal": 0
+                },
+                "a",
+                "level",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ],
+                  "ordinal": 0
+                },
+                "1",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                },
+                "2"
+              ],
+              "ordinal": 0
+            },
+            "quire.op.rational.le",
             "binary",
             {
               "package": "example",
@@ -4346,23 +4346,6 @@
         {
           "package": "example",
           "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "0"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "expression",
             "binary",
             {
@@ -4428,6 +4411,23 @@
               ],
               "ordinal": 0
             }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "0"
           ],
           "ordinal": 0
         }
@@ -5254,134 +5254,6 @@
         {
           "package": "example",
           "path": [
-            "hybrid",
-            "hybrid_transition",
-            "target",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ],
-              "ordinal": 0
-            },
-            "1",
-            "guard",
-            {
-              "package": "example",
-              "path": [
-                "expression",
-                "binary",
-                {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "v",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "rational"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
-                },
-                {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "literal",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "rational"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0"
-                  ],
-                  "ordinal": 0
-                },
-                "quire.op.rational.eq",
-                "binary",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "boolean"
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            "resets",
-            "variable",
-            "0",
-            "value",
-            {
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                },
-                "0"
-              ],
-              "ordinal": 0
-            }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "0"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "expression",
             "binary",
             {
@@ -5720,23 +5592,6 @@
         {
           "package": "example",
           "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "1"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "expression",
             "unary",
             {
@@ -5785,6 +5640,151 @@
               ],
               "ordinal": 0
             }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "hybrid",
+            "hybrid_transition",
+            "target",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ],
+              "ordinal": 0
+            },
+            "1",
+            "guard",
+            {
+              "package": "example",
+              "path": [
+                "expression",
+                "binary",
+                {
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "parameter",
+                    "name",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "text"
+                      ],
+                      "ordinal": 0
+                    },
+                    "v",
+                    "level",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ],
+                      "ordinal": 0
+                    },
+                    "0",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "rational"
+                      ],
+                      "ordinal": 0
+                    }
+                  ],
+                  "ordinal": 0
+                },
+                {
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "literal",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "rational"
+                      ],
+                      "ordinal": 0
+                    },
+                    "0"
+                  ],
+                  "ordinal": 0
+                },
+                "quire.op.rational.eq",
+                "binary",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "boolean"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "ordinal": 0
+            },
+            "resets",
+            "variable",
+            "0",
+            "value",
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                },
+                "0"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "0"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "1"
           ],
           "ordinal": 0
         }
@@ -5991,40 +5991,6 @@
         {
           "package": "example",
           "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "0"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "1"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "expression",
             "binary",
             {
@@ -6090,6 +6056,40 @@
               ],
               "ordinal": 0
             }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "0"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "1"
           ],
           "ordinal": 0
         }
@@ -6376,6 +6376,14 @@
           "package": "example",
           "path": [
             "Braking",
+            "Moving"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "Braking",
             "Stopped"
           ],
           "ordinal": 0
@@ -6419,8 +6427,36 @@
         {
           "package": "example",
           "path": [
-            "Braking",
-            "Moving"
+            "value",
+            "parameter",
+            "name",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
+            "t",
+            "level",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ],
+              "ordinal": 0
+            },
+            "2",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            }
           ],
           "ordinal": 0
         },
@@ -6449,42 +6485,6 @@
               "ordinal": 0
             },
             "0",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "parameter",
-            "name",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ],
-              "ordinal": 0
-            },
-            "t",
-            "level",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ],
-              "ordinal": 0
-            },
-            "2",
             {
               "package": "example",
               "path": [
@@ -6755,6 +6755,23 @@
           "package": "example",
           "path": [
             "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "30"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
             "parameter",
             "name",
             {
@@ -6784,23 +6801,6 @@
               ],
               "ordinal": 0
             }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "30"
           ],
           "ordinal": 0
         }
@@ -8200,6 +8200,23 @@
           "package": "example",
           "path": [
             "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "20"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
             "parameter",
             "name",
             {
@@ -8229,23 +8246,6 @@
               ],
               "ordinal": 0
             }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "20"
           ],
           "ordinal": 0
         }
@@ -9324,77 +9324,6 @@
             {
               "package": "example",
               "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "a",
-                "level",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "1",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            {
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                },
-                "2"
-              ],
-              "ordinal": 0
-            },
-            "quire.op.rational.le",
-            "binary",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "boolean"
-              ],
-              "ordinal": 0
-            }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "expression",
-            "binary",
-            {
-              "package": "example",
-              "path": [
                 "expression",
                 "binary",
                 {
@@ -9535,6 +9464,77 @@
               "ordinal": 0
             },
             "quire.op.boolean.and",
+            "binary",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ],
+                  "ordinal": 0
+                },
+                "a",
+                "level",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ],
+                  "ordinal": 0
+                },
+                "1",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                },
+                "2"
+              ],
+              "ordinal": 0
+            },
+            "quire.op.rational.le",
             "binary",
             {
               "package": "example",
@@ -10172,77 +10172,6 @@
             {
               "package": "example",
               "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "t",
-                "level",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "2",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            {
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                },
-                "0"
-              ],
-              "ordinal": 0
-            },
-            "quire.op.rational.eq",
-            "binary",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "boolean"
-              ],
-              "ordinal": 0
-            }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "expression",
-            "binary",
-            {
-              "package": "example",
-              "path": [
                 "expression",
                 "binary",
                 {
@@ -10472,6 +10401,77 @@
               "ordinal": 0
             },
             "quire.op.boolean.and",
+            "binary",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ],
+                  "ordinal": 0
+                },
+                "t",
+                "level",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ],
+                  "ordinal": 0
+                },
+                "2",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                },
+                "0"
+              ],
+              "ordinal": 0
+            },
+            "quire.op.rational.eq",
             "binary",
             {
               "package": "example",
@@ -11689,40 +11689,6 @@
         {
           "package": "example",
           "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "0"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "1"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "expression",
             "binary",
             {
@@ -11788,6 +11754,40 @@
               ],
               "ordinal": 0
             }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "0"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "1"
           ],
           "ordinal": 0
         }
@@ -12695,161 +12695,6 @@
         {
           "package": "example",
           "path": [
-            "hybrid",
-            "hybrid_transition",
-            "target",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ],
-              "ordinal": 0
-            },
-            "1",
-            "guard",
-            {
-              "package": "example",
-              "path": [
-                "expression",
-                "binary",
-                {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "v",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "rational"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
-                },
-                {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "literal",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "rational"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0"
-                  ],
-                  "ordinal": 0
-                },
-                "quire.op.rational.eq",
-                "binary",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "boolean"
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            "resets",
-            "variable",
-            "0",
-            "value",
-            {
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                },
-                "0"
-              ],
-              "ordinal": 0
-            },
-            {
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                },
-                "1"
-              ],
-              "ordinal": 0
-            },
-            "relation",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ],
-              "ordinal": 0
-            },
-            "ge"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "0"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "expression",
             "binary",
             {
@@ -13188,23 +13033,6 @@
         {
           "package": "example",
           "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "1"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "expression",
             "unary",
             {
@@ -13253,6 +13081,178 @@
               ],
               "ordinal": 0
             }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "hybrid",
+            "hybrid_transition",
+            "target",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ],
+              "ordinal": 0
+            },
+            "1",
+            "guard",
+            {
+              "package": "example",
+              "path": [
+                "expression",
+                "binary",
+                {
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "parameter",
+                    "name",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "text"
+                      ],
+                      "ordinal": 0
+                    },
+                    "v",
+                    "level",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ],
+                      "ordinal": 0
+                    },
+                    "0",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "rational"
+                      ],
+                      "ordinal": 0
+                    }
+                  ],
+                  "ordinal": 0
+                },
+                {
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "literal",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "rational"
+                      ],
+                      "ordinal": 0
+                    },
+                    "0"
+                  ],
+                  "ordinal": 0
+                },
+                "quire.op.rational.eq",
+                "binary",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "boolean"
+                  ],
+                  "ordinal": 0
+                }
+              ],
+              "ordinal": 0
+            },
+            "resets",
+            "variable",
+            "0",
+            "value",
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                },
+                "0"
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                },
+                "1"
+              ],
+              "ordinal": 0
+            },
+            "relation",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
+            "ge"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "0"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "1"
           ],
           "ordinal": 0
         }
@@ -13459,40 +13459,6 @@
         {
           "package": "example",
           "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "0"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "1"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "expression",
             "binary",
             {
@@ -13558,6 +13524,40 @@
               ],
               "ordinal": 0
             }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "0"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "1"
           ],
           "ordinal": 0
         }
@@ -14408,36 +14408,16 @@
         {
           "package": "example",
           "path": [
-            "value",
-            "parameter",
-            "name",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ],
-              "ordinal": 0
-            },
-            "a",
-            "level",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ],
-              "ordinal": 0
-            },
-            "1",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            }
+            "Braking2",
+            "Moving"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "Braking2",
+            "Stopped"
           ],
           "ordinal": 0
         },
@@ -14782,50 +14762,6 @@
         {
           "package": "example",
           "path": [
-            "Braking2",
-            "Moving"
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "parameter",
-            "name",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ],
-              "ordinal": 0
-            },
-            "v",
-            "level",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ],
-              "ordinal": 0
-            },
-            "0",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "expression",
             "binary",
             {
@@ -14997,6 +14933,42 @@
               ],
               "ordinal": 0
             },
+            "a",
+            "level",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ],
+              "ordinal": 0
+            },
+            "1",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
             "t",
             "level",
             {
@@ -15022,8 +14994,36 @@
         {
           "package": "example",
           "path": [
-            "Braking2",
-            "Stopped"
+            "value",
+            "parameter",
+            "name",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
+            "v",
+            "level",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ],
+              "ordinal": 0
+            },
+            "0",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            }
           ],
           "ordinal": 0
         }
@@ -15565,6 +15565,23 @@
           "package": "example",
           "path": [
             "value",
+            "literal",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
+              ],
+              "ordinal": 0
+            },
+            "10"
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
             "parameter",
             "name",
             {
@@ -15594,23 +15611,6 @@
               ],
               "ordinal": 0
             }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "value",
-            "literal",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ],
-              "ordinal": 0
-            },
-            "10"
           ],
           "ordinal": 0
         }
@@ -16538,62 +16538,20 @@
               "package": "example",
               "path": [
                 "value",
-                "parameter",
-                "name",
+                "literal",
                 {
                   "package": "example",
                   "path": [
                     "scalar_type",
-                    "text"
+                    "rational"
                   ],
                   "ordinal": 0
                 },
-                "v0",
-                "level",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "6",
-                {
-                  "package": "example",
-                  "path": [
-                    "bounded_domain",
-                    "rational_range",
-                    "numerator_min",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0",
-                    "numerator_max",
-                    "20",
-                    "denominator_min",
-                    "1",
-                    "denominator_max",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "rational"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
-                }
+                "10"
               ],
               "ordinal": 0
             },
-            "quire.op.rational.lt",
+            "quire.op.rational.le",
             "binary",
             {
               "package": "example",
@@ -16651,20 +16609,62 @@
               "package": "example",
               "path": [
                 "value",
-                "literal",
+                "parameter",
+                "name",
                 {
                   "package": "example",
                   "path": [
                     "scalar_type",
-                    "rational"
+                    "text"
                   ],
                   "ordinal": 0
                 },
-                "10"
+                "v0",
+                "level",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ],
+                  "ordinal": 0
+                },
+                "6",
+                {
+                  "package": "example",
+                  "path": [
+                    "bounded_domain",
+                    "rational_range",
+                    "numerator_min",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ],
+                      "ordinal": 0
+                    },
+                    "0",
+                    "numerator_max",
+                    "20",
+                    "denominator_min",
+                    "1",
+                    "denominator_max",
+                    {
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "rational"
+                      ],
+                      "ordinal": 0
+                    }
+                  ],
+                  "ordinal": 0
+                }
               ],
               "ordinal": 0
             },
-            "quire.op.rational.le",
+            "quire.op.rational.lt",
             "binary",
             {
               "package": "example",
@@ -18944,33 +18944,68 @@
         {
           "package": "example",
           "path": [
-            "value",
-            "parameter",
-            "name",
+            "expression",
+            "binary",
             {
               "package": "example",
               "path": [
-                "scalar_type",
-                "text"
+                "value",
+                "parameter",
+                "name",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ],
+                  "ordinal": 0
+                },
+                "v",
+                "level",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ],
+                  "ordinal": 0
+                },
+                "3",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                }
               ],
               "ordinal": 0
             },
-            "v",
-            "level",
             {
               "package": "example",
               "path": [
-                "scalar_type",
-                "integer"
+                "value",
+                "literal",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "rational"
+                  ],
+                  "ordinal": 0
+                },
+                "10"
               ],
               "ordinal": 0
             },
-            "3",
+            "quire.op.rational.gt",
+            "binary",
             {
               "package": "example",
               "path": [
                 "scalar_type",
-                "rational"
+                "boolean"
               ],
               "ordinal": 0
             }
@@ -18980,32 +19015,24 @@
         {
           "package": "example",
           "path": [
-            "value",
-            "parameter",
-            "name",
+            "temporal",
+            "fairness",
+            "quire.op.temporal.fair",
+            {
+              "package": "example",
+              "path": [
+                "Braking2",
+                "Moving"
+              ],
+              "ordinal": 0
+            },
+            "Stopped",
+            "temporal_fairness",
             {
               "package": "example",
               "path": [
                 "scalar_type",
-                "text"
-              ],
-              "ordinal": 0
-            },
-            "q",
-            "level",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ],
-              "ordinal": 0
-            },
-            "1",
-            {
-              "package": "example",
-              "path": [
-                "Braking2"
+                "boolean"
               ],
               "ordinal": 0
             }
@@ -19253,104 +19280,6 @@
         {
           "package": "example",
           "path": [
-            "temporal",
-            "fairness",
-            "quire.op.temporal.fair",
-            {
-              "package": "example",
-              "path": [
-                "Braking2",
-                "Moving"
-              ],
-              "ordinal": 0
-            },
-            "Stopped",
-            "temporal_fairness",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "boolean"
-              ],
-              "ordinal": 0
-            }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
-            "expression",
-            "binary",
-            {
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "v",
-                "level",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "3",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            {
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ],
-                  "ordinal": 0
-                },
-                "10"
-              ],
-              "ordinal": 0
-            },
-            "quire.op.rational.gt",
-            "binary",
-            {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "boolean"
-              ],
-              "ordinal": 0
-            }
-          ],
-          "ordinal": 0
-        },
-        {
-          "package": "example",
-          "path": [
             "value",
             "parameter",
             "name",
@@ -19377,6 +19306,77 @@
               "package": "example",
               "path": [
                 "Braking2"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
+            "q",
+            "level",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ],
+              "ordinal": 0
+            },
+            "1",
+            {
+              "package": "example",
+              "path": [
+                "Braking2"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        {
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ],
+              "ordinal": 0
+            },
+            "v",
+            "level",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ],
+              "ordinal": 0
+            },
+            "3",
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "rational"
               ],
               "ordinal": 0
             }

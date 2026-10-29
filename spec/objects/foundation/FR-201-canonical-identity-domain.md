@@ -51,10 +51,6 @@ equality.
   unequal. Byte equality of their digests does not make them equal, and a raw
   `sha256` digest cannot substitute for another domain's digest.
 
-## Remaining dependents
-
-BLOCKED-BY QSpec #518: `proposals/backend-provider-v1`, the `proposals/checked-package-v2` data files, `proposals/conformance-corpus-v1`, `tests/backend_provider_v1.rs`, `tests/checked_package_v2.rs` and `tests/model_member_types.rs`.
-
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |

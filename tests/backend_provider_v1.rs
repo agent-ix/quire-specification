@@ -1778,7 +1778,7 @@ fn tc_431_a_derived_item_takes_provider_defaults_and_inherits_no_limits() {
 
 /// The property names, at any depth, of the FR-412 and FR-418 certificates and
 /// of the certificate-owned definitions they reference. The shared value types
-/// (`StateKey`, `TransitionIdentity`, `Rational`, `NodeId`, `PackageId`,
+/// (`StateKey`, `TransitionIdentity`, `Rational`, `NodeId`,
 /// `Count`) are named by their type and contribute none.
 fn certificate_member_names() -> std::collections::BTreeSet<String> {
     const OWNED: [&str; 5] = ["CertificateIdentity", "DbmBound", "ComponentReason", "RefinementPart", "ProbabilityProductKey"];

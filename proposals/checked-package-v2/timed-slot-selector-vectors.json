@@ -772,19 +772,19 @@
         "semantic_form": "clock_place",
         "dependencies": [
           {
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ],
-            "ordinal": 0
-          },
-          {
             "package": "acme/orders",
             "path": [
               "model",
               "object_type",
               "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
             ],
             "ordinal": 0
           }
@@ -1371,19 +1371,19 @@
         "semantic_form": "clock_place",
         "dependencies": [
           {
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ],
-            "ordinal": 0
-          },
-          {
             "package": "acme/orders",
             "path": [
               "model",
               "object_type",
               "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
             ],
             "ordinal": 0
           }
@@ -1944,19 +1944,19 @@
         "semantic_form": "clock_place",
         "dependencies": [
           {
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ],
-            "ordinal": 0
-          },
-          {
             "package": "acme/orders",
             "path": [
               "model",
               "object_type",
               "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
             ],
             "ordinal": 0
           }
@@ -2517,19 +2517,19 @@
         "semantic_form": "clock_place",
         "dependencies": [
           {
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ],
-            "ordinal": 0
-          },
-          {
             "package": "acme/orders",
             "path": [
               "model",
               "object_type",
               "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
             ],
             "ordinal": 0
           }
@@ -3302,19 +3302,19 @@
         "semantic_form": "clock_place",
         "dependencies": [
           {
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ],
-            "ordinal": 0
-          },
-          {
             "package": "acme/orders",
             "path": [
               "model",
               "object_type",
               "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
             ],
             "ordinal": 0
           }
@@ -3896,19 +3896,19 @@
         "semantic_form": "clock_place",
         "dependencies": [
           {
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ],
-            "ordinal": 0
-          },
-          {
             "package": "acme/orders",
             "path": [
               "model",
               "object_type",
               "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
             ],
             "ordinal": 0
           }
@@ -4471,19 +4471,19 @@
         "semantic_form": "clock_place",
         "dependencies": [
           {
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ],
-            "ordinal": 0
-          },
-          {
             "package": "acme/orders",
             "path": [
               "model",
               "object_type",
               "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
             ],
             "ordinal": 0
           }
@@ -5615,19 +5615,19 @@
         "semantic_form": "clock_place",
         "dependencies": [
           {
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ],
-            "ordinal": 0
-          },
-          {
             "package": "acme/orders",
             "path": [
               "model",
               "object_type",
               "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
             ],
             "ordinal": 0
           }
@@ -6847,19 +6847,19 @@
         "semantic_form": "clock_place",
         "dependencies": [
           {
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ],
-            "ordinal": 0
-          },
-          {
             "package": "acme/orders",
             "path": [
               "model",
               "object_type",
               "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
             ],
             "ordinal": 0
           }
@@ -7760,19 +7760,19 @@
           "semantic_form": "clock_place",
           "dependencies": [
             {
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ],
-              "ordinal": 0
-            },
-            {
               "package": "acme/orders",
               "path": [
                 "model",
                 "object_type",
                 "ix://acme/orders/Order"
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
               ],
               "ordinal": 0
             }
@@ -8445,51 +8445,6 @@
             {
               "package": "example",
               "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "other",
-                "level",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "0",
-                {
-                  "package": "example",
-                  "path": [
-                    "composite_type",
-                    "reference",
-                    {
-                      "package": "acme/orders",
-                      "path": [
-                        "model",
-                        "object_type",
-                        "ix://acme/orders/Order"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            {
-              "package": "example",
-              "path": [
                 "timed_model",
                 "clock_place",
                 "model",
@@ -8537,6 +8492,51 @@
                 "minimum",
                 "",
                 "maximum"
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ],
+                  "ordinal": 0
+                },
+                "other",
+                "level",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ],
+                  "ordinal": 0
+                },
+                "0",
+                {
+                  "package": "example",
+                  "path": [
+                    "composite_type",
+                    "reference",
+                    {
+                      "package": "acme/orders",
+                      "path": [
+                        "model",
+                        "object_type",
+                        "ix://acme/orders/Order"
+                      ],
+                      "ordinal": 0
+                    }
+                  ],
+                  "ordinal": 0
+                }
               ],
               "ordinal": 0
             }
@@ -8855,51 +8855,6 @@
             {
               "package": "example",
               "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "self",
-                "level",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "0",
-                {
-                  "package": "example",
-                  "path": [
-                    "composite_type",
-                    "reference",
-                    {
-                      "package": "acme/orders",
-                      "path": [
-                        "model",
-                        "object_type",
-                        "ix://acme/orders/Order"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            {
-              "package": "example",
-              "path": [
                 "timed_model",
                 "clock_place",
                 "model",
@@ -8983,6 +8938,51 @@
                   "ordinal": 0
                 },
                 "0"
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ],
+                  "ordinal": 0
+                },
+                "self",
+                "level",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ],
+                  "ordinal": 0
+                },
+                "0",
+                {
+                  "package": "example",
+                  "path": [
+                    "composite_type",
+                    "reference",
+                    {
+                      "package": "acme/orders",
+                      "path": [
+                        "model",
+                        "object_type",
+                        "ix://acme/orders/Order"
+                      ],
+                      "ordinal": 0
+                    }
+                  ],
+                  "ordinal": 0
+                }
               ],
               "ordinal": 0
             }
@@ -9302,51 +9302,6 @@
             {
               "package": "example",
               "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "self",
-                "level",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "0",
-                {
-                  "package": "example",
-                  "path": [
-                    "composite_type",
-                    "reference",
-                    {
-                      "package": "acme/orders",
-                      "path": [
-                        "model",
-                        "object_type",
-                        "ix://acme/orders/Order"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
-                }
-              ],
-              "ordinal": 0
-            },
-            {
-              "package": "example",
-              "path": [
                 "timed_model",
                 "clock_place",
                 "model",
@@ -9402,6 +9357,51 @@
                 "Sequence<Option<ix://quire/native/Clock>>[slot]",
                 "none",
                 ""
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ],
+                  "ordinal": 0
+                },
+                "self",
+                "level",
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ],
+                  "ordinal": 0
+                },
+                "0",
+                {
+                  "package": "example",
+                  "path": [
+                    "composite_type",
+                    "reference",
+                    {
+                      "package": "acme/orders",
+                      "path": [
+                        "model",
+                        "object_type",
+                        "ix://acme/orders/Order"
+                      ],
+                      "ordinal": 0
+                    }
+                  ],
+                  "ordinal": 0
+                }
               ],
               "ordinal": 0
             }
@@ -10461,19 +10461,19 @@
             },
             "dependencies": [
               {
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ],
-                "ordinal": 0
-              },
-              {
                 "package": "acme/orders",
                 "path": [
                   "model",
                   "object_type",
                   "ix://acme/orders/Order"
+                ],
+                "ordinal": 0
+              },
+              {
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
                 ],
                 "ordinal": 0
               }
@@ -12323,51 +12323,247 @@
       },
       {
         "id": "AO-03",
-        "subject": "clock_places in ascending node-id order, the order the earlier fixture used",
+        "subject": "clock_places in ascending node-id order, which is not the declared order",
         "fixture": "fixtures/positive-timed-slot-nodes.json",
         "patch": [
           {
             "op": "replace",
             "path": "/semantic_graph/nodes/52/body/members/3/value/members/0/target",
             "value": {
+              "ordinal": 0,
               "package": "example",
               "path": [
                 "timed_model",
                 "clock_place",
                 "model",
                 {
+                  "ordinal": 0,
                   "package": "acme/orders",
                   "path": [
                     "model",
                     "object_type",
                     "ix://acme/orders/Order"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "path",
                 "kind",
                 {
+                  "ordinal": 0,
                   "package": "example",
                   "path": [
                     "scalar_type",
                     "text"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "field",
                 "name",
-                "s",
+                "b",
+                "slot",
+                "collection",
+                "bag",
+                "selector",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "minimum",
+                "0",
+                "maximum",
+                "2",
+                "resolved_path",
+                "path_step",
+                "declaring_type",
+                "ix://acme/orders/Order",
+                "member_identity",
+                "ix://acme/orders/Order/b",
+                "member_type",
+                "Bag<ix://quire/native/Clock>",
+                "collection_kind",
+                "1",
+                "ix://quire/native/Clock",
+                "Bag<ix://quire/native/Clock>[slot]",
+                "none",
+                ""
+              ]
+            }
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/1/target",
+            "value": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "timed_model",
+                "clock_place",
+                "model",
+                {
+                  "ordinal": 0,
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ]
+                },
+                "path",
+                "kind",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "field",
+                "name",
+                "c",
+                "slot",
+                "collection",
+                "set",
+                "selector",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "minimum",
+                "0",
+                "maximum",
+                "5",
+                "resolved_path",
+                "path_step",
+                "declaring_type",
+                "ix://acme/orders/Order",
+                "member_identity",
+                "ix://acme/orders/Order/c",
+                "member_type",
+                "Set<ix://quire/native/Clock>",
+                "collection_kind",
+                "1",
+                "ix://quire/native/Clock",
+                "Set<ix://quire/native/Clock>[slot]",
+                "none",
+                ""
+              ]
+            }
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/2/target",
+            "value": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "timed_model",
+                "clock_place",
+                "model",
+                {
+                  "ordinal": 0,
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ]
+                },
+                "path",
+                "kind",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "field",
+                "name",
+                "clock",
+                "slot",
+                "collection",
+                "map",
+                "selector",
+                "minimum",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0",
+                "maximum",
+                "unbounded",
+                "resolved_path",
+                "path_step",
+                "declaring_type",
+                "ix://acme/orders/Order",
+                "member_identity",
+                "ix://acme/orders/Order/clock",
+                "member_type",
+                "Map<Text, ix://quire/native/Clock>",
+                "collection_kind",
+                "1",
+                "Map<Text, ix://quire/native/Clock>[slot]",
+                "ix://quire/native/Clock",
+                "none",
+                ""
+              ]
+            }
+          },
+          {
+            "op": "replace",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/3/target",
+            "value": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "timed_model",
+                "clock_place",
+                "model",
+                {
+                  "ordinal": 0,
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "object_type",
+                    "ix://acme/orders/Order"
+                  ]
+                },
+                "path",
+                "kind",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "field",
+                "name",
+                "g",
                 "slot",
                 "collection",
                 "sequence",
                 "selector",
                 {
+                  "ordinal": 0,
                   "package": "example",
                   "path": [
                     "scalar_type",
                     "integer"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "minimum",
                 "0",
@@ -12378,46 +12574,49 @@
                 "declaring_type",
                 "ix://acme/orders/Order",
                 "member_identity",
-                "ix://acme/orders/Order/s",
+                "ix://acme/orders/Order/g",
                 "member_type",
-                "Sequence<ix://quire/native/Clock>",
+                "Sequence<Sequence<ix://quire/native/Clock>>",
                 "collection_kind",
                 "1",
+                "Sequence<ix://quire/native/Clock>",
+                "Sequence<Sequence<ix://quire/native/Clock>>[slot]",
+                "2",
                 "ix://quire/native/Clock",
                 "Sequence<ix://quire/native/Clock>[slot]",
                 "none",
                 ""
-              ],
-              "ordinal": 0
+              ]
             }
           },
           {
             "op": "replace",
-            "path": "/semantic_graph/nodes/52/body/members/3/value/members/1/target",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/5/target",
             "value": {
+              "ordinal": 0,
               "package": "example",
               "path": [
                 "timed_model",
                 "clock_place",
                 "model",
                 {
+                  "ordinal": 0,
                   "package": "acme/orders",
                   "path": [
                     "model",
                     "object_type",
                     "ix://acme/orders/Order"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "path",
                 "kind",
                 {
+                  "ordinal": 0,
                   "package": "example",
                   "path": [
                     "scalar_type",
                     "text"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "field",
                 "name",
@@ -12427,12 +12626,12 @@
                 "sequence",
                 "selector",
                 {
+                  "ordinal": 0,
                   "package": "example",
                   "path": [
                     "scalar_type",
                     "integer"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "minimum",
                 "0",
@@ -12452,94 +12651,37 @@
                 "Sequence<Option<ix://quire/native/Clock>>[slot]",
                 "none",
                 ""
-              ],
-              "ordinal": 0
+              ]
             }
           },
           {
             "op": "replace",
-            "path": "/semantic_graph/nodes/52/body/members/3/value/members/2/target",
+            "path": "/semantic_graph/nodes/52/body/members/3/value/members/7/target",
             "value": {
+              "ordinal": 0,
               "package": "example",
               "path": [
                 "timed_model",
                 "clock_place",
                 "model",
                 {
+                  "ordinal": 0,
                   "package": "acme/orders",
                   "path": [
                     "model",
                     "object_type",
                     "ix://acme/orders/Order"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "path",
                 "kind",
                 {
+                  "ordinal": 0,
                   "package": "example",
                   "path": [
                     "scalar_type",
                     "text"
-                  ],
-                  "ordinal": 0
-                },
-                "field",
-                "name",
-                "v",
-                "resolved_path",
-                "path_step",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "0",
-                "declaring_type",
-                "ix://acme/orders/Order",
-                "member_identity",
-                "ix://acme/orders/Order/v",
-                "member_type",
-                "Option<ix://quire/native/Clock>",
-                "collection_kind",
-                "none",
-                "minimum",
-                "",
-                "maximum"
-              ],
-              "ordinal": 0
-            }
-          },
-          {
-            "op": "replace",
-            "path": "/semantic_graph/nodes/52/body/members/3/value/members/3/target",
-            "value": {
-              "package": "example",
-              "path": [
-                "timed_model",
-                "clock_place",
-                "model",
-                {
-                  "package": "acme/orders",
-                  "path": [
-                    "model",
-                    "object_type",
-                    "ix://acme/orders/Order"
-                  ],
-                  "ordinal": 0
-                },
-                "path",
-                "kind",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "field",
                 "name",
@@ -12549,12 +12691,12 @@
                 "sequence",
                 "selector",
                 {
+                  "ordinal": 0,
                   "package": "example",
                   "path": [
                     "scalar_type",
                     "integer"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "minimum",
                 "0",
@@ -12578,268 +12720,64 @@
                 "2",
                 "ix://acme/orders/Timer/x",
                 "ix://quire/native/Clock"
-              ],
-              "ordinal": 0
-            }
-          },
-          {
-            "op": "replace",
-            "path": "/semantic_graph/nodes/52/body/members/3/value/members/4/target",
-            "value": {
-              "package": "example",
-              "path": [
-                "timed_model",
-                "clock_place",
-                "model",
-                {
-                  "package": "acme/orders",
-                  "path": [
-                    "model",
-                    "object_type",
-                    "ix://acme/orders/Order"
-                  ],
-                  "ordinal": 0
-                },
-                "path",
-                "kind",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "field",
-                "name",
-                "c",
-                "slot",
-                "collection",
-                "set",
-                "selector",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "minimum",
-                "0",
-                "maximum",
-                "5",
-                "resolved_path",
-                "path_step",
-                "declaring_type",
-                "ix://acme/orders/Order",
-                "member_identity",
-                "ix://acme/orders/Order/c",
-                "member_type",
-                "Set<ix://quire/native/Clock>",
-                "collection_kind",
-                "1",
-                "ix://quire/native/Clock",
-                "Set<ix://quire/native/Clock>[slot]",
-                "none",
-                ""
-              ],
-              "ordinal": 0
-            }
-          },
-          {
-            "op": "replace",
-            "path": "/semantic_graph/nodes/52/body/members/3/value/members/6/target",
-            "value": {
-              "package": "example",
-              "path": [
-                "timed_model",
-                "clock_place",
-                "model",
-                {
-                  "package": "acme/orders",
-                  "path": [
-                    "model",
-                    "object_type",
-                    "ix://acme/orders/Order"
-                  ],
-                  "ordinal": 0
-                },
-                "path",
-                "kind",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "field",
-                "name",
-                "o",
-                "slot",
-                "collection",
-                "ordered_set",
-                "selector",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "minimum",
-                "0",
-                "maximum",
-                "5",
-                "resolved_path",
-                "path_step",
-                "declaring_type",
-                "ix://acme/orders/Order",
-                "member_identity",
-                "ix://acme/orders/Order/o",
-                "member_type",
-                "OrderedSet<ix://quire/native/Clock>",
-                "collection_kind",
-                "1",
-                "ix://quire/native/Clock",
-                "OrderedSet<ix://quire/native/Clock>[slot]",
-                "none",
-                ""
-              ],
-              "ordinal": 0
-            }
-          },
-          {
-            "op": "replace",
-            "path": "/semantic_graph/nodes/52/body/members/3/value/members/7/target",
-            "value": {
-              "package": "example",
-              "path": [
-                "timed_model",
-                "clock_place",
-                "model",
-                {
-                  "package": "acme/orders",
-                  "path": [
-                    "model",
-                    "object_type",
-                    "ix://acme/orders/Order"
-                  ],
-                  "ordinal": 0
-                },
-                "path",
-                "kind",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ],
-                  "ordinal": 0
-                },
-                "field",
-                "name",
-                "clock",
-                "slot",
-                "collection",
-                "map",
-                "selector",
-                "minimum",
-                {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                "0",
-                "maximum",
-                "unbounded",
-                "resolved_path",
-                "path_step",
-                "declaring_type",
-                "ix://acme/orders/Order",
-                "member_identity",
-                "ix://acme/orders/Order/clock",
-                "member_type",
-                "Map<Text, ix://quire/native/Clock>",
-                "collection_kind",
-                "1",
-                "Map<Text, ix://quire/native/Clock>[slot]",
-                "ix://quire/native/Clock",
-                "none",
-                ""
-              ],
-              "ordinal": 0
+              ]
             }
           },
           {
             "op": "replace",
             "path": "/semantic_graph/nodes/52/body/members/3/value/members/8/target",
             "value": {
+              "ordinal": 0,
               "package": "example",
               "path": [
                 "timed_model",
                 "clock_place",
                 "model",
                 {
+                  "ordinal": 0,
                   "package": "acme/orders",
                   "path": [
                     "model",
                     "object_type",
                     "ix://acme/orders/Order"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "path",
                 "kind",
                 {
+                  "ordinal": 0,
                   "package": "example",
                   "path": [
                     "scalar_type",
                     "text"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
                 "field",
                 "name",
-                "b",
-                "slot",
-                "collection",
-                "bag",
-                "selector",
+                "v",
+                "resolved_path",
+                "path_step",
                 {
+                  "ordinal": 0,
                   "package": "example",
                   "path": [
                     "scalar_type",
                     "integer"
-                  ],
-                  "ordinal": 0
+                  ]
                 },
-                "minimum",
                 "0",
-                "maximum",
-                "2",
-                "resolved_path",
-                "path_step",
                 "declaring_type",
                 "ix://acme/orders/Order",
                 "member_identity",
-                "ix://acme/orders/Order/b",
+                "ix://acme/orders/Order/v",
                 "member_type",
-                "Bag<ix://quire/native/Clock>",
+                "Option<ix://quire/native/Clock>",
                 "collection_kind",
-                "1",
-                "ix://quire/native/Clock",
-                "Bag<ix://quire/native/Clock>[slot]",
                 "none",
-                ""
-              ],
-              "ordinal": 0
+                "minimum",
+                "",
+                "maximum"
+              ]
             }
           }
         ],
@@ -12847,8 +12785,8 @@
         "expected": "refused",
         "expected_code": "invalid_semantic_graph",
         "expected_cause": null,
-        "locus": "/semantic_graph/nodes/52/body/members/3/value/members/2",
-        "locus_suffix": "body/members/3/value/members/2"
+        "locus": "/semantic_graph/nodes/52/body/members/3/value/members/1",
+        "locus_suffix": "body/members/3/value/members/1"
       },
       {
         "id": "AO-04",
@@ -13684,19 +13622,19 @@
               },
               "dependencies": [
                 {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
-                },
-                {
                   "package": "acme/orders",
                   "path": [
                     "model",
                     "object_type",
                     "ix://acme/orders/Order"
+                  ],
+                  "ordinal": 0
+                },
+                {
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
                   ],
                   "ordinal": 0
                 }

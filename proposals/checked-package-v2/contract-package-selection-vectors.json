@@ -16,9 +16,9 @@
     }
   },
   "compatibility_cases": [
-    {"case": "matching", "expected": "Both requested items lower; source lock and package id equal that input exactly.", "required_source_selections": ["T"], "lock_profile_selections": ["T"]},
+    {"case": "matching", "expected": "Both requested items lower; source lock and package equal that input exactly.", "required_source_selections": ["T"], "lock_profile_selections": ["T"]},
     {"case": "missing", "expected": "Exactly `invalid_input(b)`, `invalid_input(a)`; no semantic nodes; both exact request occurrence sets retained.", "required_source_selections": ["T"], "lock_profile_selections": []},
-    {"case": "differing identity", "expected": "The same two `invalid_input` records; no substitute `T`, no node or backend artifact; output still retains `[D]` and its originating package id.", "required_source_selections": ["T"], "lock_profile_selections": ["D"]},
+    {"case": "differing identity", "expected": "The same two `invalid_input` records; no substitute `T`, no node or backend artifact; output still retains `[D]` and its originating package.", "required_source_selections": ["T"], "lock_profile_selections": ["D"]},
     {"case": "unrelated selection", "expected": "Both items lower; output retains `[U, T]` in that order, including the unrelated row.", "required_source_selections": ["T"], "lock_profile_selections": ["U", "T"]}
   ],
   "repeat_controls": [
@@ -29,7 +29,7 @@
     "With requirements `[]`, the `[D]` input lowers without inferred requirements or lock repair.",
     "For a same-identity/different-authority control, require the `T` row with only its authority changed to `other-authority`; the original `[T]` input refuses rather than matching its display identity alone.",
     "In every refusal, the serialized record has only `node_id` and `disposition: \"invalid_input\"`; no fabricated cause/pointer is added.",
-    "Compare the entire emitted source lock and originating package id against the retained expected values on every successful and refused run, not merely the row used by the predicate.",
+    "Compare the entire emitted source lock and originating package against the retained expected values on every successful and refused run, not merely the row used by the predicate.",
     "These are producer controls; the ContractPackage reader is not given or assumed to reconstruct requirements."
   ]
 }

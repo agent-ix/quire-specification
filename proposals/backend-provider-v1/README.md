@@ -9,14 +9,12 @@ schema-and-vector boundary. Each reader converts from this wire into its own
 types (QSL ADR-013 T-7): no shared Rust crate carries these types, and no
 consumer holds a copy of this schema.
 
-BLOCKED-BY STD-606 (owner: planner titan:QSL:plan): the FR-361-AC-13 universe provision key member `universe` is specified as 64 lowercase hex digits, a digest this directory cannot carry; the `universe_provision_vectors` are deleted and no vector or schema member stands in for them.
-
 ## Contents
 
 - `schema.json` is the closed Draft 2020-12 schema
   `urn:quire:backend-provider:v1`. Every member's description names its
   owning requirement. It references the checked-package schema
-  `urn:quire:checked-package:v2` for `PackageId`, `NodeId`, `Occurrence`,
+  `urn:quire:checked-package:v2` for `NodeId`, `Occurrence`,
   `Rational` and the decimal-string forms, so those shapes have one
   definition.
 - `vectors.json` holds positive vectors, each with an `owners` map from a JSON
@@ -50,9 +48,7 @@ against (FR-290).
 
 Every descriptor carries `tool` (FR-331 "Backend tool"), a `{name, version}`
 object: the executable a backend that fronts an external tool invokes, or the
-crate that implements a pure in-process engine, with `build`, the
-`quire.build-inputs/v1` digest record of the provider code's build inputs,
-which that code's own build computes. A registry snapshot carries each
+crate that implements a pure in-process engine. A registry snapshot carries each
 descriptor as its provider gave it.
 
 ## Package bytes

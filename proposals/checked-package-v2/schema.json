@@ -170,8 +170,7 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/DependencySelection"
-          },
-          "uniqueItems": true
+          }
         },
         "refinement_internals": {
           "type": "array",

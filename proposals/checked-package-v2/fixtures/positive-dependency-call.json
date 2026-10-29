@@ -50,7 +50,7 @@
         "dependencies": [],
         "node_id": {
           "ordinal": 0,
-          "package": "example",
+          "package": "test/predicates",
           "path": [
             "scalar_type",
             "integer"
@@ -67,7 +67,7 @@
         "semantic_form": "integer",
         "semantic_type": {
           "ordinal": 0,
-          "package": "example",
+          "package": "test/predicates",
           "path": [
             "scalar_type",
             "integer"
@@ -82,7 +82,7 @@
         "dependencies": [],
         "node_id": {
           "ordinal": 0,
-          "package": "example",
+          "package": "test/predicates",
           "path": [
             "scalar_type",
             "boolean"
@@ -99,7 +99,7 @@
         "semantic_form": "boolean",
         "semantic_type": {
           "ordinal": 0,
-          "package": "example",
+          "package": "test/predicates",
           "path": [
             "scalar_type",
             "boolean"
@@ -116,7 +116,7 @@
                 "term": "literal",
                 "type": {
                   "ordinal": 0,
-                  "package": "example",
+                  "package": "test/predicates",
                   "path": [
                     "scalar_type",
                     "integer"
@@ -133,7 +133,7 @@
                 "term": "literal",
                 "type": {
                   "ordinal": 0,
-                  "package": "example",
+                  "package": "test/predicates",
                   "path": [
                     "scalar_type",
                     "integer"
@@ -149,7 +149,7 @@
         "dependencies": [
           {
             "ordinal": 0,
-            "package": "example",
+            "package": "test/predicates",
             "path": [
               "scalar_type",
               "integer"
@@ -158,14 +158,14 @@
         ],
         "node_id": {
           "ordinal": 0,
-          "package": "example",
+          "package": "test/predicates",
           "path": [
             "bounded_domain",
             "integer_range",
             "min",
             {
               "ordinal": 0,
-              "package": "example",
+              "package": "test/predicates",
               "path": [
                 "scalar_type",
                 "integer"
@@ -187,7 +187,7 @@
         "semantic_form": "integer_range",
         "semantic_type": {
           "ordinal": 0,
-          "package": "example",
+          "package": "test/predicates",
           "path": [
             "scalar_type",
             "integer"
@@ -213,14 +213,14 @@
               "term": "literal",
               "type": {
                 "ordinal": 0,
-                "package": "example",
+                "package": "test/predicates",
                 "path": [
                   "bounded_domain",
                   "integer_range",
                   "min",
                   {
                     "ordinal": 0,
-                    "package": "example",
+                    "package": "test/predicates",
                     "path": [
                       "scalar_type",
                       "integer"
@@ -245,7 +245,7 @@
           "operator": "call",
           "result_type": {
             "ordinal": 0,
-            "package": "example",
+            "package": "test/predicates",
             "path": [
               "scalar_type",
               "boolean"
@@ -279,7 +279,7 @@
         "semantic_form": "pure_function",
         "semantic_type": {
           "ordinal": 0,
-          "package": "example",
+          "package": "test/predicates",
           "path": [
             "scalar_type",
             "boolean"
@@ -292,7 +292,7 @@
     {
       "node_id": {
         "ordinal": 0,
-        "package": "example",
+        "package": "test/predicates",
         "path": [
           "scalar_type",
           "integer"
@@ -314,7 +314,7 @@
     {
       "node_id": {
         "ordinal": 0,
-        "package": "example",
+        "package": "test/predicates",
         "path": [
           "scalar_type",
           "boolean"
@@ -336,14 +336,14 @@
     {
       "node_id": {
         "ordinal": 0,
-        "package": "example",
+        "package": "test/predicates",
         "path": [
           "bounded_domain",
           "integer_range",
           "min",
           {
             "ordinal": 0,
-            "package": "example",
+            "package": "test/predicates",
             "path": [
               "scalar_type",
               "integer"

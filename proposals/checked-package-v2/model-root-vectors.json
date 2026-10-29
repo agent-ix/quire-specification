@@ -132,7 +132,7 @@
       ],
       "schema": "valid",
       "outcome": "refused:invalid_semantic_graph",
-      "locus": "/semantic_graph/nodes/47/node_id"
+      "locus": "/semantic_graph/nodes/47/owner"
     },
     {
       "id": "MR-01",

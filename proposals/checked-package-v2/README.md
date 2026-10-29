@@ -103,15 +103,6 @@ structures, but any external consumer receives only the contract.
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
   `generated` `source_map` entries against its step rows, its `steps` order and
   whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). Cases `RS-18` to `RS-24` cover the closed, identity-excluded `refinement_step_rows` sidecar and its comparison with generated occurrences. The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node key.
-- `refinement-identity-vectors.json` supplies the refinement-name identity
-  vectors `RI-01` to `RI-04` (two names, two nodes; a body
-  without `name` fails the closed body schema; an equal `name` is an
-  `ambiguous-name`), the operation-class `source_node` cases `SP-01` to
-  `SP-11` (the no-point `operation_anchor` of the declaring type, with and
-  without a class catalog) and the row-expression binder cases `BI-01` to
-  `BI-07` of FR-375-AC-29 to FR-375-AC-32, and the `selected_roots` section
-  (`SR-01` to `SR-13`, five selected model roots read from their
-  selections, concrete-identity cases of FR-375-AC-33 and FR-375-AC-34).
 - The frame vectors' `frame_mutations` are applied to the semantic graph and evaluated at the
   frame step of `read_package_semantics` (FR-322, FR-340); source-map checks
   are outside a vector's expectation. Most vectors replace the all-families
@@ -136,24 +127,14 @@ structures, but any external consumer receives only the contract.
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
   The members its top-level `schema_only` lists (`dependency_selections`,
-  `entry_mutations`, `model_selections`, `model_entry_mutations`,
-  `order_vectors` and `supply_vectors`) carry identities, or symbolic supply states, that name no admitted package:
-  they exercise the schema, the order rule and the supply order only, and a
-  reader that requires every entry's package to be supplied refuses them
+  `entry_mutations`, `order_vectors` and `supply_vectors`) carry identities, or
+  symbolic supply states, that name no admitted package: they exercise the
+  schema, the order rule and the supply order only, and a reader that requires
+  every entry's package to be supplied refuses them
   `missing_import`/`missing-selection` at entry 0 by design. Only
-  `closure_vectors`, which name real packages, and
-  `dependency-call-vectors.json` name packages a reader can be supplied. Each `supply_vectors` entry lists the
-  direct entries in lock order with a symbolic `supply` state (`bound`,
-  `stale` for a supplied package not structurally equal to the one
-  recompiled, or `absent`) and the outcome FR-322-AC-84 requires.
-  Its `closure_vectors` contain `direct_dependencies` of the importer and
-  `dependency_locks` for those direct packages; each dependency lock names a
-  fixture `base` and its own `dependency_selections`. The diamond vector
-  carries two importer-rooted selection-path JSON-pointer `loci` and a
-  conflicting-definition `outcome`. The transitive-only vector carries a
-  `dependency_reference` and its call `use`, with an expected missing-selection
-  `outcome`. The reader outcomes remain planned; QSpec checks the recorded
-  package identities and the producer-side closure relationships.
+  `dependency-call-vectors.json` names packages a reader can be supplied. Each
+  `supply_vectors` entry lists the direct entries in lock order with a symbolic
+  `supply` state (`bound` or `absent`) and the outcome FR-322-AC-84 requires.
 - Both schemas carry the `dependency_reference` term
   `{term: "dependency_reference", package, node}` (FR-322): `package` is the
   identity string of a `dependency_selections` entry and `node` a `NodeId`
@@ -182,20 +163,12 @@ structures, but any external consumer receives only the contract.
   nominal `dimension` (`Length`), a nominal root `unit` `U` (`metre`), the
   builtin `Integer`, and the structural `scalar_type`/`compound_unit` node
   `metre^1` that holds `unit` = `reference(U)` and an exponent. It is the base
-  of `nominal-rekey-vectors.json` (`NK-00` to `NK-14`, RFC 6902 patches over
-  the base package), whose cases change `U` and observe the owner join
-  and the order of the join stages (`NK-06` to `NK-14`, FR-322-AC-169,
-  FR-322-AC-170).
+  of the compound-unit package test (FR-322-AC-169).
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
   remain TC-217 Contract IR consumer evidence; this schema qualification does
   not claim them complete.
-- `model-effective-declaration.schema.json` and
-  `model-effective-declaration-vectors.json` define the QSL-derived
-  `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2` and
-  `quire.model.object-universe/v2` shapes selected by
-  `quire.model.complete/v1`, with the reference order and invalid mutations. They add no CheckedPackage V2 wire member.
 - `model-member-type-vectors.json` carries a domain package as a projection
   of the declaration records FR-154 intake reads from it, the model declaration node vectors
   that recover a declaring node's `ModelOwner`, the member and selection
@@ -265,7 +238,7 @@ every owner-keyed node id. Qualified names are arrays of ASCII identifier segmen
 Arbitrary-precision integers/rationals use canonical decimal strings with no
 leading zero and no `-0`, a positive denominator, greatest-common-divisor one
 and exactly `0/1` for zero. Unordered enum members and dimension terms are
-ascending by their canonical JCS key; ordered enum members retain declaration
+ascending in node-id order; ordered enum members retain declaration
 order. Duplicate/zero-exponent terms refuse.
 
 The JSON Schema fixes structural shape; the strict reader additionally enforces
@@ -298,9 +271,6 @@ checks canonical bytes and all identity joins before exposing a graph, and
 reports malformed/cross-domain/unknown-capability input as typed refusal. It
 checks that node ids are unique and that references and dependencies resolve;
 it recomputes no key.
-The node forms a refinement row reads (history read, whole-population value,
-`count`/`only`, `seq`) and their refusals are in
-`refinement-row-node-vectors.json` (FR-322-AC-163 to FR-322-AC-168).
 Its outcome is the closed sum type admitted/refused/incomplete. It enforces
 caller-provided byte/node/edge/occurrence/diagnostic/work limits;
 exhaustion is incomplete, not an empty graph or a successful package. A node
