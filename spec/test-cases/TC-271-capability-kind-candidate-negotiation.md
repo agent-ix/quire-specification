@@ -68,6 +68,7 @@ Repeat every registry vector with the descriptors registered in reversed order.
 | TA-03 | TA-01 with the probe erroring, and separately exceeding its limit | As TA-01 |
 | TA-04 | The routed backend advertises both modes for the kind; remove its tool | As TA-01; no run under the other mode |
 | TA-06 | TA-01's routed item passes the probe; remove the tool before the run completes | FR-331 result `failed` with `unsupported_projection`/`tool-unavailable` naming the kind and backend; disposition stays `supported`; one terminal accounting record; no other candidate or mode runs |
+| TA-07 | TA-01's descriptor built at one invocation, then the executable replaced by another version before the item's run | The item's probe fails: `unsupported`, `unsupported_projection`/`tool-unavailable` naming the kind, the backend, the descriptor's version and the probed version; no run starts (FR-331-AC-38) |
 
 ## Expected Results
 

@@ -33,17 +33,15 @@ subject. Derive:
 9. A safety refutation of TC-290's `always holds(x.value <= 2)`.
 10. An observed-arm counterexample for `eventually[0,1] holds(c.value = 2)`
     under the event-position profile: `trace` `"observed"`, three steps whose
-    documents hold `c.value` 0, 1 and 2, `interval` `{lower: "0", upper: "1"}`,
+    documents hold `c.value` 0, 1 and 2,
     `trace_position` 0, empty `fairness`, every document held by the byte
     provision.
 11. Step 10's counterexample against the clause under `fair weak inc`, with
     `fairness` (`weak`, `inc`, `whole`).
 12. Step 10's counterexample with its third document missing from the
     provision.
-13. Step 10's counterexample with `interval` `{lower: "0", upper: "2"}`.
-14. An infinite-trace formula counterexample for `eventually[2,*] holds(p)`
-    with `interval` `{lower: "2", upper: null}`, replayed against that clause
-    and against `eventually[3,*] holds(p)`.
+13. Withdrawn.
+14. Withdrawn.
 
 ## Expected Results
 
@@ -66,5 +64,5 @@ subject. Derive:
 11. `unsupported`, cause `missing-fairness-premise`, naming
     (`weak`, `inc`, `whole`), with no formula evaluated (FR-364-AC-9).
 12. Refuses `invalid_runtime_input`/`invalid-value` (FR-364-AC-9).
-13. Withdrawn: `interval` is not compared with the clause's.
-14. Withdrawn: `interval` is not compared with the clause's.
+13. Withdrawn.
+14. Withdrawn.
