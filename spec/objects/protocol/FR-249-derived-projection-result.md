@@ -23,13 +23,13 @@ When a canonical protocol result is projected to portable verification, the proj
 
 | Property | Description |
 | --- | --- |
-| `resultId` | `sha256-jcs:<lowercase-hex>` over the RFC 8785 canonical identity preimage stated by FR-062. It is "distinct from the canonical protocol-result identity and stable for the exact tuple of canonical result identity and digest, target obligation and execution-binding identities, target contract version, and adapter identity and version" (FR-062). |
+| `resultId` | `sha256-jcs:<lowercase-hex>` over the RFC 8785 canonical identity preimage stated by FR-062. It is "distinct from the canonical protocol-result identity and stable for the exact tuple of canonical result identity, target obligation and execution-binding identities, target contract version, and adapter identity and version" (FR-062). |
 | `identityVersion` | `quire.protocol.e02-projection-identity/v1-draft.1`, the first member of the identity preimage (FR-062). |
-| `sourceResultRef` | The exact canonical result identity and its `sha256-jcs` digest (FR-062). The adapter validates the canonical protocol result and recomputes its digest before mapping it. |
+| `sourceResultRef` | The exact canonical result identity (FR-062). The adapter validates the canonical protocol result before mapping it. |
 | `targetContractVersion` | `quire-verification/e02-draft-2` (FR-062). |
 | `targetBinding` | `propertyRef`, `planId`, `taskId`, `runRef`, `profile`, `bindingRefs`, `dependencyClosure` and `executionScope`, each equal to its selected context; the adapter "SHALL NOT infer or substitute one from display text" (FR-062). |
 | `adapter` | The exact adapter identity and version (FR-062). |
-| `nativeArtifacts` | "Exactly one canonical-result entry with the source URI, recomputed digest and media type `application/vnd.agent-ix.quire-protocol-result+json;version=1-draft.1`" (FR-062). |
+| `nativeArtifacts` | "Exactly one canonical-result entry with the source URI and media type `application/vnd.agent-ix.quire-protocol-result+json;version=1-draft.1`" (FR-062). |
 | `provenance` | Identifies the protocol producer plus this adapter and their versions (FR-062). |
 
 ## Identity and comparison
@@ -38,7 +38,7 @@ When a canonical protocol result is projected to portable verification, the proj
   named preimage members under the rule FR-062 states; it is not authored, and it
   is distinct from the canonical protocol-result identity
   ([FR-240](FR-240-canonical-protocol-result.md)).
-- **Key** — the derivation tuple: canonical result identity and digest, target
+- **Key** — the derivation tuple: canonical result identity, target
   obligation and execution-binding identities, target contract version, and
   adapter identity and version. Equality is componentwise over that key and
   nothing else. Display name, source path, span, message text, locale and
@@ -102,7 +102,7 @@ emit a sufficiency decision."
 | --- | --- | --- |
 | FR-249-AC-1 | The derived identity is distinct from the canonical protocol-result identity and is stable for the exact derivation tuple. | Analysis |
 | FR-249-AC-2 | Changing any member of the derivation tuple changes the derived result identity. | Analysis |
-| FR-249-AC-3 | `nativeArtifacts` carries exactly one canonical-result entry with source URI, recomputed digest and the stated media type. | Inspection |
+| FR-249-AC-3 | `nativeArtifacts` carries exactly one canonical-result entry with source URI and the stated media type. | Inspection |
 | FR-249-AC-4 | `bindingRefs` retains the selected E02 semantic order and is not resorted by presentation text. | Analysis |
 | FR-249-AC-5 | Each refusal carries exactly one stable code from the table plus the affected exact identity, and no `TechniqueResult` is emitted with it. | Inspection |
 | FR-249-AC-6 | An absent context component compares only to absence and is refused rather than defaulted. | Analysis |
@@ -123,9 +123,9 @@ emit a sufficiency decision."
 
 ## Resolved refusal and source-domain boundary
 
-The adapter validates the canonical source result and recomputes its digest
+The adapter validates the canonical source result
 before deriving or checking the projection identity. Any failure in that source
-validation, including a recomputed digest mismatch, yields
+validation yields
 `invalid-source-result`. Only a valid source can reach target-context and
 projection-preimage checks; those mismatches yield `identity-mismatch`.
 

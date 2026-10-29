@@ -31,19 +31,18 @@ rule document does not select itself through a copied candidate/digest table.
 Subject kinds, relationship declarations and population declarations are the
 effective domain declarations of the checked package. A spec declares them in
 its own artifacts ([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)).
-Each one is keyed by domain package identity, IR node identity and digest
-domain `sha256-jcs`. The checked package's `model_selections` name the domain
+Each one is keyed by domain package identity and IR node identity. The checked package's `model_selections` name the domain
 package. Closed population extents are declared in spec artifacts.
 
 Runtime observation records are assessment inputs. Their subject, relationship
 and population references are typed by those declaration keys.
 
-Each assessment input retains the selected domain package identity and digest,
+Each assessment input retains the selected domain package identity and version,
 the declaration key of every subject kind it uses, the relationship declaration
 key where required, the population declaration key, `snapshotIdentity` or
-`windowIdentity`, `configurationIdentity`, and every selected closure digest.
-A declaration key outside the checked package, a missing required identity, a
-digest mismatch, or an ambient environment, working-directory, current-time, or
+`windowIdentity`, `configurationIdentity`, and every selected closure identity and version.
+A declaration key outside the checked package, a missing required identity or version, an
+identity or version mismatch, or an ambient environment, working-directory, current-time, or
 network default refuses the dependent assessment input. A relationship display
 name does not replace its declaration key.
 
@@ -82,7 +81,7 @@ roles. Each binding retains all of the following semantic values:
 | Subject mapping | Exact declaration key of the model, workflow, participant, relationship, population, delivery, attempt, or effect subject selected by the role; no textual lookup fallback. |
 | Signal and value mapping | Declared signal identity, typed value declaration, unit, missing-value policy, and required/optional status. |
 | Anchor | The selected current, invocation pre/post, temporal origin/activation, protocol occurrence, or compensation registration/activation anchor. |
-| Scope premises | Selected population declaration key and snapshot/window, membership rule/digest, configuration/closure identity and digest, exact observation-range definition/coverage row, clock/progress authority, and history premise when the role needs them. |
+| Scope premises | Selected population declaration key and snapshot/window, membership rule, configuration/closure identity and version, exact observation-range definition/coverage row, clock/progress authority, and history premise when the role needs them. |
 | Capture dependencies | Immutable capture identities and their authored anchors; a binding cannot retag a capture or import another workflow's values. |
 
 Repeated mappings for one required role, incompatible mappings, selected identities
