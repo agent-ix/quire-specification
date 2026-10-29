@@ -6,8 +6,6 @@ profile.
 adverse.json specifies one-axis substitutions with expected structural and
 semantic layers. raw-duplicate.json must fail strict raw intake as invalid-wire.
 
-No fixture stores a digest or hash.
-
 The Rust qualification tests validate schema shape and the located fixture
 files. They deliberately do not implement expected-role matching, semantic/profile
 adoption, feature support, immutable identity joins or B's report assembler.
@@ -16,7 +14,7 @@ be a required semantic refusal; adverse.json preserves that distinction.
 
 An initial test incorrectly assumed B's existing parse_bounded_json already
 rejected duplicate decoded keys. The actual test failed: the helper accepted
-the two decoded a keys as one map entry. The producer test was scoped back to its actual schema/JCS
+the two decoded a keys as one map entry. The producer test was scoped back to its actual schema
 boundary; raw-duplicate.json remains a required, unexecuted strict-reader
 control. No duplicate-key intake qualification or complete reader is claimed.
 

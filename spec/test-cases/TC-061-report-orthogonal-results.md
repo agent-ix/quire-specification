@@ -55,9 +55,8 @@ remove each predecessor and dependence group, introduce self-reference and a
 cycle, and relabel shared support independent. Mutate every provenance identity
 and every canonical result member independently. For every valid result,
 independently recompute `resultId` from the FR-286 preimage, permute JSON object
-member presentation, mutate the identity-domain prefix, omit `resultId`, reuse
-one valid identity on different canonical result bytes, and mutate the complete
-canonical bytes without updating the enclosing digest. Exercise each of the
+member presentation, mutate the identity-domain prefix, omit `resultId`, and
+reuse one valid identity on different canonical result bytes. Exercise each of the
 five FR-243 basis members, an unknown label and an absent basis with every
 permitted and forbidden truth/execution combination.
 
@@ -101,7 +100,7 @@ dependent package success becomes unavailable. Result states remain structurally
 discriminable; missing evidence never improves truth, adequacy or package status;
 assumption, observation-adequacy and protocol-adequacy facts remain independent;
 valid support relations and lineage remain exact; and strict readers refuse stale
-identities, same-ID/different-byte results, digest mutations, malformed lineage,
+result identities, same-ID/different-byte results, malformed lineage,
 invented independence or adequacy cross-wiring while retaining independent valid
 results. Object-member presentation permutations preserve the independently
 recomputed result identity; every semantic member mutation changes it. The five

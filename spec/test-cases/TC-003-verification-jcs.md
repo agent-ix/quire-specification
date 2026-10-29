@@ -1,28 +1,22 @@
 ---
 id: TC-003
-title: "Compare required feature sets"
+title: "Withdrawn: verification JCS vectors"
 type: TC
 relationships:
   - target: "ix://agent-ix/quire-specification/FR-018"
     type: verifies
 ---
-# TC-003: Compare required feature sets
+# TC-003: Withdrawn: verification JCS vectors
 
 ## Description
 
-Accepted portable contract control for FR-018-AC-4. The JCS canonical-byte and
-digest vectors this case once held (FR-018-AC-1 to -3 and -6) are withdrawn with
-those criteria.
+Withdrawn: JCS identity domain removed. The id and filename are kept and are not reused.
+The required-feature comparison is [TC-975](TC-975-compare-required-feature-sets.md).
 
 ## Test Procedure
 
-Validate the semantic reference. Exercise requiredFeatures as empty, singleton,
-two reordered unique features, duplicate decoded features and an unknown
-feature. Resource controls use IT-003's byte and value limits, including exact
-limit and one-over-limit; missing dependencies fail setup.
+None.
 
 ## Expected Results
 
-Feature-set equality is independent of the order written. Duplicate decoded
-features refuse before comparison and an unknown feature refuses interpretation.
-Resource exhaustion yields incomplete.
+None.

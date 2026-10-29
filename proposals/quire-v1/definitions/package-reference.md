@@ -61,8 +61,8 @@ execution of one such declaration cannot certify the refused whole package.
 
 ## Wire and canonical identity
 
-This definition composes the existing `ix.shared-reference/3-draft` envelope and
-`ix.artifact-ref/4-draft` fields. It adds no field or artifact-kind discriminant.
+This definition composes the existing `ix.shared-reference/2-draft` envelope and
+`ix.artifact-ref/3-draft` fields. It adds no field or artifact-kind discriminant.
 The referenced package payload still needs its own exact supported wire contract;
 this semantic definition neither supplies a serialization layout nor makes an
 unknown payload wire decodable. Acceptance of the envelope is insufficient.

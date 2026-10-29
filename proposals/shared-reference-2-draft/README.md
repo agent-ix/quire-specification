@@ -9,15 +9,14 @@ The state-core 1-draft schema is a separate version.
 ## Selected versions and scope
 
 The new envelope has exactly wireVersion, kind and value. wireVersion is
-`ix.shared-reference/3-draft`; kind is artifact or semantic. This version covers
+`ix.shared-reference/2-draft`; kind is artifact or semantic. This version covers
 these two forms only. Existing source-map and migration envelopes keep their
 1-draft selection; this amendment supplies no inferred migration, decoder
 fallback or general extension bag.
 
-An artifact value selects `ix.artifact-ref/4-draft`. Its five mandatory fields
+An artifact value selects `ix.artifact-ref/3-draft`. Its five mandatory fields
 are refVersion, kind, authority, identity and wire. Wire has exactly identity
 and version (nonempty strings). Authority and identity are nonempty strings.
-The reference stores no byte digest; the supplied artifact is located by path.
 Every record is closed.
 
 The fourteen prior kinds remain: source, model-package, linked-package,
@@ -55,27 +54,24 @@ and reject duplicate decoded members before comparison. Unknown required feature
 refuse interpretation. This rule does not sort arrays inside the referenced
 artifact.
 
-The semantic reference carries no canonical identity and no digest. A caller
-cannot infer equivalence between artifacts from a hash; the selected semantic
-profile defines what a validated value means. Input intake must reject
+The selected semantic profile defines what a validated value means. Input intake must reject
 duplicate decoded keys, invalid Unicode and non-finite numbers.
 
 ## Review disposition and its core
 
-The disposition names its core by path and stores no digest; its ArtifactRef
-uses review-disposition. A foreign core or nearby artifact kind refuses
+The disposition's ArtifactRef uses review-disposition. A nearby artifact kind refuses
 correspondence.
 
 B owns all report-core fields, validation, reviewer/procedure/provenance checks,
 missing-disposition incompleteness and final result policy. The fixture here uses
-an explicitly synthetic fixture profile to demonstrate the disposition-to-core
-reference without claiming to define B's report payload or record a real review.
+an explicitly synthetic fixture profile to demonstrate the disposition
+shape without claiming to define B's report payload or record a real review.
 B qualifies the same rule against its actual report schema under IT-003-SC-03.
 
 ## Qualification boundary
 
-FR-017/018 and TC-001–004 define positive and adverse vectors; IT-003 records
-producer structure, existing B canonicalizer parity and the later independent
+FR-017/486 and TC-001, TC-002 and TC-975 define positive and adverse vectors; IT-003 records
+producer structure and the later independent
 strict reader as distinct observations. Structural schema validation is only
 one layer. Readers retain the strict bounded intake, source/authority and
 artifact checks from the adopted packet. Exhaustion yields incomplete without

@@ -34,7 +34,7 @@ use the artifact envelope directly; null profile is not permission to claim
 semantic equivalence or evaluate the artifact.
 
 Structural validation does not establish authority, wire support, required
-features, dependency closure, canonical identity, or source correspondence.
+features, dependency closure or source correspondence.
 Those are separate checked obligations with explicitly selected registries and
 bindings. A structurally valid unfamiliar wire still refuses interpretation.
 
@@ -49,11 +49,10 @@ bindings. A structurally valid unfamiliar wire still refuses interpretation.
    Unknown versions/kinds refuse. Validate the selected closed schema; unexpected
    members, omitted required members and wrong primitive kinds refuse.
 3. Validate selected authority, wire/language/profile versions and all required
-   features against the consumer's declared support. An unknown canonical domain
-   or unqualified derivation refuses canonical interpretation. No network lookup,
+   features against the consumer's declared support. No network lookup,
    fall-through decoder, string-to-number cast or profile default occurs.
-4. Resolve locally supplied artifacts. Check immutable identity bindings and
-   model manifest/lock/closure independently. A retrieval path
+4. Resolve locally supplied artifacts. Check immutable identity bindings
+   independently. A retrieval path
    never confers authority or joins a different artifact kind.
 5. Validate source regions/maps and canonical derivations, then compare the
    intended reference role using its local collection semantics. Only a fully
@@ -61,8 +60,8 @@ bindings. A structurally valid unfamiliar wire still refuses interpretation.
    logical result or adequate verification evidence.
 
 Keep distinct diagnostics for unsupported-version, unknown-required-feature,
-invalid-wire, identity-mismatch, stale,
-malformed-source-map, unsupported-canonicalization and ambiguous-equivalence.
+invalid-wire, identity-mismatch,
+malformed-source-map and ambiguous-equivalence.
 Source-map budgets and cancellation remain incomplete rather than malformed
 input. Missing runtime observations are incomplete; missing static authority
 refuses linkage. B maps these producer distinctions into its portable envelope.
@@ -97,18 +96,6 @@ to the authored clause/fence and bind the approved extraction policy. A byte
 map proves correspondence, not fence ownership. Quire extraction remains opaque;
 C owns its existing-repository decoder/adapter and independent regressions.
 Schema success alone does not prove any cross-span or source-byte condition.
-
-## Existing canonical identity domains
-
-| Selected domain | Established behavior to retain |
-|---|---|
-| `quire.contract.canonical-json/v1` | Existing IR source-free projections and Unicode-scalar object-key ordering; semantic arrays retain their specified order. Minimal exact integers; no floats/null in this canonical model. Digest is SHA-256 of `quire-contract-ir`, NUL, profile, NUL, object kind, NUL, then canonical envelope bytes. |
-| `quire.contract.bound-identity/v1` | Existing binder's complete sorted clause bindings, package canonical digest, declaration/expression digests, and profile headers. Digest is raw SHA-256 of that canonical bound-identity envelope; do not add the other domain's prefix. |
-
-These two domains are the existing IR behavior; the semantic reference selects
-neither and carries no canonical identity. The current native parser emits no
-canonical semantic identity. Do not hash an unlinked syntax tree under the
-existing typed-expression domain.
 
 Existing IR schema 1.0
 to 1.1 migration intentionally changes package canonical bytes because the
@@ -155,7 +142,7 @@ transitive composition and reverse mappings are not inferred automatically.
 ## Qualification and owners
 
 The structural schema plus raw JSON refusal fixtures exercise selected record
-shapes; canonical vectors exercise existing domain behavior; source-map
+shapes; source-map
 cases specify additional semantic checks. Producer checks must report which
 layer ran. A schema validator is not an independent consumer or evaluator.
 Independent consumer evidence must cover the applicable refusal conditions

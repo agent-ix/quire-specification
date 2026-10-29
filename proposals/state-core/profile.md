@@ -172,7 +172,7 @@ separate claims with separate method capabilities and budgets.
 
 The normative-candidate vector set must include healthy and violating parent
 order, cycles, equal-valued distinct objects, incomplete universes, missing and
-foreign references, stale imports, wrong snapshots, deleted objects, skipped
+foreign references, wrong snapshots, deleted objects, skipped
 undefined branches, duplicate collection values, integer overflow and negative
 remainder. Conditional/helper/collection extensions require independent expected
 cases; reference/generated agreement alone cannot qualify their meaning.

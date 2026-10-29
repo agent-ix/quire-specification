@@ -6,8 +6,6 @@ object: enumeration
 relationships:
   - target: ix://agent-ix/quire-specification/FR-015
     type: specifies
-  - target: ix://agent-ix/quire-specification/FR-018
-    type: specifies
   - target: ix://agent-ix/quire-specification/FR-150
     type: specifies
 ---
@@ -24,10 +22,10 @@ equality.
 
 | Value | Description |
 | --- | --- |
-| `ir-canonical` | Existing contract-IR canonical identity. Retains its original bare-hex syntax and algorithm; it does not adopt the JCS prefix or canonicalization (FR-018-AC-6). |
+| `ir-canonical` | Existing contract-IR canonical identity. Retains its original bare-hex syntax and algorithm; it does not adopt the JCS prefix or canonicalization. |
 | `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
 | `ir-semantic` | IR semantic digest. Includes its prescribed domain separation (FR-015-AC-2). |
-| `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
+| `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout. |
 | `sha256-jcs` | JCS digest. SHA-256 over RFC 8785 canonical bytes. No model selection row of a lock and no declaration key carries it (FR-154, FR-321, AD-006); its remaining users are those that name it in their own requirement. It is distinct from package and source digests. |
 | `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from every other identity/digest domain. |
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
@@ -38,7 +36,7 @@ equality.
 | `quire.cache-key/v1` | Cache-entry key. SHA-256 over the RFC 8785 canonical bytes of the closed object `{operation, package_id, request, backend, manifest, target}` (FR-306): the cached operation, the subject's `quire.package.semantic/v2` `package_id`, the canonical request, the provider's `BackendId`, its FR-331 `ManifestDigest` as a `quire.tool-manifest.jcs/v1` digest record and, for `generate` only, the generation target and its options. Distinct from every other identity/digest domain. |
 | `quire.simulation.state-key/v1` | Simulator state-key identity. SHA-256 over the RFC 8785 canonical bytes of the typed canonical encoding of simulator state, control positions, queues, role lifetimes, observation progress and remaining bounds (FR-181). Distinct from `sha256-jcs` and from every other identity/digest domain. |
 | `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
-| `quire.verification.jcs` | Verification JCS domain, `version: rfc8785-v1`, `algorithm: sha256`. Emitted as `sha256-jcs:` followed by 64 lowercase hexadecimal digits over RFC 8785 canonical UTF-8 bytes (FR-018). |
+| `quire.verification.jcs` | Verification JCS domain, `version: rfc8785-v1`, `algorithm: sha256`. Emitted as `sha256-jcs:` followed by 64 lowercase hexadecimal digits over RFC 8785 canonical UTF-8 bytes |
 | `quire.model.effective-declaration/v2` | QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from `sha256-jcs` and from the `quire.checked-semantic-node/v1` domain. |
 | `quire.model.effective-view/v2` | QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. |
 | `quire.model.object-universe/v2` | QSL-derived object-universe identity for a connected supertype component. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection and its sorted root effective-declaration identities (FR-150). Distinct from every other identity/digest domain. |
@@ -61,27 +59,24 @@ equality.
   vocabulary of digest domains; it does not carry one.
 - **Cross-domain rule** — two identities bearing different domain labels are
   unequal. Byte equality of their digests does not make them equal, and a raw
-  `sha256` digest cannot substitute for `sha256-jcs` (FR-018-AC-2).
+  `sha256` digest cannot substitute for `sha256-jcs`.
 
 The `sha256-jcs:` textual prefix is a domain label outside the hashed bytes. It
-is not a hash preimage prefix (FR-018).
+is not a hash preimage prefix.
 
 ## Preimage selection is per-use, not per-domain
 
-Three requirements independently state what is inside the preimage under the
+Two requirements independently state what is inside the preimage under the
 `quire.verification.jcs` domain, and no requirement cross-references the others:
 
-- [FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md): for B's
-  automated-report profile the qualified input is the validated automated core
-  alone; the external disposition and outer report wrapper are excluded.
-- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): the enclosing
-  artifact reference carries the digest over the complete canonical result
-  bytes, and the digest is not a self-referential field inside those bytes.
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): the
+  canonical result identity is computed over the complete closed result with
+  only `resultId` omitted.
 - [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md):
   the derived result identity is taken over a distinct projection-identity
   preimage under `quire.protocol.e02-projection-identity/v1-draft.1`.
 
-This artifact records all three. It does not reconcile them; the selection of a
+This artifact records both. It does not reconcile them; the selection of a
 preimage belongs to the requirement that selects it.
 
 ## Acceptance Criteria
@@ -101,8 +96,6 @@ preimage belongs to the requirement that selects it.
 
 - [FR-015](../../functional/foundation/FR-015-preserve-canonical-domains.md) establishes the
   distinct domains and the substitution prohibitions.
-- [FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md) establishes
-  the verification JCS selection, output syntax and prefix rule.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
 - [FR-150](../../functional/type-model/FR-150-preserve-model-normalization-provenance.md)
   defines the `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2`

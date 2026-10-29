@@ -1,16 +1,13 @@
 {
-  "wireVersion": "ix.shared-reference/3-draft",
+  "wireVersion": "ix.shared-reference/2-draft",
   "kind": "semantic",
   "value": {
     "artifact": {
-      "refVersion": "ix.artifact-ref/4-draft",
+      "refVersion": "ix.artifact-ref/3-draft",
       "kind": "run-artifact",
       "authority": "ix.fs05.fixture",
       "identity": "fs05-core-1",
-      "wire": {
-        "identity": "ix.fs05.synthetic-core",
-        "version": "1"
-      }
+      "wire": {"identity":"ix.fs05.synthetic-core","version":"1"}
     },
     "language": null,
     "semanticProfile": {

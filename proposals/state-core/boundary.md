@@ -10,9 +10,9 @@ Local display names are aliases, never declaration identity. The language must
 not infer type definitions from application Rust strings or runtime examples.
 
 Resolve imports by identity alone (a model is its `model_root` node's identity and no digest exists), then by
-exports and transitive lock closure. Do not choose the first duplicate or a
+exports. Do not choose the first duplicate or a
 reachable but undeclared package. Reject
-missing, ambiguous, stale, foreign, ill-typed and unsupported definitions with
+missing, ambiguous, foreign, ill-typed and unsupported definitions with
 both reference and available declaration loci. Stable declaration IDs survive
 display-name changes; their meaning and dependencies may change and
 invalidate a checked package.
@@ -29,7 +29,7 @@ the observed sample. Exact domain limits are reviewed model/profile data.
 | Identity | Proposed representation and binding |
 |---|---|
 | Authored requirement/criterion | Package namespace, requirement ID, positive authored revision, clause ID; retained when a derived file changes |
-| Declaration | Stable semantic URI and containing package lock entry; field and operation IDs distinct from display names |
+| Declaration | Stable semantic URI and containing package; field and operation IDs distinct from display names |
 | Source unit | Source ID, local path, byte region and coordinate convention |
 | Language | Language tag and edition, independent from implementation version |
 | Semantic profile | Explicit profile identifier/version and required feature set |

@@ -5,212 +5,71 @@
   "oneOf": [
     {
       "type": "object",
-      "required": [
-        "wireVersion",
-        "kind",
-        "value"
-      ],
+      "required": ["wireVersion", "kind", "value"],
       "properties": {
-        "wireVersion": {
-          "const": "ix.shared-reference/3-draft"
-        },
-        "kind": {
-          "const": "artifact"
-        },
-        "value": {
-          "$ref": "#/$defs/ArtifactRef"
-        }
+        "wireVersion": {"const": "ix.shared-reference/2-draft"},
+        "kind": {"const": "artifact"},
+        "value": {"$ref": "#/$defs/ArtifactRef"}
       },
       "additionalProperties": false
     },
     {
       "type": "object",
-      "required": [
-        "wireVersion",
-        "kind",
-        "value"
-      ],
+      "required": ["wireVersion", "kind", "value"],
       "properties": {
-        "wireVersion": {
-          "const": "ix.shared-reference/3-draft"
-        },
-        "kind": {
-          "const": "semantic"
-        },
-        "value": {
-          "$ref": "#/$defs/SemanticRef"
-        }
+        "wireVersion": {"const": "ix.shared-reference/2-draft"},
+        "kind": {"const": "semantic"},
+        "value": {"$ref": "#/$defs/SemanticRef"}
       },
       "additionalProperties": false
     }
   ],
   "$defs": {
-    "Nonempty": {
-      "type": "string",
-      "minLength": 1
-    },
+    "Nonempty": {"type": "string", "minLength": 1},
     "Wire": {
-      "type": "object",
-      "required": [
-        "identity",
-        "version"
-      ],
-      "properties": {
-        "identity": {
-          "$ref": "#/$defs/Nonempty"
-        },
-        "version": {
-          "$ref": "#/$defs/Nonempty"
-        }
-      },
+      "type": "object", "required": ["identity", "version"],
+      "properties": {"identity": {"$ref": "#/$defs/Nonempty"}, "version": {"$ref": "#/$defs/Nonempty"}},
       "additionalProperties": false
     },
     "ArtifactRef": {
       "type": "object",
-      "required": [
-        "refVersion",
-        "kind",
-        "authority",
-        "identity",
-        "wire"
-      ],
+      "required": ["refVersion", "kind", "authority", "identity", "wire"],
       "properties": {
-        "refVersion": {
-          "const": "ix.artifact-ref/4-draft"
-        },
-        "kind": {
-          "enum": [
-            "source",
-            "model-package",
-            "linked-package",
-            "executable-projection",
-            "property",
-            "binding",
-            "snapshot",
-            "invocation",
-            "generated-artifact",
-            "run-artifact",
-            "environment",
-            "model-manifest",
-            "model-lock",
-            "dependency-closure",
-            "trace",
-            "fault-model",
-            "review-procedure",
-            "oracle",
-            "observation",
-            "review-disposition"
-          ]
-        },
-        "authority": {
-          "$ref": "#/$defs/Nonempty"
-        },
-        "identity": {
-          "$ref": "#/$defs/Nonempty"
-        },
-        "wire": {
-          "$ref": "#/$defs/Wire"
-        }
+        "refVersion": {"const": "ix.artifact-ref/3-draft"},
+        "kind": {"enum": ["source", "model-package", "linked-package", "executable-projection", "property", "binding", "snapshot", "invocation", "generated-artifact", "run-artifact", "environment", "model-manifest", "model-lock", "dependency-closure", "trace", "fault-model", "review-procedure", "oracle", "observation", "review-disposition"]},
+        "authority": {"$ref": "#/$defs/Nonempty"},
+        "identity": {"$ref": "#/$defs/Nonempty"},
+        "wire": {"$ref": "#/$defs/Wire"}
       },
       "additionalProperties": false
     },
     "Language": {
-      "type": "object",
-      "required": [
-        "identity",
-        "edition"
-      ],
-      "properties": {
-        "identity": {
-          "$ref": "#/$defs/Nonempty"
-        },
-        "edition": {
-          "$ref": "#/$defs/Nonempty"
-        }
-      },
+      "type": "object", "required": ["identity", "edition"],
+      "properties": {"identity": {"$ref": "#/$defs/Nonempty"}, "edition": {"$ref": "#/$defs/Nonempty"}},
       "additionalProperties": false
     },
     "SemanticProfile": {
-      "type": "object",
-      "required": [
-        "identity",
-        "version"
-      ],
+      "type": "object", "required": ["identity", "version"],
       "properties": {
-        "identity": {
-          "$ref": "#/$defs/Nonempty"
-        },
-        "version": {
-          "$ref": "#/$defs/Nonempty"
-        }
+        "identity": {"$ref": "#/$defs/Nonempty"},
+        "version": {"$ref": "#/$defs/Nonempty"}
       },
       "additionalProperties": false
     },
     "SemanticRef": {
       "type": "object",
-      "required": [
-        "artifact",
-        "language",
-        "semanticProfile",
-        "requiredFeatures"
-      ],
+      "required": ["artifact", "language", "semanticProfile", "requiredFeatures"],
       "properties": {
-        "artifact": {
-          "$ref": "#/$defs/ArtifactRef"
-        },
-        "language": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/$defs/Language"
-            }
-          ]
-        },
-        "semanticProfile": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/$defs/SemanticProfile"
-            }
-          ]
-        },
-        "requiredFeatures": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/Nonempty"
-          },
-          "uniqueItems": true
-        }
+        "artifact": {"$ref": "#/$defs/ArtifactRef"},
+        "language": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/Language"}]},
+        "semanticProfile": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/SemanticProfile"}]},
+        "requiredFeatures": {"type": "array", "items": {"$ref": "#/$defs/Nonempty"}, "uniqueItems": true}
       },
       "additionalProperties": false,
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "semanticProfile": {
-                "type": "null"
-              }
-            },
-            "required": [
-              "semanticProfile"
-            ]
-          },
-          "then": {
-            "properties": {
-              "language": {
-                "type": "null"
-              },
-              "requiredFeatures": {
-                "maxItems": 0
-              }
-            }
-          }
-        }
-      ]
+      "allOf": [{
+        "if": {"properties": {"semanticProfile": {"type": "null"}}, "required": ["semanticProfile"]},
+        "then": {"properties": {"language": {"type": "null"}, "requiredFeatures": {"maxItems": 0}}}
+      }]
     }
   }
 }

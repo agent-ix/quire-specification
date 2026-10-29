@@ -1,18 +1,16 @@
 ---
 id: TC-004
-title: "Withdrawn: bind a disposition without a circular core digest"
+title: "Withdrawn: automated core correspondence"
 type: TC
 relationships:
   - target: "ix://agent-ix/quire-specification/FR-018"
     type: verifies
 ---
-# TC-004: Withdrawn: bind a disposition without a circular core digest
+# TC-004: Withdrawn: automated core correspondence
 
 ## Description
 
-Withdrawn with FR-018-AC-5. It checked a disposition's stored core digest and the
-core's JCS identity; neither exists any more. A disposition now names its core by
-path, and the number TC-004 is not reused.
+Withdrawn: JCS identity domain removed. The id and filename are kept and are not reused.
 
 ## Test Procedure
 

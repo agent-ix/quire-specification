@@ -5,7 +5,7 @@ type: IT
 relationships:
   - target: "ix://agent-ix/quire-specification/FR-017"
     type: verifies
-  - target: "ix://agent-ix/quire-specification/FR-018"
+  - target: "ix://agent-ix/quire-specification/FR-486"
     type: verifies
 ---
 # IT-003: Qualify verification reference amendment
@@ -32,7 +32,7 @@ of 1 MiB and 65,536 values, and nesting depth is not a limit; input over a
 limit yields incomplete naming the limit, its value and the limit field that
 raises it. Fixtures
 include six exact roles and wrong-role controls, version mutations, duplicate/reordered features, exact property/subject/binding/closure/run
-mismatches, and an explicitly synthetic disposition naming its core.
+mismatches, and an explicitly synthetic disposition and core.
 
 ## Test Procedure
 
@@ -47,7 +47,7 @@ mismatches, and an explicitly synthetic disposition naming its core.
 All three criteria require observed evidence for complete integration acceptance.
 SC-01 can establish a reviewable producer handoff now. SC-03 stays
 planned until B adopts the amendment and implements its consumer. A synthetic
-core fixture proves the disposition-to-core reference only; it is never reported as
+core fixture proves the schema shape only; it is never reported as
 a valid VP04 report, completed portfolio, or actual human review.
 
 ## Metadata
@@ -59,7 +59,7 @@ Rust JSON Schema validator; it does not introduce a production shared reader.
 ## Dependencies
 
 - [FR-017](../functional/foundation/FR-017-select-verification-artifact-roles.md)
-- [FR-018](../functional/foundation/FR-018-select-verification-jcs-domain.md)
+- [FR-486](../functional/foundation/FR-486-compare-required-features.md)
 - [IT-002](IT-002-independent-reference-consumer.md) retains the broader FS02/FS05 independent-consumer gate.
 
 ## References

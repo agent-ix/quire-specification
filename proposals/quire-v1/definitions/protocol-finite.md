@@ -128,9 +128,9 @@ changed semantic selection changes the linked subject; an existing result cannot
 be relabelled under a different selection.
 
 The canonical result now carries exact assumptions, separate observation and
-protocol adequacy, and decision-support oracle dependence/lineage. Its enclosing
-artifact reference digests the complete canonical result, avoiding a digest
-inside its own preimage. The outgoing portable verification projection remains
+protocol adequacy, and decision-support oracle dependence/lineage. Its
+`resultId` identifies the canonical result under FR-286. The outgoing portable
+verification projection remains
 a separate requested adapter under
 [FR-062](../../../spec/functional/protocol/FR-062-project-results-to-portable-verification.md).
 It does not change source meaning or make E02 support a condition of native

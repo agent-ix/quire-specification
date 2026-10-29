@@ -32,7 +32,7 @@ model/operation review and differ in evidence identity.
 the eventual evaluator. The healthy and violating expectations are manually
 specified, independent of any evaluator. These inputs do not bypass the unresolved
 model linking requirement. `boundary-cases.json` describes precise malformed,
-unsupported, stale and incomplete mutations and expected diagnostics for later
+unsupported and incomplete mutations and expected diagnostics for later
 independent readers. Expected diagnostics are assertions to implement, not
 observed tool output.
 
