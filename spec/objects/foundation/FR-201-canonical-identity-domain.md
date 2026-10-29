@@ -26,7 +26,6 @@ equality.
 | `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout. |
 | `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from every other identity/digest domain. |
-| `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
 | `quire.checked-semantic-node/v1` | Checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
 | `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
 | `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
