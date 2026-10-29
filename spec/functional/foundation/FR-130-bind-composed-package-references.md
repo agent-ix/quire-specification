@@ -25,7 +25,7 @@ explicit required-feature set.
 ## Outputs
 
 A reference to the fully linked static package retaining each inner profile,
-or a typed version, role, feature-set, canonical-domain or dependency refusal.
+or a typed version, role, feature-set or dependency refusal.
 
 ## Behavior
 

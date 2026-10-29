@@ -15,13 +15,13 @@ relationships:
 
 ## Description
 
-When an observation is associated with a workflow subject, the correlation service SHALL select only an explicit typed relationship carrying its domain package identity and version, exact relationship declaration key, and ordered authority-qualified endpoints.
+When an observation is associated with a workflow subject, the correlation service SHALL select only an explicit typed relationship carrying its domain package identity, exact relationship declaration key, and ordered authority-qualified endpoints.
 
 FR-111 defines exactly `resolved`, `missing`, `conflicting` and `ambiguous`
 correlation outcomes, and states that the three non-success outcomes replace
 heuristic matching. It also states that the service refuses "a missing domain package identity, a
 relationship declaration or kind outside the checked package, or a declaration
-key naming a different package identity or version rather than reconstructing a
+key naming a different domain package identity rather than reconstructing a
 relationship from a foreign key, trace ID, provider name, or ambient
 configuration".
 
@@ -30,7 +30,7 @@ configuration".
 | Property | Source | Note |
 | --- | --- | --- |
 | Relationship type | FR-111 Description | "an explicit typed relationship". |
-| Domain package identity and version | FR-111 Description | The domain package identity and version named by a checked package `model_root` node's owner identity; absence or mismatch refuses (FR-111-AC-4). |
+| Domain package identity | FR-111 Description | The domain package identity named by a checked package `model_root` node's owner identity; absence or mismatch refuses (FR-111-AC-4). |
 | Relationship declaration key | FR-111 | Exact (domain package identity, IR node identity) key of the spec-declared relationship; a kind label does not replace it. |
 | Related instance endpoints | FR-111 Behavior | Ordered source and target, each carrying one complete FR-287 key and satisfying the relationship declaration's endpoint type/direction. |
 
@@ -44,7 +44,7 @@ infrastructure."
 - **Identity kind** — *value*. A relationship has no identity of its own; it is
   compared componentwise. It is not *derived*: FR-111 forbids reconstructing it
   "from a foreign key, trace ID, provider name, or ambient configuration".
-- **Key** — the relationship type, domain package identity and version,
+- **Key** — the relationship type, domain package identity,
   exact relationship declaration key, and ordered
   source and target FR-287 endpoint keys.
   FR-111-AC-4 establishes the declaration key as

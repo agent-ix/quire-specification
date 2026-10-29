@@ -93,12 +93,9 @@ document's own identity with the selection, then records the selection as the
 
 The lock holds no model record. The `model_root` node of the identity is the only
 record of the selection. No lock row, digest, version or staleness comparison of a model
-exists. A changed domain package needs no model-specific check, because the
-declaration nodes of the checked package derive from the document's contents:
-a replay recompiles against the supplied document and the recomputed
-`package_id` differs from the proved one, which FR-323 refuses
-`stale_dependency`/`content-mismatch`, whether or not the document's `version`
-member changed. The package document's own `version` member is not read by intake
+exists. Intake does not detect a changed domain package: an edit of the document
+under an unchanged identity goes undetected, and no check or refusal stands in
+for it. The package document's own `version` member is not read by intake
 and is not recorded.
 
 Intake keeps the authored order of every type's `fields` and `supertypes`
@@ -651,9 +648,9 @@ Admission checks are decided before the first charge.
 | FR-154-AC-33 | A tuple type with declaration identity `<package identity>/Pair` and positions `p0: Boolean`, `p1: Integer` is admitted as one tuple declaration plus two ordered position declarations; swapping the position types keeps the declaration identity but changes which type is bound to each position identity, and therefore changes the tuple's type identity and product order; an empty positions list, a gap, absent `typeRef` or unsupported type, or an extra field, identity field, operation, supertype or clause refuses `invalid_model_binding`/`malformed-declaration`; an unresolved package `typeRef` refuses `missing_declaration`/`missing-name`; two positions with one `pN` identity refuse `invalid_model_binding`/`conflicting-binding` at the later position. | Test (TC-234) |
 | FR-154-AC-34 | `model M = "test/orders";` is a source selection of identity `test/orders` and no other: it carries no version and no digest. The same declaration followed by a `version` or a `digest` token, or by any token other than `;`, refuses `invalid_syntax`/`unexpected-token` at that token. | Test (TC-234) |
 | FR-154-AC-35 | A `model` whose identity string is absent, is not a string, or is followed by the end of the source, refuses `invalid_syntax` (`unexpected-token` at the offending token, `unexpected-end` at the end of the source) and is never dropped without a diagnostic. | Test (TC-234) |
-| FR-154-AC-36 | Admitting the document supplied under `test/orders` yields the `model_root` node of identity `test/orders` and no lock row; no source, input, lock or expected value states a digest or a version. | Test (TC-234) |
+| FR-154-AC-36 | Admitting the document supplied under `test/orders` yields the `model_root` node of identity `test/orders` and no lock row; no source, input, lock or expected value states a digest or a version; the supplied document's own `package.version` member is data of that document and is never compared. | Test (TC-234) |
 | FR-154-AC-37 | Two documents supplied under one domain package identity, whether or not they differ, refuse `invalid_package`/`conflicting-definition` before intake, naming both; a selection whose identity no supplied document has refuses `missing_import`/`missing-selection` at the identity string. | Test (TC-234) |
-| FR-154-AC-38 | A package compiled against a document, replayed with a document of the same identity in which one field differs, recompiles to another `package_id` and refuses `stale_dependency`/`content-mismatch` naming the proved and the recomputed `package_id` (FR-323), and does so whether or not the two documents' `version` members differ; no model-specific comparison runs. | Test (TC-234) |
+| FR-154-AC-38 | Withdrawn: a changed domain-package document is not detected by intake. | Withdrawn |
 
 ## Dependencies
 

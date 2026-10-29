@@ -49,7 +49,7 @@
     "SourceOwner": {"type": "object", "required": ["kind", "authority", "identity"], "properties": {"kind": {"const": "source"}, "authority": {"$ref": "#/$defs/Nonempty"}, "identity": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
     "DefinitionOwner": {"type": "object", "required": ["kind", "authority", "identity"], "properties": {"kind": {"const": "definition"}, "authority": {"$ref": "#/$defs/Nonempty"}, "identity": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
     "ModelOwner": {"type": "object", "required": ["kind", "identity", "node"], "properties": {"kind": {"const": "model"}, "identity": {"$ref": "#/$defs/Nonempty"}, "node": {"$ref": "#/$defs/Nonempty"}}, "additionalProperties": false},
-    "ModelRootOwner": {"type":"object","required":["kind","identity","digest"],"properties":{"kind":{"const":"model_root"},"identity":{"$ref":"#/$defs/Nonempty"},"digest":{"$ref":"#/$defs/HexDigest"}},"additionalProperties":false},
+    "ModelRootOwner": {"type":"object","required":["kind","identity"],"properties":{"kind":{"const":"model_root"},"identity":{"$ref":"#/$defs/Nonempty"}},"additionalProperties":false},
     "ModelNodeOwner": {"oneOf":[{"$ref":"#/$defs/ModelOwner"},{"$ref":"#/$defs/ModelRootOwner"}]},
     "Owner": {"oneOf": [{"$ref": "#/$defs/SourceOwner"}, {"$ref": "#/$defs/DefinitionOwner"}, {"$ref": "#/$defs/ModelOwner"}]},
     "NodeId": {"type": "object", "required": ["domain", "digest"], "properties": {"domain": {"const": "quire.checked-semantic-node/v1"}, "digest": {"$ref": "#/$defs/HexDigest"}}, "additionalProperties": false},

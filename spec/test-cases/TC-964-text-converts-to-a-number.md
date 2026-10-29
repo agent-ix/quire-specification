@@ -30,7 +30,7 @@ Scope: FR-478-AC-1 to FR-478-AC-11.
 Select language `ix:native`, edition `1-draft`, and the
 `quire.value.complete/v1` and `quire.value.text.unicode-17.0.0/v1`
 definitions through
-[`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
+[`value-complete.md`](../../proposals/quire-v1/definitions/value-complete.md).
 Execute these vectors through the real local Rust boundary. Text operands are
 `Text[0, 64; unicode-scalars]` unless the row names another profile or a
 `String`. Quantity rows declare `dimension Time; unit s : Time = 1; unit ms :

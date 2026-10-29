@@ -13,7 +13,7 @@ relationships:
 
 ## Description
 
-When a population is assessed, the assessment request SHALL retain the selected domain package identity and version, the population declaration key, the declared finite membership rule, the population key, the bounds, the observation sources, the configuration and closure identities and versions, and the completeness and progress dependencies.
+When a population is assessed, the assessment request SHALL retain the selected domain package identity, the population declaration key, the declared finite membership rule, the population key, the bounds, the observation sources, the configuration and closure identities and versions, and the completeness and progress dependencies.
 
 FR-112 states that list as the retained set for "a population or event-time
 window", and FR-112-AC-3 requires that "A complete bounded population retains
@@ -36,7 +36,7 @@ The v1 population key is the tuple `(declaration, membershipRule, selection,
 observationSources[], configuration, closure, completenessDependencies[],
 progressDependencies[])`. Arrays that denote sets SHALL be sorted, distinct and
 bounded before comparison. `selection` SHALL contain exactly one FR-265 snapshot or FR-266
-event-time window. `declaration` holds the domain package identity and version and the
+event-time window. `declaration` holds the domain package identity and the
 population declaration key. `configuration` and `closure` each hold an identity
 and version. No digest is derived or retained.
 

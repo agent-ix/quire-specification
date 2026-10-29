@@ -20,7 +20,7 @@
         "identity": "test/predicates",
         "package_id": {
           "algorithm": "sha256",
-          "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de",
+          "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934",
           "domain": "quire.package.semantic/v2"
         }
       }
@@ -32,7 +32,6 @@
       },
       "role": "edition"
     },
-    "model_selections": [],
     "profile_selections": [],
     "required_features": [
       "quire.value.complete/v1"
@@ -46,7 +45,7 @@
         "identity": "test/predicates",
         "package_id": {
           "algorithm": "sha256",
-          "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de",
+          "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934",
           "domain": "quire.package.semantic/v2"
         }
       }
@@ -58,7 +57,6 @@
       },
       "role": "edition"
     },
-    "model_selections": [],
     "profile_selections": [],
     "required_features": [
       "quire.value.complete/v1"
@@ -74,7 +72,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "510bf8546de58daaee20a6e56d6c86a68e8c5d4481c84642daa58aa2a874b093",
+    "digest": "8b6a5f3d87e3aefb4d8faa1f022251cdb0318e481fc179afafababd651e1b49b",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {
@@ -194,7 +192,7 @@
               },
               "package": {
                 "algorithm": "sha256",
-                "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de",
+                "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934",
                 "domain": "quire.package.semantic/v2"
               },
               "term": "dependency_reference"
@@ -231,7 +229,7 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "482c77bc006e11d474b1f5e43f19a8eac8e2d36419f0d256921dc95190abfb5f",
+          "digest": "40b321cf3be1d6d2e3e61aa6e533dd64620e888f7c801ae180e52c43bfe451ac",
           "domain": "quire.checked-semantic-node/v1"
         },
         "node_tag": "function",
@@ -313,7 +311,7 @@
     },
     {
       "node_id": {
-        "digest": "482c77bc006e11d474b1f5e43f19a8eac8e2d36419f0d256921dc95190abfb5f",
+        "digest": "40b321cf3be1d6d2e3e61aa6e533dd64620e888f7c801ae180e52c43bfe451ac",
         "domain": "quire.checked-semantic-node/v1"
       },
       "ordinal": 0,

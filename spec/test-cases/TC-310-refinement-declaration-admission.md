@@ -223,10 +223,9 @@ Mutations, each applied alone to the positive unit:
     machine key with an object-type key; `SM-04` omits the abstract machine's
     row; `SM-05` duplicates that row.
     For each selected model package in these writes, also verify exactly one
-    `model_root` node whose `ModelRootOwner` identity and version join the
-    selected `model_root` node, whose generated occurrence ordinal zero
+    `model_root` node whose `ModelRootOwner` identity is the selected package identity, whose generated occurrence ordinal zero
     maps to the model-selection source region, and whose identity is derived
-    from the selected package identity and version, independent of alias
+    from the selected package identity, independent of alias
     spelling. Verify the model-only
     refinement's `abstract` and `semantic_type` name the roots, while a
     protocol refinement keeps `protocol` at the exact clause key and the
@@ -236,8 +235,7 @@ Mutations, each applied alone to the positive unit:
     model package, remove `owner` from its root (`MR-01`), add an extra
     `digest` member to `ModelRootOwner` (`MR-02`), attach `ModelRootOwner` to
     an object-type node (`MR-03`), and add a second root whose owner identity
-    and version join no `model_root` node while every row keeps its own
-    root (`MR-04`). Validate `MR-01` to `MR-03` against both V2 schemas
+    names no supplied domain package (`MR-04`). Validate `MR-01` to `MR-03` against both V2 schemas
     (`schema.json` and, through the node's structural preimage,
     `node-identity-preimage.schema.json`) and `MR-04` against `schema.json`,
     which admits it; validate every mutation with the strict reader after
@@ -479,7 +477,7 @@ row has the same closed shape as an object-type row. `SM-03` refuses
 `SM-05` refuses `invalid_model_binding`/`conflicting-binding` naming the
 duplicate rows. The object-type-only refinement is admitted without a
 state-machine node or synthetic anchor. Each selected package has exactly
-one `model_root` with `ModelRootOwner` joined to its selection row, generated
+one `model_root` with `ModelRootOwner` naming its selection identity, generated
 occurrence zero mapped to the existing model-selection source region, and a
 key recomputed from the published model-root vector. Its alias is not in the
 preimage. For a model subject, `abstract` and the refinement's
@@ -492,5 +490,5 @@ For mutation 28, `MR-01` fails the schema because the root lacks its required
 owner; `MR-02` fails the closed-owner schema; `MR-03` fails the graph-owner
 rule because a root owner is restricted to `model`/`model_root`. `MR-04`
 refuses `missing_declaration`/`missing-selection` at the root owner because
-its identity/version pair does not join a selected model package, even after
+its identity names no supplied domain package, even after
 node keys and package identity are recomputed.

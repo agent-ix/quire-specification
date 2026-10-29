@@ -54,12 +54,12 @@ FR-465-AC-9.
 | RL17 | a role body with an `internality` binding | refuses `malformed_wire` |
 | RL18 | `replication` holds only `population` | refuses `malformed_wire` |
 | RL19 | `population` is an integer literal | refuses `malformed_wire` |
-| RL20 | a static role whose `model` is the text owner `identity` of a `model_root` node, with no `model` dependency | admitted as a role on a whole model; its node key differs from RL1's role on a model type of that selection (FR-465-AC-9) |
-| RL21 | RL20's clause with a second role whose text is a second `model_root` node's owner `identity`; and RL20 in clauses whose `over` type is a scalar, a record and a `Set<M::Cell>`, one each | admitted; the two roles have different node keys; each `over` type is admitted |
-| RL22 | RL20 with a text naming no `model_root` owner identity | `missing_declaration`/`missing-selection` at the role node, retaining the text |
+| RL20 | a static role whose `model` is the text `identity` of a `model_root` node of the package, with no `model` dependency | admitted as a role on a whole model; its node key differs from RL1's role on a model type of that selection (FR-465-AC-9) |
+| RL21 | RL20's clause with a second role whose text is a second `model_root` node's `identity`; and RL20 in clauses whose `over` type is a scalar, a record and a `Set<M::Cell>`, one each | admitted; the two roles have different node keys; each `over` type is admitted |
+| RL22 | RL20 with a text naming no `model_root` node | `missing_declaration`/`missing-selection` at the role node, retaining the text |
 | RL23 | RL20 with a non-empty `replication` Group | `invalid_model_binding`/`malformed-declaration` at the role node |
 | RL24 | `model` is an integer, a Boolean and a Group, one each | refuses `malformed_wire` |
-| RL25 | RL22 with a non-empty `replication` Group: a text naming no `model_root` owner identity and a replication | `missing_declaration`/`missing-selection` at the role node: the selection check precedes the replication check |
+| RL25 | RL22 with a non-empty `replication` Group: a text naming no `model_root` node and a replication | `missing_declaration`/`missing-selection` at the role node: the selection check precedes the replication check |
 
 ## Channel vectors
 

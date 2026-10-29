@@ -40,7 +40,7 @@ refuse before consumption.
 | --- | --- | --- |
 | FR-320-AC-1 | Serializing an unrecovered artifact reproduces the exact source bytes. | Analysis |
 | FR-320-AC-2 | A recovery records every synthetic or discarded token and cannot claim semantic admission. | Analysis |
-| FR-320-AC-3 | Changing trivia changes the parsed artifact while unchanged mapped nodes may retain only source-identity-scoped correspondence. | Analysis |
+| FR-320-AC-3 | Changing trivia changes the parsed artifact while unchanged mapped nodes may retain only correspondence scoped to the unchanged source. | Analysis |
 
 ## Dependencies
 

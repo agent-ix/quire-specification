@@ -257,10 +257,9 @@ process or state machine.
 | MW-20 | MW-17 with two `clause` bindings | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
 | MW-21 | MW-17 with no `clause` binding | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
 | MW-22 | A clause function (`clause` binding `invariant`) owned by the systems interface `ix://acme/orders/Flow` | `missing_declaration`/`missing-selection` at the owner join: an invariant is owned by an object type with no `interfaceFeatures` | FR-322-AC-55 |
-| MS-01 | The document supplied under the lock row's identity, identity and version equal | Passes the selection admission checks | FR-322-AC-32 |
+| MS-01 | The document supplied under the root's identity, identity equal | Passes the selection admission checks | FR-322-AC-32 |
 | MS-02 | No document supplied | `missing_import`/`missing-selection` | FR-322-AC-32 |
-| MS-03 | A document with `OrderTotal`'s upper bound changed to 8, supplied under the lock row's identity, identity and version equal | Passes the selection admission checks: the reader compares identity and version only | FR-322-AC-32 |
-| MS-05 | The supplied document's `version` differs from the lock row's | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
+| MS-03 | A document with `OrderTotal`'s upper bound changed to 8, supplied under the root's identity, identity equal | Passes the selection admission checks: the reader compares identity only | FR-322-AC-32 |
 | MS-06 | The selection names identity `acme/invoices` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
 | MS-07 | The selected document with `dimensions` `[Time (base), Rate (terms [{Time, "-1"}])]`, `units` `[s (root of Time), ms (target s, scale 1/1000)]` and a clock field `Order/x` typed `ix://quire/native/Clock` with the clock field shape, selected; then the same document with `dimensions` and `units` removed, selected | The first read holds the dimension nodes `Time` then `Rate`, the unit nodes `s` then `ms` and the clock field `Order/x`, in authored order; the second read holds no dimension and no unit node and is otherwise equal | FR-322-AC-98 |
 | MS-08 | MS-07's first document with unit `ms`'s `scale` set to `0`, selected | `invalid_model_binding`/`malformed-declaration` at stage `package_read`, naming `ix://acme/orders/unit/ms` and `Unit.scale` | FR-322-AC-98 |

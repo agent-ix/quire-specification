@@ -24,7 +24,7 @@ populations.
 | Observation binding rules | `quire.observation.contract/v1` | [Observation contract](../observation-contract.md) |
 | Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | [Temporal meaning](temporal-common.md) |
 | Shared result rules | B FR-061 | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
-| Domain declarations | Checked package `model_root` node (owner identity) | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
+| Domain declarations | Checked package `model_root` node's domain package | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
 
 An actual assertion or restoration request selects its required dependencies by
 exact identity. Missing, substituted or inconsistent dependencies refuse the

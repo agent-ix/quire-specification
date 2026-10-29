@@ -9,7 +9,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
+          "value": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
         }
       ],
       "schema": "valid",
@@ -17,7 +17,7 @@
     },
     {
       "id": "MR-04",
-      "description": "an extra root whose owner identity and digest join no model_selections row; every row keeps its own root, so this is the only defect",
+      "description": "an extra root whose owner identity names no supplied domain package; the package keeps its own root, so this is the only defect",
       "patch": [
         {
           "op": "add",
@@ -30,7 +30,7 @@
             "dependencies": [],
             "node_id": {
               "domain": "quire.checked-semantic-node/v1",
-              "digest": "3e4ee82c5c58d80249c6acf04bbd1fb6b887a1b27a5b84c48b0b37fe9f29c13e"
+              "digest": "33c1a40235a4a0904a3af6be1b53182b5032e145c2d4424f6e86d4853f61bd4c"
             },
             "node_tag": "model",
             "occurrences": [
@@ -41,14 +41,13 @@
             ],
             "owner": {
               "kind": "model_root",
-              "identity": "acme/unselected",
-              "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              "identity": "acme/unselected"
             },
             "schema_version": "quire.checked-semantic-graph/v2",
             "semantic_form": "model_root",
             "semantic_type": {
               "domain": "quire.checked-semantic-node/v1",
-              "digest": "3e4ee82c5c58d80249c6acf04bbd1fb6b887a1b27a5b84c48b0b37fe9f29c13e"
+              "digest": "33c1a40235a4a0904a3af6be1b53182b5032e145c2d4424f6e86d4853f61bd4c"
             }
           }
         },
@@ -58,7 +57,7 @@
           "value": {
             "node_id": {
               "domain": "quire.checked-semantic-node/v1",
-              "digest": "3e4ee82c5c58d80249c6acf04bbd1fb6b887a1b27a5b84c48b0b37fe9f29c13e"
+              "digest": "33c1a40235a4a0904a3af6be1b53182b5032e145c2d4424f6e86d4853f61bd4c"
             },
             "ordinal": 0,
             "regions": [
@@ -79,7 +78,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "701e2c8eed846598e86e8e18e0e27a6779605006d8039edd2426b202d210802e"
+          "value": "54e5c44541f967cd1f840d437611463a4cb5a4c6f0ca83c29925feaa1c9086c9"
         }
       ],
       "schema": "valid",
@@ -88,30 +87,8 @@
       "cause": "missing-selection"
     },
     {
-      "id": "MR-06",
-      "description": "the only root removed with its source_map entry, leaving a model_selections row with no root",
-      "patch": [
-        {
-          "op": "remove",
-          "path": "/semantic_graph/nodes/46"
-        },
-        {
-          "op": "remove",
-          "path": "/source_map/46"
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "dc7982b8070ecb8c03fafa4ad8d33f6f4003e6f638b967a61753f4322f4e6ea5"
-        }
-      ],
-      "schema": "valid",
-      "outcome": "refused:invalid_semantic_graph",
-      "locus": "/semantic_graph/nodes"
-    },
-    {
       "id": "MR-09",
-      "description": "a second copy of the root for the one row; the copy has the root's key, so the row has two roots with one node_id",
+      "description": "a second copy of the root; the copy has the root's key, so the package has two roots with one node_id",
       "patch": [
         {
           "op": "add",
@@ -123,7 +100,7 @@
             },
             "dependencies": [],
             "node_id": {
-              "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+              "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0",
               "domain": "quire.checked-semantic-node/v1"
             },
             "node_tag": "model",
@@ -134,14 +111,13 @@
               }
             ],
             "owner": {
-              "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
               "identity": "acme/orders",
               "kind": "model_root"
             },
             "schema_version": "quire.checked-semantic-graph/v2",
             "semantic_form": "model_root",
             "semantic_type": {
-              "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041",
+              "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0",
               "domain": "quire.checked-semantic-node/v1"
             }
           }
@@ -149,7 +125,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "ee02fa91812a666140dac522ef38b6b834564041c797063b79329951083ed1de"
+          "value": "279eb05f5fef998b70b2c2d22ece0018b5d7fad307bcbacb00c4645916c15612"
         }
       ],
       "schema": "valid",
@@ -167,7 +143,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "5021507b44004a2f69d8d9d5740d32de0518329476d98dc5c062d4bb98add487"
+          "value": "7203328a3f4d39ddf05950a743ed7dc238ec3ee96a1e1fb38d7adcfc68dfa365"
         }
       ],
       "schema": "invalid",
@@ -186,7 +162,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "9a442a8d329ce0f2dcef0e68254ad904468d85d14efae7520830582628dec572"
+          "value": "a3f5dc016122d5a70d74a8d0a03624946bd0feb2b299f72cfcf8a409e626bfb2"
         }
       ],
       "schema": "invalid",
@@ -209,7 +185,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "7661ea80edb13a6bd81b1bcda42d81ab18ee3d6a50e6258fc6c46e9e53c34313"
+          "value": "4b4ae7dbbbbeefd00fff65a1a5e2d4af8462dc5be0bcec3c0d3226e863155d48"
         }
       ],
       "schema": "invalid",

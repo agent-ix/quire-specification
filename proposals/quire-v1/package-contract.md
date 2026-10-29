@@ -23,17 +23,15 @@ independent declarations whose names and dependencies are established.
 
 | Static component | Information retained and checked |
 | --- | --- |
-| Sources | Exact authority, identity and byte digest per unit; original source regions and clause/declaration identities. Two editable authorities for one clause refuse. |
+| Sources | Exact authority and identity per unit; original source regions and clause/declaration identities. Two editable authorities for one clause refuse. |
 | Language | Exact language/edition and supplied definition artifact; no implementation-version default. |
 | Profiles | Each declaration's selected root definition identity, exact required definition closure and the meaning owned by each dependency. |
-| Models | Domain package imported by identity alone; the `model_root` node records its identity; its effective declaration keys and exact manifest/lock/dependency closure. |
+| Models | Domain package imported by identity; its effective declaration keys and exact manifest/dependency closure. |
 | Native dependencies | Resolved predicate, operation-contract and temporal-obligation references with their defining source, model and profile selections; typed anchors and capture requirements. |
 | Binding requirements | Typed roles, selected model/observation contracts and clock/scope premises described below. Concrete runtime instances are not inserted here. |
 
-The native `model` import names a domain package by identity alone and states
-no digest and no version; the package's `model_root` node records the identity and the lock records nothing. The domain package is the semantic IR document lifted from the imported
-spec's artifacts. Manifest/lock digests, package fingerprints and source digests
-remain separate. The domain package identity and its declarations must match the
+The native `model` import names a domain package by identity. The domain package is the semantic IR document lifted from the imported
+spec's artifacts. The domain package identity and its declarations must match the
 supplied document and its validated closure. A transitively reachable type is
 not thereby a directly imported type. The spec's artifacts declare model closure,
 presence, units, relationships and configuration; QSL model intake checks them
@@ -61,7 +59,7 @@ selections in [AD-005](../../spec/assurance/AD-005-complete-value-expression-sys
 Every package selecting that root retains `quire.value.accounting/v1` and its
 exact supplied definition bytes; no evaluator or backend may substitute a local
 cost model. It retains `quire.value.compound-unit/v1` with its schema and
-vectors, and every rule artifact of the complete-value lock as a separate
+vectors, and every rule artifact of the complete-value package selection as a separate
 DefinitionRef.
 Text-bearing packages retain `quire.value.text.unicode-17.0.0/v1`; integer
 `div`/`rem` retains exactly one truncating, floor or Euclidean definition; IEEE
@@ -160,7 +158,7 @@ subject while changing raw bytes. Source-byte changes alter source correspondenc
 even if a typed-expression canonicalizer establishes equal expression meaning.
 Canonical identity is optional until its exact domain/version/algorithm is
 selected and qualified; structural comparison or ordinary JSON hashing cannot
-claim it. Existing ArtifactRef/SemanticRef, domain package `sha256-jcs` and IR domains
+claim it. Existing ArtifactRef/SemanticRef, domain package identity and IR domains
 retain their selected contracts.
 
 ## Admission examples
@@ -185,6 +183,5 @@ incompleteness.
 
 The FS05 reference/evolution rules are accepted; the remaining runtime and
 assessment rules stay in the [current shared draft](definitions/README.md).
-Further draft successor definitions or
-checksum publication are not prerequisites. Historical accepted selections
+Further draft successor definitions are not prerequisites. Historical accepted selections
 retain their original meaning.

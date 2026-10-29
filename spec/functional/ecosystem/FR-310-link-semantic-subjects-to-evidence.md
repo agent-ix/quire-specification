@@ -7,8 +7,6 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/AD-011
     type: references
-  - target: ix://agent-ix/quire-specification/FR-017
-    type: references
 ---
 
 # FR-310: Link every semantic subject to assurance obligations

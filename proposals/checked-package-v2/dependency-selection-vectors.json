@@ -2,8 +2,6 @@
   "schema_only": [
     "dependency_selections",
     "entry_mutations",
-    "model_selections",
-    "model_entry_mutations",
     "order_vectors",
     "supply_vectors"
   ],
@@ -26,7 +24,7 @@
       }
     }
   ],
-  "package_id": "a5a19bab6ca7c7fc5b7841526ad32f05f86af216205cf0cd5c92fafd24df2177",
+  "package_id": "08040b49b35f5d13c9295599557a4ed65cb431417e7708bab4b55015fa24a2aa",
   "entry_mutations": [
     {
       "id": "definition-selection-shape",
@@ -84,25 +82,6 @@
           "algorithm": "sha256",
           "digest": "3333333333333333333333333333333333333333333333333333333333333333"
         }
-      },
-      "outcome": "refused:unknown_member"
-    }
-  ],
-  "model_selections": [
-    {
-      "identity": "test/orders",
-      "digest_domain": "sha256-jcs",
-      "digest": "8888888888888888888888888888888888888888888888888888888888888888"
-    }
-  ],
-  "model_entry_mutations": [
-    {
-      "id": "model-selection-carries-version",
-      "entry": {
-        "identity": "test/orders",
-        "version": "1.0.0",
-        "digest_domain": "sha256-jcs",
-        "digest": "8888888888888888888888888888888888888888888888888888888888888888"
       },
       "outcome": "refused:unknown_member"
     }
@@ -276,7 +255,7 @@
           "package_id": {
             "domain": "quire.package.semantic/v2",
             "algorithm": "sha256",
-            "digest": "295c74c4f415fd827deb3af52fe27f0748f1d8c3ab78cd1599ad268ee473a139"
+            "digest": "a2623cda1628e514ea2c4c05c2115bc613ab83e6cdccd82926dfb020a8369a88"
           }
         },
         {
@@ -284,7 +263,7 @@
           "package_id": {
             "domain": "quire.package.semantic/v2",
             "algorithm": "sha256",
-            "digest": "434dcd26c42e73a81052f4fa8586ca211eb6666de403b8313fd443c83dd1dfed"
+            "digest": "c52570699781cb2ab3bf6f5f22dfef7b7a574a88011cc51e1622f015d16fb804"
           }
         }
       ],
@@ -298,7 +277,7 @@
               "package_id": {
                 "domain": "quire.package.semantic/v2",
                 "algorithm": "sha256",
-                "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
+                "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
               }
             }
           ]
@@ -312,7 +291,7 @@
               "package_id": {
                 "domain": "quire.package.semantic/v2",
                 "algorithm": "sha256",
-                "digest": "d70d30c6f2090c0a17e983173431a17b636154b816e6743b3e5f6dc236476669"
+                "digest": "1de01e7806547db4250237dc2b951ac722989602e453b980e0967bb34c5f53b2"
               }
             }
           ]
@@ -332,7 +311,7 @@
           "package_id": {
             "domain": "quire.package.semantic/v2",
             "algorithm": "sha256",
-            "digest": "295c74c4f415fd827deb3af52fe27f0748f1d8c3ab78cd1599ad268ee473a139"
+            "digest": "a2623cda1628e514ea2c4c05c2115bc613ab83e6cdccd82926dfb020a8369a88"
           }
         }
       ],
@@ -346,7 +325,7 @@
               "package_id": {
                 "domain": "quire.package.semantic/v2",
                 "algorithm": "sha256",
-                "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
+                "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
               }
             }
           ]
@@ -357,7 +336,7 @@
         "package": {
           "domain": "quire.package.semantic/v2",
           "algorithm": "sha256",
-          "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
+          "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
         },
         "node": {
           "domain": "quire.checked-semantic-node/v1",

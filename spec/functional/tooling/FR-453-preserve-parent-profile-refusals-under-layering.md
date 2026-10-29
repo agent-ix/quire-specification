@@ -56,9 +56,7 @@ reports them.
 
 ### Layering edges
 
-Each `header_selectable_layers` row of the
-[complete-value lock](../../../proposals/quire-v1/definitions/complete-value-lock.json)
-is a layer a `profile` declaration selects by naming its identity (FR-001).
+Each row of the [header-selectable layers table](../../../proposals/quire-v1/definitions/README.md#header-selectable-layers) is a layer a `profile` declaration selects by naming its identity (FR-001).
 The row carries the layer's identity, the layers it `requires`, its
 `admitted_forms` definition, what it `admits` and its `witness_request`
 (an FR-290 kind and an FR-331 extent classification). A layering edge is one AD-003 `requires` edge between two of those
@@ -84,8 +82,7 @@ refuses with a typed refusal stays refused under the child.
 - A case whose two units differ in any byte outside that identity string is
   a tool failure naming the case.
 - Each side's selected definitions follow FR-001: its layer and the layer's
-  `requires` closure, plus the qualification rows the complete-value lock's
-  `package_selection` gives for those layers, counting the layers an infinite-trace profile requires for a refinement's rows (FR-001).
+  `requires` closure, plus the definitions the complete-value package selection gives for those layers, counting the layers an infinite-trace profile requires for a refinement's rows (FR-001).
 - A case naming a pair of layers that is not one of E1 to E6 is a tool
   failure naming the case.
 - Each side compiles in the running build. No outcome is recorded or
@@ -166,9 +163,7 @@ quire-spec-language FR-345 implements this gate.
   profile hierarchy, its `requires` edges and the non-weakening rule.
 - [FR-001](../foundation/FR-001-select-native-profile.md) owns profile
   selection by `profile` declaration.
-- The `header_selectable_layers` rows of the
-  [complete-value lock](../../../proposals/quire-v1/definitions/complete-value-lock.json)
-  own each layer's `requires` edges, admitted-form set and accepting
+- The [header-selectable layers table](../../../proposals/quire-v1/definitions/README.md#header-selectable-layers) owns each layer's `requires` edges, admitted-form set and accepting
   targets.
 - [FR-452](FR-452-preserve-admission-across-specification-revisions.md)
   owns the case results, verdict and exit code.

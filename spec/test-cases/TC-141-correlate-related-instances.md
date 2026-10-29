@@ -18,7 +18,7 @@ relationship declarations in the checked package's domain package.
 Link a refund to O1's effect, offer it for O2, remove/link-conflict the relation,
 replay one exact relationship and offer a second distinct relationship for the
 same required slot. Reverse its endpoints and independently mutate each FR-287
-endpoint member, relationship kind/declaration key, domain package identity and version. Offer a relationship declaration key that is not in the
+endpoint member, relationship kind/declaration key, domain package identity. Offer a relationship declaration key that is not in the
 checked package. Repeat a delivery receipt and substitute its message,
 delivery or receive identity in each other position.
 

@@ -279,7 +279,7 @@ declaration silently. The resolver records the identity of the semantic
 IR document lifted from the imported spec's artifacts
 ([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)) that is
 supplied under it by a `model_root` node (FR-154, FR-321); no digest or
-version of the document is recorded. The selected row is part of the package identity. Clauses name
+version of the document is recorded. Clauses name
 domain types by qualified name through the model alias, for example
 `Orders::Order` after `model Orders = "acme/orders";`. A qualified name
 resolves to one effective declaration key (domain package identity, IR node

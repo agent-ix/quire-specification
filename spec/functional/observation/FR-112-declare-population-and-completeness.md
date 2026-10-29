@@ -17,7 +17,7 @@ relationships:
 ## Description
 
 When assessing a population or event-time window, the assessment request SHALL
-retain the selected domain package identity and version and population declaration
+retain the selected domain package identity and population declaration
 key, declared finite membership rule, population and snapshot/window keys, bounds,
 observation sources, configuration/closure identities and versions, and
 completeness/progress dependencies.

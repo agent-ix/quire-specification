@@ -20,7 +20,7 @@ Admit a domain package lifted from an artifact bundle, and mutate its identity, 
 Use the subject and inputs named by FR-154. Execute its positive case, each declared boundary, and each explicit refusal mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
 Select `quire.model.complete/v1` through
-[`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
+[`model-complete.md`](../../proposals/quire-v1/definitions/model-complete.md).
 Node names and declaration keys follow TC-195.
 
 Fixtures:
@@ -40,7 +40,7 @@ Fixtures:
 
 | Vector | Input | Expected result/disposition |
 | --- | --- | --- |
-| I01 | Extract and lift B1, then admit K1 under S1 | the lock row is `{test/orders}`; three original declarations with keys `(test/orders, ix://test/orders/A)`, `(test/orders, ix://test/orders/A/x)` and `(test/orders, ix://test/orders/B)`, each with its `origin` and no digest; three `normalize.record` charges in that order |
+| I01 | Extract and lift B1, then admit K1 under S1 | the `model_root` node has identity `test/orders`; three original declarations with keys `(test/orders, ix://test/orders/A)`, `(test/orders, ix://test/orders/A/x)` and `(test/orders, ix://test/orders/B)`, each with its `origin` and no digest; three `normalize.record` charges in that order |
 | I02 | S1 with an empty package input, and S1 with K1 supplied under the identity `test/other` only; K1 with one field value changed, supplied under `test/orders`; K1 relabelled identity `acme/other`, supplied under `test/orders` | `refused { code: missing_import, cause: missing-selection }` for both lookups; the changed K1 admitted with its changed field value and its own `version` (FR-154-AC-2); `refused { code: invalid_model_binding, cause: wrong-model-selection }` with both identities; no refused run charges `normalize.record` or builds a declaration |
 | I03 | K1 with `A/x.multiplicity.lower` set to `"zero"` and `B.supertypes` set to `[ix://test/orders/Z]` | after three `normalize.record` charges, two refusals in node order: `refused { code: invalid_model_binding, cause: malformed-declaration }` naming `ix://test/orders/A/x`, member path `Field.multiplicity.lower` and its `origin`; then `refused { code: missing_declaration, cause: missing-name }` naming `ix://test/orders/B`, absent node `ix://test/orders/Z` and its `origin`; no effective view |
 | I04 | B1 with artifact `A` retitled `Alpha Prime`, lifted and admitted under S1, with one clause naming `M::A::x`; then B1 with artifact `A`'s id changed to `Ay`, its `x` row typed `Ay` and `B` specializing `Ay`, lifted and admitted under S1, with one clause naming `M::A` and another naming `M::A::x` | the retitled run yields exactly I01's three declaration keys, type `A` has `displayName` `Alpha Prime`, and the clause resolves to `(test/orders, ix://test/orders/A/x)`; in the id-changed run, key `(test/orders, ix://test/orders/B)` equals I01's, the type from artifact `Ay` has the new key `(test/orders, ix://test/orders/Ay)` and its field the new key `(test/orders, ix://test/orders/Ay/x)`, `B` has supertype `Ay`, no declaration has key `(test/orders, ix://test/orders/A)` or `(test/orders, ix://test/orders/A/x)`, and each clause is `refused { code: missing_declaration, cause: missing-name }`, naming absent node `ix://test/orders/A` and `ix://test/orders/A/x` respectively |
@@ -71,7 +71,6 @@ Fixtures:
 | I29 | `model M = ;`, `model M = 7;`, `model M = "test/orders"` ending the source, and `model M "test/orders";` | `refused { code: invalid_syntax, cause: unexpected-token }` at the offending token for the first, second and fourth, `unexpected-end` at the end of the source for the third; no declaration is dropped without its diagnostic (FR-154-AC-35) |
 | I30 | Admit K1 under S1, and read the package's `model_root` nodes | one node of identity `test/orders`; no lock row, digest and no version appears in the lock or in any input of the run (FR-154-AC-36) |
 | I31 | K1 and K1 with one field value changed, both supplied under `test/orders`; then S1 with only a document supplied under `test/other` | `refused { code: invalid_package, cause: conflicting-definition }` naming both supplied documents before intake; then `refused { code: missing_import, cause: missing-selection }` at the identity string (FR-154-AC-37) |
-| I32 | The package of I30 replayed with K1 in which one field value is changed, supplied under `test/orders`, its `version` member unchanged | `refused { code: stale_dependency, cause: content-mismatch }` naming the proved and the recomputed `package_id`; no model-specific comparison runs (FR-154-AC-38) |
 
 ## Expected Results
 

@@ -36,7 +36,7 @@ Regions use zero-based half-open UTF-8 byte offsets and one-based scalar columns
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-003-AC-1 | Withdrawn: it existed only to compare a declared digest of the expression region. | Withdrawn |
+| FR-003-AC-1 | Withdrawn: the declared document digest is removed. | Withdrawn |
 | FR-003-AC-2 | A span splitting a UTF-8 scalar receives invalid_source_map. | Test |
 | FR-003-AC-3 | A segment map that deletes an interior source token receives invalid_source_map. | Test |
 | FR-003-AC-4 | A missing mapping from a requirement's positive authored revision to the IR requirement revision refuses executable projection. | Test |

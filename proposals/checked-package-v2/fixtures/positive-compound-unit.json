@@ -16,7 +16,6 @@
         "identity": "example-model"
       }
     ],
-    "model_selections": [],
     "required_features": [
       "quire.value.complete/v1"
     ],
@@ -25,7 +24,7 @@
   "package_id": {
     "domain": "quire.package.semantic/v2",
     "algorithm": "sha256",
-    "digest": "badb1cc5ad175aca47df9ab693af3f3a4d1174be82e6fad7f0c4e102b1a6cdd4"
+    "digest": "1b9f138d63e5e20aea1009bc87db97ae92f07344730fab5c933f20cb4672be69"
   },
   "lock": {
     "sources": [
@@ -56,7 +55,6 @@
         "identity": "example-model"
       }
     ],
-    "model_selections": [],
     "required_features": [
       "quire.value.complete/v1"
     ],

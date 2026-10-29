@@ -37,7 +37,7 @@ package. Closed population extents are declared in spec artifacts.
 Runtime observation records are assessment inputs. Their subject, relationship
 and population references are typed by those declaration keys.
 
-Each assessment input retains the selected domain package identity and version,
+Each assessment input retains the selected domain package identity,
 the declaration key of every subject kind it uses, the relationship declaration
 key where required, the population declaration key, `snapshotIdentity` or
 `windowIdentity`, `configurationIdentity`, and every selected closure identity and version.

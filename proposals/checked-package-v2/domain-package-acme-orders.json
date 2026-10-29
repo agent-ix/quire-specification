@@ -21,7 +21,6 @@
         "module": "acme/orders",
         "name": "entity"
       },
-      "manifestDigest": "sha256:80336b533d10d9767d578672d92c788c39df98b9ef023d76c0ba924eb68807f1",
       "moduleVersion": "1.0.0"
     },
     {
@@ -38,7 +37,6 @@
         "module": "acme/orders",
         "name": "interface"
       },
-      "manifestDigest": "sha256:5a04577132fe8f46e21635ca3960d99da21403fb786512d49ccf49db81df2f1a",
       "moduleVersion": "1.0.0"
     },
     {
@@ -52,7 +50,6 @@
         "module": "acme/orders",
         "name": "value_type"
       },
-      "manifestDigest": "sha256:4769687ec63ac998e1ba671267f6305adf8dcaf8c8618329f64232001328b27f",
       "moduleVersion": "1.0.0"
     }
   ],
@@ -61,15 +58,12 @@
   "occurrences": [],
   "package": {
     "identity": "acme/orders",
-    "lockDigest": "sha256:dd14a01dbf27630b037655ef2a121da9709d605ff79f383ea1bbe95ec5c6a8ca",
-    "manifestDigest": "sha256:0bab35506a9dd8220eba656db9f4996813dcbe7e20b12e1231e584ea5294f8e0",
     "mappingVersions": [],
     "profileVersions": [],
     "version": "1.0.0"
   },
   "source": {
     "dialect": "spec-bundle",
-    "digest": "sha256:41cf6794ba4200b839c53531555f0f3998df4cbb01a4d5cb0b94e3ca5e23947d",
     "identity": "ix://acme/orders/spec",
     "version": "1.0.0"
   },

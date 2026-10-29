@@ -23,7 +23,6 @@
       },
       "role": "edition"
     },
-    "model_selections": [],
     "profile_selections": [],
     "required_features": [
       "quire.value.complete/v1"
@@ -40,7 +39,6 @@
       },
       "role": "edition"
     },
-    "model_selections": [],
     "profile_selections": [],
     "required_features": [
       "quire.value.complete/v1"
@@ -56,7 +54,7 @@
   },
   "package_id": {
     "algorithm": "sha256",
-    "digest": "a6847ce17ace3c932e067055790ffe38f35b32e5503dec82bef172dca538196d",
+    "digest": "7722df5c3a3905770ad0884e6072a4393cfeb1310634b63a95dd67edd8063321",
     "domain": "quire.package.semantic/v2"
   },
   "semantic_graph": {

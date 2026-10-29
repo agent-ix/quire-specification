@@ -627,7 +627,7 @@ exactly one earlier or later stage, in this order of precedence:
    other non-`NodeRef` value, and an `owner_model` on another node.
 2. **Graph shape** (FR-322 key and graph stages, before any body step): the
    target's own **owner join**. A `model`/`object_type` node whose
-   `ModelOwner` joins no `model_root` node owner, or whose admitted document
+   `ModelOwner` joins no `model_root` node, or whose admitted document
    does not declare that node as an object type, is a genuinely unselected
    target. It refuses `missing_declaration`/`missing-selection` at the
    target's own `node_id` (FR-322 owner join), whether or not any clause names
