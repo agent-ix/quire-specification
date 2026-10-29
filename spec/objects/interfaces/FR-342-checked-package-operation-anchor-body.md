@@ -63,6 +63,11 @@ below.
   no-point anchor of its operation through its `operation` binding: the
   reference is a dependency, not an occurrence, so it adds none, and a
   point-qualified anchor is not a timed clause's operation.
+  The frame (FR-340) stays the only record of what the operation may modify: a
+  `clock_reset` of kind `place` requires its first field in it (`CL-11`), and a
+  frame that names a clock field imposes no write, because an unreset clock
+  keeps its value and the package builds no whole-collection clock write and no
+  drop (FR-322-AC-267).
 - **dependencies** — `C` and `F`, the two nodes the body references.
 
 One `operation_anchor` node stands for one (declaring type, operation name,

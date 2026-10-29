@@ -25872,7 +25872,7 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
 fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let ids: Vec<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected: Vec<String> = (1..=54).map(|n| format!("CL-{n:02}")).collect();
+    let expected: Vec<String> = (1..=56).map(|n| format!("CL-{n:02}")).collect();
     assert_eq!(ids, expected.iter().map(String::as_str).collect::<Vec<_>>());
     assert_eq!(timed_clause_vector_defects(""), Vec::<String>::new());
 }
@@ -26036,6 +26036,52 @@ fn tc_367_place_path_key_decides_a_shared_region() {
     .map(timed_place_path_key)
     .collect();
     assert!(keys.windows(2).all(|pair| pair[0] < pair[1]), "slot keys ascend by collection, minimum, maximum with unbounded last");
+}
+
+#[trace("TC-367", "FR-322-AC-267", "FR-415-AC-25")]
+#[test]
+fn tc_367_unbuilt_clause_forms_are_published() {
+    let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
+    let unbuilt = &vectors["unbuilt_forms"];
+    assert_eq!(unbuilt["ticket"], "STD-560");
+    assert_eq!(unbuilt["rule"], "FR-322-AC-267");
+    assert_eq!(FR322_BODY_STEPS.matches("| FR-322-AC-267 |").count(), 1);
+    assert_eq!(FR415_DECLARE_CLOCKS.matches("| FR-415-AC-25 |").count(), 1);
+    assert_eq!(TC367_CLOCK_DECLARATIONS.matches("| CK-38 |").count(), 1);
+    let ids: Vec<&str> = unbuilt["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, ["GJ-01", "GJ-02", "GJ-03", "CW-01", "CW-02", "CW-03", "CW-04", "CW-05", "SD-01", "SD-02"]);
+    let case_ids: BTreeSet<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
+    let package = parsed_fixture(POSITIVE_TIMED_CLAUSE_NODES);
+    for case in unbuilt["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        assert!(FR322_BODY_STEPS.contains(&format!("`{id}`")), "FR-322 names {id}");
+        assert!(TC367_CLOCK_DECLARATIONS.contains(id), "TC-367 names {id}");
+        match case["expected"].as_str().unwrap() {
+            "refused" => {
+                assert_eq!(case["expected_code"], "unsupported_construct", "{id}");
+                assert_eq!(case["expected_cause"], "not-yet-implemented", "{id}");
+                let row = case["reader_row"].as_str().unwrap();
+                assert!(case_ids.contains(row), "{id}: reader row {row} is a published case");
+            }
+            "built" => {
+                assert_eq!(case["package_case"], "CL-01", "{id}");
+                let node = &package["semantic_graph"]["nodes"][case["node_index"].as_u64().unwrap() as usize];
+                let form = if id.starts_with("GJ") { "clock_guard" } else { "clock_reset" };
+                assert_eq!(node["semantic_form"], form, "{id}: the control is a built {form}");
+            }
+            other => assert_eq!((other, id), ("no-node", "CW-05")),
+        }
+    }
+    // The reader rows of the exclusions are refused by the replay (CL-20, CL-55 by schema, CL-56 by the slot count).
+    for (id, expected) in [("CL-20", "refused-by-schema"), ("CL-55", "refused-by-schema"), ("CL-56", "refused")] {
+        let case = vectors["cases"].as_array().unwrap().iter().find(|c| c["id"] == id).unwrap();
+        assert_eq!(case["expected"], expected, "{id}");
+    }
+    // FR-322 states the exclusions in its own words.
+    let text = FR322_BODY_STEPS.split_whitespace().collect::<Vec<_>>().join(" ");
+    for sentence in ["Forms the package does not build", "STD-560", "part pairs a predicate with at least one constraint", "drop is not a reset", "whole-collection write", "presence requirement is not a write", "reads no element data"] {
+        assert!(text.contains(sentence), "FR-322 says: {sentence}");
+    }
 }
 
 #[trace("TC-367", "FR-322-AC-261", "FR-322-AC-262", "FR-322-AC-263", "FR-322-AC-264", "FR-322-AC-265", "FR-322-AC-266", "FR-342-AC-11", "FR-415-AC-22", "FR-415-AC-23")]

@@ -9355,6 +9355,304 @@
       "locus": "/semantic_graph/nodes/70",
       "locus_suffix": "nodes/70",
       "note": "FR-322-AC-121 and FR-342 'Reader order' put the state step before the timed-model step, so this package is refused in the state step although its reset also names an anchor of another model; CL-25 is the same defect repaired to pass the state step."
+    },
+    {
+      "id": "CL-55",
+      "subject": "a place reset with no value: a drop (self.v = absent) is not a reset and has no form, so the reset node of v loses its value binding",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "4327acdf9b86e23fe5c4ff68b634322279cc718ad3fa55bdf518f2faceeddf2d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/2/digest",
+          "value": "1c1883b74074a1c45dbf8b71d5dab00a82463b14fcd5a91fccee2c9e54e810c3"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/3/digest",
+          "value": "28b176c3e3cc28748a02984ea79b2770039dcad454fce0c3b82270c432ce6eef"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/4/digest",
+          "value": "2b08dac71c652ad9ccaa0903a25b6e5f152a1318d88602bce902a8808f3c7f01"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/5/digest",
+          "value": "3d0d503247b8528bbde993ba6d144eb0f485f326745a8287986d1982bcee6b0f"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/6/digest",
+          "value": "433bc423376ef45230e03951952fec30ddac36115e9b80835be5eccdaa92bf3d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "4327acdf9b86e23fe5c4ff68b634322279cc718ad3fa55bdf518f2faceeddf2d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/4/value/members/1/target/digest",
+          "value": "433bc423376ef45230e03951952fec30ddac36115e9b80835be5eccdaa92bf3d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/semantic_type/digest",
+          "value": "433bc423376ef45230e03951952fec30ddac36115e9b80835be5eccdaa92bf3d"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/82/node_id/digest",
+          "value": "433bc423376ef45230e03951952fec30ddac36115e9b80835be5eccdaa92bf3d"
+        },
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/82/body/members/7"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "4327acdf9b86e23fe5c4ff68b634322279cc718ad3fa55bdf518f2faceeddf2d"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/82/node_id/digest",
+          "value": "433bc423376ef45230e03951952fec30ddac36115e9b80835be5eccdaa92bf3d"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "5e1f1575d03fffa1a4f060b6f0b4118a4ecda2947f900f9edc751d09f408cb2a"
+        }
+      ],
+      "schema": "invalid",
+      "rule": "FR-322-AC-267",
+      "expected": "refused-by-schema",
+      "locus": "/semantic_graph/nodes/82/body"
+    },
+    {
+      "id": "CL-56",
+      "subject": "a place reset of the collection place q with no slot term and no binder: a whole-collection write names no place, because a place of a collection is a slot place",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "4653017a70111d25bb19bad17a4d9fb90bf06766b646119f4dfe592ad12e2b49"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/21/digest",
+          "value": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/22/digest",
+          "value": "b7bafc84b6c9816b929e87f10299f284ade59bb976d1ff182f4d8ef8dfa0e8f8"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/23/digest",
+          "value": "bb0f4f36c315becd0c6076bfdb8775a9876e285458fde25c8cf58a4c57e87c6c"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/24/digest",
+          "value": "bb8d6e58ade25c82c62442c206211568a68fd05e32d4b4536e8e5a9a930a4c78"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/25/digest",
+          "value": "c7e9bdf259a174c82ac43769bd2ac49e5213096cf834cdcf92d64c221dfa6de7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/26/digest",
+          "value": "c883bc73298724751bfe1f3810dd6829dc525ca24b6718d8fa34e8cc13d2dbd0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/27/digest",
+          "value": "de0f70075572f8880c5c9ca3c193f70324277c4c11f5a9daaa5f34f79d23b007"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/28/digest",
+          "value": "f90b80f99cb571987ef1ef1fdcb24f6ff5d67319a3436e8606ccd98723c953ed"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/29/digest",
+          "value": "fcf9fb5fe84e35c748a2d7cb588aacb6cb0f8b499763913bdd17fe650e5cccb4"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "4653017a70111d25bb19bad17a4d9fb90bf06766b646119f4dfe592ad12e2b49"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/4/value/members/3/target/digest",
+          "value": "fcf9fb5fe84e35c748a2d7cb588aacb6cb0f8b499763913bdd17fe650e5cccb4"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/84/semantic_type/digest",
+          "value": "fcf9fb5fe84e35c748a2d7cb588aacb6cb0f8b499763913bdd17fe650e5cccb4"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/84/dependencies/3/digest",
+          "value": "addef431196ef9f3fdcaf78a50352379f0192680bbffe847ad66ee13fa1aab07"
+        },
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/84/dependencies/4"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/84/node_id/digest",
+          "value": "fcf9fb5fe84e35c748a2d7cb588aacb6cb0f8b499763913bdd17fe650e5cccb4"
+        },
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/84/body/members/4/value/members/0"
+        },
+        {
+          "op": "remove",
+          "path": "/semantic_graph/nodes/84/body/members/5/value/members/0"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "4653017a70111d25bb19bad17a4d9fb90bf06766b646119f4dfe592ad12e2b49"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/84/node_id/digest",
+          "value": "fcf9fb5fe84e35c748a2d7cb588aacb6cb0f8b499763913bdd17fe650e5cccb4"
+        },
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "c5b729ddc459f4e80b0e0600fb22901a2a353b7eb69fe727c531dfd34b6c6e42"
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-322-AC-267",
+      "expected": "refused",
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible",
+      "locus": "/semantic_graph/nodes/84/body/members/4/value",
+      "locus_suffix": "members/4/value"
     }
-  ]
+  ],
+  "unbuilt_forms": {
+    "ticket": "STD-560",
+    "rule": "FR-322-AC-267",
+    "note": "Producer-level cases, like QN-01 and QN-02: source text and the refusal the checked-package producer gives, not package patches, because no package is emitted for a refused form. Each refused form is valid source (FR-415) that the producer does not build in this version, so it is unsupported_construct/not-yet-implemented (the source is not wrong), refused at the form, naming the form and STD-560; the producer writes no clause node for the operation and does not approximate the form. The `built` cases are controls: the form is built, and the package row that pins it is named. The package rows CL-20, CL-55 and CL-56 pin the reader side of the same exclusions (a part with no constraint, a reset with no value, a reset with no slot term for a collection place). Test tc_367_unbuilt_clause_forms_are_published pins the codes, the causes and that FR-322-AC-267, FR-415-AC-25 and TC-367 CK-38 name them; no reader or producer in this repository executes them (the producer is quire-spec-language, QSL).",
+    "cases": [
+      {
+        "id": "GJ-01",
+        "gap": 1,
+        "source": "guard: self.x >= 1 ms or self.versionNumber > 0",
+        "expected": "refused",
+        "expected_code": "unsupported_construct",
+        "expected_cause": "not-yet-implemented",
+        "locus": "the disjunct that reads no clock",
+        "reader_row": "CL-20"
+      },
+      {
+        "id": "GJ-02",
+        "gap": 1,
+        "source": "guard: (self.versionNumber > 0 and self.x >= 1 ms and self.y >= 1 ms) or (true and self.x >= 5 ms)  (every disjunct reads a clock; the published clock_guard of node 47: two parts)",
+        "expected": "built",
+        "package_case": "CL-01",
+        "node_index": 47
+      },
+      {
+        "id": "GJ-03",
+        "gap": 1,
+        "source": "guard: self.x >= 0 ms or self.versionNumber > 0",
+        "expected": "built",
+        "note": "the source constraint x >= 0 ms is a constraint and builds as written; the producer never inserts a constraint to give a data-only disjunct one",
+        "package_case": "CL-01",
+        "node_index": 47
+      },
+      {
+        "id": "CW-01",
+        "gap": 2,
+        "source": "post self.ts = sequence[Timer { x: 0 ms, n: 1 }]",
+        "expected": "refused",
+        "expected_code": "unsupported_construct",
+        "expected_cause": "not-yet-implemented",
+        "locus": "the write",
+        "reader_row": "CL-56"
+      },
+      {
+        "id": "CW-02",
+        "gap": 2,
+        "source": "post self.ts = filter(e in self.ts: e.n > 1)",
+        "expected": "refused",
+        "expected_code": "unsupported_construct",
+        "expected_cause": "not-yet-implemented",
+        "locus": "the write",
+        "reader_row": "CL-56"
+      },
+      {
+        "id": "CW-03",
+        "gap": 2,
+        "source": "post self.v = absent",
+        "expected": "refused",
+        "expected_code": "unsupported_construct",
+        "expected_cause": "not-yet-implemented",
+        "locus": "the write",
+        "reader_row": "CL-55"
+      },
+      {
+        "id": "CW-04",
+        "gap": 2,
+        "source": "post self.v = 0 ms  (a constant write to a guarded place makes it present: the clock_reset of node 82)",
+        "expected": "built",
+        "package_case": "CL-01",
+        "node_index": 82
+      },
+      {
+        "id": "CW-05",
+        "gap": 2,
+        "source": "post present(self.v)  with v absent in the pre-state and no write of v",
+        "expected": "no-node",
+        "note": "a presence requirement is a postcondition predicate, a presence_read expression, and not a write: the package carries no clause node for it. With the precondition establishing absence the producer refuses invalid_timed_model/clock-presence-unwritten (FP-11); otherwise the requirement restricts the pre-state to a present v (FP-09)",
+        "vectors": [
+          "FP-01",
+          "FP-09",
+          "FP-11"
+        ]
+      },
+      {
+        "id": "SD-01",
+        "gap": 3,
+        "source": "post forall(e in self.ts: e.n > 1 implies e.x = 0 ms)",
+        "expected": "refused",
+        "expected_code": "unsupported_construct",
+        "expected_cause": "not-yet-implemented",
+        "locus": "the condition",
+        "reader_row": "CL-12"
+      },
+      {
+        "id": "SD-02",
+        "gap": 3,
+        "source": "post forall(e in self.q: present(e) implies e = 0 ms)  (the condition reads the presence of the binder's place only: the clock_reset of node 84)",
+        "expected": "built",
+        "package_case": "CL-01",
+        "node_index": 84
+      }
+    ]
+  }
 }

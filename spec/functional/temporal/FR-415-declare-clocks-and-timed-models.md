@@ -361,6 +361,21 @@ An operation's precondition is a Boolean combination of data predicates and
 atomic clock constraints; its clock part is the operation's **guard**. A
 disjunction in a guard is a union of convex constraints.
 
+### Forms the checked package does not build
+
+The checked package (FR-322 "Clause nodes") builds the guard, the reset to a
+constant, the invariant and the constraint of the sections above, and three
+valid source forms it does not build in this version: a guard disjunct that
+reads no clock (a disjunct is a package part only when it holds a clock
+constraint), a clock write that is not a reset to a constant (a
+whole-collection write of a clock collection and `self.v = absent`), and a
+selection reset whose condition reads the data part of the selected element.
+The language rules above are unchanged. The producer refuses each
+`unsupported_construct`/`not-yet-implemented` at the form, naming STD-560, and
+writes no clause node and no approximation. A presence requirement in a
+postcondition is a data predicate and not a write, so it has no clause node
+and the rule of "No implicit reset on a presence change" applies as stated.
+
 ### Time invariants
 
 A model declares time invariants `time invariant when P { body }`, `P` a data
@@ -412,6 +427,7 @@ its value and the request setting that raises it.
 | FR-415-AC-22 | A checked package for a dense model emits one `clock_guard` for each operation that has guard clauses, whose `parts` each pair the guard predicate with the clock constraints it bounds; one `clock_reset` for each reset of a postcondition, of kind `place` (the place template, its owner term, the slot terms, the quantified slots as `binders`, the `when` condition and the exact value) or, for a `Clock` parameter, of kind `parameter` naming the operation and the parameter; one `time_invariant` for each invariant, whose `bounds` are upper bounds (`<`, `<=`) only; and the `clock_constraint` nodes they name, each with the relation word `lt`, `le`, `eq`, `ge` or `gt`. A lower bound or an equality in an invariant is the source refusal `time-invariant-shape`, and a package that carries one refuses `invalid_package`/`timed-node-reference` (`CL-07`). Each form is a vector of `timed-clause-node-vectors.json` (`CL-01`..`CL-25`). | Test (TC-367; CK-32..CK-36; CL-01..CL-25) |
 | FR-415-AC-23 | Two clock places of one model that no source region tells apart are listed in the order of their paths (field names and slot collections with bounds), never by a hash, so two compilations of one model list its places identically (`AO-08`, `AO-09`); an element place in a clause (`self.ts[i].x`, `self.m[k].x`) is the template place with its owner term and slot terms, and a slot term of another type than the selector's domain refuses `ill_typed`/`type-mismatch` (`CL-10`). | Test (TC-367; CK-35, CK-36; AO-08..AO-10, CL-10) |
 | FR-415-AC-24 | A guard or an invariant whose body is `forall(e in p: B)` or `exists(e in p: B)` over clock places is refused `unsupported_construct`/`not-yet-implemented` at the quantifier and names STD-554, which defines the binder form; the checked package does not carry an unquantified approximation of it. | Test (TC-367; CK-37; QN-01, QN-02) |
+| FR-415-AC-25 | The checked-package producer refuses `unsupported_construct`/`not-yet-implemented`, naming STD-560, a guard `self.x >= 1 ms or self.versionNumber > 0` (a disjunct with no clock constraint), the whole-collection write `self.ts = sequence[Timer { x: 0 ms, n: 1 }]` and `self.ts = filter(e in self.ts: e.n > 1)`, the drop `self.v = absent`, and the selection reset `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)`; it builds the guard whose every disjunct reads a clock, the constant write `self.v = 0 ms` and a reset whose condition reads only the presence of the binder's place. A presence requirement has no clause node. The cases are `GJ-01`..`GJ-03`, `CW-01`..`CW-05`, `SD-01` and `SD-02` of `timed-clause-node-vectors.json` (FR-322-AC-267). | Test (TC-367; CK-38) |
 
 ## Dependencies
 
