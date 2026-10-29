@@ -9,7 +9,7 @@ these examples or freeze another consumer's method/result contract around them.
 Local display names are aliases, never declaration identity. The language must
 not infer type definitions from application Rust strings or runtime examples.
 
-Resolve imports by identity alone (a model's version is read into the lock and no digest exists), then by
+Resolve imports by identity alone (a model's lock row is its identity and no digest exists), then by
 exports and transitive lock closure. Do not choose the first duplicate or a
 reachable but undeclared package. Reject
 missing, ambiguous, stale, foreign, ill-typed and unsupported definitions with

@@ -18,7 +18,7 @@ substitution at the boundary before a dependent evaluator runs.
 
 The package's spec artifacts pass through quire-rs semantic extraction and the
 FCD extraction-frontend lift into a domain package. QSL model intake admits it
-and A's native linker links it into a checked package whose `model_selections`
+and A's native linker links it into a checked package whose `model_root` nodes
 name that domain package. The typed linked output feeds the request binder
 consuming F's observations and B's scoped requests. Use the real extraction,
 intake and binder interfaces, without text reparsing or a fixture-only

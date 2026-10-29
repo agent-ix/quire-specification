@@ -223,10 +223,10 @@ Mutations, each applied alone to the positive unit:
     machine key with an object-type key; `SM-04` omits the abstract machine's
     row; `SM-05` duplicates that row.
     For each selected model package in these writes, also verify exactly one
-    `model_root` node whose `ModelRootOwner` identity and digest join the
-    selected `model_selections` row, whose generated occurrence ordinal zero
+    `model_root` node whose `ModelRootOwner` identity and version join the
+    selected `model_root` node, whose generated occurrence ordinal zero
     maps to the model-selection source region, and whose identity is derived
-    from the selected package identity and digest, independent of alias
+    from the selected package identity and version, independent of alias
     spelling. Verify the model-only
     refinement's `abstract` and `semantic_type` name the roots, while a
     protocol refinement keeps `protocol` at the exact clause key and the
@@ -234,9 +234,9 @@ Mutations, each applied alone to the positive unit:
     model selection; the test adds no FCD field.
 28. **Root owner joins (MR-01 to MR-04).** Starting from the admitted selected
     model package, remove `owner` from its root (`MR-01`), add an extra
-    `version` member to `ModelRootOwner` (`MR-02`), attach `ModelRootOwner` to
+    `digest` member to `ModelRootOwner` (`MR-02`), attach `ModelRootOwner` to
     an object-type node (`MR-03`), and add a second root whose owner identity
-    and digest join no `model_selections` row while every row keeps its own
+    and version join no `model_root` node while every row keeps its own
     root (`MR-04`). Validate `MR-01` to `MR-03` against both V2 schemas
     (`schema.json` and, through the node's structural preimage,
     `node-identity-preimage.schema.json`) and `MR-04` against `schema.json`,
@@ -244,7 +244,7 @@ Mutations, each applied alone to the positive unit:
     rebuilding the identities and `package_id` the mutation permits. The
     vectors are the RFC 6902 patches of `model-root-vectors.json`.
 29. **Selected-root fixtures (MR-05 to MR-09).** For every published positive
-    package with `model_selections`, derive the root and its source-map entry
+    package with `model_root` nodes, derive the root and its source-map entry
     from each row alone and compare them with the package's, last in graph
     order and last in the source map (`MR-05`, FR-322-AC-134); remove the only
     root of one row, which the schemas admit and the reader refuses
@@ -492,5 +492,5 @@ For mutation 28, `MR-01` fails the schema because the root lacks its required
 owner; `MR-02` fails the closed-owner schema; `MR-03` fails the graph-owner
 rule because a root owner is restricted to `model`/`model_root`. `MR-04`
 refuses `missing_declaration`/`missing-selection` at the root owner because
-its identity/digest pair does not join a selected model package, even after
+its identity/version pair does not join a selected model package, even after
 node keys and package identity are recomputed.

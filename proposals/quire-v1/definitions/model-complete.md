@@ -47,9 +47,8 @@ model Orders = "acme/orders";
 ```
 
 The source names the domain package identity only: no version and no digest
-(FR-154 "Model selection in source"). The resolver reads the version and
-records the import as a ModelSelection (FR-321) row of the package lock:
-`{identity, version}`, the version being the document's own `version` member. The row is part of the
+(FR-154 "Model selection in source"). The resolver records the import as a ModelSelection (FR-321) row of the package lock:
+`{identity}`. The row is part of the
 package identity. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
 declaration. Clauses of a unit name a declaration by qualified name: the model alias,
@@ -67,7 +66,7 @@ the rule.
 
 Rule `quire.model.normalize.intake/v1` admits one domain package. The package
 input is a map from domain package identity to package bytes, one document per identity. Intake first checks the selection's identity, then looks up the
-bytes by that identity, reads the document's `version` and the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
+bytes by that identity and reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
 
 | Check | Refusal |
 | --- | --- |
