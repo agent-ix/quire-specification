@@ -55,8 +55,7 @@ Show that a reader derives the type of a `field` or `operation` member whose
 declaring node is a model declaration node from the lock-selected domain
 package, as FR-322's "Model-owned members" states: it admits the selected
 document as evidence, reads the declaring node's `ModelOwner` from its
-`owner` member, checks the node's key against its `ModelDeclarationNode`
-preimage, looks up the declaration that owner names, resolves the member name among
+`owner` member, looks up the declaration that owner names, resolves the member name among
 the declaring type's exposed effective members, own and inherited, and derives
 the member type from the resolved record.
 
@@ -81,13 +80,12 @@ the member type from the resolved record.
   cases, each recorded with its criterion, the `operation_redefinition_cases`
   (MA-16 to MA-18, each a patch of the document with its expected result; MA-19 is the
   consumer-scope case that no patch of the document expresses),
-  the wire cases and the selection cases. The selection cases patch and digest the document, not the projection.
+  the wire cases and the selection cases. The selection cases patch the document, not the projection.
   The value type `OrderTotal` is the alias FR-095 mints for `Order`'s
   constrained field `total` (`<Name><Field>`), with its constraints under
   `constraint/Order-total-min` and `-max`.
 - The wire cases are hand authored: each is a single model declaration
-  node, a shape QSL emits only inside a package, keyed by QSL FR-094 exactly
-  as emitter output would be. The model declaration nodes of the positive
+  node, a shape QSL emits only inside a package, as emitter output would be. The model declaration nodes of the positive
   fixtures are QSL emitter output (TC-233).
 - `proposals/checked-package-v2/model-owner-form-vectors.json` carries a
   second projection, `acme/runs`, in the same shape and with the lists
@@ -105,27 +103,24 @@ the member type from the resolved record.
   declaration node vectors `P1` to `P6`
   name the declarations in that order (`Counter`, `Flow`, `SubFlow`, `Gate`, `Store`,
   `Plug`; `P2` is `Flow`), and `P7` and `P8` the populations `counters` and
-  `archive`. The tests recompute each node's key from its
-  preimage, and build each wire node of its owner cases from the case. The
+  `archive`. The tests build each wire node of its owner cases from the case. The
   owner, frame field, anchor and clause signature cases below are read
   against this projection, and the receiver frame cases against the published
   packages (FR-340-AC-19, FR-340-AC-20).
 - For the `acme/orders` projection the lock selects the identity `acme/orders` only; for the `acme/runs` projection it selects the identity `acme/runs` only.
-- `node-identity-preimage.schema.json` defines the closed
-  `ModelDeclarationNode` preimage.
 
 ## Test Procedure
 
-Validate each model declaration node vector against the closed preimage schema
-and recompute its JCS SHA-256. Run FR-322's owner presence rule, the
-derived-shape key stage's owner join and currency check, and step 2 over
+Validate each model declaration node vector against the closed schema.
+Run FR-322's owner presence rule, the
+owner join and step 2 over
 each wire case; each wire case's node carries the `owner` its row names. For each member
 case, look up the declaration the declaring node's owner names in the
 selected domain package,
 resolve the member and derive its type or refusal, and compare with the
 recorded expectation. An operation case also carries its call's receiver type
-and argument types, and a reference type names its target by the recomputed
-model declaration node key. For each selection case, run FR-322's selection
+and argument types, and a reference type names its target by the
+model declaration node id. For each selection case, run FR-322's selection
 admission checks over the supplied documents and compare with the recorded
 result. For each frame field case, look up the declaration the declaring node's
 owner names and
@@ -194,7 +189,7 @@ process or state machine.
 | MU-04 | `field` `ghost` on T1, `typeRef` `ix://quire/unit/ghost` | `missing_declaration`/`missing-name` | FR-322-AC-80 |
 | MU-05 | `operation` `wait` on T1 with a `Quantity<s>` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-80 |
 | MU-06 | `operation` `wait` on T1 with an `Integer` argument | `ill_typed`/`operator-ineligible` | FR-322-AC-80 |
-| MU-07 | `field` `budget` on T2 (`Call` of the admitted domain package `acme/rpc`, which declares base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate`, `target` `us`, `scale` `1000`), `typeRef` `ix://quire/unit/acme/rpc/ms`, beside MU-01's source units `ms` and `s` of the source dimension `Time` | Resolves `Call/budget`; type `Quantity<M::ms>` (with `model M = "acme/rpc"`) over the package unit's `scalar_type`/`unit` node, which carries no `declaration`, has `owner` `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, a preimage with `qualified_declaration` `["ms"]`, and a key distinct from the source `ms` node's, and depends exactly on the package `Rate` and `us` nodes; no `ambiguous_declaration` | FR-322-AC-99 |
+| MU-07 | `field` `budget` on T2 (`Call` of the admitted domain package `acme/rpc`, which declares base dimension `Rate`, root unit `us` of `Rate` and its own unit `ms` of `Rate`, `target` `us`, `scale` `1000`), `typeRef` `ix://quire/unit/acme/rpc/ms`, beside MU-01's source units `ms` and `s` of the source dimension `Time` | Resolves `Call/budget`; type `Quantity<M::ms>` (with `model M = "acme/rpc"`) over the package unit's `scalar_type`/`unit` node, which carries no `declaration`, has `owner` `{kind: "model", identity: "acme/rpc", node: "ix://acme/rpc/unit/ms"}`, a `qualified_declaration` `["ms"]`, and a node id distinct from the source `ms` node's, and depends exactly on the package `Rate` and `us` nodes; no `ambiguous_declaration` | FR-322-AC-99 |
 | MU-08 | `field` `limit` on T2, `typeRef` `ix://quire/unit/ms` | Resolves `Call/limit`; type `Quantity<ms>` over the source unit's node, distinct from MU-07's | FR-322-AC-99 |
 | MU-09 | `field` `stale` on T2, `typeRef` `ix://quire/unit/rpc/ms` | `missing_declaration`/`missing-name` | FR-322-AC-99 |
 | MU-10 | `field` `x` on T2, `typeRef` `ix://quire/native/Clock` with FR-154's clock field shape, resolved as a `field` member; then a `field` application over `x` used as a value; then `x` as the clock operand of the atomic clock constraint `self.x >= 1 ms` in a guard | The member resolves to the clock type with no checked-package node; the value application refuses `invalid_timed_model`/`clock-read-outside-constraint`; the clock-constraint operand raises no such refusal | FR-322-AC-99 |
@@ -208,7 +203,7 @@ process or state machine.
 | MA-22 | `bytes` literal `value` `"00FF"` whose `type` is the `uuid` node | `ill_typed`/`operator-ineligible`, not `invalid-value` | FR-322-AC-103 |
 | MU-11 | The source declares `dimension Time; unit s : Time = 1; unit ms : Time = 1/1000 * s;`; `field` `at` on T2, native `Duration`; then `field` `at2` on T2, `typeRef` `ix://quire/unit/s`; then `field` `d` on T2, native `Duration`, compared with a `Quantity<ms>` field `m` | `at` has type `Quantity<s>` over the node of `s`, the node of `at2`; the comparison of `d` and `m` refuses `ill_typed` (FR-142's identical-unit rule) until `m` is converted to `s`, and `1500 ms` converted to `s` equals the `Duration` `3/2` | FR-322-AC-104 |
 | MU-12 | `field` `at` on a type of the admitted domain package `acme/rpc` declaring base dimension `Time` and root unit `s`, native `Duration`, the source declaring no `s`; then the source also declaring `dimension Time; unit s : Time = 1`; then the package declaring `s` typed by a dimension `Length`; then neither declaring `s` | `Quantity<s>` over the package unit's node (`ix://quire/unit/acme/rpc/s`); the same, the package's `s`, with no refusal and a distinct type from the source `s`; `ill_typed`/`operator-ineligible`; `missing_declaration`/`missing-name` | FR-322-AC-104, FR-322-AC-116 |
-| MU-14 | the unit of compilation declaring `dimension Time; unit s : Time = 1; dimension Speed = R::Time ^ -1; unit tenth : R::Time = 1/10 * R::s;` with `acme/rpc` (alias `R`) and `acme/flow` (alias `F`) each declaring base dimension `Time` and root unit `s`; read the unit graph | Three `scalar_type`/`dimension` nodes named `Time` with pairwise distinct keys (one under a `SourceOwner`, two under the `ModelOwner`s `acme/rpc` and `acme/flow`, the package nodes carrying no `declaration` and a preimage `qualified_declaration` `["Time"]`); each package `s` depends on its own `Time`; `Speed` is self-typed with the `acme/rpc` `Time` key at exponent `-1` as its one term; `tenth` is typed by the `acme/rpc` `Time` and targets the `acme/rpc` `s`; no `ambiguous_declaration`; the package is admitted | FR-322-AC-105 |
+| MU-14 | the unit of compilation declaring `dimension Time; unit s : Time = 1; dimension Speed = R::Time ^ -1; unit tenth : R::Time = 1/10 * R::s;` with `acme/rpc` (alias `R`) and `acme/flow` (alias `F`) each declaring base dimension `Time` and root unit `s`; read the unit graph | Three `scalar_type`/`dimension` nodes named `Time` with pairwise distinct node ids (one under a `SourceOwner`, two under the `ModelOwner`s `acme/rpc` and `acme/flow`, the package nodes carrying no `declaration` and a `qualified_declaration` `["Time"]`); each package `s` depends on its own `Time`; `Speed` is self-typed with the `acme/rpc` `Time` key at exponent `-1` as its one term; `tenth` is typed by the `acme/rpc` `Time` and targets the `acme/rpc` `s`; no `ambiguous_declaration`; the package is admitted | FR-322-AC-105 |
 | MU-15 | `field` `a` on T2 typed `ix://quire/unit/acme/rpc/s` and `field` `b` typed `ix://quire/unit/acme/flow/s`, beside the source `s` of MU-14 | `Call/a` has type `Quantity<R::s>` over the `acme/rpc` unit node and `Call/b` has type `Quantity<F::s>` over the `acme/flow` unit node, two distinct `scalar_type`/`unit` nodes typed by two distinct dimension nodes; no `ambiguous_declaration` | FR-322-AC-105 |
 | MU-16 | The document of FR-322-AC-106: `Call` with clock field `x` and optional clock field `w`, `Timer` with clock field `x` and data field `n` held by field `t`, operation `reset` with a `Clock` parameter `c`, operation `clk` with a `Clock` result; `field` members `x`, `t`, `w` resolved, then a `field` application over `x`, over `t.x` and over `w` used as a value, then the `Timer` record node read | The members resolve; `w` is `Option<Clock>`; each value-position application `invalid_timed_model`/`clock-read-outside-constraint`; the `Timer` node lists `n` only and no node stands for `x`, `t.x`, `w`, `c` or the result of `clk` | FR-322-AC-106 |
 | MU-17 | T2's package with alias `D` (`target` `ix://quire/unit/acme/rpc/ms`), a sequence type with that `items`, a map type with that `values`, and a field `d` typed `D` | `d` is `Quantity<M::ms>`; the sequence `Sequence<Quantity<M::ms>>`; the map `Map<Text, Quantity<M::ms>>`; one `scalar_type`/`unit` node for `ms` and no node for `D`, the sequence or the map | FR-322-AC-107 |
@@ -216,8 +211,8 @@ process or state machine.
 | MU-19 | `field` `a` on a type of `acme/rpc` (base dimension `Time`, root `s`, `min` of scale 60 to `s`), native `Duration`; `field` `b` on a type of the unit of compilation, native `Duration`, the source declaring `dimension Time; unit s : Time = 1`; then `a` compared with `b` in an equality | `a` is `Quantity<s>` over the package unit's node and `b` over the source unit's node; the comparison refuses `ill_typed` (two distinct units, FR-142) | FR-322-AC-116 |
 | MU-20 | `field` `a` on a type of a package declaring `Time` with root `sec` and `s` of scale 60 to `sec`; the same with `s` of scale 1 and offset 5 to its root; the same with `s` reaching the root through `t` (scale 60 from `s` to `t`, scale 1/60 from `t` to the root); the same with the root `s` itself | `ill_typed`/`operator-ineligible`; `ill_typed`/`operator-ineligible`; admitted as `Quantity<s>`; admitted as `Quantity<s>` | FR-322-AC-104, FR-322-AC-116 |
 | MU-21 | `field` `a` on a type of a package declaring no `s`, the source declaring `dimension Time; unit s : Time = 1`; then a package declaring `Time` and `s` while the source declares its own `Time` and `s`, both fields native `Duration` | `Quantity<s>` over the source unit's node; `Quantity<s>` over the package's own `s`, typed by the package's own `Time` | FR-322-AC-116 |
-| MU-22 | the unit of compilation of MU-14 with `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` read as the unit graph; then the same with `dimension F::Time ~ R::Time by 1 F::s = 1 R::s;`; then with `acme/clock` (alias `G`, base `Time`, root `ms`) added, `dimension R::Time ~ G::Time by 1 R::s = 1000 G::ms;`, the same written `dimension G::Time ~ R::Time by 1000 G::ms = 1 R::s;`, and `dimension F::Time ~ G::Time by 1 F::s = 1000 G::ms;` | one more node, `scalar_type`/`dimension_equivalence`: self-typed, no `declaration`, preimage `quire.dimension-equivalence-node/v1` with the `SourceOwner`, the two package `Time` keys in ascending digest order and `root_scale` `1/1`, `dependencies` exactly those keys, one occurrence of role `anchor` and ordinal 0 (vector key `bbf770ea…`); the second spelling gives the same key; the unequal-root declarations give `root_scale` `1000/1` over `[acme/rpc, acme/clock]` (`d707eb94…`) in both spellings, and `1000/1` over `[acme/flow, acme/clock]` (`584c6bbc…`); the three `Time` nodes keep their keys; the strict reader admits the package and derives one class of the three | FR-322-AC-118 |
-| MU-23 | the equivalence node of MU-22 with its ids descending, with both ids equal, with a unit key as an id, repeated as a second node, over two derived dimensions of unequal maps or of a `root_scale` the base roots do not fix, with one dependency, with a `semantic_type` of another node, with an owner outside the lock, with its pair changed under the retained key, with `root_scale` changed under the retained key, with `root_scale` unreduced (`2000/2`), and the third node of the three-package cycle with `root_scale` `1001/1` | `invalid_semantic_graph` at the node, each | FR-322-AC-118 |
+| MU-22 | the unit of compilation of MU-14 with `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;` read as the unit graph; then the same with `dimension F::Time ~ R::Time by 1 F::s = 1 R::s;`; then with `acme/clock` (alias `G`, base `Time`, root `ms`) added, `dimension R::Time ~ G::Time by 1 R::s = 1000 G::ms;`, the same written `dimension G::Time ~ R::Time by 1000 G::ms = 1 R::s;`, and `dimension F::Time ~ G::Time by 1 F::s = 1000 G::ms;` | one more node, `scalar_type`/`dimension_equivalence`: self-typed, no `declaration`, with the `SourceOwner`, the two package `Time` keys in ascending node-id order and `root_scale` `1/1`, `dependencies` exactly those keys, one occurrence of role `anchor` and ordinal 0 ; the second spelling gives the same node; the unequal-root declarations give `root_scale` `1000/1` over `[acme/rpc, acme/clock]` in both spellings, and `1000/1` over `[acme/flow, acme/clock]`; the three `Time` nodes keep their ids; the strict reader admits the package and derives one class of the three | FR-322-AC-118 |
+| MU-23 | the equivalence node of MU-22 with its ids descending, with both ids equal, with a unit key as an id, repeated as a second node, over two derived dimensions of unequal maps or of a `root_scale` the base roots do not fix, with one dependency, with a `semantic_type` of another node, with an owner outside the lock, with `root_scale` unreduced (`2000/2`), and the third node of the three-package cycle with `root_scale` `1001/1` | `invalid_semantic_graph` at the node, each | FR-322-AC-118 |
 | MU-24 | the equivalence node of MU-22 with `root_scale` missing, with `root_scale` `numerator` `0`, with `numerator` `-1`, with `denominator` `0`, with only one id in `dimension_node_ids`, and with a `declaration` member added | `malformed_wire` at the node, each (the closed V2 schema refuses it before the graph) | FR-322-AC-118, FR-322-AC-139 |
 | KS-01 | Equality of two `Bytes` values `00ff` and `00ff`, then `00ff` and `00fe`, `00ff` and `00ff00`, `` (empty) and `00`; `quire.op.bytes.length` of `00ff00` and of the empty sequence; `quire.op.bytes.concat` of `00ff` and `01` | `true`, `false`, `false`, `false`; `3` and `0`; `00ff01` | FR-149-AC-23, FR-322-AC-103 |
 | KS-02 | Equality of `{"a":1,"b":[true,null]}` with itself, with `{"a":1,"b":[null,true]}`, with `{"a":2,"b":[true,null]}`, with `{"a":1}`, with `{"a":1,"b":[true,null],"c":{}}`; `{}` with `{}`; `[]` with `{}`; `3` with `3`; `null` with `{}` | `true`, `false`, `false`, `false`, `false`; `true`; `false`; `true`; `false` | FR-149-AC-23 |
@@ -236,30 +231,27 @@ process or state machine.
 | RE-ends-8 | `relationship_end` `followedBy` on M11 (the named inverse, traversed target to source) | `ill_typed`/`operator-ineligible` at `member.name`: the direction is `source-to-target` (FR-152) | FR-322-AC-56 |
 | RE-ends-9 | `relationship_end` `twin` on M12, whose source and target roles are both `twin` | `ambiguous_declaration`/`ambiguous-name` at `member.name` | FR-322-AC-56 |
 | MW-01 | A `model`/`object_type` wire node with M1's id, M1's owner (`acme/orders`, `ix://acme/orders/Order`), its own id as `semantic_type` and an empty body | Resolves `Order` | FR-322-AC-29 |
-| MW-02 | MW-01 with a body member | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
 | MW-03 | MW-01 with a `declaration` | Fails the V2 schema; `malformed_wire` | FR-322-AC-29 |
-| MW-04 | MW-01 with M4's id as `semantic_type` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
-| MW-05 | MW-01 with a `recursion_group` | `invalid_package`/`stale-node-key` | FR-322-AC-29 |
-| MW-06 | A `model`/`object_type` wire node carrying M4's id and M4's owner (`acme/orders`, `ix://acme/orders/relationship/Order-order-Order`) | `missing_declaration`/`missing-selection` at the owner join: `Order-order-Order` is a relationship, and the join runs over every owner-bearing node before either key pass, so the stale key (M4's id on an object-type node) is never reached; the outcome equals MW-07's | FR-322-AC-29, FR-322-AC-55 |
-| MW-07 | A `model`/`object_type` wire node carrying M4's owner, keyed by its own `model`/`object_type` preimage | `missing_declaration`/`missing-selection` at the owner join: `Order-order-Order` is a relationship | FR-322-AC-29, FR-322-AC-55 |
+| MW-06 | A `model`/`object_type` wire node carrying M4's id and M4's owner (`acme/orders`, `ix://acme/orders/relationship/Order-order-Order`) | `missing_declaration`/`missing-selection` at the owner join: `Order-order-Order` is a relationship, and the join runs over every owner-bearing node first; the outcome equals MW-07's | FR-322-AC-29, FR-322-AC-55 |
+| MW-07 | A `model`/`object_type` wire node carrying M4's owner | `missing_declaration`/`missing-selection` at the owner join: `Order-order-Order` is a relationship | FR-322-AC-29, FR-322-AC-55 |
 | MW-08 | A `model`/`object_type` wire node with M2's id and M2's owner (`acme/billing`, `ix://acme/billing/Order`) | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-29 |
 | MW-09 | MW-01 with no `owner` | Fails the V2 schema; `malformed_wire` | FR-322-AC-29 |
-| MW-10 | A `model`/`object_type` wire node with owner (`acme/orders`, `ix://acme/orders/Nope`), keyed by its own preimage, that no member reaches | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
-| MW-11 | A clause function wire node (`clause` binding `precondition`) owned by (`acme/orders`, `ix://acme/orders/Order/size`), keyed by its own preimage (FR-094 C1) | Passes the owner join | FR-322-AC-55 |
-| MW-12 | A clause function wire node (`clause` binding `invariant`) owned by (`acme/orders`, `ix://acme/orders/Order`), keyed by its own preimage | Passes the owner join | FR-322-AC-55 |
-| MW-13 | MW-11 owned by `ix://acme/orders/Order/missing`, rekeyed | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
-| MW-14 | MW-11 owned by `ix://acme/orders/Order/total`, a field, rekeyed | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
-| MW-15 | A `model`/`object_type` wire node carrying M4's id (the relationship's) and M1's owner (`acme/orders`, `ix://acme/orders/Order`), its own id as `semantic_type` and an empty body | `invalid_package`/`stale-node-key`: the owner joins, the key was computed under another tag | FR-322-AC-29 |
-| MW-16 | A clause function (`clause` binding `precondition`) owned by the object type `ix://acme/orders/Order`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join: only an invariant is owned by an object type | FR-322-AC-55 |
-| MW-17 | A clause function (`clause` binding `body`) owned by `ix://acme/orders/Order/size`, keyed by its own preimage | Passes the owner join | FR-322-AC-55 |
-| MW-18 | A clause function (`clause` binding `invariant`) owned by the operation member `ix://acme/orders/Order/size`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join: an invariant is owned by an object type | FR-322-AC-55 |
+| MW-10 | A `model`/`object_type` wire node with owner (`acme/orders`, `ix://acme/orders/Nope`), that no member reaches | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
+| MW-11 | A clause function wire node (`clause` binding `precondition`) owned by (`acme/orders`, `ix://acme/orders/Order/size`) | Passes the owner join | FR-322-AC-55 |
+| MW-12 | A clause function wire node (`clause` binding `invariant`) owned by (`acme/orders`, `ix://acme/orders/Order`) | Passes the owner join | FR-322-AC-55 |
+| MW-13 | MW-11 owned by `ix://acme/orders/Order/missing` | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
+| MW-14 | MW-11 owned by `ix://acme/orders/Order/total`, a field | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
+| MW-16 | A clause function (`clause` binding `precondition`) owned by the object type `ix://acme/orders/Order` | `missing_declaration`/`missing-selection` at the owner join: only an invariant is owned by an object type | FR-322-AC-55 |
+| MW-17 | A clause function (`clause` binding `body`) owned by `ix://acme/orders/Order/size` | Passes the owner join | FR-322-AC-55 |
+| MW-18 | A clause function (`clause` binding `invariant`) owned by the operation member `ix://acme/orders/Order/size` | `missing_declaration`/`missing-selection` at the owner join: an invariant is owned by an object type | FR-322-AC-55 |
 | MW-19 | A clause function whose `clause` binding is `postcondition`, owned by `ix://acme/orders/Order/size` | `missing_declaration`/`missing-selection` at the owner join: a postcondition is FR-341's `state_clause` node, not a clause function kind | FR-322-AC-55 |
 | MW-20 | MW-17 with two `clause` bindings | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
 | MW-21 | MW-17 with no `clause` binding | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
 | MW-22 | A clause function (`clause` binding `invariant`) owned by the systems interface `ix://acme/orders/Flow` | `missing_declaration`/`missing-selection` at the owner join: an invariant is owned by an object type with no `interfaceFeatures` | FR-322-AC-55 |
-| MS-01 | The document supplied under the root's identity, identity equal | Passes the selection admission checks | FR-322-AC-32 |
+| MS-01 | The document supplied under the lock row's identity, identity and version equal | Passes the selection admission checks | FR-322-AC-32 |
 | MS-02 | No document supplied | `missing_import`/`missing-selection` | FR-322-AC-32 |
-| MS-03 | A document with `OrderTotal`'s upper bound changed to 8, supplied under the root's identity, identity equal | Passes the selection admission checks: the reader compares identity only | FR-322-AC-32 |
+| MS-03 | A document with `OrderTotal`'s upper bound changed to 8, supplied under the lock row's identity, identity and version equal | Passes the selection admission checks: the reader compares identity and version only | FR-322-AC-32 |
+| MS-05 | The supplied document's `version` differs from the lock row's | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
 | MS-06 | The selection names identity `acme/invoices` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
 | MS-07 | The selected document with `dimensions` `[Time (base), Rate (terms [{Time, "-1"}])]`, `units` `[s (root of Time), ms (target s, scale 1/1000)]` and a clock field `Order/x` typed `ix://quire/native/Clock` with the clock field shape, selected; then the same document with `dimensions` and `units` removed, selected | The first read holds the dimension nodes `Time` then `Rate`, the unit nodes `s` then `ms` and the clock field `Order/x`, in authored order; the second read holds no dimension and no unit node and is otherwise equal | FR-322-AC-98 |
 | MS-08 | MS-07's first document with unit `ms`'s `scale` set to `0`, selected | `invalid_model_binding`/`malformed-declaration` at stage `package_read`, naming `ix://acme/orders/unit/ms` and `Unit.scale` | FR-322-AC-98 |
@@ -285,16 +277,16 @@ process or state machine.
 | CS-07 | Precondition of `Order.scaled` binding `[Reference<Order>, Boolean]` | `ill_typed`/`operator-ineligible` | FR-341-AC-5 |
 | CS-08 | Invariant of `Order` binding `[Reference<Order>]` | Admitted | FR-341-AC-5 |
 | CS-09 | Invariant of `Order` binding `[Reference<Order>, Integer]` | `ill_typed`/`operator-ineligible` | FR-341-AC-5 |
-| OF-01 | A `model`/`process` wire node owned by `Flow`, keyed by its own preimage | Recovers `Flow` | FR-322-AC-72 |
-| OF-02 | A `model`/`state_machine` wire node owned by `Gate`, keyed by its own preimage | Recovers `Gate` | FR-322-AC-72 |
-| OF-03 | A `model`/`persistence_interface` wire node owned by `Store`, keyed by its own preimage | Recovers `Store` | FR-322-AC-72 |
-| OF-04 | A `model`/`process` wire node owned by `Counter`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
-| OF-05 | A `model`/`state_machine` wire node owned by `Flow`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
-| OF-06 | A `model`/`object_type` wire node owned by `Flow`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
-| OF-07 | A `model`/`process` wire node owned by `Nope`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
-| OF-08 | A `model`/`persistence_interface` wire node owned by `Gate`, keyed by its own preimage | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
-| PR-01 | A `relation`/`population` wire node owned by `counters`, keyed by its own preimage (`P7`) | Recovers `counters` | FR-322-AC-82 |
-| PR-02 | A `relation`/`population` wire node owned by `archive`, keyed by its own preimage (`P8`) | Recovers `archive`; its key differs from `P7` | FR-322-AC-82 |
+| OF-01 | A `model`/`process` wire node owned by `Flow` | Recovers `Flow` | FR-322-AC-72 |
+| OF-02 | A `model`/`state_machine` wire node owned by `Gate` | Recovers `Gate` | FR-322-AC-72 |
+| OF-03 | A `model`/`persistence_interface` wire node owned by `Store` | Recovers `Store` | FR-322-AC-72 |
+| OF-04 | A `model`/`process` wire node owned by `Counter` | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| OF-05 | A `model`/`state_machine` wire node owned by `Flow` | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| OF-06 | A `model`/`object_type` wire node owned by `Flow` | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| OF-07 | A `model`/`process` wire node owned by `Nope` | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| OF-08 | A `model`/`persistence_interface` wire node owned by `Gate` | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-72 |
+| PR-01 | A `relation`/`population` wire node owned by `counters` (`P7`) | Recovers `counters` | FR-322-AC-82 |
+| PR-02 | A `relation`/`population` wire node owned by `archive` (`P8`) | Recovers `archive`; its node id differs from `P7` | FR-322-AC-82 |
 | PR-03 | A `relation`/`population` wire node owned by `Counter`, an object type | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
 | PR-04 | A `model`/`object_type` wire node owned by `counters`, a population | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
 | PR-05 | A `relation`/`population` wire node owned by `Nope`, which the document does not declare | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-82 |
@@ -328,7 +320,7 @@ process or state machine.
 
 ## Expected Results
 
-M1 to M12 and P1 to P6 validate and recompute their digests. Every wire,
+M1 to M12 and P1 to P6 validate. Every wire,
 member, selection, frame field, anchor, clause signature and owner case gives
 exactly its recorded result.
 

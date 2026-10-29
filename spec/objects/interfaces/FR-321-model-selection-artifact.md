@@ -24,7 +24,7 @@ When a package imports a domain package for native linking, the checker SHALL us
 
 ## Identity and validation
 
-The key is `identity`. Nothing is recorded in the lock and nothing is gated; a changed domain package under an unchanged identity is not detected (FR-154).
+The key is `identity`. Nothing is recorded in the lock and nothing is gated.
 A package selects at most one domain package per `identity`; intake
 refuses a second selection of an already-selected `identity`, before name
 binding, as `duplicate_selection`/`duplicate-identity` (QSL ADR-013 O-01,

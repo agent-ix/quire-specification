@@ -93,8 +93,8 @@ When a contract package is submitted to a backend provider, the producer SHALL u
 - `contract_version` — exactly `quire.backend-provider/v1`.
 - `capability_vocabulary` — exactly `quire.capability-kind/v1`; it selects the FR-290 vocabulary for every kind in `manifest`, `request` and `results`.
 - `manifest` — one backend descriptor per registered backend in the registry snapshot: backend identity, advertised (FR-290 kind, mode) pairs, domains, options, bounds, where the backend declares one its obligation-form set (FR-349), the state-space reductions it applies, a subset of `symmetry`, `partial-order` and `constraint` (FR-382), the state-graph claim forms it decides (`state_graph_forms`, below), and, for `probabilistic-satisfaction`, its advertised evidence kinds (FR-290). A backend that advertises `temporal-satisfaction` also carries its `fairness_kinds` ([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)). A backend that advertises `temporal-satisfaction` may also carry `state_graph_forms`, a nonempty, duplicate-free subset of `possible`, `always-possible` and `unique-path` (FR-390). Its absence means it decides no state-graph claim form. A descriptor that does not advertise `temporal-satisfaction` carries no `state_graph_forms`. A backend that advertises `temporal-satisfaction` may also carry `memory_models`, the memory models it decides for items over a subject with a weak `parallel`, a nonempty set drawn from `sc`, `tso` and `ra` by the names of the `memory` clause ([FR-439](../../functional/memory/FR-439-bound-replay-and-report-weak-memory-runs.md) routes by it). A descriptor with no `memory_models` advertises `sc` only, so, of the items over a subject with a weak `parallel`, it receives only those resolved to `sc`; a descriptor that does not advertise `temporal-satisfaction` carries none. A backend that advertises `temporal-satisfaction` may also carry `dynamics`, the dynamics it decides, a nonempty set drawn from `discrete` and `hybrid`; a descriptor with no `dynamics` decides `discrete` only, a descriptor whose `dynamics` holds `hybrid` carries both hybrid solver budgets in `bounds`, and negotiation routes by it ([FR-193](../../functional/analysis/FR-193-analyze-continuous-hybrid-models.md) "Routing a hybrid item"). Every descriptor carries `tool` ("Backend tool" below). Backend identities are unique.
-- `request` — in the frame form sent to a process provider, the checked package as `package` and `package_id` ("Package bytes" below); in the in-process form ("In-process providers" below), the checked package as a typed value and no `package` or `package_id`; in both forms, the provider deadline `deadline_ms` and the requested items: each item's claim, its proof bounds (the substituted `ProofBound`s of its `extent`, and a temporal item's `subject.proof_bounds`), its `options`, its `requirements` (the hybrid-dynamics requirement of a hybrid item, FR-193 "Routing a hybrid item") and its own limits (`temporal.limits`, `probabilistic.limits`, `hybrid.limits`); there is no request-level `domains` or `limits` member. For each item, its one required FR-290 kind, its extent and #222 extent classification (`bounded` or `unbounded`), the backend the caller names when it names one, its `candidates`, and for a model-check item its `reductions` selection (FR-382); for a `probabilistic-satisfaction` item, its evidence kind (`statistical` or `exact`) and, for `statistical`, its method (`okamoto`, `sprt`, `clopper-pearson` or `regenerative` with `min_cycles`), seed, `max_witnesses`, for a timed subject its grid exponent `q` and `max_sample_steps` (default `2^24`), and `StatisticalLimits{max_samples, max_draws, max_cycle_steps}` ([FR-408](../../functional/analysis/FR-408-settle-probabilistic-claims-statistically.md)), or, for `exact`, `ExactProbLimits` ([FR-411](../../functional/analysis/FR-411-settle-probabilistic-claims-exactly.md)). Every limit has the published default that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives it, and `max_sample_steps` defaults to `2^24`.
-- `temporal` (per `temporal-satisfaction` request item over a model subject) — the item's `subject` (initial-state references, universes, proof bounds), `item_kind` (`formula`, `deadlock-freedom`, `time-lock-freedom`, `race-freedom` or `refinement`), on a `refinement` item its `abstract_subject` (`package_id`, `initial_states`), resolved `fairness` set, `max_depth` for a bounded search and `limits`, as [FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md) states. `limits` also holds `max_clocks` for a timed model ([FR-415](../../functional/temporal/FR-415-declare-clocks-and-timed-models.md)), with the setting name `model_check.max_clocks`; a state with more live clocks than `max_clocks` records `incomplete` with `limit-reached` whose `limit` is `max_clocks`. For a state-graph, hyper or step-relation item, `limits` also holds `max_walk_steps` (the step count of one witness-sampling walk; [FR-392](../../functional/analysis/FR-392-sample-possible-witnesses.md)), `max_witness_set` and `max_relation_tuples` ([FR-399](../../functional/analysis/FR-399-settle-hyperproperty-results.md)), with the setting names `model_check.max_walk_steps`, `model_check.max_witness_set` and `model_check.max_relation_tuples` that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives them; the routed provider publishes each default, which applies when the request sets none. `temporal` also holds the sampling settings `witness_samples` and `seed`, which are method parameters with provider-published defaults.
+- `request` — in the frame form sent to a process provider, the checked package as `package` ("Package bytes" below); in the in-process form ("In-process providers" below), the checked package as a typed value and no `package`; in both forms, the provider deadline `deadline_ms` and the requested items: each item's claim, its proof bounds (the substituted `ProofBound`s of its `extent`, and a temporal item's `subject.proof_bounds`), its `options`, its `requirements` (the hybrid-dynamics requirement of a hybrid item, FR-193 "Routing a hybrid item") and its own limits (`temporal.limits`, `probabilistic.limits`, `hybrid.limits`); there is no request-level `domains` or `limits` member. For each item, its one required FR-290 kind, its extent and #222 extent classification (`bounded` or `unbounded`), the backend the caller names when it names one, its `candidates`, and for a model-check item its `reductions` selection (FR-382); for a `probabilistic-satisfaction` item, its evidence kind (`statistical` or `exact`) and, for `statistical`, its method (`okamoto`, `sprt`, `clopper-pearson` or `regenerative` with `min_cycles`), seed, `max_witnesses`, for a timed subject its grid exponent `q` and `max_sample_steps` (default `2^24`), and `StatisticalLimits{max_samples, max_draws, max_cycle_steps}` ([FR-408](../../functional/analysis/FR-408-settle-probabilistic-claims-statistically.md)), or, for `exact`, `ExactProbLimits` ([FR-411](../../functional/analysis/FR-411-settle-probabilistic-claims-exactly.md)). Every limit has the published default that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives it, and `max_sample_steps` defaults to `2^24`.
+- `temporal` (per `temporal-satisfaction` request item over a model subject) — the item's `subject` (initial-state references, universes, proof bounds), `item_kind` (`formula`, `deadlock-freedom`, `time-lock-freedom`, `race-freedom` or `refinement`), on a `refinement` item its `abstract_subject` (`identity`, `initial_states`), resolved `fairness` set, `max_depth` for a bounded search and `limits`, as [FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md) states. `limits` also holds `max_clocks` for a timed model ([FR-415](../../functional/temporal/FR-415-declare-clocks-and-timed-models.md)), with the setting name `model_check.max_clocks`; a state with more live clocks than `max_clocks` records `incomplete` with `limit-reached` whose `limit` is `max_clocks`. For a state-graph, hyper or step-relation item, `limits` also holds `max_walk_steps` (the step count of one witness-sampling walk; [FR-392](../../functional/analysis/FR-392-sample-possible-witnesses.md)), `max_witness_set` and `max_relation_tuples` ([FR-399](../../functional/analysis/FR-399-settle-hyperproperty-results.md)), with the setting names `model_check.max_walk_steps`, `model_check.max_witness_set` and `model_check.max_relation_tuples` that [FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md) gives them; the routed provider publishes each default, which applies when the request sets none. `temporal` also holds the sampling settings `witness_samples` and `seed`, which are method parameters with provider-published defaults.
 - `candidates` (per request item) — exactly one of: the set of candidate backend identities that the `quire-spec-language` registry computes under FR-290's candidate-set rule, ordered bytewise by identity; or the unknown-backend mark carrying the unregistered backend identity that the request named.
 - `dispositions` — supported, requires-bound, unsupported or invalid-request per item.
 - `artifacts` — immutable generated bytes with kind, identity and source map.
@@ -177,7 +177,7 @@ SHALL NOT invent one to select a checker.
 | Zone edge | `{edge}`, its position in the certificate's `edges` | FR-418; QSL FR-245 for `post-differs` | `backward-edge`, `post-differs` |
 | Zone edge step | `{edge, verdict}`, both present: `edge` as in a zone edge and `verdict` the step verdict below | QSL FR-245 | `step-fails` |
 | Zone component | `{component}`, its component index | FR-418 | `witness-fails` |
-| Certificate member | `{member}`, the name of a member of the FR-412 or FR-418 certificate: `identity`, `objective`, `kind`, `values`, `ranking`, `policy`, `components`, `scale`, `bounds`, `nodes`, `edges`, `reasons`, `divergence`, `initials`, `admitted`, `refinement`, `refinement_node`, `concrete_package`, `abstract_package`, `positions`, `taken`, `locked`, `start`, `nested`, and the members of the entries these hold: `abstract_states`, `algorithm`, `automaton`, `bias`, `bound`, `choice`, `clock`, `concrete`, `constraint`, `digest`, `domain`, `gain`, `history`, `lower`, `node`, `rank`, `set`, `state`, `strict`, `target`, `transition`, `transitions`, `type`, `upper`, `value` and `zone` (50 names: exactly the property names, at any depth, of the FR-412 and FR-418 certificates and the definitions they own, `CertificateIdentity`, `DbmBound`, `ComponentReason`, `RefinementPart` and `ProbabilityProductKey` (a base64url string that contributes no member names), the shared value types `StateKey`, `TransitionIdentity`, `Rational`, `NodeId` and `PackageId` being named by their type; `refinement` names the refinement part and `refinement_node` its node id, `node` the index member of an `edges` entry; the locus names the member and carries no path); QSL FR-163 also owns `components` for an absent hyper component structure | FR-412, FR-418, QSL FR-163 | `malformed` |
+| Certificate member | `{member}`, the name of a member of the FR-412 or FR-418 certificate: `identity`, `objective`, `kind`, `values`, `ranking`, `policy`, `components`, `scale`, `bounds`, `nodes`, `edges`, `reasons`, `divergence`, `initials`, `admitted`, `refinement`, `refinement_node`, `concrete_package`, `abstract_package`, `positions`, `taken`, `locked`, `start`, `nested`, and the members of the entries these hold: `abstract_states`, `algorithm`, `automaton`, `bias`, `bound`, `choice`, `clock`, `concrete`, `constraint`, `digest`, `domain`, `gain`, `history`, `lower`, `node`, `rank`, `set`, `state`, `strict`, `target`, `transition`, `transitions`, `type`, `upper`, `value` and `zone` (50 names: exactly the property names, at any depth, of the FR-412 and FR-418 certificates and the definitions they own, `CertificateIdentity`, `DbmBound`, `ComponentReason`, `RefinementPart` and `ProbabilityProductKey` (a base64url string that contributes no member names), the shared value types `StateKey`, `TransitionIdentity`, `Rational` and `NodeId` being named by their type; `refinement` names the refinement part and `refinement_node` its node id, `node` the index member of an `edges` entry; the locus names the member and carries no path); QSL FR-163 also owns `components` for an absent hyper component structure | FR-412, FR-418, QSL FR-163 | `malformed` |
 
 A model state's digest record is `{"domain": "quire.simulation.state-key/v1",
 "digest": <StateKey>}`, in a State locus, as a product state's `model_state`
@@ -287,7 +287,7 @@ for these items with `invalid_result`/`unknown-cause`.
 | `proved` (proof basis) | `exact-value{value, reductions}`, `value-bounds{lower, upper, method, reductions}` with `method` `backward-induction{precision_bits}` or `interval-iteration{precision_bits, sweeps}`, `zone-certified`, `exhaustive`, `closed-form{analysis}` with `analysis` `fixed-priority`, `edf` or `amc-rtb`, `bounded-solver{method, horizon, jumps, exhaustive}` and `inductive-solver{method}`, each `method` from FR-193's closed method table ("Solver methods") |
 | `refuted` (cause) | `undefined-evaluation{where, cause}` |
 | `measured` (FR-409 cause) | `undefined-evaluation{where, cause}` for `rejected`; `indifference-region` and `undecided-successor` for `undecided` |
-| `inconclusive` (cause) | `certificate-rejected{rule, at}`, `cross-check-disagreement{tool, primary, cross_check}` (FR-349), `replay-parity`, `undecided-successor`, `no-initial-state`, `no-instance`, `sufficient-test-failed`, `solver-inconclusive{trace}`, whose `trace` is the optional FR-193 `HybridTrace`, `insufficient-horizon{horizon, jumps, exhaustive}` (FR-193 "Proof coverage"), `lasso-not-concretized`, `no-admitted-behaviour`, `well-definedness-unchecked`, `stale-dependency{requested, recompiled}`, `refuted-ignoring-constraints` (QSL FR-127): a liveness lasso found only after the request explicitly omitted memory fairness constraints; it carries no proof basis and is not a `refuted` result or a standard counterexample |
+| `inconclusive` (cause) | `certificate-rejected{rule, at}`, `cross-check-disagreement{tool, primary, cross_check}` (FR-349), `replay-parity`, `undecided-successor`, `no-initial-state`, `no-instance`, `sufficient-test-failed`, `solver-inconclusive{trace}`, whose `trace` is the optional FR-193 `HybridTrace`, `insufficient-horizon{horizon, jumps, exhaustive}` (FR-193 "Proof coverage"), `lasso-not-concretized`, `no-admitted-behaviour`, `well-definedness-unchecked`, `refuted-ignoring-constraints` (QSL FR-127): a liveness lasso found only after the request explicitly omitted memory fairness constraints; it carries no proof basis and is not a `refuted` result or a standard counterexample |
 | `incomplete` (cause) | `limit-reached{limit, value, setting}`, naming the limit, its value and the request setting that raises it, the one limit-stop cause of every engine; `timed-out`, the backend's own wall-clock limit, as a hybrid solver's `max_solver_time` or a provider's overrun of `deadline_ms` ("Hybrid solver budgets" below); `precision-budget{lower, upper}`; `cancelled{source}` for a cancelled run, `source` the cancellation cause, `requested` when the caller cancels and `deadline` when the caller's deadline ends the run |
 | `unsupported` (cause) | `missing-confidence`, `every-scheduler`, `exact-only-form`, `confidence-beyond-precision`, `not-markov{state, transition, post_states}`, `not-stochastic{state, identity}`, `time-locked-sample{state}`, `total-above-draw-range{total}`, `zero-weight-component{component}`, `delay-distribution{operation}`, `strict-clock-constraint{locus}`, `zero-delay-cycle{states}`, `timed-form-shape{locus}`, `punctual-interval{locus}`, `stopwatch-required` |
 
@@ -302,14 +302,14 @@ process over the producer's checked package, such as a QSL `analyze` engine
 that `prove` routes to (QSL FR-280). The producer SHALL hand an in-process
 provider the request's `manifest`, `deadline_ms` and items as typed values,
 together with its checked package and the subject binding (QSL FR-120) that
-`prove` and `analyze` take, as typed values with no `package`, `package_id`,
+`prove` and `analyze` take, as typed values with no `package`,
 `dependencies` or `provision` member: the checked package and its resolved
 dependencies are already in that process. The provider trait (QSL ADR-029
 PV-3) also gives such a provider `emitted: Option<&EmittedPackage>`, which the
 producer passes as `None` when `package` refuses to emit and as `Some`
 otherwise, and an in-process provider ignores it (QSL FR-280). Such a request is never written as
 a request frame, so the "Package bytes" rules do not apply to it, and a
-request frame that lacks `package` or `package_id` still refuses before
+request frame that lacks `package` still refuses before
 consumption (FR-331-AC-18).
 
 The in-process form exists because some checked packages have no v2 bytes:
@@ -333,10 +333,8 @@ package is not emitted, and SHALL write no request frame for it.
 ## Backend tool
 
 Every backend descriptor SHALL carry `tool`, the closed object
-`{name, version, build}` that names the code which decides the backend's
-results: `name` and `version` are nonempty exact UTF-8 strings, and `build`
-is the content identity of the build inputs of the provider code that
-implements the backend.
+`{name, version}` that names the code which decides the backend's
+results: `name` and `version` are nonempty exact UTF-8 strings.
 
 - A backend **fronts an external tool** when any result it gives depends on
   an executable that is not part of the producer's build: a tool binary the
@@ -353,49 +351,13 @@ implements the backend.
   engine and its `version` that crate's package version in the producer's
   build.
 
-`build` is a digest record `{domain, algorithm, digest}` (the FR-322
-`PackageId` shape) with `domain` `quire.build-inputs/v1`, `algorithm`
-`sha256` and `digest` 64 lowercase hexadecimal digits: SHA-256 over the
-RFC 8785 bytes of the build-input record of the provider code that
-implements the backend, that is, the pure engine's crate, a linked
-provider's adapter code, or a process provider's executable. The build that
-compiles that code SHALL compute it. Equal inputs give an equal `build`, a
-change of any input changes it, and a specification or repository holds no
-copy of any `build` value: each build derives its own.
-
-The build-input record is the closed object
-`{sources, dependencies, compiler, target, profile, options}`, every string
-exact UTF-8:
-
-| Member | Value |
-| --- | --- |
-| `sources` | One `{path, sha256}` per file the build reads as source of that code and of every package of its own workspace or project that it links: `path` relative to the workspace or project root with `/` separators, `sha256` 64 lowercase hexadecimal digits over the file's bytes. Ordered bytewise by `path`; each `path` once. Nonempty. |
-| `dependencies` | One `{name, version, source}` per third-party package the build resolves, as its lock file or package manager records them (`source` the registry, repository or path it comes from). Ordered bytewise by `name`, then `version`, then `source`; each triple once. Empty when the build resolves none. |
-| `compiler` | The compiler, or for interpreted code the interpreter, that builds or runs the code, with its version as it reports it, such as `rustc 1.98.0`. |
-| `target` | The platform the code is built for, such as a target triple. |
-| `profile` | The build profile or configuration name, such as `release`. |
-| `options` | A map from each build setting that can change the produced code (enabled features, optimisation level, code-generation flags) to its value, as strings. Empty when the build sets none. |
-
-A Cargo build fills the members from its workspace: the crate's and its
-workspace path dependencies' source files, the `Cargo.lock` packages, `rustc`,
-the target triple, the profile and the enabled features and code-generation
-settings. A build by any other toolchain fills the same members from its own
-inputs. A process provider whose build inputs are not available to it, such
-as one shipped only as a prebuilt executable, records that executable as its
-one `sources` entry, with the executable's file name as `path` and the
-digest of its bytes; `dependencies` and `options` are empty, `compiler` and
-`profile` are the string `prebuilt`, and `target` is the platform it runs
-on. A change to the executable's bytes then changes its `build`.
-A pure in-process engine's code change therefore changes its descriptor
-even when its crate version stays the same.
-
 The schema refuses a descriptor without `tool` at every stage, and a
 registry snapshot carries each descriptor exactly as its provider gave it,
 so its `tool` is the provider's.
 
 A provider that fronts an external tool SHALL obtain `tool.version` by
 querying the executable it will run, each time it builds its descriptor; a
-pure in-process engine's provider takes `version` and `build` from the
+pure in-process engine's provider takes `version` from the
 producer's build. A
 producer builds its registry, and so every descriptor, afresh at each
 invocation; no external tool's `tool.version` is fixed at compile time or
@@ -406,7 +368,7 @@ from the descriptor's `tool.version`, the probe fails and the item settles
 `unsupported` with `unsupported_projection`/`tool-unavailable`, whose
 `detail` names the capability kind, the backend, the descriptor's version and
 the probed version. The code that runs therefore always has the version the
-descriptor, its `ManifestDigest` and the FR-306 cache key carry.
+descriptor carries.
 
 ## Wire schema
 
@@ -417,7 +379,7 @@ The normative wire of this value is the closed JSON schema
 schema member names its owning requirement. A reader converts from this wire
 into its own types (QSL ADR-013 T-7); no shared Rust crate carries these
 types, and no consumer holds a copy of the schema. The schema references the
-checked-package schema for `PackageId`, `NodeId`, `Occurrence`, `Rational`
+checked-package schema for `NodeId`, `Occurrence`, `Rational`
 and decimal strings.
 
 ### Stages
@@ -438,23 +400,23 @@ One envelope has three stages. Each is a closed object carrying
 ([FR-322](FR-322-checked-package-artifact.md)), spelled as RFC 4648 section 5
 base64url with no padding and zero unused trailing bits, so that one byte
 string has exactly one spelling and the frame keeps one RFC 8785 encoding.
-`request.package_id` SHALL be that package's `package_id`. A reader decodes
-`package`, admits it with the v2 reader and refuses a recomputed `package_id`
-that differs from `request.package_id` with
-`stale_dependency`/`content-mismatch`, before any item runs. A padded or
+A reader decodes
+`package` and admits it with the v2 reader before any item runs. A padded or
 standard-alphabet spelling, nonzero trailing bits, a length of 1 modulo 4, or
 a `package` that is a JSON value rather than a string refuses before
 consumption. The bytes travel as bytes, not as an embedded JSON value,
 because the v2 reader admits a byte string: it checks canonical bytes and
-byte limits itself, and FR-305's IR reader revalidates the `package_id` of
-exactly the bytes it was given.
+byte limits itself, and FR-305's IR reader revalidates exactly the bytes it
+was given.
 
 `request.dependencies` carries, in the same spelling, the v2 bytes of each
 package in the proved package's recursively derived dependency closure,
-including transitive-only packages, with each package's `package_id`,
-ordered by `package_id` digest. `request.provision` is the byte provision
-FR-364 and FR-368 read: each document with its `sha256-jcs` digest, ordered
-by digest, each digest once. `request.deadline_ms` is the provider deadline
+including transitive-only packages,
+ordered ascending by the package's `name` (its identity), each identity once;
+a second package under one identity is a duplicate definition and refuses `invalid_package`/`conflicting-definition`.
+`request.provision` is the byte provision
+FR-364 and FR-368 read: each document located by its `{authority, identity}` or
+domain-package identity, ordered by that key, each key once. `request.deadline_ms` is the provider deadline
 in milliseconds (FR-462).
 
 ### Items
@@ -629,7 +591,7 @@ certificate checker and makes its counterexample canonical assignments, so:
   plugin's entry carries none.
 - A **core-only cause** is an inconclusive cause that only the core's own
   replay or Kani run settles: `replay-parity` (AD-016 arrow 7), `replay-refused`
-  (FR-399, and a bound `contract-counterexample` a reader cannot re-execute, FR-485), `stale-dependency` and `kani_vacuous_proof` (AD-016; a plugin's entry for a `value-validity` or `operation-contract` item may carry `kani_vacuous_proof`, FR-483). A plugin's
+  (FR-399, and a bound `contract-counterexample` a reader cannot re-execute, FR-485) and `kani_vacuous_proof` (AD-016; a plugin's entry for a `value-validity` or `operation-contract` item may carry `kani_vacuous_proof`, FR-483). A plugin's
   entry carries none.
 - A plugin's `counterexamples` entry carries a `counterexample` whose `type`
   is `assignments`, `contract-counterexample` on the entry of an
@@ -641,28 +603,6 @@ certificate checker and makes its counterexample canonical assignments, so:
 - An `insufficient-horizon` cause belongs to a hybrid item (FR-193 "Proof
   coverage"); on the entry of an item that is not a hybrid claim, from any
   provider, it is refused `invalid-value` at `/cause/type`.
-
-`stale-dependency{requested, recompiled}` settles an item in exactly these
-cases: a model-check counterexample replay or a state-graph evidence replay
-whose recompiled package's own `package_id` differs from the one the replay
-request names; and a state-graph certificate check (QSL FR-169), an EN-1
-closure certificate check (QSL FR-338) or an EN-1 component certificate
-check (QSL FR-339) whose recompiled `package_id` differs from the one the
-certificate names. Each of these certificates names the `package_id` of the
-package it was produced over, and its checker compares it with the
-recompiled one before any other rule, so a stale certificate settles
-`stale-dependency`, never `certificate-rejected`. A component certificate
-names its `package_id` once, for its closure and its components. `requested` is that
-named `package_id` and `recompiled` the recompiled one, each a
-`quire.package.semantic/v2` `PackageId`, so the record names both
-identities. The cause writes each identity with a `kind` discriminator:
-`{"kind":"package","package_id":<PackageId>}` for package identities and
-`{"kind":"refinement","name":<name>}` for QSL FR-149 refinement identities.
-`requested` and `recompiled` SHALL have the same `kind`; package IDs are
-compared only with package IDs and refinement names only with refinement
-names. The refinement name is a semantic declaration identity, not a package
-ID, repository digest or checkout pin. A stale dependency's own `package_id`, and a stale
-`package_id` in a scalar-parity or plugin replay, settle `replay-refused`.
 
 This table lists the same closed causes as FR-272's `invalid_result` row:
 
@@ -799,16 +739,8 @@ Request identity includes the capability vocabulary, manifest, package, the requ
 Unknown contract versions, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption; in a result entry or a `counterexamples` entry, a missing or unknown member and a value of the wrong kind or outside its domain refuse with the `invalid_result` causes of "Result entries". A `capability_vocabulary` other than `quire.capability-kind/v1`, or none, refuses the envelope as `invalid_capability`/`unknown-vocabulary`.
 
-A backend's manifest identity, its `ManifestDigest`, is the SHA-256 digest in
-the FR-201 domain `quire.tool-manifest.jcs/v1` over the RFC 8785 bytes of its
-complete admitted descriptor: for a process provider, the descriptor at
-`/manifest/0` of its `hello` body; for a linked or in-process provider, the
-descriptor its manifest gives. Every member the descriptor carries, `tool`
-included, is in that preimage, and the enclosing array, the stage, the
-registry snapshot and the request are not. The backend identity, the
-`BackendId`, is the `backend` member alone, so a change to any other member,
-`tool.version` included, changes the `ManifestDigest` and leaves the
-`BackendId` unchanged.
+The backend identity, the `BackendId`, is the `backend` member of the
+descriptor alone.
 
 ## Acceptance Criteria
 
@@ -830,7 +762,7 @@ registry snapshot and the request are not. The backend identity, the
 | FR-331-AC-15 | A `proved` result with proof basis `exact-value`, `value-bounds` or `zone-certified` carries its certificate, and one with `closed-form` its evidence; each is recorded only after the checker accepts it. | Test (TC-363, TC-371, TC-372) |
 | FR-331-AC-16 | Each proof basis and cause of a probabilistic, timed or real-time result is emitted with exactly its spelling in the wire-spelling table, and a result carrying another spelling is refused `invalid_result`/`unknown-cause`. | Test (TC-358) |
 | FR-331-AC-17 | A state-graph item's `temporal` member carries `witness_samples` and `seed` and its `limits` carry `max_walk_steps`, each taking the provider's published default when the request sets none; two requests differing only in `seed`, `witness_samples` or `max_walk_steps` have different request identities; a hyper item's `limits` carry `max_witness_set` and `max_relation_tuples`. | Test (TC-336, TC-339) |
-| FR-331-AC-18 | A request's `package` is the unpadded base64url spelling of the RFC 8785 bytes of its checked package and decodes to exactly those bytes, whose `package_id` equals the request's `package_id`; a padded or standard-alphabet spelling, nonzero trailing bits, a length of 1 modulo 4, an absent `package` or `package_id`, a `package` that is a JSON value, and a `package_id` outside `quire.package.semantic/v2` each refuse before consumption. | Test (TC-431) |
+| FR-331-AC-18 | A request's `package` is the unpadded base64url spelling of the RFC 8785 bytes of its checked package and decodes to exactly those bytes; a padded or standard-alphabet spelling, nonzero trailing bits, a length of 1 modulo 4, an absent `package`, and a `package` that is a JSON value each refuse before consumption. | Test (TC-431) |
 | FR-331-AC-19 | Every positive vector of `proposals/backend-provider-v1/vectors.json` is admitted by its schema, each owned member it lists exists, and every adverse vector, a single-member change of a positive one, is refused: an unknown contract version or vocabulary, an extra or missing member, an out-of-vocabulary value, a cause or basis outside its result's closed set, and a counterexample entry naming both or neither arm. | Test (TC-431) |
 | FR-331-AC-20 | The Kani vectors carry an admitted result entry for each of the Kani results table's thirteen rows, each `declined` cause separately, so together they hold each of the eight results a Kani item can settle; changing a row's cause or diagnostic to one outside its result's closed set is refused. | Test (TC-431) |
 | FR-331-AC-21 | Every `ProofBound` carries the `kind` of the domain it bounds, from the ADR-014 domain-kind vocabulary shared with an unbounded extent's `domains`, and a bound matching that kind; a `ProofBound` without `kind`, with a kind outside the vocabulary, with a non-boundable kind or with a bound of another kind refuses before consumption: of the seven kinds and three bound types, exactly the pairs `collection` and `population` with `cardinality`, `integer` with `integer-range` and `recursive` with `depth` are admitted. | Test (TC-431) |
@@ -845,12 +777,12 @@ registry snapshot and the request are not. The backend identity, the
 | FR-331-AC-30 | The descriptor schema admits `memory_models` as a nonempty duplicate-free subset of `sc`, `tso` and `ra` on a descriptor that advertises `temporal-satisfaction`, and refuses an empty `memory_models`, a repeated or unknown model, and `memory_models` on a descriptor that does not advertise `temporal-satisfaction`. | Test (TC-431) |
 | FR-331-AC-31 | An accounting record whose `warnings` hold `{code: memory.load-buffering-shape, load, store}` with `load` and `store` transition identities is admitted; one missing `store`, one with an extra member and one with a `load` that is not a transition identity are refused. | Test (TC-431) |
 | FR-331-AC-32 | A temporal request item whose `extent` is `unbounded` with an `infinite-trace` domain, `finite_bound_available` false and no `bounds`, and whose `subject.proof_bounds` holds a `population` `cardinality` bound, is admitted by the request schema; the same item with `subject.proof_bounds` empty is also admitted. That the bound moves nothing into `extent.bounds` and changes neither the classification nor `finite_bound_available` is an obligation of the request's producer, which this wire criterion does not check. | Test (TC-431) |
-| FR-331-AC-33 | An in-process request holds the manifest, `deadline_ms`, items, checked package and subject binding as typed values; its results carry the members a process provider's do; two in-process requests of the same items run the engine twice and the second result comes from the second run; an item of a process provider over a checked package that `package` refuses to emit settles `unsupported` with `unsupported_projection`/`unsupported-requested-capability` naming the kind, the backend and that the package is not emitted, with no frame written; and a request frame of the same items without `package` and `package_id` refuses before consumption. | Test (TC-220) |
-| FR-331-AC-34 | A reader refuses each of these before consumption with the `invalid_result` cause given, naming the pointer given: `certification-missing`, `missing-member` at `/certification`; `certification-on-refuted`, `unknown-member` at `/certification`; `certification-other-value`, `invalid-value` at `/certification`; a `proved` entry whose `certification` is `7`, `wrong-value-kind` at `/certification`; `certification-reduced-certified`, `certification-bounded-solver-certified` and `certification-symmetry-certified`, `certification-mismatch` at `/certification` with `expected` `uncertified` and `actual` `certified`; a plugin's `proved` entry carrying `certified`, `certification-mismatch` with `expected` `trusted`, also when its basis is core-only; a `refuted` entry carrying `certification` `7`, `unknown-member` at `/certification`; a plugin's `proved` entry carrying `trusted` and a `closed-form` basis, `unknown-cause` at `/basis/type`; a plugin's `inconclusive` entry with cause `replay-parity`, `unknown-cause` at `/cause/type`; a plugin's `inconclusive` entry with cause `stale-dependency`, `unknown-cause` at `/cause/type`; a plugin's `counterexamples` entry whose `counterexample` is a `TemporalCounterexample`, `invalid-value` at `/counterexample/type`; a plugin's `hybrid-counterexample` on a hybrid item admitted and passed to FR-193 exact replay, and the same on an FR-468 refinement item, `invalid-value` at `/counterexample/type`; and a plugin's `counterexamples` entry carrying canonical assignments and a `transcript`, `unknown-member` at `/transcript`. A first-party `exhaustive` proof carrying `uncertified` is admitted. A plugin's proof basis or inconclusive cause that a plugin may send but that is outside the reader's types is refused `unknown_required_feature`/`unsupported-feature`, not `invalid_result`. The schema refuses each vector on its shape alone, so the schema run does not discharge the cause. | Inspection (TC-431) |
-| FR-331-AC-35 | An `inconclusive` entry whose cause is `stale-dependency` with `requested` and `recompiled` tagged `package`, each carrying a `quire.package.semantic/v2` `PackageId`, is admitted; the same cause without `recompiled` is refused by the schema. | Test (TC-431) |
-| FR-331-AC-36 | The `temporal-satisfaction` entry of a safety item settled by a stale EN-1 closure certificate (QSL FR-338), and that of a TP-4 liveness item settled by a stale EN-1 component certificate (QSL FR-339), each `inconclusive` with cause `stale-dependency{requested, recompiled}`, both identities tagged `package` and carrying `quire.package.semantic/v2` `PackageId`s, are admitted; the same cause without `requested` is refused by the schema. The checkers' comparison before any other rule and the settlement are verified by QSL FR-338-AC-11, FR-339-AC-4, FR-282-AC-10 and FR-127-AC-13. | Test (TC-431) |
-| FR-331-AC-37 | The schema refuses a descriptor without `tool` at the manifest and request stages, including a linked Kani snapshot descriptor (`snapshot-kani-without-tool`) and a pure engine's snapshot descriptor (`snapshot-engine-without-tool`); refuses a `tool` without `name`, `version` or `build`, with an empty `name` or `version`, with another member, or that is a string or `null`; refuses a `build` in another domain, with another algorithm, with a digest that is not 64 lowercase hexadecimal digits, with another member, or that is a bare digest string; and admits a pure in-process engine's descriptor whose `tool` names its implementing crate, version and build. A request-stage snapshot carries the kani descriptor with the `tool` its `hello` gives. Two admitted descriptors that differ only in `tool.version`, or only in `tool.build` with the same `tool.version`, have different `ManifestDigest` records in `quire.tool-manifest.jcs/v1` and the same `BackendId`. | Test (TC-431) |
-| FR-331-AC-38 | A provider fronting an external tool reports, in the descriptor it builds at an invocation, the version the executable reports at that invocation. When the executable is replaced by another version after the descriptor is built and before an item's run, the item's FR-290 probe fails and the item settles `unsupported` with `unsupported_projection`/`tool-unavailable` naming the capability kind, the backend, the descriptor's version and the probed version, and no run starts. | Test (TC-226) |
+| FR-331-AC-33 | An in-process request holds the manifest, `deadline_ms`, items, checked package and subject binding as typed values; its results carry the members a process provider's do; two in-process requests of the same items run the engine twice and the second result comes from the second run; an item of a process provider over a checked package that `package` refuses to emit settles `unsupported` with `unsupported_projection`/`unsupported-requested-capability` naming the kind, the backend and that the package is not emitted, with no frame written; and a request frame of the same items without `package` refuses before consumption. | Test (TC-220) |
+| FR-331-AC-34 | A reader refuses each of these before consumption with the `invalid_result` cause given, naming the pointer given: `certification-missing`, `missing-member` at `/certification`; `certification-on-refuted`, `unknown-member` at `/certification`; `certification-other-value`, `invalid-value` at `/certification`; a `proved` entry whose `certification` is `7`, `wrong-value-kind` at `/certification`; `certification-reduced-certified`, `certification-bounded-solver-certified` and `certification-symmetry-certified`, `certification-mismatch` at `/certification` with `expected` `uncertified` and `actual` `certified`; a plugin's `proved` entry carrying `certified`, `certification-mismatch` with `expected` `trusted`, also when its basis is core-only; a `refuted` entry carrying `certification` `7`, `unknown-member` at `/certification`; a plugin's `proved` entry carrying `trusted` and a `closed-form` basis, `unknown-cause` at `/basis/type`; a plugin's `inconclusive` entry with cause `replay-parity`, `unknown-cause` at `/cause/type`; a plugin's `counterexamples` entry whose `counterexample` is a `TemporalCounterexample`, `invalid-value` at `/counterexample/type`; a plugin's `hybrid-counterexample` on a hybrid item admitted and passed to FR-193 exact replay, and the same on an FR-468 refinement item, `invalid-value` at `/counterexample/type`; and a plugin's `counterexamples` entry carrying canonical assignments and a `transcript`, `unknown-member` at `/transcript`. A first-party `exhaustive` proof carrying `uncertified` is admitted. A plugin's proof basis or inconclusive cause that a plugin may send but that is outside the reader's types is refused `unknown_required_feature`/`unsupported-feature`, not `invalid_result`. The schema refuses each vector on its shape alone, so the schema run does not discharge the cause. | Inspection (TC-431) |
+| FR-331-AC-35 | Withdrawn: the `stale-dependency` cause is removed; replay recompiles the supplied inputs and compares nothing against a supplied package. | Withdrawn |
+| FR-331-AC-36 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
+| FR-331-AC-37 | The schema refuses a descriptor without `tool` at the manifest and request stages, including a linked Kani snapshot descriptor (`snapshot-kani-without-tool`) and a pure engine's snapshot descriptor (`snapshot-engine-without-tool`); refuses a `tool` without `name` or `version`, with an empty `name` or `version`, with another member (a `build` included), or that is a string or `null`; and admits a pure in-process engine's descriptor whose `tool` names its implementing crate and version. A request-stage snapshot carries the kani descriptor with the `tool` its `hello` gives. Two admitted descriptors that differ only in `tool.version` have the same `BackendId`. | Test (TC-431) |
+| FR-331-AC-38 | A provider fronting an external tool reports, in the descriptor it builds at an invocation, the version the executable reports at that invocation. When the executable is replaced by another version after the descriptor is built and before an item's run, the item's FR-290 probe fails and the item settles `unsupported` with `unsupported_projection`/`tool-unavailable` naming the capability kind, the backend, the descriptor's version and the probed version, and no run starts. | Analysis |
 | FR-331-AC-39 | A `proved` result with `cross_check` `{"tool": "z3", "verdict": "proved"}` and one with `{"tool": "z3", "verdict": "refuted"}`, each `certified`, are admitted; `cross_check` on a `refuted`, `inconclusive` or `failed` result, a `cross_check` missing `tool` or `verdict`, with a `verdict` outside `proved`, `refuted` and `inconclusive`, or with another member, is refused before consumption. `cross_check` on a plugin's `trusted` `bounded-complete` proof (`cross-check-on-trusted`, refused by the `trusted` rule alone), on a certified `reduced` proof (`cross-check-on-non-smt-basis`), and verdict `refuted` on an `uncertified` `inductive` proof (`cross-check-disagreement-on-uncertified`) are each refused at `/results/<i>/cross_check`. An `inconclusive` result with cause `{"type": "cross-check-disagreement", "tool": "z3", "primary": "proved", "cross_check": "refuted"}` is admitted, so is one with `primary` `inconclusive`, and the cause missing `primary` is refused. | Test (TC-431) |
 | FR-331-AC-40 | A `failed` result with cause `{"type": "tool-failure", "defect": "frame-length", "limit": 1048576, "value": 1048577}` and one with `defect` `total-bytes`, `limit` 4194304 and `value` 4194305 are admitted; either defect without `limit` or `value` is refused, and `limit` or `value` on any other defect, such as `crash`, is refused, before consumption. | Test (TC-431) |
 | FR-331-AC-41 | The schema admits a hybrid request item carrying `"requirements": ["hybrid-dynamics"]` and `hybrid`, a temporal descriptor with `dynamics` `["discrete", "hybrid"]` and `bounds` holding `max_solver_steps` and `max_solver_time`, a `proved` entry with `inductive-solver{method: inductive-enclosure}` labelled `uncertified`, and an `inconclusive` entry with `insufficient-horizon{horizon: {numerator: "1", denominator: "1"}, jumps: 1, exhaustive: ["time"]}`; it refuses before consumption `requirements` `[]` or holding another label, `requirements` on an item of another kind, `hybrid` without `requirements`, a `dynamics` that is empty, repeats a label, holds another label or sits on a descriptor advertising no `temporal-satisfaction`, a hybrid descriptor whose `bounds` lack either limit, a `bounded-solver` `method` outside `delta-complete`, `flowpipe-outward-rounded`, `flowpipe-unrounded` and `unclassified`, an `inductive-solver` `method` other than `inductive-enclosure`, an `inductive-solver` proof carrying `certified`, an `insufficient-horizon` without `jumps`, a `bounded-solver` without `exhaustive`, and an `exhaustive` that repeats a dimension or holds a label other than `time` and `jumps`; and it refuses `requirements` `[]` and `["stochastic-dynamics"]` on an item that carries no `hybrid`. A reader refuses an `insufficient-horizon` cause on an item whose claim is not a hybrid claim `invalid_result`/`invalid-value` at `/cause/type`. | Test (TC-431) |
@@ -859,9 +791,9 @@ registry snapshot and the request are not. The backend identity, the
 | FR-331-AC-44 | A temporal request item whose `item_kind` is each of `deadlock-freedom`, `time-lock-freedom`, `race-freedom` and `refinement` is admitted by the request schema, with an empty `fairness` for the three derived kinds, an `unbounded` extent with an `infinite-trace` domain and the claim of FR-368-AC-14; an unknown spelling, a derived item with a non-empty `fairness`, a `bounded` extent, or an `unbounded` extent with no `infinite-trace` domain is refused before consumption. That the domain's node is the claim's node, the anchor and occurrence rule, and the item order are obligations of the request's producer that a reader checks against the package, which the schema run does not discharge. | Test (TC-431) |
 | FR-331-AC-45 | `initial-mismatch` is admitted at a zone node `{node}`, `post-differs` at a zone edge `{edge}` and `step-fails` at a zone edge step `{edge, verdict}`; `initial-mismatch` at `{edge}`, `post-differs` at `{edge, verdict}`, `step-fails` at `{edge}` alone, with a `null` verdict or with a verdict of another kind than a step verdict, and `backward-edge` at `{edge, verdict}` are refused. A reader still binds each rule and locus to the resolved checker (FR-331-AC-26), so a zone locus on an FR-149 claim is refused. | Test (TC-431) |
 | FR-331-AC-46 | `malformed` is admitted at each of the 50 member names the "Certificate member" row lists (the thirteen members of the FR-412 and Büchi parts, the eleven FR-418 adds `initials`, `admitted`, `refinement`, `refinement_node`, `concrete_package`, `abstract_package`, `positions`, `taken`, `locked`, `start` and `nested`, and the 26 entry members such as `state`, `automaton`, `zone`, `target`, `transition`, `lower`, `upper`, `concrete`, `abstract_states` and `type`); the enum equals the property names of the two certificates computed from the schema, so a member added to a certificate and not to the enum is a failure; a name outside it, such as `initial` (which FR-418 does not carry), `initials[0]`, `position`, `refinement_name` or `refinement.node`, is refused. | Test (TC-431) |
-| FR-331-AC-47 | A `refinement` item is admitted with `abstract_subject` `{package_id, initial_states}` and refused without it; a `formula` or derived item carrying `abstract_subject`, an `abstract_subject` with a `universes` member, one without `initial_states` and one whose `package_id` is a bare digest string are each refused. That `package_id` names a package of `request.dependencies` is a reader obligation the schema cannot state. The vector's consistency with it is checked (TC-431): the composed positive request carries the abstract package, the real fixture `positive-dependency-library.json` with its own id and v2 bytes, as its one dependency, and a `package_id` no dependency carries is schema-admitted, so it is the reader that refuses it. | Test (TC-431) |
+| FR-331-AC-47 | A `refinement` item is admitted with `abstract_subject` `{identity, initial_states}` and refused without it; a `formula` or derived item carrying `abstract_subject`, an `abstract_subject` with a `universes` member, one without `initial_states` and one whose `identity` is not a string are each refused. That `identity` names a package of `request.dependencies` is a reader obligation the schema cannot state. The vector's consistency with it is checked (TC-431): the composed positive request carries the abstract package, the real fixture `positive-dependency-library.json` with its own v2 bytes, as its one dependency, and an `identity` no dependency carries is schema-admitted, so it is the reader that refuses it. | Test (TC-431) |
 | FR-331-AC-48 | The request identity includes the request's `memory` selections: two requests that differ only in one `memory` entry's model have different request identities, as FR-434-AC-1 requires of obligation identities. | Test (TC-431) |
-| FR-331-AC-49 | An `inconclusive` result with `stale-dependency` whose `requested` and `recompiled` identities are both tagged `refinement` and each carries a nonempty `name` is admitted. The schema refuses an unknown `kind`, a missing `kind`, a missing payload member, an unrecognized extra member, and a cause mixing a tagged package identity with a tagged refinement identity. Package identity pairs remain admitted under AC-35 and AC-36. | Test (TC-431) |
+| FR-331-AC-49 | Withdrawn: the `stale-dependency` cause is removed; replay recompiles the supplied inputs and compares nothing against a supplied package. | Withdrawn |
 
 ## Dependencies
 

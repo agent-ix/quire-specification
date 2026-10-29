@@ -27,8 +27,7 @@ its named code and cause.
   the body of `area(s: Shape): Integer`,
   `case s { Empty: 0; Rect(w, h): w * h; Circle(r): r }`, with its parameter
   and binder nodes, and the constructions `Shape::Rect(2, 3)` and
-  `Shape::Empty`. Its `package_id` and its application node keys are
-  recomputed from their preimages.
+  `Shape::Empty`.
 - Both V2 schemas enumerate the `union`, `union_value` and `case` forms, the
   `case` operator class and `quire.op.control.case`. The reader vectors
   (N01 and N05 to N09) additionally need the operation catalog to carry the `union`
@@ -38,16 +37,14 @@ its named code and cause.
 ## Test Procedure
 
 Read `union-nodes` through the strict V2 reader, then read each mutation
-below, each made to an otherwise admitted copy with its node keys recomputed so
-that no `stale-node-key` refusal masks the join under test, except N15,
-which deliberately retains the wrong node key to exercise that refusal.
+below, each made to an otherwise admitted copy.
 
 | Vector | Input | Expected result/disposition |
 | --- | --- | --- |
 | N01 | `union-nodes` as published | admitted; the `Shape` node is `composite_type`/`union` with `declaration` `["Shape"]` and bindings `Circle` (one `Integer` reference), `Rect` (two) and `Empty` (empty aggregate), in that order |
 | N02 | the `Shape::Rect(2, 3)` and `Shape::Empty` nodes | `value`/`union_value` nodes typed `Shape`, with the single bindings `Rect` over two payload terms and `Empty` over the empty aggregate |
 | N03 | the `area` body | an `expression`/`case` node whose `quire.op.control.case` application holds the scrutinee then the arms `Circle`, `Rect`, `Empty`; the binders `r`, `w`, `h` are `value`/`parameter` nodes typed `Integer` at levels `1`, `1` and `2`, because the parameter `s` takes level `0` (FR-440 "Binder levels" rule 1) and each arm starts one above it (rule 3) |
-| N04 | the same source with the arms written `Circle`, `Rect`, `Empty` | the `case` node id and the `package_id` equal N01's |
+| N04 | the same source with the arms written `Circle`, `Rect`, `Empty` | the `case` node id equals N01's |
 | N05 | a second `Circle` binding in the `Shape` node; a `Circle` payload reference to a `value` node | `invalid_package`/`duplicate-member` at the `Shape` node; `ill_typed`/`operator-ineligible` at the `Shape` node |
 | N06 | a `union_value` binding `Triangle`; a `Rect` binding with one payload term; a `Circle` binding whose payload term is `Text` | each `ill_typed`/`type-mismatch` at the `union_value` node |
 | N07 | the `case` arms out of member order; the `Empty` arm removed; a second `Rect` arm; a `Rect` binder aggregate of one reference; the `r` binder typed `Text`; an arm body typed `Text` under `result_type` `Integer` | each `ill_typed`/`operator-ineligible` at the `case` node |
@@ -57,12 +54,9 @@ which deliberately retains the wrong node key to exercise that refusal.
 | N11 | `quire.op.structural.eq` over two values of `union Label { Named(Text[0,8;nfc]), Tagged(Integer, Text[0,8;nfc]), Empty }` | admitted with exactly the leaves `["member:Named", "position:0"]` then `["member:Tagged", "position:1"]`, each with the `nfc` text law and mode, and none for `Empty`; both V2 schemas admit the `member:<Ident>` segment (FR-322-AC-45, FR-440-AC-8) |
 | N12 | `quire.op.structural.eq` over two values of `union List { Cons(Integer, List), Nil }` whose cycle names one `recursion_group`; over two values of a record whose field's type cycles back to it through a union | each admitted with empty `leaves`, neither `operator-ineligible` (FR-322-AC-46, FR-440-AC-8) |
 | N13 | `quire.op.structural.eq` over two values of each of FR-322's `Node`, `Cell`, `Chain` and `Option<Chain>` | each admitted with exactly FR-322's listed leaves in order, ending in `recursion:0`, `recursion:0`, `recursion:0` and `recursion:1` with `laws` `[]` and `mode` `null`; both V2 schemas admit the `recursion:<d>` segment (FR-322-AC-46, FR-440-AC-8) |
-| N14 | fixed union and payload node ids for `Shape::Empty` and `Shape::Rect` with two reference payloads, neither body containing an application | producer and strict reader each match independently fixed RFC 8785 bytes and canonical keys for `quire.application-node/v1`; bodies remain the one-binding aggregates, `declaration` and `recursion` are `null`, and `owner` is absent (FR-440-AC-11) |
-| N15 | N14 with a retained `quire.structural-node/v1` key, with package identity rebuilt to expose the node-key check | strict reader refuses `invalid_package`/`stale-node-key` at the application-node key stage (FR-440-AC-11) |
-| N16 | fixed record and tuple value inputs without an application in either body; N04's reordered source arms | record and tuple preimage bytes and keys remain their existing `quire.structural-node/v1` vectors; the case retains its declared-order body, node id and package id (FR-440-AC-10) |
+| N16 | N04's reordered source arms | the case retains its declared-order body and node id (FR-440-AC-10) |
 
-N14's expected bytes and keys are fixed independently of the producer and
-reader under test. QSpec's Rust fixture/schema qualification and the strict
+QSpec's Rust fixture/schema qualification and the strict
 reader qualification are separate executions; producer agreement alone
 does not establish reader admission. QSL's matching producer obligations
 are [FR-319](ix://agent-ix/quire-spec-language/FR-319) AC-4 and AC-5.

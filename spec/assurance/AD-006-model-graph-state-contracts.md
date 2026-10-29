@@ -86,8 +86,7 @@ flowchart TD
    spec package into a semantic IR 2.0.0 document: the **domain package**.
    Each type definition names its module-qualified kind, and the document
    embeds each kind's construct with its Quire meaning id. The
-   lowering is deterministic, serialized with RFC 8785 and fingerprinted with
-   `sha256-jcs`.
+   lowering is deterministic and serialized with RFC 8785.
 3. **Intake.** QSL admits the domain package supplied under a selected identity, records its identity in the package lock,
    and builds Quire model declarations from its IR nodes. It checks every model rule in
    this document. A domain package that fails a rule refuses with a located
@@ -128,7 +127,7 @@ never evaluated or used as proof obligations.
 - A Quire package imports a domain package by identity alone, as it imports a
   library (FR-307). The package's `model_root` node records the
   identity; the row is
-  part of the package identity and no digest of the document exists.
+  part of the package and no digest of the document exists.
 - Clauses name domain types by qualified name over their IR node identity, for
   example `Orders::Order` for the artifact with id `Order`.
 - Native `record`, `enum` and `tuple` declarations remain the way to write value
@@ -142,7 +141,7 @@ dispatch sets, parts, ports, connections, allocations, operations and
 relationships. Ambiguous precedence or dispatch refuses at checking rather than
 selecting by source or registration order.
 
-An original declaration is keyed by (domain package identity, IR node identity); it carries no digest and no digest domain. The immutable
+An original declaration is keyed by (domain package identity, IR node identity); it carries no digest. The immutable
 selection inventory retains every original and its FCD origin; effective
 entries exist only where the selected normalization rules derive them.
 An effective declaration has its own `quire.model.effective-declaration/v2`
@@ -172,7 +171,7 @@ adds no normalization rule or effective-identity member.
 | The spec's artifacts declare the domain model | One authority. Reviewers, generators and the checker read the same text. |
 | One artifact per domain object, typed by a module object type | Authors add a domain object without touching any type system. |
 | quire-rs is the only artifact parser | One reading of the markdown. Extraction spans point at the real source. |
-| The semantic IR domain package is the exchange form | Generated code and Quire's model share one fingerprinted shape. |
+| The semantic IR domain package is the exchange form | Generated code and Quire's model share one shape. |
 | Quire owns model semantics | Conformance, redefinition, dispatch, frames and populations are checked by the language that proves over them. |
 | Keep original and effective declarations | Diagnostics and evidence trace both meanings. |
 | Closed conformance and dispatch sets | The same package resolves deterministically; a missing closure refuses. |
@@ -184,6 +183,6 @@ adds no normalization rule or effective-identity member.
 | Risk | Control |
 | --- | --- |
 | An artifact declares a feature its module manifest cannot extract | Extraction refuses with the artifact, section and span. No feature is inferred. |
-| Generated types and the model view drift | Both read one domain package, selected by identity in the CheckedPackage. |
+| Generated types and the model view drift | Both read one domain package, selected by the identity its `model_root` node records in the CheckedPackage. |
 | Dynamic dispatch becomes open-world | Dispatch requires the closed subtype set and reports ambiguity or incompleteness. |
 | Graph bounds are mistaken for semantic truncation | Exhaustion is incomplete; no cutoff returns false. |

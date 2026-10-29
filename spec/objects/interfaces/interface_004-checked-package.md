@@ -24,31 +24,28 @@ relationships:
 ```yaml
 name: CheckedPackageArtifactV2
 associated_types:
-  - CheckedPackageId
   - CheckedSemanticGraphV2
-  - CheckedSemanticNodePreimageV1
   - CheckedOperationCatalogV1
   - PackageLockV2
   - SourceDocumentRef
   - DefinitionArtifactRef
-  - ModelSelectionRef
+  - ModelRootNode
   - SourceMapV2
   - CapabilityReportV2
   - DiagnosticReportV2
   - CheckedPackageReadLimits
 operations:
   - { name: link_and_check, inputs: [ParsedSource, ModelSelection, profile bundle], output: CheckedPackageArtifactV2 or located refusals, semantics: resolves exact definitions types dependencies nominal identities and capabilities }
-  - { name: read, inputs: [canonical CheckedPackageArtifactV2 bytes, CheckedPackageReadLimits], output: immutable checked package or typed refusal/incomplete result, semantics: verifies the selected wire, closed structure, canonical bytes, domain-tagged identities and bounded graph before consumption }
+  - { name: read, inputs: [canonical CheckedPackageArtifactV2 bytes, CheckedPackageReadLimits], output: immutable checked package or typed refusal/incomplete result, semantics: verifies the selected wire, closed structure, canonical bytes, structural node identities and bounded graph before consumption }
   - { name: inspect, inputs: [CheckedPackageArtifactV2], output: immutable declarations capabilities and diagnostics, semantics: does not execute or lower }
 invariants:
   - runtime inputs do not participate in static package identity
   - backend support does not alter admission
-  - source bytes, definition bytes, domain packages, checked semantic graph and generated IR occupy distinct typed identity and digest domains
+  - a checked package is identified by its `name` and its declared contents compared structurally
   - the public semantic graph is a closed union owned by this interface; consumers do not receive parser/CST/package implementation objects
-  - complete-V1 nominal scalar node keys use the closed node-identity preimages and known vectors published with the I04 schema
-  - every V2 application term carries one closed catalogued operation identity with exactly its required lock-selected laws (a clause its lock-selected profile law and one profile operator member), type-pinned mode, member, structural or keyed-collection leaves and declared result type, bound into its application node identity and the package identity
+  - every node id is the structural `{package, path, ordinal}` of FR-322, compared componentwise
+  - every V2 application term carries one closed catalogued operation identity with exactly its required lock-selected laws (a clause its lock-selected profile law and one profile operator member), type-pinned mode, member, structural or keyed-collection leaves and declared result type, bound into its application node
   - every literal term carries its declared type; no application result or literal type is inferred
-  - an application node retaining a stale key is refused as invalid_package with cause stale-node-key before any declaration or operation refusal
   - every named, source-declared node carries exactly one package-local declaration path, bound into its node identity; builtin and anonymous nodes carry none; library exports resolve only through it
   - a reader retains invalid unsupported incomplete and failed dispositions; it cannot replace one with an empty graph or a successful package
 ```
@@ -64,15 +61,9 @@ requirements retain authority for language meaning. This boundary deliberately
 does not expose a parser CST, a filesystem path, a display string, or an
 implementation-private native package structure.
 
-The adjacent `node-identity-preimage.schema.json` and
-`node-identity-vectors.json` are normative parts of this contract. They close the
-JCS preimages for enum declarations/members, dimensions and declared units
-without making a whole package identity part of a nominal type identity.
-
 The `read` operation is a strict, bounded admission operation. It verifies the
 declared wire before graph interpretation and returns a typed refusal for a
-document that is not a checked package, a malformed or duplicate member, cross-domain substitution,
-stale dependency, unknown capability, or graph/source-map invariant violation.
+document that is not a checked package, a malformed or duplicate member, unknown capability, or graph/source-map invariant violation.
 Exceeding a selected byte, node, edge, locus, diagnostic, or work limit
 returns an incomplete resource disposition naming the limit, its value and its
 setting, and no admitted package. A node body follows FR-322's closed
@@ -104,11 +95,9 @@ FR-149 conversion classes that decide eligibility are the normative table of
 range and rational narrowing are checked obligations, and only a decimal scale
 reduction rounds.
 
-Every node whose body contains an application is keyed by its
-`quire.application-node/v1` preimage (`node_tag`, `semantic_form`,
-`semantic_type`, `declaration`, `recursion`, `body`), so a changed operation,
-law, mode, member, leaf, result type or declaration changes that node's id and
-the package id. `read` refuses with the causes and order owned by
+Every node whose body contains an application has a structural `node_id`
+over its derived form (FR-322), so a changed operation, law, mode, member,
+leaf, result type or declaration yields a different node. `read` refuses with the causes and order owned by
 `quire.native.diagnostics/v1`:
 
 | Order | Cause | Code |
@@ -125,13 +114,12 @@ the package id. `read` refuses with the causes and order owned by
 
 Causes 1 to 7 of an application precede its argument applications' refusals,
 which precede its causes 8 and 9 and then its leaves. Nodes are checked in
-ascending node-id digest order and applications in pre-order. Before any
+ascending node-id order and applications in pre-order. Before any
 operation refusal the reader checks, in order, the graph shape
-(`invalid_semantic_graph`), `stale-node-key` (`invalid_package`) for a node
-whose retained key is not its preimage digest, `declaration-nominal-mismatch`
+(`invalid_semantic_graph`), `declaration-nominal-mismatch`
 (`invalid_package`) and then `ambiguous-name` (`ambiguous_declaration`) over
 the nodes' `declaration` members, and then, at the first `state`/`frame` node
-in ascending node-id digest order carrying a defect
+in ascending node-id order carrying a defect
 ([FR-340](./FR-340-checked-package-frame-location.md)), that node's own
 defect: a `missing-name`/`missing_declaration` or `malformed-declaration`/
 `invalid_model_binding` meaning-join defect, or a
@@ -141,7 +129,7 @@ step ([FR-341](./FR-341-checked-package-state-clause-body.md)): the
 placement of every `quire.op.state.clause` application, then each
 `state`/`operation_anchor` node's joins
 ([FR-342](./FR-342-checked-package-operation-anchor-body.md)), then each
-`state`/`state_clause` node's joins, each in ascending node-id digest order.
+`state`/`state_clause` node's joins, each in ascending node-id order.
 
 ## Declaration
 
@@ -162,4 +150,4 @@ resolve only through this member.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | interface_004-AC-1 | Every application term of each published V2 package names exactly one catalogued operation identity and explicitly states its laws, mode, member and leaves, all admitted by the catalog and the package lock. | Test (TC-233) |
-| interface_004-AC-2 | Changing an application's operation identity, law or absence mode changes its node id and package id and a retained key is refused; the rekeyed package is admitted, refused as `operation-law-unselected` for an unlocked law, or refused as `operator-ineligible` when the mode disagrees with the retained result type. | Test (TC-233) |
+| interface_004-AC-2 | Changing an application's operation identity, law or absence mode yields a different node; the changed package is admitted, refused as `operation-law-unselected` for an unlocked law, or refused as `operator-ineligible` when the mode disagrees with the retained result type. | Test (TC-233) |

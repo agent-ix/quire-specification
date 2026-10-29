@@ -61,7 +61,7 @@ provider boundary, linked or as a process, and is not a plugin.
   bound each plugin run.
 - **Typed output.** Every plugin result is read with the typed FR-331 reader.
   A plugin never produces a checked object: it receives v2 bytes, and the IR
-  reader revalidates their `package_id`.
+  reader revalidates them.
 - **Counterexamples.** A plugin's counterexample is canonical assignments.
   The item settles `refuted` only when the reference evaluator's replay
   reproduces it.

@@ -22,9 +22,8 @@ Compile each vector through the real local Rust boundary, read the
 compare node ids and identities pairwise. Every unit declares the dimension
 `Time` and the unit `ms` of it, and TC-372's `Ctl` task set; `CtlFp`, `CtlEdf`
 and `T3` are TC-372's claims. For SC-08 to SC-19, edit the node of SC-01 or
-SC-02 as stated, recompute its node key and recompute the `package_id` over
-the derived identity projection, as TC-233 does for its patched vectors, and
-feed the package to the reader.
+SC-02 as stated, set its `dependencies` to the body's targets, as TC-233 does for its patched
+vectors, and feed the package to the reader.
 
 ## Vectors
 

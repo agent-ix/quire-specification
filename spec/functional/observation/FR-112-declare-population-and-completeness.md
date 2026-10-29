@@ -17,7 +17,7 @@ relationships:
 ## Description
 
 When assessing a population or event-time window, the assessment request SHALL
-retain the selected domain package identity/digest and population declaration
+retain the selected domain package identity and population declaration
 key, declared finite membership rule/digest, population and snapshot/window identities, bounds,
 observation sources, configuration/closure identities and digests, and
 completeness/progress dependencies.
@@ -28,8 +28,7 @@ every required semantic member identity and derive its identity under
 `quire.verification.jcs` from that exact versioned list.
 
 When retaining configuration and closure definition bytes, the observation
-service SHALL identify their digests under FR-201 `raw-artifact-digest`, and
-SHALL identify the domain package and its declarations under `sha256-jcs`.
+service SHALL identify them by their declared identities.
 
 When selecting a snapshot, the observation service SHALL derive its
 `sha256-jcs` identity from the exact declaration selection, membership-rule
@@ -65,12 +64,12 @@ the latter can participate only in a separately selected later window.
 | FR-112-AC-4 | A declaration key, identity, membership-digest, configuration, or closure-digest mismatch is refused without ambient defaulting. | Test (TC-142) |
 | FR-112-AC-5 | A selected half-open window includes an exact member at `start`, excludes one at `end`, and cannot double-count either across windows. | Test (TC-142) |
 | FR-112-AC-6 | The v1 explicit-members rule, snapshot and population identities are independently recomputable; every key mutation changes the applicable identity and presentation permutation does not. | Test (TC-142) |
-| FR-112-AC-7 | Unknown/duplicate/unbounded member sets and absent/foreign digest domains refuse, while unknown required membership remains distinct from an empty required set. | Test (TC-142) |
+| FR-112-AC-7 | Unknown/duplicate/unbounded member sets refuse, while unknown required membership remains distinct from an empty required set. | Test (TC-142) |
 
 ## Dependencies
 
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
-- [AD-006](../../assurance/AD-006-model-graph-state-contracts.md): population declarations and their closed extents are spec-declared and keyed by domain package identity, IR node identity and `sha256-jcs`; E owns closure semantics.
+- [AD-006](../../assurance/AD-006-model-graph-state-contracts.md): population declarations and their closed extents are spec-declared and keyed by domain package identity and IR node identity; E owns closure semantics.
 
 ## Status
 

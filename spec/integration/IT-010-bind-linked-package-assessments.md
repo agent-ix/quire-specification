@@ -47,7 +47,7 @@ ceilings and separate mutants listed in TC-030 and TC-035.
 
 1. Extract and lift the inventory into its domain package, admit it through QSL model intake, link it and consume the result.
    - IT-010-SC-01: every expected source, model/profile selection, declaration and typed role agrees with the independently authored fixture; both equal-named roles remain distinct.
-2. Remove one inventoried source and substitute each wrong digest domain independently.
+2. Remove one inventoried source and substitute each wrong source identity independently.
    - IT-010-SC-02: namespace or import admission refuses as applicable; the consumer receives no falsely checked dependent declaration.
 3. Bind the original O1/O2 requests; then omit, duplicate and substitute a required role mapping and cross-bind O2 progress into O1's population.
    - IT-010-SC-03: explicit compatible role sharing succeeds; each mutant refuses its dependent request with a typed role/scope cause and no evaluator invocation.
@@ -66,13 +66,12 @@ Additional stage and declaration-key controls:
    scope selection removed and separately with an unavailable required record.
    - IT-010-SC-07: static linking succeeds without observations; the valid assessment binds, the missing selection refuses, and unavailable required evidence remains incomplete. No compile-time window or synthesized record fills a later prerequisite.
 8. Bind runtime subject references to effective declaration keys (domain
-   package identity, IR node identity). Swap the digest domain,
-   name an IR node the domain package does not declare, and supply a runtime
+   package identity, IR node identity). Name an IR node the domain package does not declare, and supply a runtime
    reference keyed to a foreign domain package independently. Change one
    declared field in a source artifact and relift. Intake the relifted package
-   with its bytes supplied under its own digest and a ModelSelection naming that digest. Separately remove one referenced
+   with its document supplied under the same identity. Separately remove one referenced
    artifact, relift and bind with its old declaration key.
-   - IT-010-SC-08: the original declaration keys survive linking and binding; each substitution refuses its dependent binding. After the field change, the declaration key is unchanged and the new ModelSelection binds the changed declaration. After the removal, the old key refuses `missing_declaration`/`missing-name`.
+   - IT-010-SC-08: the original declaration keys survive linking and binding; each substitution refuses its dependent binding. After the field change, the declaration key is unchanged and the relifted package binds the changed declaration. After the removal, the old key refuses `missing_declaration`/`missing-name`.
 
 ## Expected Results
 

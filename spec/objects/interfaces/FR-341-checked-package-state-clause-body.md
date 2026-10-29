@@ -64,7 +64,7 @@ hold.
   `ClauseBinding.execution_point`, in FR-322's closed `ExecutionPoint` shape.
   It is absent only when the checked clause has no execution point. Because
   the operation member is part of the application body, the point participates
-  in the state-clause node's application preimage and identity.
+  in the state-clause node's identity.
 - **semantic_type** — the `scalar_type`/`boolean` node. The application's
   `result_type` names the same node: the catalog's `clause` result form
   declares a Boolean result, and FR-322's rule that a node whose body root
@@ -73,7 +73,7 @@ hold.
 - **occurrences** — every occurrence has role `claim`, one per declaration
   that checks to this node.
 - **dependencies** — FR-322's application-node rule: exactly the unique
-  digest-ascending `reference` targets of the body, so the anchor, each
+  node-id-ascending `reference` targets of the body, so the anchor, each
   parameter node and every node the condition references.
 
 The parameters a clause binds follow the state contract's "Operation
@@ -228,22 +228,22 @@ other transition forms are outside this body and this version.
 - **occurrences** — every occurrence has role `claim`, one per declaration
   that checks to this node.
 - **dependencies** — FR-322's application-node rule: the unique
-  digest-ascending `reference` targets of the body, so the anchor, subject,
+  node-id-ascending `reference` targets of the body, so the anchor, subject,
   each input, the `pre` clause when present and the `post` clause.
-- **identity** — the node is keyed by FR-322's application-node preimage with
-  no `declaration`. The preimage holds the operator, the operation identity,
-  the profile law's definition, the member operator, the five bindings (every
-  referenced node id, therefore the anchor's context, operation name and
-  execution point, the subject's field and the two clauses' conditions) and the
-  `result_type`. It holds no source region, occurrence, ordinal or source-map
-  entry: re-spelling the source, moving a region or adding an occurrence
-  changes neither the node id nor the `package_id`, while changing the field,
-  the operation, an input, `pre`, `post` or the profile selection changes the
-  node id and the `package_id` through the `identity_projection`.
+- **identity** — the node is an application with no `declaration`, so its
+  `node_id` is the structural path of FR-322's derived-node form: the
+  operator, the operation identity, the profile law's definition, the member
+  operator and the five bindings (every referenced node's `node_id`, therefore
+  the anchor's context, operation name and execution point, the subject's
+  field and the two clauses' conditions). It holds no source region,
+  occurrence or source-map entry: re-spelling the source, moving a region or
+  adding an occurrence leaves the node id unchanged, while changing the
+  field, the operation, an input, `pre`, `post` or the profile selection
+  yields a different node.
 
 Placement. A `quire.op.state.transition` application is the body root of a
 `state`/`transition` node and nowhere else. The state step checks the
-placement of every such application first, in ascending node-id digest order,
+placement of every such application first, in ascending node-id order,
 before the anchor checks: an application at the body root of a node that is not
 a `state`/`transition` node refuses `ill_typed`/`operator-ineligible` at that
 node; an application nested inside a node body or another term is outside
@@ -253,7 +253,7 @@ strict wire validation; and a `state`/`transition` node whose body root is not a
 
 Reader order for transition nodes: the state step checks every
 `state`/`transition` node after every `state`/`state_clause` node, in
-ascending node-id digest order, and the first failing check is its defect:
+ascending node-id order, and the first failing check is its defect:
 
 1. **Anchor.** The `anchor` target is a declared dependency (a node of the graph absent from `dependencies` is refused `invalid_semantic_graph` at the graph stage, FR-322-AC-96, before this step), else
    `missing_declaration`/`missing-name` for a target that names no node, and a `state`/`operation_anchor` node,
@@ -279,7 +279,7 @@ ascending node-id digest order, and the first failing check is its defect:
    "clause joins", else `invalid_model_binding`/`malformed-declaration` at its
    target.
 5. **Uniqueness.** No two transition nodes join to one (`anchor`, `subject`)
-   pair; the second in ascending node-id digest order refuses
+   pair; the second in ascending node-id order refuses
    `ambiguous_declaration`/`ambiguous-name`.
 
 The profile law, the member operator, the `result_type` and the argument term
@@ -329,8 +329,7 @@ transition's `post` as the operation's complete postcondition, SHALL NOT read
 its `pre` as the operation's complete precondition, and SHALL NOT infer from a
 transition that no further postcondition or precondition exists. No
 conjunction node is synthesized, so no new canonical order or identity exists
-to rule, and the single `post` binding, the at-most-one `pre`, the preimage
-and the uniqueness rule are unchanged.
+to rule, and the single `post` binding, the at-most-one `pre` and the uniqueness rule are unchanged.
 
 One producer option, not a requirement of this specification: where several
 clauses of one kind constrain one subject, the producer that wants a
@@ -345,12 +344,12 @@ part of IR-1052 AC-7 is not closed by this specification.
 
 The state step runs after the frame step (FR-340) and before any operation
 refusal ([FR-322](FR-322-checked-package-artifact.md)), after every
-graph-shape, `stale-node-key` and declaration refusal. Within it, the
+graph-shape and declaration refusal. Within it, the
 reader first checks the placement of every `quire.op.state.clause`
-application, in ascending node-id digest order; then every
-`state`/`operation_anchor` node (FR-342), in ascending node-id digest
-order; then every `state`/`state_clause` node, in ascending node-id digest
-order; then every `state`/`transition` node, in ascending node-id digest order
+application, in ascending node-id order; then every
+`state`/`operation_anchor` node (FR-342), in ascending node-id
+order; then every `state`/`state_clause` node, in ascending node-id
+order; then every `state`/`transition` node, in ascending node-id order
 ("State transition body"). It reports the first defect. For one clause node, the checks run in
 this order and the first failing check is its defect:
 
@@ -402,7 +401,7 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 | FR-341-AC-14 | The state-clause member admits each closed `execution_point` variant: initialization/handler on an invariant, pre/post on an operation clause; it refuses an unknown variant, extra member, missing anchor name, an inapplicable point, or a name that disagrees with the checked source/operation anchor. Equal clause bodies with different accepted points have different node identities and package ids; the same point round-trips unchanged. | Test (TC-233) |
 | FR-341-AC-15 | A `state`/`transition` node's body is a `quire.op.state.transition` application with operator class `state_transition`, one `protocol_profile` law, `member` `{kind: "profile_operator", operator: "transition"}`, `null` mode, empty leaves, a Boolean `result_type`, and exactly the five bindings `anchor`, `subject`, `inputs`, `pre`, `post` in that order, where `anchor`, `subject` and `post` are references, `inputs` an aggregate of references and `pre` an aggregate of at most one reference; every occurrence has role `claim`. A body with the bindings reordered, one missing or added, `pre` holding two references, an aggregate `subject`, another member operator, another law role, a mode, or an occurrence of another role fails the published schema (`malformed_wire`); the operation step, run alone on a document the schema was not applied to, refuses another profile operator as `operation-member-mismatch` (FR-341-AC-19). | Test (TC-233) |
 | FR-341-AC-16 | The state step refuses a transition node with the first defect in this order, each at its stated locus: a transition application at the root of another node (`ill_typed`/`operator-ineligible` at that node); an `anchor` that is not a declared `operation_anchor` dependency; a `subject` that is not a declared field projection of a dereferenced `Reference<C>` `self` of the anchor's context, or whose field the anchor's frame does not modify (`invalid_model_binding`/`malformed-declaration`), or whose type is not the required single-valued Boolean node, such as an optional Boolean field typed `Option<Boolean>` or an Integer field (`ill_typed`/`operator-ineligible` at the node); an `inputs` list that is not the operation's Boolean parameters in declared order; a `pre` or `post` that is not the operation's precondition or postcondition state clause, including one anchored at another context or operation; and a second transition over the same `anchor` and `subject` (`ambiguous_declaration`/`ambiguous-name`). | Analysis |
-| FR-341-AC-17 | The published `positive-state-transition.json` package, whose transition is `Switch.set(flag: Boolean)` over the required Boolean field `on` of `acme/orders` with precondition `flag || on` and postcondition `on`, validates against `schema.json`, has every application node's preimage valid under the preimage schema, keys every node by its preimage and its `package_id` by the identity preimage plus the occurrence-free node projection, and is admitted by the operation step for every application, the subject projection included. Rewriting the anchor's operation name changes the ids of the anchor, both clauses and the transition and the `package_id`; rewriting the subject's field, `pre`, `post` or the profile selection changes the transition id and the `package_id`; moving a source-map region leaves every node id and the `package_id` unchanged. | Test (TC-233) |
+| FR-341-AC-17 | The published `positive-state-transition.json` package, whose transition is `Switch.set(flag: Boolean)` over the required Boolean field `on` of `acme/orders` with precondition `flag || on` and postcondition `on`, validates against `schema.json`, is admitted by the operation step for every application, the subject projection included. Rewriting the anchor's operation name changes the ids of the anchor, both clauses and the transition; rewriting the subject's field, `pre`, `post` or the profile selection changes the transition id; moving a source-map region leaves every node id unchanged. | Test (TC-233) |
 | FR-341-AC-18 | A `quire.op.state.transition` application nested inside a node body or another term fails the V2 schema (`malformed_wire` at the nested application), and a `state`/`transition` node whose body root is another application or term fails the V2 schema; the state step refuses a transition application at the root of any other node as `ill_typed`/`operator-ineligible` at that node, before any anchor check. | Test (TC-233) |
 | FR-341-AC-19 | For the published `positive-clause-operations.json` and `positive-state-transition.json` packages, a `quire.op.protocol.control` application naming operator `transition` fails the published schema and a complete reader refuses it `malformed_wire` at the application's `operation/member/operator`; a `quire.op.state.transition` application naming `sequence` fails the schema likewise; the operation step run alone on either edited document refuses `invalid_package`/`operation-member-mismatch` at the application. The schema is not widened. | Test (TC-233) |
 | FR-341-AC-20 | A package whose operation anchor has two `postcondition` `state_clause` nodes and one transition binding either one as `post` is admitted, and likewise for two `precondition` nodes and `pre`; a transition's `post` and `pre` do not stand for the operation's complete postcondition or precondition, and two transitions over one (`anchor`, `subject`) refuse `ambiguous_declaration`/`ambiguous-name` whichever clauses each binds. How QSL's first transition emitter chooses its clause (for example one source-stated `post A and B`) is QSL-owned and OPEN (QSL-1163, e38); this criterion does not close the QSL-authored part of IR-1052 AC-7. | Analysis |
@@ -410,7 +409,7 @@ non-Boolean node each refuse `ill_typed`/`operator-ineligible`.
 ## Dependencies
 
 - [FR-322](FR-322-checked-package-artifact.md) owns the `semantic_graph`,
-  the operation catalog, the application-node preimage and the reader's
+  the operation catalog, the application-node dependency rule and the reader's
   refusal order this artifact adds the state step to.
 - [FR-342](FR-342-checked-package-operation-anchor-body.md) owns the
   `state`/`operation_anchor` body a precondition or postcondition is

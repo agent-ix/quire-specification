@@ -78,5 +78,6 @@ are current semantic inputs to these definitions.
 FS03 accepts the ordered state closure, FS04 accepts the temporal/observation
 closure, and FS05 accepts the linked-package
 interpretation plus its selected strict reference/canonical/migration contracts.
-Other listed family definitions retain their own acceptance tickets. This authoring workflow does not weaken the product semantics of FR-030/032/035
+Other listed family definitions retain their own acceptance tickets. Runtime identity, source provenance and refusal of
+mismatched inputs remain required by FR-030/032/035. This authoring workflow does not weaken those product semantics
 or rewrite previously accepted profiles.

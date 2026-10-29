@@ -28,8 +28,7 @@ FR-466-AC-18.
    names `finish Closed` and the template `Refund` (forward `Applied`, commit
    `Finalized`, `attempts 3 of M::RefundAttempt`).
 2. Encode one admitted variant of each operator in the "Layouts" table.
-3. Apply each vector of the other tables to the base package, recompute node
-   and package identities after each edit, and run the full reader.
+3. Apply each vector of the other tables to the base package, and run the full reader.
 
 ## Layouts
 
@@ -38,10 +37,10 @@ FR-466-AC-18.
 | L1 | the base package | admitted: every control has exactly its layout of FR-466 |
 | L2 | an empty `sequence` | admitted; `children` is an empty Group |
 | L3 | `parallel` with each policy: `all [east, west]`, `any [east]`, `quorum` with count 1 and 2 over `[east, west]`, `predicate` naming a `function` node over `[east, west]` | admitted |
-| L4 | `parallel` with `memory` `sc`, `tso` and `ra`, and with none | admitted: four distinct node keys |
-| L5 | `parallel` with `outstanding` `continue`, `cancel` and none | admitted: three distinct node keys |
-| L6 | `attempt` with `ordering` each of `relaxed`, `acquire`, `release`, `acq_rel`, `seq_cst`, and none | admitted: six distinct node keys |
-| L7 | `fence` with `ordering` each of `acquire`, `release`, `acq_rel`, `seq_cst` | admitted: four distinct node keys |
+| L4 | `parallel` with `memory` `sc`, `tso` and `ra`, and with none | admitted: four distinct node ids |
+| L5 | `parallel` with `outstanding` `continue`, `cancel` and none | admitted: three distinct node ids |
+| L6 | `attempt` with `ordering` each of `relaxed`, `acquire`, `release`, `acq_rel`, `seq_cst`, and none | admitted: six distinct node ids |
+| L7 | `fence` with `ordering` each of `acquire`, `release`, `acq_rel`, `seq_cst` | admitted: four distinct node ids |
 | L8 | `repeat` with `maximum` and `exhausted`; with `proof`; with both; with neither | admitted |
 | L9 | `event` with and without a `compensation`; `commit`; `check` | admitted |
 | L10 | `Requested`'s two top-level arguments swapped | refuses `malformed_wire` (binding names out of order) |
@@ -59,7 +58,7 @@ FR-466-AC-18.
 
 | Vector | Edit | Expected |
 | --- | --- | --- |
-| S1 | swap `Requested` and `Charged` in `Main`'s `children` | `Main`'s node key and the `package_id` change; the reader refuses `definition-cycle` for the `receive`/`send` edge (`Requested` and `Received`) |
+| S1 | swap `Requested` and `Charged` in `Main`'s `children` | `Main`'s node id changes; the reader refuses `definition-cycle` for the `receive`/`send` edge (`Requested` and `Received`) |
 | S2 | a child of `Main` that is a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | S3 | a child of `Main` that is a node of the graph absent from `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the `Main` node (graph stage, FR-322-AC-96, before any body step) |
 | S3a | a child of `Main` that is a local node id no node of the graph carries, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target |
@@ -71,8 +70,8 @@ FR-466-AC-18.
 | CE6 | `visible` empty, guards over constants and the capture `order` only | admitted |
 | CE6b | `visible` empty, a guard reads `eastRes.ok` | `wrong_snapshot`/`wrong-observation`, `reason` `unlisted` |
 | CE8 | `cases` listed `shipped`, `failed` (not in ascending label order) | `invalid_semantic_graph` |
-| CE9 | `visible` entries out of digest order; a repeated entry | `invalid_semantic_graph` |
-| CE10 | `contracts` out of digest order; `related` out of order; a repeated `related` entry | `invalid_semantic_graph` |
+| CE9 | `visible` entries out of node-id order; a repeated entry | `invalid_semantic_graph` |
+| CE10 | `contracts` out of node-id order; `related` out of order; a repeated `related` entry | `invalid_semantic_graph` |
 | CE11 | the same `eastRes.ok` node listed in `Outcome.visible` and `Poll.visible` | admitted (a shared expression node is not a duplicate declaration) |
 | CE7 | the two guards overlap (`eastRes.ok` and `eastRes.ok or true`) | admitted: the reader does not re-prove exhaustiveness or exclusiveness |
 | PA1 | `Shipments` with one branch | refuses `malformed_wire` (at least two branches) |
@@ -80,7 +79,7 @@ FR-466-AC-18.
 | PA3 | `joined` is `[east, middle]` | `missing_declaration`/`missing-name` at `middle` |
 | PA4 | `join all [east]` | `invalid_package`/`invalid-value` at `joined` |
 | PA12 | `branches` listed `west`, `east` | `invalid_semantic_graph` (branches sorted by label) |
-| PA13 | the same protocol declared with branches `west` then `east` in the source | one encoding, `east` then `west`: the same node keys as the base |
+| PA13 | the same protocol declared with branches `west` then `east` in the source | one encoding, `east` then `west`: the same node ids as the base |
 | PA5 | `joined` is `[west, east]` (branch order reversed) | `invalid_semantic_graph` |
 | PA6 | `joined` is `[east, east, west]` | `invalid_semantic_graph` |
 | PA7 | `quorum` with `count` 0, and with `count` 3 over two joined branches | `invalid_package`/`invalid-value` at `count` |
@@ -197,7 +196,7 @@ FR-466-AC-18.
 | Vector | Edit | Expected |
 | --- | --- | --- |
 | CP1 | the base `Refund`: `commit Finalized`, `attempts 3 of M::RefundAttempt` | admitted; thirteen bindings in order |
-| CP2 | `Refund` with `commit never` | admitted; `commit` is an empty optional; the node key differs from CP1's |
+| CP2 | `Refund` with `commit never` | admitted; `commit` is an empty optional; the node id differs from CP1's |
 | CP3 | `forward` names `Charged` (an `attempt`) | `invalid_model_binding`/`malformed-declaration` at the target |
 | CP4 | `forward_binder` has a type other than `Applied`'s own binder | `ill_typed`/`type-mismatch` at the template, retaining expected and actual |
 | CP5 | `role` names a role of another protocol | `invalid_model_binding`/`malformed-declaration` at the target |
@@ -227,7 +226,7 @@ FR-466-AC-18.
 | CP23 | the retry relation reads `sent` | `missing_declaration`/`missing-name` at the template |
 | CP24 | the recovery predicate reads its binder and a capture | admitted |
 | CP25 | the recovery predicate reads `earlier` | `missing_declaration`/`missing-name` at the template |
-| CP26 | two templates named `Refund` | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
+| CP26 | two templates named `Refund` | `ambiguous_declaration`/`ambiguous-name` naming both node ids |
 | CP27 | a template that no clause lists | `invalid_semantic_graph` at the template |
 | CP28 | the lock selects no `temporal_profile` | `missing_declaration`/`missing-selection` at the template |
 | CP29 | the trigger guard reads `view` (`over`) | `ill_typed`/`operator-ineligible` at the read, naming the guard |
@@ -254,7 +253,7 @@ FR-466-AC-18.
 8. BS1 to BS11 behave as listed (FR-466-AC-10).
 9. CP1 to CP37 (with CP9b to CP9f and CP10b) behave as listed (FR-466-AC-11, FR-466-AC-12).
 10. DF1 to DF18 (with DF6b and DF7b to DF7h) behave as listed (FR-466-AC-14, FR-466-AC-16, FR-466-AC-17, FR-466-AC-18).
-11. Every admitted vector's node keys are unchanged by reformatting the source
+11. Every admitted vector's node ids are unchanged by reformatting the source
     and by a second reference to the protocol, and change with any retargeted
     reference, renamed control, reordered child or changed literal
     (FR-466-AC-13).

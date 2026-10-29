@@ -53,8 +53,8 @@ diagnostic; recognition does not admit floating point. Numeric value/range
 checking follows syntax and the selected scalar domain.
 
 `digest` and `version` are not reserved words: a `digest` or `version` after a
-`model` or `import` identity string is an ordinary token that the declaration does
-not admit (`invalid_syntax`/`unexpected-token`). Common reserved words for this candidate fragment are `language`, `edition`,
+`model` or `import` identity string is an ordinary token that the declaration
+does not admit (`invalid_syntax`/`unexpected-token`). Common reserved words for this candidate fragment are `language`, `edition`,
 `profile`, `model`, `using`, `predicate`, `Boolean`,
 `invariant`, `pre`, `post`, `on`, `at`, `current`, `let`, `in`, `if`, `then`,
 `else`, `implies`, `or`, `and`, `not`, `self`, `result`, `true`, `false`,

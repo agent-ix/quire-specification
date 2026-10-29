@@ -300,18 +300,14 @@ compared bytewise as UTF-8.
 
 A registry snapshot is a function of the set of admitted registrations it has
 received. A registration refused under "Advertised mode" is not admitted and
-takes no part in the identity rules below. Two registrations carry equal
-descriptors when their FR-331 manifest descriptors have byte-equal RFC 8785
-canonical encodings. For each backend identity:
+takes no part in the identity rules below. For each backend identity:
 
-- When every admitted registration of the identity carries an equal FR-331
-  manifest, the registry SHALL hold that identity once, with that manifest.
-  The repeats are one registration, and a repeat is not refused.
-- When the admitted registrations of the identity carry two or more manifests
-  that differ in any member, such as their advertised pairs, the registry
-  SHALL refuse every registration of that identity with
-  `invalid_capability`/`duplicate-backend`, once per distinct manifest, and
-  SHALL hold no registration of that identity.
+- When exactly one admitted registration carries the identity, the registry
+  SHALL hold it.
+- When two or more admitted registrations carry the identity, whatever their
+  manifests, the registry SHALL refuse the identity with
+  `invalid_capability`/`duplicate-backend`, once for the identity, and SHALL
+  hold no registration of that identity. A backend identity is registered once.
 
 A registration of an identity that conflicts is refused whenever it arrives:
 one admitted before the conflicting registration is withdrawn from the
@@ -379,7 +375,7 @@ Registration causes `absent-kind`, `unknown-kind`, `unknown-mode`,
 `invalid-dynamics` (FR-193) and `invalid-state-graph-forms` refuse only that
 registration. `duplicate-backend` refuses every registration of its
 identity and no other. Registration refusals are reported ordered bytewise by
-backend identity, then by the manifest's RFC 8785 bytes.
+backend identity.
 
 ## Identity and comparison
 
@@ -429,8 +425,8 @@ backend identity, then by the manifest's RFC 8785 bytes.
 | FR-290-AC-6 | For each row of the advertised-mode table, negotiation settles the listed disposition; an unbounded extent on a bounded-only advertisement never settles `supported`; an item with no extent classification settles `invalid-request`. | Test (TC-271) |
 | FR-290-AC-7 | Each row of the candidate table settles its listed disposition and cause; an item with two or more candidates and no named backend settles `invalid-request` naming every candidate in candidate order, identically under every registration order; a malformed registration is refused and keyed by backend identity. | Test (TC-271) |
 | FR-290-AC-8 | A routed item whose tool is missing, or whose probe finds a version other than the descriptor's `tool.version`, errors or exceeds its limit, records the FR-331 result `unsupported` with cause `unsupported_projection`/`tool-unavailable` naming the kind and backend; its disposition stays `supported`, and no other registered candidate or mode runs; a tool that becomes unavailable after a passing probe records the FR-331 result `failed` with the same cause. | Test (TC-271) |
-| FR-290-AC-9 | Two or more admitted registrations of one backend identity with equal manifests leave that identity registered once, with no refusal, and give the same snapshot and candidate sets as one registration. | Test (TC-282) |
-| FR-290-AC-10 | Admitted registrations of one backend identity with two or more differing manifests are all refused with `invalid_capability`/`duplicate-backend`, one refusal per distinct manifest, ordered by identity and then by the manifest's RFC 8785 bytes; the snapshot holds no registration of that identity, a request naming it receives the unknown-backend mark, and registrations of other identities stand; the snapshot, its refusals and every candidate set are identical under every registration order. | Test (TC-282) |
+| FR-290-AC-9 | Withdrawn: equal manifests of one backend identity are no longer merged; a backend identity registered more than once is refused (FR-290-AC-10). | Withdrawn |
+| FR-290-AC-10 | Two or more admitted registrations of one backend identity, whatever their manifests, are refused with `invalid_capability`/`duplicate-backend`, one refusal per identity, ordered by identity; the snapshot holds no registration of that identity, a request naming it receives the unknown-backend mark, and registrations of other identities stand; the snapshot, its refusals and every candidate set are identical under every registration order. | Test (TC-282) |
 | FR-290-AC-11 | A probabilistic claim requires `probabilistic-satisfaction`, a task-set claim `schedulability`, and a timed temporal claim and the time-lock-freedom item `temporal-satisfaction`. | Test (TC-353, TC-370, TC-372) |
 | FR-290-AC-12 | A `probabilistic-satisfaction` item is a candidate only for backends advertising its evidence kind; an `exact` item with only a `statistical` candidate, and the converse, settle `unsupported`, `unsupported-requested-capability`; an item with an absent or unknown evidence kind settles `invalid-request` with its named cause. | Test (TC-353) |
 | FR-290-AC-13 | At the single candidate's arm, the domain-kind check runs after the candidate table and before the advertised-mode table: a bounded item whose `extent.bounds` hold a kind outside the candidate's `domains` settles `unsupported`, `unsupported-requested-capability`, naming the kind, and one with empty `bounds` passes. An unbounded item on a candidate that advertises only `bounded` for its kind has only its boundable `extent.domains` kinds compared: when one is outside `domains` it settles `unsupported`, `unsupported-requested-capability`, naming the kind, whatever `finite_bound_available` says; when every boundable kind is in `domains`, the advertised-mode table settles it, `requires-bound` with a finite bound available and `unsupported`, `unbounded-extent` without one, so a `quantity`, `loop` or `infinite-trace` domain never settles `unsupported-requested-capability`. An unbounded item is not compared on a candidate that advertises `unbounded`. Any registration, including one that advertises only `unbounded` modes, whose `domains` is present and empty, holds a non-boundable or unknown kind or repeats a kind is refused `invalid_capability`/`invalid-domains`, keyed by backend identity; a registration with no `domains` is refused the same way only when it advertises a `bounded` pair, and one that advertises only `unbounded` modes is admitted without `domains`. | Test (TC-271) |

@@ -19,16 +19,14 @@ does not reconstruct or alter its package identity or lock.
 
 Admit a checked package whose lock has at least two ordered profile selections
 and one dependency selection. Lower one requested item. Compare the
-ContractPackage `package.source.package_id` and `package.source.lock` byte-for-byte
+ContractPackage `package.source.identity` and `package.source.lock` byte-for-byte
 as typed values with the admitted checked package. Then mutate the
 ContractPackage's source package identity, one lock selection, and
 `package.lowering_profile` independently.
 
 ## Expected Results
 
-The unmodified ContractPackage retains the exact `source.package_id`, lock
+The unmodified ContractPackage retains the exact `source.identity`, lock
 members, selected identities and order, plus the explicit lowering
 profile reference in closed `{authority, identity}` form nested in `package`.
-Changing the source package identity, lock, or profile reference without
-recomputing the package identity is refused as `invalid_package`/`invalid-value`
-at `/identity/digest`. No default profile or reconstructed lock is admitted.
+No default profile or reconstructed lock is admitted.

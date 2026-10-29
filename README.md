@@ -81,7 +81,10 @@ each must produce. The cases from that file:
 | `duplicate-object` | refused, `duplicate_object` |
 | `incomplete-population` | incomplete, `incomplete_population` |
 
-The file's status is `manually-authored-expectations-not-evaluator-output`. These are the draft's authored
+The file's status is `manually-authored-expectations-not-evaluator-output`, and
+the fixture's model is named by identity alone, so no domain package is supplied
+and linking it refuses `missing_import`/`missing-selection`; the model is
+resolved only when a resolver supplies a package. These are the draft's authored
 expectations; no program has produced them as results yet.
 
 ## Rust library

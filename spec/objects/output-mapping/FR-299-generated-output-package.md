@@ -24,30 +24,26 @@ to the complete ordered record set and source/profile/generator selections.
 | Property | Description |
 | --- | --- |
 | `identity_version` | `quire.output.package-identity/v1-draft.1`. |
-| `package_id` | Derived `sha256-jcs` identity over every property below. |
-| `source_package_ref` | Strict FS05 source-package reference and recomputed digest. |
+| `source_package_ref` | Strict FS05 source-package reference. |
 | `target_profile` | Exact FR-297 value. |
 | `generator` | Rust generator identity and semantic version/revision. |
 | `target_bytes` | Immutable generated target-language bytes; data, never source authority. |
-| `target_bytes_digest` | `sha256-raw` of `target_bytes`. |
 | `records` | Complete FR-298 records in requested source-obligation order. |
 | `limits` | Exact admitted request/output/work limits that governed generation. |
 
 ## Identity and comparison
 
-- **Identity kind** — *derived aggregate root*. The JCS preimage includes the
-  identity version, source reference, target profile, generator, raw-byte digest,
-  complete ordered record identities and limits.
-- **Key** — the complete preimage. Package equality is componentwise; matching
-  target bytes alone is insufficient.
-- **Key order** — none between packages. Record order is the requested source
-  order and is part of the key.
+- **Identity kind** — *structural aggregate*. A package is the identity version,
+  source reference, target profile, generator, target bytes, complete ordered
+  records and limits.
+- **Key** — none. Package equality is componentwise; matching target bytes alone
+  is insufficient.
+- **Order** — none between packages. Record order is the requested source
+  order and is part of the package.
 - **Causal order** — the validated request and all records precede assembly;
   optional parser/tool observations reference the immutable package afterward.
 - **Absence** — a missing property or record prevents package construction. No
-  partial package or identity is exposed after refusal, cancellation or exhaustion.
-- **Digest domain** — `sha256-raw` for target bytes and `sha256-jcs` for package
-  identity. These domains are never substituted even if digest text matches.
+  partial package is exposed after refusal, cancellation or exhaustion.
 
 ## Aggregate invariants
 
@@ -64,7 +60,7 @@ to the complete ordered record set and source/profile/generator selections.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-299-AC-1 | A package exists only after every requested obligation has exactly one valid record. | Test (TC-150) |
-| FR-299-AC-2 | Mutating target bytes, source/profile/generator identity, record order/content or limits changes or invalidates the package identity. | Test (TC-154) |
+| FR-299-AC-2 | Mutating target bytes, source/profile/generator identity, record order/content or limits yields a package unequal to the original. | Test (TC-154) |
 | FR-299-AC-3 | Equal admitted requests produce byte-identical packages; path, timestamp, locale and observer output cannot change them. | Test (TC-155) |
 | FR-299-AC-4 | Refusal, cancellation, overflow or exhaustion exposes no partial package or plausible substitute bytes. | Test (TC-154) |
 | FR-299-AC-5 | Parser/tool observations reference the package after assembly and cannot mutate it or its semantic classifications. | Test (TC-155) |

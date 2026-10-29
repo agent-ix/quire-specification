@@ -135,9 +135,8 @@ defined value disagrees.
 
 Agreement settles `refuted`, `decisive-counterexample`. Disagreement settles
 `inconclusive`, `replay-parity`. Replay refuses as FR-181 replay refuses:
-`stale_dependency`/`content-mismatch` for a digest with no matching
-successor; `invalid_runtime_input`/`invalid-value` for a step that is not
-enabled, a value outside its support, a choice that is not the scheduler's,
+`invalid_runtime_input`/`invalid-value` for a digest with no matching
+successor, a step that is not enabled, a value outside its support, a choice that is not the scheduler's,
 or a path set that is not prefix-free.
 
 A path of a path set on which the event is false is also a counterexample for

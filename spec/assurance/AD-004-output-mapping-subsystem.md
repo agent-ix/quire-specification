@@ -65,9 +65,8 @@ whole-request check or exhausted reservation exposes no partial package.
 - Plugins are either compile-time Rust trait implementations or isolated Rust
   executables using a versioned wire contract; V1 defines no unstable dynamic
   library ABI.
-- AOT/JIT execution is an exact backend provider with cache keys over semantic
-  package, target, provider/toolchain and options; cache hits preserve native
-  runtime parity and invalidation.
+- AOT/JIT execution is an exact backend provider; any cache a host keeps
+  preserves native runtime parity and invalidation.
 
 ## Decisions
 

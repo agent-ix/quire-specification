@@ -15,13 +15,13 @@ relationships:
 ## Description
 
 Verify that source correspondence covers each graph node and request outcome,
-including a request whose checked-node key is absent.
+including a request whose node_id is absent.
 
 ## Test Procedure
 
 Lower a package with three requested items in this order: a represented
 expression with multiple ordered FR-322 source occurrences, one unsupported
-item, and one request whose `CheckedNodeId` is absent from the checked graph.
+item, and one request whose node_id is absent from the checked graph.
 Inspect every `source_map` collection and join each entry to its graph node,
 request, or accounting refusal. Apply one mutation per case: select the `nodes`
 entry whose `node_id` is the represented expression's node, record its array
@@ -35,7 +35,7 @@ absent-key request entry 2; or add a fully well-formed but non-corresponding
 Every semantic node, each of the three requests, and each non-`lowered`
 accounting record has exactly one source-map entry. Existing occurrence keys,
 source identities, half-open UTF-8 byte regions and ordering match FR-322;
-multiple source occurrences are retained in order. The absent `CheckedNodeId`
+multiple source occurrences are retained in order. The absent node_id
 has an explicit request subject with an empty region list and an `invalid_input`
 record, without an invented source span. The invalid interval is refused as
 `invalid_package`/`invalid-value` at the exact selected path

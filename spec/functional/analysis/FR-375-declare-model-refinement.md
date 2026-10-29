@@ -189,8 +189,8 @@ it imports that library.
 The list changes what a declaration means, so it is recorded in the lock
 ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)) and
 carried by a replay request ([FR-323](../../objects/interfaces/FR-323-native-runtime-envelope.md));
-a replay that dropped it would recompile with an empty list and a different
-`package_id`.
+a replay that dropped it would recompile with an empty list and a
+structurally different checked package.
 
 **Unbuilt features.** A producer holds a closed support set of the
 refinement features it has built, a capability of the producer and not a
@@ -400,34 +400,28 @@ and source alias. Its
 `abstract` and optional `protocol` keys, every row's direct declaration and
 type key, and the row expressions' `reference` targets and application member
 declarations and populations, plus every local `class_catalog` class node and
-binder type key, in ascending node-id digest order. This rule
+binder type key, in ascending node-id order. This rule
 includes the local header keys even when every row array is empty. As in
 FR-322, a literal's `type`, an application's `result_type` and the node's own
 `semantic_type` are annotations, not dependencies unless another listed body
-key or reference names the same node. External `PackageNodeKey`s and the
+key or reference names the same node. External `{package, node}` keys and the
 profile `DefinitionRef` never enter this local list; dependency-package nodes
 join through the selected dependency package. Its body is
 `{"term": "refinement", "name", "abstract", "profile", "populations", "objects",
 "steps", "histories", "assume", "ensure"}` with the conditional
-`class_catalog` below. Its node id is the JCS SHA-256
-of the closed `{version: "quire.refinement-node/v1", semantic_type, body}` preimage in
-`node-identity-preimage.schema.json`; the same body enters FR-322's package
-identity projection. `semantic_type` is the concrete model root's `NodeRef`,
+`class_catalog` below. Its node id is FR-322's structural
+`{package, path, ordinal}` with `path` `["relation", "refinement", name]` (the
+derived form over the body's authored `name`) and `ordinal` 0. `semantic_type` is the concrete model root's `NodeRef`,
 exactly the node's `semantic_type` member; it is required even if
-every row array is empty, so two refinements with the same abstract model,
-profile and empty body rows but different concrete models have different node
-ids. The refinement's own authored name is part of the body (below), so two
-declarations never share a node. The closed member shapes below also apply to that
-node-identity preimage, with FR-322's `group_reference` leaf admitted in a
-preimage expression. A `NodeRef` has FR-322's `NodeId`
-shape and names a node of this graph. A `PackageNodeKey` is the closed
-`{package: PackageId, node: NodeId}` shape and names a node of a directly
+every row array is empty. The refinement's own authored name is part of the
+node id (below), so two declarations never share a node. A `NodeRef` has
+FR-322's `node_id` shape and names a node of this graph. A `{package, node}` key
+is the closed `{package: identity, node: node_id}` shape, `identity` being the
+dependency package's identity string, and names a node of a directly
 selected dependency package. A `RefinementKey` is exactly one of those two
 shapes: a key for this graph MUST be a `NodeRef`, and a key for a dependency
-MUST be a `PackageNodeKey`. Source aliases and source-order positions are
-never keys. In particular, the current package's `package_id` MUST NOT appear
-inside its own refinement body: the body enters the package identity
-projection, so using that package id would make identity circular. `abstract`
+MUST be a `{package, node}` key. Source aliases and source-order positions are
+never keys. `abstract`
 is a `RefinementKey` for the abstract model declaration; a protocol subject
 adds `protocol`, a `RefinementKey` for the selected protocol clause (absent
 for a model subject). Both keys use the same local-or-dependency rule.
@@ -444,15 +438,14 @@ declaration occurrence and source-map entry. This follows the owner-nested
 declaration identities of FR-322, in which a declaration's name enters its
 identity; it also matches the protocol rule above, where a changed part of the
 declaration's meaning gives a different node. Renaming a refinement therefore
-changes its node id, the `package_id` and the obligation identity of every
+changes its node id and the obligation identity of every
 item that cites it; renaming a model or profile alias does not. Two refinement
 declarations of one unit with the same name refuse
 `ambiguous_declaration`/`ambiguous-name` at the second declaration's name
 token, before row checks; a producer never emits one node for two declarations
 and never fails internally on valid input that declares two refinements of
-equal meaning. A refinement node carries no `declaration`, `owner` or
-`nominal_identity_preimage` (FR-322); `name` is a body member, so no FCD
-declaration field is added.
+equal meaning. A refinement node carries no `declaration` or `owner` (FR-322); `name` is a
+body member, so no FCD declaration field is added.
 
 The six row arrays use these exact closed entries; all arrays are present,
 including empty arrays. `SemanticTerm` means FR-322's closed body term, with
@@ -483,7 +476,7 @@ arguments of a step target; it is not a general `SemanticTerm`. Every
 checked against the selected subject and its declared kind; a schema-valid
 but unresolved or wrong-kind key is refused under the existing graph and
 model-binding rules, not silently dropped. `histories[].updates` is sorted
-by its operation node-key digest, and `objects[].fields` by field name in
+by its operation node id, and `objects[].fields` by field name in
 UTF-8 byte order.
 
 **Step-row provenance.** An **operation class** is the step class of one
@@ -518,7 +511,7 @@ is not an occurrence of the anchor; its provenance is the
 `refinement_step_rows` sidecar. A memory class has no
 `source_node`. The abstract operation target's `operation` key names, by the
 same rule, the no-point anchor of (the abstract declaring type, the abstract
-operation), as a local `NodeRef` or a `PackageNodeKey`. A `source_node` that is
+operation), as a local `NodeRef` or a `{package, node}` key. A `source_node` that is
 an anchor of another operation, a point-qualified anchor, an anchor of a type
 the selected concrete model does not own, or not an `operation_anchor`, or
 a missing `source_node` on an operation class, refuses
@@ -617,7 +610,7 @@ by that selected concrete declaration, with their source memory
 defaults. The edge is on each protocol-clause node, names the object-type
 `NodeRef` of a model that a selected declaration owns (never an unselected
 declaration's node, and never the selected concrete model or state-machine
-node itself), is part of its application-node identity preimage and exact
+node itself), is part of its exact
 `dependencies`, and is not inferred from the `over` parameter's type. Every
 such clause contributes its classes even when the refinement has no step
 rows; a clause whose edge names a model owned by another declaration is
@@ -649,12 +642,12 @@ argument types to one abstract entry. An empty `arguments` array leaves
 every binder open as FR-432's omitted argument list does; a nonempty array
 has one entry per binder. A memory class has no node or binder record.
 A missing class refuses `missing_declaration`/`missing-name` at
-the class member; a row node key unequal to its catalog entry refuses
+the class member; a row node id unequal to its catalog entry refuses
 `invalid_model_binding`/`malformed-declaration` at that row key.
 A nonempty target argument count unequal to its catalog binder count
 refuses `ill_typed`/`operator-ineligible`, and an argument of another type
 refuses `ill_typed`/`type-mismatch`, at that target argument as FR-432 states.
-The refinement step uses only already checked node keys, declarations,
+The refinement step uses only already checked node ids, declarations,
 types, dependency selections, canonical catalog order and the catalog's
 own row joins. It does not treat protocol control bodies as admitted.
 At FR-464 protocol body step 7, the reader SHALL compare the complete
@@ -674,11 +667,11 @@ of QSL source. A later analysis request may override a parallel's memory
 model; its resolved memory classes belong to that request's obligation
 identity and are outside checked-package admission.
 
-The catalog enters the closed `quire.refinement-node/v1` body preimage and
-FR-322 package identity projection. A changed class, node, binder type or
-source-default memory model changes both identities. Every local catalog
+The catalog is part of the refinement node's body. A changed class, node,
+binder type or source-default memory model changes the node's value and the
+obligation identity. Every local catalog
 `node` and `binder_types` key enters the refinement's exact local
-`dependencies`; external `PackageNodeKey`s do not. A present catalog on
+`dependencies`; external `{package, node}` keys do not. A present catalog on
 a model-only refinement, or an absent catalog when a protocol or memory
 class participates, refuses `invalid_semantic_graph` at
 `/semantic_graph/nodes/{n}/body/class_catalog` after the dedicated key check
@@ -694,7 +687,7 @@ local abstract alias, and renaming the alias, with the list renamed to
 match, leaves the node id unchanged. It is absent for an empty list, as
 `protocol` is absent for a model subject, and never null. Every other array
 of the body (`populations`, `objects`, `steps`, `histories`, `assume`,
-`ensure`) is sorted ascending by the node-key digest of its first named declaration, then by
+`ensure`) is sorted ascending by the node id of its first named declaration, then by
 member name as UTF-8 bytes; for a protocol subject's `steps`, a row that names no declaration (every
 `memory` step row) sorts after every row that names one, and rows that tie on those two keys
 (for example `duplicate` and `lose` on one channel, `spawn` and `retire` of one role,
@@ -703,18 +696,17 @@ ordered by the UTF-8 bytes of the row's alias-free class spelling: the
 [FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md) spelling with the concrete
 alias `<C>::` removed, and for `memory` rows the memory kind name. The order of `steps` is
 therefore total and does not depend on the order the rows were written; within an `objects` entry the field rows are sorted
-ascending by field name as UTF-8 bytes. The node enters the identity projection, so it
-enters the `package_id` and the obligation identity of every item that
-cites it; the internal list is therefore part of both identities through
-`abstract_internal`, and needs no member of its own in the identity preimage.
+ascending by field name as UTF-8 bytes. The node is part of the checked package, so the internal list is part of
+the obligation identity of every item that cites it through
+`abstract_internal`, and needs no member of its own.
 
 For every emitted `steps[i]`, the producer SHALL retain the exact
 `SourceRegion` of its original checked source row and write one
 `refinement_step_rows` sidecar entry keyed by the refinement node id and
 zero-based canonical step ordinal `i` (FR-322). It writes these entries for
 proof-eligible and ineligible refinements alike. The sidecar is outside the
-refinement body, node-key preimage and package identity projection; source
-reordering therefore changes row regions without changing those identities.
+refinement body; source
+reordering therefore changes row regions without changing the body.
 The reader checks the sidecar against the retained body step count and, for
 proof-eligible owners, against generated `source_map` occurrences. This is a
 closed wire consistency check, not a second parse of the QSL source.
@@ -728,26 +720,18 @@ of kind `operation-contract` ([FR-290](../../objects/protocol/FR-290-protocol-cl
 The refinement step is a body step of
 [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
 "Body steps": it runs after the abstraction step and before the terminal
-step. It visits every `relation`/`refinement` node in ascending retained
-node-id digest order. Schema, graph-shape checks (including the exact local
-`dependencies` list), the general application and structural key stages,
-declaration, frame, state, and the earlier body steps retain FR-322's
-precedence. Neither general key stage re-keys a refinement node. For one
+step. It visits every `relation`/`refinement` node in ascending
+node-id order. Schema, graph-shape checks (including the exact local
+`dependencies` list), declaration, frame, state, and the earlier body steps
+retain FR-322's precedence. For one
 refinement node, the reader checks in this order and reports its first defect:
 
-1. **Identity.** Recompute the JCS SHA-256 of exactly
-   `{version: "quire.refinement-node/v1", semantic_type, body}` from the
-   node's retained `semantic_type` and `body`, using the closed
-   `RefinementNode` preimage schema. A retained `node_id` with a different
-   digest refuses `invalid_package`/`stale-node-key` at that `node_id`.
-   `owner`, `declaration`, `nominal_identity_preimage` and
-   `recursion_group` are not members of this preimage and are absent on the
-   node; a document carrying one fails the closed V2 node shape as
-   `malformed_wire` before this step. An application in a row expression
-   does not select `quire.application-node/v1` for this node. Two refinement
+1. **Identity.** `owner`, `declaration` and `recursion_group` are absent on
+   the node; a document carrying one fails the closed V2 node shape as
+   `malformed_wire` before this step. Two refinement
    nodes of one package whose bodies carry an equal `name` refuse
    `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name`
-   in ascending node-id order, after both identities are recomputed.
+   in ascending node-id order.
 2. **Canonical order.** Check each array and nested array in the order
    `populations`, `objects` (each entry's `fields` first), `steps`,
    `histories` (each entry's `updates` first), `assume`, `ensure`, and then
@@ -767,7 +751,7 @@ refinement node, the reader checks in this order and reports its first defect:
    the selected abstract model root,
    then optional `protocol` to a protocol clause of that abstract model,
    and `profile` to the selected infinite-trace profile. Resolve a local
-   `NodeRef` only in this graph, and a `PackageNodeKey` only in its named
+   `NodeRef` only in this graph, and a `{package, node}` key only in its named
    directly selected dependency's admitted package. A missing local or
    external key refuses `missing_declaration`/`missing-name` at that key;
    a package absent from direct `dependency_selections` refuses
@@ -776,7 +760,7 @@ refinement node, the reader checks in this order and reports its first defect:
    abstract model, or a profile of the wrong kind refuses
    `invalid_model_binding`/`malformed-declaration` at that member.
 4. **Class catalog.** After the header joins, check presence and the closed
-   catalog entries against already admitted node keys, declaration kinds,
+   catalog entries against already admitted node ids, declaration kinds,
    type keys and direct dependency selections. Check `concrete` before
    `abstract`, in class order, and each entry's node before its binder type
    keys. This does not inspect protocol body layout, membership, control
@@ -815,7 +799,7 @@ refinement node, the reader checks in this order and reports its first defect:
 
 The step does not recompile source or infer an alternate key from a row's
 source position. An admitted wire target is checked against the selected
-declarations and the graph; its body and node identity remain the exact
+declarations and the graph; its body remains the exact
 content the reader checks. The retained `dependencies` list was checked
 before this step and cannot substitute for a missing body key.
 
@@ -829,33 +813,33 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-4 | A field-row or step-argument expression whose type does not conform to the abstract type after reference lifting refuses `ill_typed`/`type-mismatch` at that expression; a `Reference<T_C>` expression for a `Reference<T_A>` field is admitted exactly when an object row maps `T_A` from `T_C`. | Test (TC-310) |
 | FR-375-AC-5 | A history row whose name the concrete type already declares, whose type is unbounded, or whose update is ill-typed refuses with its named cause; an admitted history field appears in no concrete clause, frame or successor relation. | Test (TC-310) |
 | FR-375-AC-6 | A fairness row with no granularity is read as `whole`; an `assume` row naming an abstract operation, or an `ensure` row naming a concrete operation, refuses `missing_declaration`/`missing-name`. | Test (TC-310) |
-| FR-375-AC-7 | Changing any row of an admitted declaration changes the refinement node's id, the `package_id` and the obligation identity of an item that cites it; reordering rows in source does not; changing only the refinement's authored name changes all three (FR-375-AC-29). Two admitted row-empty refinements with the same abstract model, profile and body but different concrete selected model roots have different node ids because `semantic_type` enters the node preimage; each node retains the local `abstract` root key in `dependencies` despite its empty rows. | Test (TC-310) |
+| FR-375-AC-7 | Changing any row of an admitted declaration changes the refinement node's value and the obligation identity of an item that cites it; reordering rows in source does not; changing only the refinement's authored name changes the node id and the obligation identity (FR-375-AC-29). Each row-empty refinement node retains the local `abstract` root key in `dependencies` despite its empty rows. | Test (TC-310) |
 | FR-375-AC-8 | A request to check the whole declaration requires `temporal-satisfaction`, each per-step simulation obligation requires `operation-contract`, and neither requires `refinement`. | Test (TC-310) |
 | FR-375-AC-9 | A history row with an initial `history-literal` written as a negative or non-negative integer, `true`/`false`, `none`, a string, an exact number or a full-path enum member is admitted when its value is in the declared bounded type's value set; a literal of the right kind outside the value set or of the wrong kind (`5` or `true` for `Int[0, 4]`, `none` for a non-`Option` type) refuses `ill_typed`/`type-mismatch` at the literal; an unresolved enum path refuses `missing_declaration`/`missing-name`; a collection, record or float spelling refuses `invalid_syntax`/`unexpected-token`. | Test (TC-310) |
 | FR-375-AC-10 | An `assume` or `ensure` fairness row written `fair strong` is admitted with or without `each` or `whole`, and its emitted entry carries kind `strong`; the same row written `fair weak` carries kind `weak`, and the two rows give different refinement node ids; `fair` with no kind, or any kind other than `weak` or `strong`, refuses `invalid_syntax`/`unexpected-token` at the token, because a refinement row has no default kind. | Test (TC-310) |
 | FR-375-AC-11 | `abstract Spec` selects the whole abstract model through its canonical local or dependency-package model-root key; `abstract Spec::Twice` and `abstract Spec::Twice2`, two protocol clauses of the abstract package with identical operation-target rows, are each admitted, with the model subject and two protocol subjects distinguished by their root/clause keys and protocol subjects carrying `protocol`; a clause of the declaring package is listed among local `dependencies`, while a clause of a directly selected dependency package joins through `dependency_selections` and is absent from local `dependencies`. `abstract Spec::Thrice` (no such clause), `abstract Spec::Counter` (a type), `abstract Spec::counters` (a population) and `abstract Nope::Twice` (no such alias) refuse `missing_declaration`/`missing-name` at the unresolved segment (`Thrice`, `Counter`, `counters`, `Nope`); a clause of the abstract package that acts only on another model refuses `invalid_model_binding`/`malformed-declaration` at the name. Syntax refusals are `invalid_syntax`/`unexpected-token` at these tokens: `abstract Spec::Twice::finish concrete Impl` at the second `::`; `abstract ::Twice` at the `::`; `abstract Spec:: concrete Impl` at `Impl` (`concrete` is read as the name); `abstract Spec:: {` at the `{`; `abstract Spec::1` at the `1`. | Test (TC-310) |
-| FR-375-AC-12 | The `refinement_internals` input is the only host of the internal list: `abstract Spec::Twice` with no row naming internals and the unit value `[{"refinement": "R", "internal": ["Spec::Twice::finish"]}]` is admitted with `abstract_internal` `["Twice::finish"]`; the same source with the value absent, `[]` or naming another refinement is admitted with no `abstract_internal` entry. A supplied library declaring its own refinement and given its own value is admitted with that value affecting only the library's node and `package_id` and the importer's selection of it; a value naming a refinement the library does not declare refuses `missing_declaration`/`missing-name` at (that library's value, `/0/refinement`) and the compilation, the unit included, is not admitted. | Test (TC-310) |
-| FR-375-AC-13 | The two lists `["Spec::Twice::finish"]` and none give refinement nodes with different ids, `package_id`s and obligation identities for an item citing the node; reordering the value's objects and entries changes none of them; renaming the abstract alias from `Spec` to `S`, with the value's spellings renamed to match, changes none of them. | Test (TC-310) |
+| FR-375-AC-12 | The `refinement_internals` input is the only host of the internal list: `abstract Spec::Twice` with no row naming internals and the unit value `[{"refinement": "R", "internal": ["Spec::Twice::finish"]}]` is admitted with `abstract_internal` `["Twice::finish"]`; the same source with the value absent, `[]` or naming another refinement is admitted with no `abstract_internal` entry. A supplied library declaring its own refinement and given its own value is admitted with that value affecting only the library's node and the importer's selection of it; a value naming a refinement the library does not declare refuses `missing_declaration`/`missing-name` at (that library's value, `/0/refinement`) and the compilation, the unit included, is not admitted. | Test (TC-310) |
+| FR-375-AC-13 | The two lists `["Spec::Twice::finish"]` and none give refinement nodes with different bodies and obligation identities for an item citing the node; reordering the value's objects and entries changes none of them; renaming the abstract alias from `Spec` to `S`, with the value's spellings renamed to match, changes none of them. | Test (TC-310) |
 | FR-375-AC-14 | For each feature a producer's support set omits, a declaration using it refuses `unsupported_construct`/`not-yet-implemented` as the Unbuilt features paragraph states: two `history` rows give two refusals at their keywords naming `history-row`; `abstract Spec::Twice` one at `Twice` naming `protocol-abstract-side`; a non-empty resolved list one at `Spec` naming `refinement-internal-list`, both together giving two refusals for the one declaration; each names the refinement and the profile identity and produces no node. A list with a resolution defect (`missing-name`, `conflicting-binding`, malformed) reports that defect and no support-set refusal for the list, and a value attributable to no refinement reports its defect alone. A producer that has built a feature is checked by that feature's own criteria, and this criterion places no test on it. | Test (TC-310) |
 | FR-375-AC-15 | A field row of type `Sequence<Reference<T_C>>[0, 2]` for an abstract `Sequence<Reference<T_A>>[0, 2]` field, and the row `Some(self.ring)` for an abstract `?` field of type `Reference<T_A>`, each use `nested-reference-row`: where the support set omits it, each refuses `unsupported_construct`/`not-yet-implemented` naming the feature at the row's expression, once per such row, and no node is produced; a whole-population reference row and a plain `Reference<T_C>` row for a `Reference<T_A>` field are admitted; a `Sequence<Reference<T_C>>` step argument for a `Sequence<Reference<T_A>>` parameter refuses `ill_typed`/`type-mismatch`. | Test (TC-310) |
 | FR-375-AC-16 | A refinement whose abstract model declares a relationship refuses `unsupported_construct`/`declaration-form` at the abstract alias of the header, once per refinement, naming the form, the refinement and the selected profile identity, whatever the producer's support set, and produces no node. | Test (TC-310) |
 | FR-375-AC-17 | `Some(e)` for `e` of type `E` is typed `Option<E>`; over an abstract `?` field of type `T`, the row `none` leaves the field absent and `Some(v)` sets it, and a row that is not `Option<T>`, including a bare `self.f` of a concrete `?` field, refuses `ill_typed`/`type-mismatch`; over an abstract `Option<T>` field the row's option value is taken unchanged; `none` with no field type or other `if` arm refuses `ill_typed`/`type-mismatch`; outside a refinement declaration `Some` is an ordinary identifier, so `Some(1)` in a state clause refuses `missing_declaration`/`missing-name` at `Some` when no function `Some` is declared and is a call to it when one is. | Test (TC-310) |
 | FR-375-AC-18 | In a refinement governed by `quire.temporal.infinite-trace/v1`, the ring-buffer rows `s.ring = self`, `(self.head + i) mod 2` and an `a div b` row are admitted even when the unit's own declarations select no layer, the lock selection counts the rows' layers (the `always` rows and exactly one integer-division law, `selection_trigger_unsatisfied` when none is selected), and a Boolean field row `ready = protocol Fill` naming a local protocol refuses `unsupported_construct`/`expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks. | Test (TC-310) |
-| FR-375-AC-19 | A protocol-subject declaration whose rows include `step duplicate C::P::ch`, `step lose C::P::ch`, `step spawn C::P::w`, `step retire C::P::w`, `step fork C::P::par`, `step join C::P::par`, a template's `cattempt` and `cend` rows and `step memory flush` and `step memory drain` emits `steps` in one total order, the same for every permutation of those rows in the source: the declaration-naming rows by node-key digest then member name with tied rows ordered by alias-free class spelling in UTF-8 byte order (`duplicate P::ch` before `lose P::ch`; `retire P::w` before `spawn P::w`; `fork P::par` before `join P::par`), and the `memory` rows after every declaration-naming row, `drain` before `flush`. | Test (TC-310) |
-| FR-375-AC-20 | A checked package carrying an admitted `relation`/`refinement` node with row-empty arrays and a local abstract model root is read with the node key recomputed from the closed `quire.refinement-node/v1` preimage, not from `quire.structural-node/v1` or `quire.application-node/v1`; changing only its concrete `semantic_type` root or one body row while retaining its node id, and recomputing the package id and dependency list, refuses `invalid_package`/`stale-node-key` at that node in the refinement body step. | Test (TC-310) |
-| FR-375-AC-21 | With every identity recomputed, the reader visits refinement nodes in ascending retained digest order and applies canonical order, header joins and row joins after the identity check; an out-of-order row refuses `invalid_semantic_graph` at the first offending entry, an absent local `abstract` key refuses `missing_declaration`/`missing-name`, an absent direct dependency for an external `abstract` key refuses `missing_declaration`/`missing-selection`, and a wrong-kind local `semantic_type` or object-row type key refuses `invalid_model_binding`/`malformed-declaration`, each at the member this section names. Object rows join either two object types admitted by mapped populations or two `state_machine` declarations and reject mixed or unrelated declaration kinds. | Test (TC-310) |
+| FR-375-AC-19 | A protocol-subject declaration whose rows include `step duplicate C::P::ch`, `step lose C::P::ch`, `step spawn C::P::w`, `step retire C::P::w`, `step fork C::P::par`, `step join C::P::par`, a template's `cattempt` and `cend` rows and `step memory flush` and `step memory drain` emits `steps` in one total order, the same for every permutation of those rows in the source: the declaration-naming rows by node id then member name with tied rows ordered by alias-free class spelling in UTF-8 byte order (`duplicate P::ch` before `lose P::ch`; `retire P::w` before `spawn P::w`; `fork P::par` before `join P::par`), and the `memory` rows after every declaration-naming row, `drain` before `flush`. | Test (TC-310) |
+| FR-375-AC-20 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
+| FR-375-AC-21 | The reader visits refinement nodes in ascending node-id order and applies canonical order, header joins and row joins after the identity check; an out-of-order row refuses `invalid_semantic_graph` at the first offending entry, an absent local `abstract` key refuses `missing_declaration`/`missing-name`, an absent direct dependency for an external `abstract` key refuses `missing_declaration`/`missing-selection`, and a wrong-kind local `semantic_type` or object-row type key refuses `invalid_model_binding`/`malformed-declaration`, each at the member this section names. Object rows join either two object types admitted by mapped populations or two `state_machine` declarations and reject mixed or unrelated declaration kinds. | Test (TC-310) |
 | FR-375-AC-22 | For each step row the producer emits one `refinement_step_rows` entry with the source region of that original checked row, associated with the refinement owner id and its canonical zero-based step ordinal; reversing source order while retaining the same semantic rows changes the region assignments but not the owner id or package id. | Test (TC-310) |
-| FR-375-AC-23 | A protocol refinement carries a complete, canonical `class_catalog` of its source-level concrete and abstract classes and checked binder types in both V2 schemas and its node-key preimage. A tied `fork`/`join` pair names one parallel node under two distinct class spellings; a class of another selected model or protocol, a changed class/node association, a missing or duplicated class, a wrong binder record, or a memory kind absent from its source-default model refuses under the catalog and row-join rules. The concrete catalog includes classes from every clause whose identity-bound `owner_model` is the object-type node of a model owned by the selected concrete declaration, including when no step rows name those classes, and excludes clauses whose edge names a model owned by another declaration. For each of `sc`, `tso` and `ra` used as a source default in that subject, `memory drain` is recorded; `memory flush` is recorded when `tso` is a source default. Each `memory drain` entry carries `drain: store-buffer-flush`, whose SC behavior is a no-op. A later request's memory override changes no checked-package class fact or package id. | Test (TC-310, TC-233) |
+| FR-375-AC-23 | A protocol refinement carries a complete, canonical `class_catalog` of its source-level concrete and abstract classes and checked binder types in both V2 schemas. A tied `fork`/`join` pair names one parallel node under two distinct class spellings; a class of another selected model or protocol, a changed class/node association, a missing or duplicated class, a wrong binder record, or a memory kind absent from its source-default model refuses under the catalog and row-join rules. The concrete catalog includes classes from every clause whose identity-bound `owner_model` is the object-type node of a model owned by the selected concrete declaration, including when no step rows name those classes, and excludes clauses whose edge names a model owned by another declaration. For each of `sc`, `tso` and `ra` used as a source default in that subject, `memory drain` is recorded; `memory flush` is recorded when `tso` is a source default. Each `memory drain` entry carries `drain: store-buffer-flush`, whose SC behavior is a no-op. A later request's memory override changes no checked-package class fact. | Test (TC-310, TC-233) |
 | FR-375-AC-24 | A `state_machine` field set is represented by an existing `objects[]` row whose `abstract_type` and `concrete_type` keys resolve to `state_machine` declarations and whose field names resolve on the abstract machine; the row keeps the existing closed shape and requires no population row. A model with only object types and populations is admitted using its ordinary object rows without a `state_machine` anchor. Missing or duplicate abstract machine rows refuse as the corresponding missing or conflicting object mapping; an object row that mixes a `state_machine` declaration and an object type refuses `invalid_model_binding`/`malformed-declaration`. The reader admits the same rows by joining their keys to the selected packages; no additional wire member is present in either V2 schema. | Test (TC-310) |
-| FR-375-AC-25 | For a selected model with any number of object types and state machines, including none, the producer derives exactly one identity-bound model root from the selected package identity; it does not choose a declaration as a representative. Model-subject `abstract` keys and refinement `semantic_type` keys name that root, and protocol-subject `abstract` keys name that root while `protocol` names the exact clause. Changing a source alias leaves the root identity unchanged; changing selected package content changes its digest and therefore the root identity. The model root is derived from existing selection state and requires no FCD declaration or new selection field. | Test (TC-310) |
+| FR-375-AC-25 | For a selected model with any number of object types and state machines, including none, the producer derives exactly one identity-bound model root from the selected package identity; it does not choose a declaration as a representative. Model-subject `abstract` keys and refinement `semantic_type` keys name that root, and protocol-subject `abstract` keys name that root while `protocol` names the exact clause. Changing a source alias leaves the root identity unchanged; a model root names the selected package by its identity. The model root is derived from existing selection state and requires no FCD declaration or new selection field. | Test (TC-310) |
 | FR-375-AC-26 | A catalog is unique and ordered by catalog key. Over a subject whose source `parallel` controls default to `sc`, `tso` and `ra`, `concrete` holds `memory drain` three times, once per model, in the order `ra`, `sc`, `tso`, each with `drain: store-buffer-flush`, and `memory flush` once for `tso`, after the three drains; every such catalog is admitted. The same models selected by two `parallel` controls produce one entry per model, not two. Reordering the three drains, repeating a `(memory drain, memory_model)` pair, or repeating a declared class spelling refuses `invalid_semantic_graph` at the first out-of-order or later duplicate array entry. | Test (TC-310, TC-233) |
 | FR-375-AC-27 | A concrete protocol clause with activation `on each (x: T)` carries one catalog entry `{class: "activate <protocol>", node: <clause node>, binder_types: [...]}` where `binder_types` is `[T]` for a non-record `T` and one key per field of `T`, in effective field order, for a record `T`; the abstract catalog carries the same entry with `RefinementKey`s for a selected abstract clause with that activation. A clause with activation `on origin` carries none. A catalog that associates `activate` with a node other than its clause, or lists a wrong or reordered binder type, refuses `invalid_model_binding`/`malformed-declaration` at the catalog entry in FR-464 step 7; one that drops the entry refuses `invalid_semantic_graph` at the catalog array, and one that adds an `origin` clause's entry refuses `invalid_semantic_graph` at that extra entry (the omitted or extra class rule above). | Test (TC-310) |
 | FR-375-AC-28 | A protocol refinement's concrete and abstract catalogs carry one declared entry for each `effect` node and each `commit` node of the selected subject, with `class` the bare node path (the `event` step kind), `node` that node and `binder_types` its binder record, and one `cend <protocol>::<template>` entry for each template, with `node` the template node and empty `binder_types`, whether or not a step row names them; a protocol with none of these nodes carries none of these entries. Each of these independent mutations of a valid catalog refuses as stated: dropping the `effect`, the `commit` or the `cend` entry refuses `invalid_semantic_graph` at the `concrete` (or `abstract`) catalog array; repeating one of those entries refuses `invalid_semantic_graph` at the later duplicate entry; an entry of one of those classes for a node that is not such a node (a `cend` of an attempt, or a path naming no node) refuses `invalid_semantic_graph` at that entry; and associating the `commit` entry with the `effect` node, or changing a binder type, refuses `invalid_model_binding`/`malformed-declaration` at the entry. | Test (TC-310, TC-233) |
-| FR-375-AC-29 | The refinement's authored `ident` is the body's `name`. Two declarations in one unit whose abstract model, protocol, profile, concrete model and rows are equal and whose names differ (`Alpha` and `Beta`) are admitted as two `relation`/`refinement` nodes with different node ids, each with its own declaration occurrence and source-map entry; the producer emits no internal failure for them. Renaming one refinement changes its node id, the `package_id` and the obligation identity of an item citing it; renaming a model or profile alias changes none. A body without `name`, or with a non-`Identifier` `name`, fails both V2 schemas. | Test (TC-310) |
-| FR-375-AC-30 | Two refinement declarations of one unit with the same name refuse `ambiguous_declaration`/`ambiguous-name` at the second declaration's name token, whatever their rows; a package whose two refinement nodes carry equal `body.name` refuses `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name` in ascending node-id order, after identity recomputation. | Test (TC-310) |
+| FR-375-AC-29 | The refinement's authored `ident` is the body's `name`. Two declarations in one unit whose abstract model, protocol, profile, concrete model and rows are equal and whose names differ (`Alpha` and `Beta`) are admitted as two `relation`/`refinement` nodes with different node ids, each with its own declaration occurrence and source-map entry; the producer emits no internal failure for them. Renaming one refinement changes its node id and the obligation identity of an item citing it; renaming a model or profile alias changes none. A body without `name`, or with a non-`Identifier` `name`, fails both V2 schemas. | Test (TC-310) |
+| FR-375-AC-30 | Two refinement declarations of one unit with the same name refuse `ambiguous_declaration`/`ambiguous-name` at the second declaration's name token, whatever their rows; a package whose two refinement nodes carry equal `body.name` refuses `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name` in ascending node-id order. | Test (TC-310) |
 | FR-375-AC-31 | For an operation class `T::op`, `source_node` is the no-point `state`/`operation_anchor` of (`T`, `op`) whose `context` is the declaring type `T`, with and without a `class_catalog`; a catalog entry for the class carries that anchor as `node`. A `source_node` naming the concrete model root, the model-owner node, an anchor of another operation or type, or a point-qualified anchor, or a missing `source_node` on an operation class, refuses `invalid_model_binding`/`malformed-declaration`; a `source_class` naming no operation that `T` itself declares (including an inherited operation spelled under the inheriting type), checked before `source_node`, refuses `missing_declaration`/`missing-name` at `source_class`. A no-point anchor no clause names carries one `anchor` occurrence, the operation's declaration region. An operation is the class of its declaring type only: an inherited operation is spelled and anchored at the type that declares it, and a class naming a type that does not declare the operation refuses `missing_declaration`/`missing-name`. The abstract operation target's `operation` key names the abstract declaring type's no-point anchor by the same rule. | Test (TC-310) |
 | FR-375-AC-32 | A step row's `self` and concrete operation arguments are `reference` terms to FR-341 `value`/`parameter` nodes: `self` named `"self"` at level 0 with `Reference<C>`, then each parameter by declared name at levels 1..n in declared order; a step row has no `result` binder and an object row has `self` alone; the nodes are those of the operation's precondition clause. A reference to a node with a wrong name, level or type refuses `invalid_model_binding`/`malformed-declaration` at the reference. | Test (TC-310) |
-| FR-375-AC-33 | The refinement's concrete identity is the `identity` of the `model_root` owner joined by its `semantic_type`. With two or more selected models, swapping only a valid refinement's `semantic_type` to the root of another selected model (its node id recomputed; a retained id is FR-375-AC-20's refusal) refuses, in this order: an absent concrete catalog on a protocol subject `invalid_semantic_graph` at `/body/class_catalog`; the first concrete key (array order of reader step 2) whose declaration or anchor owner is not the concrete identity `invalid_model_binding`/`malformed-declaration` at that key; then, at FR-464 step 7, `invalid_semantic_graph` at the first discrepancy between the catalog and the classes the new concrete identity derives, walked together in catalog-key order: at the entry for a class the identity does not derive, at the `class_catalog/concrete` array for a derived class the catalog lacks. The swap is undetectable only when the refinement has no concrete key and the swapped-to model derives an identical class set (every protocol subject with an empty concrete catalog over a model deriving no class, and every model subject, which carries no catalog): it is then admitted as a different node whose id differs by `semantic_type` (FR-375-AC-7). Protocol-body nodes are compared only at step 7. No `model_root` nodes or wire field is added. | Test (TC-310) |
+| FR-375-AC-33 | The refinement's concrete identity is the `identity` of the `model_root` owner joined by its `semantic_type`. With two or more selected models, swapping only a valid refinement's `semantic_type` to the root of another selected model refuses, in this order: an absent concrete catalog on a protocol subject `invalid_semantic_graph` at `/body/class_catalog`; the first concrete key (array order of reader step 2) whose declaration or anchor owner is not the concrete identity `invalid_model_binding`/`malformed-declaration` at that key; then, at FR-464 step 7, `invalid_semantic_graph` at the first discrepancy between the catalog and the classes the new concrete identity derives, walked together in catalog-key order: at the entry for a class the identity does not derive, at the `class_catalog/concrete` array for a derived class the catalog lacks. The swap is undetectable only when the refinement has no concrete key and the swapped-to model derives an identical class set (every protocol subject with an empty concrete catalog over a model deriving no class, and every model subject, which carries no catalog): it is then admitted as a different node whose id differs by `semantic_type` (FR-375-AC-7). Protocol-body nodes are compared only at step 7. No `model_root` nodes or wire field is added. | Test (TC-310) |
 | FR-375-AC-34 | A refinement whose `semantic_type` root is the same node as its `abstract` model root is admitted when every concrete key and the concrete catalog agree with that one identity as in FR-375-AC-33; FR-375 imposes no distinctness between the two. | Test (TC-310) |
 
 ## Dependencies

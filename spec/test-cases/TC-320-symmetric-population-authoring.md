@@ -26,7 +26,7 @@ of `ConfigVersion` objects (`versionNumber: Int[0, 2]`,
 `attemptUpdate` advancing `versionNumber` modulo 3.
 
 1. Declare `config_history` `symmetric`; check the unit; then remove the
-   annotation and compare `package_id`s.
+   annotation and compare the checked packages.
 2. Add a field `peers: Set<Reference<ConfigVersion>>` and a postcondition
    that chooses the new parent by `fold` over `self.peers` (a step outside
    FR-145's catalog); check with and without the annotation. Then replace the
@@ -56,7 +56,7 @@ of `ConfigVersion` objects (`versionNumber: Int[0, 2]`,
 ## Expected Results
 
 Case 1 is admitted with the annotation in the checked package, and the two
-`package_id`s differ (FR-381-AC-1). Case 2 refuses
+checked packages differ (FR-381-AC-1). Case 2 refuses
 `ill_typed`/`identity-observing-form` at the `fold` node naming
 `config_history`, and without the annotation refuses
 `ill_typed`/`operator-ineligible` at the `fold`; the counting `fold` is

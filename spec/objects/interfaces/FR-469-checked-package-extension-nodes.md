@@ -64,24 +64,17 @@ joins below do not hold with the refusal this requirement names, in
   `source_map` entry for the clause value's region, by the rules for that
   subnode's own tag.
 - **Type and dependencies** — the node is its own `semantic_type`. Its
-  `dependencies` are exactly the unique digest-ascending targets of its
+  `dependencies` are exactly the unique node-id-ascending targets of its
   clause references (FR-322's dependency rule). It carries no
-  `recursion_group` and no `nominal_identity_preimage`. The node has no
+  `recursion_group`. The node has no
   operation family, so no catalogued operand position admits a reference to
   it.
-- **Node key** — the node is keyed by the closed `quire.structural-node/v1`
-  preimage `{version: "quire.structural-node/v1", node_tag: "extension",
-  semantic_form: "extension_form", semantic_type: null, declaration,
-  recursion: null, owner, body}`, with `declaration` and `owner` equal to the
-  node's members and `body` its `extension_form` body with each clause
-  reference's target as its node key. The definition identity, the node
-  kind, the declared name, the owner and every clause subnode's key
-  therefore enter the node id and, through the `identity_projection`,
-  `package_id`. The source span does not. FR-322's derived-shape key stage
-  checks the key as it checks every other structural node.
+- **Node id** — the node is a declared node, so its `node_id` is FR-322's
+  structural id `{package, path, ordinal}` whose `path` is the node's
+  `declaration` path. The source span is not part of the id.
 - **Clause subnode types** — a clause entry's `type` names either a core
   `type-ref` or a node kind. For a core `type-ref`, the subnode's
-  `semantic_type` is the type node that `type-ref` denotes, keyed by the same
+  `semantic_type` is the type node that `type-ref` denotes, identified by the same
   rules as every other node of that type, or, for a record type, a record
   type node that conforms to it (FR-322 "Record conformance"). For a node
   kind, the subnode is an `extension`/`extension_form` node whose
@@ -97,8 +90,7 @@ joins below do not hold with the refusal this requirement names, in
   `extension` among the `node_tag` values with the one form
   `extension_form`, binds the `ExtensionFormBody` above to that tag and
   form, restricts its occurrences to one `declaration` occurrence, and lists
-  `extension` among the tags that carry `declaration`. The node-identity
-  preimage schema defines the closed `ExtensionFormNode` preimage above. The
+  `extension` among the tags that carry `declaration`. The
   published fixtures `positive-extension-nodes.json` and
   `positive-all-families.json` each carry the
   `retention Audit { subject: "audit", days: 30 }` form of FR-467-AC-1.
@@ -125,7 +117,7 @@ joins below do not hold with the refusal this requirement names, in
   definition whose `reference` equals it, and holds no definition the file
   does not publish; a selection with no published definition is not held.
   The definitions are reader input under join 2 below, never fixture data,
-  so loading them changes no fixture byte, node id or `package_id`.
+  so loading them changes no fixture byte or node id.
   `extension-definition-vectors.json` names the definitions file and lists
   withheld-definition controls: each vector names a fixture, the references
   the reader withholds, and the expected result, either `admitted` or the
@@ -141,7 +133,7 @@ joins below do not hold with the refusal this requirement names, in
 limits and domain package documents. They are not artifact data and never
 participate in package identity. The reader checks these joins at FR-322's
 declaration step, after every protocol-reference carrier and before any
-frame check, over the `extension` nodes in ascending node-id digest order,
+frame check, over the `extension` nodes in ascending node-id order,
 and reports the first failing join of the first failing node:
 
 1. **Definition selection.** `definition` equals a
@@ -187,8 +179,8 @@ FR-322's `invalid_semantic_graph` at `/dependencies`, at the graph-shape step.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-469-AC-1 | With FR-467-AC-1's `retention` extension selected and held, `retention Audit { subject: "audit", days: 30 }` is one `extension`/`extension_form` node with `declaration` `["Audit"]`, a `SourceOwner`, the `retention` definition's `DefinitionRef`, `node_kind` `retention`, the clause bindings `subject` and `days` in that order, each a `reference` to a subnode typed `Text` and `Int[1, 3650]`, `dependencies` exactly those two subnodes in digest order, and one `declaration` occurrence whose `source_map` region spans the whole form; the full reader admits the package. | Test (TC-951) |
-| FR-469-AC-2 | The node's key recomputes from its `quire.structural-node/v1` `ExtensionFormNode` preimage; changing the definition identity, the node kind, the declared name, the owner or a clause subnode, with identities recomputed, changes the node id and `package_id`, and changing only the form's source region changes neither. A retained key after such a change refuses `invalid_package`/`stale-node-key` at the node. | Test (TC-951) |
+| FR-469-AC-1 | With FR-467-AC-1's `retention` extension selected and held, `retention Audit { subject: "audit", days: 30 }` is one `extension`/`extension_form` node with `declaration` `["Audit"]`, a `SourceOwner`, the `retention` definition's `DefinitionRef`, `node_kind` `retention`, the clause bindings `subject` and `days` in that order, each a `reference` to a subnode typed `Text` and `Int[1, 3650]`, `dependencies` exactly those two subnodes in node-id order, and one `declaration` occurrence whose `source_map` region spans the whole form; the full reader admits the package. | Test (TC-951) |
+| FR-469-AC-2 | Changing the declared name or the owner yields a different node id, and changing only the form's source region leaves the node id unchanged. | Test (TC-951) |
 | FR-469-AC-3 | A reader that does not hold the `retention` definition refuses the package `unknown_required_capability` with no cause, the node's `node_id` as `locus` and `/semantic_graph/nodes/{i}/body/definition` as `document_pointer`, and the package's lock, source map and node are unchanged; a `definition` absent from `lock.definition_selections` refuses `missing_declaration`/`missing-selection` at the same pointer before that check. | Test (TC-951) |
 | FR-469-AC-4 | A `node_kind` the held definition does not declare refuses `missing_declaration`/`missing-name` at `/body/node_kind`; the clauses in the order `days`, `subject`, an unknown clause name and a repeated clause each refuse `invalid_package`/`invalid-value` at the offending clause; a body without `days` refuses `invalid_package`/`missing-member` naming `days` at `/body/clauses`. | Test (TC-951) |
 | FR-469-AC-5 | A `days` subnode typed `Text` refuses `ill_typed`/`type-mismatch` naming `days`, `Int[1, 3650]` and `Text` at `/body/clauses/1/value`; a clause target absent from the graph refuses `missing_declaration`/`missing-name` at that pointer; a clause typed by a node kind whose subnode is an `extension` node of another node kind refuses `ill_typed`/`type-mismatch`. | Test (TC-951) |
@@ -212,4 +204,4 @@ FR-322's `invalid_semantic_graph` at `/dependencies`, at the graph-shape step.
 - [FR-272](../foundation/FR-272-typed-diagnostic-cause.md) owns the
   `unknown_required_capability` row and its `locus` and `document_pointer`.
 - QSL FR-354 admits extension forms and emits this node; QSL FR-092 owns the
-  `quire.structural-node/v1` key function.
+  structural `node_id` function.

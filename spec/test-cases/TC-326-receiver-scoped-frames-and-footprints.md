@@ -58,7 +58,7 @@ Under frame 1 the first observation is frame-valid and the second receives
 `frame_violation` at `b.v`; under frame 2 both are frame-valid; frame 3
 refuses `invalid_model_binding`/`conflicting-binding` (FR-013-AC-8). In case
 4 the entries carry `scope` `receiver` and `every-object`, the two
-`package_id`s differ, and an entry with no `scope` or `some-objects` fails
+checked packages differ, and an entry with no `scope` or `some-objects` fails
 the schema (FR-340-AC-16). In case 5 `W(bump(a)) = {(a, v)}` and
 `R(bump(a)) = {(a, v), (counters, membership of a)}`, `R(copy(a, b))` holds
 `(b, v)` and the membership of `a` and `b`, `W(copy(a, b)) = {(a, v)}`, and

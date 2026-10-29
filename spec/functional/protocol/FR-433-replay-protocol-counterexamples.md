@@ -72,7 +72,7 @@ memory models and instance budget, and re-execute each step:
    loop whose last post-state is not its entry state, refuses
    `invalid_runtime_input`/`invalid-value`.
 2. A step whose identity has no successor with the recorded `post_state`
-   refuses `stale_dependency`/`content-mismatch`. For a `send` step, replay
+   refuses `invalid_runtime_input`/`invalid-value`. For a `send` step, replay
    recomputes the send record from the pre-state and the step, and a recorded
    `send_record` that differs from it refuses the same way. A `send` step
    without a `send_record`, or any other step with one, is a wire-shape defect
@@ -109,13 +109,13 @@ counterexamples for one item both replay.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-433-AC-1 | The `Fill` deadlock counterexample carries the steps `fork(Both)` and `attempt(A)` as protocol transition identities with post-state digests, `kind: deadlock` and the blocked list, and replays to `reproduced-with-evaluated-witness`. | Test (TC-387) |
-| FR-433-AC-2 | A counterexample whose step is not enabled, or whose loop does not close, refuses `invalid_runtime_input`/`invalid-value`; one whose recorded digest matches no successor refuses `stale_dependency`/`content-mismatch`. | Test (TC-387) |
+| FR-433-AC-2 | A counterexample whose step is not enabled, or whose loop does not close, refuses `invalid_runtime_input`/`invalid-value`; one whose recorded digest matches no successor refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-387) |
 | FR-433-AC-3 | A liveness counterexample whose loop starves a branch under the scheduler constraints refuses as unfair; the same loop under a `scheduling adversarial` clause replays. | Test (TC-384, TC-387) |
 | FR-433-AC-4 | A deadlock counterexample whose last state enables a step, or whose recorded blocked list differs from the recomputed one, settles `inconclusive`, cause `replay-parity`. | Test (TC-387) |
 | FR-433-AC-5 | A counterexample with a missing `subject`, an extra member or a mistyped transition identity refuses before replay. | Test (TC-387) |
 | FR-433-AC-6 | Every refutation vector of TC-376 to TC-386 replays to `reproduced-with-evaluated-witness`. | Test (TC-387) |
 | FR-433-AC-7 | The `undefined-evaluation` counterexample of an undefined recovery predicate replays to `reproduced-with-evaluated-witness` and the item `refuted`, cause `undefined-evaluation`; the same counterexample with its last step changed so that the predicate is defined at `trace_position` settles `inconclusive`, cause `replay-parity`. | Test (TC-387) |
-| FR-433-AC-8 | Each `send` step of a counterexample carries a `send_record` that replay recomputes and compares: a step whose recorded `outcome` or `displaced` differs refuses `stale_dependency`/`content-mismatch`; a `send` step without a `send_record` and a non-`send` step with one refuse before replay as a missing or extra member. | Test (TC-387) |
+| FR-433-AC-8 | Each `send` step of a counterexample carries a `send_record` that replay recomputes and compares: a step whose recorded `outcome` or `displaced` differs refuses `invalid_runtime_input`/`invalid-value`; a `send` step without a `send_record` and a non-`send` step with one refuse before replay as a missing or extra member. | Test (TC-387) |
 
 ## Dependencies
 

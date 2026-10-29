@@ -44,7 +44,7 @@ below.
   `execution_point`, following `frame`, whose value is FR-322's closed
   `ExecutionPoint`. A clause-bound anchor carries the same accepted point as
   its `state_clause`; a protocol-only anchor omits it. The point is part of
-  the body, so it participates in the structural-node preimage and identity.
+  the body, so it participates in the node's identity (two anchors differing in execution point are distinct nodes).
 - **semantic_type** — `C`, the context's node. A reference to the anchor
   therefore has family `object`, which is the anchor position of
   `quire.op.state.clause`
@@ -102,7 +102,7 @@ is the signature every clause anchored here binds (FR-341).
 
 The anchor checks run in the state step (FR-341 "Reader order"), after the
 frame step, over every `state`/`operation_anchor` node in ascending node-id
-digest order and before any `state`/`state_clause` node. For one anchor,
+order and before any `state`/`state_clause` node. For one anchor,
 the checks run in this order and the first failing check is its defect:
 
 1. **Context.** The `context` target is a declared dependency of the anchor,
@@ -132,7 +132,7 @@ the checks run in this order and the first failing check is its defect:
 
 Once every anchor's own joins (1-3) hold, the reader checks the package-wide
 uniqueness this artifact's "One `operation_anchor` node stands for..." rule
-states, over every anchor in the same ascending node-id digest order: no two
+states, over every anchor in the same ascending node-id order: no two
 anchors join to the same (`context`, `operation`, execution point) tuple. The
 second anchor to claim a tuple refuses
 `ambiguous_declaration`/`ambiguous-name` at that anchor.
@@ -151,7 +151,7 @@ clause that references the anchor. A malformed or inapplicable point refuses
 | FR-342-AC-3 | The anchor's `semantic_type` is its `context` node, whichever of the three it is; an anchor whose `semantic_type` names another node refuses `invalid_model_binding`/`malformed-declaration` at the anchor. | Test (TC-233) |
 | FR-342-AC-4 | The `operation` name resolves among the context's exposed operation members to one the context declares: `(Order, "scaled")` resolves to `Order`'s operation and `(Sub, "size")` to `Sub`'s redefinition; `(Sub, "reset")`, which `Sub` only inherits, and an operation on a `systems_interface` node refuse `invalid_model_binding`/`malformed-declaration`; an undeclared name and a field's name refuse `missing_declaration`/`missing-name`; a context owned by a domain package identity the lock does not select refuses `missing_declaration`/`missing-selection`. | Test (TC-280) |
 | FR-342-AC-5 | The state step checks every `operation_anchor` node before any `state_clause` node: a package carrying an anchor defect and a clause defect reports the anchor defect. | Test (TC-233) |
-| FR-342-AC-6 | No two `state`/`operation_anchor` nodes join to the same (`context`, `operation`, execution point) tuple; a duplicate tuple refuses `ambiguous_declaration`/`ambiguous-name` at the second anchor in ascending node-id digest order. Two anchors of one `context` whose operations have equal frames reference one `state`/`frame` node and are both admitted. | Test (TC-233) |
+| FR-342-AC-6 | No two `state`/`operation_anchor` nodes join to the same (`context`, `operation`, execution point) tuple; a duplicate tuple refuses `ambiguous_declaration`/`ambiguous-name` at the second anchor in ascending node-id order. Two anchors of one `context` whose operations have equal frames reference one `state`/`frame` node and are both admitted. | Test (TC-233) |
 | FR-342-AC-7 | A `state`/`operation_anchor` node whose `context` is a `model`/`process` node is admitted: `(Flow, "go")` resolves to the process's own operation, its `frame` is a `state`/`frame` node whose `semantic_type` is the process node, the anchor's `semantic_type` is the process node, and a reference to the anchor has family `object`. An operation a process inherits from its supertype process is anchored at the declaring process, and `(SubFlow, "go")` with `go` only inherited refuses `invalid_model_binding`/`malformed-declaration`. | Test (TC-233, TC-280) |
 | FR-342-AC-8 | A `state`/`operation_anchor` node whose `context` is a `model`/`state_machine` node is admitted on the same terms: `(Gate, "toggle")` resolves to the machine's own operation and the frame and anchor `semantic_type` are the state-machine node. Two anchors of one process or state-machine `context` whose operations have equal frames reference one `state`/`frame` node, and a frame never joins the anchors of two different declaring types. | Test (TC-233, TC-280) |
 | FR-342-AC-9 | A `context` that is a `model`/`record_value_type`, `model`/`event_type`, `model`/`persistence_interface` or `model`/`systems_interface` node refuses `invalid_model_binding`/`malformed-declaration` at the `context` target, and a process-owned or state-machine-owned anchor with a missing operation name refuses `missing_declaration`/`missing-name`, an ambiguous one `ambiguous_declaration`/`ambiguous-name`, and one owned by a domain package identity the lock does not select `missing_declaration`/`missing-selection`. | Test (TC-233, TC-280) |

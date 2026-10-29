@@ -46,8 +46,8 @@ model Orders = "acme/orders";
 ```
 
 The source names the domain package identity only: no version and no digest
-(FR-154 "Model selection in source"). The package records the import as a `model_root` node of identity
-(FR-321); the lock records nothing. QSL model intake admits the domain package and builds the
+(FR-154 "Model selection in source"). The resolver records the import as a
+ModelSelection (FR-321) row of the package lock: `{identity}`. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
 declaration. Clauses of a unit name a declaration by qualified name: the model alias,
 then the segments of its IR node identity after the package identity, such as

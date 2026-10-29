@@ -142,8 +142,8 @@ within the same identity domain. At minimum the kernel distinguishes:
 - generated artifact, tool/toolchain/options set, evidence record and human
   decision.
 
-An
-effective model declaration never replaces its original declaration identity.
+An effective model declaration never replaces its original declaration
+identity.
 
 ### 4.2 Selection axes
 
@@ -207,9 +207,9 @@ into an executed Boolean.
 ### 4.5 Model and state semantics
 
 The model universe is a closed selection of one or more domain packages, each
-lifted from spec artifacts and selected by identity. QSL model intake
-constructs a read-only model view containing original
-and effective declaration IDs, inheritance/conformance edges, redefinitions,
+lifted from spec artifacts, selected by identity and rooted at its `model_root` node. QSL model intake
+constructs a read-only model view containing original and effective
+declaration IDs, inheritance/conformance edges, redefinitions,
 parts, ports, interfaces, connections, allocations, operations and
 relationships. Dynamic dispatch resolves only inside the selected closed method
 set.
@@ -302,7 +302,7 @@ contracts. This is not a new top-level epic or semantic engine.
 
 The coordinator accepts one `ExecutionRequest` with exact package, model,
 profile, dependency, observation/population, bound and requested-claim
-identities. It validates the request, dispatches independent state, temporal,
+identities. It validates the package selection, dispatches independent state, temporal,
 protocol or analysis producers, and emits an ordered `ExecutionBundle`. It
 never parses source, evaluates a clause itself or collapses producer outcomes.
 
@@ -482,7 +482,7 @@ Names are architectural roles; Rust names may follow repository idioms.
 | I01 Source document | editor/filesystem -> QSL | Exact bytes, unit identity and bounded read outcome. |
 | I02 Parsed source | QSL parser -> formatter/linker/editor | Lossless CST, recoveries, tokens/spans and edition; not semantically admitted. |
 | I03 Model selection | FCD extraction-frontend lift -> QSL/QObs | Domain package identity, declaration keys, declarations and relationships lifted from spec artifacts. |
-| I04 Checked package | QSL -> all semantic consumers | Immutable semantic graph, package lock, feature report, source map and diagnostics. |
+| I04 Checked package | QSL -> all semantic consumers | Immutable semantic graph, package identity, feature report, source map and diagnostics. |
 | I05 Native runtime input/result | caller/S6 <-> QSL | Typed state anchors, objects, frames, bounds and independent results. |
 | I06 Native temporal artifact/result | QSL/S6 <-> TL/QSL | Typed atoms/formula, clocks/history/captures, partial valuations and progress. |
 | I07 Observation authority bundle | QObs -> temporal/Protocol/S6 | Records, revisions, populations, positions, clocks, completeness and authority. |

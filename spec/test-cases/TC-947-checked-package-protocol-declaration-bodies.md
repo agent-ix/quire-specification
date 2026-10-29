@@ -87,7 +87,7 @@ FR-465-AC-9.
 | CH14 | `delivery` is `exactly-once` | refuses `malformed_wire` |
 | CH15 | `delivery` removed | refuses `malformed_wire` |
 | CH16 | `ordering` removed | refuses `malformed_wire` |
-| CH17 | changing `delivery` from `at-least-once` to `unknown` | the channel's node key, the clause's and the `package_id` change |
+| CH17 | changing `delivery` from `at-least-once` to `unknown` | the channel's body, the clause's and the checked package change |
 
 ## Queue vectors
 

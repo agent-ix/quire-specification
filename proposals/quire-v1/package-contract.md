@@ -26,12 +26,14 @@ independent declarations whose names and dependencies are established.
 | Sources | Exact authority and identity per unit; original source regions and clause/declaration identities. Two editable authorities for one clause refuse. |
 | Language | Exact language/edition and supplied definition artifact; no implementation-version default. |
 | Profiles | Each declaration's selected root definition identity, exact required definition closure and the meaning owned by each dependency. |
-| Models | Domain package imported by identity; its effective declaration keys and exact manifest/dependency closure. |
+| Models | Domain package imported by identity alone; the `model_root` node records its identity; its effective declaration keys and exact manifest/dependency closure. |
 | Native dependencies | Resolved predicate, operation-contract and temporal-obligation references with their defining source, model and profile selections; typed anchors and capture requirements. |
 | Binding requirements | Typed roles, selected model/observation contracts and clock/scope premises described below. Concrete runtime instances are not inserted here. |
 
-The native `model` import names a domain package by identity. The domain package is the semantic IR document lifted from the imported
-spec's artifacts. The domain package identity and its declarations must match the
+The native `model` import names a domain package by identity alone and states
+no digest and no version; the package's `model_root` node records the identity
+and the lock records nothing. The domain package is the semantic IR document
+lifted from the imported spec's artifacts. The domain package identity and its declarations must match the
 supplied document and its validated closure. A transitively reachable type is
 not thereby a directly imported type. The spec's artifacts declare model closure,
 presence, units, relationships and configuration; QSL model intake checks them
@@ -156,10 +158,9 @@ Exact serialized bytes, static language subject and assessment inputs have
 distinct identities. Reordering a set in a permitted encoding may preserve its
 subject while changing raw bytes. Source-byte changes alter source correspondence
 even if a typed-expression canonicalizer establishes equal expression meaning.
-Canonical identity is optional until its exact domain/version/algorithm is
-selected and qualified; structural comparison or ordinary JSON hashing cannot
-claim it. Existing ArtifactRef/SemanticRef, domain package identity and IR domains
-retain their selected contracts.
+Canonical identity is optional until its exact version/algorithm is selected
+and qualified; structural comparison cannot claim it. Existing
+ArtifactRef/SemanticRef and IR domains retain their selected contracts.
 
 ## Admission examples
 

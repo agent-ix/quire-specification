@@ -43,10 +43,8 @@ catalog).
 | `unknown_required_feature` | A required feature that is unknown or unsupported in the selected consumer/profile scope. "A recognized name is not implementation support." |
 | `missing_import` | A requested typed dependency that is not present in the owning scope. |
 | `missing_declaration` | A requested name that is not present in the owning scope. |
-| `stale_dependency` | A byte-digest, digest-domain or content-identity mismatch against a dependency. |
-| `source_digest_mismatch` | A byte-digest or digest-domain mismatch against source. "A missing artifact cannot supply an invented actual digest." |
 | `ambiguous_declaration` | A visible name or clause resolving to distinct conflicting declarations or authorities, including two checked-package nodes declaring the same qualified name. |
-| `invalid_package` | A malformed, incomplete, conflicting or cyclic package definition, including feature-set mismatch, or a checked-package application whose operation identity, operator class, required law, lock-selected law, mode, member or type-pinned mode is unknown or inconsistent, a checked-package application node that retains a stale node key, or a checked-package declaration that disagrees with its nominal qualified declaration. |
+| `invalid_package` | A malformed, incomplete, conflicting (two unequal checked packages or documents for one identity) or cyclic package definition, including feature-set mismatch, or a checked-package application whose operation identity, operator class, required law, lock-selected law, mode, member or type-pinned mode is unknown or inconsistent or a checked-package declaration that disagrees with its nominal qualified declaration. |
 | `invalid_model_binding` | A model binding with a wrong role, selection, export or context, a conflicting binding, unpreserved model meaning, or a specialization cycle, redefinition-target mismatch, derivation conflict, malformed domain package declaration or port-direction violation. "Missing versus explicit null may not be collapsed into a generic absent value." |
 | `ill_typed` | A type, unit, operator-eligibility, literal-ambiguity or non-Boolean-root typing failure, a parameter or result variance, multiplicity-narrowing, effect-escape or subsetting-type conformance failure, or an identity-observing form over a `symmetric` population (FR-381). |
 | `undefined_expression` | Definedness not proved for a potentially evaluated operation, or a redefinition refinement not constructed or proved. "Failure to prove definedness is not logical violation." |
@@ -87,7 +85,6 @@ catalog).
 | `malformed_wire` | A wire whose JSON syntax or closed structure the reader's schema refuses, including a nested shape outside its closed grammar. |
 | `duplicate_member` | A JSON member name repeated in one object of the wire. |
 | `unknown_member` | A member outside the closed member set of the object that holds it. |
-| `digest_domain_mismatch` | A supplied package identity whose digest domain differs from the domain its position requires. |
 | `unknown_required_capability` | A package that requires a capability the reader does not know. |
 | `invalid_semantic_graph` | A semantic graph that breaks the reader's graph rules: a dependency, key, owner or term order the artifact refuses. |
 | `unsupported_node_tag` | A node whose `node_tag` is outside the closed tag set (QSL ADR-013 O-14, QC-19). |
@@ -169,7 +166,7 @@ settling unselected native literals or treating spelling as a global convention.
 | FR-271-AC-4 | Localizing the message accompanying a diagnostic leaves its code unchanged. | Analysis |
 | FR-271-AC-5 | A code minted by a consumer for its own refusal does not resolve to a member of this table, even when its spelling equals a member spelling. | Analysis |
 | FR-271-AC-6 | The values table has exactly one row for each of `invalid_source_identity` and the ten evaluator value-refusal codes: `inexact_decimal`, `decimal_out_of_domain`, `division_out_of_domain`, `modulo_out_of_domain`, `text_length_out_of_domain`, `integer_out_of_domain`, `rational_out_of_domain`, `ieee_not_exact`, `ieee_nan_payload_not_representable` and `ieee_rational_out_of_domain`. | Test (TC-233) |
-| FR-271-AC-7 | The values table has exactly one row for each of `unknown_contract_version`, `malformed_wire`, `duplicate_member`, `unknown_member`, `digest_domain_mismatch`, `unknown_required_capability`, `invalid_semantic_graph` and `unsupported_node_tag`, the codes of the FR-322 reader vocabulary that no other row holds. | Test (TC-233) |
+| FR-271-AC-7 | The values table has exactly one row for each of `unknown_contract_version`, `malformed_wire`, `duplicate_member`, `unknown_member`, `unknown_required_capability`, `invalid_semantic_graph` and `unsupported_node_tag`, the codes of the FR-322 reader vocabulary that no other row holds. | Test (TC-233) |
 
 ## Resolved catalog namespaces
 
@@ -209,7 +206,7 @@ exactly and for the FR-322 V2 reader's non-canonical bytes, and
 `ieee_not_exact`, `ieee_nan_payload_not_representable` and
 `ieee_rational_out_of_domain`, one refusal code per evaluator value refusal.
 FR-272 types every cause, including the causes of `foreign_reference` for
-FR-153 and FR-204, the checked-package operation variants, `stale-node-key`,
+FR-153 and FR-204, the checked-package operation variants,
 `declaration-nominal-mismatch` and `ambiguous-name`, `unproved-exhaustiveness`
 for FR-146, the `unbounded-extent` and `tool-unavailable` causes of
 `unsupported_projection`, the `stage_limit_exceeded` causes, the

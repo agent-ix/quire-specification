@@ -77,7 +77,7 @@ preimages, orders and vectors are defined by the selected
 and
 [`model-effective-declaration-vectors.json`](../../../proposals/checked-package-v2/model-effective-declaration-vectors.json).
 These domains differ from the I04 node domain, so no
-derived identity equals an I04 node key. The
+derived identity equals an I04 node id. The
 effective view is carried in the checked package as a `correspondence` node
 with semantic form `model_correspondence`.
 

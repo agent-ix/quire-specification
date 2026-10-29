@@ -15,7 +15,7 @@ relationships:
 
 Schema and reader vectors for the `protocol` node family of
 `quire.checked-semantic-graph/v2`: the shared `quire.op.protocol.control`
-body, the operator catalog, node keys, declaration paths, the clause body,
+body, the operator catalog, node ids, declaration paths, the clause body,
 membership and containment, binders and their scope, the derived causal
 relation and progress, placement, profile fit, the reader order and the
 activation relation. Scope: FR-464-AC-1 to FR-464-AC-15 and FR-464-AC-21 to FR-464-AC-23.
@@ -71,9 +71,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
    Example::OrderFlow` reference in a user expression (K1).
 2. Apply each vector of "Placement and operators", "Keys and declarations",
    "Clause body", "Membership", "Binders and scope", "Causal relation and
-   progress" and "Activation relation" to the base package and run the full reader; recompute node and
-   package identities after each edit unless the vector says the stale key is
-   the point.
+   progress" and "Activation relation" to the base package and run the full reader.
 3. Feed a package with a state-step defect and a protocol defect, and one with
    a protocol placement defect and a member-node defect, and one with a
    protocol defect and an operation-step defect.
@@ -103,21 +101,20 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 
 | Vector | Edit to the base | Expected |
 | --- | --- | --- |
-| K1 | reformat the source; add a comment; add a second source reference to the protocol; declare the roles in another source order | every node key and the `package_id` unchanged; the carrier gains one `expression` occurrence |
-| K2 | rename role `Fulfillment` to `Shipping` | the role's node key, every node that references it and the `package_id` change |
-| K3 | swap `Orders` and `Payments` in the clause's `roles` set | `invalid_semantic_graph` at the clause node (a set out of ascending digest order); no role node key changes |
-| K13 | list `Outcome.cases` with `shipped` before `failed`'s sorted position; and, separately, swap two independent `children` of `Finalized`'s holder | the unsorted `cases` is `invalid_semantic_graph` at `Outcome`; swapping two `children` of a `sequence` changes the sequence's key and the `package_id` |
-| K4 | change `max 3` to `max 4` | `Poll`'s node key, its ancestors' keys and the `package_id` change |
-| K5 | retarget `Applied`'s `of` from `Charged` to `Requested` | `Applied`'s node key changes and the reader refuses `invalid_model_binding`/`malformed-declaration` at the target (not an `attempt`) |
+| K1 | reformat the source; add a comment; add a second source reference to the protocol; declare the roles in another source order | every node id unchanged; the carrier gains one `expression` occurrence |
+| K2 | rename role `Fulfillment` to `Shipping` | the role's node id and every node that references it change |
+| K3 | swap `Orders` and `Payments` in the clause's `roles` set | `invalid_semantic_graph` at the clause node (a set out of ascending node-id order); no role node id changes |
+| K13 | list `Outcome.cases` with `shipped` before `failed`'s sorted position; and, separately, swap two independent `children` of `Finalized`'s holder | the unsorted `cases` is `invalid_semantic_graph` at `Outcome`; swapping two `children` of a `sequence` changes the sequence |
+| K4 | change `max 3` to `max 4` | `Poll`'s node id and its ancestors' node ids change |
+| K5 | retarget `Applied`'s `of` from `Charged` to `Requested` | `Applied`'s node id changes and the reader refuses `invalid_model_binding`/`malformed-declaration` at the target (not an `attempt`) |
 | K6 | a role `Main`, a channel `Main`, a template `Main` and the root control `Main` | admitted: four distinct declarations (`role`, `channel`, `compensate`, `run` segments) |
-| K7 | two roles named `Orders` | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
-| K8 | two controls on one path named `Done` | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
-| K9 | a node's retained key differs from the digest of its preimage | `invalid_package`/`stale-node-key` at the node, before any protocol check |
+| K7 | two roles named `Orders` | `ambiguous_declaration`/`ambiguous-name` naming both node ids |
+| K8 | two controls on one path named `Done` | `ambiguous_declaration`/`ambiguous-name` naming both node ids |
 | K10 | an acyclic protocol node adds `recursion_group` but leaves `recursion` `null` | refuses `malformed_wire` (`malformed_wire`) |
 | K11 | a `queue` node carries a `declaration` | refuses `malformed_wire` (a `generated`-only node carries no declaration) |
 | K12 | a `role` node has no `declaration` occurrence | refuses `malformed_wire` (`declaration` is present exactly with a `declaration` occurrence) |
 | K14 | a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic | the complete cyclic reference component shares one `recursion_group`, each member has its FR-322 `{size, ordinal}` coordinate and intra-component edges use `group_reference`; the reader admits the package. `Plain` and every other node outside that component have no `recursion_group` and `recursion` `null` |
-| K15 | Add a state precondition on the operation named by `Charged`'s attempt, with accepted `Pre{operation: "charge"}` | the attempt still references the no-point `operation_anchor`; the clause references a distinct point-bearing anchor; both anchors reference the same frame; the reader admits both nodes and each node key re-derives from its own body |
+| K15 | Add a state precondition on the operation named by `Charged`'s attempt, with accepted `Pre{operation: "charge"}` | the attempt still references the no-point `operation_anchor`; the clause references a distinct point-bearing anchor; both anchors reference the same frame; the reader admits both nodes and each node id re-derives from its own body |
 
 ## Clause body
 
@@ -126,7 +123,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | C1 | none | admitted: thirteen bindings `over`, `activation`, `captures`, `roles`, `relationships`, `channels`, `queues`, `requirements`, `compensations`, `terminal`, `scheduling`, `run`, `finish` in that order, plus the node-level `owner_model` edge |
 | C2 | `activation on origin` | `activation` is `{kind: origin}`; admitted |
 | C3 | a protocol with no relationship, requirement, compensation, `terminal` or `scheduling` | empty lists and absent optionals; admitted |
-| C4 | `scheduling` removed from the base | the clause node key and the `package_id` change |
+| C4 | `scheduling` removed from the base | the clause node id changes |
 | C5 | `roles` and `channels` swapped in the body | refuses `malformed_wire` (binding names out of order) |
 | C6 | the `finish` binding missing | refuses `malformed_wire` |
 | C7 | `over` is a `literal` | refuses `malformed_wire` |
@@ -142,9 +139,9 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 
 | Vector | Edit to the base | Expected |
 | --- | --- | --- |
-| OM-01 | Keep the `over` argument and add `owner_model` as the object-type node of the model owned by a selected declaration that the source clause's `over` type names | Admitted; the target is in `dependencies` and in the application-node identity preimage |
-| OM-02 | Change only `owner_model` to another existing selected model node and recompute the node and package identities | Admitted as a different clause identity; FR-375 class-catalog reconstruction associates its classes only with the new owner model |
-| OM-03 | Omit `owner_model`, or use an external `PackageNodeKey` | `malformed_wire` at the node (both V2 schemas) |
+| OM-01 | Keep the `over` argument and add `owner_model` as the object-type node of the model owned by a selected declaration that the source clause's `over` type names | Admitted; the target is in `dependencies` |
+| OM-02 | Change only `owner_model` to another existing selected model node | Admitted as a different clause identity; FR-375 class-catalog reconstruction associates its classes only with the new owner model |
+| OM-03 | Omit `owner_model`, or use an external `{package, node}` key | `malformed_wire` at the node (both V2 schemas) |
 | OM-04 | Keep two clauses over distinct selected models and build the concrete catalog for one of them, including a clause with no deciding step rows | Classes from all clauses owned by the selected model are included; the other model's classes are excluded |
 | OM-05 | Retarget `owner_model` to a `model`/`object_type` node whose `ModelOwner` joins no `model_root` node (or whose selected document does not declare it as an object type), rebuild the clause key and package identity | `missing_declaration`/`missing-selection` at the target's own `node_id` in the owner join, before any body step and before the clause edge is read |
 | OM-06 | Retarget `owner_model` to a selected declaration's model node of another form (a `state_machine`), then a `process`, a `record_value_type`, and the selected package's `model_root` node | each `invalid_model_binding`/`malformed-declaration` at `/semantic_graph/nodes/{i}/owner_model` after the refinement step, as the clause's first step 6 check |
@@ -275,11 +272,11 @@ Each vector derives the activation relation from the admitted package
 
 | Vector | Edit to the base | Expected |
 | --- | --- | --- |
-| A1 | none | one row: the `Example::OrderFlow` clause key, `each` with `opened`'s node key, and `OrderClosureBounded`'s node key |
-| A2 | `activation on origin` (C2) | one row: the clause key, `origin` with no trigger, and `OrderClosureBounded`'s node key |
+| A1 | none | one row: the `Example::OrderFlow` clause key, `each` with `opened`'s node id, and `OrderClosureBounded`'s node id |
+| A2 | `activation on origin` (C2) | one row: the clause key, `origin` with no trigger, and `OrderClosureBounded`'s node id |
 | A3 | the protocol requires no temporal clause (C3) | no row |
 | A4 | a second `requires temporal OrderClosureBounded` | one `requirements` entry and one row, equal to A1's |
-| A5 | a second temporal clause `OrderPaidBounded` and `requires temporal OrderPaidBounded` | two rows, in ascending node-id digest order of the two temporal clause nodes |
+| A5 | a second temporal clause `OrderPaidBounded` and `requires temporal OrderPaidBounded` | two rows, in ascending node-id order of the two temporal clause nodes |
 | A6 | a temporal clause `RefundBounded` on the clock `refund-clock`, which `Refund` reads, not required by the protocol | the relation equals A1's: no row for `RefundBounded` |
 | A7 | K1's reformatting, comment and second protocol reference | the relation equals A1's |
 | A8 | the `requirements` entry names a `temporal_clause` node of the graph that is absent from the clause's `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the clause node (graph stage, FR-322-AC-96, before any body step); no relation |

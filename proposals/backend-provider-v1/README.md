@@ -58,12 +58,10 @@ descriptor as its provider gave it.
 `request.package` is the RFC 8785 byte string of the
 `quire.checked-package/v2` document, spelled as RFC 4648 section 5 base64url
 with no padding and zero unused trailing bits, so one byte string has one
-spelling and the frame keeps one RFC 8785 encoding. `request.package_id` is
-that package's `package_id`. A reader decodes `package`, admits it with the v2
-reader and refuses a recomputed `package_id` that differs from
-`request.package_id` with `stale_dependency`/`content-mismatch`.
+spelling and the frame keeps one RFC 8785 encoding. A reader decodes
+`package` and admits it with the v2 reader.
 
-A request-stage vector omits `package` and `package_id`; the test fills them
+A request-stage vector omits `package`; the test fills it
 from `../checked-package-v2/fixtures/positive-all-families.json`, so the vector
 carries no second copy of that fixture.
 

@@ -14,8 +14,7 @@ relationships:
 ## Objective
 
 Verify compile-time and process Rust providers negotiate exact capabilities,
-stay within their run budgets, and that JIT execution keeps interpreter parity
-and the content-keyed cache.
+stay within their run budgets, and that JIT execution keeps interpreter parity.
 
 ## Target Integration
 
@@ -29,14 +28,14 @@ Manifests, options and run budgets are given in the request.
 ## Inputs
 
 Supported and unsupported requests plus malformed output, wrong wire identity,
-crash, timeout and cache-key mutation cases.
+crash and timeout cases.
 
 ## Test Procedure
 
 1. Negotiate and execute valid providers.
    - IT-077-SC-01: capabilities and results are exact and interpreter parity holds.
-2. Mutate each cache-key input and the provider manifest.
-   - IT-077-SC-02: each mutation is a cache miss, and a plugin result is never cached.
+2. Inject a plugin result.
+   - IT-077-SC-02: a plugin result is never stored as a compile result.
 3. Inject malformed, crashing and timed-out plugin behaviour.
    - IT-077-SC-03: the host contains failure and emits no semantic substitute.
 

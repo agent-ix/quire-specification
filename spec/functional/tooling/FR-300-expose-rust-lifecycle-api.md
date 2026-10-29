@@ -56,7 +56,7 @@ a clock, or silently performs a later stage.
 | `execute` | Call a checked function or evaluate a checked clause | the checked package, the selected entry, arguments, objects, accounting limits, the selected execution backend (FR-306) | the evaluation or a typed call failure |
 | `monitor` | Check a supplied finite or lasso trace against temporal clauses | the checked package, clause selections, a trace | one verdict per clause |
 | `analyze` | Decide claims over every behaviour with an in-process engine | the checked package, claim items, the subject binding, engine limits | one FR-331 terminal record per item |
-| `lower` | Read the emitted package into target-neutral IR | the emitted package and its expected `package_id` | IR nodes or a typed refusal |
+| `lower` | Read the emitted package into target-neutral IR | the emitted package | IR nodes or a typed refusal |
 | `generate` | Emit backend artifacts from IR | IR nodes, the routed backend per item, the generation target | FR-331 `artifacts` with source maps; an unsupported item emits nothing |
 | `prove` | Negotiate, generate, run, replay and settle | the checked package from the same run's `check` and, when `package` emits it, the emitted package; claim items, the subject binding, the provider registry, provider limits | one FR-331 terminal record per item |
 | `replay` | Re-execute a counterexample | a replay request with its byte provision (FR-323) | the replay result |

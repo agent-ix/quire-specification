@@ -23,8 +23,7 @@ unsupported nodes.
 Use the subject and inputs named by FR-195 and FR-322. Validate the
 `proposals/checked-package-v2` schema and positive fixtures; require the schema
 to refuse an unrecognized `contract_version`. Then exercise unknown-version,
-missing/duplicate/unknown member, a recorded `package_id` that differs from its
-identity preimage, cross-domain digest, unknown required capability,
+missing/duplicate/unknown member, unknown required capability,
 non-canonical-byte and each selected byte, node, edge, locus, diagnostic and
 work boundary through the real local Rust reader; each one-over-limit input must
 report the limit, its value and its setting. Validate every object in the V2

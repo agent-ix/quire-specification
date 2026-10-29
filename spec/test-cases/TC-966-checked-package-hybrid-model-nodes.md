@@ -27,10 +27,8 @@ declaration and `SlowEnough` claim, and as `restored_nodes` those of
 vectors through the real local Rust boundary; for HY-03 to HY-14, HY-17 to
 HY-19 and HY-23 edit the
 node of HY-01 as stated, adding to the graph any node the edit references,
-then set each edited node's `dependencies` to its body's targets, recompute
-its key and every key that references it, and recompute the `package_id`
-over the derived identity projection, as TC-233 does for its patched
-vectors, and feed the package to the reader.
+then set each edited node's `dependencies` to its body's targets, as TC-233
+does for its patched vectors, and feed the package to the reader.
 
 ## Vectors
 
@@ -46,7 +44,7 @@ vectors, and feed the package to the reader.
 | HN-15 | `positive-all-families.json`'s `Tank` | a `hybrid_model`, a `hybrid_mode` and a `hybrid_transition` node, each holding its own key; `x`'s rate and `x`'s reset value reference `y`'s variable node; `y`, classed `hybrid`, has the rate literal `1`; the full reader admits the package |
 | HN-16 | every `code`/`cause` pair FR-481 and FR-193 name, scanned from their text | each cause listed in its code's native-diagnostics row; each cause of a V2 `Diagnostic` code, `non-boolean-root` included, in the `cause_tag` enum and admitted by the schema with that code |
 | HY-01 | `Braking` and `SlowEnough` of QSL FR-447, compiled and emitted | the HN-01 nodes; the full reader admits the package |
-| HY-02 | HY-01 respelled with other whitespace and comments | one `package_id` with HY-01 |
+| HY-02 | HY-01 respelled with other whitespace and comments | a checked package structurally equal to HY-01's |
 | HY-03 | `modes` listing `Moving` twice | `invalid_semantic_graph` at the second entry |
 | HY-04 | `v`'s parameter node typed `scalar_type`/`integer`; `a`'s at level 2 | `invalid_model_binding`/`malformed-declaration` at the target, each |
 | HY-05 | `Moving` with a fourth rate | `invalid_model_binding`/`malformed-declaration` at `rates` |

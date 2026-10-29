@@ -31,17 +31,17 @@ cannot introduce a second editable authority. Runtime observations and changing
 monitor state do not participate in static package identity.
 
 The [package contract](../../../proposals/quire-v1/package-contract.md) defines the
-static components, exact import identity and typed binding requirements. The
+static components, the lock's recorded model identities and typed binding requirements. The
 compiler input inventory closes the native declaration namespace. Checked output
 retains per-declaration dependency dispositions; partial admission is not a
 complete package. Static subject identity differs from serialized artifact bytes
-and build provenance; an unqualified canonical digest is not claimed.
+and build provenance.
 
 The linker's prerequisites follow the package contract's processing-stage table.
 Concrete populations, windows and observations are later assessment inputs,
 not prerequisites for type-checking a valid future obligation. A domain package
-is selected by its identity, and its `model_root` node records the identity. A definition is selected by
-its byte digest. The linker keeps each digest in its own domain and never
+is selected by its identity, and its `model_root` node records the identity. A
+definition is selected by its authority and identity. The linker never
 substitutes one for the other.
 
 ## Acceptance Criteria
@@ -53,11 +53,11 @@ substitutes one for the other.
 | FR-030-AC-3 | Changing a runtime trace while keeping source, model and selected definitions fixed does not change static package identity; changing a semantic dependency does. | Test (TC-030) |
 | FR-030-AC-4 | Duplicating a clause's editable authority refuses admission rather than choosing the first or last declaration. | Test (TC-030) |
 | FR-030-AC-5 | An omitted required source unit prevents namespace closure; an extra file outside the explicit inventory cannot add or shadow a declaration. | Test (TC-030) |
-| FR-030-AC-6 | A lock digest, package fingerprint or raw-byte digest placed after a `model` identity string refuses `invalid_syntax`/`unexpected-token`; a `model` has no digest position. | Test (TC-030) |
+| FR-030-AC-6 | A version or any further token placed after a `model` identity string refuses `invalid_syntax`/`unexpected-token`; a `model` has no position for it. | Test (TC-030) |
 | FR-030-AC-7 | Linked binding roles retain owning declaration, source region, kind, exact type/contract, anchor and scope prerequisites; equal local names in different clauses do not merge their roles. | Test (TC-030) |
 | FR-030-AC-8 | A compile configuration change limited to resource controls remains visible in provenance while preserving the static subject; a changed semantic selection changes the static subject. | Test (TC-030) |
 | FR-030-AC-9 | A valid three-family template links with exact static model/definition/binding contracts and no runtime population, window or observations; removing a required static definition still refuses its dependent declaration. | Test (TC-030) |
-| FR-030-AC-10 | The domain package selection (identity) and each definition selection (byte digest) are retained and validated in their own domains; a missing domain package, a domain type absent from it and cross-domain digest substitutions refuse the dependent static binding. | Test (TC-030) |
+| FR-030-AC-10 | The domain package selection (identity) and each definition selection (authority and identity) are retained and validated separately; a missing domain package, a domain type absent from it and a definition supplied in place of a domain package refuse the dependent static binding. | Test (TC-030) |
 
 ## Dependencies
 

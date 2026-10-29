@@ -36,9 +36,8 @@ The ContractPackage is a closed object with exactly five required members:
 
 - `contract_version`: exactly `quire.contract-package/v1`.
 - `package`: the closed object `{source, lowering_profile}`. `source` is the
-  closed object `{package_id, lock}`. `source.package_id` is the exact
-  `PackageId` of the admitted originating `quire.checked-package/v2` value,
-  including its `quire.package.semantic/v2` domain and SHA-256 algorithm.
+  closed object `{identity, lock}`. `source.identity` is the `name` of the
+  admitted originating `quire.checked-package/v2` value.
   `source.lock` is that value's exact FR-322 lock, with the same members,
   selected identities, and ordering. It is provenance, not a second package
   or authority; the producer SHALL NOT reconstruct, normalize, or silently
@@ -52,12 +51,12 @@ The ContractPackage is a closed object with exactly five required members:
 - `semantic_graph`: the closed object `{graph_version, nodes}` with exactly
   one `nodes` array. `graph_version` is exactly
   `quire.checked-semantic-graph/v2`. The node array uses FR-322's closed
-  node-tag vocabulary, typed-node-key order, stable references,
+  node-tag vocabulary, ascending node-id order, stable references,
   dependency-reference and recursion-group rules. Each node occurs once.
   `types`, `expressions`, `clauses`, and `protocol_references` are not graph
   properties or separate reference forms. A protocol reference is FR-322's
   `protocol`/`protocol_reference` node in this array, with its body target
-  bound by exact local typed node key to a `protocol` node. Its body,
+  bound by exact local node_id to a `protocol` node. Its body,
   dependency and semantic-type joins retain FR-322's validation and identity
   rules; no separate protocol-reference collection or implicit target lookup
   is introduced.
@@ -144,7 +143,7 @@ exception: it fails every record if even the refusal package cannot be encoded.
 A completed mismatch is not a reader `invalid_package` diagnostic and gains no
 invented pointer/cause.
 
-The lowerer SHALL retain the originating `package.source.package_id` and exact `source.lock`,
+The lowerer SHALL retain the originating `package.source.identity` and exact `source.lock`,
 including every row and its order, without sorting, filtering, adding or
 substituting selections. The resolved requirements are not serialized into
 `package.lowering_profile` or another ContractPackage member. A strict reader
@@ -153,17 +152,17 @@ lowerer's producer obligation, verified against its typed operation input.
 
 Each `feature_accounting` record is a closed object with exactly the common
 members `node_id` and `disposition`; `node_id` is the requested exact
-`CheckedNodeId`, and `disposition` is one of the seven values below. Each
+`node_id`, and `disposition` is one of the seven values below. Each
 variant has exactly the additional payload members listed for it and no
 others:
 
-- `lowered`: no additional payload; `node_id` is the stable root-node key in
+- `lowered`: no additional payload; `node_id` is the root node_id in
   `semantic_graph`, and all reachable compatible dependencies are present by
-  stable key.
+  node_id.
 - `unsupported`: the requested `node_id`, the first unsupported reachable
-  `unsupported_node_id` in ascending typed-key order, and its `node_tag`.
+  `unsupported_node_id` in ascending node-id order, and its `node_tag`.
 - `requires_bound`: the requested `node_id` and the first unbounded
-  `unbounded_type` in ascending typed-key order.
+  `unbounded_type` in ascending node-id order.
 - `invalid_input`: no additional payload; `node_id` may be absent from the
   originating checked package.
 - `failed`: the requested `node_id`, exact Contract IR FR-038 `limit_kind`,
@@ -191,7 +190,7 @@ QSL producer's path semantics:
 `code` uses the exact FR-322 code spelling;
 `path` is its RFC 6901 pointer into the checked-package document; `cause` uses
 the FR-272 spelling paired by FR-322; `locus` is its exact closed
-`CheckedNodeId` object `{domain, digest}`; `contract_version` is the string
+structural `node_id` object `{package, path, ordinal}`; `contract_version` is the string
 read for `unknown_contract_version`; and
 `document_pointer` is its RFC 6901 pointer into a supplied domain-package
 document. Each optional JSON member is present exactly when the corresponding
@@ -245,20 +244,14 @@ FR-038 and is checked against the originating typed outcome by the producer,
 as TC-933 asserts.
 
 For example, this illustrates the serialized shape of a defensive body-limit
-result. Node-ID domains, digests, and pointer are illustrative; member names
+result. Node IDs and pointer are illustrative; member names
 and field types are normative.
 
 ```json
 {
-  "node_id": {
-    "domain": "quire.checked-semantic-node/v1",
-    "digest": "0000000000000000000000000000000000000000000000000000000000000000"
-  },
+  "node_id": {"package": "Orders", "path": ["Orders", "Order", "total"], "ordinal": 0},
   "disposition": "body_incomplete",
-  "body_node_id": {
-    "domain": "quire.checked-semantic-node/v1",
-    "digest": "1111111111111111111111111111111111111111111111111111111111111111"
-  },
+  "body_node_id": {"package": "Orders", "path": ["Orders", "Order", "total", "body"], "ordinal": 0},
   "incomplete": {
     "limit_kind": "work",
     "limit": "8",
@@ -285,12 +278,12 @@ Contract IR FR-038; no second disposition or diagnostic vocabulary is created.
 and `refusals` collections:
 
 - Each `nodes` entry is `{node_id, occurrences}`. `node_id` is one output
-  semantic node's stable key, and `occurrences` is an ordered array of exact
+  semantic node's node_id, and `occurrences` is an ordered array of exact
   FR-322 `SourceMapEntry` values `{node_id, role, ordinal, regions}` from the
   originating checked package. There is exactly one entry per output semantic
   node.
 - Each `requested_items` entry is `{requested_item, occurrences}`. It names
-  the exact requested `CheckedNodeId` and the ordered FR-322 source-map entries
+  the exact requested `node_id` and the ordered FR-322 source-map entries
   for the source occurrences associated with that request. There is exactly
   one entry per requested item.
 - Each `refusals` entry is `{requested_item, disposition, occurrences}`. It
@@ -303,17 +296,13 @@ An absent requested key has an explicit requested-item entry with an empty
 guessed source span or silently omitted. Occurrence keys, source-region
 identity, byte intervals, and ordering are exactly those in FR-322. A
 synthesized node maps to the source occurrences that derive it. The three
-collections have one entry per subject in semantic node-key order or original
+collections have one entry per subject in ascending node-id order or original
 request order as applicable; occurrence keys and regions retain FR-322 order.
 
-The ContractPackage carries no stored identity, digest or hash of itself: a
-consumer identifies it by its members (`package.source.package_id`, `lowering_profile`, the graph and the accounting records), and no
-reader recomputes or compares a self-digest. A valid change to only source
-occurrence/region data leaves every other member unchanged; corruption or
-incompleteness of `source_map` still refuses admission. Caller limits are not
-copied as separate package settings; where a `failed` accounting record names
-the exact failed `limit_kind`, limit and consumed count, those result fields
-are part of that record.
+`source_map` is strictly validated; corruption or incompleteness refuses
+admission. Caller limits are not copied as separate package settings; where a
+`failed` accounting record names the exact failed `limit_kind`, limit and
+consumed count, those result fields are part of that record.
 
 The ContractPackage reader is the single owner of outer wire admission. It
 first applies only the generic wire checks reused from FR-322: strict JSON
@@ -321,9 +310,10 @@ parsing including duplicate-member rejection, then canonical-byte validation.
 It then validates
 FR-330's own exact `quire.contract-package/v1` version (it MUST NOT apply
 FR-322's `quire.checked-package/v2` version predicate to this output), and
-checks the exact top-level and nested closed shapes, typed node keys and
+checks the exact top-level and nested closed shapes, node_ids and
 references, package provenance, the closed lowering-profile reference shape,
-source-map totality, and feature-accounting/request bijection before exposing an admitted typed value to a consumer. The order
+source-map totality, and feature-accounting/request bijection
+before exposing an admitted typed value to a consumer. The order
 after generic wire checks is: outer version, all top-level and nested closed
 shapes and typed values, package provenance and lowering-profile reference
 shape, source-map totality, accounting/request consistency, then dependency inputs
@@ -366,24 +356,19 @@ lowering; they are not package data.
 The reader input also includes one admitted FR-322 dependency package for every
 entry of `package.source.lock.dependency_selections`, keyed by that entry's
 library `identity`, as FR-322's `dependency_selections` rule requires. These
-admitted values are inputs, not ContractPackage members; their selected `package_id` values remain in `package.source.lock`.
+admitted values are inputs, not ContractPackage members; their selected
+identities remain in `package.source.lock`.
 After the checks above, the reader checks dependency
 inputs in lock order before checking graph references. It requires
-each selected input and confirms both its library `identity` and admitted
-`package_id` equal the selection. The admitted input has already had its own
-`package_id` verified by FR-322. A missing input, including a value supplied
+each selected input and confirms its library `identity` equals the
+selection. A missing input, including a value supplied
 under the selected key with a different library identity, refuses
 `missing_import`/`missing-selection` at the corresponding ContractPackage
 pointer
-`/package/source/lock/dependency_selections/{i}`. A supplied admitted package
-with the selected identity but a different `package_id` refuses
-`stale_dependency`/`content-mismatch` at that same pointer. Its FR-272
-diagnostic carries the selected `package_id` as `expected` and the supplied
-`package_id` as `actual`, as required for a typed content-mismatch; the library
-identity is the selected lock entry at that pointer.
+`/package/source/lock/dependency_selections/{i}`.
 The reader then derives the selected packages' closures recursively as FR-322
 defines. If two paths from this ContractPackage through their locks reach one
-library identity at different `package_id`s, it refuses
+library identity at structurally unequal packages, it refuses
 `invalid_package`/`conflicting-definition` with both paths as JSON-pointer
 loci. Each pointer starts at `/package/source/lock/dependency_selections/{i}`
 and each further `/lock/dependency_selections/{j}` traverses the admitted
@@ -411,7 +396,7 @@ The reader returns a missing, duplicate, unknown, wrong-kind or out-of-domain
 member as `invalid_package` with the causes above, never as the codes
 `duplicate_member` or `unknown_member`, and it checks no required capability,
 so it never returns `unknown_required_capability`. The refusal's `path` is the
-FR-274 `json_path` location, and the `locus` payload (a `CheckedNodeId`)
+FR-274 `json_path` location, and the `locus` payload (a node_id)
 accompanies a refusal the reader reports at a node.
 
 The reader's `incomplete` result is `stage_limit_exceeded`, category
@@ -443,17 +428,17 @@ this reader and the I2 reader together, is outside this requirement.
 | --- | --- | --- |
 | FR-330-AC-1 | Every represented node has identical native meaning to its originating checked-package node under the source profiles selected by the exact FR-322 lock. | Test (TC-935) |
 | FR-330-AC-2 | An unrepresentable item has no substitute node and retains exactly one typed terminal refusal with every available source locus (or its exact requested identity when no source key exists), while independent sibling records remain unchanged. | Test (TC-933, TC-934) |
-| FR-330-AC-3 | Withdrawn: the ContractPackage carries no stored identity digest. | Withdrawn |
-| FR-330-AC-4 | A package has exactly one semantic node collection ordered by the FR-322 typed node key; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, a `protocol`/`protocol_reference` carrier binds by its body target to a local `protocol` node under FR-322-AC-66, and recursion is represented only by permitted keyed references. | Test |
-| FR-330-AC-5 | The embedded source `package_id` and lock exactly equal those of the originating admitted checked package, and the explicit lowering-profile reference is retained in its closed `{authority, identity}` form separately from the lock's source-profile selections. | Test (TC-932, TC-935) |
+| FR-330-AC-3 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
+| FR-330-AC-4 | A package has exactly one semantic node collection ordered by FR-322's ascending node-id order; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, a `protocol`/`protocol_reference` carrier binds by its body target to a local `protocol` node under FR-322-AC-66, and recursion is represented only by permitted keyed references. | Test |
+| FR-330-AC-5 | The embedded source `identity` and lock exactly equal the `name` and lock of the originating admitted checked package, and the explicit lowering-profile reference is retained in its closed `{authority, identity}` form separately from the lock's source-profile selections. | Test (TC-932, TC-935) |
 | FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and `invalid_body.refusal` and `body_incomplete.incomplete` use the exact closed nested shapes and omission rules above. | Test (TC-933) |
-| FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent `CheckedNodeId` remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test (TC-934) |
-| FR-330-AC-8 | Withdrawn: the identity digest recomputation is removed with the digest. | Withdrawn |
-| FR-330-AC-9 | The sole reader admits a valid canonical value only with every lock-selected admitted dependency package supplied and matching its selection; it ignores extra unselected inputs, refuses a missing or wrong-identity dependency as `missing_import`/`missing-selection` and a same-identity admitted package with a different `package_id` as `stale_dependency`/`content-mismatch` at the selected lock pointer, all before dependent-reference checks. Malformed nested payloads use `invalid_package` with FR-322's `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value` cause as applicable. Wrong versions, invalid references, incomplete source maps, and accounting mismatches also refuse with a typed FR-330 reader result and FR-272 diagnostic mapping before any consumer sees a value. | Test (TC-937) |
+| FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent node_id remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test (TC-934) |
+| FR-330-AC-8 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
+| FR-330-AC-9 | The sole reader admits a valid canonical value only with every lock-selected admitted dependency package supplied and matching its selection; it ignores extra unselected inputs, refuses a missing or wrong-identity dependency as `missing_import`/`missing-selection` all before dependent-reference checks. malformed nested payloads use `invalid_package` with FR-322's `missing-member`, `duplicate-member`, `unknown-member`, `wrong-value-kind`, or `invalid-value` cause as applicable. Wrong versions, invalid references, incomplete source maps, and accounting mismatches also refuse with a typed FR-330 reader result and FR-272 diagnostic mapping before any consumer sees a value. | Test (TC-937) |
 | FR-330-AC-10 | The resolved profile carries authoritative typed `required_source_selections`; exact role/authority/identity matches admit lowering, empty requirements impose no restriction, and unrelated lock rows or reordered/repeated requirements do not change compatibility. Per-request compatibility uses the existing first-charge meter and stated row-visit charges without reset; zero-work and an unpayable comparison charge yield `failed` before compatibility refusal. With sufficient work a missing or different required row yields one request-ordered `invalid_input` per item before node traversal, with no extra payload, no nodes and exact available source occurrences; both success and refusal retain the exact originating lock and package id. | Test |
 | FR-330-AC-11 | A reader `refused` result is a diagnostic at stage `package_read` carrying the reader's code and cause unchanged, every returned code having an FR-271 row and the category its code and cause map to; its `path` is the FR-274 `json_path` location and a node-level refusal carries the `locus` payload. A wrong outer contract version is `unknown_contract_version` and bytes that are not well-formed JSON are `malformed_wire`; a member outside the closed schema is `invalid_package`. A duplicate or unknown member is `invalid_package` with cause `duplicate-member` or `unknown-member`, never the code `duplicate_member` or `unknown_member`, and the reader never returns `unknown_required_capability`. | Test (TC-937) |
 | FR-330-AC-12 | A reader `incomplete` result is `stage_limit_exceeded` at stage `package_read`, category incomplete, with the cause the table gives for its `limit_kind` (`bytes`, `nodes`, `edges`, `occurrences`, `work`), `bound` its `limit`, `actual` its `consumed`, the location its `path` (none for `bytes`) and `setting` the value `CheckedPackageReadLimits.<limit_kind>`; an exact-limit input is admitted and the reader reports no `diagnostics` stop. | Test (TC-937) |
-| FR-330-AC-13 | The ContractPackage reader derives every direct input's closure recursively and refuses a diamond that reaches one library identity at two different `package_id`s as `invalid_package`/`conflicting-definition` with both selection-path JSON pointers rooted at `/package/source/lock/dependency_selections` as loci, before graph-reference checks. | Test (TC-937, planned) |
+| FR-330-AC-13 | The ContractPackage reader derives every direct input's closure recursively and refuses a diamond that reaches one library identity at two structurally unequal packages as `invalid_package`/`conflicting-definition` with both selection-path JSON pointers rooted at `/package/source/lock/dependency_selections` as loci, before graph-reference checks. | Test (TC-937, planned) |
 
 ## Dependencies
 

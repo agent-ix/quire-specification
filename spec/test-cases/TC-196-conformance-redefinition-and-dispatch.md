@@ -31,7 +31,7 @@ ascending digest order.
 
 Fixtures:
 
-- **G** (domain package `test/orders`, ModelSelection `{test/orders}`): F2's types and supertypes; `Count`;
+- **G** (domain package `test/orders`, version `g`, ModelSelection `{test/orders, g}`): F2's types and supertypes; `Count`;
   operation `A/size` with receiver `A`, `params: []`, `returns: {type: Count,
   multiplicity: {1,1}}` and `frame: {modifies: [], creates: [], deletes: []}`;
   and operation `B/size` with the same signature, receiver `B` and

@@ -25,7 +25,7 @@ relationships:
 
 ```yaml
 name: ContractPackage
-associated_types: [ContractPackageId, SourceMap, LoweringProfileRef, CompleteLoweringProfileV2]
+associated_types: [SourceMap, LoweringProfileRef, CompleteLoweringProfileV2]
 operations:
   - { name: lower, inputs: [checked_package, lowering_profile, requested_items, limits], output: ContractPackage and per-item accounting, semantics: exact representation or per-item refusal }
 invariants:
