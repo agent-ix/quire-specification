@@ -10069,29 +10069,28 @@ fn refinement_step_refusal(case: &Value) -> Option<String> {
     let Some(step_rows) = case["refinement_step_rows"].as_array() else {
         return Some("/refinement_step_rows".to_owned());
     };
-    let mut previous_key: Option<(OrderedId, u64)> = None;
+    // Steps are in declaration order; the sidecar checks the owner, that each
+    // ordinal is in range and that no (owner, ordinal) pair repeats.
+    let mut pairs = std::collections::BTreeSet::new();
     for (index, row) in step_rows.iter().enumerate() {
         if row["node_id"] != *owner {
             return Some(format!("/refinement_step_rows/{index}"));
         }
         let ordinal = row["ordinal"].as_u64().expect("row ordinal");
-        let key = (OrderedId(row["node_id"].clone()), ordinal);
-        if previous_key.as_ref().is_some_and(|previous| previous >= &key) {
+        if usize::try_from(ordinal).is_ok_and(|ordinal| ordinal >= step_names.len())
+            || !pairs.insert(ordinal)
+        {
             return Some(format!("/refinement_step_rows/{index}"));
         }
-        previous_key = Some(key);
     }
     if step_rows.len() != step_names.len() {
         return Some("/refinement_step_rows".to_owned());
     }
-    for (index, row) in step_rows.iter().enumerate() {
-        if usize::try_from(row["ordinal"].as_u64().expect("row ordinal")).ok() != Some(index) {
-            return Some(format!("/refinement_step_rows/{index}"));
-        }
+    let mut by_ordinal: Vec<&Value> = vec![&Value::Null; step_rows.len()];
+    for row in step_rows {
+        by_ordinal[row["ordinal"].as_u64().expect("row ordinal") as usize] = &row["region"];
     }
-    // The sidecar is keyed by the canonical step order, independently of the
-    // order in which the source rows were written.
-    let steps: Vec<&Value> = step_rows.iter().map(|row| &row["region"]).collect();
+    let steps = by_ordinal;
     let mut seen = std::collections::BTreeSet::new();
     for (index, entry) in source_map.iter().enumerate() {
         if entry["node_id"] != *owner {
@@ -10130,7 +10129,7 @@ fn refinement_step_refusal(case: &Value) -> Option<String> {
 fn tc_233_a_refinement_owner_carries_one_generated_occurrence_per_proof_obligation() {
     let vectors = parsed_fixture(REFINEMENT_STEP_VECTORS);
     let cases = vectors["cases"].as_array().expect("cases");
-    assert_eq!(cases.len(), 24);
+    assert_eq!(cases.len(), 23, "RS-23, an order refusal, is withdrawn");
     for case in cases {
         let name = case["name"].as_str().expect("name");
         let refusal = refinement_step_refusal(case);

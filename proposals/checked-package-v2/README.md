@@ -99,9 +99,9 @@ structures, but any external consumer receives only the contract.
   FR-342-AC-7 to AC-9). Its model declaration nodes are read from the
   projection by owner.
 - `class-catalog-vectors.json` supplies the canonical `class_catalog` of TC-233 `CCW-10` (effect, commit, event, attempt, `cend`, the three drain entries and `memory flush`) with schema and reader mutations.
-- `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` of
+- `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` (`RS-23`, a step-order refusal, is withdrawn; steps are in declaration order) of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
-  `generated` `source_map` entries against its step rows, its `steps` order and
+  `generated` `source_map` entries against its step rows, its `steps` (in declaration order) and
   whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). Cases `RS-18` to `RS-24` cover the closed, identity-excluded `refinement_step_rows` sidecar and its comparison with generated occurrences. The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node key.
 - The frame vectors' `frame_mutations` are applied to the semantic graph and evaluated at the
   frame step of `read_package_semantics` (FR-322, FR-340); source-map checks
