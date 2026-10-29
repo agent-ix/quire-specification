@@ -38,18 +38,15 @@ or wire token. RFC 8785 is applied to the JSON object on the right-hand side of
 `:=`; the notation itself is not hashed. The preimage includes every other
 result member and excludes only `resultId`.
 Unknown or duplicate result members are refused by the closed result contract
-before identity computation. The enclosing artifact digest is separate: it is
-computed over the complete canonical result bytes including `resultId`, lives in
-the enclosing reference outside those bytes, and does not equal or replace the
-result identity merely because both select `quire.verification.jcs`.
+before identity computation. The result identity is the sole digest required by
+this result contract and is not an enclosing ArtifactRef seal.
 
 ## Reader order and comparison
 
 A strict reader SHALL validate in this order: (1) closed result shape,
-`contractVersion` and `kind`; (2) recompute and compare `resultId`; (3) recompute
-and compare the enclosing artifact digest; (4) validate cross-field combination
-and lineage rules. The reader SHALL refuse the first failed boundary and SHALL
-NOT repair, approximate or reseal the result.
+`contractVersion` and `kind`; (2) recompute and compare `resultId`; (3) validate
+cross-field combination and lineage rules. The reader SHALL refuse the first
+failed boundary and SHALL NOT repair, approximate or reseal the result.
 
 - **Identity kind** — *derived* from the exact preimage above.
 - **Key** — the complete textual `resultId`, including its domain prefix.

@@ -34,13 +34,12 @@
     },
     "ArtifactRef": {
       "type": "object",
-      "required": ["refVersion", "kind", "authority", "identity", "digest", "wire"],
+      "required": ["refVersion", "kind", "authority", "identity", "wire"],
       "properties": {
         "refVersion": {"const": "ix.artifact-ref/3-draft"},
         "kind": {"enum": ["source", "model-package", "linked-package", "executable-projection", "property", "binding", "snapshot", "invocation", "generated-artifact", "run-artifact", "environment", "model-manifest", "model-lock", "dependency-closure", "trace", "fault-model", "review-procedure", "oracle", "observation", "review-disposition"]},
         "authority": {"$ref": "#/$defs/Nonempty"},
         "identity": {"$ref": "#/$defs/Nonempty"},
-        "digest": {"$ref": "#/$defs/ByteDigest"},
         "wire": {"$ref": "#/$defs/Wire"}
       },
       "additionalProperties": false

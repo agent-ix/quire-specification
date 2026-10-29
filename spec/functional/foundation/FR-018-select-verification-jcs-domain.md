@@ -41,10 +41,10 @@ canonicalization. No global array sort supplies these two different contracts.
 For B's reviewed automated-report profile, the qualified input is the validated
 automated core alone, selected before hashing. Its external disposition and
 outer report wrapper are excluded. Changing a core member changes the identity;
-attaching a disposition leaves it unchanged. The disposition's exact byte
-ArtifactRef uses review-disposition and its core digest must match the selected
-core. This rule defines correspondence only; B owns the complete report schema,
-reviewer/procedure checks, completeness and outcome policy.
+attaching a disposition leaves it unchanged. The disposition is identified by
+an ArtifactRef with kind review-disposition, and its content names the selected
+core identity. This rule defines correspondence only; B owns the complete report
+schema, reviewer/procedure checks, completeness and outcome policy.
 
 ## Acceptance Criteria
 

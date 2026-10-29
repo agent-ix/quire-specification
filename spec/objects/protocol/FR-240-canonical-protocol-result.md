@@ -66,7 +66,6 @@ artifact adds none.
 | `contractVersion` | Exactly `quire.protocol.result/v1-draft.1` on every canonical protocol result (FR-061). |
 | `kind` | Exactly `ProtocolResult` (FR-061). |
 | `resultId` | The derived `sha256-jcs` identity defined by [FR-286](FR-286-canonical-protocol-result-identity-preimage.md): RFC 8785/SHA-256 over the versioned wrapper around the complete closed result with only `resultId` omitted. |
-| enclosing artifact reference | Carries the `sha256-jcs` digest over the complete RFC 8785 canonical result bytes. The digest is **not** a self-referential field inside those bytes, and a strict reader recomputes it before accepting the result (FR-061, FR-061-AC-3). |
 | assessment execution | One state stating whether the requested evaluator completed or why it did not ([FR-241](FR-241-assessment-execution-disposition.md)). |
 | decision-scope progress | Independent fact with exact scope, authority and boundary identities, carrying one state from [FR-284](FR-284-scope-progress-and-closure-state.md) (FR-061). |
 | decision-scope closure | Independent fact with exact scope, authority and boundary identities, carrying one state from [FR-284](FR-284-scope-progress-and-closure-state.md) (FR-061). |
@@ -108,10 +107,10 @@ artifact adds none.
   That lineage is never derived from key order, timestamp or source position.
 - **Absence** — an absent key component compares only to absence, never to a
   default or empty value (FR-200).
-- **Digest domain** — the enclosing artifact reference's digest is
-  `sha256-jcs`, whose domain vocabulary is
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
-  An identity crossing domains is unequal regardless of byte equality.
+- **Digest domain** — `resultId` uses `quire.verification.jcs` as specified by
+  [FR-286](FR-286-canonical-protocol-result-identity-preimage.md) and
+  [FR-201](../foundation/FR-201-canonical-identity-domain.md). The enclosing
+  ArtifactRef carries no content digest.
 
 ## Five independent closure and progress axes
 
@@ -152,7 +151,6 @@ selection. Equal display labels or implementation names establish none of them.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-240-AC-1 | Every canonical protocol result carries `contractVersion` equal to `quire.protocol.result/v1-draft.1` and kind `ProtocolResult`. | Test (TC-061) |
-| FR-240-AC-2 | The enclosing artifact reference's digest is computed over the complete canonical result bytes and does not appear as a field inside those bytes. | Test (TC-061) |
 | FR-240-AC-3 | The five progress and closure axes remain independently readable; no axis is populated from completeness or assessment execution. | Test (TC-061) |
 | FR-240-AC-6 | Each of the four decision-scope and surrounding-execution axes carries exactly one FR-284 member, and the complete-global-conformance axis carries exactly one FR-247 member. | Test (TC-061) |
 | FR-240-AC-4 | Two results are compared over the result identity alone; equal display names or implementations establish neither equality nor independence. | Test (TC-061) |
@@ -169,7 +167,7 @@ selection. Equal display labels or implementation names establish none of them.
 - [FR-060](../../functional/protocol/FR-060-separate-protocol-claims.md) supplies the
   independent per-claim dispositions.
 - [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md) supplies the
-  contract version, kind, identity, enclosing reference digest rule and every
+  contract version, kind, identity and every
   retained fact.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
