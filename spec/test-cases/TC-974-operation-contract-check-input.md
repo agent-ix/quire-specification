@@ -57,7 +57,7 @@ The harness-only item member `refinement_step_simulable` of OC-23 and OC-24 stan
 | OC-20 | bound candidate whose concrete outcome the implementation does not produce: kind `operation-contract`, form `clause` | `supported`; arm outcome `unknown`, result `inconclusive`, cause `replay-parity` | FR-485-AC-10, FR-485-AC-5, FR-483-AC-3 |
 | OC-21 | reader with no implementation engine receives a bound counterexample: kind `operation-contract`, form `clause` | `supported`; arm outcome `unknown`, result `inconclusive`, cause `replay-refused` | FR-485-AC-13, FR-483-AC-3 |
 | OC-22 | the same bound counterexample with an implementation engine is replayed and reproduced: kind `operation-contract`, form `clause` | `supported`; arm outcome `violation`, result `refuted` | FR-485-AC-13, FR-485-AC-10, FR-483-AC-3 |
-| OC-23 | defensive path, step row (ordinal 2): a simulation item over a refinement with a hidden field, a history field or an `any` row: kind `operation-contract`, form `simulation` | `supported`; arm outcome `unsupported`, result `unsupported`, reason `no-contract-level-reading` | FR-485-AC-14 |
+| OC-23 | defensive path, step row at position 0 (ordinal 1): a simulation item over a refinement with a hidden field, a history field or an `any` row: kind `operation-contract`, form `simulation` | `supported`; arm outcome `unsupported`, result `unsupported`, reason `no-contract-level-reading` | FR-485-AC-14 |
 | OC-24 | defensive path, initial-state rule (ordinal 0): the same refinement: kind `operation-contract`, form `simulation` | `supported`; arm outcome `unsupported`, result `unsupported`, reason `no-contract-level-reading` | FR-485-AC-14 |
 
 ## Expected Results

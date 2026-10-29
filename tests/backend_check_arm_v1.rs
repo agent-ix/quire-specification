@@ -342,7 +342,15 @@ fn check_arm_outcomes_map_to_the_fr_331_results() {
                     assert_eq!(result["diagnostic"]["detail"]["reason"], reason.unwrap(), "{id} unsupported reason");
                 }
             }
-            None => assert!(kind != "declined", "{id} nothing refuses it"),
+            None => {
+                assert!(kind != "declined", "{id} nothing refuses it");
+                // Reverse implication: the gate's reasons are produced by the gate alone.
+                let reason = result["diagnostic"]["detail"]["reason"].as_str();
+                assert!(
+                    !matches!(reason, Some("no-contract-level-reading" | "no-implementation-engine")),
+                    "{id} carries a gate reason that the gate does not derive"
+                );
+            }
         }
         // FR-483 replay-before-refuted: the replay is computed natively from the case's model, never declared.
         let status = replay_status(&case, &document);
