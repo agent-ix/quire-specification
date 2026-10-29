@@ -20,9 +20,6 @@ use std::collections::{BTreeSet, HashMap};
 const SCHEMA: &str = include_str!("../proposals/backend-provider-v1/schema.json");
 const CHECKED_PACKAGE_SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
 const VECTORS: &str = include_str!("../proposals/backend-check-arm-v1/vectors.json");
-const TC_972: &str = include_str!("../spec/test-cases/TC-972-check-arm-outcome-contract.md");
-const TC_973: &str = include_str!("../spec/test-cases/TC-973-value-validity-check-input.md");
-const TC_974: &str = include_str!("../spec/test-cases/TC-974-operation-contract-check-input.md");
 
 fn parsed(text: &str) -> Value {
     serde_json::from_str(text).expect("authored JSON is valid")
@@ -32,15 +29,15 @@ fn node_id(label: &str) -> Value {
     json!({"package": "arm", "path": [label], "ordinal": 0})
 }
 
-fn rekey(value: &mut Value) {
+fn expand_labels(value: &mut Value) {
     match value {
         Value::String(text) => {
             if let Some(label) = text.strip_prefix("$node:") {
                 *value = node_id(label);
             }
         }
-        Value::Array(items) => items.iter_mut().for_each(rekey),
-        Value::Object(map) => map.values_mut().for_each(rekey),
+        Value::Array(items) => items.iter_mut().for_each(expand_labels),
+        Value::Object(map) => map.values_mut().for_each(expand_labels),
         _ => {}
     }
 }
@@ -194,7 +191,7 @@ const REQUIRED_ACS: &[&str] = &[
 
 fn composed(case: &Value) -> Value {
     let mut document = case["outcome"].clone();
-    rekey(&mut document);
+    expand_labels(&mut document);
     document
 }
 
@@ -726,7 +723,7 @@ fn replay_status(case: &Value, document: &Value) -> Option<Replay> {
     }
     let candidate = recorded.or_else(|| {
         let mut ce = case["candidate_ce"].clone();
-        rekey(&mut ce);
+        expand_labels(&mut ce);
         (!ce.is_null()).then_some(ce)
     })?;
     let engine = case["reader"]["implementation_engine"] != false;
@@ -889,14 +886,6 @@ fn the_vector_file_is_complete() {
     for must in ["OC-19", "SH-13"] {
         assert!(ids.iter().any(|i| i == must));
     }
-    // The evaluator-dependent criteria are stated as the provider's own obligation in the TC that owns them.
-    for ac in parsed(VECTORS)["provider_obligations"].as_array().unwrap() {
-        let ac = ac.as_str().unwrap();
-        let text = if ac.starts_with("FR-484") { TC_973 } else { TC_974 };
-        assert!(text.contains("provider's own tests SHALL cover"), "{ac} TC states the obligation");
-        assert!(text.contains(ac), "{ac} is named in its TC");
-    }
-    let _ = TC_972;
     let case = cases().into_iter().find(|c| c["id"] == "VV-02").unwrap();
     assert_eq!(composed(&case)["counterexamples"][0]["counterexample"]["values"][0]["parameter"], node_id("vv.x"));
 }

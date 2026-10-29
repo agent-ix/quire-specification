@@ -1,6 +1,6 @@
 {
   "version": "quire.zone-certificate-vectors/v1",
-  "encoding": "RFC 8785 JCS, UTF-8, over the FR-331 ZoneCertificate value; states are illustrative typed values, not computed from a model",
+  "encoding": "RFC 8785 JCS, UTF-8, over the FR-331 ZoneCertificate value; states are illustrative state keys, not computed from a model",
   "vectors": [
     {
       "id": "ZC-10",
@@ -22,17 +22,7 @@
         "bounds": [
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "1"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "clock": "r.x",
             "lower": {
@@ -43,17 +33,7 @@
           },
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "2"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "clock": "r.x",
             "lower": {
@@ -66,17 +46,7 @@
         "nodes": [
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "1"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "automaton": 0,
             "zone": [
@@ -101,17 +71,7 @@
           },
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "2"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "automaton": 1,
             "zone": [
@@ -175,63 +135,23 @@
           "positions": [
             {
               "concrete": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "1"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               },
               "history": [],
               "abstract_states": [
                 {
-                  "type": "record",
-                  "name": "State",
-                  "fields": [
-                    {
-                      "name": "n",
-                      "value": {
-                        "type": "integer",
-                        "value": "6"
-                      }
-                    }
-                  ]
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                 }
               ]
             },
             {
               "concrete": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "2"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               },
               "history": [],
               "abstract_states": [
                 {
-                  "type": "record",
-                  "name": "State",
-                  "fields": [
-                    {
-                      "name": "n",
-                      "value": {
-                        "type": "integer",
-                        "value": "7"
-                      }
-                    }
-                  ]
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjcifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                 }
               ]
             }
@@ -279,8 +199,8 @@
           0
         ]
       },
-      "canonical_text": "{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":[{\"clock\":\"r.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"1\"}}],\"name\":\"State\",\"type\":\"record\"},\"upper\":\"infinity\"},{\"clock\":\"r.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"2\"}}],\"name\":\"State\",\"type\":\"record\"},\"upper\":\"infinity\"}],\"edges\":[{\"node\":0,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"TReq::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}},{\"node\":1,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"TReq::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}}],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Safety\"]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"1\"}}],\"name\":\"State\",\"type\":\"record\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":1,\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"2\"}}],\"name\":\"State\",\"type\":\"record\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"-1\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"refinement\":{\"abstract_package\":\"test/predicates\",\"concrete_package\":\"example\",\"positions\":[{\"abstract_states\":[{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"6\"}}],\"name\":\"State\",\"type\":\"record\"}],\"concrete\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"1\"}}],\"name\":\"State\",\"type\":\"record\"},\"history\":[]},{\"abstract_states\":[{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"7\"}}],\"name\":\"State\",\"type\":\"record\"}],\"concrete\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"2\"}}],\"name\":\"State\",\"type\":\"record\"},\"history\":[]}],\"refinement_node\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Refinement\"]},\"taken\":[{\"transitions\":[{\"arguments\":[],\"operation\":\"Req::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}],\"type\":\"abstract\"},{\"transitions\":[{\"arguments\":[],\"operation\":\"Req::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}],\"type\":\"abstract\"}]},\"scale\":\"1\"}",
-      "byte_length": 2233
+      "canonical_text": "{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":[{\"clock\":\"r.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":\"infinity\"},{\"clock\":\"r.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":\"infinity\"}],\"edges\":[{\"node\":0,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"TReq::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}},{\"node\":1,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"TReq::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}}],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Safety\"]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":1,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"-1\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"refinement\":{\"abstract_package\":\"test/predicates\",\"concrete_package\":\"example\",\"positions\":[{\"abstract_states\":[{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"}],\"concrete\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"history\":[]},{\"abstract_states\":[{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjcifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"}],\"concrete\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"history\":[]}],\"refinement_node\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Refinement\"]},\"taken\":[{\"transitions\":[{\"arguments\":[],\"operation\":\"Req::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}],\"type\":\"abstract\"},{\"transitions\":[{\"arguments\":[],\"operation\":\"Req::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}],\"type\":\"abstract\"}]},\"scale\":\"1\"}",
+      "byte_length": 2569
     },
     {
       "id": "ZC-11",
@@ -302,17 +222,7 @@
         "bounds": [
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "1"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "clock": "c.x",
             "lower": {
@@ -326,17 +236,7 @@
           },
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "2"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "clock": "c.x",
             "lower": {
@@ -352,17 +252,7 @@
         "nodes": [
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "1"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "automaton": 0,
             "zone": [
@@ -390,17 +280,7 @@
           },
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "2"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "automaton": 0,
             "zone": [
@@ -480,8 +360,8 @@
           0
         ]
       },
-      "canonical_text": "{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":[{\"clock\":\"c.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"1\"}}],\"name\":\"State\",\"type\":\"record\"},\"upper\":{\"bound\":\"3\",\"strict\":false}},{\"clock\":\"c.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"2\"}}],\"name\":\"State\",\"type\":\"record\"},\"upper\":{\"bound\":\"3\",\"strict\":false}}],\"components\":[0,1],\"divergence\":[1,1],\"edges\":[{\"node\":0,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"Call::reply\",\"receiver\":{\"type\":\"text\",\"value\":\"c\"},\"type\":\"transition\"}},{\"node\":1,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"Call::tick\",\"receiver\":{\"type\":\"text\",\"value\":\"c\"},\"type\":\"transition\"}}],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Safety\"]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"1\"}}],\"name\":\"State\",\"type\":\"record\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[{\"bound\":\"3\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":0,\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"2\"}}],\"name\":\"State\",\"type\":\"record\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"reasons\":[{\"set\":\"accepting\",\"type\":\"missing-acceptance\"},{\"constraint\":\"fair weak serve\",\"type\":\"weak-fairness\"}],\"scale\":\"1\"}",
-      "byte_length": 1504
+      "canonical_text": "{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":[{\"clock\":\"c.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":{\"bound\":\"3\",\"strict\":false}},{\"clock\":\"c.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":{\"bound\":\"3\",\"strict\":false}}],\"components\":[0,1],\"divergence\":[1,1],\"edges\":[{\"node\":0,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"Call::reply\",\"receiver\":{\"type\":\"text\",\"value\":\"c\"},\"type\":\"transition\"}},{\"node\":1,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"Call::tick\",\"receiver\":{\"type\":\"text\",\"value\":\"c\"},\"type\":\"transition\"}}],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Safety\"]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[{\"bound\":\"3\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"reasons\":[{\"set\":\"accepting\",\"type\":\"missing-acceptance\"},{\"constraint\":\"fair weak serve\",\"type\":\"weak-fairness\"}],\"scale\":\"1\"}",
+      "byte_length": 1672
     },
     {
       "id": "ZC-12",
@@ -503,17 +383,7 @@
         "bounds": [
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "1"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "clock": "r.x",
             "lower": "infinity",
@@ -521,17 +391,7 @@
           },
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "2"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "clock": "r.x",
             "lower": "infinity",
@@ -541,17 +401,7 @@
         "nodes": [
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "2"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "automaton": 1,
             "locked": true,
@@ -580,17 +430,7 @@
           },
           {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "1"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "automaton": 0,
             "zone": [
@@ -625,32 +465,12 @@
           "positions": [
             {
               "concrete": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "1"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               },
               "history": [],
               "abstract_states": [
                 {
-                  "type": "record",
-                  "name": "State",
-                  "fields": [
-                    {
-                      "name": "n",
-                      "value": {
-                        "type": "integer",
-                        "value": "6"
-                      }
-                    }
-                  ]
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                 }
               ]
             }
@@ -670,8 +490,8 @@
           1
         ]
       },
-      "canonical_text": "{\"admitted\":{\"edges\":[],\"start\":1},\"bounds\":[{\"clock\":\"r.x\",\"lower\":\"infinity\",\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"1\"}}],\"name\":\"State\",\"type\":\"record\"},\"upper\":\"infinity\"},{\"clock\":\"r.x\",\"lower\":\"infinity\",\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"2\"}}],\"name\":\"State\",\"type\":\"record\"},\"upper\":\"infinity\"}],\"edges\":[],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Safety\"]},\"ordinal\":0},\"initials\":[0,1],\"nodes\":[{\"automaton\":1,\"locked\":true,\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"2\"}}],\"name\":\"State\",\"type\":\"record\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":0,\"state\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"1\"}}],\"name\":\"State\",\"type\":\"record\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"refinement\":{\"abstract_package\":\"test/predicates\",\"concrete_package\":\"example\",\"positions\":[{\"abstract_states\":[{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"6\"}}],\"name\":\"State\",\"type\":\"record\"}],\"concrete\":{\"fields\":[{\"name\":\"n\",\"value\":{\"type\":\"integer\",\"value\":\"1\"}}],\"name\":\"State\",\"type\":\"record\"},\"history\":[]}],\"refinement_node\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Refinement\"]},\"taken\":[]},\"scale\":\"1\"}",
-      "byte_length": 1449
+      "canonical_text": "{\"admitted\":{\"edges\":[],\"start\":1},\"bounds\":[{\"clock\":\"r.x\",\"lower\":\"infinity\",\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":\"infinity\"},{\"clock\":\"r.x\",\"lower\":\"infinity\",\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":\"infinity\"}],\"edges\":[],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Safety\"]},\"ordinal\":0},\"initials\":[0,1],\"nodes\":[{\"automaton\":1,\"locked\":true,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"refinement\":{\"abstract_package\":\"test/predicates\",\"concrete_package\":\"example\",\"positions\":[{\"abstract_states\":[{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"}],\"concrete\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"history\":[]}],\"refinement_node\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Refinement\"]},\"taken\":[]},\"scale\":\"1\"}",
+      "byte_length": 1701
     }
   ]
 }

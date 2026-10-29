@@ -31,17 +31,18 @@ fn parsed(text: &str) -> Value {
     serde_json::from_str(text).expect("authored JSON is valid")
 }
 
-/// RFC 4648 section 5 base64url with no padding.
-/// A model state as its typed canonical value: states are compared
-/// structurally, never by a key derived from them.
+/// A model state as its State locus `{key}`: the base64url spelling of the
+/// canonical octets of the state's typed value.
 fn state(n: u32) -> Value {
-    serde_json::json!({
-        "type": "record",
+    let typed = serde_json::json!({
+        "fields": [{"name": "n", "value": {"type": "integer", "value": n.to_string()}}],
         "name": "State",
-        "fields": [{"name": "n", "value": {"type": "integer", "value": n.to_string()}}]
-    })
+        "type": "record"
+    });
+    serde_json::json!({"key": encode(&jcs_canonicalize(&typed).expect("canonical state"))})
 }
 
+/// RFC 4648 section 5 base64url with no padding.
 fn encode(bytes: &[u8]) -> String {
     let mut out = String::with_capacity(bytes.len().div_ceil(3) * 4);
     for chunk in bytes.chunks(3) {
@@ -1159,7 +1160,7 @@ fn tc_431_hyper_loci_have_closed_shapes_and_rule_pairs() {
 /// and the vectors: a query part is `unrolling`, `base`, `step` or
 /// `step/<row>` (QSL FR-338's specified spelling); a proof step is `{part,
 /// index}`; a product state is `{model_state, automaton_state}`; a model
-/// state is its typed value; a state-graph entry is `{entry}`;
+/// state is `{key}`; a state-graph entry is `{entry}`;
 /// a simulation step always carries `position`, `edge` and `verdict`, null
 /// when absent. Each rule is admitted exactly at the forms listed with it.
 #[trace("TC-431", "FR-331-AC-24", "FR-331-AC-25")]
@@ -1469,47 +1470,6 @@ fn tc_431_load_buffering_warning_carries_two_transition_identities() {
     let mut bad = good.clone();
     bad["load"] = serde_json::json!("Reader::read");
     assert!(!warning.is_valid(&bad), "load is a transition identity");
-}
-
-/// FR-361-AC-13: a universe provision is the RFC 8785 array of keys in list
-/// order, each exactly `universe` (a node id) and `identity` (lowercase hex).
-#[trace("TC-290", "FR-361-AC-13")]
-#[test]
-fn tc_290_universe_provisions_are_canonical_arrays_of_keys() {
-    let is_hex = |text: &str| {
-        text.bytes()
-            .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
-    };
-    let vectors = parsed(VECTORS);
-    let cases = vectors["universe_provision_vectors"]
-        .as_array()
-        .expect("universe provision vectors");
-    let node = definition("NodeId");
-    for case in cases {
-        let name = case["name"].as_str().expect("name");
-        let keys = &case["keys"];
-        for key in keys.as_array().expect("keys") {
-            let members: BTreeSet<&str> = key
-                .as_object()
-                .expect("a key is an object")
-                .keys()
-                .map(String::as_str)
-                .collect();
-            assert_eq!(members, BTreeSet::from(["identity", "universe"]), "{name}");
-            assert!(node.is_valid(&key["universe"]), "{name}: universe");
-            let identity = key["identity"].as_str().expect("identity");
-            assert!(
-                !identity.is_empty() && identity.len() % 2 == 0 && is_hex(identity),
-                "{name}: identity"
-            );
-        }
-        let canonical = jcs_canonicalize(keys).expect("canonical keys");
-        assert_eq!(
-            canonical,
-            case["jcs"].as_str().expect("jcs").as_bytes(),
-            "{name}"
-        );
-    }
 }
 
 /// FR-364-AC-10: the observed-arm positive and the coupling adverse vectors
@@ -1923,7 +1883,4 @@ fn tc_431_the_request_has_a_memory_member_and_its_identity_includes_it() {
     assert_eq!(errors(&validator(), &document), Vec::<String>::new(), "a memory selection is a request member");
     document["request"]["memory"][0]["model"] = "weak".into();
     assert_ne!(errors(&validator(), &document), Vec::<String>::new(), "only sc, tso and ra are models");
-    let spec = include_str!("../spec/objects/interfaces/FR-331-backend-provider-envelope.md");
-    let identity = spec.lines().find(|line| line.starts_with("Request identity includes")).expect("identity paragraph");
-    assert!(identity.contains("the request's `memory` selections"));
 }

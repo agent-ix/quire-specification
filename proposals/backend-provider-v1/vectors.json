@@ -1348,17 +1348,7 @@
                     "arguments": []
                   },
                   "post_state": {
-                    "type": "record",
-                    "name": "State",
-                    "fields": [
-                      {
-                        "name": "n",
-                        "value": {
-                          "type": "integer",
-                          "value": "1"
-                        }
-                      }
-                    ]
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                   }
                 }
               ],
@@ -1368,17 +1358,7 @@
                     "type": "terminal-stutter"
                   },
                   "post_state": {
-                    "type": "record",
-                    "name": "State",
-                    "fields": [
-                      {
-                        "name": "n",
-                        "value": {
-                          "type": "integer",
-                          "value": "1"
-                        }
-                      }
-                    ]
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                   }
                 }
               ],
@@ -2135,17 +2115,7 @@
               "rule": "successor-missing",
               "at": {
                 "model_state": {
-                  "type": "record",
-                  "name": "State",
-                  "fields": [
-                    {
-                      "name": "n",
-                      "value": {
-                        "type": "integer",
-                        "value": "1"
-                      }
-                    }
-                  ]
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                 },
                 "automaton_state": "AQ"
               }
@@ -2161,17 +2131,7 @@
               "rule": "witness-fails",
               "at": {
                 "model_state": {
-                  "type": "record",
-                  "name": "State",
-                  "fields": [
-                    {
-                      "name": "n",
-                      "value": {
-                        "type": "integer",
-                        "value": "2"
-                      }
-                    }
-                  ]
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                 },
                 "automaton_state": "Ag"
               }
@@ -2188,30 +2148,10 @@
               "at": {
                 "states": [
                   {
-                    "type": "record",
-                    "name": "State",
-                    "fields": [
-                      {
-                        "name": "n",
-                        "value": {
-                          "type": "integer",
-                          "value": "1"
-                        }
-                      }
-                    ]
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                   },
                   {
-                    "type": "record",
-                    "name": "State",
-                    "fields": [
-                      {
-                        "name": "n",
-                        "value": {
-                          "type": "integer",
-                          "value": "2"
-                        }
-                      }
-                    ]
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                   }
                 ],
                 "automaton_state": "Aw"
@@ -2229,30 +2169,10 @@
               "at": {
                 "states": [
                   {
-                    "type": "record",
-                    "name": "State",
-                    "fields": [
-                      {
-                        "name": "n",
-                        "value": {
-                          "type": "integer",
-                          "value": "1"
-                        }
-                      }
-                    ]
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                   },
                   {
-                    "type": "record",
-                    "name": "State",
-                    "fields": [
-                      {
-                        "name": "n",
-                        "value": {
-                          "type": "integer",
-                          "value": "2"
-                        }
-                      }
-                    ]
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                   }
                 ],
                 "automaton_state": "BA",
@@ -2260,17 +2180,7 @@
                   {
                     "states": [
                       {
-                        "type": "record",
-                        "name": "State",
-                        "fields": [
-                          {
-                            "name": "n",
-                            "value": {
-                              "type": "integer",
-                              "value": "3"
-                            }
-                          }
-                        ]
+                        "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjMifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                       }
                     ],
                     "automaton_state": "BQ"
@@ -2290,17 +2200,7 @@
               "at": {
                 "states": [
                   {
-                    "type": "record",
-                    "name": "State",
-                    "fields": [
-                      {
-                        "name": "n",
-                        "value": {
-                          "type": "integer",
-                          "value": "3"
-                        }
-                      }
-                    ]
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjMifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                   }
                 ]
               }
@@ -2315,17 +2215,7 @@
               "type": "certificate-rejected",
               "rule": "rank-broken",
               "at": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "4"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjQifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -2473,17 +2363,7 @@
               "type": "certificate-rejected",
               "rule": "initial-missing",
               "at": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "6"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -2663,17 +2543,7 @@
               "rule": "bad-state",
               "at": {
                 "model_state": {
-                  "type": "record",
-                  "name": "State",
-                  "fields": [
-                    {
-                      "name": "n",
-                      "value": {
-                        "type": "integer",
-                        "value": "1"
-                      }
-                    }
-                  ]
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                 },
                 "automaton_state": "AQ"
               }
@@ -2690,17 +2560,7 @@
               "at": {
                 "states": [
                   {
-                    "type": "record",
-                    "name": "State",
-                    "fields": [
-                      {
-                        "name": "n",
-                        "value": {
-                          "type": "integer",
-                          "value": "1"
-                        }
-                      }
-                    ]
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                   }
                 ],
                 "automaton_state": "AQ"
@@ -2716,17 +2576,7 @@
               "type": "certificate-rejected",
               "rule": "predicate-undefined",
               "at": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "1"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -2739,17 +2589,7 @@
               "type": "certificate-rejected",
               "rule": "rank-missing",
               "at": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "1"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -2762,17 +2602,7 @@
               "type": "certificate-rejected",
               "rule": "order-broken",
               "at": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "1"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -2785,17 +2615,7 @@
               "type": "certificate-rejected",
               "rule": "count-broken",
               "at": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "1"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -2907,17 +2727,7 @@
                 "transitions": [
                   {
                     "pre_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "1"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "transition": {
                       "type": "transition",
@@ -2926,17 +2736,7 @@
                       "arguments": []
                     },
                     "post_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "1"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "result": {
                       "type": "boolean",
@@ -2945,17 +2745,7 @@
                   },
                   {
                     "pre_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "1"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "transition": {
                       "type": "transition",
@@ -2964,17 +2754,7 @@
                       "arguments": []
                     },
                     "post_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "2"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "result": {
                       "type": "boolean",
@@ -2997,17 +2777,7 @@
                 "transitions": [
                   {
                     "pre_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "1"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "transition": {
                       "type": "transition",
@@ -3021,33 +2791,13 @@
                       ]
                     },
                     "post_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "1"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "result": null
                   },
                   {
                     "pre_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "1"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "transition": {
                       "type": "transition",
@@ -3061,17 +2811,7 @@
                       ]
                     },
                     "post_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "2"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "result": null
                   }
@@ -3091,17 +2831,7 @@
                 "transitions": [
                   {
                     "pre_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "1"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "transition": {
                       "type": "transition",
@@ -3110,17 +2840,7 @@
                       "arguments": []
                     },
                     "post_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "2"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "result": {
                       "type": "boolean",
@@ -3129,17 +2849,7 @@
                   },
                   {
                     "pre_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "1"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "transition": {
                       "type": "transition",
@@ -3148,17 +2858,7 @@
                       "arguments": []
                     },
                     "post_state": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "1"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "result": {
                       "type": "boolean",
@@ -3199,30 +2899,10 @@
                   {
                     "states": [
                       {
-                        "type": "record",
-                        "name": "State",
-                        "fields": [
-                          {
-                            "name": "n",
-                            "value": {
-                              "type": "integer",
-                              "value": "1"
-                            }
-                          }
-                        ]
+                        "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                       },
                       {
-                        "type": "record",
-                        "name": "State",
-                        "fields": [
-                          {
-                            "name": "n",
-                            "value": {
-                              "type": "integer",
-                              "value": "2"
-                            }
-                          }
-                        ]
+                        "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                       }
                     ],
                     "automaton_state": "Ag"
@@ -3242,17 +2922,7 @@
               "at": {
                 "states": [
                   {
-                    "type": "record",
-                    "name": "State",
-                    "fields": [
-                      {
-                        "name": "n",
-                        "value": {
-                          "type": "integer",
-                          "value": "1"
-                        }
-                      }
-                    ]
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                   }
                 ],
                 "automaton_state": "AQ",
@@ -3464,17 +3134,7 @@
               "rule": "shape-mismatch",
               "at": {
                 "model_state": {
-                  "type": "record",
-                  "name": "State",
-                  "fields": [
-                    {
-                      "name": "n",
-                      "value": {
-                        "type": "integer",
-                        "value": "1"
-                      }
-                    }
-                  ]
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                 },
                 "automaton_state": "AQ"
               }
@@ -3489,17 +3149,7 @@
               "type": "certificate-rejected",
               "rule": "malformed",
               "at": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "1"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -3512,17 +3162,7 @@
               "type": "certificate-rejected",
               "rule": "bad-state",
               "at": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "2"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -3625,17 +3265,7 @@
                   "where": {
                     "position": "1",
                     "state_key": {
-                      "type": "record",
-                      "name": "State",
-                      "fields": [
-                        {
-                          "name": "n",
-                          "value": {
-                            "type": "integer",
-                            "value": "2"
-                          }
-                        }
-                      ]
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "locus": "mapping"
                   },
@@ -3955,17 +3585,7 @@
                         ]
                       },
                       "post_state": {
-                        "type": "record",
-                        "name": "State",
-                        "fields": [
-                          {
-                            "name": "n",
-                            "value": {
-                              "type": "integer",
-                              "value": "2"
-                            }
-                          }
-                        ]
+                        "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                       }
                     }
                   ]
@@ -7007,17 +6627,7 @@
           "op": "replace",
           "path": "/results/21/cause/at",
           "value": {
-            "type": "record",
-            "name": "State",
-            "fields": [
-              {
-                "name": "n",
-                "value": {
-                  "type": "integer",
-                  "value": "5"
-                }
-              }
-            ]
+            "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjUifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
           }
         }
       ]
@@ -7031,17 +6641,7 @@
           "op": "replace",
           "path": "/results/22/cause/at",
           "value": {
-            "type": "record",
-            "name": "State",
-            "fields": [
-              {
-                "name": "n",
-                "value": {
-                  "type": "integer",
-                  "value": "5"
-                }
-              }
-            ]
+            "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjUifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
           }
         }
       ]
@@ -7078,17 +6678,7 @@
           "op": "add",
           "path": "/results/21/cause/at/state",
           "value": {
-            "type": "record",
-            "name": "State",
-            "fields": [
-              {
-                "name": "n",
-                "value": {
-                  "type": "integer",
-                  "value": "5"
-                }
-              }
-            ]
+            "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjUifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
           }
         }
       ]
@@ -7323,17 +6913,7 @@
           "path": "/results/4/cause/at",
           "value": {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "1"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             },
             "automaton_state": "AQ"
           }
@@ -7350,17 +6930,7 @@
           "path": "/results/5/cause/at",
           "value": {
             "state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "1"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             }
           }
         }
@@ -8990,17 +8560,7 @@
           "op": "add",
           "path": "/results/6/cause/at/state",
           "value": {
-            "type": "record",
-            "name": "State",
-            "fields": [
-              {
-                "name": "n",
-                "value": {
-                  "type": "integer",
-                  "value": "1"
-                }
-              }
-            ]
+            "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
           }
         }
       ]
@@ -9657,17 +9217,7 @@
               "type": "terminal-stutter"
             },
             "post_state": {
-              "type": "record",
-              "name": "State",
-              "fields": [
-                {
-                  "name": "n",
-                  "value": {
-                    "type": "integer",
-                    "value": "2"
-                  }
-                }
-              ]
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
             }
           }
         }
@@ -9687,17 +9237,7 @@
                 "type": "terminal-stutter"
               },
               "post_state": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "2"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           ]
@@ -9776,17 +9316,7 @@
             "where": {
               "position": 1,
               "state_key": {
-                "type": "record",
-                "name": "State",
-                "fields": [
-                  {
-                    "name": "n",
-                    "value": {
-                      "type": "integer",
-                      "value": "2"
-                    }
-                  }
-                ]
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               },
               "locus": {
                 "node": {
@@ -9898,17 +9428,7 @@
               ],
               "state_keys": [
                 {
-                  "type": "record",
-                  "name": "State",
-                  "fields": [
-                    {
-                      "name": "n",
-                      "value": {
-                        "type": "integer",
-                        "value": "2"
-                      }
-                    }
-                  ]
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                 }
               ],
               "locus": {
@@ -10873,66 +10393,6 @@
           "value": "refinement_name"
         }
       ]
-    }
-  ],
-  "universe_provision_vectors": [
-    {
-      "name": "counters-c-d",
-      "description": "FR-361: the universe provision of population counters, universe list [c, d]; identity bytes are the UTF-8 of the object identities c (0x63) and d (0x64).",
-      "keys": [
-        {
-          "identity": "63",
-          "universe": {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Account"
-            ]
-          }
-        },
-        {
-          "identity": "64",
-          "universe": {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Account"
-            ]
-          }
-        }
-      ],
-      "jcs": "[{\"identity\":\"63\",\"universe\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Account\"]}},{\"identity\":\"64\",\"universe\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Account\"]}}]"
-    },
-    {
-      "name": "counters-d-c",
-      "description": "The same keys in the order [d, c]: a different provision.",
-      "keys": [
-        {
-          "identity": "64",
-          "universe": {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Account"
-            ]
-          }
-        },
-        {
-          "identity": "63",
-          "universe": {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Account"
-            ]
-          }
-        }
-      ],
-      "jcs": "[{\"identity\":\"64\",\"universe\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Account\"]}},{\"identity\":\"63\",\"universe\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Account\"]}}]"
     }
   ]
 }

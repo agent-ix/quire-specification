@@ -76,7 +76,7 @@
     "Mode": {"description": "FR-290: an advertised mode.", "enum": ["bounded", "unbounded"]},
     "LimitName": {"description": "FR-461: a limit member name, such as max_states.", "type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
     "SettingName": {"description": "FR-461: the dotted setting name that raises a limit, such as model_check.max_states.", "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"},
-    "State": {"description": "FR-181: a model state as its typed canonical value, compared structurally and never keyed by a hash.", "$ref": "#/$defs/TypedValue"},
+    "State": {"description": "FR-331 State locus `{key}`: the unpadded base64url spelling of the state's canonical StateKey octets (FR-181).", "type": "object", "required": ["key"], "properties": {"key": {"$ref": "#/$defs/Base64Url"}}, "additionalProperties": false},
     "Locus": {
       "description": "FR-331 (defined): the source locus of an expression, named by the checked-package node and its occurrence; the package source map gives its regions.",
       "type": "object",
