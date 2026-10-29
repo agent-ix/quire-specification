@@ -220,6 +220,7 @@
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"const": "temporal-satisfaction"}}}}}}, "else": {"not": {"required": ["dynamics"]}}},
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"const": "temporal-satisfaction"}}}}}}, "else": {"not": {"required": ["state_graph_forms"]}}},
         {"description": "FR-193 Routing a hybrid item: a backend that decides hybrid items publishes both hybrid solver budget defaults.", "if": {"required": ["dynamics"], "properties": {"dynamics": {"contains": {"const": "hybrid"}}}}, "then": {"required": ["bounds"], "properties": {"bounds": {"required": ["max_solver_steps", "max_solver_time"]}}}},
+        {"description": "FR-483: a backend that decides value-validity or operation-contract items publishes the default case budget max_cases, a positive count; an item without check.limits.max_cases takes it and there is no unlimited fallback.", "if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"kind": {"enum": ["value-validity", "operation-contract"]}}, "required": ["kind"]}}}}, "then": {"required": ["bounds"], "properties": {"bounds": {"required": ["max_cases"], "properties": {"max_cases": {"$ref": "#/$defs/PositiveCount"}}}}}},
         {"if": {"required": ["advertises"], "properties": {"advertises": {"contains": {"properties": {"mode": {"const": "bounded"}}, "required": ["mode"]}}}}, "then": {"required": ["domains"]}}
       ],
       "additionalProperties": false
@@ -779,6 +780,9 @@
         }
       },
       "allOf": [
+        {"description": "FR-485 Counterexample: an initial-state or simulation-initial violation is one execution with no operation.", "if": {"properties": {"obligation": {"enum": ["initial-state", "simulation-initial"]}}}, "then": {"properties": {"executions": {"minItems": 1, "maxItems": 1, "items": {"properties": {"operation": {"type": "null"}}}}}}},
+        {"description": "FR-485 Counterexample: a relation violation names at least two executions, each of an operation.", "if": {"properties": {"obligation": {"const": "relation"}}}, "then": {"properties": {"executions": {"minItems": 2, "items": {"properties": {"operation": {"$ref": "#/$defs/NodeId"}}}}}}},
+        {"description": "FR-485 Counterexample: every other obligation is one execution of an operation.", "if": {"properties": {"obligation": {"enum": ["preservation", "definedness", "postcondition", "frame", "simulation-step"]}}}, "then": {"properties": {"executions": {"minItems": 1, "maxItems": 1, "items": {"properties": {"operation": {"$ref": "#/$defs/NodeId"}}}}}}},
         {"if": {"properties": {"bound": {"const": true}}}, "then": {"properties": {"executions": {"items": {"required": ["concrete"]}}}}},
         {"if": {"properties": {"bound": {"const": false}}}, "then": {"properties": {"executions": {"items": {"not": {"required": ["concrete"]}}}}}}
       ],

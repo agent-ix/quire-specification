@@ -588,7 +588,7 @@ names, FR-462), `kind` and `result`, and:
 | `failed` | exactly one of `cause` (`tool-failure{defect}`, with `limit` and `value` for `frame-length` and `total-bytes`, FR-462) and `diagnostic` |
 
 The closed proof bases are those of FR-363 (`exhaustive`,
-`bounded-complete{depth}`, `inductive{depth}`), FR-385
+`bounded-complete{depth}`, `inductive{depth}`; `depth` is a `Count`, and for a `value-validity` or `operation-contract` item it is the number of transition steps the SMT query encodes, 0 for a value-validity item, which has no transition, and 1 for an operation-contract item, FR-483), FR-385
 (`reduced{reductions}`, each reduction `{reduction, parameters, row}`), the
 table above, FR-391 (`witnessed{sources}`, the FR-393
 witness source of each initial state) and the Kani basis
@@ -629,7 +629,7 @@ certificate checker and makes its counterexample canonical assignments, so:
   plugin's entry carries none.
 - A **core-only cause** is an inconclusive cause that only the core's own
   replay or Kani run settles: `replay-parity` (AD-016 arrow 7), `replay-refused`
-  (FR-399), `stale-dependency` and `kani_vacuous_proof` (AD-016; a plugin's entry for a `value-validity` or `operation-contract` item may carry `kani_vacuous_proof`, FR-483). A plugin's
+  (FR-399, and a bound `contract-counterexample` a reader cannot re-execute, FR-485), `stale-dependency` and `kani_vacuous_proof` (AD-016; a plugin's entry for a `value-validity` or `operation-contract` item may carry `kani_vacuous_proof`, FR-483). A plugin's
   entry carries none.
 - A plugin's `counterexamples` entry carries a `counterexample` whose `type`
   is `assignments`, `contract-counterexample` on the entry of an
@@ -729,7 +729,6 @@ or from a failure around the run:
 | --- | --- | --- |
 | `Proved`, one or more SUCCESS checks | `proved` | basis `bounded-proof{checks}`, the SUCCESS count; certification `certified` |
 | `Proved`, zero SUCCESS checks | `inconclusive` | cause `kani_vacuous_proof` |
-
 | `Counterexample` | `refuted` | its `counterexamples` entry names the transcript artifact |
 | `Refused`, `InvalidInput`, `IncompleteInput` | `declined` | cause `refused`, `invalid-input` or `incomplete-input`, with the run's typed `diagnostic` |
 | `Unavailable` | `unsupported` | diagnostic `unsupported_projection`/`tool-unavailable`, `detail` naming `kind`, `backend` and the `absent` solver or backend |
@@ -766,7 +765,7 @@ probabilistic engine's is `exact_prob`.
   `ProbabilisticCounterexample`; an FR-393 `GraphEvidence`; an FR-400
   `HyperCounterexample`; or, on an `operation-contract` item, a
   `contract-counterexample` ([FR-485](../../functional/ir-proof/FR-485-check-operation-contract-items.md)
-  "Counterexample"): `{type, obligation, violated, executions}`. `backend` and `request_index` are the originating
+  "Counterexample"): `{type, obligation, violated, bound, executions}`. `backend` and `request_index` are the originating
   run identity.
 - An accounting record is the item's terminal record:
   `{request_index, settled_by}`, `settled_by` `disposition` when its

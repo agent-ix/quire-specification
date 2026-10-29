@@ -14,7 +14,7 @@
 
 use ix_trace_rs::trace;
 use serde_json::{Value, json};
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::{BTreeSet, HashMap};
 use sha2::{Digest, Sha256};
 
@@ -125,7 +125,7 @@ fn negotiate(case: &Value) -> (String, Option<String>) {
     }
 }
 
-const REQUIRED: [&str; 55] = [
+const REQUIRED: [&str; 58] = [
     "VV-01",
     "VV-02",
     "VV-03",
@@ -181,6 +181,9 @@ const REQUIRED: [&str; 55] = [
     "OC-17",
     "OC-18",
     "OC-19",
+    "OC-20",
+    "OC-21",
+    "VV-17",
 ];
 
 const REQUIRED_ACS: [&str; 30] = [
@@ -246,8 +249,15 @@ fn check_limit(case: &Value) -> Option<u64> {
     case["item"]["check_limit"].as_u64()
 }
 
+/// The descriptor FR-290 selects for the item: its published `bounds.max_cases` is the default.
 fn default_limit(case: &Value) -> Option<u64> {
-    case["registry"][0]["bounds"]["max_cases"].as_u64()
+    let item = &case["item"];
+    let kind = item["kind"].as_str()?;
+    case["registry"].as_array()?.iter().find(|d| {
+        (advertises(d, kind, "bounded") || advertises(d, kind, "unbounded"))
+            && item.get("backend").is_none_or(|b| *b == d["backend"])
+    })?["bounds"]["max_cases"]
+        .as_u64()
 }
 
 #[trace("TC-972", "FR-483-AC-6")]
@@ -271,6 +281,9 @@ fn check_arm_negotiation_dispositions_follow_fr_290() {
 #[trace("TC-974", "FR-485-AC-1")]
 #[trace("TC-974", "FR-485-AC-7")]
 #[trace("TC-974", "FR-485-AC-9")]
+#[trace("TC-974", "FR-485-AC-10")]
+#[trace("TC-974", "FR-485-AC-11")]
+#[trace("TC-974", "FR-485-AC-13")]
 #[test]
 fn check_arm_outcomes_map_to_the_fr_331_results() {
     let validator = outcome_validator();
@@ -323,19 +336,26 @@ fn check_arm_outcomes_map_to_the_fr_331_results() {
             }
             None => assert!(kind != "declined", "{id} nothing refuses it"),
         }
-        // FR-483 replay-before-refuted: a refutation is replayed, and one that does not reproduce is replay-parity.
-        let replay = case["replay"]["reproduced"].as_bool();
+        // FR-483 replay-before-refuted: the replay is computed natively from the case's model, never declared.
+        let status = replay_status(&case, &document);
         if kind == "refuted" {
-            assert_eq!(replay, Some(true), "{id} refuted only after a replay that reproduced");
+            assert_eq!(status, Some(Replay::Reproduced), "{id} refuted only after a replay that reproduced");
             let entry = &counterexamples[result["counterexample"].as_u64().unwrap() as usize];
             let expected = if case["item"]["kind"] == "value-validity" { "assignments" } else { "contract-counterexample" };
             assert_eq!(entry["counterexample"]["type"], expected, "{id} counterexample type");
             assert!(entry.get("transcript").is_none(), "{id} has no transcript");
         } else {
             assert!(counterexamples.is_empty(), "{id} records no counterexample");
-            if replay == Some(false) {
-                assert_eq!(result["cause"]["type"], "replay-parity", "{id} unreproduced candidate");
-                assert_eq!(kind, "inconclusive", "{id}");
+            match status {
+                Some(Replay::NotReproduced) => {
+                    assert_eq!(result["cause"]["type"], "replay-parity", "{id} unreproduced candidate");
+                    assert_eq!(kind, "inconclusive", "{id}");
+                }
+                Some(Replay::Refused) => {
+                    assert_eq!(result["cause"]["type"], "replay-refused", "{id} unreplayable candidate");
+                    assert_eq!(kind, "inconclusive", "{id}");
+                }
+                _ => {}
             }
         }
         if kind == "proved" {
@@ -428,9 +448,12 @@ fn population_domain_is_decided_only_by_a_candidate_that_lists_it() {
 enum Fail {
     Undefined(Option<String>),
     NotEvaluable,
+    Exhausted,
 }
 
 struct Ctx<'a> {
+    spent: &'a Cell<u64>,
+    limit: u64,
     functions: &'a Value,
     reached: RefCell<BTreeSet<String>>,
     undefined: RefCell<BTreeSet<String>>,
@@ -454,6 +477,7 @@ fn eval(e: &Value, vars: &HashMap<String, i128>, cx: &Ctx) -> Result<i128, Fail>
                 }
                 ">" => b(arg(1)? > arg(2)?),
                 "<" => b(arg(1)? < arg(2)?),
+                "<=" => b(arg(1)? <= arg(2)?),
                 ">=" => b(arg(1)? >= arg(2)?),
                 "=" => b(arg(1)? == arg(2)?),
                 "!=" => b(arg(1)? != arg(2)?),
@@ -466,6 +490,11 @@ fn eval(e: &Value, vars: &HashMap<String, i128>, cx: &Ctx) -> Result<i128, Fail>
                 "call" => {
                     let name = items[1].as_str().unwrap();
                     let Some(function) = cx.functions.get(name) else { return Err(Fail::NotEvaluable) };
+                    // One evaluation of a function body is one case (FR-483).
+                    cx.spent.set(cx.spent.get() + 1);
+                    if cx.spent.get() > cx.limit {
+                        return Err(Fail::Exhausted);
+                    }
                     let params = function["params"].as_array().unwrap();
                     let mut scope = HashMap::new();
                     for (i, p) in params.iter().enumerate() {
@@ -513,22 +542,21 @@ enum Verdict {
     Incomplete(u64),
 }
 
-fn violates(case: &Value, vars: &HashMap<String, i128>) -> Result<(bool, bool, bool), Fail> {
+fn violates(case: &Value, vars: &HashMap<String, i128>, spent: &Cell<u64>, limit: u64) -> Result<(bool, bool, bool), Fail> {
     // (violated, undefined, reached)
     let model = &case["model"];
     let functions = model.get("functions").unwrap_or(&Value::Null);
-    let cx = Ctx { functions, reached: RefCell::new(BTreeSet::new()), undefined: RefCell::new(BTreeSet::new()) };
+    let cx = Ctx { spent, limit, functions, reached: RefCell::new(BTreeSet::new()), undefined: RefCell::new(BTreeSet::new()) };
     if let Some(goal) = model.get("goal") {
         return match eval(goal, vars, &cx) {
             Ok(v) => Ok((v == 0, false, true)),
-            Err(Fail::NotEvaluable) => Err(Fail::NotEvaluable),
             Err(Fail::Undefined(_)) => Ok((true, true, true)),
+            Err(other) => Err(other),
         };
     }
     let target = model["occurrence"].as_str().unwrap();
-    match eval(&model["body"], vars, &cx) {
-        Err(Fail::NotEvaluable) => return Err(Fail::NotEvaluable),
-        _ => {}
+    if let Err(stop @ (Fail::NotEvaluable | Fail::Exhausted)) = eval(&model["body"], vars, &cx) {
+        return Err(stop);
     }
     let reached = cx.reached.borrow().contains(target);
     let undefined = cx.undefined.borrow().contains(target);
@@ -548,19 +576,142 @@ fn assignments(model: &Value) -> Vec<HashMap<String, i128>> {
 }
 
 fn decide(case: &Value) -> Verdict {
-    let limit = check_limit(case).or_else(|| default_limit(case)).unwrap_or(u64::MAX);
+    // There is no unlimited fallback: the descriptor always publishes a default.
+    let limit = check_limit(case).or_else(|| default_limit(case)).expect("a max_cases for every item");
+    let spent = Cell::new(0);
     let mut any_reached = case["model"].get("goal").is_some();
-    for (examined, vars) in assignments(&case["model"]).iter().enumerate() {
-        if examined as u64 == limit {
+    for vars in &assignments(&case["model"]) {
+        spent.set(spent.get() + 1);
+        if spent.get() > limit {
             return Verdict::Incomplete(limit);
         }
-        match violates(case, vars) {
+        match violates(case, vars, &spent, limit) {
+            Err(Fail::Exhausted) => return Verdict::Incomplete(limit),
             Err(_) => return Verdict::NotEvaluable,
             Ok((true, undefined, _)) => return Verdict::Refuted(vars.clone(), undefined),
             Ok((false, _, reached)) => any_reached |= reached,
         }
     }
     if any_reached { Verdict::Proved } else { Verdict::Vacuous }
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+enum Replay {
+    Reproduced,
+    NotReproduced,
+    Refused,
+}
+
+fn record_fields(value: &Value, suffix: &str) -> HashMap<String, i128> {
+    value["fields"]
+        .as_array()
+        .map(|fields| {
+            fields
+                .iter()
+                .map(|f| (format!("{}{suffix}", f["name"].as_str().unwrap()), f["value"]["value"].as_str().unwrap().parse().unwrap()))
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn argument_env(arguments: &Value, names: &Value) -> HashMap<String, i128> {
+    let mut env = HashMap::new();
+    for (name, label) in names.as_object().into_iter().flatten() {
+        let node = node_id(label.as_str().unwrap());
+        let found = arguments.as_array().unwrap().iter().find(|a| a["parameter"] == node).expect("argument");
+        env.insert(name.clone(), found["value"]["value"].as_str().unwrap().parse().unwrap());
+    }
+    env
+}
+
+/// FR-485 "Replay", over the vector's small model: an unbound counterexample is evaluated on the recorded
+/// values; a bound one re-executes the implementation on the recorded concrete inputs, requires the recorded
+/// concrete outcome to be one the implementation produces, compares the abstraction images, then evaluates.
+fn replay_contract(model: &Value, ce: &Value, reader_has_engine: bool) -> Replay {
+    let bound = ce["bound"] == true;
+    if bound && !reader_has_engine {
+        return Replay::Refused;
+    }
+    let executions = ce["executions"].as_array().unwrap();
+    let spent = Cell::new(0);
+    let cx = Ctx { spent: &spent, limit: u64::MAX, functions: &Value::Null, reached: RefCell::new(BTreeSet::new()), undefined: RefCell::new(BTreeSet::new()) };
+    let names = &model["args"];
+    let mut frame_hit = false;
+    let mut env: HashMap<String, i128> = HashMap::new();
+    for (index, execution) in executions.iter().enumerate() {
+        let image_pre = record_fields(&execution["pre_state"], "");
+        let image_post = record_fields(&execution["post_state"], "");
+        if bound {
+            let concrete = &execution["concrete"];
+            let (pre, post) = (record_fields(&concrete["pre_state"], ""), record_fields(&concrete["post_state"], ""));
+            let mut inputs = pre.clone();
+            inputs.extend(argument_env(&concrete["arguments"], names));
+            let produced = model["outcomes"].as_array().unwrap().iter().any(|outcome| {
+                let mut next = pre.clone();
+                for (field, expr) in outcome.as_object().unwrap() {
+                    next.insert(field.clone(), eval(expr, &inputs, &cx).expect("effect evaluates"));
+                }
+                next == post
+            });
+            if !produced {
+                return Replay::NotReproduced;
+            }
+            for (concrete_state, image) in [(&pre, &image_pre), (&post, &image_post)] {
+                for (field, location) in model["abstraction"].as_object().unwrap() {
+                    if image.get(field) != concrete_state.get(location.as_str().unwrap()) {
+                        return Replay::NotReproduced;
+                    }
+                }
+            }
+            if model["frame"] == true {
+                let inside: BTreeSet<&str> = model["modifies"].as_array().unwrap().iter().map(|m| model["abstraction"][m.as_str().unwrap()].as_str().unwrap()).collect();
+                frame_hit |= pre.iter().any(|(location, value)| !inside.contains(location.as_str()) && post.get(location) != Some(value));
+            }
+        }
+        if index == 0 {
+            env.extend(image_pre);
+        }
+        let suffix = ["'", "''"][index.min(1)];
+        env.extend(image_post.into_iter().map(|(k, v)| (format!("{k}{suffix}"), v)));
+        env.extend(argument_env(&execution["arguments"], names));
+    }
+    if model["frame"] == true {
+        return if frame_hit { Replay::Reproduced } else { Replay::NotReproduced };
+    }
+    for premise in model["premises"].as_array().unwrap() {
+        if eval(premise, &env, &cx) != Ok(1) {
+            return Replay::NotReproduced;
+        }
+    }
+    let violated = match eval(&model["obligation"], &env, &cx) {
+        Err(Fail::Undefined(_)) => true,
+        Ok(value) => value == 0 && model["undefined_only"] != true,
+        Err(_) => false,
+    };
+    if violated { Replay::Reproduced } else { Replay::NotReproduced }
+}
+
+/// The native replay of a case's recorded or candidate counterexample, derived from its model.
+fn replay_status(case: &Value, document: &Value) -> Option<Replay> {
+    let recorded = document["counterexamples"].as_array().and_then(|c| c.first()).map(|e| e["counterexample"].clone());
+    let from = |reproduced: bool| if reproduced { Replay::Reproduced } else { Replay::NotReproduced };
+    if case["item"]["kind"] == "value-validity" {
+        if case["model"].is_null() {
+            return case["replay"]["reproduced"].as_bool().map(from);
+        }
+        return replayed(case, document).map(from);
+    }
+    let model = &case["replay_model"];
+    if model.is_null() {
+        return None;
+    }
+    let candidate = recorded.or_else(|| {
+        let mut ce = case["candidate_ce"].clone();
+        rekey(&mut ce);
+        (!ce.is_null()).then_some(ce)
+    })?;
+    let engine = case["reader"]["implementation_engine"] != false;
+    Some(replay_contract(model, &candidate, engine))
 }
 
 fn replayed(case: &Value, document: &Value) -> Option<bool> {
@@ -583,7 +734,8 @@ fn replayed(case: &Value, document: &Value) -> Option<bool> {
         }
         // A single-variable candidate written as {"x": n} names the variable `x`.
     }
-    violates(case, &vars).ok().map(|(violated, _, _)| violated)
+    let spent = Cell::new(0);
+    violates(case, &vars, &spent, u64::MAX).ok().map(|(violated, _, _)| violated)
 }
 
 #[trace("TC-973", "FR-484-AC-1")]
@@ -596,6 +748,7 @@ fn replayed(case: &Value, document: &Value) -> Option<bool> {
 #[test]
 fn value_validity_vectors_agree_with_the_native_evaluation() {
     let mut modelled = 0;
+    let mut recursion = false;
     for case in cases() {
         let id = id(&case);
         if case["item"]["kind"] != "value-validity" {
@@ -618,7 +771,10 @@ fn value_validity_vectors_agree_with_the_native_evaluation() {
             (Verdict::Proved, "proved", _) => true,
             (Verdict::Vacuous, "inconclusive", Some("kani_vacuous_proof")) => true,
             (Verdict::NotEvaluable, "unsupported", _) => true,
-            (Verdict::Incomplete(limit), "incomplete", Some("limit-reached")) => result["cause"]["value"] == *limit,
+            (Verdict::Incomplete(limit), "incomplete", Some("limit-reached")) => {
+                recursion |= case["model"]["functions"]["loop"].is_object();
+                result["cause"]["value"] == *limit
+            }
             (Verdict::Refuted(..), "refuted", cause) => {
                 // The recorded assignment is replayed and must reproduce the violation.
                 assert_eq!(replayed(&case, &document), Some(true), "{id} replay reproduces");
@@ -636,6 +792,7 @@ fn value_validity_vectors_agree_with_the_native_evaluation() {
         }
         assert!(expected, "{id}: evaluator says {verdict:?}, vector says {result}");
     }
+    assert!(recursion, "a recursive call stopped by max_cases is exercised");
     assert!(modelled >= 10, "the evaluator ran on the modelled value-validity cases");
 }
 
@@ -699,7 +856,6 @@ fn schema_refuses_a_malformed_contract_counterexample() {
     assert!(!validator.is_valid(&no_bound), "bound is required");
 }
 
-#[trace("TC-972", "FR-483-AC-3")]
 #[test]
 fn the_vector_file_is_complete_and_freezes_no_digest() {
     // A pinned case list: deleting a vector fails.
@@ -727,4 +883,43 @@ fn the_vector_file_is_complete_and_freezes_no_digest() {
     assert_ne!(node_id("a"), node_id("b"));
     let case = cases().into_iter().find(|c| c["id"] == "VV-02").unwrap();
     assert_eq!(composed(&case)["counterexamples"][0]["counterexample"]["values"][0]["parameter"], node_id("vv.x"));
+}
+
+#[test]
+fn descriptors_for_these_kinds_must_publish_a_positive_max_cases() {
+    let registry = jsonschema::Registry::new()
+        .add("urn:quire:checked-package:v2", parsed(CHECKED_PACKAGE_SCHEMA))
+        .unwrap()
+        .add("urn:quire:backend-provider:v1", parsed(SCHEMA))
+        .unwrap()
+        .prepare()
+        .unwrap();
+    let validator = jsonschema::options()
+        .with_registry(&registry)
+        .build(&json!({"$ref": "urn:quire:backend-provider:v1#/$defs/BackendDescriptor"}))
+        .unwrap();
+    let build = node_id("build-inputs")["digest"].clone();
+    let descriptor = |kind: &str, bounds: &Value| {
+        let mut d = json!({
+            "backend": "checker",
+            "tool": {"name": "checker", "version": "1.0.0", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": build}},
+            "advertises": [{"kind": kind, "mode": "bounded"}],
+            "domains": ["integer"]
+        });
+        if !bounds.is_null() {
+            d["bounds"] = bounds.clone();
+        }
+        d
+    };
+    for entry in parsed(VECTORS)["descriptor_cases"].as_array().unwrap() {
+        for kind in ["value-validity", "operation-contract"] {
+            let d = descriptor(kind, &entry["bounds"]);
+            assert_eq!(validator.is_valid(&d), entry["valid"] == true, "{kind}: {}", entry["name"]);
+        }
+    }
+    for case in cases() {
+        for d in case["registry"].as_array().unwrap() {
+            assert!(d["bounds"]["max_cases"].as_u64().is_some_and(|n| n > 0), "{} {}", case["id"], d["backend"]);
+        }
+    }
 }

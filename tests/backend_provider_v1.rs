@@ -1371,7 +1371,8 @@ fn tc_431_memory_models_is_a_nonempty_unique_subset_on_temporal_descriptors() {
     let mut other = serde_json::json!({
         "backend": "smt",
         "tool": {"name": "z3", "version": "4.13.4", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1"}},
-        "advertises": [{"kind": "operation-contract", "mode": "unbounded"}]
+        "advertises": [{"kind": "operation-contract", "mode": "unbounded"}],
+        "bounds": {"max_cases": 10000}
     });
     assert!(
         descriptor.is_valid(&other),

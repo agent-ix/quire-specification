@@ -105,7 +105,7 @@ The arm SHALL replay the candidate counterexample through the native evaluator o
 
 A plugin's counterexample entry carries `assignments` for a `value-validity` item and `contract-counterexample` for an `operation-contract` item, and no `transcript`.
 
-The replay of `assignments` is [FR-197](FR-197-replay-backend-counterexamples.md)'s `Input`-arm replay. The replay of a `contract-counterexample` is owned by [FR-485](FR-485-check-operation-contract-items.md) "Replay"; FR-197 does not own it.
+The replay of `assignments` is [FR-197](FR-197-replay-backend-counterexamples.md)'s `Input`-arm replay. The replay of a `contract-counterexample` is owned by [FR-485](FR-485-check-operation-contract-items.md) "Replay"; FR-197 does not own it. A reader that cannot perform the replay of a bound `contract-counterexample` because it holds no implementation engine settles the item `inconclusive` `replay-refused`, never `refuted`. One case is also one evaluation of a function body inside an assignment, so a recursive call that does not return stops at `max_cases`.
 
 ### Unknown and stopped runs
 
@@ -117,7 +117,7 @@ The replay of `assignments` is [FR-197](FR-197-replay-backend-counterexamples.md
 | the provider's own wall-clock budget ends | `incomplete` | `timed-out` |
 | the caller cancels or the caller's `deadline_ms` ends the run | `incomplete` | `cancelled{source}`, `source` `requested` or `deadline` |
 
-An item's `max_cases` is its `check.limits.max_cases`, a dedicated limits member of the request item beside `hybrid.limits` and `temporal.limits`, a `PositiveCount` that only a `value-validity` or `operation-contract` item may carry; an absent member takes the descriptor's published default under the key `max_cases` in `bounds` ([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) "Items"). The setting names are `value_check.max_cases` and `contract_check.max_cases`, each the engine name, a dot and the member as [FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md) fixes, so the CLI raises one with `--limit value_check.max_cases=<n>`. `check.limits` is part of request identity, because a different case budget can produce a different result. A `max_cases` that is zero or not a count is refused before consumption by the wire schema. The count is the number of cases the engine examined, where one case is one assignment or pre-state tuple evaluated, one solver query, or one Kani harness run.
+An item's `max_cases` is its `check.limits.max_cases`, a dedicated limits member of the request item beside `hybrid.limits` and `temporal.limits`, a `PositiveCount` that only a `value-validity` or `operation-contract` item may carry; an absent member takes the descriptor's published default under the key `max_cases` in `bounds` ([FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) "Items"). The setting names are `value_check.max_cases` and `contract_check.max_cases`, each the engine name, a dot and the member as [FR-461](../foundation/FR-461-name-the-limit-value-and-setting.md) fixes, so the CLI raises one with `--limit value_check.max_cases=<n>`. `check.limits` is part of request identity, because a different case budget can produce a different result. A `max_cases` that is zero or not a count is refused before consumption by the wire schema. The count is the number of cases the engine examined, where one case is one assignment or pre-state tuple evaluated, one evaluation of a function body inside it, one solver query, or one Kani harness run.
 
 ### Refusal dispositions
 

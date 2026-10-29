@@ -70,7 +70,45 @@
     "OC-16",
     "OC-17",
     "OC-18",
-    "OC-19"
+    "OC-19",
+    "OC-20",
+    "OC-21",
+    "VV-17"
+  ],
+  "descriptor_cases": [
+    {
+      "name": "max_cases present",
+      "bounds": {
+        "max_cases": 10000
+      },
+      "valid": true
+    },
+    {
+      "name": "no bounds member",
+      "bounds": null,
+      "valid": false
+    },
+    {
+      "name": "bounds without max_cases",
+      "bounds": {
+        "max_objects": 64
+      },
+      "valid": false
+    },
+    {
+      "name": "max_cases zero",
+      "bounds": {
+        "max_cases": 0
+      },
+      "valid": false
+    },
+    {
+      "name": "max_cases not a count",
+      "bounds": {
+        "max_cases": "9"
+      },
+      "valid": false
+    }
   ],
   "cases": [
     {
@@ -95,7 +133,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -192,7 +233,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -236,9 +280,6 @@
           ],
           256
         ]
-      },
-      "replay": {
-        "reproduced": true
       },
       "outcome": {
         "contract_version": "quire.backend-provider/v1",
@@ -305,7 +346,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -361,9 +405,6 @@
           ],
           "x"
         ]
-      },
-      "replay": {
-        "reproduced": true
       },
       "candidate": {
         "x": -1
@@ -433,7 +474,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -557,7 +601,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -629,9 +676,6 @@
           ]
         ],
         "occurrence": "o1"
-      },
-      "replay": {
-        "reproduced": true
       },
       "candidate": {
         "a": 1,
@@ -722,7 +766,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -838,12 +885,15 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
         "kind": "value-validity",
-        "form": "range-narrowing",
+        "form": "none",
         "claim": "vv.narrow",
         "occurrence": {
           "role": "claim",
@@ -921,7 +971,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -971,9 +1024,6 @@
           ]
         ],
         "occurrence": "o"
-      },
-      "replay": {
-        "reproduced": true
       },
       "candidate": {
         "a": 7
@@ -1056,7 +1106,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1110,9 +1163,6 @@
             "b"
           ]
         ]
-      },
-      "replay": {
-        "reproduced": true
       },
       "candidate": {
         "a": 1,
@@ -1204,7 +1254,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1309,7 +1362,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1411,7 +1467,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1507,7 +1566,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1569,7 +1631,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1662,7 +1727,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1732,7 +1800,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1833,7 +1904,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1904,7 +1978,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         },
         {
           "backend": "value-prover",
@@ -1913,7 +1990,10 @@
               "kind": "value-validity",
               "mode": "unbounded"
             }
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -1991,7 +2071,10 @@
           ],
           "domains": [
             "integer"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -2070,7 +2153,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -2147,7 +2233,10 @@
           ],
           "domains": [
             "integer"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -2224,6 +2313,9 @@
           "domains": [
             "integer"
           ],
+          "bounds": {
+            "max_cases": 10000
+          },
           "plugin": true
         }
       ],
@@ -2296,7 +2388,10 @@
               "kind": "value-validity",
               "mode": "unbounded"
             }
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -2367,7 +2462,10 @@
               "kind": "value-validity",
               "mode": "unbounded"
             }
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -2440,7 +2538,10 @@
               "kind": "value-validity",
               "mode": "unbounded"
             }
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -2511,7 +2612,10 @@
               "kind": "value-validity",
               "mode": "unbounded"
             }
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -2781,7 +2885,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -2828,9 +2935,6 @@
       },
       "candidate": {
         "x": 3
-      },
-      "replay": {
-        "reproduced": false
       },
       "outcome": {
         "contract_version": "quire.backend-provider/v1",
@@ -2883,7 +2987,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -2952,7 +3059,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -3022,7 +3132,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -3092,7 +3205,10 @@
             "integer",
             "population",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -3167,7 +3283,10 @@
           ],
           "domains": [
             "integer"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -3238,7 +3357,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -3323,7 +3445,10 @@
             "collection",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         },
         {
           "backend": "contract-checker",
@@ -3338,7 +3463,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -3559,7 +3687,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -3584,9 +3715,6 @@
       "arm": {
         "outcome": "violation",
         "result": "refuted"
-      },
-      "replay": {
-        "reproduced": true
       },
       "cex_obligation": "preservation",
       "outcome": {
@@ -3687,6 +3815,20 @@
             "settled_by": "result"
           }
         ]
+      },
+      "replay_model": {
+        "premises": [
+          [
+            "<=",
+            "l",
+            "h"
+          ]
+        ],
+        "obligation": [
+          "<=",
+          "l'",
+          "h'"
+        ]
       }
     },
     {
@@ -3710,7 +3852,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -3735,9 +3880,6 @@
       "arm": {
         "outcome": "violation",
         "result": "refuted"
-      },
-      "replay": {
-        "reproduced": true
       },
       "cex_obligation": "initial-state",
       "outcome": {
@@ -3811,6 +3953,14 @@
             "settled_by": "result"
           }
         ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "<=",
+          "l",
+          "h"
+        ]
       }
     },
     {
@@ -3834,7 +3984,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -3914,15 +4067,18 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
         "kind": "operation-contract",
-        "form": "expression",
+        "form": "none",
         "claim": "oc.expr",
         "occurrence": {
-          "role": "expression",
+          "role": "claim",
           "ordinal": 0
         },
         "extent": {
@@ -3999,7 +4155,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -4084,7 +4243,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -4109,9 +4271,6 @@
       "arm": {
         "outcome": "violation",
         "result": "refuted"
-      },
-      "replay": {
-        "reproduced": true
       },
       "cex_obligation": "definedness",
       "outcome": {
@@ -4225,6 +4384,15 @@
             "settled_by": "result"
           }
         ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "/",
+          "l",
+          "h"
+        ],
+        "undefined_only": true
       }
     },
     {
@@ -4251,6 +4419,9 @@
             "integer",
             "recursive"
           ],
+          "bounds": {
+            "max_cases": 10000
+          },
           "implementation_engine": true
         }
       ],
@@ -4276,9 +4447,6 @@
       "arm": {
         "outcome": "violation",
         "result": "refuted"
-      },
-      "replay": {
-        "reproduced": true
       },
       "cex_obligation": "postcondition",
       "outcome": {
@@ -4431,6 +4599,28 @@
             "settled_by": "result"
           }
         ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "=",
+          "l'",
+          [
+            "+",
+            "l",
+            "i"
+          ]
+        ],
+        "args": {
+          "i": "oc.i"
+        },
+        "abstraction": {
+          "l": "lo",
+          "h": "hi"
+        },
+        "outcomes": [
+          {}
+        ]
       }
     },
     {
@@ -4454,7 +4644,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -4538,6 +4731,9 @@
             "integer",
             "recursive"
           ],
+          "bounds": {
+            "max_cases": 10000
+          },
           "implementation_engine": true
         }
       ],
@@ -4623,6 +4819,9 @@
             "integer",
             "recursive"
           ],
+          "bounds": {
+            "max_cases": 10000
+          },
           "implementation_engine": true
         }
       ],
@@ -4648,9 +4847,6 @@
       "arm": {
         "outcome": "violation",
         "result": "refuted"
-      },
-      "replay": {
-        "reproduced": true
       },
       "cex_obligation": "frame",
       "outcome": {
@@ -4817,6 +5013,24 @@
             "settled_by": "result"
           }
         ]
+      },
+      "replay_model": {
+        "frame": true,
+        "modifies": [
+          "l"
+        ],
+        "args": {
+          "i": "oc.i"
+        },
+        "abstraction": {
+          "l": "lo",
+          "h": "hi"
+        },
+        "outcomes": [
+          {
+            "audit": 9
+          }
+        ]
       }
     },
     {
@@ -4841,6 +5055,9 @@
             "integer",
             "recursive"
           ],
+          "bounds": {
+            "max_cases": 10000
+          },
           "implementation_engine": true
         }
       ],
@@ -4928,6 +5145,9 @@
             "integer",
             "recursive"
           ],
+          "bounds": {
+            "max_cases": 10000
+          },
           "implementation_engine": true
         }
       ],
@@ -5040,6 +5260,9 @@
             "integer",
             "recursive"
           ],
+          "bounds": {
+            "max_cases": 10000
+          },
           "implementation_engine": true
         }
       ],
@@ -5119,6 +5342,9 @@
             "integer",
             "recursive"
           ],
+          "bounds": {
+            "max_cases": 10000
+          },
           "implementation_engine": true
         }
       ],
@@ -5144,9 +5370,6 @@
       "arm": {
         "outcome": "violation",
         "result": "refuted"
-      },
-      "replay": {
-        "reproduced": true
       },
       "cex_obligation": "relation",
       "outcome": {
@@ -5404,6 +5627,39 @@
             "settled_by": "result"
           }
         ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "and",
+          [
+            "=",
+            "l'",
+            "l''"
+          ],
+          [
+            "=",
+            "h'",
+            "h''"
+          ]
+        ],
+        "args": {
+          "i": "oc.i"
+        },
+        "abstraction": {
+          "l": "lo",
+          "h": "hi"
+        },
+        "outcomes": [
+          {},
+          {
+            "lo": [
+              "+",
+              "lo",
+              1
+            ]
+          }
+        ]
       }
     },
     {
@@ -5427,7 +5683,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -5452,9 +5711,6 @@
       "arm": {
         "outcome": "violation",
         "result": "refuted"
-      },
-      "replay": {
-        "reproduced": true
       },
       "cex_obligation": "simulation-initial",
       "outcome": {
@@ -5521,6 +5777,14 @@
             "settled_by": "result"
           }
         ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "=",
+          "value",
+          0
+        ]
       }
     },
     {
@@ -5544,7 +5808,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -5569,9 +5836,6 @@
       "arm": {
         "outcome": "violation",
         "result": "refuted"
-      },
-      "replay": {
-        "reproduced": true
       },
       "cex_obligation": "simulation-step",
       "outcome": {
@@ -5650,6 +5914,18 @@
             "settled_by": "result"
           }
         ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "=",
+          "value'",
+          [
+            "+",
+            "value",
+            1
+          ]
+        ]
       }
     },
     {
@@ -5674,7 +5950,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -5738,7 +6017,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -5818,7 +6100,10 @@
             "population",
             "integer",
             "recursive"
-          ]
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
         }
       ],
       "item": {
@@ -5844,9 +6129,6 @@
         "outcome": "unknown",
         "result": "inconclusive"
       },
-      "replay": {
-        "reproduced": false
-      },
       "outcome": {
         "contract_version": "quire.backend-provider/v1",
         "capability_vocabulary": "quire.capability-kind/v1",
@@ -5865,6 +6147,655 @@
             "result": "inconclusive",
             "cause": {
               "type": "replay-parity"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "=",
+          "l'",
+          [
+            "+",
+            "l",
+            "i"
+          ]
+        ],
+        "args": {
+          "i": "oc.i"
+        }
+      },
+      "candidate_ce": {
+        "type": "contract-counterexample",
+        "obligation": "postcondition",
+        "violated": {
+          "node": "$node:oc.post",
+          "occurrence": {
+            "role": "claim",
+            "ordinal": 0
+          }
+        },
+        "bound": false,
+        "executions": [
+          {
+            "operation": "$node:oc.step",
+            "pre_state": {
+              "type": "record",
+              "name": "acme/Vault",
+              "fields": [
+                {
+                  "name": "l",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                },
+                {
+                  "name": "h",
+                  "value": {
+                    "type": "integer",
+                    "value": "5"
+                  }
+                }
+              ]
+            },
+            "arguments": [
+              {
+                "parameter": "$node:oc.i",
+                "value": {
+                  "type": "integer",
+                  "value": "1"
+                }
+              }
+            ],
+            "result": null,
+            "post_state": {
+              "type": "record",
+              "name": "acme/Vault",
+              "fields": [
+                {
+                  "name": "l",
+                  "value": {
+                    "type": "integer",
+                    "value": "2"
+                  }
+                },
+                {
+                  "name": "h",
+                  "value": {
+                    "type": "integer",
+                    "value": "5"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-20",
+      "tc": "TC-974",
+      "name": "bound candidate whose concrete outcome the implementation does not produce",
+      "acs": [
+        "FR-485-AC-10",
+        "FR-485-AC-5",
+        "FR-483-AC-3"
+      ],
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ],
+          "bounds": {
+            "max_cases": 10000
+          },
+          "implementation_engine": true
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "clause",
+        "claim": "oc.post",
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 0
+        },
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        },
+        "bound": true
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "unknown",
+        "result": "inconclusive"
+      },
+      "cex_obligation": "postcondition",
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "inconclusive",
+            "cause": {
+              "type": "replay-parity"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "=",
+          "l'",
+          [
+            "+",
+            "l",
+            "i"
+          ]
+        ],
+        "args": {
+          "i": "oc.i"
+        },
+        "abstraction": {
+          "l": "lo",
+          "h": "hi"
+        },
+        "outcomes": [
+          {}
+        ]
+      },
+      "candidate_ce": {
+        "type": "contract-counterexample",
+        "obligation": "postcondition",
+        "violated": {
+          "node": "$node:oc.post",
+          "occurrence": {
+            "role": "claim",
+            "ordinal": 0
+          }
+        },
+        "bound": true,
+        "executions": [
+          {
+            "operation": "$node:oc.step",
+            "pre_state": {
+              "type": "record",
+              "name": "acme/Vault",
+              "fields": [
+                {
+                  "name": "l",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                },
+                {
+                  "name": "h",
+                  "value": {
+                    "type": "integer",
+                    "value": "5"
+                  }
+                }
+              ]
+            },
+            "arguments": [
+              {
+                "parameter": "$node:oc.i",
+                "value": {
+                  "type": "integer",
+                  "value": "1"
+                }
+              }
+            ],
+            "result": null,
+            "post_state": {
+              "type": "record",
+              "name": "acme/Vault",
+              "fields": [
+                {
+                  "name": "l",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                },
+                {
+                  "name": "h",
+                  "value": {
+                    "type": "integer",
+                    "value": "5"
+                  }
+                }
+              ]
+            },
+            "concrete": {
+              "pre_state": {
+                "type": "record",
+                "name": "impl/Vault",
+                "fields": [
+                  {
+                    "name": "lo",
+                    "value": {
+                      "type": "integer",
+                      "value": "1"
+                    }
+                  },
+                  {
+                    "name": "hi",
+                    "value": {
+                      "type": "integer",
+                      "value": "5"
+                    }
+                  }
+                ]
+              },
+              "arguments": [
+                {
+                  "parameter": "$node:oc.i",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                }
+              ],
+              "result": null,
+              "post_state": {
+                "type": "record",
+                "name": "impl/Vault",
+                "fields": [
+                  {
+                    "name": "lo",
+                    "value": {
+                      "type": "integer",
+                      "value": "7"
+                    }
+                  },
+                  {
+                    "name": "hi",
+                    "value": {
+                      "type": "integer",
+                      "value": "5"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "OC-21",
+      "tc": "TC-974",
+      "name": "reader with no implementation engine receives a bound counterexample",
+      "acs": [
+        "FR-485-AC-13",
+        "FR-483-AC-3"
+      ],
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ],
+          "bounds": {
+            "max_cases": 10000
+          },
+          "implementation_engine": true
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "clause",
+        "claim": "oc.post",
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 0
+        },
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        },
+        "bound": true
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "unknown",
+        "result": "inconclusive"
+      },
+      "cex_obligation": "postcondition",
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "inconclusive",
+            "cause": {
+              "type": "replay-refused"
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "=",
+          "l'",
+          [
+            "+",
+            "l",
+            "i"
+          ]
+        ],
+        "args": {
+          "i": "oc.i"
+        },
+        "abstraction": {
+          "l": "lo",
+          "h": "hi"
+        },
+        "outcomes": [
+          {}
+        ]
+      },
+      "candidate_ce": {
+        "type": "contract-counterexample",
+        "obligation": "postcondition",
+        "violated": {
+          "node": "$node:oc.post",
+          "occurrence": {
+            "role": "claim",
+            "ordinal": 0
+          }
+        },
+        "bound": true,
+        "executions": [
+          {
+            "operation": "$node:oc.step",
+            "pre_state": {
+              "type": "record",
+              "name": "acme/Vault",
+              "fields": [
+                {
+                  "name": "l",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                },
+                {
+                  "name": "h",
+                  "value": {
+                    "type": "integer",
+                    "value": "5"
+                  }
+                }
+              ]
+            },
+            "arguments": [
+              {
+                "parameter": "$node:oc.i",
+                "value": {
+                  "type": "integer",
+                  "value": "1"
+                }
+              }
+            ],
+            "result": null,
+            "post_state": {
+              "type": "record",
+              "name": "acme/Vault",
+              "fields": [
+                {
+                  "name": "l",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                },
+                {
+                  "name": "h",
+                  "value": {
+                    "type": "integer",
+                    "value": "5"
+                  }
+                }
+              ]
+            },
+            "concrete": {
+              "pre_state": {
+                "type": "record",
+                "name": "impl/Vault",
+                "fields": [
+                  {
+                    "name": "lo",
+                    "value": {
+                      "type": "integer",
+                      "value": "1"
+                    }
+                  },
+                  {
+                    "name": "hi",
+                    "value": {
+                      "type": "integer",
+                      "value": "5"
+                    }
+                  }
+                ]
+              },
+              "arguments": [
+                {
+                  "parameter": "$node:oc.i",
+                  "value": {
+                    "type": "integer",
+                    "value": "1"
+                  }
+                }
+              ],
+              "result": null,
+              "post_state": {
+                "type": "record",
+                "name": "impl/Vault",
+                "fields": [
+                  {
+                    "name": "lo",
+                    "value": {
+                      "type": "integer",
+                      "value": "1"
+                    }
+                  },
+                  {
+                    "name": "hi",
+                    "value": {
+                      "type": "integer",
+                      "value": "5"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "reader": {
+        "implementation_engine": false
+      }
+    },
+    {
+      "id": "VV-17",
+      "tc": "TC-973",
+      "name": "recursive call that never returns stops at max_cases",
+      "acs": [
+        "FR-484-AC-9",
+        "FR-483-AC-4"
+      ],
+      "registry": [
+        {
+          "backend": "value-checker",
+          "advertises": [
+            {
+              "kind": "value-validity",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "integer",
+            "recursive"
+          ],
+          "bounds": {
+            "max_cases": 10000
+          }
+        }
+      ],
+      "item": {
+        "kind": "value-validity",
+        "form": "clause",
+        "claim": "vv.clause",
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 0
+        },
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        },
+        "check_limit": 50
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "unknown",
+        "result": "incomplete"
+      },
+      "method": "enumeration",
+      "model": {
+        "variables": [
+          {
+            "name": "x",
+            "node": "vv.x",
+            "lo": 0,
+            "hi": 3
+          }
+        ],
+        "functions": {
+          "loop": {
+            "params": [
+              "n"
+            ],
+            "body": [
+              "call",
+              "loop",
+              "n"
+            ]
+          }
+        },
+        "goal": [
+          ">=",
+          [
+            "call",
+            "loop",
+            "x"
+          ],
+          0
+        ]
+      },
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "value-checker",
+            "kind": "value-validity",
+            "result": "incomplete",
+            "cause": {
+              "type": "limit-reached",
+              "limit": "max_cases",
+              "value": 50,
+              "setting": "value_check.max_cases"
             }
           }
         ],
