@@ -11554,6 +11554,43 @@ fn model_root_positions(package: &Value) -> Vec<usize> {
         .collect()
 }
 
+/// The reader-stage model-root checks of FR-322-AC-135, in reader order: a
+/// repeated `node_id` (graph shape), then the owner join.
+/// Returns `(code, cause, pointer)`.
+fn model_root_reader_refusal(package: &Value) -> Option<(&'static str, &'static str, String)> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes are an array");
+    let mut seen = BTreeSet::new();
+    for (position, node) in nodes.iter().enumerate() {
+        if !seen.insert(node["node_id"].to_string()) {
+            return Some((
+                "invalid_semantic_graph",
+                "",
+                format!("/semantic_graph/nodes/{position}/node_id"),
+            ));
+        }
+    }
+    let roots = model_root_positions(package);
+    for position in &roots {
+        let owner = &nodes[*position]["owner"];
+        let supplied = owner["identity"]
+            .as_str()
+            .is_some_and(|identity| selected_model_document(package, identity).is_some());
+        if !supplied {
+            return Some((
+                "missing_import",
+                "missing-selection",
+                format!("/semantic_graph/nodes/{position}/owner/identity"),
+            ));
+        }
+    }
+    None
+}
+
+const MODEL_ROOT_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/model-root-vectors.json");
+
 /// Applies the RFC 6902 `add`, `remove` and `replace` operations the model-root
 /// vectors use.
 fn apply_json_patch(package: &mut Value, patch: &Value) {

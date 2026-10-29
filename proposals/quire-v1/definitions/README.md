@@ -43,8 +43,6 @@ Other definition families remain editable candidates under their owning tickets.
 | `quire.simulation.sampler/v1` | [Simulation sampler](simulation-sampler.md) |
 | `quire.model.complete/v1` | [Complete model root](model-complete.md) |
 | `quire.model.complete.rules/v1` | [Complete-model normalization rules](model-complete-rules.json) |
-| `quire.model.effective-declaration.schema/v1` | [Effective declaration schema](../../checked-package-v2/model-effective-declaration.schema.json) |
-| `quire.model.effective-declaration.vectors/v1` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 | `quire.temporal.complete/v1` | [Complete temporal root](temporal-complete.md) |
 
 ## Header-selectable layers

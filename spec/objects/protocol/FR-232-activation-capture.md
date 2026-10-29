@@ -61,9 +61,6 @@ instance's captures shall not satisfy another instance's propositions."
   never compared to a default, an empty value or an implicit option-none, and
   FR-093-AC-4 holds "Missing, nullable, wrong-type, stale or anchor-mismatched
   capture input" distinct from an established capture.
-- **Digest domain** — no key component of this object is a digest. Where a
-  captured identifier is carried as a digest, it retains the domain selected
-  under [FR-201](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Acceptance Criteria
 

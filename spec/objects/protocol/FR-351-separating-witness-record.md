@@ -16,8 +16,6 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-200
     type: references
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
   - target: ix://agent-ix/quire-specification/FR-207
     type: references
   - target: ix://agent-ix/quire-specification/FR-322
@@ -70,9 +68,6 @@ A separating witness accompanies only a `decisive-witness` or `decisive-countere
   absent; there is no partial record. A witness absent under a `decisive-witness`
   or `decisive-counterexample` basis is a refusal, not an empty substitute
   (see **Witness-free dispositions**).
-- **Digest domain** — where a key component is a digest, its domain is
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
-  An identity crossing domains is unequal regardless of byte equality.
 
 ## Acceptance Criteria
 
@@ -99,8 +94,6 @@ A separating witness accompanies only a `decisive-witness` or `decisive-countere
   supplies the replay envelope this record's shape now types.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain vocabulary.
 - [FR-243](FR-243-settlement-basis.md) supplies the protocol family's
   `decisive-witness` and `decisive-counterexample` bases this record
   substantiates.

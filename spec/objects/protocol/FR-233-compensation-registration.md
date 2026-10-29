@@ -75,10 +75,6 @@ receive, delivery or attempt that lacks the required successful effect" and that
   compared to a default or empty effect identity, and FR-051-AC-3 states that "A
   payment attempt with no established effect remains an attempt and cannot
   activate effect-dependent compensation."
-- **Digest domain** — every digest inside the FR-288 static definition key and
-  FR-287 effect key retains its selected
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md) domain. Equal bytes
-  across different domains are unequal.
 
 ## Acceptance Criteria
 

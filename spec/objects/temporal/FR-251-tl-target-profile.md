@@ -69,10 +69,6 @@ profile selection required by FR-090.
   FR-095-AC-3 holds that "Timestamped-event and past-time requests return typed
   unsupported mappings at current TL versions without emitting a substitute
   formula." An absent target is never defaulted to a member.
-- **Digest domain** — the bridge definition digest that carries this label
-  retains the domain it was derived under
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
-  crossing domains is unequal regardless of byte equality.
 
 ## A TL profile label is not a correspondence
 

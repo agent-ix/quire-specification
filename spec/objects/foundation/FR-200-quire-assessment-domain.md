@@ -4,8 +4,6 @@ title: "Quire semantic assessment bounded context"
 type: FR
 object: domain
 relationships:
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: contains
   - target: ix://agent-ix/quire-specification/FR-202
     type: contains
   - target: ix://agent-ix/quire-specification/FR-203
@@ -242,21 +240,16 @@ Every object artifact contained in this context SHALL declare, explicitly:
   derived from key order, timestamp or source position.
 - **Absence** — an absent key component compares only to absence. It never
   compares to a default, an empty value or an implicit option-none.
-- **Digest domain** — where a key contains a digest, the domain that digest was
-  derived under ([FR-201](FR-201-canonical-identity-domain.md)). An identity
-  crossing domains is unequal regardless of byte equality.
 
 ## Ubiquitous Language
 
 - **Authored** — written by a person in native Quire source, and therefore
-  carrying a source identity, digest and span.
+  carrying a source identity and span.
 - **Derived** — computed from other identified things under a named rule, and
   changing whenever any input to that rule changes.
 - **Key** — the exact component tuple that decides equality.
 - **Key order** — the total order over keys used for collection comparison.
 - **Causal order** — the authored partial order over protocol nodes.
-- **Domain** — the named algorithm and selection under which a digest identity
-  is derived.
 - **Absence** — the explicit state of a component that was not supplied, held
   distinct from every supplied value.
 
@@ -264,7 +257,7 @@ Every object artifact contained in this context SHALL declare, explicitly:
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-200-AC-1 | Every object artifact contained in this context addresses all six axes: identity kind, key, key order, causal order, absence and digest domain. An axis that does not apply is stated to not apply; an axis the prose does not establish is stated to be unestablished. Silent omission of an axis fails. | Test |
+| FR-200-AC-1 | Every object artifact contained in this context addresses all five axes: identity kind, key, key order, causal order and absence. An axis that does not apply is stated to not apply; an axis the prose does not establish is stated to be unestablished. Silent omission of an axis fails. | Test |
 | FR-200-AC-2 | No object artifact contained in this context introduces an obligation, a vocabulary member, a key component or an order absent from the behavioral requirement it extracts. Any component the artifact supplies as authored scaffolding is disclosed as such. | Test |
 | FR-200-AC-3 | A key order declared by a contained object carries no causal meaning and is never cited as evidence of a causal edge. | Test |
 | FR-200-AC-4 | No contained object declares a key order where it also records that the key components are not established. | Test |

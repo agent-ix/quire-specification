@@ -74,16 +74,16 @@ region never defaults to `preserved`.
 
 ## Package and identities
 
-The generated package contains target bytes, a target-byte `sha256-raw` digest,
-the ordered records, the exact request/profile selections, generator identity
-and version, and a `sha256-jcs` package identity over
-`quire.output.package-identity/v1-draft.1` plus those fields. Output order is the
+The generated package contains target bytes, the ordered records, the exact
+request/profile selections, the source package identity and version, and the
+generator identity and version. It is identified by that componentwise key; no
+digest of the bytes, records or package is carried. Output order is the
 requested source order with target-profile-defined stable local ordering.
 Presentation paths, timestamps, locale, parser results and diagnostic text are
 excluded from semantic identity.
 
 External structural observations are separate derived evidence referencing the
-immutable package identity and exact observer/tool version. They cannot mutate
+immutable package (by its key) and exact observer/tool version. They cannot mutate
 the package, record a semantic verdict or become a native source dependency.
 
 ## Resource and failure behavior

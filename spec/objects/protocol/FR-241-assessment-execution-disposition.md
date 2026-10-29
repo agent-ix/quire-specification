@@ -44,9 +44,6 @@ When a result records whether the requested evaluator ran, the strict reader SHA
 - **Absence** — an absent assessment-execution state compares only to absence. It
   is never defaulted to `completed` or to any other member. FR-061 refuses "an
   omitted required axis".
-- **Digest domain** — not applicable; this key contains no digest. Where a
-  containing result's key carries a digest, its domain is
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Substitution prohibitions
 

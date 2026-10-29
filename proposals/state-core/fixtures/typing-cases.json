@@ -4,13 +4,11 @@
   "ruleContract": {
     "identity": "agent-a-fs03",
     "version": "1-draft",
-    "path": "../state-semantics.md",
-    "digest": "sha256:09670bf5bb0bf6242bd749cb6e75a6d75db9b9960117ec7ce26f986b6fd7b014"
+    "path": "../state-semantics.md"
   },
   "baseProfile": {
     "identity": "state-finite",
     "version": "0-draft",
-    "definitionDigest": "sha256:c9bf08f925104499f3a4a983e8a788ad5df9076f5331061a53d778f1e8fad6c6",
     "refinementsAccepted": false
   },
   "modelBinding": {

@@ -16,7 +16,6 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/snapshot/forbidden-frame-change/pre",
-      "digest": "sha256:a688672f769fccdd01904eeb3a12acd7fb327a81b1ee8c7b575b1709df92f0d0",
       "profile": "agent-a-snapshot/1-draft"
     }
   },
@@ -25,7 +24,6 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/snapshot/forbidden-frame-change/post",
-      "digest": "sha256:454c60eb09f7803779cda44d654d4c5af4fc2e4f5e8145a42851d1fc2134dd66",
       "profile": "agent-a-snapshot/1-draft"
     }
   },
@@ -36,7 +34,6 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/binding/preserve-all",
-      "digest": "sha256:2620e64cfbdc3d8cbee9893b18436f4855211b48034a84e3c6461d5bbd643984",
       "profile": "agent-a-frame-binding/1-draft"
     }
   }

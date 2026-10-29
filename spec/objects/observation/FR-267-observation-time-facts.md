@@ -62,10 +62,6 @@ axis and cannot supply a missing clock selection.
   "SHALL retain an incomplete or refused input rather than settle or restart from
   it" (FR-113 Behavior). An absent fact is never filled from one of the other
   three.
-- **Digest domain** — not applicable; none of these four facts is a digest. The
-  progress/assertion definition digest that accompanies them is typed by
-  [FR-268](FR-268-progress-and-late-data-authority.md) and carries a domain
-  selected under `ix://agent-ix/quire-specification/FR-201`.
 
 ## Acceptance Criteria
 

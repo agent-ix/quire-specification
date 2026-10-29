@@ -48,7 +48,7 @@ older profile prohibits them or required closure/bounds are unavailable, the
 frontend shall refuse without erasing the original relationship or inventing
 bounds.
 
-The frontend shall reject duplicate clause authorities, stale source bindings
+The frontend shall reject duplicate clause authorities
 and mismatched evaluation anchors before lowering. Invalid or unsupported input
 does not produce a Boolean; runtime exhaustion remains incomplete.
 
@@ -69,7 +69,7 @@ its owning semantic acceptance and corresponding compiler support.
 | FR-019-AC-4 | The complete collection facet admits bounded sequences, sets, bags and ordered sets plus explicit conversions; absent consumer bounds, implicit lossy conversion or a profile-prohibited kind refuses, including in unused declarations. | Test (TC-009) |
 | FR-019-AC-5 | Complete-V1 declarations admit total pure typed functions and proved recursion; truthiness coercion, reflection, I/O, mutation and ambient-store operations refuse with their source location. | Test (TC-010) |
 | FR-019-AC-7 | Selecting every complete-V1 facet admits the full language capability inventory subject only to its normative premises; an implementation gap is reported as unimplemented capability, not as product-scope deferral. | Test (TC-180) |
-| FR-019-AC-6 | Exactly one byte/span-bound clause authority and the specified invariant/pre/post anchor are required; duplicate authority, stale bytes, bare context, foreign operation, forbidden pre access and cross-observation guard reuse refuse before lowering. | Test (TC-011) |
+| FR-019-AC-6 | Exactly one byte/span-bound clause authority and the specified invariant/pre/post anchor are required; duplicate authority, bare context, foreign operation, forbidden pre access and cross-observation guard reuse refuse before lowering. | Test (TC-011) |
 
 ## Dependencies
 

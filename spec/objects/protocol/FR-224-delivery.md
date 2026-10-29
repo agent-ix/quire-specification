@@ -73,8 +73,6 @@ delivery, node occurrence or effect.
 - **Absence** — an absent component compares only to absence and is never
   compared to a default or an empty value. A send with zero observed deliveries
   under a `[0,b]` premise has absent deliveries, not a default one.
-- **Digest domain** — FR-287 retains the authority digest and its FR-201 domain;
-  equal digest bytes in different domains are unequal.
 
 ## Acceptance Criteria
 

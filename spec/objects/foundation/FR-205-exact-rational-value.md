@@ -49,7 +49,6 @@ floating point and no implicit integer-to-rational conversion occurs (FR-039).
   rational type, ambiguous expected types, a runtime-expression argument or
   implicit integer conversion refuses rather than choosing a domain
   (FR-039-AC-4).
-- **Digest domain** — not applicable.
 
 ## Value equality is not literal identity
 

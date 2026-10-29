@@ -10,6 +10,82 @@
       "outcome": "admitted"
     },
     {
+      "id": "MR-04",
+      "description": "an extra root whose owner identity names no supplied domain package; the package keeps its own root, so this is the only defect",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/-",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "package": "acme/unselected",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "generated"
+              }
+            ],
+            "owner": {
+              "kind": "model_root",
+              "identity": "acme/unselected"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "model_root",
+            "semantic_type": {
+              "package": "acme/unselected",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/-",
+          "value": {
+            "node_id": {
+              "package": "acme/unselected",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
+            },
+            "ordinal": 0,
+            "regions": [
+              {
+                "end": 1,
+                "source": {
+                  "authority": "agent-ix",
+                  "identity": "example"
+                },
+                "start": 0
+              }
+            ],
+            "role": "generated"
+          }
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_import",
+      "locus": "/semantic_graph/nodes/47/owner/identity",
+      "cause": "missing-selection"
+    },
+    {
       "id": "MR-09",
       "description": "a second copy of the root; the copy has the root's key, so the package has two roots with one node_id",
       "patch": [

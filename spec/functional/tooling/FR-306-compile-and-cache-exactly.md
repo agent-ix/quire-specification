@@ -33,6 +33,9 @@ When a checked entry is executed through the interpreter, an ahead-of-time
 (AOT) backend or a just-in-time (JIT) backend, the backend SHALL return the
 interpreter's exact outcome.
 
+The producer SHALL recompute every `prove`, `analyze` and `generate` result on
+each invocation; no result is cached or reused between invocations.
+
 ## Inputs
 
 A checked package, the selected entries, arguments, objects and accounting
@@ -90,14 +93,14 @@ emits nothing (FR-331-AC-2).
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-306-AC-1 | The AOT and JIT backends return the interpreter's outcome, typed cause, location, loss records and `incomplete` charge point for every entry of the conformance corpus and of generated programs, and the outcome names no backend. | Test (TC-226) |
-| FR-306-AC-2 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-306-AC-3 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
+| FR-306-AC-2 | Withdrawn: it existed only for the result cache, which is removed; results are recomputed on every invocation. | Withdrawn |
+| FR-306-AC-3 | Withdrawn: it existed only for the result cache, which is removed; results are recomputed on every invocation. | Withdrawn |
 | FR-306-AC-4 | `--engine` outside `interpreter`, `aot` and `jit` refuses as an unknown argument (exit 20); a named backend the binary does not link refuses before any stage as unsupported (exit 21); an entry a backend cannot translate settles `unsupported` for that entry only, and no backend substitutes another. | Test (TC-226) |
 | FR-306-AC-5 | A JIT or AOT internal error is an internal failure (exit 30) and never a verdict, and reaching a preparation limit is a typed limit failure of preparation naming the limit, its value and its setting. | Test (TC-226) |
-| FR-306-AC-6 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-306-AC-7 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-306-AC-8 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-306-AC-9 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
+| FR-306-AC-6 | Withdrawn: it existed only for the result cache, which is removed; results are recomputed on every invocation. | Withdrawn |
+| FR-306-AC-7 | Withdrawn: it existed only for the result cache, which is removed; results are recomputed on every invocation. | Withdrawn |
+| FR-306-AC-8 | Withdrawn: it existed only for the result cache, which is removed; results are recomputed on every invocation. | Withdrawn |
+| FR-306-AC-9 | Withdrawn: it existed only for the result cache, which is removed; results are recomputed on every invocation. | Withdrawn |
 
 ## Dependencies
 

@@ -29,9 +29,10 @@ One FR-299 package or a typed failure with no partial package.
 
 ## Behavior
 
-The assembler SHALL verify record completeness and region bounds, recompute the
-source-package and target-byte digests, and derive the package identity over the
-closed FS06 preimage. It SHALL exclude path, time, locale and observer messages
+The assembler SHALL verify record completeness and region bounds, check that the
+source-package reference names the admitted request's package identity and
+version. The package is identified by its componentwise key; no digest is
+computed. It SHALL exclude path, time, locale and observer messages
 from output bytes and semantic identity unless a target profile explicitly
 defines a stable semantic representation for them.
 
@@ -42,8 +43,8 @@ and SHALL NOT change bytes, records, classifications or identity.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-125-AC-1 | Equal admitted inputs produce byte-identical target output, records and package identity. | Test (TC-155) |
-| FR-125-AC-2 | Any semantic input/profile/generator/record/limit/target-byte change changes or invalidates the corresponding identity. | Test (TC-154) |
+| FR-125-AC-1 | Equal admitted inputs produce byte-identical target output and records and compare equal as packages. | Test (TC-155) |
+| FR-125-AC-2 | Any semantic input/profile/generator/record/limit/target-byte change makes the package or record compare unequal or invalid. | Test (TC-154) |
 | FR-125-AC-3 | All output regions are in bounds and belong to their record; non-output dispositions claim none. | Test (TC-150) |
 | FR-125-AC-4 | Failure, cancellation, overflow or exhaustion exposes no partial package. | Test (TC-154) |
 | FR-125-AC-5 | Observer/tool output remains separate structural evidence and cannot alter semantic mapping state. | Test (TC-155) |
@@ -52,7 +53,7 @@ and SHALL NOT change bytes, records, classifications or identity.
 
 - [FR-121](FR-121-account-for-every-output-obligation.md).
 - [FR-299](../../objects/output-mapping/FR-299-generated-output-package.md).
-- FS05 strict references and [FR-201](../../objects/foundation/FR-201-canonical-identity-domain.md).
+- FS05 strict references.
 
 ## Status
 

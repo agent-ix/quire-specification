@@ -54,9 +54,8 @@ Build independent, shared, derived and unknown decision-support relations;
 remove each predecessor and dependence group, introduce self-reference and a
 cycle, and relabel shared support independent. Mutate every provenance identity
 and every canonical result member independently. For every valid result,
-independently recompute `resultId` from the FR-286 preimage, permute JSON object
-member presentation, mutate the identity-domain prefix, omit `resultId`, and
-reuse one valid identity on different canonical result bytes. Exercise each of the
+permute JSON object member presentation, mutate each `resultKey` member, omit
+`resultKey`, and reuse one valid key on different result members. Exercise each of the
 five FR-243 basis members, an unknown label and an absent basis with every
 permitted and forbidden truth/execution combination.
 
@@ -99,11 +98,11 @@ superseding or invalidating result without changing the earlier bytes, and
 dependent package success becomes unavailable. Result states remain structurally
 discriminable; missing evidence never improves truth, adequacy or package status;
 assumption, observation-adequacy and protocol-adequacy facts remain independent;
-valid support relations and lineage remain exact; and strict readers refuse stale
-result identities, same-ID/different-byte results, malformed lineage,
+valid support relations and lineage remain exact; and strict readers refuse missing
+keys, same-key/different-member results, malformed lineage,
 invented independence or adequacy cross-wiring while retaining independent valid
-results. Object-member presentation permutations preserve the independently
-recomputed result identity; every semantic member mutation changes it. The five
+results. Object-member presentation permutations preserve the
+result key; every key-member mutation changes it and attribute mutations do not. The five
 settlement bases admit only their exact truth/execution combinations, while
 unknown and absent bases refuse. Known and unknown participation remain
 structurally distinct; empty is not absent or unknown, exact role-instance

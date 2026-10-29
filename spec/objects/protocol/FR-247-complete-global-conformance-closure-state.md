@@ -53,8 +53,6 @@ When a global-conformance claim is reported, the result producer SHALL retain ex
   defaulted to `open` or to `not-required`: FR-061 refuses "a global claim without
   its complete-global-conformance closure record", and a non-global claim must
   carry `not-required` explicitly rather than by omission.
-- **Digest domain** — not applicable; this key contains no digest. See
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Five independent axes
 

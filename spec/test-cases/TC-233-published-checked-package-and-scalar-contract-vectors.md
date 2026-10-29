@@ -487,7 +487,7 @@ Each vector edits the published clause-operations package and edits the node bef
 
 ### Execution point identity vectors
 
-Each vector in `node-identity-vectors.json`'s `operation_vectors` applies the
+Each vector below applies the
 execution point to the published `positive-clause-operations.json` state-clause
 body. Both V2 schemas admit each. On complete package reads, exercise valid
 initialization/handler invariants and pre/post operation clauses, and verify

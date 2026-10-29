@@ -60,10 +60,6 @@ Synchronized clocks are likewise never inferred (FR-054).
   delivery or synchronized clocks" (FR-054), and a missing required component
   refuses admission. `unordered` is a present ordering member with a positively
   absent FIFO expression; it is not a default for a missing ordering policy.
-- **Digest domain** — every digest carried by a referenced static role, message
-  type, FIFO expression definition or qualified protocol-definition identity
-  retains its selected FR-201 domain. Equal bytes crossing domains are unequal;
-  no domain is inferred from result provenance.
 
 ## Acceptance Criteria
 

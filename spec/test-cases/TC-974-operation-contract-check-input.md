@@ -23,7 +23,7 @@ Check the operation-contract forms: an invariant with initial-state and preserva
 
 ## Test Procedure
 
-Read `proposals/backend-check-arm-v1/vectors.json`. For each case, derive each `$node:<label>` NodeId from its label as the file's `rekey` member states, recompute the FR-290 disposition from the case's registry and item, validate the case's outcome stage against `proposals/backend-provider-v1/schema.json`, apply the arm's own refusal gate, and compare the arm outcome with the result. The harness is `tests/backend_check_arm_v1.rs`; its pinned case list fails when a vector is removed.
+Read `proposals/backend-check-arm-v1/vectors.json`. For each case, resolve each `$node:<label>` to the NodeId of the node it labels, recompute the FR-290 disposition from the case's registry and item, validate the case's outcome stage against `proposals/backend-provider-v1/schema.json`, apply the arm's own refusal gate, and compare the arm outcome with the result. The harness is `tests/backend_check_arm_v1.rs`; its pinned case list fails when a vector is removed.
 
 The harness checks the shape of every `contract-counterexample` against the schema and FR-485: `bound` mirrors the item, `concrete` is present for a bound item and absent for an unbound one, an initial-state violation has no operation, a relation violation has two executions, a simulation violation's obligation and locus ordinal follow ordinal 0 = initial rule and k + 1 = step row k, and a frame violation hidden in a concrete location leaves the images equal and the concrete values different. It also checks the arm's refusal gate (no form, missing node, unbound element, no implementation engine, unbound frame).
 

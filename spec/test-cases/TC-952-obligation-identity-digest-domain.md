@@ -1,13 +1,13 @@
 ---
 id: TC-952
-title: "Obligation identity is structural"
+title: "Obligation identity is structural (retired name: obligation identity digest domain)"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-479
     type: verifies
 ---
 
-# TC-952: Obligation identity is structural
+# TC-952: Obligation identity is structural (retired name: obligation identity digest domain)
 
 ## Description
 

@@ -63,8 +63,6 @@ Outputs requires "separate attempt, effect, commit and recovery facts".
   FR-057-AC-4 states that "Missing state, commit or compensation-effect inputs
   yield incomplete/pending rather than recovery success"; an absent commit is
   never compared to a default, an empty commit or an implicit permitting commit.
-- **Digest domain** — the linked definition and FR-287 authority digest retain
-  their selected FR-201 domains.
 
 `commit Node` selects exactly one forbidding static boundary for the owning
 compensation definition. Only an established occurrence/observation of that

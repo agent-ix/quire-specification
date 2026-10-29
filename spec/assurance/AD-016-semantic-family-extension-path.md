@@ -350,7 +350,7 @@ layer-owned with a total conversion.
 
 | Concept | Shared / layer-owned | Owner | Total conversion and test |
 | --- | --- | --- | --- |
-| `Value`, `ValueType`, `Outcome`, `Refusal`, `BoundViolation`, `CardinalityBound`, `BoundedInteger`, `NodeKey`, `EffectiveId`, `UniverseId`, `ObjectId`, `UnitId`, `VariantId`, `MemberId`, `Origin`/`Location`, `ChargePoint`, `Meter`, `Incomplete` | **Shared (Owner decision 2)**: one `no_std` + `alloc` kernel holding exactly the types listed in this row plus `Undefined` and the scalar/collection operations over them. Checked node ids are the kernel `NodeKey`; this row is their only listing. The `Value` component types are exactly `EffectiveId` (reference type), `UniverseId` and `ObjectId` (reference), `UnitId` (quantity), `VariantId` (enum and sum) and `MemberId` (record member): each is an opaque 32-byte digest newtype with one public constructor from a digest that QSL computes, and none depends on QSL `check` or `model`. `EffectiveId`'s FR-201 digest domain is `quire.model.effective-declaration/v2` (QSL ADR-013 QC-2), and only QSL `model` calls its constructor (QSL ADR-013 O-05; ADR-011 T-12). `OPEN — decided in QSL #213`: the FR-201 digest domain of `UniverseId`, `ObjectId`, `UnitId`, `VariantId` and `MemberId`, and whether ADR-011 T-12 limits their minting (S-2). RT `exact/expression.rs` (`Frame`, `Body`, `CheckedPackage`, `Evaluation`, `plan_call`) and the `negotiate_*` predicates stay in RT. | `quire-exact` in QSL repo (`crates/quire-exact`); consumers QSL, RT, CG, footprint build | Kernel vs QSpec value/node-identity vectors. RT `conformance/qsl-agreement` is kept and retargeted to shared kernel vs QSpec canonical vectors. `NodeKey` → v2 wire string → IR `CheckedNodeId` round trip on I04 vectors. |
+| `Value`, `ValueType`, `Outcome`, `Refusal`, `BoundViolation`, `CardinalityBound`, `BoundedInteger`, `NodeId`, `EffectiveId`, `UniverseId`, `ObjectId`, `UnitId`, `VariantId`, `MemberId`, `Origin`/`Location`, `ChargePoint`, `Meter`, `Incomplete` | **Shared (Owner decision 2)**: one `no_std` + `alloc` kernel holding exactly the types listed in this row plus `Undefined` and the scalar/collection operations over them. Checked node ids are the kernel `NodeId`, the structural `{package, path, ordinal}` of FR-322; this row is their only listing. The `Value` component types are exactly `EffectiveId` (reference type), `UniverseId` and `ObjectId` (reference), `UnitId` (quantity), `VariantId` (enum and sum) and `MemberId` (record member): each is an opaque newtype with one public constructor that QSL calls, and none depends on QSL `check` or `model`. BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): the effective-declaration identity member of `EffectiveId`; only QSL `model` calls its constructor (QSL ADR-013 O-05; ADR-011 T-12). `OPEN — decided in QSL #213`: the identity members of `UniverseId`, `ObjectId`, `UnitId`, `VariantId` and `MemberId`, and whether ADR-011 T-12 limits their minting (S-2). RT `exact/expression.rs` (`Frame`, `Body`, `CheckedPackage`, `Evaluation`, `plan_call`) and the `negotiate_*` predicates stay in RT. | `quire-exact` in QSL repo (`crates/quire-exact`); consumers QSL, RT, CG, footprint build | Kernel vs QSpec value/node-identity vectors. RT `conformance/qsl-agreement` is kept and retargeted to shared kernel vs QSpec canonical vectors. `NodeId` → v2 wire value → IR node id round trip on I04 vectors. |
 | Semantic identity: `DeclarationKey` | Layer-owned | QSL `model::key` | Wire strings in v2; QSL emit ↔ IR `CheckedDomainPackageRef` round trip on I04 and TC-195 vectors |
 | Source locations | Layer-owned; QSL sole minter | QSL `SourceMap`/`LocatedSpan`; IR `CheckedSourceMapEntry`; RT reports kernel `Location` | FCD `Locus` → `LocatedSpan` (intake); occurrence key → span at replay; nested-span replay test |
 | IR value type, `ClauseKind` (6), `ExecutionPoint`, `CheckedNodeTag`, `Operator` | Layer-owned (target-neutral) | IR `quire-contract-model` | Total `From` from checked forms; exhaustive; `cargo mutants` on mapping fns |
@@ -368,8 +368,7 @@ If the kernel proposal is not accepted, every cell naming `quire-exact` or
 `conformance/qsl-agreement`. Scenario 1 then also touches RT. `OPEN` cells
 homed in D-2/WP5a/WP5b are decided in WP8 against RT's module path.
 
-Distinct types that share a name stay distinct: `state::CanonicalDigest` vs
-IR `CanonicalDigest`, QSL `linking::DeclarationKey` vs `model::DeclarationKey`,
+Distinct types that share a name stay distinct: QSL `linking::DeclarationKey` vs `model::DeclarationKey`,
 and the four `CheckedPackage` types.
 
 ### Crate graph
@@ -489,7 +488,7 @@ predictions, re-walked on landed code in WP11.**
 
 | Kind | Changes |
 | --- | --- |
-| Files | `quire-exact` `NodeKey` or QSL `model/key.rs`; QSpec vectors |
+| Files | `quire-exact` `NodeId` or QSL `model/key.rs`; QSpec vectors |
 | Crates | `quire-exact` or `quire-spec-language` |
 | Repos | QSL, QSpec |
 | Conversions | `DeclarationKey` wire round trip |
@@ -544,7 +543,7 @@ predictions, re-walked on landed code in WP11.**
 | 3 | Extend Q14 (complete-V1 executor) to Kani counterexample replay. |
 | 4 | Answer ADR-005: CG `kani_obligations` generates harnesses. |
 | 5 | CG → QSL normal dependency (WP9). |
-| 6 | Renames of `CanonicalDigest`/`DeclarationKey`/`CheckedPackage` deferred until the owner asks. |
+| 6 | Renames of `DeclarationKey`/`CheckedPackage` deferred until the owner asks. |
 
 ## Decisions
 

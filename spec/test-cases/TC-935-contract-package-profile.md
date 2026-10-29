@@ -66,7 +66,7 @@ below disagrees with it (FR-322-AC-180):
 
 Construct independently admitted FR-322 checked packages with the selected rows
 below and graph meaning valid under their own selections; do not mutate an
-admitted value's lock. Retain each input's exact package id and full lock as the
+admitted value's lock. Retain each input's exact package value and full lock as the
 independent expected output provenance. Use two distinct existing requested keys
 `a`, `b` with available source occurrences, in request order `[b, a]`; both can
 otherwise lower under the resolved profile's supported tags/bounds. Use resource
@@ -75,9 +75,9 @@ unchanged across the rows.
 
 | Case | `required_source_selections` | Input `lock.profile_selections` | Expected result |
 | --- | --- | --- | --- |
-| matching | `[T]` | `[T]` | Both requested items lower; source lock and package id equal that input exactly. |
+| matching | `[T]` | `[T]` | Both requested items lower; source lock and package equal that input exactly. |
 | missing | `[T]` | `[]` | Exactly `invalid_input(b)`, `invalid_input(a)`; no semantic nodes; both exact request occurrence sets retained. |
-| differing identity | `[T]` | `[D]` | The same two `invalid_input` records; no substitute `T`, no node or backend artifact; output still retains `[D]` and its originating package id. |
+| differing identity | `[T]` | `[D]` | The same two `invalid_input` records; no substitute `T`, no node or backend artifact; output still retains `[D]` and its originating package. |
 | unrelated selection | `[T]` | `[U, T]` | Both items lower; output retains `[U, T]` in that order, including the unrelated row. |
 
 Repeat the unrelated case with lock order `[T, U]` in a separately admitted
@@ -93,7 +93,7 @@ its authority changed to `other-authority`; the original `[T]` input refuses
 rather than matching its display identity alone. In every refusal, the serialized
 record has only `node_id` and `disposition: "invalid_input"`; no fabricated
 cause/pointer is added. Compare the entire emitted source lock and originating
-package id against the retained expected values on every successful and refused
+package against the retained expected values on every successful and refused
 run, not merely the row used by the predicate. These are producer controls; the
 ContractPackage reader is not given or assumed to reconstruct requirements.
 
@@ -122,5 +122,5 @@ with limit `W - 1`, consumed `W`, no returned node and no substitute artifact.
 This binds comparison and traversal to one meter: restarting at the closure
 would incorrectly admit the one-under run. Independently derive `C` from the
 fixture's graph/body structure rather than from a previous implementation count.
-Every emitted result still preserves the entire originating lock and package id;
+Every emitted result still preserves the entire originating lock and package;
 its `failed` counters retain the existing canonical unsigned-decimal wire form.

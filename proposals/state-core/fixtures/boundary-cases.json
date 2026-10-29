@@ -1,6 +1,6 @@
 {
   "status": "proposed-mutation-expectations-not-observed-diagnostics",
-  "note": "Source edits other than stale-source require refreshed source digests before the intended parser/typechecker phase. Model mutations require actual linked input fixtures when that contract is available.",
+  "note": "Model mutations require actual linked input fixtures when that contract is available.",
   "cases": [
     {
       "id": "unknown-language-profile",
@@ -21,13 +21,6 @@
       "artifact": "subject.json",
       "mutation": "append arbitrary-required-feature to profile.requiredFeatures",
       "expectedDiagnostic": "unknown_required_feature",
-      "expectedLogicalValue": "absent"
-    },
-    {
-      "id": "stale-source",
-      "artifact": "parent-order.native",
-      "mutation": "change the final comparison < to <= without changing source.digest",
-      "expectedDiagnostic": "stale_dependency",
       "expectedLogicalValue": "absent"
     },
     {

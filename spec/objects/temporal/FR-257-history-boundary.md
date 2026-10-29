@@ -74,10 +74,6 @@ false and Boolean constants as unchanged."
   conclusive Boolean" (FR-092-AC-4). FR-094-AC-6 holds that "Missing
   predecessor/history on restart requires replay or an admitted
   state-restoration contract and cannot resume as a fresh complete stream."
-- **Digest domain** — a boundary or authority component carried as a digest
-  retains the domain it was derived under
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
-  crossing domains is unequal regardless of byte equality.
 
 ## A boundary is not an anchor
 

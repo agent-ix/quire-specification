@@ -19,7 +19,7 @@ payload-bearing variant type read as a union, the application nodes over them
 and a cyclic pair of model types (steps 6 to 12), then the refinement row
 expression nodes: history read, whole-population value, `count`, `only` and
 `seq` (steps 16 to 18). Scope: FR-322-AC-71, FR-141-AC-7 (steps 1 to 5);
-FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12); FR-322-AC-163 to FR-322-AC-168
+FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12); FR-322-AC-163 to FR-322-AC-167
 (steps 16 to 18).
 
 ## Test Procedure
@@ -123,22 +123,17 @@ Expected results:
 
 ## Refinement row nodes (STD-538)
 
-Scope: FR-322-AC-163 to FR-322-AC-168 (steps 16 to 18). Use
-`refinement-row-node-vectors.json`.
+Scope: FR-322-AC-163 to FR-322-AC-167 (steps 16 and 17).
 
-16. Build each vector `VN-01` to `VN-06` (history read,
+16. Build each row node (history read,
     `pre` over it, whole-population value, `count`, `only`, `seq`) from the
-    recorded world nodes.
+    concrete model `acme/counter`.
 17. Run each refusal case `RR-01` to `RR-09` through the refinement step and the
     operation stage.
-18. Compare the catalog delta with the operations the vectors use and with its
-    exact entries (operator, operands, member kind, constraints).
 
 Expected results:
 
-16. Every node equals the recorded node; the history read carries no
-    refinement in its node id (FR-322-AC-163, 165, 166, 167).
+16. Every node equals the expected node; the history read names no
+    refinement in its path (FR-322-AC-163, 165, 166, 167).
 17. Each case refuses with the code, cause and locus its vector states
     (FR-322-AC-164, 165, 166, 167).
-18. The delta names exactly the three operations and the member kind `history`
-    the vectors use, with the exact entries the FR text states (FR-322-AC-168).

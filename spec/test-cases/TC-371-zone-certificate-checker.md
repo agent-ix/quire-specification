@@ -15,6 +15,8 @@ relationships:
 
 # TC-371: Zone certificate checker
 
+BLOCKED-BY STD-606 (owner: planner titan:QSL:plan): State locus `{domain, digest}` of rows ZC-08 and ZC-14 (StateKey digest record, FR-331).
+
 ## Description
 
 Accept valid zone certificates and reject or refuse invalid ones, recomputing every successor in exact arithmetic.

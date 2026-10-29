@@ -8,8 +8,6 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-266
     type: references
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
   - target: ix://agent-ix/quire-specification/FR-255
     type: references
   - target: ix://agent-ix/quire-specification/FR-289
@@ -44,18 +42,16 @@ selected cutoff rather than silently rewriting an already settled result", and
 FR-113-AC-3 that "A late event is retained as late and cannot silently replace
 the selected settled result."
 
-The v1 authority identity is derived under `quire.verification.jcs` from the
-exact definition identity, subject scope, clock
-selection, required source set, boundary convention and restoration basis.
-The v1 cutoff identity is derived separately under
-`quire.verification.jcs` from the clock selection, cutoff instant and cutoff
-rule identity.
+The v1 authority key is the exact definition identity and version, subject
+scope, clock selection, required source set, boundary convention and restoration
+basis. The v1 cutoff key is separately the clock selection, cutoff instant and
+cutoff rule identity and version.
 
 ## Identity and comparison
 
-- **Identity kind** — *derived*. Authority and cutoff have separate
-  `sha256-jcs:<hex>` identities over the preimages above.
-- **Key** — the complete derived identity of the selected authority or cutoff.
+- **Identity kind** — *value*. Authority and cutoff have separate componentwise
+  keys as above; there is no derived content hash.
+- **Key** — the complete key of the selected authority or cutoff.
   All named semantic components participate; display name, source path, span,
   message text, locale and rendering never do.
 - **Key order** — bytewise over `definition identity`, for collection
@@ -72,8 +68,6 @@ rule identity.
   nor a violated one. An absent or mismatched restoration basis, scope, clock or
   source set "SHALL retain an incomplete or refused input" (FR-113 Behavior) and
   is never defaulted.
-- **Digest domain** — authority and cutoff identities use
-  `quire.verification.jcs`. A crossing domain is unequal.
 
 ## Late data
 
@@ -100,8 +94,8 @@ half-open end/watermark and the inclusive deadline is insufficient.
 | FR-268-AC-3 | An event classified late against the selected cutoff leaves the previously settled result's bytes unchanged. | Test (TC-143) |
 | FR-268-AC-4 | A mismatched assertion definition, scope, clock, source set or restoration basis compares only to absence for settlement purposes and does not restart an assessment. | Test (TC-143) |
 | FR-268-AC-5 | A native inclusive deadline is covered only through an exact FR-289 mapping; equality of a half-open end/watermark with that deadline cannot settle it. | Test (TC-143) |
-| FR-268-AC-6 | Any authority scope, clock, required-source set, boundary or restoration-basis mutation changes the authority identity; any cutoff clock, instant or rule-identity mutation changes the cutoff identity. | Test (TC-143) |
-| FR-268-AC-7 | Missing, foreign-domain, duplicate or unbounded authority/cutoff inputs refuse before settlement or timing classification. | Test (TC-143) |
+| FR-268-AC-6 | Any authority scope, clock, required-source set, boundary or restoration-basis mutation makes the authority compare unequal; any cutoff clock, instant or rule identity or version mutation makes the cutoff compare unequal. | Test (TC-143) |
+| FR-268-AC-7 | Missing, duplicate or unbounded authority/cutoff inputs refuse before settlement or timing classification. | Test (TC-143) |
 
 ## Dependencies
 
@@ -115,8 +109,6 @@ half-open end/watermark and the inclusive deadline is insufficient.
 - [FR-255](../temporal/FR-255-bounded-temporal-interval.md) records the
   inclusive temporal convention this authority is asked to cover, and the
   conflict with the half-open observation convention.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain rule.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
 

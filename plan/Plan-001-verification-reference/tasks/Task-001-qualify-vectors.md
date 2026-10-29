@@ -8,8 +8,6 @@ priority: P1
 relationships:
   - target: ix://agent-ix/quire-specification/FR-017
     type: references
-  - target: ix://agent-ix/quire-specification/FR-018
-    type: references
   - target: ix://agent-ix/quire-specification/TC-001
     type: verifies
   - target: ix://agent-ix/quire-specification/TC-002

@@ -77,9 +77,6 @@ A completed analysis that found no counterexample up to a depth is
 - **Causal order** — none. A result-disposition label is not a causal node.
 - **Absence** — an absent result-disposition compares only to absence and is
   never defaulted to `inconclusive` or to any other member.
-- **Digest domain** — not applicable; this key contains no digest. Where a
-  containing result's key carries a digest, its domain is
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Acceptance Criteria
 

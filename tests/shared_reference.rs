@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Agent-IX
 
-//! Producer structure and real B canonicalizer parity, not a shared reader.
+//! Producer structure checks, not a shared reader.
 //! Fixture loading keeps the last value of a raw duplicate key. Strict intake
 //! and semantic matching remain IT-003-SC-03.
 
@@ -10,9 +10,7 @@ use std::io::Read;
 use std::path::{Component, Path};
 
 use ix_trace_rs::trace;
-use quire_verification_contracts::{jcs_canonicalize, jcs_sha256};
 use serde_json::{Value, json};
-use sha2::{Digest, Sha256};
 
 const ROOT: &str = concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -347,7 +345,7 @@ fn six_role_shapes_have_exact_roles() {
 fn structural_negatives_and_semantic_boundary() {
     let schema = validator();
     let semantic = fixture("semantic.json");
-    schema.validate(&semantic).expect("positive JCS shape");
+    schema.validate(&semantic).expect("positive semantic shape");
     let adverse = fixture("adverse.json");
     for case in adverse["structuralMutations"]
         .as_array()
@@ -364,7 +362,6 @@ fn structural_negatives_and_semantic_boundary() {
         "language",
         "semanticProfile",
         "requiredFeatures",
-        "canonicalIdentity",
     ] {
         let mut candidate = semantic.clone();
         candidate["value"]
@@ -420,77 +417,6 @@ fn structural_negatives_and_semantic_boundary() {
             }
         }
     }
-    for domain in [
-        "quire.contract.canonical-json",
-        "quire.contract.bound-identity",
-    ] {
-        let mut candidate = semantic.clone();
-        candidate["value"]["canonicalIdentity"] = json!({"domain":domain,"version":"v1","algorithm":"sha256","digest":"0000000000000000000000000000000000000000000000000000000000000000"});
-        assert!(schema.is_valid(&candidate));
-        candidate["value"]["canonicalIdentity"]["digest"] =
-            semantic["value"]["canonicalIdentity"]["digest"].clone();
-        assert!(!schema.is_valid(&candidate));
-    }
-}
-
-#[test]
-#[trace("IT-003-SC-02")]
-fn independently_authored_canonical_bytes_match_b() {
-    let vectors = fixture("canonical-vectors.json");
-    for vector in vectors.as_array().expect("canonical vectors") {
-        let input =
-            intake(vector["input"].as_str().expect("input text").as_bytes()).expect("valid JSON");
-        let expected = vector["canonical"]
-            .as_str()
-            .expect("golden bytes")
-            .as_bytes();
-        assert_eq!(
-            jcs_canonicalize(&input).expect("B canonicalizer"),
-            expected,
-            "{}",
-            vector["id"]
-        );
-        assert_eq!(
-            jcs_sha256(&input).expect("B digest"),
-            format!("sha256-jcs:{:x}", Sha256::digest(expected))
-        );
-    }
-    assert_eq!(
-        jcs_canonicalize(&json!({"a":1,"b":2})).unwrap(),
-        jcs_canonicalize(&intake(br#"{"b":2,"a":1}"#).unwrap()).unwrap()
-    );
-    assert_ne!(
-        jcs_canonicalize(&json!([2, 1])).unwrap(),
-        jcs_canonicalize(&json!([1, 2])).unwrap()
-    );
-}
-
-#[test]
-#[trace("IT-003-SC-02")]
-fn synthetic_core_is_the_non_circular_preimage() {
-    let core = fixture("core.json");
-    jsonschema::validator_for(&fixture("core.schema.json"))
-        .unwrap()
-        .validate(&core)
-        .unwrap();
-    let semantic = fixture("semantic.json");
-    let digest = jcs_sha256(&core).expect("B core digest");
-    assert_eq!(semantic["value"]["canonicalIdentity"]["digest"], digest);
-    assert_eq!(
-        semantic["value"]["semanticProfile"]["definitionDigest"],
-        format!(
-            "sha256:{:x}",
-            Sha256::digest(bytes("fixtures/profile.json").expect("fixture within the byte limit"))
-        )
-    );
-    let disposition = fixture("review-disposition.json");
-    assert_eq!(disposition["coreDigest"], digest);
-    let wrapper = json!({"automatedCore":core,"disposition":disposition});
-    assert_eq!(jcs_sha256(&wrapper["automatedCore"]).unwrap(), digest);
-    assert_ne!(jcs_sha256(&wrapper).unwrap(), digest);
-    let mut changed = wrapper["automatedCore"].clone();
-    changed["reportId"] = json!("foreign-core");
-    assert_ne!(jcs_sha256(&changed).unwrap(), digest);
 }
 
 #[test]
