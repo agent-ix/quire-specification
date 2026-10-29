@@ -40,11 +40,11 @@ Fixtures:
     (required, `1..1`), listed by no namespace.
 - **K1**: the domain package that quire-rs extraction and the FCD
   extraction-frontend lift produce from B1.
-- **U1**: a unit with `model M = "test/orders" digest "<SHA-256 over K1's JCS bytes>";`.
+- **U1**: a unit with `model M = "test/orders";`.
 - **U2**: U1 with the alias `Shop` in place of `M`.
 
-Each vector adds the named clauses to B1, re-extracts, re-lifts and re-digests
-K1, and updates both units' digests.
+Each vector adds the named clauses to B1, re-extracts and re-lifts
+K1; the units are unchanged, since a unit names no digest.
 
 | Vector | Input | Expected result/disposition |
 | --- | --- | --- |
@@ -56,7 +56,7 @@ K1, and updates both units' digests.
 | R06 | `Audit` invariant `NoAlias`: `OrderManagement::OrderStatus::Draft = OrderManagement::OrderStatus::Draft`; `Audit` invariant `NonNegative`: `self.entries >= 0` | `NoAlias` gives two `refused { code: missing_declaration, cause: missing-name }` at `OrderManagement`, in source order, naming `ix://test/orders/Audit/NoAlias`; `NonNegative` checks with no refusal (FR-470-AC-5) |
 | R07 | B1 plus the `domain` artifact with id `Billing`, members `Invoice`, and the `entity` artifact with id `Invoice`, field `status` typed `OrderStatus`; `Invoice` invariant `OwnAlias`: `self.status = Billing::OrderStatus::Draft`; `Invoice` invariant `OtherAlias`: `self.status = OrderManagement::OrderStatus::Draft` | `OwnAlias` checks with no refusal and its name resolves to the R01 `Draft` key; `OtherAlias` is exactly one `refused { code: missing_declaration, cause: missing-name }` at `OrderManagement`, naming `ix://test/orders/Invoice/OtherAlias` (FR-470-AC-6) |
 | R08 | `Order` invariant `Absent`: `self.status = OrderManagement::OrderStatus::Shipped`; `Order` invariant `TwoAbsent`: `self.status = OrderManagement::OrderStatus::Shipped or self.status = OrderManagement::OrderStatus::Lost`; `Order` invariant `NoType`: `self.status = OrderManagement::Nope::Draft` | `Absent` is one `refused { code: ill_typed, cause: type-mismatch }` at the name, naming `OrderStatus` and `Shipped`; `TwoAbsent` is two such refusals, naming `OrderStatus` and `Shipped`, then `OrderStatus` and `Lost`; `NoType` is one `refused { code: missing_declaration, cause: missing-name }` naming absent node `ix://test/orders/Nope` (FR-470-AC-7) |
-| R09 | Four `Order` invariants whose text begins, in turn, with `model M = "test/orders" digest "<K1 digest>";`, `import`, `profile` and the `quire` header, each followed by `self.status = OrderManagement::OrderStatus::Draft` | each is exactly one `refused { code: invalid_syntax, cause: unexpected-token }` at its first token, and no name of that clause is resolved (FR-470-AC-8) |
+| R09 | Four `Order` invariants whose text begins, in turn, with `model M = "test/orders";`, `import`, `profile` and the `quire` header, each followed by `self.status = OrderManagement::OrderStatus::Draft` | each is exactly one `refused { code: invalid_syntax, cause: unexpected-token }` at its first token, and no name of that clause is resolved (FR-470-AC-8) |
 | R10 | `Order/place` given `post` entry `self.status = OrderManagement::OrderStatus::Placed`, checked under U1; then `Order/place` given `post` entry `self.status = M::OrderStatus::Placed`, checked under U1 | the first checks with no refusal and the name resolves to `(test/orders, ix://test/orders/variant/OrderStatus-Placed)`; the second is exactly one `refused { code: missing_declaration, cause: missing-name }` at `M`, naming the operation's identity with the `post` entry and its position (FR-470-AC-9) |
 | R11 | `Fulfilment` guard clause `GuardOpen`: `self.status = OrderManagement::OrderStatus::Draft`, checked under U1 and under U2; then `GuardOpen`: `self.status = M::OrderStatus::Draft`, checked under U1 | the first checks with no refusal, the name resolves to the R01 `Draft` key through `Fulfilment`'s self alias, and the keys and results are byte-equal between U1 and U2; the second is exactly one `refused { code: missing_declaration, cause: missing-name }` at `M`, naming `ix://test/orders/Fulfilment/GuardOpen` and its `origin` (FR-470-AC-10) |
 

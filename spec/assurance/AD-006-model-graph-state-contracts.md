@@ -88,7 +88,7 @@ flowchart TD
    embeds each kind's construct with its Quire meaning id. The
    lowering is deterministic, serialized with RFC 8785 and fingerprinted with
    `sha256-jcs`.
-3. **Intake.** QSL admits a domain package by identity and `sha256-jcs` digest
+3. **Intake.** QSL admits the domain package supplied under a selected identity, derives its `sha256-jcs` digest and records it in the package lock,
    and builds Quire model declarations from its IR nodes. It checks every model rule in
    this document. A domain package that fails a rule refuses with a located
    diagnostic that retains the node's IR identity and `origin`.
@@ -125,8 +125,10 @@ never evaluated or used as proof obligations.
 
 ## Language surface
 
-- A Quire package imports a domain package by identity and
-  `sha256-jcs` digest. The import is part of the package identity.
+- A Quire package imports a domain package by identity alone, as it imports a
+  library (FR-307). The resolver derives the package's `sha256-jcs` digest and
+  records it in the lock's `model_selections` row; the row is part of the
+  package identity and the source states no digest.
 - Clauses name domain types by qualified name over their IR node identity, for
   example `Orders::Order` for the artifact with id `Order`.
 - Native `record`, `enum` and `tuple` declarations remain the way to write value
@@ -183,6 +185,6 @@ adds no normalization rule or effective-identity member.
 | Risk | Control |
 | --- | --- |
 | An artifact declares a feature its module manifest cannot extract | Extraction refuses with the artifact, section and span. No feature is inferred. |
-| Generated types and the model view drift | Both read one domain package, pinned by `sha256-jcs` digest in the CheckedPackage. |
+| Generated types and the model view drift | Both read one domain package, pinned by the `sha256-jcs` digest the lock's `model_selections` row records in the CheckedPackage. |
 | Dynamic dispatch becomes open-world | Dispatch requires the closed subtype set and reports ambiguity or incompleteness. |
 | Graph bounds are mistaken for semantic truncation | Exhaustion is incomplete; no cutoff returns false. |

@@ -43,11 +43,13 @@ serialized with RFC 8785 JCS and fingerprinted with `sha256-jcs`.
 A package imports a domain package with a `model` declaration:
 
 ```text
-model Orders = "acme/orders" digest "<64 lowercase hex digits>";
+model Orders = "acme/orders";
 ```
 
-The import is a ModelSelection (FR-321):
-`{identity, digest_domain: "sha256-jcs", digest}`. It is part of the
+The source names the domain package identity only: no version and no digest
+(FR-154 "Model selection in source"). The resolver derives the digest and
+records the import as a ModelSelection (FR-321) row of the package lock:
+`{identity, digest_domain: "sha256-jcs", digest}`. The row is part of the
 package identity. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
 declaration. Clauses of a unit name a declaration by qualified name: the model alias,
@@ -64,14 +66,13 @@ the rule.
 ### Intake
 
 Rule `quire.model.normalize.intake/v1` admits one domain package. The package
-input is a map from `sha256-jcs` digest to package bytes. Intake first checks the selection's identity, then looks up the
-bytes by the selected digest and reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
+input is a map from domain package identity to package bytes, one document per identity. Intake first checks the selection's identity, then looks up the
+bytes by that identity, derives the `sha256-jcs` digest of the supplied document and reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
 
 | Check | Refusal |
 | --- | --- |
 | The selection's domain package identity equals `quire/native` or `quire/unit`, or begins `quire/native/` or `quire/unit/` (a reserved identity) | `invalid_model_binding`/`malformed-declaration` |
-| The selection's digest domain is exactly `sha256-jcs` | `stale_dependency`/`digest-domain-mismatch` with the expected and actual domain |
-| The package input supplies bytes under the selected digest | `missing_import`/`missing-selection` with the ModelSelection |
+| The package input supplies bytes under the selection's identity | `missing_import`/`missing-selection` with the ModelSelection |
 | The package's own identity equals the selection's | `invalid_model_binding`/`wrong-model-selection` with both |
 
 Intake then reads each IR node and builds one original declaration per node.

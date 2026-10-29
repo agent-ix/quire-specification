@@ -131,8 +131,7 @@ derivation paths and exposes no effective member for either. A redefinition
 whose target is not an inherited member is refused
 `invalid_model_binding`/`redefinition-target`. A supertype cycle is refused
 `invalid_model_binding`/`specialization-cycle`. A ModelSelection whose digest
-domain is not `sha256-jcs` is refused `stale_dependency`/`digest-domain-mismatch`; model intake does not
-recompute the digest of a supplied document. A model `variant` type
+domain is not `sha256-jcs` is refused `stale_dependency`/`digest-domain-mismatch`; model intake derives the digest of a supplied document (FR-154) and no source states one. A model `variant` type
 referenced by source is admitted (FR-208). Canonical ordering
 affects identity bytes only; it never changes a declaration key or resolves
 semantic ambiguity.

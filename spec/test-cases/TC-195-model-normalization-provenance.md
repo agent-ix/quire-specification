@@ -28,7 +28,7 @@ by id `B` titled `Beta`, `C` by id `C` titled `Gamma` and `D` by id `D` titled
 `Delta`; each type definition's construct meaning is
 `quire.meaning.model.object-type/v1`, and each field's span is its Properties
 row. Rows N04 and N05 admit package bytes: their ModelSelection digest is the
-SHA-256 of those JCS bytes, and the bytes are supplied under that digest. Every
+SHA-256 of those JCS bytes, derived by the resolver from the bytes supplied under the identity `test/orders`. Every
 other row enters at the normalization boundary with a fixed placeholder
 ModelSelection, not the digest of real package bytes: F1 selects the SHA-256 of
 the UTF-8 bytes `n01`, F2 of `n02`, and F1 republished under a second digest of `n01v2`. The
@@ -47,7 +47,7 @@ Fixtures:
 - **F2**: F1's nodes plus object types `C` with `supertypes = [A]` and `D`
   with `supertypes = [B, C]`. Five IR nodes.
 - **Source S1**: `language "ix:native" edition "1-draft";`, one profile with
-  alias `V`, `model M = "test/orders" digest "<F2 digest>";`.
+  alias `V`, `model M = "test/orders";`.
 
 | Vector | Input | Expected result/disposition |
 | --- | --- | --- |
