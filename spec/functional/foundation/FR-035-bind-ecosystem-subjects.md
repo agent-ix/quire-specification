@@ -39,7 +39,7 @@ by a currently activated obligation are distinct prerequisites.
 Runtime binding checks the package contract's stage-specific prerequisites
 against the already linked selections. A prior successful type-check cannot
 supply missing required runtime scope or authority. The domain package
-identity and version and native raw-byte digests remain separate; a runtime input
+identity and native raw-byte digests remain separate; a runtime input
 cannot override the linked domain package or profile.
 
 Every concrete runtime subject SHALL be identified by one authority-qualified

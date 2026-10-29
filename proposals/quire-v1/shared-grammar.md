@@ -275,12 +275,11 @@ token included, is `refused { code: invalid_syntax, cause: unexpected-token }`
 at that token; a `model` whose identity string is absent or is not a string is
 `refused { code: invalid_syntax, cause: unexpected-token }` at the offending
 token, or `unexpected-end` at the end of the source, and never drops the
-declaration silently. The resolver reads the `version` member of the semantic
+declaration silently. The resolver records the identity of the semantic
 IR document lifted from the imported spec's artifacts
 ([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)) that is
-supplied under the identity, and records the identity and version
-in the package lock's `model_selections` row (FR-154, FR-321); no digest of the
-document exists. The selected row is part of the package identity. Clauses name
+supplied under it by a `model_root` node (FR-154, FR-321); no digest or
+version of the document is recorded. The selected row is part of the package identity. Clauses name
 domain types by qualified name through the model alias, for example
 `Orders::Order` after `model Orders = "acme/orders";`. A qualified name
 resolves to one effective declaration key (domain package identity, IR node

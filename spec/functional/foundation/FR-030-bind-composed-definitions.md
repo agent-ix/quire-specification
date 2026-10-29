@@ -13,8 +13,8 @@ When admitting a composed native package, the frontend SHALL bind every clause t
 ## Inputs
 
 Native source with exact byte/span identity, clause declarations,
-selected definition identities and imported domain package identities (a `model` names the identity alone; the resolver records its
-identity and version in the lock). Selection is authored or explicitly supplied by the source
+selected definition identities and imported domain package identities (a `model` names the identity alone; the lock records its
+identity). Selection is authored or explicitly supplied by the source
 profile; installed backends never choose it.
 
 ## Outputs
@@ -31,7 +31,7 @@ cannot introduce a second editable authority. Runtime observations and changing
 monitor state do not participate in static package identity.
 
 The [package contract](../../../proposals/quire-v1/package-contract.md) defines the
-static components, the lock's recorded model versions and typed binding requirements. The
+static components, the lock's recorded model identities and typed binding requirements. The
 compiler input inventory closes the native declaration namespace. Checked output
 retains per-declaration dependency dispositions; partial admission is not a
 complete package. Static subject identity differs from serialized artifact bytes
@@ -40,7 +40,7 @@ and build provenance; an unqualified canonical digest is not claimed.
 The linker's prerequisites follow the package contract's processing-stage table.
 Concrete populations, windows and observations are later assessment inputs,
 not prerequisites for type-checking a valid future obligation. A domain package
-is selected by its identity, and the lock records the version of the supplied document. A definition is selected by
+is selected by its identity, and its `model_root` node records the identity. A definition is selected by
 its byte digest. The linker keeps each digest in its own domain and never
 substitutes one for the other.
 
@@ -57,7 +57,7 @@ substitutes one for the other.
 | FR-030-AC-7 | Linked binding roles retain owning declaration, source region, kind, exact type/contract, anchor and scope prerequisites; equal local names in different clauses do not merge their roles. | Test (TC-030) |
 | FR-030-AC-8 | A compile configuration change limited to resource controls remains visible in provenance while preserving the static subject; a changed semantic selection changes the static subject. | Test (TC-030) |
 | FR-030-AC-9 | A valid three-family template links with exact static model/definition/binding contracts and no runtime population, window or observations; removing a required static definition still refuses its dependent declaration. | Test (TC-030) |
-| FR-030-AC-10 | The domain package selection (identity and version) and each definition selection (byte digest) are retained and validated in their own domains; a missing domain package, a domain type absent from it and cross-domain digest substitutions refuse the dependent static binding. | Test (TC-030) |
+| FR-030-AC-10 | The domain package selection (identity) and each definition selection (byte digest) are retained and validated in their own domains; a missing domain package, a domain type absent from it and cross-domain digest substitutions refuse the dependent static binding. | Test (TC-030) |
 
 ## Dependencies
 

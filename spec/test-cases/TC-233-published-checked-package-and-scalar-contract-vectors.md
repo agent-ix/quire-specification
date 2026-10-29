@@ -98,7 +98,7 @@ published dependency selections of `dependency-selection-vectors.json` into
 the all-families package's lock and identity preimage, require the schema to
 admit it and its recorded package id to recompute, require each authored
 entry mutation, and each `model_entry_mutations` entry placed in
-`model_selections`, to fail the schema in either member at the mutated entry, and
+`lock`, to fail the schema in either member at the mutated entry, and
 apply each order vector's selections to require its recorded order outcome.
 Treat the members the vectors file lists in `schema_only` as schema and order vectors only, not as supplied packages. Check supply order with the `supply_vectors`: neither entry supplied refuses the first; the first supplied and the second not refuses the second; the first supplied but stale and the second not refuses `stale_dependency`/`content-mismatch` at the first, not `missing-selection` at the second (FR-322-AC-84). Check a `dependency_reference` refusal's locus: `missing-selection` at the term's `package` member, `missing-name` at its `node` member and `operator-ineligible` at the term, under the term's pointer in its node's `body`. Check a function whose parameter is of a declared record type, and one whose body only references a declared record, to decide the signature type nodes: only the first is ineligible.
 Apply the published closure vectors to two direct dependencies whose own locks
@@ -342,7 +342,7 @@ operand 0, with its key and its application's key recomputed; the `counters` and
 nodes, applications and package ids differ and `counters` is one node for both operations),
 each admitted; `population-owned-by-an-object-type` and `population-owned-by-an-undeclared-node`
 (`missing_declaration`/`missing-selection` at the population node);
-`population-without-an-owner` (`malformed_wire`); `population-entry-without-an-identity-refused` (entries that carry a `node` and no `identity`), `population-entry-with-a-node-member-refused` (the published entries plus a `node` member) and `population-entry-lacking-only-an-identity-refused` (the published entries with one `identity` removed), each `invalid_model_binding`/`malformed-declaration` at `package_read`, at `/lock/model_selections/0`, before the owner join (FR-322-AC-82); and
+`population-without-an-owner` (`malformed_wire`); `population-entry-without-an-identity-refused` (entries that carry a `node` and no `identity`), `population-entry-with-a-node-member-refused` (the published entries plus a `node` member) and `population-entry-lacking-only-an-identity-refused` (the published entries with one `identity` removed), each `invalid_model_binding`/`malformed-declaration` at `package_read`, at `/semantic_graph/nodes/0/owner`, before the owner join (FR-322-AC-82); and
 `population-as-a-relationship-declaration`, `population-as-a-field-declaration`,
 `population-as-an-operation-declaration`, `population-as-a-reaches-population-link` and
 `population-as-a-collection-operand`

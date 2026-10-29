@@ -151,10 +151,8 @@ structures, but any external consumer receives only the contract.
   identity preimage's `dependency_selections`, and entry mutations the schema
   refuses: a `Selection` or `DefinitionRef` shape, a missing `package_id`, a
   bare-digest `package_id`, a `package_id` in another digest domain and an
-  extra `version` member. Its `model_selections` entry and
-  `model_entry_mutations` pin the same rule for a `ModelRef`: one carrying
-  `version` fails the schema at that entry and a reader refuses it
-  `unknown_member`. Its `order_vectors` pin FR-322's order rule: entries in UTF-8 byte
+  extra `version` member. A lock with a `model_selections` member fails the schema (a model is recorded by its `model_root` node only; FR-322).
+  Its `order_vectors` pin FR-322's order rule: entries in UTF-8 byte
   order (where UTF-16 order differs) are admitted, a repeated identity
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.

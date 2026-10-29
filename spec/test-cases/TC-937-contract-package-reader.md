@@ -80,7 +80,7 @@ Also admit separate valid typed refusals: one `invalid_package`/`invalid-value`
 with `path` equal to the empty string (the root pointer) and
 `document_pointer` absent, and one `stale_dependency`/`content-mismatch` with
 `document_pointer` equal to the empty string and `path` set to
-`/lock/model_selections/0/version`. Admit a valid non-byte incomplete value
+`/lock/dependency_selections/0/package_id`. Admit a valid non-byte incomplete value
 whose typed `path` is the empty string; this is distinct from TC-933's producer
 check for omitted typed pointers.
 For cause validation, test an unknown cause string, a known FR-272 cause paired

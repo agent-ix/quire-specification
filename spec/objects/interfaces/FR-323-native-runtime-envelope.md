@@ -34,7 +34,7 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   `{package_id, contract_version, sources, dependencies}` plus the optional
   `refinement_internals` below. Definition and
   domain-package documents are reached through `byte_provision` by the
-  identity the recompiled sources name; the lock row's version is checked against the document's.
+  identity the recompiled sources name.
   `sources` is the proved package's own FR-322 lock `sources`.
   `dependencies` holds one entry per library identity in the proved package's
   derived closure (its direct selections plus the closure of every selected
@@ -85,7 +85,7 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 - `byte_provision` — present on a replay request only: the bytes of every
   source and definition input the replay recompiles, each keyed by its declared
   digest domain and digest, and every domain-package document, keyed by its
-  identity, whose `version` is checked against its lock row's (QSL ADR-013 QC-1). The executor obtains every recompilation input from this
+  identity its own `package.identity` member declares (QSL ADR-013 QC-1), the entries forming one ordered provision whose position is the request's position (FR-336), with no version or digest compared. The executor obtains every recompilation input from this
   provision and never from a path, environment variable or search location.
   Before any recompile, an input the `package` reference names that the
   provision does not carry refuses `missing_import`/`missing-selection`,
@@ -94,11 +94,9 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   the `package` reference that names it; an entry under a raw-byte digest
   domain such as `quire.source.bytes/v1` whose bytes do not match its
   declared digest refuses `stale_dependency`/`byte-digest-mismatch`, naming
-  the declared digest and the digest of the supplied bytes; and a
-  domain-package document whose `version` differs from the version the lock
-  row records for its identity refuses `stale_dependency`/`content-mismatch`,
-  naming the recorded and the supplied version. A domain-package document has no
-  digest to recompute.
+  the declared digest and the digest of the supplied bytes; a changed
+  domain-package document is caught by the recomputed `package_id` (rule 5). A
+  domain-package document has no digest to recompute.
 - `selection` — ordered clause/function identifiers.
 - `state_environment` — typed anchors, values, object populations, frames and invocation captures.
 - `limits` — the `quire.value.accounting/v1` limit objects: `ScalarLimitsV1`,
@@ -517,7 +515,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-2 | Replay uses the same evaluator and inputs rather than a generated-oracle shortcut. | Analysis |
 | FR-323-AC-3 | Missing anchors, exhausted limits and false predicates remain distinct. | Analysis |
 | FR-323-AC-4 | The outcome-to-verdict map assigns one verdict per QSL ADR-013 O-16 category, fixed independently of any request; an `Undefined` outcome and a refused `FamilyOutcome` never settle agreement. | Test (TC-273) |
-| FR-323-AC-5 | A replay request's `byte_provision` supplies every source and definition input the replay recompiles, each keyed by its declared digest domain and digest, and every domain-package document keyed by identity; the `package` reference's `RawSourceRef` digests are exactly the source and definition digests the executor recomputes and compares, and the executor reads no recompilation input by path, environment variable or search location. Before any recompile, a named input the provision does not carry refuses `missing_import`/`missing-selection` naming the requested digest record, or the requested domain-package identity, and the `package` member that names it; a raw-byte entry whose bytes do not match its digest refuses `stale_dependency`/`byte-digest-mismatch` naming the declared and the actual digest; and a domain-package document supplied under an identity whose `version` differs from the version the lock row records for it refuses `stale_dependency`/`content-mismatch` naming the recorded and the supplied version. | Test (TC-277) |
+| FR-323-AC-5 | A replay request's `byte_provision` supplies every source and definition input the replay recompiles, each keyed by its declared digest domain and digest, and every domain-package document, an entry of the ordered provision located by the identity it declares; the `package` reference's `RawSourceRef` digests are exactly the source and definition digests the executor recomputes and compares, and the executor reads no recompilation input by path, environment variable or search location. Before any recompile, a named input the provision does not carry refuses `missing_import`/`missing-selection` naming the requested digest record, or the requested domain-package identity, and the `package` member that names it; a raw-byte entry whose bytes do not match its digest refuses `stale_dependency`/`byte-digest-mismatch` naming the declared and the actual digest; a changed domain-package document is caught by the recomputed `package_id`. | Test (TC-277) |
 | FR-323-AC-6 | A replay request's `replay` property carries the `ReplaySource`, the replay target (`function`, `frame_operation` or `state_clause`), for a function request arguments keyed by parameter node id, the semantic profile selections, for a function request the failing node's occurrence key, the proof bounds and declared domains, the trace position and the `backend` member; a non-replay request carries no `replay` property. | Test (TC-278) |
 | FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per identity in its derived closure, in ascending UTF-8 identity order, each carrying that dependency's `identity`, `package_id` and own lock `sources`, including transitive-only dependencies. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import in the dependency tree reaches `invalid_package`/`invalid-value`; an entry whose sources are edited, by an edit the recompile admits, so that they recompile to a `package_id` other than the entry's, and an entry whose `package_id` alone is changed, each `stale_dependency`/`content-mismatch` naming its `identity`, its `package_id` and the recompiled one, before the proved package's `package_id` is compared. If a transitive-only entry's sources change by an edit the directly importing package's recompile admits, and its declared `package_id` changes to match, the package that directly imports it recompiles to a different `package_id` and its entry refuses by the same rule. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. None yields a result. | Test (TC-277) |
 | FR-323-AC-8 | A replay request's `stage_limits` entry raises its named stage limit for the replay recompile, a stage limit the request does not name runs at its published default, and an entry naming no stage-limit setting refuses before any stage runs. | Test (TC-426) |

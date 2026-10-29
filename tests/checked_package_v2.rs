@@ -26106,7 +26106,7 @@ fn tc_367_timed_clause_criteria_and_vectors_are_published() {
         assert!(TC367_CLOCK_DECLARATIONS.contains(cell), "CK-30 names {cell}");
     }
     for sentence in [
-        "The model document of a `model_selections` row is not a source artifact",
+        "The model document of a `model_root` node is not a source artifact",
         "one `clock_guard` for each operation anchor",
         "a bare reference, not a binding",
         "place path key",

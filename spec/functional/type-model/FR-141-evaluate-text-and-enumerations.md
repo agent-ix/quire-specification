@@ -73,7 +73,7 @@ Declaration identity is the opaque node key of an I04 `scalar_type`/`enum`
 node. Its `quire.checked-semantic-node/v1` digest is SHA-256 over RFC 8785 JCS of
 `{ version: quire.enum-declaration-node/v1, owner, qualified_declaration,
 ordered, members }`, where `owner` is the stable subject projection of an exact
-admitted source, DefinitionRef or ModelRef (and must join that lock selection)
+admitted source, DefinitionRef or selected domain package identity (and must join that lock or model_root selection)
 and `members` is the declaration-ordered list of semantic case names
 (sorted by case name for an unordered enum). Member identity is the opaque key
 of an I04 `value`/`enum_value` node whose `semantic_type` references that

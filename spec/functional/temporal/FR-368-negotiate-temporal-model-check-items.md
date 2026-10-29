@@ -151,12 +151,12 @@ reader's choice:
   "Protocol subject"). For a derived item over any other model subject, the
   package's `model_root` node for the model selection the subject reads
   ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
-  "Model root": one self-typed `model`/`model_root` node per `model_selections`
+  "Model root": one self-typed `model`/`model_root` node per selected model identity
   row). A model subject ([FR-361](FR-361-read-model-behaviours-as-temporal-traces.md)
   "Model subject") is (checked package, initial states, universes, proof
   bounds) and names no model alias, so the anchor is read from the selection
   and invents no alias. A subject that reads more than one
-  `model_selections` row has more than one `model_root` node and no
+  `model_root` node has more than one `model_root` node and no
   anchor, and so does a subject that reads none
   ([FR-361](FR-361-read-model-behaviours-as-temporal-traces.md) "Model
   selection of a subject"): the producer SHALL settle each derived item over
@@ -458,7 +458,7 @@ infinite-trace formula that no registered candidate decides.
 | FR-368-AC-19 | A `refinement` item carries `abstract_subject` (`package_id`, `initial_states`) beside its concrete `subject`, and an item of any other kind carrying one is refused; a refinement item without one, one whose `abstract_subject` has an extra member such as `universes` or `proof_bounds`, and one whose `package_id` is not a package id are refused, and a `package_id` that no entry of `request.dependencies` carries is refused by the reader (the schema cannot relate the two members); two refinement items that differ only in `abstract_subject` have different obligation identities. | Test (TC-431) |
 | FR-368-AC-20 | A derived item carries no `max_depth` (a derived item with one is refused) and takes the provider defaults for `limits` it has no caller setting for; it may carry `limits` only of `max_states`, `max_transitions`, `max_clocks`, `max_store_buffer`, `max_messages`, `max_live_instances`, `max_solver_steps` and `max_solver_time`, for a caller's FR-461 setting, and `max_automaton_states`, `max_walk_steps`, `max_witness_set` or `max_relation_tuples` in a derived item's `limits` is refused as an unknown member; no item inherits `limits`, `max_depth` or `smt_encoding` from another, so an authored item's `max_depth` and `limits` are absent from the request's derived items. | Test (TC-431) |
 | FR-368-AC-21 | `transfer` is not an `item_kind` and a transfer item is not a request item: it is evaluated by the planner and never reaches a provider. | Test (TC-431) |
-| FR-368-AC-22 | A derived item over a model subject whose package has one `model_root` is anchored at it; one over a subject that reads several `model_selections` rows, or none, is settled `unsupported`, `unsupported_projection`/`unsupported-requested-capability`, by the producer, which writes no request item for it. | Test (TC-431 BP-47 for several; TC-290 step 10 for none) |
+| FR-368-AC-22 | A derived item over a model subject whose package has one `model_root` is anchored at it; one over a subject that reads several `model_root` nodes, or none, is settled `unsupported`, `unsupported_projection`/`unsupported-requested-capability`, by the producer, which writes no request item for it. | Test (TC-431 BP-47 for several; TC-290 step 10 for none) |
 | FR-368-AC-23 | A protocol subject whose model selection reads a timed model gains no `time-lock-freedom` item. | Test (TC-370) |
 | FR-368-AC-24 | A protocol subject over a protocol clause of a unit that selects no protocol profile (the clause is checked and has no node, FR-322) has no anchor: its `deadlock-freedom` item, and its `race-freedom` item exactly where FR-438 derives it, are each settled `unsupported`, `unsupported_projection`/`unsupported-requested-capability`, with a `detail` naming the item kind and that the unit selects no protocol profile, by the producer, which writes no request item for it. | Test (TC-431 BP-49) |
 | FR-368-AC-25 | A protocol subject over a protocol clause of a unit that selects no protocol profile gains no `time-lock-freedom` item, settled or written. | Test (TC-431 BP-50) |

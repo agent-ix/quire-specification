@@ -88,7 +88,7 @@ flowchart TD
    embeds each kind's construct with its Quire meaning id. The
    lowering is deterministic, serialized with RFC 8785 and fingerprinted with
    `sha256-jcs`.
-3. **Intake.** QSL admits the domain package supplied under a selected identity, reads its `version` and records identity and version in the package lock,
+3. **Intake.** QSL admits the domain package supplied under a selected identity, records its identity in the package lock,
    and builds Quire model declarations from its IR nodes. It checks every model rule in
    this document. A domain package that fails a rule refuses with a located
    diagnostic that retains the node's IR identity and `origin`.
@@ -126,8 +126,8 @@ never evaluated or used as proof obligations.
 ## Language surface
 
 - A Quire package imports a domain package by identity alone, as it imports a
-  library (FR-307). The resolver reads the package document's `version` and
-  records identity and version in the lock's `model_selections` row; the row is
+  library (FR-307). The package's `model_root` node records the
+  identity; the row is
   part of the package identity and no digest of the document exists.
 - Clauses name domain types by qualified name over their IR node identity, for
   example `Orders::Order` for the artifact with id `Order`.
@@ -146,7 +146,7 @@ An original declaration is keyed by (domain package identity, IR node identity);
 selection inventory retains every original and its FCD origin; effective
 entries exist only where the selected normalization rules derive them.
 An effective declaration has its own `quire.model.effective-declaration/v2`
-identity over original keys, derivation facts and the identities of its direct parents. CheckedPackage `model_selections` name the domain
+identity over original keys, derivation facts and the identities of its direct parents. CheckedPackage `model_root` nodes name the domain
 package. Runtime subject references in observation and protocol records use
 these declaration keys.
 
@@ -184,6 +184,6 @@ adds no normalization rule or effective-identity member.
 | Risk | Control |
 | --- | --- |
 | An artifact declares a feature its module manifest cannot extract | Extraction refuses with the artifact, section and span. No feature is inferred. |
-| Generated types and the model view drift | Both read one domain package, selected by the identity and version the lock's `model_selections` row records in the CheckedPackage. |
+| Generated types and the model view drift | Both read one domain package, selected by the identity its `model_root` node records in the CheckedPackage. |
 | Dynamic dispatch becomes open-world | Dispatch requires the closed subtype set and reports ambiguity or incompleteness. |
 | Graph bounds are mistaken for semantic truncation | Exhaustion is incomplete; no cutoff returns false. |

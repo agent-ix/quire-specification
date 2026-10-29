@@ -30,7 +30,7 @@ the last two defensive cases. In separate runs, inject one typed
 `invalid_package`/`invalid-value` refusal with `path` equal to the empty root
 pointer and `document_pointer` absent, and another
 `stale_dependency`/`content-mismatch` refusal with `document_pointer` equal to
-the empty root pointer and `path` set to `/lock/model_selections/0/version`.
+the empty root pointer and `path` set to `/lock/dependency_selections/0/package_id`.
 Also inject refusals with each optional pointer absent. Inject a non-byte incomplete value
 whose typed path is the empty root pointer, and a byte-limit value whose typed
 path is absent. Before reading the emitted wire, compare each
