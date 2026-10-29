@@ -685,17 +685,14 @@ ascending UTF-8 byte order; the abstract model and the protocol clause are
 identified by `abstract` and `protocol`, so the entry does not depend on the
 local abstract alias, and renaming the alias, with the list renamed to
 match, leaves the node id unchanged. It is absent for an empty list, as
-`protocol` is absent for a model subject, and never null. Every other array
-of the body (`populations`, `objects`, `steps`, `histories`, `assume`,
+`protocol` is absent for a model subject, and never null. The `steps` array
+is in **declaration order**: the order in which the declaration lists its step
+rows, for a model subject and a protocol subject alike. It is not sorted by
+node id, class spelling or any other key, so reordering step rows in source
+reorders `steps`. Every other array
+of the body (`populations`, `objects`, `histories`, `assume`,
 `ensure`) is sorted ascending by the node id of its first named declaration, then by
-member name as UTF-8 bytes; for a protocol subject's `steps`, a row that names no declaration (every
-`memory` step row) sorts after every row that names one, and rows that tie on those two keys
-(for example `duplicate` and `lose` on one channel, `spawn` and `retire` of one role,
-`fork` and `join` of one `parallel` node, a template's `cattempt` and `cend` rows) are
-ordered by the UTF-8 bytes of the row's alias-free class spelling: the
-[FR-432](../protocol/FR-432-map-every-protocol-step-in-refinements.md) spelling with the concrete
-alias `<C>::` removed, and for `memory` rows the memory kind name. The order of `steps` is
-therefore total and does not depend on the order the rows were written; within an `objects` entry the field rows are sorted
+member name as UTF-8 bytes; within an `objects` entry the field rows are sorted
 ascending by field name as UTF-8 bytes. The node is part of the checked package, so the internal list is part of
 the obligation identity of every item that cites it through
 `abstract_internal`, and needs no member of its own.
@@ -703,7 +700,7 @@ the obligation identity of every item that cites it through
 For every emitted `steps[i]`, the producer SHALL retain the exact
 `SourceRegion` of its original checked source row and write one
 `refinement_step_rows` sidecar entry keyed by the refinement node id and
-zero-based canonical step ordinal `i` (FR-322). It writes these entries for
+zero-based step position `i` in declaration order (FR-322). It writes these entries for
 proof-eligible and ineligible refinements alike. The sidecar is outside the
 refinement body; source
 reordering therefore changes row regions without changing the body.
@@ -732,11 +729,12 @@ refinement node, the reader checks in this order and reports its first defect:
    nodes of one package whose bodies carry an equal `name` refuse
    `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name`
    in ascending node-id order.
-2. **Canonical order.** Check each array and nested array in the order
-   `populations`, `objects` (each entry's `fields` first), `steps`,
+2. **Canonical order.** Check each sorted array and nested array in the order
+   `populations`, `objects` (each entry's `fields` first),
    `histories` (each entry's `updates` first), `assume`, `ensure`, and then
    `abstract_internal` and `class_catalog` (`concrete`, then `abstract`) when
-   present. Apply the total ordering rules above, with catalog entries sorted
+   present. `steps` is in declaration order and has no order check: no
+   `steps` entry is out of order. Apply the ordering rules above, with catalog entries sorted
    by their catalog key (`class` UTF-8 bytes, then `memory_model` UTF-8 bytes
    for memory entries);
    the first out-of-order entry refuses `invalid_semantic_graph` at its
@@ -766,7 +764,8 @@ refinement node, the reader checks in this order and reports its first defect:
    keys. This does not inspect protocol body layout, membership, control
    associations, binder records or source memory defaults: FR-464's later
    protocol step checks those after admitting the protocol graph.
-5. **Rows.** In the same array and nested-array order as step 2, resolve
+5. **Rows.** In the same array and nested-array order as step 2, with `steps`
+   visited between `objects` and `histories` in declaration order, resolve
    each local and external declaration key under the rule above, and check
    its role and type against the concrete and abstract subjects and the
    entry shape specified in the row table. A missing target refuses
@@ -782,7 +781,7 @@ refinement node, the reader checks in this order and reports its first defect:
    kind owned by another selected model is a wrong subject. For
    `steps[].source_node` this is the owner rule of "Step-row provenance"
    above, not a second rule. The rows are checked in the array order of step
-   2, then by index, then by member. Protocol-body nodes (channel, role,
+   2 (`steps` in declaration order), then by index, then by member. Protocol-body nodes (channel, role,
    `parallel`, template, effect, commit) carry no `ModelOwner`, and a clause's
    `owner_model` edge is typed only at FR-464 step 6, so this step does not
    own them: they and every `class_catalog` node are compared at FR-464
@@ -813,7 +812,7 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-4 | A field-row or step-argument expression whose type does not conform to the abstract type after reference lifting refuses `ill_typed`/`type-mismatch` at that expression; a `Reference<T_C>` expression for a `Reference<T_A>` field is admitted exactly when an object row maps `T_A` from `T_C`. | Test (TC-310) |
 | FR-375-AC-5 | A history row whose name the concrete type already declares, whose type is unbounded, or whose update is ill-typed refuses with its named cause; an admitted history field appears in no concrete clause, frame or successor relation. | Test (TC-310) |
 | FR-375-AC-6 | A fairness row with no granularity is read as `whole`; an `assume` row naming an abstract operation, or an `ensure` row naming a concrete operation, refuses `missing_declaration`/`missing-name`. | Test (TC-310) |
-| FR-375-AC-7 | Changing any row of an admitted declaration changes the refinement node's value and the obligation identity of an item that cites it; reordering rows in source does not; changing only the refinement's authored name changes the node id and the obligation identity (FR-375-AC-29). Each row-empty refinement node retains the local `abstract` root key in `dependencies` despite its empty rows. | Test (TC-310) |
+| FR-375-AC-7 | Changing any row of an admitted declaration changes the refinement node's value and the obligation identity of an item that cites it; reordering rows other than step rows in source does not (reordering step rows reorders `steps` and changes the value); changing only the refinement's authored name changes the node id and the obligation identity (FR-375-AC-29). Each row-empty refinement node retains the local `abstract` root key in `dependencies` despite its empty rows. | Test (TC-310) |
 | FR-375-AC-8 | A request to check the whole declaration requires `temporal-satisfaction`, each per-step simulation obligation requires `operation-contract`, and neither requires `refinement`. | Test (TC-310) |
 | FR-375-AC-9 | A history row with an initial `history-literal` written as a negative or non-negative integer, `true`/`false`, `none`, a string, an exact number or a full-path enum member is admitted when its value is in the declared bounded type's value set; a literal of the right kind outside the value set or of the wrong kind (`5` or `true` for `Int[0, 4]`, `none` for a non-`Option` type) refuses `ill_typed`/`type-mismatch` at the literal; an unresolved enum path refuses `missing_declaration`/`missing-name`; a collection, record or float spelling refuses `invalid_syntax`/`unexpected-token`. | Test (TC-310) |
 | FR-375-AC-10 | An `assume` or `ensure` fairness row written `fair strong` is admitted with or without `each` or `whole`, and its emitted entry carries kind `strong`; the same row written `fair weak` carries kind `weak`, and the two rows give different refinement node ids; `fair` with no kind, or any kind other than `weak` or `strong`, refuses `invalid_syntax`/`unexpected-token` at the token, because a refinement row has no default kind. | Test (TC-310) |
@@ -825,10 +824,10 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-16 | A refinement whose abstract model declares a relationship refuses `unsupported_construct`/`declaration-form` at the abstract alias of the header, once per refinement, naming the form, the refinement and the selected profile identity, whatever the producer's support set, and produces no node. | Test (TC-310) |
 | FR-375-AC-17 | `Some(e)` for `e` of type `E` is typed `Option<E>`; over an abstract `?` field of type `T`, the row `none` leaves the field absent and `Some(v)` sets it, and a row that is not `Option<T>`, including a bare `self.f` of a concrete `?` field, refuses `ill_typed`/`type-mismatch`; over an abstract `Option<T>` field the row's option value is taken unchanged; `none` with no field type or other `if` arm refuses `ill_typed`/`type-mismatch`; outside a refinement declaration `Some` is an ordinary identifier, so `Some(1)` in a state clause refuses `missing_declaration`/`missing-name` at `Some` when no function `Some` is declared and is a call to it when one is. | Test (TC-310) |
 | FR-375-AC-18 | In a refinement governed by `quire.temporal.infinite-trace/v1`, the ring-buffer rows `s.ring = self`, `(self.head + i) mod 2` and an `a div b` row are admitted even when the unit's own declarations select no layer, the lock selection counts the rows' layers (the `always` rows and exactly one integer-division law, `selection_trigger_unsatisfied` when none is selected), and a Boolean field row `ready = protocol Fill` naming a local protocol refuses `unsupported_construct`/`expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks. | Test (TC-310) |
-| FR-375-AC-19 | A protocol-subject declaration whose rows include `step duplicate C::P::ch`, `step lose C::P::ch`, `step spawn C::P::w`, `step retire C::P::w`, `step fork C::P::par`, `step join C::P::par`, a template's `cattempt` and `cend` rows and `step memory flush` and `step memory drain` emits `steps` in one total order, the same for every permutation of those rows in the source: the declaration-naming rows by node id then member name with tied rows ordered by alias-free class spelling in UTF-8 byte order (`duplicate P::ch` before `lose P::ch`; `retire P::w` before `spawn P::w`; `fork P::par` before `join P::par`), and the `memory` rows after every declaration-naming row, `drain` before `flush`. | Test (TC-310) |
+| FR-375-AC-19 | Withdrawn: the sort of `steps` by node id, member name and alias-free class spelling this criterion tested is removed; `steps` is in declaration order. | Withdrawn |
 | FR-375-AC-20 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-375-AC-21 | The reader visits refinement nodes in ascending node-id order and applies canonical order, header joins and row joins after the identity check; an out-of-order row refuses `invalid_semantic_graph` at the first offending entry, an absent local `abstract` key refuses `missing_declaration`/`missing-name`, an absent direct dependency for an external `abstract` key refuses `missing_declaration`/`missing-selection`, and a wrong-kind local `semantic_type` or object-row type key refuses `invalid_model_binding`/`malformed-declaration`, each at the member this section names. Object rows join either two object types admitted by mapped populations or two `state_machine` declarations and reject mixed or unrelated declaration kinds. | Test (TC-310) |
-| FR-375-AC-22 | For each step row the producer emits one `refinement_step_rows` entry with the source region of that original checked row, associated with the refinement owner id and its canonical zero-based step ordinal; reversing source order while retaining the same semantic rows changes the region assignments but not the owner id or package id. | Test (TC-310) |
+| FR-375-AC-21 | The reader visits refinement nodes in ascending node-id order and applies canonical order (of the sorted arrays, never `steps`), header joins and row joins after the identity check; an out-of-order entry of a sorted array refuses `invalid_semantic_graph` at the first offending entry, an absent local `abstract` key refuses `missing_declaration`/`missing-name`, an absent direct dependency for an external `abstract` key refuses `missing_declaration`/`missing-selection`, and a wrong-kind local `semantic_type` or object-row type key refuses `invalid_model_binding`/`malformed-declaration`, each at the member this section names. Object rows join either two object types admitted by mapped populations or two `state_machine` declarations and reject mixed or unrelated declaration kinds. | Test (TC-310) |
+| FR-375-AC-22 | For each step row the producer emits one `refinement_step_rows` entry with the source region of that original checked row, associated with the refinement owner id and the zero-based position of that row in declaration order; reversing the source order of the step rows reverses `steps` and the region assignments but keeps the owner id. | Test (TC-310) |
 | FR-375-AC-23 | A protocol refinement carries a complete, canonical `class_catalog` of its source-level concrete and abstract classes and checked binder types in both V2 schemas. A tied `fork`/`join` pair names one parallel node under two distinct class spellings; a class of another selected model or protocol, a changed class/node association, a missing or duplicated class, a wrong binder record, or a memory kind absent from its source-default model refuses under the catalog and row-join rules. The concrete catalog includes classes from every clause whose identity-bound `owner_model` is the object-type node of a model owned by the selected concrete declaration, including when no step rows name those classes, and excludes clauses whose edge names a model owned by another declaration. For each of `sc`, `tso` and `ra` used as a source default in that subject, `memory drain` is recorded; `memory flush` is recorded when `tso` is a source default. Each `memory drain` entry carries `drain: store-buffer-flush`, whose SC behavior is a no-op. A later request's memory override changes no checked-package class fact. | Test (TC-310, TC-233) |
 | FR-375-AC-24 | A `state_machine` field set is represented by an existing `objects[]` row whose `abstract_type` and `concrete_type` keys resolve to `state_machine` declarations and whose field names resolve on the abstract machine; the row keeps the existing closed shape and requires no population row. A model with only object types and populations is admitted using its ordinary object rows without a `state_machine` anchor. Missing or duplicate abstract machine rows refuse as the corresponding missing or conflicting object mapping; an object row that mixes a `state_machine` declaration and an object type refuses `invalid_model_binding`/`malformed-declaration`. The reader admits the same rows by joining their keys to the selected packages; no additional wire member is present in either V2 schema. | Test (TC-310) |
 | FR-375-AC-25 | For a selected model with any number of object types and state machines, including none, the producer derives exactly one identity-bound model root from the selected package identity; it does not choose a declaration as a representative. Model-subject `abstract` keys and refinement `semantic_type` keys name that root, and protocol-subject `abstract` keys name that root while `protocol` names the exact clause. Changing a source alias leaves the root identity unchanged; a model root names the selected package by its identity. The model root is derived from existing selection state and requires no FCD declaration or new selection field. | Test (TC-310) |

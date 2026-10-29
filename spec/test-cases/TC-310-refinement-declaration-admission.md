@@ -53,7 +53,7 @@ Mutations, each applied alone to the positive unit:
    `assume fair weak Spec::Counter::inc;`; then an `ensure` row with no
    granularity;
 9. change the object row expression to `self.value + 0`, and separately
-   reorder the step rows in source;
+   reorder the rows other than step rows in source;
 10. write the initial literal of a history row on a type that admits it:
     `-3` for `Int[-5, 4]`, `true` and `false` for `Boolean`, `none` for
     `Option<Int[0, 4]>`, `"a"` for `Text[0, 4; nfc]`, `rational(1, 2)` for
@@ -294,9 +294,9 @@ For every producer-emitted refinement with step rows, inspect the closed
 `refinement_step_rows` sidecar: one entry per `body.steps` position names the
 retained refinement node id, that position's zero-based ordinal, and the
 exact original checked source row region. Reverse the source order of two
-semantically distinct rows while keeping the same canonical `steps` order:
-the sidecar regions follow their rows, and the refinement node id
-remains equal. For a proof-eligible refinement, each generated
+semantically distinct step rows: `steps` is in declaration order, so it
+reverses with the source, each sidecar region stays with its row's position,
+and the refinement node id remains equal. For a proof-eligible refinement, each generated
 owner occurrence at ordinal `i + 1` has that sidecar row region. For a
 refinement made ineligible by an `any` target, the sidecar still has its
 rows and the owner has no generated occurrence (FR-375-AC-22,
@@ -314,7 +314,7 @@ row of TC-314 appears in no concrete clause, frame or successor relation
 the two misplaced rows, and the unmarked row's emitted granularity is `whole`
 (FR-375-AC-6). In mutation 9 the expression change changes the node's value and the
 obligation identity of the refinement item, and the
-source reorder changes none of them (FR-375-AC-7). In mutation 10 every
+reorder of the rows other than step rows changes none of them (FR-375-AC-7). In mutation 10 every
 literal on a type that admits it is admitted; `5`, `true`, `0` for `Boolean`,
 `none` for `Int[0, 4]` and `Impl::Other::idle` each refuse
 `ill_typed`/`type-mismatch` at the literal; `idle` and `Impl::Mode::missing`
@@ -389,7 +389,7 @@ vector); the `ready = protocol Fill` row, in the separate run, is the only refus
 `expression-form` at the `protocol` token naming `quire.protocol.complete/v1`, the layer that admits the form and that the rows' layer set lacks
 (FR-375-AC-18, FR-001-AC-7, FR-090-AC-10, FR-250-AC-8). In mutation 22 the
 clause is admitted and the unit's selection gains no value layer or lock row
-(FR-090-AC-10). In mutation 23 the node's `steps` array is identical for the two source orders, the tied rows ordered by alias-free class spelling in UTF-8 byte order and the two `memory` rows after every declaration-naming row, `drain` before `flush` (FR-375-AC-19).
+(FR-090-AC-10). In mutation 23 the node's `steps` array lists the rows in the order each source writes them, so the reversed source gives the reversed array; no row is moved by its node id, member name or class spelling (FR-375-AC-22).
 In mutation 24 both refinements are admitted, their bodies are identical,
 their `semantic_type` keys differ, and each node carries its respective
 `semantic_type`. The local abstract

@@ -824,7 +824,7 @@ A frame body refusal, meaning-join or canonical-order
   node, its *owner*, and of the per-obligation occurrences a refinement owner
   carries on its own node ("Refinement step occurrences" below). Its ordinal is the node's position among the derived
   nodes of that owner, in the owner's total order (for a refinement owner
-  deriving one node per step row, FR-375's `steps` order), and its source
+  deriving one node per step row, FR-375's `steps` declaration order), and its source
   region, when it has one, is the region of the source row it derives from. An occurrence may name
   multiple ordered regions; regions for that one occurrence/document cannot
   overlap, while regions belonging to different occurrences may nest or
@@ -845,10 +845,10 @@ A frame body refusal, meaning-join or canonical-order
   hidden when the entry has no field row of that name. A refinement with an
   abstract field that is hidden in any `objects` entry is not proof-eligible. The initial obligation is at ordinal 0, and the
   obligation of the step row at zero-based position `i` of the node's `steps`
-  order (FR-375-AC-19) is at ordinal `i + 1`. The ordinal is the obligation's
+  order (declaration order, FR-375) is at ordinal `i + 1`. The ordinal is the obligation's
   position in the certificate's order, the base part and then the step parts.
-  The `steps` order does not depend on the order the rows were written, so each
-  ordinal is the same under any source order. The `regions` of a step
+  The `steps` order is the order the rows were written, so reordering the rows
+  in source reorders the ordinals. The `regions` of a step
   occurrence are exactly the one region of the source row of its step row, and
   the `regions` of the initial occurrence are exactly the one region of the
   node's `declaration` occurrence. This ordinal is the position of an
@@ -881,11 +881,11 @@ A frame body refusal, meaning-join or canonical-order
   node has a `steps` entry; otherwise it is a nonempty array of closed
   `{node_id, ordinal, region}` entries. `node_id` is the refinement owner's
   retained `NodeRef`; zero-based `ordinal` is the position of one entry in
-  that owner's canonical `body.steps` array; `region` is exactly one
+  that owner's `body.steps` array, which is in declaration order; `region` is exactly one
   `SourceRegion` for the original checked source row that produced the step.
   QSL SHALL derive this region from the checked source row before writing the
-  package, including for a refinement that is not proof-eligible. The entries
-  are ordered first by owner node-id and then by ascending ordinal.
+  package, including for a refinement that is not proof-eligible. The sidecar
+  has no entry-order rule.
   The sidecar's regions are provenance only; changing a row region alone leaves
   every `node_id` unchanged.
 
@@ -893,8 +893,8 @@ A frame body refusal, meaning-join or canonical-order
   SHALL visit `refinement_step_rows` in wire order and refuse
   `invalid_package`/`invalid-value` at `/refinement_step_rows/{i}` for an entry
   whose `node_id` is not one retained `relation`/`refinement` node, whose
-  ordinal is outside that owner's `steps` array, whose owner and ordinal pair
-  repeats, or whose position breaks the required order. It then SHALL require
+  ordinal is outside that owner's `steps` array, or whose owner and ordinal
+  pair repeats. It then SHALL require
   exactly one entry for every step position of every refinement owner; an
   absent sidecar, a present sidecar with no refinement step, or a missing
   position refuses `invalid_package`/`invalid-value` at
@@ -3026,9 +3026,9 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-84 | Supply of `dependency_selections` is checked entry by entry in lock order, and the first failing entry is reported alone: two unsupplied entries refuse `missing_import`/`missing-selection` at entry 0; entry 0 supplied and entry 1 unsupplied refuse at entry 1; entry 0 supplied and entry 1 unsupplied refuse at entry 1 alone, never at entry 0. | Test (TC-233) |
 | FR-322-AC-85 | A `dependency_reference` refusal's locus is the term's `package` member for `missing-selection`, its `node` member for `missing-name` and the term itself for `operator-ineligible`, each under the pointer of the term in its node's `body`. | Test (TC-233) |
 | FR-322-AC-86 | The signature type nodes of a dependency function are the `semantic_type` of each node its `parameters` binding references and the function's own `semantic_type`: a dependency function with a parameter of a declared record type is ineligible (`ill_typed`/`operator-ineligible`), while one whose body only references a declared record is eligible. | Inspection (TC-233) |
-| FR-322-AC-87 | A refinement owner with step rows `R0`, `R1` (in `steps` order) from which the compiler derives one node per row has, for the node derived from `R1`, an occurrence with role `generated`, ordinal 1 and a `source_map` region equal to the region of `R1`'s source row; swapping the source order of the two rows leaves the `steps` order, and so each ordinal, unchanged. | Test (TC-233) |
+| FR-322-AC-87 | A refinement owner with step rows `R0`, `R1` (in `steps` declaration order) from which the compiler derives one node per row has, for the node derived from `R1`, an occurrence with role `generated`, ordinal 1 and a `source_map` region equal to the region of `R1`'s source row; swapping the source order of the two rows swaps their `steps` positions, and so their ordinals. | Test (TC-233) |
 | FR-322-AC-88 | A proof-eligible refinement owner with step rows `R0` and `R1` in `steps` order, whose source regions are `[10,20)` and `[30,40)` and whose `declaration` region is `[0,50)`, is admitted when its `source_map` holds a `declaration` occurrence at ordinal 0 and `generated` occurrences on its own node at ordinal 0 with region `[0,50)`, at ordinal 1 with region `[10,20)` and at ordinal 2 with region `[30,40)`, and entries of other nodes do not affect it (`RS-01`). | Test (TC-233) |
-| FR-322-AC-89 | With the rows written in the order `R1`, `R0` and the `steps` order `R0`, `R1`, ordinal 1 holds `R0`'s region and ordinal 2 `R1`'s (`RS-02`). | Test (TC-233) |
+| FR-322-AC-89 | With the same two rows written in the other source order (`RS-02`), `steps` lists them in that order, so ordinal 1 holds the region of the row now written first and ordinal 2 that of the row written second. | Test (TC-233) |
 | FR-322-AC-90 | A proof-eligible refinement owner with two step rows refuses `invalid_package`/`invalid-value` at the offending `source_map` entry for a `generated` occurrence at ordinal 3, for a second entry with the key of an existing occurrence, for a `generated` occurrence at ordinal 1 that carries `R1`'s region, for an `expression` occurrence at ordinal 1 and for a `declaration` occurrence at ordinal 1; and at `/source_map` for a package that omits the `declaration` occurrence, the `generated` ordinal 0 or the `generated` ordinal 2. | Test (TC-233) |
 | FR-322-AC-91 | A refinement owner that is not proof-eligible, with a history field, with an `any` step target or with an abstract field that has no field row, is admitted with its `declaration` occurrence alone and refuses `invalid_package`/`invalid-value` at the first `generated` entry on its node when one is present (`RS-12` to `RS-15`). The hidden field is derived from the abstract model's fields against the `objects` entries' field rows, whatever their order (`RS-14`, `RS-16`, `RS-17`). | Test (TC-233) |
 | FR-322-AC-92 | In every published producer-output package (every published positive package except the reader-admission fixture `positive-integer-literal-references.json` of FR-322-AC-93), each operand of a `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` or `ne` application that is an integer literal typed at the builtin Integer node is an inline `literal` term with `value_kind` `integer` and that type, and no such operand is a `reference` to a `value`/`literal` node of `value_kind` `integer`, whatever the node's type. In `positive-two-owners-a.json` and `-b.json` the `three` application holds the inline operands `1` and `2` and has empty `dependencies`; in `positive-operation-identities.json` the `integer.mul` and `integer.add` hold `7` and `-2` inline, and the `value`/`literal` nodes `7` and `-2` are present for the nodes that reference them. | Test (TC-233) |
@@ -3067,7 +3067,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-131 | `ExecutionPoint` has exactly `initialization{name: AnchorName}`, `handler{name: AnchorName}`, `pre{operation: AnchorName}` and `post{operation: AnchorName}` variants; each rejects unknown tags, missing/extra members and empty names. The state-clause application and operation-anchor body carry it at the locations FR-341/FR-342 specify, so a point is part of that node's body; omitting it is distinct from every point. Both schemas agree. | Test (TC-233) |
 | FR-322-AC-126 | I2 refuses a tick source that owns any clock place as `invalid_package`/`clock-without-dense-time` at the offending place node's `model` binding pointer `/semantic_graph/nodes/{place}/body/members/0/value/target`. A tick source with no places remains admissible; TM-23 starts from the positive tick fixture, adds the positive dense fixture's valid clock-place node to its root, and reports the appended place node's model pointer. | Test (TC-367; TM-23) |
 | FR-322-AC-127 | The timed root names the exact base `Time` dimension node and the source unit's `dimension_node_id` equals that node by identity. I2 refuses a source unit in base `Length`, a derived non-Time dimension, or a nominal derived-Time dimension as `ill_typed`/`invalid-time-quantity` at `/semantic_graph/nodes/{source}/body/members/1/value/target`, for both dense and tick sources. Dimension equivalence, matching dimension terms, names and declaration order do not substitute for this identity equality. | Test (TC-367; TM-24..TM-29) |
-| FR-322-AC-128 | A checked package with refinement steps carries one closed `refinement_step_rows` entry for every step of every refinement owner, keyed by that owner's retained node id and zero-based canonical step ordinal; its regions are part of no node body. The reader admits the `RS-01` and `RS-02` row regions independently of source order, and refuses an absent or incomplete sidecar at `/refinement_step_rows`, and a wrong owner, out-of-range ordinal, duplicate pair or noncanonical order at the offending entry. | Test (TC-233) |
+| FR-322-AC-128 | A checked package with refinement steps carries one closed `refinement_step_rows` entry for every step of every refinement owner, keyed by that owner's retained node id and zero-based step position in declaration order; its regions are part of no node body. The reader admits the `RS-01` and `RS-02` row regions, each keyed by (owner, ordinal) for its own source order, and refuses an absent or incomplete sidecar at `/refinement_step_rows`, and a wrong owner, out-of-range ordinal or duplicate pair at the offending entry. | Test (TC-233) |
 | FR-322-AC-129 | A proof-eligible refinement owner with source rows `R0` and `R1` is admitted only when generated occurrence ordinals 1 and 2 each carry exactly the region of the corresponding `refinement_step_rows` entry; changing either generated region or its row-region carrier alone leaves every node unchanged but refuses `invalid_package`/`invalid-value` at that `source_map` entry. A refinement that is not proof-eligible still carries every row-region entry and no generated occurrence. | Test (TC-233, TC-310) |
 | FR-322-AC-130 | Both closed V2 schemas admit a refinement `class_catalog` with ordered concrete and abstract declared classes (local `NodeRef` versus local-or-dependency `RefinementKey`), typed binders and source-default memory classes, and refuse a missing or extra class-entry member or a wrong key shape. A `memory drain` entry carries `drain: store-buffer-flush`; the catalog includes `memory drain` for each of `sc`, `tso` and `ra` that occurs as a source default, and `memory flush` for `tso` when it occurs, without a `drain` member. In an admitted protocol refinement, removing a local class node or binder type from `dependencies` refuses in graph shape before class joins. A model-only refinement retains its nine-member body with no catalog. Every V2 `protocol_clause` node carries the identity-bound `owner_model` reference in its path and exact dependencies; other nodes omit it. | Test (TC-233, TC-310, TC-946) |
 | FR-322-AC-132 | For each selected domain-package identity, a package contains exactly one self-typed `model`/`model_root` node with the closed `{kind: "model_root", identity}` owner, one `generated` occurrence at ordinal zero mapped to the existing model-selection source region; this form exists regardless of declaration count and its `node_id` is determined by the selected identity, never by a model alias or representative declaration. The V2 schema rejects a root without `ModelRootOwner`, a `ModelRootOwner` on another node form and an extra owner member; the join of the owner's identity to a supplied document is a reader rule, not a schema rule (FR-322-AC-135). The reader admits it without a new FCD declaration or selection field. | Test |
