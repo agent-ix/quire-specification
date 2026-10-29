@@ -86,8 +86,6 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-        "digest_domain": "quire.source.bytes/v1",
         "identity": "example"
       }
     ]
@@ -3868,8 +3866,6 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 0
@@ -3888,8 +3884,6 @@
           "end": 1001,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1000
@@ -3908,8 +3902,6 @@
           "end": 8,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 7
@@ -3928,8 +3920,6 @@
           "end": 21,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 20
@@ -3948,8 +3938,6 @@
           "end": 1017,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1016
@@ -3968,8 +3956,6 @@
           "end": 107,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 106
@@ -3988,8 +3974,6 @@
           "end": 12,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 11
@@ -4008,8 +3992,6 @@
           "end": 1007,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1006
@@ -4028,8 +4010,6 @@
           "end": 191,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 190
@@ -4048,8 +4028,6 @@
           "end": 8,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 7
@@ -4068,8 +4046,6 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 0
@@ -4088,8 +4064,6 @@
           "end": 1009,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1008
@@ -4108,8 +4082,6 @@
           "end": 230,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 202
@@ -4128,8 +4100,6 @@
           "end": 14,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 13
@@ -4148,8 +4118,6 @@
           "end": 16,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 15
@@ -4168,8 +4136,6 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1
@@ -4188,8 +4154,6 @@
           "end": 1013,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1012
@@ -4208,8 +4172,6 @@
           "end": 26,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 25
@@ -4228,8 +4190,6 @@
           "end": 11,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 10
@@ -4248,8 +4208,6 @@
           "end": 24,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 23
@@ -4268,8 +4226,6 @@
           "end": 20,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 19
@@ -4288,8 +4244,6 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 2
@@ -4308,8 +4262,6 @@
           "end": 10,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 9
@@ -4328,8 +4280,6 @@
           "end": 1025,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1024
@@ -4348,8 +4298,6 @@
           "end": 17,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 16
@@ -4368,8 +4316,6 @@
           "end": 108,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 107
@@ -4388,8 +4334,6 @@
           "end": 7,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 6
@@ -4408,8 +4352,6 @@
           "end": 5,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 4
@@ -4428,8 +4370,6 @@
           "end": 154,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 108
@@ -4448,8 +4388,6 @@
           "end": 23,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 22
@@ -4468,8 +4406,6 @@
           "end": 22,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 21
@@ -4488,8 +4424,6 @@
           "end": 105,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 104
@@ -4508,8 +4442,6 @@
           "end": 200,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 199
@@ -4528,8 +4460,6 @@
           "end": 4,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 3
@@ -4548,8 +4478,6 @@
           "end": 25,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 24
@@ -4568,8 +4496,6 @@
           "end": 157,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 156
@@ -4588,8 +4514,6 @@
           "end": 232,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 170
@@ -4608,8 +4532,6 @@
           "end": 1015,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1014
@@ -4628,8 +4550,6 @@
           "end": 152,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 150
@@ -4648,8 +4568,6 @@
           "end": 18,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 17
@@ -4668,8 +4586,6 @@
           "end": 1005,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1004
@@ -4688,8 +4604,6 @@
           "end": 6,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 5
@@ -4708,8 +4622,6 @@
           "end": 103,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 102
@@ -4728,8 +4640,6 @@
           "end": 142,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 135
@@ -4748,8 +4658,6 @@
           "end": 1019,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1018
@@ -4768,8 +4676,6 @@
           "end": 11,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 10
@@ -4788,8 +4694,6 @@
           "end": 195,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 194
@@ -4808,8 +4712,6 @@
           "end": 1021,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1020
@@ -4828,8 +4730,6 @@
           "end": 10,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 9
@@ -4848,8 +4748,6 @@
           "end": 1011,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1010
@@ -4868,8 +4766,6 @@
           "end": 1003,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1002
@@ -4888,8 +4784,6 @@
           "end": 156,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 155
@@ -4908,8 +4802,6 @@
           "end": 13,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 12
@@ -4928,8 +4820,6 @@
           "end": 234,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 158
@@ -4948,8 +4838,6 @@
           "end": 10,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 9
@@ -4968,8 +4856,6 @@
           "end": 11,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 10
@@ -4988,8 +4874,6 @@
           "end": 1027,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1026
@@ -5008,8 +4892,6 @@
           "end": 1028,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1027
@@ -5028,8 +4910,6 @@
           "end": 1029,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1028
@@ -5048,8 +4928,6 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 0

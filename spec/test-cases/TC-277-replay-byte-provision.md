@@ -11,11 +11,10 @@ relationships:
 
 ## Description
 
-Show that an FR-323 replay request's `byte_provision` supplies every source and
-definition input the replay recompiles, keyed by declared
-digest domain and digest, and every domain-package document, an entry of the ordered provision located by the identity it declares, with no version or digest compared, and that the `package` reference's `RawSourceRef`
-digests are exactly the digests the executor recomputes and compares, per
-QSL ADR-013 O-26 and QC-1.
+Show that an FR-323 replay request's `byte_provision` supplies every source
+and definition input the replay recompiles, located by its `{authority,
+identity}`, and every domain-package document, located by the identity it
+declares, with no version or digest compared, per QSL ADR-013 O-26 and QC-1.
 
 ## Preconditions
 
@@ -36,9 +35,7 @@ recompilation outcome.
 | Vector | Mutation | Expected result | Criteria |
 | --- | --- | --- | --- |
 | BP-01 | A `byte_provision` naming every source and definition input by matching digest domain and digest and every selected domain-package document as an entry located by its declared identity | Recompilation proceeds; no missing-input refusal | FR-323-AC-27 |
-| BP-02 | A `byte_provision` missing one input the `package` reference's `RawSourceRef` digests name | Refused `missing_import`/`missing-selection` naming the requested digest record (domain and digest) and the `package` member that names it, before recompilation | FR-323-AC-5 |
-| BP-03 | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; `byte-digest-mismatch`, `RawSourceRef`) A `byte_provision` entry under the raw-byte domain `quire.source.bytes/v1` whose bytes do not match its declared digest | Refused `stale_dependency`/`byte-digest-mismatch` naming the declared digest and the digest of the supplied bytes, before recompilation | FR-323-AC-28 |
-| BP-04 | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; `digest-domain-mismatch`, `quire.source.bytes/v1`) A `byte_provision` entry under the wrong declared digest domain | Refused `stale_dependency`/`digest-domain-mismatch` | FR-323-AC-28 |
+| BP-02 | A `byte_provision` missing one input the `package` reference's source `{authority, identity}` entries name | Refused `missing_import`/`missing-selection` naming the requested digest record (domain and digest) and the `package` member that names it, before recompilation | FR-323-AC-5 |
 | BP-05 | Withdrawn: the `package_id` staleness comparison is removed. | Withdrawn | - |
 | BP-06 | A proved package with two direct `dependency_selections`, one of whose dependencies imports a third library; the `package` reference names the proved package's `sources` and one `dependencies` entry per identity in the derived closure, in ascending UTF-8 identity order, each with its own lock `sources`; the provision carries every source, including the transitive-only library's | Each dependency recompiles from its entry's sources and is supplied to its direct or transitive imports; the proved package recompiles to the declared `package_id` | FR-323-AC-7 |
 | BP-07 | BP-06 with one dependency entry's source bytes replaced by an edit removing the export the proved package calls | Refused in the recompile, `missing_declaration`/`missing-name` at the call in the proved source; no result | FR-323-AC-7 |

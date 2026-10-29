@@ -160,8 +160,6 @@
     "sources": [
       {
         "authority": "a",
-        "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
-        "digest_domain": "quire.source.bytes/v1",
         "identity": "u"
       }
     ]
@@ -458,8 +456,6 @@
           "end": 66,
           "source": {
             "authority": "a",
-            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "u"
           },
           "start": 0
@@ -478,8 +474,6 @@
           "end": 66,
           "source": {
             "authority": "a",
-            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "u"
           },
           "start": 0
@@ -498,8 +492,6 @@
           "end": 66,
           "source": {
             "authority": "a",
-            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "u"
           },
           "start": 0
@@ -518,8 +510,6 @@
           "end": 66,
           "source": {
             "authority": "a",
-            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "u"
           },
           "start": 0
@@ -538,8 +528,6 @@
           "end": 66,
           "source": {
             "authority": "a",
-            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "u"
           },
           "start": 0
@@ -558,8 +546,6 @@
           "end": 66,
           "source": {
             "authority": "a",
-            "digest": "a207f0e326aa21d722d3f645cda01595a51ffb0f6299acbd15d4da1a708bfa15",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "u"
           },
           "start": 0

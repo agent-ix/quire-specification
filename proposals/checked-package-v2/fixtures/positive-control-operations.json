@@ -46,8 +46,6 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-        "digest_domain": "quire.source.bytes/v1",
         "identity": "example"
       }
     ]
@@ -310,8 +308,6 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 0
@@ -330,8 +326,6 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 1
@@ -350,8 +344,6 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 2
@@ -370,8 +362,6 @@
           "end": 8,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 7
@@ -390,8 +380,6 @@
           "end": 9,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 8
@@ -410,8 +398,6 @@
           "end": 10,
           "source": {
             "authority": "agent-ix",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example"
           },
           "start": 9

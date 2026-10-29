@@ -85,10 +85,7 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   domain-package identity (FR-323-AC-23); two entries declaring one
   domain-package identity refuse `invalid_package`/`conflicting-definition`
   naming both, and `duplicate_selection`/`duplicate-identity` is reserved for a
-  source that selects one identity twice (FR-323-AC-25); an entry under a
-  raw-byte digest domain such as `quire.source.bytes/v1` whose bytes do not
-  match its declared digest refuses `stale_dependency`/`byte-digest-mismatch`,
-  naming the declared digest and the digest of the supplied bytes (FR-323-AC-28). A changed
+  source that selects one identity twice (FR-323-AC-25); a changed
   domain-package document under an unchanged identity is not detected: no
   refusal stands in for it (FR-323-AC-24 is withdrawn); a domain-package entry no recompiled source selects is not
   read and has no effect (FR-323-AC-26). A domain-package document has no
@@ -534,7 +531,7 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-25 | A `byte_provision` carrying two domain-package entries that declare one identity refuses `invalid_package`/`conflicting-definition` naming both entries at decode, before any recompile, whichever `package.version` members the two documents state (a document's own member; no version is compared); `duplicate_selection`/`duplicate-identity` applies only to a source that selects one identity twice (FR-321-AC-5). | Test (TC-277) |
 | FR-323-AC-26 | A domain-package entry of `byte_provision` that no recompiled source selects is not read: no refusal. | Test (TC-277) |
 | FR-323-AC-27 | The executor reads no recompilation input by path, environment variable or search location: every source, definition and domain-package input comes from `byte_provision`. | Test (TC-277) |
-| FR-323-AC-28 | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan: the `byte-digest-mismatch` and `digest-domain-mismatch` causes exist only for `RawSourceRef` / `quire.source.bytes/v1` source and definition digests, which STD-583 removes.) A `byte_provision` entry under a raw-byte digest domain such as `quire.source.bytes/v1` whose bytes do not match its declared digest refuses `stale_dependency`/`byte-digest-mismatch` naming the declared digest and the digest of the supplied bytes, and an entry under another declared digest domain than the requested one refuses `stale_dependency`/`digest-domain-mismatch`, at decode and before any recompile; the duplicate domain-package identity check of FR-323-AC-25 runs after it, also at decode. | Test (TC-277) |
+| FR-323-AC-28 | Withdrawn: source byte digests are removed, so a `byte_provision` entry has no digest to mismatch. | Withdrawn |
 
 ## Dependencies
 
