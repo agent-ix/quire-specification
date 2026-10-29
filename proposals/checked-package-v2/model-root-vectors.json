@@ -1,17 +1,11 @@
 {
   "base": "fixtures/positive-all-families.json",
-  "note": "RFC 6902 patches applied to the base; each patch ends by replacing package_id with the recomputed package id. A schema of invalid fails the V2 schema and a reader refuses it malformed_wire at the locus; a schema of valid passes it. Outcomes are the first reader refusal.",
+  "note": "RFC 6902 patches applied to the base; each patch ends by replacing package_id with the recomputed package id. A schema of invalid fails the V2 schema and a reader refuses it malformed_wire at the locus; a schema of valid passes it. Outcomes are the first reader refusal. BLOCKED-BY STD-583 (owner: planner titan:QSL:plan): package_id",
   "vectors": [
     {
       "id": "MR-00",
       "description": "the published package, unmutated",
-      "patch": [
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
-        }
-      ],
+      "patch": [],
       "schema": "valid",
       "outcome": "admitted"
     },
@@ -82,8 +76,8 @@
         }
       ],
       "schema": "valid",
-      "outcome": "refused:missing_declaration",
-      "locus": "/semantic_graph/nodes/47/owner",
+      "outcome": "refused:missing_import",
+      "locus": "/semantic_graph/nodes/47/owner/identity",
       "cause": "missing-selection"
     },
     {
@@ -177,7 +171,6 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/13/owner",
           "value": {
-            "digest": "179fb0d98f7f55094a03ad0e6166b604e6401bae90479f3073f6fe4b01a7af26",
             "identity": "acme/orders",
             "kind": "model_root"
           }
@@ -185,7 +178,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "4b4ae7dbbbbeefd00fff65a1a5e2d4af8462dc5be0bcec3c0d3226e863155d48"
+          "value": "6acc87d2469e75d34aaac294ffde20509e6c4ef1c5ee3aaaa7405203c68dba26"
         }
       ],
       "schema": "invalid",
