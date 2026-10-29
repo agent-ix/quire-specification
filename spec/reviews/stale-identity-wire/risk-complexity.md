@@ -15,4 +15,4 @@ The change adds a strict cause alternative to a prerelease v1 contract. Older st
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No issues found in the scoped identity contract; the v1 compatibility boundary remains explicit through strict cause validation. | FR-331-AC-37; schema InconclusiveCause |
+| FND-001 | low | No issues found in the scoped identity contract; the v1 compatibility boundary remains explicit through strict cause validation. | FR-331-AC-49; schema InconclusiveCause |

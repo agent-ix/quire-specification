@@ -2801,7 +2801,7 @@
                 "package_id": {
                   "domain": "quire.package.semantic/v2",
                   "algorithm": "sha256",
-                  "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
                 }
               },
               "recompiled": {
@@ -2809,7 +2809,7 @@
                 "package_id": {
                   "domain": "quire.package.semantic/v2",
                   "algorithm": "sha256",
-                  "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                  "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"
                 }
               }
             }
@@ -4800,7 +4800,7 @@
                 "package_id": {
                   "domain": "quire.package.semantic/v2",
                   "algorithm": "sha256",
-                  "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+                  "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
                 }
               },
               "recompiled": {
@@ -4808,7 +4808,7 @@
                 "package_id": {
                   "domain": "quire.package.semantic/v2",
                   "algorithm": "sha256",
-                  "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+                  "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"
                 }
               }
             }
@@ -4825,7 +4825,7 @@
                 "package_id": {
                   "domain": "quire.package.semantic/v2",
                   "algorithm": "sha256",
-                  "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+                  "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
                 }
               },
               "recompiled": {
@@ -4833,7 +4833,7 @@
                 "package_id": {
                   "domain": "quire.package.semantic/v2",
                   "algorithm": "sha256",
-                  "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+                  "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"
                 }
               }
             }
@@ -8569,12 +8569,17 @@
             "package_id": {
               "domain": "quire.package.semantic/v2",
               "algorithm": "sha256",
-              "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              "digest": "b12b4d7dfea01454168190325b3bd4ffcd7ff831bd9299b838f4c6809414d82a"
             }
           }
         }
       ]
     }
+    ,
+    {"name":"stale-dependency-unknown-kind","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"replace","path":"/results/0/cause/requested/kind","value":"future"}]},
+    {"name":"stale-dependency-missing-kind","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"remove","path":"/results/0/cause/requested/kind"}]},
+    {"name":"stale-dependency-missing-payload-member","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"remove","path":"/results/0/cause/requested/name"}]},
+    {"name":"stale-dependency-unrecognized-extra-member","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"add","path":"/results/0/cause/requested/extra","value":"unexpected"}]}
   ],
   "universe_provision_vectors": [
     {

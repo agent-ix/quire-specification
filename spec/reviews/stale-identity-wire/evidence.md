@@ -15,4 +15,4 @@ TC-431 exercises admitted refinement identities and refused mixed identity kinds
 
 | ID | Severity | Summary | Refs |
 | --- | --- | --- | --- |
-| FND-001 | low | No issues found in the scoped identity contract. | FR-331-AC-35, FR-331-AC-37; TC-431 BP-26, BP-32, BP-39 |
+| FND-001 | low | No issues found in the scoped identity contract. | FR-331-AC-35, FR-331-AC-49; TC-431 BP-26, BP-32, BP-39 |
