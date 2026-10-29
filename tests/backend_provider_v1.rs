@@ -483,8 +483,8 @@ fn tc_431_positive_vectors_are_admitted_with_owned_members() {
         if let (Some(dispositions), Some(accounting)) = (
             document["dispositions"].as_array(),
             document["accounting"].as_array(),
-        ) {
-            if !dispositions.is_empty() && !accounting.is_empty() {
+        )
+            && !dispositions.is_empty() && !accounting.is_empty() {
                 let indices = |records: &[Value]| -> Vec<u64> {
                     let mut found: Vec<u64> = records
                         .iter()
@@ -502,7 +502,6 @@ fn tc_431_positive_vectors_are_admitted_with_owned_members() {
                     "{name}: accounting covers exactly the dispositions' items"
                 );
             }
-        }
         let owners = vector["owners"].as_object().expect("owners map");
         assert!(!owners.is_empty(), "{name} names member owners");
         for (pointer, fr) in owners {
@@ -1935,12 +1934,11 @@ fn certificate_member_names() -> std::collections::BTreeSet<String> {
     fn walk(node: &Value, defs: &Value, names: &mut std::collections::BTreeSet<String>, seen: &mut Vec<String>) {
         match node {
             Value::Object(map) => {
-                if let Some(target) = map.get("$ref").and_then(Value::as_str).and_then(|r| r.strip_prefix("#/$defs/")) {
-                    if OWNED.contains(&target) && !seen.iter().any(|s| s == target) {
+                if let Some(target) = map.get("$ref").and_then(Value::as_str).and_then(|r| r.strip_prefix("#/$defs/"))
+                    && OWNED.contains(&target) && !seen.iter().any(|s| s == target) {
                         seen.push(target.to_owned());
                         walk(&defs[target], defs, names, seen);
                     }
-                }
                 for (key, value) in map {
                     if key == "properties" {
                         for (name, property) in value.as_object().expect("properties") {

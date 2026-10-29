@@ -90,7 +90,7 @@ fn evaluate(case: &Value) -> Value {
         "lookup_eq" => {
             let held = case["held_keys"].as_array().expect("held_keys");
             let found = held.contains(&case["key"]).then_some(1);
-            json!(found == None::<i64>)
+            json!(found.is_none())
         }
         other => panic!("unexpected form {other}"),
     }

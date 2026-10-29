@@ -102,7 +102,7 @@ fn a_reference_to_a_composed_document_is_a_missing_declaration() {
         .collect();
     for case in array(&v, "reference_cases") {
         let refusal = (!nodes.contains(text(case, "reference")))
-            .then(|| ("missing_declaration", "missing-name"));
+            .then_some(("missing_declaration", "missing-name"));
         let expected = &case["expected"];
         match refusal {
             Some((code, cause)) => {

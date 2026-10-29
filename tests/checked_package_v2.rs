@@ -624,7 +624,7 @@ fn package_lock_matches_identity_preimage(package: &Value) -> bool {
 
 fn package_nominal_nodes_are_valid(package: &Value) -> bool {
     if !package_lock_matches_identity_preimage(package)
-        || unqualified_jcs_sha256(&package_id_preimage(&package))
+        || unqualified_jcs_sha256(&package_id_preimage(package))
             != package["package_id"]["digest"].as_str().unwrap_or_default()
     {
         return false;
@@ -664,7 +664,7 @@ fn replace_node_field_in_graph(
 }
 
 fn refresh_package_id(package: &mut Value) {
-    package["package_id"]["digest"] = json!(unqualified_jcs_sha256(&package_id_preimage(&package)));
+    package["package_id"]["digest"] = json!(unqualified_jcs_sha256(&package_id_preimage(package)));
 }
 
 fn replace_nominal_preimage_in_graph(
@@ -4853,7 +4853,7 @@ fn dependency_supply_refusal(
                 locus,
             ));
         };
-        if entry["package_id"]["digest"] != unqualified_jcs_sha256(&package_id_preimage(&dependency))
+        if entry["package_id"]["digest"] != unqualified_jcs_sha256(&package_id_preimage(dependency))
         {
             return Err(ReadRefusal::Dependency(
                 "stale_dependency",
@@ -9790,7 +9790,7 @@ fn tc_233_operation_mutations_rekey_or_refuse_with_their_recorded_cause() {
     let v2 = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
     let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
     let mutations = &vectors["operation_mutations"];
-    let mut package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    let package = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
     let renames = BTreeMap::<String, String>::new();
     let causes = mutations
         .as_array()
@@ -10316,7 +10316,8 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
     };
     let mut undeclared = families.clone();
     let scalar = index_of(&families, "scalar_type");
-    for prefix in ["/semantic_graph/nodes"] {
+    {
+        let prefix = "/semantic_graph/nodes";
         undeclared
             .pointer_mut(&format!("{prefix}/{scalar}"))
             .and_then(Value::as_object_mut)
@@ -10329,7 +10330,8 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
     );
     let mut stray = families.clone();
     let expression = index_of(&families, "expression");
-    for prefix in ["/semantic_graph/nodes"] {
+    {
+        let prefix = "/semantic_graph/nodes";
         stray
             .pointer_mut(&format!("{prefix}/{expression}"))
             .and_then(Value::as_object_mut)
@@ -10357,7 +10359,8 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
         })
         .expect("the operation package uses a builtin scalar only as a type occurrence");
     let mut named_builtin = operations.clone();
-    for prefix in ["/semantic_graph/nodes"] {
+    {
+        let prefix = "/semantic_graph/nodes";
         named_builtin
             .pointer_mut(&format!("{prefix}/{anonymous}"))
             .and_then(Value::as_object_mut)
@@ -18274,7 +18277,8 @@ fn tc_951_the_node_key_binds_definition_kind_name_owner_and_clause_subnodes_not_
 
     let held = [held_retention()];
     assert_eq!(read_extension_package(&package, &held), Ok(()));
-    let changes: [(&str, Box<dyn Fn(&mut Value)>); 5] = [
+    type Change = Box<dyn Fn(&mut Value)>;
+    let changes: [(&str, Change); 5] = [
         (
             "definition identity",
             Box::new(|package| {
@@ -18568,7 +18572,8 @@ fn tc_951_wire_graph_shape_and_name_refusals_of_the_extension_node() {
     let base = extension_package();
     let index = extension_node_index(&base, "Audit");
     // X13: four schema-level defects.
-    let defects: [(&str, Box<dyn Fn(&mut Value)>); 4] = [
+    type Change = Box<dyn Fn(&mut Value)>;
+    let defects: [(&str, Change); 4] = [
         (
             "inline literal clause value",
             Box::new(|node| {
@@ -21498,7 +21503,7 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
                 None => mismatch(),
                 Some((_, payload)) => {
                     let supplied = case["payload"].as_array().unwrap();
-                    if supplied.iter().cloned().collect::<Vec<_>>() == payload.into_iter().collect::<Vec<_>>() {
+                    if supplied.to_vec() == payload.into_iter().collect::<Vec<_>>() {
                         json!({"admitted": true})
                     } else {
                         mismatch()
@@ -25070,7 +25075,7 @@ fn tc_940_swapping_any_two_adjacent_key_and_join_stages_fails_a_vector() {
         &["NK-10"],
         &["NK-11"],
     ];
-    for at in 0..groups.len() - 1 {
+    for (at, expected_group) in expected_killers.iter().enumerate().take(groups.len() - 1) {
         let mut swapped = groups.clone();
         swapped.swap(at, at + 1);
         let order = flatten(&swapped);
@@ -25080,7 +25085,7 @@ fn tc_940_swapping_any_two_adjacent_key_and_join_stages_fails_a_vector() {
             .map(|(id, _, _)| id.as_str())
             .collect::<Vec<_>>();
         assert!(!killers.is_empty(), "swap at {at} ({order:?}) fails no vector");
-        for named in expected_killers[at] {
+        for named in expected_group.iter() {
             assert!(killers.contains(named), "swap at {at} must fail {named}: {killers:?}");
         }
     }
@@ -25571,11 +25576,10 @@ fn timed_clause_refusal(
     let mut unlisted: Vec<usize> =
         (0..nodes.len()).filter(|at| nodes[*at]["node_tag"] == "timed_model" && !represented.contains(nodes[*at]["node_id"]["digest"].as_str().unwrap())).collect();
     unlisted.sort_by_key(|at| nodes[*at]["node_id"]["digest"].as_str().unwrap().to_owned());
-    if on("unlisted") {
-        if let Some(at) = unlisted.first() {
+    if on("unlisted")
+        && let Some(at) = unlisted.first() {
             return Some(("invalid_package", Some(REF), format!("/semantic_graph/nodes/{at}/body")));
         }
-    }
     let mut used = BTreeSet::new();
     let mut order: Vec<usize> = (0..nodes.len()).filter(|at| nodes[*at]["node_tag"] == "timed_model").collect();
     order.sort_by_key(|at| nodes[*at]["node_id"]["digest"].as_str().unwrap().to_owned());
@@ -25654,7 +25658,7 @@ fn timed_clause_refusal(
                     if on("frame-modifies") && !frame_fields(&anchor).contains(first) {
                         return refuse("/members/2/value/target".into());
                     }
-                    let slots: Vec<String> = clause["body"]["members"][4]["value"]["members"].as_array().unwrap().iter().map(|s| target(s)).collect();
+                    let slots: Vec<String> = clause["body"]["members"][4]["value"]["members"].as_array().unwrap().iter().map(&target).collect();
                     let mut previous: Option<usize> = None;
                     for (k, binder) in clause["body"]["members"][5]["value"]["members"].as_array().unwrap().iter().enumerate() {
                         let binder = target(binder);
