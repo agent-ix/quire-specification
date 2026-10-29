@@ -7,6 +7,8 @@ relationships:
     type: implements
   - target: ix://agent-ix/quire-specification/FR-361
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-181
+    type: references
   - target: ix://agent-ix/quire-specification/FR-363
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-364
@@ -110,6 +112,12 @@ no enabled transition settles the item `refuted`, cause
 [FR-363](FR-363-settle-every-behaviour-temporal-verdicts.md), with the FR-364
 undefined-evaluation counterexample ending at that state. The state is read
 neither as intended nor as a deadlock.
+
+Over a timed model subject a state is terminal as
+[FR-181](../runtime/FR-181-simulate-finite-executions.md) "Timed subjects"
+states: a timed state with no enabled discrete step and no admissible positive
+delay is a time-lock, reported by the time-lock-freedom item
+([FR-417](FR-417-settle-time-lock-freedom.md)) and not here.
 
 ### Claims read every terminal state the same way
 

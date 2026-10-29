@@ -11,6 +11,10 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-181
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-426
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-425
+    type: references
   - target: ix://agent-ix/quire-specification/FR-418
     type: references
 ---
@@ -49,6 +53,17 @@ For each distinct timed subject among a request's items the request writer
 adds exactly one derived item of fixed kind `time-lock-freedom`, beside the
 derived deadlock-freedom item. It has no opt-out. Its obligation identity is
 the subject and the item kind. It settles with the verdict kinds of FR-161.
+
+### Protocol subjects
+
+Time-lock-freedom is owed for timed model subjects only. A protocol subject
+([FR-425](../protocol/FR-425-define-protocol-subjects-and-state-keys.md)) is
+never a timed subject, even when its model selection reads a timed model: the
+protocol system reads no clock ([FR-426](../protocol/FR-426-apply-protocol-steps.md)),
+has no delay step, and its steps neither advance nor stop the model's clocks.
+Protocol timing semantics is outside v1.1. A request therefore gains no
+time-lock-freedom item for a protocol subject, and a timed model subject over
+the same model keeps its own item.
 
 ### Time-lock counterexample
 
@@ -96,6 +111,8 @@ reachable, and settles only after the checker accepts it.
 | FR-417-AC-3 | A non-local time-lock settles `refuted` only after a fresh, unreduced exploration of the trap's forward closure completes with no target; a found target settles `inconclusive`, `replay-parity`. | Test (TC-370) |
 | FR-417-AC-4 | In the strict-guard variant the deadlock-freedom item settles `proved` and the time-lock is reported only by the time-lock-freedom item; with non-strict guards both settle `proved`. | Test (TC-370) |
 | FR-417-AC-5 | A time-lock-freedom proof settles only after its zone certificate is accepted. | Test (TC-370, TC-371) |
+| FR-417-AC-6 | A request with an item over a protocol subject whose model selection reads a timed model gains no time-lock-freedom item for that protocol subject. | Test (TC-370) |
+| FR-417-AC-7 | A timed model subject over the model that a protocol subject reads keeps its time-lock-freedom item. | Test (TC-370) |
 
 ## Dependencies
 

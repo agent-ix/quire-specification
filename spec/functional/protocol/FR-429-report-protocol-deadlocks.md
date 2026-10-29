@@ -61,6 +61,12 @@ one of its threads, compensation threads included, has left `running`. Under
 each`, a state with no live instance is terminal only when no `activate` step
 is enabled.
 
+A protocol state is terminal over protocol steps only: the protocol system
+reads no clock ([FR-426](FR-426-apply-protocol-steps.md)) and has no delay
+step, so no protocol state is time-locked, and a protocol subject has no
+time-lock-freedom item ([FR-425](FR-425-define-protocol-subjects-and-state-keys.md)
+"Protocol subject").
+
 A state the run does not expand because a state constraint, a memory bound or
 the instance budget cuts it ([FR-428](FR-428-check-replicated-roles-and-per-trigger-activation.md))
 is a boundary state: never terminal and never a deadlock.
