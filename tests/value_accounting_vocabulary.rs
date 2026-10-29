@@ -268,48 +268,51 @@ fn published_limit_kind_list_equals_the_limit_object() {
     );
 }
 
-#[test]
-#[trace("TC-426", "FR-461-AC-11")]
-fn undeclared_limit_kinds_are_not_in_the_vocabulary() {
-    let vectors: Value = serde_json::from_str(VALUE_ACCOUNTING_LIMIT_KIND_VECTORS).expect("JSON");
-    let declared: BTreeSet<_> = limit_kind_vocabulary(DEFINITION).into_iter().collect();
-    let undeclared = strings(&vectors["undeclared"]);
-    assert!(!undeclared.is_empty());
-    // An undeclared spelling is no `limit_kind` value anywhere in the
-    // definition, whichever limit object names it, and no backticked word.
-    let elsewhere = other_limit_kind_values(DEFINITION);
-    assert!(
-        elsewhere.contains("ancestor_steps"),
-        "the scan sees other objects"
-    );
-    let backticked: BTreeSet<_> = DEFINITION
+/// The spellings of `undeclared` the definition contradicts: a declared
+/// `ScalarLimitsV1` counter, a `limit_kind` value any limit object of the
+/// definition names, or any backticked word of it.
+fn undeclared_violations(definition: &str, undeclared: &[String]) -> Vec<String> {
+    let declared: BTreeSet<_> = limit_kind_vocabulary(definition).into_iter().collect();
+    let elsewhere = other_limit_kind_values(definition);
+    let backticked: BTreeSet<_> = definition
         .split('`')
         .enumerate()
         .filter(|(i, _)| i % 2 == 1)
         .map(|(_, w)| w.to_owned())
         .collect();
-    for spelling in undeclared {
-        assert!(
-            !declared.contains(&spelling),
-            "{spelling:?} must stay undeclared"
-        );
-        assert!(
-            !elsewhere.contains(&spelling) && !backticked.contains(&spelling),
-            "{spelling:?} appears in the definition"
-        );
-    }
+    undeclared
+        .iter()
+        .filter(|s| declared.contains(*s) || elsewhere.contains(*s) || backticked.contains(*s))
+        .cloned()
+        .collect()
+}
+
+#[test]
+#[trace("TC-426", "FR-461-AC-11")]
+fn undeclared_limit_kinds_are_not_in_the_vocabulary() {
+    let vectors: Value = serde_json::from_str(VALUE_ACCOUNTING_LIMIT_KIND_VECTORS).expect("JSON");
+    let undeclared = strings(&vectors["undeclared"]);
+    assert!(!undeclared.is_empty());
+    assert!(
+        other_limit_kind_values(DEFINITION).contains("ancestor_steps"),
+        "the scan sees other objects"
+    );
+    assert_eq!(
+        undeclared_violations(DEFINITION, &undeclared),
+        Vec::<String>::new()
+    );
 }
 
 #[test]
 #[trace("TC-426", "FR-461-AC-11")]
 fn a_real_counter_in_undeclared_is_detected() {
-    let declared: BTreeSet<_> = limit_kind_vocabulary(DEFINITION).into_iter().collect();
-    let polluted = ["work_units".to_owned()];
-    assert!(polluted.iter().any(|s| declared.contains(s)));
-    let elsewhere = other_limit_kind_values(DEFINITION);
-    assert!(["ancestor_steps", "family_steps"]
-        .iter()
-        .all(|s| elsewhere.contains(*s)));
+    let polluted: Vec<String> = ["unit_work", "work_units", "ancestor_steps", "family_steps"]
+        .map(str::to_owned)
+        .to_vec();
+    assert_eq!(
+        undeclared_violations(DEFINITION, &polluted),
+        ["work_units", "ancestor_steps", "family_steps"].map(str::to_owned)
+    );
 }
 
 #[test]
