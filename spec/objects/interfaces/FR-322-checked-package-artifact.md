@@ -613,6 +613,9 @@ boundary.
   selected declaration, over which that protocol clause is declared (the
   object type of its `over` input);
   consumers use this edge as the authoritative clause-to-model association.
+  A protocol clause is written as a `protocol`/`protocol_clause` node only
+  under a selected protocol profile (FR-464 "Operator catalog"); a unit that
+  selects none still has its clause checked and writes no node for it.
   FR-464's protocol step checks its typed target (step 6, the clause's first
   check, after the refinement step; FR-464 "Owner-model edge phase"), and
   neither general key stage re-keys or refuses the edge. The target node's own
