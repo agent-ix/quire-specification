@@ -33,6 +33,8 @@ relationships:
 
 # FR-181: Simulate finite composed executions reproducibly
 
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+
 ## Description
 
 When simulation is requested, the simulator SHALL enumerate or sample only the

@@ -34,6 +34,8 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-285
     type: references
 ---
+
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
 ## Description
 
 When a canonical protocol result is submitted for portable evidence assessment, the projection adapter SHALL emit one source-bound `quire-verification/e02-draft-2` `TechniqueResult` or one typed refusal without losing or conflating an FR-007 finding.

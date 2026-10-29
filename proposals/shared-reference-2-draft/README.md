@@ -19,9 +19,9 @@ are refVersion, kind, authority, identity and wire. Wire has exactly identity
 and version (nonempty strings). Authority and identity are nonempty strings.
 Every record is closed.
 
-The fourteen prior kinds remain: source, model-package, linked-package,
+The thirteen prior kinds remain: source, model-package, linked-package,
 executable-projection, property, binding, snapshot, invocation,
-generated-artifact, run-artifact, environment, model-manifest, model-lock and
+generated-artifact, run-artifact, environment, model-manifest and
 dependency-closure. The six additional kinds have these exact roles:
 
 | Kind | Artifact selected |

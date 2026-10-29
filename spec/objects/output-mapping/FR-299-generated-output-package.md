@@ -13,6 +13,8 @@ relationships:
 ---
 # FR-299: Generated output package
 
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+
 ## Description
 
 When all requested obligations have valid mapping records, the package assembler SHALL

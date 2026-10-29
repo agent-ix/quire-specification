@@ -14,6 +14,8 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-266
     type: references
 ---
+
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
 ## Description
 
 When assessing a population or event-time window, the assessment request SHALL

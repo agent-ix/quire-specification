@@ -39,7 +39,6 @@
   "unrepresentableOldKinds": [
     "environment",
     "model-manifest",
-    "model-lock",
     "dependency-closure"
   ],
   "historicalEvidence": "retains-original-reference-version-bytes-and-identity"

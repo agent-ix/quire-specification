@@ -15,6 +15,8 @@ relationships:
 ---
 # FR-260: Admitted observation
 
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+
 ## Description
 
 When a record is admitted as an observation, the observation binder SHALL retain the exact observation identity, source schema identity, declared binding identity, field units, selected subject identity, and whether the record is internal or externally observed, or refuse the record with a typed cause.

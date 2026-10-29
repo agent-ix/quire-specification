@@ -33,7 +33,7 @@ incomplete with no accepted reference, as specified by
 The six added kinds are trace, fault-model, review-procedure, oracle, observation
 and review-disposition. Each names the artifact itself; none grants truth,
 independence, reviewer authentication or evidence sufficiency. No nearby generic
-kind substitutes for a requested role. The fourteen existing kinds retain their
+kind substitutes for a requested role. The thirteen existing kinds retain their
 meanings. Authority, identity and wire remain mandatory. Unknown kinds/versions and implicit cross-version joins refuse.
 The 1-draft envelope and 1/2-draft artifact contracts retain their original bytes
 and closed vocabulary. This amendment adds no migration inference.

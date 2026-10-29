@@ -11,6 +11,8 @@ relationships:
 ---
 # FR-265: Selected snapshot
 
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+
 ## Description
 
 When a snapshot is selected for an assessment, the assessment request SHALL retain it as a subject distinct from a selected event-time window.

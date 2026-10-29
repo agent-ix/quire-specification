@@ -1,5 +1,7 @@
 # CheckedPackage V2 public interchange
 
+> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #517 lands.
+
 This directory is the normative public transport contract for I04 immutable
 checked packages. It is intentionally a schema-and-vector boundary, not a
 native Rust package API: QSL remains free to use internal parser/CST/package

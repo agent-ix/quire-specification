@@ -24,9 +24,7 @@ equality.
 | --- | --- |
 | `ir-canonical` | Existing contract-IR canonical identity. Retains its original bare-hex syntax and algorithm; it does not adopt the JCS prefix or canonicalization. |
 | `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
-| `ir-semantic` | IR semantic digest. Includes its prescribed domain separation (FR-015-AC-2). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout. |
-| `sha256-jcs` | JCS digest. SHA-256 over RFC 8785 canonical bytes. No model selection row of a lock and no declaration key carries it (FR-154, FR-321, AD-006); its remaining users are those that name it in their own requirement. It is distinct from package and source digests. |
 | `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from every other identity/digest domain. |
 | `quire.source.bytes/v1` | Exact authored native source-document bytes, including layout; distinct from every definition/model artifact. |
 | `quire.checked-semantic-node/v1` | Checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
@@ -34,10 +32,9 @@ equality.
 | `quire.tool-manifest.jcs/v1` | RFC 8785 canonical tool/plugin/provider manifest bytes; a provider's FR-331 `ManifestDigest` is SHA-256 over its complete descriptor's bytes, `tool` included. |
 | `quire.build-inputs/v1` | Build-input identity of the provider code that implements a backend: SHA-256 over the RFC 8785 bytes of its FR-331 build-input record `{sources, dependencies, compiler, target, profile, options}`, computed by the build that compiles it (FR-331 "Backend tool"). Distinct from every other identity/digest domain. |
 | `quire.cache-key/v1` | Cache-entry key. SHA-256 over the RFC 8785 canonical bytes of the closed object `{operation, package_id, request, backend, manifest, target}` (FR-306): the cached operation, the subject's `quire.package.semantic/v2` `package_id`, the canonical request, the provider's `BackendId`, its FR-331 `ManifestDigest` as a `quire.tool-manifest.jcs/v1` digest record and, for `generate` only, the generation target and its options. Distinct from every other identity/digest domain. |
-| `quire.simulation.state-key/v1` | Simulator state-key identity. SHA-256 over the RFC 8785 canonical bytes of the typed canonical encoding of simulator state, control positions, queues, role lifetimes, observation progress and remaining bounds (FR-181). Distinct from `sha256-jcs` and from every other identity/digest domain. |
+| `quire.simulation.state-key/v1` | Simulator state-key identity. SHA-256 over the RFC 8785 canonical bytes of the typed canonical encoding of simulator state, control positions, queues, role lifetimes, observation progress and remaining bounds (FR-181). Distinct from every other identity/digest domain. |
 | `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
-| `quire.verification.jcs` | Verification JCS domain, `version: rfc8785-v1`, `algorithm: sha256`. Emitted as `sha256-jcs:` followed by 64 lowercase hexadecimal digits over RFC 8785 canonical UTF-8 bytes. |
-| `quire.model.effective-declaration/v2` | QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from `sha256-jcs` and from the `quire.checked-semantic-node/v1` domain. |
+| `quire.model.effective-declaration/v2` | QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from the `quire.checked-semantic-node/v1` domain. |
 | `quire.model.effective-view/v2` | QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. |
 | `quire.model.object-universe/v2` | QSL-derived object-universe identity for a connected supertype component. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection and its sorted root effective-declaration identities (FR-150). Distinct from every other identity/digest domain. |
 | `quire.ir-proof.obligation-identity/v1` | CG obligation identity. SHA-256 over the RFC 8785 canonical bytes, through QSL ADR-013 §2's one encoder, of an object with exactly four members: the subject node id, the subject's occurrence key (`node_id`, `role`, `ordinal`), the obligation kind and `arguments`, except for a parity claim, whose whole preimage is the QSL ADR-013 O-09 parity preimage (members `arguments`, `node`, `obligation_kind` and `occurrence_key` = `{ordinal, role}`). The subject is a clause, an operation application, a function (occurrence role `declaration`) or the application node of a parity claim (occurrence role `expression`). For a clause, an application or a function, `arguments` holds one entry per parameter, each a parameter node id with its declared per-argument domain; for a parity claim it holds one entry per operand position, each `{operand, position, domain}`, as that preimage encodes it. A per-step protocol record is one other form: its object has exactly the members `subject_kind` (the string `protocol-refinement-step`) and `record` (the canonical `StepSimulationRecord`), and no occurrence key. A function-value parity claim (QSL FR-357, function level) is the other: its object has exactly the members `subject_kind` (the string `function-value-parity`), `node` (the function node id), `occurrence_key` (`{ordinal: 0, role: "declaration"}`) and `arguments` (one `{parameter, position, type}` entry per declared parameter in declared order, `type` the parameter node's `semantic_type`), with no obligation kind, as QSL FR-484 spells it. Every other member of the CG obligation record (resource ceilings, embedded oracles, module, harness and contract symbols, subject path, results, solver, unwind and options), `source_span` and every source region are outside the preimage, so changing any of them leaves the identity unchanged. CG mints the digest for the clause, application, function, parity and per-step forms; QSL recomputes the parity form from the same preimage, and QSL alone mints the function-value parity form (at `qsl_replay::call_site`) and recomputes it at replay. Distinct from `quire.checked-semantic-node/v1` and every other identity/digest domain. |
@@ -59,25 +56,17 @@ equality.
   vocabulary of digest domains; it does not carry one.
 - **Cross-domain rule** — two identities bearing different domain labels are
   unequal. Byte equality of their digests does not make them equal, and a raw
-  `sha256` digest cannot substitute for `sha256-jcs`.
+  `sha256` digest cannot substitute for another domain's digest.
 
-The `sha256-jcs:` textual prefix is a domain label outside the hashed bytes. It
-is not a hash preimage prefix.
+## Removed domains
 
-## Preimage selection is per-use, not per-domain
-
-Two requirements independently state what is inside the preimage under the
-`quire.verification.jcs` domain, and no requirement cross-references the others:
-
-- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): the
-  canonical result identity is computed over the complete closed result with
-  only `resultId` omitted.
-- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md):
-  the derived result identity is taken over a distinct projection-identity
-  preimage under `quire.protocol.e02-projection-identity/v1-draft.1`.
-
-This artifact records both. It does not reconcile them; the selection of a
-preimage belongs to the requirement that selects it.
+The `sha256-jcs` and `quire.verification.jcs` domains and the `ir-semantic` row are removed
+with no replacement. Requirements that still cite them are owned by open PRs and
+carry that PR as the blocker: BLOCKED-BY QSpec #513 (observation, protocol and
+output-mapping objects: FR-061, FR-062, FR-111, FR-112, FR-240, FR-249, FR-260,
+FR-262, FR-263, FR-264, FR-265, FR-268, FR-283, FR-286, FR-287, FR-296, FR-298,
+FR-299, FR-364, TC-064, TC-290) and BLOCKED-BY QSpec #517 (FR-322, FR-331,
+FR-336, FR-353, FR-361, IT-070, TC-952, AD-006 and the checked-package files).
 
 ## Acceptance Criteria
 

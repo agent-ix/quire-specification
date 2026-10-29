@@ -123,7 +123,7 @@ The candidate migration envelope records an exact old ArtifactRef, new
 ArtifactRef, mapping ArtifactRef, preserved aspects and a reason. Old artifact
 references retain their selected version; only the explicitly named 1-draft and
 2-draft forms are admitted here. The earlier closed kind set cannot represent
-environment, model-manifest, model-lock or dependency-closure.
+environment, model-manifest or dependency-closure.
 
 An accepted mapping between common kinds may establish the same underlying byte
 artifact only when kind, authority, identity and

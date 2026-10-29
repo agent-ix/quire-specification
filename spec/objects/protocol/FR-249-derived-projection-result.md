@@ -15,6 +15,8 @@ relationships:
 ---
 # FR-249: Derived portable projection result
 
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+
 ## Description
 
 When a canonical protocol result is projected to portable verification, the projection adapter SHALL derive the `TechniqueResult.resultId` from the exact tuple stated by FR-062 so that changing any member of that tuple changes the derived result identity.

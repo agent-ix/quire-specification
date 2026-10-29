@@ -9,6 +9,8 @@ relationships:
 ---
 # FR-283: Projection refusal code vocabulary
 
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+
 ## Description
 
 When a projection adapter refuses to map a protocol result to portable verification, the adapter SHALL emit exactly one code from this closed vocabulary rather than an English explanation.

@@ -11,6 +11,8 @@ relationships:
 
 # TC-952: Obligation identity digest domain
 
+> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #517 lands.
+
 ## Description
 
 Compute CG obligation identities in the FR-201

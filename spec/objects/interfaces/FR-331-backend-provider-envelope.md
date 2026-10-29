@@ -84,6 +84,8 @@ relationships:
 
 # FR-331: Backend provider request and result envelope
 
+> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #517 lands.
+
 ## Description
 
 When a contract package is submitted to a backend provider, the producer SHALL use the immutable BackendProviderEnvelope contract below rather than an untyped map, display string or implementation-local structure.

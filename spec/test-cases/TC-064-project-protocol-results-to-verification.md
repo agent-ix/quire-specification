@@ -12,6 +12,8 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-285
     type: verifies
 ---
+
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
 ## Description
 
 Verify the total, source-bound projection from one canonical protocol result to

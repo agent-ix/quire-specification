@@ -13,6 +13,8 @@ relationships:
 ---
 # FR-286: Canonical protocol result identity preimage
 
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+
 ## Description
 
 When a canonical `ProtocolResult` is produced or read, its `resultId` SHALL be

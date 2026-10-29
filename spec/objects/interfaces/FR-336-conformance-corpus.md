@@ -19,6 +19,8 @@ relationships:
 
 # FR-336: Independent complete-V1 conformance corpus
 
+> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #517 lands.
+
 ## Description
 
 When the complete-V1 conformance corpus is published or executed, the producer SHALL use the immutable ConformanceCorpus contract below rather than an untyped map, display string or implementation-local structure.

@@ -13,6 +13,8 @@ relationships:
 
 # IT-070: Artifact bundle to checked package
 
+> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #517 lands.
+
 ## Objective
 
 Verify that a spec's artifact bundle becomes a checked package through the real

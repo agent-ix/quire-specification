@@ -130,7 +130,6 @@
             "run-artifact",
             "environment",
             "model-manifest",
-            "model-lock",
             "dependency-closure"
           ]
         },

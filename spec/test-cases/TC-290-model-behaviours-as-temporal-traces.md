@@ -13,6 +13,8 @@ relationships:
 
 # TC-290: Model behaviours read as temporal traces
 
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+
 ## Description
 
 Conformance vectors for the model subject: positions and anchors, the clock

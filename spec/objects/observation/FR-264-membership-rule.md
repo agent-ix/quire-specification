@@ -11,6 +11,8 @@ relationships:
 ---
 # FR-264: Declared membership rule
 
+> BLOCKED-BY QSpec #513: this file still cites the removed `sha256-jcs` / `quire.verification.jcs` identity domain (FR-201); delete that wording when #513 lands.
+
 ## Description
 
 When a membership rule is declared, the assessment request SHALL retain its exact rule identity and digest rather than accepting an ambient default.
