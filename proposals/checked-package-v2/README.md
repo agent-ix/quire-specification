@@ -64,7 +64,7 @@ structures, but any external consumer receives only the contract.
   semantic IR 2.0.0 domain package (FR-322-AC-151; its tuple `positions` depend on IR-1059 / FCD tuple support) and
   `model-tuple-union-vectors.json` publishes its projection (`domain_package`, derived
   from the document) and `selection_digest`, the RFC 8785 SHA-256 of the whole
-  document that the lock row pins, the declaration node keys, the application-node
+  document the `model_root` node names, the declaration node keys, the application-node
   key vectors and the family, position, member, union-value, enum-value,
   equality, identity, recursion, intake and wire cases the QSpec test runs over
   them; `node-identity-vectors.json` carries the keys
@@ -230,7 +230,7 @@ structures, but any external consumer receives only the contract.
   field projection cases for its "Reference conformance" and model field
   projection rules (TC-281). The SHA-256 of the RFC 8785 bytes
   of the document `domain-package-acme-orders.json` is the `sha256-jcs` digest
-  the lock rows pin; `domain_package` is derived from it and not digested.
+  the `model_root` nodes name; `domain_package` is derived from it and not digested.
 - The checked semantic graph is a closed `quire.checked-semantic-graph/v2`
   tagged union. It is source-language-neutral transport, not Contract IR and
   not an alternative language semantic authority.
