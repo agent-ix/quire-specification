@@ -19955,7 +19955,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 adverse["semantic_graph"]["nodes"][44]["body"]["members"][3]["value"]["target"] =
                     adverse["semantic_graph"]["nodes"][5]["node_id"].clone();
             }
-            "duplicate-clock-place" => {
+            "second-place-forged-row" => {
                 // A DISTINCT second place of the same path (a clock place has no field but its
                 // path, its model and its derived `resolved_path`, so only that table can differ:
                 // a different body and key), listed after the first and starting after every
@@ -20106,7 +20106,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
             "dangling-tick-operation" | "function-as-tick-operation" => (
                 "invalid_package", "timed-node-reference", "/semantic_graph/nodes/44/body/members/3/value/target",
             ),
-            "duplicate-clock-place" => (
+            "second-place-forged-row" => (
                 "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/59/body/members/2/value/members/1",
             ),
             "repeated-clock-place-reference" => (
@@ -20158,7 +20158,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
             let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"].as_array().unwrap();
             assert_eq!(places[0], places[1], "TM-30 lists one node reference twice");
         }
-        if row["mutation"] == "duplicate-clock-place" {
+        if row["mutation"] == "second-place-forged-row" {
             assert_eq!(timed_aggregate_order_refusal(&adverse), None, "TM-12 is in declared order, so only the forged row of the second node of the path is refused");
             let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"].as_array().unwrap();
             assert_ne!(places[0], places[1], "the second node of the path is a distinct node, not a repeated reference");
