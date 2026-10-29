@@ -24398,15 +24398,14 @@ const FR415_DECLARE_CLOCKS: &str =
     include_str!("../spec/functional/temporal/FR-415-declare-clocks-and-timed-models.md");
 
 /// The whole FR-415-AC-21 row, pinned exactly.
-const FR415_AC21_ROW: &str = "| FR-415-AC-21 | With `v: Option<Clock>` and `st: Mode` where `Mode` is a union of `Idle` and `Armed { x: Clock }`, both in the frame of an operation: a postcondition that requires `present(self.v)` of an absent `v`, or `present(self.st.Armed)` of an `Idle` `st`, with no write of the clock has no successor (no implicit reset to 0), and refuses `invalid_timed_model`/`clock-presence-unwritten` when the precondition establishes the place absent; with the write `self.v = 5 ms` or the constructor `self.st = Armed { x: 5 ms }` it has one successor in which the place is present with the clock `5 ms`; a write of `absent` or of `Idle` drops the place; a requirement is never a write, so `not present(self.v)` of a present, unwritten `v` has no successor, while `not present(self.st.Armed)` of an `Armed` `st` has the successor with `st` an `Idle`; an unwritten `Armed` `st` with no requirement keeps its clock and also admits the `Idle` successor, and an unwritten present `v` only keeps it. The vectors `FP-01`..`FP-14` of `clock-presence-frame-vectors.json` pair each `Option` vector with its union twin and state which pairs agree and which differ only because a union can leave its case. | Test (TC-367; CK-31; FP-01..FP-14) |";
+const FR415_AC21_ROW: &str = "| FR-415-AC-21 | With `v: Option<Clock>` in an operation's frame: requiring `present(self.v)` of an absent `v` without writing its clock has no successor and refuses `invalid_timed_model`/`clock-presence-unwritten` when the precondition establishes absence; writing `self.v = 5 ms` makes it present with `5 ms`; writing `absent` drops it; a requirement is never a write, so `not present(self.v)` of a present, unwritten `v` has no successor and an unwritten present `v` keeps its clock. The vectors FP-01, FP-03, FP-05, FP-07, FP-09, FP-11 and FP-13 of `clock-presence-frame-vectors.json` exercise these cases. | Test (TC-367; CK-31) |";
 
 /// The sentences of the FR-415 frame paragraphs that the vectors realize.
-const FR415_FRAME_SENTENCES: [&str; 5] = [
-    "A place becomes present only by a write of its clock value, for an `Option<Clock>` place and for a union case alike.",
-    "does not select an `Armed` successor with a clock of 0: nothing writes the clock, so there is no successor, exactly as `present(self.v)` alone from an absent `v` has none.",
+const FR415_FRAME_SENTENCES: [&str; 4] = [
+    "A successor in which a place is present although it was absent in its predecessor exists only when the postcondition writes that place's clock value.",
+    "A postcondition that requires presence without the write has no successor;",
     "refuses `invalid_timed_model`/`clock-presence-unwritten` at the `present(...)` requirement, naming the place.",
-    "A requirement is a constraint, never a write: `not present(p)` does not write `absent` or `Idle`.",
-    "they differ only because a union can leave a case and an `Option<Clock>` bit does not change.",
+    "A requirement is a constraint, never a write: `not present(p)` does not write `absent`.",
 ];
 
 /// How an oracle reads a place that becomes present with no write of its clock.
@@ -24423,9 +24422,9 @@ enum UnwrittenPresence {
 /// admits the clockless case; the requirement then filters the candidates and
 /// is never itself a write.
 fn frame_outcome(case: &Value, unwritten: UnwrittenPresence) -> Value {
+    // The union form (PR-02) is dropped from FR-415: only `Option<Clock>` places remain.
     let (present, clock) = match case["form"].as_str().unwrap() {
         "option" => (case["pre"]["present"].as_bool().unwrap(), case["pre"]["clock"].clone()),
-        "union" => (case["pre"]["case"] == "Armed", case["pre"]["clock"].clone()),
         other => panic!("form {other}"),
     };
     let requires = case["requires"].as_str();
@@ -24443,10 +24442,7 @@ fn frame_outcome(case: &Value, unwritten: UnwrittenPresence) -> Value {
                 return json!([{"present": true, "clock": "0 ms"}]);
             }
         }
-        candidates.push(kept.clone());
-        if case["form"] == "union" && dropped != kept {
-            candidates.push(dropped);
-        }
+        candidates.push(kept);
     } else if write.get("absent").is_some() || write["constructor"] == "Idle" {
         candidates.push(dropped);
     } else {
@@ -24464,32 +24460,15 @@ fn frame_outcome(case: &Value, unwritten: UnwrittenPresence) -> Value {
 fn frame_defects(vectors: &Value, fr415: &str, unwritten: UnwrittenPresence) -> Vec<String> {
     let mut defects = Vec::new();
     let cases = vectors["cases"].as_array().unwrap();
-    let mut differing = Vec::new();
     for case in cases {
         let id = case["id"].as_str().unwrap();
         if frame_outcome(case, unwritten) != case["expected"] {
             defects.push(format!("{id} outcome differs from the rule"));
         }
-        let twin = cases.iter().find(|other| other["id"] == case["pair"]["with"]);
-        match twin {
-            Some(twin) if twin["pair"]["with"] == case["id"] && twin["form"] != case["form"] && twin["pair"]["outcome"] == case["pair"]["outcome"] => {
-                let agree = twin["expected"] == case["expected"];
-                match case["pair"]["outcome"].as_str() {
-                    Some("same") if agree => {}
-                    Some("differs") if !agree => differing.push(id.to_owned()),
-                    _ => defects.push(format!("{id} and its twin do not {}", case["pair"]["outcome"])),
-                }
-            }
-            _ => defects.push(format!("{id} has no paired twin of the other form")),
-        }
-    }
-    differing.sort();
-    if differing != ["FP-05", "FP-06", "FP-13", "FP-14"] {
-        defects.push(format!("the differing pairs are {differing:?}"));
     }
     let ids: Vec<_> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
-    if ids != ["FP-01", "FP-02", "FP-03", "FP-04", "FP-05", "FP-06", "FP-07", "FP-08", "FP-09", "FP-10", "FP-11", "FP-12", "FP-13", "FP-14"] {
-        defects.push("the vector ids are not FP-01..FP-14".to_owned());
+    if ids != ["FP-01", "FP-03", "FP-05", "FP-07", "FP-09", "FP-11", "FP-13"] {
+        defects.push("the vector ids are not FP-01, FP-03, .., FP-13".to_owned());
     }
     let text = normalized(fr415);
     let row = fr415.lines().find(|line| line.starts_with("| FR-415-AC-21 |"));
@@ -24528,7 +24507,7 @@ fn tc_367_frame_presence_vectors_fail_on_each_mutation() {
     let vectors = parsed_fixture(CLOCK_PRESENCE_FRAME_VECTORS);
     let defects = |vectors: &Value, fr415: &str, unwritten| frame_defects(vectors, fr415, unwritten);
     let reset = defects(&vectors, FR415_DECLARE_CLOCKS, UnwrittenPresence::ImplicitReset);
-    assert!(reset.iter().any(|d| d.starts_with("FP-01 ")) && reset.iter().any(|d| d.starts_with("FP-02 ")), "{reset:?}");
+    assert!(reset.iter().any(|d| d.starts_with("FP-01 ")), "{reset:?}");
     let edit = |change: &dyn Fn(&mut Value)| {
         let mut copy = vectors.clone();
         change(&mut copy);
@@ -24536,19 +24515,15 @@ fn tc_367_frame_presence_vectors_fail_on_each_mutation() {
     };
     assert!(!edit(&|v| v["cases"][1]["expected"] = json!([{"present": true, "clock": "0 ms"}])).is_empty());
     assert!(!edit(&|v| v["cases"][4]["expected"] = json!([{"present": true, "clock": null}])).is_empty());
-    assert!(!edit(&|v| v["cases"][2]["write"]["clock"] = json!("6 ms")).is_empty());
-    assert!(!edit(&|v| v["cases"][3]["pair"]["with"] = json!("FP-05")).is_empty());
+    assert!(!edit(&|v| v["cases"][1]["write"]["clock"] = json!("6 ms")).is_empty());
     assert!(!edit(&|v| { v["cases"].as_array_mut().unwrap().pop(); }).is_empty());
-    // `not present` read as a write of absent for the Option bit, or the union kept.
-    assert!(!edit(&|v| v["cases"][12]["expected"] = json!([{"present": false, "clock": null}])).is_empty());
-    assert!(!edit(&|v| v["cases"][13]["expected"] = json!([])).is_empty());
+    // `not present` read as a write of absent for the Option bit.
+    assert!(!edit(&|v| v["cases"][6]["expected"] = json!([{"present": false, "clock": null}])).is_empty());
     // The static refusal dropped or renamed.
-    assert!(!edit(&|v| v["cases"][10]["expected"] = json!([])).is_empty());
-    assert!(!edit(&|v| v["cases"][11]["expected"]["refused"]["cause"] = json!("clock-write")).is_empty());
-    // A differing pair declared the same.
-    assert!(!edit(&|v| { v["cases"][5]["pair"]["outcome"] = json!("same"); v["cases"][4]["pair"]["outcome"] = json!("same"); }).is_empty());
+    assert!(!edit(&|v| v["cases"][5]["expected"] = json!([])).is_empty());
+    assert!(!edit(&|v| v["cases"][5]["expected"]["refused"]["cause"] = json!("clock-write")).is_empty());
     // The pinned row and sentences edited or removed.
-    let edited = FR415_DECLARE_CLOCKS.replacen("`FP-01`..`FP-14`", "`FP-01`..`FP-12`", 1);
+    let edited = FR415_DECLARE_CLOCKS.replacen("FP-13 of", "FP-12 of", 1);
     assert!(!defects(&vectors, &edited, UnwrittenPresence::NoSuccessor).is_empty());
     for pinned in FR415_FRAME_SENTENCES {
         let words: Vec<&str> = pinned.split_whitespace().collect();
