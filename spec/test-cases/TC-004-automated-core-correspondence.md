@@ -21,7 +21,7 @@ passing that core alone to B's JCS functions. Compare with the recorded canonica
 bytes/digest, then attach the separate disposition and recompute from the same
 selected core. Independently mutate a core field, disposition core digest, its
 prefix from sha256-jcs to sha256, and disposition reference role to observation.
-Verify the disposition's own byte digest separately. Finally repeat the projection
+Finally repeat the projection
 rule through B's real report profile/assembler under IT-003-SC-03 when available.
 
 ## Expected Results

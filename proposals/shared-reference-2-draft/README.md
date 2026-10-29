@@ -14,11 +14,10 @@ these two forms only. Existing source-map and migration envelopes keep their
 1-draft selection; this amendment supplies no inferred migration, decoder
 fallback or general extension bag.
 
-An artifact value selects `ix.artifact-ref/3-draft`. Its six mandatory fields
-are refVersion, kind, authority, identity, digest and wire. Wire has exactly identity
+An artifact value selects `ix.artifact-ref/3-draft`. Its five mandatory fields
+are refVersion, kind, authority, identity and wire. Wire has exactly identity
 and version (nonempty strings). Authority and identity are nonempty strings.
-Digest is exactly `sha256:` plus 64 lowercase hexadecimal digits, hashing all
-supplied artifact bytes with no normalization. Every record is closed.
+The reference carries no content digest or byte seal. Every record is closed.
 
 The fourteen prior kinds remain: source, model-package, linked-package,
 executable-projection, property, binding, snapshot, invocation,
@@ -36,11 +35,10 @@ dependency-closure. The six additional kinds have these exact roles:
 
 The consumer selects its expected role explicitly. A structurally valid nearby
 kind is an identity-mismatch for that role. No generic-kind fallback is permitted.
-Artifact identity is the exact tuple of kind, authority, identity, digest and
-wire under its selected refVersion. Equal bytes alone cannot join different
-roles. Supplied bytes whose digest differs from the reference's digest remain
-identity-content-conflict. Changing versions requires a separately accepted
-mapping; an amendment's existence is not that mapping.
+Artifact identity is the exact tuple of kind, authority, identity and wire under
+its selected refVersion. Equal bytes alone cannot join different roles.
+Changing versions requires a separately accepted mapping; an amendment's
+existence is not that mapping.
 
 ## Semantic reference and JCS identity
 
@@ -81,22 +79,20 @@ contracts that cannot admit binary64 round trips need a different selected
 representation. These rules follow [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785.html#section-3);
 no RFC implementation or example corpus is copied here.
 
-A raw byte digest cannot be converted by changing its prefix. Even if an artifact
-already contains canonical bytes and the hexadecimal hash happens to agree,
-byte identity and semantic identity still have different checked obligations.
 Unknown domain/version/algorithm selections refuse with
 unsupported-canonicalization before interpretation; malformed digest syntax is
-invalid-wire, and a validly shaped incorrect digest is identity-mismatch.
+invalid-wire, and a validly shaped incorrect canonical identity is
+identity-mismatch.
 
 ## Non-circular automated-core correspondence
 
 B's report profile selects the complete validated automated core before hashing.
 Neither the external disposition nor the outer wrapper belongs to that preimage.
 The disposition contains the exact resulting sha256-jcs core digest, and its
-ArtifactRef uses review-disposition with a separate digest over its actual bytes.
-Attaching a disposition cannot change the sealed core or its digest. A changed
-core requires a new matching disposition. A foreign digest, byte-digest
-substitution or nearby artifact kind refuses correspondence.
+ArtifactRef uses the review-disposition role. Attaching a disposition cannot
+change the selected core or its digest. A changed core requires a new matching
+disposition. A foreign core identity or nearby artifact kind refuses
+correspondence.
 
 B owns all report-core fields, validation, reviewer/procedure/provenance checks,
 missing-disposition incompleteness and final result policy. The fixture here uses

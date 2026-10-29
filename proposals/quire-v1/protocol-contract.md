@@ -205,7 +205,7 @@ Refused, violating or incomplete controls:
 9. An open prefix without a decisive basis is relabelled satisfied or violated,
    a decisive result omits one supporting fact, or open subject progress is
    restamped as closed: refused as an impossible result combination.
-10. A late contradiction silently rewrites or reseals the earlier settled
+10. A late contradiction silently rewrites the earlier settled
     result instead of emitting a linked superseding or invalidating result:
     refused as result-history corruption.
 

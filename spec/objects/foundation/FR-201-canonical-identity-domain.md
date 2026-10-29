@@ -57,8 +57,6 @@ equality.
   `raw-artifact-digest` or to any other member.
 - **Causal order** — not applicable. A domain label participates in no causal
   structure.
-- **Digest domain** — not applicable to the label itself. This artifact *is* the
-  vocabulary of digest domains; it does not carry one.
 - **Cross-domain rule** — two identities bearing different domain labels are
   unequal. Byte equality of their digests does not make them equal, and a raw
   `sha256` digest cannot substitute for `sha256-jcs` (FR-018-AC-2).
@@ -74,9 +72,9 @@ Three requirements independently state what is inside the preimage under the
 - [FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md): for B's
   automated-report profile the qualified input is the validated automated core
   alone; the external disposition and outer report wrapper are excluded.
-- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): the enclosing
-  artifact reference carries the digest over the complete canonical result
-  bytes, and the digest is not a self-referential field inside those bytes.
+- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): the
+  canonical result identity is computed over the complete closed result with
+  only `resultId` omitted.
 - [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md):
   the derived result identity is taken over a distinct projection-identity
   preimage under `quire.protocol.e02-projection-identity/v1-draft.1`.

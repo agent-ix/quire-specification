@@ -188,7 +188,7 @@ When a later observation, progress or closure record contradicts a premise in a
 settled result, the result producer SHALL retain the earlier result bytes and
 emit a typed superseding or invalidating result that identifies the earlier
 result, the contradicted premise and the corrected input identity. The result
-producer SHALL NOT rewrite, reseal or silently replace the earlier result. A
+producer SHALL NOT rewrite or silently replace the earlier result. A
 premise contradiction is not an admitted continuation under the earlier input
 identity.
 

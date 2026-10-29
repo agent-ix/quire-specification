@@ -402,9 +402,8 @@ One envelope has three stages. Each is a closed object carrying
 base64url with no padding and zero unused trailing bits, so that one byte
 string has exactly one spelling and the frame keeps one RFC 8785 encoding.
 `request.package_id` SHALL be that package's `package_id`. A reader decodes
-`package`, admits it with the v2 reader and refuses a recomputed `package_id`
-that differs from `request.package_id` with
-`stale_dependency`/`content-mismatch`, before any item runs. A padded or
+`package` and admits it with the v2 reader before any item runs; it does not
+recompute or compare `package_id` to refuse a package as stale. A padded or
 standard-alphabet spelling, nonzero trailing bits, a length of 1 modulo 4, or
 a `package` that is a JSON value rather than a string refuses before
 consumption. The bytes travel as bytes, not as an embedded JSON value,

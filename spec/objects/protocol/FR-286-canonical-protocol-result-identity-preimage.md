@@ -36,7 +36,7 @@ duplicate result members are refused by the closed result contract.
 A strict reader SHALL validate in this order: (1) closed result shape,
 `contractVersion` and `kind`; (2) the presence and completeness of `resultKey`;
 (3) cross-field combination and lineage rules. The reader SHALL refuse the first
-failed boundary and SHALL NOT repair, approximate or reseal the result. No
+failed boundary and SHALL NOT repair or approximate the result. No
 separate artifact digest is computed or compared.
 
 - **Identity kind** — *entity*. The key is structural and is not derived from the
