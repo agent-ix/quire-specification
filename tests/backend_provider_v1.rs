@@ -1966,7 +1966,7 @@ fn certificate_member_names() -> std::collections::BTreeSet<String> {
 }
 
 /// FR-368-AC-22: a derived item over a model subject that reads more than one
-/// `model_selections` row has no stated anchor and is settled `unsupported` by
+/// `model_root` node has no stated anchor and is settled `unsupported` by
 /// the producer, which writes no request item for it. The anchor is the one
 /// `model_root` of the package; two roots are refused with the FR-331
 /// producer-side settlement cause.

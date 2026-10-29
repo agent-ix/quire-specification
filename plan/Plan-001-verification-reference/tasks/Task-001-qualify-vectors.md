@@ -28,7 +28,7 @@ through actual Rust dependencies. Completion covers IT-003-SC-01/02/04 only.
 
 ## Subtasks
 
-- [x] Preserve independently authored canonical byte expectations.
+- [x] Author canonical-form vectors checked against the JCS rules.
 - [x] Validate the closed schema and one-axis shape mutations.
 - [x] Run B's JCS API with distinct raw-byte and semantic identities.
 

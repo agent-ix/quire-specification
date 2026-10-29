@@ -30,8 +30,8 @@ relationships:
 ## Description
 
 When a package imports a domain package, QSL model intake SHALL admit the
-package selected by its identity, SHALL derive the package's `sha256-jcs`
-digest, record it in the package lock and SHALL build one Quire
+package selected by its identity, SHALL record the identity and the document's
+identity in the package lock and SHALL build one Quire
 model declaration for each IR node, refusing any invalid node with its IR node identity and
 `origin`.
 
@@ -43,7 +43,7 @@ definition.
 ## Outputs
 
 The original declarations of one ModelSelection (FR-321), each keyed by
-`(domain package identity, IR node identity, sha256-jcs)`, or located refusals.
+`(domain package identity, IR node identity)`, or located refusals.
 
 ## Behavior
 
@@ -57,8 +57,7 @@ chain is:
    yields field, relationship, operation, frame, clause, population and systems
    declarations with source spans.
 3. **Lift.** The FCD extraction-frontend lowers the extracted declarations into
-   one semantic IR 2.0.0 domain package, serialized with RFC 8785 JCS and
-   fingerprinted with `sha256-jcs`.
+   one semantic IR 2.0.0 domain package, serialized with RFC 8785 JCS.
 4. **Admission.** Rule `quire.model.normalize.intake/v1` checks the selection
    and the package bytes in the order the selected definition fixes.
 5. **Declarations.** Intake builds one original declaration per IR node,
@@ -78,30 +77,26 @@ token, or any other token after the identity string, is
 token, or `unexpected-end` at the end of the source; the declaration is never
 dropped without a diagnostic. A digest is not part of the grammar.
 
-The package input maps each domain package identity to the bytes of one domain
-package document, a supplier never stating a digest. At most one document is
-supplied per identity; a second supplied under an identity already supplied is
+The package input maps each domain package identity to one domain package
+document; a supplier states no digest and no version. At most one document is
+supplied per identity; a second document supplied under an identity already
+supplied is
 `refused { code: invalid_package, cause: conflicting-definition }` before intake
-runs, whether or not the two differ, naming both. Intake looks up the bytes by
-the selection's identity and compares the package's own identity with the
-selection. Intake then derives the document's `sha256-jcs` digest, SHA-256 over
-the RFC 8785 bytes of the whole document, and that digest is the content
-identity member of the ModelSelection (FR-321) and its row in the package lock's
-`model_selections`: `{identity, digest_domain: "sha256-jcs", digest}`. The lock
-row binds the model's content, as the lock's `package_id` selection binds a
-library's.
+runs, naming both. One document per identity is the rule: a package that needs
+two releases of one domain package is not supported in v1, and a source that
+selects one identity twice is `duplicate_selection`/`duplicate-identity`
+(FR-321-AC-5). Which release a supplier offers under an identity is chosen by the
+supplier or resolver outside the compiler; the compiler uses what it is given.
+Intake looks up the document by the selection's identity and compares the
+document's own identity with the selection, then records the selection as the
+`model_root` node of identity (FR-321, FR-322); the lock records nothing.
 
-A source never states the digest, so no comparison at intake detects an edited
-document. A changed document is caught against the lock: replay keys its
-`byte_provision` by the lock row's digest, and a document whose freshly
-derived `sha256-jcs` digest differs from the row's refuses
-`stale_dependency`/`content-mismatch` naming the recorded and the derived
-digest (FR-323 `byte_provision`). The checked-package reader receives each
-lock-selected document under the row's recorded digest and does not recompute
-it (FR-322-AC-32); that digest is a lock-recorded value, never source text. The lock row also
-changes the package's `package_id`, so a changed model is visible in the
-package identity. The digest domain of a lock row other than `sha256-jcs`
-refuses `stale_dependency`/`digest-domain-mismatch`.
+The lock holds no model record. The `model_root` node of the identity is the only
+record of the selection. No lock row, digest, version or staleness comparison of a model
+exists. Intake does not detect a changed domain package: an edit of the document
+under an unchanged identity goes undetected, and no check or refusal stands in
+for it. The package document's own `version` member is not read by intake
+and is not recorded.
 
 Intake keeps the authored order of every type's `fields` and `supertypes`
 arrays (FR-208 "Effective field order" reads it). FR-150's sorting by identity
@@ -150,7 +145,7 @@ parameter not suppressed, in `params` order; then the frame entries, so that
 `deletes p` resolves against validated names. A parameter whose `name` equals
 the last segment of its identity and whose name is repeated has a repeated
 identity, so a repeated name is a repeated-identity refusal. The name refusal
-is reported at the selection row (`/lock/model_selections/<i>`) like the other
+is reported at the owner of the package's `model_root` node (`/semantic_graph/nodes/<i>/owner`) like the other
 declaration refusals of the selected document, names the operation's IR node
 identity and the member path `TypeDefinition.operations[k].params[s].name`,
 `k` the operation's index in its owner and `s` the parameter's, and retains the
@@ -608,9 +603,8 @@ embedded `constructs` table; that entry's `meaning` is a Quire meaning id
 (FR-208). The kind name and module select the construct entry only and never
 select a meaning.
 
-A declaration key carries no digest. Two domain package documents with equal nodes yield
-equal declaration keys. The ModelSelection, which binds the digest, separates
-them.
+A declaration key carries no digest and no digest domain. Two domain package
+documents with equal nodes yield equal declaration keys.
 
 Intake charges `normalize.record` under `ModelNormalizationLimitsV1` of
 `quire.value.accounting/v1` once per declaration, ascending by declaration key.
@@ -621,15 +615,15 @@ Admission checks are decided before the first charge.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-154-AC-1 | An artifact bundle whose extraction and lift yield a valid domain package is admitted, and intake builds exactly one original declaration per IR node, keyed by package identity and IR node identity. | Test (TC-234) |
-| FR-154-AC-2 | A missing package and a package whose identity differs each refuse with its named cause before any declaration is built, a package supplied under the selection's identity and carrying it is admitted, and the admitted document's `sha256-jcs` digest is derived by intake and recorded in the `model_selections` row. | Test (TC-234) |
+| FR-154-AC-2 | A missing package and a package whose identity differs each refuse with its named cause before any declaration is built, a package supplied under the selection's identity and carrying it is admitted, and the admitted document's identity is recorded by the package's `model_root` node. | Test (TC-234) |
 | FR-154-AC-3 | A malformed IR node or a dangling reference refuses with the IR node identity and its `origin`, and every such refusal is reported in node order. | Test (TC-234) |
-| FR-154-AC-4 | Publishing a domain package document with equal nodes and a different digest leaves every declaration key and effective declaration unchanged, while the ModelSelection, the effective view and the object universe change. | Test (TC-234) |
+| FR-154-AC-4 | Two domain package documents with equal nodes and different `version` members yield equal declaration keys, effective declarations, effective view and object universe; the `version` member is not read. | Test (TC-234) |
 | FR-154-AC-5 | Intake at its exact `normalize.record` bound completes, and the one-less run is incomplete at `normalize.record`. | Test (TC-234) |
 | FR-154-AC-6 | Retitling an artifact leaves every declaration key unchanged. Changing an artifact's id changes the declaration key of the type it declares and of that type's members, leaves every other declaration key unchanged, and a reference to the old key refuses `missing_declaration`/`missing-name`. | Test (TC-234) |
 | FR-154-AC-7 | A type definition or population node whose kind names no construct entry, or whose construct has no Quire meaning id or an id outside FR-208, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity and its `origin`, and no meaning is inferred from its kind name. | Test (TC-234) |
 | FR-154-AC-8 | A type definition or population node whose artifact id begins with an ASCII letter and continues with ASCII letters, digits, underscores or hyphens is admitted with that id in its node identity and declaration key; this includes `sys_pump`, `sys-pump` and `FR-001`. An artifact id that does not match this rule, such as `-sys_pump`, refuses `invalid_model_binding`/`malformed-declaration` with the IR node identity and its `origin`, a reference to that node reports no `missing_declaration`/`missing-name`, and a second failing check on the same node reports after the id refusal. An artifact-type document such as `FR-204` with `object: value_object` still yields no node because extraction classifies by `type`; a model-declaring object artifact with id `FR-204` does yield a node and is admitted. | Test (TC-234) |
 | FR-154-AC-9 | The published domain package document of `acme/orders` (`domain-package-acme-orders.json`) carries exactly FR-095's identity forms: types `ix://acme/orders/<artifact id>`, fields, operations and parameters nested under their owner, and relationships `ix://acme/orders/relationship/<Name>-<verb>-<TargetName>` (`Order-order-Order`, `Order-invoiced-Invoice`, `Order-follows-Order`, `Order-twin-Order`), the constrained-field alias `ix://acme/orders/OrderTotal`, none of them owner-nested. | Test (TC-280) |
-| FR-154-AC-10 | A relationship declaration of the selected document refuses at the selection row (`/lock/model_selections/<i>`), in node order and, within a node, in the order malformed declaration, unresolved end type, duplicate identity, reversed multiplicity: an identity outside the package's global `relationship` slot (owner-nested, foreign-package or wrong-slot), a missing or invalid `direction`, `category`, `composite` or `origin`, a missing, null, empty or non-string `sourceEnd.role`, a present null, empty or non-string `targetEnd.role` (an absent `targetEnd.role` is valid), a source end naming another owning type, a malformed end or multiplicity, and an end type naming a relationship or another declaration of the wrong meaning each refuse `invalid_model_binding`/`malformed-declaration`; an end type naming no declaration refuses `missing_declaration`/`missing-name`; a repeated relationship identity, including under two owners, refuses `invalid_model_binding`/`conflicting-binding`, and two missing identities are malformed declarations, not conflicting ones; `lower > upper` alone refuses `invalid_model_binding`/`unpreserved-model-meaning`. The published `adverse.json` `relationship_document_cases` hold one entry per refusal and three admitted entries. Each refusal retains the relationship's IR identity and its `origin` verbatim: `declaration_origin_cases` `refusal-retains-source-origin` (a source origin with its `sourceIdentity`, `path` and span) `refusal-retains-generated-origin` (a generated origin with its members and no span) and `refusal-retains-no-malformed-origin` (a malformed origin, refused `malformed-declaration`, retained as none). | Test (TC-280) |
+| FR-154-AC-10 | A relationship declaration of the selected document refuses at the owner of the package's `model_root` node (`/semantic_graph/nodes/<i>/owner`), in node order and, within a node, in the order malformed declaration, unresolved end type, duplicate identity, reversed multiplicity: an identity outside the package's global `relationship` slot (owner-nested, foreign-package or wrong-slot), a missing or invalid `direction`, `category`, `composite` or `origin`, a missing, null, empty or non-string `sourceEnd.role`, a present null, empty or non-string `targetEnd.role` (an absent `targetEnd.role` is valid), a source end naming another owning type, a malformed end or multiplicity, and an end type naming a relationship or another declaration of the wrong meaning each refuse `invalid_model_binding`/`malformed-declaration`; an end type naming no declaration refuses `missing_declaration`/`missing-name`; a repeated relationship identity, including under two owners, refuses `invalid_model_binding`/`conflicting-binding`, and two missing identities are malformed declarations, not conflicting ones; `lower > upper` alone refuses `invalid_model_binding`/`unpreserved-model-meaning`. The published `adverse.json` `relationship_document_cases` hold one entry per refusal and three admitted entries. Each refusal retains the relationship's IR identity and its `origin` verbatim: `declaration_origin_cases` `refusal-retains-source-origin` (a source origin with its `sourceIdentity`, `path` and span) `refusal-retains-generated-origin` (a generated origin with its members and no span) and `refusal-retains-no-malformed-origin` (a malformed origin, refused `malformed-declaration`, retained as none). | Test (TC-280) |
 | FR-154-AC-11 | A variant type with no case, a case with no source span, a case whose identity is not `variant/<Name>-<value>` of its owner and name, and a construct of a shape other than `enumeration` each refuse `invalid_model_binding`/`malformed-declaration` (except a case already refused by a same-identity collision, FR-154-AC-13), at the node and member path FR-154 names (`TypeDefinition.kind`, `TypeDefinition.variants`, `TypeDefinition.variants[i].origin`, `Variant.identity`); a field `typeRef`, an operation parameter and an operation result naming a variant type are admitted and raise no refusal; a case with a supported, resolving `payloadType` is admitted as that union member's single payload, and an unresolved or unsupported `payloadType` refuses `unsupported_construct`/`declaration-form` at its case node and `Variant.payloadType`, never `invalid_model_binding`; a type whose cases all omit `payloadType` remains an enumeration of nullary cases, while a case without `payloadType` in a union is a nullary member; two cases with equal names and distinct identities refuse the later case `invalid_model_binding`/`conflicting-binding` at the type node and `TypeDefinition.variants[i]` and raise no other refusal for it; within the type node the failures report in the order shape, empty list, repeated names, source spans, and each case node then reports identity and payload after the type node's refusals; reordering the `variants` list changes no declaration key for an enumeration or a union. | Test (TC-235, TC-939) |
 | FR-154-AC-12 | A clause, state, transition and step identity is exactly `<owner identity>/<member name>`: `ix://test/orders/OrderLifecycle/NotYetPlaced`, `.../OrderLifecycle/Draft`, `.../OrderLifecycle/<transition member name>` and `.../Fulfilment/receive_order` are admitted, a clause, state or step whose `clauseId` or `name` differs from the member name of its identity refuses `invalid_model_binding`/`malformed-declaration` at `TypeDefinition.clauses[i].clauseId`, `TypeDefinition.states[i].name` and `TypeDefinition.steps[i].identity`, a state of `OrderLifecycle` with the identity `.../Fulfilment/Draft` (the wrong owner) refuses `malformed-declaration` at `TypeDefinition.states[i].identity`, a state, clause, step or transition whose member name is also a field or operation of its owner (state `cancel` beside operation `cancel`) refuses `invalid_model_binding`/`conflicting-binding`, and the global-slot spellings `clause/<Name>-<clauseId>`, `state/<Name>-<state>`, `transition/<Name>-<from>-<to>-<trigger>` and `step/<Name>-<step>` each refuse `invalid_model_binding`/`malformed-declaration` at the member's `identity`. Two transitions of one machine whose slugged global spellings would be equal (`a_b → c` and `a → b_c` on one trigger) are two distinct nodes with distinct keys. | Test (TC-235) |
 | FR-154-AC-13 | Two fields of one owner, two operations of one owner, a field and an operation of one owner, two parameters of one operation, two tuple positions with one ordinal identity, or two variant cases that share one identity each refuse once, `invalid_model_binding`/`conflicting-binding`, naming the shared identity at the later member's path: `TypeDefinition.fields[j]`, `TypeDefinition.operations[k]` (the operation, for a field and an operation), `TypeDefinition.operations[k].params[s]`, the tuple position path or the later case node's owner's `TypeDefinition.variants[i]`, including when the variant cases have different owners. The refusal carries the code, cause, shared identity and path only, and the collision suppresses the identity, origin and payload checks of both colliding cases (FR-154-AC-11 and FR-208-AC-15 apply to a case not already refused by a collision), so exactly one refusal is reported whichever of the two cases carries the correctly minted identity, and no declaration of the package is admitted. The same members with distinct identities are admitted, and one member name used in two different owners is two distinct identities and no collision. | Test (TC-234, TC-235) |
@@ -654,9 +648,9 @@ Admission checks are decided before the first charge.
 | FR-154-AC-33 | A tuple type with declaration identity `<package identity>/Pair` and positions `p0: Boolean`, `p1: Integer` is admitted as one tuple declaration plus two ordered position declarations; swapping the position types keeps the declaration identity but changes which type is bound to each position identity, and therefore changes the tuple's type identity and product order; an empty positions list, a gap, absent `typeRef` or unsupported type, or an extra field, identity field, operation, supertype or clause refuses `invalid_model_binding`/`malformed-declaration`; an unresolved package `typeRef` refuses `missing_declaration`/`missing-name`; two positions with one `pN` identity refuse `invalid_model_binding`/`conflicting-binding` at the later position. | Test (TC-234) |
 | FR-154-AC-34 | `model M = "test/orders";` is a source selection of identity `test/orders` and no other: it carries no version and no digest. The same declaration followed by a `version` or a `digest` token, or by any token other than `;`, refuses `invalid_syntax`/`unexpected-token` at that token. | Test (TC-234) |
 | FR-154-AC-35 | A `model` whose identity string is absent, is not a string, or is followed by the end of the source, refuses `invalid_syntax` (`unexpected-token` at the offending token, `unexpected-end` at the end of the source) and is never dropped without a diagnostic. | Test (TC-234) |
-| FR-154-AC-36 | Admitting the document supplied under `test/orders` yields a `model_selections` row `{identity: test/orders, digest_domain: sha256-jcs, digest}` whose digest is the SHA-256 of the document's RFC 8785 bytes; no source, input or expected value states that digest. | Test (TC-234) |
+| FR-154-AC-36 | Admitting the document supplied under `test/orders` yields the `model_root` node of identity `test/orders` and no lock row; no source, input, lock or expected value states a digest or a version; the supplied document's own `package.version` member is data of that document and is never compared. | Test (TC-234) |
 | FR-154-AC-37 | Two documents supplied under one domain package identity, whether or not they differ, refuse `invalid_package`/`conflicting-definition` before intake, naming both; a selection whose identity no supplied document has refuses `missing_import`/`missing-selection` at the identity string. | Test (TC-234) |
-| FR-154-AC-38 | A lock whose `model_selections` row records the digest of one document, replayed with a document of the same identity whose derived `sha256-jcs` digest differs, refuses `stale_dependency`/`content-mismatch` naming the recorded and the derived digest; the changed document's row changes the package's `package_id`. | Test (TC-234) |
+| FR-154-AC-38 | Withdrawn: a changed domain-package document is not detected by intake. | Withdrawn |
 
 ## Dependencies
 

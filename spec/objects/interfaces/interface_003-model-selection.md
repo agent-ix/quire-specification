@@ -23,8 +23,8 @@ relationships:
 name: ModelSelection
 associated_types: [DomainPackageId, DeclarationKey, EffectiveDeclarationId]
 operations:
-  - { name: select_package, inputs: [domain package identity, domain package bytes supplied under that identity], output: immutable admitted domain package and its derived sha256-jcs digest, or refusal, semantics: derives the sha256-jcs digest of the exact package bytes for the lock row }
-  - { name: intake, inputs: [admitted domain package, selected quire.model.complete/v1 definition], output: original declarations keyed by (package identity, IR node identity, sha256-jcs) or located refusal, semantics: builds one declaration per IR node and refuses retaining the IR node identity and its FCD `origin` }
+  - { name: select_package, inputs: [domain package identity, domain package bytes supplied under that identity], output: immutable admitted domain package or refusal, semantics: reads the document supplied under the identity; the lock row records the identity }
+  - { name: intake, inputs: [admitted domain package, selected quire.model.complete/v1 definition], output: original declarations keyed by (package identity, IR node identity) or located refusal, semantics: builds one declaration per IR node and refuses retaining the IR node identity and its FCD `origin` }
   - { name: normalize, inputs: [original declarations, selected quire.model.complete/v1 definition], output: original-to-effective view (quire.model.effective-view/v2) or refusal, semantics: QSL derives effective identities in its own domains and preserves ordered derivation provenance }
 invariants:
   - declaration keys come only from the domain package identity and IR node identities; effective identities are QSL-derived in QSL digest domains

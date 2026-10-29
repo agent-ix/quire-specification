@@ -275,17 +275,15 @@ token included, is `refused { code: invalid_syntax, cause: unexpected-token }`
 at that token; a `model` whose identity string is absent or is not a string is
 `refused { code: invalid_syntax, cause: unexpected-token }` at the offending
 token, or `unexpected-end` at the end of the source, and never drops the
-declaration silently. The resolver recomputes the domain package's
-`sha256-jcs` digest, SHA-256 over the RFC 8785 canonical bytes of the semantic
+declaration silently. The resolver records the identity of the semantic
 IR document lifted from the imported spec's artifacts
-([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)), from
-the document supplied under the identity, and records the identity and digest
-in the package lock's `model_selections` row (FR-154, FR-321); the source never
-states a digest. The selected row is part of the package identity. Clauses name
+([AD-006](../../spec/assurance/AD-006-model-graph-state-contracts.md)) that is
+supplied under it by a `model_root` node (FR-154, FR-321); no digest or
+version of the document is recorded. Clauses name
 domain types by qualified name through the model alias, for example
 `Orders::Order` after `model Orders = "acme/orders";`. A qualified name
 resolves to one effective declaration key (domain package identity, IR node
-identity, `sha256-jcs`). A name absent from the domain package refuses. The
+identity). A name absent from the domain package refuses. The
 three-segment name `Orders::Tier::Gold` names the case `Gold` of the variant
 type `Tier` (the grammar is unchanged; resolution is in
 [model-complete](definitions/model-complete.md)).

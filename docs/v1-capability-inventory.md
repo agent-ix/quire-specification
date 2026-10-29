@@ -21,9 +21,9 @@ with a typed, located outcome.
 | V1-SRC-002 | Select an exact language edition independently of profiles and wire formats. | Required | V1-001, V1-051 |
 | V1-SRC-003 | Select an exact, ordered profile bundle. | Required | V1-001, V1-051 |
 | V1-SRC-004 | Link state, temporal, protocol and analysis declarations into one package. | Required | V1-001, V1-040 |
-| V1-SRC-005 | Preserve exact source bytes and content digest. | Required | V1-002 |
+| V1-SRC-005 | Preserve exact source bytes. | Required | V1-002 |
 | V1-SRC-007 | Preserve lexical spans through parsing, linking, lowering and results. | Required | V1-002, V1-005 |
-| V1-SRC-008 | Import one exact domain package by identity; the resolver derives its `sha256-jcs` digest into the lock. | Required | V1-002, V1-003 |
+| V1-SRC-008 | Import one exact domain package by identity. | Required | V1-002, V1-003 |
 | V1-SRC-009 | Bind qualified source names to typed domain declarations without inventing identities. | Required | V1-002, V1-003 |
 | V1-SRC-010 | Keep semantic, source, artifact, run and evidence identities distinct. | Required | V1-002, V1-041 |
 | V1-SRC-013 | Discover edition, profile, declaration-family and consumer features exactly. | Required | V1-051 |

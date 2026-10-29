@@ -8,8 +8,7 @@ Implementation and qualification remain separately reported.
 ## Always-selected definitions
 
 Every package that selects this root also selects the complete-value root and
-its always-selected closure through
-[`complete-value-lock.json`](complete-value-lock.json), and:
+its always-selected closure ([package selection](value-complete.md#package-selection)), and:
 
 | Identity | Definition artifact |
 | --- | --- |
@@ -38,7 +37,7 @@ declares one domain object, such as `Order`, and its module object type, such
 as `entity`, fixes the artifact's shape. quire-rs extracts the declarations.
 The FCD extraction-frontend lifts the extracted declarations of one spec
 package into one semantic IR document, the **domain package**. It is
-serialized with RFC 8785 JCS and fingerprinted with `sha256-jcs`.
+serialized with RFC 8785 JCS.
 
 A package imports a domain package with a `model` declaration:
 
@@ -47,10 +46,8 @@ model Orders = "acme/orders";
 ```
 
 The source names the domain package identity only: no version and no digest
-(FR-154 "Model selection in source"). The resolver derives the digest and
-records the import as a ModelSelection (FR-321) row of the package lock:
-`{identity, digest_domain: "sha256-jcs", digest}`. The row is part of the
-package identity. QSL model intake admits the domain package and builds the
+(FR-154 "Model selection in source"). The package records the import as a `model_root` node of identity
+(FR-321); the lock records nothing. QSL model intake admits the domain package and builds the
 Quire model declarations from its IR nodes. Quire owns the meaning of every
 declaration. Clauses of a unit name a declaration by qualified name: the model alias,
 then the segments of its IR node identity after the package identity, such as
@@ -67,7 +64,7 @@ the rule.
 
 Rule `quire.model.normalize.intake/v1` admits one domain package. The package
 input is a map from domain package identity to package bytes, one document per identity. Intake first checks the selection's identity, then looks up the
-bytes by that identity, derives the `sha256-jcs` digest of the supplied document and reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
+bytes by that identity and reads the package's own identity. It runs these checks in order. Each failure ends intake with no declaration.
 
 | Check | Refusal |
 | --- | --- |
@@ -195,8 +192,8 @@ than every finite value. `ordered` and `unique` are booleans.
 
 ## Identity domains
 
-An original declaration key is `{package, node, digest_domain: "sha256-jcs"}`:
-the domain package identity, the IR node identity and the fixed digest domain.
+An original declaration key is `{package, node}`:
+the domain package identity and the IR node identity.
 QSL derives the following identities in its own domains. Their exact preimage
 shapes are
 [`model-effective-declaration.schema.json`](../../checked-package-v2/model-effective-declaration.schema.json)
@@ -204,9 +201,9 @@ and their known vectors are
 [`model-effective-declaration-vectors.json`](../../checked-package-v2/model-effective-declaration-vectors.json).
 Each identity is SHA-256 over the RFC 8785 JCS bytes of its schema-valid
 preimage, written as `{domain, digest}` with a lowercase 64-hex digest. Each
-domain string differs from `sha256-jcs`, from `quire.checked-semantic-node/v1`
-and from every other QSL domain, so no QSL identity can equal a domain package
-digest or an I04 node key, even with equal digest bytes.
+domain string differs from `quire.checked-semantic-node/v1`
+and from every other QSL domain, so no QSL identity can equal an I04 node key,
+even with equal digest bytes.
 
 Only these three identity domains and the inherit, subset and redefine rule
 identities (`quire.model.normalize.inherit/v2`, `.subset/v2`, `.redefine/v2`)
@@ -225,15 +222,12 @@ one, relabels it or derives one from the other.
 
 A declaration key carries no digest. An effective declaration identity binds
 declaration keys and derivation facts only. Two domain package documents
-with equal nodes and different digests therefore yield equal effective
-declaration identities, while their effective views and object universes
-differ: the vectors `n01v2-view` and `n01v2-universe` select F1's nodes under
-the digest `n01v2`, carry declarations
-byte-equal to `n01-view`'s, and differ from `n01-view` and `n01-universe`.
+with equal nodes yield equal effective
+declaration identities, effective views and object universes.
 Equal nodes in two different packages under one identity also share effective
 declaration identities, as `n01-type-A` and `n02-type-A` show. Every use that must separate selections pairs the effective
-declaration identity with the ModelSelection or with an object universe
-identity, which binds the selection.
+declaration identity with the selected domain package identity or with an object universe
+identity.
 
 Declaration keys compare by `package`, then `node`, as UTF-8 bytes, a proper
 prefix first.
@@ -247,8 +241,7 @@ effective declaration. An operation's `Pre:` and `Post:` contract clause is not 
 declaration: it is not retained and is never qualified. Effective entries and their fact input
 keys reference only that retained inventory. Retention adds no derivation,
 effective-declaration or hash charge and changes no effective identity
-preimage. The fixed `digest_domain: "sha256-jcs"` discriminator in an original
-key is not the selected package's content digest.
+preimage. An original key carries no digest and no digest domain.
 
 After structural normalization, the accounting definition orders systems
 checks, source resolution and structural assembly, checked-fact admission,
@@ -523,19 +516,20 @@ kind `none` or the element's kind.
 Direction is read only from a connection's or relationship's declared
 `direction` and from a port's direction, never from a role.
 
-## Qualification catalog and package selection
+## Package selection
 
-The canonical lock is [`complete-model-lock.json`](complete-model-lock.json).
-Its `requires` entry names the complete-value lock. Its
-`qualification_catalog` closes every artifact this root selects by role,
-authority, identity and artifact path. Its `package_selection`
-places every catalog role in `always`; this root has no conditional or
+This root requires the complete-value root. Its package selection places every
+role in `always`: `root`, `state_graph`, `rule_manifest`,
+`effective_declaration_schema`, `effective_declaration_vectors`, `rule_ad_006`,
+`rule_fr_043`, `rule_fr_143`, `rule_fr_144`, `rule_fr_150`, `rule_fr_151`,
+`rule_fr_152`, `rule_fr_153`, `rule_fr_154`, `rule_fr_204`, `rule_fr_208`,
+`rule_fr_321` and `rule_interface_003`; this root has no conditional or
 alternative profile. A package selection is checked with the same closed
-refusal codes and order as the complete-value lock.
+refusal codes and order as the complete-value package selection.
 
 ## Selected rules
 
-Each rule below is a `rule_*` role of the lock's `qualification_catalog`.
+Each rule below is a `rule_*` role of the package selection.
 
 | Rule |
 | --- |

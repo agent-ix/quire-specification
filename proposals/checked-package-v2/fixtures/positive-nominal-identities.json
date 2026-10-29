@@ -7,11 +7,10 @@
     "definition_selections": [
       {"authority":"agent-ix","identity":"example-model"}
     ],
-    "model_selections": [],
     "required_features": ["quire.value.complete/v1"],
     "dependency_selections": []
   },
-  "package_id": {"domain":"quire.package.semantic/v2","algorithm":"sha256","digest":"80b90ed59737fba3077550f2c4675f0b32486090e818b3a53d1eb1dadfe77ded"},
+  "package_id": {"domain":"quire.package.semantic/v2","algorithm":"sha256","digest":"a7daa2fca6e6ddf87b6387d755e93f80d01fcac34630d7682396d8deac31c610"},
   "lock": {
     "sources": [{"authority":"agent-ix","identity":"example","digest_domain":"quire.source.bytes/v1","digest":"2222222222222222222222222222222222222222222222222222222222222222"},{"authority":"agent-ix","identity":"example-units","digest_domain":"quire.source.bytes/v1","digest":"6666666666666666666666666666666666666666666666666666666666666666"}],
     "edition": {"role":"edition","definition":{"authority":"agent-ix","identity":"quire-edition"}},
@@ -19,7 +18,6 @@
     "definition_selections": [
       {"authority":"agent-ix","identity":"example-model"}
     ],
-    "model_selections": [],
     "required_features": ["quire.value.complete/v1"],
     "dependency_selections": []
   },

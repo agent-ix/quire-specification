@@ -18,7 +18,7 @@ the owner's namespace membership and the clause text's leading form.
 ## Test Procedure
 
 Select `quire.model.complete/v1` through
-[`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
+[`model-complete.md`](../../proposals/quire-v1/definitions/model-complete.md).
 Run every vector through the real local Rust check of domain clauses and
 compare the complete typed result with the criterion.
 

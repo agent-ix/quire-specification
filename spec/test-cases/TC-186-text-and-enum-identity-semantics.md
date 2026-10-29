@@ -18,7 +18,7 @@ Compare normalized text and declaration-qualified enum members at valid and inva
 Select language `ix:native`, edition `1-draft`, and the
 `quire.value.complete/v1` definition and the
 `quire.value.text.unicode-17.0.0/v1` definition through
-[`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
+[`value-complete.md`](../../proposals/quire-v1/definitions/value-complete.md).
 Execute these vectors through the real
 local Rust boundary:
 

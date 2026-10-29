@@ -22,7 +22,7 @@ Resolve every model element kind and attempt kind, direction and package substit
 Use the subject and inputs named by FR-152. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
 Select `quire.model.complete/v1` through
-[`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
+[`model-complete.md`](../../proposals/quire-v1/definitions/model-complete.md).
 Node names, declaration keys, package identity, multiplicity notation and
 default limits follow TC-195 and TC-196; the source is TC-195 S1 importing Y,
 with profile alias `V` and model alias `M`. A binder request is written

@@ -19,7 +19,7 @@ When a parsed source crosses the parser boundary, the producer SHALL use the imm
 ## Properties
 
 - `contract_version` — exactly `quire.parsed-source/v1`.
-- `source` — exact FR-202 source-document identity and digest.
+- `source` — exact FR-202 source-document identity.
 - `edition` — the selected language edition identity.
 - `tokens` — ordered token kind, exact byte region and original bytes.
 - `trivia` — ordered whitespace/comment byte regions retained without normalization.
@@ -40,7 +40,7 @@ refuse before consumption.
 | --- | --- | --- |
 | FR-320-AC-1 | Serializing an unrecovered artifact reproduces the exact source bytes. | Analysis |
 | FR-320-AC-2 | A recovery records every synthetic or discarded token and cannot claim semantic admission. | Analysis |
-| FR-320-AC-3 | Changing trivia changes the parsed artifact while unchanged mapped nodes may retain only source-digest-scoped correspondence. | Analysis |
+| FR-320-AC-3 | Changing trivia changes the parsed artifact while unchanged mapped nodes may retain only correspondence scoped to the unchanged source. | Analysis |
 
 ## Dependencies
 

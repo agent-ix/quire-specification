@@ -71,8 +71,7 @@ Qualify the published QSpec contract artifacts themselves: the V2
 checked-package schema and fixtures, the nominal node-identity preimage
 schema and vectors, the operation catalog including text-to-number identities,
 its clause and control operation identities, and the compound-unit value identity schema and
-vectors, and the complete-value and complete-model definition locks and
-package-selection vectors. This case proves producer-side schema closure,
+vectors, and the package-selection vectors. This case proves producer-side schema closure,
 digest recomputation, and operation-identity and diagnostic-cause closure
 through QSpec's Rust qualification. The dependency-closure reader outcomes
 below have implementation evidence in quire-contract-ir's
@@ -98,7 +97,7 @@ published dependency selections of `dependency-selection-vectors.json` into
 the all-families package's lock and identity preimage, require the schema to
 admit it and its recorded package id to recompute, require each authored
 entry mutation, and each `model_entry_mutations` entry placed in
-`model_selections`, to fail the schema in either member at the mutated entry, and
+`lock`, to fail the schema in either member at the mutated entry, and
 apply each order vector's selections to require its recorded order outcome.
 Treat the members the vectors file lists in `schema_only` as schema and order vectors only, not as supplied packages. Check supply order with the `supply_vectors`: neither entry supplied refuses the first; the first supplied and the second not refuses the second; the first supplied but stale and the second not refuses `stale_dependency`/`content-mismatch` at the first, not `missing-selection` at the second (FR-322-AC-84). Check a `dependency_reference` refusal's locus: `missing-selection` at the term's `package` member, `missing-name` at its `node` member and `operator-ineligible` at the term, under the term's pointer in its node's `body`. Check a function whose parameter is of a declared record type, and one whose body only references a declared record, to decide the signature type nodes: only the first is ineligible.
 Apply the published closure vectors to two direct dependencies whose own locks
@@ -133,13 +132,9 @@ others `invalid_semantic_graph`, FR-322-AC-139),
 and require the semantic oracle itself to refuse `-0` and to refuse a repeated
 pair, a derived pair of unequal normalized maps or of a ratio the base roots do
 not fix, and a cycle of the `dimension-equivalence-` vectors whose ratios do not
-multiply to one (FR-322-AC-118). Require every qualification-catalog entry of both definition locks to name
-an authored artifact under a unique role and identity, require each
-complete-value catalog role to occupy exactly one always, conditional or
-exactly-one slot and each complete-model role the always slot, and evaluate
-every accepted and refused
+multiply to one (FR-322-AC-118). Evaluate every accepted and refused
 package-selection vector with an independent selection oracle. Check the
-operation catalog's closure against both V2 schemas and the value lock;
+operation catalog's closure against both V2 schemas;
 recompute every operation vector and application node key; classify every
 operation mutation, ordering case and declaration mutation with an
 independent operation and declaration oracle; check the published fixture's
@@ -311,7 +306,7 @@ node with no `declaration`, owned by the `ModelOwner` of the operation member
 `ix://acme/orders/Order/size` and whose body holds the one `clause` binding
 `precondition` (QSL FR-094); `model-member-type-vectors.json`'s
 `domain_package` projection (derived from the selected document `domain-package-acme-orders.json`,
-which every model-selecting fixture selects by its JCS digest) declares
+which every fixture selecting it names by identity and version) declares
 `Order-order-Order` with the ends `order` and `next` (`bidirectional`) and `Order-invoiced-Invoice`
 with the one end `invoiced` (no `targetEnd.role`, `source-to-target`) and
 `Order-follows-Order` (`source-to-target`, ends `follows` and `followedBy`).
@@ -342,7 +337,7 @@ operand 0, with its key and its application's key recomputed; the `counters` and
 nodes, applications and package ids differ and `counters` is one node for both operations),
 each admitted; `population-owned-by-an-object-type` and `population-owned-by-an-undeclared-node`
 (`missing_declaration`/`missing-selection` at the population node);
-`population-without-an-owner` (`malformed_wire`); `population-entry-without-an-identity-refused` (entries that carry a `node` and no `identity`), `population-entry-with-a-node-member-refused` (the published entries plus a `node` member) and `population-entry-lacking-only-an-identity-refused` (the published entries with one `identity` removed), each `invalid_model_binding`/`malformed-declaration` at `package_read`, at `/lock/model_selections/0`, before the owner join (FR-322-AC-82); and
+`population-without-an-owner` (`malformed_wire`); `population-entry-without-an-identity-refused` (entries that carry a `node` and no `identity`), `population-entry-with-a-node-member-refused` (the published entries plus a `node` member) and `population-entry-lacking-only-an-identity-refused` (the published entries with one `identity` removed), each `invalid_model_binding`/`malformed-declaration` at `package_read`, at `/semantic_graph/nodes/0/owner`, before the owner join (FR-322-AC-82); and
 `population-as-a-relationship-declaration`, `population-as-a-field-declaration`,
 `population-as-an-operation-declaration`, `population-as-a-reaches-population-link` and
 `population-as-a-collection-operand`

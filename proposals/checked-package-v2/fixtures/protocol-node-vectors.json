@@ -1274,21 +1274,21 @@
       "test_case": "TC-947",
       "section": "Role vectors",
       "id": "RL20",
-      "Edit": "a static role whose `model` is the text `identity` of the lock's `model_selections` row, with no `model` dependency",
+      "Edit": "a static role whose `model` is the text `identity` of a `model_root` node of the package, with no `model` dependency",
       "Expected": "admitted as a role on a whole model; its node key differs from RL1's role on a model type of that selection (FR-465-AC-9)"
     },
     {
       "test_case": "TC-947",
       "section": "Role vectors",
       "id": "RL21",
-      "Edit": "RL20's clause with a second role whose text is a second `model_selections` row's `identity`; and RL20 in clauses whose `over` type is a scalar, a record and a `Set<M::Cell>`, one each",
+      "Edit": "RL20's clause with a second role whose text is a second `model_root` node's `identity`; and RL20 in clauses whose `over` type is a scalar, a record and a `Set<M::Cell>`, one each",
       "Expected": "admitted; the two roles have different node keys; each `over` type is admitted"
     },
     {
       "test_case": "TC-947",
       "section": "Role vectors",
       "id": "RL22",
-      "Edit": "RL20 with a text naming no `model_selections` row",
+      "Edit": "RL20 with a text naming no `model_root` node",
       "Expected": "`missing_declaration`/`missing-selection` at the role node, retaining the text"
     },
     {
@@ -1309,7 +1309,7 @@
       "test_case": "TC-947",
       "section": "Role vectors",
       "id": "RL25",
-      "Edit": "RL22 with a non-empty `replication` Group: a text naming no `model_selections` row and a replication",
+      "Edit": "RL22 with a non-empty `replication` Group: a text naming no `model_root` node and a replication",
       "Expected": "`missing_declaration`/`missing-selection` at the role node: the selection check precedes the replication check"
     },
     {
@@ -2982,7 +2982,7 @@
       "test_case": "TC-946",
       "section": "Clause model owner edge",
       "id": "OM-05",
-      "Edit to the base": "Retarget `owner_model` to a `model`/`object_type` node whose `ModelOwner` joins no `model_selections` row (or whose selected document does not declare it as an object type), rebuild the clause key and package identity",
+      "Edit to the base": "Retarget `owner_model` to a `model`/`object_type` node whose `ModelOwner` joins no `model_root` node (or whose selected document does not declare it as an object type), rebuild the clause key and package identity",
       "Expected": "`missing_declaration`/`missing-selection` at the target's own `node_id` in the owner join, before any body step and before the clause edge is read"
     },
     {

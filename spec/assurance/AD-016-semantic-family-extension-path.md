@@ -122,7 +122,7 @@ resolves them. A ticket with an opened issue cites it, as in TK-04 (IR #144).
 | --- | --- |
 | Owner | QSL, crate `quire-spec-language`, module `value::expression` (`check.rs`); domain-package input from `model::intake` (QSL #200). The native `syntax`/`checking`/`lowering.rs` path is fixed at its three targets and admits no new families. |
 | Typed in → out | `Expression` + admitted `DomainPackage` → `CheckedPackage` of checked `NodeKind` |
-| Identity retained | QSL mints the checked node id (`quire.checked-semantic-node/v1`, FR-201) at this step. QSL does not mint `DeclarationKey{package,node}` (`sha256-jcs` digest domain) here; that minting belongs to QSL ADR-013 O-03. The source map is keyed by occurrence key. |
+| Identity retained | QSL mints the checked node id (`quire.checked-semantic-node/v1`, FR-201) at this step. QSL does not mint `DeclarationKey{package,node}` here; that minting belongs to QSL ADR-013 O-03. The source map is keyed by occurrence key. |
 | Model / bound | `DomainPackageRef` (FR-321), `Extent{Closed,Open}`, `ValueType::Population(u64)`, `ValueTypeRef{Native(NativeValueType),Package(DeclarationKey)}` (QSL #200; see Domain-package intake boundary) |
 | Refusal / unsupported / incomplete / failure | `Diagnostic{Code}` from the closed catalog (`native-diagnostics.md`). Language admission is independent of backend capability. Declaration forms outside the admitted set refuse as `unsupported_construct`/`declaration-form`. |
 | Accounting | `quire.value.accounting/v1` `ChargePoint`/`Meter` from the `quire-exact` kernel |
@@ -186,14 +186,14 @@ resolves them. A ticket with an opened issue cites it, as in TK-04 (IR #144).
 | --- | --- |
 | Owner | CG `kani_obligations` (Owner decision 4; answers ADR-005's generation owner) |
 | Typed in → out | Oracle + IR bounds → harness; `KaniObligationIdentity.arguments: Vec<ObligationBinding>`, ascending by identifier |
-| Identity retained | Obligation identity = the digest over exactly the members that the FR-201 `quire.ir-proof.obligation-identity/v1` domain lists: the subject node id, its occurrence key, the obligation kind and `arguments`. The other `KaniObligationIdentity` members (resource ceilings, embedded oracles, module, harness and contract symbols, subject path, results, solver, unwind and options) describe how the harness is generated and run and are outside the preimage, as is `source_span`. Clause node id, obligation kind and `arguments` are the members that tell apart the obligations of one clause: one clause yields one obligation per obligation kind it requests, so the clause node id alone never identifies an obligation. `source_span` is outside the preimage, because occurrence regions are excluded; the O-09 obligation identity includes the clause occurrence key — (`node_id`, `role`, `ordinal`), FR-322 `source_map` — because node ids are content-addressed and structurally identical nodes share one id (QC-8; QSL ADR-013 O-07). Its FR-201 digest domain is `quire.ir-proof.obligation-identity/v1`. |
+| Identity retained | Obligation identity = exactly these members: the subject node id, its occurrence key, the obligation kind and `arguments`. The other `KaniObligationIdentity` members (resource ceilings, embedded oracles, module, harness and contract symbols, subject path, results, solver, unwind and options) describe how the harness is generated and run and are outside the preimage, as is `source_span`. Clause node id, obligation kind and `arguments` are the members that tell apart the obligations of one clause: one clause yields one obligation per obligation kind it requests, so the clause node id alone never identifies an obligation. `source_span` is outside the preimage, because occurrence regions are excluded; the O-09 obligation identity includes the clause occurrence key — (`node_id`, `role`, `ordinal`), FR-322 `source_map` — because node ids are content-addressed and structurally identical nodes share one id (QC-8; QSL ADR-013 O-07). |
 | Model / bound | Harness bound = declared finite domain from IR `requires-bound` forms. `OPEN — decided in WP8`: `SemanticFamily::Function` bound representation. |
 | Harness domain | The harness domain is a declared finite subset of the value type: Kani witnesses decode integers as 8-byte LE `i64`, while complete-V1 `Integer` is unbounded `BigInt` (RT `src/exact/integer.rs:20`). A `proved` result qualifies only over that declared subset; the subset (bound per argument) is part of the retained obligation identity and is reported with the result. Replay widens witness values into the complete-V1 value type losslessly. An unbounded domain with no declared bound is `requires-bound` (I13) and never narrowed implicitly. |
 | Refusal / unsupported / incomplete / failure | `requires-bound` is a negotiation disposition (#129 Q4), never an outcome |
 | Accounting | `OPEN — decided in WP8`: harness-generation accounting owner |
 | Source location | Inherited from arrow 4 tags |
 | Capability point | Same point as arrow 4 |
-| Canonical vectors / agreement | Harness goldens. |
+| Canonical vectors / agreement | Generated harness vs direct RT vs QSL reference; no stored expected output. |
 | Rejected item → substitute? | No harness for any item not settled `supported` |
 | Replay input / parity | `KaniObligationIdentity.arguments` is the reconstruction schema for arrow 7 |
 
@@ -271,8 +271,6 @@ data)
 
 | Field | Value |
 | --- | --- |
-| `obligationIdentitySha256` | `OPEN — decided in QSL ADR-013 TK-05`: regenerated under the arrow-5 obligation identity in the FR-201 `quire.ir-proof.obligation-identity/v1` domain (QC-4, QC-14) |
-| `oracleDigest` | `3330ec9bcd3a211a90ce3230f97989ac7438dfb59d7291acb80287e8e0aef021` |
 | `unwind` | 4 |
 | `solver` | `cadical` |
 | `exitCode` | 1 |
@@ -360,7 +358,7 @@ layer-owned with a total conversion.
 | Capability descriptions | Layer-owned: QSL `Capability` = language admission (FR-290 capability kinds); IR closed obligation-capability enum parsed at the wire edge | QSL / IR | Wire string ↔ enum total test |
 | Finite/unbounded bounds | Layer-owned | QSL `Extent`/`Population`; IR `bounded_domain`/`model_population` + single `requires-bound` predicate | v2 round trip; `requires-bound` table test |
 | Outcomes and stable diagnostic codes | Codes shared by catalog (QSpec `native-diagnostics.md`); typed causes layer-owned | Each layer: one `fn catalog_code(&self) -> CatalogCode`, exhaustive | Totality test against the QSpec catalog |
-| Domain-package and model references | Layer-owned | QSL `DomainPackageRef` (FR-321), `ModelRef` | Crosses to IR only as v2 wire strings |
+| Domain-package and model references | Layer-owned | QSL `DomainPackageRef` (FR-321) | Crosses to IR only as v2 wire strings |
 | Accounting/work categories | Shared via kernel `ChargePoint` (kernel type under D-2) = `quire.value.accounting/v1` (#129 Q9) | `quire-exact` (`ChargePoint`) | `ChargePoint` lives in RT `src/exact/accounting.rs` (kernel-bound, moves with D-2). CG charge emission maps to kernel charge points. `OPEN — decided in WP5b`: RT charge agreement vs kernel `ChargePoint`. |
 | FCD identities | Layer-owned | FCD | Translated only in QSL `model::intake`; FCD conformance fixtures → admitted `DeclarationKey` set |
 
@@ -495,7 +493,7 @@ predictions, re-walked on landed code in WP11.**
 | Crates | `quire-exact` or `quire-spec-language` |
 | Repos | QSL, QSpec |
 | Conversions | `DeclarationKey` wire round trip |
-| Tests | Tests read expected digests from QSpec vectors by reference; QSL-emit ↔ IR-read round trip |
+| Tests | QSL-emit ↔ IR-read round trip |
 
 #### 4. Add an unbounded construct that Kani refuses
 
@@ -535,7 +533,7 @@ predictions, re-walked on landed code in WP11.**
 | Crates | `quire-contract-model`, `quire-contract-codegen` |
 | Repos | IR, CG |
 | Conversions | `DeclarationKey` set → IR frame subject; modifies/creates/deletes domains |
-| Tests | Typed `unsupported` ledger test now; frame harness goldens with the node |
+| Tests | Typed `unsupported` ledger test now; frame harness three-way agreement with the node |
 
 ## Owner decisions
 

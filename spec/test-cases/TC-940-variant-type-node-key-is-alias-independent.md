@@ -73,7 +73,7 @@ the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 7. Project position 0, position 1 and position 2 of `Pair`; project positions of
    `Nest`; read a `Holder` field typed `Pair`.
 8. Select the package with `Swap` replacing `Pair` and with the positions of
-   `Pair` swapped; compare node keys, the selection digest and the root key.
+   `Pair` swapped; compare node keys, the selection identity and the root key.
 9. Read the family and members of `Shape` and `Color`, with `variants` reordered;
    build `union_value` nodes for `Empty`, `Flag` and `Both`, an `enum_value`
    over `Shape`, and structural and enum equality over `Shape`.
@@ -95,7 +95,7 @@ the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
     and every tuple position has its schema-required `origin` (FR-322-AC-151;
     filament-core-data FR-147-AC-2 and FR-147-AC-3). Derive the projection of
     `domain-package-acme-shapes.json`, compare it with `domain_package`, and
-    hash the RFC 8785 bytes of the whole document against the lock row digest;
+    compare the document identity with the `model_root` owner;
     swap the position types of `Pair` and reorder two declarations in the
     document.
 
@@ -108,7 +108,7 @@ Expected results:
 7. Position 0 is `Boolean`, position 1 `Integer`, position 2 refuses
    `ill_typed`/`operator-ineligible`; `Nest` gives the `Pair` and `Shape`
    nodes; the field is the `Pair` node.
-8. The `Pair` key is unchanged by the swap; the selection digest, the root key
+8. The `Pair` key is unchanged by the swap; the selection identity, the root key
    and the `package_id` change; `Swap` has a key different from `Pair`.
 9. `Shape` is `union` with members `Both`, `Empty`, `Flag`; `Color` is `enum`;
    the `union_value` nodes are admitted or refused as FR-322-AC-144 states; the

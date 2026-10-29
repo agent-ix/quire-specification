@@ -605,42 +605,37 @@
     ]
   },
   "selected_roots": {
-    "note": "FR-375-AC-33, FR-375-AC-34. Five selected model roots. Each root node is the structural model_root key of its selection (identity, digest), recomputed by the test; the selection digests are labels, no selected document is published. Cases are graph cases, not wire packages. `semantic_type` names the concrete root; the abstract root is always RA.",
+    "note": "FR-375-AC-33, FR-375-AC-34. Five selected model roots. Each root node is the structural model_root key of its selected identity, recomputed by the test; no selected document is published. Cases are graph cases, not wire packages. `semantic_type` names the concrete root; the abstract root is always RA.",
     "roots": {
       "RA": {
         "identity": "acme/spec",
-        "digest": "4706a1cd0b467ba2bd85f158f86e896f35d4e9d2b44793baab74f34bbd50abc7",
-        "node": "78920d7fbea1d340be76e1bc3236cf3a46c8de3236e4072e69ff1b82949214ae",
+        "node": "6bf2f99bb378329a58b34bca39bb98427060cac7e4bbff83e4aee72590342764",
         "derived_concrete_classes": [
           "Spec::Tick"
         ]
       },
       "RB": {
         "identity": "acme/impl",
-        "digest": "72940eef4217c2889abe93daf2adc3d03e188779e4a042091d577758c40ad883",
-        "node": "9280040317d34160eb1763d745966188e56ff138ec4cf498a8e7d48e5fa2ffb0",
+        "node": "24b77b287c4d828e21c924b350a83a547b99206de9fb6e8026e95d59f154e1cc",
         "derived_concrete_classes": [
           "Impl::Do"
         ]
       },
       "RC": {
         "identity": "acme/other",
-        "digest": "33b1eff36dc1e15ca206432ce2a1dcc551be0bfb877c5edcb761f9acb878ab78",
-        "node": "83d62faa4b2f9a233c1fc928300e7b7bd3c239f860f30db0a6e902941a24d6de",
+        "node": "64746117dd0f78d122cb6420e9433a281eb83c149acadd48d209fed363f8acbc",
         "derived_concrete_classes": [
           "Other::Go"
         ]
       },
       "RD": {
         "identity": "acme/bare",
-        "digest": "8f7780defcd8f1cbd502ff04802eb7e58b512a19b7115f220215d656f73ef584",
-        "node": "8b3cef44525b95961031bc9b35471d43f6090d13f5eb72ebd3bc275b43a492dc",
+        "node": "fbbd93b59006e0d43b4318bfba0cf1b53158ca40ff7b5409927107b20ba451fb",
         "derived_concrete_classes": []
       },
       "RF": {
         "identity": "acme/plain",
-        "digest": "c4f23338dbf67b73e8b6cd0d932c36032576cb6faf64ba7d9613b373f99fb6dc",
-        "node": "c6c72df767df9ed249de2d411f3227f00309366e88723defcd9534a388f17866",
+        "node": "47d9687d07dbb3ac48430811c4cdbd9d288d1009eb7a18f1eb7ab7f9a05d6cfb",
         "derived_concrete_classes": []
       }
     },
@@ -840,13 +835,13 @@
           "version": "quire.refinement-node/v1",
           "semantic_type": {
             "domain": "quire.checked-semantic-node/v1",
-            "digest": "9280040317d34160eb1763d745966188e56ff138ec4cf498a8e7d48e5fa2ffb0"
+            "digest": "24b77b287c4d828e21c924b350a83a547b99206de9fb6e8026e95d59f154e1cc"
           },
           "body": {
             "term": "refinement",
             "abstract": {
               "domain": "quire.checked-semantic-node/v1",
-              "digest": "78920d7fbea1d340be76e1bc3236cf3a46c8de3236e4072e69ff1b82949214ae"
+              "digest": "6bf2f99bb378329a58b34bca39bb98427060cac7e4bbff83e4aee72590342764"
             },
             "profile": {
               "authority": "agent-ix",
@@ -861,7 +856,7 @@
             "name": "Alpha"
           }
         },
-        "sha256": "b70129c4dc1f6567547e0edffcd62896e1b9ef74ccbb6b7ccc7fefc54388ce7f"
+        "sha256": "abd334a24a0a13de3b0ae1bdd38e83e126a5b0c60d405a3fa823ac3bdc9c3346"
       },
       {
         "name": "SR-07-swapped",
@@ -869,13 +864,13 @@
           "version": "quire.refinement-node/v1",
           "semantic_type": {
             "domain": "quire.checked-semantic-node/v1",
-            "digest": "83d62faa4b2f9a233c1fc928300e7b7bd3c239f860f30db0a6e902941a24d6de"
+            "digest": "64746117dd0f78d122cb6420e9433a281eb83c149acadd48d209fed363f8acbc"
           },
           "body": {
             "term": "refinement",
             "abstract": {
               "domain": "quire.checked-semantic-node/v1",
-              "digest": "78920d7fbea1d340be76e1bc3236cf3a46c8de3236e4072e69ff1b82949214ae"
+              "digest": "6bf2f99bb378329a58b34bca39bb98427060cac7e4bbff83e4aee72590342764"
             },
             "profile": {
               "authority": "agent-ix",
@@ -890,7 +885,7 @@
             "name": "Alpha"
           }
         },
-        "sha256": "f43bf0f85c4481eaa431f47df4a42f0b11a8a49474fae7234ed1dbea75e99997"
+        "sha256": "8768ff10b2f7a66f06e715fd6af72562693e2db008f74ff7de0b17dedc03ea50"
       }
     ]
   }

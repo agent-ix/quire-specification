@@ -19,7 +19,7 @@ Select language `ix:native`, edition `1-draft`, the
 `quire.value.complete/v1` definition, and the
 `quire.value.text.unicode-17.0.0/v1` and `quire.value.ieee754-2019-default/v1`
 definitions through
-[`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json).
+[`value-complete.md`](../../proposals/quire-v1/definitions/value-complete.md).
 Build fixtures with distinct I04 semantic-node keys
 for declarations that intentionally share names or shapes. Execute every row
 through the real local Rust boundary:

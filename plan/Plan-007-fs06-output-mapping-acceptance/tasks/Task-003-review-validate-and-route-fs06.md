@@ -35,4 +35,4 @@ executable exporter evidence.
 
 - IT-060 remains Planned until executable evidence exists.
 - SR-552–SR-558 review/gap artifacts.
-- One FS06-closing PR and exact downstream implementation pins.
+- One FS06-closing PR and the downstream implementation handoff.

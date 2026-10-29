@@ -66,8 +66,8 @@ the member type from the resolved record.
   selected evidence: the FCD semantic IR 2.0.0 domain package `acme/orders`
   `1.0.0` (FR-154), authored by hand with FCD-minted identities (types
   `ix://acme/orders/<Id>`, members `<type>/<member>`, relationships
-  `ix://acme/orders/relationship/<Name>-<verb>-<Target>`). Its `sha256-jcs`
-  digest is the digest every published selection of `acme/orders` carries.
+  `ix://acme/orders/relationship/<Name>-<verb>-<Target>`). Its identity and version `1.0.0`
+  are the row every published selection of `acme/orders` carries.
   Each operation redefinition is the redefining operation's
   `Operation.redefines` member (FR-154): `Sub/size` and `SubSub/size` name
   `Order/size`, and `Sub/scaled` names `Order/scaled`.
@@ -257,13 +257,12 @@ process or state machine.
 | MW-20 | MW-17 with two `clause` bindings | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
 | MW-21 | MW-17 with no `clause` binding | `missing_declaration`/`missing-selection` at the owner join | FR-322-AC-55 |
 | MW-22 | A clause function (`clause` binding `invariant`) owned by the systems interface `ix://acme/orders/Flow` | `missing_declaration`/`missing-selection` at the owner join: an invariant is owned by an object type with no `interfaceFeatures` | FR-322-AC-55 |
-| MS-01 | The document supplied under the lock row's recorded digest, identity equal | Passes the selection admission checks | FR-322-AC-32 |
+| MS-01 | The document supplied under the root's identity, identity equal | Passes the selection admission checks | FR-322-AC-32 |
 | MS-02 | No document supplied | `missing_import`/`missing-selection` | FR-322-AC-32 |
-| MS-03 | A document with `OrderTotal`'s upper bound changed to 8, supplied under the lock row's recorded digest, identity equal | Passes the selection admission checks: the document's own canonical digest is not compared with the row's recorded digest | FR-322-AC-32 |
-| MS-05 | The lock row names digest domain `sha256` | `stale_dependency`/`digest-domain-mismatch` | FR-322-AC-32 |
+| MS-03 | A document with `OrderTotal`'s upper bound changed to 8, supplied under the root's identity, identity equal | Passes the selection admission checks: the reader compares identity only | FR-322-AC-32 |
 | MS-06 | The selection names identity `acme/invoices` | `invalid_model_binding`/`wrong-model-selection` | FR-322-AC-32 |
-| MS-07 | The selected document with `dimensions` `[Time (base), Rate (terms [{Time, "-1"}])]`, `units` `[s (root of Time), ms (target s, scale 1/1000)]` and a clock field `Order/x` typed `ix://quire/native/Clock` with the clock field shape, re-digested and selected; then the same document with `dimensions` and `units` removed, re-digested and selected | The first read holds the dimension nodes `Time` then `Rate`, the unit nodes `s` then `ms` and the clock field `Order/x`, in authored order; the second read holds no dimension and no unit node and is otherwise equal | FR-322-AC-98 |
-| MS-08 | MS-07's first document with unit `ms`'s `scale` set to `0`, re-digested and selected | `invalid_model_binding`/`malformed-declaration` at stage `package_read`, naming `ix://acme/orders/unit/ms` and `Unit.scale` | FR-322-AC-98 |
+| MS-07 | The selected document with `dimensions` `[Time (base), Rate (terms [{Time, "-1"}])]`, `units` `[s (root of Time), ms (target s, scale 1/1000)]` and a clock field `Order/x` typed `ix://quire/native/Clock` with the clock field shape, selected; then the same document with `dimensions` and `units` removed, selected | The first read holds the dimension nodes `Time` then `Rate`, the unit nodes `s` then `ms` and the clock field `Order/x`, in authored order; the second read holds no dimension and no unit node and is otherwise equal | FR-322-AC-98 |
+| MS-08 | MS-07's first document with unit `ms`'s `scale` set to `0`, selected | `invalid_model_binding`/`malformed-declaration` at stage `package_read`, naming `ix://acme/orders/unit/ms` and `Unit.scale` | FR-322-AC-98 |
 | FF-01 | Frame field entry `(M1, "total")` | Resolves `Order/total` | FR-340-AC-13 |
 | FF-02 | Frame field entry `(M5, "total")` | Resolves the inherited `Order/total` | FR-340-AC-13 |
 | FF-03 | Frame field entry `(M1, "missing")` | `missing_declaration`/`missing-name` | FR-340-AC-13 |

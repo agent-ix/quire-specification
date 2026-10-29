@@ -22,7 +22,7 @@ Scope: FR-151-AC-16.
    local alias `V`, model declaration `M` for G, and
    `body sizeA using V on M::A::size() { 1 }`, and retains S2's
    `invariant I using V on M::A at current { self.size() >= 1 }`. The second selects
-   the same profile and exact same model identity/digest under local aliases
+   the same profile and exact same model identity under local aliases
    `W` and `N`, and has `body sizeB using W on N::B::size() { 2 }`.
 2. Compile those two units together as the single-body-per-operation-identity
    control.

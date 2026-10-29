@@ -9,7 +9,7 @@ these examples or freeze another consumer's method/result contract around them.
 Local display names are aliases, never declaration identity. The language must
 not infer type definitions from application Rust strings or runtime examples.
 
-Resolve imports by identity alone, then by
+Resolve imports by identity alone (a model is its `model_root` node's identity and no digest exists), then by
 exports and transitive lock closure. Do not choose the first duplicate or a
 reachable but undeclared package. Reject
 missing, ambiguous, stale, foreign, ill-typed and unsupported definitions with
@@ -89,7 +89,7 @@ Diagnostics carry phase, stable code, source reference, primary byte span,
 related declaration loci, and the original obligation identity. Proposed codes:
 `invalid_syntax`, `unsupported_construct`, `unknown_profile`, `unknown_wire`,
 `unknown_required_feature`, `missing_import`, `ambiguous_declaration`,
-`stale_dependency`, `foreign_reference`, `ill_typed`, `unbounded_domain`,
+`foreign_reference`, `ill_typed`, `unbounded_domain`,
 `undefined_expression`, `invalid_source_map`, `duplicate_object`,
 `dangling_reference`, `wrong_snapshot`, `frame_violation`,
 `population_delta_mismatch`, `incomplete_population`,

@@ -1,6 +1,6 @@
 ---
 id: Task-002
-title: "Review and deliver the exact PR8 unblock"
+title: "Review and deliver the PR8 unblock"
 type: Task
 status: done
 track: A
@@ -19,14 +19,14 @@ relationships:
 
 ## Scope
 
-Review the actual qualification changes, publish the private exact schema/vector
-pin to B and resolve PR8 readiness without requiring the complete compiler.
+Review the actual qualification changes, publish the private schema/vector
+handoff to B and resolve PR8 readiness without requiring the complete compiler.
 
 ## Subtasks
 
 - [x] Run actual code-review/rust-review and record remaining implementation gaps.
 - [x] Validate all changed artifacts and retain actual command outcomes.
-- [x] Push the exact revision and respond to B's concrete findings on PR8.
+- [x] Push the branch and respond to B's concrete findings on PR8.
 - [x] Make the PR reviewable and land it when its actual prerequisites permit.
 
 PR8 was marked ready for review, with the direct B handoff at
@@ -37,5 +37,5 @@ waited for B's entire consumer and does not mark that consumer acceptance comple
 
 ## Deliverables
 
-Review artifact, accurate PR description and exact private handoff. B owns its
+Review artifact, accurate PR description and private handoff. B owns its
 subsequent adoption and IT-003-SC-03; no outcome is invented on its behalf.
