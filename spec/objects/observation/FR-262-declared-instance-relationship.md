@@ -30,7 +30,7 @@ configuration".
 | Property | Source | Note |
 | --- | --- | --- |
 | Relationship type | FR-111 Description | "an explicit typed relationship". |
-| Domain package identity and version | FR-111 Description | The domain package identity and version named by the checked package `model_selections`; absence or mismatch refuses (FR-111-AC-4). |
+| Domain package identity and version | FR-111 Description | The domain package identity and version named by a checked package `model_root` node's owner identity; absence or mismatch refuses (FR-111-AC-4). |
 | Relationship declaration key | FR-111 | Exact (domain package identity, IR node identity) key of the spec-declared relationship; a kind label does not replace it. |
 | Related instance endpoints | FR-111 Behavior | Ordered source and target, each carrying one complete FR-287 key and satisfying the relationship declaration's endpoint type/direction. |
 

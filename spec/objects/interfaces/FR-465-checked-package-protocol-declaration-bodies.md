@@ -47,13 +47,13 @@ A `protocol`/`role` node (operator `role`) has two arguments, in this order:
 
 | # | Binding | Value |
 | --- | --- | --- |
-| 1 | `model` | the model the role is played against: a reference to a `model` node (a role on a model type), or a text, the `identity` of a `model_selections` row (a role on a whole model) |
+| 1 | `model` | the model the role is played against: a reference to a `model` node (a role on a model type), or a text, the owner `identity` of a `model_root` node (a role on a whole model) |
 | 2 | `replication` | a Group; empty for a static role |
 
 A static role is one responsibility with one role-instance binding per
 assessed workflow. A **role on a whole model** is the form of `role w on M`
 where `M` is a model alias: its `model` argument is the text `identity` of the
-`model_selections` row the alias selects, not a reference. The alias may be
+`model_root` node the alias selects, not a reference. The alias may be
 any model alias of the package: the protocol subject's model subject is the
 whole checked package with every selection (FR-361), so a clause may hold
 roles on several whole models and a clause over any `over` type may hold
@@ -83,7 +83,7 @@ is a template of role instances, one per object of a population, and its
 
 The reader checks, for one role, in this order:
 
-1. **Model.** A text `model` equals the `identity` of a `model_selections`
+1. **Model.** A text `model` equals the owner `identity` of a `model_root` node
    row of the lock, else `missing_declaration`/`missing-selection` at the
    role node, retaining the text. Any row of the lock is admitted, whatever
    the clause's `over` type. Its `replication` Group is empty, else
@@ -292,7 +292,7 @@ runtime dimension of the control's key and are not a member of any node.
 | FR-465-AC-6 | A `finish` node is admitted with a closing-record binder and a Boolean constraint that reads the binders readable after the root control; a non-Boolean constraint refuses `ill_typed`/`non-boolean-root` and a read of a binder of an unjoined branch `missing_declaration`/`missing-name`; a clause's `finish` argument naming a `terminal` node refuses `invalid_model_binding`/`malformed-declaration` at the target, and a `finish` node the clause does not name refuses `invalid_semantic_graph`. | Test (TC-947) |
 | FR-465-AC-7 | A `terminal` node is admitted as `when` with a condition and as `any` with none; a `when` without a condition and an `any` with one refuse `malformed_wire`; a second `terminal` node of one clause refuses `ambiguous_declaration`/`ambiguous-name`. | Test (TC-947) |
 | FR-465-AC-8 | The package carries no instance, ordinal, delivery, observation or internality member: the runtime subject kinds of the "Runtime subjects" table are a function of the operators, an added `internal`/`external` member refuses `malformed_wire`, and the package compiles with no workflow instance, delivery or clock observation. | Test (TC-947) |
-| FR-465-AC-9 | A static role whose `model` is the text `identity` of a `model_selections` row of the lock is admitted as a role on a whole model, with no `model` dependency, whatever the clause's `over` type (a model type, a reference, a scalar, a record or a `Set<M::Cell>`); one clause holding `role w on M` and `role u on N` for two selections is admitted, and the two roles, and a role on a whole model and a role on a model type of the same selection, have different node keys. A text naming no `model_selections` row refuses `missing_declaration`/`missing-selection` at the role node, and so does such a text with a non-empty `replication` Group (RL25); a text `model` with a non-empty `replication` Group refuses `invalid_model_binding`/`malformed-declaration` at the role node; a `model` that is an integer, a Boolean or a Group refuses `malformed_wire`. | Test (TC-947) |
+| FR-465-AC-9 | A static role whose `model` is the text owner `identity` of a `model_root` node is admitted as a role on a whole model, with no `model` dependency, whatever the clause's `over` type (a model type, a reference, a scalar, a record or a `Set<M::Cell>`); one clause holding `role w on M` and `role u on N` for two selections is admitted, and the two roles, and a role on a whole model and a role on a model type of the same selection, have different node keys. A text naming no `model_root` owner identity refuses `missing_declaration`/`missing-selection` at the role node, and so does such a text with a non-empty `replication` Group (RL25); a text `model` with a non-empty `replication` Group refuses `invalid_model_binding`/`malformed-declaration` at the role node; a `model` that is an integer, a Boolean or a Group refuses `malformed_wire`. | Test (TC-947) |
 
 ## Dependencies
 

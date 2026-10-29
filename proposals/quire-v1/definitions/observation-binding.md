@@ -23,7 +23,7 @@ or executable interface.
 | Observation binding rules | `quire.observation.contract/v1` | [Observation contract](../observation-contract.md) |
 | Temporal lifecycle/result facet | `quire.temporal.bounded-facet/v1` | [Temporal meaning](temporal-common.md) |
 | Protocol result/conformance root | `quire.protocol.finite-global/v1` | [Protocol meaning](protocol-finite.md) |
-| Domain declarations | Checked package `model_selections` domain package | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
+| Domain declarations | Checked package `model_root` node (owner identity) | [Domain declaration selection](../observation-contract.md#domain-declaration-selection) |
 | Shared result rules | B FR-061 | [Orthogonal results](../../../spec/functional/protocol/FR-061-report-orthogonal-results.md) |
 | Observation result rules | F FR-115/116 | [Result contribution](../../../spec/functional/observation/FR-115-report-activation-participation-and-adequacy.md) and [consumer-result boundary](../observation-output-mapping-contract.md) |
 | Target output-mapping rules | `quire.output.mapping/v1` | [Common and target profiles](../output-mappings/README.md) |

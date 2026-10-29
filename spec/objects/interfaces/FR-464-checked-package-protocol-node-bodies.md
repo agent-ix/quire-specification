@@ -69,7 +69,7 @@ FR-466, with the first refusal in the order below.
   other protocol node. It is a local `NodeRef` to the object-type node of the
   model that the source clause is declared over, which is the object type of
   its `over` input. That model is owned by a *selected declaration*: a
-  declaration of a model package named by a `lock.model_selections` row, whose
+  declaration of a model package named by a `model_root` node, whose
   declaration node key is that package's recorded key for it (FR-322). A
   source-local declaration (a node with a source `owner`, such as
   `Config::ConfigVersion` of the published fixtures) is declared by no selected
@@ -627,7 +627,7 @@ exactly one earlier or later stage, in this order of precedence:
    other non-`NodeRef` value, and an `owner_model` on another node.
 2. **Graph shape** (FR-322 key and graph stages, before any body step): the
    target's own **owner join**. A `model`/`object_type` node whose
-   `ModelOwner` joins no `model_selections` row, or whose admitted document
+   `ModelOwner` joins no `model_root` node owner, or whose admitted document
    does not declare that node as an object type, is a genuinely unselected
    target. It refuses `missing_declaration`/`missing-selection` at the
    target's own `node_id` (FR-322 owner join), whether or not any clause names
