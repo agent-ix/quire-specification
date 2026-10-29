@@ -10,8 +10,6 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-017
     type: references
-  - target: ix://agent-ix/quire-specification/FR-018
-    type: references
   - target: ix://agent-ix/quire-specification/TC-003
     type: verifies
 ---

@@ -16,8 +16,8 @@ contract selectors, not instructions to fetch a remote schema or executable.
 
 Artifact values use `ix.artifact-ref/2-draft` from FS02. Every member is required,
 including the referenced artifact's wire identity and
-version. Semantic values require artifact, language, semanticProfile,
-requiredFeatures and canonicalIdentity. Explicit null is permitted only where
+version. Semantic values require artifact, language, semanticProfile and
+requiredFeatures. Explicit null is permitted only where
 specified; a missing member never means null, empty, current or latest.
 
 This resolves an ambiguity in the earlier FS02 draft: **requiredFeatures must
@@ -27,14 +27,14 @@ other orders and compares the decoded set. Duplicate spellings, including
 escaped spellings that decode to the same string, refuse before comparison.
 No case folding, normalization or global array sorting is permitted.
 
-A profile-bearing semantic subject needs a non-null profile definition digest.
+A profile-bearing semantic subject needs a non-null profile identity and version.
 A null language permits a subject whose semantics belong to another explicitly
 selected contract, not an inferred native language. A byte-only reference can
 use the artifact envelope directly; null profile is not permission to claim
 semantic equivalence or evaluate the artifact.
 
 Structural validation does not establish authority, wire support, required
-features, dependency closure, canonical identity, or source correspondence.
+features, dependency closure or source correspondence.
 Those are separate checked obligations with explicitly selected registries and
 bindings. A structurally valid unfamiliar wire still refuses interpretation.
 
@@ -49,11 +49,9 @@ bindings. A structurally valid unfamiliar wire still refuses interpretation.
    Unknown versions/kinds refuse. Validate the selected closed schema; unexpected
    members, omitted required members and wrong primitive kinds refuse.
 3. Validate selected authority, wire/language/profile versions and all required
-   features against the consumer's declared support. An unknown canonical domain
-   or unqualified derivation refuses canonical interpretation. No network lookup,
+   features against the consumer's declared support. No network lookup,
    fall-through decoder, string-to-number cast or profile default occurs.
-4. Resolve locally supplied artifacts and compare their exact byte digests.
-   Check immutable identity/digest bindings and model manifest/lock/closure
+4. Resolve locally supplied artifacts. Check immutable identity bindings
    independently. A retrieval path
    never confers authority or joins a different artifact kind.
 5. Validate source regions/maps and canonical derivations, then compare the
@@ -62,8 +60,8 @@ bindings. A structurally valid unfamiliar wire still refuses interpretation.
    logical result or adequate verification evidence.
 
 Keep distinct diagnostics for unsupported-version, unknown-required-feature,
-invalid-wire, identity-mismatch, identity-content-conflict, stale,
-malformed-source-map, unsupported-canonicalization and ambiguous-equivalence.
+invalid-wire, identity-mismatch,
+malformed-source-map and ambiguous-equivalence.
 Source-map budgets and cancellation remain incomplete rather than malformed
 input. Missing runtime observations are incomplete; missing static authority
 refuses linkage. B maps these producer distinctions into its portable envelope.
@@ -99,38 +97,7 @@ map proves correspondence, not fence ownership. Quire extraction remains opaque;
 C owns its existing-repository decoder/adapter and independent regressions.
 Schema success alone does not prove any cross-span or source-byte condition.
 
-## Preserve each canonical identity domain
-
-| Selected domain | Established behavior to retain |
-|---|---|
-| Exact artifact bytes | `sha256:` plus lowercase SHA-256 of the complete supplied bytes, including whitespace and final newline. No semantic canonicalization. |
-| `quire.contract.canonical-json/v1` | Existing IR source-free projections and Unicode-scalar object-key ordering; semantic arrays retain their specified order. Minimal exact integers; no floats/null in this canonical model. Digest is SHA-256 of `quire-contract-ir`, NUL, profile, NUL, object kind, NUL, then canonical envelope bytes. |
-| `quire.contract.bound-identity/v1` | Existing binder's complete sorted clause bindings, package canonical digest, declaration/expression digests, and profile headers. Digest is raw SHA-256 of that canonical bound-identity envelope; do not add the other domain's prefix. |
-| B's provisional `sha256-jcs:` domain | Preserve B's selected canonicalized structured value and prefix. Do not run arbitrary IR/source bytes through it and claim their existing identity. Its adoption into a shared semantic reference remains B-reviewed. |
-
-The canonicalIdentity fields select domain, version, algorithm and the exact
-domain-produced digest. For the two IR domains above the candidate selects
-domain `quire.contract.canonical-json` or `quire.contract.bound-identity`,
-version `v1`, algorithm `sha256`, and the existing bare lowercase hex digest.
-This split names the established full profile; it does not rename it. Other
-domains require an explicit reviewed mapping of their digest syntax and inputs.
-
-The consumer must also possess the canonicalizer's qualified input/derivation,
-including object kind where the domain requires it. A canonicalIdentity alone
-does not prove a source artifact corresponds to a typed expression. The current
-native parser therefore continues to emit no canonical semantic identity. Do
-not hash an unlinked syntax tree under the existing typed-expression domain.
-
-JCS orders object keys by UTF-16 code units and uses IEEE-754/ECMAScript number
-serialization. The existing IR instead preserves exact integer values and uses
-Unicode-scalar key order. These can differ for supplementary characters and
-large integers; shared spelling of "JSON" or "SHA-256" does not imply equality.
-See [RFC 8785 sections 3.1 and 3.2](https://www.rfc-editor.org/rfc/rfc8785.html#section-3).
-No RFC code or example corpus is copied into this packet.
-
-Historical canonical vectors stay byte-identical. Corpus `.sha256` sidecars are
-file-integrity digests unless that corpus explicitly says otherwise; they must
-not be relabeled as domain-separated semantic digests. Existing IR schema 1.0
+Existing IR schema 1.0
 to 1.1 migration intentionally changes package canonical bytes because the
 schema version participates in them. It preserves only its documented content.
 
@@ -156,13 +123,13 @@ The candidate migration envelope records an exact old ArtifactRef, new
 ArtifactRef, mapping ArtifactRef, preserved aspects and a reason. Old artifact
 references retain their selected version; only the explicitly named 1-draft and
 2-draft forms are admitted here. The earlier closed kind set cannot represent
-environment, model-manifest, model-lock or dependency-closure.
+environment, model-manifest or dependency-closure.
 
 An accepted mapping between common kinds may establish the same underlying byte
-artifact only when kind, authority, identity, digest and
+artifact only when kind, authority, identity and
 wire all remain equal. Changed reference encoding yields a new wrapper artifact;
 it does not rewrite the stored old record or adopt an authored identity. The
-mapping must be selected by exact identity/digest and explicitly
+mapping must be selected by exact identity and explicitly
 accepted for the requested equivalence. Without it, reject the version join.
 
 This mapping preserves byte-artifact correspondence only. It does not preserve
@@ -175,7 +142,7 @@ transitive composition and reverse mappings are not inferred automatically.
 ## Qualification and owners
 
 The structural schema plus raw JSON refusal fixtures exercise selected record
-shapes; canonical vectors preserve existing domain bytes/digests; source-map
+shapes; source-map
 cases specify additional semantic checks. Producer checks must report which
 layer ran. A schema validator is not an independent consumer or evaluator.
 Independent consumer evidence must cover the applicable refusal conditions

@@ -28,8 +28,7 @@ candidate remains a draft until semantic and artifact reviews are complete.
 
 The [FS03 typing/evaluation draft](state-semantics.md) makes guard, snapshot,
 arithmetic, collection and resource judgments explicit. Its proposed refinements
-remain under separate review; they do not change the earlier profile file or
-make its old digest cover new rules.
+remain under separate review; they do not change the earlier profile file.
 
 The [FS05 interchange draft](interchange.md) defines a closed candidate reference
 envelope, source-map shape, strict reader phases, preserved canonical domains

@@ -408,6 +408,8 @@ relationships:
     type: contains
   - target: ix://agent-ix/quire-specification/FR-018
     type: contains
+  - target: ix://agent-ix/quire-specification/FR-486
+    type: contains
   - target: ix://agent-ix/quire-specification/IT-003
     type: contains
   - target: ix://agent-ix/quire-specification/US-001
@@ -1139,7 +1141,8 @@ The requirement artifacts are indexed below.
 | [FR-014](functional/foundation/FR-014-read-exact-wire.md) | FR | Accepted by FS05; consumer qualification remains separate |
 | [FR-015](functional/foundation/FR-015-preserve-canonical-domains.md) | FR | Accepted by FS05; historical algorithms unchanged |
 | [FR-017](functional/foundation/FR-017-select-verification-artifact-roles.md) | FR | Accepted FS05 internal amendment |
-| [FR-018](functional/foundation/FR-018-select-verification-jcs-domain.md) | FR | Accepted FS05 internal amendment |
+| [FR-018](functional/foundation/FR-018-select-verification-jcs-domain.md) | FR | Withdrawn: JCS identity domain removed |
+| [FR-486](functional/foundation/FR-486-compare-required-features.md) | FR | Accepted |
 | [FR-019](functional/foundation/FR-019-admit-native-source-profile.md) | FR | Accepted FS01 admission constraint; implementation evidence remains partial |
 | [US-001](usecase/US-001-understand-native-meaning.md) | US | Draft |
 | [US-002](usecase/US-002-exchange-exact-subjects.md) | US | Draft |

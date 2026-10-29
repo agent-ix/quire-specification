@@ -10,7 +10,6 @@
         "artifactRef": {
           "authority": "agent-a-review-fixtures",
           "identity": "ix://example/config/invocation/healthy-unchanged-version",
-          "digest": "sha256:9cb76a82c451ed1078afbaefa8b301973ddeb6f53b2add697f482d7775cadae4",
           "profile": "agent-a-invocation/1-draft"
         }
       },
@@ -26,7 +25,6 @@
         "artifactRef": {
           "authority": "agent-a-review-fixtures",
           "identity": "ix://example/config/invocation/violating-changed-version",
-          "digest": "sha256:53ec3591856424a967c8c874b0e84084b27e20b02a4ee9f5d8cca5b4d704908e",
           "profile": "agent-a-invocation/1-draft"
         }
       },
@@ -42,7 +40,6 @@
         "artifactRef": {
           "authority": "agent-a-review-fixtures",
           "identity": "ix://example/config/invocation/wrong-invocation",
-          "digest": "sha256:9c555fbdfa73d648544187c141cbfabd4a062115aa14ccafeaa1c28caa0e2334",
           "profile": "agent-a-invocation/1-draft"
         }
       },
@@ -59,7 +56,6 @@
         "artifactRef": {
           "authority": "agent-a-review-fixtures",
           "identity": "ix://example/config/invocation/missing-pre-observation",
-          "digest": "sha256:3c025e5a26871bb0c45a8bb980f3d51b4e24f0bf684f9404a1a9c8376483c75f",
           "profile": "agent-a-invocation/1-draft"
         }
       },
@@ -76,7 +72,6 @@
         "artifactRef": {
           "authority": "agent-a-review-fixtures",
           "identity": "ix://example/config/invocation/forbidden-frame-change",
-          "digest": "sha256:f0cf96ebde5c191b4c0985ee9b78f6e744c1c848722c97988ae15338fe4cbd13",
           "profile": "agent-a-invocation/1-draft"
         }
       },
@@ -93,7 +88,6 @@
         "artifactRef": {
           "authority": "agent-a-review-fixtures",
           "identity": "ix://example/config/invocation/deleted-self-post-context",
-          "digest": "sha256:c9693c6217c2802b908ca068faa94617904110f8d71b1f62cd45ee5f776e6a3b",
           "profile": "agent-a-invocation/1-draft"
         }
       },
@@ -110,7 +104,6 @@
         "artifactRef": {
           "authority": "agent-a-review-fixtures",
           "identity": "ix://example/config/invocation/incorrect-creation-inventory",
-          "digest": "sha256:14b1cc17f20e00ebfb05f1a791a2934ce937d98c384d0c9a038f219d44752cca",
           "profile": "agent-a-invocation/1-draft"
         }
       },
@@ -127,7 +120,6 @@
       "artifactRef": {
         "authority": "agent-a-review-fixtures",
         "identity": "ix://example/config/binding/allow-version-write",
-        "digest": "sha256:2a738f60ad414e0fb3ac5348fac7ba62b66820ce698e7499441f3f51e4821632",
         "profile": "agent-a-frame-binding/1-draft"
       }
     },
@@ -136,7 +128,6 @@
       "artifactRef": {
         "authority": "agent-a-review-fixtures",
         "identity": "ix://example/config/binding/preserve-all",
-        "digest": "sha256:2620e64cfbdc3d8cbee9893b18436f4855211b48034a84e3c6461d5bbd643984",
         "profile": "agent-a-frame-binding/1-draft"
       }
     },
@@ -145,16 +136,8 @@
       "artifactRef": {
         "authority": "agent-a-review-fixtures",
         "identity": "ix://example/config/binding/allow-self-deletion",
-        "digest": "sha256:646b00d455dea2a88a0bfc081ba93cca57b0fd1de5b02c9cff60631b75cf5535",
         "profile": "agent-a-frame-binding/1-draft"
       }
-    }
-  ],
-  "identityAdverseControls": [
-    {
-      "id": "stale-frame-digest",
-      "mutation": "Change frame bytes without updating the selected artifact reference",
-      "expected": "refuse_digest_mismatch"
     }
   ]
 }

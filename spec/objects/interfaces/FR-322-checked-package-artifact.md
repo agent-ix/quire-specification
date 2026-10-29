@@ -80,6 +80,8 @@ relationships:
 
 # FR-322: Immutable checked-package artifact
 
+> BLOCKED-BY QSpec #517: this file still cites the removed `sha256-jcs` identity domain (FR-201); delete that wording when #517 lands.
+
 ## Description
 
 When a native complete-V1 package completes linking and checking, the producer
