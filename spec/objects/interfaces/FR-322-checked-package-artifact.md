@@ -3083,8 +3083,20 @@ written above, pinned by a package row. The producer-level cases are the
   elements: a `sequence[...]`, `set[...]`, `bag[...]` or map literal, `filter`,
   `flatten`, concatenation, slicing, reordering, and a collection element
   written as a literal (a map entry `self.m[k] = Timer { ... }` or an ordered
-  element `self.ts[i] = Timer { ... }`), each of which creates, carries or
-  removes slots. A write of a non-collection composite is not in the
+  element `self.ts[i] = Timer { ... }`). Every member of the class but the
+  last creates, carries or removes slots. The map entry creates a slot when its
+  key is absent, and the ordered element is excluded for a different reason:
+  an element write to a slot that exists creates, carries and removes none, but
+  it replaces the element at a slot chosen by a dynamic term `i`, data part and
+  clocks together, and the package has no indexed element-write form. A reset
+  names a place and writes only a constant to its clock, carries no data
+  component, and FR-415 gives the ordered element write no language rule (no
+  criterion or vector of FR-415-AC-12, FR-415-AC-14 or TC-367 CK-15 to CK-17
+  and CK-20 publishes one).
+  The producer therefore refuses `self.ts[i] = Timer { ... }` instead of
+  lowering it to a slot reset and a data write; the built forms that reach the
+  same slot are the reset `self.ts[i].x = 0 ms` (FR-415-AC-12) beside ordinary
+  data writes. A write of a non-collection composite is not in the
   class: `self.o = Timer { x: 0 ms, n: 3 }` is the reset of the place `o.x` to
   `0 ms` (making an `Option<Timer>` place present) together with an ordinary data
   write of `n`, and is built. The drop is the write `absent` to an `Option<Clock>`

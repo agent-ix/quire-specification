@@ -382,7 +382,15 @@ clock component and an ordinary data write. The collection class is a write
 whose value is a collection of clock-bearing elements (a literal, `filter`,
 `flatten`, concatenation, slicing, reordering) or a collection element written
 as a literal (a map entry `self.m[k] = Timer { ... }` or an ordered element
-`self.ts[i] = Timer { ... }`). The drop is the write `absent` to an
+`self.ts[i] = Timer { ... }`). The map entry creates a slot when its key is
+absent. The ordered element creates, carries and removes none when slot `i`
+exists, and is excluded because it replaces the element at a slot chosen by a
+dynamic term, data part and clocks together, for which the package has no
+indexed element-write form: a reset writes a constant to one place and carries
+no data component, and this requirement gives the ordered element write no
+language rule (FR-415-AC-12 and TC-367 CK-17 state only the reset
+`self.ts[i].x = c`, which is built and can be written beside ordinary data
+writes). The drop is the write `absent` to an
 `Option<Clock>` place (`self.v = absent`, or a slot of `Sequence<Option<Clock>>`),
 whose presence is a runtime bit that only a write can change. `self.o = absent`
 over `o: Option<Timer>` (FR-415-AC-14) is not that drop: the presence of `o.x`
