@@ -154,3 +154,45 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
     extra_provision_member["bytes"] = json!([1, 2, 3]);
     assert!(!replay_provision_validator.is_valid(&extra_provision_member));
 }
+
+#[trace("TC-970", "FR-336-AC-8")]
+#[test]
+fn replay_provision_rows_use_fr001_labels_without_digest_members() {
+    let schema = parsed(SCHEMA);
+    let validator = definition_validator(&schema, "ReplayProvisionPath");
+    let valid = json!({
+        "identity": {
+            "authority": "example",
+            "identity": "source/main",
+            "revision_namespace": "git",
+            "revision": "main"
+        },
+        "bytes_path": "inputs/source.quire"
+    });
+    assert!(validator.is_valid(&valid));
+
+    let mut missing_label = valid.clone();
+    missing_label["identity"]
+        .as_object_mut()
+        .unwrap()
+        .remove("revision");
+    assert!(!validator.is_valid(&missing_label));
+
+    let mut digest_keyed = valid;
+    digest_keyed["digest"] = json!("a".repeat(64));
+    assert!(!validator.is_valid(&digest_keyed));
+
+    let object_environment = definition_validator(&schema, "ObjectEnvironmentRef");
+    let valid_environment = json!({
+        "identity": {
+            "authority": "example",
+            "identity": "model/main",
+            "revision_namespace": "git",
+            "revision": "main"
+        }
+    });
+    assert!(object_environment.is_valid(&valid_environment));
+    let mut digest_keyed_environment = valid_environment;
+    digest_keyed_environment["digest"] = json!(format!("sha256-jcs:{}", "b".repeat(64)));
+    assert!(!object_environment.is_valid(&digest_keyed_environment));
+}

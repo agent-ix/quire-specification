@@ -2,7 +2,6 @@
 id: FR-323
 title: "Native runtime request and result envelope"
 type: FR
-object: value_object
 relationships:
   - target: ix://agent-ix/quire-specification/interface_005
     type: specifies
