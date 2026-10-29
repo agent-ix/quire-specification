@@ -29,3 +29,12 @@ pub const NATIVE_DIAGNOSTICS: &str =
 /// its own `ChargePoint` set with this list.
 pub const VALUE_ACCOUNTING_CHARGE_POINT_VECTORS: &str =
     include_str!("../proposals/quire-v1/definitions/value-accounting-charge-point-vectors.json");
+
+/// `proposals/quire-v1/definitions/value-accounting-limit-kind-vectors.json`:
+/// the complete `ScalarLimitsV1` counter spelling list of
+/// `quire.value.accounting/v1`, in field order, with spellings that are not
+/// `ScalarLimitsV1` counters. It does not cover the `limit_kind` values of
+/// `PopulationAdmissionLimitsV1` or `ModelNormalizationLimitsV1`. A kernel compares its own
+/// `LimitKind` set with this list.
+pub const VALUE_ACCOUNTING_LIMIT_KIND_VECTORS: &str =
+    include_str!("../proposals/quire-v1/definitions/value-accounting-limit-kind-vectors.json");
