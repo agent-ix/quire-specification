@@ -30,15 +30,11 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "identity": "example",
-        "digest_domain": "quire.source.bytes/v1",
-        "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+        "identity": "example"
       },
       {
         "authority": "agent-ix",
-        "identity": "example-units",
-        "digest_domain": "quire.source.bytes/v1",
-        "digest": "6666666666666666666666666666666666666666666666666666666666666666"
+        "identity": "example-units"
       }
     ],
     "edition": {
@@ -263,9 +259,7 @@
         {
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
           "start": 0,
           "end": 1
@@ -283,9 +277,7 @@
         {
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
           "start": 1,
           "end": 2
@@ -303,9 +295,7 @@
         {
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
           "start": 2,
           "end": 3
@@ -323,9 +313,7 @@
         {
           "source": {
             "authority": "agent-ix",
-            "identity": "example",
-            "digest_domain": "quire.source.bytes/v1",
-            "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+            "identity": "example"
           },
           "start": 3,
           "end": 4

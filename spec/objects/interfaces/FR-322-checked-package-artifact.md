@@ -122,10 +122,10 @@ boundary.
   embedded in that preimage. Its digest value is an unprefixed
   64-lowercase-hex string and its domain and algorithm are explicit fields.
 - `lock` — exact source-document, edition, ordered profile, dependency
-  and required-feature identities. A definition
-  selection is a `DefinitionRef` `{authority, identity}`. Every byte digest
-  carries its own declared domain; a raw source digest cannot
-  substitute for a semantic package digest or for another artifact role.
+  and required-feature identities. A source-document entry and every
+  `source_map` source reference is exactly `{authority, identity}`: it carries
+  no digest, digest domain or other member. A definition
+  selection is a `DefinitionRef` `{authority, identity}`.
 - `dependency_selections` — the libraries the unit imports directly
   ([FR-307](../../functional/tooling/FR-307-package-reusable-semantic-libraries.md)):
   one `DependencySelection` per directly imported library identity, each
@@ -137,8 +137,8 @@ boundary.
   is the dependency's own `quire.package.semantic/v2` `package_id`
   (`{domain, algorithm, digest}`, the `PackageId` shape), recomputed from
   the library compiled from the source supplied under `identity`; an import
-  names only the identity and states no digest. A `quire.source.bytes/v1`
-  or `sha256-jcs` domain in `package_id` refuses `digest_domain_mismatch`.
+  names only the identity and states no digest. A `sha256-jcs` domain
+  in `package_id` refuses `digest_domain_mismatch`.
   A second entry whose `identity` equals an earlier entry's refuses
   `invalid_package`/`conflicting-definition` (FR-307's diamond cause), with
   both entries as loci. Otherwise an entry whose `identity` is not strictly
@@ -997,7 +997,7 @@ boundary.
   mapping. An occurrence key is (`node_id`, `role`, `ordinal`), where role is
   `declaration`, `type`, `expression`, `anchor`, `claim` or `generated`; a
   source region is a half-open UTF-8 byte interval `[start,end)` under one exact
-  source-document identity/raw-byte digest. The role `generated` is the role
+  source-document identity. The role `generated` is the role
   of every occurrence of a *compiler-derived node*, a node the compiler adds
   that no source text declares and that derives from exactly one declaration
   node, its *owner*, and of the per-obligation occurrences a refinement owner
@@ -2864,7 +2864,7 @@ as its key; the minimum makes the key a total order when a node has several
 entries or regions, and two members that share a start are ordered by their
 end. A `clock_place` that has no region of its own (the model document of a
 `model_root` node is a host-supplied document, not a source artifact of
-`source_map`: its bytes are not a `quire.source.bytes/v1` source and no region
+`source_map`: its bytes are not a source of `source_map` and no region
 points into it) carries the region of its model's declaration, which a
 `source_map` entry must give it, so several places can have one minimum
 triple, and the order key of a `clock_place` is the pair (that triple, its
@@ -3223,7 +3223,7 @@ the graph and verifies the same normalized constraints and package identity.
 | FR-322-AC-2 | Changing backend capability availability cannot change package admission or package identity. | Analysis |
 | FR-322-AC-3 | Changing a meaning-affecting lock member changes the package identity. | Analysis |
 | FR-322-AC-4 | The public reader refuses a document that is not a checked package (`unknown_contract_version`), malformed/duplicate members, stale dependencies, cross-domain digest substitutions, unknown required capabilities and non-canonical bytes before exposing an admitted package. | Test (TC-217) |
-| FR-322-AC-5 | The canonical positive, boundary, refusal and mutation vectors distinguish raw source and definition byte digests from checked-semantic and generated-IR identities, even when digest bytes are equal. | Test (TC-217) |
+| FR-322-AC-5 | Withdrawn: source and definition byte digests are removed; a source reference is `{authority, identity}`. | Withdrawn |
 | FR-322-AC-6 | Exact selected limits admit the boundary vector; one-over-byte, node, edge, locus, diagnostic and work inputs return incomplete resource accounting naming the limit, its value and its setting, and no partial checked package. | Test (TC-217) |
 | FR-322-AC-7 | A consumer obtains the complete closed semantic graph through the public schema and never through a native parser/CST/package implementation type. | Inspection |
 | FR-322-AC-8 | Two conformers derive the same package id from the specified JCS identity preimage; changing an excluded raw artifact/source-map/presentation or reader-limit member does not change it, while changing any named preimage member does. | Test (TC-217) |

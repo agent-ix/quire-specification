@@ -7282,7 +7282,7 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
 
         // Each excluded member: its edit pointer and replacement, plus the
         // identity-preimage object into which the member would be smuggled.
-        let excluded: [(&str, &str, Value, &str, &str, Value); 5] = [
+        let excluded: [(&str, &str, Value, &str, &str, Value); 4] = [
             (
                 "source-map region",
                 "/source_map/0/regions/0/end",
@@ -7298,14 +7298,6 @@ fn tc_233_package_identity_ignores_excluded_members_and_binds_every_named_member
                 "/identity_preimage",
                 "identity_projection",
                 package["semantic_graph"]["nodes"].clone(),
-            ),
-            (
-                "raw source digest",
-                "/lock/sources/0/digest",
-                json!("8888888888888888888888888888888888888888888888888888888888888888"),
-                "/identity_preimage",
-                "sources",
-                package["lock"]["sources"].clone(),
             ),
             (
                 "capability disposition",
@@ -18048,8 +18040,6 @@ fn tc_951_the_node_key_binds_definition_kind_name_owner_and_clause_subnodes_not_
             Box::new(|package| {
                 let other = json!({
                     "authority": "agent-ix",
-                    "digest": "3333333333333333333333333333333333333333333333333333333333333333",
-                    "digest_domain": "quire.source.bytes/v1",
                     "identity": "other",
                 });
                 package["lock"]["sources"]

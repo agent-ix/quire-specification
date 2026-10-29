@@ -160,8 +160,6 @@
     "sources": [
       {
         "authority": "agent-ix",
-        "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
-        "digest_domain": "quire.source.bytes/v1",
         "identity": "example-a"
       }
     ]
@@ -485,8 +483,6 @@
           "end": 1,
           "source": {
             "authority": "agent-ix",
-            "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-a"
           },
           "start": 0
@@ -505,8 +501,6 @@
           "end": 2,
           "source": {
             "authority": "agent-ix",
-            "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-a"
           },
           "start": 1
@@ -525,8 +519,6 @@
           "end": 3,
           "source": {
             "authority": "agent-ix",
-            "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-a"
           },
           "start": 2
@@ -545,8 +537,6 @@
           "end": 4,
           "source": {
             "authority": "agent-ix",
-            "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-a"
           },
           "start": 3
@@ -565,8 +555,6 @@
           "end": 5,
           "source": {
             "authority": "agent-ix",
-            "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-a"
           },
           "start": 4
@@ -585,8 +573,6 @@
           "end": 6,
           "source": {
             "authority": "agent-ix",
-            "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-a"
           },
           "start": 5
@@ -605,8 +591,6 @@
           "end": 7,
           "source": {
             "authority": "agent-ix",
-            "digest": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
-            "digest_domain": "quire.source.bytes/v1",
             "identity": "example-a"
           },
           "start": 6

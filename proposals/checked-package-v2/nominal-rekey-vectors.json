@@ -292,9 +292,7 @@
               {
                 "source": {
                   "authority": "agent-ix",
-                  "identity": "example",
-                  "digest_domain": "quire.source.bytes/v1",
-                  "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+                  "identity": "example"
                 },
                 "start": 4,
                 "end": 5
