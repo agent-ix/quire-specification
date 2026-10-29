@@ -18,7 +18,7 @@ Query lookup/all-instances with complete, unknown, foreign and over-bound popula
 Use the subject and inputs named by FR-153. Execute its positive case, each declared boundary, and each explicit refusal/non-conclusive mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
 Select `quire.model.complete/v1` through
-[`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
+[`model-complete.md`](../../proposals/quire-v1/definitions/model-complete.md).
 Node names, declaration keys, package identity and default limits follow
 TC-195. The model is TC-195 F1 imported as `M` by TC-195 S1's shape with
 profile alias `V`: object universe `U` = `af5934e1`, effective types

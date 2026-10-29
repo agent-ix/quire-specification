@@ -193,7 +193,7 @@ resolves them. A ticket with an opened issue cites it, as in TK-04 (IR #144).
 | Accounting | `OPEN — decided in WP8`: harness-generation accounting owner |
 | Source location | Inherited from arrow 4 tags |
 | Capability point | Same point as arrow 4 |
-| Canonical vectors / agreement | Harness goldens. |
+| Canonical vectors / agreement | Generated harness vs direct RT vs QSL reference; no stored expected output. |
 | Rejected item → substitute? | No harness for any item not settled `supported` |
 | Replay input / parity | `KaniObligationIdentity.arguments` is the reconstruction schema for arrow 7 |
 
@@ -271,8 +271,6 @@ data)
 
 | Field | Value |
 | --- | --- |
-| `obligationIdentitySha256` | `OPEN — decided in QSL ADR-013 TK-05`: regenerated under the arrow-5 obligation identity in the FR-201 `quire.ir-proof.obligation-identity/v1` domain (QC-4, QC-14) |
-| `oracleDigest` | `3330ec9bcd3a211a90ce3230f97989ac7438dfb59d7291acb80287e8e0aef021` |
 | `unwind` | 4 |
 | `solver` | `cadical` |
 | `exitCode` | 1 |
@@ -495,7 +493,7 @@ predictions, re-walked on landed code in WP11.**
 | Crates | `quire-exact` or `quire-spec-language` |
 | Repos | QSL, QSpec |
 | Conversions | `DeclarationKey` wire round trip |
-| Tests | Tests read expected digests from QSpec vectors by reference; QSL-emit ↔ IR-read round trip |
+| Tests | QSL-emit ↔ IR-read round trip |
 
 #### 4. Add an unbounded construct that Kani refuses
 
@@ -535,7 +533,7 @@ predictions, re-walked on landed code in WP11.**
 | Crates | `quire-contract-model`, `quire-contract-codegen` |
 | Repos | IR, CG |
 | Conversions | `DeclarationKey` set → IR frame subject; modifies/creates/deletes domains |
-| Tests | Typed `unsupported` ledger test now; frame harness goldens with the node |
+| Tests | Typed `unsupported` ledger test now; frame harness three-way agreement with the node |
 
 ## Owner decisions
 

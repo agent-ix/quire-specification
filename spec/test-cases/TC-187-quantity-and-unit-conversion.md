@@ -17,7 +17,7 @@ Evaluate compatible exact/lossy conversions and incompatible or affine-unit oper
 
 Select language `ix:native`, edition `1-draft`, and the
 `quire.value.complete/v1` definition through
-[`complete-value-lock.json`](../../proposals/quire-v1/definitions/complete-value-lock.json),
+[`value-complete.md`](../../proposals/quire-v1/definitions/value-complete.md),
 including `quire.value.compound-unit/v1`. Use distinct I04 semantic-node keys for length `L`, time `T`
 and temperature `Theta`. Define canonical roots metre `m`, second `s` and kelvin `K`; centimetre `cm`
 targeting `m` with scale `1/100`; millisecond `ms` targeting `s` with scale `1/1000`; inch `in` targeting `m` with scale `127/5000`;

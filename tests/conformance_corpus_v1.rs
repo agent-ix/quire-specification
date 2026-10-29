@@ -3,7 +3,7 @@
 
 //! FR-336's closed conformance-corpus v1 structural contract.
 
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 use ix_trace_rs::trace;
 use quire_verification_contracts::jcs_canonicalize;

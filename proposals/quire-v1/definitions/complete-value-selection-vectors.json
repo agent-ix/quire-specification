@@ -1,6 +1,5 @@
 {
   "version": "quire.value.package-selection-vectors/v1",
-  "lock": {"lock_version": "quire.value.definition-lock/v1"},
   "always_roles": ["edition", "root", "accounting", "compound_unit", "compound_unit_schema", "compound_unit_vectors", "rule_package_contract", "rule_shared_grammar", "rule_ad_005", "rule_fr_140", "rule_fr_141", "rule_fr_142", "rule_fr_147", "rule_fr_148", "rule_fr_149"],
   "accepted": [
     {"name": "no-trigger", "triggers": [], "additional_roles": []},

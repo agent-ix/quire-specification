@@ -20,7 +20,7 @@ Admit a domain package lifted from an artifact bundle, and mutate its digest, id
 Use the subject and inputs named by FR-154. Execute its positive case, each declared boundary, and each explicit refusal mutation through the real local Rust boundary; compare the complete typed result and artifact accounting with the criterion.
 
 Select `quire.model.complete/v1` through
-[`complete-model-lock.json`](../../proposals/quire-v1/definitions/complete-model-lock.json).
+[`model-complete.md`](../../proposals/quire-v1/definitions/model-complete.md).
 Node names and declaration keys follow TC-195.
 
 Fixtures:

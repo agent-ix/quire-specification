@@ -98,7 +98,10 @@ fn evaluate(case: &Value) -> Value {
 
 fn run(vectors: &Value, criterion: &str) -> usize {
     let mut ran = 0;
-    for case in vectors["evaluation_cases"].as_array().expect("evaluation_cases") {
+    for case in vectors["evaluation_cases"]
+        .as_array()
+        .expect("evaluation_cases")
+    {
         if case["criterion"] == criterion {
             assert_eq!(evaluate(case), case["expected"], "{}", case["name"]);
             ran += 1;
@@ -160,7 +163,12 @@ fn primary_alternatives() -> Vec<String> {
     let start = GRAMMAR
         .match_indices("\nprimary ")
         .map(|(at, _)| at + 1)
-        .find(|at| GRAMMAR[*at..].lines().next().is_some_and(|line| line.contains("'none'")))
+        .find(|at| {
+            GRAMMAR[*at..]
+                .lines()
+                .next()
+                .is_some_and(|line| line.contains("'none'"))
+        })
         .expect("the primary production that lists 'none'");
     let production = &GRAMMAR[start..start + GRAMMAR[start..].find(" ;").expect("production end")];
     production
@@ -191,17 +199,31 @@ fn tc_188_absent_takes_the_option_its_position_expects() {
         !statement.contains("`absent = absent` of two `Option<Integer>` operands is true"),
         "AC-18 no longer admits the literal against the literal"
     );
-    assert!(FR143.lines().any(|line| line == "## The `absent` Option literal"));
+    assert!(
+        FR143
+            .lines()
+            .any(|line| line == "## The `absent` Option literal")
+    );
     let alternatives = primary_alternatives();
-    let none_at = alternatives.iter().position(|a| a == "'none'").expect("'none' primary");
-    assert_eq!(alternatives[none_at + 1], "'absent'", "primary admits absent beside none");
+    let none_at = alternatives
+        .iter()
+        .position(|a| a == "'none'")
+        .expect("'none' primary");
+    assert_eq!(
+        alternatives[none_at + 1],
+        "'absent'",
+        "primary admits absent beside none"
+    );
     assert!(
         FR153.contains("| `empty` | `Option<Reference<T>>` | the present option | `none`, the value the literal `absent` denotes at that type"),
         "the empty-mode row names the literal"
     );
     let r15 = row_cells(TC188, "R15");
     assert!(r15[1].contains("(lookup<M::A>(p, r) absent empty) = absent"));
-    assert!(r15[2].contains("the lookup equality is false for the held key and true for the missing key"));
+    assert!(
+        r15[2]
+            .contains("the lookup equality is false for the held key and true for the missing key")
+    );
 }
 
 #[trace("TC-188", "FR-143-AC-19")]
@@ -245,9 +267,18 @@ fn tc_188_vector_mutations_are_detected() {
             "\"tail\": [\"absent\", \"empty\"]",
         ),
         ("\"kind\": \"OptionalSlot\"", "\"kind\": \"Option\""),
-        ("\"key\": \"k2\", \"expected\": true", "\"key\": \"k2\", \"expected\": false"),
-        ("\"cond\": true, \"then\": \"absent\"", "\"cond\": false, \"then\": \"absent\""),
-        ("\"body\": \"x\", \"argument\": \"absent\", \"expected\": \"none\"", "\"body\": \"x\", \"argument\": \"absent\", \"expected\": {\"some\": 0}"),
+        (
+            "\"key\": \"k2\", \"expected\": true",
+            "\"key\": \"k2\", \"expected\": false",
+        ),
+        (
+            "\"cond\": true, \"then\": \"absent\"",
+            "\"cond\": false, \"then\": \"absent\"",
+        ),
+        (
+            "\"body\": \"x\", \"argument\": \"absent\", \"expected\": \"none\"",
+            "\"body\": \"x\", \"argument\": \"absent\", \"expected\": {\"some\": 0}",
+        ),
     ] {
         assert!(VECTORS.contains(from), "{from}");
         let mutated: Value = serde_json::from_str(&VECTORS.replacen(from, to, 1)).unwrap();

@@ -61,7 +61,7 @@ selections in [AD-005](../../spec/assurance/AD-005-complete-value-expression-sys
 Every package selecting that root retains `quire.value.accounting/v1` and its
 exact supplied definition bytes; no evaluator or backend may substitute a local
 cost model. It retains `quire.value.compound-unit/v1` with its schema and
-vectors, and every rule artifact of the complete-value lock as a separate
+vectors, and every rule artifact of the complete-value package selection as a separate
 DefinitionRef.
 Text-bearing packages retain `quire.value.text.unicode-17.0.0/v1`; integer
 `div`/`rem` retains exactly one truncating, floor or Euclidean definition; IEEE

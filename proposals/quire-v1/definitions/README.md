@@ -5,12 +5,12 @@ this set. Each file contains its semantic text and links to its requirements and
 dependencies. Identity-role acceptance is not semantic-definition adoption,
 compiler/backend implementation or qualification. Those statuses remain explicit
 in each artifact and owning FS02–FS06/family ticket. The complete-value
-[definition lock](complete-value-lock.json) separates the qualification catalog
-(always-selected, conditional, alternative and rule artifacts) from per-package
-selection: the Unicode text profile is selected only by `text_bearing` packages,
-the IEEE profile only by `ieee_operation` packages, and exactly one
-integer-division profile only by `integer_div_rem` packages. Listing a profile
-in the catalog does not select it.
+[package selection](value-complete.md#package-selection) separates the
+selectable artifacts (always-selected, conditional, alternative and rule
+artifacts) from per-package selection: the Unicode text profile is selected only
+by `text_bearing` packages, the IEEE profile only by `ieee_operation` packages,
+and exactly one integer-division profile only by `integer_div_rem` packages.
+Listing a profile does not select it.
 
 FS03 accepts the exact `state-core → state-queries → state-graph` semantic
 closure below, and acceptance does not imply complete implementation or qualification.
@@ -45,25 +45,29 @@ Other definition families remain editable candidates under their owning tickets.
 | `quire.model.complete.rules/v1` | [Complete-model normalization rules](model-complete-rules.json) |
 | `quire.model.effective-declaration.schema/v1` | [Effective declaration schema](../../checked-package-v2/model-effective-declaration.schema.json) |
 | `quire.model.effective-declaration.vectors/v1` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
-| `quire.model.definition-lock/v1` | [Complete model lock](complete-model-lock.json) |
 | `quire.temporal.complete/v1` | [Complete temporal root](temporal-complete.md) |
-| `quire.temporal.definition-lock/v1` | [Complete temporal lock](complete-temporal-lock.json) |
 
 ## Header-selectable layers
 
-The `header_selectable_layers` rows of the
-[complete-value lock](complete-value-lock.json) are the one catalog of the
-AD-003 state, value, model and timed-model layers a `profile` declaration selects
+Each AD-003 state, value, model and timed-model layer is selected by a
+`profile` declaration naming its identity
 ([FR-001](../../../spec/functional/foundation/FR-001-select-native-profile.md)).
-Each row gives the layer's `identity`, the layers it `requires`, its
-`admitted_forms` definition file, a one-line statement of what it `admits`,
-and the `witness_request`: the FR-290 kind and FR-331 extent classification
-that the layer's witness item requests from the registered backends. A user
-selects a layer to keep a unit inside the subset the backends serving that
-request accept.
-The lock's `package_selection` applies when a unit's selected layers include
-its `layer`; a unit selecting only state layers selects the `without_layer`
-rows. The rows' `requires` edges are the profile-layering edges that
+A user selects a layer to keep a unit inside the subset the backends serving
+its witness request accept.
+
+| Layer | Requires | Admitted forms | Admits | Witness request (FR-290 kind, FR-331 extent) |
+| --- | --- | --- | --- | --- |
+| `quire.state.core/v1` | none | [State core](state-core.md) | bounded scalars, explicit rationals, presence and control, and finite ordered sequences with authored maxima in invariants, preconditions and postconditions | `operation-contract`, `bounded` |
+| `quire.state.queries/v1` | `quire.state.core/v1` | [Predicates and queries](state-queries.md) | state core plus typed acyclic named predicates and the ordered queries filter, map, count and sum | `operation-contract`, `bounded` |
+| `quire.state.graph/v1` | `quire.state.queries/v1` | [Finite graphs](state-graph.md) | state queries plus explicit finite typed universes, references, object identity and reachability | `operation-contract`, `bounded` |
+| `quire.value.complete/v1` | `quire.state.core/v1` | [Complete value root](value-complete.md) | state core plus complete scalars, records, tuples, unions, recursive values, collections and pure functions | `value-validity`, `bounded` |
+| `quire.model.complete/v1` | `quire.state.graph/v1`, `quire.value.complete/v1` | [Complete model root](model-complete.md) | state graph and complete values plus conformance, redefinition, dispatch and systems-model structure | `operation-contract`, `bounded` |
+| `quire.temporal.complete/v1` | `quire.model.complete/v1` | [Complete temporal root](temporal-complete.md) | complete model plus timed models: the time source, clock fields and clock places, resets, atomic clock constraints in guards, time invariants and urgency | `operation-contract`, `bounded` |
+
+The package selection of [`quire.value.complete/v1`](value-complete.md#package-selection)
+applies when a unit's selected layers include that layer; a unit selecting only
+state layers selects the `edition` role only. The `Requires` column holds the
+profile-layering edges that
 [FR-453](../../../spec/functional/tooling/FR-453-preserve-parent-profile-refusals-under-layering.md)
 compares.
 
@@ -74,7 +78,5 @@ are current semantic inputs to these definitions.
 FS03 accepts the ordered state closure, FS04 accepts the temporal/observation
 closure, and FS05 accepts the linked-package
 interpretation plus its selected strict reference/canonical/migration contracts.
-Other listed family definitions retain their own acceptance tickets. Runtime identity, source provenance,
-digest-domain separation and refusal of mismatched inputs remain required by
-FR-030/032/035. This authoring workflow does not weaken those product semantics
+Other listed family definitions retain their own acceptance tickets. This authoring workflow does not weaken the product semantics of FR-030/032/035
 or rewrite previously accepted profiles.
