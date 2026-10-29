@@ -207,7 +207,7 @@ declaration with no hidden field, no history field and no `any` row as one `oper
 obligation per step row and one for the initial-state rule
 ([FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md)): the
 concrete invariants, the operation's effective precondition, frame and
-postcondition over `(s, s')` imply the row's rule over `(map(s), map(s'))`.
+postcondition over `(s, s')` imply the row's rule over `(map(s), map(s'))`. The step obligation is per application: each application of the row is its own (receiver, argument vector) instance, evaluated at `s0`, and the obligation is negated per application, never as one global negation ([FR-468](FR-468-certify-per-step-refinement-obligations.md) negates per pair `(s, s')`).
 A per-step obligation reads one concrete step and cannot see history values,
 so a declaration with a history field is decided by the explicit-state engine
 only.
