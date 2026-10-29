@@ -6040,7 +6040,10 @@
                 "kind": "value-validity",
                 "mode": "bounded"
               }
-            ]
+            ],
+            "bounds": {
+              "max_cases": 10000
+            }
           }
         }
       ]

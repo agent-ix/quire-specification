@@ -125,7 +125,7 @@ fn negotiate(case: &Value) -> (String, Option<String>) {
     }
 }
 
-const REQUIRED: [&str; 58] = [
+const REQUIRED: [&str; 59] = [
     "VV-01",
     "VV-02",
     "VV-03",
@@ -183,6 +183,7 @@ const REQUIRED: [&str; 58] = [
     "OC-19",
     "OC-20",
     "OC-21",
+    "OC-22",
     "VV-17",
 ];
 
@@ -338,6 +339,16 @@ fn check_arm_outcomes_map_to_the_fr_331_results() {
         }
         // FR-483 replay-before-refuted: the replay is computed natively from the case's model, never declared.
         let status = replay_status(&case, &document);
+        let carries_counterexample = !counterexamples.is_empty() || !case["candidate_ce"].is_null();
+        if case["item"]["kind"] == "operation-contract" && carries_counterexample {
+            assert!(!case["replay_model"].is_null(), "{id} records or receives a counterexample, so it carries a replay_model");
+        }
+        // Both directions: the recorded cause is exactly what the computed replay says.
+        match result["cause"]["type"].as_str() {
+            Some("replay-refused") => assert_eq!(status, Some(Replay::Refused), "{id} replay-refused"),
+            Some("replay-parity") => assert_eq!(status, Some(Replay::NotReproduced), "{id} replay-parity"),
+            _ => {}
+        }
         if kind == "refuted" {
             assert_eq!(status, Some(Replay::Reproduced), "{id} refuted only after a replay that reproduced");
             let entry = &counterexamples[result["counterexample"].as_u64().unwrap() as usize];

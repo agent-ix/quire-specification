@@ -73,6 +73,7 @@
     "OC-19",
     "OC-20",
     "OC-21",
+    "OC-22",
     "VV-17"
   ],
   "descriptor_cases": [
@@ -6691,6 +6692,237 @@
       },
       "reader": {
         "implementation_engine": false
+      }
+    },
+    {
+      "id": "OC-22",
+      "tc": "TC-974",
+      "name": "the same bound counterexample with an implementation engine is replayed and reproduced",
+      "acs": [
+        "FR-485-AC-13",
+        "FR-485-AC-10",
+        "FR-483-AC-3"
+      ],
+      "registry": [
+        {
+          "backend": "contract-checker",
+          "advertises": [
+            {
+              "kind": "operation-contract",
+              "mode": "bounded"
+            }
+          ],
+          "domains": [
+            "collection",
+            "population",
+            "integer",
+            "recursive"
+          ],
+          "bounds": {
+            "max_cases": 10000
+          },
+          "implementation_engine": true
+        }
+      ],
+      "item": {
+        "kind": "operation-contract",
+        "form": "clause",
+        "claim": "oc.post",
+        "occurrence": {
+          "role": "claim",
+          "ordinal": 0
+        },
+        "extent": {
+          "classification": "bounded",
+          "bound_kinds": [
+            "integer"
+          ]
+        },
+        "bound": true
+      },
+      "negotiation": {
+        "disposition": "supported"
+      },
+      "arm": {
+        "outcome": "violation",
+        "result": "refuted"
+      },
+      "cex_obligation": "postcondition",
+      "outcome": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "kind": "operation-contract",
+            "result": "refuted",
+            "counterexample": 0
+          }
+        ],
+        "counterexamples": [
+          {
+            "request_index": 0,
+            "backend": "contract-checker",
+            "counterexample": {
+              "type": "contract-counterexample",
+              "obligation": "postcondition",
+              "violated": {
+                "node": "$node:oc.post",
+                "occurrence": {
+                  "role": "claim",
+                  "ordinal": 0
+                }
+              },
+              "bound": true,
+              "executions": [
+                {
+                  "operation": "$node:oc.step",
+                  "pre_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "5"
+                        }
+                      }
+                    ]
+                  },
+                  "arguments": [
+                    {
+                      "parameter": "$node:oc.i",
+                      "value": {
+                        "type": "integer",
+                        "value": "1"
+                      }
+                    }
+                  ],
+                  "result": null,
+                  "post_state": {
+                    "type": "record",
+                    "name": "acme/Vault",
+                    "fields": [
+                      {
+                        "name": "l",
+                        "value": {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      },
+                      {
+                        "name": "h",
+                        "value": {
+                          "type": "integer",
+                          "value": "5"
+                        }
+                      }
+                    ]
+                  },
+                  "concrete": {
+                    "pre_state": {
+                      "type": "record",
+                      "name": "impl/Vault",
+                      "fields": [
+                        {
+                          "name": "lo",
+                          "value": {
+                            "type": "integer",
+                            "value": "1"
+                          }
+                        },
+                        {
+                          "name": "hi",
+                          "value": {
+                            "type": "integer",
+                            "value": "5"
+                          }
+                        }
+                      ]
+                    },
+                    "arguments": [
+                      {
+                        "parameter": "$node:oc.i",
+                        "value": {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      }
+                    ],
+                    "result": null,
+                    "post_state": {
+                      "type": "record",
+                      "name": "impl/Vault",
+                      "fields": [
+                        {
+                          "name": "lo",
+                          "value": {
+                            "type": "integer",
+                            "value": "1"
+                          }
+                        },
+                        {
+                          "name": "hi",
+                          "value": {
+                            "type": "integer",
+                            "value": "5"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          }
+        ]
+      },
+      "replay_model": {
+        "premises": [],
+        "obligation": [
+          "=",
+          "l'",
+          [
+            "+",
+            "l",
+            "i"
+          ]
+        ],
+        "args": {
+          "i": "oc.i"
+        },
+        "abstraction": {
+          "l": "lo",
+          "h": "hi"
+        },
+        "outcomes": [
+          {}
+        ]
+      },
+      "reader": {
+        "implementation_engine": true
       }
     },
     {
