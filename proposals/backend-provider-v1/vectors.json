@@ -4851,6 +4851,814 @@
         "counterexamples": [],
         "accounting": [{"request_index": 0, "settled_by": "result"}]
       }
+    },
+    {
+      "name": "derived-items-request",
+      "stage": "request",
+      "owners": {
+        "/request/items/2/claim": "FR-368",
+        "/request/items/2/extent": "FR-368",
+        "/request/items/2/temporal/item_kind": "FR-368",
+        "/request/items/2/temporal/fairness": "FR-368",
+        "/request/items/3/claim": "FR-368",
+        "/request/items/3/extent": "FR-368",
+        "/request/items/3/temporal/item_kind": "FR-368",
+        "/request/items/3/temporal/fairness": "FR-368",
+        "/request/items/4/claim": "FR-368",
+        "/request/items/4/extent": "FR-368",
+        "/request/items/4/temporal/item_kind": "FR-368",
+        "/request/items/4/temporal/fairness": "FR-368",
+        "/request/items/5/claim": "FR-368",
+        "/request/items/5/extent": "FR-368",
+        "/request/items/5/temporal/item_kind": "FR-368",
+        "/request/items/5/temporal/fairness": "FR-368",
+        "/request/items/6/claim": "FR-368",
+        "/request/items/6/extent": "FR-368",
+        "/request/items/6/temporal/item_kind": "FR-368",
+        "/request/items/6/temporal/fairness": "FR-368"
+      },
+      "description": "FR-368 Item kinds, claim, extent, position, limits and the refinement item's abstract_subject. Items 0 and 1 are the caller's authored clauses over two subjects, item 2 a refinement item over subject 0 (its node id is an illustrative value: the package fixture holds no refinement node); items 3 to 6 are the derived items, grouped by subject in order of first occurrence and, within a subject, deadlock-freedom, time-lock-freedom, race-freedom. Anchors are the fixture's model_root node (occurrence role generated, ordinal 0) for the model subject and its Example::Handshake protocol clause node (declaration, ordinal 0) for the protocol subject. The authored and refinement items carry max_depth and limits; the derived items carry none and take the provider defaults. The refinement item's abstract package is positive-dependency-library.json, whose id is abstract_subject.package_id and whose v2 bytes the test composition adds as the request's one dependency, as it adds package and package_id.",
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "manifest": [
+          {
+            "backend": "qsl-model-check",
+            "tool": {
+              "name": "qsl-analyze",
+              "version": "0.1.0",
+              "build": {
+                "domain": "quire.build-inputs/v1",
+                "algorithm": "sha256",
+                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
+              }
+            },
+            "advertises": [
+              {
+                "kind": "temporal-satisfaction",
+                "mode": "bounded"
+              },
+              {
+                "kind": "temporal-satisfaction",
+                "mode": "unbounded"
+              }
+            ],
+            "fairness_kinds": [
+              "strong",
+              "weak"
+            ],
+            "reductions": [
+              "constraint",
+              "partial-order",
+              "symmetry"
+            ],
+            "bounds": {
+              "max_automaton_states": 100000,
+              "max_states": 1000000,
+              "max_transitions": 10000000
+            },
+            "domains": [
+              "collection",
+              "integer",
+              "population",
+              "recursive"
+            ]
+          }
+        ],
+        "request": {
+          "deadline_ms": 600000,
+          "provision": [
+            {
+              "digest_domain": "sha256-jcs",
+              "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "bytes": "e30"
+            },
+            {
+              "digest_domain": "sha256-jcs",
+              "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "bytes": "W10"
+            }
+          ],
+          "items": [
+            {
+              "request_index": 0,
+              "kind": "temporal-satisfaction",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "65dff8adef451a9ceead2d27077e6acc22d54cac7edc783b72d2e1ca8c42455b"
+                },
+                "occurrence": {
+                  "role": "expression",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "65dff8adef451a9ceead2d27077e6acc22d54cac7edc783b72d2e1ca8c42455b"
+                      },
+                      "path": []
+                    },
+                    "kind": "infinite-trace"
+                  }
+                ],
+                "finite_bound_available": false
+              },
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "qsl-model-check"
+                ]
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": []
+                },
+                "item_kind": "formula",
+                "fairness": [
+                  {
+                    "kind": "weak",
+                    "operation": "Example::Session::step",
+                    "granularity": "whole"
+                  }
+                ],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                }
+              }
+            },
+            {
+              "request_index": 1,
+              "kind": "temporal-satisfaction",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "f3c3e283753392ece0f303133cf860ca58b1848623e43d044257c95fec470d27"
+                },
+                "occurrence": {
+                  "role": "expression",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "f3c3e283753392ece0f303133cf860ca58b1848623e43d044257c95fec470d27"
+                      },
+                      "path": []
+                    },
+                    "kind": "infinite-trace"
+                  }
+                ],
+                "finite_bound_available": false
+              },
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "qsl-model-check"
+                ]
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": []
+                },
+                "item_kind": "formula",
+                "fairness": [],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                }
+              }
+            },
+            {
+              "request_index": 2,
+              "kind": "temporal-satisfaction",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+                      },
+                      "path": []
+                    },
+                    "kind": "infinite-trace"
+                  }
+                ],
+                "finite_bound_available": false
+              },
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "qsl-model-check"
+                ]
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": []
+                },
+                "item_kind": "refinement",
+                "fairness": [
+                  {
+                    "kind": "weak",
+                    "operation": "Example::Session::step",
+                    "granularity": "whole"
+                  }
+                ],
+                "max_depth": 40,
+                "limits": {
+                  "max_states": 250000
+                },
+                "abstract_subject": {
+                  "package_id": {
+                    "domain": "quire.package.semantic/v2",
+                    "algorithm": "sha256",
+                    "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"
+                  },
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "request_index": 3,
+              "kind": "temporal-satisfaction",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041"
+                },
+                "occurrence": {
+                  "role": "generated",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041"
+                      },
+                      "path": []
+                    },
+                    "kind": "infinite-trace"
+                  }
+                ],
+                "finite_bound_available": false
+              },
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "qsl-model-check"
+                ]
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": []
+                },
+                "item_kind": "deadlock-freedom",
+                "fairness": []
+              }
+            },
+            {
+              "request_index": 4,
+              "kind": "temporal-satisfaction",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041"
+                },
+                "occurrence": {
+                  "role": "generated",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "ff388429ac907bffe149b81b0c1b3f4099f6075df486c96736455f39a88d3041"
+                      },
+                      "path": []
+                    },
+                    "kind": "infinite-trace"
+                  }
+                ],
+                "finite_bound_available": false
+              },
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "qsl-model-check"
+                ]
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": []
+                },
+                "item_kind": "time-lock-freedom",
+                "fairness": [],
+                "limits": {
+                  "max_states": 250000,
+                  "max_clocks": 1024
+                }
+              }
+            },
+            {
+              "request_index": 5,
+              "kind": "temporal-satisfaction",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "fc076411d2ed2cea9252cdbbf37ab728493cca3e2f3841111f55e06b544de36f"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "fc076411d2ed2cea9252cdbbf37ab728493cca3e2f3841111f55e06b544de36f"
+                      },
+                      "path": []
+                    },
+                    "kind": "infinite-trace"
+                  }
+                ],
+                "finite_bound_available": false
+              },
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "qsl-model-check"
+                ]
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": []
+                },
+                "item_kind": "deadlock-freedom",
+                "fairness": []
+              }
+            },
+            {
+              "request_index": 6,
+              "kind": "temporal-satisfaction",
+              "claim": {
+                "node": {
+                  "domain": "quire.checked-semantic-node/v1",
+                  "digest": "fc076411d2ed2cea9252cdbbf37ab728493cca3e2f3841111f55e06b544de36f"
+                },
+                "occurrence": {
+                  "role": "declaration",
+                  "ordinal": 0
+                }
+              },
+              "extent": {
+                "classification": "unbounded",
+                "domains": [
+                  {
+                    "domain": {
+                      "type": "node",
+                      "node": {
+                        "domain": "quire.checked-semantic-node/v1",
+                        "digest": "fc076411d2ed2cea9252cdbbf37ab728493cca3e2f3841111f55e06b544de36f"
+                      },
+                      "path": []
+                    },
+                    "kind": "infinite-trace"
+                  }
+                ],
+                "finite_bound_available": false
+              },
+              "candidates": {
+                "type": "set",
+                "backends": [
+                  "qsl-model-check"
+                ]
+              },
+              "temporal": {
+                "subject": {
+                  "initial_states": [
+                    {
+                      "digest_domain": "sha256-jcs",
+                      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                    }
+                  ],
+                  "universes": [],
+                  "proof_bounds": []
+                },
+                "item_kind": "race-freedom",
+                "fairness": []
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "certificate-rejected-refinement-loci",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cause/at": "FR-331",
+        "/results/1/cause/at": "FR-331",
+        "/results/2/cause/at": "FR-331",
+        "/results/3/cause/at": "FR-331",
+        "/results/4/cause/at": "FR-331",
+        "/results/5/cause/at": "FR-331",
+        "/results/6/cause/at": "FR-331",
+        "/results/7/cause/at": "FR-331",
+        "/results/8/cause/at": "FR-331",
+        "/results/9/cause/at": "FR-331",
+        "/results/10/cause/at": "FR-331",
+        "/results/11/cause/at": "FR-331",
+        "/results/12/cause/at": "FR-331"
+      },
+      "description": "FR-331 Zone node, Zone edge, Zone edge step and Certificate member loci of QSL FR-245's refinement-form rules: initial-mismatch at a node, post-differs at an edge, step-fails at an edge with its verdict, and malformed at each member FR-418 adds.",
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 3,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 4,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 5,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 6,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 7,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 8,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 9,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 10,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 11,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 12,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "initial-mismatch",
+              "at": {
+                "node": 0
+              }
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "post-differs",
+              "at": {
+                "edge": 1
+              }
+            }
+          },
+          {
+            "request_index": 2,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "step-fails",
+              "at": {
+                "edge": 1,
+                "verdict": {
+                  "kind": "AbstractStepRejected",
+                  "position": "2",
+                  "transition": {
+                    "type": "transition",
+                    "operation": "inc",
+                    "receiver": null,
+                    "arguments": []
+                  },
+                  "cause": {
+                    "kind": "Postcondition"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "request_index": 3,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "successor-missing",
+              "at": {
+                "node": 2
+              }
+            }
+          },
+          {
+            "request_index": 4,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "backward-edge",
+              "at": {
+                "edge": 3
+              }
+            }
+          },
+          {
+            "request_index": 5,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "member": "initials"
+              }
+            }
+          },
+          {
+            "request_index": 6,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "member": "admitted"
+              }
+            }
+          },
+          {
+            "request_index": 7,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "member": "refinement"
+              }
+            }
+          },
+          {
+            "request_index": 8,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "member": "concrete_package"
+              }
+            }
+          },
+          {
+            "request_index": 9,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "member": "abstract_package"
+              }
+            }
+          },
+          {
+            "request_index": 10,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "member": "initials"
+              }
+            }
+          },
+          {
+            "request_index": 11,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "member": "positions"
+              }
+            }
+          },
+          {
+            "request_index": 12,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "member": "taken"
+              }
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 3,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 4,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 5,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 6,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 7,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 8,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 9,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 10,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 11,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 12,
+            "settled_by": "result"
+          }
+        ]
+      }
     }
   ],
   "adverse": [
@@ -7647,7 +8455,45 @@
       "base": "refuted-ignoring-constraints-outcome",
       "owner": "FR-331",
       "patch": [{"op": "replace", "path": "/results/0/result", "value": "proved"}]
-    }
+    },
+    {"name": "derived-item-kind-time-lock", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/4/temporal/item_kind", "value": "time-lock"}]},
+    {"name": "derived-item-kind-race", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/6/temporal/item_kind", "value": "race"}]},
+    {"name": "derived-item-kind-capitalized", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/0/temporal/item_kind", "value": "Formula"}]},
+    {"name": "deadlock-freedom-with-fairness", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/3/temporal/fairness", "value": [{"kind": "weak", "operation": "Example::Session::step", "granularity": "whole"}]}]},
+    {"name": "time-lock-freedom-with-fairness", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/4/temporal/fairness", "value": [{"kind": "weak", "operation": "Example::Session::step", "granularity": "whole"}]}]},
+    {"name": "race-freedom-with-fairness", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/6/temporal/fairness", "value": [{"kind": "weak", "operation": "Example::Session::step", "granularity": "whole"}]}]},
+    {"name": "derived-item-bounded-extent", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/3/extent", "value": {"classification": "bounded", "bounds": []}}]},
+    {"name": "refinement-item-bounded-extent", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/extent", "value": {"classification": "bounded", "bounds": []}}]},
+    {"name": "derived-item-without-infinite-trace-domain", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/5/extent/domains/0/kind", "value": "population"}]},
+    {"name": "derived-item-claim-without-occurrence", "base": "derived-items-request", "owner": "FR-331", "patch": [{"op": "remove", "path": "/request/items/3/claim/occurrence"}]},
+    {"name": "refinement-item-without-abstract-subject", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "remove", "path": "/request/items/2/temporal/abstract_subject"}]},
+    {"name": "abstract-subject-on-formula", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/0/temporal/abstract_subject", "value": {"package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"}, "initial_states": [{"digest_domain": "sha256-jcs", "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}]}}]},
+    {"name": "abstract-subject-on-derived-item", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/3/temporal/abstract_subject", "value": {"package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"}, "initial_states": [{"digest_domain": "sha256-jcs", "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}]}}]},
+    {"name": "abstract-subject-with-universes", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/2/temporal/abstract_subject/universes", "value": []}]},
+    {"name": "abstract-subject-without-initial-states", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "remove", "path": "/request/items/2/temporal/abstract_subject/initial_states"}]},
+    {"name": "abstract-subject-package-id-bare-digest", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/temporal/abstract_subject/package_id", "value": "8940bdb489d9cc75866f7784e6bc6de69cd5f9807b01f60ec10d63552b5e15de"}]},
+    {"name": "item-kind-transfer", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/temporal/item_kind", "value": "transfer"}]},
+    {"name": "time-lock-freedom-bounded-extent", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/4/extent", "value": {"classification": "bounded", "bounds": []}}]},
+    {"name": "time-lock-freedom-without-infinite-trace-domain", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/4/extent/domains/0/kind", "value": "population"}]},
+    {"name": "race-freedom-bounded-extent", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/6/extent", "value": {"classification": "bounded", "bounds": []}}]},
+    {"name": "race-freedom-without-infinite-trace-domain", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/6/extent/domains/0/kind", "value": "population"}]},
+    {"name": "refinement-item-without-infinite-trace-domain", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/extent/domains/0/kind", "value": "population"}]},
+    {"name": "deadlock-freedom-with-max-depth", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/3/temporal/max_depth", "value": 40}]},
+    {"name": "time-lock-freedom-with-max-depth", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/4/temporal/max_depth", "value": 40}]},
+    {"name": "race-freedom-with-max-depth", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/6/temporal/max_depth", "value": 40}]},
+    {"name": "deadlock-freedom-with-max-automaton-states", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/3/temporal/limits", "value": {"max_automaton_states": 5}}]},
+    {"name": "time-lock-freedom-with-max-walk-steps", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/4/temporal/limits/max_walk_steps", "value": 10}]},
+    {"name": "deadlock-freedom-protocol-with-max-witness-set", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/5/temporal/limits", "value": {"max_witness_set": 2}}]},
+    {"name": "race-freedom-with-max-relation-tuples", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/6/temporal/limits", "value": {"max_relation_tuples": 1}}]},
+    {"name": "initial-mismatch-at-edge", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": {"edge": 0}}]},
+    {"name": "post-differs-at-node", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": {"node": 1}}]},
+    {"name": "post-differs-with-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": {"edge": 1, "verdict": {"kind": "AbstractStepRejected", "position": "2", "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []}, "cause": {"kind": "Postcondition"}}}}]},
+    {"name": "step-fails-without-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/at", "value": {"edge": 1}}]},
+    {"name": "step-fails-null-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/at", "value": {"edge": 1, "verdict": null}}]},
+    {"name": "step-fails-verdict-other-kind", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/at/verdict", "value": {"kind": "Undefined", "position": "1"}}]},
+    {"name": "backward-edge-with-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/4/cause/at", "value": {"edge": 3, "verdict": {"kind": "AbstractStepRejected", "position": "2", "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []}, "cause": {"kind": "Postcondition"}}}}]},
+    {"name": "certificate-member-initials-index", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/10/cause/at/member", "value": "initials[0]"}]},
+    {"name": "certificate-member-refinement-name", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/7/cause/at/member", "value": "refinement_name"}]}
   ],
   "universe_provision_vectors": [
     {
