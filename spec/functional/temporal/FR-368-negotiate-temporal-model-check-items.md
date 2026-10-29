@@ -169,6 +169,22 @@ reader's choice:
   one model subject therefore share a claim node, and the `timed_model` root
   ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
   "Timed-model nodes"), owned by that model, is not a second anchor.
+- **Protocol subject without a clause node.** A unit that selects no protocol
+  profile writes no node for its protocol clause, so the clause has no
+  checked protocol clause node and a protocol subject over it has no anchor.
+  The subject still exists, because
+  [FR-425](../protocol/FR-425-define-protocol-subjects-and-state-keys.md)
+  "Protocol subject" defines it from the checked clause and not from a node,
+  so it still derives the items that
+  [FR-429](../protocol/FR-429-report-protocol-deadlocks.md) and
+  [FR-438](../memory/FR-438-report-data-races.md) give it, and no
+  `time-lock-freedom` item. The producer SHALL settle each of those items
+  `unsupported` with the diagnostic
+  `unsupported_projection`/`unsupported-requested-capability`, whose `detail`
+  names the item kind and that the unit selects no protocol profile, and SHALL
+  write no request item for it, exactly as for a model subject that has no
+  anchor above. It does not settle them as a deadlock, a race or a pass, and
+  it does not omit them.
 - **Occurrence.** The anchor node's occurrence of role `declaration` and
   ordinal 0 when it has one, otherwise its occurrence of role `expression` and
   ordinal 0, otherwise its occurrence of role `generated` and ordinal 0, as
@@ -441,6 +457,7 @@ infinite-trace formula that no registered candidate decides.
 | FR-368-AC-21 | `transfer` is not an `item_kind` and a transfer item is not a request item: it is evaluated by the planner and never reaches a provider. | Test (TC-431) |
 | FR-368-AC-22 | A derived item over a model subject whose package has one `model_root` is anchored at it; one over a subject that reads several `model_selections` rows, or none, is settled `unsupported`, `unsupported_projection`/`unsupported-requested-capability`, by the producer, which writes no request item for it. | Test (TC-431 BP-47 for several; TC-290 step 10 for none) |
 | FR-368-AC-23 | A protocol subject whose model selection reads a timed model gains no `time-lock-freedom` item. | Test (TC-370) |
+| FR-368-AC-24 | A protocol subject over a protocol clause of a unit that selects no protocol profile has no anchor: its `deadlock-freedom` item, and its `race-freedom` item where it has a weak `parallel`, are each settled `unsupported`, `unsupported_projection`/`unsupported-requested-capability`, with a `detail` naming the item kind and that the unit selects no protocol profile, by the producer, which writes no request item for it; the subject gains no `time-lock-freedom` item. | Test (TC-431 BP-49) |
 
 ## Dependencies
 
