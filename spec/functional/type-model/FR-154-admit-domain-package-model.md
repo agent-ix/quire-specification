@@ -94,7 +94,7 @@ Declaration refusals:
 | An IR node is not valid for its construct's meaning, including a reference that names a node of the wrong meaning and a `supertypes` entry that names a node of another meaning (FR-208) | `invalid_model_binding`/`malformed-declaration` |
 | An operation parameter's `name` is absent, is not a string, is empty, does not match `^[A-Za-z][A-Za-z0-9_]*$`, or differs from the last segment of the parameter's identity `<operation identity>/<param>`, on a parameter not refused as a repeated identity of its operation (checked after that row and before the frame entries) | `invalid_model_binding`/`malformed-declaration` |
 | A field's or an operation's `name` is absent, is not a string, is empty, does not match `^[A-Za-z][A-Za-z0-9_]*$`, or differs from the last segment of its identity `<owner identity>/<member name>`, on a member not refused as a repeated identity of its owner (checked after the "Two nodes share one identity" row below) | `invalid_model_binding`/`malformed-declaration` |
-| A field, parameter, result, alias `target`, sequence `items`, map `values`, tuple position `typeRef` or variant case `payloadType` that is none of `ix://quire/native/<Name>` with `<Name>` a native value type name, `ix://quire/unit/<name>` with a non-empty `<name>`, and a package value type identity (including a tuple's owner-nested identity) | `invalid_model_binding`/`malformed-declaration` |
+| A field, parameter, result, alias `target`, sequence `items`, map `values`, tuple position `typeRef` or variant case `payloadType` that is none of `ix://quire/native/<Name>` with `<Name>` a native value type name, `ix://quire/unit/<name>` with a non-empty `<name>`, and a package value type identity (including a tuple's owner-nested identity). This row validates reference form only: tuple position admission is further restricted by FR-322, which refuses Clock as `invalid_model_binding`/`malformed-declaration`; variant payload admission is governed by AC-25. | `invalid_model_binding`/`malformed-declaration` |
 | `ix://quire/unit/<name>` as a reference `target` (a quantity has no identity, so no reference names one), a constraint on a clock whose keyword is neither `min` nor `max`, a constraint on a unit whose keyword is neither `min` nor `max`, or a clock member (a field or parameter typed `ix://quire/native/Clock`, or a result of that type) that breaks the clock member shape below | `invalid_model_binding`/`malformed-declaration` |
 | A dimension or unit node with a malformed member or a unit-graph defect: a `name` outside `^[A-Za-z][A-Za-z0-9_]*$`, a non-boolean `base`, an `identity` that is not `ix://<package identity>/dimension/<name>` or `ix://<package identity>/unit/<name>`, a base dimension with terms, a term exponent that is not a canonical integer string, `0` or outside `i128`, terms out of order or repeated, a term cycle, a `scale` or `offset` that is not a canonical rational string or is outside `i128`, a zero `scale`, a `target` in another dimension, a second root of one dimension, a root whose `scale` is not `1` or `offset` not `0`, a target cycle, a `dimension` or `target` that is not an identity, or a missing or malformed `origin` | `invalid_model_binding`/`malformed-declaration` |
 | A dimension term's `dimension`, a unit's `dimension` or a unit's `target` names no dimension or unit node of the package | `missing_declaration`/`missing-name` |
@@ -201,11 +201,11 @@ two never collide. A `typeRef` that begins `ix://quire/native/` and whose
 `invalid_model_binding`/`malformed-declaration`.
 
 `ix://quire/native/Clock` is admitted as a field `typeRef`, an operation
-parameter `typeRef`, an operation result `typeRef`, a variant case
-`payloadType` and an alias `target` (filament-core-data FR-146 "Clock
-members"). A field or parameter typed by an alias whose `target` chain reaches
-`Clock` is a clock member as well, and an alias of `Clock` builds no type
-declaration. A **clock member** is a field, parameter or result of the clock
+parameter `typeRef`, an operation result `typeRef` and an alias `target`
+(filament-core-data FR-146 "Clock members"). A field or parameter typed by an
+alias whose `target` chain reaches `Clock` is a clock member as well. An alias
+of `Clock` builds no type declaration. A **clock member** is a field, parameter
+or result of the clock
 type; it has the clock member shape: any multiplicity `{lower, upper, ordered,
 unique}` that the member rows of the package admit for any member (a multiplicity
 other than `{1, 1}` makes the member a clock collection, FR-415 "Clock
@@ -234,11 +234,13 @@ refuses any other keyword `invalid_model_binding`/`malformed-declaration` at
 or an alias of it with the keyword `min` or `max` is a unit bound ("Unit
 bounds" below), and any other keyword refuses at `Constraint.keyword`; a `reference` whose
 `target` is a unit refuses at `TypeDefinition.target`, because a quantity has no
-identity for a reference to name. A variant case whose
-`payloadType` is `Clock` is read by the variant payload row of the construct
-validity table as any other payload is. Intake does not check which construct
-owns a clock member or whether the model declares a time source; QSL FR-230
-and FR-415 check those where the clock is used.
+identity for a reference to name. A variant case whose `payloadType` is
+`ix://quire/native/Clock` is refused `unsupported_construct`/`declaration-form`
+at `Variant.payloadType` (AC-25). This differs from a tuple position typed
+`Clock`, which FR-322 refuses as `invalid_model_binding`/`malformed-declaration`.
+Intake does not check which construct owns an admitted clock member or whether
+the model declares a time source; QSL FR-230 and FR-415 check those where the
+clock is used.
 
 `ix://quire/unit/<name>` is admitted at every position that takes a type:
 a field, parameter or result `typeRef`, an alias `target`, a sequence `items`,
@@ -431,7 +433,7 @@ map it to the QSL refusal pair used by TC-235:
 | --- | --- | --- |
 | `UNRESOLVED_CONSTRUCT_REF` | `missing_declaration`/`missing-name` | A construct member reference names no declared node or member, including an occurrence field, transition state or trigger, or emitted/consumed type. |
 | `DANGLING_CLAUSE_REF` | `missing_declaration`/`missing-name` | A transition guard names no clause of its owning type. |
-| `INVALID_CLOCK_MEMBER` | `invalid_model_binding`/`malformed-declaration` | A clock member shape member, at its `Field.*`, `Operation.params[i].*` or `Operation.returns.*` path. |
+| `INVALID_CLOCK_MEMBER` | `invalid_model_binding`/`malformed-declaration` | A clock member shape member only: `Field.*`, `Operation.params[i].*` or `Operation.returns.*`. This mapping does not cover a variant payload, whose refusal is governed by FR-154-AC-25. |
 | `INVALID_UNIT_GRAPH` | `invalid_model_binding`/`malformed-declaration` | A dimension or unit graph defect, at the member path of its FCD pointer. |
 | `INVALID_OPERAND`, `INTEGER_OUTSIDE_I128` | `invalid_model_binding`/`malformed-declaration` | A term `exponent`, or a unit `scale` or `offset`, at `Dimension.terms[t].exponent`, `Unit.scale` or `Unit.offset`. |
 | `UNRESOLVED_DIMENSION_REF` | `missing_declaration`/`missing-name` | A term's or unit's `dimension` names no dimension node, at `Dimension.terms[t].dimension` or `Unit.dimension`. |
