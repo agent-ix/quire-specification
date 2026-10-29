@@ -23,6 +23,8 @@ Run each vector through the real local Rust boundary of the frontend or provider
 
 ## Vectors
 
+Vectors CK-04 to CK-20 state the language semantics of clock writes and selection resets; they are not requirements on the checked package. A frontend that produces a checked package refuses the forms of CK-38 (FR-415-AC-25, FR-322-AC-267) instead of building them, so the language forms `self.v = absent`, `self.ts = sequence[...]`, `self.ts = filter(...)` and the quantified reset of CK-17 keep their meaning while their package build is refused.
+
 | Vector | Input | Expected result |
 | --- | --- | --- |
 | CK-01 | `time Rpc dense unit ms;` and `time Ctl tick Ctl::tick period rational(1, 2) ms unit ms;` | Both admitted; `Rpc` is a timed model; the tick period is `1/2` ms |

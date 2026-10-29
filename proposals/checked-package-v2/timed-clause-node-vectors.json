@@ -9573,7 +9573,11 @@
         "source": "guard: (self.versionNumber > 0 and self.x >= 1 ms and self.y >= 1 ms) or (true and self.x >= 5 ms)  (every disjunct reads a clock; the published clock_guard of node 47: two parts)",
         "expected": "built",
         "package_case": "CL-01",
-        "node_index": 47
+        "node_index": 47,
+        "built_node": {
+          "form": "clock_guard",
+          "parts": 2
+        }
       },
       {
         "id": "GJ-03",
@@ -9582,7 +9586,11 @@
         "expected": "built",
         "note": "the source constraint x >= 0 ms is a constraint and builds as written; the producer never inserts a constraint to give a data-only disjunct one",
         "package_case": "CL-01",
-        "node_index": 47
+        "node_index": 47,
+        "built_node": {
+          "form": "clock_guard",
+          "parts": 2
+        }
       },
       {
         "id": "CW-01",
@@ -9592,7 +9600,8 @@
         "expected_code": "unsupported_construct",
         "expected_cause": "expression-form",
         "locus": "the write",
-        "reader_row": "CL-56"
+        "reader_row": "CL-56",
+        "source_note": "the class: sequence/set/bag/map literals, filter, flatten, concatenation, slicing, reordering and a map entry written as a literal"
       },
       {
         "id": "CW-02",
@@ -9620,7 +9629,12 @@
         "source": "post self.v = 0 ms  (a constant write to a guarded place makes it present: the clock_reset of node 82)",
         "expected": "built",
         "package_case": "CL-01",
-        "node_index": 82
+        "node_index": 82,
+        "built_node": {
+          "form": "clock_reset",
+          "place_field": "v",
+          "binders": 0
+        }
       },
       {
         "id": "CW-05",
@@ -9642,7 +9656,7 @@
         "expected_code": "unsupported_construct",
         "expected_cause": "expression-form",
         "locus": "the condition",
-        "reader_row": "CL-12"
+        "reader_row_note": "no published row pins a read of element data: no package can carry one"
       },
       {
         "id": "SD-02",
@@ -9650,7 +9664,12 @@
         "source": "post forall(e in self.q: present(e) implies e = 0 ms)  (the condition reads the presence of the binder's place only: the clock_reset of node 84)",
         "expected": "built",
         "package_case": "CL-01",
-        "node_index": 84
+        "node_index": 84,
+        "built_node": {
+          "form": "clock_reset",
+          "place_field": "q",
+          "binders": 1
+        }
       }
     ]
   }

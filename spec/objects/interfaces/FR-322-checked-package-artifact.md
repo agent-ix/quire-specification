@@ -2493,7 +2493,8 @@ to one `literal` term with `value_kind` `none` whose `type` is a node of family
 `option`, the `composite_type`/`option` node of the `Option<T>` the position
 expects; the spelling is not carried. No type node stands for a clock, so for an
 `Option<Clock>` place no such literal exists in the package: `self.v = absent` over
-`v: Option<Clock>` is recorded by the timed model (FR-415), not carried in the package.
+`v: Option<Clock>` has no package form: it is the excluded drop ("Forms the package
+excludes", `CW-03`), refused by the producer and carried by no node.
 
 The fit rule has one exception besides record conformance ("Record
 conformance"), **event equality**: `quire.op.structural.eq` and
@@ -3078,7 +3079,14 @@ written above, pinned by a package row. The producer-level cases are the
   `self.ts = filter(e in self.ts: e.n > 1)`) creates, carries and removes slots,
   and a reset names one place by its owner and exactly the slot terms its path
   has slot steps for, so no reset names a collection as a whole (`CL-56`, the
-  slot count). A constant write to a guarded place is a reset and makes the
+  slot count). The class is a write whose value is a collection of clock-bearing
+  elements: a `sequence[...]`, `set[...]`, `bag[...]` or map literal, `filter`,
+  `flatten`, concatenation, slicing, reordering, and a map entry or element
+  written as a literal (`self.m[k] = Timer { ... }`), each of which creates,
+  carries or removes slots. A write of a non-collection composite is not in the
+  class: `self.o = Timer { x: 0 ms, n: 3 }` is the reset of the place `o.x` to
+  `0 ms` (making an `Option<Timer>` place present) together with an ordinary data
+  write of `n`, and is built. A constant write to a guarded place is a reset and makes the
   place present (`CW-04`, node 82). A presence requirement is not a write
   (`CW-05`): `present(p)` in a postcondition is a `presence_read` expression of
   the postcondition and not a clause, so the package carries no node for it; a
@@ -3087,12 +3095,18 @@ written above, pinned by a package row. The producer-level cases are the
   `FP-09`, `FP-11`), and the source refusal `clock-presence-unwritten` is as
   FR-415 states. An unwritten clock keeps its value, so a frame that names a
   clock field imposes no write.
+
+  These exclusions concern what a package-producing frontend builds. The
+  language rules of FR-415 (AC-7, AC-11, AC-12, AC-14) are unchanged: they say
+  what the source forms mean, and a frontend that produces a checked package
+  refuses the forms listed here instead of building them.
 - **A selection reset whose condition reads element data** (`SD-01`:
   `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)`). A binder is a
   `parameter` node among the reset's slots, bound by slot position only (the
   index of a `Sequence` or `OrderedSet`, the key of a `Map`, the canonical
   position of a `Set` or `Bag`) and typed by the selector's domain (`CL-10`,
-  `CL-12`). The package has no expression that reads the data part of the
+  `CL-12`; no published row pins a read of element data, because no package can
+  carry one). The package has no expression that reads the data part of the
   element at a binder, and the package defines none, so a `condition` reads no element data: it is a Boolean
   expression over the owner, the operation's parameters, the state data of the
   owner and the presence of the binder's place (`SD-02`, node 84:
@@ -3110,8 +3124,8 @@ unless another code is written.
 - `clock_place`: the rows of `resolved_path` join the path and the selected document (FR-322-AC-148); it has no clause to join.
 - `clock_constraint` of kind `place`: `place` is a `clock_place`; then an
   `owner` that is not of the owner type refuses `ill_typed`/`type-mismatch` at
-  `/body/members/3/value`; a `slots` count other than the number of `slot` steps
-  refuses `ill_typed`/`operator-ineligible` at `/body/members/4/value`; a slot
+  `/body/members/2/value`; a `slots` count other than the number of `slot` steps
+  refuses `ill_typed`/`operator-ineligible` at `/body/members/3/value`; a slot
   term not of the selector's domain refuses `ill_typed`/`type-mismatch` at that
   slot (the rules of `present(p)`).
 - `clock_constraint` of kind `parameter`: `operation` is a `state`/`operation_anchor`

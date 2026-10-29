@@ -26060,23 +26060,48 @@ fn tc_367_excluded_clause_forms_are_published() {
             "refused" => {
                 assert_eq!(case["expected_code"], "unsupported_construct", "{id}");
                 assert_eq!(case["expected_cause"], "expression-form", "{id}");
-                let row = case["reader_row"].as_str().unwrap();
-                assert!(case_ids.contains(row), "{id}: reader row {row} is a published case");
+                match case["reader_row"].as_str() {
+                    Some(row) => assert!(case_ids.contains(row), "{id}: reader row {row} is a published case"),
+                    None => assert!(case["reader_row_note"].is_string(), "{id}: no reader row is stated and why"),
+                }
             }
             "built" => {
                 assert_eq!(case["package_case"], "CL-01", "{id}");
-                let node = &package["semantic_graph"]["nodes"][case["node_index"].as_u64().unwrap() as usize];
-                let form = if id.starts_with("GJ") { "clock_guard" } else { "clock_reset" };
-                assert_eq!(node["semantic_form"], form, "{id}: the control is a built {form}");
+                let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
+                let node = &nodes[case["node_index"].as_u64().unwrap() as usize];
+                let expect = &case["built_node"];
+                assert_eq!(node["semantic_form"], expect["form"], "{id}: the control is a built {}", expect["form"]);
+                let bound = |name: &str| node["body"]["members"].as_array().unwrap().iter().find(|m| m["name"] == name).unwrap()["value"].clone();
+                if expect["form"] == "clock_guard" {
+                    let parts = bound("parts")["members"].as_array().unwrap().clone();
+                    assert_eq!(parts.len() as u64, expect["parts"].as_u64().unwrap(), "{id}: parts");
+                    assert!(parts.iter().all(|part| part["members"].as_array().unwrap().len() >= 2), "{id}: every part holds a clock constraint");
+                } else {
+                    let place_digest = bound("place")["target"]["digest"].as_str().unwrap().to_owned();
+                    let place = nodes.iter().find(|n| n["node_id"]["digest"] == place_digest.as_str()).unwrap();
+                    let first = place["body"]["members"][1]["value"]["members"][0]["members"][1]["value"]["value"].as_str().unwrap();
+                    assert_eq!(first, expect["place_field"].as_str().unwrap(), "{id}: the reset writes the place that begins with the field");
+                    assert_eq!(bound("binders")["members"].as_array().unwrap().len() as u64, expect["binders"].as_u64().unwrap(), "{id}: binders");
+                }
             }
             other => assert_eq!((other, id), ("no-node", "CW-05")),
         }
     }
     // The reader rows of the exclusions are refused by the replay (CL-20, CL-55 by schema, CL-56 by the slot count).
-    for (id, expected) in [("CL-20", "refused-by-schema"), ("CL-55", "refused-by-schema"), ("CL-56", "refused")] {
+    for (id, expected, locus) in [
+        ("CL-20", "refused-by-schema", "/semantic_graph/nodes/86/body"),
+        ("CL-55", "refused-by-schema", "/semantic_graph/nodes/82/body"),
+        ("CL-56", "refused", "/semantic_graph/nodes/84/body/members/4/value"),
+    ] {
         let case = vectors["cases"].as_array().unwrap().iter().find(|c| c["id"] == id).unwrap();
         assert_eq!(case["expected"], expected, "{id}");
+        assert_eq!(case["locus"], locus, "{id} locus");
+        let touched = |prefix: &str| case["patch"].as_array().unwrap().iter().any(|op| op["path"].as_str().unwrap().starts_with(prefix));
+        let node = locus.split('/').nth(3).unwrap();
+        assert!(touched(&format!("/semantic_graph/nodes/{node}/")), "{id}: the patch changes the node it is refused at");
     }
+    let cl55 = vectors["cases"].as_array().unwrap().iter().find(|c| c["id"] == "CL-55").unwrap();
+    assert!(cl55["patch"].as_array().unwrap().iter().any(|op| op["op"] == "remove" && op["path"] == "/semantic_graph/nodes/82/body/members/7"), "CL-55 removes the value binding");
     // FR-322 states the exclusions in its own words.
     let text = FR322_BODY_STEPS.split_whitespace().collect::<Vec<_>>().join(" ");
     for sentence in ["Forms the package excludes", "part pairs a predicate with at least one constraint", "drop is not a reset", "whole-collection write", "presence requirement is not a write", "reads no element data"] {

@@ -58,8 +58,9 @@ the query's roots, as it classifies every other `operation-contract` item.
   result and parameter types; the parameter domain of each `_` argument of
   its abstract operation; the *context population*, the one population of the
   concrete model that covers the receiver's type; each population the
-  operation's contract clauses range over (QSL FR-104,
-  [FR-391](FR-391-settle-state-graph-claims.md)), whether by a quantifier, an
+  operation's contract clauses range over (QSL FR-104, check state clauses;
+  QSL FR-391, name a domain-package population in a state clause or a holds
+  atom), whether by a quantifier, an
   `allInstances` or a `reaches`, because the query reads the clause bodies; and
   each population a `reaches` in the refinement's state mapping walks.
 - The initial query's roots are the populations that cover the concrete
@@ -126,4 +127,4 @@ When the declaration's `F_A` is non-empty, the liveness half is decided by the e
 - [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) owns the `operation-contract` kind.
 - [FR-354](../ir-proof/FR-354-record-proof-trust-basis.md) owns the checker outcome to certification table.
 - [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) owns the closed `certification` values, the `extent` wire form and the causes this requirement uses.
-- QSL FR-146 (Claim extent) states the same roots and classification for the QSL request writer.
+- QSL FR-146 (Claim extent) states the roots and classification of the QSL request writer: the `reaches` roots for a step query and the covering populations for the initial query. The roots above are a superset of those.
