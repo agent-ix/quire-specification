@@ -13,6 +13,8 @@ relationships:
 ---
 # FR-263: Declared finite population
 
+BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
+
 ## Description
 
 When a population is assessed, the assessment request SHALL retain the selected domain package identity and digest, the population declaration key, the declared finite membership rule and digest, the population identity, the bounds, the observation sources, the configuration and closure identities and digests, and the completeness and progress dependencies.

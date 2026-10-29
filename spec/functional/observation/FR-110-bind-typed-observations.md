@@ -22,7 +22,7 @@ cause.
 The observation binder SHALL derive the observation identity under FR-296 from
 the complete closed canonical observation with only its identity omitted. A producer SHALL NOT
 author the identity independently, and a strict reader SHALL refuse a missing,
-stale, cross-domain or same-identity/different-bytes observation.
+cross-domain or same-identity/different-bytes observation.
 
 ## Behavior
 

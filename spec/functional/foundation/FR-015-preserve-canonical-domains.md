@@ -24,14 +24,14 @@ Canonical bytes/digest or an unsupported-canonicalization refusal.
 
 ## Behavior
 
-Existing contract-IR canonical and bound identities, `sha256-jcs` verification digests and raw artifact digests remain distinct. Source-free typed-expression identity requires a typed derivation. JCS cannot silently replace exact-integer/scalar-order IR canonicalization. Current native syntax has no qualified canonical semantic identity.
+Existing contract-IR canonical and bound identities, and raw artifact digests remain distinct. Source-free typed-expression identity requires a typed derivation. JCS cannot silently replace exact-integer/scalar-order IR canonicalization. Current native syntax has no qualified canonical semantic identity.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-015-AC-1 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-015-AC-2 | An IR semantic digest includes its prescribed domain separation. | Test |
+| FR-015-AC-2 | Withdrawn: the IR semantic digest domain (`ir-semantic`) is removed from FR-201. | Withdrawn |
 | FR-015-AC-3 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 | FR-015-AC-4 | An unlinked syntax tree cannot claim a typed-expression canonical identity. | Test |
 

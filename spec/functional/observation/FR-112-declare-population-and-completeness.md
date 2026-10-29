@@ -16,6 +16,8 @@ relationships:
 ---
 ## Description
 
+BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
+
 When assessing a population or event-time window, the assessment request SHALL
 retain the selected domain package identity and population declaration
 key, declared finite membership rule/digest, population and snapshot/window identities, bounds,

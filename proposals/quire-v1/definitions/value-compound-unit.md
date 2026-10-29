@@ -14,6 +14,7 @@ The normative examples and mutations are
 [value-compound-unit-vectors.json](value-compound-unit-vectors.json).
 
 A value identity is SHA-256 over RFC 8785 JCS of the schema-valid preimage.
+BLOCKED-BY STD-605 (owner: planner titan:QSL:plan): value-compound-unit digest and preimage; the `value-compound-unit-vectors.json` digests carry no marker of their own and are covered by this one.
 Terms reference admitted canonical root-unit I04 node IDs, use nonzero
 mathematical integer exponents written as canonical decimal strings (never
 `-0`), and are strictly ascending by canonical node

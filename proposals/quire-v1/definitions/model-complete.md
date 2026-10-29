@@ -14,8 +14,6 @@ its always-selected closure ([package selection](value-complete.md#package-selec
 | --- | --- |
 | `quire.state.graph/v1` | [Finite graphs](state-graph.md) |
 | `quire.model.complete.rules/v1` | [Normalization rules](model-complete-rules.json) |
-| `quire.model.effective-declaration.schema/v1` | [Effective identity schema](../../checked-package-v2/model-effective-declaration.schema.json) |
-| `quire.model.effective-declaration.vectors/v1` | [Effective identity vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 
 The accounting role is `quire.value.accounting/v1`, already selected by the
 complete-value root. Its model and graph charge points and its
@@ -194,11 +192,8 @@ than every finite value. `ordered` and `unique` are booleans.
 
 An original declaration key is `{package, node}`:
 the domain package identity and the IR node identity.
-QSL derives the following identities in its own domains. Their exact preimage
-shapes are
-[`model-effective-declaration.schema.json`](../../checked-package-v2/model-effective-declaration.schema.json)
-and their known vectors are
-[`model-effective-declaration-vectors.json`](../../checked-package-v2/model-effective-declaration-vectors.json).
+QSL derives the following identities in its own domains.
+BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): the effective-declaration identity member and its preimage shape and vectors.
 Each identity is SHA-256 over the RFC 8785 JCS bytes of its schema-valid
 preimage, written as `{domain, digest}` with a lowercase 64-hex digest. Each
 domain string differs from `quire.checked-semantic-node/v1`

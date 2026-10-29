@@ -32,9 +32,7 @@ row. Rows N04 and N05 admit package bytes: their ModelSelection is
 other row enters at the normalization boundary with a fixed placeholder
 ModelSelection: F1 selects version `1`, F1 republished version `2` and F2 version `3`. The
 published vectors use these placeholder selections.
-Effective identities are written as the first eight hex digits of the full
-digests in
-[`model-effective-declaration-vectors.json`](../../proposals/checked-package-v2/model-effective-declaration-vectors.json).
+BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): the effective-declaration identity member of the rows below (written there as eight hex digits) and its vectors.
 Unless a row states `ModelNormalizationLimitsV1`, run it under limits large
 enough that no charge is denied.
 

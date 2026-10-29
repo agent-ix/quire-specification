@@ -63,11 +63,7 @@ unexplored frontier the same way.
 
 The simulator state key is the typed canonical form of the simulator's typed
 semantic state, control positions, queues, role lifetimes, observation
-progress and remaining bounds, serialized with RFC 8785 JCS. The state-key
-digest is SHA-256 over those canonical JCS bytes, under the
-`quire.simulation.state-key/v1` digest domain (FR-201), distinct from
-`sha256-jcs`. Coalescing compares the full state-key bytes; the digest
-identifies states only in traces and frontier records.
+progress and remaining bounds, serialized with RFC 8785 JCS. BLOCKED-BY STD-606 (owner: planner titan:QSL:plan): StateKey/counterexample digest: the state-key digest, its SHA-256 over the canonical JCS bytes and the `quire.simulation.state-key/v1` domain (also the state-key digests in traces, frontier records and timed replay below). Coalescing compares the full state-key bytes.
 
 ### Typed canonical form
 

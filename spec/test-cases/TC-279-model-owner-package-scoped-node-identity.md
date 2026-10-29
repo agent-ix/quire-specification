@@ -23,8 +23,8 @@ published `ModelOwner` vectors validate against the closed schema.
 
 ## Test Procedure
 
-Validate the published `model-enum-order-status` and
-`model-dimension-order-mass` vectors in `node-identity-vectors.json` against
+Validate the `model-enum-order-status` and
+`model-dimension-order-mass` declarations of the vector table below against
 the closed schema. Apply the
 `model-owner-carries-version` mutation and validate the result.
 

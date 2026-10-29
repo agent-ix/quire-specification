@@ -11,6 +11,8 @@ relationships:
 ---
 # FR-287: Authority-qualified runtime subject reference
 
+BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
+
 ## Description
 
 When a concrete runtime subject is bound for assessment, the binder SHALL retain

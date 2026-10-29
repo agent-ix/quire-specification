@@ -24,7 +24,7 @@ consumer's expected role. The amendment is defined in the
 ## Outputs
 
 A checked reference or a distinct invalid-wire, unsupported-version,
-identity-mismatch or stale refusal. Exhaustion yields
+identity-mismatch or stale refusal. BLOCKED-BY QSpec #512: the stale refusal and the verification JCS domain it relies on are owned there. Exhaustion yields
 incomplete with no accepted reference, as specified by
 [NFR-002](../../non-functional/NFR-002-classify-resource-incompleteness.md).
 

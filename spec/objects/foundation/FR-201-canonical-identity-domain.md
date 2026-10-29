@@ -24,18 +24,15 @@ equality.
 
 | Value | Description |
 | --- | --- |
-| `ir-canonical` | Existing contract-IR canonical identity. Retains its original bare-hex syntax and algorithm; it does not adopt the JCS prefix or canonicalization (FR-018-AC-6). |
+| `ir-canonical` | Existing contract-IR canonical identity. Retains its original bare-hex syntax and algorithm; it does not adopt the JCS prefix or canonicalization (FR-018-AC-6). BLOCKED-BY QSpec #512: FR-018 is withdrawn there. |
 | `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
-| `ir-semantic` | IR semantic digest. Includes its prescribed domain separation (FR-015-AC-2). |
 | `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout (FR-018). |
-| `sha256-jcs` | JCS digest. SHA-256 over RFC 8785 canonical bytes. No model selection row of a lock and no declaration key carries it (FR-154, FR-321, AD-006); its remaining users are those that name it in their own requirement.  |
 | `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
-| `quire.simulation.state-key/v1` | Simulator state-key identity. SHA-256 over the RFC 8785 canonical bytes of the typed canonical encoding of simulator state, control positions, queues, role lifetimes, observation progress and remaining bounds (FR-181). Distinct from `sha256-jcs` and from every other identity/digest domain. |
+| `quire.simulation.state-key/v1` | Simulator state-key identity. SHA-256 over the RFC 8785 canonical bytes of the typed canonical encoding of simulator state, control positions, queues, role lifetimes, observation progress and remaining bounds (FR-181). Distinct from every other identity/digest domain. BLOCKED-BY STD-606 (owner: planner titan:QSL:plan): StateKey digest, the `quire.simulation.state-key/v1` domain and its SHA-256 preimage (FR-181). |
 | `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
-| `quire.verification.jcs` | Verification JCS domain, `version: rfc8785-v1`, `algorithm: sha256`. Emitted as `sha256-jcs:` followed by 64 lowercase hexadecimal digits over RFC 8785 canonical UTF-8 bytes (FR-018). |
-| `quire.model.effective-declaration/v2` | QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from `sha256-jcs`. |
-| `quire.model.effective-view/v2` | QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. |
-| `quire.model.object-universe/v2` | QSL-derived object-universe identity for a connected supertype component. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection and its sorted root effective-declaration identities (FR-150). Distinct from every other identity/digest domain. |
+| `quire.model.effective-declaration/v2` | QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from every other identity/digest domain. BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): effective-declaration hash and its `{version, owner_effective_type, original, derivation}` preimage (FR-150, model-complete.md). |
+| `quire.model.effective-view/v2` | QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): effective-view digest over effective-declaration identities. |
+| `quire.model.object-universe/v2` | QSL-derived object-universe identity for a connected supertype component. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection and its sorted root effective-declaration identities (FR-150). Distinct from every other identity/digest domain. BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): object-universe digest over effective-declaration identities. |
 
 ## Identity and comparison
 
@@ -53,29 +50,7 @@ equality.
 - **Digest domain** — not applicable to the label itself. This artifact *is* the
   vocabulary of digest domains; it does not carry one.
 - **Cross-domain rule** — two identities bearing different domain labels are
-  unequal. Byte equality of their digests does not make them equal, and a raw
-  `sha256` digest cannot substitute for `sha256-jcs` (FR-018-AC-2).
-
-The `sha256-jcs:` textual prefix is a domain label outside the hashed bytes. It
-is not a hash preimage prefix (FR-018).
-
-## Preimage selection is per-use, not per-domain
-
-Three requirements independently state what is inside the preimage under the
-`quire.verification.jcs` domain, and no requirement cross-references the others:
-
-- [FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md): for B's
-  automated-report profile the qualified input is the validated automated core
-  alone; the external disposition and outer report wrapper are excluded.
-- [FR-061](../../functional/protocol/FR-061-report-orthogonal-results.md): the
-  canonical result identity is computed over the complete closed result with
-  only `resultId` omitted.
-- [FR-062](../../functional/protocol/FR-062-project-results-to-portable-verification.md):
-  the derived result identity is taken over a distinct projection-identity
-  preimage under `quire.protocol.e02-projection-identity/v1-draft.1`.
-
-This artifact records all three. It does not reconcile them; the selection of a
-preimage belongs to the requirement that selects it.
+  unequal. Byte equality of their digests does not make them equal. BLOCKED-BY QSpec #512: FR-018-AC-2 is withdrawn there.
 
 ## Acceptance Criteria
 
@@ -94,8 +69,7 @@ preimage belongs to the requirement that selects it.
 
 - [FR-015](../../functional/foundation/FR-015-preserve-canonical-domains.md) establishes the
   distinct domains and the substitution prohibitions.
-- [FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md) establishes
-  the verification JCS selection, output syntax and prefix rule.
+- [FR-018](../../functional/foundation/FR-018-select-verification-jcs-domain.md) is withdrawn in QSpec #512 (BLOCKED-BY QSpec #512).
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
 - [FR-150](../../functional/type-model/FR-150-preserve-model-normalization-provenance.md)
   defines the `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2`

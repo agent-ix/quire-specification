@@ -15,6 +15,8 @@ relationships:
 ---
 # FR-262: Declared instance relationship
 
+BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
+
 ## Description
 
 When an observation is associated with a workflow subject, the correlation service SHALL select only an explicit typed relationship carrying its domain package identity, digest and declared digest domain, exact relationship declaration key, and ordered authority-qualified endpoints.

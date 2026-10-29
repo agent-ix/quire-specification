@@ -700,10 +700,11 @@ A frame body refusal, meaning-join or canonical-order
   references and its own `dependencies` list are not signature nodes. No node
   in the transitive closure of the signature type nodes' `dependencies` carries a
   `declaration` or a `ModelOwner`. Such types (builtin, bounded-domain and anonymous
-  structural types over them) have the same node id in every package. The
+  structural types over them) carry no declaration, so each belongs to the package
+  that contains it and an imported node keeps its own package name. The
   application's `return:0` result is that function's result type; the
-  referencing node's `result_type` names that type's node, which the
-  importing graph carries under the same id. A `dependency_reference` that
+  referencing node's `result_type` names that type's node by that node's
+  `node_id`, whose `package` is the dependency's name. A `dependency_reference` that
   names any other declaration, names a function one of whose reachable
   signature type nodes carries a `declaration` or a `ModelOwner` (a
   `Set<R>`, a tuple holding `R`, a quantity over a declared unit, or
@@ -976,9 +977,10 @@ hashed. It is a closed object with exactly these members:
 | `path` | A non-empty array of segments. A declared node's path is its declaration path, the declaring scopes' names outermost first. A derived node (no `declaration`, for example `Set<Integer>`, an application or a literal) has the path `[node_tag, semantic_form, ...operands]`; each operand is a string (a literal's text, an operator or member name) or the `node_id` of an operand node. |
 | `ordinal` | A non-negative integer, `0` unless several nodes share one `package` and `path`, as the members of one recursion group do; then it is the member's position among them in graph order. |
 
-Two nodes with equal `package`, `path` and `ordinal` are the same node: a
-package carries it once (sharing by equality), and a second node with an equal
-`node_id` refuses `invalid_semantic_graph` at the second node's `node_id`. The
+A node belongs to the package that contains it, and an imported node keeps its
+own package name. Two nodes with equal `package`, `path` and `ordinal` have the
+same `node_id`, and node ids are unique within a graph: a second node with an
+equal `node_id` refuses `invalid_semantic_graph` at the second node's `node_id`. The
 node order used wherever this artifact says "ascending node-id order" is
 `package` in UTF-8 byte order, then `path` element by element (a string sorts
 before a nested `node_id`; nested `node_id`s compare recursively by this same
@@ -1500,8 +1502,7 @@ no operation identity, and the published operation catalog is unchanged.
 
 The published vectors are `model-tuple-union-vectors.json` (the declarations,
 the position, family, member, union-read, recursion and intake cases and the
-wire cases), the two `union_member_vectors` entries
-`union-member-model-shape-both` and `union-member-model-shape-empty`, and the
+wire cases), and the
 package fixture `fixtures/positive-model-tuple-union.json`, whose application
 nodes are a `union_value` over the body-less `Shape` and `List` nodes, an
 `enum_value`, two `tuple.project`, a `case` and three equalities.
@@ -1516,7 +1517,7 @@ application result type names the resolved type's node, so an alias cannot
 create a second `composite_type`, `bounded_domain` or `scalar_type` identity. A
 `Quantity<u>` annotation likewise introduces no node: it names the
 `scalar_type`/`unit` node of `u`, the type of a quantity in that unit (family
-`quantity`), under the same id in every package that holds that unit (FR-142).
+`quantity`), under the `node_id` of that unit's node (FR-142).
 A quantity literal `n u` lowers to a `literal` term of `value_kind` `quantity`
 whose `type` is that node and whose `value` is the magnitude spelled as "Scalar
 literal values" says.
@@ -1934,7 +1935,7 @@ that refinement's row expressions. The three forms below are application nodes
 (`node_tag: "expression"`) they add no
 member to the refinement body and no node form, and the
 refinement node's `dependencies` already list their row expression targets. The
-vectors are `refinement-row-node-vectors.json`, over the concrete model
+forms below are read over the concrete model
 `acme/counter` (object type `Counter`, population `counters`, and the history
 row `history Counter.seen: Int[0, 9] = 0`).
 
@@ -1958,9 +1959,8 @@ row `history Counter.seen: Int[0, 9] = 0`).
   declaration key and name, the receiver and the result type enter it, and
   neither the refinement node nor the history's initial value or updates
   does, because the refinement's body reaches this node and a path that held it
-  would be circular. A node is therefore shared by every
-  refinement that declares the same history of the same type. The vectors are
-  `VN-01` (`seen` read at `self`) and `VN-02` (`pre(seen)`).
+  would be circular. Two refinements that declare the same history of the same
+  type therefore refer to one node id, and the graph holds that node once.
 - **Population value.** A concrete population `C::p` that a row names is read
   as `allInstances<T>(C::p)`, the node `quire.op.model.all_instances` over the
   `relation`/`population` node of "Population references", whose owner is the
@@ -1973,18 +1973,18 @@ row `history Counter.seen: Int[0, 9] = 0`).
   `Set<Reference<T>>[0, n]` and derives the bounds of `count` and `sum` from `n`,
   so the unbounded `Set<Reference<T>>` of "Population references" is not a
   population value of a row and refuses `ill_typed`/`operator-ineligible` at the
-  application. The vector is `VN-03`. The other forms of
+  application. The other forms of
   [FR-376](../../functional/analysis/FR-376-evaluate-population-valued-mapping-expressions.md)
   lower over that node, each binder `x` being a `value`/`parameter` node of type
   `Reference<T>` and an omitted `where` the `boolean` literal `true`:
 
   | FR-376 form | Nodes |
   | --- | --- |
-  | `count(x in P where c)` | `quire.op.collection.count` over the population value, binder body `c`, `type_argument` and `result_type` the `Int[0, n]` node (`VN-04`) |
+  | `count(x in P where c)` | `quire.op.collection.count` over the population value, binder body `c`, `type_argument` and `result_type` the `Int[0, n]` node |
   | `exists(x in P where c)` | `quire.op.collection.exists` over the population value, binder body `c` |
   | `all(x in P where c)` | `quire.op.collection.forall` over the population value, binder body `c` |
   | `sum(x in P where c: e)` | `quire.op.collection.sum.<family>` over `F`, binder body `e`, `type_argument` and `result_type` the bounded type FR-376 derives |
-  | `only(x in P where c: e)` | `quire.op.collection.only` over `F`, binder body `e`, `type_argument` and `result_type` the type node of `e` (`VN-05`) |
+  | `only(x in P where c: e)` | `quire.op.collection.only` over `F`, binder body `e`, `type_argument` and `result_type` the type node of `e` |
 
   where `F` is the population value when `where` is omitted and otherwise the
   `quire.op.collection.filter` application over it with binder body `c`.
@@ -2007,11 +2007,10 @@ row `history Counter.seen: Int[0, 9] = 0`).
   `Sequence<E>` with `m = max(0, hi_max - lo_min + 1)`. A bound whose type is not
   an `integer_range` node (an unbounded `Integer` has no `lo_min` or `hi_max`),
   or a `result_type` that is another node, refuses `ill_typed`/`operator-ineligible`
-  at the application. The vector is `VN-06`, `seq(i in 0 .. 3: i)`, whose `m` is
-  `4`.
+  at the application. For `seq(i in 0 .. 3: i)`, `m` is `4`.
 - **Operation catalog.** The forms need three entries of
   `quire.checked-operation-catalog/v1` and one member kind, published exactly as
-  `catalog_delta` of `refinement-row-node-vectors.json` gives them:
+  follows:
   `quire.op.refinement.history` (operator `query`, one `reference` operand,
   result `member`, member kind `history`), `quire.op.collection.only` (operator
   `collection`, operands `collection_kind` and `binder`, result `member`, member
@@ -3085,7 +3084,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-143 | A variant type `Shape` with the nullary case `Empty` and the payload cases `Flag(Boolean)` and `Both(Pair)` is admitted as the same self-typed `model`/`variant_type` declaration node and owner join as an enumeration, and its family is `union`: its members are `Both`, `Empty`, `Flag` in ascending UTF-8 byte order of case name regardless of the order of `variants`, with payload arities 1, 0, 1 and payload types the `Pair` node, none and the `Boolean` node. A `case` over `Shape` has the arms `Both`, `Empty`, `Flag`; the same arms in the order `Flag`, `Empty`, `Both` refuse `ill_typed`/`operator-ineligible`. A variant type none of whose cases carries a `payloadType` keeps family `enum`. A field, parameter, result, tuple position or payload typed `Shape` derives the `Shape` node. The `Shape` node's `node_id` is the same whether `Shape` declares only `Empty` or also `Flag`; the two documents differ. | Test (TC-940) |
 | FR-322-AC-144 | The package fixture carries a `value`/`union_value` over the body-less `Shape` node for `Empty`, `Flag` and `Both`, a `union_value` over `List`, an `enum_value` over `Color`, two `quire.op.tuple.project` over `Pair`, a `case` over `Shape` and the equalities over `Shape`, `List` and `Color`, and the full reader enforces the rules below on them. A `value`/`union_value` node whose `semantic_type` is the `Shape` node is admitted with the case `Empty` and the empty payload `aggregate`, with `Flag` and one `Boolean` payload term, and with `Both` and one `Pair` payload term; the case `Flag` with an `Integer` payload term, with no payload term or with two, and a case `Missing`, refuse `ill_typed`/`type-mismatch`. A `union_value` over the enumeration `Color` refuses `ill_typed`/`type-mismatch`, and an `enum_value` over `Shape` naming `Empty` or `Flag` refuses `invalid_semantic_graph` at the node. `quire.op.structural.eq` over two `Shape` operands is admitted and `quire.op.enum.eq` refuses `ill_typed`/`operator-ineligible`, as does `quire.op.structural.eq` over two `Color` operands; a `case` over a `Shape` operand has one arm per member in the member order above, and an arm missing refuses `ill_typed`/`operator-ineligible`. A `quire.op.tuple.project` over `Pair` at position `2`, at the beyond-safe `KeyOrdinal` string `9007199254740993` or with the tuple `Swap` as its `declaration` refuses `ill_typed`/`operator-ineligible`, and one whose position is a string that is no `KeyOrdinal` fails the V2 schema. | Test (TC-940) |
 | FR-322-AC-145 | A selected document with a tuple that has no position, a gap in its position ordinals, a position without `typeRef`, or a field, identity field, operation, supertype or clause refuses `invalid_model_binding`/`malformed-declaration` at stage `package_read`; a position `typeRef` naming no package type refuses `missing_declaration`/`missing-name`; two positions with one ordinal refuse `invalid_model_binding`/`conflicting-binding`; a variant case whose `payloadType` is unresolved or is `ix://quire/native/Clock` refuses `unsupported_construct`/`declaration-form`. Each is the first refusal in FR-154's report order, in the order "Intake refusal order" states, and precedes every graph refusal. | Test (TC-940) |
-| FR-322-AC-146 | `model-tuple-union-vectors.json` publishes the declarations, the cases of FR-322-AC-141 to FR-322-AC-145, the recursion cases of FR-322-AC-147 and the wire cases of FR-322-AC-140 and FR-322-AC-144; `node-identity-vectors.json` publishes the `union_member_vectors` `union-member-model-shape-both` and `union-member-model-shape-empty`; and `fixtures/positive-model-tuple-union.json` is a schema-valid package with one `model_root` per selection and a tuple node and a payload-bearing variant node whose owners join the published document. The QSpec test runs all three from the files. | Test (TC-940) |
+| FR-322-AC-146 | `model-tuple-union-vectors.json` publishes the declarations, the cases of FR-322-AC-141 to FR-322-AC-145, the recursion cases of FR-322-AC-147 and the wire cases of FR-322-AC-140 and FR-322-AC-144; and `fixtures/positive-model-tuple-union.json` is a schema-valid package with one `model_root` per selection and a tuple node and a payload-bearing variant node whose owners join the published document. The QSpec test runs all three from the files. | Test (TC-940) |
 | FR-322-AC-147 | A selected document in which the tuple `Cell` (positions `Integer`, `List`) and the variant type `List` (cases `Nil`, `Cons(Cell)`) refer to one another is admitted by intake. The `Cell` and `List` nodes carry no `recursion_group`, each `node_id` is a function of its owner alone, and `List` has family `union` and `Cell` family `tuple`. The structural walk out of `List` has the one step `member:Cons`, `position:0` to `Cell`, and out of `Cell` the steps `position:0` to `Integer` and `position:1` to `List`; `quire.op.structural.eq` over two `List` operands, which re-enters `List` and reaches no text, has no leaf and is admitted with the empty `leaves`, and one that supplies a leaf refuses `invalid_package`/`operation-law-mismatch`. A `union_value` of `List` with the case `Cons` and a `Cell` payload term, and with `Nil` and none, is admitted. | Test (TC-940) |
 | FR-322-AC-148 | The slot selector of a template step is symbolic. For `ts: Sequence<Timer>[0, 3]` with `Timer { x: Clock; n: Int }`, the place `ts.0.x` is the one `clock_place` whose path is `field(ts)`, `slot(sequence, <Integer type node>, 0, 3)`, `field(x)`; `Set`, `Bag` and `OrderedSet` differ only in the `collection` literal, the declared field (`c`, `b` and `o`: one model declares one field of each name once) and the resulting path, `Sequence<Sequence<Clock>>` carries one Integer-typed slot step for each level, and `Map<Text, Clock>` carries the Text type node (the published fixture place). A slot selector that is an integer literal, a reference to the Text type node under a `Sequence`, a reference to an expression node, or a reference to the Integer type node under a `Map<Text, _>` refuses `invalid_package`/`malformed-clock-place` at the path step `/semantic_graph/nodes/{i}/body/members/1/value/members/{j}`. | Test (TC-367; CK-26; SL-01..SL-06, SR-01..SR-04) |
 | FR-322-AC-149 | One template node serves every instance. The places `ts.0.x`, `ts.1.x` and `ts.2.x` of AC-148 are instances of the one node of `SL-01`; no node carries an index and no node field depends on how many elements a state holds. Two `clock_place` nodes with one path can differ only in the derived `resolved_path`, and a row that differs from the selected declaration is forged (FR-322-AC-124), so the second node refuses `invalid_package`/`malformed-clock-place` at its first differing row, after the order check and before the repeated-path determination (this replaces the earlier `duplicate-clock-place` refusal of a second node, STD-559); `duplicate-clock-place` is kept for a repeated path whose every row joins, which a conforming package cannot contain. | Test (TC-367; CK-26; SL-01, SL-07, GD-02) |
@@ -3094,19 +3093,19 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-152 | The wire cases `TW-18` (position `2`), `TW-19` (the `declaration` is the tuple `Swap`) and `TW-20` (the beyond-safe `KeyOrdinal` string `9007199254740993`) of `model-tuple-union-vectors.json` each refuse `ill_typed`/`operator-ineligible` at the locus `/semantic_graph/nodes/31`, the `quire.op.tuple.project` application node, which is the position-0 projection over the `Pair`-typed parameter (node 14, result type the `Boolean` node), and not at `/semantic_graph/nodes/31/body/operation/member`, `/member/position` or `/member/declaration`; `TW-26` (position the string `0`) is `malformed_wire` at the same `/semantic_graph/nodes/31`. | Test (TC-940) |
 | FR-322-AC-153 | A wire case of `model-tuple-union-vectors.json` states a `cause` exactly when its code carries one: `invalid_package`, `ill_typed`, `ambiguous_declaration`, `missing_declaration` and `invalid_model_binding` rows state their cause (`TW-06` to `TW-09`, `TW-11` to `TW-20`, `TW-23` to `TW-25`), and the admitted case `TW-00` and the rows of `malformed_wire` (`TW-01` to `TW-04`, `TW-10`, `TW-26`) and `invalid_semantic_graph` (`TW-21`, `TW-22`), codes that carry no cause (FR-272), state none. | Test (TC-940) |
 | FR-322-AC-154 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-322-AC-200 | A `relation`/`refinement` node's closed `RefinementBody` requires `name`, an `Identifier`, in both V2 schemas; the node's body, and so its path, includes it. Two refinement nodes that differ only in `name` are two nodes (vectors `RI-01` and `RI-02` of `refinement-identity-vectors.json`); a body without `name` fails both schemas (`RI-03`); two nodes of one package with an equal `name` refuse `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name` (`RI-04`). | Test (TC-310) |
+| FR-322-AC-200 | A `relation`/`refinement` node's closed `RefinementBody` requires `name`, an `Identifier`, in both V2 schemas; the node's body, and so its path, includes it. Two refinement nodes that differ only in `name` are two nodes; a body without `name` fails both schemas; two nodes of one package with an equal `name` refuse `ambiguous_declaration`/`ambiguous-name` at the later node's `body/name`. | Test (TC-310) |
 | FR-322-AC-155 | `present(other.v)` over `v: Option<Clock>`, and the body `present(e)` of `forall(e in self.q: ...)` over `q: Sequence<Option<Clock>>[0, 2]` are each one `presence_read` application of `quire.op.option.present`, typed Boolean, with the arguments the place template, the owner term (`other`, `self`) and, for `q`, one slot term (the binder parameter `e`); the two nodes are distinct, the place nodes are the same templates for every owner, and no place, parameter or model node carries a `presence` member or an `Option<Boolean>`. | Test (TC-367; CK-27; PR-01, PR-03) |
 | FR-322-AC-156 | A `presence_read` with no slot term over `q` refuses `ill_typed`/`operator-ineligible` at `/body/arguments`; one whose owner term is an Integer parameter refuses `ill_typed`/`type-mismatch` at `/body/arguments/1`; one whose first argument is no `clock_place` node refuses `ill_typed`/`operator-ineligible` at `/body/arguments/0`. | Test (TC-367; CK-27; PR-04..PR-06) |
 | FR-322-AC-157 | The `clock_place` of `v: Option<Clock>` has the single path step `field(v)` and one `resolved_path` row whose member type is `Option<ix://quire/native/Clock>`, and the `Option` wrapper adds no step. The row joins the declared field `v` of the `Order` declaration by identity, declared presence `optional` and type `Clock`, and terminates at `Clock` once the wrapper is removed; the `object_type` node of `Order` is the same node with and without `v`, and its declared members are exactly the declared fields. The place of `q: Sequence<Option<Clock>>` has a `field` and a `slot` step whose row type is that `Option` type and is checked for its schema and symbolic selector only. | Test (TC-367; CK-27; PR-01..PR-03, model_join) |
 | FR-322-AC-160 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 | FR-322-AC-161 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 | FR-322-AC-162 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-322-AC-163 | A history read is the application node of `quire.op.refinement.history` with member `{kind: "history", declaration, name}`, one `reference` argument and the history's declared `type` as `result_type`: `VN-01` (`seen` of `Counter` at `self`) and `VN-02` (`pre(seen)`, `quire.op.state.pre` over it) have `dependencies` exactly the reference targets and the member declaration in ascending node-id order, and their path names no refinement, so two refinements declaring the same history share the node. | Test (TC-940) |
+| FR-322-AC-163 | A history read is the application node of `quire.op.refinement.history` with member `{kind: "history", declaration, name}`, one `reference` argument and the history's declared `type` as `result_type`: the read of `seen` of `Counter` at `self` and `pre(seen)` (`quire.op.state.pre` over it) have `dependencies` exactly the reference targets and the member declaration in ascending node-id order, and their path names no refinement, so two refinements declaring the same history refer to one node id. | Test (TC-940) |
 | FR-322-AC-164 | In the refinement step's row check a history read whose member names no `histories` entry of the refinement refuses `missing_declaration`/`missing-name` at `/body/operation/member/name` (`RR-01`), one whose `result_type` is not the history's `type` refuses `ill_typed`/`type-mismatch` at `/body/result_type` (`RR-02`), and in the operation stage a history read that no refinement row reaches (`RR-03`) or whose receiver is not a reference to the declaring type (`RR-04`) refuses `ill_typed`/`operator-ineligible` at the application. | Test (TC-940) |
-| FR-322-AC-165 | The population value `counters` of a refinement row is `quire.op.model.all_instances` over the `relation`/`population` node with `result_type` the `collection_bounds` `[0, 3]` node over `Set<Reference<Counter>>` (`VN-03`); the same application with the unbounded `Set<Reference<Counter>>` as `result_type` refuses `ill_typed`/`operator-ineligible` in a row (`RR-07`). | Test (TC-940) |
-| FR-322-AC-166 | `count(x in counters)` is `quire.op.collection.count` over the population value with the `boolean` literal `true` as binder body and the `Int[0, 3]` node as `type_argument` and `result_type` (`VN-04`), and `only(x in counters: x)` is `quire.op.collection.only` over it with the binder as body and `Reference<Counter>` as `type_argument` and `result_type` (`VN-05`); an `only` whose member is not the type of its binder bound refuses `ill_typed`/`operator-ineligible` (`RR-08`). The row table of "Refinement row expressions" gives `exists`, `all`, `sum` and `where`. | Test (TC-940) |
-| FR-322-AC-167 | `seq(i in 0 .. 3: i)` is `quire.op.collection.seq` over the literals `0` and `3` typed `Int[0, 0]` and `Int[3, 3]` and the binder `i` of type `Int[0, 3]`, with `type_argument` `Int[0, 3]` and `result_type` the `[0, 4]` bound over `Sequence<Int[0, 3]>` (`VN-06`), because `max(0, 3 - 0 + 1)` is `4`; a bound typed the unbounded `Integer` (`RR-05`) and a `result_type` bounded `[0, 5]` (`RR-06`) refuse `ill_typed`/`operator-ineligible`, and so does a `member` declaration that is not the element type of the result's sequence (`RR-09`, the Boolean node against the `Int[0, 3]` element). | Test (TC-940) |
-| FR-322-AC-168 | The `catalog_delta` of `refinement-row-node-vectors.json` is the exact catalog change the three forms need (`quire.op.refinement.history`, `quire.op.collection.only`, `quire.op.collection.seq` and the member kind `history`): every identity the vectors use is a `catalog_delta` entry or a catalog entry equal to it, and each entry the catalog already publishes is identical to the delta's. | Test (TC-940) |
+| FR-322-AC-165 | The population value `counters` of a refinement row is `quire.op.model.all_instances` over the `relation`/`population` node with `result_type` the `collection_bounds` `[0, 3]` node over `Set<Reference<Counter>>`; the same application with the unbounded `Set<Reference<Counter>>` as `result_type` refuses `ill_typed`/`operator-ineligible` in a row (`RR-07`). | Test (TC-940) |
+| FR-322-AC-166 | `count(x in counters)` is `quire.op.collection.count` over the population value with the `boolean` literal `true` as binder body and the `Int[0, 3]` node as `type_argument` and `result_type`, and `only(x in counters: x)` is `quire.op.collection.only` over it with the binder as body and `Reference<Counter>` as `type_argument` and `result_type`; an `only` whose member is not the type of its binder bound refuses `ill_typed`/`operator-ineligible` (`RR-08`). The row table of "Refinement row expressions" gives `exists`, `all`, `sum` and `where`. | Test (TC-940) |
+| FR-322-AC-167 | `seq(i in 0 .. 3: i)` is `quire.op.collection.seq` over the literals `0` and `3` typed `Int[0, 0]` and `Int[3, 3]` and the binder `i` of type `Int[0, 3]`, with `type_argument` `Int[0, 3]` and `result_type` the `[0, 4]` bound over `Sequence<Int[0, 3]>`, because `max(0, 3 - 0 + 1)` is `4`; a bound typed the unbounded `Integer` (`RR-05`) and a `result_type` bounded `[0, 5]` (`RR-06`) refuse `ill_typed`/`operator-ineligible`, and so does a `member` declaration that is not the element type of the result's sequence (`RR-09`, the Boolean node against the `Int[0, 3]` element). | Test (TC-940) |
+| FR-322-AC-168 | Withdrawn: the `catalog_delta` vector file it checked is removed. | Withdrawn |
 | FR-322-AC-169 | The join stages run in the one order of "One total order of the join stages": graph shape and independent dangling `reference`, owner join, derived-shape semantic checks, then a dangling `semantic_type` or `dependencies` edge of a node whose own step does not own it (the tags in stage 4; a node of another tag is left to its own family's artifact). An added function node whose source owner the lock does not select (`NK-08`) is reported (`missing_declaration`/`missing-selection` at the function node's `/semantic_graph/nodes/4/node_id`) ahead of a derived-shape defect at the compound unit (`NK-09`) and ahead of a `semantic_type` that names no node (`NK-13`, and `TW-06` to `TW-09`). A derived-shape defect (`invalid_package`/`invalid-derived-shape` at `/semantic_graph/nodes/3/node_id`) is reported ahead of a dangling `semantic_type` (`NK-11`), and an independent dangling `reference` term (`invalid_semantic_graph` at the node that holds it) ahead of every later stage. A frame whose `semantic_type` names no node is outside stage 4 and is refused as `missing_declaration`/`missing-name` at its `/semantic_type` where FR-340 defines that refusal (`NK-14`). An owner refusal of a tuple or variant model type is located at `/owner` (`TW-06` to `TW-09`), every other at `/node_id`. Swapping any two adjacent stages changes the first refusal of a published vector. | Test (TC-940) |
 | FR-322-AC-170 | The order of FR-322-AC-169 is one order for every node form. The owner join precedes the derived-shape semantic checks for a grouped and an ungrouped structural node (FR-322-AC-52), so a consumer that reports a dangling `semantic_type` ahead of an owner defect, or a frame's `semantic_type` that names no node refused otherwise than as FR-340 defines, departs from `NK-08`, `NK-13`, `TW-06` and `NK-14`. | Test (TC-940) |
 | FR-322-AC-180 | `contract-package-selection-vectors.json` publishes the typed source-selection rows `T`, `D` and `U` of TC-935 (`selections`, each an exact FR-322 `Selection` with its `role` and closed `{authority, identity}` `definition`) and the four compatibility cases `matching`, `missing`, `differing identity` and `unrelated selection` (`compatibility_cases`, each stating its `required_source_selections` and `lock_profile_selections` as ordered label lists). It is the authoritative machine-readable form: a consumer reads it (for example through `QUIRE_SPECIFICATION_DIR`) and neither copies nor redefines the rows. The fenced JSON block and the case table of TC-935 equal it exactly, and the QSpec test fails when either differs in any row, role, authority, identity, case name or label order. | Test (TC-935) |

@@ -83,12 +83,11 @@ nothing else.
   `type`, `population` and `context` target in the body.
 - **occurrences** — every occurrence has role `declaration`, at the
   `abstraction-decl` it was produced from.
-- **node_id** — the JCS SHA-256 of `{version:
-  "quire.abstraction-relation-node/v1", body}`. Every binding is therefore
-  part of the node id, and through the `identity_projection` of the
-  package id (FR-322): changing any binding changes the package id, so a
-  rebinding is a new relation revision that never reinterprets a contract
-  generated from the earlier package (FR-353-AC-5).
+- **node_id** — the structural node id of FR-322: the node's package, its
+  declaration path and its ordinal, compared componentwise. No hash of the
+  body is computed; a rebinding is a different checked-package value, and
+  two checked packages are the same package only when their values are
+  equal (FR-322).
 
 ## Canonical order
 
@@ -155,7 +154,7 @@ object, population or operation key refuses `invalid_model_binding`/
 ## Dependencies
 
 - [FR-322](FR-322-checked-package-artifact.md) owns the graph, node ids,
-  model-owned member resolution, the `identity_projection` and the reader's
+  model-owned member resolution and the reader's
   refusal order.
 - [FR-353](../../functional/ir-proof/FR-353-declare-abstraction-relation.md)
   owns the relation's meaning and refusals.

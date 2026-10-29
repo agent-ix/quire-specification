@@ -12,6 +12,8 @@ relationships:
 ---
 # FR-018: Preserve the verification JCS identity domain
 
+BLOCKED-BY QSpec #512: FR-018 (`quire.verification.jcs`) is withdrawn there; its `quire.verification.jcs` row is deleted from FR-201 (planner ruling).
+
 ## Description
 
 When a shared semantic reference selects the verification JCS domain, the producer shall derive its digest from the exact qualified structured value using RFC 8785.

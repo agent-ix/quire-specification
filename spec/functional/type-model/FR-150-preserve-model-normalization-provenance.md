@@ -72,10 +72,11 @@ is `quire.model.effective-view/v2` over the ModelSelection, rule manifest and
 every effective declaration sorted by identity; and the object universe of a
 connected supertype component is `quire.model.object-universe/v2`. The exact
 preimages, orders and vectors are defined by the selected
-`quire.model.complete/v1` definition,
-[`model-effective-declaration.schema.json`](../../../proposals/checked-package-v2/model-effective-declaration.schema.json)
-and
-[`model-effective-declaration-vectors.json`](../../../proposals/checked-package-v2/model-effective-declaration-vectors.json).
+`quire.model.complete/v1` definition.
+BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): effective-declaration hash,
+the `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2` and
+`quire.model.object-universe/v2` digests and their preimages, orders and vectors
+(the schema and vector files are removed).
 These domains differ from the I04 node domain, so no
 derived identity equals an I04 node id. The
 effective view is carried in the checked package as a `correspondence` node

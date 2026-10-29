@@ -39,7 +39,7 @@ A temporal counterexample; the checked package; the item's clause and resolved
 fairness set; for the model arm, the model subject's initial states and
 universes, re-admitted from the request's byte provision; for the observed
 arm, each observed document the counterexample names, held in the request's
-byte provision by its `sha256-jcs` digest.
+byte provision by its `sha256-jcs` digest. BLOCKED-BY QSpec #513: observed-document digest and byte-provision digest (FR-364 is owned by #513).
 
 ## Outputs
 
@@ -95,7 +95,7 @@ A model-arm step is `{transition, post_state}`: `transition` is the step's
 or `{"type":"terminal-stutter"}` for the terminal stutter step; `post_state` is
 the `quire.simulation.state-key/v1` digest of the step's post-state. An
 observed-arm step is `{document}`: the `sha256-jcs` digest of the observed
-document at that position. The loop's entry is the position after the
+document at that position. BLOCKED-BY QSpec #513: observed-document digest; BLOCKED-BY STD-606 (owner: planner titan:QSL:plan): `post_state` StateKey digest. The loop's entry is the position after the
 prefix's last step.
 
 The **undefined-evaluation envelope** is the one shape of an undefined
@@ -108,7 +108,7 @@ with these key names:
 | --- | --- |
 | `position` | the trace position of the evaluation point |
 | `state_key` | model arm: the `quire.simulation.state-key/v1` digest of the state there |
-| `document` | observed arm: the `sha256-jcs` digest of the observed document there |
+| `document` | observed arm: the `sha256-jcs` digest of the observed document there (BLOCKED-BY QSpec #513) |
 | `locus` | the source locus of the expression that has no value |
 | `transition` | for an undefined guard only: the FR-181 transition identity whose guard it is |
 | `predicate` | for a predicate of a state-graph claim only: `"P"`, `"Q"`, `"X"` or `"Y"`, the predicate that has no value ([FR-393](../../objects/interfaces/FR-393-state-graph-evidence.md)) |

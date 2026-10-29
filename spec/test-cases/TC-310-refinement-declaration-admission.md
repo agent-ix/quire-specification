@@ -256,8 +256,7 @@ Mutations, each applied alone to the positive unit:
     ids differ, and the package emits no internal failure
     (FR-375-AC-29); a body without `name` fails both schemas; two nodes with
     equal `name` refuse `ambiguous_declaration`/`ambiguous-name` at the later
-    node's `body/name` (FR-375-AC-30). The vectors are
-    `refinement-identity-vectors.json`. For the step provenance vectors, an
+    node's `body/name` (FR-375-AC-30). For the step provenance vectors, an
     operation class `Counter::beginA` is admitted with the no-point anchor of
     (`Counter`, `beginA`), with and without a `class_catalog`, and refused with
     the concrete model root, the model-owner node, another operation's anchor
@@ -268,10 +267,9 @@ Mutations, each applied alone to the positive unit:
     For the binder vectors, `self` at level 0 and the parameters at levels
     1..n by declared name are admitted; a wrong name, level or type, and a
     step row with a `result` binder, are refused (FR-375-AC-32).
-31. **Selected model roots (SR-01 to SR-13).** The vectors are the
-    `selected_roots` section of `refinement-identity-vectors.json`: five
-    selected models (`acme/spec` the abstract `RA`, `acme/impl` `RB`,
-    `acme/other` `RC`, `acme/bare` `RD`, `acme/plain` `RF`), each root
+31. **Selected model roots (SR-01 to SR-13).** Five
+    selected models are used (`acme/spec` the abstract `RA`, `acme/impl` `RB`,
+    `acme/other` `RC`, `acme/bare` `RD`, `acme/plain` `RF`), each root being
     its selection's `model_root` id. They are graph cases, not
     wire packages: no two-selection wire fixture is published, so only the
     root ids and the row-empty node ids (SR-07) are compared.
