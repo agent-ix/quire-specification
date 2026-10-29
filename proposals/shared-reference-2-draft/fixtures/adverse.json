@@ -36,24 +36,6 @@
     },
     {
       "base": "semantic.json",
-      "pointer": "/value/canonicalIdentity/domain",
-      "replacement": "unselected.jcs",
-      "expected": "unsupported-canonicalization"
-    },
-    {
-      "base": "semantic.json",
-      "pointer": "/value/canonicalIdentity/version",
-      "replacement": "rfc8785-v2",
-      "expected": "unsupported-canonicalization"
-    },
-    {
-      "base": "semantic.json",
-      "pointer": "/value/canonicalIdentity/algorithm",
-      "replacement": "sha512",
-      "expected": "unsupported-canonicalization"
-    },
-    {
-      "base": "semantic.json",
       "pointer": "/value/requiredFeatures",
       "replacement": [
         "a",
@@ -90,9 +72,5 @@
     ],
     "expected": "identity-mismatch",
     "note": "Use a distinct valid replacement value on one axis; source is this byte-only subject fixture's explicit role, not a normative role for every semantic subject."
-  },
-  "coreCorrespondence": {
-    "note": "Computed at test time, never stored: the test derives the core's JCS identity from core.json and compares it with the identity derived from a changed core, a wrapper including the disposition, and a different canonical domain. Each must differ.",
-    "expected": "identity-mismatch"
   }
 }

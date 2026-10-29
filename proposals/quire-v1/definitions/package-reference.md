@@ -61,15 +61,14 @@ execution of one such declaration cannot certify the refused whole package.
 
 ## Wire and canonical identity
 
-This definition composes the existing `ix.shared-reference/2-draft` envelope and
-`ix.artifact-ref/3-draft` fields. It adds no field or artifact-kind discriminant.
+This definition composes the existing `ix.shared-reference/3-draft` envelope and
+`ix.artifact-ref/4-draft` fields. It adds no field or artifact-kind discriminant.
 The referenced package payload still needs its own exact supported wire contract;
 this semantic definition neither supplies a serialization layout nor makes an
 unknown payload wire decodable. Acceptance of the envelope is insufficient.
 
-For this definition's whole-package reference, `canonicalIdentity` is null: no
-whole-package semantic canonicalizer is selected. A raw artifact digest, an IR
-expression digest or the verification JCS domain cannot substitute for one.
+A whole-package reference carries no canonical identity and no digest; none can
+substitute for the package's declared identity.
 Build provenance, runtime inputs and static components retain the separations
 in the required edition's package contract. Historical references keep their
 original profiles and wire versions; no in-place migration is inferred.

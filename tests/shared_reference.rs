@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Agent-IX
 
-//! Producer structure and real B canonicalizer parity, not a shared reader.
+//! Producer structure checks, not a shared reader.
 //! Fixture loading keeps the last value of a raw duplicate key. Strict intake
 //! and semantic matching remain IT-003-SC-03.
 
@@ -10,7 +10,6 @@ use std::io::Read;
 use std::path::{Component, Path};
 
 use ix_trace_rs::trace;
-use quire_verification_contracts::jcs_canonicalize;
 use serde_json::{Value, json};
 
 const ROOT: &str = concat!(
@@ -351,7 +350,7 @@ fn six_role_shapes_and_located_files() {
 fn structural_negatives_and_semantic_boundary() {
     let schema = validator();
     let semantic = fixture("semantic.json");
-    schema.validate(&semantic).expect("positive JCS shape");
+    schema.validate(&semantic).expect("positive semantic shape");
     let adverse = fixture("adverse.json");
     for case in adverse["structuralMutations"]
         .as_array()
@@ -368,7 +367,6 @@ fn structural_negatives_and_semantic_boundary() {
         "language",
         "semanticProfile",
         "requiredFeatures",
-        "canonicalIdentity",
     ] {
         let mut candidate = semantic.clone();
         candidate["value"]
@@ -424,64 +422,27 @@ fn structural_negatives_and_semantic_boundary() {
             }
         }
     }
-    for domain in [
-        "quire.contract.canonical-json",
-        "quire.contract.bound-identity",
+    for member in [
+        ("artifact", "digest"),
+        ("semanticProfile", "definitionDigest"),
     ] {
-        let mut candidate = semantic.clone();
-        candidate["value"]["canonicalIdentity"] =
-            json!({"domain":domain,"version":"v1","algorithm":"sha256"});
-        assert!(schema.is_valid(&candidate));
-        candidate["value"]["canonicalIdentity"]["version"] =
-            semantic["value"]["canonicalIdentity"]["version"].clone();
-        assert!(!schema.is_valid(&candidate));
         let mut stored = semantic.clone();
-        stored["value"]["canonicalIdentity"]["digest"] = json!("any");
-        assert!(!schema.is_valid(&stored), "an identity stores no digest");
+        stored["value"][member.0][member.1] = json!("any");
+        assert!(!schema.is_valid(&stored), "{member:?} stores no digest");
     }
+    let mut stored = semantic.clone();
+    stored["value"]["canonicalIdentity"] = json!(null);
+    assert!(!schema.is_valid(&stored), "no canonical identity member");
 }
 
 #[test]
-#[trace("IT-003-SC-02")]
-fn independently_authored_canonical_bytes_match_b() {
-    let vectors = fixture("canonical-vectors.json");
-    for vector in vectors.as_array().expect("canonical vectors") {
-        let input =
-            intake(vector["input"].as_str().expect("input text").as_bytes()).expect("valid JSON");
-        let expected = vector["canonical"]
-            .as_str()
-            .expect("golden bytes")
-            .as_bytes();
-        assert_eq!(
-            jcs_canonicalize(&input).expect("B canonicalizer"),
-            expected,
-            "{}",
-            vector["id"]
-        );
-    }
-    assert_eq!(
-        jcs_canonicalize(&json!({"a":1,"b":2})).unwrap(),
-        jcs_canonicalize(&intake(br#"{"b":2,"a":1}"#).unwrap()).unwrap()
-    );
-    assert_ne!(
-        jcs_canonicalize(&json!([2, 1])).unwrap(),
-        jcs_canonicalize(&json!([1, 2])).unwrap()
-    );
-}
-
-#[test]
-#[trace("IT-003-SC-02")]
+#[trace("IT-003-SC-01")]
 fn synthetic_core_is_named_by_path_not_digest() {
     let core = fixture("core.json");
     jsonschema::validator_for(&fixture("core.schema.json"))
         .unwrap()
         .validate(&core)
         .unwrap();
-    let semantic = fixture("semantic.json");
-    assert_eq!(
-        semantic["value"]["canonicalIdentity"]["domain"],
-        "quire.verification.jcs"
-    );
     let disposition = fixture("review-disposition.json");
     assert_eq!(disposition["core"], "core.json");
     assert_eq!(

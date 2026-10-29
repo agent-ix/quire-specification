@@ -1,9 +1,9 @@
 {
-  "wireVersion": "ix.shared-reference/2-draft",
+  "wireVersion": "ix.shared-reference/3-draft",
   "kind": "semantic",
   "value": {
     "artifact": {
-      "refVersion": "ix.artifact-ref/3-draft",
+      "refVersion": "ix.artifact-ref/4-draft",
       "kind": "run-artifact",
       "authority": "ix.fs05.fixture",
       "identity": "fs05-core-1",
@@ -17,11 +17,6 @@
       "identity": "ix.fs05.correspondence-fixture",
       "version": "1"
     },
-    "requiredFeatures": [],
-    "canonicalIdentity": {
-      "domain": "quire.verification.jcs",
-      "version": "rfc8785-v1",
-      "algorithm": "sha256"
-    }
+    "requiredFeatures": []
   }
 }

@@ -15,7 +15,7 @@ relationships:
 
 ## Statement
 
-When an artifact binding conflicts with selected authority or content, the consumer shall refuse that binding.
+When an artifact binding conflicts with selected authority or identity, the consumer shall refuse that binding.
 
 ## Scope
 
@@ -25,12 +25,11 @@ Imports, source maps, dependency closure and evidence subjects.
 
 | Metric | Target | Threshold | Method |
 | --- | --- | --- | --- |
-| Accepted stale-byte mutations | 0 | 0 | Digest mutation tests |
-| Accepted identity-content conflicts | 0 | 0 | Independent reference-join tests |
+| Accepted identity conflicts | 0 | 0 | Independent reference-join tests |
 
 ## Verification
 
-Run both stale-digest mutations and changed content with a recomputed digest under the same immutable key. Do not replace semantic validation with schema success.
+Run one-axis authority, identity and wire mutations. The stale-digest mutation metric is withdrawn: no digest is stored. Do not replace semantic validation with schema success.
 
 ## Dependencies
 

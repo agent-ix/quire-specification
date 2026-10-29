@@ -9,12 +9,12 @@ The state-core 1-draft schema is a separate version.
 ## Selected versions and scope
 
 The new envelope has exactly wireVersion, kind and value. wireVersion is
-`ix.shared-reference/2-draft`; kind is artifact or semantic. This version covers
+`ix.shared-reference/3-draft`; kind is artifact or semantic. This version covers
 these two forms only. Existing source-map and migration envelopes keep their
 1-draft selection; this amendment supplies no inferred migration, decoder
 fallback or general extension bag.
 
-An artifact value selects `ix.artifact-ref/3-draft`. Its five mandatory fields
+An artifact value selects `ix.artifact-ref/4-draft`. Its five mandatory fields
 are refVersion, kind, authority, identity and wire. Wire has exactly identity
 and version (nonempty strings). Authority and identity are nonempty strings.
 The reference stores no byte digest; the supplied artifact is located by path.
@@ -41,62 +41,35 @@ wire under its selected refVersion. Equal bytes alone cannot join different
 roles. Changing versions requires a separately accepted
 mapping; an amendment's existence is not that mapping.
 
-## Semantic reference and JCS identity
+## Semantic reference
 
-A semantic value has exactly artifact, language, semanticProfile,
-requiredFeatures and canonicalIdentity, preserving the prior field meanings.
-All are required; only language, semanticProfile and canonicalIdentity may be
-null. A null profile requires null language/canonicalIdentity and no required
+A semantic value has exactly artifact, language, semanticProfile and
+requiredFeatures, preserving the prior field meanings.
+All are required; only language and semanticProfile may be
+null. A null profile requires a null language and no required
 features. A non-null profile has exactly identity and version. A non-null language has identity and edition.
 
 requiredFeatures is a duplicate-free decoded set of nonempty Unicode scalar
 strings. Producers order it by UTF-8 bytes; readers accept reordered unique sets
 and reject duplicate decoded members before comparison. Unknown required features
 refuse interpretation. This rule does not sort arrays inside the referenced
-artifact's canonical preimage.
+artifact.
 
-CanonicalIdentity has exactly domain, version and algorithm, with these
-closed alternatives. It names the canonicalization a consumer applies; it stores
-no computed value, and the consumer derives the identity at run time.
+The semantic reference carries no canonical identity and no digest. A caller
+cannot infer equivalence between artifacts from a hash; the selected semantic
+profile defines what a validated value means. Input intake must reject
+duplicate decoded keys, invalid Unicode and non-finite numbers.
 
-| Domain | Version | Algorithm |
-| --- | --- | --- |
-| quire.contract.canonical-json | v1 | sha256 |
-| quire.contract.bound-identity | v1 | sha256 |
-| quire.verification.jcs | rfc8785-v1 | sha256 |
+## Review disposition and its core
 
-The first two alternatives retain their existing algorithms, including their
-different preimages. The new alternative preserves B's existing
-`contracts::jcs_sha256`: SHA-256 over RFC 8785 canonical UTF-8 bytes of the
-qualified structured value. The semantic profile defines
-which validated value is selected. A caller cannot strip arbitrary fields,
-canonicalize arbitrary IR/source bytes or infer equivalence from a digest alone.
-
-JCS preserves array order and string contents, sorts object keys by UTF-16, and
-uses its specified binary64 number serialization. Input intake must reject
-duplicate decoded keys, invalid Unicode and non-finite numbers. Exact-integer
-contracts that cannot admit binary64 round trips need a different selected
-representation. These rules follow [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785.html#section-3);
-no RFC implementation or example corpus is copied here.
-
-Byte identity and semantic identity have different checked obligations.
-Unknown domain/version/algorithm selections refuse with
-unsupported-canonicalization before interpretation.
-
-## Non-circular automated-core correspondence
-
-B's report profile selects the complete validated automated core before canonicalizing.
-Neither the external disposition nor the outer wrapper belongs to that preimage.
 The disposition names its core by path and stores no digest; its ArtifactRef
-uses review-disposition. A consumer derives the core's JCS identity at run time.
-Attaching a disposition cannot change the sealed core or its derived identity. A
-changed core derives a different identity and requires a new matching
-disposition. A foreign core or nearby artifact kind refuses correspondence.
+uses review-disposition. A foreign core or nearby artifact kind refuses
+correspondence.
 
 B owns all report-core fields, validation, reviewer/procedure/provenance checks,
 missing-disposition incompleteness and final result policy. The fixture here uses
-an explicitly synthetic fixture profile to demonstrate the projection and
-correspondence rule without claiming to define B's report payload or record a real review.
+an explicitly synthetic fixture profile to demonstrate the disposition-to-core
+reference without claiming to define B's report payload or record a real review.
 B qualifies the same rule against its actual report schema under IT-003-SC-03.
 
 ## Qualification boundary

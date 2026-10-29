@@ -20,14 +20,13 @@ generated-artifact plus each of the other five new kinds, leaving every other
 field unchanged. Then mutate unknown kind, extra member, missing member,
 envelope version and artifact version individually. For exact property, subject
 (a source ArtifactRef), binding, dependency-closure and run-artifact references,
-mutate authority, identity, digest, wire identity/version
+mutate authority, identity, wire identity/version
 one at a time. Submit each added role under the previous closed schema.
 
 ## Expected Results
 
 Valid nearby kinds still refuse intended-role matching with identity-mismatch.
 Malformed shapes refuse invalid-wire and unsupported selections refuse their
-version/kind interpretation. Every exact-reference mutation fails equality;
-changing a digest without changing bytes additionally fails byte verification.
+version/kind interpretation. Every exact-reference mutation fails equality.
 The state-core 1-draft schema rejects the added kinds.
 No failed selection returns a partially accepted reference.

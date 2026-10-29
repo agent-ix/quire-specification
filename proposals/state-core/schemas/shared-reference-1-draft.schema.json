@@ -225,29 +225,6 @@
       },
       "additionalProperties": false
     },
-    "CanonicalIdentity": {
-      "type": "object",
-      "required": [
-        "domain",
-        "version",
-        "algorithm"
-      ],
-      "properties": {
-        "domain": {
-          "enum": [
-            "quire.contract.canonical-json",
-            "quire.contract.bound-identity"
-          ]
-        },
-        "version": {
-          "const": "v1"
-        },
-        "algorithm": {
-          "const": "sha256"
-        }
-      },
-      "additionalProperties": false
-    },
     "Features": {
       "type": "array",
       "items": {
@@ -282,8 +259,7 @@
         "artifact",
         "language",
         "semanticProfile",
-        "requiredFeatures",
-        "canonicalIdentity"
+        "requiredFeatures"
       ],
       "properties": {
         "artifact": {
@@ -311,16 +287,6 @@
         },
         "requiredFeatures": {
           "$ref": "#/$defs/Features"
-        },
-        "canonicalIdentity": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/$defs/CanonicalIdentity"
-            }
-          ]
         }
       },
       "additionalProperties": false,
@@ -343,9 +309,6 @@
               },
               "requiredFeatures": {
                 "maxItems": 0
-              },
-              "canonicalIdentity": {
-                "type": "null"
               }
             }
           }

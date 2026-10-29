@@ -2,17 +2,14 @@
 
 These are independently authored synthetic inputs. roles.json supplies all six
 new exact references and actual payload files. semantic.json selects the
-profile and the JCS canonicalization of the core.
-canonical-vectors.json records hand-authored canonical UTF-8 expectations.
+profile.
 adverse.json specifies one-axis substitutions with expected structural and
 semantic layers. raw-duplicate.json must fail strict raw intake as invalid-wire.
 
-No fixture stores a digest. The tests derive the core's JCS identity at run
-time from core.json and compare run-time-derived values with each other.
+No fixture stores a digest or hash.
 
-The Rust qualification tests call B's existing JCS functions. They validate
-schema shape and exact bytes and exercise the selected canonical preimages.
-They deliberately do not implement expected-role matching, semantic/profile
+The Rust qualification tests validate schema shape and the located fixture
+files. They deliberately do not implement expected-role matching, semantic/profile
 adoption, feature support, immutable identity joins or B's report assembler.
 Those remain IT-003-SC-03. A nearby role can be structurally valid and still
 be a required semantic refusal; adverse.json preserves that distinction.

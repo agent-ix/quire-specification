@@ -16,8 +16,8 @@ contract selectors, not instructions to fetch a remote schema or executable.
 
 Artifact values use `ix.artifact-ref/2-draft` from FS02. Every member is required,
 including the referenced artifact's wire identity and
-version. Semantic values require artifact, language, semanticProfile,
-requiredFeatures and canonicalIdentity. Explicit null is permitted only where
+version. Semantic values require artifact, language, semanticProfile and
+requiredFeatures. Explicit null is permitted only where
 specified; a missing member never means null, empty, current or latest.
 
 This resolves an ambiguity in the earlier FS02 draft: **requiredFeatures must
@@ -98,34 +98,17 @@ map proves correspondence, not fence ownership. Quire extraction remains opaque;
 C owns its existing-repository decoder/adapter and independent regressions.
 Schema success alone does not prove any cross-span or source-byte condition.
 
-## Preserve each canonical identity domain
+## Existing canonical identity domains
 
 | Selected domain | Established behavior to retain |
 |---|---|
 | `quire.contract.canonical-json/v1` | Existing IR source-free projections and Unicode-scalar object-key ordering; semantic arrays retain their specified order. Minimal exact integers; no floats/null in this canonical model. Digest is SHA-256 of `quire-contract-ir`, NUL, profile, NUL, object kind, NUL, then canonical envelope bytes. |
 | `quire.contract.bound-identity/v1` | Existing binder's complete sorted clause bindings, package canonical digest, declaration/expression digests, and profile headers. Digest is raw SHA-256 of that canonical bound-identity envelope; do not add the other domain's prefix. |
-| B's provisional `sha256-jcs:` domain | Preserve B's selected canonicalized structured value and prefix. Do not run arbitrary IR/source bytes through it and claim their existing identity. Its adoption into a shared semantic reference remains B-reviewed. |
 
-The canonicalIdentity fields select domain, version and algorithm; a consumer
-computes the identity at run time from the qualified input and records no stored
-value. For the two IR domains above the candidate selects
-domain `quire.contract.canonical-json` or `quire.contract.bound-identity`,
-version `v1` and algorithm `sha256`.
-This split names the established full profile; it does not rename it. Other
-domains require an explicit reviewed mapping of their inputs.
-
-The consumer must also possess the canonicalizer's qualified input/derivation,
-including object kind where the domain requires it. A canonicalIdentity alone
-does not prove a source artifact corresponds to a typed expression. The current
-native parser therefore continues to emit no canonical semantic identity. Do
-not hash an unlinked syntax tree under the existing typed-expression domain.
-
-JCS orders object keys by UTF-16 code units and uses IEEE-754/ECMAScript number
-serialization. The existing IR instead preserves exact integer values and uses
-Unicode-scalar key order. These can differ for supplementary characters and
-large integers; shared spelling of "JSON" or "SHA-256" does not imply equality.
-See [RFC 8785 sections 3.1 and 3.2](https://www.rfc-editor.org/rfc/rfc8785.html#section-3).
-No RFC code or example corpus is copied into this packet.
+These two domains are the existing IR behavior; the semantic reference selects
+neither and carries no canonical identity. The current native parser emits no
+canonical semantic identity. Do not hash an unlinked syntax tree under the
+existing typed-expression domain.
 
 Existing IR schema 1.0
 to 1.1 migration intentionally changes package canonical bytes because the

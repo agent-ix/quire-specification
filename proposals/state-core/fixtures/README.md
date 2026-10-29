@@ -7,8 +7,7 @@ package. `parent-order.native` is a parse/source fixture. Its `model M =
 "example/config";` names the domain package by identity alone and no domain
 package is supplied, so linking it is an intentional `missing_import`/`missing-selection`
 refusal, not a claim of a working import. Qualifying linking supplies a real
-reviewed domain package under that identity; the resolver derives its digest into the
-lock, and the source is unchanged.
+reviewed domain package under that identity, and the source is unchanged.
 
 `subject.json` supplies concrete authored/profile/source identities to the
 verification owner. Its model binding is explicitly unavailable. The expression span

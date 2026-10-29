@@ -27,8 +27,7 @@
       "bounded-integer",
       "guarded-implication",
       "optional-reference"
-    ],
-    "canonicalIdentity": null
+    ]
   },
   "cases": [
     {
