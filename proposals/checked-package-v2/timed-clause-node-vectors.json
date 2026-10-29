@@ -9644,6 +9644,16 @@
         ]
       },
       {
+        "id": "CW-06",
+        "gap": 2,
+        "source": "post self.ts[i] = Timer { x: 0 ms, n: 1 }  (an in-bounds element of a Sequence)",
+        "expected": "refused",
+        "expected_code": "unsupported_construct",
+        "expected_cause": "expression-form",
+        "locus": "the write",
+        "reader_row_note": "no reader row: the write is excluded because the package has no indexed element-write form, not because a reader rule refuses a node (FR-322 Timed-model nodes, FR-415 Element places); the built route is the reset self.ts[i].x = 0 ms (FR-415-AC-12) beside ordinary data writes"
+      },
+      {
         "id": "SD-01",
         "gap": 3,
         "source": "post forall(e in self.ts: e.n > 1 implies e.x = 0 ms)",

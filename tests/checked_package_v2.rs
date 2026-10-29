@@ -26024,7 +26024,7 @@ fn tc_367_excluded_clause_forms_are_published() {
     assert_eq!(FR415_DECLARE_CLOCKS.matches("| FR-415-AC-25 |").count(), 1);
     assert_eq!(TC367_CLOCK_DECLARATIONS.matches("| CK-38 |").count(), 1);
     let ids: Vec<&str> = unbuilt["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    assert_eq!(ids, ["GJ-01", "GJ-02", "GJ-03", "CW-01", "CW-02", "CW-03", "CW-04", "CW-05", "SD-01", "SD-02"]);
+    assert_eq!(ids, ["GJ-01", "GJ-02", "GJ-03", "CW-01", "CW-02", "CW-03", "CW-04", "CW-05", "CW-06", "SD-01", "SD-02"]);
     let case_ids: BTreeSet<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
     let package = parsed_fixture(POSITIVE_TIMED_CLAUSE_NODES);
     for case in unbuilt["cases"].as_array().unwrap() {
