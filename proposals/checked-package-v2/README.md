@@ -5,6 +5,19 @@ checked packages. It is intentionally a schema-and-vector boundary, not a
 native Rust package API: QSL remains free to use internal parser/CST/package
 structures, but any external consumer receives only the contract.
 
+## Identity regeneration pending STD-583
+
+BLOCKED-BY STD-583 (owner: planner titan:QSL:plan): the `package_id`,
+`node_id`, root-key, effective-id and view hex values in the fixtures and
+vectors of this directory are kept only because each is a node or package
+identity input of a fixture that must keep validating; they regenerate when
+the structural identity lands. This PR adds no recompute or known-answer test.
+The same ticket owns the remaining digest machinery, which this PR does not
+remove: `package_id`, structural node keys, `quire.cache-key/v1`,
+`RawSourceRef` and `quire.source.bytes/v1`, definition digests, the library
+`package_id` binding, state keys, observation and protocol result digests,
+FR-331 state digests and the FR-201 identity-domain rows.
+
 ## Contract contents
 
 - `schema.json` defines the closed `quire.checked-package/v2` wire shape.
@@ -63,8 +76,7 @@ structures, but any external consumer receives only the contract.
   FR-441, TC-940). `domain-package-acme-shapes.json` is its selected document, a full FCD
   semantic IR 2.0.0 domain package (FR-322-AC-151; its tuple `positions` depend on IR-1059 / FCD tuple support) and
   `model-tuple-union-vectors.json` publishes its projection (`domain_package`, derived
-  from the document) and `selection_digest`, the RFC 8785 SHA-256 of the whole
-  document the `model_root` node names, the declaration node keys, the application-node
+  from the document); the `model_root` node names the document by identity, the declaration node keys, the application-node
   key vectors and the family, position, member, union-value, enum-value,
   equality, identity, recursion, intake and wire cases the QSpec test runs over
   them; `node-identity-vectors.json` carries the keys

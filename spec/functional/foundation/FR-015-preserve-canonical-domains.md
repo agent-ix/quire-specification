@@ -24,7 +24,7 @@ Canonical bytes/digest or an unsupported-canonicalization refusal.
 
 ## Behavior
 
-Existing contract-IR canonical and bound identities, `sha256-jcs` verification digests, package fingerprints and raw artifact digests remain distinct. Source-free typed-expression identity requires a typed derivation. JCS cannot silently replace exact-integer/scalar-order IR canonicalization. Current native syntax has no qualified canonical semantic identity.
+Existing contract-IR canonical and bound identities, domain package `sha256-jcs` digests and raw artifact digests remain distinct. Source-free typed-expression identity requires a typed derivation. JCS cannot silently replace exact-integer/scalar-order IR canonicalization. Current native syntax has no qualified canonical semantic identity.
 
 ## Acceptance Criteria
 

@@ -32,7 +32,7 @@ configuration".
 | Property | Source | Note |
 | --- | --- | --- |
 | Relationship type | FR-111 Description | "an explicit typed relationship". |
-| Domain package identity | FR-111 Description | The domain package named by the checked package `model_selections`. |
+| Domain package identity | FR-111 Description | The domain package named by the checked package `model_root` node. |
 | Declaration digest | FR-111 Description | The exact digest and its explicitly declared FR-201 domain `sha256-jcs`; absence or mismatch refuses (FR-111-AC-4). |
 | Relationship declaration key | FR-111 | Exact (domain package identity, IR node identity, `sha256-jcs`) key of the spec-declared relationship; a kind label does not replace it. |
 | Related instance endpoints | FR-111 Behavior | Ordered source and target, each carrying one complete FR-287 key and satisfying the relationship declaration's endpoint type/direction. |
