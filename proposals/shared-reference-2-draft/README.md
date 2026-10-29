@@ -17,11 +17,11 @@ fallback or general extension bag.
 An artifact value selects `ix.artifact-ref/3-draft`. Its five mandatory fields
 are refVersion, kind, authority, identity and wire. Wire has exactly identity
 and version (nonempty strings). Authority and identity are nonempty strings.
-The reference carries no content digest or byte seal. Every record is closed.
+Every record is closed.
 
-The fourteen prior kinds remain: source, model-package, linked-package,
+The thirteen prior kinds remain: source, model-package, linked-package,
 executable-projection, property, binding, snapshot, invocation,
-generated-artifact, run-artifact, environment, model-manifest, model-lock and
+generated-artifact, run-artifact, environment, model-manifest and
 dependency-closure. The six additional kinds have these exact roles:
 
 | Kind | Artifact selected |
@@ -35,75 +35,43 @@ dependency-closure. The six additional kinds have these exact roles:
 
 The consumer selects its expected role explicitly. A structurally valid nearby
 kind is an identity-mismatch for that role. No generic-kind fallback is permitted.
-Artifact identity is the exact tuple of kind, authority, identity and wire under
-its selected refVersion. Equal bytes alone cannot join different roles.
-Changing versions requires a separately accepted mapping; an amendment's
-existence is not that mapping.
+Artifact identity is the exact tuple of kind, authority, identity and
+wire under its selected refVersion. Equal bytes alone cannot join different
+roles. Changing versions requires a separately accepted
+mapping; an amendment's existence is not that mapping.
 
-## Semantic reference and JCS identity
+## Semantic reference
 
-A semantic value has exactly artifact, language, semanticProfile,
-requiredFeatures and canonicalIdentity, preserving the prior field meanings.
-All are required; only language, semanticProfile and canonicalIdentity may be
-null. A null profile requires null language/canonicalIdentity and no required
-features. A non-null profile has exactly identity, version and definitionDigest;
-the digest is an exact byte digest. A non-null language has identity and edition.
+A semantic value has exactly artifact, language, semanticProfile and
+requiredFeatures, preserving the prior field meanings.
+All are required; only language and semanticProfile may be
+null. A null profile requires a null language and no required
+features. A non-null profile has exactly identity and version. A non-null language has identity and edition.
 
 requiredFeatures is a duplicate-free decoded set of nonempty Unicode scalar
 strings. Producers order it by UTF-8 bytes; readers accept reordered unique sets
 and reject duplicate decoded members before comparison. Unknown required features
 refuse interpretation. This rule does not sort arrays inside the referenced
-artifact's canonical preimage.
+artifact.
 
-CanonicalIdentity has exactly domain, version, algorithm and digest, with these
-closed alternatives:
+The selected semantic profile defines what a validated value means. Input intake must reject
+duplicate decoded keys, invalid Unicode and non-finite numbers.
 
-| Domain | Version | Algorithm | Digest syntax |
-| --- | --- | --- | --- |
-| quire.contract.canonical-json | v1 | sha256 | 64 lowercase hex digits |
-| quire.contract.bound-identity | v1 | sha256 | 64 lowercase hex digits |
-| quire.verification.jcs | rfc8785-v1 | sha256 | sha256-jcs: followed by 64 lowercase hex digits |
+## Review disposition and its core
 
-The first two alternatives retain their existing algorithms, including their
-different preimages. The new alternative preserves B's existing
-`contracts::jcs_sha256`: SHA-256 over RFC 8785 canonical UTF-8 bytes of the
-qualified structured value; prepend `sha256-jcs:` to the digest text afterward.
-The prefix is not included in the hashed bytes. The semantic profile defines
-which validated value is selected. A caller cannot strip arbitrary fields,
-canonicalize arbitrary IR/source bytes or infer equivalence from a digest alone.
-
-JCS preserves array order and string contents, sorts object keys by UTF-16, and
-uses its specified binary64 number serialization. Input intake must reject
-duplicate decoded keys, invalid Unicode and non-finite numbers. Exact-integer
-contracts that cannot admit binary64 round trips need a different selected
-representation. These rules follow [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785.html#section-3);
-no RFC implementation or example corpus is copied here.
-
-Unknown domain/version/algorithm selections refuse with
-unsupported-canonicalization before interpretation; malformed digest syntax is
-invalid-wire, and a validly shaped incorrect canonical identity is
-identity-mismatch.
-
-## Non-circular automated-core correspondence
-
-B's report profile selects the complete validated automated core before hashing.
-Neither the external disposition nor the outer wrapper belongs to that preimage.
-The disposition contains the exact resulting sha256-jcs core digest, and its
-ArtifactRef uses the review-disposition role. Attaching a disposition cannot
-change the selected core or its digest. A changed core requires a new matching
-disposition. A foreign core identity or nearby artifact kind refuses
+The disposition's ArtifactRef uses review-disposition. A nearby artifact kind refuses
 correspondence.
 
 B owns all report-core fields, validation, reviewer/procedure/provenance checks,
 missing-disposition incompleteness and final result policy. The fixture here uses
-an explicitly synthetic fixture profile to demonstrate the projection and hash
-rule without claiming to define B's report payload or record a real review.
+an explicitly synthetic fixture profile to demonstrate the disposition
+shape without claiming to define B's report payload or record a real review.
 B qualifies the same rule against its actual report schema under IT-003-SC-03.
 
 ## Qualification boundary
 
-FR-017/018 and TC-001–004 define positive and adverse vectors; IT-003 records
-producer structure, existing B canonicalizer parity and the later independent
+FR-017/486 and TC-001, TC-002 and TC-975 define positive and adverse vectors; IT-003 records
+producer structure and the later independent
 strict reader as distinct observations. Structural schema validation is only
 one layer. Readers retain the strict bounded intake, source/authority and
 artifact checks from the adopted packet. Exhaustion yields incomplete without

@@ -17,8 +17,6 @@ relationships:
 ---
 # FR-268: Progress and late-data authority
 
-BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
-
 ## Description
 
 When silence would settle a deadline, the observation service SHALL settle it only where declared progress and closure authority covers that deadline.

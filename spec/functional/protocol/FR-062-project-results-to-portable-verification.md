@@ -36,8 +36,6 @@ relationships:
 ---
 ## Description
 
-BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
-
 When a canonical protocol result is submitted for portable evidence assessment, the projection adapter SHALL emit one source-bound `quire-verification/e02-draft-2` `TechniqueResult` or one typed refusal without losing or conflating an FR-007 finding.
 
 ## Inputs

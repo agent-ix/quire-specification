@@ -11,8 +11,6 @@ relationships:
 ---
 # FR-265: Selected snapshot
 
-BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
-
 ## Description
 
 When a snapshot is selected for an assessment, the assessment request SHALL retain it as a subject distinct from a selected event-time window.

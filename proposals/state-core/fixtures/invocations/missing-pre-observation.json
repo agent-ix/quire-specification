@@ -20,7 +20,6 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/snapshot/missing-pre-observation/post",
-      "digest": "sha256:f0264fd4d40aacd90c7a6320252e7c2587e6a9727b86b085819c87f55158d1f2",
       "profile": "agent-a-snapshot/1-draft"
     }
   },
@@ -31,7 +30,6 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/binding/allow-version-write",
-      "digest": "sha256:2a738f60ad414e0fb3ac5348fac7ba62b66820ce698e7499441f3f51e4821632",
       "profile": "agent-a-frame-binding/1-draft"
     }
   }

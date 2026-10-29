@@ -49,8 +49,6 @@ relationships:
 ---
 # FR-240: Canonical protocol result
 
-BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
-
 ## Description
 
 When a protocol assessment result is emitted or read, the strict reader SHALL resolve the result's contract version, kind, identity and retained fact set through this object artifact rather than through a restatement in an individual behavioral requirement.

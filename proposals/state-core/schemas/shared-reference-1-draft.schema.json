@@ -103,10 +103,6 @@
       },
       "additionalProperties": false
     },
-    "ByteDigest": {
-      "type": "string",
-      "pattern": "^sha256:[0-9a-f]{64}$"
-    },
     "ArtifactRef": {
       "type": "object",
       "required": [
@@ -114,7 +110,6 @@
         "kind",
         "authority",
         "identity",
-        "digest",
         "wire"
       ],
       "properties": {
@@ -135,7 +130,6 @@
             "run-artifact",
             "environment",
             "model-manifest",
-            "model-lock",
             "dependency-closure"
           ]
         },
@@ -146,9 +140,6 @@
         "identity": {
           "type": "string",
           "minLength": 1
-        },
-        "digest": {
-          "$ref": "#/$defs/ByteDigest"
         },
         "wire": {
           "$ref": "#/$defs/Wire"
@@ -163,7 +154,6 @@
         "kind",
         "authority",
         "identity",
-        "digest",
         "wire"
       ],
       "properties": {
@@ -191,9 +181,6 @@
         "identity": {
           "type": "string",
           "minLength": 1
-        },
-        "digest": {
-          "$ref": "#/$defs/ByteDigest"
         },
         "wire": {
           "$ref": "#/$defs/Wire"
@@ -223,8 +210,7 @@
       "type": "object",
       "required": [
         "identity",
-        "version",
-        "definitionDigest"
+        "version"
       ],
       "properties": {
         "identity": {
@@ -234,37 +220,6 @@
         "version": {
           "type": "string",
           "minLength": 1
-        },
-        "definitionDigest": {
-          "$ref": "#/$defs/ByteDigest"
-        }
-      },
-      "additionalProperties": false
-    },
-    "CanonicalIdentity": {
-      "type": "object",
-      "required": [
-        "domain",
-        "version",
-        "algorithm",
-        "digest"
-      ],
-      "properties": {
-        "domain": {
-          "enum": [
-            "quire.contract.canonical-json",
-            "quire.contract.bound-identity"
-          ]
-        },
-        "version": {
-          "const": "v1"
-        },
-        "algorithm": {
-          "const": "sha256"
-        },
-        "digest": {
-          "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
         }
       },
       "additionalProperties": false
@@ -303,8 +258,7 @@
         "artifact",
         "language",
         "semanticProfile",
-        "requiredFeatures",
-        "canonicalIdentity"
+        "requiredFeatures"
       ],
       "properties": {
         "artifact": {
@@ -332,16 +286,6 @@
         },
         "requiredFeatures": {
           "$ref": "#/$defs/Features"
-        },
-        "canonicalIdentity": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/$defs/CanonicalIdentity"
-            }
-          ]
         }
       },
       "additionalProperties": false,
@@ -364,9 +308,6 @@
               },
               "requiredFeatures": {
                 "maxItems": 0
-              },
-              "canonicalIdentity": {
-                "type": "null"
               }
             }
           }

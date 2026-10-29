@@ -8,8 +8,6 @@ priority: P0
 relationships:
   - target: ix://agent-ix/quire-specification/FR-014
     type: references
-  - target: ix://agent-ix/quire-specification/FR-018
-    type: references
   - target: ix://agent-ix/quire-specification/FR-032
     type: references
   - target: ix://agent-ix/quire-specification/FR-130

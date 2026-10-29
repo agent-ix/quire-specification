@@ -9,8 +9,6 @@ relationships:
 ---
 # FR-264: Declared membership rule
 
-BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
-
 ## Description
 
 When a membership rule is declared, the assessment request SHALL retain its exact rule key rather than accepting an ambient default.

@@ -11,8 +11,6 @@ relationships:
 ---
 # FR-286: Canonical protocol result key
 
-BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
-
 ## Description
 
 When a canonical `ProtocolResult` is produced or read, the producer SHALL identify it by

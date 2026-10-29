@@ -16,7 +16,6 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/snapshot/wrong-invocation/pre",
-      "digest": "sha256:4d4c4dd5b1a9b2839592b8485065b86ff93d47cab58934b9ee3547d391f9b1af",
       "profile": "agent-a-snapshot/1-draft"
     }
   },
@@ -25,7 +24,6 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/snapshot/wrong-invocation/post",
-      "digest": "sha256:49821a495d00518fede1019ccb4fcf86b62df2629d9595e0b6cab38866b731d0",
       "profile": "agent-a-snapshot/1-draft"
     }
   },
@@ -36,7 +34,6 @@
     "artifactRef": {
       "authority": "agent-a-review-fixtures",
       "identity": "ix://example/config/binding/allow-version-write",
-      "digest": "sha256:2a738f60ad414e0fb3ac5348fac7ba62b66820ce698e7499441f3f51e4821632",
       "profile": "agent-a-frame-binding/1-draft"
     }
   }

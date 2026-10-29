@@ -12,8 +12,6 @@ relationships:
 ---
 ## Description
 
-BLOCKED-BY QSpec #513: this requirement's `sha256-jcs` / `quire.verification.jcs` digest identity (rows removed from FR-201).
-
 When associating an observation with a workflow subject, the correlation service SHALL select only an explicit typed relationship whose
 relationship declaration is an effective domain declaration of the checked
 package, with its exact declaration key and ordered endpoints.

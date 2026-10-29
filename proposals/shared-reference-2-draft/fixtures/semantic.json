@@ -12,15 +12,8 @@
     "language": null,
     "semanticProfile": {
       "identity": "ix.fs05.correspondence-fixture",
-      "version": "1",
-      "definitionDigest": "sha256:9795ea41cec842eb1ed356a8e63d491206a9ea676377fb99f766e9b836f4bda4"
+      "version": "1"
     },
-    "requiredFeatures": [],
-    "canonicalIdentity": {
-      "domain": "quire.verification.jcs",
-      "version": "rfc8785-v1",
-      "algorithm": "sha256",
-      "digest": "sha256-jcs:70a89fec8afa6a435d5a92f63ba9ce1d01e86b17791629bb788628ee7bfb81d5"
-    }
+    "requiredFeatures": []
   }
 }

@@ -228,25 +228,21 @@ Mutations, each applied alone to the positive unit:
     model package, remove `owner` from its root (`MR-01`), add an extra
     unknown member to `ModelRootOwner` (`MR-02`), attach `ModelRootOwner` to
     an object-type node (`MR-03`), and add a second root whose owner identity
-    and version join no `model_root` node while every row keeps its own
-    root (`MR-04`). Validate `MR-01` to `MR-03` against both V2 schemas
+    names no supplied domain package (`MR-04`). Validate `MR-01` to `MR-03` against both V2 schemas
     (`schema.json`) and `MR-04` against `schema.json`,
     which admits it; validate every mutation with the strict reader. The
     vectors are the RFC 6902 patches of `model-root-vectors.json`.
 29. **Selected-root fixtures (MR-05 to MR-09).** For every published positive
     package with `model_root` nodes, derive the root and its source-map entry
     from each row alone and compare them with the package's, last in graph
-    order and last in the source map (`MR-05`, FR-322-AC-134); remove the only
-    root of one row, which the schemas admit and the reader refuses
-    `invalid_semantic_graph` at `/semantic_graph/nodes` (`MR-06`,
-    FR-322-AC-135); check that each root's `generated` ordinal-zero entry has
+    order and last in the source map (`MR-05`, FR-322-AC-134); check that each root's `generated` ordinal-zero entry has
     at least one region, each naming a lock source, without claiming it is the
     selecting range (`MR-07`, FR-322-AC-136); derive the published
     model-root vector from its selection (`MR-08`, FR-322-AC-137); repeat the
     root, which the reader refuses `invalid_semantic_graph` at the second
     node's `node_id` (`MR-09`). `MR-04` refuses
-    `missing_declaration`/`missing-selection` at
-    `/semantic_graph/nodes/{i}/owner` and is schema-valid. The model-root
+    `missing_import`/`missing-selection` at
+    `/semantic_graph/nodes/{i}/owner/identity` and is schema-valid. The model-root
     vector is a structural id, `{package, path, ordinal}`, compared
     componentwise.
 30. **Refinement identity (RI-01 to RI-04) and step provenance (SP-01 to
@@ -472,5 +468,5 @@ reader admits both V2 schemas and the package without a new FCD field.
 For mutation 28, `MR-01` fails the schema because the root lacks its required
 owner; `MR-02` fails the closed-owner schema; `MR-03` fails the graph-owner
 rule because a root owner is restricted to `model`/`model_root`. `MR-04`
-refuses `missing_declaration`/`missing-selection` at the root owner because
-its identity/version pair does not join a selected model package, .
+refuses `missing_import`/`missing-selection` at the root owner identity
+because it names no supplied domain package; no digest or version is compared.
