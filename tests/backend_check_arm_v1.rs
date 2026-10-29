@@ -125,7 +125,7 @@ fn negotiate(case: &Value) -> (String, Option<String>) {
     }
 }
 
-const REQUIRED: [&str; 59] = [
+const REQUIRED: [&str; 60] = [
     "VV-01",
     "VV-02",
     "VV-03",
@@ -184,6 +184,7 @@ const REQUIRED: [&str; 59] = [
     "OC-20",
     "OC-21",
     "OC-22",
+    "OC-23",
     "VV-17",
 ];
 
@@ -235,6 +236,9 @@ fn gate(case: &Value) -> Option<(&'static str, &'static str, Option<&'static str
         return Some(("declined", "incomplete-input", None));
     }
     if item["kind"] == "operation-contract" {
+        if form == "simulation" && item["refinement_step_simulable"] == false {
+            return Some(("unsupported", "", Some("no-contract-level-reading")));
+        }
         if form == "frame" && item["bound"] != true {
             return Some(("unsupported", "", Some("no-contract-level-reading")));
         }
@@ -285,6 +289,7 @@ fn check_arm_negotiation_dispositions_follow_fr_290() {
 #[trace("TC-974", "FR-485-AC-10")]
 #[trace("TC-974", "FR-485-AC-11")]
 #[trace("TC-974", "FR-485-AC-13")]
+#[trace("TC-974", "FR-485-AC-14")]
 #[test]
 fn check_arm_outcomes_map_to_the_fr_331_results() {
     let validator = outcome_validator();
