@@ -604,6 +604,7 @@ certificate checker and makes its counterexample canonical assignments, so:
   coverage"); on the entry of an item that is not a hybrid claim, from any
   provider, it is refused `invalid-value` at `/cause/type`.
 
+(BLOCKED-BY STD-583, owner: planner titan:QSL:plan; the `package` kind of this cause compares library `package_id`s, and STD-576 owns its schema and vectors.)
 `stale-dependency{requested, recompiled}` settles an item in exactly these
 cases: a model-check counterexample replay or a state-graph evidence replay
 whose recompiled package's own `package_id` differs from the one the replay

@@ -359,8 +359,7 @@ delay is admissible, applies it, checks that the transition identity is
 enabled at the delayed state, selects the successor by the post-state key,
 applies the resets and checks the target's time invariants, all in exact
 rational arithmetic. A violated delay or guard refuses
-`invalid_runtime_input`/`invalid-value`; a post-state key with no matching successor
-refuses `stale_dependency`/`content-mismatch`. Every non-empty set of
+`invalid_runtime_input`/`invalid-value`. Every non-empty set of
 valuations of an automaton with rational constants contains a rational point,
 so every timed refutation has a counterexample with exact rational delays.
 

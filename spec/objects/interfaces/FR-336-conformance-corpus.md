@@ -144,7 +144,7 @@ order; object maps retain their string keys.
 | `dependencies` | `ReplayRequestWire.dependencies`: ordered `DependencyEntryWire` objects `{identity, version}`. |
 | `replay_target` | `ReplayRequestWire.replay_target`: FR-323 target members under `members`, plus request fields `arguments`, `occurrence_key` and `over`. |
 | `source` | `ReplayRequestWire.source`: the FR-323 `ReplaySource`, one `witness` or `input` arm. |
-| `obligation_identity` | `ReplayRequestWire.obligation_identity`: 64 lowercase hexadecimal digits decoded to the 32-byte identity. |
+| `obligation_identity` | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; obligation_identity hash) `ReplayRequestWire.obligation_identity`: 64 lowercase hexadecimal digits decoded to the 32-byte identity. |
 | `backend` | `ReplayRequestWire.backend`: FR-323 backend identity string, unchanged. |
 | `state_environment` | `ReplayRequestWire.state_environment`: ordered `[name, value]` string pairs, preserving the stored tuple order. |
 | `accounting_limits` | `ReplayRequestWire.accounting_limits`: complete FR-255 `ScalarLimitsV1`; every numeric member is an unsigned decimal string. |

@@ -48,9 +48,7 @@ against (FR-290).
 
 Every descriptor carries `tool` (FR-331 "Backend tool"), a `{name, version}`
 object: the executable a backend that fronts an external tool invokes, or the
-crate that implements a pure in-process engine, with `build`, the
-`quire.build-inputs/v1` digest record of the provider code's build inputs,
-which that code's own build computes. A registry snapshot carries each
+crate that implements a pure in-process engine. A registry snapshot carries each
 descriptor as its provider gave it.
 
 ## Package bytes
@@ -59,9 +57,8 @@ descriptor as its provider gave it.
 `quire.checked-package/v2` document, spelled as RFC 4648 section 5 base64url
 with no padding and zero unused trailing bits, so one byte string has one
 spelling and the frame keeps one RFC 8785 encoding. `request.package_id` is
-that package's `package_id`. A reader decodes `package`, admits it with the v2
-reader and refuses a recomputed `package_id` that differs from
-`request.package_id` with `stale_dependency`/`content-mismatch`.
+that package's `package_id`. A reader decodes `package` and admits it with the v2
+reader.
 
 A request-stage vector omits `package` and `package_id`; the test fills them
 from `../checked-package-v2/fixtures/positive-all-families.json`, so the vector

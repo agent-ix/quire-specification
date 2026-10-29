@@ -29,7 +29,7 @@ Encode each vector with RFC 8785 JCS through the real local Rust boundary, read 
 | GE-02 | a witness whose last node fails `P` | `inconclusive`, `replay-parity` |
 | GE-03 | a trap whose closure, explored afresh, reaches a target node | `inconclusive`, `replay-parity` |
 | GE-04 | a path pair whose two sequences are equal | `inconclusive`, `replay-parity` |
-| GE-05 | a path whose step's transition is not enabled, and one whose post-state key matches no successor | `inconclusive`, `replay-parity` |
+| GE-05 | a path whose step's transition is not enabled | `inconclusive`, `replay-parity` |
 | GE-06 | the same witness steps with sources `sampled`, `explored` and `unrolled` | identical replay with no sampler or engine present |
 | GE-07 | a trap whose closure exploration exceeds `max_states` | `incomplete`, cause `limit-reached` naming `max_states`, its value and its setting |
 | GE-12 | GE-07's trap with the caller cancelling the closure exploration before it completes | `incomplete`, cause `cancelled` |

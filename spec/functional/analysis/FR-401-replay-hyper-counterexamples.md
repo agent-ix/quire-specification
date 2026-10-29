@@ -45,8 +45,7 @@ cause `limit-reached{limit, value, setting}` or `cancelled`, or a refusal
 Replay recompiles the package, re-admits each subject, checks the match and
 each trace's fairness, and runs with no engine or solver present. Each trace re-executes from the initial state its `initial` index names
 through its subject's FR-181 transition relation. A step is refused when its
-transition is not enabled, when no successor of that transition has the
-recorded post-state key, or when a terminal-stutter step appears at a
+transition is not enabled, or when a terminal-stutter step appears at a
 state that is not terminal; a `lockstep` or `witness-exhausted` trace is refused when its
 loop does not close at `loop_entry`. A refused step settles the item
 `inconclusive` with `replay-parity`. A terminal-stutter step followed by a

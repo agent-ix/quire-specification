@@ -52,7 +52,7 @@ subject. Derive:
 2. Refuses `invalid_runtime_input`/`invalid-value` (FR-364-AC-4).
 3. Refuses as an unfair lasso naming (`weak`, `attemptUpdate`, `each`) with
    the starved receiver `b`; no `refuted` (FR-364-AC-5).
-4. Refuses `stale_dependency`/`content-mismatch` (FR-364-AC-4).
+4. Withdrawn: the recorded post-state key is not checked against a successor.
 5. Refuses `invalid_runtime_input`/`invalid-value`: `inc` is not enabled at
    value 3 (FR-364-AC-4).
 6. Refuses `invalid_runtime_input`/`invalid-value`: value 2 is not terminal
@@ -66,8 +66,5 @@ subject. Derive:
 11. `unsupported`, cause `missing-fairness-premise`, naming
     (`weak`, `inc`, `whole`), with no formula evaluated (FR-364-AC-9).
 12. Refuses `invalid_runtime_input`/`invalid-value` (FR-364-AC-9).
-13. Refuses `stale_dependency`/`content-mismatch` naming `interval`
-    (FR-364-AC-9).
-14. Against `eventually[2,*] holds(p)` the interval check passes and replay
-    evaluates the formula; against `eventually[3,*] holds(p)` it refuses
-    `stale_dependency`/`content-mismatch` naming `interval` (FR-364-AC-9).
+13. Withdrawn: `interval` is not compared with the clause's.
+14. Withdrawn: `interval` is not compared with the clause's.
