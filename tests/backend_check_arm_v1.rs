@@ -125,7 +125,7 @@ fn negotiate(case: &Value) -> (String, Option<String>) {
     }
 }
 
-const REQUIRED: [&str; 60] = [
+const REQUIRED: &[&str] = &[
     "VV-01",
     "VV-02",
     "VV-03",
@@ -185,15 +185,17 @@ const REQUIRED: [&str; 60] = [
     "OC-21",
     "OC-22",
     "OC-23",
+    "OC-24",
     "VV-17",
 ];
 
-const REQUIRED_ACS: [&str; 30] = [
+const REQUIRED_ACS: &[&str] = &[
     "FR-483-AC-1", "FR-483-AC-2", "FR-483-AC-3", "FR-483-AC-4", "FR-483-AC-5", "FR-483-AC-6",
     "FR-483-AC-7", "FR-483-AC-8", "FR-483-AC-9", "FR-484-AC-1", "FR-484-AC-2", "FR-484-AC-3",
     "FR-484-AC-4", "FR-484-AC-5", "FR-484-AC-6", "FR-484-AC-7", "FR-484-AC-8", "FR-484-AC-9",
     "FR-485-AC-1", "FR-485-AC-2", "FR-485-AC-3", "FR-485-AC-4", "FR-485-AC-5", "FR-485-AC-6",
     "FR-485-AC-7", "FR-485-AC-8", "FR-485-AC-9", "FR-485-AC-10", "FR-485-AC-11", "FR-485-AC-12",
+    "FR-485-AC-13", "FR-485-AC-14",
 ];
 
 
@@ -877,9 +879,9 @@ fn the_vector_file_is_complete_and_freezes_no_digest() {
     // A pinned case list: deleting a vector fails.
     let ids: Vec<String> = cases().iter().map(id).collect();
     assert_eq!(ids, REQUIRED.to_vec(), "the case list is exactly the pinned list");
-    assert_eq!(parsed(VECTORS)["required_cases"], json!(REQUIRED.as_slice()));
+    assert_eq!(parsed(VECTORS)["required_cases"], json!(REQUIRED));
     let covered: BTreeSet<String> = cases().iter().flat_map(|c| c["acs"].as_array().unwrap().iter().map(|a| a.as_str().unwrap().to_owned()).collect::<Vec<_>>()).collect();
-    for ac in REQUIRED_ACS {
+    for &ac in REQUIRED_ACS {
         assert!(covered.contains(ac), "{ac} has a vector");
     }
     // Every case that settles a replayed refutation or a replay-parity cause is present.
