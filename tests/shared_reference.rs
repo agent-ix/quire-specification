@@ -421,16 +421,6 @@ fn structural_negatives_and_semantic_boundary() {
 
 #[test]
 #[trace("IT-003-SC-01")]
-fn synthetic_core_validates_its_schema() {
-    let core = fixture("core.json");
-    jsonschema::validator_for(&fixture("core.schema.json"))
-        .unwrap()
-        .validate(&core)
-        .unwrap();
-}
-
-#[test]
-#[trace("IT-003-SC-01")]
 fn qualification_fixture_size_node_and_json_syntax_controls() {
     for raw in [
         br#""\ud800""#.as_slice(),

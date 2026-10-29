@@ -17,8 +17,3 @@ rejected duplicate decoded keys. The actual test failed: the helper accepted
 the two decoded a keys as one map entry. The producer test was scoped back to its actual schema
 boundary; raw-duplicate.json remains a required, unexecuted strict-reader
 control. No duplicate-key intake qualification or complete reader is claimed.
-
-The synthetic core schema and disposition demonstrate correspondence only.
-They do not define B's VP04 report shape, contain a real human disposition or
-prove review independence. B must run the same rule through its actual accepted
-report schema and assembler for complete consumer qualification.

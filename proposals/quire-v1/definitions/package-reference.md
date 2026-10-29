@@ -67,8 +67,6 @@ The referenced package payload still needs its own exact supported wire contract
 this semantic definition neither supplies a serialization layout nor makes an
 unknown payload wire decodable. Acceptance of the envelope is insufficient.
 
-A whole-package reference carries no canonical identity and no digest; none can
-substitute for the package's declared identity.
 Build provenance, runtime inputs and static components retain the separations
 in the required edition's package contract. Historical references keep their
 original profiles and wire versions; no in-place migration is inferred.
