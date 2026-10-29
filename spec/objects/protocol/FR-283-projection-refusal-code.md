@@ -21,10 +21,10 @@ values in that catalog, not aliases for native producer codes in another catalog
 
 | Value | Description |
 | --- | --- |
-| `invalid-source-result` | The canonical protocol result did not validate, or its recomputed `sha256-jcs` digest did not match, before mapping was attempted (FR-062). |
+| `invalid-source-result` | The canonical protocol result did not validate before mapping was attempted (FR-062). |
 | `unsupported-source-version` | The source result's contract version is not one this adapter maps from (FR-062). |
 | `unsupported-target-version` | The requested target contract version is not one this adapter maps to (FR-062). |
-| `identity-mismatch` | A target-context identity or derived projection identity does not agree with the exact selected/derived tuple (FR-062). It does not classify invalid canonical source bytes or a source-result digest mismatch. |
+| `identity-mismatch` | A target-context identity or derived projection identity does not agree with the exact selected/derived tuple (FR-062). It does not classify invalid canonical source bytes. |
 | `unrepresented-source-state` | A source state has no mapping in the selected table. It cannot be reclassified as a malformed source (FR-062). |
 | `finding-loss` | The output would lose an applicable FR-007 finding (FR-062). |
 
@@ -49,18 +49,14 @@ case convention or cross-catalog spelling alias.
 - **Absence** — a refusal emitted without a code has an absent code, which
   compares only to absence and is never defaulted to `invalid-source-result` or
   to any other member.
-- **Digest domain** — not applicable. The digest whose mismatch produces
-  `invalid-source-result` is `sha256-jcs` under
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md).
 
 ## Resolved code and namespace ruling
 
-A canonical source result whose strict-reader validation fails, including a
-recomputed `sha256-jcs` digest mismatch, yields `invalid-source-result` before
+A canonical source result whose strict-reader validation fails yields `invalid-source-result` before
 mapping. `identity-mismatch` applies only after valid source acceptance to a
 missing/conflicting target context or a derived projection identity that does
 not match its exact preimage. The two outcomes cannot share a code merely
-because both mention a digest or identity.
+because both mention an identity.
 
 This catalog owns the six projection-adapter refusal spellings. FR-271's native
 producer catalog is a separate selected namespace; equal-looking strings across
@@ -73,7 +69,7 @@ catalogs remain unequal and no snake/kebab normalization is performed.
 | FR-283-AC-1 | Each member's value equals the exact label string in the table, and an underscored spelling does not match a hyphenated one. | Inspection |
 | FR-283-AC-2 | An unrepresented source state yields `unrepresented-source-state` and is not reclassified as `invalid-source-result`. | Analysis |
 | FR-283-AC-3 | Changing or localizing the human-readable refusal message leaves the emitted code unchanged. | Analysis |
-| FR-283-AC-4 | A recomputed canonical-source digest mismatch yields `invalid-source-result`, while an invalid derived projection identity yields `identity-mismatch`; neither emits a `TechniqueResult`. | Analysis |
+| FR-283-AC-4 | A canonical source result failing strict-reader validation yields `invalid-source-result`, while an invalid derived projection identity yields `identity-mismatch`; neither emits a `TechniqueResult`. | Analysis |
 
 ## Dependencies
 

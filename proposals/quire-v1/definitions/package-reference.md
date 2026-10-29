@@ -68,8 +68,7 @@ this semantic definition neither supplies a serialization layout nor makes an
 unknown payload wire decodable. Acceptance of the envelope is insufficient.
 
 For this definition's whole-package reference, `canonicalIdentity` is null: no
-whole-package semantic canonicalizer is selected. A raw artifact digest, an IR
-expression digest or the verification JCS domain cannot substitute for one.
+whole-package semantic canonicalizer is selected. No other identity can substitute for one.
 Build provenance, runtime inputs and static components retain the separations
 in the required edition's package contract. Historical references keep their
 original profiles and wire versions; no in-place migration is inferred.

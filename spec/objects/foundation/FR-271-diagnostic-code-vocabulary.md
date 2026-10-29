@@ -43,8 +43,8 @@ catalog).
 | `unknown_required_feature` | A required feature that is unknown or unsupported in the selected consumer/profile scope. "A recognized name is not implementation support." |
 | `missing_import` | A requested typed dependency that is not present in the owning scope. |
 | `missing_declaration` | A requested name that is not present in the owning scope. |
-| `stale_dependency` | A byte-digest, digest-domain or content-identity mismatch against a dependency. |
-| `source_digest_mismatch` | A byte-digest or digest-domain mismatch against source. "A missing artifact cannot supply an invented actual digest." |
+| `stale_dependency` | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; byte-digest, digest-domain and package_id content causes) A byte-digest, digest-domain or content-identity mismatch against a dependency. |
+| `source_digest_mismatch` | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; source byte digests) A byte-digest or digest-domain mismatch against source. "A missing artifact cannot supply an invented actual digest." |
 | `ambiguous_declaration` | A visible name or clause resolving to distinct conflicting declarations or authorities, including two checked-package nodes declaring the same qualified name. |
 | `invalid_package` | A malformed, incomplete, conflicting or cyclic package definition, including feature-set mismatch, or a checked-package application whose operation identity, operator class, required law, lock-selected law, mode, member or type-pinned mode is unknown or inconsistent, a checked-package application node that retains a stale node key, or a checked-package declaration that disagrees with its nominal qualified declaration. |
 | `invalid_model_binding` | A model binding with a wrong role, selection, export or context, a conflicting binding, unpreserved model meaning, or a specialization cycle, redefinition-target mismatch, derivation conflict, malformed domain package declaration or port-direction violation. "Missing versus explicit null may not be collapsed into a generic absent value." |
@@ -87,7 +87,7 @@ catalog).
 | `malformed_wire` | A wire whose JSON syntax or closed structure the reader's schema refuses, including a nested shape outside its closed grammar. |
 | `duplicate_member` | A JSON member name repeated in one object of the wire. |
 | `unknown_member` | A member outside the closed member set of the object that holds it. |
-| `digest_domain_mismatch` | A supplied package identity whose digest domain differs from the domain its position requires. |
+| `digest_domain_mismatch` | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; package identity digest domain) A supplied package identity whose digest domain differs from the domain its position requires. |
 | `unknown_required_capability` | A package that requires a capability the reader does not know. |
 | `invalid_semantic_graph` | A semantic graph that breaks the reader's graph rules: a dependency, key, owner or term order the artifact refuses. |
 | `unsupported_node_tag` | A node whose `node_tag` is outside the closed tag set (QSL ADR-013 O-14, QC-19). |
@@ -130,9 +130,6 @@ catalog).
   original bytes and available provenance. It cannot be recast as a known
   failure, an empty diagnostic list or a successful assessment" (proposed
   catalog).
-- **Digest domain** — a code carries no digest. The catalog that resolves it is
-  selected by its interpretation identity
-  ([FR-270](FR-270-diagnostic-catalog.md)).
 
 ## Scope: producer-minted codes
 

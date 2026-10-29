@@ -62,7 +62,7 @@ atoms false beyond closure. The no-operator row covers each false-extension
 profile and is separate from the bounded-future and bounded-past rows.
 
 For a supported mapping, the bridge shall preserve the native source
-digest and exact clause/expression span; clause/requirement identity;
+identity and exact clause/expression span; clause/requirement identity;
 language and temporal profile definition; model/type/predicate bindings;
 evaluation anchor; immutable capture environment; clock/observation binding;
 interval; closure/history premises; TL formula/profile/proposition identities;
@@ -86,8 +86,7 @@ predicate, signal and capture identities.
 The bridge shall not treat a formula match without its valuation, capture and
 clock mapping as semantic correspondence.
 
-The native source and bridge-definition byte digests shall use the FR-201
-`raw-artifact-digest` domain. Generated formula, history/trace, request and
+Generated formula, history/trace, request and
 report identities shall be recomputed by their selected TL public readers.
 The correspondence shall be independently addressable by the bridge-owned
 derived artifact reference over the complete preserved key; it shall not reuse
@@ -112,7 +111,7 @@ correspondence.
 | FR-095-AC-5 | A numeric, nullable, unavailable or pending native value cannot enter the TL proposition population. | Test (TC-117) |
 | FR-095-AC-6 | Fixed-sample lowering retains epoch/period/unit, reports an absent runtime sample as incomplete, and refuses a changed period or event-count reinterpretation even where the TL formula bytes match. | Test (TC-113) |
 | FR-095-AC-7 | A supported TL result is accepted only when the correspondence record preserves assessment execution, both progress/closure axes, settlement basis, exact decision support, completeness and supersession; mutating or omitting one axis cannot yield a healthy native result. | Test (TC-117) |
-| FR-095-AC-8 | Source/bridge definition digests use `raw-artifact-digest`; every generated artifact identity is accepted by its target owner reader; the bridge-owned correspondence reference changes with every preserved-key mutation and never substitutes for an owner identity. | Test (TC-117) |
+| FR-095-AC-8 | Every generated artifact identity is accepted by its target owner reader; the bridge-owned correspondence reference changes with every preserved-key mutation and never substitutes for an owner identity. | Test (TC-117) |
 | FR-095-AC-9 | An infinite-trace unbounded-property request returns a typed unsupported mapping naming the absent TL target without emitting a substitute formula. | Test (TC-200) |
 
 ## Dependencies

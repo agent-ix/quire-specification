@@ -34,7 +34,6 @@ does not infer a cutoff from ingestion order or wall-clock time.
 - **Key order** — lexicographic for deterministic collection handling only.
 - **Causal order** — none; `late` does not imply causation.
 - **Absence** — absent compares only to absent and cannot default to `on-time`.
-- **Digest domain** — not applicable.
 
 ## Acceptance Criteria
 

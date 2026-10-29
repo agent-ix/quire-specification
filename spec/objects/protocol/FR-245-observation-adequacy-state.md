@@ -43,8 +43,6 @@ missing-observation identities when known" (FR-062).
 - **Absence** — an absent observation adequacy compares only to absence. It is
   distinct from the supplied values `unknown` and `not-assessed` and is never
   defaulted to either.
-- **Digest domain** — not applicable; this key contains no digest. See
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
 
 ## The two adequacy domains are disjoint
 

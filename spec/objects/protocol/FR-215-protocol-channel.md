@@ -61,8 +61,6 @@ channel/component reference rather than becoming a participant role" (FR-054).
   FIFO order across channels, reliable delivery or synchronized clocks"
   (FR-054), and "Missing or conflicting sender, receiver, message-type, order or
   delivery premises refuse admission" (FR-054-AC-3).
-- **Digest domain** — every digest carried by the qualified linked-definition
-  identity or premise provenance retains its selected FR-201 domain.
 
 ## Acceptance Criteria
 

@@ -65,7 +65,7 @@ import selects the library supplied under `L`. The linker compiles it
 through the same stages as the importing unit, resolving its own imports
 against the same supplied libraries, and its `package_id` is the one that
 compile yields; a supplier never states a library's `package_id`, and an
-import never states one either. That recomputed `package_id`, the
+import never states one either. (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; library `package_id` binding.) That recomputed `package_id`, the
 `quire.package.semantic/v2` `package_id` of the library's CheckedPackage
 V2, is the library's selection in the importing package's lock, and it is
 what binds the library's content. At most one library is supplied per

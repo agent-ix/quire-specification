@@ -10,8 +10,6 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-094
     type: specifies
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
   - target: ix://agent-ix/quire-specification/FR-282
     type: references
 ---
@@ -77,9 +75,6 @@ relation."
   set makes the associated truth `unavailable`; a fact missing outside a completed
   support set remains a completeness gap and does not falsify or delay a settled
   truth (FR-061, FR-094).
-- **Digest domain** — where a key component is a digest, its domain is
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
-  An identity crossing domains is unequal regardless of byte equality.
 
 ## Acceptance Criteria
 
@@ -102,8 +97,6 @@ relation."
   establishes the inside/outside decision-support distinction.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain vocabulary.
 - [FR-282](FR-282-dependence-relation.md) defines the dependence relation
   vocabulary carried on this record.
 

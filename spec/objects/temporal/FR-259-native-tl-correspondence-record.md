@@ -10,8 +10,6 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-258
     type: references
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
   - target: ix://agent-ix/quire-contract-ir/FR-026
     type: references
 ---
@@ -33,7 +31,7 @@ bridge preserves:
 
 | Property | Source | Note |
 | --- | --- | --- |
-| Native source digest and exact clause/expression span | FR-095 Behavior | Span identity per [FR-203](../foundation/FR-203-source-region.md). |
+| Native source identity and exact clause/expression span | FR-095 Behavior | Span identity per [FR-203](../foundation/FR-203-source-region.md). |
 | Clause/requirement identity | FR-095 Behavior | |
 | Language and temporal profile definition | FR-095 Behavior | [FR-250](FR-250-temporal-semantic-profile.md). |
 | Model/type/predicate bindings | FR-095 Behavior | |
@@ -82,11 +80,6 @@ and valuation request when the selected TL profile does not encode them."
   temporal bridge shall not use a backend, syntax or historical result to repair
   an unknown mapping, substitute a profile or synthesize missing
   correspondence."
-- **Digest domain** — the native source digest and bridge-definition digest use
-  FR-201 `raw-artifact-digest`. Generated TL identities retain their selected
-  owner domains. The bridge-owned correspondence artifact reference is derived
-  over the complete key under its exact selected bridge contract and does not
-  restamp any source or target identity.
 
 ## Identifier namespaces stay separate
 
@@ -109,7 +102,7 @@ valuation, capture and clock mapping as semantic correspondence."
 | FR-259-AC-3 | An unsupported request yields an absent correspondence rather than a substitute formula. | Test |
 | FR-259-AC-4 | A TL proposition identifier is never compared equal to a native predicate, signal or capture identity. | Test |
 | FR-259-AC-5 | Every result axis named by FR-095 is present in the record for a supported mapping. | Test |
-| FR-259-AC-6 | Source/bridge definition digests use `raw-artifact-digest`, target identities validate through target owner readers, and the correspondence reference is distinct from every owner identity. | Test |
+| FR-259-AC-6 | Target identities validate through target owner readers, and the correspondence reference is distinct from every owner identity. | Test |
 
 ## Dependencies
 
@@ -121,8 +114,6 @@ valuation, capture and clock mapping as semantic correspondence."
   the record preserves.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the
   identity discipline.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the
-  digest domain rule.
 
 ## Artifact identity allocation
 

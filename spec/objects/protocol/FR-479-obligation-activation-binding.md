@@ -87,10 +87,6 @@ component of that key is taken from anywhere else.
   requires, never an empty identity, a caller-selected obligation or a
   successful binding. An `origin` row carries the workflow execution identity
   as its origin identity, never an absent trigger placeholder (FR-230-AC-4).
-- **Digest domain** — every carried definition, observation or
-  activation-result digest retains its owner-selected domain
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)). Equal bytes
-  from different domains compare unequal.
 
 ## Refusals
 
@@ -100,7 +96,6 @@ component of that key is taken from anywhere else.
 | The origin kind does not match the row's activation: `trigger_event` on an `origin` row, `whole_execution` on an `each` row | `invalid_runtime_input`/`conflicting-identity`, naming the row and the origin kind |
 | A required component (definition, row, workflow instance, clause subject, origin identity, checked activation result) is absent | `invalid_runtime_input`/`missing-member`, naming the component, with no binding and no instance |
 | The same key offered with unequal checked activation content, or the same semantic trigger identity with conflicting admitted bytes | `invalid_runtime_input`/`conflicting-identity`, naming the key, with neither offer selected |
-| A carried digest whose domain differs from its owner-selected domain | `stale_dependency`/`digest-domain-mismatch` |
 
 A refused binding constructs no FR-230 instance.
 

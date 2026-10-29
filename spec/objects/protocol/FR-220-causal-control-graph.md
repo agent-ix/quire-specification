@@ -65,8 +65,8 @@ finite graph (FR-052-AC-3).
   under the same FR-288 key is an identity contradiction and refuses. Every
   semantic-content mutation requires a different FR-288. External filesystem
   path, locus, build provenance and rendering metadata do not independently
-  extend the key. Authored source text, including a display-name edit, still
-  changes FR-288 through its required raw-source digest; this artifact does not
+  extend the key. A new version of the authored source document, including a display-name edit, still
+  changes FR-288 through its source document key; this artifact does not
   erase or override that already-selected identity component.
 - **Key order** — FR-288's lexicographic key order, used only for canonical
   collection comparison. It establishes no graph-member order, precedence or
@@ -84,8 +84,6 @@ finite graph (FR-052-AC-3).
   missing join input and a zero-progress loop refuse admission (FR-052-AC-3);
   an iteration maximum and a loop invariant and variant are optional. An absent optional component compares only to absence and is
   never compared to a default or an empty value.
-- **Digest domain** — inherited exactly from FR-288, including the raw-source
-  and admitted semantic-selection digests in their declared FR-201 domains.
 
 ## Acceptance Criteria
 
@@ -97,7 +95,7 @@ finite graph (FR-052-AC-3).
 | FR-220-AC-4 | A missing join input, a causal cycle, and a zero-progress loop each refuse admission independently; a repeat with no iteration maximum and no invariant is admitted. | Analysis |
 | FR-220-AC-5 | The graph key equals its complete FR-288 qualified protocol-definition identity; there is no independent flattened or position-only graph fingerprint. | Analysis |
 | FR-220-AC-6 | Every typed semantic-content mutation requires another FR-288, and different complete graph content offered under one FR-288 refuses as an identity contradiction. | Test (TC-052) |
-| FR-220-AC-7 | External path, locus, build and rendering changes do not independently extend the graph key, while a changed authored source byte changes the raw-source digest already inside FR-288. | Analysis |
+| FR-220-AC-7 | External path, locus, build and rendering changes do not independently extend the graph key, while a new version of the authored source document yields a different source document key inside FR-288. | Analysis |
 
 ## Dependencies
 
@@ -113,7 +111,7 @@ finite graph (FR-052-AC-3).
 - [FR-210](FR-210-protocol-subject-vocabulary.md) supplies the
   distinct protocol subject kinds.
 - [FR-288](FR-288-qualified-protocol-definition-identity.md) supplies the exact
-  graph key and selected source/semantic digest domains.
+  graph key and selected source and semantic selections.
 
 ## Status
 

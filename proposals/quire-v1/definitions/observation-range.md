@@ -25,7 +25,7 @@ declaration key, window identity, selected temporal profile identity, clock
 authority, ordered record-set identity, and the exact coverage row. Missing,
 substituted, mutually inconsistent, or multiply selected values refuse the
 dependent assessment. A member-object identity, a timestamp, a record arrival
-order, or a digest from another domain is not a substitute.
+order, or an identity of another kind is not a substitute.
 
 ## Selected correspondence
 
@@ -52,5 +52,5 @@ selected clock profile before passing admitted records to E/B. A missing record,
 sample, coverage document, required valuation, progress assertion, or closure
 premise remains incomplete with its exact identity. A wrong family, endpoint,
 authority, sequence, epoch, period, unit, record/position association, or
-declaration digest refuses. Neither outcome is false, an empty population, a
+declaration key refuses. Neither outcome is false, an empty population, a
 manufactured member, or an ambient default.

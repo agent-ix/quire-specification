@@ -17,42 +17,41 @@ relationships:
 ## Description
 
 When assessing a population or event-time window, the assessment request SHALL
-retain the selected domain package identity/digest and population declaration
-key, declared finite membership rule/digest, population and snapshot/window identities, bounds,
-observation sources, configuration/closure identities and digests, and
+retain the selected domain package identity and population declaration
+key, declared finite membership rule, population and snapshot/window keys, bounds,
+observation sources, configuration/closure identities and versions, and
 completeness/progress dependencies.
 
 When selecting a v1 membership rule, the observation service SHALL admit only
 `quire.observation.explicit-members/v1` with a sorted distinct bounded list of
-every required semantic member identity and derive its identity under
-`quire.verification.jcs` from that exact versioned list.
+every required semantic member identity; the rule is identified by that contract
+and list, and no digest of the list is derived.
 
-When retaining configuration and closure definition bytes, the observation
-service SHALL identify their digests under FR-201 `raw-artifact-digest`, and
-SHALL identify the domain package and its declarations under `sha256-jcs`.
+When retaining configuration and closure definitions, the observation
+service SHALL identify each by its identity and version, and SHALL identify the
+domain package by its identity and version and its declarations by (domain
+package identity, IR node identity). No digest of definition bytes is retained.
 
-When selecting a snapshot, the observation service SHALL derive its
-`sha256-jcs` identity from the exact declaration selection, membership-rule
-identity, capture assertion and sorted distinct admitted observation identities
-under `quire.observation.snapshot-identity/v1-draft.1`.
+When selecting a snapshot, the observation service SHALL identify it by the
+exact declaration selection, membership rule, capture assertion and sorted
+distinct admitted observation identities, componentwise.
 
-When declaring a population, the observation service SHALL derive its
-`sha256-jcs` identity from the declaration selection, membership rule,
-snapshot-or-window selection, observation sources, configuration and closure
-selections, and completeness/progress dependencies under
-`quire.observation.population-identity/v1-draft.1`.
+When declaring a population, the observation service SHALL identify it by the
+declaration selection, membership rule, snapshot-or-window selection,
+observation sources, configuration and closure selections, and
+completeness/progress dependencies, componentwise.
 
 ## Behavior
 
 Unknown required membership, missing external-provider observations, or an absent declared closure input are incomplete/refused assessment causes and cannot establish aggregate success. The request SHALL retain the distinction between a selected snapshot and a selected event-time window.
-When a declaration key outside the checked package, missing selected identity,
-digest mismatch, or ambient default is encountered, the assessment service SHALL refuse it rather
+When a declaration key outside the checked package, missing selected identity or version,
+identity or version mismatch, or ambient default is encountered, the assessment service SHALL refuse it rather
 than supplying a population, membership, configuration, or closure input.
 When admitting a population, the assessment service SHALL take its closed extent
 only from the population declaration in the checked package and SHALL NOT
 derive it from observation records.
 For a selected window `[start, end)`, the assessment service SHALL
-include an exactly listed/digested member at `start` and exclude one at `end`;
+include an exactly listed member at `start` and exclude one at `end`;
 the latter can participate only in a separately selected later window.
 
 ## Acceptance Criteria
@@ -62,15 +61,15 @@ the latter can participate only in a separately selected later window.
 | FR-112-AC-1 | Changing a declared snapshot/window or membership rule changes the assessment subject. | Test (TC-142) |
 | FR-112-AC-2 | Unknown membership and a missing provider record remain visible incomplete reasons. | Test (TC-142) |
 | FR-112-AC-3 | A complete bounded population retains membership and closure provenance. | Test (TC-142) |
-| FR-112-AC-4 | A declaration key, identity, membership-digest, configuration, or closure-digest mismatch is refused without ambient defaulting. | Test (TC-142) |
+| FR-112-AC-4 | A declaration key, identity, version, membership-rule, configuration, or closure identity or version mismatch is refused without ambient defaulting. | Test (TC-142) |
 | FR-112-AC-5 | A selected half-open window includes an exact member at `start`, excludes one at `end`, and cannot double-count either across windows. | Test (TC-142) |
-| FR-112-AC-6 | The v1 explicit-members rule, snapshot and population identities are independently recomputable; every key mutation changes the applicable identity and presentation permutation does not. | Test (TC-142) |
-| FR-112-AC-7 | Unknown/duplicate/unbounded member sets and absent/foreign digest domains refuse, while unknown required membership remains distinct from an empty required set. | Test (TC-142) |
+| FR-112-AC-6 | The v1 explicit-members rule, snapshot and population keys compare equal exactly when every key component is equal; every key mutation makes the applicable key compare unequal and presentation permutation does not. | Test (TC-142) |
+| FR-112-AC-7 | Unknown/duplicate/unbounded member sets refuse, while unknown required membership remains distinct from an empty required set. | Test (TC-142) |
 
 ## Dependencies
 
 - [Shared foundation](../../../proposals/quire-v1/shared-foundation.md).
-- [AD-006](../../assurance/AD-006-model-graph-state-contracts.md): population declarations and their closed extents are spec-declared and keyed by domain package identity, IR node identity and `sha256-jcs`; E owns closure semantics.
+- [AD-006](../../assurance/AD-006-model-graph-state-contracts.md): population declarations and their closed extents are spec-declared and keyed by domain package identity and IR node identity; E owns closure semantics.
 
 ## Status
 

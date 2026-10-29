@@ -178,7 +178,7 @@ FR-331 state digests and the FR-201 identity-domain rows.
   `closure_vectors`, whose digests are recomputed from real packages, and
   `dependency-call-vectors.json` name packages a reader can be supplied. Each `supply_vectors` entry lists the
   direct entries in lock order with a symbolic `supply` state (`bound`,
-  `stale` for a supplied package whose recomputed `package_id` differs, or
+  `stale` (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; library `package_id`) for a supplied package whose recomputed `package_id` differs, or
   `absent`) and the outcome FR-322-AC-84 requires.
   Its `closure_vectors` contain `direct_dependencies` of the importer and
   `dependency_locks` for those direct packages; each dependency lock names a

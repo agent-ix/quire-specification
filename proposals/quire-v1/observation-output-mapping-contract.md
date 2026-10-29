@@ -17,7 +17,7 @@ the input retains:
 | Value | Required meaning |
 | --- | --- |
 | Subject and request | Exact linked-package/static subject, runtime assessment-input identity, requested capability, selected observation binding, and separately identified decision scope and surrounding execution. |
-| Source correspondence | Native clause, source digest/span, declaration/anchor/capture identities, and every selected definition/profile identity. |
+| Source correspondence | Native clause, source package identity and version, span, declaration/anchor/capture identities, and every selected definition/profile identity. |
 | Result facts | Independent B-owned assessment execution, truth, settlement basis, exact decision support, activation, participation, completeness, separately qualified observation adequacy and protocol adequacy, claim strength, assumptions, and provenance facts; no summary may erase another fact or use bare `adequacy`. |
 | Decision-scope progress | Exact progress for the obligation's decision scope, retaining its scope, authority and boundary identities independently of surrounding-execution progress. |
 | Decision-scope closure | Exact closure state and premises for that decision scope, independently of its progress, assessment execution, completeness and surrounding-execution closure. |

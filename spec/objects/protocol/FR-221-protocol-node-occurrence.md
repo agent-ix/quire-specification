@@ -78,9 +78,6 @@ When a source node is lowered into the causal control graph, the frontend SHALL 
   bounded iteration has a present zero-length ordinal sequence. Omitting or
   adding a repeat dimension, or supplying an out-of-domain ordinal, refuses;
   missing input never becomes ordinal zero.
-- **Digest domain** — every digest carried by the qualified definition or
-  workflow-instance component retains its selected FR-201 domain; equal bytes
-  crossing domains are unequal.
 
 ## Acceptance Criteria
 
