@@ -19925,7 +19925,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
     let schema = parsed_fixture(SCHEMA);
     let validator = jsonschema::validator_for(&schema).unwrap();
     let rows = vectors["semantic_refusals"].as_array().unwrap();
-    assert_eq!(rows.len(), 21);
+    assert_eq!(rows.len(), 22);
     let all_ids = ["schema_refusals", "authority_vectors", "semantic_refusals"]
         .into_iter()
         .flat_map(|section| vectors[section].as_array().unwrap())
@@ -19986,6 +19986,13 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 places["dependencies"].as_array_mut().unwrap().push(id);
                 places["dependencies"].as_array_mut().unwrap().sort_by(|left, right| left["digest"].as_str().cmp(&right["digest"].as_str()));
                 adverse["source_map"].as_array_mut().unwrap().push(entry);
+            }
+            "repeated-clock-place-reference" => {
+                // One node reference listed twice repeats its order key (FR-322-AC-260).
+                let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"]
+                    .as_array_mut().unwrap();
+                let d = places[0].clone();
+                places.push(d);
             }
             "noncanonical-place-path" => {
                 adverse["semantic_graph"]["nodes"][45]["body"]["members"][1]["value"]["members"][0]["members"][1]["value"]["value"] = json!("not-clock");
@@ -20102,6 +20109,9 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
             "duplicate-clock-place" => (
                 "invalid_package", "duplicate-clock-place", "/semantic_graph/nodes/52/body/members/3/value/members/1",
             ),
+            "repeated-clock-place-reference" => (
+                "invalid_semantic_graph", "", "/semantic_graph/nodes/52/body/members/3/value/members/1",
+            ),
             "noncanonical-place-path" => (
                 "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/45/body/members/1/value/members/0",
             ),
@@ -20135,8 +20145,19 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
             other => panic!("unhandled expected diagnostic for {other}"),
         };
         assert_eq!(row["expected_code"], expected.0);
-        assert_eq!(row["expected_cause"], expected.1);
+        let expected_cause = if expected.1.is_empty() { Value::Null } else { json!(expected.1) };
+        assert_eq!(row["expected_cause"], expected_cause);
         assert_eq!(row["locus"], expected.2);
+        if row["mutation"] == "repeated-clock-place-reference" {
+            // The same node listed twice is refused as an order defect with no cause, at the repeated member.
+            assert_eq!(
+                timed_aggregate_order_refusal(&adverse).as_deref(),
+                Some(row["locus"].as_str().unwrap()),
+                "TM-30 repeats an order key, so the AC-260 order refusal is at the repeated member"
+            );
+            let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"].as_array().unwrap();
+            assert_eq!(places[0], places[1], "TM-30 lists one node reference twice");
+        }
         if row["mutation"] == "duplicate-clock-place" {
             assert_eq!(timed_aggregate_order_refusal(&adverse), None, "TM-12 is in declared order, so only the repeated path is refused");
             let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"].as_array().unwrap();
