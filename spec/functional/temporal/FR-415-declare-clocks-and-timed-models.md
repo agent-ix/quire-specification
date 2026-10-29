@@ -382,7 +382,15 @@ clock component and an ordinary data write. The collection class is a write
 whose value is a collection of clock-bearing elements (a literal, `filter`,
 `flatten`, concatenation, slicing, reordering) or a collection element written
 as a literal (a map entry `self.m[k] = Timer { ... }` or an ordered element
-`self.ts[i] = Timer { ... }`). The drop is the write `absent` to an
+`self.ts[i] = Timer { ... }`). The map entry creates a slot when its key is
+absent. The ordered element creates, carries and removes none when slot `i`
+exists, and is excluded because it replaces the element at a slot chosen by a
+dynamic term, data part and clocks together, for which the package has no
+indexed element-write form: a reset writes a constant to one place and carries
+no data component, and this requirement gives the ordered element write no
+language rule (FR-415-AC-12 and TC-367 CK-17 state only the reset
+`self.ts[i].x = c`, which is built and can be written beside ordinary data
+writes). The drop is the write `absent` to an
 `Option<Clock>` place (`self.v = absent`, or a slot of `Sequence<Option<Clock>>`),
 whose presence is a runtime bit that only a write can change. `self.o = absent`
 over `o: Option<Timer>` (FR-415-AC-14) is not that drop: the presence of `o.x`
@@ -445,7 +453,7 @@ its value and the request setting that raises it.
 | FR-415-AC-22 | A checked package for a dense model emits one `clock_guard` for each operation that has guard clauses, whose `parts` each pair the guard predicate with the clock constraints it bounds; one `clock_reset` for each reset of a postcondition, of kind `place` (the place template, its owner term, the slot terms, the quantified slots as `binders`, the `when` condition and the exact value) or, for a `Clock` parameter, of kind `parameter` naming the operation and the parameter; one `time_invariant` for each invariant, whose `bounds` are upper bounds (`<`, `<=`) only; and the `clock_constraint` nodes they name, each with the relation word `lt`, `le`, `eq`, `ge` or `gt`. A lower bound or an equality in an invariant is the source refusal `time-invariant-shape`, and a package that carries one refuses `invalid_package`/`timed-node-reference` (`CL-07`). Each form is a vector of `timed-clause-node-vectors.json` (`CL-01`..`CL-25`). | Test (TC-367; CK-32..CK-36; CL-01..CL-25) |
 | FR-415-AC-23 | Two clock places of one model that no source region tells apart are listed in the order of their paths (field names and slot collections with bounds), never by a hash, so two compilations of one model list its places identically (`AO-08`, `AO-09`); an element place in a clause (`self.ts[i].x`, `self.m[k].x`) is the template place with its owner term and slot terms, and a slot term of another type than the selector's domain refuses `ill_typed`/`type-mismatch` (`CL-10`). | Test (TC-367; CK-35, CK-36; AO-08..AO-10, CL-10) |
 | FR-415-AC-24 | A guard or an invariant whose body is `forall(e in p: B)` or `exists(e in p: B)` over clock places is refused `unsupported_construct`/`not-yet-implemented` at the quantifier and names STD-554, which defines the binder form; the checked package does not carry an unquantified approximation of it. | Test (TC-367; CK-37; QN-01, QN-02) |
-| FR-415-AC-25 | The checked-package producer refuses `unsupported_construct`/`expression-form`, naming the construct, a guard `self.x >= 1 ms or self.versionNumber > 0` (a disjunct with no clock constraint), the whole-collection write `self.ts = sequence[Timer { x: 0 ms, n: 1 }]` and `self.ts = filter(e in self.ts: e.n > 1)`, the drop `self.v = absent`, and the selection reset `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)`; it builds the guard whose every disjunct reads a clock, the constant write `self.v = 0 ms` and a reset whose condition reads only the presence of the binder's place. A presence requirement has no clause node. The cases are `GJ-01`..`GJ-03`, `CW-01`..`CW-05`, `SD-01` and `SD-02` of `timed-clause-node-vectors.json` (FR-322-AC-267). | Test (TC-367; CK-38) |
+| FR-415-AC-25 | The checked-package producer refuses `unsupported_construct`/`expression-form`, naming the construct, a guard `self.x >= 1 ms or self.versionNumber > 0` (a disjunct with no clock constraint), the whole-collection write `self.ts = sequence[Timer { x: 0 ms, n: 1 }]` and `self.ts = filter(e in self.ts: e.n > 1)`, the drop `self.v = absent`, the ordered element write `self.ts[i] = Timer { x: 0 ms, n: 1 }` (`CW-06`), and the selection reset `forall(e in self.ts: e.n > 1 implies e.x = 0 ms)`; it builds the guard whose every disjunct reads a clock, the constant write `self.v = 0 ms` and a reset whose condition reads only the presence of the binder's place. A presence requirement has no clause node. The cases are `GJ-01`..`GJ-03`, `CW-01`..`CW-06`, `SD-01` and `SD-02` of `timed-clause-node-vectors.json` (FR-322-AC-267). | Test (TC-367; CK-38) |
 
 ## Dependencies
 
