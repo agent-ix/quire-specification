@@ -9,12 +9,9 @@ remain separately reported.
 ## Required definition
 
 A package that selects this root also selects the complete-model root
-[`quire.model.complete/v1`](model-complete.md), which this root requires (its
-`header_selectable_layers` row in the
-[complete-value lock](complete-value-lock.json)), and so the complete-value
-root, the state-graph layer and every definition those roots select through
-[`complete-model-lock.json`](complete-model-lock.json) and
-[`complete-value-lock.json`](complete-value-lock.json).
+[`quire.model.complete/v1`](model-complete.md), which this root requires (one of the
+[header-selectable layers](README.md#header-selectable-layers)), and so the complete-value
+root, the state-graph layer and every definition those roots select.
 
 ## Admitted forms
 
@@ -69,25 +66,9 @@ admits the form. The probabilistic, scheduling and temporal-clause forms of the
 same shared-grammar section are admitted under the facets and profiles that
 own them, and selecting this root neither admits nor refuses them.
 
-## Qualification catalog and package selection
+## Package selection
 
-The canonical lock is [`complete-temporal-lock.json`](complete-temporal-lock.json).
-Its `requires` entry names the complete-model lock. Its
-`qualification_catalog` closes every artifact this root selects by role,
-authority, identity and artifact path, and its `package_selection` places every
-catalog role in `always`; this root has no conditional or alternative profile.
-A package selection is checked with the same closed refusal codes and order as
-the complete-value lock.
-
-## Selected rules
-
-Each rule below is a `rule_*` role of the lock's `qualification_catalog`.
-
-| Rule |
-| --- |
-| [Clocks and timed models](../../../spec/functional/temporal/FR-415-declare-clocks-and-timed-models.md) |
-| [Exact rational value](../../../spec/objects/foundation/FR-205-exact-rational-value.md) |
-
-The exact-quantity rule of [FR-142](../../../spec/functional/type-model/FR-142-evaluate-quantities-and-units.md)
-is selected by the complete-value root and applies unchanged to time
-quantities.
+This root requires the complete-model root. Its package selection places every
+role in `always`: `root`, `rule_fr_415` and `rule_fr_205`; this root has no
+conditional or alternative profile. A package selection is checked with the
+same closed refusal codes and order as the complete-value package selection.

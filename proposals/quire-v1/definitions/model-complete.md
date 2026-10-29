@@ -8,8 +8,7 @@ Implementation and qualification remain separately reported.
 ## Always-selected definitions
 
 Every package that selects this root also selects the complete-value root and
-its always-selected closure through
-[`complete-value-lock.json`](complete-value-lock.json), and:
+its always-selected closure ([package selection](value-complete.md#package-selection)), and:
 
 | Identity | Definition artifact |
 | --- | --- |
@@ -522,19 +521,20 @@ kind `none` or the element's kind.
 Direction is read only from a connection's or relationship's declared
 `direction` and from a port's direction, never from a role.
 
-## Qualification catalog and package selection
+## Package selection
 
-The canonical lock is [`complete-model-lock.json`](complete-model-lock.json).
-Its `requires` entry names the complete-value lock. Its
-`qualification_catalog` closes every artifact this root selects by role,
-authority, identity and artifact path. Its `package_selection`
-places every catalog role in `always`; this root has no conditional or
+This root requires the complete-value root. Its package selection places every
+role in `always`: `root`, `state_graph`, `rule_manifest`,
+`effective_declaration_schema`, `effective_declaration_vectors`, `rule_ad_006`,
+`rule_fr_043`, `rule_fr_143`, `rule_fr_144`, `rule_fr_150`, `rule_fr_151`,
+`rule_fr_152`, `rule_fr_153`, `rule_fr_154`, `rule_fr_204`, `rule_fr_208`,
+`rule_fr_321` and `rule_interface_003`; this root has no conditional or
 alternative profile. A package selection is checked with the same closed
-refusal codes and order as the complete-value lock.
+refusal codes and order as the complete-value package selection.
 
 ## Selected rules
 
-Each rule below is a `rule_*` role of the lock's `qualification_catalog`.
+Each rule below is a `rule_*` role of the package selection.
 
 | Rule |
 | --- |

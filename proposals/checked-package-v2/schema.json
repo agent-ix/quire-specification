@@ -28,7 +28,7 @@
   "$defs": {
     "Nonempty": {"type": "string","minLength": 1},
     "HexDigest": {"type": "string","pattern": "^[0-9a-f]{64}$"},
-    "SemanticDigest": {"type": "object","required": ["domain","algorithm","digest"],"properties": {"domain": {"enum": ["quire.package.semantic/v2","quire.checked-semantic-node/v1","quire.contract-ir.semantic/v1"]},"algorithm": {"const": "sha256"},"digest": {"$ref": "#/$defs/HexDigest"}},"additionalProperties": false},
+    "SemanticDigest": {"type": "object","required": ["domain","algorithm","digest"],"properties": {"domain": {"enum": ["quire.package.semantic/v2","quire.checked-semantic-node/v1"]},"algorithm": {"const": "sha256"},"digest": {"$ref": "#/$defs/HexDigest"}},"additionalProperties": false},
     "PackageId": {"type": "object","required": ["domain","algorithm","digest"],"properties": {"domain": {"const": "quire.package.semantic/v2"},"algorithm": {"const": "sha256"},"digest": {"$ref": "#/$defs/HexDigest"}},"additionalProperties": false},
     "RawSourceRef": {"type": "object","required": ["authority","identity","digest_domain","digest"],"properties": {"authority": {"$ref": "#/$defs/Nonempty"},"identity": {"$ref": "#/$defs/Nonempty"},"digest_domain": {"const": "quire.source.bytes/v1"},"digest": {"$ref": "#/$defs/HexDigest"}},"additionalProperties": false},
     "DefinitionRef": {"type": "object","required": ["authority","identity"],"properties": {"authority": {"$ref": "#/$defs/Nonempty"},"identity": {"$ref": "#/$defs/Nonempty"}},"additionalProperties": false},
