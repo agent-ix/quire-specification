@@ -46,6 +46,8 @@ completed result. That record is closed; its members are defined under
 | lookup | `lookup.key`, then `lookup.result-retain` when a value is returned, for each `lookup<T>(p, r) absent m` |
 | population | one `population.visit` before each member walked by `allInstances<T>(p)`, conforming or not, then `collection.bound` and `collection.result-retain` |
 | dispatch | `dispatch.select` for each dispatched `receiver.name(args)` call, followed by the callee's `function.call` |
+| declaration check | one `declaration.check` before each checked declaration's own checking work, and one before each further checking step the checking family states as work (FR-464's exit-feasibility valuation is one); it is distinct from `function.call`, which charges one evaluated call, not one checked declaration |
+| temporal | one `temporal.visit` before each (operator node, position) visit of a temporal evaluator's formula traversal; the evaluator owns the traversal, the memoization and when a visit occurs, and charges a visit once |
 | frame | for each field write of an invocation, in ascending (object reference key, field declaration key) order: one `frame.write` before the write is tested against the frame's `modifies` grants, then one `frame.redefines-link` before each `redefines` link followed from the written member, stopping at the first member a `modifies` entry names or at a member with no `redefines` link |
 
 Each charge is the following exact `{ counter: amount }` vector. A semantic-size
@@ -133,15 +135,17 @@ unmaterialized result.
 | `lookup.result-retain` | `value_occurrences=occ(result)`, `result_units += occ(result)`: one for a `Reference<T>` or `none`, two for a present `Option<Reference<T>>` |
 | each `population.visit` | no size-counter change; `work_units += 1` |
 | `dispatch.select` | `value_occurrences=c`, where `c` is the number of linked candidates of the called effective operation; `work_units += c` instead of one |
+| each `declaration.check` | no size-counter change; `work_units += w`, where `w` is the unit count the checking family states for the charged step: a function declaration's identity-preimage field-write count, one for an exit-feasibility valuation. A denied charge is mapped by the checking stage to its `stage_limit_exceeded`/`work-budget-exceeded` outcome (FR-272) and never to a completed result |
+| each `temporal.visit` | no size-counter change; `work_units += 1` and no `result_units`; it is not a graph-walk point and a temporal visit never charges `graph.expand` |
 | each `frame.write` | no size-counter change; `work_units += 1` |
 | each `frame.redefines-link` | no size-counter change; `work_units += 1` |
 
 For each non-repeated row, `work_units += 1`; repeated identity, edge, rational,
 normalization-output, equality-pair, function-call, collection-element,
 collection-visit, model-deref, model-navigate, graph-expand, graph-edge,
-population-visit, frame-write and frame-redefines-link rows add one per event, and `equality.plan-form`,
+population-visit, temporal-visit, frame-write and frame-redefines-link rows add one per event, and `equality.plan-form`,
 `collection.member-walk`, `collection.member-test` and `dispatch.select` add
-their stated amounts.
+their stated amounts, and `declaration.check` adds the unit count of its row.
 A composite retained value costs `occ(result)`. Checked amount derivation and counter arithmetic precede
 allocation or semantic arithmetic. A counter amount greater than `u64::MAX`
 returns incomplete at that point. No unnamed precision, shift, host-backend cost
