@@ -8,8 +8,6 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-240
     type: references
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
   - target: ix://agent-ix/quire-specification/FR-283
     type: references
 ---
@@ -17,15 +15,14 @@ relationships:
 
 ## Description
 
-When a canonical protocol result is projected to portable verification, the projection adapter SHALL derive the `TechniqueResult.resultId` from the exact tuple stated by FR-062 so that changing any member of that tuple changes the derived result identity.
+When a canonical protocol result is projected to portable verification, the projection adapter SHALL derive the `TechniqueResult.resultId` from the exact tuple stated by FR-062 so that changing any member of that tuple changes the derived result ID.
 
 ## Properties
 
 | Property | Description |
 | --- | --- |
-| `resultId` | `sha256-jcs:<lowercase-hex>` over the RFC 8785 canonical identity preimage stated by FR-062. It is "distinct from the canonical protocol-result identity and stable for the exact tuple of canonical result identity, target obligation and execution-binding identities, target contract version, and adapter identity and version" (FR-062). |
-| `identityVersion` | `quire.protocol.e02-projection-identity/v1-draft.1`, the first member of the identity preimage (FR-062). |
-| `sourceResultRef` | The exact canonical result identity (FR-062). The adapter validates the canonical protocol result before mapping it. |
+| `resultId` | The RFC 8785 canonical JSON text of the derivation tuple stated by FR-062; no hash is computed. It is "distinct from the canonical protocol-result key and stable for the exact tuple of canonical result key, target obligation and execution-binding identities, target contract version, and adapter identity and version" (FR-062). |
+| `sourceResultRef` | The exact canonical result key (FR-062). The adapter validates the canonical protocol result before mapping it. |
 | `targetContractVersion` | `quire-verification/e02-draft-2` (FR-062). |
 | `targetBinding` | `propertyRef`, `planId`, `taskId`, `runRef`, `profile`, `bindingRefs`, `dependencyClosure` and `executionScope`, each equal to its selected context; the adapter "SHALL NOT infer or substitute one from display text" (FR-062). |
 | `adapter` | The exact adapter identity and version (FR-062). |
@@ -34,11 +31,11 @@ When a canonical protocol result is projected to portable verification, the proj
 
 ## Identity and comparison
 
-- **Identity kind** — *derived*. The identity is computed structurally from the
-  named preimage members under the rule FR-062 states; it is not authored, and it
-  is distinct from the canonical protocol-result identity
+- **Identity kind** — *derived*. The result ID is spelled structurally from the
+  tuple FR-062 states; it is not authored, and it
+  is distinct from the canonical protocol-result key
   ([FR-240](FR-240-canonical-protocol-result.md)).
-- **Key** — the derivation tuple: canonical result identity, target
+- **Key** — the derivation tuple: canonical result key, target
   obligation and execution-binding identities, target contract version, and
   adapter identity and version. Equality is componentwise over that key and
   nothing else. Display name, source path, span, message text, locale and
@@ -58,12 +55,7 @@ When a canonical protocol result is projected to portable verification, the proj
   default or empty value. FR-062 refuses the projection when "an exact context or
   canonical-result reference is missing or conflicting"; an absent context is a
   refusal, not an empty binding.
-- **Digest domain** — `sha256-jcs`, whose domain vocabulary is
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
-  FR-201 records that this preimage is a distinct per-use selection: the derived
-  identity is taken "over a distinct projection-identity preimage under
-  `quire.protocol.e02-projection-identity/v1-draft.1`". An identity crossing
-  domains is unequal regardless of byte equality.
+- **Digest domain** — not applicable; the result ID carries no digest.
 
 ## Refusal codes
 
@@ -100,8 +92,8 @@ emit a sufficiency decision."
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-249-AC-1 | The derived identity is distinct from the canonical protocol-result identity and is stable for the exact derivation tuple. | Analysis |
-| FR-249-AC-2 | Changing any member of the derivation tuple changes the derived result identity. | Analysis |
+| FR-249-AC-1 | The derived result ID is distinct from the canonical protocol-result key and is stable for the exact derivation tuple. | Analysis |
+| FR-249-AC-2 | Changing any member of the derivation tuple changes the derived result ID. | Analysis |
 | FR-249-AC-3 | `nativeArtifacts` carries exactly one canonical-result entry with source URI and the stated media type. | Inspection |
 | FR-249-AC-4 | `bindingRefs` retains the selected E02 semantic order and is not resorted by presentation text. | Analysis |
 | FR-249-AC-5 | Each refusal carries exactly one stable code from the table plus the affected exact identity, and no `TechniqueResult` is emitted with it. | Inspection |
@@ -116,8 +108,6 @@ emit a sufficiency decision."
   result.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain vocabulary.
 - [FR-283](FR-283-projection-refusal-code.md) defines the refusal code
   vocabulary recorded above.
 

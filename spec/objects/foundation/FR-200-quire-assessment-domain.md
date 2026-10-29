@@ -249,7 +249,7 @@ Every object artifact contained in this context SHALL declare, explicitly:
 ## Ubiquitous Language
 
 - **Authored** — written by a person in native Quire source, and therefore
-  carrying a source identity, digest and span.
+  carrying a source identity and span.
 - **Derived** — computed from other identified things under a named rule, and
   changing whenever any input to that rule changes.
 - **Key** — the exact component tuple that decides equality.

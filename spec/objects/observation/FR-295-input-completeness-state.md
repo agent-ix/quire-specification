@@ -45,8 +45,7 @@ foreign boundary cannot yield `complete`.
   earlier fact. Label or timestamp order supplies no causal edge.
 - **Absence** — absence compares only to absence and is never defaulted to
   `incomplete` or `complete`; a required absent axis is refused.
-- **Digest domain** — not applicable to the label. Digests carried by the
-  assertion retain their selected FR-201 domains.
+- **Digest domain** — not applicable; the label and the assertion carry no digest.
 
 ## Independence from progress and closure
 

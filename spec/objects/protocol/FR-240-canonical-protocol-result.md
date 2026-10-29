@@ -10,8 +10,6 @@ relationships:
     type: specifies
   - target: ix://agent-ix/quire-specification/FR-061
     type: specifies
-  - target: ix://agent-ix/quire-specification/FR-201
-    type: references
   - target: ix://agent-ix/quire-specification/FR-241
     type: references
   - target: ix://agent-ix/quire-specification/FR-242
@@ -87,9 +85,9 @@ artifact adds none.
 
 ## Identity and comparison
 
-- **Identity kind** — *derived*. FR-286 defines the exact versioned preimage and
-  validation order; the producer cannot author the identity independently.
-- **Key** — the result identity. Equality is componentwise over the key and
+- **Identity kind** — *entity*. FR-286 defines the structural `resultKey` and
+  validation order.
+- **Key** — the FR-286 `resultKey`. Equality is componentwise over the key and
   nothing else. Display name, source path, span, message text, locale and
   rendering never participate (FR-200, FR-009). FR-061 supports this directly: a
   strict reader "SHALL NOT infer independence from distinct display names or
@@ -108,10 +106,7 @@ artifact adds none.
   That lineage is never derived from key order, timestamp or source position.
 - **Absence** — an absent key component compares only to absence, never to a
   default or empty value (FR-200).
-- **Digest domain** — the enclosing artifact reference's digest is
-  `sha256-jcs`, whose domain vocabulary is
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
-  An identity crossing domains is unequal regardless of byte equality.
+- **Digest domain** — not applicable; the result carries no digest.
 
 ## Five independent closure and progress axes
 
@@ -155,9 +150,9 @@ selection. Equal display labels or implementation names establish none of them.
 | FR-240-AC-2 | The enclosing artifact reference's digest is computed over the complete canonical result bytes and does not appear as a field inside those bytes. | Test (TC-061) |
 | FR-240-AC-3 | The five progress and closure axes remain independently readable; no axis is populated from completeness or assessment execution. | Test (TC-061) |
 | FR-240-AC-6 | Each of the four decision-scope and surrounding-execution axes carries exactly one FR-284 member, and the complete-global-conformance axis carries exactly one FR-247 member. | Test (TC-061) |
-| FR-240-AC-4 | Two results are compared over the result identity alone; equal display names or implementations establish neither equality nor independence. | Test (TC-061) |
+| FR-240-AC-4 | Two results are compared over the result key alone; equal display names or implementations establish neither equality nor independence. | Test (TC-061) |
 | FR-240-AC-5 | No result-identity ordering is asserted by this artifact or inferred by a reader. | Test (TC-061) |
-| FR-240-AC-7 | `resultId` is derived under FR-286; same identity with different canonical result bytes and any reader-supplied default identity are refused. | Test (TC-061) |
+| FR-240-AC-7 | `resultKey` is the structural FR-286 key; the same key with different result members and any reader-supplied default key member are refused. | Test (TC-061) |
 | FR-240-AC-8 | Participation carries exactly one FR-285 value object and never an E02 target status label. | Test (TC-061) |
 | FR-240-AC-9 | Completeness carries exactly one FR-295 state derived from its exact population and remains independent from the five progress/closure facts. | Test (TC-061) |
 | FR-240-AC-10 | Claim kind, strength, admitted fragment and backend retain their exact FR-290/281/291/292 shapes and compatible membership. | Test (TC-061) |
@@ -173,8 +168,6 @@ selection. Equal display labels or implementation names establish none of them.
   retained fact.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the identity
   discipline.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the digest
-  domain vocabulary.
 - [FR-280](FR-280-assumption-state.md) defines the assumption state vocabulary
   carried here.
 - [FR-281](FR-281-claim-strength.md) states how the Engineering Assurance
@@ -184,7 +177,7 @@ selection. Equal display labels or implementation names establish none of them.
 - [FR-285](FR-285-participation-fact.md) defines source participation without
   importing E02 status labels.
 - [FR-286](FR-286-canonical-protocol-result-identity-preimage.md) defines the
-  canonical result identity preimage, byte-uniqueness rule and reader order.
+  canonical result key, uniqueness rule and reader order.
 - [FR-295](../observation/FR-295-input-completeness-state.md) defines input
   completeness independently from progress and closure.
 - [FR-290](FR-290-protocol-claim-kind.md), [FR-291](FR-291-admitted-analysis-fragment.md)
@@ -192,8 +185,8 @@ selection. Equal display labels or implementation names establish none of them.
 
 ## Resolved FS02 rulings
 
-The result identity is derived, not authored; same identity with different
-canonical bytes is invalid; and participation is a discriminated source value
+The result key is structural; the same key with different
+result members is invalid; and participation is a discriminated source value
 object rather than a status enumeration. FR-285 intentionally delegates the
 role-instance key and canonical member order to FR-212. If that selected rule is
 incomplete, construction or reordering refuses rather than falling back to

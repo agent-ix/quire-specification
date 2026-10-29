@@ -34,7 +34,7 @@ The six added kinds are trace, fault-model, review-procedure, oracle, observatio
 and review-disposition. Each names the artifact itself; none grants truth,
 independence, reviewer authentication or evidence sufficiency. No nearby generic
 kind substitutes for a requested role. The fourteen existing kinds retain their
-meanings. Authority, identity, exact byte digest and wire remain mandatory. Unknown kinds/versions and implicit cross-version joins refuse.
+meanings. Authority, identity and wire remain mandatory. Unknown kinds/versions and implicit cross-version joins refuse.
 The 1-draft envelope and 1/2-draft artifact contracts retain their original bytes
 and closed vocabulary. This amendment adds no migration inference.
 
@@ -45,7 +45,7 @@ and closed vocabulary. This amendment adds no migration inference.
 | FR-017-AC-1 | Each of the six new kinds is structurally representable under the selected versions and matches the same requested role after byte verification. | Test (TC-001) |
 | FR-017-AC-2 | Substituting a nearby generic kind or any other added kind for the requested role refuses with identity-mismatch, even when bytes and every other reference field agree. | Test (TC-002) |
 | FR-017-AC-3 | Unknown kinds, extra members and omitted required fields refuse; changing only the envelope or artifact version never selects a fallback decoder. | Test (TC-002) |
-| FR-017-AC-4 | Exact property, subject, binding, dependency-closure and run references fail matching after one-axis authority, identity, digest or wire changes. | Test (TC-002) |
+| FR-017-AC-4 | Exact property, subject, binding, dependency-closure and run references fail matching after one-axis authority, identity or wire changes. | Test (TC-002) |
 | FR-017-AC-5 | The closed state-core shared-reference 1-draft schema refuses each new role. | Test (TC-002) |
 
 ## Dependencies

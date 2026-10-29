@@ -33,7 +33,7 @@ The value has two parts: the `WitnessScheduler` and the
 
 `WitnessScheduler{entries}`: for each product state the evidence names, its
 product state key and its choice. A choice is a scheduled identity; after a
-draw with several post-states, the post-state digest chosen per drawn vector;
+draw with several post-states, the post-state key chosen per drawn vector;
 over a timed subject under every scheduler, a unit delay or an identity; over
 a timed subject under a workload with free delays
 ([FR-420](../../functional/analysis/FR-420-sample-stochastic-timed-models.md),
@@ -118,7 +118,7 @@ product state at which the claim evaluates undefined
 `replay_probabilistic_witness` recompiles the package and re-admits the
 subject's initial state and universes. For a path set it re-executes each path
 through the native transition relation with FR-181 replay, selects each
-step's successor by its post-state digest, checks that each drawn value lies
+step's successor by its post-state key, checks that each drawn value lies
 in its support and, under every scheduler or for a free delay under a
 workload, that each step takes a choice the witness scheduler gives positive
 probability at its product state and, with a
@@ -135,7 +135,7 @@ defined value disagrees.
 
 Agreement settles `refuted`, `decisive-counterexample`. Disagreement settles
 `inconclusive`, `replay-parity`. Replay refuses as FR-181 replay refuses:
-`stale_dependency`/`content-mismatch` for a digest with no matching
+`stale_dependency`/`content-mismatch` for a key with no matching
 successor; `invalid_runtime_input`/`invalid-value` for a step that is not
 enabled, a value outside its support, a choice that is not the scheduler's,
 or a path set that is not prefix-free.

@@ -94,15 +94,13 @@ The result producer SHALL NOT create a local evidence store or verification-meth
 registry.
 The result producer SHALL emit every canonical protocol result with
 `contractVersion` equal to `quire.protocol.result/v1-draft.1`, kind
-`ProtocolResult` and a `resultId` derived exactly under FR-286. The identity
-preimage is the versioned wrapper around the complete closed result with only
-`resultId` omitted. A strict reader SHALL validate closed shape, version and
-kind before recomputing the identity, and SHALL refuse a missing, stale or
-cross-domain identity. Two accepted results bearing one identity SHALL have
-byte-identical RFC 8785 canonical result bytes. A later contradiction emits a
-new identity and explicit lineage; it never reuses the old identity for changed
-bytes. No separate enclosing artifact digest is computed or compared; a strict
-reader SHALL validate cross-field and lineage rules after the result identity.
+`ProtocolResult` and a structural `resultKey` under FR-286. A strict reader SHALL validate closed shape, version and
+kind before the key, and SHALL refuse a missing, incomplete or
+key member. Two accepted results bearing one key SHALL have
+equal result members. A later contradiction emits a
+new key and explicit lineage; it never reuses the old key for changed
+members. No digest is computed or compared; a strict
+reader SHALL validate cross-field and lineage rules after the result key.
 Assessment execution states whether the requested evaluator completed or why it
 did not. Decision-scope progress and closure and surrounding-execution progress
 and closure are four independent facts with exact scope, authority and boundary
@@ -230,7 +228,7 @@ The strict reader SHALL enforce the following result-combination rules.
 | FR-061-AC-11 | Each of decision-scope progress, decision-scope closure, surrounding-execution progress and surrounding-execution closure carries exactly `open` or `closed`; `incomplete`, `contradicted`, `not-required`, `not-started`, `advanced`, `stalled`, `unobserved` or any other label on one of the four is refused. | Test (TC-061) |
 | FR-061-AC-12 | An omitted one of the four axes is refused rather than defaulted to `open` or to `closed`, and compares only to absence. | Test (TC-061) |
 | FR-061-AC-13 | A `closed` progress fact leaves its own scope's closure fact independently readable and does not close it, and a `closed` closure fact on one scope does not close the other scope. | Test (TC-061) |
-| FR-061-AC-14 | The independently recomputed FR-286 identity accepts object-member presentation permutations, changes for every semantic member mutation, and refuses missing identity or the same identity on different canonical result bytes. | Test (TC-061) |
+| FR-061-AC-14 | The FR-286 `resultKey` accepts object-member presentation permutations, changes for every key-member mutation, and refuses a missing key or the same key on different result members. | Test (TC-061) |
 | FR-061-AC-15 | Participation accepts exactly the FR-285 known/unknown shapes, retains exact role-instance and missing-dependency references, and refuses target labels, mixed variants, duplicate members or display-derived ordering. | Test (TC-061) |
 | FR-061-AC-16 | Completeness accepts exactly the FR-295 state derived from the complete required population and remains independent from all five progress/closure facts and assessment execution. | Test (TC-061) |
 | FR-061-AC-17 | Each result retains one exact FR-290 protocol-family claim kind; every advanced result retains one compatible FR-281 strength, FR-291 fragment and FR-292 backend, and unknown/absent/mismatched or display-derived selections refuse; a non-protocol FR-290 member in the claim refuses as mismatched. | Test (TC-061) |
@@ -245,7 +243,7 @@ The strict reader SHALL enforce the following result-combination rules.
 - [FR-285](../../objects/protocol/FR-285-participation-fact.md) types the source
   participation fact.
 - [FR-286](../../objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md)
-  defines the result identity preimage and validation order.
+  defines the result key and validation order.
 - [FR-295](../../objects/observation/FR-295-input-completeness-state.md)
   defines the independent input-completeness state and its population derivation.
 - [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md),

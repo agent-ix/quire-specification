@@ -63,11 +63,10 @@ unexplored frontier the same way.
 
 The simulator state key is the typed canonical form of the simulator's typed
 semantic state, control positions, queues, role lifetimes, observation
-progress and remaining bounds, serialized with RFC 8785 JCS. The state-key
-digest is SHA-256 over those canonical JCS bytes, under the
-`quire.simulation.state-key/v1` digest domain (FR-201), distinct from
-`sha256-jcs`. Coalescing compares the full state-key bytes; the digest
-identifies states only in traces and frontier records.
+progress and remaining bounds, serialized with RFC 8785 JCS. The state key is
+those canonical JCS bytes themselves; no hash of them is computed. Coalescing
+compares the full state-key bytes, and traces and frontier records carry the
+state key as that value.
 
 ### Typed canonical form
 
@@ -271,7 +270,7 @@ An unbounded domain
 or population returns the I13 `requires-bound` per-item negotiation
 disposition before exploration begins; `requires-bound` is never an evaluator
 outcome. A trace records every transition identity and remains replayable
-without the simulator. The unexplored frontier contains state-key digests
+without the simulator. The unexplored frontier contains state keys
 plus the resource limit that stopped expansion.
 
 ## Exploration from a given state and the explored graph
@@ -346,17 +345,17 @@ bound").
   `i` is `p` times the number of `O` steps among steps 1 to `i`.
 
 A timed trace step carries, beside its transition identity and post-state
-digest, `delay`: the exact non-negative rational delay before the step in the
-model's unit. The post-state digest is the canonical identity digest of the
+key, `delay`: the exact non-negative rational delay before the step in the
+model's unit. The post-state key is the canonical key of the
 discrete state and the exact clock valuation. A time-lock counterexample (`kind`
 `time-lock`) ends with its member `final_delay` ([FR-417](../temporal/FR-417-settle-time-lock-freedom.md)).
 
 **Timed replay** starts every clock at 0 and, for each step, checks that the
 delay is admissible, applies it, checks that the transition identity is
-enabled at the delayed state, selects the successor by the post-state digest,
+enabled at the delayed state, selects the successor by the post-state key,
 applies the resets and checks the target's time invariants, all in exact
 rational arithmetic. A violated delay or guard refuses
-`invalid_runtime_input`/`invalid-value`; a digest with no matching successor
+`invalid_runtime_input`/`invalid-value`; a post-state key with no matching successor
 refuses `stale_dependency`/`content-mismatch`. Every non-empty set of
 valuations of an automaton with rational constants contains a rational point,
 so every timed refutation has a counterexample with exact rational delays.
@@ -375,9 +374,9 @@ so every timed refutation has a counterexample with exact rational delays.
 | FR-181-AC-13 | Exhaustive exploration from a given state treats it as the only initial state, explores its forward closure in canonical breadth-first order under the request's limits, and retains every explored edge with each state's open or closed status. | Test (TC-335) |
 | FR-181-AC-9 | Under a workload each sampled step draws the operation by exact integer weight, the scheduled identity uniformly and each random parameter by its weights, each with its own choice index; with unit weights and one choice per step the selection equals the unweighted uniform selection. | Test (TC-354) |
 | FR-181-AC-10 | Sample `i` of test `j` among `m` tests uses trace index `i · m + j`. | Test (TC-354) |
-| FR-181-AC-11 | Timed replay checks each delay's admissibility, the guard at the delayed state, the post-state digest over the discrete state and exact clock valuation, and the target's time invariants in exact rationals; a violated delay or guard refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-369) |
+| FR-181-AC-11 | Timed replay checks each delay's admissibility, the guard at the delayed state, the post-state key over the discrete state and exact clock valuation, and the target's time invariants in exact rationals; a violated delay or guard refuses `invalid_runtime_input`/`invalid-value`. | Test (TC-369) |
 | FR-181-AC-12 | Under `time tick O period p` a position's time stamp is `p` times the number of `O` steps up to it. | Test (TC-369) |
-| FR-181-AC-25 | Over a model with `ts: Sequence<Timer>[0, 3]` the discrete state key of a state ignores the clock values and holds the data parts of the elements, the size of a `Set<Clock>` field is in the key, the valuation of a state lists exactly the live places in object, field and slot order, a step that filters out the element at slot 0 moves the clock of the element at slot 1 to slot 0 with its value, a step that inserts a fresh element at the front gives it the literal's constant and moves the others up one slot, and the post-state digest changes with the valuation and the live places. | Test (TC-369) |
+| FR-181-AC-25 | Over a model with `ts: Sequence<Timer>[0, 3]` the discrete state key of a state ignores the clock values and holds the data parts of the elements, the size of a `Set<Clock>` field is in the key, the valuation of a state lists exactly the live places in object, field and slot order, a step that filters out the element at slot 0 moves the clock of the element at slot 1 to slot 0 with its value, a step that inserts a fresh element at the front gives it the literal's constant and moves the others up one slot, and the post-state key changes with the valuation and the live places. | Test (TC-369) |
 | FR-181-AC-14 | A sampled choice whose integer total `n` exceeds `2^256` stops the whole sampling run before any draw and settles `unsupported` with cause `total-above-draw-range{total}`, `total` being `n`; no digest is computed and the sampler does not loop. | Test (TC-354) |
 | FR-181-AC-15 | A sampled choice whose integer total is exactly `2^256` accepts the draw-0 digest and selects the least index `i` with `v mod n < w_0 + … + w_i`. | Test (TC-354) |
 | FR-181-AC-16 | Two successors of one parent with equal transition identities and different post-states are visited in ascending order of their post-states' state-key bytes, whatever order the successor relation yields them in; two with equal transition identities and equal post-state keys are one successor. | Test (TC-210) |

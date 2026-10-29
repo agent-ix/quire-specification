@@ -26,10 +26,10 @@ refusal or settlement.
 
 | Vector | Counterexample and mutation | Expected result |
 | --- | --- | --- |
-| RP-01 | `Fill` deadlock (TC-376 FL-03), unmodified | members `kind: deadlock`, `subject`, `initial_state`, `prefix` of two steps (`fork(Both)`, `attempt(A)`) each with a post-state digest, empty `loop`, `blocked`; replays to `reproduced-with-evaluated-witness` |
+| RP-01 | `Fill` deadlock (TC-376 FL-03), unmodified | members `kind: deadlock`, `subject`, `initial_state`, `prefix` of two steps (`fork(Both)`, `attempt(A)`) each with a post-state key, empty `loop`, `blocked`; replays to `reproduced-with-evaluated-witness` |
 | RP-02 | RP-01 truncated after step 1 | the prefix ends at s1, which enables both attempts: settles `inconclusive`, cause `replay-parity` |
 | RP-03 | RP-01 with step 1 removed | `attempt(A)` is not enabled at s0: refuses `invalid_runtime_input`/`invalid-value` |
-| RP-04 | RP-01 with step 2's post-state digest altered | refuses `stale_dependency`/`content-mismatch` |
+| RP-04 | RP-01 with step 2's post-state key altered | refuses `stale_dependency`/`content-mismatch` |
 | RP-05 | RP-01 with `blocked` naming `left` | settles `inconclusive`, cause `replay-parity` |
 | RP-06 | RP-01 with `subject` removed, with an extra member, and with a transition identity missing `node` | each refuses before replay |
 | RP-07 | the `Fill` lasso of TC-376 FL-04 | replays: the loop is s2's terminal stutter step, and the formula is false at `trace_position` |

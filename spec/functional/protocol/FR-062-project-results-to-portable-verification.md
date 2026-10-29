@@ -65,16 +65,16 @@ exact exercised protocol obligations and cases. It SHALL NOT represent protocol
 adequacy as E02 observation adequacy or as an evidence-sufficiency decision.
 
 The derived `TechniqueResult.resultId` SHALL be distinct from the canonical
-protocol-result identity and stable for the exact tuple of canonical result
-identity, target obligation and execution-binding identities, target
+protocol-result key and stable for the exact tuple of canonical result
+key, target obligation and execution-binding identities, target
 contract version, and adapter identity and version. Changing any member of that
-tuple SHALL change the derived result identity. The result ID is
-`sha256-jcs:<lowercase-hex>` over this RFC 8785 canonical identity preimage:
+tuple SHALL change the derived result ID. The result ID is
+the RFC 8785 canonical JSON text of this derivation tuple itself, with no hash
+computed:
 
 ```json
 {
-  "identityVersion": "quire.protocol.e02-projection-identity/v1-draft.1",
-  "sourceResultRef": { "identity": "<exact-result-id>" },
+  "sourceResultRef": { "resultKey": "<exact-result-key>" },
   "targetContractVersion": "quire-verification/e02-draft-2",
   "targetBinding": {
     "propertyRef": "<exact-artifact-reference>",
@@ -83,7 +83,7 @@ tuple SHALL change the derived result identity. The result ID is
     "runRef": "<exact-artifact-reference>",
     "profile": "<exact-profile>",
     "bindingRefs": ["<ordered-exact-artifact-reference>"],
-    "dependencyClosure": "<exact-digest>",
+    "dependencyClosure": ["<ordered-exact-identity-and-version>"],
     "executionScope": "<exact-scope>"
   },
   "adapter": { "identity": "<exact-adapter-id>", "version": "<exact-version>" }
@@ -91,7 +91,7 @@ tuple SHALL change the derived result identity. The result ID is
 ```
 
 The angle-bracket strings describe typed values rather than literal wire text;
-the preimage contains their complete JSON values. `bindingRefs` uses the selected
+the tuple contains their complete JSON values. `bindingRefs` uses the selected
 E02 semantic order and SHALL NOT be resorted by presentation text.
 `nativeArtifacts` SHALL contain
 exactly one canonical-result entry with the source URI and

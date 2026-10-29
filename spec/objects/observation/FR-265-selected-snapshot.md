@@ -27,7 +27,7 @@ between a selected snapshot and a selected event-time window."
 | Subject participation | FR-112-AC-1 | "Changing a declared snapshot/window or membership rule changes the assessment subject." |
 | Declaration and membership selection | FR-112 Description | Exact population declaration key and FR-264 rule used for this capture. |
 | Capture assertion | FR-112 Behavior | Exact immutable capture identity, not an inferred timestamp. |
-| Admitted observations | FR-112 Behavior | Sorted distinct bounded FR-296 observation identities. |
+| Admitted observations | FR-112 Behavior | Sorted distinct bounded FR-296 observation keys. |
 
 ## Identity and comparison
 

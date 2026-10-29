@@ -23,7 +23,7 @@ subject. Derive:
 1. `X` unchanged.
 2. `X` with the loop's last step removed, so the loop does not close.
 3. `X` replayed against the clause with `fair weak each …`.
-4. `X` with the second step's `post_state` replaced by the digest of `(2,0)`.
+4. `X` with the second step's `post_state` replaced by the state key of `(2,0)`.
 5. A Counter prefix with four `inc` steps, the fourth at value 3.
 6. A Counter lasso whose loop is a terminal stutter step at value 2.
 7. `X` with `trace_position` 0 against `always eventually holds(c.versionNumber

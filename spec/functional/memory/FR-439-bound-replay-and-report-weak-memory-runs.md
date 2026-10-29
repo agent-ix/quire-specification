@@ -133,7 +133,7 @@ with these additions:
 - its fairness set lists the flush or visibility constraints with origin
   `memory`.
 
-The memory component is data for the reader; the post-state digest already
+The memory component is data for the reader; the post-state key already
 binds it.
 
 ### Replay
@@ -143,7 +143,7 @@ counterexample's resolved models: an access by the FR-181 successor rule over
 the thread observation, a memory step by its model's rule. It recomputes the
 memory component and refuses `stale_dependency`/`content-mismatch` when it
 differs from the carried one in any member, including a view's `frontier` or
-`owed` and the SC event graph, or the post-state digest differs, and
+`owed` and the SC event graph, or the post-state key differs, and
 `invalid_runtime_input`/`invalid-value` when a step is not enabled or a named
 message or slot does not exist. A lasso is checked against the authored,
 scheduler and memory constraints; an unfair lasso refuses. Then the formula is

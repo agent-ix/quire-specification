@@ -26,7 +26,7 @@ the checked package's domain package;
 change one identity; remove one required member; remove the external
 payment-provider record; remove closure input; offer an observation record for a member outside the
 declared closed extent; and independently mutate the population
-declaration key, membership digest, configuration digest, and closure digest.
+declaration key, membership rule, configuration identity and version, and closure identity and version.
 Repeat with adjacent half-open windows: a member at the first window's `start`,
 one exactly at its `end`, and the second window starting at that same instant.
 Repeat the selected correspondence for an event-position sequence, a
@@ -39,12 +39,10 @@ admitted event size and retained population/window-member count; repeat one
 byte or member over that exact limit. The one-over input must not be retained or
 allocated beyond its declared bound merely because the final disposition is a
 refusal.
-Derive the explicit-members, snapshot and population identities independently
-from their exact RFC 8785 preimages. Permute presentation order and then mutate
+Compare the explicit-members, snapshot and population keys componentwise. Permute presentation order and then mutate
 each semantic key component one at a time. Exercise empty, unknown, duplicate,
 unsorted-on-wire and one-over-limit member sets; exercise snapshot-only,
-window-only, neither and both selection forms; substitute a JCS digest where a
-raw-artifact digest is required and vice versa.
+window-only, neither and both selection forms.
 
 ## Expected Results
 
@@ -61,8 +59,7 @@ cross-clock inference refuse rather than manufacturing coverage.
 Exact limits retain at most their declared event and population/window-member
 state. One-over results retain no excess state and identify the affected subject
 and exceeded bound as incomplete/refused.
-Independent derivations agree byte-for-byte. Presentation permutation preserves
-identity after canonical admission, while every semantic key mutation changes
-the applicable identity. Unknown membership is not empty membership; duplicate,
-unbounded, invalid selection-cardinality and foreign-domain inputs refuse before
-a partial population or identity is exposed.
+Presentation permutation preserves key equality after canonical admission, while
+every semantic key mutation makes the applicable key unequal. Unknown membership is not empty membership; duplicate,
+unbounded and invalid selection-cardinality inputs refuse before
+a partial population or key is exposed.
