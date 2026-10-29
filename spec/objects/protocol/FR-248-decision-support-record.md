@@ -77,9 +77,6 @@ relation."
   set makes the associated truth `unavailable`; a fact missing outside a completed
   support set remains a completeness gap and does not falsify or delay a settled
   truth (FR-061, FR-094).
-- **Digest domain** — where a key component is a digest, its domain is
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
-  An identity crossing domains is unequal regardless of byte equality.
 
 ## Acceptance Criteria
 

@@ -59,7 +59,6 @@ are not members of this source object and SHALL NOT be copied back into it.
 - **Causal order** — none. Participation does not establish event order.
 - **Absence** — absence is distinct from an empty supplied collection and from
   the `unknown` variant. Required-property absence is refused.
-- **Digest domain** — not applicable; the fact carries no digest.
 
 ## Acceptance Criteria
 

@@ -53,8 +53,6 @@ participant role" (FR-054).
   unresolved, duplicate or ambiguous role reference "prevents dependent
   evaluation without removing independent valid definitions" (FR-050-AC-4); it
   is never defaulted to an empty name or to an implicit role.
-- **Digest domain** — every digest carried by the qualified linked-definition
-  identity retains its selected FR-201 domain.
 
 ## Acceptance Criteria
 

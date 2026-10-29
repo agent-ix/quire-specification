@@ -66,7 +66,6 @@ through that boundary."
   ambient default (FR-112 Behavior, FR-112-AC-4). A window with no admitted
   member is not the same as a window whose membership is unknown: "Unknown
   required membership ... cannot establish aggregate success" (FR-112 Behavior).
-- **Digest domain** — not applicable; a window carries no digest.
 
 ## Acceptance Criteria
 

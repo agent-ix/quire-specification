@@ -49,7 +49,6 @@ case convention or cross-catalog spelling alias.
 - **Absence** — a refusal emitted without a code has an absent code, which
   compares only to absence and is never defaulted to `invalid-source-result` or
   to any other member.
-- **Digest domain** — not applicable; no source-result digest is recomputed.
 
 ## Resolved code and namespace ruling
 

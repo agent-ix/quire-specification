@@ -100,7 +100,6 @@ digital source, and step order as sequence authority.
   authority or admitted order is never defaulted, and an absent runtime sample
   under a valid fixed-sample binding is classified "as incomplete" (FR-090), not
   as a value.
-- **Digest domain** — not applicable; no key component is a digest.
 
 ## A foreign binding cannot settle
 

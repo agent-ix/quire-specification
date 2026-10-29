@@ -70,7 +70,6 @@ configuration, or closure input".
   reasons." A population with unknown membership is therefore neither an empty
   population nor a complete one, and an absent component is never supplied by an
   ambient default (FR-112 Behavior, FR-112-AC-4).
-- **Digest domain** — not applicable; the population carries no digest.
 
 ## Acceptance Criteria
 

@@ -95,8 +95,7 @@ registry.
 The result producer SHALL emit every canonical protocol result with
 `contractVersion` equal to `quire.protocol.result/v1-draft.1`, kind
 `ProtocolResult` and a structural `resultKey` under FR-286. A strict reader SHALL validate closed shape, version and
-kind before the key, and SHALL refuse a missing, incomplete or
-key member. Two accepted results bearing one key SHALL have
+kind before the key, and SHALL refuse a missing or incomplete `resultKey`. Two accepted results bearing one key SHALL have
 equal result members. A later contradiction emits a
 new key and explicit lineage; it never reuses the old key for changed
 members. No digest is computed or compared; a strict

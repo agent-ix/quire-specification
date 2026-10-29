@@ -47,7 +47,6 @@ separate artifact digest is computed or compared.
   never inferred from the key, presentation order or time.
 - **Absence** — an absent `resultKey` member is refused and never supplied as a
   reader default.
-- **Digest domain** — not applicable; the key carries no digest.
 
 Two accepted canonical results with one `resultKey` SHALL have equal result
 members. The same key with different members is an invalid result, not an

@@ -45,7 +45,6 @@ key members.
 - **Causal order** — only an explicit declared causal or correction relation;
   event time, ingestion time and population order do not establish causality.
 - **Absence** — an absent key member is refused, never filled by a reader default.
-- **Digest domain** — not applicable; the key carries no digest.
 
 Two accepted observations with one key have equal canonical observation members.
 A correction preserves the predecessor's members, carries a new source ordinal

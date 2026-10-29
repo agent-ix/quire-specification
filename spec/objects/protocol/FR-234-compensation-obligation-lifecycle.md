@@ -87,8 +87,6 @@ vocabulary is [FR-236](FR-236-compensation-attempt-outcome.md).
 - **Absence** — a registration whose lifecycle state has not been reported has an
   absent state, and absence compares only to absence. It is never defaulted to
   `not_registered` or to `recovery_decided`.
-- **Digest domain** — not applicable; no key component of this object is a
-  digest.
 
 ## Acceptance Criteria
 

@@ -51,8 +51,6 @@ replace original spelling or offsets (FR-036).
   ([native diagnostics catalog](../../../proposals/quire-v1/definitions/native-diagnostics.md)),
   and FR-047-AC-4 requires that diagnostics do not reconstruct a location by
   searching for a repeated name.
-- **Digest domain** — not applicable; the region carries no digest. Its document
-  does ([FR-202](FR-202-authored-source-document.md)).
 
 ## Location kinds are distinct
 

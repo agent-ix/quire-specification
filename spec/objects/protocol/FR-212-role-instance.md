@@ -55,8 +55,6 @@ instance, refuses linking with the affected source location" (FR-050-AC-2).
   evaluation without removing independent valid definitions" (FR-050-AC-4), and
   a missing required role mapping refuses the dependent request rather than
   binding a default (FR-035-AC-5).
-- **Digest domain** — FR-287 retains the authority digest and its selected
-  FR-201 domain.
 
 ## Acceptance Criteria
 

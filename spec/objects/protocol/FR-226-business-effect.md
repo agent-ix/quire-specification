@@ -59,7 +59,6 @@ delivery, trace identifier or equal payload alone", and FR-049-AC-2 states that
   default or empty value. An attempt with no established effect has an absent
   effect, which is never compared to an unsuccessful effect or to an empty one
   (FR-051-AC-3).
-- **Digest domain** — FR-287 retains the authority digest and its FR-201 domain.
 
 ## Acceptance Criteria
 

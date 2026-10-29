@@ -68,7 +68,6 @@ cutoff rule identity and version.
   nor a violated one. An absent or mismatched restoration basis, scope, clock or
   source set "SHALL retain an incomplete or refused input" (FR-113 Behavior) and
   is never defaulted.
-- **Digest domain** — not applicable; neither carries a digest.
 
 ## Late data
 

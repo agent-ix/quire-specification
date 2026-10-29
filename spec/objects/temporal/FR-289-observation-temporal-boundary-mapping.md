@@ -53,7 +53,6 @@ upper bound without treating the half-open end as an included instant.
 - **Causal order** — supplied by the selected clock/progress authority only.
 - **Absence** — a missing carrier end, clock binding or progress authority is
   incomplete/refused and never defaulted.
-- **Digest domain** — not applicable; the mapping carries no digest.
 
 An empty or reversed native interval is not representable under the selected
 bounded-temporal-operator contract and is refused before mapping. A point

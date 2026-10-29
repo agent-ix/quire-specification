@@ -57,9 +57,6 @@ records the sentence that states each construct's rule.
   rather than receiving a default: a missing join input, a causal cycle or a
   zero-progress loop refuses admission (FR-052-AC-3). An absent optional
   component, such as an iteration maximum, compares only to absence.
-- **Digest domain** — no member of this key is a digest. Where a construct is
-  carried beside a digest in provenance, that digest carries the domain it was
-  derived under, `ix://agent-ix/quire-specification/FR-201`.
 
 ## Acceptance Criteria
 

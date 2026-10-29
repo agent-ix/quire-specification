@@ -54,7 +54,6 @@ When a numeric operand or result is checked, the checker SHALL require its named
   and from an observed logical violation; exhausted checking resources are
   reported as incomplete. Neither is a completed Boolean violation
   (FR-044-AC-5).
-- **Digest domain** — not applicable.
 
 ## Acceptance Criteria
 

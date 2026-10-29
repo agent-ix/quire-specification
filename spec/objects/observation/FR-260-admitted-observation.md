@@ -59,7 +59,6 @@ and visibility provenance."
   explicit for valuations: "A required absent valuation SHALL be incomplete or
   refused, never false or an implicit option-none." Absence never becomes a
   default, an empty value or an implicit option-none.
-- **Digest domain** — not applicable; the observation carries no digest.
 
 ## Acceptance Criteria
 

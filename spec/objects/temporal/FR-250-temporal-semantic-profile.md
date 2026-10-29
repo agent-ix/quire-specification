@@ -73,7 +73,6 @@ target as absent.
   unsupported dimension", and FR-090-AC-2 holds that "Unknown, multiply
   selected or internally inconsistent profile/clock definitions refuse before
   evaluation". An absent profile is never defaulted to a member.
-- **Digest domain** — not applicable; the key carries no digest.
 
 ## Meaning change requires a new identity
 

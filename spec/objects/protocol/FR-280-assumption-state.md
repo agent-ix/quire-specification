@@ -43,7 +43,6 @@ identity and one state from `met`, `not-met`, `unknown` or `not-assessed`."
 - **Absence** — an assumption retained without a state has an absent state,
   which compares only to absence. It is never defaulted to `not-assessed` or to
   `unknown`; those are two distinct assessed outcomes.
-- **Digest domain** — not applicable.
 
 ## Acceptance Criteria
 

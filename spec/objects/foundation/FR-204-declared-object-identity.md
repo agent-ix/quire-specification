@@ -57,12 +57,6 @@ When identity-bearing objects are compared, the evaluator SHALL compare their un
   absence. It is never defaulted to a current or ambient universe. An unlinked
   syntax tree cannot claim a typed-expression canonical identity
   ([FR-015](../../functional/foundation/FR-015-preserve-canonical-domains.md)-AC-4).
-- **Digest domain** — not applicable to `object_identity`; a declared object
-  identity is authored, not digested. Under `quire.model.complete/v1` the
-  universe and type components are QSL-derived identities in the
-  `quire.model.object-universe/v2` and `quire.model.effective-declaration/v2`
-  domains; their key bytes are the domain string followed by the digest bytes. Where a derived identity is digested instead, its domain is
-  selected under [FR-201](FR-201-canonical-identity-domain.md).
 
 ## Cross-universe comparison
 

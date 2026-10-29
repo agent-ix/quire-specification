@@ -47,7 +47,6 @@ FR-112 Behavior requires that members be "exactly listed", and that
   is refused "rather than supplying a population, membership,
   configuration, or closure input" (FR-112 Behavior); it is never defaulted to a
   current or compatible-looking rule, and never to an empty population.
-- **Digest domain** — not applicable; the rule carries no digest.
 
 ## Acceptance Criteria
 

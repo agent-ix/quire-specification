@@ -87,10 +87,6 @@ component of that key is taken from anywhere else.
   requires, never an empty identity, a caller-selected obligation or a
   successful binding. An `origin` row carries the workflow execution identity
   as its origin identity, never an absent trigger placeholder (FR-230-AC-4).
-- **Digest domain** — every carried definition, observation or
-  activation-result digest retains its owner-selected domain
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)). Equal bytes
-  from different domains compare unequal.
 
 ## Refusals
 

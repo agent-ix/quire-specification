@@ -51,7 +51,6 @@ every qualifier above.
   closure is present. Missing, ambiguous, foreign or conflicting qualifiers
   refuse the dependent definition; none is defaulted from a current package,
   ambient profile, declaration name or table position.
-- **Digest domain** — not applicable; the key carries no digest.
 
 Display names, paths, spans, build provenance, runtime configuration values and
 observations are not standalone key members and cannot substitute for one.
@@ -78,8 +77,6 @@ selection changes the definition identity.
   retains the protocol declaration, formal owner and selected definitions.
 - [FR-202](../foundation/FR-202-authored-source-document.md) supplies the exact
   source-document key.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) governs every
-  retained digest domain.
 - [FR-200](../foundation/FR-200-quire-assessment-domain.md) supplies the object
   identity discipline.
 

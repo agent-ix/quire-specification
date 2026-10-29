@@ -57,9 +57,6 @@ produce no semantic tokens (FR-036).
   defaulted to the empty digest. A changed
   definition digest prevents reuse of the earlier semantic subject
   ([FR-001](../../functional/foundation/FR-001-select-native-profile.md)-AC-3).
-- **Digest domain** — `raw-artifact-digest` under
-  [FR-201](FR-201-canonical-identity-domain.md). A digest carried in another
-  domain is not equal to this one regardless of byte equality.
 
 ## Acceptance Criteria
 

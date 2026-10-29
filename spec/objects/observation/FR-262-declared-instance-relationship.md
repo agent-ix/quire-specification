@@ -68,7 +68,6 @@ infrastructure."
   refuse. Absence of any admitted candidate for a required slot is the distinct
   `missing` incomplete outcome, never a default relationship. A conflicting or
   ambiguous candidate refuses.
-- **Digest domain** — not applicable; the relationship carries no digest.
 
 ## Correlation outcomes and distinct subjects
 

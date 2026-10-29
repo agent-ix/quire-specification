@@ -68,10 +68,6 @@ created.
   Whole-execution origin carries its workflow execution identity rather than an
   absent trigger placeholder, and it never compares equal to trigger-event
   origin. Absence is never defaulted to an empty identity.
-- **Digest domain** — no key component of this object is a digest. Where a
-  component identity is carried as a digest, it retains the domain selected under
-  [FR-201](../foundation/FR-201-canonical-identity-domain.md), and an identity
-  crossing domains is unequal regardless of byte equality.
 
 ## Acceptance Criteria
 

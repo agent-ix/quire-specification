@@ -42,7 +42,6 @@ to the complete ordered record set and source/profile/generator selections.
   optional parser/tool observations reference the immutable package afterward.
 - **Absence** — a missing property or record prevents package construction. No
   partial package or identity is exposed after refusal, cancellation or exhaustion.
-- **Digest domain** — not applicable; the package carries no digest.
 
 ## Aggregate invariants
 

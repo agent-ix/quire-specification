@@ -55,7 +55,6 @@ When a canonical protocol result is projected to portable verification, the proj
   default or empty value. FR-062 refuses the projection when "an exact context or
   canonical-result reference is missing or conflicting"; an absent context is a
   refusal, not an empty binding.
-- **Digest domain** — not applicable; the result ID carries no digest.
 
 ## Refusal codes
 

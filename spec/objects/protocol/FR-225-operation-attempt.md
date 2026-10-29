@@ -79,7 +79,6 @@ successful retry retains both attempts and one successful refund effect", is a
 - **Absence** — every FR-287 component is required and never defaulted. An
   attempt without an effect retains an absent effect relationship, not an empty
   effect identity.
-- **Digest domain** — FR-287 retains the authority digest and its FR-201 domain.
 
 ## Acceptance Criteria
 

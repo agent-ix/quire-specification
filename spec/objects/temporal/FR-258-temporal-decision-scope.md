@@ -100,10 +100,6 @@ incomplete input."
   complete. FR-061 states that "A strict reader SHALL refuse an omitted required
   axis, cross-scope substitution, global premise under `not-required`, or global
   claim without its complete-global-conformance closure record."
-- **Digest domain** — a scope or support identity carried as a digest retains
-  the domain it was derived under
-  ([FR-201](../foundation/FR-201-canonical-identity-domain.md)); an identity
-  crossing domains is unequal regardless of byte equality.
 
 ## Early settlement on an open scope
 

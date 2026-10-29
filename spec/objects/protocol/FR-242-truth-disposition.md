@@ -40,9 +40,6 @@ When a result reports the truth of an assessed obligation, the strict reader SHA
   derived from key order, timestamp or source position.
 - **Absence** — an absent truth compares only to absence. It is distinct from
   `unavailable`, which is a supplied value, and it is never defaulted.
-- **Digest domain** — not applicable; this key contains no digest. See
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md)
-  for the containing result's digest domain.
 
 ## Temporal boundary correspondence
 

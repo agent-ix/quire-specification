@@ -40,7 +40,6 @@ missing, evicted or unmatched predecessor remains missing history.
   admitted causal order.
 - **Absence** — absent/unknown kind is refused and never defaulted to either
   member.
-- **Digest domain** — not applicable.
 
 ## Acceptance Criteria
 

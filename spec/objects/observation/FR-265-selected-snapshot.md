@@ -44,7 +44,6 @@ between a selected snapshot and a selected event-time window."
 - **Absence** — an absent key component compares only to absence. A missing
   selected identity is refused rather than supplied by an ambient default
   (FR-112 Behavior, FR-112-AC-4).
-- **Digest domain** — not applicable; the snapshot carries no digest.
 
 ## Acceptance Criteria
 

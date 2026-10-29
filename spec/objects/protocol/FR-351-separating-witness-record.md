@@ -70,9 +70,6 @@ A separating witness accompanies only a `decisive-witness` or `decisive-countere
   absent; there is no partial record. A witness absent under a `decisive-witness`
   or `decisive-counterexample` basis is a refusal, not an empty substitute
   (see **Witness-free dispositions**).
-- **Digest domain** — where a key component is a digest, its domain is
-  [`ix://agent-ix/quire-specification/FR-201`](../foundation/FR-201-canonical-identity-domain.md).
-  An identity crossing domains is unequal regardless of byte equality.
 
 ## Acceptance Criteria
 

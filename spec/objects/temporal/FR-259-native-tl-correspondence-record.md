@@ -82,11 +82,6 @@ and valuation request when the selected TL profile does not encode them."
   temporal bridge shall not use a backend, syntax or historical result to repair
   an unknown mapping, substitute a profile or synthesize missing
   correspondence."
-- **Digest domain** — the native source digest and bridge-definition digest use
-  FR-201 `raw-artifact-digest`. Generated TL identities retain their selected
-  owner domains. The bridge-owned correspondence artifact reference is derived
-  over the complete key under its exact selected bridge contract and does not
-  restamp any source or target identity.
 
 ## Identifier namespaces stay separate
 
