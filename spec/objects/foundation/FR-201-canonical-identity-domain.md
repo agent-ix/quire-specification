@@ -30,7 +30,7 @@ equality.
 | `quire.checked-semantic-node/v1` | Checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
 | `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
 | `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
-| `quire.model.effective-declaration/v2` | (BLOCKED-BY STD-604, owner: planner titan:QSL:plan; effective-declaration hash identity) QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from `sha256-jcs` and from the `quire.checked-semantic-node/v1` domain. |
+| `quire.model.effective-declaration/v2` | (BLOCKED-BY STD-604, owner: planner titan:QSL:plan; effective-declaration hash identity) QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from the `quire.checked-semantic-node/v1` domain. |
 | `quire.model.effective-view/v2` | (BLOCKED-BY STD-604, owner: planner titan:QSL:plan; effective-view hash identity) QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. |
 | `quire.model.object-universe/v2` | (BLOCKED-BY STD-604, owner: planner titan:QSL:plan; object-universe hash identity) QSL-derived object-universe identity for a connected supertype component. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection and its sorted root effective-declaration identities (FR-150). Distinct from every other identity/digest domain. |
 | `quire.ir-proof.obligation-identity/v1` | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; obligation_identity hash) CG obligation identity. SHA-256 over the RFC 8785 canonical bytes, through QSL ADR-013 §2's one encoder, of an object with exactly four members: the subject node id, the subject's occurrence key (`node_id`, `role`, `ordinal`), the obligation kind and `arguments`, except for a parity claim, whose whole preimage is the QSL ADR-013 O-09 parity preimage (members `arguments`, `node`, `obligation_kind` and `occurrence_key` = `{ordinal, role}`). The subject is a clause, an operation application, a function (occurrence role `declaration`) or the application node of a parity claim (occurrence role `expression`). For a clause, an application or a function, `arguments` holds one entry per parameter, each a parameter node id with its declared per-argument domain; for a parity claim it holds one entry per operand position, each `{operand, position, domain}`, as that preimage encodes it. A per-step protocol record is one other form: its object has exactly the members `subject_kind` (the string `protocol-refinement-step`) and `record` (the canonical `StepSimulationRecord`), and no occurrence key. A function-value parity claim (QSL FR-357, function level) is the other: its object has exactly the members `subject_kind` (the string `function-value-parity`), `node` (the function node id), `occurrence_key` (`{ordinal: 0, role: "declaration"}`) and `arguments` (one `{parameter, position, type}` entry per declared parameter in declared order, `type` the parameter node's `semantic_type`), with no obligation kind, as QSL FR-484 spells it. Every other member of the CG obligation record (resource ceilings, embedded oracles, module, harness and contract symbols, subject path, results, solver, unwind and options), `source_span` and every source region are outside the preimage, so changing any of them leaves the identity unchanged. CG mints the digest for the clause, application, function, parity and per-step forms; QSL recomputes the parity form from the same preimage, and QSL alone mints the function-value parity form (at `qsl_replay::call_site`) and recomputes it at replay. Distinct from `quire.checked-semantic-node/v1` and every other identity/digest domain. |
@@ -52,14 +52,11 @@ equality.
   unequal. Byte equality of their digests does not make them equal, and a raw
   `sha256` digest cannot substitute for another domain's digest.
 
-## Removed domains
+## Remaining dependents
 
-The `sha256-jcs` and `quire.verification.jcs` domains and the `ir-semantic` row are removed
-with no replacement. The files that still cite them are edited by the open STD-583
-stack and carry that PR as the blocker: BLOCKED-BY QSpec #517 (FR-322, IT-070,
-TC-952, AD-006, `proposals/checked-package-v2/README.md`) and BLOCKED-BY QSpec #518
-(`proposals/backend-provider-v1`, `proposals/checked-package-v2` data,
-`proposals/conformance-corpus-v1` and the tests that read them).
+BLOCKED-BY QSpec #517: FR-322, IT-070, TC-952, AD-006, `proposals/checked-package-v2/README.md`.
+
+BLOCKED-BY QSpec #518: `proposals/backend-provider-v1`, the `proposals/checked-package-v2` data files, `proposals/conformance-corpus-v1`, `tests/backend_provider_v1.rs`, `tests/checked_package_v2.rs` and `tests/model_member_types.rs`.
 
 ## Acceptance Criteria
 

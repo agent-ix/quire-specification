@@ -29,7 +29,7 @@ Imports, source maps, dependency closure and evidence subjects.
 
 ## Verification
 
-Run one-axis authority, identity and wire mutations. The stale-digest mutation metric is withdrawn: no digest is stored. Do not replace semantic validation with schema success.
+Run one-axis authority, identity and wire mutations. Do not replace semantic validation with schema success.
 
 ## Dependencies
 

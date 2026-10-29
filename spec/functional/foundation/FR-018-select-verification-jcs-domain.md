@@ -10,7 +10,7 @@ relationships:
 
 ## Description
 
-Withdrawn: JCS identity domain removed. The id and filename are kept and are not reused.
+Withdrawn: JCS identity domain removed.
 
 ## Acceptance Criteria
 

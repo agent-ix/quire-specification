@@ -10,8 +10,7 @@ relationships:
 
 ## Description
 
-Withdrawn: JCS identity domain removed. The id and filename are kept and are not reused.
-The required-feature comparison is [TC-975](TC-975-compare-required-feature-sets.md).
+Withdrawn: JCS identity domain removed.
 
 ## Test Procedure
 

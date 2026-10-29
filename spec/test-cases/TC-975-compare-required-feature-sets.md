@@ -10,7 +10,7 @@ relationships:
 
 ## Description
 
-Portable contract control for FR-486-AC-1. New id; it replaces nothing under TC-003.
+Portable contract control for FR-486-AC-1.
 
 ## Test Procedure
 

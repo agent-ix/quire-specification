@@ -15,8 +15,6 @@ relationships:
 ---
 # Implementation Plan: FS05 interchange and migration acceptance
 
-> Superseded in part: this completed plan instructs stored digests, the verification JCS identity domain and digest-keyed vectors. Those were removed (artifact-ref/3-draft, shared-reference/2-draft; FR-018-AC-1, -2, -3, -5, -6, TC-004 and IT-003-SC-02 withdrawn). Treat those instructions as historical.
-
 ## Requirements Summary
 
 ### Functional requirements

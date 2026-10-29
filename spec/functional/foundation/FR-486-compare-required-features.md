@@ -43,4 +43,4 @@ independently of the order it was written in. No global array sort applies.
 
 ## Status
 
-New id. It carries what FR-018-AC-4 once stated; FR-018 is fully withdrawn.
+Accepted.

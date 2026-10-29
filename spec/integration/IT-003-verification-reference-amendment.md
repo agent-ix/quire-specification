@@ -38,7 +38,7 @@ mismatches, and an explicitly synthetic disposition and core.
 
 1. Validate the closed schema and positive/adverse structure (30 seconds).
    - IT-003-SC-01: Actual validation agrees with each structural expectation and records that role/identity semantics require further checks.
-2. IT-003-SC-02 is withdrawn with the JCS canonical vectors it exercised; its number is not reused.
+2. IT-003-SC-02: Withdrawn.
 3. Pass the packet through B's adopted strict shared reader and selected report definition (30 seconds).
    - IT-003-SC-03: Exact-role/version/identity controls and actual report correspondence receive the specified outcomes.
 
