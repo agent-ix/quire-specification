@@ -26040,10 +26040,10 @@ fn tc_367_place_path_key_decides_a_shared_region() {
 
 #[trace("TC-367", "FR-322-AC-267", "FR-415-AC-25")]
 #[test]
-fn tc_367_unbuilt_clause_forms_are_published() {
+fn tc_367_excluded_clause_forms_are_published() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
-    let unbuilt = &vectors["unbuilt_forms"];
-    assert_eq!(unbuilt["ticket"], "STD-560");
+    let unbuilt = &vectors["excluded_forms"];
+    assert!(unbuilt.get("ticket").is_none(), "an exclusion is a rule and names no ticket");
     assert_eq!(unbuilt["rule"], "FR-322-AC-267");
     assert_eq!(FR322_BODY_STEPS.matches("| FR-322-AC-267 |").count(), 1);
     assert_eq!(FR415_DECLARE_CLOCKS.matches("| FR-415-AC-25 |").count(), 1);
@@ -26059,7 +26059,7 @@ fn tc_367_unbuilt_clause_forms_are_published() {
         match case["expected"].as_str().unwrap() {
             "refused" => {
                 assert_eq!(case["expected_code"], "unsupported_construct", "{id}");
-                assert_eq!(case["expected_cause"], "not-yet-implemented", "{id}");
+                assert_eq!(case["expected_cause"], "expression-form", "{id}");
                 let row = case["reader_row"].as_str().unwrap();
                 assert!(case_ids.contains(row), "{id}: reader row {row} is a published case");
             }
@@ -26079,7 +26079,7 @@ fn tc_367_unbuilt_clause_forms_are_published() {
     }
     // FR-322 states the exclusions in its own words.
     let text = FR322_BODY_STEPS.split_whitespace().collect::<Vec<_>>().join(" ");
-    for sentence in ["Forms the package does not build", "STD-560", "part pairs a predicate with at least one constraint", "drop is not a reset", "whole-collection write", "presence requirement is not a write", "reads no element data"] {
+    for sentence in ["Forms the package excludes", "part pairs a predicate with at least one constraint", "drop is not a reset", "whole-collection write", "presence requirement is not a write", "reads no element data"] {
         assert!(text.contains(sentence), "FR-322 says: {sentence}");
     }
 }

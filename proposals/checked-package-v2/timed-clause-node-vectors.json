@@ -9553,10 +9553,9 @@
       "locus_suffix": "members/4/value"
     }
   ],
-  "unbuilt_forms": {
-    "ticket": "STD-560",
+  "excluded_forms": {
     "rule": "FR-322-AC-267",
-    "note": "Producer-level cases, like QN-01 and QN-02: source text and the refusal the checked-package producer gives, not package patches, because no package is emitted for a refused form. Each refused form is valid source (FR-415) that the producer does not build in this version, so it is unsupported_construct/not-yet-implemented (the source is not wrong), refused at the form, naming the form and STD-560; the producer writes no clause node for the operation and does not approximate the form. The `built` cases are controls: the form is built, and the package row that pins it is named. The package rows CL-20, CL-55 and CL-56 pin the reader side of the same exclusions (a part with no constraint, a reset with no value, a reset with no slot term for a collection place). Test tc_367_unbuilt_clause_forms_are_published pins the codes, the causes and that FR-322-AC-267, FR-415-AC-25 and TC-367 CK-38 name them; no reader or producer in this repository executes them (the producer is quire-spec-language, QSL).",
+    "note": "Producer-level cases, like QN-01 and QN-02: source text and the refusal the checked-package producer gives, not package patches, because no package is emitted for a refused form. Each refused form is excluded from the checked package by rule: the producer refuses unsupported_construct/expression-form at the form, naming the construct, writes no clause node for the operation and does not approximate the form. The `built` cases are controls: the form is built, and the package row that pins it is named. The package rows CL-20, CL-55 and CL-56 pin the reader side of the same exclusions (a part with no constraint, a reset with no value, a reset with no slot term for a collection place). Test tc_367_excluded_clause_forms_are_published pins the codes, the causes and that FR-322-AC-267, FR-415-AC-25 and TC-367 CK-38 name them; no reader or producer in this repository executes them (the producer is quire-spec-language, QSL).",
     "cases": [
       {
         "id": "GJ-01",
@@ -9564,7 +9563,7 @@
         "source": "guard: self.x >= 1 ms or self.versionNumber > 0",
         "expected": "refused",
         "expected_code": "unsupported_construct",
-        "expected_cause": "not-yet-implemented",
+        "expected_cause": "expression-form",
         "locus": "the disjunct that reads no clock",
         "reader_row": "CL-20"
       },
@@ -9591,7 +9590,7 @@
         "source": "post self.ts = sequence[Timer { x: 0 ms, n: 1 }]",
         "expected": "refused",
         "expected_code": "unsupported_construct",
-        "expected_cause": "not-yet-implemented",
+        "expected_cause": "expression-form",
         "locus": "the write",
         "reader_row": "CL-56"
       },
@@ -9601,7 +9600,7 @@
         "source": "post self.ts = filter(e in self.ts: e.n > 1)",
         "expected": "refused",
         "expected_code": "unsupported_construct",
-        "expected_cause": "not-yet-implemented",
+        "expected_cause": "expression-form",
         "locus": "the write",
         "reader_row": "CL-56"
       },
@@ -9611,7 +9610,7 @@
         "source": "post self.v = absent",
         "expected": "refused",
         "expected_code": "unsupported_construct",
-        "expected_cause": "not-yet-implemented",
+        "expected_cause": "expression-form",
         "locus": "the write",
         "reader_row": "CL-55"
       },
@@ -9641,7 +9640,7 @@
         "source": "post forall(e in self.ts: e.n > 1 implies e.x = 0 ms)",
         "expected": "refused",
         "expected_code": "unsupported_construct",
-        "expected_cause": "not-yet-implemented",
+        "expected_cause": "expression-form",
         "locus": "the condition",
         "reader_row": "CL-12"
       },
