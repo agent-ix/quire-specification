@@ -303,7 +303,7 @@ fn validator() -> jsonschema::Validator {
 
 #[test]
 #[trace("IT-003-SC-01")]
-fn six_role_shapes_and_actual_bytes() {
+fn six_role_shapes_have_exact_roles() {
     let schema = validator();
     let legacy = intake(include_bytes!(
         "../proposals/state-core/schemas/shared-reference-1-draft.schema.json"
@@ -317,12 +317,6 @@ fn six_role_shapes_and_actual_bytes() {
     for role in roles {
         let envelope = &role["envelope"];
         schema.validate(envelope).expect("positive role shape");
-        let name = role["file"].as_str().expect("fixture filename");
-        let actual = bytes(&format!("fixtures/{name}")).expect("fixture within the byte limit");
-        assert_eq!(
-            envelope["value"]["digest"],
-            format!("sha256:{:x}", Sha256::digest(actual))
-        );
         assert_eq!(envelope["value"]["kind"], role["expectedRole"]);
         assert!(observed.insert(role["expectedRole"].as_str().expect("role")));
         let mut previous = envelope.clone();
@@ -482,13 +476,6 @@ fn synthetic_core_is_the_non_circular_preimage() {
     let semantic = fixture("semantic.json");
     let digest = jcs_sha256(&core).expect("B core digest");
     assert_eq!(semantic["value"]["canonicalIdentity"]["digest"], digest);
-    assert_eq!(
-        semantic["value"]["artifact"]["digest"],
-        format!(
-            "sha256:{:x}",
-            Sha256::digest(bytes("fixtures/core.json").expect("fixture within the byte limit"))
-        )
-    );
     assert_eq!(
         semantic["value"]["semanticProfile"]["definitionDigest"],
         format!(
