@@ -9585,12 +9585,7 @@
         "source": "guard: self.x >= 0 ms or self.versionNumber > 0",
         "expected": "built",
         "note": "the source constraint x >= 0 ms is a constraint and builds as written; the producer never inserts a constraint to give a data-only disjunct one",
-        "package_case": "CL-01",
-        "node_index": 47,
-        "built_node": {
-          "form": "clock_guard",
-          "parts": 2
-        }
+        "package_note": "GJ-03 has no package row of its own: the clause fixture holds no guard whose part is a data predicate with a zero-bound constraint. It builds as GJ-02 does (one part, a predicate and the constraint x >= 0 ms), pinned by the part rule of CL-01 and the rule that a part holds at least one constraint (CL-20)."
       },
       {
         "id": "CW-01",

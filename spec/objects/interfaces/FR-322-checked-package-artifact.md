@@ -3081,12 +3081,18 @@ written above, pinned by a package row. The producer-level cases are the
   has slot steps for, so no reset names a collection as a whole (`CL-56`, the
   slot count). The class is a write whose value is a collection of clock-bearing
   elements: a `sequence[...]`, `set[...]`, `bag[...]` or map literal, `filter`,
-  `flatten`, concatenation, slicing, reordering, and a map entry or element
-  written as a literal (`self.m[k] = Timer { ... }`), each of which creates,
-  carries or removes slots. A write of a non-collection composite is not in the
+  `flatten`, concatenation, slicing, reordering, and a collection element
+  written as a literal (a map entry `self.m[k] = Timer { ... }` or an ordered
+  element `self.ts[i] = Timer { ... }`), each of which creates, carries or
+  removes slots. A write of a non-collection composite is not in the
   class: `self.o = Timer { x: 0 ms, n: 3 }` is the reset of the place `o.x` to
   `0 ms` (making an `Option<Timer>` place present) together with an ordinary data
-  write of `n`, and is built. A constant write to a guarded place is a reset and makes the
+  write of `n`, and is built. The drop is the write `absent` to an `Option<Clock>`
+  place (or a slot of `Sequence<Option<Clock>>`), whose presence is a runtime
+  bit; `self.o = absent` over `o: Option<Timer>` is not that drop, because the
+  presence of `o.x` is derived from the data case of `o` (Presence, above), so it
+  is an ordinary data write that builds no clause node and ends the presence of
+  `o.x` with it. A constant write to a guarded place is a reset and makes the
   place present (`CW-04`, node 82). A presence requirement is not a write
   (`CW-05`): `present(p)` in a postcondition is a `presence_read` expression of
   the postcondition and not a clause, so the package carries no node for it; a

@@ -26041,6 +26041,11 @@ fn tc_367_excluded_clause_forms_are_published() {
                 }
             }
             "built" => {
+                if case.get("node_index").is_none() {
+                    assert_eq!(id, "GJ-03", "only GJ-03 has no package row of its own");
+                    assert!(case["package_note"].is_string(), "{id}: says why it has no package row");
+                    continue;
+                }
                 assert_eq!(case["package_case"], "CL-01", "{id}");
                 let nodes = package["semantic_graph"]["nodes"].as_array().unwrap();
                 let node = &nodes[case["node_index"].as_u64().unwrap() as usize];

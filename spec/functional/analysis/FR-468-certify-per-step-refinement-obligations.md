@@ -127,4 +127,4 @@ When the declaration's `F_A` is non-empty, the liveness half is decided by the e
 - [FR-290](../../objects/protocol/FR-290-protocol-claim-kind.md) owns the `operation-contract` kind.
 - [FR-354](../ir-proof/FR-354-record-proof-trust-basis.md) owns the checker outcome to certification table.
 - [FR-331](../../objects/interfaces/FR-331-backend-provider-envelope.md) owns the closed `certification` values, the `extent` wire form and the causes this requirement uses.
-- QSL FR-146 (Claim extent) states the roots and classification of the QSL request writer: the `reaches` roots for a step query and the covering populations for the initial query. The roots above are a superset of those.
+- QSL FR-146 (Claim extent) states the same roots and classification for the QSL request writer.

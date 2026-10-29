@@ -364,8 +364,8 @@ disjunction in a guard is a union of convex constraints.
 ### Forms the checked package excludes
 
 The checked package (FR-322 "Clause nodes") builds the guard, the reset to a
-constant, the invariant and the constraint of the sections above, and three
-three forms it excludes by rule: a guard disjunct that
+constant, the invariant and the constraint of the sections above, and excludes
+three forms by rule: a guard disjunct that
 reads no clock (a disjunct is a package part only when it holds a clock
 constraint), a clock write that is not a reset to a constant (a
 whole-collection write of a clock collection and `self.v = absent`), and a
@@ -373,15 +373,22 @@ selection reset whose condition reads the data part of the selected element.
 The language rules above are unchanged: FR-415-AC-7, AC-11, AC-12 and AC-14 and
 TC-367 CK-15 to CK-20 state what those forms mean in the language
 (`self.v = absent`, `self.ts = sequence[...]` or `filter(...)`,
-`forall(e in self.ts: e.n > 1 implies e.x = 0 ms)`, `self.o = absent`), and a
+`forall(e in self.ts: e.n > 1 implies e.x = 0 ms)`), and a
 frontend that produces a checked package refuses the forms listed here per
 FR-415-AC-25 instead of building them, so no form is both required to be
 supported by the package and refused. A write of a non-collection composite
 (`self.o = Timer { x: 0 ms, n: 3 }`) is not excluded: it is the reset of each
 clock component and an ordinary data write. The collection class is a write
 whose value is a collection of clock-bearing elements (a literal, `filter`,
-`flatten`, concatenation, slicing, reordering, or a map entry written as a
-literal). The producer refuses each
+`flatten`, concatenation, slicing, reordering) or a collection element written
+as a literal (a map entry `self.m[k] = Timer { ... }` or an ordered element
+`self.ts[i] = Timer { ... }`). The drop is the write `absent` to an
+`Option<Clock>` place (`self.v = absent`, or a slot of `Sequence<Option<Clock>>`),
+whose presence is a runtime bit that only a write can change. `self.o = absent`
+over `o: Option<Timer>` (FR-415-AC-14) is not that drop: the presence of `o.x`
+is derived from the data case of `o`, so the write is an ordinary data write of
+`o`, builds no clause node, and `o.x` ceases to be present with it. The producer
+refuses each
 `unsupported_construct`/`expression-form` at the form, naming the construct, and
 writes no clause node and no approximation. A presence requirement in a
 postcondition is a data predicate and not a write, so it has no clause node
