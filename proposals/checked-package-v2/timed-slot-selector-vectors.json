@@ -5540,7 +5540,7 @@
     },
     {
       "id": "GD-02",
-      "subject": "a second node of the path of SL-07",
+      "subject": "a second node of the path of SL-07 whose last resolved_path row names a member the selected declaration lacks",
       "mutation": "duplicate-place-different-resolved-path",
       "fixture": "fixtures/positive-timed-slot-nodes.json",
       "patch": [
@@ -6038,10 +6038,10 @@
       ],
       "schema": "valid",
       "expected_code": "invalid_package",
-      "expected_cause": "duplicate-clock-place",
-      "locus": "/semantic_graph/nodes/52/body/members/3/value/members/9",
-      "locus_suffix": "body/members/3/value/members/9",
-      "expected": "a second place node of SL-07's path is added before the model_root and listed last in the root's clock_places; identity is the complete body and a place has no field but model, path and resolved_path, so a second node of one path can differ only in the derived resolved_path (here the member identity of its last row); both are listed, so the reader refuses at the later reference before joining any row; the patch ends with the recomputed root key, its source_map entry and package_id"
+      "expected_cause": "malformed-clock-place",
+      "locus": "/semantic_graph/nodes/72/body/members/2/value/members/1",
+      "locus_suffix": "body/members/2/value/members/1",
+      "expected": "a second place node of SL-07's path is added before the model_root and listed last in the root's clock_places; identity is the complete body and a place has no field but model, path and resolved_path, so a second node of one path can differ only in the derived resolved_path (here the member identity of its last row), which is then forged: no valid second node of a path exists. The row join of every place node (FR-322-AC-124) runs before the root's aggregates are read, so the reader refuses the twin at its forged row; duplicate-clock-place is reachable only for a repeated path whose every row joins, which no conforming package contains; the patch ends with the recomputed root key, its source_map entry and package_id"
     },
     {
       "id": "GD-03",
@@ -6419,7 +6419,7 @@
       },
       {
         "id": "AO-10",
-        "subject": "GD-02's duplicate of s given the region of s and listed right after it: equal region and equal path, so the order key is equal and the member is refused as out of order, before and instead of duplicate-clock-place",
+        "subject": "GD-02's duplicate of s given the region of s and listed right after it: equal region and equal path, so the order key is equal and the member is refused as out of order, before and instead of the twin's malformed-clock-place row refusal",
         "fixture": "fixtures/positive-timed-slot-nodes.json",
         "patch": [
           {

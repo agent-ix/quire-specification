@@ -2,9 +2,9 @@
   "version": "quire.checked-timed-clause-node-vectors/v1",
   "fixture": "fixtures/positive-timed-clause-nodes.json",
   "selected_document": "domain-package-acme-timed-clauses.json",
-  "selection_digest": "0e04d2f58fcba3bc8bbe42e82d2d27988963d019c0873ded5ef164954d6ce9ec",
-  "selected_package_id": "1a10a3ca69da124baa3e3619b8df290690b43a6d7f71fa5433151df72bbf2bb7",
-  "note": "The clause package is the dense timed fixture plus the places, anchors, frames, parameters, constraints, resets, guard and invariant that CL-01 lists; every clause is listed by the root and every reference is joined. The two clock-bearing operations are arm(c: Clock), touch(i: Integer) and size(); a clause refers to an operation by the operation_anchor node of its declaring model with no execution point (FR-342-AC-11).",
+  "selection_digest": "7ada0ecf0efe325e63511b0d81a1f8dceac4c83d46b3f8f1062e5606c763aab4",
+  "selected_package_id": "1a85b2da3c05c6fc252e02aba1e3aaf095b012197505ee4297f83ddbbf28860d",
+  "note": "The clause package is the dense timed fixture plus the places, anchors, frames, parameters, constraints, resets, guard and invariant that CL-01 lists; every clause is listed by the root and every reference is joined. The two clock-bearing operations are arm(c: Clock), touch(i: Integer) and size(); a clause refers to an operation by the operation_anchor node of its declaring model with no execution point (FR-342-AC-11). The selected document also declares the entity Gadget with one operation, ping(), only so that CL-25 can name an anchor of another model; no other clause names it.",
   "node_indexes": {
     "clock_constraint_place": [
       51,
@@ -145,7 +145,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "69a05868a6f3c5afe8e08297ef5e6cc1faa0a578b2c9e7889a92f21fd1350a09"
+          "value": "225c8dc441d7a8d3909aa44c032c6afaae3603319c3a35d218042c78e1e77751"
         },
         {
           "op": "replace",
@@ -264,7 +264,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "bdb4764a85dfddc002ce292f2d2473be6561d16ce5d8faef5ad008277fbbdd7f"
+          "value": "91738ab80b7e13d4f1434f39bd079508d32f00c2099d1e276ee45456547355b4"
         },
         {
           "op": "replace",
@@ -390,7 +390,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "0ada5e70a46de676b8503c32d1e1186e449a2f61ed4482ea0fcd26e09104209a"
+          "value": "abdb8973408ec3f1ce2ee9fad31a10b3af02f6875723c79ff8dcc78707c854bc"
         },
         {
           "op": "add",
@@ -552,7 +552,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "35a6ec8f1a956b4856b14d3b41f03854c2422bbb084593bd6471ac2754d711ba"
+          "value": "50876211de883113e1e067502cf0a66406dfed02a49487aa4c4d2f6ae5011b79"
         },
         {
           "op": "remove",
@@ -594,7 +594,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "f9d16610973bf8a6636b866f2621f03e62aecf714432291cb9c2c39a7790da1a"
+          "value": "d9db6a79c49cfa5f3e5e6144872a0255d60c3592c0036a8788fbd95606349770"
         },
         {
           "op": "add",
@@ -778,7 +778,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "78c3911c7e7ee7f0eea70a6a3759b5a4b590e93bf123c436bb8388697745ed28"
+          "value": "41fe7bb424a4a61011dfbb80d8b380758e679fe4a094d08f704f032167797ed4"
         },
         {
           "op": "replace",
@@ -907,7 +907,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "a41d576e366314e4c821ac2ba8591e48e448b00a2254f6f8ecf5ff354904859e"
+          "value": "21dd8277a5c80753d4b05d136269de5290036c14c2d46192d16cf0659c473f6b"
         },
         {
           "op": "replace",
@@ -1120,7 +1120,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "4b298b50098c5fa00a5409601b179d6f3d79bb3b99b80eed4b44470c18c50d42"
+          "value": "db7e14f1cef2a65d171d0f775a031c15f5d88998a7fd67c60fc72faba89c4385"
         },
         {
           "op": "replace",
@@ -1283,7 +1283,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "6e7b2b6a29a63c01a9a7107e822df8845dfe857c82f0e24037e56675fc1a3fb4"
+          "value": "2412113fed75a4bfe8055e7bc61c958335940810f3b2713773361580319a703e"
         },
         {
           "op": "replace",
@@ -1467,7 +1467,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "f0cdd7a97f9f1562c966ec509f74a2a52377638aff66ee3ad1406e9ab84568a6"
+          "value": "75fdcf1ced2401bcea749a0960d2d8db3f434bfd3446ffe24f770cfb6bfb08de"
         },
         {
           "op": "replace",
@@ -1566,7 +1566,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "e88fe21a9dda6aad4f88fdbee169e17ae774fa9436e3affd0f90c7b7513fb189"
+          "value": "c14d3bfac421082c7392a818c923bd1fc99786481407654ec3c326af677c3e90"
         },
         {
           "op": "replace",
@@ -1647,7 +1647,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "4eff6761932ab78f9662537c0924451e892a8d018f972e72008b50010f62dc4b"
+          "value": "c83917b689effe9b57b95707bb149bad94bdfda1aeeb1cec2f77a689a7343e81"
         },
         {
           "op": "replace",
@@ -1796,7 +1796,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "4a7c6a834990f80cb1b3ecc2ec2d0f214aea2c684aca09ac2a5ab96f4d5d4b53"
+          "value": "c654bd04e843ac8d7f9c1229366f1134df3af8de4c72087b581e035e60e79d54"
         },
         {
           "op": "replace",
@@ -1890,7 +1890,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "b30c78342e08451014d8303c66138c2e65348304e81bd797d4f38aac906df520"
+          "value": "eb819b6a290522518fe3d252709459b91a887de1aa6077c02631ad151f38f748"
         },
         {
           "op": "replace",
@@ -2029,7 +2029,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "761bdaee3bd966d9420920348ef0a3eca25d08ac8998409298e7da00fc731e13"
+          "value": "4266dc39d3c8b99521775d359af612586a9b0cb2936c11d31612ff7644e77dd9"
         },
         {
           "op": "replace",
@@ -2178,7 +2178,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "a798ed2c152aedadbcb591758691b1a5132cec1192be2c148e0f41f182459888"
+          "value": "b301aeb41b42398f39e30d9bc92a85757550ebca0adf690be8030f0224568185"
         },
         {
           "op": "replace",
@@ -2381,7 +2381,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "949d642b58f6668ffbe246fd42f688372d6992898d5b511bf837514022ea8115"
+          "value": "4a5c616030680c1cdee272ad33e0f3e95fba8695d429cb35f6f03642fc3ee4ee"
         },
         {
           "op": "replace",
@@ -2528,7 +2528,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "47d03c4600961c0b05be5968d2c92d6c316e0a6d37bc469b85539127124c7cb5"
+          "value": "8da692344e8648a840a49a0e06de426216e633692923074831b55b3bd3437e84"
         },
         {
           "op": "replace",
@@ -2739,7 +2739,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "d918232deed268fc5d8436c1f0bd8e2c252c22386876f03654402e0dea149c35"
+          "value": "31be9197b695f326f4188b5ab99ddbe700773ea55204d31d28e950d0b083f91a"
         },
         {
           "op": "replace",
@@ -2868,7 +2868,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "0c6b3f8aa58f9876e3e315cc8329e8a7e11759d9f4824392ba46a5aebc47985a"
+          "value": "4cadb1c9b384a8719e05edd703e84fcfb93fa5f915668cab2895d7bb938c68d1"
         },
         {
           "op": "replace",
@@ -2977,7 +2977,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "3fceded4fb0d08acc907c053a42d2553019f65d75c2785dd3b5e804f4c288611"
+          "value": "236bf44f67ec07882da1faf750fb838595a61ebe17f035ce4d38374bf0dd2cbf"
         },
         {
           "op": "replace",
@@ -3106,7 +3106,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "a117454cd41bd2a905458878f01c33663d5e7a65afb636844a0a703ae117219f"
+          "value": "01a5521ca561d8b8afe9ba5f4f8d707ede54bbaae23e03e0065bf51f0793edb7"
         },
         {
           "op": "replace",
@@ -3260,7 +3260,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "cbebc77023aa9ccc131afa91b7114b8bd765c67a854920470532f00ef9d5748b"
+          "value": "da04aabba09322a804827b09581f79ffa89c41b55903a3f0b2a43ad2b4c39a48"
         },
         {
           "op": "replace",
@@ -3433,143 +3433,292 @@
     },
     {
       "id": "CL-25",
-      "subject": "a reset whose operation anchor belongs to another model",
+      "subject": "a reset whose operation anchor belongs to another model: the anchor of `Gadget.ping`, a second entity the selected document declares, with its own `Gadget` model node and its own frame (the frame's `semantic_type` equals the anchor's `context`), so that every state-step join of FR-342 holds and the timed-model join is the first defect",
       "fixture": "fixtures/positive-timed-clause-nodes.json",
       "patch": [
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "340aefa626b6ae7af2c1585e39677044d8a2bffed96f3f7edf1f36ed1497a6c1"
+          "value": "762ac8b49db68abfb31a539ac6eac03d27d3079ed3c2c2417b6a0b5ae2396362"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/46/body/members/1/value/target/digest",
-          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+          "value": "ecd5c302befe39bab8967dace229c96859a611074f4e5c8e0ce42615625994c4"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/46/dependencies/4/digest",
-          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+          "value": "ecd5c302befe39bab8967dace229c96859a611074f4e5c8e0ce42615625994c4"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/46/node_id/digest",
-          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
+          "value": "cd79a107c765ed249ba4533322f397f857c820817f463f96f1e8aa3ab6eb0fde"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/46/semantic_type/digest",
-          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
+          "value": "cd79a107c765ed249ba4533322f397f857c820817f463f96f1e8aa3ab6eb0fde"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/52/body/members/4/value/members/0/target/digest",
-          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/13/digest",
-          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/14/digest",
-          "value": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/15/digest",
-          "value": "7a456c343672a2f298aa9223934a50fb051eebf81324022f4ab3747bd6823421"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/16/digest",
-          "value": "7c1f93d40e8d08c41cd378f2b79d1a4cde08fe6d93400213fb5915d1edff556e"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/17/digest",
-          "value": "7c464b10d9660cdd5d5a8b31a34f6b4bfff05e4ed3c292421a0348c9484a5a37"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/18/digest",
-          "value": "94d9ec9398a414cbfcae23708267b96038fc3860ddd832aceabaaa885ed87f92"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/19/digest",
-          "value": "9a18ee606d48a6f1b96826db9e1cc14b0a8287fcfb6ab35bb36a500793a009c0"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/20/digest",
-          "value": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/21/digest",
-          "value": "a26279caa47a7fc05578fb7a35a099e277d321ddeb0cae27db8eff4d16fe08f6"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/22/digest",
-          "value": "ae1f2458b0b79b442bb9116d59e1100e0628869e0b03a8cc609c2ad3281eb249"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/52/dependencies/23/digest",
-          "value": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14"
+          "value": "cd79a107c765ed249ba4533322f397f857c820817f463f96f1e8aa3ab6eb0fde"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/52/dependencies/24/digest",
-          "value": "b7bafc84b6c9816b929e87f10299f284ade59bb976d1ff182f4d8ef8dfa0e8f8"
+          "value": "bb8d6e58ade25c82c62442c206211568a68fd05e32d4b4536e8e5a9a930a4c78"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/25/digest",
+          "value": "c7e9bdf259a174c82ac43769bd2ac49e5213096cf834cdcf92d64c221dfa6de7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/26/digest",
+          "value": "c883bc73298724751bfe1f3810dd6829dc525ca24b6718d8fa34e8cc13d2dbd0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/27/digest",
+          "value": "cd79a107c765ed249ba4533322f397f857c820817f463f96f1e8aa3ab6eb0fde"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/52/node_id/digest",
-          "value": "19729983ca8b867b25e2076773e5d8de60ea16976fd0e0672f1a1a85bb86e342"
+          "value": "48d054b99f8902fd65345ea3461fa727a582722585ba5b7c344add1ff7c3c979"
         },
         {
           "op": "replace",
           "path": "/semantic_graph/nodes/52/semantic_type/digest",
-          "value": "19729983ca8b867b25e2076773e5d8de60ea16976fd0e0672f1a1a85bb86e342"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/70/body/members/0/value/target/digest",
-          "value": "44054fe93ad60c95983336dd537cc3510def5f715359e7f8b3baa8fcaaca23b7"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/70/dependencies/0/digest",
-          "value": "44054fe93ad60c95983336dd537cc3510def5f715359e7f8b3baa8fcaaca23b7"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/70/node_id/digest",
-          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
-        },
-        {
-          "op": "replace",
-          "path": "/semantic_graph/nodes/70/semantic_type/digest",
-          "value": "44054fe93ad60c95983336dd537cc3510def5f715359e7f8b3baa8fcaaca23b7"
+          "value": "48d054b99f8902fd65345ea3461fa727a582722585ba5b7c344add1ff7c3c979"
         },
         {
           "op": "replace",
           "path": "/source_map/11/node_id/digest",
-          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
+          "value": "cd79a107c765ed249ba4533322f397f857c820817f463f96f1e8aa3ab6eb0fde"
         },
         {
           "op": "replace",
           "path": "/source_map/47/node_id/digest",
-          "value": "19729983ca8b867b25e2076773e5d8de60ea16976fd0e0672f1a1a85bb86e342"
+          "value": "48d054b99f8902fd65345ea3461fa727a582722585ba5b7c344add1ff7c3c979"
         },
         {
-          "op": "replace",
-          "path": "/source_map/70/node_id/digest",
-          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+          "op": "add",
+          "path": "/semantic_graph/nodes/88",
+          "value": {
+            "body": {
+              "members": [],
+              "term": "aggregate"
+            },
+            "dependencies": [],
+            "node_id": {
+              "digest": "b333e50d68eb3e74806d39ef35e0a6b04c336b0c225f6bc75b6a97c6da7995d5",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "model",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "expression"
+              }
+            ],
+            "owner": {
+              "identity": "acme/orders",
+              "kind": "model",
+              "node": "ix://acme/orders/Gadget"
+            },
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "object_type",
+            "semantic_type": {
+              "digest": "b333e50d68eb3e74806d39ef35e0a6b04c336b0c225f6bc75b6a97c6da7995d5",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/89",
+          "value": {
+            "body": {
+              "creates": [],
+              "deletes": [],
+              "deletes_scoped": [],
+              "modifies": [],
+              "term": "frame"
+            },
+            "dependencies": [
+              {
+                "digest": "b333e50d68eb3e74806d39ef35e0a6b04c336b0c225f6bc75b6a97c6da7995d5",
+                "domain": "quire.checked-semantic-node/v1"
+              }
+            ],
+            "node_id": {
+              "digest": "2e70d6f3d2eda65c06aef7662ab511f0a59787763d23a739e58963b28ef0ad5e",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "state",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "generated"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "frame",
+            "semantic_type": {
+              "digest": "b333e50d68eb3e74806d39ef35e0a6b04c336b0c225f6bc75b6a97c6da7995d5",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/90",
+          "value": {
+            "body": {
+              "members": [
+                {
+                  "name": "context",
+                  "term": "binding",
+                  "value": {
+                    "target": {
+                      "digest": "b333e50d68eb3e74806d39ef35e0a6b04c336b0c225f6bc75b6a97c6da7995d5",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                },
+                {
+                  "name": "operation",
+                  "term": "binding",
+                  "value": {
+                    "term": "literal",
+                    "type": {
+                      "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "value": "ping",
+                    "value_kind": "text"
+                  }
+                },
+                {
+                  "name": "frame",
+                  "term": "binding",
+                  "value": {
+                    "target": {
+                      "digest": "2e70d6f3d2eda65c06aef7662ab511f0a59787763d23a739e58963b28ef0ad5e",
+                      "domain": "quire.checked-semantic-node/v1"
+                    },
+                    "term": "reference"
+                  }
+                }
+              ],
+              "term": "aggregate"
+            },
+            "dependencies": [
+              {
+                "digest": "2e70d6f3d2eda65c06aef7662ab511f0a59787763d23a739e58963b28ef0ad5e",
+                "domain": "quire.checked-semantic-node/v1"
+              },
+              {
+                "digest": "b333e50d68eb3e74806d39ef35e0a6b04c336b0c225f6bc75b6a97c6da7995d5",
+                "domain": "quire.checked-semantic-node/v1"
+              }
+            ],
+            "node_id": {
+              "digest": "ecd5c302befe39bab8967dace229c96859a611074f4e5c8e0ce42615625994c4",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "node_tag": "state",
+            "occurrences": [
+              {
+                "ordinal": 0,
+                "role": "anchor"
+              }
+            ],
+            "schema_version": "quire.checked-semantic-graph/v2",
+            "semantic_form": "operation_anchor",
+            "semantic_type": {
+              "digest": "b333e50d68eb3e74806d39ef35e0a6b04c336b0c225f6bc75b6a97c6da7995d5",
+              "domain": "quire.checked-semantic-node/v1"
+            }
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/-",
+          "value": {
+            "node_id": {
+              "digest": "b333e50d68eb3e74806d39ef35e0a6b04c336b0c225f6bc75b6a97c6da7995d5",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "ordinal": 0,
+            "regions": [
+              {
+                "end": 9101,
+                "source": {
+                  "authority": "agent-ix",
+                  "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                  "digest_domain": "quire.source.bytes/v1",
+                  "identity": "example"
+                },
+                "start": 9100
+              }
+            ],
+            "role": "expression"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/-",
+          "value": {
+            "node_id": {
+              "digest": "2e70d6f3d2eda65c06aef7662ab511f0a59787763d23a739e58963b28ef0ad5e",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "ordinal": 0,
+            "regions": [
+              {
+                "end": 9102,
+                "source": {
+                  "authority": "agent-ix",
+                  "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                  "digest_domain": "quire.source.bytes/v1",
+                  "identity": "example"
+                },
+                "start": 9101
+              }
+            ],
+            "role": "generated"
+          }
+        },
+        {
+          "op": "add",
+          "path": "/source_map/-",
+          "value": {
+            "node_id": {
+              "digest": "ecd5c302befe39bab8967dace229c96859a611074f4e5c8e0ce42615625994c4",
+              "domain": "quire.checked-semantic-node/v1"
+            },
+            "ordinal": 0,
+            "regions": [
+              {
+                "end": 9103,
+                "source": {
+                  "authority": "agent-ix",
+                  "digest": "2222222222222222222222222222222222222222222222222222222222222222",
+                  "digest_domain": "quire.source.bytes/v1",
+                  "identity": "example"
+                },
+                "start": 9102
+              }
+            ],
+            "role": "anchor"
+          }
         }
       ],
       "schema": "valid",
@@ -3578,7 +3727,8 @@
       "expected_code": "invalid_package",
       "expected_cause": "timed-node-reference",
       "locus": "/semantic_graph/nodes/46/body/members/1/value/target",
-      "locus_suffix": "members/1/value/target"
+      "locus_suffix": "members/1/value/target",
+      "note": "Repaired by STD-558: the earlier patch rebound only the anchor's `context` and `semantic_type` and left its frame on the first model, which a public reader refuses earlier, in the state step (FR-342 'Reader order' step 3). That package is CL-54."
     },
     {
       "id": "CL-26",
@@ -3588,7 +3738,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "83b2d97326454b9e5bb7bc97562c3a12a72e46967b9b0139e5efeb3bb245aa0e"
+          "value": "3c4be43976d686a3a60051e54eaa3a616f030c41546e0ae2065d8eab62c533ff"
         },
         {
           "op": "remove",
@@ -3630,7 +3780,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "b3ea24f748d3cf158348da0b3c1b0332957f6a2ecba2089253601e038386a1b4"
+          "value": "6229bcdc3d633224009737b2af9223bff99cf68f43e86a04b80adc99ee88d41f"
         },
         {
           "op": "add",
@@ -3988,7 +4138,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "6c789be0e8c6a12d74752f854f999daaf6b8b7be89c76f8af8bc575d7e87a7d7"
+          "value": "107af63bb56d4cd9eff9828fa4ab29764df842c560efe61074087d25d5d7f57a"
         },
         {
           "op": "replace",
@@ -4077,7 +4227,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "cb151dec5a2f5cc54c70434a56903c0d0498bb702629215c2319d0fc51b92fa1"
+          "value": "cac0d5ecfe9bf24221ac8432fae47cdf3792a0c0b4d0604c6f206de2bb01f31d"
         },
         {
           "op": "replace",
@@ -4196,7 +4346,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "53d83c9164622f262150551a11c4511267bcead9dde5f40f88695da72719d847"
+          "value": "f1b05ed719608b21d94f412027a5c4426b78221d2a1b07ba93b918380646ad6f"
         },
         {
           "op": "replace",
@@ -4250,7 +4400,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "084d2b667d6b0fa473aa9903e815519d90a94c5c49b7b995bdba50cf3e9d4316"
+          "value": "6b47ecf713d77105aec13a5f8e1112f8f7c71211956d821cbba84f46db184b83"
         },
         {
           "op": "replace",
@@ -4430,7 +4580,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "faaa3d29e8af3a1b28720a5b418ba003cc74ff43629fd0f6f8a190be9d5e8e02"
+          "value": "f9a9e43d43b9271d9eb2a4eeed48e9a2a0f51fc8cd1a1ba7535b9e3e5ebb9440"
         },
         {
           "op": "replace",
@@ -4614,7 +4764,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "83a218edc461a23eeaa21aa430528a958b4087dcf8a06f155628668e891ff670"
+          "value": "1ea0a773999290762e56370265383aed10612c12cd5b080d3fa75946c6e5af9b"
         },
         {
           "op": "replace",
@@ -4909,7 +5059,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "a45ff66235ee8a21ebfd819748e837607a234f884f54bda80680814b1930b9f4"
+          "value": "f8f9790f8a6bb3cbcfc3a56d3e446a80135a69e1346a8c463ba10a0f25bbc733"
         },
         {
           "op": "replace",
@@ -5208,7 +5358,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "2f3b779d34a34935e7a54bd6635404f2a36893fdf69a4b5ce3d5329dca81ddf6"
+          "value": "9b97fcbb47e532292dc65c8907c4825734a477d046dae10411feb9ac23c8a63b"
         },
         {
           "op": "replace",
@@ -5383,7 +5533,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "c050f273824f8072b98e1d4a66b31ebb9d9707a7b9926ceade9b075c86c16927"
+          "value": "30f0720a1d445b4dac3cb3f439fdf6abf263fac325b717656345e4bdb9bf9d73"
         },
         {
           "op": "replace",
@@ -5562,7 +5712,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "96d9dc4c42897a072112ef8dc57bc5b73cc74d663bb13b9e42facad876d3df60"
+          "value": "1e0620ecaf96a6ee38ed9d6e0800e36f17abe33cb655aff137d36d285fc3660a"
         },
         {
           "op": "add",
@@ -5878,7 +6028,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "cdc5695f3ec21095c3cb527fcb1fe079036ec5892fb1378ff2bc15a9b4354334"
+          "value": "75f988e4f32b9a41f088253b48e209a6fd82be8d768a421760581a48347fe051"
         },
         {
           "op": "add",
@@ -6213,7 +6363,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "9e3173395f633413f7ebab6459c844a40a67cec5eec751f8f0dcd5ba44120755"
+          "value": "fc28ed696b3178e672eade52b36fb0f9a37e51336a12d8923cdc0b8ada9c4aa3"
         },
         {
           "op": "add",
@@ -6418,7 +6568,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "bee3767321a00449a2dc1a912e85f89c2f6d62a1f8043ffd8ddf8eb407b8c60e"
+          "value": "f149cd41e1a7a2c3ae3d6ff41341ed7e552b903d6fc85031c7b24af5a536494d"
         },
         {
           "op": "add",
@@ -6627,7 +6777,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "f583357dbbd69434c27a5821145d9daab716dc7ca98acf2e7cdf14c9d7354bd7"
+          "value": "6bf7b42884e31c59f031aa5660fdfbd6e88596d216e6a2a71eec17f135da5b3d"
         },
         {
           "op": "add",
@@ -6832,7 +6982,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "f2dfb5cfccb611077d9407d86aa5d3b1e9c12d757d4de627b46c9abb3068f458"
+          "value": "1031e0979d1b10240c6b8ecf7d1ec26b7e91ff28ee61977460228354c83e5ad7"
         },
         {
           "op": "add",
@@ -7041,7 +7191,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "9c843f8c5a5867e835839199a9af0cf6e491db081596a9dfaddfc60c4a89c603"
+          "value": "07a1da83d41361a22c527e14f48323393ed51c4cc05787b52ba6ca42b209c88b"
         },
         {
           "op": "replace",
@@ -7379,7 +7529,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "3e0487c610234b775a5e90e2553f9e7437284a155d17ac1b8b9da91f63e992e9"
+          "value": "e92a410a6f008574237b0aab5d0330483c1d17052ebcbc0ba2acd87f2260eae2"
         },
         {
           "op": "replace",
@@ -7721,7 +7871,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "2f3b779d34a34935e7a54bd6635404f2a36893fdf69a4b5ce3d5329dca81ddf6"
+          "value": "9b97fcbb47e532292dc65c8907c4825734a477d046dae10411feb9ac23c8a63b"
         },
         {
           "op": "replace",
@@ -7910,7 +8060,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "e3fd452e08ad634af670849406d3e9dc10f5fe5a74497a2260ee18cccd41eaca"
+          "value": "d75c04465bf48cafebd09f8aaadf0aaf0b5179a01d8675fbc28168dfc31a7210"
         },
         {
           "op": "add",
@@ -8115,7 +8265,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "3b21eaa93d2fb6afcc19c1920eee10327cc7974204d8f1d36ebc07b48f6c3504"
+          "value": "bcef42b581a55261ae82a8a9763b0650cf701280132c28bb520bf6ec33f3659b"
         },
         {
           "op": "add",
@@ -8324,7 +8474,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "e96eb0ec4b9807f78e81205590a5edaaa00d7fba0b1d238a48fb0743ce1be0d7"
+          "value": "ceead8c0a54ca6fb813b28690e12784c14d22eac6ac5b52910ce87608250c1f7"
         },
         {
           "op": "add",
@@ -8541,7 +8691,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "11754c193625c89d9d297a588b5ecc94e74fefda581ef3bfa4abfd1d03435f74"
+          "value": "ea030e0da77e4945d8415bd8cc044f7146891ce0f01bd379ded08edbe8b8ec8d"
         },
         {
           "op": "add",
@@ -8762,7 +8912,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "573e47b6ae75d48e56b4740f73a53571d56be267f734e06e68a49cc2396705b5"
+          "value": "c5eff995e08666bc113df722e5f77b2a8ee3b28db0cba02117df12830f4fa1d9"
         },
         {
           "op": "add",
@@ -8911,7 +9061,7 @@
         {
           "op": "replace",
           "path": "/package_id/digest",
-          "value": "1c438266c84fc6a564c5893b890ebef5b607da3374ff1fd9bb031de9c86054d6"
+          "value": "f5b3b821d74b868b66fd54b72639c550dd66a0ea9f73c344269d3fc9b031e858"
         },
         {
           "op": "add",
@@ -9055,6 +9205,156 @@
       "expected_cause": null,
       "locus": "/semantic_graph/nodes/52/body/members/6/value/members/2",
       "locus_suffix": "members/6/value/members/2"
+    },
+    {
+      "id": "CL-54",
+      "subject": "CL-25's earlier construction, kept as the state-before-timed control: the anchor of the reset is rebound to another model (`context` and `semantic_type`) but keeps the frame of the first model, so the frame's `semantic_type` is not the anchor's `context`",
+      "fixture": "fixtures/positive-timed-clause-nodes.json",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/package_id/digest",
+          "value": "616e267d9faabb960a5ebc5c064d9a7cc4933978198f80a41e5c2f6870f86679"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/body/members/1/value/target/digest",
+          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/dependencies/4/digest",
+          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/node_id/digest",
+          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/46/semantic_type/digest",
+          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/body/members/4/value/members/0/target/digest",
+          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/13/digest",
+          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/14/digest",
+          "value": "6f006fa31e8ceeb4c7e6ffb71a68a7883643c931f90d487d35239d49390c596b"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/15/digest",
+          "value": "7a456c343672a2f298aa9223934a50fb051eebf81324022f4ab3747bd6823421"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/16/digest",
+          "value": "7c1f93d40e8d08c41cd378f2b79d1a4cde08fe6d93400213fb5915d1edff556e"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/17/digest",
+          "value": "7c464b10d9660cdd5d5a8b31a34f6b4bfff05e4ed3c292421a0348c9484a5a37"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/18/digest",
+          "value": "94d9ec9398a414cbfcae23708267b96038fc3860ddd832aceabaaa885ed87f92"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/19/digest",
+          "value": "9a18ee606d48a6f1b96826db9e1cc14b0a8287fcfb6ab35bb36a500793a009c0"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/20/digest",
+          "value": "9f6ad5f6118aff3a7832bb0fcd83da94958514a8602ee12eadca35e1b0080977"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/21/digest",
+          "value": "a26279caa47a7fc05578fb7a35a099e277d321ddeb0cae27db8eff4d16fe08f6"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/22/digest",
+          "value": "ae1f2458b0b79b442bb9116d59e1100e0628869e0b03a8cc609c2ad3281eb249"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/23/digest",
+          "value": "af3b3871cfeb8261f625904b31a96d9ce9cc2093c8a1adedff00782942215e14"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/dependencies/24/digest",
+          "value": "b7bafc84b6c9816b929e87f10299f284ade59bb976d1ff182f4d8ef8dfa0e8f8"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/node_id/digest",
+          "value": "19729983ca8b867b25e2076773e5d8de60ea16976fd0e0672f1a1a85bb86e342"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/52/semantic_type/digest",
+          "value": "19729983ca8b867b25e2076773e5d8de60ea16976fd0e0672f1a1a85bb86e342"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/body/members/0/value/target/digest",
+          "value": "44054fe93ad60c95983336dd537cc3510def5f715359e7f8b3baa8fcaaca23b7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/dependencies/0/digest",
+          "value": "44054fe93ad60c95983336dd537cc3510def5f715359e7f8b3baa8fcaaca23b7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/node_id/digest",
+          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/70/semantic_type/digest",
+          "value": "44054fe93ad60c95983336dd537cc3510def5f715359e7f8b3baa8fcaaca23b7"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/11/node_id/digest",
+          "value": "6b5302e696854a35106af2590b4f0a608a6c41212892c7b3812df1c8bc72270a"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/47/node_id/digest",
+          "value": "19729983ca8b867b25e2076773e5d8de60ea16976fd0e0672f1a1a85bb86e342"
+        },
+        {
+          "op": "replace",
+          "path": "/source_map/70/node_id/digest",
+          "value": "f2b10c6ac4d172ec66f98730bfd34803a543540742e53d7137942999c068cde7"
+        }
+      ],
+      "schema": "valid",
+      "rule": "FR-342-AC-8",
+      "expected": "refused",
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "locus": "/semantic_graph/nodes/70",
+      "locus_suffix": "nodes/70",
+      "note": "FR-322-AC-121 and FR-342 'Reader order' put the state step before the timed-model step, so this package is refused in the state step although its reset also names an anchor of another model; CL-25 is the same defect repaired to pass the state step."
     }
   ]
 }

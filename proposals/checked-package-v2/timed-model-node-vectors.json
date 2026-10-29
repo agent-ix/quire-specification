@@ -118,10 +118,10 @@
     {
       "id": "TM-12",
       "mutation": "duplicate-clock-place",
-      "subject": "a distinct second clock_place node of the same path, listed last in declared order and starting after every published place; one node reference listed twice repeats its order key and is the FR-322-AC-260 refusal invalid_semantic_graph with no cause at the repeated member, not this vector",
+      "subject": "a distinct second clock_place node of the same path, listed last in declared order and starting after every published place; its last resolved_path row names a member the selected declaration lacks (no valid second node of a path exists: a place has only model, path and resolved_path, and valid rows are derived), so the row join, which precedes the root's aggregates, refuses it at that row (STD-559); one node reference listed twice repeats its order key and is the FR-322-AC-260 refusal invalid_semantic_graph with no cause at the repeated member, not this vector",
       "expected_code": "invalid_package",
-      "expected_cause": "duplicate-clock-place",
-      "locus": "/semantic_graph/nodes/52/body/members/3/value/members/1"
+      "expected_cause": "malformed-clock-place",
+      "locus": "/semantic_graph/nodes/59/body/members/2/value/members/1"
     },
     {
       "id": "TM-13",
