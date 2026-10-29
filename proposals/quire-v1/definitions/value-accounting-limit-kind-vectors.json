@@ -1,7 +1,8 @@
 {
   "version": "quire.value.accounting-limit-kinds/v1",
   "definition": "quire.value.accounting/v1",
-  "source": "value-accounting.md, section Limit object: every backtick-quoted ScalarLimitsV1 counter name, in the order the section lists them (the field order)",
+  "scope": "ScalarLimitsV1 counters only; PopulationAdmissionLimitsV1 and ModelNormalizationLimitsV1 name their own limit_kind values, which this list does not claim",
+  "source": "value-accounting.md, section Limit object: the backtick-quoted counter names of the field list after 'limits for', in the order listed (the field order)",
   "limit_kinds": [
     "integer_bits",
     "decimal_digits",
@@ -15,15 +16,12 @@
     "result_units"
   ],
   "undeclared": [
-    "work_unit",
+    "unit_work",
     "work-units",
     "workunits",
     "Work_Units",
     "integer-bits",
     "accounting.work_units",
-    "ancestor_steps",
-    "family_steps",
-    "declaration_records",
     "max_states",
     ""
   ]

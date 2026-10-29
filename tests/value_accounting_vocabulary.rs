@@ -175,8 +175,10 @@ fn a_one_sided_change_to_either_list_is_detected() {
 
 use quire_specification::VALUE_ACCOUNTING_LIMIT_KIND_VECTORS;
 
-/// The `ScalarLimitsV1` counters the Limit object section names, in the order
-/// it lists them: backtick-quoted lowercase words joined by underscores.
+/// The `ScalarLimitsV1` counters: the backtick-quoted field names of the
+/// field list in the Limit object, which runs from `limits for` to the
+/// sentence end. Fail closed on a missing list, a non-field token or a
+/// duplicate.
 fn limit_kind_vocabulary(definition: &str) -> Vec<String> {
     let section = definition
         .split("## Limit object")
@@ -185,17 +187,49 @@ fn limit_kind_vocabulary(definition: &str) -> Vec<String> {
         .split("\n## ")
         .next()
         .expect("section body");
+    let list = section
+        .split_once("limits for")
+        .expect("field list follows `limits for`")
+        .1
+        .split_once(". ")
+        .expect("field list ends at its sentence")
+        .0;
     let mut found = Vec::new();
-    for (index, part) in section.split('`').enumerate() {
-        let word = !part.is_empty()
-            && !part.starts_with('_')
-            && !part.ends_with('_')
-            && part.bytes().all(|b| b.is_ascii_lowercase() || b == b'_');
-        if index % 2 == 1 && word && part != "u64" {
+    for (index, part) in list.split('`').enumerate() {
+        if index % 2 == 1 {
+            assert!(
+                !part.is_empty()
+                    && !part.starts_with('_')
+                    && !part.ends_with('_')
+                    && part.bytes().all(|b| b.is_ascii_lowercase() || b == b'_'),
+                "{part:?} is not a counter field name"
+            );
+            assert!(
+                !found.contains(&part.to_owned()),
+                "{part:?} is listed twice"
+            );
             found.push(part.to_owned());
         }
     }
+    assert!(!found.is_empty(), "the field list names counters");
     found
+}
+
+/// Every value the definition gives a `limit_kind`, as `limit_kind: <name>`
+/// in a code span or as the first-field wording of another limit object's
+/// field list.
+fn other_limit_kind_values(definition: &str) -> BTreeSet<String> {
+    let mut values = BTreeSet::new();
+    for chunk in definition.split("limit_kind: ").skip(1) {
+        let name: String = chunk
+            .chars()
+            .take_while(|c| c.is_ascii_lowercase() || *c == '_')
+            .collect();
+        if !name.is_empty() {
+            values.insert(name);
+        }
+    }
+    values
 }
 
 fn compare_limit_kinds(published: &[String], definition: &str) -> Result<(), String> {
@@ -241,12 +275,41 @@ fn undeclared_limit_kinds_are_not_in_the_vocabulary() {
     let declared: BTreeSet<_> = limit_kind_vocabulary(DEFINITION).into_iter().collect();
     let undeclared = strings(&vectors["undeclared"]);
     assert!(!undeclared.is_empty());
+    // An undeclared spelling is no `limit_kind` value anywhere in the
+    // definition, whichever limit object names it, and no backticked word.
+    let elsewhere = other_limit_kind_values(DEFINITION);
+    assert!(
+        elsewhere.contains("ancestor_steps"),
+        "the scan sees other objects"
+    );
+    let backticked: BTreeSet<_> = DEFINITION
+        .split('`')
+        .enumerate()
+        .filter(|(i, _)| i % 2 == 1)
+        .map(|(_, w)| w.to_owned())
+        .collect();
     for spelling in undeclared {
         assert!(
             !declared.contains(&spelling),
             "{spelling:?} must stay undeclared"
         );
+        assert!(
+            !elsewhere.contains(&spelling) && !backticked.contains(&spelling),
+            "{spelling:?} appears in the definition"
+        );
     }
+}
+
+#[test]
+#[trace("TC-426", "FR-461-AC-11")]
+fn a_real_counter_in_undeclared_is_detected() {
+    let declared: BTreeSet<_> = limit_kind_vocabulary(DEFINITION).into_iter().collect();
+    let polluted = ["work_units".to_owned()];
+    assert!(polluted.iter().any(|s| declared.contains(s)));
+    let elsewhere = other_limit_kind_values(DEFINITION);
+    assert!(["ancestor_steps", "family_steps"]
+        .iter()
+        .all(|s| elsewhere.contains(*s)));
 }
 
 #[test]
@@ -256,7 +319,7 @@ fn a_one_sided_limit_kind_change_is_detected() {
     let published = strings(&vectors["limit_kinds"]);
     assert!(compare_limit_kinds(&published[1..], DEFINITION).is_err());
     let mut added = published.clone();
-    added.push("work_unit".to_owned());
+    added.push("unit_work".to_owned());
     assert!(compare_limit_kinds(&added, DEFINITION).is_err());
     let mut swapped = published.clone();
     swapped.swap(0, 1);
