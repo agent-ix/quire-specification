@@ -19,6 +19,14 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-366
     type: references
+  - target: ix://agent-ix/quire-specification/FR-429
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-438
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-425
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-417
+    type: references
 ---
 
 # FR-368: Request and negotiate temporal items over a model subject
@@ -110,6 +118,14 @@ every behaviour. A `deadlock-freedom` item over a protocol subject and one
 over a model subject are the same kind; the subject tells them apart. Each
 kind is part of the obligation identity (above), so the five never share a
 verdict.
+
+A protocol subject is never a timed subject, so it derives a `deadlock-freedom`
+item and, where it has a weak `parallel`, a `race-freedom` item, and no
+`time-lock-freedom` item, even when its model selection reads a timed model
+([FR-425](../protocol/FR-425-define-protocol-subjects-and-state-keys.md)
+"Protocol subject", [FR-417](FR-417-settle-time-lock-freedom.md) "Protocol
+subjects"). The item order of "Position of derived items in the request" is
+unchanged for it.
 
 A transfer item ([FR-380](../analysis/FR-380-transfer-claims-through-refinement.md))
 has no `item_kind` and is not a request item. FR-380 classifies it as an item
@@ -424,6 +440,7 @@ infinite-trace formula that no registered candidate decides.
 | FR-368-AC-20 | A derived item carries no `max_depth` (a derived item with one is refused) and takes the provider defaults for `limits` it has no caller setting for; it may carry `limits` only of `max_states`, `max_transitions`, `max_clocks`, `max_store_buffer`, `max_messages`, `max_live_instances`, `max_solver_steps` and `max_solver_time`, for a caller's FR-461 setting, and `max_automaton_states`, `max_walk_steps`, `max_witness_set` or `max_relation_tuples` in a derived item's `limits` is refused as an unknown member; no item inherits `limits`, `max_depth` or `smt_encoding` from another, so an authored item's `max_depth` and `limits` are absent from the request's derived items. | Test (TC-431) |
 | FR-368-AC-21 | `transfer` is not an `item_kind` and a transfer item is not a request item: it is evaluated by the planner and never reaches a provider. | Test (TC-431) |
 | FR-368-AC-22 | A derived item over a model subject whose package has one `model_root` is anchored at it; one over a subject that reads several `model_selections` rows, or none, is settled `unsupported`, `unsupported_projection`/`unsupported-requested-capability`, by the producer, which writes no request item for it. | Test (TC-431 BP-47 for several; TC-290 step 10 for none) |
+| FR-368-AC-23 | A protocol subject whose model selection reads a timed model gains no `time-lock-freedom` item. | Test (TC-370) |
 
 ## Dependencies
 

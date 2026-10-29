@@ -27,6 +27,16 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-466
     type: references
+  - target: ix://agent-ix/quire-specification/FR-429
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-438
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-415
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-368
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-417
+    type: references
 ---
 
 # FR-425: Define protocol subjects and their state keys
@@ -69,6 +79,18 @@ obligation identity that reads it. The obligation identity reads each
 `parallel`'s resolved memory model in place of its source `memory` clause
 ([FR-434](../memory/FR-434-select-memory-models-for-parallel.md)); the source
 clause is package content and enters the package identity.
+
+A protocol subject is never a timed subject. Protocol timing semantics is
+outside v1.1: the protocol system reads no clock ([FR-426](FR-426-apply-protocol-steps.md)
+"Protocol steps"), so it has no delay step, and its steps neither advance nor
+stop the clocks of a model whose selection it reads. This holds even when the
+subject's model selection reads a timed model
+([FR-415](../temporal/FR-415-declare-clocks-and-timed-models.md)). A protocol
+subject therefore owes no time-lock-freedom item
+([FR-417](../temporal/FR-417-settle-time-lock-freedom.md)); its derived items
+are the deadlock-freedom item
+([FR-429](FR-429-report-protocol-deadlocks.md)) and, for a weak `parallel`, the
+race-freedom item ([FR-438](../memory/FR-438-report-data-races.md)).
 
 A static role on a whole model
 ([FR-465](../../objects/interfaces/FR-465-checked-package-protocol-declaration-bodies.md),
@@ -264,6 +286,7 @@ state holds the model state and no instance.
 | FR-425-AC-11 | Inside a `repeat`, a `parallel Outer` with an `all` join has a branch holding an inner `parallel Inner` joined `any` whose branch binds `x`, and a reader of `x` after the binding, in the same branch of `Inner` as the binding node and inside the loop body. After `join(Outer)` the joiner's environment holds no entry for `x`, and `observations` holds none under the joiner's path, although the `repeat` back edge widens the joiner's reach to the whole body; the same with `Inner` joined `all` holds `x` after `join(Outer)` for as long as the reach rule keeps it. | Test (TC-375) |
 | FR-425-AC-12 | Template `Refund` with `attempts 1` and `commit Committed`, whose forward `effect` node is reached twice in a `repeat` of maximum 2, giving registrations `r1` and `r2` that differ in a registration capture `id`, whose activation guard compares `id` with the `id` of the trigger record, and a `parallel Triggers` of two sibling branches each binding a trigger record with one of the two ids, followed by `commit Committed`, each compensation thread taking its `cattempt` and `cend` before the step of `Committed`. The state after `r1`'s trigger and then `r2`'s and the state after `r2`'s and then `r1`'s have different keys, because each compensation thread's `thread-state` names its registration: thread `(0, Refund, 0)` names `r1` in the first and `r2` in the second. The state after the step of `Committed` holds the `commit` entry for that node under its instance and the state before the step does not, so the two have different keys, and the entry is absent once the instance is removed. In a variant with `attempts 2 of M::RefundAttempt`, `RefundAttempt` with one field `ok: Boolean`, a template operation whose precondition is `true`, and the retry relation `not e.ok` over (`e`, `l`): after thread `(0, Refund, 0)`'s first `cattempt` with record `ok` false, `observations` holds that thread's `attempt-record` entry with `ok` false and a retry `cattempt` is enabled; after its first `cattempt` with `ok` true, the entry holds `ok` true and only `cend` is enabled, so the two post-states have different keys. The entry is absent after the thread's second `cattempt`, whose count reaches 2, after its `cend`, and in the post-state of the step of `Committed` taken while the thread rests at its retry point holding one. With the retry relation `l.ok`, which does not read `e`, no state holds an `attempt-record` entry, and the two first `cattempt` steps, `ok` true and `ok` false, reach one state. | Test (TC-375) |
 | FR-425-AC-13 | A protocol with `role w on M`, `M` a model alias of the package, builds its subject with no binding supplied for `w`, and every state's `roles` entry for `w` is `{"type":"model-binding","selection":"<identity>"}` with `M`'s `model_selections` identity; a clause with `role w on M` and `role u on N` over two selections builds with no binding for either, and each state's `roles` entries name `M`'s and `N`'s identities; supplying a binding for `w` refuses `invalid_runtime_input`/`wrong-role-mapping` naming `w` before any expansion, and so does a static role on a model type with no binding. | Test (TC-375) |
+| FR-425-AC-14 | A protocol subject whose model selection reads a timed model is not a timed subject. | Test (TC-370) |
 
 ## Dependencies
 

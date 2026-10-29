@@ -11,6 +11,14 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-181
     type: depends_on
+  - target: ix://agent-ix/quire-specification/FR-361
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-366
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-426
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-425
+    type: references
   - target: ix://agent-ix/quire-specification/FR-418
     type: references
 ---
@@ -50,6 +58,17 @@ adds exactly one derived item of fixed kind `time-lock-freedom`, beside the
 derived deadlock-freedom item. It has no opt-out. Its obligation identity is
 the subject and the item kind. It settles with the verdict kinds of FR-161.
 
+### Protocol subjects
+
+Time-lock-freedom is owed for timed model subjects only. A protocol subject
+([FR-425](../protocol/FR-425-define-protocol-subjects-and-state-keys.md)) is
+never a timed subject, even when its model selection reads a timed model: the
+protocol system reads no clock ([FR-426](../protocol/FR-426-apply-protocol-steps.md)),
+has no delay step, and its steps neither advance nor stop the model's clocks.
+Protocol timing semantics is outside v1.1. A request therefore gains no
+time-lock-freedom item for a protocol subject, and a timed model subject over
+the same model keeps its own item.
+
 ### Time-lock counterexample
 
 A refutation carries a counterexample whose `kind` is `time-lock`: a finite
@@ -75,11 +94,14 @@ trap whose closure is its one state.
 ### Deadlocks and time-locks
 
 A timed state is **terminal** when no discrete step is enabled at it or after
-any admissible delay. A terminal state at a quiescent discrete state (no time
+any admissible delay ([FR-181](../runtime/FR-181-simulate-finite-executions.md)
+"Timed subjects"). A terminal state at a quiescent discrete state (no time
 invariant applies and it is not urgent) admits the idle tail of FR-161 and is
 a deadlock when it is not intended; the deadlock-freedom item reports it. A
-terminal state where delay is bounded is a local time-lock, reported by the
-time-lock-freedom item and not by the deadlock-freedom item.
+terminal state where the admissible delay is bounded, a **bounded-delay
+terminal state**, has no time-divergent behaviour, so it is a time-lock: local
+when no positive delay is admissible, non-local otherwise. The time-lock-freedom
+item reports it and the deadlock-freedom item does not.
 
 ### Proof
 
@@ -96,6 +118,7 @@ reachable, and settles only after the checker accepts it.
 | FR-417-AC-3 | A non-local time-lock settles `refuted` only after a fresh, unreduced exploration of the trap's forward closure completes with no target; a found target settles `inconclusive`, `replay-parity`. | Test (TC-370) |
 | FR-417-AC-4 | In the strict-guard variant the deadlock-freedom item settles `proved` and the time-lock is reported only by the time-lock-freedom item; with non-strict guards both settle `proved`. | Test (TC-370) |
 | FR-417-AC-5 | A time-lock-freedom proof settles only after its zone certificate is accepted. | Test (TC-370, TC-371) |
+| FR-417-AC-6 | A timed model subject over the model that a protocol subject reads keeps its time-lock-freedom item. | Test (TC-370) |
 
 ## Dependencies
 

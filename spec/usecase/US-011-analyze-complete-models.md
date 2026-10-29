@@ -22,7 +22,7 @@ must carry the exact domain, assumptions, provider and replay lineage.
 
 The same checked package also states probabilistic and real-time intent: how
 likely a failure is under a declared workload, how often a latency stays under
-a deadline, whether a timed protocol meets its deadlines, and whether a task
+a deadline, whether a timed model meets its deadlines (a protocol subject is not timed in v1.1), and whether a task
 set is schedulable. The engineer checks these claims exactly where the model
 admits it, or measures them by sampling where it does not, and a measurement is
 reported as a measurement, never as an exact conclusion.

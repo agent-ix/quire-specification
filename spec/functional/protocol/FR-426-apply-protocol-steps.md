@@ -133,7 +133,14 @@ unsatisfied join, at `finish` while another thread of its instance is
 compensation attempt that a commit step has closed, or at a false `check` has
 no enabled step and waits. A `cancelled` thread takes
 no step. A false `check` never becomes true. The protocol
-system reads no clock: `timeout` is enabled for as long as its `await` waits,
+system reads no clock and has no delay step. An `attempt` of an operation whose
+guard reads a model clock evaluates that guard at the composed state's current
+clock valuation, which no protocol step advances or stops, so protocol steps
+neither advance nor stop model clocks. A protocol may select a timed model, and
+its derived items are then the deadlock-freedom item and, with a weak
+`parallel`, the race-freedom item
+([FR-425](FR-425-define-protocol-subjects-and-state-keys.md) "Protocol
+subject"). `timeout` is enabled for as long as its `await` waits,
 which admits every behaviour some deadline admits, and a compensation's
 `within` window is not read.
 
@@ -224,6 +231,7 @@ JCS bytes of the identity, as FR-181 states for model transition identities.
 | FR-426-AC-15 | In a protocol with `activation on each` and a replicated role `r`, `spawn(r, o)` of one object `o` in protocol instance 0 and in protocol instance 1 have different transition identities that differ in the `instance` member, and so do `retire(r, o)` in the two instances; a `spawn` or `retire` identity holds the members `step`, `role`, `object` and `instance`, and no `thread`. | Test (TC-382) |
 | FR-426-AC-16 | `run sequence Main { parallel P { branch left attempt A as (a); branch right attempt B } join all; effect E of Main::P::left::A as (e) { true } }`, with `A` and `B` always enabled: at the state after `join(P)`, `event(E)` is enabled and the root thread's environment holds `A`'s binder, added by the join. | Test (TC-376) |
 | FR-426-AC-17 | A `parallel J` of branches `a`, `b` and `c`, each one always-enabled `event`, joined `predicate(g)` over `[a, b, c]` with `outstanding cancel`, where `g(p, q, r)` is `true` exactly when `q` is `true` and `r` is `false`: `join(J)` is enabled at exactly the states whose completed branch set is `{b}` or `{a, b}`, and at no state whose completed set is `{}`, `{a}`, `{c}`, `{a, c}`, `{b, c}` or `{a, b, c}`; a join at `{b}` makes `a` and `c` `cancelled` in that step. | Test (TC-377) |
+| FR-426-AC-18 | An `attempt` whose operation guard reads a model clock is evaluated at the current clock valuation, and no protocol step changes that valuation. | Test (TC-370) |
 
 ## Dependencies
 
