@@ -530,8 +530,8 @@ and two nodes declaring one name refuse as `ambiguous-name`
   package that carries one node of each form and `domain-package-acme-timed-clauses.json`
   its selected document; the cases are RFC 6902 patches on that package.
 - `clock-presence-frame-vectors.json` publishes the frame rule of FR-415-AC-21
-  (no implicit reset on a presence change) for an `Option<Clock>` place and a
-  union case place, paired case for case (TC-367 CK-31).
+  (no implicit reset on a presence change) for an `Option<Clock>` place
+  (TC-367 CK-31).
 
 ## Regenerating protocol fixture keys
 

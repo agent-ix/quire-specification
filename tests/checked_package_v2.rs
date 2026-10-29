@@ -19955,7 +19955,7 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
                 adverse["semantic_graph"]["nodes"][44]["body"]["members"][3]["value"]["target"] =
                     adverse["semantic_graph"]["nodes"][5]["node_id"].clone();
             }
-            "duplicate-clock-place" => {
+            "second-place-forged-row" => {
                 // A DISTINCT second place of the same path (a clock place has no field but its
                 // path, its model and its derived `resolved_path`, so only that table can differ:
                 // a different body and key), listed after the first and starting after every
@@ -20106,8 +20106,8 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
             "dangling-tick-operation" | "function-as-tick-operation" => (
                 "invalid_package", "timed-node-reference", "/semantic_graph/nodes/44/body/members/3/value/target",
             ),
-            "duplicate-clock-place" => (
-                "invalid_package", "duplicate-clock-place", "/semantic_graph/nodes/52/body/members/3/value/members/1",
+            "second-place-forged-row" => (
+                "invalid_package", "malformed-clock-place", "/semantic_graph/nodes/59/body/members/2/value/members/1",
             ),
             "repeated-clock-place-reference" => (
                 "invalid_semantic_graph", "", "/semantic_graph/nodes/52/body/members/3/value/members/1",
@@ -20158,10 +20158,15 @@ fn tc_367_timed_model_semantic_refusals_are_replayable_packages() {
             let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"].as_array().unwrap();
             assert_eq!(places[0], places[1], "TM-30 lists one node reference twice");
         }
-        if row["mutation"] == "duplicate-clock-place" {
-            assert_eq!(timed_aggregate_order_refusal(&adverse), None, "TM-12 is in declared order, so only the repeated path is refused");
+        if row["mutation"] == "second-place-forged-row" {
+            assert_eq!(timed_aggregate_order_refusal(&adverse), None, "TM-12 is in declared order, so only the forged row of the second node of the path is refused");
             let places = adverse["semantic_graph"]["nodes"][52]["body"]["members"][3]["value"]["members"].as_array().unwrap();
-            assert_ne!(places[0], places[1], "the repeated path is a distinct node, not a repeated reference");
+            assert_ne!(places[0], places[1], "the second node of the path is a distinct node, not a repeated reference");
+            assert_eq!(
+                timed_guard_and_place_refusal(&adverse),
+                Some(("invalid_package", "malformed-clock-place", row["locus"].as_str().unwrap().to_owned())),
+                "TM-12: the row join of the second node precedes the root's repeated-path check"
+            );
         }
     }
 }
@@ -23217,8 +23222,9 @@ fn place_selectors_are_symbolic(place: &Value, nodes: &[Value]) -> bool {
 
 /// The guard and duplicate-place checks of FR-322 "Timed-model nodes" over a
 /// whole package, as the code, cause and RFC 6901 locus a reader gives (`None`
-/// when admitted): a repeated path refuses at the later reference of the
-/// root's `clock_places` (FR-322-AC-120), and a `clock_guard` node that no
+/// when admitted): a second node of a path is refused at its first forged
+/// `resolved_path` row, before the root's aggregates (FR-322-AC-124), a repeated path whose rows all
+/// join at the later reference of the root's `clock_places` (FR-322-AC-120), and a `clock_guard` node that no
 /// root's `guards` lists refuses at that node's own `body` (FR-322-AC-243),
 /// the first such node in ascending node-id digest order.
 fn timed_guard_and_place_refusal(package: &Value) -> Option<(&'static str, &'static str, String)> {
@@ -23236,6 +23242,26 @@ fn timed_guard_and_place_refusal(package: &Value) -> Option<(&'static str, &'sta
                 .unwrap_or_else(|| panic!("root binding {name}"))
         };
         let places = binding("clock_places");
+        // The row join of every place node (FR-322-AC-124) precedes the root's aggregates: a second node of one
+        // path can differ only in its `resolved_path`, and the declared rows are the earlier node's, so the
+        // first differing row of the later node is forged.
+        for (at, place) in places.iter().enumerate() {
+            let at_node = position(&place["target"]);
+            let path = &nodes[at_node]["body"]["members"][1];
+            if let Some(earlier) = places[..at].iter().find(|earlier| &nodes[position(&earlier["target"])]["body"]["members"][1] == path) {
+                let (declared, rows) = (
+                    nodes[position(&earlier["target"])]["body"]["members"][2]["value"]["members"].as_array().unwrap(),
+                    nodes[at_node]["body"]["members"][2]["value"]["members"].as_array().unwrap(),
+                );
+                if let Some(row) = (0..rows.len()).find(|row| declared.get(*row) != rows.get(*row)) {
+                    return Some((
+                        "invalid_package",
+                        "malformed-clock-place",
+                        format!("/semantic_graph/nodes/{at_node}/body/members/2/value/members/{row}"),
+                    ));
+                }
+            }
+        }
         for (at, place) in places.iter().enumerate() {
             let path = &nodes[position(&place["target"])]["body"]["members"][1];
             if places[..at].iter().any(|earlier| &nodes[position(&earlier["target"])]["body"]["members"][1] == path) {
@@ -25416,8 +25442,8 @@ fn tc_971_option_value_body_is_closed_and_its_preimage_covers_type_and_payload()
 }
 
 /// Every switch of the clause oracle; the mutation test pins each to a vector.
-const TIMED_CLAUSE_RULES: [&str; 21] = [
-    "path-key", "member-key", "unlisted", "nested-order", "anchor-kind", "anchor-model", "no-point", "parameter-declared", "parameter-clock",
+const TIMED_CLAUSE_RULES: [&str; 22] = [
+    "state-anchor-types", "path-key", "member-key", "unlisted", "nested-order", "anchor-kind", "anchor-model", "no-point", "parameter-declared", "parameter-clock",
     "owner-type", "slot-count", "slot-domain", "part-predicate", "same-anchor",
     "invariant-predicate", "invariant-bound", "frame-modifies", "binders", "condition", "one-guard", "root-constraints",
 ];
@@ -25448,6 +25474,22 @@ fn timed_clause_refusal(
         node["body"]["members"].as_array().unwrap().iter().find(|member| member["name"] == name).unwrap()["value"].clone()
     };
     let target = |value: &Value| value["target"]["digest"].as_str().unwrap().to_owned();
+    // The state step (FR-342 "Reader order" step 3) runs before the timed-model step (FR-322-AC-121): an
+    // anchor and its frame are both typed by the anchor's `context`, else `invalid_model_binding` at the anchor.
+    if on("state-anchor-types") {
+        let mut anchors: Vec<usize> = (0..nodes.len()).filter(|at| nodes[*at]["semantic_form"] == "operation_anchor").collect();
+        anchors.sort_by_key(|at| nodes[*at]["node_id"]["digest"].as_str().unwrap().to_owned());
+        for at in anchors {
+            let anchor = &nodes[at];
+            let context = target(&anchor["body"]["members"][0]["value"]);
+            let frame = node(&target(&anchor["body"]["members"][2]["value"]));
+            let typed = anchor["semantic_type"]["digest"] == context.as_str()
+                && frame.is_some_and(|frame| frame["semantic_type"]["digest"] == context.as_str());
+            if !typed {
+                return Some(("invalid_model_binding", Some("malformed-declaration"), format!("/semantic_graph/nodes/{at}")));
+            }
+        }
+    }
     let word = |node: &Value, at: usize| node["body"]["members"][at]["value"]["value"].as_str().unwrap_or("").to_owned();
     let root_at = nodes.iter().position(|node| node["semantic_form"] == "timed_model").unwrap();
     let root = &nodes[root_at];
@@ -25830,7 +25872,7 @@ fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
 fn tc_367_timed_clause_vectors_replay_to_their_refusals() {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let ids: Vec<&str> = vectors["cases"].as_array().unwrap().iter().map(|c| c["id"].as_str().unwrap()).collect();
-    let expected: Vec<String> = (1..=53).map(|n| format!("CL-{n:02}")).collect();
+    let expected: Vec<String> = (1..=54).map(|n| format!("CL-{n:02}")).collect();
     assert_eq!(ids, expected.iter().map(String::as_str).collect::<Vec<_>>());
     assert_eq!(timed_clause_vector_defects(""), Vec::<String>::new());
 }
@@ -25863,6 +25905,7 @@ fn tc_367_timed_clause_oracle_fails_on_each_mutation() {
         ("invariant-predicate", "CL-23"),
         ("invariant-bound", "CL-24"),
         ("anchor-model", "CL-25"),
+        ("state-anchor-types", "CL-54"),
         ("member-key", "CL-33"),
         ("member-key", "CL-35"),
     ];
@@ -25964,7 +26007,7 @@ fn tc_367_place_path_key_decides_a_shared_region() {
     assert_eq!(timed_aggregate_order_refusal(&unordered), locus, "AO-09");
     let (repeated, locus) = case_package("AO-10");
     assert_eq!(timed_aggregate_order_refusal(&repeated), locus, "AO-10: equal region and equal path");
-    assert_eq!(timed_guard_and_place_cause(&repeated), Some(("invalid_package", "duplicate-clock-place")), "AO-10 would otherwise be a repeated place");
+    assert_eq!(timed_guard_and_place_cause(&repeated), Some(("invalid_package", "malformed-clock-place")), "AO-10 would otherwise be refused at the twin's forged row");
     // The key reads the path and not the declared rows: a place whose resolved rows are swapped keeps its place in the order.
     let mut rows = ordered.clone();
     let place_at = rows["semantic_graph"]["nodes"].as_array().unwrap().iter().position(|n| {

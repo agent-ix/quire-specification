@@ -92,6 +92,82 @@
     },
     {
       "constraints": [],
+      "displayName": "Gadget",
+      "extensions": [],
+      "identity": "ix://acme/orders/Gadget",
+      "kind": {
+        "module": "acme/orders",
+        "name": "entity"
+      },
+      "origin": {
+        "source": {
+          "path": "orders/Gadget.md",
+          "sourceIdentity": "ix://acme/orders/spec",
+          "startColumn": 1,
+          "startLine": 1
+        }
+      },
+      "roles": [],
+      "unknownPolicy": "reject",
+      "fields": [
+        {
+          "defaultKind": "none",
+          "identity": "ix://acme/orders/Gadget/id",
+          "multiplicity": {
+            "lower": 1,
+            "ordered": false,
+            "unique": true,
+            "upper": 1
+          },
+          "name": "id",
+          "nullable": false,
+          "origin": {
+            "source": {
+              "path": "orders/Gadget.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "presence": "required",
+          "typeRef": "ix://quire/native/Integer"
+        }
+      ],
+      "identityFields": [
+        "ix://acme/orders/Gadget/id"
+      ],
+      "operations": [
+        {
+          "identity": "ix://acme/orders/Gadget/ping",
+          "name": "ping",
+          "origin": {
+            "source": {
+              "path": "orders/Gadget.md",
+              "sourceIdentity": "ix://acme/orders/spec",
+              "startColumn": 1,
+              "startLine": 1
+            }
+          },
+          "params": [],
+          "post": [],
+          "pre": [],
+          "returns": {
+            "multiplicity": {
+              "lower": 1,
+              "ordered": false,
+              "unique": true,
+              "upper": 1
+            },
+            "nullable": false,
+            "typeRef": "ix://quire/native/Integer"
+          }
+        }
+      ],
+      "relationships": [],
+      "supertypes": []
+    },
+    {
+      "constraints": [],
       "displayName": "Order",
       "extensions": [],
       "identity": "ix://acme/orders/Order",
