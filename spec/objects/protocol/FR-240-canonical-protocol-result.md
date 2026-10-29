@@ -53,7 +53,7 @@ relationships:
 
 ## Description
 
-When a protocol assessment result is emitted or read, the strict reader SHALL resolve the result's contract version, kind, identity, enclosing artifact reference and retained fact set through this object artifact rather than through a restatement in an individual behavioral requirement.
+When a protocol assessment result is emitted or read, the strict reader SHALL resolve the result's contract version, kind, identity and retained fact set through this object artifact rather than through a restatement in an individual behavioral requirement.
 
 ## Properties
 

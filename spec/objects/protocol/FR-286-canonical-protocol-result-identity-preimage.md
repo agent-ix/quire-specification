@@ -46,7 +46,7 @@ this result contract and is not an enclosing ArtifactRef seal.
 A strict reader SHALL validate in this order: (1) closed result shape,
 `contractVersion` and `kind`; (2) recompute and compare `resultId`; (3) validate
 cross-field combination and lineage rules. The reader SHALL refuse the first
-failed boundary and SHALL NOT repair, approximate or reseal the result.
+failed boundary and SHALL NOT repair or approximate the result.
 
 - **Identity kind** — *derived* from the exact preimage above.
 - **Key** — the complete textual `resultId`, including its domain prefix.
