@@ -55,3 +55,4 @@ examined and are clean.
 | FND-001 | deferred | Not fixed on #539. It is covered by open PR #540, whose TW-27 is the non-empty-body vector for TC-940 step 6, and it is closed when #540 merges. |
 | FND-002 | fixed | TW-28 (owner `ix://acme/shapes/Missing` plus node 14's `semantic_type` naming the absent `Absent` node) is schema-valid, and its one dangling edge is the stage 4 edge. It refuses at the stage 2 owner join, at `/semantic_graph/nodes/0/owner`. The paragraph now cites live FR-322-AC-275 and TW-28. |
 | FND-003 | fixed | The paragraph now says the reader does not compare `node_id.path` with `owner.node`, names the broken producer rule, and calls the owner join the one defect a reader checks. |
+| FND-004 | fixed | 3cfe82ad deletes `assert_eq!(ids.len(), 26, ...)` from `tc_940_tuple_node_wire_cases_run_from_the_published_vectors` and keeps the uniqueness assert, so the replay no longer pins the case count and TW-28 runs. |
