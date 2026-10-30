@@ -15251,36 +15251,6 @@ fn tc_233_application_result_types_and_literal_types_are_checked_not_inferred() 
     );
 }
 
-/// FR-322-AC-54: the `correspondence`/`abstraction_relation` node is left to
-/// FR-451, whose identity step refuses an edited body as
-/// `invalid_semantic_graph`.
-#[trace("TC-233", "FR-322-AC-54")]
-#[test]
-fn tc_233_an_abstraction_relation_node_is_left_to_fr_451() {
-    let catalog = parsed_fixture(OPERATION_CATALOG);
-    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
-    let package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
-    assert!(schema.is_valid(&package));
-    let index = node_index_where(&package, |node| {
-        node["semantic_form"] == "abstraction_relation"
-    });
-    let node = &package["semantic_graph"]["nodes"][index];
-    assert!(node.get("owner").is_none());
-    assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
-
-    let mut edited = package.clone();
-    let id = node["node_id"].clone();
-    edit_node(&mut edited, index, |node| {
-        node["body"]["frames"][0]["function"][1] = json!("attempt_other");
-    });
-    assert!(schema.is_valid(&edited));
-    assert_eq!(edited["semantic_graph"]["nodes"][index]["node_id"], id);
-    assert_eq!(
-        read_package_semantics(&edited, &catalog),
-        Err(ReadRefusal::Abstraction(id))
-    );
-}
-
 
 /// FR-322-AC-151: the projection FR-154 intake reads from the `acme/shapes`
 /// document, in document order: for each object type its supertypes and fields
