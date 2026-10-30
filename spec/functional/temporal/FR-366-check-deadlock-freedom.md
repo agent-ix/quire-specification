@@ -105,10 +105,10 @@ writer SHALL add one deadlock-freedom item, unless the subject's model declares
   ([FR-368](FR-368-negotiate-temporal-model-check-items.md));
 - is recorded, negotiated and settled as a reachable-state invariant, with the
   verdicts of FR-363;
-- has no node of its own: it is keyed by its anchor, the `model`/`model_root`
-  node `{package: <selected identity>, path: ["model", "model_root"],
-  ordinal: 0}` of the model selection the subject reads, together with its
-  `item_kind` `deadlock-freedom`, as
+- has no node of its own: it is keyed by its subject, its anchor (the
+  `model`/`model_root` node `{package: <selected identity>, path: ["model",
+  "model_root"], ordinal: 0}` of the model selection the subject reads) and
+  its `item_kind` `deadlock-freedom`, as
   [FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) "Derived request items" states.
 
 A reachable deadlock settles the item `refuted`, basis
@@ -158,7 +158,7 @@ A `terminal` declaration changes only the deadlock-freedom item.
 | FR-366-AC-8 | A model whose `terminal when` predicate evaluates undefined at a reachable state with no enabled transition settles the deadlock-freedom item `refuted`, cause `undefined-evaluation`, with an undefined-evaluation counterexample ending at that state, never `proved` and never a `deadlock` counterexample. | Test (TC-305) |
 | FR-366-AC-9 | Over the Job subject with universe `{j, k}`, `terminal Finished using v on M when { self.status = done }` classifies a terminal state where both objects are `done` as intended, one where `j` is `done` and `k` is `stuck` as deadlocked, and, with universe `{}`, the initial terminal state as intended; a model whose populations cover two object types refuses `self` with `missing_declaration`/`missing-name` at `self`; a model with two populations that both cover `Job` refuses `self` with `ambiguous_declaration`/`ambiguous-name` at `self`, naming both populations. | Test (TC-297) |
 | FR-366-AC-10 | A bounded-delay terminal state is not reported by the deadlock-freedom item. | Test (TC-370) |
-| FR-366-AC-11 | A model subject's deadlock-freedom item adds no node to the checked package. Its claim node is the `model`/`model_root` node of the subject's model selection, `{package: "acme/orders", path: ["model", "model_root"], ordinal: 0}` in `derived-items-request`, at occurrence `generated` 0, and the item is told apart from the time-lock-freedom item on that node by `item_kind` alone. | Test (TC-431 BP-51) |
+| FR-366-AC-11 | A model subject's deadlock-freedom item adds no node to the checked package. Its claim node is the `model`/`model_root` node of the subject's model selection, `{package: "acme/orders", path: ["model", "model_root"], ordinal: 0}` in `derived-items-request`, at occurrence `generated` 0, and the item is told apart from the time-lock-freedom item of the same subject on that node by `item_kind`. Its key is (subject, anchor `node_id`, `item_kind`). | Test (TC-431 BP-51) |
 
 ## Dependencies
 

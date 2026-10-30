@@ -198,9 +198,10 @@ reader's choice:
   the pair always names a `source_map` entry. The choice depends on the node
   alone, not on the order of the node's `occurrences` array.
 
-A derived item has no node of its own. It is keyed by its anchor node's
-`node_id` together with its `item_kind`, and two derived items of one subject
-that share an anchor differ only in `item_kind`
+A derived item has no node of its own. It is keyed by its `subject`, its
+anchor node's `node_id` and its `item_kind`. Two derived items of one subject
+that share an anchor differ only in `item_kind`, and two items of one kind
+over two subjects that share an anchor differ only in `subject`
 ([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md)
 "Derived request items").
 
