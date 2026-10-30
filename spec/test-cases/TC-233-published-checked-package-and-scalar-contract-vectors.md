@@ -334,6 +334,8 @@ Each positive fixture that names a model-owned field, operation or owner resolve
 
 Every vector patch (the timed-clause, timed-slot-selector and model-root vectors) applied to its base keeps each node's `dependencies` the unique, node-id-ascending list of exactly the nodes its rules name (FR-322-AC-262): a patch that edits a body `reference` edits `dependencies` with it, so the reader reaches the recorded refusal and not a dependency refusal first. A patched package a vector records as admitted resolves its model-owned names in the document its base selects (FR-322-AC-266). The one vector whose refusal is the dependency defect itself (`target-listed-in-dependencies`) is outside this rule.
 
+A patch that replaces a node's `node_id` (the model-tuple-union wire cases TW-06 to TW-09) rewrites every edge that named the old id (`semantic_type`, `dependencies`, an operation's `declaration`) too, so the reader refuses the recorded owner and not a dangling edge; no patched package of the tuple-union, timed-clause, timed-slot-selector or model-root vectors names a node id its graph lacks beyond what its published base already does (FR-322-AC-266).
+
 `positive-clause-operations.json`
 gains one `correspondence`/`abstraction_relation` node (FR-451): no `owner`, empty `objects` and
 `populations`, and one `frames` entry keyed by the fixture's

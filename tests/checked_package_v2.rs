@@ -16273,6 +16273,126 @@ fn tc_233_every_vector_patch_keeps_dependencies_equal_to_its_body_references() {
     assert!(failures.is_empty(), "{failures:#?}");
 }
 
+/// Every node id a graph names outside a `node_id` (a `semantic_type`, a
+/// `dependencies` entry, a body `reference` or `declaration`) that is not the
+/// `node_id` of a node of that graph.
+fn dangling_node_ids(package: &Value) -> Vec<Value> {
+    fn collect(value: &Value, found: &mut Vec<Value>) {
+        if is_node_id(value) {
+            found.push(value.clone());
+            return;
+        }
+        match value {
+            Value::Object(members) => members
+                .iter()
+                .filter(|(name, _)| name.as_str() != "node_id")
+                .for_each(|(_, inner)| collect(inner, found)),
+            Value::Array(items) => items.iter().for_each(|inner| collect(inner, found)),
+            _ => {}
+        }
+    }
+    let graph = &package["semantic_graph"];
+    let own: Vec<&Value> = graph["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .map(|node| &node["node_id"])
+        .collect();
+    let mut named = Vec::new();
+    collect(graph, &mut named);
+    named.retain(|id| !own.contains(&id));
+    named.sort_by(node_id_order);
+    named.dedup();
+    named
+}
+
+/// FR-322-AC-266: a vector patch that replaces a node's `node_id` rewrites
+/// every edge that named the old id (`semantic_type`, `dependencies`,
+/// operation `declaration`), so the reader reaches the recorded refusal and
+/// not an `invalid_semantic_graph` for a dangling edge. Every patched package
+/// of the model-tuple-union wire cases, the timed-clause, timed-slot-selector
+/// and model-root vectors names no node id its graph lacks beyond the ones
+/// its published base already names outside the graph (a dependency package's
+/// node, an operation's `destination_type`).
+#[trace("TC-233", "FR-322-AC-266")]
+#[test]
+fn tc_233_every_vector_patch_keeps_its_node_id_references_resolving() {
+    let tuple_union_vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
+    let clause_vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
+    let slot_vectors = parsed_fixture(TIMED_SLOT_SELECTOR_VECTORS);
+    let root_vectors = parsed_fixture(MODEL_ROOT_VECTORS);
+    let tuple_union_base = parsed_fixture(include_str!(
+        "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
+    ));
+    let clause_base = parsed_fixture(POSITIVE_TIMED_CLAUSE_NODES);
+    let slot_base = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
+    let root_base = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let slot_cases = slot_vectors["aggregate_order"]["cases"]
+        .as_array()
+        .expect("aggregate order cases")
+        .iter()
+        .chain(slot_vectors["guards"].as_array().expect("guards"));
+    let groups: [(&str, &Value, Vec<&Value>); 4] = [
+        (
+            "tuple-union",
+            &tuple_union_base,
+            tuple_union_vectors["wire_cases"]
+                .as_array()
+                .expect("cases")
+                .iter()
+                .collect(),
+        ),
+        (
+            "clause",
+            &clause_base,
+            clause_vectors["cases"]
+                .as_array()
+                .expect("cases")
+                .iter()
+                .collect(),
+        ),
+        ("slot", &slot_base, slot_cases.collect()),
+        (
+            "root",
+            &root_base,
+            root_vectors["vectors"]
+                .as_array()
+                .expect("vectors")
+                .iter()
+                .collect(),
+        ),
+    ];
+    let mut failures = Vec::new();
+    let mut patched = 0;
+    for (group, base, cases) in groups {
+        let published = dangling_node_ids(base);
+        for case in cases {
+            let Some(patch) = case.get("patch").and_then(Value::as_array) else {
+                continue;
+            };
+            let mut package = base.clone();
+            for operation in patch {
+                apply_json_patch(&mut package, operation);
+            }
+            patched += 1;
+            if package["semantic_graph"]["nodes"].as_array().is_none() {
+                continue;
+            }
+            for id in dangling_node_ids(&package)
+                .into_iter()
+                .filter(|id| !published.contains(id))
+            {
+                failures.push(format!(
+                    "{group} {}: names {id}, which no node of its graph carries",
+                    case["id"]
+                ));
+            }
+        }
+    }
+    assert!(patched > 0, "the vectors hold patches");
+    assert!(failures.is_empty(), "{failures:#?}");
+}
+
 const NODE_ORDINAL_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/node-ordinal-vectors.json");
 
