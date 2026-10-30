@@ -78,7 +78,7 @@ A decimal string is `0`, or an optional `-` followed by `[1-9][0-9]*`. A
 domain-object reference is its FR-204 (universe, type, object_identity)
 triple, realized under `quire.model.complete/v1`
 ([model-complete.md](../../../proposals/quire-v1/definitions/model-complete.md))
-as `{"type":"reference","universe":"<64 lowercase hex>","object_type":"<64 lowercase hex>","identity":"<lowercase hex of the identity bytes>"}`.
+as `{"type":"reference","universe":<node id>,"object_type":<node id>,"identity":"<lowercase hex of the identity bytes>"}`, where each `<node id>` is a structural checked-package node id `{package, path, ordinal}` (FR-322): `universe` that of the declaration node of the universe's least root type and `object_type` that of the declaration node of the object's most-specific type (model-complete.md "Object universe").
 The null literal is `{"type":"null"}`. Every value encodes as a tagged JCS
 object, `{"type": <tag>, ...}`:
 

@@ -27,7 +27,7 @@ to the body's targets, as TC-233 does for its patched vectors, and feed the pack
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| SN-01 | TC-331 PV-01, `possible ReachesTwo using v over (c: Config::ConfigVersion) { c.versionNumber = 2 }` | one node, with no `declaration` and no `owner`; body `kind` `possible`, `over` a reference to `c`'s parameter node, `from` the empty aggregate, `target` a reference to the `expression` node of `c.versionNumber = 2`; occurrence role `claim`; `dependencies` the two targets in digest order |
+| SN-01 | TC-331 PV-01, `possible ReachesTwo using v over (c: Config::ConfigVersion) { c.versionNumber = 2 }` | one node, with no `declaration` and no `owner`; body `kind` `possible`, `over` a reference to `c`'s parameter node, `from` the empty aggregate, `target` a reference to the `expression` node of `c.versionNumber = 2`; occurrence role `claim`; `dependencies` the two targets in node-id order |
 | SN-02 | TC-332 AP-02, `always possible CanStillWin using v over (x: G::Game) from (x.phase != G::Phase::Lost) { x.phase = G::Phase::Won }` | `kind` `always-possible`; `from` references the `expression` node of `x.phase != G::Phase::Lost` |
 | SN-03 | TC-333 UP-01, `unique path InOneWay` | `kind` `unique-path`; `from` references `X`'s node and `target` `Y`'s node |
 | SN-04 | `possible Anything using v { true }` | admitted; `over` the empty aggregate; `target` a reference to the Boolean `value`/`literal` node of `true`; `dependencies` that node only |

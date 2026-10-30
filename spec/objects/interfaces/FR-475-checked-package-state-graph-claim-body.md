@@ -61,8 +61,8 @@ below.
   pre-state is the checker's admission rule (FR-390 "Admission"); the reader
   does not check it again.
 - **semantic_type** — the `scalar_type`/`boolean` node.
-- **declaration** — none. The node is content-addressed, as a
-  `temporal`/`temporal_clause` node is: it carries no `declaration` and no
+- **declaration** — none. The node has a derived node id, as a
+  `temporal`/`temporal_clause` node does: it carries no `declaration` and no
   `owner`, two claims with equal checked content share one node, and each
   declaration is one `claim` occurrence of it, told apart by its occurrence
   ordinal.

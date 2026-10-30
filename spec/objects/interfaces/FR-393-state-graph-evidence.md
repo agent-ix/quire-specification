@@ -37,10 +37,11 @@ runs.
     states, in their canonical order, as a decimal string;
   - `steps` — the path's steps in order, possibly none. A step is the model
     trace step of a model-subject counterexample:
-    `{"type":"step","transition":<transition>,"post_state":"<64 lowercase hex>"}`,
+    `{"type":"step","transition":<transition>,"post_state":"<state key>"}`,
     with `transition` the FR-181 typed canonical form of the step's
     transition identity and `post_state` the post-state's
-    state key (FR-181).
+    state key (FR-181) in the unpadded base64url spelling of its canonical
+    JCS bytes (FR-331), with no hash.
 - **Instance** — the `over` binding of the item's instance:
   `{"type":"instance","parameter":"<ident>","key":<encoded>}`, with `key`
   the bound object's universe key in FR-181 typed canonical form, or `null`

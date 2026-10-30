@@ -154,7 +154,7 @@ numbering and each component's stated reason, and reads no output of the
 search beyond the certificate. It refuses a certificate whose `identity`
 differs from the item's with `invalid_runtime_input`/`conflicting-identity`.
 A rejected certificate settles `inconclusive`, `certificate-rejected{rule,
-at}` (FR-331): `initial-missing` at the State locus `{domain, digest}` of
+at}` (FR-331): `initial-missing` at the State locus `{key}` of
 the initial discrete state, when no node of it covers the initial symbolic state (in a refinement form, of the discrete state of concrete initial state `i`, when `initials[i]` does not cover that state's symbolic state, for each `i`); `successor-missing` at
 `{node}` when a node's successor by an identity is not covered by its named
 target; `bad-state` at `{node}` for a bad node; `backward-edge` at `{edge}`

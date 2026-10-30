@@ -145,8 +145,9 @@ process provider alike.
     entry with no `relation` sets `x` to the value; the other entries bound
     the value `x` takes. A reset `true` is the empty aggregate, and a variable
     no entry names keeps its value.
-- **declaration** and **owner** — none. A transition is content-addressed:
-  two transitions with equal content share one node.
+- **declaration** and **owner** — none. A transition has a derived node id (FR-322
+  "Structural node identity"): two transitions with equal content have the
+  same node id and are one node.
 - **occurrences** — one or more, of role `expression`, one per source
   `transition` clause that checks to this node.
 

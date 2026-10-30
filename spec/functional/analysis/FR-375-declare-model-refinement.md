@@ -733,8 +733,7 @@ refinement node, the reader checks in this order and reports its first defect:
    `populations`, `objects` (each entry's `fields` first),
    `histories` (each entry's `updates` first), `assume`, `ensure`, and then
    `abstract_internal` and `class_catalog` (`concrete`, then `abstract`) when
-   present. `steps` is in declaration order and has no order check: no
-   `steps` entry is out of order. Apply the ordering rules above, with catalog entries sorted
+   present. `steps` is in declaration order. Apply the ordering rules above, with catalog entries sorted
    by their catalog key (`class` UTF-8 bytes, then `memory_model` UTF-8 bytes
    for memory entries);
    the first out-of-order entry refuses `invalid_semantic_graph` at its

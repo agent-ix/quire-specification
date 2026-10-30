@@ -49,7 +49,7 @@ nothing else.
     Boolean state predicate `P`; for `any`, the empty aggregate
     `{term: "aggregate", members: []}`.
 - **declaration** — none. A `temporal` node carries no `declaration` (the
-  schema's `DeclarationTagRules`). The node is content-addressed and nested
+  schema's `DeclarationTagRules`). The node has a derived node id and is nested
   under its model by the `model` reference: the written name `T` of
   `terminal T using v on M …` is presentation, carried only by the node's
   source occurrence, so renaming `T` changes neither the node id nor any

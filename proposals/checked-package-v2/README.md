@@ -102,16 +102,7 @@ structures, but any external consumer receives only the contract.
 - `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
   `generated` `source_map` entries against its step rows, its `steps` order and
-  whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). Cases `RS-18` to `RS-24` cover the closed, identity-excluded `refinement_step_rows` sidecar and its comparison with generated occurrences. The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node key.
-- `refinement-identity-vectors.json` supplies the refinement-name identity
-  vectors `RI-01` to `RI-04` (two names, two nodes; a body
-  without `name` fails the closed body schema; an equal `name` is an
-  `ambiguous-name`), the operation-class `source_node` cases `SP-01` to
-  `SP-11` (the no-point `operation_anchor` of the declaring type, with and
-  without a class catalog) and the row-expression binder cases `BI-01` to
-  `BI-07` of FR-375-AC-29 to FR-375-AC-32, and the `selected_roots` section
-  (`SR-01` to `SR-13`, five selected model roots read from their
-  selections, concrete-identity cases of FR-375-AC-33 and FR-375-AC-34).
+  whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). Cases `RS-18` to `RS-24` cover the closed, identity-excluded `refinement_step_rows` sidecar and its comparison with generated occurrences. The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node id.
 - The frame vectors' `frame_mutations` are applied to the semantic graph and evaluated at the
   frame step of `read_package_semantics` (FR-322, FR-340); source-map checks
   are outside a vector's expectation. Most vectors replace the all-families
@@ -143,9 +134,7 @@ structures, but any external consumer receives only the contract.
   `missing_import`/`missing-selection` at entry 0 by design. Only
   `closure_vectors`, which name real packages, and
   `dependency-call-vectors.json` name packages a reader can be supplied. Each `supply_vectors` entry lists the
-  direct entries in lock order with a symbolic `supply` state (`bound`,
-  `stale` for a supplied package not structurally equal to the one
-  recompiled, or `absent`) and the outcome FR-322-AC-84 requires.
+  direct entries in lock order with a symbolic `supply` state (`bound` or `absent`) and the outcome FR-322-AC-84 requires.
   Its `closure_vectors` contain `direct_dependencies` of the importer and
   `dependency_locks` for those direct packages; each dependency lock names a
   fixture `base` and its own `dependency_selections`. The diamond vector
@@ -178,24 +167,11 @@ structures, but any external consumer receives only the contract.
   as a non-callee argument and as a node body root, and the target listed in
   `dependencies`. Each records its refusal `outcome` and its `locus`, the JSON
   pointer FR-322 fixes for it in the mutated package.
-- `fixtures/positive-compound-unit.json` is a V2 package of four nodes: a
-  nominal `dimension` (`Length`), a nominal root `unit` `U` (`metre`), the
-  builtin `Integer`, and the structural `scalar_type`/`compound_unit` node
-  `metre^1` that holds `unit` = `reference(U)` and an exponent. It is the base
-  of `nominal-rekey-vectors.json` (`NK-00` to `NK-14`, RFC 6902 patches over
-  the base package), whose cases change `U` and observe the owner join
-  and the order of the join stages (`NK-06` to `NK-14`, FR-322-AC-169,
-  FR-322-AC-170).
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
   remain TC-217 Contract IR consumer evidence; this schema qualification does
   not claim them complete.
-- `model-effective-declaration.schema.json` and
-  `model-effective-declaration-vectors.json` define the QSL-derived
-  `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2` and
-  `quire.model.object-universe/v2` shapes selected by
-  `quire.model.complete/v1`, with the reference order and invalid mutations. They add no CheckedPackage V2 wire member.
 - `model-member-type-vectors.json` carries a domain package as a projection
   of the declaration records FR-154 intake reads from it, the model declaration node vectors
   that recover a declaring node's `ModelOwner`, the member and selection
@@ -254,12 +230,9 @@ selection; source/definition owners use authority plus identity, and model
 owners use the domain package identity plus the IR node identity: a checked
 package selects at most one domain package per identity (FR-321), so the owner's
 `identity` scopes a `ModelOwner` node's identity to its declaring domain
-package. A node id depends only on content: an unchanged source- or
-definition-owned declaration retains its identity across unrelated document
-changes. A structural node carries its `owner` member (`SourceOwner` on a
+package. A structural node carries its `owner` member (`SourceOwner` on a
 declared node, `ModelOwner` on a model declaration node or clause function, none
-elsewhere), which the derived identity projection carries, so a reader re-derives
-every structural key from the package alone. `fixtures/positive-two-owners-a.json`
+elsewhere). `fixtures/positive-two-owners-a.json`
 and `-b.json` declare the same records under two `SourceOwner`s and differ in
 every owner-keyed node id. Qualified names are arrays of ASCII identifier segments.
 Arbitrary-precision integers/rationals use canonical decimal strings with no
@@ -298,9 +271,6 @@ checks canonical bytes and all identity joins before exposing a graph, and
 reports malformed/cross-domain/unknown-capability input as typed refusal. It
 checks that node ids are unique and that references and dependencies resolve;
 it recomputes no key.
-The node forms a refinement row reads (history read, whole-population value,
-`count`/`only`, `seq`) and their refusals are in
-`refinement-row-node-vectors.json` (FR-322-AC-163 to FR-322-AC-168).
 Its outcome is the closed sum type admitted/refused/incomplete. It enforces
 caller-provided byte/node/edge/occurrence/diagnostic/work limits;
 exhaustion is incomplete, not an empty graph or a successful package. A node

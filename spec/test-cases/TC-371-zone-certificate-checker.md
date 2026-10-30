@@ -15,8 +15,6 @@ relationships:
 
 # TC-371: Zone certificate checker
 
-BLOCKED-BY STD-606 (owner: planner titan:QSL:plan): State locus `{domain, digest}` of rows ZC-08 and ZC-14 (StateKey digest record, FR-331).
-
 ## Description
 
 Accept valid zone certificates and reject or refuse invalid ones, recomputing every successor in exact arithmetic.
@@ -42,13 +40,13 @@ The models below are defined here in full; the citation names the QSL design rec
 | ZC-05 | ZC-01 with another item's identity | Refused `invalid_runtime_input`/`conflicting-identity` |
 | ZC-06 | A model with constant `rational(123456789123456789, 7) ms` | Constants scale by 7 and DBM bounds hold the exact integers |
 | ZC-07 | The `Rpc` time-lock-freedom certificate | Every node states a reachable time-divergent target, and the checker verifies each |
-| ZC-08 | The certificate of `NoLateReply` with `T = 4 ms`, with the node covering the initial symbolic state removed | `inconclusive`, `certificate-rejected` with rule `initial-missing` at `{domain, digest}`, the State record of the initial discrete state |
+| ZC-08 | The certificate of `NoLateReply` with `T = 4 ms`, with the node covering the initial symbolic state removed | `inconclusive`, `certificate-rejected` with rule `initial-missing` at `{key}`, the State record of the initial discrete state |
 | ZC-09 | The `Rpc` time-lock-freedom certificate with one node's named target replaced by a node that is not a reachable time-divergent target | `certificate-rejected` with rule `witness-fails` at `{node}`, that node's position |
 | ZC-10 | The refinement-form certificate of FR-430-AC-1's `TReq` safety half (two positions, two nodes, two edges) | Valid `ZoneCertificate`; its RFC 8785 bytes equal `ZC-10`'s published `bytes_hex` (2343 bytes) |
 | ZC-11 | A time-lock-freedom certificate with a component index per node, two reasons (`missing-acceptance`, `weak-fairness`) and a divergence target per node | Valid; bytes equal `ZC-11`'s published `bytes_hex` (1432 bytes) |
 | ZC-12 | A refinement form with two initial states, the first a `locked` node with the reserved index and `admitted` starting at the positioned second | Valid; bytes equal `ZC-12`'s published `bytes_hex` (1617 bytes); `taken` is `[]` |
 | ZC-13 | ZC-10 with a zone entry or a bound as a bare JSON number, a bound as the JSON number `-1`, a bound `"01"`, `scale` `"0"`, `components` as `null`, `locked` `false`, `initials` removed or `initial` added | Each is not a `ZoneCertificate` |
-| ZC-14 | ZC-12 with `initials[1]` replaced by a node whose zone does not cover concrete initial state 1's symbolic state | `certificate-rejected` with rule `initial-missing` at `{domain, digest}`, the State record of that initial state's discrete state (the QSL checker's vector, QSL TC-700 step 8) |
+| ZC-14 | ZC-12 with `initials[1]` replaced by a node whose zone does not cover concrete initial state 1's symbolic state | `certificate-rejected` with rule `initial-missing` at `{key}`, the State record of that initial state's discrete state (the QSL checker's vector, QSL TC-700 step 8) |
 
 ## Expected Results
 

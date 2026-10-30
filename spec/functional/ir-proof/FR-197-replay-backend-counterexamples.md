@@ -58,8 +58,8 @@ verdict; decode, domain or verdict mismatch is an explicit backend parity failur
 
 ## Replay envelope
 
-The canonical envelope contains schema/profile versions, package and claim
-digests, typed input values, pre-state, selected transition or trace
+The canonical envelope contains schema/profile versions, package
+identity, claim node id, typed input values, pre-state, selected transition or trace
 occurrences, expected disposition and complete source maps. A `Witness`-arm
 envelope also contains the backend run identity, and its typed input values are
 the decode of its transcript; it stores no input beside the transcript. An
@@ -78,9 +78,10 @@ revisions.
 
 ## Failing-node identity and stage limits
 
-Because node ids are content-addressed and structurally identical nodes share
-one id, a bare node id does not tell apart the occurrences of one failing
-node; the occurrence key is FR-322's `source_map` key,
+A node id is positional, `{package, path, ordinal}` (FR-322), and a second node
+with an equal node id is refused, so one node id names one node. One node may
+occur at several source positions, and a bare node id does not tell apart the
+occurrences of one failing node; the occurrence key is FR-322's `source_map` key,
 (`node_id`, `role`, `ordinal`) (QC-8; QSL ADR-013 O-07, O-09).
 
 - The replay boundary SHALL carry the failing node's occurrence key in the
