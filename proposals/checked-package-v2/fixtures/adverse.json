@@ -1781,5 +1781,106 @@
       "expected_path": "TypeDefinition.operations[1].params[1].name",
       "expected_identity": "ix://acme/orders/Order/scaled"
     }
+  ],
+  "nominal_body_mutations": [
+    {
+      "id": "NB-01",
+      "base": "positive-nominal-identities",
+      "node": {
+        "node_tag": "scalar_type",
+        "semantic_form": "enum"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body",
+          "value": {
+            "term": "aggregate",
+            "members": []
+          }
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "a source enum body is the closed enum body, not an empty aggregate"
+    },
+    {
+      "id": "NB-02",
+      "base": "positive-nominal-identities",
+      "node": {
+        "node_tag": "scalar_type",
+        "semantic_form": "enum"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body/members",
+          "value": []
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "an enum body names at least one member"
+    },
+    {
+      "id": "NB-03",
+      "base": "positive-nominal-identities",
+      "node": {
+        "node_tag": "scalar_type",
+        "semantic_form": "unit"
+      },
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/body/scale"
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "a unit body requires scale"
+    },
+    {
+      "id": "NB-04",
+      "base": "positive-nominal-identities",
+      "node": {
+        "node_tag": "scalar_type",
+        "semantic_form": "unit"
+      },
+      "patch": [
+        {
+          "op": "add",
+          "path": "/body/extra",
+          "value": "x"
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "a unit body is closed"
+    },
+    {
+      "id": "NB-05",
+      "base": "positive-nominal-identities",
+      "node": {
+        "node_tag": "scalar_type",
+        "semantic_form": "dimension"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body/terms",
+          "value": [
+            {
+              "dimension_node_id": {
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Length"
+                ],
+                "ordinal": 0
+              },
+              "exponent": "1.5"
+            }
+          ]
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "a dimension term exponent is an integer string"
+    }
   ]
 }

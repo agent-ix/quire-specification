@@ -752,7 +752,7 @@ A frame body refusal, meaning-join or canonical-order
   unit in that package's document, and it reaches a package dimension
   the same way, as `M::name` in a dimension position (FR-142 "Namespaces"). On a source `enum`, `unit` or `dimension` node, `node_id.path` equals
   `qualified_name` (a structural label comparison; nothing is recomputed or
-  hashed) and the body is `{term: aggregate, members: []}`, else the reader refuses as `invalid_package` with
+  hashed), else the reader refuses as `invalid_package` with
   cause `declaration-nominal-mismatch`. The one exception is a nominal node
   whose `owner` is a `ModelOwner` (a dimension or unit an admitted domain
   package declares, "Model-owned members" step 4): it carries no
@@ -801,9 +801,19 @@ A frame body refusal, meaning-join or canonical-order
   dimension-equivalence or declared-unit node is identified by its declaration
   path like any declared node (a dimension equivalence by its structural id,
   which names its two dimension nodes). A source `enum`, `unit` and `dimension`
-  node carries an empty `aggregate` body, its name in `declaration` and its
-  `SourceOwner`; its member terms, dimension terms and a unit's dimension and
-  target are carried by its `semantic_type` and `dependencies`. A dimension
+  node carries its name in `declaration`, its `SourceOwner` and a closed body
+  holding its source values (nothing in it is hashed or recomputed):
+  an `enum` `{term: "enum", ordered, members}` with `ordered` a boolean and `members` a non-empty
+  list of unique identifiers, the enum's cases in declared order; a `dimension`
+  `{term: "dimension", terms}` with `terms` a list of `{dimension_node_id, exponent}`
+  (`dimension_node_id` a node id, `exponent` an integer string), empty for a base dimension;
+  and a `unit` `{term: "unit", dimension_node_id, target_unit_node_id, scale, offset}`
+  with `dimension_node_id` a node id, `target_unit_node_id` a node id or `null` for a canonical
+  root, and `scale` and `offset` exact rationals `{numerator, denominator}`
+  (`numerator` an integer string, `denominator` a positive integer string). An enum is
+  `ordered_enum` when its `ordered` is true. A
+  model-owned nominal node reads its values from the selected document, and its body is
+  `{term: aggregate, members: []}`. A dimension
   equivalence carries its pair and scale in its body and its `SourceOwner`.
   Owner subjects must join an exact lock
   selection. A reader joins enum member declaration/case to `semantic_type`,
@@ -1268,14 +1278,15 @@ constraints ("Reference conformance" below).
    `[node_tag, semantic_form, <FCD identity>]`, the rule of every node without a
    `declaration` (`["scalar_type", "unit", "ix://acme/rpc/unit/ms"]`, and
    `["scalar_type", "dimension", "ix://acme/rpc/dimension/Time"]` for a dimension), and its body is
-   `{term: aggregate, members: []}`.
+   `{term: aggregate, members: []}`; its values are read from the selected document.
    The node carries no `declaration`, under
    the `ModelOwner` exception of the `declaration` rule. Its `node_id` stays
    distinct from a source unit `ms`'s (a different `package` and `path`), whose `declaration` carries the same
    `qualified_name` under a `SourceOwner`; a dimension's `terms` are
-   its FCD terms and a unit's `dimension_node_id`, `target_unit_node_id`,
-   `scale` and `offset` are its FCD `dimension`, `target`, `scale` and
-   `offset` resolved to those nodes. A dimension node is self-typed and
+   its FCD terms and a unit's `dimension`, `target`, `scale` and
+   `offset` are its FCD `dimension`, `target`, `scale` and
+   `offset`, each read from the document and resolved to those nodes (a source dimension and unit
+   hold them as `terms`, `dimension_node_id`, `target_unit_node_id`, `scale` and `offset` in their bodies). A dimension node is self-typed and
    depends exactly on the dimension nodes of its terms; a unit node's
    `semantic_type` is its dimension node and it depends exactly on that node
    and its non-null target. A `typeRef` `ix://quire/unit/<p>/<name>` whose
@@ -2215,8 +2226,8 @@ disagreement between them is a catalog defect, not a reader choice.
 A type node's **family** is read from the type the node resolves to through its
 `bounded_domain` base chain: `scalar_type` forms `boolean`, `integer`,
 `rational`, `decimal`, `float32`, `float64`, `text`, `string`, `uuid` and `timestamp` are their own family, a
-`unit` is `quantity`, an enum is `ordered_enum` when its nominal body is
-ordered and `enum` otherwise; `composite_type` forms `option`, `record`,
+`unit` is `quantity`, an enum is `ordered_enum` when its body's `ordered` is
+true and `enum` otherwise; `composite_type` forms `option`, `record`,
 `tuple`, `union`, `sequence`, `set`, `bag`, `ordered_set` and `reference` are
 their own family; a `model`/`record_value_type` or `model`/`event_type`
 declaration is `record`, a `model`/`tuple_value_type` declaration is `tuple`, a
