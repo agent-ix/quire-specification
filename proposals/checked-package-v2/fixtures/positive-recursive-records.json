@@ -100,7 +100,7 @@
           "members": [
             {
               "target": {
-                "ordinal": 0,
+                "ordinal": 1,
                 "package": "u",
                 "path": [
                   "List"
@@ -113,7 +113,7 @@
         },
         "dependencies": [
           {
-            "ordinal": 0,
+            "ordinal": 1,
             "package": "u",
             "path": [
               "List"
@@ -124,15 +124,7 @@
           "ordinal": 0,
           "package": "u",
           "path": [
-            "composite_type",
-            "option",
-            {
-              "ordinal": 0,
-              "package": "u",
-              "path": [
-                "List"
-              ]
-            }
+            "List"
           ]
         },
         "node_tag": "composite_type",
@@ -149,15 +141,7 @@
           "ordinal": 0,
           "package": "u",
           "path": [
-            "composite_type",
-            "option",
-            {
-              "ordinal": 0,
-              "package": "u",
-              "path": [
-                "List"
-              ]
-            }
+            "List"
           ]
         }
       },
@@ -177,15 +161,7 @@
                         "ordinal": 0,
                         "package": "u",
                         "path": [
-                          "composite_type",
-                          "option",
-                          {
-                            "ordinal": 0,
-                            "package": "u",
-                            "path": [
-                              "List"
-                            ]
-                          }
+                          "List"
                         ]
                       },
                       "term": "reference"
@@ -208,20 +184,12 @@
             "ordinal": 0,
             "package": "u",
             "path": [
-              "composite_type",
-              "option",
-              {
-                "ordinal": 0,
-                "package": "u",
-                "path": [
-                  "List"
-                ]
-              }
+              "List"
             ]
           }
         ],
         "node_id": {
-          "ordinal": 0,
+          "ordinal": 1,
           "package": "u",
           "path": [
             "List"
@@ -243,7 +211,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",
         "semantic_type": {
-          "ordinal": 0,
+          "ordinal": 1,
           "package": "u",
           "path": [
             "List"
@@ -290,38 +258,10 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "ordinal": 0,
+                  "ordinal": 2,
                   "package": "u",
                   "path": [
-                    "bounded_domain",
-                    "collection_bounds",
-                    "min",
-                    {
-                      "ordinal": 0,
-                      "package": "u",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ]
-                    },
-                    "0",
-                    "max",
-                    "3",
-                    {
-                      "ordinal": 0,
-                      "package": "u",
-                      "path": [
-                        "composite_type",
-                        "sequence",
-                        {
-                          "ordinal": 0,
-                          "package": "u",
-                          "path": [
-                            "Tree"
-                          ]
-                        }
-                      ]
-                    }
+                    "Tree"
                   ]
                 },
                 "term": "reference"
@@ -337,38 +277,10 @@
         },
         "dependencies": [
           {
-            "ordinal": 0,
+            "ordinal": 2,
             "package": "u",
             "path": [
-              "bounded_domain",
-              "collection_bounds",
-              "min",
-              {
-                "ordinal": 0,
-                "package": "u",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "0",
-              "max",
-              "3",
-              {
-                "ordinal": 0,
-                "package": "u",
-                "path": [
-                  "composite_type",
-                  "sequence",
-                  {
-                    "ordinal": 0,
-                    "package": "u",
-                    "path": [
-                      "Tree"
-                    ]
-                  }
-                ]
-              }
+              "Tree"
             ]
           }
         ],
@@ -428,18 +340,10 @@
           }
         ],
         "node_id": {
-          "ordinal": 0,
+          "ordinal": 1,
           "package": "u",
           "path": [
-            "composite_type",
-            "sequence",
-            {
-              "ordinal": 0,
-              "package": "u",
-              "path": [
-                "Tree"
-              ]
-            }
+            "Tree"
           ]
         },
         "node_tag": "composite_type",
@@ -453,18 +357,10 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "sequence",
         "semantic_type": {
-          "ordinal": 0,
+          "ordinal": 1,
           "package": "u",
           "path": [
-            "composite_type",
-            "sequence",
-            {
-              "ordinal": 0,
-              "package": "u",
-              "path": [
-                "Tree"
-              ]
-            }
+            "Tree"
           ]
         }
       },
@@ -510,54 +406,18 @@
         },
         "dependencies": [
           {
-            "ordinal": 0,
+            "ordinal": 1,
             "package": "u",
             "path": [
-              "composite_type",
-              "sequence",
-              {
-                "ordinal": 0,
-                "package": "u",
-                "path": [
-                  "Tree"
-                ]
-              }
+              "Tree"
             ]
           }
         ],
         "node_id": {
-          "ordinal": 0,
+          "ordinal": 2,
           "package": "u",
           "path": [
-            "bounded_domain",
-            "collection_bounds",
-            "min",
-            {
-              "ordinal": 0,
-              "package": "u",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
-            },
-            "0",
-            "max",
-            "3",
-            {
-              "ordinal": 0,
-              "package": "u",
-              "path": [
-                "composite_type",
-                "sequence",
-                {
-                  "ordinal": 0,
-                  "package": "u",
-                  "path": [
-                    "Tree"
-                  ]
-                }
-              ]
-            }
+            "Tree"
           ]
         },
         "node_tag": "bounded_domain",
@@ -571,18 +431,10 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "collection_bounds",
         "semantic_type": {
-          "ordinal": 0,
+          "ordinal": 1,
           "package": "u",
           "path": [
-            "composite_type",
-            "sequence",
-            {
-              "ordinal": 0,
-              "package": "u",
-              "path": [
-                "Tree"
-              ]
-            }
+            "Tree"
           ]
         }
       }
@@ -594,15 +446,7 @@
         "ordinal": 0,
         "package": "u",
         "path": [
-          "composite_type",
-          "option",
-          {
-            "ordinal": 0,
-            "package": "u",
-            "path": [
-              "List"
-            ]
-          }
+          "List"
         ]
       },
       "ordinal": 0,
@@ -620,7 +464,7 @@
     },
     {
       "node_id": {
-        "ordinal": 0,
+        "ordinal": 1,
         "package": "u",
         "path": [
           "List"
@@ -684,18 +528,10 @@
     },
     {
       "node_id": {
-        "ordinal": 0,
+        "ordinal": 1,
         "package": "u",
         "path": [
-          "composite_type",
-          "sequence",
-          {
-            "ordinal": 0,
-            "package": "u",
-            "path": [
-              "Tree"
-            ]
-          }
+          "Tree"
         ]
       },
       "ordinal": 0,
@@ -713,38 +549,10 @@
     },
     {
       "node_id": {
-        "ordinal": 0,
+        "ordinal": 2,
         "package": "u",
         "path": [
-          "bounded_domain",
-          "collection_bounds",
-          "min",
-          {
-            "ordinal": 0,
-            "package": "u",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
-          },
-          "0",
-          "max",
-          "3",
-          {
-            "ordinal": 0,
-            "package": "u",
-            "path": [
-              "composite_type",
-              "sequence",
-              {
-                "ordinal": 0,
-                "package": "u",
-                "path": [
-                  "Tree"
-                ]
-              }
-            ]
-          }
+          "Tree"
         ]
       },
       "ordinal": 0,
