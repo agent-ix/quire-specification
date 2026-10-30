@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "FR-322-AC-268 (TC-280 MU-25..MU-27): dimension equivalence over base dimension nodes of three packages. Each node is a structural id {package,path,ordinal}; `form` is the node's scalar_type form. `pair` names two entries of `nodes`; root_scale is the exact positive rational for which one canonical root of the first equals root_scale canonical roots of the second. `at` is the index in `equivalences` of the refused node (the later in node-id order). The equivalence node's own id is assigned: path [scalar_type, dimension_equivalence, first id, second id] in package `example`, ordinal from the entry (default 0).",
+  "note": "FR-322-AC-268 (TC-280 MU-25..MU-28): dimension equivalence over dimension nodes of three packages (the derived dimensions of XP-08..XP-10 name `terms` entries by node key, each a closed DimensionBody term). The reader that decides these outcomes is quire-contract-ir's (FR-063-AC-3, FR-063-AC-4); these vectors are authoritative for it and QSpec's test checks only their shape. Each node is a structural id {package,path,ordinal}; `form` is the node's scalar_type form (every node is a dimension except `rpc_s`, the unit XP-05 names). `pair` names two entries of `nodes`; root_scale is the exact positive rational for which one canonical root of the first equals root_scale canonical roots of the second. `at` is the index in `equivalences` of the refused node (the later in node-id order). The equivalence node's own id is assigned: path [scalar_type, dimension_equivalence, first id, second id] in package `example`, ordinal from the entry (default 0).",
   "nodes": {
     "clock_time": {
       "package": "acme/clock",
@@ -33,6 +33,68 @@
       ],
       "ordinal": 0,
       "form": "unit"
+    },
+    "rpc_length": {
+      "package": "acme/rpc",
+      "path": [
+        "Length"
+      ],
+      "ordinal": 0,
+      "form": "dimension"
+    },
+    "rpc_speed": {
+      "package": "acme/rpc",
+      "path": [
+        "Speed"
+      ],
+      "ordinal": 0,
+      "form": "dimension",
+      "terms": [
+        {
+          "node": "rpc_length",
+          "exponent": "1"
+        },
+        {
+          "node": "rpc_time",
+          "exponent": "-1"
+        }
+      ]
+    },
+    "flow_speed": {
+      "package": "acme/flow",
+      "path": [
+        "Speed"
+      ],
+      "ordinal": 0,
+      "form": "dimension",
+      "terms": [
+        {
+          "node": "rpc_length",
+          "exponent": "1"
+        },
+        {
+          "node": "flow_time",
+          "exponent": "-1"
+        }
+      ]
+    },
+    "flow_accel": {
+      "package": "acme/flow",
+      "path": [
+        "Acceleration"
+      ],
+      "ordinal": 0,
+      "form": "dimension",
+      "terms": [
+        {
+          "node": "rpc_length",
+          "exponent": "1"
+        },
+        {
+          "node": "flow_time",
+          "exponent": "-2"
+        }
+      ]
     }
   },
   "cases": [
@@ -211,6 +273,79 @@
       ],
       "expected": "invalid_semantic_graph",
       "at": 0
+    },
+    {
+      "id": "XP-08",
+      "note": "derived dimensions with unequal normalized maps: Length*Time^-2 against Length*Time^-1",
+      "equivalences": [
+        {
+          "pair": [
+            "flow_accel",
+            "rpc_speed"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1"
+          }
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 0
+    },
+    {
+      "id": "XP-09",
+      "note": "the base roots fix flow Time = rpc Time (1/1), so the derived speeds are 1/1 and the scale 5/1 is inconsistent with the base roots",
+      "equivalences": [
+        {
+          "pair": [
+            "flow_time",
+            "rpc_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1"
+          }
+        },
+        {
+          "pair": [
+            "flow_speed",
+            "rpc_speed"
+          ],
+          "root_scale": {
+            "numerator": "5",
+            "denominator": "1"
+          }
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 1
+    },
+    {
+      "id": "XP-10",
+      "note": "control for XP-09: the derived speeds with the scale the base roots fix",
+      "equivalences": [
+        {
+          "pair": [
+            "flow_time",
+            "rpc_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1"
+          }
+        },
+        {
+          "pair": [
+            "flow_speed",
+            "rpc_speed"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1"
+          }
+        }
+      ],
+      "expected": "admitted"
     }
   ]
 }

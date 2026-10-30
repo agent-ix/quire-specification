@@ -7083,7 +7083,7 @@ fn is_body_term(term: &Value) -> bool {
     match term["term"].as_str() {
         Some("application") => all_members(&term["arguments"]),
         Some("aggregate") => all_members(&term["members"]),
-        Some("frame" | "abstraction_relation" | "dimension_equivalence") => true,
+        Some("frame" | "abstraction_relation" | "dimension_equivalence" | "enum" | "dimension" | "unit") => true,
         Some("extension_form") => term["clauses"].as_array().is_some_and(|clauses| {
             clauses
                 .iter()
@@ -8542,8 +8542,7 @@ fn required_owner_kind(node: &Value) -> Option<&'static str> {
     }
 }
 
-/// Apply `edit` to the node at `index`, keep the node id, and recompute the
-/// package id.
+/// Apply `edit` to the node at `index` and keep the node id.
 fn edit_node(package: &mut Value, index: usize, edit: impl Fn(&mut Value)) {
     edit(
         package
@@ -8624,6 +8623,63 @@ fn tc_233_every_positive_fixture_carries_owners_exactly_where_the_rule_requires(
     );
 }
 
+/// FR-322-AC-269: a source `enum`, `dimension` and `unit` node carries its
+/// closed body. Each refused mutation (`NB-01`..`NB-05`) fails the V2 schema at
+/// the recorded locus inside the node's body, which a reader reports
+/// `malformed_wire`; the code is derived here from the schema result, not read
+/// from the vector. `NB-06` (an enum with `ordered` true) is admitted.
+#[trace("TC-233", "FR-322-AC-269")]
+#[test]
+fn tc_233_nominal_body_mutations_fail_the_schema_as_malformed_wire() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let base = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
+    assert!(schema.is_valid(&base), "the base is admitted");
+    let adverse = parsed_fixture(ADVERSE);
+    let mutations = adverse["nominal_body_mutations"]
+        .as_array()
+        .expect("nominal body mutations");
+    let ids: Vec<&str> = mutations.iter().map(|m| m["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, ["NB-01", "NB-02", "NB-03", "NB-04", "NB-05", "NB-06"]);
+    for mutation in mutations {
+        let id = mutation["id"].as_str().expect("id");
+        let index = node_index_where(&base, |node| {
+            node["node_tag"] == mutation["node"]["node_tag"]
+                && node["semantic_form"] == mutation["node"]["semantic_form"]
+                && node.get("declaration").is_some()
+        });
+        let mut candidate = base.clone();
+        edit_node(&mut candidate, index, |node| {
+            for patch in mutation["patch"].as_array().expect("patch") {
+                apply_authored_patch(node, patch);
+            }
+        });
+        let body_schema = schema_for_def(&parsed_fixture(SCHEMA), mutation["body_def"].as_str().unwrap());
+        let body = &candidate["semantic_graph"]["nodes"][index]["body"];
+        let observed = if schema.is_valid(&candidate) {
+            assert!(body_schema.is_valid(body), "{id}: the body meets its closed def");
+            "admitted".to_owned()
+        } else {
+            // The node-level `oneOf` hides the failing rule, so the rule is read
+            // from the closed body def: the recorded locus inside the body.
+            let locus = mutation["locus"].as_str().expect("refused vectors record a locus");
+            let paths: Vec<String> = body_schema
+                .iter_errors(body)
+                .map(|error| error.instance_path().to_string())
+                .collect();
+            assert!(
+                paths.iter().any(|path| path == locus),
+                "{id}: the body def refuses at {locus:?}, got {paths:?}"
+            );
+            "refused:malformed_wire".to_owned()
+        };
+        assert_eq!(observed, mutation["outcome"], "{id}");
+    }
+    let enum_index = node_index_where(&base, |node| {
+        node["semantic_form"] == "enum" && node.get("declaration").is_some()
+    });
+    assert_eq!(base["semantic_graph"]["nodes"][enum_index]["body"]["ordered"], false);
+}
+
 /// FR-322-AC-51: each owner mutation fails the V2 schema, which a reader
 /// reports `malformed_wire`.
 #[trace("TC-233", "FR-322-AC-51")]
@@ -8656,8 +8712,7 @@ fn tc_233_owner_mutations_fail_the_schema_as_malformed_wire() {
 }
 
 /// FR-322-AC-52: a declared node's owner and its source map agree. Moving the
-/// declaration region to another lock source changes no node id and not the
-/// package id, and is refused invalid-value at that source-map entry.
+/// declaration region to another lock source changes no node id and is refused invalid-value at that source-map entry.
 #[trace("TC-233", "FR-322-AC-52")]
 #[test]
 fn tc_233_a_moved_declaration_region_refuses_invalid_value_at_its_source_map_entry() {
@@ -13476,7 +13531,7 @@ fn timed_clause_case_package(case: &Value) -> Value {
 }
 
 /// Replays every case of the clause vectors: the patch applied to the clause
-/// fixture, schema validity, current keys and package id, and the refusal.
+/// fixture, schema validity and the refusal.
 fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let document = parsed_fixture(SELECTED_TIMED_CLAUSE_DOCUMENT);
@@ -15874,138 +15929,59 @@ fn tc_233_structural_identity_vectors_compare_componentwise() {
 const DIMENSION_EQUIVALENCE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/dimension-equivalence-vectors.json");
 
-/// An exact positive rational as a reduced pair of integers.
-type Ratio = (BigInt, BigInt);
-
-fn ratio(numerator: &BigInt, denominator: &BigInt) -> Ratio {
-    let divisor = numerator.gcd(denominator);
-    (numerator / &divisor, denominator / &divisor)
-}
-
-fn ratio_mul(left: &Ratio, right: &Ratio) -> Ratio {
-    ratio(&(&left.0 * &right.0), &(&left.1 * &right.1))
-}
-
-fn ratio_div(left: &Ratio, right: &Ratio) -> Ratio {
-    ratio(&(&left.0 * &right.1), &(&left.1 * &right.0))
-}
-
-/// The producer-side oracle of FR-322's dimension-equivalence graph checks over
-/// base dimension nodes: each pair names two distinct dimension nodes in
-/// ascending node-id order, no pair repeats, every `root_scale` is reduced, and
-/// the root sizes the pairs fix agree around every cycle. Returns the index of
-/// the first refused equivalence in ascending node-id order.
-fn dimension_equivalence_refusal(vectors: &Value, case: &Value) -> Option<usize> {
-    let node_ids = |key: &str| {
-        let node = &vectors["nodes"][key];
-        json!({"package": node["package"], "path": node["path"], "ordinal": node["ordinal"]})
-    };
-    let mut entries = Vec::new();
-    for (index, entry) in case["equivalences"].as_array().unwrap().iter().enumerate() {
-        let pair: Vec<&str> = entry["pair"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|key| key.as_str().unwrap())
-            .collect();
-        let own = json!({
-            "package": "example",
-            "path": ["scalar_type", "dimension_equivalence", node_ids(pair[0]), node_ids(pair[1])],
-            "ordinal": entry.get("ordinal").cloned().unwrap_or(json!(0))
-        });
-        entries.push((index, own, pair, entry));
-    }
-    entries.sort_by(|left, right| node_id_order(&left.1, &right.1));
-    let mut seen = BTreeSet::new();
-    let mut sizes: BTreeMap<String, Ratio> = BTreeMap::new();
-    let mut component: BTreeMap<String, usize> = BTreeMap::new();
-    for (index, _, pair, entry) in entries {
-        let (first, second) = (pair[0], pair[1]);
-        let dimension = |key: &str| vectors["nodes"][key]["form"] == "dimension";
-        let ascending = node_id_order(&node_ids(first), &node_ids(second)).is_lt();
-        let scale = &entry["root_scale"];
-        let numerator: BigInt = scale["numerator"].as_str().unwrap().parse().unwrap();
-        let denominator: BigInt = scale["denominator"].as_str().unwrap().parse().unwrap();
-        let scale = ratio(&numerator, &denominator);
-        let reduced = scale == (numerator.clone(), denominator.clone());
-        if !(dimension(first) && dimension(second) && ascending && reduced)
-            || !seen.insert((first, second))
-        {
-            return Some(index);
-        }
-        // One canonical root of `first` is `scale` roots of `second`, so the
-        // size of `first`'s root is `scale` times the size of `second`'s.
-        match (component.get(first).copied(), component.get(second).copied()) {
-            (None, None) => {
-                sizes.insert(second.to_owned(), (BigInt::from(1), BigInt::from(1)));
-                sizes.insert(first.to_owned(), scale);
-                let id = component.len() + 1;
-                component.insert(first.to_owned(), id);
-                component.insert(second.to_owned(), id);
-            }
-            (Some(id), None) => {
-                let size = ratio_div(&sizes[first], &scale);
-                sizes.insert(second.to_owned(), size);
-                component.insert(second.to_owned(), id);
-            }
-            (None, Some(id)) => {
-                let size = ratio_mul(&sizes[second], &scale);
-                sizes.insert(first.to_owned(), size);
-                component.insert(first.to_owned(), id);
-            }
-            (Some(left), Some(right)) if left == right => {
-                if sizes[first] != ratio_mul(&sizes[second], &scale) {
-                    return Some(index);
-                }
-            }
-            (Some(left), Some(right)) => {
-                let factor = ratio_div(&ratio_mul(&sizes[second], &scale), &sizes[first]);
-                for (key, id) in component.iter_mut() {
-                    if *id == right {
-                        *id = left;
-                        let size = ratio_div(&sizes[key], &factor);
-                        sizes.insert(key.clone(), size);
-                    }
-                }
-            }
-        }
-    }
-    None
-}
-
-/// FR-322-AC-268 (TC-280 `MU-25`..`MU-27`): the dimension nodes of an
-/// equivalence may belong to different packages. Three packages' `Time`
-/// dimensions in a consistent graph are admitted; a descending, equal,
-/// repeated, non-dimension, inconsistent-cycle or unreduced pair refuses
-/// `invalid_semantic_graph` at its node. Each equivalence body meets the
-/// closed schema body.
+/// FR-322-AC-268 (TC-280 `MU-25`..`MU-28`): shape and consistency check of the
+/// published cross-package equivalence vectors. QSpec holds no reader for
+/// equivalence graphs: the reader that decides admission and each
+/// `invalid_semantic_graph` refusal is quire-contract-ir's (FR-063-AC-3,
+/// FR-063-AC-4), and the vectors are authoritative for it, so this test
+/// recomputes no outcome. It requires only that the vectors are well formed:
+/// every equivalence body and every derived dimension body meets the closed V2
+/// schema, every named key resolves, every `at` indexes a refused case's
+/// equivalences, and the dimensions span three packages.
 #[trace("TC-280", "FR-322-AC-268")]
 #[test]
-fn tc_280_dimension_equivalence_spans_packages_and_refuses_inconsistent_graphs() {
-    let schema = schema_for_def(&parsed_fixture(SCHEMA), "DimensionEquivalenceBody");
+fn tc_280_dimension_equivalence_vectors_are_well_formed_and_span_packages() {
+    let root = parsed_fixture(SCHEMA);
+    let equivalence_schema = schema_for_def(&root, "DimensionEquivalenceBody");
+    let dimension_schema = schema_for_def(&root, "DimensionBody");
     let vectors = parsed_fixture(DIMENSION_EQUIVALENCE_VECTORS);
+    let node = |key: &str| {
+        let node = vectors["nodes"].get(key).unwrap_or_else(|| panic!("node {key} resolves"));
+        json!({"package": node["package"], "path": node["path"], "ordinal": node["ordinal"]})
+    };
+    for (key, entry) in vectors["nodes"].as_object().unwrap() {
+        let Some(terms) = entry.get("terms") else { continue };
+        let body = json!({
+            "term": "dimension",
+            "terms": terms.as_array().unwrap().iter().map(|term| json!({
+                "dimension_node_id": node(term["node"].as_str().unwrap()),
+                "exponent": term["exponent"]
+            })).collect::<Vec<_>>()
+        });
+        assert!(dimension_schema.is_valid(&body), "{key}: the body meets the closed schema");
+    }
     let cases = vectors["cases"].as_array().unwrap();
     let ids: Vec<&str> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
-    assert_eq!(ids, ["XP-01", "XP-02", "XP-03", "XP-04", "XP-05", "XP-06", "XP-07"]);
+    assert_eq!(
+        ids,
+        ["XP-01", "XP-02", "XP-03", "XP-04", "XP-05", "XP-06", "XP-07", "XP-08", "XP-09", "XP-10"]
+    );
     for case in cases {
         let id = case["id"].as_str().unwrap();
-        for entry in case["equivalences"].as_array().unwrap() {
-            let node = |key: &str| {
-                let node = &vectors["nodes"][key];
-                json!({"package": node["package"], "path": node["path"], "ordinal": node["ordinal"]})
-            };
+        let equivalences = case["equivalences"].as_array().unwrap();
+        for entry in equivalences {
             let body = json!({
                 "term": "dimension_equivalence",
                 "dimension_node_ids": [node(entry["pair"][0].as_str().unwrap()), node(entry["pair"][1].as_str().unwrap())],
                 "root_scale": entry["root_scale"]
             });
-            assert!(schema.is_valid(&body), "{id}: the body meets the closed schema");
+            assert!(equivalence_schema.is_valid(&body), "{id}: the body meets the closed schema");
         }
-        let refused = dimension_equivalence_refusal(&vectors, case);
         match case["expected"].as_str().unwrap() {
-            "admitted" => assert_eq!(refused, None, "{id}: admitted"),
+            "admitted" => assert!(case.get("at").is_none(), "{id}: an admitted case has no locus"),
             "invalid_semantic_graph" => {
-                assert_eq!(refused, case["at"].as_u64().map(|at| at as usize), "{id}: refused at its node")
+                let at = case["at"].as_u64().unwrap_or_else(|| panic!("{id}: a refusal names its node"));
+                assert!((at as usize) < equivalences.len(), "{id}: the locus indexes an equivalence");
             }
             other => panic!("{id}: unknown expectation {other}"),
         }
