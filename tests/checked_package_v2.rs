@@ -15782,7 +15782,8 @@ fn path_embeds_an_operand(node_id: &Value) -> bool {
 /// id is never derived by embedding an operand node id. Members of one group
 /// share that path and are told apart by `node_id.ordinal`, which is
 /// producer-assigned and unique among nodes sharing `package` and `path`; the
-/// member's position in its group is the separate `recursion` rule.
+/// group membership is the shared `recursion_group` label alone, and no node
+/// carries a group-position member.
 #[trace("TC-233", "FR-322-AC-53", "FR-322-AC-274")]
 #[test]
 fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
@@ -15846,6 +15847,9 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         for (position, node) in nodes.iter().enumerate() {
             let Some(label) = node.get("recursion_group") else { continue };
             members += 1;
+            if node.get("recursion").is_some() {
+                failures.push(format!("{fixture} node {position}: carries a group-position member"));
+            }
             let declared = nodes
                 .iter()
                 .find(|n| n["semantic_form"] == "record" && n["recursion_group"] == *label)
