@@ -110,7 +110,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | K6 | a role `Main`, a channel `Main`, a template `Main` and the root control `Main` | admitted: four distinct declarations (`role`, `channel`, `compensate`, `run` segments) |
 | K7 | two roles named `Orders` | `ambiguous_declaration`/`ambiguous-name` naming both node ids |
 | K8 | two controls on one path named `Done` | `ambiguous_declaration`/`ambiguous-name` naming both node ids |
-| K10 | an acyclic protocol node adds `recursion_group` | refuses `malformed_wire` (`malformed_wire`) |
+| K10 | an acyclic protocol node adds a lone `recursion_group` label | admitted: the label means nothing outside a cycle (FR-322), and the base package is otherwise unchanged |
 | K11 | a `queue` node carries a `declaration` | refuses `malformed_wire` (a `generated`-only node carries no declaration) |
 | K12 | a `role` node has no `declaration` occurrence | refuses `malformed_wire` (`declaration` is present exactly with a `declaration` occurrence) |
 | K14 | a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic | the complete cyclic reference component shares one `recursion_group`, its in-component references are ordinary `reference`s to member `node_id`s (spelled `group_reference` in the written form); the reader admits the package. `Plain` and every node outside that component have no `recursion_group` |

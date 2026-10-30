@@ -86,7 +86,8 @@ claim, and the body, through the node's references, and from nothing else.
 - **declaration** — `{qualified_name}`, the relation's declared name.
 - **owner** — the declaring source unit's `SourceOwner`
   ([FR-322](FR-322-checked-package-artifact.md) `owner`), required for a
-  declared node whose body holds no application; it enters the node id.
+  declared node whose body holds no application; it enters the node id (FR-322
+  "Structural node identity").
 - **occurrences** — one occurrence of role `declaration`, at the relation's
   declaration, and one of role `claim`, which provider requests name. The
   model claim and, when requested, the code claim are two items over that
@@ -108,10 +109,12 @@ yields the model claim alone (FR-397 "Code claim").
 
 ## Identity
 
-The node id follows FR-322's rules over the body, so the subjects, the
-execution variables in order with their operations, the parameters, every
-precondition, postcondition and invariant, the implementation bindings and
-the body each enter the node id. The obligation
+The node is declared, so its id is FR-322's structural `{package, path, ordinal}`:
+the declaration path (with the owner) and a producer-assigned ordinal. The
+subjects, the execution variables in order with their operations, the
+parameters, every precondition, postcondition and invariant, the implementation
+bindings and the body are part of the body, compared structurally, and none
+of them enters the node id. The obligation
 identities of the model claim and the code claim are FR-402's.
 
 ## Reader order
@@ -154,7 +157,7 @@ first failing check is its defect:
 | --- | --- | --- |
 | FR-477-AC-1 | A determinism relation `x: V::Vault::step, y: V::Vault::step` over a vault whose `step` is bound by an abstraction relation produces one `claim`/`step_relation` node whose body has `subjects`, `executions`, `invariants` and `body` in order; `subjects` holds `V` once; each of the two `executions` entries holds alias `V`, a reference to `step`'s `state`/`operation_anchor` node, its own `self` and `i` parameter nodes in FR-341 order (`step` has no result), `x`'s at levels 0 and 1 and `y`'s at levels 2 and 3, `step`'s precondition and postcondition nodes and a reference to the abstraction relation node; `invariants` holds `Vault`'s invariant nodes; the node carries `declaration` `Det`, its `owner`, and one `declaration` and one `claim` occurrence. | Test (TC-962) |
 | FR-477-AC-2 | The same relation over a vault whose `step` has no binding has empty `implementation` members and yields the model claim alone; with the binding it yields both claims, with different obligation identities (FR-402-AC-4). | Test (TC-962) |
-| FR-477-AC-3 | Adding a declared invariant to `Vault`, changing `step`'s precondition, or swapping `x` and `y` changes the node id; the same relation respelled with different whitespace and comments has the same node id. | Test (TC-962) |
+| FR-477-AC-3 | Adding a declared invariant to `Vault`, changing `step`'s precondition, or swapping `x` and `y` changes the relation's body, so the package is structurally unequal, and no node id changes; renaming the relation or changing its owner changes the node id; the same relation respelled with different whitespace and comments has the same node id. | Test (TC-962) |
 | FR-477-AC-4 | An `executions` entry missing `implementation` refuses `invalid_semantic_graph`; an `alias` naming no `subjects` binding refuses `missing_declaration`/`missing-name`; an `operation` naming an object type node, and an `implementation` naming an abstraction relation with no `frames` entry for `step`, refuse `invalid_model_binding`/`malformed-declaration`; a `preconditions` aggregate missing `step`'s precondition and an `invariants` aggregate missing one of `Vault`'s invariants refuse `invalid_model_binding`/`malformed-declaration`; a `body` naming an integer-typed expression node refuses `ill_typed`/`non-boolean-root`. | Test (TC-962) |
 | FR-477-AC-5 | In AC-1's node, `x`'s and `y`'s `self` nodes are different nodes, as are their `i` nodes, and the body's `pre(x.self.l) = pre(y.self.l)` reads both; an `executions` entry for `y` that references `x`'s `self` and `i` nodes refuses `invalid_model_binding`/`malformed-declaration` at `y`'s `parameters`. | Test (TC-962) |
 

@@ -15778,7 +15778,8 @@ fn path_embeds_an_operand(node_id: &Value) -> bool {
 
 /// FR-322 recursion groups: every member of a recursion group, the declared
 /// record and the anonymous derived members alike, is identified by
-/// `{package, path, ordinal}` with `path` the group's declaration path; its
+/// `{package, path, ordinal}` with `path` the group's shared path (a declaration path where a member
+/// names one, as in these fixtures); its
 /// id is never derived by embedding an operand node id. Members of one group
 /// share that path and are told apart by `node_id.ordinal`, which is
 /// producer-assigned and unique among nodes sharing `package` and `path`; the

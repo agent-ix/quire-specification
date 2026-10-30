@@ -413,8 +413,8 @@
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "id": "K10",
-      "Edit to the base": "an acyclic protocol node adds `recursion_group`",
-      "Expected": "refuses `malformed_wire` (`malformed_wire`)"
+      "Edit to the base": "an acyclic protocol node adds a lone `recursion_group` label",
+      "Expected": "admitted: the label means nothing outside a cycle (FR-322), and the base package is otherwise unchanged"
     },
     {
       "test_case": "TC-946",
