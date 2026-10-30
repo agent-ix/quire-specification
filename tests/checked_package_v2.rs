@@ -15926,6 +15926,76 @@ fn tc_233_structural_identity_vectors_compare_componentwise() {
 }
 
 
+const DIMENSION_EQUIVALENCE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/dimension-equivalence-vectors.json");
+
+/// FR-322-AC-268 (TC-280 `MU-25`..`MU-28`): shape and consistency check of the
+/// published cross-package equivalence vectors. QSpec holds no reader for
+/// equivalence graphs: the reader that decides admission and each
+/// `invalid_semantic_graph` refusal is quire-contract-ir's (FR-063-AC-3,
+/// FR-063-AC-4), and the vectors are authoritative for it, so this test
+/// recomputes no outcome. It requires only that the vectors are well formed:
+/// every equivalence body and every derived dimension body meets the closed V2
+/// schema, every named key resolves, every `at` indexes a refused case's
+/// equivalences, and the dimensions span three packages.
+#[trace("TC-280", "FR-322-AC-268")]
+#[test]
+fn tc_280_dimension_equivalence_vectors_are_well_formed_and_span_packages() {
+    let root = parsed_fixture(SCHEMA);
+    let equivalence_schema = schema_for_def(&root, "DimensionEquivalenceBody");
+    let dimension_schema = schema_for_def(&root, "DimensionBody");
+    let vectors = parsed_fixture(DIMENSION_EQUIVALENCE_VECTORS);
+    let node = |key: &str| {
+        let node = vectors["nodes"].get(key).unwrap_or_else(|| panic!("node {key} resolves"));
+        json!({"package": node["package"], "path": node["path"], "ordinal": node["ordinal"]})
+    };
+    for (key, entry) in vectors["nodes"].as_object().unwrap() {
+        let Some(terms) = entry.get("terms") else { continue };
+        let body = json!({
+            "term": "dimension",
+            "terms": terms.as_array().unwrap().iter().map(|term| json!({
+                "dimension_node_id": node(term["node"].as_str().unwrap()),
+                "exponent": term["exponent"]
+            })).collect::<Vec<_>>()
+        });
+        assert!(dimension_schema.is_valid(&body), "{key}: the body meets the closed schema");
+    }
+    let cases = vectors["cases"].as_array().unwrap();
+    let ids: Vec<&str> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
+    assert_eq!(
+        ids,
+        ["XP-01", "XP-02", "XP-03", "XP-04", "XP-05", "XP-06", "XP-07", "XP-08", "XP-09", "XP-10"]
+    );
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        let equivalences = case["equivalences"].as_array().unwrap();
+        for entry in equivalences {
+            let body = json!({
+                "term": "dimension_equivalence",
+                "dimension_node_ids": [node(entry["pair"][0].as_str().unwrap()), node(entry["pair"][1].as_str().unwrap())],
+                "root_scale": entry["root_scale"]
+            });
+            assert!(equivalence_schema.is_valid(&body), "{id}: the body meets the closed schema");
+        }
+        match case["expected"].as_str().unwrap() {
+            "admitted" => assert!(case.get("at").is_none(), "{id}: an admitted case has no locus"),
+            "invalid_semantic_graph" => {
+                let at = case["at"].as_u64().unwrap_or_else(|| panic!("{id}: a refusal names its node"));
+                assert!((at as usize) < equivalences.len(), "{id}: the locus indexes an equivalence");
+            }
+            other => panic!("{id}: unknown expectation {other}"),
+        }
+    }
+    let packages: BTreeSet<&str> = vectors["nodes"]
+        .as_object()
+        .unwrap()
+        .values()
+        .filter(|node| node["form"] == "dimension")
+        .map(|node| node["package"].as_str().unwrap())
+        .collect();
+    assert_eq!(packages.len(), 3, "the dimensions belong to three packages");
+}
+
 /// Every node body of every published V2 package is in the closed
 /// five-stratum body grammar.
 #[trace("TC-427", "FR-322-AC-39")]
