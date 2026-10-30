@@ -34,7 +34,7 @@ result.
 
 For `byte_provision`, construct a replay vector with one listed `bytes` file
 and a matching relative `bytes_path`; verify that the adapter reads the file's
-raw bytes and maps them to that digest entry. Then separately use an absent,
+raw bytes and maps them to that provision entry. Then separately use an absent,
 unlisted, absolute and parent-traversing path and verify refusal before
 `ReplayRequestWire` construction.
 
@@ -45,4 +45,4 @@ Tag the tests `#[trace("TC-970", "FR-336-AC-7", "FR-336-AC-8")]`.
 The published replay fixture validates, all documented source and target
 forms map to their named FR-323 members, structural values reject unknown
 fields and tags, and byte paths admit only listed sibling `bytes` files whose
-raw bytes supply the digest-addressed provision.
+raw bytes supply the located provision.

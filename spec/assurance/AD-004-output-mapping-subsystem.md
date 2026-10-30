@@ -34,7 +34,7 @@ target-specific correspondence and downstream structural observation.
 | --- | --- | --- |
 | Common coordinator | strict request intake, exact profile dispatch, complete ordered record set, resource reservation and generated-package identity | target-specific syntax/semantics or source parsing |
 | Target profile mapper | one exact bounded correspondence and deterministic target bytes | shared loss meaning, native semantics or another target |
-| Package assembler | immutable bytes/manifest/record binding and raw/JCS digests | target parser verdict or evidence sufficiency |
+| Package assembler | immutable bytes/manifest/record binding | target parser verdict or evidence sufficiency |
 | Optional structural observer | parse/typecheck observation of the immutable package | mapping classification, package mutation or native verdict |
 | Authoring tools | lossless source edits, stable formatting, incremental diagnostics and typed lifecycle APIs | semantic reinterpretation or fabricated spans |
 | Tool/provider registry | exact Rust manifest validation, capability negotiation, isolation and provenance | ambient discovery, semantic admission or effect authorization |
@@ -57,7 +57,7 @@ whole-request check or exhausted reservation exposes no partial package.
 - `preserved` is proven per obligation and is never a default.
 - Conditions and unrepresented source facts remain machine-readable even when
   plausible target text exists.
-- Target bytes and the mapping manifest have separate raw/JCS digest domains.
+- Target bytes and the mapping manifest are separate artifacts.
 - Parser/tool observations are causally downstream of the immutable package.
 - Observation adequacy and protocol adequacy retain their separate FR-061
   vocabularies; the mapping layer exposes no bare adequacy field.

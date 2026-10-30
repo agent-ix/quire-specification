@@ -22,7 +22,7 @@ Exact role-specific bindings or identity-conflict diagnostics.
 
 ## Behavior
 
-The immutable key is kind, authority, identity and content digest. A path or display label is a locator. Reusing the same key with a changed wire is a conflict. Runtime snapshots, invocations and runs do not adopt authored requirement identity. The earlier operation fixtures retain their established draft encoding.
+The immutable key is kind, authority and identity. A path or display label is a locator. Reusing the same key with a changed wire is a conflict. Runtime snapshots, invocations and runs do not adopt authored requirement identity. The earlier operation fixtures retain their established draft encoding.
 
 ## Acceptance Criteria
 

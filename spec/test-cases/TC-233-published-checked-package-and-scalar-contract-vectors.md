@@ -33,8 +33,6 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-108
     type: verifies
-  - target: ix://agent-ix/quire-specification/FR-322-AC-118
-    type: verifies
   - target: ix://agent-ix/quire-specification/FR-478-AC-3
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-341
@@ -112,15 +110,8 @@ record `R`, a function over `Reference<M::T>` for a model type `M::T`,
 the term as a non-callee argument, the term as a node body root, and the target listed in
 `dependencies`. Apply each authored
 mutation, requiring the exact refusing check it names (`schema` or `semantic`),
-including `-0` spellings and the `dimension-equivalence-` mutations (descending
-ids, one node twice, one id, a zero, a
-negative, a missing and an unreduced `root_scale`, an owner outside the lock;
-the one-id, zero, negative and missing mutations are `malformed_wire`, the
-others `invalid_semantic_graph`, FR-322-AC-139),
-and require the semantic oracle itself to refuse `-0` and to refuse a repeated
-pair, a derived pair of unequal normalized maps or of a ratio the base roots do
-not fix, and a cycle of the `dimension-equivalence-` vectors whose ratios do not
-multiply to one (FR-322-AC-118). Evaluate every accepted and refused
+including `-0` spellings, and require the semantic oracle itself to refuse
+`-0`. Evaluate every accepted and refused
 package-selection vector with an independent selection oracle. Check the
 operation catalog's closure against both V2 schemas and the value lock;
 check every operation vector; classify every

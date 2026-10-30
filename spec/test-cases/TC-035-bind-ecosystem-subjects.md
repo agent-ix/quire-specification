@@ -58,8 +58,8 @@ span or package-local table index without the admitted package qualifiers.
 Then change only external rendering metadata/path/build provenance, runtime
 observations and resource-only controls while preserving the source-document
 key, and lexicographically sort a finite definition set. Separately edit a
-display name inside the authored source and retain the resulting changed raw-
-byte source digest.
+display name inside the authored source and retain the resulting changed raw
+source bytes.
 
 ## Expected Results
 

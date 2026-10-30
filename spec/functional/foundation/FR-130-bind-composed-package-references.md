@@ -46,7 +46,7 @@ their original meanings and do not migrate to this candidate implicitly.
 | FR-130-AC-2 | Selecting the package artifact interpretation as a clause's using profile refuses rather than granting state, temporal or protocol forms. | Test (TC-030) |
 | FR-130-AC-3 | The exact unique feature set matches declared kinds; predicate-only does not claim family.state, an extra known family.temporal on a state-only package refuses, and unique set reordering preserves interpretation. | Test (TC-030) |
 | FR-130-AC-4 | Changing an inner profile changes the static package subject even when the outer definition identity is unchanged; outer feature flags cannot establish implementation or full-v1 conformance. | Test (TC-030) |
-| FR-130-AC-5 | This candidate refuses an unknown payload wire or a non-null whole-package canonical identity, including an unrelated IR/JCS digest, despite a structurally valid reference envelope. | Test (TC-030) |
+| FR-130-AC-5 | This candidate refuses an unknown payload wire or a non-null whole-package canonical identity, despite a structurally valid reference envelope. | Test (TC-030) |
 | FR-130-AC-6 | A partial compilation cannot claim a fully linked package through this interpretation; independent checked child references and scoped results remain available under FR-030/031. | Test (TC-030) |
 
 ## Dependencies

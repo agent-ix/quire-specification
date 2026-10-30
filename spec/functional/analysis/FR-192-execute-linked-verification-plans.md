@@ -36,7 +36,7 @@ requirement, assumption, method, provider and semantic subject it addresses.
 
 ## Plan execution graph
 
-Each plan node binds one requirement/claim identity, semantic-subject digest,
+Each plan node binds one requirement/claim identity, semantic-subject identity,
 method profile, provider identity/options, assumptions, limits and expected
 evidence kind. Edges are typed `requires`, `validates`, `replays` or `aggregates`.
 The coordinator topologically dispatches ready nodes, records a result for every

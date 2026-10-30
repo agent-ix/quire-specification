@@ -60,7 +60,7 @@ where they preserve the required distinctions.
 
 | Boundary | Required identity and information | Editor / consumer |
 | --- | --- | --- |
-| Source to native syntax | Exact bytes/digest, byte spans, clause identities, one language/edition | A; all families consume |
+| Source to native syntax | Exact bytes, byte spans, clause identities, one language/edition | A; all families consume |
 | Model to linker | Domain package identity as recorded by the `model_root` node, declaration keys, declared types, node `origin`s; explicit presence/refusal | Spec artifacts through quire-rs extraction and FCD lift; A model intake |
 | Linked package | Exact profile definitions, typed declarations and family dependency graph; source/model identity; no mutable monitor state | A; B/E/F consume |
 | Package to assessment | [Static components and typed binding roles](package-contract.md); full configuration retained separately from concrete observations, clocks, progress and resource controls | A consumer contract; F/B supply exact interfaces |
@@ -116,7 +116,7 @@ not an integration gate.
 | Shared result vocabulary, protocol subject keys, channels, graph consistency, relationship, registration, retry, commit and recovery rules | Quire v1 standard | Specification PRs #38/#41/#42 | Protocol and observation runtime consumers |
 | Temporal boundary mapping, claim inputs, history kinds, late data, completeness and admitted-observation identity | Quire v1 standard | Specification #40 / PR #44 | TL, Contract-IR, observation and protocol execution/qualification |
 
-Equal spellings, shapes or digests from another row never transfer authority.
+Equal spellings or shapes from another row never transfer authority.
 Missing, ambiguous, stale, foreign, dangling, wrong-kind or cross-domain inputs
 retain their owning located refusal or incomplete outcome; no boundary repairs
 another owner's absent input by approximation.
@@ -130,7 +130,7 @@ following dispositions resolve SR-408's findings:
 | Finding | Current correction |
 | --- | --- |
 | SR-408 FND-001/002 | Latest corrected definition text is promoted to the unsuffixed files. Superseded copies are removed. Protocol, temporal and state dependencies link the matching current definitions, including state graph and temporal common. |
-| SR-408 FND-003 | Per-rule and internal-definition draft digest pins are replaced with same-checkout links. Explicit external compiler selections and runtime digest-domain requirements remain. |
+| SR-408 FND-003 | Per-rule and internal-definition draft pins are replaced with same-checkout links. Explicit external compiler selections remain. |
 | SR-408 FND-004 | The historical A/F integration findings are dispositioned below. Their original review observations are retained; they no longer impose checksum publication or missing-consumer-text gates. |
 | SR-408 FND-005 | The capability ledger links the same temporal/protocol files as the definition index. |
 

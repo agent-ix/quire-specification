@@ -24,7 +24,7 @@ static meaning.
 This accepted contract uses the [current shared specification](definitions/README.md)
 and its [range correspondence](definitions/observation-range.md).
 Runtime binding/progress identities are supplied by the linked package; this
-rule document does not select itself through a copied candidate/digest table.
+rule document does not select itself through a copied candidate table.
 
 ## Domain declaration selection
 

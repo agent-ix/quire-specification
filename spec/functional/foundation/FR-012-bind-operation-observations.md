@@ -35,9 +35,7 @@ four identity labels `authority`, `identity`, `revision_namespace` and
 present and the four labels differ from the identity labels of the invocation
 document the snapshot is read with, the snapshot is refused
 `wrong_snapshot`/`wrong-invocation`. When it is absent, the snapshot is unbound
-and is read as before, with no check. The member carries no digest: the
-invocation document's digest covers its snapshots, so a snapshot digest naming
-its invocation would be circular.
+and is read as before, with no check. 
 
 ## Acceptance Criteria
 

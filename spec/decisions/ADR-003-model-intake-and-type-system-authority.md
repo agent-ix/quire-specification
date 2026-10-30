@@ -38,8 +38,8 @@ Filament model authority, and states no Filament reader or universal
 typed-model adapter.
 [FR-154](../functional/type-model/FR-154-admit-domain-package-model.md) assigns
 exactly that model intake to native Quire model linking, and
-`quire-spec-language` carries no artifact for a domain package, a model
-selection or a package digest.
+`quire-spec-language` carries no artifact for a domain package or a model
+selection.
 
 ## Question
 

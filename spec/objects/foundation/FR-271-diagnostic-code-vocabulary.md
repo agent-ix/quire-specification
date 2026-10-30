@@ -66,7 +66,7 @@ catalog).
 | `runtime_invariant` | A named established evaluator or input invariant broken. "It is a failed evaluation, not a false predicate." |
 | `io_error` | An explicitly authorized tool or adapter I/O operation failed; evaluators never emit it for a semantic value. |
 | `malformed_command` | A CLI command or option set failed structural validation. |
-| `invalid_identifier` | A digest, typed identity or canonical domain failed validation. |
+| `invalid_identifier` | A typed identity failed validation. |
 | `output_serialization` | A validated result could not be encoded under the selected output wire contract. |
 | `invalid_quire_context` | A lifecycle request supplied an incompatible package, stage or semantic context. |
 | `invalid_source_identity` | A required source label (authority or identity) is empty or only whitespace, or the source path is empty. Its causes are `blank-label` and `empty-path`. |

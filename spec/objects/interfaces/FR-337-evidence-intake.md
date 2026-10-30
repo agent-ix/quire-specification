@@ -19,10 +19,10 @@ When a producer result enters the assurance evidence store, the producer SHALL u
 ## Properties
 
 - `contract_version` — exactly `quire.evidence-intake/v1`.
-- `evidence_id` — domain-separated digest of retained metadata and artifact references.
+- `evidence_id` — the evidence's identifier, assigned at intake and compared as an exact string.
 - `subjects` — exact requirement, semantic, implementation and run identities.
 - `results` — immutable native/method/qualification result references.
-- `artifacts` — content-addressed bytes, media type, digest domain and availability.
+- `artifacts` — retained bytes, media type and availability.
 - `traceability` — typed verifies/implements/qualifies/supersedes relationships.
 - `rights` — provenance, license, disclosure and retention metadata.
 - `limitations` — missing/redacted/non-replayable material and its claim impact.
@@ -38,7 +38,7 @@ refuse before consumption.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-337-AC-1 | Unknown types, digest mismatch or cross-kind identity reuse refuses intake. | Analysis |
+| FR-337-AC-1 | Unknown types or cross-kind identity reuse refuses intake. | Analysis |
 | FR-337-AC-2 | Missing replay material remains an explicit limitation and cannot support a broader claim. | Analysis |
 | FR-337-AC-3 | Intake validates producer bytes but does not execute or reinterpret the producer. | Analysis |
 

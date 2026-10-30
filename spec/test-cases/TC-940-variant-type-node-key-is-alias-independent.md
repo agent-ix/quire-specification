@@ -1,6 +1,6 @@
 ---
 id: TC-940
-title: "Model-owned variant, tuple and union declaration nodes, their ids and their reads; refinement row nodes"
+title: "Model-owned variant, tuple and union declaration nodes, their ids and their reads"
 type: TC
 relationships:
   - target: ix://agent-ix/quire-specification/FR-322
@@ -8,7 +8,7 @@ relationships:
   - target: ix://agent-ix/quire-specification/FR-141
     type: verifies
 ---
-# TC-940: Model-owned variant, tuple and union declaration nodes, their ids and their reads; refinement row nodes
+# TC-940: Model-owned variant, tuple and union declaration nodes, their ids and their reads
 
 ## Description
 
@@ -16,11 +16,8 @@ Verify the `model`/`variant_type` declaration node, the type a variant-typed
 member derives, and the identity of the node and of its cases (steps 1 to 5,
 independent of the alias), then the `model`/`tuple_value_type` node, the
 payload-bearing variant type read as a union, the application nodes over them
-and a cyclic pair of model types (steps 6 to 12), then the refinement row
-expression nodes: history read, whole-population value, `count`, `only` and
-`seq` (steps 16 to 18). Scope: FR-322-AC-71, FR-141-AC-7 (steps 1 to 5);
-FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12); FR-322-AC-163 to FR-322-AC-167
-(steps 16 to 18).
+and a cyclic pair of model types (steps 6 to 12). Scope: FR-322-AC-71, FR-141-AC-7 (steps 1 to 5);
+FR-322-AC-140 to FR-322-AC-147 (steps 6 to 12).
 
 ## Test Procedure
 
@@ -120,20 +117,3 @@ Expected results:
     the empty leaf list are those of FR-322-AC-147.
 13. The tuple construct shape is `tuple` and each tuple position carries an
     `origin`; the projection equals `domain_package` (FR-322-AC-151).
-
-## Refinement row nodes (STD-538)
-
-Scope: FR-322-AC-163 to FR-322-AC-167 (steps 16 and 17).
-
-16. Build each row node (history read,
-    `pre` over it, whole-population value, `count`, `only`, `seq`) from the
-    concrete model `acme/counter`.
-17. Run each refusal case `RR-01` to `RR-09` through the refinement step and the
-    operation stage.
-
-Expected results:
-
-16. Every node equals the expected node; the history read names no
-    refinement in its path (FR-322-AC-163, 165, 166, 167).
-17. Each case refuses with the code, cause and locus its vector states
-    (FR-322-AC-164, 165, 166, 167).

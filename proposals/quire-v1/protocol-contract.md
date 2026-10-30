@@ -121,7 +121,7 @@ cannot execute. The minimum orthogonal dimensions are:
 | Observation adequacy | adequate, inadequate, unknown or not-assessed for the exact observations required to interpret the result |
 | Protocol adequacy | demonstrated, not-demonstrated, inapplicable, unknown, with the exact obligations and cases considered |
 | Claim | global-conformance, monitorability, local-projection, realizability, refinement or composition |
-| Provenance | source/profile/model/protocol/request/binding/observation/progress/backend identities and derived artifact digests |
+| Provenance | source/profile/model/protocol/request/binding/observation/progress/backend identities |
 
 The combination is constrained by the normative table in
 [FR-061](../../spec/functional/protocol/FR-061-report-orthogonal-results.md). Missing
