@@ -3144,6 +3144,18 @@ fn clause_kind(node: &Value) -> Option<&str> {
         .flatten()
 }
 
+/// FR-322 "Structural node identity": the reader's one rule on an ordinal is
+/// that no two nodes share `package`, `path` and `ordinal`. It requires no
+/// ordinal 0, no contiguity and no graph or sibling order. Returns the graph
+/// index of the first node whose `node_id` an earlier node already holds, the
+/// locus `/semantic_graph/nodes/{i}/node_id` of `invalid_semantic_graph`.
+fn duplicate_node_id_index(nodes: &[Value]) -> Option<usize> {
+    let mut seen = BTreeSet::new();
+    nodes
+        .iter()
+        .position(|node| !seen.insert(node["node_id"].to_string()))
+}
+
 /// The graph-shape, owner-join and derived-shape stages that precede every
 /// declaration, frame, state and operation refusal.
 fn shape_stages_refusal(package: &Value, nodes: &[Value]) -> Result<(), ReadRefusal> {
@@ -15766,7 +15778,7 @@ fn path_embeds_an_operand(node_id: &Value) -> bool {
 
 /// FR-322 recursion groups: a recursion-group member that is a declared
 /// record is identified by `{package, path, ordinal}` with `path` its declared
-/// name path and `ordinal` its position among nodes of that path; its id is
+/// name path and `ordinal` its position within the group (the recursion-group rule); its id is
 /// never derived by embedding an operand node id.
 #[trace("TC-233", "FR-322-AC-53")]
 #[test]
@@ -15870,6 +15882,69 @@ fn tc_233_node_id_ordinal_vectors_run_from_the_published_file() {
         std::cmp::Ordering::Less,
         "ordinals compare numerically"
     );
+}
+
+/// FR-322-AC-272 and FR-322-AC-273 (TC-233 `NO-05`..`NO-08`): the ordinal is
+/// producer-assigned. Sibling nodes of one `package` and `path` at ordinals
+/// that are not 0, not contiguous and not in graph order are admitted; two
+/// nodes of an equal `{package, path, ordinal}` are refused
+/// `invalid_semantic_graph` at the second node's `node_id`.
+#[trace("TC-233", "FR-322-AC-272", "FR-322-AC-273")]
+#[test]
+fn tc_233_a_producer_assigned_ordinal_is_unique_and_otherwise_free() {
+    let vectors = parsed_fixture(NODE_ORDINAL_VECTORS);
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let base = node_index_where(&package, |node| {
+        node["node_tag"] == "scalar_type"
+            && node["semantic_form"] == "integer"
+            && node.get("declaration").is_none()
+    });
+    let cases = vectors["uniqueness_cases"].as_array().expect("uniqueness cases");
+    let ids: Vec<&str> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, ["NO-05", "NO-06", "NO-07", "NO-08"]);
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        let mut candidate = package.clone();
+        let original = candidate["semantic_graph"]["nodes"][base].clone();
+        let mut inserted = 0;
+        for sibling in case["siblings"].as_array().unwrap() {
+            let mut clone = original.clone();
+            clone["node_id"]["ordinal"] = sibling["ordinal"].clone();
+            if original["semantic_type"] == original["node_id"] {
+                clone["semantic_type"] = clone["node_id"].clone();
+            }
+            let nodes = candidate["semantic_graph"]["nodes"].as_array_mut().unwrap();
+            match case["placement"].as_str().unwrap() {
+                "before" => nodes.insert(base + inserted, clone),
+                _ => nodes.push(clone),
+            }
+            inserted += 1;
+        }
+        assert!(schema.is_valid(&candidate), "{id}: the wire shape is valid");
+        let duplicate = duplicate_node_id_index(
+            candidate["semantic_graph"]["nodes"].as_array().unwrap(),
+        );
+        let outcome = read_package_semantics(&candidate, &catalog);
+        match case["expected"].as_str().unwrap() {
+            "admitted" => {
+                assert_eq!(duplicate, None, "{id}");
+                assert_eq!(outcome, Ok(()), "{id}");
+            }
+            "invalid_semantic_graph" => {
+                let at = case["at"].as_u64().unwrap() as usize;
+                let index = match case["placement"].as_str().unwrap() {
+                    "before" => base + at,
+                    _ => candidate["semantic_graph"]["nodes"].as_array().unwrap().len()
+                        - inserted
+                        + at,
+                };
+                assert_eq!(duplicate, Some(index), "{id}");
+            }
+            other => panic!("{id}: unknown expectation {other}"),
+        }
+    }
 }
 
 const STRUCTURAL_IDENTITY_SCHEMA: &str =

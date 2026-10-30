@@ -21,6 +21,10 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-269
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-272
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-273
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-270
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-271
@@ -548,7 +552,7 @@ through XT-20 do not close the QSL-authored part of IR-1052 AC-7.
 
 ### Node id ordinal bound vectors
 
-Each vector patches the `node_id.ordinal` of one node of the all-families fixture (FR-322-AC-171).
+`NO-01` to `NO-04` patch the `node_id.ordinal` of one node of the all-families fixture (FR-322-AC-171); `NO-05` to `NO-08` add sibling nodes to it (`uniqueness_cases` of `node-ordinal-vectors.json`, FR-322-AC-272, FR-322-AC-273).
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
@@ -556,6 +560,10 @@ Each vector patches the `node_id.ordinal` of one node of the all-families fixtur
 | NO-02 | `ordinal` `9007199254740991` (at the limit) | Admitted; it orders after every smaller ordinal of equal `package` and `path` | FR-322-AC-171 |
 | NO-03 | `ordinal` `9007199254740992` (over the limit) | `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal` | FR-322-AC-171 |
 | NO-04 | `ordinal` `-1`, `1.5`, `1e2` and the string `"1"`, each in turn | Each `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal` | FR-322-AC-171 |
+| NO-05 | one sibling of the fixture's derived `Integer` node (equal `package` and `path`) at ordinal `7`, appended | Admitted: the ordinal is producer-assigned, neither `0` nor contiguous | FR-322-AC-272 |
+| NO-06 | two siblings of that node at ordinals `3` then `2`, inserted before it | Admitted: in neither ordinal order nor graph order | FR-322-AC-272 |
+| NO-07 | one sibling at ordinal `0`, the original's own | `invalid_semantic_graph` at the sibling's `/semantic_graph/nodes/{i}/node_id` | FR-322-AC-273 |
+| NO-08 | two siblings both at ordinal `4` | `invalid_semantic_graph` at the second sibling's `/semantic_graph/nodes/{i}/node_id` | FR-322-AC-273 |
 
 ### Structural identity member vectors
 

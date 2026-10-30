@@ -174,8 +174,8 @@ boundary.
   `semantic_graph.nodes` array, which the producer chooses. A reader neither
   sorts the nodes nor requires them in any sort order, so a graph in any order
   is admitted when every other check passes. Graph order is part of the package
-  value that structural equality compares, and a recursion-group member's
-  `ordinal` is its position among the group's members in graph order. Where this
+  value that structural equality compares; a node's `ordinal` is producer-assigned
+  and is not read from graph order (`Structural node identity` below). Where this
   artifact says that a reader checks nodes "in ascending node-id order", that
   phrase orders the reader's visits for choosing which refusal to report, by the
   componentwise node-id order below; it orders no array of the package. References name a
@@ -997,16 +997,18 @@ hashed. It is a closed object with exactly these members:
 | --- | --- |
 | `package` | The `name` of the package the node belongs to (for a `model_root` node and for a node a domain package owns, that domain package's identity). |
 | `path` | A non-empty array of segments. A declared node's path is its declaration path, the declaring scopes' names outermost first. A derived node (no `declaration`, for example `Set<Integer>`, an application or a literal) outside every recursion group has the path `[node_tag, semantic_form, ...operands]`; each operand is a string (a literal's text, an operator or member name) or the `node_id` of an operand node. |
-| `ordinal` | A non-negative JSON integer from `0` to 9007199254740991 (2^53-1, the I-JSON safe integer), `0` unless several nodes share one `package` and `path`, as the members of one recursion group do; then it is the member's position among them in graph order. |
+| `ordinal` | A non-negative JSON integer from `0` to 9007199254740991 (2^53-1, the I-JSON safe integer), assigned by the producer. It tells apart nodes that share one `package` and `path`; the reader's only rule is that no two nodes sharing a `package` and `path` have the same `ordinal`. It need not be `0`, need not be contiguous and need not follow sibling or graph order, and a reader never derives one. The members of a recursion group are the one case with a rule of its own (`recursion_group`, below). |
 
 Ordinals compare numerically; `package` and `path` strings compare as UTF-8 bytes. An `ordinal` that is negative, above 9007199254740991, not a JSON integer (a string, a fraction or an exponent form, for example) is a malformed integer and is refused `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal`, `i` the node's graph index; the same bound and the same refusal apply to every `node_id` held in a reference, dependency, `semantic_type` or nested path operand, at that member's pointer.
 
-A recursion-group member is identified by `{package, path, ordinal}`, with `path` its declared name path and `ordinal` its position in graph order within the group; its `path` is never derived by operand embedding. Only a derived node outside every recursion group embeds operand `node_id`s. A producer disambiguates nodes sharing a package and path by ordinal in graph order; body content is not part of the path.
+A recursion-group member is identified by `{package, path, ordinal}`, with `path` its declared name path and `ordinal` governed by the recursion-group rule of `semantic_graph` nodes (its position among the group's members in graph order); its `path` is never derived by operand embedding. Only a derived node outside every recursion group embeds operand `node_id`s. A producer disambiguates other nodes sharing a package and path by distinct ordinals of its choosing; body content is not part of the path.
 
 A node belongs to the package that contains it, and an imported node keeps its
 own package name. Two nodes with equal `package`, `path` and `ordinal` have the
 same `node_id`, and node ids are unique within a graph: a second node with an
-equal `node_id` refuses `invalid_semantic_graph` at the second node's `node_id`. The
+equal `node_id` refuses `invalid_semantic_graph` at the second node's `node_id`
+(`NO-07`, `NO-08`); sibling nodes at an ordinal other than `0`, at non-contiguous
+ordinals or out of graph order are admitted (`NO-05`, `NO-06`). The
 node order used wherever this artifact says "ascending node-id order" is
 `package` in UTF-8 byte order, then `path` element by element (a string sorts
 before a nested `node_id`; nested `node_id`s compare recursively by this same
@@ -3187,6 +3189,8 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-269 | A source `enum`, `dimension` and `unit` node carries the closed body of FR-322 "Nominal nodes" (`enum` `{term, ordered, members}`, `dimension` `{term, terms}`, `unit` `{term, dimension_node_id, target_unit_node_id, scale, offset}`), and the V2 schema refuses, as `malformed_wire`, an empty `aggregate` body on one of them (`NB-01`), an enum with no members (`NB-02`), a unit without `scale` (`NB-03`), an extra member on a unit body (`NB-04`) and a non-integer dimension exponent (`NB-05`); an enum with `ordered` true (`NB-06`) is admitted and is `ordered_enum`. | Test (TC-233) |
 | FR-322-AC-270 | The `relationship_end` member carries `destination_type`, a producer-supplied structural `NodeId` that the reader returns verbatim without resolving or deriving it (FR-322 "Destination type of a relationship end"). `fixtures/positive-operation-identities.json` names a destination type node absent from the graph, is admitted by the full reader, and lists no `destination_type` among the node's `dependencies`; `DT-05` of `adverse.json` `destination_type_mutations`, a destination naming a node present in the graph, is admitted and kept verbatim. | Test (TC-233) |
 | FR-322-AC-271 | A `relationship_end` member with no `destination_type` (`DT-01`), a `destination_type` that is a string (`DT-02`), one with a member beyond `package`, `path` and `ordinal` (`DT-03`) or one whose `ordinal` is a string (`DT-04`) fails the V2 schema, which a reader reports `malformed_wire`. | Test (TC-233) |
+| FR-322-AC-272 | A node `ordinal` is producer-assigned. Nodes sharing one `package` and `path` at ordinals that are not `0` (`NO-05`: one sibling at `7`), not contiguous and in neither ordinal nor graph order (`NO-06`: siblings at `3` then `2` placed before the node at `0`) are admitted by the full reader; the reader neither requires `0`, contiguity or sibling order nor derives an ordinal. | Test (TC-233) |
+| FR-322-AC-273 | Two nodes of an equal `{package, path, ordinal}` refuse `invalid_semantic_graph` at the second node's `node_id`, `/semantic_graph/nodes/{i}/node_id`: a sibling at the original's ordinal `0` (`NO-07`) and two siblings both at ordinal `4` (`NO-08`, refused at the second). A recursion-group member's `ordinal` keeps its own rule. | Test (TC-233) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the node. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 
 ## Dependencies

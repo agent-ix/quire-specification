@@ -99,7 +99,7 @@ structures, but any external consumer receives only the contract.
   FR-342-AC-7 to AC-9). Its model declaration nodes are read from the
   projection by owner.
 - `dimension-equivalence-vectors.json` supplies the cases `XP-01` to `XP-10` of TC-280 `MU-25` to `MU-28`: equivalences over dimension nodes of three packages, three consistent graphs and seven refusals (FR-322-AC-268). The reader that decides them is quire-contract-ir's (FR-063); the vectors are authoritative for it and QSpec's test checks only their shape.
-- `node-ordinal-vectors.json` supplies the cases `NO-01` to `NO-04` of TC-233: a `node_id.ordinal` of 0 and of 9007199254740991 is admitted, and 9007199254740992, -1, `1.5`, `1e2` and the string `"1"` are each `malformed_wire` at the ordinal (FR-322-AC-171).
+- `node-ordinal-vectors.json` supplies the cases `NO-01` to `NO-04` of TC-233: a `node_id.ordinal` of 0 and of 9007199254740991 is admitted, and 9007199254740992, -1, `1.5`, `1e2` and the string `"1"` are each `malformed_wire` at the ordinal (FR-322-AC-171). `uniqueness_cases` add `NO-05` to `NO-08` (FR-322-AC-272, FR-322-AC-273): sibling nodes of one `package` and `path` at ordinals that are not `0`, not contiguous or out of graph order are admitted, and two nodes of an equal `{package, path, ordinal}` are `invalid_semantic_graph` at the second.
 - `structural-identity.schema.json` and `structural-identity-vectors.json` give the closed shapes of FR-201's `MemberId`, `VariantId`, `UnitId`, `UniverseId` and `PopulationId` (and the `EffectiveId` an effective `MemberId` owner holds) and the TC-233 cases `SI-01` to `SI-06` (FR-201-AC-11): each comparison is equal or different, and orders as recorded, componentwise; nothing is hashed.
 - `adverse.json` `nominal_body_mutations` supplies the cases `NB-01` to `NB-06` of TC-233 (FR-322-AC-269): a source enum, dimension or unit node with an `aggregate` body, an empty enum, a unit without `scale`, an extra unit member or a non-integer dimension exponent fails the closed body schema at the recorded locus (`malformed_wire`), and an enum with `ordered` true is admitted.
 - `adverse.json` `destination_type_mutations` supplies the cases `DT-01` to `DT-05` of TC-233 (FR-322-AC-270, FR-322-AC-271): a `relationship_end` member carries a producer-supplied structural `destination_type` that the reader returns verbatim; a missing, string, extended or string-ordinal value fails the schema (`malformed_wire`), and a destination present in the graph is admitted beside the fixture's absent one.
@@ -214,9 +214,11 @@ identifier is derived from the contents, and nothing is hashed.
 A node id is the structural `{package, path, ordinal}` compared componentwise,
 never hashed (FR-322). `package` is the `name` of the package the node belongs
 to, `path` is the node's declaration path or, for a derived or anonymous node,
-`[node_tag, semantic_form, ...operands]`, and `ordinal` is `0` unless several
-members of one recursion group need telling apart. Two nodes with equal
-`package` and `path` are the same node. Ascending node-id order compares
+`[node_tag, semantic_form, ...operands]`, and `ordinal` is a producer-assigned
+non-negative integer that tells apart nodes sharing a `package` and `path`; the
+reader requires only that no two such nodes share an ordinal, not `0`, not
+contiguity and not graph order. Two nodes with equal `package`, `path` and
+`ordinal` are the same node, and a graph holds one. Ascending node-id order compares
 `package` bytes, then `path` element by element, then `ordinal`.
 
 Raw source documents, native definition documents, domain packages, checked
