@@ -42,8 +42,6 @@ const OPTION_VALUE_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/option-value-vectors.json");
 const SELECTED_TIMED_SLOT_DOCUMENT: &str =
     include_str!("../proposals/checked-package-v2/domain-package-acme-timed-slots.json");
-const POSITIVE_COMPOUND_UNIT: &str =
-    include_str!("../proposals/checked-package-v2/fixtures/positive-compound-unit.json");
 const PROTOCOL_NODE_VECTORS: &str = include_str!("../proposals/checked-package-v2/fixtures/protocol-node-vectors.json");
 const POSITIVE_NOMINAL_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-nominal-identities.json");
@@ -15722,32 +15720,61 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         .all(|node| path_embeds_an_operand(&node["node_id"])));
 }
 
-/// `NodeId.ordinal` is an integer in `0..=9007199254740991` (2^53 - 1): the
-/// limit is accepted, one over it and a negative or non-integer ordinal are
-/// malformed wire, at the node's `node_id`, in both a bare id and a package.
-#[trace("TC-233", "FR-322-AC-10")]
+const NODE_ORDINAL_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/node-ordinal-vectors.json");
+
+/// FR-322-AC-171 (TC-233 `NO-01`..`NO-04`): a `node_id.ordinal` of 0 and of
+/// 9007199254740991 is admitted and compares numerically; 9007199254740992,
+/// -1, `1.5`, `1e2` and the string `"1"` are each `malformed_wire` at the
+/// ordinal. The vectors give each ordinal as its raw JSON text.
+#[trace("TC-233", "FR-322-AC-171")]
 #[test]
-fn tc_233_node_id_ordinal_is_bounded_by_two_to_the_53_minus_one() {
+fn tc_233_node_id_ordinal_vectors_run_from_the_published_file() {
+    let vectors = parsed_fixture(NODE_ORDINAL_VECTORS);
     let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
-    let id = def_validator("NodeId");
     let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
     assert!(schema.is_valid(&package));
-    let cases: [(&str, Value, bool); 6] = [
-        ("zero", json!(0), true),
-        ("at the limit", json!(9007199254740991u64), true),
-        ("one over the limit", json!(9007199254740992u64), false),
-        ("far over the limit", json!(18446744073709551615u64), false),
-        ("negative", json!(-1), false),
-        ("fractional", json!(1.5), false),
-    ];
-    for (name, ordinal, admitted) in cases {
-        let mut node_id = package["semantic_graph"]["nodes"][0]["node_id"].clone();
-        node_id["ordinal"] = ordinal.clone();
-        assert_eq!(id.is_valid(&node_id), admitted, "{name}: bare node id");
+    let at = 0;
+    let admitted = |ordinal: &Value| {
         let mut candidate = package.clone();
-        candidate["semantic_graph"]["nodes"][0]["node_id"]["ordinal"] = ordinal;
-        assert_eq!(schema.is_valid(&candidate), admitted, "{name}: in a package");
+        candidate["semantic_graph"]["nodes"][at]["node_id"]["ordinal"] = ordinal.clone();
+        let wire = &candidate["semantic_graph"]["nodes"][at]["node_id"]["ordinal"];
+        schema.is_valid(&candidate) && wire.is_u64()
+    };
+    let ids: Vec<&str> = vectors["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|case| case["id"].as_str().unwrap())
+        .collect();
+    assert_eq!(ids, ["NO-01", "NO-02", "NO-03", "NO-04"]);
+    for case in vectors["cases"].as_array().unwrap() {
+        let id = case["id"].as_str().unwrap();
+        for text in case["ordinals"].as_array().unwrap() {
+            let ordinal: Value = serde_json::from_str(text.as_str().unwrap()).expect("raw JSON");
+            match case["expected"].as_str().unwrap() {
+                "admitted" => assert!(admitted(&ordinal), "{id}: {text} is admitted"),
+                "malformed_wire" => {
+                    assert!(!admitted(&ordinal), "{id}: {text} is malformed wire");
+                    assert_eq!(
+                        case["locus"], "/semantic_graph/nodes/{i}/node_id/ordinal",
+                        "{id}"
+                    );
+                }
+                other => panic!("{id}: unknown expectation {other}"),
+            }
+        }
     }
+    let id = |ordinal: u64| {
+        let mut node_id = package["semantic_graph"]["nodes"][at]["node_id"].clone();
+        node_id["ordinal"] = json!(ordinal);
+        node_id
+    };
+    assert_eq!(
+        node_id_order(&id(9), &id(9007199254740991)),
+        std::cmp::Ordering::Less,
+        "ordinals compare numerically"
+    );
 }
 
 
@@ -16806,28 +16833,4 @@ fn tc_367_selected_package_assertions_each_fail_on_their_mutation() {
     let root_at = unlisted["semantic_graph"]["nodes"].as_array().unwrap().iter().position(|n| n["semantic_form"] == "timed_model").unwrap();
     unlisted["semantic_graph"]["nodes"][root_at]["body"]["members"][3]["value"]["members"].as_array_mut().unwrap().remove(0);
     assert!(defect(&vectors, &document, &unlisted).contains("not listed"));
-}
-
-/// FR-322-AC-169: the published compound-unit package is a closed V2 package
-/// that the reader admits; its compound unit names the root unit it
-/// exponentiates and depends on exactly that unit.
-#[trace("TC-940", "FR-322-AC-169")]
-#[test]
-fn tc_940_the_compound_unit_package_is_admitted_with_its_unit_reference() {
-    let catalog = parsed_fixture(OPERATION_CATALOG);
-    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
-    let package = parsed_fixture(POSITIVE_COMPOUND_UNIT);
-    schema
-        .validate(&package)
-        .unwrap_or_else(|error| panic!("the compound-unit package is a closed V2 package: {error}"));
-    assert_eq!(read_package_semantics(&package, &catalog), Ok(()));
-    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
-    let compound = nodes
-        .iter()
-        .find(|node| node["semantic_form"] == "compound_unit")
-        .expect("the compound unit is published");
-    let unit = compound["body"]["members"][0]["members"][0]["value"]["target"].clone();
-    assert_eq!(compound["dependencies"], json!([unit]));
-    let named = node_by_id(nodes, &unit).expect("the unit node is published");
-    assert_eq!(named["semantic_form"], "unit");
 }

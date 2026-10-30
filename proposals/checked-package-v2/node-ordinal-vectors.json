@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "note": "TC-233 NO-01..NO-04: a node_id ordinal is a JSON integer in 0..=9007199254740991 written canonically. Each ordinals entry is the raw JSON text of the ordinal member; the refusal is malformed_wire at the locus, with {i} the node's position.",
+  "cases": [
+    {
+      "id": "NO-01",
+      "ordinals": [
+        "0"
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "NO-02",
+      "ordinals": [
+        "9007199254740991"
+      ],
+      "expected": "admitted",
+      "note": "at the limit; orders after every smaller ordinal of equal package and path"
+    },
+    {
+      "id": "NO-03",
+      "ordinals": [
+        "9007199254740992"
+      ],
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/{i}/node_id/ordinal"
+    },
+    {
+      "id": "NO-04",
+      "ordinals": [
+        "-1",
+        "1.5",
+        "1e2",
+        "\"1\""
+      ],
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/{i}/node_id/ordinal"
+    }
+  ]
+}

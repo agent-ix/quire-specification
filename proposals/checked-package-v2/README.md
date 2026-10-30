@@ -98,6 +98,7 @@ structures, but any external consumer receives only the contract.
   cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
   FR-342-AC-7 to AC-9). Its model declaration nodes are read from the
   projection by owner.
+- `node-ordinal-vectors.json` supplies the cases `NO-01` to `NO-04` of TC-233: a `node_id.ordinal` of 0 and of 9007199254740991 is admitted, and 9007199254740992, -1, `1.5`, `1e2` and the string `"1"` are each `malformed_wire` at the ordinal (FR-322-AC-171).
 - `class-catalog-vectors.json` supplies the canonical `class_catalog` of TC-233 `CCW-10` (effect, commit, event, attempt, `cend`, the three drain entries and `memory flush`) with schema and reader mutations.
 - `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` (`RS-23`, a step-order refusal, is withdrawn; steps are in declaration order) of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
