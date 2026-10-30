@@ -268,7 +268,8 @@ boundary.
   when every cycle member names the same explicit `recursion_group`; all other
   graph cycles refuse. A `recursion_group` label on a node outside every
   cycle is admitted and means nothing: the label constrains cycles only, and
-  no refusal is invented for an acyclic node that carries one. Every node has one or more exact source occurrences.
+  no refusal is invented for an acyclic node that carries one.
+  Every node has one or more exact source occurrences.
 - `operation` — every `application` semantic term, wherever it occurs in a node
   body, carries `operator`, `operation: {identity, laws, mode, member,
   leaves}`, `result_type` (the node id of the package type the application

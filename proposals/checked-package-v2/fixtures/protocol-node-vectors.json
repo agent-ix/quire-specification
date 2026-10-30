@@ -435,7 +435,7 @@
       "section": "Keys and declarations",
       "id": "K14",
       "Edit to the base": "a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic",
-      "Expected": "the complete cyclic reference component shares one `recursion_group`, its in-component references are ordinary `reference`s to member `node_id`s (spelled `group_reference` in the written form); the reader admits the package. `Plain` and every node outside that component have no `recursion_group`"
+      "Expected": "the complete cyclic reference component shares one `recursion_group`, its in-component references are ordinary `reference`s to member `node_id`s (spelled `group_reference` in the written form); the reader admits the package. `Plain` and every node outside that component carry no `recursion_group` from a producer (a label there is admitted and means nothing)"
     },
     {
       "test_case": "TC-946",
