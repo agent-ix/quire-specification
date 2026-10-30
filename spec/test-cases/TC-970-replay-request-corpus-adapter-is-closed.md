@@ -50,5 +50,6 @@ resolution.
 The published replay fixture validates, all documented source and target
 forms map to their named FR-323 members, structural values reject unknown
 fields and tags, and byte paths admit only listed sibling `bytes` files whose
-raw bytes are paired with the row's four QSL FR-001 labels in the ordered
-provision. Provision rows have no digest or digest-domain key.
+raw bytes are paired with the row's source-label selector or domain-package
+marker in the ordered provision. Provision rows have no digest or
+digest-domain key.
