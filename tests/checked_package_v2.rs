@@ -1391,6 +1391,11 @@ impl<'a> OperationOracle<'a> {
         let first_target = |node: &'a Value| node["body"]["members"][0]["target"].clone();
         let object_type = || {
             let population = model_declared(population, "bounded_domain", "model_population")?;
+            // Contract IR FR-038-AC-279: a missing `max` is the unbounded
+            // population node, which a `reaches` does not admit.
+            population["body"]["members"]
+                .as_array()
+                .filter(|members| members.iter().any(|member| member["name"] == "max"))?;
             let set = model_declared(&population["semantic_type"], "composite_type", "set")?;
             let reference = model_declared(&first_target(set), "composite_type", "reference")?;
             self.node(&first_target(reference))
@@ -10583,7 +10588,9 @@ fn append_population_chain(package: &mut Value, object: &Value, max: Option<&str
 
 /// FR-322-AC-74 (unbounded population node): the published
 /// `unbounded_population_cases`. A `model_population` node with no `max`
-/// member is the unbounded population and is admitted by the full reader, and
+/// member is the unbounded population node; named as the `population` of a
+/// `reaches` it is refused `ill_typed`/`operator-ineligible` at
+/// `member.population` (Contract IR FR-038-AC-279), and
 /// the bounded node with `max` `3` is unchanged; a `max` that is negative or
 /// not an integer, and a node with a second member beside `max`, are still
 /// refused. Each node is reached as the `population` of the `Order-order-Order`
@@ -10661,6 +10668,21 @@ fn tc_233_a_model_population_with_no_max_is_the_unbounded_population() {
         let outcome = read_package_semantics(&candidate, &catalog);
         match case["outcome"].as_str() {
             Some("admitted") => assert_eq!(outcome, Ok(()), "{id}"),
+            Some("refused-at-member-population") => {
+                assert_eq!(
+                    (
+                        case["expected_code"].as_str(),
+                        case["expected_cause"].as_str()
+                    ),
+                    (Some("ill_typed"), Some("operator-ineligible")),
+                    "{id}: the fixture records the member.population refusal"
+                );
+                assert_eq!(
+                    outcome,
+                    Err(ReadRefusal::Operation(OperationRefusal::OperatorIneligible)),
+                    "{id}: an unbounded population is not a reaches population"
+                );
+            }
             _ => {
                 // The derived-shape refusal is `GraphShape` at the node it names.
                 assert_eq!(

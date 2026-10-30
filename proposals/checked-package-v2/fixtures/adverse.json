@@ -667,7 +667,9 @@
       "id": "population-without-max-is-unbounded",
       "base": "positive-operation-identities",
       "max": null,
-      "outcome": "admitted"
+      "outcome": "refused-at-member-population",
+      "expected_code": "ill_typed",
+      "expected_cause": "operator-ineligible"
     },
     {
       "id": "population-max-3-stays-bounded",
