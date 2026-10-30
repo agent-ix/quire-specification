@@ -5868,6 +5868,34 @@
       "schema": "invalid",
       "outcome": "refused:malformed_wire",
       "locus": "/semantic_graph/nodes/31"
+    },
+    {
+      "id": "TW-28",
+      "description": "the Pair tuple node owned by a node the document does not declare, and the Pair-typed parameter whose semantic_type names a node the graph lacks: the owner join (stage 2) is reported before the dangling semantic_type edge (stage 4)",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/0/owner/node",
+          "value": "ix://acme/shapes/Missing"
+        },
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/14/semantic_type",
+          "value": {
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "tuple_value_type",
+              "ix://acme/shapes/Absent"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:missing_declaration",
+      "locus": "/semantic_graph/nodes/0/owner",
+      "cause": "missing-selection"
     }
   ]
 }
