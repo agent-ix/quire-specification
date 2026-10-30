@@ -1,0 +1,424 @@
+{
+  "version": "quire.structural-identity-vectors/v1",
+  "note": "TC-233 SI-01..SI-06 (FR-201-AC-11). Each case gives a base identity of `kind` and comparisons against it: `relation` is equal or different, and `base_orders: before` records that the base orders before the other under the comparison order of FR-201 'Structural identities'. Values are compared componentwise; nothing is hashed.",
+  "cases": [
+    {
+      "id": "SI-01",
+      "kind": "MemberId",
+      "subject": "MemberId",
+      "base": {
+        "owner": {
+          "node_id": {
+            "package": "acme/shapes",
+            "path": [
+              "Point"
+            ],
+            "ordinal": 0
+          }
+        },
+        "member": "x"
+      },
+      "comparisons": [
+        {
+          "other": {
+            "owner": {
+              "node_id": {
+                "package": "acme/shapes",
+                "path": [
+                  "Point"
+                ],
+                "ordinal": 0
+              }
+            },
+            "member": "x"
+          },
+          "relation": "equal"
+        },
+        {
+          "other": {
+            "owner": {
+              "node_id": {
+                "package": "acme/shapes",
+                "path": [
+                  "Point"
+                ],
+                "ordinal": 0
+              }
+            },
+            "member": "y"
+          },
+          "relation": "different",
+          "base_orders": "before",
+          "note": "x orders before y"
+        },
+        {
+          "other": {
+            "owner": {
+              "node_id": {
+                "package": "acme/shapes",
+                "path": [
+                  "Line"
+                ],
+                "ordinal": 0
+              }
+            },
+            "member": "x"
+          },
+          "relation": "different",
+          "note": "the owner node id differs"
+        },
+        {
+          "other": {
+            "owner": {
+              "effective_id": {
+                "owner_effective_type": null,
+                "original": {
+                  "package": "acme/orders",
+                  "node": "Order"
+                }
+              }
+            },
+            "member": "x"
+          },
+          "relation": "different",
+          "base_orders": "before",
+          "note": "the node_id arm orders before the effective_id arm"
+        }
+      ]
+    },
+    {
+      "id": "SI-02",
+      "kind": "VariantId",
+      "subject": "VariantId",
+      "base": {
+        "owner": {
+          "package": "acme/shapes",
+          "path": [
+            "Shape"
+          ],
+          "ordinal": 0
+        },
+        "case": "Circle"
+      },
+      "comparisons": [
+        {
+          "other": {
+            "owner": {
+              "package": "acme/shapes",
+              "path": [
+                "Shape"
+              ],
+              "ordinal": 0
+            },
+            "case": "Circle"
+          },
+          "relation": "equal"
+        },
+        {
+          "other": {
+            "owner": {
+              "package": "acme/shapes",
+              "path": [
+                "Shape"
+              ],
+              "ordinal": 0
+            },
+            "case": "Square"
+          },
+          "relation": "different",
+          "base_orders": "before",
+          "note": "Circle orders before Square"
+        },
+        {
+          "other": {
+            "owner": {
+              "package": "acme/shapes",
+              "path": [
+                "Line"
+              ],
+              "ordinal": 0
+            },
+            "case": "Circle"
+          },
+          "relation": "different",
+          "note": "the owner differs"
+        }
+      ]
+    },
+    {
+      "id": "SI-03",
+      "kind": "UnitId",
+      "subject": "UnitId",
+      "base": {
+        "declared": {
+          "package": "acme/shapes",
+          "path": [
+            "m"
+          ],
+          "ordinal": 0
+        }
+      },
+      "comparisons": [
+        {
+          "other": {
+            "declared": {
+              "package": "acme/shapes",
+              "path": [
+                "m"
+              ],
+              "ordinal": 0
+            }
+          },
+          "relation": "equal"
+        },
+        {
+          "other": {
+            "terms": [
+              {
+                "unit": {
+                  "package": "acme/shapes",
+                  "path": [
+                    "m"
+                  ],
+                  "ordinal": 0
+                },
+                "exponent": "1"
+              },
+              {
+                "unit": {
+                  "package": "acme/shapes",
+                  "path": [
+                    "s"
+                  ],
+                  "ordinal": 0
+                },
+                "exponent": "-1"
+              }
+            ]
+          },
+          "relation": "different",
+          "base_orders": "before",
+          "note": "the declared arm orders before the terms arm"
+        }
+      ]
+    },
+    {
+      "id": "SI-03-terms",
+      "kind": "UnitId",
+      "subject": "UnitId",
+      "base": {
+        "terms": [
+          {
+            "unit": {
+              "package": "acme/shapes",
+              "path": [
+                "m"
+              ],
+              "ordinal": 0
+            },
+            "exponent": "1"
+          },
+          {
+            "unit": {
+              "package": "acme/shapes",
+              "path": [
+                "s"
+              ],
+              "ordinal": 0
+            },
+            "exponent": "-1"
+          }
+        ]
+      },
+      "comparisons": [
+        {
+          "other": {
+            "terms": [
+              {
+                "unit": {
+                  "package": "acme/shapes",
+                  "path": [
+                    "m"
+                  ],
+                  "ordinal": 0
+                },
+                "exponent": "1"
+              },
+              {
+                "unit": {
+                  "package": "acme/shapes",
+                  "path": [
+                    "s"
+                  ],
+                  "ordinal": 0
+                },
+                "exponent": "-1"
+              }
+            ]
+          },
+          "relation": "equal",
+          "note": "two terms arrays of the same {unit, exponent} elements are equal"
+        }
+      ]
+    },
+    {
+      "id": "SI-03-exponent",
+      "kind": "UnitId",
+      "subject": "UnitId",
+      "base": {
+        "terms": [
+          {
+            "unit": {
+              "package": "acme/shapes",
+              "path": [
+                "m"
+              ],
+              "ordinal": 0
+            },
+            "exponent": "2"
+          }
+        ]
+      },
+      "comparisons": [
+        {
+          "other": {
+            "terms": [
+              {
+                "unit": {
+                  "package": "acme/shapes",
+                  "path": [
+                    "m"
+                  ],
+                  "ordinal": 0
+                },
+                "exponent": "10"
+              }
+            ]
+          },
+          "relation": "different",
+          "base_orders": "before",
+          "note": "exponents \"2\" and \"10\" order numerically"
+        }
+      ]
+    },
+    {
+      "id": "SI-04",
+      "kind": "UniverseId",
+      "subject": "UniverseId",
+      "base": {
+        "package": "acme/shapes",
+        "path": [
+          "Shape"
+        ],
+        "ordinal": 0
+      },
+      "comparisons": [
+        {
+          "other": {
+            "package": "acme/shapes",
+            "path": [
+              "Shape"
+            ],
+            "ordinal": 0
+          },
+          "relation": "equal"
+        },
+        {
+          "other": {
+            "package": "acme/shapes",
+            "path": [
+              "Line"
+            ],
+            "ordinal": 0
+          },
+          "relation": "different"
+        }
+      ]
+    },
+    {
+      "id": "SI-05",
+      "kind": "PopulationId",
+      "subject": "PopulationId",
+      "base": {
+        "package": "acme/shapes",
+        "path": [
+          "counters"
+        ],
+        "ordinal": 0
+      },
+      "comparisons": [
+        {
+          "other": {
+            "package": "acme/shapes",
+            "path": [
+              "counters"
+            ],
+            "ordinal": 0
+          },
+          "relation": "equal"
+        },
+        {
+          "other": {
+            "package": "acme/shapes",
+            "path": [
+              "archive"
+            ],
+            "ordinal": 0
+          },
+          "relation": "different",
+          "note": "different although both populations have the same member type"
+        }
+      ]
+    },
+    {
+      "id": "SI-06",
+      "kind": "MemberId",
+      "subject": "MemberId (effective owner arm)",
+      "base": {
+        "owner": {
+          "effective_id": {
+            "owner_effective_type": null,
+            "original": {
+              "package": "acme/orders",
+              "node": "Order"
+            }
+          }
+        },
+        "member": "total"
+      },
+      "comparisons": [
+        {
+          "other": {
+            "owner": {
+              "effective_id": {
+                "owner_effective_type": null,
+                "original": {
+                  "package": "acme/orders",
+                  "node": "Order"
+                }
+              }
+            },
+            "member": "total"
+          },
+          "relation": "equal"
+        },
+        {
+          "other": {
+            "owner": {
+              "effective_id": {
+                "owner_effective_type": null,
+                "original": {
+                  "package": "acme/orders",
+                  "node": "Invoice"
+                }
+              }
+            },
+            "member": "total"
+          },
+          "relation": "different",
+          "note": "the original nodes differ"
+        }
+      ]
+    }
+  ]
+}

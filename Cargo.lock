@@ -515,7 +515,6 @@ dependencies = [
  "num-integer",
  "quire-verification-contracts",
  "serde_json",
- "sha2",
 ]
 
 [[package]]

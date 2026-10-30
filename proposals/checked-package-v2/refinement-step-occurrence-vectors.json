@@ -21,8 +21,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -65,8 +69,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -80,8 +88,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -97,8 +109,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "1"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -115,8 +131,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -133,8 +153,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -151,8 +175,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -169,8 +197,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -208,8 +240,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -245,32 +281,21 @@
           }
         ],
         "steps": [
-          "R0",
-          "R1"
+          "R1",
+          "R0"
         ]
       },
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
-          "region": {
-            "end": 20,
-            "source": {
-              "authority": "agent-ix",
-              "identity": "example"
-            },
-            "start": 10
-          }
-        },
-        {
-          "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "ordinal": 1,
           "region": {
             "end": 40,
             "source": {
@@ -279,13 +304,36 @@
             },
             "start": 30
           }
+        },
+        {
+          "node_id": {
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
+          },
+          "ordinal": 1,
+          "region": {
+            "end": 20,
+            "source": {
+              "authority": "agent-ix",
+              "identity": "example"
+            },
+            "start": 10
+          }
         }
       ],
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -302,8 +350,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -320,28 +372,14 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
-          "regions": [
-            {
-              "end": 20,
-              "source": {
-                "authority": "agent-ix",
-                "identity": "example"
-              },
-              "start": 10
-            }
-          ],
-          "role": "generated"
-        },
-        {
-          "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "ordinal": 2,
           "regions": [
             {
               "end": 40,
@@ -350,6 +388,28 @@
                 "identity": "example"
               },
               "start": 30
+            }
+          ],
+          "role": "generated"
+        },
+        {
+          "node_id": {
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
+          },
+          "ordinal": 2,
+          "regions": [
+            {
+              "end": 20,
+              "source": {
+                "authority": "agent-ix",
+                "identity": "example"
+              },
+              "start": 10
             }
           ],
           "role": "generated"
@@ -383,8 +443,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -427,8 +491,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -442,8 +510,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -459,8 +531,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -477,8 +553,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -495,8 +575,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -513,8 +597,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -531,8 +619,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 3,
           "regions": [
@@ -576,8 +668,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -620,8 +716,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -635,8 +735,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -652,8 +756,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -670,8 +778,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -688,8 +800,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -706,8 +822,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -724,8 +844,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -769,8 +893,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -813,8 +941,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -828,8 +960,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -845,8 +981,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -863,8 +1003,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -881,8 +1025,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -899,8 +1047,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -944,8 +1096,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -988,8 +1144,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -1003,8 +1163,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -1020,8 +1184,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1038,8 +1206,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1056,8 +1228,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -1074,8 +1250,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -1119,8 +1299,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -1163,8 +1347,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -1178,8 +1366,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -1195,8 +1387,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1213,8 +1409,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1231,8 +1431,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -1249,8 +1453,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -1294,8 +1502,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -1338,8 +1550,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -1353,8 +1569,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -1370,8 +1590,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1388,8 +1612,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1406,8 +1634,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -1451,8 +1683,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -1495,8 +1731,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -1510,8 +1750,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -1527,8 +1771,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1545,8 +1793,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -1563,8 +1815,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -1608,8 +1864,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -1652,8 +1912,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -1667,8 +1931,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -1684,8 +1952,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1702,8 +1974,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -1720,8 +1996,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -1765,8 +2045,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -1809,8 +2093,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -1824,8 +2112,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -1841,8 +2133,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1859,8 +2155,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -1877,8 +2177,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -1916,8 +2220,12 @@
         },
         "histories": 1,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -1960,8 +2268,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -1975,8 +2287,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -1992,8 +2308,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2037,8 +2357,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -2081,8 +2405,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -2096,8 +2424,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -2113,8 +2445,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2131,8 +2467,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2149,8 +2489,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -2167,8 +2511,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -2212,8 +2560,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -2255,8 +2607,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -2270,8 +2626,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -2287,8 +2647,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2305,8 +2669,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2350,8 +2718,12 @@
         },
         "histories": 2,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -2394,8 +2766,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -2409,8 +2785,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -2426,8 +2806,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2444,8 +2828,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2483,8 +2871,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -2527,8 +2919,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -2542,8 +2938,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -2559,8 +2959,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "1"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2577,8 +2981,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2595,8 +3003,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2613,8 +3025,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -2631,8 +3047,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -2680,8 +3100,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -2730,8 +3154,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -2745,8 +3173,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -2762,8 +3194,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2780,8 +3216,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2825,8 +3265,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -2869,8 +3313,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "1"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2887,8 +3335,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2905,8 +3357,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -2923,8 +3379,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -2941,8 +3401,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -2986,8 +3450,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "2"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -3030,8 +3498,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "2"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -3045,8 +3517,12 @@
         },
         {
           "node_id": {
-            "digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "2"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -3062,8 +3538,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "1"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3080,8 +3560,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3098,8 +3582,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3116,8 +3604,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -3134,8 +3626,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -3179,8 +3675,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -3223,8 +3723,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -3238,8 +3742,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -3253,8 +3761,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -3270,8 +3782,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "1"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3288,8 +3804,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3306,8 +3826,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3324,8 +3848,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -3342,8 +3870,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -3387,8 +3919,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -3431,8 +3967,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -3448,8 +3988,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "1"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3466,8 +4010,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3484,8 +4032,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3502,8 +4054,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -3520,8 +4076,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -3565,8 +4125,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -3609,8 +4173,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -3624,8 +4192,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "region": {
@@ -3641,8 +4213,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "1"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3659,8 +4235,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3677,8 +4257,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -3695,8 +4279,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -3713,201 +4301,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "ordinal": 2,
-          "regions": [
-            {
-              "end": 40,
-              "source": {
-                "authority": "agent-ix",
-                "identity": "example"
-              },
-              "start": 30
-            }
-          ],
-          "role": "generated"
-        }
-      ]
-    },
-    {
-      "expected": {
-        "refused": {
-          "at": "/refinement_step_rows/1",
-          "cause": "invalid-value",
-          "code": "invalid_package"
-        }
-      },
-      "name": "RS-23",
-      "refinement": {
-        "abstract_fields": {
-          "Counter": [
-            "total",
-            "value"
-          ]
-        },
-        "any_row": false,
-        "declaration": {
-          "end": 50,
-          "source": {
-            "authority": "agent-ix",
-            "identity": "example"
-          },
-          "start": 0
-        },
-        "histories": 0,
-        "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
-        },
-        "objects": [
-          {
-            "abstract_type": "Counter",
-            "fields": [
-              "total",
-              "value"
-            ]
-          }
-        ],
-        "rows": [
-          {
-            "name": "R0",
-            "region": {
-              "end": 20,
-              "source": {
-                "authority": "agent-ix",
-                "identity": "example"
-              },
-              "start": 10
-            }
-          },
-          {
-            "name": "R1",
-            "region": {
-              "end": 40,
-              "source": {
-                "authority": "agent-ix",
-                "identity": "example"
-              },
-              "start": 30
-            }
-          }
-        ],
-        "steps": [
-          "R0",
-          "R1"
-        ]
-      },
-      "refinement_step_rows": [
-        {
-          "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "ordinal": 1,
-          "region": {
-            "end": 40,
-            "source": {
-              "authority": "agent-ix",
-              "identity": "example"
-            },
-            "start": 30
-          }
-        },
-        {
-          "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "ordinal": 0,
-          "region": {
-            "end": 20,
-            "source": {
-              "authority": "agent-ix",
-              "identity": "example"
-            },
-            "start": 10
-          }
-        }
-      ],
-      "source_map": [
-        {
-          "node_id": {
-            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "ordinal": 0,
-          "regions": [
-            {
-              "end": 5,
-              "source": {
-                "authority": "agent-ix",
-                "identity": "example"
-              },
-              "start": 0
-            }
-          ],
-          "role": "declaration"
-        },
-        {
-          "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "ordinal": 0,
-          "regions": [
-            {
-              "end": 50,
-              "source": {
-                "authority": "agent-ix",
-                "identity": "example"
-              },
-              "start": 0
-            }
-          ],
-          "role": "declaration"
-        },
-        {
-          "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "ordinal": 0,
-          "regions": [
-            {
-              "end": 50,
-              "source": {
-                "authority": "agent-ix",
-                "identity": "example"
-              },
-              "start": 0
-            }
-          ],
-          "role": "generated"
-        },
-        {
-          "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "ordinal": 1,
-          "regions": [
-            {
-              "end": 20,
-              "source": {
-                "authority": "agent-ix",
-                "identity": "example"
-              },
-              "start": 10
-            }
-          ],
-          "role": "generated"
-        },
-        {
-          "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -3951,8 +4350,12 @@
         },
         "histories": 0,
         "node_id": {
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "domain": "quire.checked-semantic-node/v1"
+          "package": "example",
+          "path": [
+            "unresolved",
+            "0"
+          ],
+          "ordinal": 0
         },
         "objects": [
           {
@@ -3995,8 +4398,12 @@
       "refinement_step_rows": [
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "region": {
@@ -4010,8 +4417,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "region": {
@@ -4027,8 +4438,12 @@
       "source_map": [
         {
           "node_id": {
-            "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "1"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -4045,8 +4460,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -4063,8 +4482,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 0,
           "regions": [
@@ -4081,8 +4504,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 1,
           "regions": [
@@ -4099,8 +4526,12 @@
         },
         {
           "node_id": {
-            "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "domain": "quire.checked-semantic-node/v1"
+            "package": "example",
+            "path": [
+              "unresolved",
+              "0"
+            ],
+            "ordinal": 0
           },
           "ordinal": 2,
           "regions": [
@@ -4118,6 +4549,6 @@
       ]
     }
   ],
-  "note": "The refinement members are illustrative; each row sidecar entry uses the closed RefinementStepRowRegion shape of schema.json. A published package uses the closed RefinementBody and compares its retained node id and canonical steps order against this sidecar.",
+  "note": "The refinement members are illustrative; each row sidecar entry uses the closed RefinementStepRowRegion shape of schema.json. A published package uses the closed RefinementBody and compares its retained node id and steps in declaration order against this sidecar.",
   "version": "quire.refinement-step-occurrences/v1"
 }

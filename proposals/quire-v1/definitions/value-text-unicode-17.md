@@ -5,10 +5,10 @@ This definition selects the Unicode 17.0.0 normalization data and
 algorithms for the `nfc`, `nfd`, `nfkc` and `nfkd` profiles in FR-141.
 
 The normative external closure is the following exact set of Unicode-hosted
-artifacts, all at Unicode version 17.0.0.
+artifacts.
 
 | Artifact | Authoritative URL |
-| --- | --- | --- |
+| --- | --- |
 | UAX #15 revision 57 (Unicode 17.0.0) | `https://www.unicode.org/reports/tr15/tr15-57.html` |
 | `UnicodeData.txt` | `https://www.unicode.org/Public/17.0.0/ucd/UnicodeData.txt` |
 | `DerivedNormalizationProps.txt` | `https://www.unicode.org/Public/17.0.0/ucd/DerivedNormalizationProps.txt` |
@@ -18,7 +18,7 @@ artifacts, all at Unicode version 17.0.0.
 
 UAX #15 supplies the algorithm, the four UCD files supply the normalization
 properties, exclusions and conformance vectors, and the license supplies the
-redistribution terms. A producer compiles or vendors tables from the Unicode 17.0.0 files named above. Implementations may encode the verified tables differently
+redistribution terms. Implementations may encode the tables differently
 only when every Unicode scalar sequence produces the same normalization result
 and the complete `NormalizationTest.txt` corpus passes. `unicode-scalars` and
 `binary-utf8` select FR-141's non-normalizing relations but retain this

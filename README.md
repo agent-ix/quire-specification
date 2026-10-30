@@ -109,10 +109,9 @@ file under `proposals/quire-v1/definitions/`. The crate does no parsing.
 | `tests/backend_provider_v1.rs` | Every positive backend-provider vector is admitted by the schema, every adverse one is refused, and the request carries exactly the checked package its identifier names. |
 | `tests/conformance_corpus_v1.rs` | The FR-336 fixture and closed-domain controls are checked against the conformance-corpus schema. |
 | `tests/checked_package_v2.rs` | The checked-package and complete-value vectors. |
-| `tests/checked_package_model.rs` | The effective-declaration vectors. |
 | `tests/model_member_types.rs` | Model-owned member vectors: owner recovery, member resolution and member type derivation. |
 | `tests/record_conformance.rs` | Record conformance and event-equality vectors, against the shared operation catalog. |
-| `tests/shared_reference.rs` | The producer structure of the verification-reference fixtures, and that Quire's canonicalizer gives the same identities. |
+| `tests/shared_reference.rs` | The producer structure of the verification-reference fixtures, and the strict intake limits. |
 
 These are producer checks. They do not show that an independent reader accepts
 the same data. They do not discharge the written test cases under

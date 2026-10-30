@@ -13,22 +13,6 @@
     },
     "entries": []
   },
-  "identity_preimage": {
-    "definition_selections": [],
-    "dependency_selections": [],
-    "edition": {
-      "definition": {
-        "authority": "agent-ix",
-        "identity": "quire-edition"
-      },
-      "role": "edition"
-    },
-    "profile_selections": [],
-    "required_features": [
-      "quire.value.complete/v1"
-    ],
-    "version": "quire.checked-package-id/v2"
-  },
   "lock": {
     "definition_selections": [],
     "dependency_selections": [],
@@ -50,11 +34,7 @@
       }
     ]
   },
-  "package_id": {
-    "algorithm": "sha256",
-    "digest": "54dc3ffc295d4631d2d1df14a33ae7f772743ff26b0bbe5bd736ed7530ad2967",
-    "domain": "quire.package.semantic/v2"
-  },
+  "name": "example",
   "semantic_graph": {
     "graph_version": "quire.checked-semantic-graph/v2",
     "nodes": [
@@ -65,8 +45,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -78,8 +62,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "integer",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -89,8 +77,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "text"
+          ]
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -102,8 +94,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "text",
         "semantic_type": {
-          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "text"
+          ]
         }
       },
       {
@@ -116,8 +112,12 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
                     },
                     "term": "reference"
                   }
@@ -132,15 +132,23 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
                     },
                     "term": "reference"
                   },
                   {
                     "target": {
-                      "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
                     },
                     "term": "reference"
                   }
@@ -166,13 +174,20 @@
         },
         "dependencies": [
           {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           }
         ],
         "node_id": {
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Shape"
+          ]
         },
         "node_tag": "composite_type",
         "occurrences": [
@@ -189,8 +204,11 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "union",
         "semantic_type": {
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Shape"
+          ]
         }
       },
       {
@@ -202,8 +220,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "s",
                 "value_kind": "text"
@@ -215,8 +237,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "0",
                 "value_kind": "integer"
@@ -227,8 +253,39 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "s",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "0",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Shape"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -240,8 +297,11 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Shape"
+          ]
         }
       },
       {
@@ -253,8 +313,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "r",
                 "value_kind": "text"
@@ -266,8 +330,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "1",
                 "value_kind": "integer"
@@ -278,8 +346,32 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "r",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "1"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -291,8 +383,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -304,8 +400,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "w",
                 "value_kind": "text"
@@ -317,8 +417,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "1",
                 "value_kind": "integer"
@@ -329,8 +433,32 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "w",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "1"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -342,8 +470,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -355,8 +487,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "h",
                 "value_kind": "text"
@@ -368,8 +504,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "2",
                 "value_kind": "integer"
@@ -380,8 +520,32 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "h",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "2"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -393,24 +557,45 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "value": "0",
           "value_kind": "integer"
         },
         "dependencies": [],
         "node_id": {
-          "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "0"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -422,24 +607,45 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "value": "2",
           "value_kind": "integer"
         },
         "dependencies": [],
         "node_id": {
-          "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "2"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -451,24 +657,45 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "value": "3",
           "value_kind": "integer"
         },
         "dependencies": [],
         "node_id": {
-          "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "3"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -480,8 +707,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -494,15 +725,41 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "literal",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        },
+                        "2"
+                      ]
                     },
                     "term": "reference"
                   },
                   {
                     "target": {
-                      "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "literal",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        },
+                        "3"
+                      ]
                     },
                     "term": "reference"
                   }
@@ -515,17 +772,89 @@
         },
         "dependencies": [
           {
-            "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2"
+            ]
           },
           {
-            "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "3"
+            ]
           }
         ],
         "node_id": {
-          "digest": "8dfdf62acb13476b3aa64f7b414f19b571e81e8aa89ce93dd453e2c8e22728f1",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "union_value",
+            "Rect",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "2"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "3"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Shape"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -537,8 +866,11 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "union_value",
         "semantic_type": {
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Shape"
+          ]
         }
       },
       {
@@ -557,8 +889,20 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "a6e41bcd8c595ae730b9f214fbe0b5496ffff2c63d35e92b52f8b745ddf27211",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "union_value",
+            "Empty",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Shape"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -570,8 +914,11 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "union_value",
         "semantic_type": {
-          "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Shape"
+          ]
         }
       },
       {
@@ -579,15 +926,63 @@
           "arguments": [
             {
               "target": {
-                "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "w",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "1"
+                ]
               },
               "term": "reference"
             },
             {
               "target": {
-                "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "h",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "2"
+                ]
               },
               "term": "reference"
             }
@@ -601,24 +996,146 @@
           },
           "operator": "binary",
           "result_type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "h",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2"
+            ]
           },
           {
-            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "w",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
           }
         ],
         "node_id": {
-          "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "w",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "1"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "h",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "2"
+              ]
+            },
+            "quire.op.integer.mul",
+            "binary",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -630,8 +1147,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "binary",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -639,8 +1160,39 @@
           "arguments": [
             {
               "target": {
-                "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "s",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "0",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Shape"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             },
@@ -653,8 +1205,32 @@
                     "members": [
                       {
                         "target": {
-                          "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
-                          "domain": "quire.checked-semantic-node/v1"
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "value",
+                            "parameter",
+                            "name",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "text"
+                              ]
+                            },
+                            "r",
+                            "level",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "integer"
+                              ]
+                            },
+                            "1"
+                          ]
                         },
                         "term": "reference"
                       }
@@ -663,8 +1239,32 @@
                   },
                   {
                     "target": {
-                      "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "parameter",
+                        "name",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "text"
+                          ]
+                        },
+                        "r",
+                        "level",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        },
+                        "1"
+                      ]
                     },
                     "term": "reference"
                   }
@@ -681,15 +1281,63 @@
                     "members": [
                       {
                         "target": {
-                          "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
-                          "domain": "quire.checked-semantic-node/v1"
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "value",
+                            "parameter",
+                            "name",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "text"
+                              ]
+                            },
+                            "w",
+                            "level",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "integer"
+                              ]
+                            },
+                            "1"
+                          ]
                         },
                         "term": "reference"
                       },
                       {
                         "target": {
-                          "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
-                          "domain": "quire.checked-semantic-node/v1"
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "value",
+                            "parameter",
+                            "name",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "text"
+                              ]
+                            },
+                            "h",
+                            "level",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "integer"
+                              ]
+                            },
+                            "2"
+                          ]
                         },
                         "term": "reference"
                       }
@@ -698,8 +1346,78 @@
                   },
                   {
                     "target": {
-                      "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "expression",
+                        "binary",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "value",
+                            "parameter",
+                            "name",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "text"
+                              ]
+                            },
+                            "w",
+                            "level",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "integer"
+                              ]
+                            },
+                            "1"
+                          ]
+                        },
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "value",
+                            "parameter",
+                            "name",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "text"
+                              ]
+                            },
+                            "h",
+                            "level",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "integer"
+                              ]
+                            },
+                            "2"
+                          ]
+                        },
+                        "quire.op.integer.mul",
+                        "binary",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        }
+                      ]
                     },
                     "term": "reference"
                   }
@@ -718,8 +1436,21 @@
                   },
                   {
                     "target": {
-                      "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "literal",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        },
+                        "0"
+                      ]
                     },
                     "term": "reference"
                   }
@@ -737,40 +1468,457 @@
           },
           "operator": "case",
           "result_type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "expression",
+              "binary",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "w",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "1"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "h",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "2"
+                ]
+              },
+              "quire.op.integer.mul",
+              "binary",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              }
+            ]
           },
           {
-            "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0"
+            ]
           },
           {
-            "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "h",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2"
+            ]
           },
           {
-            "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "r",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
           },
           {
-            "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "s",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Shape"
+                ]
+              }
+            ]
           },
           {
-            "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "w",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
           }
         ],
         "node_id": {
-          "digest": "8d7858a8635af44d4becada9e80b23b186f3bf634a4fafb30965380a8b1a1665",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "case",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "s",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Shape"
+                  ]
+                }
+              ]
+            },
+            "Circle",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "r",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "1"
+              ]
+            },
+            "Rect",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "w",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "1"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "h",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "2"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "expression",
+                "binary",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "parameter",
+                    "name",
+                    {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "text"
+                      ]
+                    },
+                    "w",
+                    "level",
+                    {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
+                    },
+                    "1"
+                  ]
+                },
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "value",
+                    "parameter",
+                    "name",
+                    {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "text"
+                      ]
+                    },
+                    "h",
+                    "level",
+                    {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
+                    },
+                    "2"
+                  ]
+                },
+                "quire.op.integer.mul",
+                "binary",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                }
+              ]
+            },
+            "Empty",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0"
+              ]
+            },
+            "quire.op.control.case",
+            "case",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -782,8 +1930,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "case",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       }
     ]
@@ -791,8 +1943,12 @@
   "source_map": [
     {
       "node_id": {
-        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "integer"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -809,8 +1965,12 @@
     },
     {
       "node_id": {
-        "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "text"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -827,8 +1987,11 @@
     },
     {
       "node_id": {
-        "digest": "684d1e7edc4b570ce3f44ad33aaa4019dd121dc09878aae3acfe0ab8aa92d173",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Shape"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -845,8 +2008,39 @@
     },
     {
       "node_id": {
-        "digest": "1517bba0df4a7a93662ab16dc6f3c90a082376e622f23268411778c77d77c82e",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "s",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "0",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Shape"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -863,8 +2057,32 @@
     },
     {
       "node_id": {
-        "digest": "ac69c455c10d86a6d9a6b843a5a724749d01d6db507db70642f5b7149f0deffa",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "r",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "1"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -881,8 +2099,32 @@
     },
     {
       "node_id": {
-        "digest": "dbdd29b48761a2db09575b07abe246727617914abe17719c886c00d9da4d19bd",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "w",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "1"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -899,8 +2141,32 @@
     },
     {
       "node_id": {
-        "digest": "24c79d91fc3bb54f5db449b1b0b1560ea77e1e3ea7a9326f934a676bd965773b",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "h",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "2"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -917,8 +2183,21 @@
     },
     {
       "node_id": {
-        "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "literal",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "0"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -935,8 +2214,21 @@
     },
     {
       "node_id": {
-        "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "literal",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "2"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -953,8 +2245,21 @@
     },
     {
       "node_id": {
-        "digest": "c6a3dfeac8dc1c4cc7bf7e777d11c51050cef99b2e2c604725d6d3ea88510a5f",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "literal",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "3"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -971,8 +2276,54 @@
     },
     {
       "node_id": {
-        "digest": "8dfdf62acb13476b3aa64f7b414f19b571e81e8aa89ce93dd453e2c8e22728f1",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "union_value",
+          "Rect",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2"
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "3"
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Shape"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -989,8 +2340,20 @@
     },
     {
       "node_id": {
-        "digest": "a6e41bcd8c595ae730b9f214fbe0b5496ffff2c63d35e92b52f8b745ddf27211",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "union_value",
+          "Empty",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Shape"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1007,8 +2370,78 @@
     },
     {
       "node_id": {
-        "digest": "1037cb029834c7b1271da20fb67683c49ef3d74ddcdb6b3f82107143f576481d",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "binary",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "w",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "h",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2"
+            ]
+          },
+          "quire.op.integer.mul",
+          "binary",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1025,8 +2458,235 @@
     },
     {
       "node_id": {
-        "digest": "8d7858a8635af44d4becada9e80b23b186f3bf634a4fafb30965380a8b1a1665",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "case",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "s",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Shape"
+                ]
+              }
+            ]
+          },
+          "Circle",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "r",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
+          },
+          "Rect",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "w",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "h",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2"
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "expression",
+              "binary",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "w",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "1"
+                ]
+              },
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "h",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "2"
+                ]
+              },
+              "quire.op.integer.mul",
+              "binary",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              }
+            ]
+          },
+          "Empty",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0"
+            ]
+          },
+          "quire.op.control.case",
+          "case",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [

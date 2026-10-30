@@ -98,10 +98,12 @@ structures, but any external consumer receives only the contract.
   cases over them (FR-322-AC-72, FR-340-AC-19/AC-20, FR-341-AC-11/AC-12,
   FR-342-AC-7 to AC-9). Its model declaration nodes are read from the
   projection by owner.
+- `node-ordinal-vectors.json` supplies the cases `NO-01` to `NO-04` of TC-233: a `node_id.ordinal` of 0 and of 9007199254740991 is admitted, and 9007199254740992, -1, `1.5`, `1e2` and the string `"1"` are each `malformed_wire` at the ordinal (FR-322-AC-171).
+- `structural-identity.schema.json` and `structural-identity-vectors.json` give the closed shapes of FR-201's `MemberId`, `VariantId`, `UnitId`, `UniverseId` and `PopulationId` (and the `EffectiveId` an effective `MemberId` owner holds) and the TC-233 cases `SI-01` to `SI-06` (FR-201-AC-11): each comparison is equal or different, and orders as recorded, componentwise; nothing is hashed.
 - `class-catalog-vectors.json` supplies the canonical `class_catalog` of TC-233 `CCW-10` (effect, commit, event, attempt, `cend`, the three drain entries and `memory flush`) with schema and reader mutations.
-- `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` of
+- `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` (`RS-23`, a step-order refusal, is withdrawn; steps are in declaration order) of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
-  `generated` `source_map` entries against its step rows, its `steps` order and
+  `generated` `source_map` entries against its step rows, its `steps` (in declaration order) and
   whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). Cases `RS-18` to `RS-24` cover the closed, identity-excluded `refinement_step_rows` sidecar and its comparison with generated occurrences. The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node id.
 - The frame vectors' `frame_mutations` are applied to the semantic graph and evaluated at the
   frame step of `read_package_semantics` (FR-322, FR-340); source-map checks
@@ -127,22 +129,14 @@ structures, but any external consumer receives only the contract.
   refuses `invalid_package`/`conflicting-definition` and a misordered entry
   `invalid_package`/`invalid-value`, each with its loci.
   The members its top-level `schema_only` lists (`dependency_selections`,
-  `entry_mutations`, `model_selections`, `model_entry_mutations`,
-  `order_vectors` and `supply_vectors`) carry identities, or symbolic supply states, that name no admitted package:
-  they exercise the schema, the order rule and the supply order only, and a
-  reader that requires every entry's package to be supplied refuses them
+  `entry_mutations`, `order_vectors` and `supply_vectors`) carry identities, or
+  symbolic supply states, that name no admitted package: they exercise the
+  schema, the order rule and the supply order only, and a reader that requires
+  every entry's package to be supplied refuses them
   `missing_import`/`missing-selection` at entry 0 by design. Only
-  `closure_vectors`, which name real packages, and
-  `dependency-call-vectors.json` name packages a reader can be supplied. Each `supply_vectors` entry lists the
-  direct entries in lock order with a symbolic `supply` state (`bound` or `absent`) and the outcome FR-322-AC-84 requires.
-  Its `closure_vectors` contain `direct_dependencies` of the importer and
-  `dependency_locks` for those direct packages; each dependency lock names a
-  fixture `base` and its own `dependency_selections`. The diamond vector
-  carries two importer-rooted selection-path JSON-pointer `loci` and a
-  conflicting-definition `outcome`. The transitive-only vector carries a
-  `dependency_reference` and its call `use`, with an expected missing-selection
-  `outcome`. The reader outcomes remain planned; QSpec checks the recorded
-  package identities and the producer-side closure relationships.
+  `dependency-call-vectors.json` names packages a reader can be supplied. Each
+  `supply_vectors` entry lists the direct entries in lock order with a symbolic
+  `supply` state (`bound` or `absent`) and the outcome FR-322-AC-84 requires.
 - Both schemas carry the `dependency_reference` term
   `{term: "dependency_reference", package, node}` (FR-322): `package` is the
   identity string of a `dependency_selections` entry and `node` a `NodeId`
@@ -238,7 +232,7 @@ every owner-keyed node id. Qualified names are arrays of ASCII identifier segmen
 Arbitrary-precision integers/rationals use canonical decimal strings with no
 leading zero and no `-0`, a positive denominator, greatest-common-divisor one
 and exactly `0/1` for zero. Unordered enum members and dimension terms are
-ascending by their canonical JCS key; ordered enum members retain declaration
+ascending in node-id order; ordered enum members retain declaration
 order. Duplicate/zero-exponent terms refuse.
 
 The JSON Schema fixes structural shape; the strict reader additionally enforces
@@ -249,15 +243,7 @@ dimension node ids. Cross-field joins are exact: an enum member's `semantic_type
 and sole dependency equal its declaration node id and its enum literal
 body equals the declared case; a dimension is self-typed and depends exactly on
 its term node ids; a unit's `semantic_type` equals its dimension node id and its
-dependencies are exactly that dimension plus its non-null target; a
-`scalar_type`/`dimension_equivalence` node (FR-142 "Dimension equivalence") is
-self-typed, carries no `declaration`, holds a `SourceOwner` and the node ids of the
-two dimension nodes it relates, distinct and in ascending node-id order, and a
-`root_scale` (a positive reduced rational: one canonical root of the first node
-is `root_scale` canonical roots of the second), and depends on exactly those
-node ids. The `root_scale` values of the base pairs multiply to one around every
-cycle, and a pair of two non-base nodes carries the ratio their base roots fix. Readers recompute the equivalence classes from
-these nodes, so no other member records one. Changing a
+dependencies are exactly that dimension plus its non-null target. Changing a
 body/type/dependency while retaining the nominal declaration therefore refuses.
 Runtime compound-unit values are evaluator-owned
 `quire.value.compound-unit/v1` identities defined with the complete-value

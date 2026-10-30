@@ -97,8 +97,10 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
             {"kind": "boolean", "value": true},
             {"kind": "integer", "decimal": "-17"},
             {
-                "kind": "reference", "universe": "a".repeat(64),
-                "type": "b".repeat(64), "object_identity": "item-1"
+                "kind": "reference",
+                "universe": {"package": "orders", "path": ["Orders"], "ordinal": 0},
+                "type": {"package": "orders", "path": ["Orders", "Item"], "ordinal": 0},
+                "object_identity": "item-1"
             },
             {"kind": "population", "name": "items"}
         ],
@@ -115,7 +117,7 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
     assert!(!call_validator.is_valid(&malformed_decimal));
 
     let mut malformed_identity = valid_call.clone();
-    malformed_identity["arguments"][2]["universe"] = json!("a".repeat(63));
+    malformed_identity["arguments"][2]["universe"] = json!("not-a-node-id");
     assert!(!call_validator.is_valid(&malformed_identity));
 
     let mut unknown_call_member = valid_call.clone();
@@ -135,15 +137,18 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
 
     let replay_provision_validator = definition_validator(&schema, "ReplayProvisionPath");
     let valid_provision_path = json!({
-        "digest_domain": "quire.source.bytes/v1",
-        "digest": "c".repeat(64),
+        "authority": "fixture",
+        "identity": "source.quire",
         "bytes_path": "inputs/source.quire"
     });
     assert!(replay_provision_validator.is_valid(&valid_provision_path));
 
-    let mut malformed_digest = valid_provision_path.clone();
-    malformed_digest["digest"] = json!("not-a-digest");
-    assert!(!replay_provision_validator.is_valid(&malformed_digest));
+    let mut missing_identity = valid_provision_path.clone();
+    missing_identity
+        .as_object_mut()
+        .expect("provision path is an object")
+        .remove("identity");
+    assert!(!replay_provision_validator.is_valid(&missing_identity));
 
     let mut extra_provision_member = valid_provision_path;
     extra_provision_member["bytes"] = json!([1, 2, 3]);

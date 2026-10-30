@@ -4,20 +4,107 @@
     {
       "name": "probability-product-rejections",
       "stage": "outcome",
-      "owners": {"/results/0/cause": "FR-412", "/results/1/cause": "FR-412", "/results/2/cause": "FR-412", "/results/3/cause": "FR-412"},
+      "owners": {
+        "/results/0/cause": "FR-412",
+        "/results/1/cause": "FR-412",
+        "/results/2/cause": "FR-412",
+        "/results/3/cause": "FR-412"
+      },
       "document": {
         "contract_version": "quire.backend-provider/v1",
         "capability_vocabulary": "quire.capability-kind/v1",
-        "dispositions": [{"request_index": 0, "disposition": "supported"}, {"request_index": 1, "disposition": "supported"}, {"request_index": 2, "disposition": "supported"}, {"request_index": 3, "disposition": "supported"}],
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 3,
+            "disposition": "supported"
+          }
+        ],
         "artifacts": [],
         "results": [
-          {"request_index": 0, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "inequality-fails", "at": {"product_key": "AQ"}}},
-          {"request_index": 1, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "rank-missing", "at": {"product_key": "Ag"}}},
-          {"request_index": 2, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "rank-broken", "at": {"product_key": "AQ"}}},
-          {"request_index": 3, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "threshold-missed", "at": {"product_key": "Ag"}}}
+          {
+            "request_index": 0,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "inequality-fails",
+              "at": {
+                "product_key": "AQ"
+              }
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "rank-missing",
+              "at": {
+                "product_key": "Ag"
+              }
+            }
+          },
+          {
+            "request_index": 2,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "rank-broken",
+              "at": {
+                "product_key": "AQ"
+              }
+            }
+          },
+          {
+            "request_index": 3,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "threshold-missed",
+              "at": {
+                "product_key": "Ag"
+              }
+            }
+          }
         ],
         "counterexamples": [],
-        "accounting": [{"request_index": 0, "settled_by": "result"}, {"request_index": 1, "settled_by": "result"}, {"request_index": 2, "settled_by": "result"}, {"request_index": 3, "settled_by": "result"}]
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 3,
+            "settled_by": "result"
+          }
+        ]
       }
     },
     {
@@ -40,12 +127,7 @@
             "backend": "kani",
             "tool": {
               "name": "kani",
-              "version": "0.56.0",
-              "build": {
-                "domain": "quire.build-inputs/v1",
-                "algorithm": "sha256",
-                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
-              }
+              "version": "0.56.0"
             },
             "advertises": [
               {
@@ -77,7 +159,6 @@
       "stage": "request",
       "owners": {
         "/request/package": "FR-462",
-        "/request/package_id": "FR-462",
         "/request/deadline_ms": "FR-462",
         "/request/items/0/request_index": "FR-331",
         "/request/items/0/kind": "FR-290",
@@ -98,12 +179,7 @@
             "backend": "kani",
             "tool": {
               "name": "kani",
-              "version": "0.56.0",
-              "build": {
-                "domain": "quire.build-inputs/v1",
-                "algorithm": "sha256",
-                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
-              }
+              "version": "0.56.0"
             },
             "advertises": [
               {
@@ -136,8 +212,12 @@
               "kind": "value-validity",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -151,8 +231,12 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"
+                        "ordinal": 0,
+                        "package": "example",
+                        "path": [
+                          "Example",
+                          "Flag"
+                        ]
                       },
                       "path": []
                     },
@@ -181,8 +265,12 @@
               "kind": "value-validity",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "ac15b477899ce4bf720e32ff29a6418e565c693028b4ed4451a4a6f4b2d4b368"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "run"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -196,8 +284,12 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"
+                        "ordinal": 0,
+                        "package": "example",
+                        "path": [
+                          "Example",
+                          "Flag"
+                        ]
                       },
                       "path": []
                     },
@@ -234,12 +326,7 @@
             "backend": "kani",
             "tool": {
               "name": "kani",
-              "version": "0.56.0",
-              "build": {
-                "domain": "quire.build-inputs/v1",
-                "algorithm": "sha256",
-                "digest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b"
-              }
+              "version": "0.56.0"
             },
             "advertises": [
               {
@@ -266,8 +353,12 @@
               "kind": null,
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -284,8 +375,12 @@
               "kind": "value-validity",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -303,8 +398,12 @@
               "kind": "probabilistic-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -364,8 +463,12 @@
             "source_map": [
               {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -508,8 +611,12 @@
               "values": [
                 {
                   "parameter": {
-                    "domain": "quire.checked-semantic-node/v1",
-                    "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "Example",
+                      "Flag"
+                    ]
                   },
                   "value": {
                     "type": "integer",
@@ -944,12 +1051,7 @@
             "backend": "qsl-model-check",
             "tool": {
               "name": "qsl-analyze",
-              "version": "0.1.0",
-              "build": {
-                "domain": "quire.build-inputs/v1",
-                "algorithm": "sha256",
-                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
-              }
+              "version": "0.1.0"
             },
             "advertises": [
               {
@@ -987,8 +1089,7 @@
           "deadline_ms": 600000,
           "provision": [
             {
-              "digest_domain": "sha256-jcs",
-              "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "identity": "initial-states-1",
               "bytes": "e30"
             }
           ],
@@ -998,8 +1099,12 @@
               "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Tank"
+                  ]
                 },
                 "occurrence": {
                   "role": "claim",
@@ -1013,8 +1118,12 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                        "ordinal": 0,
+                        "package": "example",
+                        "path": [
+                          "Example",
+                          "Tank"
+                        ]
                       },
                       "path": []
                     },
@@ -1039,8 +1148,7 @@
                 "subject": {
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                      "identity": "initial-states-1"
                     }
                   ],
                   "universes": [],
@@ -1049,8 +1157,12 @@
                       "domain": {
                         "type": "population",
                         "member_type": {
-                          "domain": "quire.checked-semantic-node/v1",
-                          "digest": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "Example",
+                            "Account"
+                          ]
                         },
                         "ordinal": 0
                       },
@@ -1235,7 +1347,9 @@
                     "receiver": null,
                     "arguments": []
                   },
-                  "post_state": "1111111111111111111111111111111111111111111111111111111111111111"
+                  "post_state": {
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                  }
                 }
               ],
               "loop": [
@@ -1243,7 +1357,9 @@
                   "transition": {
                     "type": "terminal-stutter"
                   },
-                  "post_state": "1111111111111111111111111111111111111111111111111111111111111111"
+                  "post_state": {
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                  }
                 }
               ],
               "over_binding": null,
@@ -1537,7 +1653,224 @@
         ]
       }
     },
-    {"name": "cross-check-and-byte-limit-outcome", "stage": "outcome", "owners": {"/results/0/cross_check": "FR-354", "/results/1/cross_check": "FR-349", "/results/2/cause": "FR-349", "/results/3/cause": "FR-462", "/results/4/cause": "FR-462", "/results/5/cross_check": "FR-349", "/results/6/cross_check": "FR-349", "/results/7/cause": "FR-349", "/results/8/certification": "FR-305"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}, {"request_index": 1, "disposition": "supported"}, {"request_index": 2, "disposition": "supported"}, {"request_index": 3, "disposition": "supported"}, {"request_index": 4, "disposition": "supported"}, {"request_index": 5, "disposition": "supported"}, {"request_index": 6, "disposition": "supported"}, {"request_index": 7, "disposition": "supported"}, {"request_index": 8, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "proved", "certification": "certified", "basis": {"type": "bounded-complete", "depth": 3}, "cross_check": {"tool": "z3", "verdict": "proved"}}, {"request_index": 1, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "proved", "certification": "certified", "basis": {"type": "bounded-complete", "depth": 3}, "cross_check": {"tool": "z3", "verdict": "refuted"}}, {"request_index": 2, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "cross-check-disagreement", "tool": "z3", "primary": "proved", "cross_check": "refuted"}}, {"request_index": 3, "backend": "example-plugin", "kind": "temporal-satisfaction", "result": "failed", "cause": {"type": "tool-failure", "defect": "frame-length", "limit": 1048576, "value": 1048577}}, {"request_index": 4, "backend": "example-plugin", "kind": "temporal-satisfaction", "result": "failed", "cause": {"type": "tool-failure", "defect": "total-bytes", "limit": 4194304, "value": 4194305}}, {"request_index": 5, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "proved", "certification": "uncertified", "basis": {"type": "inductive", "depth": 1}, "cross_check": {"tool": "z3", "verdict": "proved"}}, {"request_index": 6, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "proved", "certification": "certified", "basis": {"type": "bounded-complete", "depth": 3}, "cross_check": {"tool": "z3", "verdict": "inconclusive"}}, {"request_index": 7, "backend": "cvc5", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "cross-check-disagreement", "tool": "z3", "primary": "inconclusive", "cross_check": "proved"}}, {"request_index": 8, "backend": "example-plugin", "kind": "temporal-satisfaction", "result": "proved", "certification": "trusted", "basis": {"type": "bounded-complete", "depth": 3}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result"}, {"request_index": 1, "settled_by": "result"}, {"request_index": 2, "settled_by": "result"}, {"request_index": 3, "settled_by": "result"}, {"request_index": 4, "settled_by": "result"}, {"request_index": 5, "settled_by": "result"}, {"request_index": 6, "settled_by": "result"}, {"request_index": 7, "settled_by": "result"}, {"request_index": 8, "settled_by": "result"}]}},
+    {
+      "name": "cross-check-and-byte-limit-outcome",
+      "stage": "outcome",
+      "owners": {
+        "/results/0/cross_check": "FR-354",
+        "/results/1/cross_check": "FR-349",
+        "/results/2/cause": "FR-349",
+        "/results/3/cause": "FR-462",
+        "/results/4/cause": "FR-462",
+        "/results/5/cross_check": "FR-349",
+        "/results/6/cross_check": "FR-349",
+        "/results/7/cause": "FR-349",
+        "/results/8/certification": "FR-305"
+      },
+      "document": {
+        "contract_version": "quire.backend-provider/v1",
+        "capability_vocabulary": "quire.capability-kind/v1",
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 3,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 4,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 5,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 6,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 7,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 8,
+            "disposition": "supported"
+          }
+        ],
+        "artifacts": [],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "proved",
+            "certification": "certified",
+            "basis": {
+              "type": "bounded-complete",
+              "depth": 3
+            },
+            "cross_check": {
+              "tool": "z3",
+              "verdict": "proved"
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "proved",
+            "certification": "certified",
+            "basis": {
+              "type": "bounded-complete",
+              "depth": 3
+            },
+            "cross_check": {
+              "tool": "z3",
+              "verdict": "refuted"
+            }
+          },
+          {
+            "request_index": 2,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "cross-check-disagreement",
+              "tool": "z3",
+              "primary": "proved",
+              "cross_check": "refuted"
+            }
+          },
+          {
+            "request_index": 3,
+            "backend": "example-plugin",
+            "kind": "temporal-satisfaction",
+            "result": "failed",
+            "cause": {
+              "type": "tool-failure",
+              "defect": "frame-length",
+              "limit": 1048576,
+              "value": 1048577
+            }
+          },
+          {
+            "request_index": 4,
+            "backend": "example-plugin",
+            "kind": "temporal-satisfaction",
+            "result": "failed",
+            "cause": {
+              "type": "tool-failure",
+              "defect": "total-bytes",
+              "limit": 4194304,
+              "value": 4194305
+            }
+          },
+          {
+            "request_index": 5,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "proved",
+            "certification": "uncertified",
+            "basis": {
+              "type": "inductive",
+              "depth": 1
+            },
+            "cross_check": {
+              "tool": "z3",
+              "verdict": "proved"
+            }
+          },
+          {
+            "request_index": 6,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "proved",
+            "certification": "certified",
+            "basis": {
+              "type": "bounded-complete",
+              "depth": 3
+            },
+            "cross_check": {
+              "tool": "z3",
+              "verdict": "inconclusive"
+            }
+          },
+          {
+            "request_index": 7,
+            "backend": "cvc5",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "cross-check-disagreement",
+              "tool": "z3",
+              "primary": "inconclusive",
+              "cross_check": "proved"
+            }
+          },
+          {
+            "request_index": 8,
+            "backend": "example-plugin",
+            "kind": "temporal-satisfaction",
+            "result": "proved",
+            "certification": "trusted",
+            "basis": {
+              "type": "bounded-complete",
+              "depth": 3
+            }
+          }
+        ],
+        "counterexamples": [],
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 3,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 4,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 5,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 6,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 7,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 8,
+            "settled_by": "result"
+          }
+        ]
+      }
+    },
     {
       "name": "certificate-rejected-loci",
       "stage": "outcome",
@@ -1780,7 +2113,12 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "successor-missing",
-              "at": {"model_state": {"domain": "quire.simulation.state-key/v1", "digest": "1111111111111111111111111111111111111111111111111111111111111111"}, "automaton_state": "AQ"}
+              "at": {
+                "model_state": {
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                },
+                "automaton_state": "AQ"
+              }
             }
           },
           {
@@ -1791,7 +2129,12 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "witness-fails",
-              "at": {"model_state": {"domain": "quire.simulation.state-key/v1", "digest": "2222222222222222222222222222222222222222222222222222222222222222"}, "automaton_state": "Ag"}
+              "at": {
+                "model_state": {
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                },
+                "automaton_state": "Ag"
+              }
             }
           },
           {
@@ -1802,7 +2145,17 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "not-partition",
-              "at": {"states": ["1111111111111111111111111111111111111111111111111111111111111111", "2222222222222222222222222222222222222222222222222222222222222222"], "automaton_state": "Aw"}
+              "at": {
+                "states": [
+                  {
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                  },
+                  {
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                  }
+                ],
+                "automaton_state": "Aw"
+              }
             }
           },
           {
@@ -1813,7 +2166,27 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "violating-member",
-              "at": {"states": ["1111111111111111111111111111111111111111111111111111111111111111", "2222222222222222222222222222222222222222222222222222222222222222"], "automaton_state": "BA", "witness_set": [{"states": ["3333333333333333333333333333333333333333333333333333333333333333"], "automaton_state": "BQ"}]}
+              "at": {
+                "states": [
+                  {
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                  },
+                  {
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                  }
+                ],
+                "automaton_state": "BA",
+                "witness_set": [
+                  {
+                    "states": [
+                      {
+                        "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjMifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                      }
+                    ],
+                    "automaton_state": "BQ"
+                  }
+                ]
+              }
             }
           },
           {
@@ -1824,7 +2197,13 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "successor-missing",
-              "at": {"states": ["3333333333333333333333333333333333333333333333333333333333333333"]}
+              "at": {
+                "states": [
+                  {
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjMifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                  }
+                ]
+              }
             }
           },
           {
@@ -1835,7 +2214,9 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "rank-broken",
-              "at": {"domain": "quire.simulation.state-key/v1", "digest": "4444444444444444444444444444444444444444444444444444444444444444"}
+              "at": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjQifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              }
             }
           },
           {
@@ -1846,7 +2227,11 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "initial-mismatch",
-              "at": {"position": "0", "edge": null, "verdict": null}
+              "at": {
+                "position": "0",
+                "edge": null,
+                "verdict": null
+              }
             }
           },
           {
@@ -1857,7 +2242,11 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "post-differs",
-              "at": {"position": "3", "edge": "1", "verdict": null}
+              "at": {
+                "position": "3",
+                "edge": "1",
+                "verdict": null
+              }
             }
           },
           {
@@ -1868,7 +2257,23 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "step-fails",
-              "at": {"position": "5", "edge": "0", "verdict": {"kind": "AbstractStepRejected", "position": "4", "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []}, "cause": {"kind": "Postcondition"}}}
+              "at": {
+                "position": "5",
+                "edge": "0",
+                "verdict": {
+                  "kind": "AbstractStepRejected",
+                  "position": "4",
+                  "transition": {
+                    "type": "transition",
+                    "operation": "inc",
+                    "receiver": null,
+                    "arguments": []
+                  },
+                  "cause": {
+                    "kind": "Postcondition"
+                  }
+                }
+              }
             }
           },
           {
@@ -1879,7 +2284,9 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "successor-missing",
-              "at": {"node": 2}
+              "at": {
+                "node": 2
+              }
             }
           },
           {
@@ -1890,7 +2297,9 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "backward-edge",
-              "at": {"edge": 4}
+              "at": {
+                "edge": 4
+              }
             }
           },
           {
@@ -1901,7 +2310,9 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "witness-fails",
-              "at": {"component": 1}
+              "at": {
+                "component": 1
+              }
             }
           },
           {
@@ -1912,7 +2323,9 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "malformed",
-              "at": {"member": "ranking"}
+              "at": {
+                "member": "ranking"
+              }
             }
           },
           {
@@ -1923,7 +2336,9 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "inequality-fails",
-              "at": {"product_key": "AQ"}
+              "at": {
+                "product_key": "AQ"
+              }
             }
           },
           {
@@ -1934,7 +2349,9 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "threshold-missed",
-              "at": {"product_key": "Ag"}
+              "at": {
+                "product_key": "Ag"
+              }
             }
           },
           {
@@ -1945,7 +2362,9 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "initial-missing",
-              "at": {"domain": "quire.simulation.state-key/v1", "digest": "6666666666666666666666666666666666666666666666666666666666666666"}
+              "at": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              }
             }
           },
           {
@@ -1956,7 +2375,9 @@
             "cause": {
               "type": "certificate-rejected",
               "rule": "witness-fails",
-              "at": {"node": 0}
+              "at": {
+                "node": 0
+              }
             }
           }
         ],
@@ -2081,33 +2502,169 @@
         "contract_version": "quire.backend-provider/v1",
         "capability_vocabulary": "quire.capability-kind/v1",
         "dispositions": [
-          {"request_index": 0, "disposition": "supported"},
-          {"request_index": 1, "disposition": "supported"},
-          {"request_index": 2, "disposition": "supported"},
-          {"request_index": 3, "disposition": "supported"},
-          {"request_index": 4, "disposition": "supported"},
-          {"request_index": 5, "disposition": "supported"},
-          {"request_index": 6, "disposition": "supported"}
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 3,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 4,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 5,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 6,
+            "disposition": "supported"
+          }
         ],
         "artifacts": [],
         "results": [
-          {"request_index": 0, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "bad-state", "at": {"model_state": {"domain": "quire.simulation.state-key/v1", "digest": "1111111111111111111111111111111111111111111111111111111111111111"}, "automaton_state": "AQ"}}},
-          {"request_index": 1, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "undefined-member", "at": {"states": ["1111111111111111111111111111111111111111111111111111111111111111"], "automaton_state": "AQ"}}},
-          {"request_index": 2, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "predicate-undefined", "at": {"domain": "quire.simulation.state-key/v1", "digest": "1111111111111111111111111111111111111111111111111111111111111111"}}},
-          {"request_index": 3, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "rank-missing", "at": {"domain": "quire.simulation.state-key/v1", "digest": "1111111111111111111111111111111111111111111111111111111111111111"}}},
-          {"request_index": 4, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "order-broken", "at": {"domain": "quire.simulation.state-key/v1", "digest": "1111111111111111111111111111111111111111111111111111111111111111"}}},
-          {"request_index": 5, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "count-broken", "at": {"domain": "quire.simulation.state-key/v1", "digest": "1111111111111111111111111111111111111111111111111111111111111111"}}},
-          {"request_index": 6, "backend": "qsl-refinement", "kind": "refinement", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "successors-differ", "at": {"position": "0", "edge": null, "verdict": null}}}
+          {
+            "request_index": 0,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "bad-state",
+              "at": {
+                "model_state": {
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                },
+                "automaton_state": "AQ"
+              }
+            }
+          },
+          {
+            "request_index": 1,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "undefined-member",
+              "at": {
+                "states": [
+                  {
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                  }
+                ],
+                "automaton_state": "AQ"
+              }
+            }
+          },
+          {
+            "request_index": 2,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "predicate-undefined",
+              "at": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              }
+            }
+          },
+          {
+            "request_index": 3,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "rank-missing",
+              "at": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              }
+            }
+          },
+          {
+            "request_index": 4,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "order-broken",
+              "at": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              }
+            }
+          },
+          {
+            "request_index": 5,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "count-broken",
+              "at": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              }
+            }
+          },
+          {
+            "request_index": 6,
+            "backend": "qsl-refinement",
+            "kind": "refinement",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "successors-differ",
+              "at": {
+                "position": "0",
+                "edge": null,
+                "verdict": null
+              }
+            }
+          }
         ],
         "counterexamples": [],
         "accounting": [
-          {"request_index": 0, "settled_by": "result"},
-          {"request_index": 1, "settled_by": "result"},
-          {"request_index": 2, "settled_by": "result"},
-          {"request_index": 3, "settled_by": "result"},
-          {"request_index": 4, "settled_by": "result"},
-          {"request_index": 5, "settled_by": "result"},
-          {"request_index": 6, "settled_by": "result"}
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 3,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 4,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 5,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 6,
+            "settled_by": "result"
+          }
         ]
       }
     },
@@ -2127,13 +2684,34 @@
         "contract_version": "quire.backend-provider/v1",
         "capability_vocabulary": "quire.capability-kind/v1",
         "dispositions": [
-          {"request_index": 0, "disposition": "supported"},
-          {"request_index": 1, "disposition": "supported"},
-          {"request_index": 2, "disposition": "supported"},
-          {"request_index": 3, "disposition": "supported"},
-          {"request_index": 4, "disposition": "supported"},
-          {"request_index": 5, "disposition": "supported"},
-          {"request_index": 6, "disposition": "supported"}
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 1,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 2,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 3,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 4,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 5,
+            "disposition": "supported"
+          },
+          {
+            "request_index": 6,
+            "disposition": "supported"
+          }
         ],
         "artifacts": [],
         "results": [
@@ -2147,8 +2725,42 @@
               "rule": "violating-member",
               "at": {
                 "transitions": [
-                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "isZero", "receiver": null, "arguments": []}, "post_state": "1111111111111111111111111111111111111111111111111111111111111111", "result": {"type": "boolean", "value": true}},
-                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "isZero", "receiver": null, "arguments": []}, "post_state": "2222222222222222222222222222222222222222222222222222222222222222", "result": {"type": "boolean", "value": false}}
+                  {
+                    "pre_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "transition": {
+                      "type": "transition",
+                      "operation": "isZero",
+                      "receiver": null,
+                      "arguments": []
+                    },
+                    "post_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "result": {
+                      "type": "boolean",
+                      "value": true
+                    }
+                  },
+                  {
+                    "pre_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "transition": {
+                      "type": "transition",
+                      "operation": "isZero",
+                      "receiver": null,
+                      "arguments": []
+                    },
+                    "post_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "result": {
+                      "type": "boolean",
+                      "value": false
+                    }
+                  }
                 ]
               }
             }
@@ -2163,8 +2775,46 @@
               "rule": "undefined-member",
               "at": {
                 "transitions": [
-                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "0"}]}, "post_state": "1111111111111111111111111111111111111111111111111111111111111111", "result": null},
-                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "set", "receiver": null, "arguments": [{"type": "integer", "value": "1"}]}, "post_state": "2222222222222222222222222222222222222222222222222222222222222222", "result": null}
+                  {
+                    "pre_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "transition": {
+                      "type": "transition",
+                      "operation": "set",
+                      "receiver": null,
+                      "arguments": [
+                        {
+                          "type": "integer",
+                          "value": "0"
+                        }
+                      ]
+                    },
+                    "post_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "result": null
+                  },
+                  {
+                    "pre_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "transition": {
+                      "type": "transition",
+                      "operation": "set",
+                      "receiver": null,
+                      "arguments": [
+                        {
+                          "type": "integer",
+                          "value": "1"
+                        }
+                      ]
+                    },
+                    "post_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "result": null
+                  }
                 ]
               }
             }
@@ -2179,26 +2829,151 @@
               "rule": "violating-member",
               "at": {
                 "transitions": [
-                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "isZero", "receiver": null, "arguments": []}, "post_state": "2222222222222222222222222222222222222222222222222222222222222222", "result": {"type": "boolean", "value": false}},
-                  {"pre_state": "1111111111111111111111111111111111111111111111111111111111111111", "transition": {"type": "transition", "operation": "isZero", "receiver": null, "arguments": []}, "post_state": "1111111111111111111111111111111111111111111111111111111111111111", "result": {"type": "boolean", "value": true}}
+                  {
+                    "pre_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "transition": {
+                      "type": "transition",
+                      "operation": "isZero",
+                      "receiver": null,
+                      "arguments": []
+                    },
+                    "post_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "result": {
+                      "type": "boolean",
+                      "value": false
+                    }
+                  },
+                  {
+                    "pre_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "transition": {
+                      "type": "transition",
+                      "operation": "isZero",
+                      "receiver": null,
+                      "arguments": []
+                    },
+                    "post_state": {
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                    },
+                    "result": {
+                      "type": "boolean",
+                      "value": true
+                    }
+                  }
                 ]
               }
             }
           },
-          {"request_index": 3, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "violating-member", "at": {"states": [], "automaton_state": "AQ", "witness_set": []}}},
-          {"request_index": 4, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "successor-missing", "at": {"states": [], "automaton_state": "AQ", "witness_set": [{"states": ["1111111111111111111111111111111111111111111111111111111111111111", "2222222222222222222222222222222222222222222222222222222222222222"], "automaton_state": "Ag"}]}}},
-          {"request_index": 5, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "violating-member", "at": {"states": ["1111111111111111111111111111111111111111111111111111111111111111"], "automaton_state": "AQ", "witness_set": []}}},
-          {"request_index": 6, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "certificate-rejected", "rule": "malformed", "at": {"member": "components"}}}
+          {
+            "request_index": 3,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "violating-member",
+              "at": {
+                "states": [],
+                "automaton_state": "AQ",
+                "witness_set": []
+              }
+            }
+          },
+          {
+            "request_index": 4,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "successor-missing",
+              "at": {
+                "states": [],
+                "automaton_state": "AQ",
+                "witness_set": [
+                  {
+                    "states": [
+                      {
+                        "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                      },
+                      {
+                        "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                      }
+                    ],
+                    "automaton_state": "Ag"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "request_index": 5,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "violating-member",
+              "at": {
+                "states": [
+                  {
+                    "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                  }
+                ],
+                "automaton_state": "AQ",
+                "witness_set": []
+              }
+            }
+          },
+          {
+            "request_index": 6,
+            "backend": "qsl-model-check",
+            "kind": "temporal-satisfaction",
+            "result": "inconclusive",
+            "cause": {
+              "type": "certificate-rejected",
+              "rule": "malformed",
+              "at": {
+                "member": "components"
+              }
+            }
+          }
         ],
         "counterexamples": [],
         "accounting": [
-          {"request_index": 0, "settled_by": "result"},
-          {"request_index": 1, "settled_by": "result"},
-          {"request_index": 2, "settled_by": "result"},
-          {"request_index": 3, "settled_by": "result"},
-          {"request_index": 4, "settled_by": "result"},
-          {"request_index": 5, "settled_by": "result"},
-          {"request_index": 6, "settled_by": "result"}
+          {
+            "request_index": 0,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 1,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 2,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 3,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 4,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 5,
+            "settled_by": "result"
+          },
+          {
+            "request_index": 6,
+            "settled_by": "result"
+          }
         ]
       }
     },
@@ -2222,8 +2997,7 @@
         "/results/13/cause": "FR-331",
         "/results/14/cause": "FR-331",
         "/results/15/cause": "FR-331",
-        "/results/16/cause": "FR-331",
-        "/results/17/cause": "FR-331"
+        "/results/16/cause": "FR-331"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -2296,10 +3070,6 @@
           {
             "request_index": 16,
             "disposition": "supported"
-          },
-          {
-            "request_index": 17,
-            "disposition": "supported"
           }
         ],
         "artifacts": [],
@@ -2364,8 +3134,7 @@
               "rule": "shape-mismatch",
               "at": {
                 "model_state": {
-                  "domain": "quire.simulation.state-key/v1",
-                  "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                 },
                 "automaton_state": "AQ"
               }
@@ -2380,8 +3149,7 @@
               "type": "certificate-rejected",
               "rule": "malformed",
               "at": {
-                "domain": "quire.simulation.state-key/v1",
-                "digest": "1111111111111111111111111111111111111111111111111111111111111111"
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -2394,8 +3162,7 @@
               "type": "certificate-rejected",
               "rule": "bad-state",
               "at": {
-                "domain": "quire.simulation.state-key/v1",
-                "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
               }
             }
           },
@@ -2498,8 +3265,7 @@
                   "where": {
                     "position": "1",
                     "state_key": {
-                      "domain": "quire.simulation.state-key/v1",
-                      "digest": "2222222222222222222222222222222222222222222222222222222222222222"
+                      "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
                     },
                     "locus": "mapping"
                   },
@@ -2602,20 +3368,6 @@
                 }
               }
             }
-          },
-          {
-            "request_index": 17,
-            "backend": "qsl-model-check",
-            "kind": "temporal-satisfaction",
-            "result": "inconclusive",
-            "cause": {
-              "type": "certificate-rejected",
-              "rule": "malformed",
-              "at": {
-                "domain": "package-fingerprint",
-                "digest": "3333333333333333333333333333333333333333333333333333333333333333"
-              }
-            }
           }
         ],
         "counterexamples": [],
@@ -2687,10 +3439,6 @@
           {
             "request_index": 16,
             "settled_by": "result"
-          },
-          {
-            "request_index": 17,
-            "settled_by": "result"
           }
         ]
       }
@@ -2703,8 +3451,7 @@
         "/results/1/counterexample": "FR-393",
         "/counterexamples/0/counterexample": "FR-393",
         "/counterexamples/1/counterexample": "FR-400",
-        "/results/3/evidence": "FR-391",
-        "/results/4/cause": "FR-331"
+        "/results/3/evidence": "FR-391"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -2724,10 +3471,6 @@
           },
           {
             "request_index": 3,
-            "disposition": "supported"
-          },
-          {
-            "request_index": 4,
             "disposition": "supported"
           }
         ],
@@ -2793,31 +3536,6 @@
                 }
               ]
             }
-          },
-          {
-            "request_index": 4,
-            "backend": "qsl-model-check",
-            "kind": "temporal-satisfaction",
-            "result": "inconclusive",
-            "cause": {
-              "type": "stale-dependency",
-              "requested": {
-                "kind": "package",
-                "package_id": {
-                  "domain": "quire.package.semantic/v2",
-                  "algorithm": "sha256",
-                  "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
-                }
-              },
-              "recompiled": {
-                "kind": "package",
-                "package_id": {
-                  "domain": "quire.package.semantic/v2",
-                  "algorithm": "sha256",
-                  "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934"
-                }
-              }
-            }
           }
         ],
         "counterexamples": [
@@ -2866,7 +3584,9 @@
                           }
                         ]
                       },
-                      "post_state": "2222222222222222222222222222222222222222222222222222222222222222"
+                      "post_state": {
+                        "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                      }
                     }
                   ]
                 }
@@ -2903,11 +3623,6 @@
             "reached": [
               "max_states"
             ]
-          },
-          {
-            "request_index": 4,
-            "settled_by": "result",
-            "method": "exploration"
           }
         ]
       }
@@ -2929,12 +3644,7 @@
             "backend": "qsl-prob",
             "tool": {
               "name": "qsl-analyze",
-              "version": "0.1.0",
-              "build": {
-                "domain": "quire.build-inputs/v1",
-                "algorithm": "sha256",
-                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
-              }
+              "version": "0.1.0"
             },
             "advertises": [
               {
@@ -2962,8 +3672,12 @@
               "kind": "probabilistic-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -2998,8 +3712,12 @@
               "kind": "probabilistic-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -3181,9 +3899,16 @@
             },
             "certificate": {
               "identity": {
-                "domain": "quire.obligation/v1",
-                "algorithm": "sha256",
-                "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+                "node_id": {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
+                },
+                "model": "example",
+                "ordinal": 0
               },
               "objective": {
                 "optimisation": "workload"
@@ -3377,12 +4102,7 @@
             "backend": "qsl-model-check",
             "tool": {
               "name": "qsl-analyze",
-              "version": "0.1.0",
-              "build": {
-                "domain": "quire.build-inputs/v1",
-                "algorithm": "sha256",
-                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
-              }
+              "version": "0.1.0"
             },
             "advertises": [
               {
@@ -3419,12 +4139,7 @@
             "backend": "dreal",
             "tool": {
               "name": "dreal",
-              "version": "4.21.06.2",
-              "build": {
-                "domain": "quire.build-inputs/v1",
-                "algorithm": "sha256",
-                "digest": "d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7"
-              }
+              "version": "4.21.06.2"
             },
             "advertises": [
               {
@@ -3458,8 +4173,7 @@
           "deadline_ms": 600000,
           "provision": [
             {
-              "digest_domain": "sha256-jcs",
-              "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "identity": "initial-states-1",
               "bytes": "e30"
             }
           ],
@@ -3469,8 +4183,12 @@
               "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Tank"
+                  ]
                 },
                 "occurrence": {
                   "role": "claim",
@@ -3484,8 +4202,12 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                        "ordinal": 0,
+                        "package": "example",
+                        "path": [
+                          "Example",
+                          "Tank"
+                        ]
                       },
                       "path": []
                     },
@@ -3513,8 +4235,7 @@
                 "subject": {
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                      "identity": "initial-states-1"
                     }
                   ],
                   "universes": [],
@@ -3523,8 +4244,12 @@
                       "domain": {
                         "type": "population",
                         "member_type": {
-                          "domain": "quire.checked-semantic-node/v1",
-                          "digest": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "Example",
+                            "Account"
+                          ]
                         },
                         "ordinal": 0
                       },
@@ -4408,8 +5133,12 @@
             "cause": {
               "type": "hypotheses-not-established",
               "hypothesis": {
-                "domain": "quire.checked-semantic-node/v1",
-                "digest": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Account"
+                ]
               },
               "result": "refuted"
             }
@@ -4464,10 +5193,10 @@
               "initial_state": null,
               "prefix": [
                 {
-                  "document": "2222222222222222222222222222222222222222222222222222222222222222"
+                  "document": "document-2"
                 },
                 {
-                  "document": "3333333333333333333333333333333333333333333333333333333333333333"
+                  "document": "document-3"
                 }
               ],
               "loop": [],
@@ -4521,11 +5250,15 @@
                 "type": "undefined-evaluation",
                 "where": {
                   "position": 1,
-                  "document": "3333333333333333333333333333333333333333333333333333333333333333",
+                  "document": "document-3",
                   "locus": {
                     "node": {
-                      "domain": "quire.checked-semantic-node/v1",
-                      "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "Example",
+                        "Tank"
+                      ]
                     },
                     "occurrence": {
                       "role": "claim",
@@ -4538,10 +5271,10 @@
               "initial_state": null,
               "prefix": [
                 {
-                  "document": "2222222222222222222222222222222222222222222222222222222222222222"
+                  "document": "document-2"
                 },
                 {
-                  "document": "3333333333333333333333333333333333333333333333333333333333333333"
+                  "document": "document-3"
                 }
               ],
               "loop": [],
@@ -4606,8 +5339,12 @@
               "type": "weak-access-shape",
               "site": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -4634,8 +5371,12 @@
               "type": "weak-access-shape",
               "site": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -4664,8 +5405,12 @@
               "type": "weak-access-shape",
               "site": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -4694,8 +5439,12 @@
               "type": "weak-access-shape",
               "site": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -4724,8 +5473,12 @@
               "type": "weak-access-shape",
               "site": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "1d4cf0ff1b76830f071f75e37af3f888ef30197788e8937c481a4adbde3c8191"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Safety"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -4772,11 +5525,10 @@
       }
     },
     {
-      "name": "certificate-stale-dependency-outcome",
+      "name": "limit-reached-max-clocks",
       "stage": "outcome",
       "owners": {
-        "/results/0/cause": "FR-331",
-        "/results/1/cause": "FR-331"
+        "/results/0/cause": "FR-415"
       },
       "document": {
         "contract_version": "quire.backend-provider/v1",
@@ -4784,10 +5536,6 @@
         "dispositions": [
           {
             "request_index": 0,
-            "disposition": "supported"
-          },
-          {
-            "request_index": 1,
             "disposition": "supported"
           }
         ],
@@ -4797,50 +5545,12 @@
             "request_index": 0,
             "backend": "qsl-model-check",
             "kind": "temporal-satisfaction",
-            "result": "inconclusive",
+            "result": "incomplete",
             "cause": {
-              "type": "stale-dependency",
-              "requested": {
-                "kind": "package",
-                "package_id": {
-                  "domain": "quire.package.semantic/v2",
-                  "algorithm": "sha256",
-                  "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
-                }
-              },
-              "recompiled": {
-                "kind": "package",
-                "package_id": {
-                  "domain": "quire.package.semantic/v2",
-                  "algorithm": "sha256",
-                  "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934"
-                }
-              }
-            }
-          },
-          {
-            "request_index": 1,
-            "backend": "qsl-model-check",
-            "kind": "temporal-satisfaction",
-            "result": "inconclusive",
-            "cause": {
-              "type": "stale-dependency",
-              "requested": {
-                "kind": "package",
-                "package_id": {
-                  "domain": "quire.package.semantic/v2",
-                  "algorithm": "sha256",
-                  "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
-                }
-              },
-              "recompiled": {
-                "kind": "package",
-                "package_id": {
-                  "domain": "quire.package.semantic/v2",
-                  "algorithm": "sha256",
-                  "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934"
-                }
-              }
+              "type": "limit-reached",
+              "limit": "max_clocks",
+              "value": 1024,
+              "setting": "model_check.max_clocks"
             }
           }
         ],
@@ -4849,34 +5559,64 @@
           {
             "request_index": 0,
             "settled_by": "result",
-            "method": "exploration"
-          },
-          {
-            "request_index": 1,
-            "settled_by": "result",
-            "method": "exploration"
+            "method": "exploration",
+            "limits": {
+              "max_clocks": 1024
+            },
+            "reached": [
+              "max_clocks"
+            ]
           }
         ]
       }
     },
-    {"name": "limit-reached-max-clocks", "stage": "outcome", "owners": {"/results/0/cause": "FR-415"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "qsl-model-check", "kind": "temporal-satisfaction", "result": "incomplete", "cause": {"type": "limit-reached", "limit": "max_clocks", "value": 1024, "setting": "model_check.max_clocks"}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result", "method": "exploration", "limits": {"max_clocks": 1024}, "reached": ["max_clocks"]}]}},
-    {"name": "limit-reached-accounting-setting", "stage": "outcome", "owners": {"/results/0/cause": "FR-461"}, "document": {"contract_version": "quire.backend-provider/v1", "capability_vocabulary": "quire.capability-kind/v1", "dispositions": [{"request_index": 0, "disposition": "supported"}], "artifacts": [], "results": [{"request_index": 0, "backend": "qsl-prob", "kind": "probabilistic-satisfaction", "result": "incomplete", "cause": {"type": "limit-reached", "limit": "work_units", "value": 4096, "setting": "accounting.work_units"}}], "counterexamples": [], "accounting": [{"request_index": 0, "settled_by": "result", "limits": {"work_units": 4096}, "reached": ["work_units"]}]}},
     {
-      "name": "refuted-ignoring-constraints-outcome",
+      "name": "limit-reached-accounting-setting",
       "stage": "outcome",
-      "owners": {"/results/0/cause": "FR-331"},
+      "owners": {
+        "/results/0/cause": "FR-461"
+      },
       "document": {
         "contract_version": "quire.backend-provider/v1",
         "capability_vocabulary": "quire.capability-kind/v1",
-        "dispositions": [{"request_index": 0, "disposition": "supported"}],
+        "dispositions": [
+          {
+            "request_index": 0,
+            "disposition": "supported"
+          }
+        ],
         "artifacts": [],
-        "results": [{"request_index": 0, "backend": "qsl-analyze", "kind": "temporal-satisfaction", "result": "inconclusive", "cause": {"type": "refuted-ignoring-constraints"}}],
+        "results": [
+          {
+            "request_index": 0,
+            "backend": "qsl-prob",
+            "kind": "probabilistic-satisfaction",
+            "result": "incomplete",
+            "cause": {
+              "type": "limit-reached",
+              "limit": "work_units",
+              "value": 4096,
+              "setting": "accounting.work_units"
+            }
+          }
+        ],
         "counterexamples": [],
-        "accounting": [{"request_index": 0, "settled_by": "result"}]
+        "accounting": [
+          {
+            "request_index": 0,
+            "settled_by": "result",
+            "limits": {
+              "work_units": 4096
+            },
+            "reached": [
+              "work_units"
+            ]
+          }
+        ]
       }
     },
     {
-      "name": "refinement-stale-dependency-outcome",
+      "name": "refuted-ignoring-constraints-outcome",
       "stage": "outcome",
       "owners": {
         "/results/0/cause": "FR-331"
@@ -4894,19 +5634,11 @@
         "results": [
           {
             "request_index": 0,
-            "backend": "qsl-model-check",
-            "kind": "refinement",
+            "backend": "qsl-analyze",
+            "kind": "temporal-satisfaction",
             "result": "inconclusive",
             "cause": {
-              "type": "stale-dependency",
-              "requested": {
-                "kind": "refinement",
-                "name": "OtherRefinement"
-              },
-              "recompiled": {
-                "kind": "refinement",
-                "name": "CasRefinesCounter"
-              }
+              "type": "refuted-ignoring-constraints"
             }
           }
         ],
@@ -4944,7 +5676,7 @@
         "/request/items/6/temporal/item_kind": "FR-368",
         "/request/items/6/temporal/fairness": "FR-368"
       },
-      "description": "FR-368 Item kinds, claim, extent, position, limits and the refinement item's abstract_subject. Items 0 and 1 are the caller's authored clauses over two subjects, item 2 a refinement item over subject 0 (its node id is an illustrative value: the package fixture holds no refinement node); items 3 to 6 are the derived items, grouped by subject in order of first occurrence and, within a subject, deadlock-freedom, time-lock-freedom, race-freedom. Anchors are the fixture's model_root node (occurrence role generated, ordinal 0) for the model subject and its Example::Handshake protocol clause node (declaration, ordinal 0) for the protocol subject. The authored and refinement items carry max_depth and limits; the derived items carry none and take the provider defaults. The refinement item's abstract package is positive-dependency-library.json, whose id is abstract_subject.package_id and whose v2 bytes the test composition adds as the request's one dependency, as it adds package and package_id.",
+      "description": "FR-368 Item kinds, claim, extent, position, limits and the refinement item's abstract_subject. Items 0 and 1 are the caller's authored clauses over two subjects, item 2 a refinement item over subject 0 (its node id is an illustrative value: the package fixture holds no refinement node); items 3 to 6 are the derived items, grouped by subject in order of first occurrence and, within a subject, deadlock-freedom, time-lock-freedom, race-freedom. Anchors are the fixture's model_root node (occurrence role generated, ordinal 0) for the model subject and its Example::Handshake protocol clause node (declaration, ordinal 0) for the protocol subject. The authored and refinement items carry max_depth and limits; the derived items carry none and take the provider defaults. The refinement item's abstract package is positive-dependency-library.json, whose identity is abstract_subject.identity and whose v2 bytes the test composition adds as the request's one dependency, as it adds package and package_id.",
       "document": {
         "contract_version": "quire.backend-provider/v1",
         "capability_vocabulary": "quire.capability-kind/v1",
@@ -4953,12 +5685,7 @@
             "backend": "qsl-model-check",
             "tool": {
               "name": "qsl-analyze",
-              "version": "0.1.0",
-              "build": {
-                "domain": "quire.build-inputs/v1",
-                "algorithm": "sha256",
-                "digest": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
-              }
+              "version": "0.1.0"
             },
             "advertises": [
               {
@@ -4996,13 +5723,11 @@
           "deadline_ms": 600000,
           "provision": [
             {
-              "digest_domain": "sha256-jcs",
-              "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+              "identity": "initial-states-1",
               "bytes": "e30"
             },
             {
-              "digest_domain": "sha256-jcs",
-              "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "identity": "initial-states-4",
               "bytes": "W10"
             }
           ],
@@ -5012,8 +5737,30 @@
               "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "65dff8adef451a9ceead2d27077e6acc22d54cac7edc783b72d2e1ca8c42455b"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "temporal",
+                    "formula",
+                    {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "Example",
+                        "enabled"
+                      ]
+                    },
+                    "quire.op.temporal.holds",
+                    "temporal_formula",
+                    {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "Example",
+                        "Flag"
+                      ]
+                    }
+                  ]
                 },
                 "occurrence": {
                   "role": "expression",
@@ -5027,8 +5774,30 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "65dff8adef451a9ceead2d27077e6acc22d54cac7edc783b72d2e1ca8c42455b"
+                        "ordinal": 0,
+                        "package": "example",
+                        "path": [
+                          "temporal",
+                          "formula",
+                          {
+                            "ordinal": 0,
+                            "package": "example",
+                            "path": [
+                              "Example",
+                              "enabled"
+                            ]
+                          },
+                          "quire.op.temporal.holds",
+                          "temporal_formula",
+                          {
+                            "ordinal": 0,
+                            "package": "example",
+                            "path": [
+                              "Example",
+                              "Flag"
+                            ]
+                          }
+                        ]
                       },
                       "path": []
                     },
@@ -5047,8 +5816,7 @@
                 "subject": {
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                      "identity": "initial-states-1"
                     }
                   ],
                   "universes": [],
@@ -5073,8 +5841,48 @@
               "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "f3c3e283753392ece0f303133cf860ca58b1848623e43d044257c95fec470d27"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "temporal",
+                    "formula",
+                    {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "temporal",
+                        "formula",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "Example",
+                            "enabled"
+                          ]
+                        },
+                        "quire.op.temporal.holds",
+                        "temporal_formula",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "Example",
+                            "Flag"
+                          ]
+                        }
+                      ]
+                    },
+                    "quire.op.temporal.eventually",
+                    "temporal_formula",
+                    {
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "Example",
+                        "Flag"
+                      ]
+                    }
+                  ]
                 },
                 "occurrence": {
                   "role": "expression",
@@ -5088,8 +5896,48 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "f3c3e283753392ece0f303133cf860ca58b1848623e43d044257c95fec470d27"
+                        "ordinal": 0,
+                        "package": "example",
+                        "path": [
+                          "temporal",
+                          "formula",
+                          {
+                            "ordinal": 0,
+                            "package": "example",
+                            "path": [
+                              "temporal",
+                              "formula",
+                              {
+                                "ordinal": 0,
+                                "package": "example",
+                                "path": [
+                                  "Example",
+                                  "enabled"
+                                ]
+                              },
+                              "quire.op.temporal.holds",
+                              "temporal_formula",
+                              {
+                                "ordinal": 0,
+                                "package": "example",
+                                "path": [
+                                  "Example",
+                                  "Flag"
+                                ]
+                              }
+                            ]
+                          },
+                          "quire.op.temporal.eventually",
+                          "temporal_formula",
+                          {
+                            "ordinal": 0,
+                            "package": "example",
+                            "path": [
+                              "Example",
+                              "Flag"
+                            ]
+                          }
+                        ]
                       },
                       "path": []
                     },
@@ -5108,8 +5956,7 @@
                 "subject": {
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                      "identity": "initial-states-4"
                     }
                   ],
                   "universes": [],
@@ -5128,8 +5975,12 @@
               "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Refinement"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -5143,8 +5994,12 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+                        "ordinal": 0,
+                        "package": "example",
+                        "path": [
+                          "Example",
+                          "Refinement"
+                        ]
                       },
                       "path": []
                     },
@@ -5163,8 +6018,7 @@
                 "subject": {
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                      "identity": "initial-states-1"
                     }
                   ],
                   "universes": [],
@@ -5183,15 +6037,10 @@
                   "max_states": 250000
                 },
                 "abstract_subject": {
-                  "package_id": {
-                    "domain": "quire.package.semantic/v2",
-                    "algorithm": "sha256",
-                    "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934"
-                  },
+                  "identity": "test/predicates",
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                      "identity": "initial-states-4"
                     }
                   ]
                 }
@@ -5202,8 +6051,12 @@
               "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0"
+                  "ordinal": 0,
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "model_root"
+                  ]
                 },
                 "occurrence": {
                   "role": "generated",
@@ -5217,8 +6070,12 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0"
+                        "ordinal": 0,
+                        "package": "acme/orders",
+                        "path": [
+                          "model",
+                          "model_root"
+                        ]
                       },
                       "path": []
                     },
@@ -5237,8 +6094,7 @@
                 "subject": {
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                      "identity": "initial-states-1"
                     }
                   ],
                   "universes": [],
@@ -5253,8 +6109,12 @@
               "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0"
+                  "ordinal": 0,
+                  "package": "acme/orders",
+                  "path": [
+                    "model",
+                    "model_root"
+                  ]
                 },
                 "occurrence": {
                   "role": "generated",
@@ -5268,8 +6128,12 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0"
+                        "ordinal": 0,
+                        "package": "acme/orders",
+                        "path": [
+                          "model",
+                          "model_root"
+                        ]
                       },
                       "path": []
                     },
@@ -5288,8 +6152,7 @@
                 "subject": {
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                      "identity": "initial-states-1"
                     }
                   ],
                   "universes": [],
@@ -5308,8 +6171,12 @@
               "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "fc076411d2ed2cea9252cdbbf37ab728493cca3e2f3841111f55e06b544de36f"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Handshake"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -5323,8 +6190,12 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "fc076411d2ed2cea9252cdbbf37ab728493cca3e2f3841111f55e06b544de36f"
+                        "ordinal": 0,
+                        "package": "example",
+                        "path": [
+                          "Example",
+                          "Handshake"
+                        ]
                       },
                       "path": []
                     },
@@ -5343,8 +6214,7 @@
                 "subject": {
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                      "identity": "initial-states-4"
                     }
                   ],
                   "universes": [],
@@ -5359,8 +6229,12 @@
               "kind": "temporal-satisfaction",
               "claim": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "fc076411d2ed2cea9252cdbbf37ab728493cca3e2f3841111f55e06b544de36f"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Handshake"
+                  ]
                 },
                 "occurrence": {
                   "role": "declaration",
@@ -5374,8 +6248,12 @@
                     "domain": {
                       "type": "node",
                       "node": {
-                        "domain": "quire.checked-semantic-node/v1",
-                        "digest": "fc076411d2ed2cea9252cdbbf37ab728493cca3e2f3841111f55e06b544de36f"
+                        "ordinal": 0,
+                        "package": "example",
+                        "path": [
+                          "Example",
+                          "Handshake"
+                        ]
                       },
                       "path": []
                     },
@@ -5394,8 +6272,7 @@
                 "subject": {
                   "initial_states": [
                     {
-                      "digest_domain": "sha256-jcs",
-                      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                      "identity": "initial-states-4"
                     }
                   ],
                   "universes": [],
@@ -5729,49 +6606,482 @@
     }
   ],
   "adverse": [
-    {"name": "temporal-limits-max-clocks-zero", "base": "temporal-request", "owner": "FR-415", "patch": [{"op": "replace", "path": "/request/items/0/temporal/limits/max_clocks", "value": 0}]},
-    {"name": "probability-inequality-model-projection", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/21/cause/at", "value": {"domain": "quire.simulation.state-key/v1", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}}]},
-    {"name": "probability-threshold-model-projection", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/22/cause/at", "value": {"domain": "quire.simulation.state-key/v1", "digest": "5555555555555555555555555555555555555555555555555555555555555555"}}]},
-    {"name": "probability-product-key-padded", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/21/cause/at/product_key", "value": "AQ=="}]},
-    {"name": "probability-product-key-missing", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/21/cause/at/product_key"}]},
-    {"name": "probability-product-key-extra-member", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/21/cause/at/state", "value": "5555555555555555555555555555555555555555555555555555555555555555"}]},
-    {"name": "query-part-step-row-leading-zero", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": "step/02"}]},
-    {"name": "cross-check-on-inconclusive", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/2/cross_check", "value": {"tool": "z3", "verdict": "proved"}}]},
-    {"name": "cross-check-missing-verdict", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/0/cross_check/verdict"}]},
-    {"name": "cross-check-missing-tool", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/0/cross_check/tool"}]},
-    {"name": "cross-check-unknown-verdict", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cross_check/verdict", "value": "agrees"}]},
-    {"name": "cross-check-extra-member", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/0/cross_check/certification", "value": "certified"}]},
-    {"name": "cross-check-disagreement-missing-primary", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-349", "patch": [{"op": "remove", "path": "/results/2/cause/primary"}]},
-    {"name": "cross-check-on-trusted", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/8/cross_check", "value": {"tool": "z3", "verdict": "proved"}}]},
-    {"name": "cross-check-on-non-smt-basis", "base": "certification-outcome", "owner": "FR-331", "patch": [{"op": "add", "path": "/results/5/cross_check", "value": {"tool": "z3", "verdict": "proved"}}]},
-    {"name": "cross-check-disagreement-on-uncertified", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-349", "patch": [{"op": "replace", "path": "/results/5/cross_check/verdict", "value": "refuted"}]},
-    {"name": "tool-failure-frame-length-missing-limit", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-462", "patch": [{"op": "remove", "path": "/results/3/cause/limit"}]},
-    {"name": "tool-failure-total-bytes-missing-value", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-462", "patch": [{"op": "remove", "path": "/results/4/cause/value"}]},
-    {"name": "tool-failure-limit-on-crash", "base": "cross-check-and-byte-limit-outcome", "owner": "FR-462", "patch": [{"op": "replace", "path": "/results/3/cause/defect", "value": "crash"}]},
-    {"name": "query-part-step-row-empty", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": "step/"}]},
-    {"name": "query-part-step-row-overflow", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": "step/18446744073709551616"}]},
-    {"name": "query-part-unrolling-row", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": "unrolling/2"}]},
-    {"name": "query-part-base-row", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": "base/0"}]},
-    {"name": "proof-step-part-step-row-negative", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/at/part", "value": "step/-1"}]},
-    {"name": "product-state-bare-state-key", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/4/cause/at", "value": {"state": "1111111111111111111111111111111111111111111111111111111111111111", "automaton_state": "AQ"}}]},
-    {"name": "model-state-other-domain", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/17/cause/rule", "value": "bad-state"}]},
-    {"name": "model-state-malformed-empty-domain", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/17/cause/at/domain", "value": ""}]},
-    {"name": "model-state-foreign-domain-uppercase-digest", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/17/cause/at/digest", "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"}]},
-    {"name": "model-state-foreign-domain-short-digest", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/17/cause/at/digest", "value": "33333333333333333333333333333333333333333333333333333333333333"}]},
-    {"name": "model-state-without-domain", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/5/cause/at/domain"}]},
-    {"name": "model-state-bare-state-key", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/5/cause/at", "value": {"state": "1111111111111111111111111111111111111111111111111111111111111111"}}]},
-    {"name": "entry-index-number", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/7/cause/at/entry", "value": 2}]},
-    {"name": "entry-other-rule", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/7/cause/rule", "value": "bad-state"}]},
-    {"name": "simulation-step-without-null-edge", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/8/cause/at/edge"}]},
-    {"name": "simulation-step-without-null-verdict", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/8/cause/at/verdict"}]},
-    {"name": "simulation-step-post-differs-null-edge", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/15/cause/at/edge", "value": null}]},
-    {"name": "simulation-step-fails-null-verdict", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/16/cause/at/verdict", "value": null}]},
-    {"name": "step-verdict-type-tagged-cause", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/13/cause/at/verdict/cause", "value": {"type": "Precondition", "clause": "positive"}}]},
-    {"name": "step-verdict-position-number", "base": "certificate-rejected-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/16/cause/at/verdict/position", "value": 4}]},
-    {"name": "step-verdict-undetermined-cause-spelling", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/11/cause/at/verdict/cause", "value": "mapping-undetermined"}]},
-    {"name": "step-verdict-incomplete-without-limit", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/11/cause/at/verdict/evaluation/limit"}]},
-    {"name": "step-verdict-undefined-without-state-key", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "remove", "path": "/results/12/cause/at/verdict/where/state_key"}]},
-    {"name": "step-verdict-engine-undefined-form", "base": "certificate-rejected-qsl-spellings", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/10/cause/at/verdict", "value": {"kind": "Undefined", "position": "1"}}]},
+    {
+      "name": "temporal-limits-max-clocks-zero",
+      "base": "temporal-request",
+      "owner": "FR-415",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/limits/max_clocks",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "probability-inequality-model-projection",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/21/cause/at",
+          "value": {
+            "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjUifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+          }
+        }
+      ]
+    },
+    {
+      "name": "probability-threshold-model-projection",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/22/cause/at",
+          "value": {
+            "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjUifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+          }
+        }
+      ]
+    },
+    {
+      "name": "probability-product-key-padded",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/21/cause/at/product_key",
+          "value": "AQ=="
+        }
+      ]
+    },
+    {
+      "name": "probability-product-key-missing",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/21/cause/at/product_key"
+        }
+      ]
+    },
+    {
+      "name": "probability-product-key-extra-member",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/21/cause/at/state",
+          "value": {
+            "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjUifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+          }
+        }
+      ]
+    },
+    {
+      "name": "query-part-step-row-leading-zero",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/at",
+          "value": "step/02"
+        }
+      ]
+    },
+    {
+      "name": "cross-check-on-inconclusive",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/2/cross_check",
+          "value": {
+            "tool": "z3",
+            "verdict": "proved"
+          }
+        }
+      ]
+    },
+    {
+      "name": "cross-check-missing-verdict",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/0/cross_check/verdict"
+        }
+      ]
+    },
+    {
+      "name": "cross-check-missing-tool",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/0/cross_check/tool"
+        }
+      ]
+    },
+    {
+      "name": "cross-check-unknown-verdict",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cross_check/verdict",
+          "value": "agrees"
+        }
+      ]
+    },
+    {
+      "name": "cross-check-extra-member",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/0/cross_check/certification",
+          "value": "certified"
+        }
+      ]
+    },
+    {
+      "name": "cross-check-disagreement-missing-primary",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-349",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/2/cause/primary"
+        }
+      ]
+    },
+    {
+      "name": "cross-check-on-trusted",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/8/cross_check",
+          "value": {
+            "tool": "z3",
+            "verdict": "proved"
+          }
+        }
+      ]
+    },
+    {
+      "name": "cross-check-on-non-smt-basis",
+      "base": "certification-outcome",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/5/cross_check",
+          "value": {
+            "tool": "z3",
+            "verdict": "proved"
+          }
+        }
+      ]
+    },
+    {
+      "name": "cross-check-disagreement-on-uncertified",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-349",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/5/cross_check/verdict",
+          "value": "refuted"
+        }
+      ]
+    },
+    {
+      "name": "tool-failure-frame-length-missing-limit",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-462",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/3/cause/limit"
+        }
+      ]
+    },
+    {
+      "name": "tool-failure-total-bytes-missing-value",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-462",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/4/cause/value"
+        }
+      ]
+    },
+    {
+      "name": "tool-failure-limit-on-crash",
+      "base": "cross-check-and-byte-limit-outcome",
+      "owner": "FR-462",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/3/cause/defect",
+          "value": "crash"
+        }
+      ]
+    },
+    {
+      "name": "query-part-step-row-empty",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/at",
+          "value": "step/"
+        }
+      ]
+    },
+    {
+      "name": "query-part-step-row-overflow",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/at",
+          "value": "step/18446744073709551616"
+        }
+      ]
+    },
+    {
+      "name": "query-part-unrolling-row",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/at",
+          "value": "unrolling/2"
+        }
+      ]
+    },
+    {
+      "name": "query-part-base-row",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/1/cause/at",
+          "value": "base/0"
+        }
+      ]
+    },
+    {
+      "name": "proof-step-part-step-row-negative",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/2/cause/at/part",
+          "value": "step/-1"
+        }
+      ]
+    },
+    {
+      "name": "product-state-bare-state-key",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/4/cause/at",
+          "value": {
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
+            "automaton_state": "AQ"
+          }
+        }
+      ]
+    },
+    {
+      "name": "model-state-bare-state-key",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/5/cause/at",
+          "value": {
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "entry-index-number",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/7/cause/at/entry",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "entry-other-rule",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/7/cause/rule",
+          "value": "bad-state"
+        }
+      ]
+    },
+    {
+      "name": "simulation-step-without-null-edge",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/8/cause/at/edge"
+        }
+      ]
+    },
+    {
+      "name": "simulation-step-without-null-verdict",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/8/cause/at/verdict"
+        }
+      ]
+    },
+    {
+      "name": "simulation-step-post-differs-null-edge",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/15/cause/at/edge",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "simulation-step-fails-null-verdict",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/16/cause/at/verdict",
+          "value": null
+        }
+      ]
+    },
+    {
+      "name": "step-verdict-type-tagged-cause",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/13/cause/at/verdict/cause",
+          "value": {
+            "type": "Precondition",
+            "clause": "positive"
+          }
+        }
+      ]
+    },
+    {
+      "name": "step-verdict-position-number",
+      "base": "certificate-rejected-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/16/cause/at/verdict/position",
+          "value": 4
+        }
+      ]
+    },
+    {
+      "name": "step-verdict-undetermined-cause-spelling",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/11/cause/at/verdict/cause",
+          "value": "mapping-undetermined"
+        }
+      ]
+    },
+    {
+      "name": "step-verdict-incomplete-without-limit",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/11/cause/at/verdict/evaluation/limit"
+        }
+      ]
+    },
+    {
+      "name": "step-verdict-undefined-without-state-key",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/12/cause/at/verdict/where/state_key"
+        }
+      ]
+    },
+    {
+      "name": "step-verdict-engine-undefined-form",
+      "base": "certificate-rejected-qsl-spellings",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/10/cause/at/verdict",
+          "value": {
+            "kind": "Undefined",
+            "position": "1"
+          }
+        }
+      ]
+    },
     {
       "name": "unknown-contract-version",
       "base": "kani-hello",
@@ -5923,76 +7233,6 @@
       ]
     },
     {
-      "name": "hello-tool-without-build",
-      "base": "kani-hello",
-      "owner": "FR-331",
-      "patch": [
-        {
-          "op": "remove",
-          "path": "/manifest/0/tool/build"
-        }
-      ]
-    },
-    {
-      "name": "snapshot-engine-tool-without-build",
-      "base": "temporal-request",
-      "owner": "FR-331",
-      "patch": [
-        {
-          "op": "remove",
-          "path": "/manifest/0/tool/build"
-        }
-      ]
-    },
-    {
-      "name": "snapshot-engine-build-other-domain",
-      "base": "temporal-request",
-      "owner": "FR-331",
-      "patch": [
-        {
-          "op": "replace",
-          "path": "/manifest/0/tool/build/domain",
-          "value": "quire.tool-manifest.jcs/v1"
-        }
-      ]
-    },
-    {
-      "name": "snapshot-engine-build-uppercase-digest",
-      "base": "temporal-request",
-      "owner": "FR-331",
-      "patch": [
-        {
-          "op": "replace",
-          "path": "/manifest/0/tool/build/digest",
-          "value": "A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5A5"
-        }
-      ]
-    },
-    {
-      "name": "snapshot-engine-build-bare-digest",
-      "base": "temporal-request",
-      "owner": "FR-331",
-      "patch": [
-        {
-          "op": "replace",
-          "path": "/manifest/0/tool/build",
-          "value": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5"
-        }
-      ]
-    },
-    {
-      "name": "snapshot-engine-build-extra-member",
-      "base": "temporal-request",
-      "owner": "FR-331",
-      "patch": [
-        {
-          "op": "add",
-          "path": "/manifest/0/tool/build/version",
-          "value": "1"
-        }
-      ]
-    },
-    {
       "name": "manifest-unknown-kind",
       "base": "kani-hello",
       "owner": "FR-290",
@@ -6028,12 +7268,7 @@
             "backend": "cbmc",
             "tool": {
               "name": "cbmc",
-              "version": "6.4.1",
-              "build": {
-                "domain": "quire.build-inputs/v1",
-                "algorithm": "sha256",
-                "digest": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3"
-              }
+              "version": "6.4.1"
             },
             "advertises": [
               {
@@ -6130,29 +7365,6 @@
         {
           "op": "remove",
           "path": "/request/package"
-        }
-      ]
-    },
-    {
-      "name": "package-id-absent",
-      "base": "kani-request",
-      "owner": "FR-462",
-      "patch": [
-        {
-          "op": "remove",
-          "path": "/request/package_id"
-        }
-      ]
-    },
-    {
-      "name": "package-id-other-domain",
-      "base": "kani-request",
-      "owner": "FR-462",
-      "patch": [
-        {
-          "op": "replace",
-          "path": "/request/package_id/domain",
-          "value": "sha256-jcs"
         }
       ]
     },
@@ -7124,137 +8336,244 @@
       "name": "hp1-tuple-without-transitions",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/0/cause/at/transitions"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/0/cause/at/transitions"
+        }
+      ]
     },
     {
       "name": "hp1-tuple-empty-transitions",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "replace", "path": "/results/0/cause/at/transitions", "value": []}]
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/at/transitions",
+          "value": []
+        }
+      ]
     },
     {
       "name": "hp1-edge-without-pre-state",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/0/cause/at/transitions/0/pre_state"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/0/cause/at/transitions/0/pre_state"
+        }
+      ]
     },
     {
       "name": "hp1-edge-without-transition",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/0/cause/at/transitions/0/transition"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/0/cause/at/transitions/0/transition"
+        }
+      ]
     },
     {
       "name": "hp1-edge-without-post-state",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/0/cause/at/transitions/0/post_state"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/0/cause/at/transitions/0/post_state"
+        }
+      ]
     },
     {
       "name": "hp1-edge-without-result",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/1/cause/at/transitions/0/result"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/1/cause/at/transitions/0/result"
+        }
+      ]
     },
     {
       "name": "hp1-edge-extra-member",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "add", "path": "/results/0/cause/at/transitions/0/extra", "value": true}]
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/0/cause/at/transitions/0/extra",
+          "value": true
+        }
+      ]
     },
     {
       "name": "hp1-tuple-extra-automaton",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "add", "path": "/results/0/cause/at/automaton_state", "value": "AQ"}]
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/0/cause/at/automaton_state",
+          "value": "AQ"
+        }
+      ]
     },
     {
       "name": "hp1-edge-protocol-transition",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "replace", "path": "/results/0/cause/at/transitions/0/transition", "value": {"type": "protocol-transition"}}]
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/at/transitions/0/transition",
+          "value": {
+            "type": "protocol-transition"
+          }
+        }
+      ]
     },
     {
       "name": "hp1-edge-untyped-result",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "replace", "path": "/results/0/cause/at/transitions/0/result", "value": false}]
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/at/transitions/0/result",
+          "value": false
+        }
+      ]
     },
     {
       "name": "hp1-tuple-inapplicable-rule",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "replace", "path": "/results/0/cause/rule", "value": "successor-missing"}]
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/cause/rule",
+          "value": "successor-missing"
+        }
+      ]
     },
     {
       "name": "hp3-empty-universal-without-states",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/3/cause/at/states"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/3/cause/at/states"
+        }
+      ]
     },
     {
       "name": "hp3-empty-universal-without-automaton",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/3/cause/at/automaton_state"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/3/cause/at/automaton_state"
+        }
+      ]
     },
     {
       "name": "hp3-empty-universal-without-witness-set",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/3/cause/at/witness_set"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/3/cause/at/witness_set"
+        }
+      ]
     },
     {
       "name": "hp3-empty-universal-single-existential",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/4/cause/at/witness_set/0/states/1"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/4/cause/at/witness_set/0/states/1"
+        }
+      ]
     },
     {
       "name": "hp3-witness-without-states",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/4/cause/at/witness_set/0/states"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/4/cause/at/witness_set/0/states"
+        }
+      ]
     },
     {
       "name": "hp3-witness-empty-existentials",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "replace", "path": "/results/4/cause/at/witness_set/0/states", "value": []}]
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/4/cause/at/witness_set/0/states",
+          "value": []
+        }
+      ]
     },
     {
       "name": "hp3-witness-without-automaton",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "remove", "path": "/results/4/cause/at/witness_set/0/automaton_state"}]
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/results/4/cause/at/witness_set/0/automaton_state"
+        }
+      ]
     },
     {
       "name": "hp3-witness-extra-member",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "add", "path": "/results/4/cause/at/witness_set/0/extra", "value": true}]
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/4/cause/at/witness_set/0/extra",
+          "value": true
+        }
+      ]
     },
     {
       "name": "hyper-components-member-extra-state",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "add", "path": "/results/6/cause/at/state", "value": "1111111111111111111111111111111111111111111111111111111111111111"}]
+      "patch": [
+        {
+          "op": "add",
+          "path": "/results/6/cause/at/state",
+          "value": {
+            "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+          }
+        }
+      ]
     },
     {
       "name": "hyper-components-member-other-rule",
       "base": "certificate-rejected-hyper-identities",
       "owner": "FR-331",
-      "patch": [{"op": "replace", "path": "/results/6/cause/rule", "value": "violating-member"}]
-    },
-    {
-      "name": "state-locus-not-a-state-key",
-      "base": "certificate-rejected-loci",
-      "owner": "FR-331",
       "patch": [
         {
           "op": "replace",
-          "path": "/results/13/cause/at/digest",
-          "value": "(1, 0)"
+          "path": "/results/6/cause/rule",
+          "value": "violating-member"
         }
       ]
     },
@@ -7300,7 +8619,9 @@
         {
           "op": "replace",
           "path": "/results/16/cause/at/verdict",
-          "value": {"type": "replay-parity"}
+          "value": {
+            "type": "replay-parity"
+          }
         }
       ]
     },
@@ -7465,8 +8786,12 @@
             "domain": {
               "type": "node",
               "node": {
-                "domain": "quire.checked-semantic-node/v1",
-                "digest": "1c9ac70521e54c69c310ff337b10364e2c3c80c917efb8b29010c97a9534bd14"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "Example",
+                  "Flag"
+                ]
               },
               "path": []
             },
@@ -7513,17 +8838,6 @@
         {
           "op": "remove",
           "path": "/results/3/cause/limit"
-        }
-      ]
-    },
-    {
-      "name": "stale-dependency-without-recompiled",
-      "base": "state-graph-and-hyper-outcome",
-      "owner": "FR-331",
-      "patch": [
-        {
-          "op": "remove",
-          "path": "/results/4/cause/recompiled"
         }
       ]
     },
@@ -7806,7 +9120,7 @@
         {
           "op": "replace",
           "path": "/results/0/cause/hypothesis",
-          "value": "dc1dee8382c4d6bf958f84a637db1d2168a3dbef00a3bbd0c14241178860e9b9"
+          "value": "Example/Account"
         }
       ]
     },
@@ -7902,7 +9216,9 @@
             "transition": {
               "type": "terminal-stutter"
             },
-            "post_state": "2222222222222222222222222222222222222222222222222222222222222222"
+            "post_state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            }
           }
         }
       ]
@@ -7920,7 +9236,9 @@
               "transition": {
                 "type": "terminal-stutter"
               },
-              "post_state": "2222222222222222222222222222222222222222222222222222222222222222"
+              "post_state": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              }
             }
           ]
         }
@@ -7952,10 +9270,10 @@
             "initial_state": null,
             "prefix": [
               {
-                "document": "2222222222222222222222222222222222222222222222222222222222222222"
+                "document": "document-2"
               },
               {
-                "document": "3333333333333333333333333333333333333333333333333333333333333333"
+                "document": "document-3"
               }
             ],
             "loop": [],
@@ -7997,11 +9315,17 @@
             "type": "undefined-evaluation",
             "where": {
               "position": 1,
-              "state_key": "2222222222222222222222222222222222222222222222222222222222222222",
+              "state_key": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              },
               "locus": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Tank"
+                  ]
                 },
                 "occurrence": {
                   "role": "claim",
@@ -8023,7 +9347,7 @@
           "op": "replace",
           "path": "/counterexamples/0/counterexample/prefix/0",
           "value": {
-            "document": "2222222222222222222222222222222222222222222222222222222222222222"
+            "document": "document-2"
           }
         }
       ]
@@ -8037,7 +9361,7 @@
           "op": "replace",
           "path": "/counterexamples/0/counterexample/loop/0",
           "value": {
-            "document": "2222222222222222222222222222222222222222222222222222222222222222"
+            "document": "document-2"
           }
         }
       ]
@@ -8066,11 +9390,15 @@
             "type": "undefined-evaluation",
             "where": {
               "position": 1,
-              "document": "2222222222222222222222222222222222222222222222222222222222222222",
+              "document": "document-2",
               "locus": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Tank"
+                  ]
                 },
                 "occurrence": {
                   "role": "claim",
@@ -8099,12 +9427,18 @@
                 1
               ],
               "state_keys": [
-                "2222222222222222222222222222222222222222222222222222222222222222"
+                {
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                }
               ],
               "locus": {
                 "node": {
-                  "domain": "quire.checked-semantic-node/v1",
-                  "digest": "ce5910fa76ddf0e72968c75c20bc10ac818fd165a81338740f0e82ce1838de10"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "Example",
+                    "Tank"
+                  ]
                 },
                 "occurrence": {
                   "role": "claim",
@@ -8504,123 +9838,561 @@
       ]
     },
     {
-      "name": "certificate-stale-dependency-without-requested",
-      "base": "certificate-stale-dependency-outcome",
-      "owner": "FR-331",
-      "patch": [
-        {
-          "op": "remove",
-          "path": "/results/1/cause/requested"
-        }
-      ]
-    },
-    {
       "name": "refuted-ignoring-constraints-as-refuted",
       "base": "refuted-ignoring-constraints-outcome",
       "owner": "FR-331",
-      "patch": [{"op": "replace", "path": "/results/0/result", "value": "refuted"}]
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/result",
+          "value": "refuted"
+        }
+      ]
     },
     {
       "name": "refuted-ignoring-constraints-as-proved",
       "base": "refuted-ignoring-constraints-outcome",
       "owner": "FR-331",
-      "patch": [{"op": "replace", "path": "/results/0/result", "value": "proved"}]
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/0/result",
+          "value": "proved"
+        }
+      ]
     },
-    {"name": "derived-item-kind-time-lock", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/4/temporal/item_kind", "value": "time-lock"}]},
-    {"name": "derived-item-kind-race", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/6/temporal/item_kind", "value": "race"}]},
-    {"name": "derived-item-kind-capitalized", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/0/temporal/item_kind", "value": "Formula"}]},
-    {"name": "deadlock-freedom-with-fairness", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/3/temporal/fairness", "value": [{"kind": "weak", "operation": "Example::Session::step", "granularity": "whole"}]}]},
-    {"name": "time-lock-freedom-with-fairness", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/4/temporal/fairness", "value": [{"kind": "weak", "operation": "Example::Session::step", "granularity": "whole"}]}]},
-    {"name": "race-freedom-with-fairness", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/6/temporal/fairness", "value": [{"kind": "weak", "operation": "Example::Session::step", "granularity": "whole"}]}]},
-    {"name": "derived-item-bounded-extent", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/3/extent", "value": {"classification": "bounded", "bounds": []}}]},
-    {"name": "refinement-item-bounded-extent", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/extent", "value": {"classification": "bounded", "bounds": []}}]},
-    {"name": "derived-item-without-infinite-trace-domain", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/5/extent/domains/0/kind", "value": "population"}]},
-    {"name": "derived-item-claim-without-occurrence", "base": "derived-items-request", "owner": "FR-331", "patch": [{"op": "remove", "path": "/request/items/3/claim/occurrence"}]},
-    {"name": "refinement-item-without-abstract-subject", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "remove", "path": "/request/items/2/temporal/abstract_subject"}]},
-    {"name": "abstract-subject-on-formula", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/0/temporal/abstract_subject", "value": {"package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934"}, "initial_states": [{"digest_domain": "sha256-jcs", "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}]}}]},
-    {"name": "abstract-subject-on-derived-item", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/3/temporal/abstract_subject", "value": {"package_id": {"domain": "quire.package.semantic/v2", "algorithm": "sha256", "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934"}, "initial_states": [{"digest_domain": "sha256-jcs", "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"}]}}]},
-    {"name": "abstract-subject-with-universes", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/2/temporal/abstract_subject/universes", "value": []}]},
-    {"name": "abstract-subject-without-initial-states", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "remove", "path": "/request/items/2/temporal/abstract_subject/initial_states"}]},
-    {"name": "abstract-subject-package-id-bare-digest", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/temporal/abstract_subject/package_id", "value": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934"}]},
-    {"name": "item-kind-transfer", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/temporal/item_kind", "value": "transfer"}]},
-    {"name": "time-lock-freedom-bounded-extent", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/4/extent", "value": {"classification": "bounded", "bounds": []}}]},
-    {"name": "time-lock-freedom-without-infinite-trace-domain", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/4/extent/domains/0/kind", "value": "population"}]},
-    {"name": "race-freedom-bounded-extent", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/6/extent", "value": {"classification": "bounded", "bounds": []}}]},
-    {"name": "race-freedom-without-infinite-trace-domain", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/6/extent/domains/0/kind", "value": "population"}]},
-    {"name": "refinement-item-without-infinite-trace-domain", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "replace", "path": "/request/items/2/extent/domains/0/kind", "value": "population"}]},
-    {"name": "deadlock-freedom-with-max-depth", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/3/temporal/max_depth", "value": 40}]},
-    {"name": "time-lock-freedom-with-max-depth", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/4/temporal/max_depth", "value": 40}]},
-    {"name": "race-freedom-with-max-depth", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/6/temporal/max_depth", "value": 40}]},
-    {"name": "deadlock-freedom-with-max-automaton-states", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/3/temporal/limits", "value": {"max_automaton_states": 5}}]},
-    {"name": "time-lock-freedom-with-max-walk-steps", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/4/temporal/limits/max_walk_steps", "value": 10}]},
-    {"name": "deadlock-freedom-protocol-with-max-witness-set", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/5/temporal/limits", "value": {"max_witness_set": 2}}]},
-    {"name": "race-freedom-with-max-relation-tuples", "base": "derived-items-request", "owner": "FR-368", "patch": [{"op": "add", "path": "/request/items/6/temporal/limits", "value": {"max_relation_tuples": 1}}]},
-    {"name": "initial-mismatch-at-edge", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/0/cause/at", "value": {"edge": 0}}]},
-    {"name": "post-differs-at-node", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": {"node": 1}}]},
-    {"name": "post-differs-with-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/1/cause/at", "value": {"edge": 1, "verdict": {"kind": "AbstractStepRejected", "position": "2", "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []}, "cause": {"kind": "Postcondition"}}}}]},
-    {"name": "step-fails-without-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/at", "value": {"edge": 1}}]},
-    {"name": "step-fails-null-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/at", "value": {"edge": 1, "verdict": null}}]},
-    {"name": "step-fails-verdict-other-kind", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/2/cause/at/verdict", "value": {"kind": "Undefined", "position": "1"}}]},
-    {"name": "backward-edge-with-verdict", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/4/cause/at", "value": {"edge": 3, "verdict": {"kind": "AbstractStepRejected", "position": "2", "transition": {"type": "transition", "operation": "inc", "receiver": null, "arguments": []}, "cause": {"kind": "Postcondition"}}}}]},
-    {"name": "certificate-member-initials-index", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/10/cause/at/member", "value": "initials[0]"}]},
-    {"name": "certificate-member-refinement-name", "base": "certificate-rejected-refinement-loci", "owner": "FR-331", "patch": [{"op": "replace", "path": "/results/7/cause/at/member", "value": "refinement_name"}]},
     {
-      "name": "stale-dependency-mixed-identity-kinds",
-      "base": "refinement-stale-dependency-outcome",
+      "name": "derived-item-kind-time-lock",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/4/temporal/item_kind",
+          "value": "time-lock"
+        }
+      ]
+    },
+    {
+      "name": "derived-item-kind-race",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/6/temporal/item_kind",
+          "value": "race"
+        }
+      ]
+    },
+    {
+      "name": "derived-item-kind-capitalized",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/0/temporal/item_kind",
+          "value": "Formula"
+        }
+      ]
+    },
+    {
+      "name": "deadlock-freedom-with-fairness",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/3/temporal/fairness",
+          "value": [
+            {
+              "kind": "weak",
+              "operation": "Example::Session::step",
+              "granularity": "whole"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "time-lock-freedom-with-fairness",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/4/temporal/fairness",
+          "value": [
+            {
+              "kind": "weak",
+              "operation": "Example::Session::step",
+              "granularity": "whole"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "race-freedom-with-fairness",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/6/temporal/fairness",
+          "value": [
+            {
+              "kind": "weak",
+              "operation": "Example::Session::step",
+              "granularity": "whole"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "derived-item-bounded-extent",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/3/extent",
+          "value": {
+            "classification": "bounded",
+            "bounds": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "refinement-item-bounded-extent",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/2/extent",
+          "value": {
+            "classification": "bounded",
+            "bounds": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "derived-item-without-infinite-trace-domain",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/5/extent/domains/0/kind",
+          "value": "population"
+        }
+      ]
+    },
+    {
+      "name": "derived-item-claim-without-occurrence",
+      "base": "derived-items-request",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/request/items/3/claim/occurrence"
+        }
+      ]
+    },
+    {
+      "name": "refinement-item-without-abstract-subject",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/request/items/2/temporal/abstract_subject"
+        }
+      ]
+    },
+    {
+      "name": "abstract-subject-on-formula",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/0/temporal/abstract_subject",
+          "value": {
+            "identity": "test/predicates",
+            "initial_states": [
+              {
+                "identity": "initial-states-4"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "abstract-subject-on-derived-item",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/3/temporal/abstract_subject",
+          "value": {
+            "identity": "test/predicates",
+            "initial_states": [
+              {
+                "identity": "initial-states-4"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "abstract-subject-with-universes",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/2/temporal/abstract_subject/universes",
+          "value": []
+        }
+      ]
+    },
+    {
+      "name": "abstract-subject-without-initial-states",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/request/items/2/temporal/abstract_subject/initial_states"
+        }
+      ]
+    },
+    {
+      "name": "item-kind-transfer",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/2/temporal/item_kind",
+          "value": "transfer"
+        }
+      ]
+    },
+    {
+      "name": "time-lock-freedom-bounded-extent",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/4/extent",
+          "value": {
+            "classification": "bounded",
+            "bounds": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "time-lock-freedom-without-infinite-trace-domain",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/4/extent/domains/0/kind",
+          "value": "population"
+        }
+      ]
+    },
+    {
+      "name": "race-freedom-bounded-extent",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/6/extent",
+          "value": {
+            "classification": "bounded",
+            "bounds": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "race-freedom-without-infinite-trace-domain",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/6/extent/domains/0/kind",
+          "value": "population"
+        }
+      ]
+    },
+    {
+      "name": "refinement-item-without-infinite-trace-domain",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/request/items/2/extent/domains/0/kind",
+          "value": "population"
+        }
+      ]
+    },
+    {
+      "name": "deadlock-freedom-with-max-depth",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/3/temporal/max_depth",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "name": "time-lock-freedom-with-max-depth",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/4/temporal/max_depth",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "name": "race-freedom-with-max-depth",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/6/temporal/max_depth",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "name": "deadlock-freedom-with-max-automaton-states",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/3/temporal/limits",
+          "value": {
+            "max_automaton_states": 5
+          }
+        }
+      ]
+    },
+    {
+      "name": "time-lock-freedom-with-max-walk-steps",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/4/temporal/limits/max_walk_steps",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "name": "deadlock-freedom-protocol-with-max-witness-set",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/5/temporal/limits",
+          "value": {
+            "max_witness_set": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "race-freedom-with-max-relation-tuples",
+      "base": "derived-items-request",
+      "owner": "FR-368",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/request/items/6/temporal/limits",
+          "value": {
+            "max_relation_tuples": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "initial-mismatch-at-edge",
+      "base": "certificate-rejected-refinement-loci",
       "owner": "FR-331",
       "patch": [
         {
           "op": "replace",
-          "path": "/results/0/cause/requested",
+          "path": "/results/0/cause/at",
           "value": {
-            "kind": "package",
-            "package_id": {
-              "domain": "quire.package.semantic/v2",
-              "algorithm": "sha256",
-              "digest": "6a76b27a8e04703d74e531c9993cd2cdffe6e4120083c4bd52dff31e004386e5"
+            "edge": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "post-differs-at-node",
+      "base": "certificate-rejected-refinement-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/1/cause/at",
+          "value": {
+            "node": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "post-differs-with-verdict",
+      "base": "certificate-rejected-refinement-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/1/cause/at",
+          "value": {
+            "edge": 1,
+            "verdict": {
+              "kind": "AbstractStepRejected",
+              "position": "2",
+              "transition": {
+                "type": "transition",
+                "operation": "inc",
+                "receiver": null,
+                "arguments": []
+              },
+              "cause": {
+                "kind": "Postcondition"
+              }
             }
           }
         }
       ]
-    }
-    ,
-    {"name":"stale-dependency-unknown-kind","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"replace","path":"/results/0/cause/requested/kind","value":"future"}]},
-    {"name":"stale-dependency-missing-kind","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"remove","path":"/results/0/cause/requested/kind"}]},
-    {"name":"stale-dependency-missing-payload-member","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"remove","path":"/results/0/cause/requested/name"}]},
-    {"name":"stale-dependency-unrecognized-extra-member","base":"refinement-stale-dependency-outcome","owner":"FR-331","patch":[{"op":"add","path":"/results/0/cause/requested/extra","value":"unexpected"}]}
-  ],
-  "universe_provision_vectors": [
-    {
-      "name": "counters-c-d",
-      "description": "FR-361: the universe provision of population counters, universe list [c, d]; identity bytes are the UTF-8 of the object identities c (0x63) and d (0x64).",
-      "keys": [
-        {
-          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
-          "identity": "63"
-        },
-        {
-          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
-          "identity": "64"
-        }
-      ],
-      "jcs": "[{\"identity\":\"63\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"},{\"identity\":\"64\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"}]",
-      "digest": "ebdd6190dfd24ceb2a6147007beffd22b1d3dc1ce73550af0c033ed61efa1be9"
     },
     {
-      "name": "counters-d-c",
-      "description": "The same keys in the order [d, c]: a different provision and digest.",
-      "keys": [
+      "name": "step-fails-without-verdict",
+      "base": "certificate-rejected-refinement-loci",
+      "owner": "FR-331",
+      "patch": [
         {
-          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
-          "identity": "64"
-        },
-        {
-          "universe": "1111111111111111111111111111111111111111111111111111111111111111",
-          "identity": "63"
+          "op": "replace",
+          "path": "/results/2/cause/at",
+          "value": {
+            "edge": 1
+          }
         }
-      ],
-      "jcs": "[{\"identity\":\"64\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"},{\"identity\":\"63\",\"universe\":\"1111111111111111111111111111111111111111111111111111111111111111\"}]",
-      "digest": "f59722af7334950a9b7b4d19a3e2ad477f7f71941fdbaf6fd4a82d75ee52a695"
+      ]
+    },
+    {
+      "name": "step-fails-null-verdict",
+      "base": "certificate-rejected-refinement-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/2/cause/at",
+          "value": {
+            "edge": 1,
+            "verdict": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "step-fails-verdict-other-kind",
+      "base": "certificate-rejected-refinement-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/2/cause/at/verdict",
+          "value": {
+            "kind": "Undefined",
+            "position": "1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "backward-edge-with-verdict",
+      "base": "certificate-rejected-refinement-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/4/cause/at",
+          "value": {
+            "edge": 3,
+            "verdict": {
+              "kind": "AbstractStepRejected",
+              "position": "2",
+              "transition": {
+                "type": "transition",
+                "operation": "inc",
+                "receiver": null,
+                "arguments": []
+              },
+              "cause": {
+                "kind": "Postcondition"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "certificate-member-initials-index",
+      "base": "certificate-rejected-refinement-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/10/cause/at/member",
+          "value": "initials[0]"
+        }
+      ]
+    },
+    {
+      "name": "certificate-member-refinement-name",
+      "base": "certificate-rejected-refinement-loci",
+      "owner": "FR-331",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/results/7/cause/at/member",
+          "value": "refinement_name"
+        }
+      ]
     }
   ]
 }

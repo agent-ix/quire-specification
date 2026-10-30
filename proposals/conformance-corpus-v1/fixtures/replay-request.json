@@ -1,10 +1,5 @@
 {
   "profile_selections": [],
-  "package_id": {
-    "domain": "quire.package.semantic/v2",
-    "digest": "0000000000000000000000000000000000000000000000000000000000000000"
-  },
-  "source_digests": [],
   "dependencies": [],
   "replay_target": {
     "members": {
@@ -12,7 +7,13 @@
     },
     "arguments": false,
     "occurrence_key": {
-      "node_id": "0000000000000000000000000000000000000000000000000000000000000000",
+      "node_id": {
+        "package": "fixture",
+        "path": [
+          "zero"
+        ],
+        "ordinal": 0
+      },
       "role": "declaration",
       "ordinal": "0"
     },
@@ -22,7 +23,14 @@
     "kind": "input",
     "assignments": [
       {
-        "parameter": "1111111111111111111111111111111111111111111111111111111111111111",
+        "parameter": {
+          "package": "fixture",
+          "path": [
+            "zero",
+            "x"
+          ],
+          "ordinal": 0
+        },
         "value": {
           "kind": "integer",
           "decimal": "7"
@@ -30,7 +38,18 @@
       }
     ]
   },
-  "obligation_identity": "0000000000000000000000000000000000000000000000000000000000000000",
+  "obligation_identity": {
+    "node_id": {
+      "package": "fixture",
+      "path": [
+        "zero",
+        "obligation"
+      ],
+      "ordinal": 0
+    },
+    "model": "fixture",
+    "ordinal": 0
+  },
   "backend": "fixture.backend",
   "state_environment": [],
   "accounting_limits": {
@@ -56,7 +75,14 @@
     {
       "domain": {
         "kind": "node",
-        "node": "2222222222222222222222222222222222222222222222222222222222222222",
+        "node": {
+          "package": "fixture",
+          "path": [
+            "zero",
+            "x"
+          ],
+          "ordinal": 0
+        },
         "path": [
           "0"
         ]

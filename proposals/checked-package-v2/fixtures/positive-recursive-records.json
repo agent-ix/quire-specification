@@ -13,79 +13,6 @@
     },
     "entries": []
   },
-  "identity_preimage": {
-    "definition_selections": [
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.complete/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.accounting/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.compound-unit/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.compound-unit.schema/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.compound-unit.vectors/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.package-contract/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.shared-grammar/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.ad-005/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-140/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-141/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-142/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-147/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-148/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-149/v1"
-      }
-    ],
-    "dependency_selections": [],
-    "edition": {
-      "definition": {
-        "authority": "agent-ix",
-        "identity": "ix:native"
-      },
-      "role": "edition"
-    },
-    "profile_selections": [],
-    "required_features": [
-      "quire.value.complete/v1"
-    ],
-    "version": "quire.checked-package-id/v2"
-  },
   "lock": {
     "definition_selections": [
       {
@@ -164,11 +91,7 @@
       }
     ]
   },
-  "package_id": {
-    "algorithm": "sha256",
-    "digest": "a62bb1cde722de51d4336bed07ac26e1c4b8464ed00132ce68f9c48430d4732b",
-    "domain": "quire.package.semantic/v2"
-  },
+  "name": "u",
   "semantic_graph": {
     "graph_version": "quire.checked-semantic-graph/v2",
     "nodes": [
@@ -177,8 +100,11 @@
           "members": [
             {
               "target": {
-                "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "u",
+                "path": [
+                  "List"
+                ]
               },
               "term": "reference"
             }
@@ -187,13 +113,27 @@
         },
         "dependencies": [
           {
-            "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "u",
+            "path": [
+              "List"
+            ]
           }
         ],
         "node_id": {
-          "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "composite_type",
+            "option",
+            {
+              "ordinal": 0,
+              "package": "u",
+              "path": [
+                "List"
+              ]
+            }
+          ]
         },
         "node_tag": "composite_type",
         "occurrences": [
@@ -202,12 +142,23 @@
             "role": "generated"
           }
         ],
-        "recursion_group": "c4f49ce64b352b9d55a753e8ce21fa995ee78bd025587acbeba67223442bafcc",
+        "recursion_group": "List",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "option",
         "semantic_type": {
-          "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "composite_type",
+            "option",
+            {
+              "ordinal": 0,
+              "package": "u",
+              "path": [
+                "List"
+              ]
+            }
+          ]
         }
       },
       {
@@ -223,8 +174,19 @@
                     "term": "binding",
                     "value": {
                       "target": {
-                        "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
-                        "domain": "quire.checked-semantic-node/v1"
+                        "ordinal": 0,
+                        "package": "u",
+                        "path": [
+                          "composite_type",
+                          "option",
+                          {
+                            "ordinal": 0,
+                            "package": "u",
+                            "path": [
+                              "List"
+                            ]
+                          }
+                        ]
                       },
                       "term": "reference"
                     }
@@ -243,13 +205,27 @@
         },
         "dependencies": [
           {
-            "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "u",
+            "path": [
+              "composite_type",
+              "option",
+              {
+                "ordinal": 0,
+                "package": "u",
+                "path": [
+                  "List"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "List"
+          ]
         },
         "node_tag": "composite_type",
         "occurrences": [
@@ -263,12 +239,15 @@
           "identity": "u",
           "kind": "source"
         },
-        "recursion_group": "c4f49ce64b352b9d55a753e8ce21fa995ee78bd025587acbeba67223442bafcc",
+        "recursion_group": "List",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",
         "semantic_type": {
-          "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "List"
+          ]
         }
       },
       {
@@ -278,8 +257,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -291,8 +274,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "integer",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -303,8 +290,39 @@
               "term": "binding",
               "value": {
                 "target": {
-                  "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "u",
+                  "path": [
+                    "bounded_domain",
+                    "collection_bounds",
+                    "min",
+                    {
+                      "ordinal": 0,
+                      "package": "u",
+                      "path": [
+                        "scalar_type",
+                        "integer"
+                      ]
+                    },
+                    "0",
+                    "max",
+                    "3",
+                    {
+                      "ordinal": 0,
+                      "package": "u",
+                      "path": [
+                        "composite_type",
+                        "sequence",
+                        {
+                          "ordinal": 0,
+                          "package": "u",
+                          "path": [
+                            "Tree"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
                 },
                 "term": "reference"
               }
@@ -319,13 +337,47 @@
         },
         "dependencies": [
           {
-            "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "u",
+            "path": [
+              "bounded_domain",
+              "collection_bounds",
+              "min",
+              {
+                "ordinal": 0,
+                "package": "u",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              "max",
+              "3",
+              {
+                "ordinal": 0,
+                "package": "u",
+                "path": [
+                  "composite_type",
+                  "sequence",
+                  {
+                    "ordinal": 0,
+                    "package": "u",
+                    "path": [
+                      "Tree"
+                    ]
+                  }
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "Tree"
+          ]
         },
         "node_tag": "composite_type",
         "occurrences": [
@@ -339,12 +391,15 @@
           "identity": "u",
           "kind": "source"
         },
-        "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
+        "recursion_group": "Tree",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",
         "semantic_type": {
-          "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "Tree"
+          ]
         }
       },
       {
@@ -352,8 +407,11 @@
           "members": [
             {
               "target": {
-                "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "u",
+                "path": [
+                  "Tree"
+                ]
               },
               "term": "reference"
             }
@@ -362,13 +420,27 @@
         },
         "dependencies": [
           {
-            "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "u",
+            "path": [
+              "Tree"
+            ]
           }
         ],
         "node_id": {
-          "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "composite_type",
+            "sequence",
+            {
+              "ordinal": 0,
+              "package": "u",
+              "path": [
+                "Tree"
+              ]
+            }
+          ]
         },
         "node_tag": "composite_type",
         "occurrences": [
@@ -377,12 +449,23 @@
             "role": "generated"
           }
         ],
-        "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
+        "recursion_group": "Tree",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "sequence",
         "semantic_type": {
-          "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "composite_type",
+            "sequence",
+            {
+              "ordinal": 0,
+              "package": "u",
+              "path": [
+                "Tree"
+              ]
+            }
+          ]
         }
       },
       {
@@ -394,8 +477,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "u",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "0",
                 "value_kind": "integer"
@@ -407,8 +494,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "u",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "3",
                 "value_kind": "integer"
@@ -419,13 +510,55 @@
         },
         "dependencies": [
           {
-            "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "u",
+            "path": [
+              "composite_type",
+              "sequence",
+              {
+                "ordinal": 0,
+                "package": "u",
+                "path": [
+                  "Tree"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "bounded_domain",
+            "collection_bounds",
+            "min",
+            {
+              "ordinal": 0,
+              "package": "u",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "0",
+            "max",
+            "3",
+            {
+              "ordinal": 0,
+              "package": "u",
+              "path": [
+                "composite_type",
+                "sequence",
+                {
+                  "ordinal": 0,
+                  "package": "u",
+                  "path": [
+                    "Tree"
+                  ]
+                }
+              ]
+            }
+          ]
         },
         "node_tag": "bounded_domain",
         "occurrences": [
@@ -434,12 +567,23 @@
             "role": "generated"
           }
         ],
-        "recursion_group": "098352bbb5f6c2dd2836b1dc59c7bbc6fdf93076c767bf4c358304da0b98ca6b",
+        "recursion_group": "Tree",
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "collection_bounds",
         "semantic_type": {
-          "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "u",
+          "path": [
+            "composite_type",
+            "sequence",
+            {
+              "ordinal": 0,
+              "package": "u",
+              "path": [
+                "Tree"
+              ]
+            }
+          ]
         }
       }
     ]
@@ -447,8 +591,19 @@
   "source_map": [
     {
       "node_id": {
-        "digest": "060cc5df3b74317489ef49b6d6fa5cd221667a2f2923910ac1f60855d581366b",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "u",
+        "path": [
+          "composite_type",
+          "option",
+          {
+            "ordinal": 0,
+            "package": "u",
+            "path": [
+              "List"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -465,8 +620,11 @@
     },
     {
       "node_id": {
-        "digest": "8a69ece82bb34c5857bb0b3386367af4003bca6480ca864e7b04a8697e61e79b",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "u",
+        "path": [
+          "List"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -483,8 +641,12 @@
     },
     {
       "node_id": {
-        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "u",
+        "path": [
+          "scalar_type",
+          "integer"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -501,8 +663,11 @@
     },
     {
       "node_id": {
-        "digest": "5dd245d1f95885f7c628dfa8424f4b4ddb616a218369984e488731a5e3061c64",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "u",
+        "path": [
+          "Tree"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -519,8 +684,19 @@
     },
     {
       "node_id": {
-        "digest": "5dab1d21b36212959d997c17b88ab44822bf4078e35ae1b993c17db591425756",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "u",
+        "path": [
+          "composite_type",
+          "sequence",
+          {
+            "ordinal": 0,
+            "package": "u",
+            "path": [
+              "Tree"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -537,8 +713,39 @@
     },
     {
       "node_id": {
-        "digest": "6bd6dd7f2b655affb65a4b49dfcff572129d960f9d45766bf954cfc8ce6a4028",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "u",
+        "path": [
+          "bounded_domain",
+          "collection_bounds",
+          "min",
+          {
+            "ordinal": 0,
+            "package": "u",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "0",
+          "max",
+          "3",
+          {
+            "ordinal": 0,
+            "package": "u",
+            "path": [
+              "composite_type",
+              "sequence",
+              {
+                "ordinal": 0,
+                "package": "u",
+                "path": [
+                  "Tree"
+                ]
+              }
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [

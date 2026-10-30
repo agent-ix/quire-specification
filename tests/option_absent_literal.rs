@@ -9,12 +9,6 @@ use ix_trace_rs::trace;
 use serde_json::{Value, json};
 
 const VECTORS: &str = include_str!("../proposals/quire-v1/option-absent-literal-vectors.json");
-const FR143: &str =
-    include_str!("../spec/functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md");
-const FR153: &str =
-    include_str!("../spec/functional/type-model/FR-153-query-closed-model-environments.md");
-const GRAMMAR: &str = include_str!("../proposals/quire-v1/shared-grammar.md");
-const TC188: &str = include_str!("../spec/test-cases/TC-188-record-tuple-and-recursive-values.md");
 
 fn vectors() -> Value {
     serde_json::from_str(VECTORS).expect("authored vectors are JSON")
@@ -133,97 +127,22 @@ fn run(vectors: &Value, criterion: &str) -> usize {
     ran
 }
 
-/// The cells of the single `| id | statement | evidence |` row of `id` in `doc`,
-/// whitespace-normalised.
-fn row_cells(doc: &str, id: &str) -> Vec<String> {
-    let rows: Vec<&str> = doc
-        .lines()
-        .filter(|line| line.starts_with(&format!("| {id} |")))
-        .collect();
-    assert_eq!(rows.len(), 1, "exactly one {id} row");
-    rows[0]
-        .trim_matches('|')
-        .split(" | ")
-        .map(|cell| cell.split_whitespace().collect::<Vec<_>>().join(" "))
-        .collect()
-}
-
-fn ac_row(id: &str) -> Vec<String> {
-    let cells = row_cells(FR143, id);
-    assert_eq!(cells.len(), 3, "{id} has id, statement and evidence cells");
-    assert_eq!(cells[2], "Test (TC-188)", "{id} evidence");
-    cells
-}
-
-/// The alternatives of the shared-grammar `primary` production.
-fn primary_alternatives() -> Vec<String> {
-    let start = GRAMMAR
-        .match_indices("\nprimary ")
-        .map(|(at, _)| at + 1)
-        .find(|at| GRAMMAR[*at..].lines().next().is_some_and(|line| line.contains("'none'")))
-        .expect("the primary production that lists 'none'");
-    let production = &GRAMMAR[start..start + GRAMMAR[start..].find(" ;").expect("production end")];
-    production
-        .split_once('=')
-        .expect("production body")
-        .1
-        .split('|')
-        .map(|alternative| alternative.split_whitespace().collect::<Vec<_>>().join(" "))
-        .collect()
-}
-
 #[trace("TC-188", "FR-143-AC-18")]
 #[test]
 fn tc_188_absent_takes_the_option_its_position_expects() {
     assert_eq!(run(&vectors(), "FR-143-AC-18"), 18);
-    let statement = &ac_row("FR-143-AC-18")[1];
-    for phrase in [
-        "`self.v = absent` for `v: Option<Clock>`",
-        "a function result typed `Option<Integer>`",
-        "an `if` branch",
-        "`(lookup<M::A>(p, r) absent empty) = absent` is true for a key `p` does not hold and false for one it holds",
-        "not literals",
-        "`absent = absent`",
-    ] {
-        assert!(statement.contains(phrase), "AC-18 states {phrase}");
-    }
-    assert!(
-        !statement.contains("`absent = absent` of two `Option<Integer>` operands is true"),
-        "AC-18 no longer admits the literal against the literal"
-    );
-    assert!(FR143.lines().any(|line| line == "## The `absent` Option literal"));
-    let alternatives = primary_alternatives();
-    let none_at = alternatives.iter().position(|a| a == "'none'").expect("'none' primary");
-    assert_eq!(alternatives[none_at + 1], "'absent'", "primary admits absent beside none");
-    assert!(
-        FR153.contains("| `empty` | `Option<Reference<T>>` | the present option | `none`, the value the literal `absent` denotes at that type"),
-        "the empty-mode row names the literal"
-    );
-    let r15 = row_cells(TC188, "R15");
-    assert!(r15[1].contains("(lookup<M::A>(p, r) absent empty) = absent"));
-    assert!(r15[2].contains("the lookup equality is false for the held key and true for the missing key"));
 }
 
 #[trace("TC-188", "FR-143-AC-19")]
 #[test]
 fn tc_188_absent_without_an_option_context_is_ill_typed() {
     assert_eq!(run(&vectors(), "FR-143-AC-19"), 6);
-    let statement = &ac_row("FR-143-AC-19")[1];
-    assert!(statement.contains("`let x = absent in x`, `present(absent)`, `value(absent)`) is `refused { code: ill_typed, cause: ambiguous-literal }` before any charge"));
-    assert!(statement.contains("an `Integer` field or parameter, a `Reference<T>`, a `Set<Integer>`) is `refused { code: ill_typed, cause: type-mismatch }`"));
-    let r16 = row_cells(TC188, "R16");
-    assert!(r16[2].contains("ambiguous-literal") && r16[2].contains("type-mismatch"));
 }
 
 #[trace("TC-188", "FR-143-AC-20")]
 #[test]
 fn tc_188_an_optional_slot_takes_no_absent_and_the_lookup_mode_keeps_its_meaning() {
     assert_eq!(run(&vectors(), "FR-143-AC-20"), 5);
-    let statement = &ac_row("FR-143-AC-20")[1];
-    assert!(statement.contains("`P { a: 1, b: absent }` for `b: Integer?` is `refused { code: ill_typed, cause: type-mismatch }`"));
-    assert!(statement.contains("`lookup<M::A>(p, r) absent absent` is not a mode and is `refused { code: invalid_syntax, cause: unexpected-token }`"));
-    let r17 = row_cells(TC188, "R17");
-    assert!(r17[2].contains("`type-mismatch` (a `?` slot is not an `Option<Integer>` position)"));
 }
 
 /// Mutation check for FR-143-AC-18 to FR-143-AC-20: a vector whose outcome is

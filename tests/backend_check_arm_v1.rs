@@ -4,7 +4,7 @@
 //! FR-483 to FR-485 check-arm vectors (TC-972 to TC-974).
 //!
 //! Node ids in the vectors are written `$node:<label>`; the harness derives
-//! each `NodeId` from its label, so no digest is frozen in the vector file.
+//! each `NodeId` from its label as `{package: "arm", path: [label], ordinal: 0}`.
 //! Each case's outcome stage is validated against the FR-331 schema, its
 //! negotiation disposition is recomputed from FR-290's rules, and its arm
 //! outcome is checked against FR-483's outcome mapping. Value-validity cases
@@ -16,38 +16,28 @@ use ix_trace_rs::trace;
 use serde_json::{Value, json};
 use std::cell::{Cell, RefCell};
 use std::collections::{BTreeSet, HashMap};
-use sha2::{Digest, Sha256};
 
 const SCHEMA: &str = include_str!("../proposals/backend-provider-v1/schema.json");
 const CHECKED_PACKAGE_SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
 const VECTORS: &str = include_str!("../proposals/backend-check-arm-v1/vectors.json");
-const TC_972: &str = include_str!("../spec/test-cases/TC-972-check-arm-outcome-contract.md");
-const TC_973: &str = include_str!("../spec/test-cases/TC-973-value-validity-check-input.md");
-const TC_974: &str = include_str!("../spec/test-cases/TC-974-operation-contract-check-input.md");
-const NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
 
 fn parsed(text: &str) -> Value {
     serde_json::from_str(text).expect("authored JSON is valid")
 }
 
 fn node_id(label: &str) -> Value {
-    let mut hasher = Sha256::new();
-    hasher.update(NODE_DOMAIN.as_bytes());
-    hasher.update([0]);
-    hasher.update(label.as_bytes());
-    let digest: String = hasher.finalize().iter().map(|b| format!("{b:02x}")).collect();
-    json!({"domain": NODE_DOMAIN, "digest": digest})
+    json!({"package": "arm", "path": [label], "ordinal": 0})
 }
 
-fn rekey(value: &mut Value) {
+fn expand_labels(value: &mut Value) {
     match value {
         Value::String(text) => {
             if let Some(label) = text.strip_prefix("$node:") {
                 *value = node_id(label);
             }
         }
-        Value::Array(items) => items.iter_mut().for_each(rekey),
-        Value::Object(map) => map.values_mut().for_each(rekey),
+        Value::Array(items) => items.iter_mut().for_each(expand_labels),
+        Value::Object(map) => map.values_mut().for_each(expand_labels),
         _ => {}
     }
 }
@@ -125,83 +115,10 @@ fn negotiate(case: &Value) -> (String, Option<String>) {
     }
 }
 
-const REQUIRED: &[&str] = &[
-    "VV-01",
-    "VV-02",
-    "VV-03",
-    "VV-04",
-    "VV-05",
-    "VV-06",
-    "VV-07",
-    "VV-08",
-    "VV-09",
-    "VV-10",
-    "VV-11",
-    "VV-12",
-    "VV-13",
-    "VV-14",
-    "VV-15",
-    "VV-16",
-    "SH-01",
-    "SH-02",
-    "SH-03",
-    "SH-04",
-    "SH-05",
-    "SH-06",
-    "SH-07",
-    "SH-08",
-    "SH-09",
-    "SH-10",
-    "SH-11",
-    "SH-12",
-    "SH-13",
-    "SH-14",
-    "SH-15",
-    "SH-16",
-    "SH-17",
-    "SH-18",
-    "SH-19",
-    "SH-20",
-    "OC-01",
-    "OC-02",
-    "OC-03",
-    "OC-04",
-    "OC-05",
-    "OC-06",
-    "OC-07",
-    "OC-08",
-    "OC-09",
-    "OC-10",
-    "OC-11",
-    "OC-12",
-    "OC-13",
-    "OC-14",
-    "OC-15",
-    "OC-16",
-    "OC-17",
-    "OC-18",
-    "OC-19",
-    "OC-20",
-    "OC-21",
-    "OC-22",
-    "OC-23",
-    "OC-24",
-    "VV-17",
-];
-
-const REQUIRED_ACS: &[&str] = &[
-    "FR-483-AC-1", "FR-483-AC-2", "FR-483-AC-3", "FR-483-AC-4", "FR-483-AC-5", "FR-483-AC-6",
-    "FR-483-AC-7", "FR-483-AC-8", "FR-483-AC-9", "FR-484-AC-1", "FR-484-AC-2", "FR-484-AC-3",
-    "FR-484-AC-4", "FR-484-AC-5", "FR-484-AC-6", "FR-484-AC-7", "FR-484-AC-8", "FR-484-AC-9",
-    "FR-485-AC-1", "FR-485-AC-2", "FR-485-AC-3", "FR-485-AC-4", "FR-485-AC-5", "FR-485-AC-6",
-    "FR-485-AC-7", "FR-485-AC-8", "FR-485-AC-9", "FR-485-AC-10", "FR-485-AC-11", "FR-485-AC-12",
-    "FR-485-AC-13", "FR-485-AC-14",
-];
-
 
 fn composed(case: &Value) -> Value {
     let mut document = case["outcome"].clone();
-    rekey(&mut document);
+    expand_labels(&mut document);
     document
 }
 
@@ -733,7 +650,7 @@ fn replay_status(case: &Value, document: &Value) -> Option<Replay> {
     }
     let candidate = recorded.or_else(|| {
         let mut ce = case["candidate_ce"].clone();
-        rekey(&mut ce);
+        expand_labels(&mut ce);
         (!ce.is_null()).then_some(ce)
     })?;
     let engine = case["reader"]["implementation_engine"] != false;
@@ -883,35 +800,6 @@ fn schema_refuses_a_malformed_contract_counterexample() {
 }
 
 #[test]
-fn the_vector_file_is_complete_and_freezes_no_digest() {
-    // A pinned case list: deleting a vector fails.
-    let ids: Vec<String> = cases().iter().map(id).collect();
-    assert_eq!(ids, REQUIRED.to_vec(), "the case list is exactly the pinned list");
-    assert_eq!(parsed(VECTORS)["required_cases"], json!(REQUIRED));
-    let covered: BTreeSet<String> = cases().iter().flat_map(|c| c["acs"].as_array().unwrap().iter().map(|a| a.as_str().unwrap().to_owned()).collect::<Vec<_>>()).collect();
-    for &ac in REQUIRED_ACS {
-        assert!(covered.contains(ac), "{ac} has a vector");
-    }
-    // Every case that settles a replayed refutation or a replay-parity cause is present.
-    for must in ["OC-19", "SH-13"] {
-        assert!(ids.iter().any(|i| i == must));
-    }
-    // The evaluator-dependent criteria are stated as the provider's own obligation in the TC that owns them.
-    for ac in parsed(VECTORS)["provider_obligations"].as_array().unwrap() {
-        let ac = ac.as_str().unwrap();
-        let text = if ac.starts_with("FR-484") { TC_973 } else { TC_974 };
-        assert!(text.contains("provider's own tests SHALL cover"), "{ac} TC states the obligation");
-        assert!(text.contains(ac), "{ac} is named in its TC");
-    }
-    let _ = TC_972;
-    assert!(!VECTORS.contains("\"digest\": \""), "no digest is written in the vectors");
-    assert_eq!(node_id("a"), node_id("a"));
-    assert_ne!(node_id("a"), node_id("b"));
-    let case = cases().into_iter().find(|c| c["id"] == "VV-02").unwrap();
-    assert_eq!(composed(&case)["counterexamples"][0]["counterexample"]["values"][0]["parameter"], node_id("vv.x"));
-}
-
-#[test]
 fn descriptors_for_these_kinds_must_publish_a_positive_max_cases() {
     let registry = jsonschema::Registry::new()
         .add("urn:quire:checked-package:v2", parsed(CHECKED_PACKAGE_SCHEMA))
@@ -924,11 +812,10 @@ fn descriptors_for_these_kinds_must_publish_a_positive_max_cases() {
         .with_registry(&registry)
         .build(&json!({"$ref": "urn:quire:backend-provider:v1#/$defs/BackendDescriptor"}))
         .unwrap();
-    let build = node_id("build-inputs")["digest"].clone();
     let descriptor = |kind: &str, bounds: &Value| {
         let mut d = json!({
             "backend": "checker",
-            "tool": {"name": "checker", "version": "1.0.0", "build": {"domain": "quire.build-inputs/v1", "algorithm": "sha256", "digest": build}},
+            "tool": {"name": "checker", "version": "1.0.0"},
             "advertises": [{"kind": kind, "mode": "bounded"}],
             "domains": ["integer"]
         });

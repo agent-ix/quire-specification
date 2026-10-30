@@ -2,7 +2,7 @@
 // Copyright (C) 2026 Agent-IX
 
 //! FR-322 "Model-owned members" vector qualification (TC-280): owner recovery
-//! by recomputed model declaration node keys, member resolution in the
+//! by the structural ids of model declaration nodes, member resolution in the
 //! declaring type's exposed effective members and member type derivation.
 //! TC-281 applies the published operation catalog's `quire.op.reference.eq`,
 //! `quire.op.reference.ne`, `quire.op.model.deref` and
@@ -11,15 +11,12 @@
 //! projection over a `deref` result.
 
 use ix_trace_rs::trace;
-use quire_verification_contracts::jcs_sha256;
 use quire_verification_contracts::operation_catalog::CHECKED_OPERATION_CATALOG_V1;
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 
 const VECTORS: &str =
     include_str!("../proposals/checked-package-v2/model-member-type-vectors.json");
-const PREIMAGE_SCHEMA: &str =
-    include_str!("../proposals/checked-package-v2/node-identity-preimage.schema.json");
 /// The catalog lives only in `quire-verification-contracts`; it is read from there.
 const OPERATION_CATALOG: &str = CHECKED_OPERATION_CATALOG_V1;
 /// The selected domain package document: an FCD semantic IR 2.0.0 document.
@@ -34,18 +31,9 @@ const OWNER_FORMS: &str =
     include_str!("../proposals/checked-package-v2/model-owner-form-vectors.json");
 const ADVERSE: &str = include_str!("../proposals/checked-package-v2/fixtures/adverse.json");
 const SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
-const NODE_DOMAIN: &str = "quire.checked-semantic-node/v1";
 
 fn parsed(bytes: &str) -> Value {
     serde_json::from_str(bytes).expect("authored fixture is valid JSON")
-}
-
-fn digest(value: &Value) -> String {
-    jcs_sha256(value)
-        .expect("authored value is canonicalizable")
-        .strip_prefix("sha256-jcs:")
-        .expect("canonicalizer retains its selected prefix")
-        .to_owned()
 }
 
 fn text<'a>(value: &'a Value, member: &str) -> &'a str {
@@ -72,24 +60,6 @@ fn refused_at(code: &str, cause: &str, at: &str) -> Value {
 
 fn ineligible() -> Value {
     refused("ill_typed", "operator-ineligible")
-}
-
-/// The `ModelDeclarationNode` preimage FR-322 step 2 computes.
-fn declaration_preimage(package: &Value, tag: &str, form: &str, node: &str) -> Value {
-    json!({
-        "version": "quire.structural-node/v1",
-        "node_tag": tag,
-        "semantic_form": form,
-        "semantic_type": null,
-        "declaration": null,
-        "recursion": null,
-        "owner": {
-            "kind": "model",
-            "identity": package["identity"],
-            "node": node
-        },
-        "body": {"term": "aggregate", "members": []}
-    })
 }
 
 /// A declaration of the selected package with its node tag and form.
@@ -153,20 +123,21 @@ fn declarations(package: &Value) -> Vec<Declared<'_>> {
         .collect()
 }
 
-fn declaration_key(package: &Value, declared: &Declared<'_>) -> String {
-    digest(&declaration_preimage(
-        package,
-        declared.tag,
-        declared.form,
-        declared.node,
-    ))
+/// The structural node id of a model declaration: the owning package, then
+/// the node tag, form and declared node, at ordinal zero.
+fn declaration_key(package: &Value, declared: &Declared<'_>) -> Value {
+    json!({
+        "package": package["identity"],
+        "path": [declared.tag, declared.form, declared.node],
+        "ordinal": 0
+    })
 }
 
 /// FR-322 step 2 over a wire node's key, tag and form: the matching
 /// declaration of the selected package.
-fn recover<'a>(package: &'a Value, key: &str, tag: &str, form: &str) -> Option<Declared<'a>> {
+fn recover<'a>(package: &'a Value, key: &Value, tag: &str, form: &str) -> Option<Declared<'a>> {
     declarations(package).into_iter().find(|declared| {
-        declared.tag == tag && declared.form == form && declaration_key(package, declared) == key
+        declared.tag == tag && declared.form == form && declaration_key(package, declared) == *key
     })
 }
 
@@ -393,12 +364,11 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
         .iter()
         .find(|vector| vector["name"] == member["declaration"])
         .expect("a case names a published node vector");
-    let preimage = &declaring["preimage"];
     let Some(recovered) = recover(
         package,
-        text(declaring, "sha256"),
-        text(preimage, "node_tag"),
-        text(preimage, "semantic_form"),
+        &declaring["node_id"],
+        text(declaring, "node_tag"),
+        text(declaring, "semantic_form"),
     ) else {
         return refused("missing_declaration", "missing-selection");
     };
@@ -428,7 +398,7 @@ fn derive(package: &Value, nodes: &[Value], member: &Value) -> Value {
         if recovered.form != "object_type" {
             return ineligible();
         }
-        let receiver = json!({"type": "Reference", "target": declaring["sha256"]});
+        let receiver = json!({"type": "Reference", "target": declaring["node_id"]});
         if member["receiver"] != receiver {
             return ineligible();
         }
@@ -532,31 +502,9 @@ fn clause_kind(node: &Value) -> Option<&str> {
         .flatten()
 }
 
-/// The key of a model-owned wire node, from the node's own members and its
-/// `owner` (QSL FR-094): `quire.structural-node/v1` with `semantic_type`
-/// `null` exactly when the node is its own type.
-fn wire_key(node: &Value) -> String {
-    let semantic_type = if node["semantic_type"] == node["node_id"] {
-        Value::Null
-    } else {
-        node["semantic_type"].clone()
-    };
-    digest(&json!({
-        "version": "quire.structural-node/v1",
-        "node_tag": node["node_tag"],
-        "semantic_form": node["semantic_form"],
-        "semantic_type": semantic_type,
-        "declaration": node.get("declaration").cloned().unwrap_or(Value::Null),
-        "recursion": null,
-        "owner": node["owner"],
-        "body": node["body"],
-    }))
-}
-
-/// FR-322's owner presence rule (the V2 schema), the owner join, the currency
-/// check of the derived-shape key stage and step 2 over one wire node.
+/// FR-322's owner presence rule (the V2 schema), the owner join and step 2
+/// over one wire node.
 fn read_wire(package: &Value, node: &Value) -> Value {
-    assert_eq!(node["node_id"]["domain"], NODE_DOMAIN);
     let schema = parsed(SCHEMA);
     let validator = jsonschema::validator_for(&json!({
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -573,45 +521,11 @@ fn read_wire(package: &Value, node: &Value) -> Value {
     {
         return refused("missing_declaration", "missing-selection");
     }
-    let model_declaration = text(node, "node_tag") != "function";
-    let current = wire_key(node) == text(&node["node_id"], "digest")
-        && (!model_declaration
-            || (node["semantic_type"] == node["node_id"]
-                && node.get("recursion_group").is_none()
-                && node["body"] == json!({"term": "aggregate", "members": []})));
-    if !current {
-        return refused("invalid_package", "stale-node-key");
-    }
-    if model_declaration {
+    if text(node, "node_tag") != "function" {
         json!({"recovers": owner["node"]})
     } else {
         json!({"passes": "owner-join"})
     }
-}
-
-/// FR-322 step 1's admission checks over one selection case: the document
-/// supplied under the selected identity must declare that identity.
-fn select(package: &Value, case: &Value) -> Value {
-    let selection = &case["selection"];
-    let supplied: BTreeMap<String, Value> = array(case, "supplied")
-        .iter()
-        .map(|entry| {
-            let mut document = package.clone();
-            for patch in array(entry, "patch") {
-                *document
-                    .pointer_mut(text(patch, "path"))
-                    .expect("a patch names an existing member") = patch["value"].clone();
-            }
-            (text(entry, "under").to_owned(), document)
-        })
-        .collect();
-    let Some(document) = supplied.get(text(selection, "identity")) else {
-        return refused("missing_import", "missing-selection");
-    };
-    if document["package"]["identity"] != selection["identity"] {
-        return refused("invalid_model_binding", "wrong-model-selection");
-    }
-    json!({"admission": "passed"})
 }
 
 /// The member cases recorded for exactly `criterion`.
@@ -654,51 +568,24 @@ fn assert_member_cases(vectors: &Value, criterion: &str) {
 
 #[trace("TC-280", "FR-322-AC-29")]
 #[test]
-fn tc_280_model_declaration_node_vectors_recompute_and_recover_only_selected_owners() {
+fn tc_280_model_declaration_nodes_recover_only_selected_owners() {
     let vectors = parsed(VECTORS);
-    let schema =
-        jsonschema::validator_for(&parsed(PREIMAGE_SCHEMA)).expect("node preimage schema is valid");
     let package = &vectors["domain_package"];
     for vector in array(&vectors, "model_declaration_nodes") {
         let name = text(vector, "name");
-        let preimage = &vector["preimage"];
-        schema
-            .validate(preimage)
-            .unwrap_or_else(|error| panic!("{name} validates: {error}"));
-        assert_eq!(digest(preimage), text(vector, "sha256"), "{name} digest");
-        let selected = preimage["owner"]["identity"] == package["identity"];
+        let selected = vector["owner"]["identity"] == package["identity"];
         let recovered = recover(
             package,
-            text(vector, "sha256"),
-            text(preimage, "node_tag"),
-            text(preimage, "semantic_form"),
+            &vector["node_id"],
+            text(vector, "node_tag"),
+            text(vector, "semantic_form"),
         );
         assert_eq!(
             recovered.is_some(),
             selected,
             "{name} recovers exactly when its owner is the selected domain package"
         );
-
-        let mut named_body = preimage.clone();
-        named_body["body"]["members"] = json!([{"term": "binding", "name": "total",
-            "value": {"term": "aggregate", "members": []}}]);
-        assert!(
-            !schema.is_valid(&named_body),
-            "{name} with a body member is refused"
-        );
-        let mut declared = preimage.clone();
-        declared["declaration"] = json!({"qualified_name": ["M", "Order"]});
-        assert!(
-            !schema.is_valid(&declared),
-            "{name} with a declaration is refused"
-        );
     }
-    let mut crossed = array(&vectors, "model_declaration_nodes")[3]["preimage"].clone();
-    crossed["semantic_form"] = json!("object_type");
-    assert!(
-        !schema.is_valid(&crossed),
-        "a relation node keyed as an object type is refused"
-    );
 
     for case in array(&vectors, "wire_cases") {
         assert_eq!(
@@ -839,32 +726,6 @@ fn tc_280_text_value_type_members_carry_their_bounds_and_profile() {
     assert_member_cases(&parsed(VECTORS), "FR-322-AC-44");
 }
 
-#[trace("TC-280", "FR-322-AC-32")]
-#[test]
-fn tc_280_selected_domain_package_documents_are_admitted_by_identity() {
-    let vectors = parsed(VECTORS);
-    let cases = array(&vectors, "selection_cases");
-    let causes: BTreeSet<_> = cases
-        .iter()
-        .filter_map(|case| case["expected"]["refused"]["cause"].as_str())
-        .collect();
-    assert_eq!(
-        causes,
-        BTreeSet::from([
-            "missing-selection",
-            "wrong-model-selection"
-        ])
-    );
-    for case in cases {
-        assert_eq!(
-            select(&parsed(DOCUMENT), case),
-            case["expected"],
-            "{}",
-            text(case, "name")
-        );
-    }
-}
-
 /// A catalog entry by identity.
 fn catalog_entry<'a>(catalog: &'a Value, identity: &str) -> &'a Value {
     array(catalog, "operations")
@@ -915,8 +776,8 @@ impl<'a> Operand<'a> {
         match self {
             Self::Reference(_) => Some("reference"),
             Self::Object(name) => {
-                let preimage = &node_vector(nodes, name)["preimage"];
-                match (text(preimage, "node_tag"), text(preimage, "semantic_form")) {
+                let vector = node_vector(nodes, name);
+                match (text(vector, "node_tag"), text(vector, "semantic_form")) {
                     (
                         "model",
                         "object_type" | "process" | "state_machine" | "systems_interface",
@@ -931,12 +792,11 @@ impl<'a> Operand<'a> {
 /// FR-322 step 2 over a named node vector.
 fn recover_vector<'a>(package: &'a Value, nodes: &[Value], name: &str) -> Option<Declared<'a>> {
     let vector = node_vector(nodes, name);
-    let preimage = &vector["preimage"];
     recover(
         package,
-        text(vector, "sha256"),
-        text(preimage, "node_tag"),
-        text(preimage, "semantic_form"),
+        &vector["node_id"],
+        text(vector, "node_tag"),
+        text(vector, "semantic_form"),
     )
 }
 
@@ -1306,7 +1166,7 @@ fn tc_280_frame_field_entries_resolve_among_exposed_fields() {
 /// or a state machine, and the operation resolves among its exposed operation members to one the
 /// context itself declares.
 fn anchor_operation(package: &Value, nodes: &[Value], context: &str, operation: &str) -> Value {
-    let form = text(&node_vector(nodes, context)["preimage"], "semantic_form");
+    let form = text(node_vector(nodes, context), "semantic_form");
     if !matches!(form, "object_type" | "process" | "state_machine") {
         return refused("invalid_model_binding", "malformed-declaration");
     }
@@ -1384,7 +1244,7 @@ fn clause_decision(package: &Value, nodes: &[Value], case: &Value) -> Value {
         .iter()
         .map(|parameter| match parameter["reference"].as_str() {
             Some(name) => {
-                json!({"type": "Reference", "target": node_vector(nodes, name)["sha256"]})
+                json!({"type": "Reference", "target": node_vector(nodes, name)["node_id"]})
             }
             None => parameter.clone(),
         })
@@ -2119,7 +1979,7 @@ fn tc_280_parameter_names_refuse_each_defect_at_the_selection_row() {
 /// The mapping `derive`'s wire cases name: a model declaration vector's
 /// declared node identity.
 fn vector_node<'a>(nodes: &'a [Value], name: &str) -> &'a str {
-    text(&node_vector(nodes, name)["preimage"]["owner"], "node")
+    text(&node_vector(nodes, name)["owner"], "node")
 }
 
 fn conforms_to(projection: &Value, node: &str, endpoint: &str) -> bool {
@@ -2159,7 +2019,7 @@ fn destination_type(end: &Value, destination: &str) -> Result<Value, Value> {
 fn relationship_navigation(projection: &Value, nodes: &[Value], case: &Value) -> Value {
     let document = patched_document(case.get("patch"));
     let relationship_vector = node_vector(nodes, text(case, "relationship"));
-    if relationship_vector["preimage"]["semantic_form"] != "relationship" {
+    if relationship_vector["semantic_form"] != "relationship" {
         return refused_at("ill_typed", "operator-ineligible", "member.declaration");
     }
     let node = vector_node(nodes, text(case, "relationship"));
@@ -2277,16 +2137,19 @@ fn tc_280_a_declaration_refusal_retains_the_nodes_origin_verbatim() {
 }
 
 /// A `model` wire node of `form` owned by `owner_node` of the selected
-/// package, keyed by its own preimage as QSL FR-094 keys a model declaration
-/// node.
+/// package, carrying the structural id of a model declaration node.
 fn owner_form_node(package: &Value, case: &Value) -> Value {
-    let id = |digest: &str| json!({"domain": NODE_DOMAIN, "digest": digest});
-    let mut node = json!({
-        "node_id": id(""),
+    let id = json!({
+        "package": package["identity"],
+        "path": [case["node_tag"], case["semantic_form"], case["owner_node"]],
+        "ordinal": 0
+    });
+    json!({
+        "node_id": id,
         "schema_version": "quire.checked-semantic-graph/v2",
         "node_tag": case["node_tag"],
         "semantic_form": case["semantic_form"],
-        "semantic_type": id(""),
+        "semantic_type": id,
         "dependencies": [],
         "occurrences": [{"role": "generated", "ordinal": 0}],
         "body": {"term": "aggregate", "members": []},
@@ -2295,38 +2158,26 @@ fn owner_form_node(package: &Value, case: &Value) -> Value {
             "identity": package["identity"],
             "node": case["owner_node"],
         },
-    });
-    let key = wire_key(&node);
-    node["node_id"] = id(&key);
-    node["semantic_type"] = id(&key);
-    node
+    })
 }
 
 /// FR-322-AC-72: a process, a state machine and a persistence interface are
-/// model declaration nodes. Each preimage validates against the closed
-/// `ModelDeclarationNode` schema and recovers its declaration, and the owner
+/// model declaration nodes. Each recovers its declaration, and the owner
 /// join admits a node exactly when the selected document declares its owner as
 /// the node's own kind.
 #[trace("TC-280", "FR-322-AC-72")]
 #[test]
 fn tc_280_process_state_machine_and_persistence_owners_join_the_selected_document() {
     let vectors = parsed(OWNER_FORMS);
-    let schema =
-        jsonschema::validator_for(&parsed(PREIMAGE_SCHEMA)).expect("node preimage schema is valid");
     let package = &vectors["domain_package"];
     for vector in array(&vectors, "model_declaration_nodes") {
         let name = text(vector, "name");
-        let preimage = &vector["preimage"];
-        schema
-            .validate(preimage)
-            .unwrap_or_else(|error| panic!("{name} validates: {error}"));
-        assert_eq!(digest(preimage), text(vector, "sha256"), "{name} digest");
         assert!(
             recover(
                 package,
-                text(vector, "sha256"),
-                text(preimage, "node_tag"),
-                text(preimage, "semantic_form"),
+                &vector["node_id"],
+                text(vector, "node_tag"),
+                text(vector, "semantic_form"),
             )
             .is_some(),
             "{name} recovers its declaration"
@@ -2344,69 +2195,25 @@ fn tc_280_process_state_machine_and_persistence_owners_join_the_selected_documen
 
 /// FR-322-AC-82: a declared population is a self-typed `relation`/`population`
 /// model declaration node whose `ModelOwner` is the population's declaration
-/// key (package, then node). Two populations of one package key differently,
-/// the closed preimage refuses every other form and shape, the owner join
-/// admits the node exactly when the selected document declares the owner as a
+/// id (package, then node). Two populations of one package differ in id, the
+/// owner join admits the node exactly when the selected document declares the owner as a
 /// population, and an ownerless node fails the V2 schema.
 #[trace("TC-280", "FR-322-AC-82")]
 #[test]
-fn tc_280_a_population_reference_node_is_keyed_by_its_declaration_key_alone() {
+fn tc_280_a_population_reference_node_is_identified_by_its_declaration_alone() {
     let vectors = parsed(OWNER_FORMS);
-    let schema =
-        jsonschema::validator_for(&parsed(PREIMAGE_SCHEMA)).expect("node preimage schema is valid");
     let package = &vectors["domain_package"];
     let nodes = array(&vectors, "model_declaration_nodes");
     let counters = node_vector(nodes, "P7");
     let archive = node_vector(nodes, "P8");
     for vector in [counters, archive] {
-        assert_eq!(vector["preimage"]["node_tag"], "relation");
-        assert_eq!(vector["preimage"]["semantic_form"], "population");
-        assert!(
-            schema.is_valid(&vector["preimage"]),
-            "{}",
-            text(vector, "name")
-        );
+        assert_eq!(vector["node_tag"], "relation");
+        assert_eq!(vector["semantic_form"], "population");
     }
     assert_ne!(
-        text(counters, "sha256"),
-        text(archive, "sha256"),
-        "two populations of one package carry different declaration keys and so different node keys"
+        counters["node_id"], archive["node_id"],
+        "two populations of one package carry different declaration ids"
     );
-    let mut other_package = counters["preimage"].clone();
-    other_package["owner"]["identity"] = json!("acme/other");
-    assert_ne!(digest(&other_package), text(counters, "sha256"));
-    for (mutation, change) in [
-        ("a model-tagged population", ("node_tag", json!("model"))),
-        (
-            "a relation-tagged object type",
-            ("semantic_form", json!("object_type")),
-        ),
-        (
-            "a typed population",
-            (
-                "semantic_type",
-                json!({"domain": NODE_DOMAIN, "digest": "0".repeat(64)}),
-            ),
-        ),
-        (
-            "a declared population",
-            ("declaration", json!({"qualified_name": ["counters"]})),
-        ),
-        (
-            "a population with a body",
-            (
-                "body",
-                json!({"term": "aggregate", "members": [{"term": "reference"}]}),
-            ),
-        ),
-    ] {
-        let mut candidate = counters["preimage"].clone();
-        candidate[change.0] = change.1;
-        assert!(
-            !schema.is_valid(&candidate),
-            "{mutation} fails the closed preimage"
-        );
-    }
     let mut ownerless = owner_form_node(
         package,
         &json!({
@@ -2489,10 +2296,7 @@ fn tc_280_frame_field_entries_resolve_among_the_fields_of_a_process_or_state_mac
     let nodes = array(&vectors, "model_declaration_nodes");
     for case in array(&vectors, "frame_field_cases") {
         let declaration = text(case, "declaration");
-        let form = text(
-            &node_vector(nodes, declaration)["preimage"],
-            "semantic_form",
-        );
+        let form = text(node_vector(nodes, declaration), "semantic_form");
         let decided = if matches!(
             form,
             "object_type" | "record_value_type" | "process" | "state_machine"

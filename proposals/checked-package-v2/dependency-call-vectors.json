@@ -25,8 +25,8 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/3/body/arguments/0/package/digest",
-          "value": "09e949d62fc722502cbbc63bcfbb5658b923e16ff4730ea95d4e75030bd67bb8"
+          "path": "/semantic_graph/nodes/3/body/arguments/0/package",
+          "value": "test/unselected"
         }
       ],
       "outcome": "refused:missing_declaration/missing-selection",
@@ -37,8 +37,55 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
-          "value": "ebe64b4c3bc2cc5f3460a43480f8979f5df24c5e7665d9e89890f43517dd8eda"
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node",
+          "value": {
+            "package": "test/predicates",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "package": "test/predicates",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ],
+                "ordinal": 0
+              },
+              "x",
+              "level",
+              {
+                "package": "test/predicates",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ],
+                "ordinal": 0
+              },
+              "0",
+              {
+                "package": "test/predicates",
+                "path": [
+                  "bounded_domain",
+                  "integer_range",
+                  "min",
+                  {
+                    "package": "test/predicates",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ],
+                    "ordinal": 0
+                  },
+                  "0",
+                  "max",
+                  "9"
+                ],
+                "ordinal": 0
+              }
+            ],
+            "ordinal": 0
+          }
         }
       ],
       "outcome": "refused:missing_declaration/missing-name",
@@ -49,8 +96,15 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
-          "value": "b3f29500c84371b1918d3170091cebabcd0a7bf6b3126011e0ca2f08ad012a70"
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node",
+          "value": {
+            "package": "test/predicates",
+            "path": [
+              "Lib",
+              "Point"
+            ],
+            "ordinal": 0
+          }
         }
       ],
       "outcome": "refused:ill_typed/operator-ineligible",
@@ -61,8 +115,15 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
-          "value": "fa983d09a7466fb8f5f10ee50779aa07ca6ca80b8d3a1cdcf9643917150edfe6"
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node",
+          "value": {
+            "package": "test/predicates",
+            "path": [
+              "Lib",
+              "make_point"
+            ],
+            "ordinal": 0
+          }
         }
       ],
       "outcome": "refused:ill_typed/operator-ineligible",
@@ -73,8 +134,15 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
-          "value": "0deec3ba87fdd3bc1ac5aca8f0b4984d27bf8b0d44c584aede0b5b7b6fdd8589"
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node",
+          "value": {
+            "package": "test/predicates",
+            "path": [
+              "Lib",
+              "any_point"
+            ],
+            "ordinal": 0
+          }
         }
       ],
       "outcome": "refused:ill_typed/operator-ineligible",
@@ -85,8 +153,15 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
-          "value": "14ef99fcc94f7588195cab024923f15d525b8e4b4ff4bcd058790d836eb996d4"
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node",
+          "value": {
+            "package": "test/predicates",
+            "path": [
+              "Lib",
+              "first_small"
+            ],
+            "ordinal": 0
+          }
         }
       ],
       "outcome": "refused:ill_typed/operator-ineligible",
@@ -97,8 +172,15 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/3/body/arguments/0/node/digest",
-          "value": "f3a9c2646ad053adba2a05968d90df665c3e66aa736d1136b4ef3513890907f4"
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node",
+          "value": {
+            "package": "test/predicates",
+            "path": [
+              "Lib",
+              "is_open"
+            ],
+            "ordinal": 0
+          }
         }
       ],
       "outcome": "refused:ill_typed/operator-ineligible",
@@ -111,16 +193,16 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/3/body/arguments/1",
           "value": {
+            "term": "dependency_reference",
+            "package": "test/predicates",
             "node": {
-              "digest": "0f17302cedf3adf043ed9559f0b447b9efff41ea346b41b1cef45be2067080ce",
-              "domain": "quire.checked-semantic-node/v1"
-            },
-            "package": {
-              "algorithm": "sha256",
-              "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934",
-              "domain": "quire.package.semantic/v2"
-            },
-            "term": "dependency_reference"
+              "package": "test/predicates",
+              "path": [
+                "Lib",
+                "is_small"
+              ],
+              "ordinal": 0
+            }
           }
         }
       ],
@@ -134,16 +216,16 @@
           "op": "replace",
           "path": "/semantic_graph/nodes/3/body",
           "value": {
+            "term": "dependency_reference",
+            "package": "test/predicates",
             "node": {
-              "digest": "0f17302cedf3adf043ed9559f0b447b9efff41ea346b41b1cef45be2067080ce",
-              "domain": "quire.checked-semantic-node/v1"
-            },
-            "package": {
-              "algorithm": "sha256",
-              "digest": "eeaadbc32f0b5deabab77937354c81f6be2dafbaa3c203d5f9c7adec60b1d934",
-              "domain": "quire.package.semantic/v2"
-            },
-            "term": "dependency_reference"
+              "package": "test/predicates",
+              "path": [
+                "Lib",
+                "is_small"
+              ],
+              "ordinal": 0
+            }
           }
         },
         {
@@ -167,8 +249,12 @@
           "path": "/semantic_graph/nodes/3/dependencies",
           "value": [
             {
-              "digest": "0f17302cedf3adf043ed9559f0b447b9efff41ea346b41b1cef45be2067080ce",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "test/predicates",
+              "path": [
+                "Lib",
+                "is_small"
+              ],
+              "ordinal": 0
             }
           ]
         }

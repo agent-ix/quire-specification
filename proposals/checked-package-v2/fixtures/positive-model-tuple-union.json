@@ -13,79 +13,6 @@
     },
     "entries": []
   },
-  "identity_preimage": {
-    "definition_selections": [
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.complete/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.accounting/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.compound-unit/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.compound-unit.schema/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.value.compound-unit.vectors/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.package-contract/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.shared-grammar/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.ad-005/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-140/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-141/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-142/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-147/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-148/v1"
-      },
-      {
-        "authority": "agent-ix",
-        "identity": "quire.rule.fr-149/v1"
-      }
-    ],
-    "dependency_selections": [],
-    "edition": {
-      "definition": {
-        "authority": "agent-ix",
-        "identity": "ix:native"
-      },
-      "role": "edition"
-    },
-    "profile_selections": [],
-    "required_features": [
-      "quire.value.complete/v1"
-    ],
-    "version": "quire.checked-package-id/v2"
-  },
   "lock": {
     "definition_selections": [
       {
@@ -164,11 +91,7 @@
       }
     ]
   },
-  "package_id": {
-    "algorithm": "sha256",
-    "digest": "b133fa2f98ba6cfcc18421854b1939b18a3de076b0a19673b55612a8d5f8fe51",
-    "domain": "quire.package.semantic/v2"
-  },
+  "name": "example",
   "semantic_graph": {
     "graph_version": "quire.checked-semantic-graph/v2",
     "nodes": [
@@ -179,8 +102,13 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Pair"
+          ]
         },
         "node_tag": "model",
         "occurrences": [
@@ -197,8 +125,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "tuple_value_type",
         "semantic_type": {
-          "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Pair"
+          ]
         }
       },
       {
@@ -208,8 +141,13 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Swap"
+          ]
         },
         "node_tag": "model",
         "occurrences": [
@@ -226,8 +164,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "tuple_value_type",
         "semantic_type": {
-          "digest": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Swap"
+          ]
         }
       },
       {
@@ -237,8 +180,13 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "6cb9af1911fc38c0360147c7bfbf08ebfab6ee35e9f2577d073ab49bba409f03",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Nest"
+          ]
         },
         "node_tag": "model",
         "occurrences": [
@@ -255,8 +203,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "tuple_value_type",
         "semantic_type": {
-          "digest": "6cb9af1911fc38c0360147c7bfbf08ebfab6ee35e9f2577d073ab49bba409f03",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Nest"
+          ]
         }
       },
       {
@@ -266,8 +219,13 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Shape"
+          ]
         },
         "node_tag": "model",
         "occurrences": [
@@ -284,8 +242,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "variant_type",
         "semantic_type": {
-          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Shape"
+          ]
         }
       },
       {
@@ -295,8 +258,13 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Color"
+          ]
         },
         "node_tag": "model",
         "occurrences": [
@@ -313,8 +281,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "variant_type",
         "semantic_type": {
-          "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Color"
+          ]
         }
       },
       {
@@ -324,8 +297,13 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "887b32c65277454f77bf672ea95a9cfddb6ad4d18b872f02148f156e873c44a2",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Cell"
+          ]
         },
         "node_tag": "model",
         "occurrences": [
@@ -342,8 +320,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "tuple_value_type",
         "semantic_type": {
-          "digest": "887b32c65277454f77bf672ea95a9cfddb6ad4d18b872f02148f156e873c44a2",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Cell"
+          ]
         }
       },
       {
@@ -353,8 +336,13 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/List"
+          ]
         },
         "node_tag": "model",
         "occurrences": [
@@ -371,8 +359,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "variant_type",
         "semantic_type": {
-          "digest": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/List"
+          ]
         }
       },
       {
@@ -382,8 +375,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -395,8 +392,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "boolean",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
@@ -406,8 +407,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -419,8 +424,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "integer",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -430,8 +439,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "text"
+          ]
         },
         "node_tag": "scalar_type",
         "occurrences": [
@@ -443,24 +456,44 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "text",
         "semantic_type": {
-          "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "text"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
           },
           "value": true,
           "value_kind": "boolean"
         },
         "dependencies": [],
         "node_id": {
-          "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -472,24 +505,45 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "value": "0",
           "value_kind": "integer"
         },
         "dependencies": [],
         "node_id": {
-          "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "0"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -501,24 +555,45 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "value": "1",
           "value_kind": "integer"
         },
         "dependencies": [],
         "node_id": {
-          "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "1"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -530,24 +605,45 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "value": "2",
           "value_kind": "integer"
         },
         "dependencies": [],
         "node_id": {
-          "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "literal",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "2"
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -559,8 +655,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "literal",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -572,8 +672,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "pp",
                 "value_kind": "text"
@@ -585,8 +689,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "0",
                 "value_kind": "integer"
@@ -597,8 +705,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "pp",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "0",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "tuple_value_type",
+                "ix://acme/shapes/Pair"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -610,8 +751,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Pair"
+          ]
         }
       },
       {
@@ -623,8 +769,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "ps",
                 "value_kind": "text"
@@ -636,8 +786,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "1",
                 "value_kind": "integer"
@@ -648,8 +802,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "b4f1a9bc733e81180a1e5a52949ae7d4c5fc1b111bbfef1eb704a6fce835cc93",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "ps",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "1",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/Shape"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -661,8 +848,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Shape"
+          ]
         }
       },
       {
@@ -674,8 +866,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "bf",
                 "value_kind": "text"
@@ -687,8 +883,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "2",
                 "value_kind": "integer"
@@ -699,8 +899,40 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "6079f748d67b01a942928e5d43a72a300b5b188c8a098b5c31177a23cf1e5e50",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "bf",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "2",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -712,8 +944,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
@@ -725,8 +961,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "bq",
                 "value_kind": "text"
@@ -738,8 +978,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "2",
                 "value_kind": "integer"
@@ -750,8 +994,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "e8fb2661007246ad812224853516472fa8e3bed49e2168865b8f9d4acaf1f2e1",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "bq",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "2",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "tuple_value_type",
+                "ix://acme/shapes/Pair"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -763,8 +1040,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Pair"
+          ]
         }
       },
       {
@@ -776,8 +1058,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "pcell",
                 "value_kind": "text"
@@ -789,8 +1075,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "0",
                 "value_kind": "integer"
@@ -801,8 +1091,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "e8f313a0868f5516512cf1a7bb00aecf573300807b8a9009a89de45c23d8e051",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "pcell",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "0",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "tuple_value_type",
+                "ix://acme/shapes/Cell"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -814,8 +1137,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "887b32c65277454f77bf672ea95a9cfddb6ad4d18b872f02148f156e873c44a2",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "tuple_value_type",
+            "ix://acme/shapes/Cell"
+          ]
         }
       },
       {
@@ -827,8 +1155,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "pl1",
                 "value_kind": "text"
@@ -840,8 +1172,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "0",
                 "value_kind": "integer"
@@ -852,8 +1188,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "096d226dd1d145034b5902a46a721b40fe602d99b51769d4ad18e666f8439059",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "pl1",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "0",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/List"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -865,8 +1234,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/List"
+          ]
         }
       },
       {
@@ -878,8 +1252,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "pl2",
                 "value_kind": "text"
@@ -891,8 +1269,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "1",
                 "value_kind": "integer"
@@ -903,8 +1285,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "714049cde40c3daa10e66a67fbb5c102786f7607f11afcfbb5ef26f05fcc670d",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "pl2",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "1",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/List"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -916,8 +1331,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/List"
+          ]
         }
       },
       {
@@ -929,8 +1349,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "pc1",
                 "value_kind": "text"
@@ -942,8 +1366,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "0",
                 "value_kind": "integer"
@@ -954,8 +1382,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "c5feaacf8adf6cf744ad4edc8ad579dfda398c16f9a2b2184f0e7e4d5c3d8a67",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "pc1",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "0",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/Color"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -967,8 +1428,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Color"
+          ]
         }
       },
       {
@@ -980,8 +1446,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "pc2",
                 "value_kind": "text"
@@ -993,8 +1463,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "1",
                 "value_kind": "integer"
@@ -1005,8 +1479,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "babb4d17c0628b17af76e9335757dc2bd42ed53262c1581d655e8412d875da98",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "pc2",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "1",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/Color"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -1018,8 +1525,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Color"
+          ]
         }
       },
       {
@@ -1031,8 +1543,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "pshape1",
                 "value_kind": "text"
@@ -1044,8 +1560,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "0",
                 "value_kind": "integer"
@@ -1056,8 +1576,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "d71da0484abd839a708480abf5f722f01cce85eb0b1fdc7306423a98ba0ae305",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "pshape1",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "0",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/Shape"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -1069,8 +1622,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Shape"
+          ]
         }
       },
       {
@@ -1082,8 +1640,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
                 },
                 "value": "pshape2",
                 "value_kind": "text"
@@ -1095,8 +1657,12 @@
               "value": {
                 "term": "literal",
                 "type": {
-                  "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-                  "domain": "quire.checked-semantic-node/v1"
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
                 },
                 "value": "1",
                 "value_kind": "integer"
@@ -1107,8 +1673,41 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "86af6a8f52d222c86cac9266bb4438fdf3b0fc778d120f6eb48e2c95025493e2",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "parameter",
+            "name",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "text"
+              ]
+            },
+            "pshape2",
+            "level",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            },
+            "1",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/Shape"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -1120,8 +1719,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "parameter",
         "semantic_type": {
-          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Shape"
+          ]
         }
       },
       {
@@ -1140,8 +1744,22 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "c38e0b9349a1974bc271b1fd67f9833a9c7daeb938ce22b2ea7aa60bcc4e927e",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "union_value",
+            "Empty",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/Shape"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -1153,8 +1771,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "union_value",
         "semantic_type": {
-          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Shape"
+          ]
         }
       },
       {
@@ -1167,8 +1790,20 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "literal",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "boolean"
+                          ]
+                        }
+                      ]
                     },
                     "term": "reference"
                   }
@@ -1181,13 +1816,55 @@
         },
         "dependencies": [
           {
-            "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "boolean"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "96ea484476eab7c369e23cb11ccb8243bd20b8bda74d535bc646424096a76a1d",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "union_value",
+            "Flag",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "boolean"
+                  ]
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/Shape"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -1199,8 +1876,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "union_value",
         "semantic_type": {
-          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Shape"
+          ]
         }
       },
       {
@@ -1213,8 +1895,41 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "parameter",
+                        "name",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "text"
+                          ]
+                        },
+                        "pp",
+                        "level",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        },
+                        "0",
+                        {
+                          "ordinal": 0,
+                          "package": "acme/shapes",
+                          "path": [
+                            "model",
+                            "tuple_value_type",
+                            "ix://acme/shapes/Pair"
+                          ]
+                        }
+                      ]
                     },
                     "term": "reference"
                   }
@@ -1227,13 +1942,97 @@
         },
         "dependencies": [
           {
-            "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pp",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "b9ea1540ec12b80405c5ea76a6102287fab3b801c8f2215292bfa744ccfea55b",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "union_value",
+            "Both",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pp",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "tuple_value_type",
+                    "ix://acme/shapes/Pair"
+                  ]
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/Shape"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -1245,8 +2044,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "union_value",
         "semantic_type": {
-          "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Shape"
+          ]
         }
       },
       {
@@ -1265,8 +2069,22 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "cf82e5577ce3001598614a326071d866a62d6c30d39713a574fc70604d96acce",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "union_value",
+            "Nil",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/List"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -1278,8 +2096,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "union_value",
         "semantic_type": {
-          "digest": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/List"
+          ]
         }
       },
       {
@@ -1292,8 +2115,41 @@
                 "members": [
                   {
                     "target": {
-                      "digest": "e8f313a0868f5516512cf1a7bb00aecf573300807b8a9009a89de45c23d8e051",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "parameter",
+                        "name",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "text"
+                          ]
+                        },
+                        "pcell",
+                        "level",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        },
+                        "0",
+                        {
+                          "ordinal": 0,
+                          "package": "acme/shapes",
+                          "path": [
+                            "model",
+                            "tuple_value_type",
+                            "ix://acme/shapes/Cell"
+                          ]
+                        }
+                      ]
                     },
                     "term": "reference"
                   }
@@ -1306,13 +2162,97 @@
         },
         "dependencies": [
           {
-            "digest": "e8f313a0868f5516512cf1a7bb00aecf573300807b8a9009a89de45c23d8e051",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pcell",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Cell"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "8196c67a49dfda3ad2c708f0bf202d5c7728598befd0389b84e07b1f941db540",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "union_value",
+            "Cons",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pcell",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "tuple_value_type",
+                    "ix://acme/shapes/Cell"
+                  ]
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/List"
+              ]
+            }
+          ]
         },
         "node_tag": "value",
         "occurrences": [
@@ -1324,39 +2264,60 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "union_value",
         "semantic_type": {
-          "digest": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/List"
+          ]
         }
       },
       {
         "body": {
           "term": "literal",
           "type": {
-            "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Color"
+            ]
           },
           "value": "Red",
           "value_kind": "enum"
         },
         "dependencies": [
           {
-            "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Color"
+            ]
           }
         ],
         "node_id": {
-          "digest": "c5b4741ba77f2c9ae90fbfff890638bcf4ef6400574dc5dece37683300ebcc74",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "value",
+            "enum_value",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "variant_type",
+                "ix://acme/shapes/Color"
+              ]
+            },
+            "Red"
+          ]
         },
         "node_tag": "value",
-        "nominal_identity_preimage": {
-          "case": "Red",
-          "declaration_node_id": {
-            "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
-            "domain": "quire.checked-semantic-node/v1"
-          },
-          "version": "quire.enum-member-node/v1"
-        },
         "occurrences": [
           {
             "ordinal": 0,
@@ -1366,8 +2327,13 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "enum_value",
         "semantic_type": {
-          "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "variant_type",
+            "ix://acme/shapes/Color"
+          ]
         }
       },
       {
@@ -1375,8 +2341,41 @@
           "arguments": [
             {
               "target": {
-                "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "pp",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "0",
+                  {
+                    "ordinal": 0,
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "tuple_value_type",
+                      "ix://acme/shapes/Pair"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             }
@@ -1387,8 +2386,13 @@
             "leaves": [],
             "member": {
               "declaration": {
-                "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
               },
               "kind": "position",
               "position": 0
@@ -1397,24 +2401,126 @@
           },
           "operator": "query",
           "result_type": {
-            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "tuple_value_type",
+              "ix://acme/shapes/Pair"
+            ]
           },
           {
-            "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pp",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "a16e36344e60b6a2bccd6efc64e42a428420a93b55174669a2f0390eb11912a8",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "query",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pp",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "tuple_value_type",
+                    "ix://acme/shapes/Pair"
+                  ]
+                }
+              ]
+            },
+            "quire.op.tuple.project",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "tuple_value_type",
+                "ix://acme/shapes/Pair"
+              ]
+            },
+            "query",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -1426,8 +2532,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "query",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
@@ -1435,8 +2545,41 @@
           "arguments": [
             {
               "target": {
-                "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "pp",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "0",
+                  {
+                    "ordinal": 0,
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "tuple_value_type",
+                      "ix://acme/shapes/Pair"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             }
@@ -1447,8 +2590,13 @@
             "leaves": [],
             "member": {
               "declaration": {
-                "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
               },
               "kind": "position",
               "position": 1
@@ -1457,24 +2605,126 @@
           },
           "operator": "query",
           "result_type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "tuple_value_type",
+              "ix://acme/shapes/Pair"
+            ]
           },
           {
-            "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pp",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "2daf200a9b18a755955dd36af4bd65d439fe8ab3d223fa6d61d6470e7f37c88d",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "query",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pp",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "tuple_value_type",
+                    "ix://acme/shapes/Pair"
+                  ]
+                }
+              ]
+            },
+            "quire.op.tuple.project",
+            {
+              "ordinal": 0,
+              "package": "acme/shapes",
+              "path": [
+                "model",
+                "tuple_value_type",
+                "ix://acme/shapes/Pair"
+              ]
+            },
+            "query",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -1486,8 +2736,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "query",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -1495,8 +2749,41 @@
           "arguments": [
             {
               "target": {
-                "digest": "b4f1a9bc733e81180a1e5a52949ae7d4c5fc1b111bbfef1eb704a6fce835cc93",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "ps",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "1",
+                  {
+                    "ordinal": 0,
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "variant_type",
+                      "ix://acme/shapes/Shape"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             },
@@ -1509,8 +2796,41 @@
                     "members": [
                       {
                         "target": {
-                          "digest": "e8fb2661007246ad812224853516472fa8e3bed49e2168865b8f9d4acaf1f2e1",
-                          "domain": "quire.checked-semantic-node/v1"
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "value",
+                            "parameter",
+                            "name",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "text"
+                              ]
+                            },
+                            "bq",
+                            "level",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "integer"
+                              ]
+                            },
+                            "2",
+                            {
+                              "ordinal": 0,
+                              "package": "acme/shapes",
+                              "path": [
+                                "model",
+                                "tuple_value_type",
+                                "ix://acme/shapes/Pair"
+                              ]
+                            }
+                          ]
                         },
                         "term": "reference"
                       }
@@ -1519,8 +2839,21 @@
                   },
                   {
                     "target": {
-                      "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "literal",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        },
+                        "1"
+                      ]
                     },
                     "term": "reference"
                   }
@@ -1539,8 +2872,21 @@
                   },
                   {
                     "target": {
-                      "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "literal",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        },
+                        "0"
+                      ]
                     },
                     "term": "reference"
                   }
@@ -1557,8 +2903,40 @@
                     "members": [
                       {
                         "target": {
-                          "digest": "6079f748d67b01a942928e5d43a72a300b5b188c8a098b5c31177a23cf1e5e50",
-                          "domain": "quire.checked-semantic-node/v1"
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "value",
+                            "parameter",
+                            "name",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "text"
+                              ]
+                            },
+                            "bf",
+                            "level",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "integer"
+                              ]
+                            },
+                            "2",
+                            {
+                              "ordinal": 0,
+                              "package": "example",
+                              "path": [
+                                "scalar_type",
+                                "boolean"
+                              ]
+                            }
+                          ]
                         },
                         "term": "reference"
                       }
@@ -1567,8 +2945,21 @@
                   },
                   {
                     "target": {
-                      "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
-                      "domain": "quire.checked-semantic-node/v1"
+                      "ordinal": 0,
+                      "package": "example",
+                      "path": [
+                        "value",
+                        "literal",
+                        {
+                          "ordinal": 0,
+                          "package": "example",
+                          "path": [
+                            "scalar_type",
+                            "integer"
+                          ]
+                        },
+                        "2"
+                      ]
                     },
                     "term": "reference"
                   }
@@ -1586,40 +2977,359 @@
           },
           "operator": "case",
           "result_type": {
-            "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0"
+            ]
           },
           {
-            "digest": "6079f748d67b01a942928e5d43a72a300b5b188c8a098b5c31177a23cf1e5e50",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
           },
           {
-            "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2"
+            ]
           },
           {
-            "digest": "b4f1a9bc733e81180a1e5a52949ae7d4c5fc1b111bbfef1eb704a6fce835cc93",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "bf",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "boolean"
+                ]
+              }
+            ]
           },
           {
-            "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "bq",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
+              }
+            ]
           },
           {
-            "digest": "e8fb2661007246ad812224853516472fa8e3bed49e2168865b8f9d4acaf1f2e1",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "ps",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Shape"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "4ea005a164150dcb6137a3811a691b4d6f53d7f45a7faf46e38f0aae63ec7c11",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "case",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "ps",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "1",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "variant_type",
+                    "ix://acme/shapes/Shape"
+                  ]
+                }
+              ]
+            },
+            "Both",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "bq",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "2",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "tuple_value_type",
+                    "ix://acme/shapes/Pair"
+                  ]
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "1"
+              ]
+            },
+            "Empty",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0"
+              ]
+            },
+            "Flag",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "bf",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "2",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "boolean"
+                  ]
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "literal",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "2"
+              ]
+            },
+            "quire.op.control.case",
+            "case",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "integer"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -1631,8 +3341,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "case",
         "semantic_type": {
-          "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "integer"
+          ]
         }
       },
       {
@@ -1640,15 +3354,81 @@
           "arguments": [
             {
               "target": {
-                "digest": "d71da0484abd839a708480abf5f722f01cce85eb0b1fdc7306423a98ba0ae305",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "pshape1",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "0",
+                  {
+                    "ordinal": 0,
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "variant_type",
+                      "ix://acme/shapes/Shape"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             },
             {
               "target": {
-                "digest": "86af6a8f52d222c86cac9266bb4438fdf3b0fc778d120f6eb48e2c95025493e2",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "pshape2",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "1",
+                  {
+                    "ordinal": 0,
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "variant_type",
+                      "ix://acme/shapes/Shape"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             }
@@ -1662,24 +3442,182 @@
           },
           "operator": "binary",
           "result_type": {
-            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "86af6a8f52d222c86cac9266bb4438fdf3b0fc778d120f6eb48e2c95025493e2",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pshape1",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Shape"
+                ]
+              }
+            ]
           },
           {
-            "digest": "d71da0484abd839a708480abf5f722f01cce85eb0b1fdc7306423a98ba0ae305",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pshape2",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Shape"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "407a2cf949f9c76736c81d42181422148418eecfe15ea7e537735afef4e20cbc",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pshape1",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "variant_type",
+                    "ix://acme/shapes/Shape"
+                  ]
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pshape2",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "1",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "variant_type",
+                    "ix://acme/shapes/Shape"
+                  ]
+                }
+              ]
+            },
+            "quire.op.structural.eq",
+            "binary",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -1691,8 +3629,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "binary",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
@@ -1700,15 +3642,81 @@
           "arguments": [
             {
               "target": {
-                "digest": "096d226dd1d145034b5902a46a721b40fe602d99b51769d4ad18e666f8439059",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "pl1",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "0",
+                  {
+                    "ordinal": 0,
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "variant_type",
+                      "ix://acme/shapes/List"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             },
             {
               "target": {
-                "digest": "714049cde40c3daa10e66a67fbb5c102786f7607f11afcfbb5ef26f05fcc670d",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "pl2",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "1",
+                  {
+                    "ordinal": 0,
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "variant_type",
+                      "ix://acme/shapes/List"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             }
@@ -1722,24 +3730,182 @@
           },
           "operator": "binary",
           "result_type": {
-            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "096d226dd1d145034b5902a46a721b40fe602d99b51769d4ad18e666f8439059",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pl1",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/List"
+                ]
+              }
+            ]
           },
           {
-            "digest": "714049cde40c3daa10e66a67fbb5c102786f7607f11afcfbb5ef26f05fcc670d",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pl2",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/List"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "e19d17a4ad91e7dc9caee0c06a59b959d80492948284ab578be428cf7c6d9a99",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pl1",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "variant_type",
+                    "ix://acme/shapes/List"
+                  ]
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pl2",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "1",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "variant_type",
+                    "ix://acme/shapes/List"
+                  ]
+                }
+              ]
+            },
+            "quire.op.structural.eq",
+            "binary",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -1751,8 +3917,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "binary",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
@@ -1760,15 +3930,81 @@
           "arguments": [
             {
               "target": {
-                "digest": "c5feaacf8adf6cf744ad4edc8ad579dfda398c16f9a2b2184f0e7e4d5c3d8a67",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "pc1",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "0",
+                  {
+                    "ordinal": 0,
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "variant_type",
+                      "ix://acme/shapes/Color"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             },
             {
               "target": {
-                "digest": "babb4d17c0628b17af76e9335757dc2bd42ed53262c1581d655e8412d875da98",
-                "domain": "quire.checked-semantic-node/v1"
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "value",
+                  "parameter",
+                  "name",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "text"
+                    ]
+                  },
+                  "pc2",
+                  "level",
+                  {
+                    "ordinal": 0,
+                    "package": "example",
+                    "path": [
+                      "scalar_type",
+                      "integer"
+                    ]
+                  },
+                  "1",
+                  {
+                    "ordinal": 0,
+                    "package": "acme/shapes",
+                    "path": [
+                      "model",
+                      "variant_type",
+                      "ix://acme/shapes/Color"
+                    ]
+                  }
+                ]
               },
               "term": "reference"
             }
@@ -1782,24 +4018,182 @@
           },
           "operator": "binary",
           "result_type": {
-            "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
           },
           "term": "application"
         },
         "dependencies": [
           {
-            "digest": "babb4d17c0628b17af76e9335757dc2bd42ed53262c1581d655e8412d875da98",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pc1",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Color"
+                ]
+              }
+            ]
           },
           {
-            "digest": "c5feaacf8adf6cf744ad4edc8ad579dfda398c16f9a2b2184f0e7e4d5c3d8a67",
-            "domain": "quire.checked-semantic-node/v1"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pc2",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Color"
+                ]
+              }
+            ]
           }
         ],
         "node_id": {
-          "digest": "0bfeb08ccdfdbeac96cb45d9c578ad4b4d73f1f6d4ac1a3966b24bc271754d1f",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "expression",
+            "binary",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pc1",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "0",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "variant_type",
+                    "ix://acme/shapes/Color"
+                  ]
+                }
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "value",
+                "parameter",
+                "name",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "text"
+                  ]
+                },
+                "pc2",
+                "level",
+                {
+                  "ordinal": 0,
+                  "package": "example",
+                  "path": [
+                    "scalar_type",
+                    "integer"
+                  ]
+                },
+                "1",
+                {
+                  "ordinal": 0,
+                  "package": "acme/shapes",
+                  "path": [
+                    "model",
+                    "variant_type",
+                    "ix://acme/shapes/Color"
+                  ]
+                }
+              ]
+            },
+            "quire.op.enum.eq",
+            "binary",
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            }
+          ]
         },
         "node_tag": "expression",
         "occurrences": [
@@ -1811,8 +4205,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "binary",
         "semantic_type": {
-          "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "boolean"
+          ]
         }
       },
       {
@@ -1822,8 +4220,12 @@
         },
         "dependencies": [],
         "node_id": {
-          "digest": "0bc6a49167dd5c9c205bfae94d177e5e83f34a6d658d79b11e1b544e3d54bbf1",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "model_root"
+          ]
         },
         "node_tag": "model",
         "occurrences": [
@@ -1839,8 +4241,12 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "model_root",
         "semantic_type": {
-          "digest": "0bc6a49167dd5c9c205bfae94d177e5e83f34a6d658d79b11e1b544e3d54bbf1",
-          "domain": "quire.checked-semantic-node/v1"
+          "ordinal": 0,
+          "package": "acme/shapes",
+          "path": [
+            "model",
+            "model_root"
+          ]
         }
       }
     ]
@@ -1848,8 +4254,13 @@
   "source_map": [
     {
       "node_id": {
-        "digest": "629c05077f693e4fceeb1c5cd304104dce376c0d9c1796a169978bdb2cec9344",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "acme/shapes",
+        "path": [
+          "model",
+          "tuple_value_type",
+          "ix://acme/shapes/Pair"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1866,8 +4277,13 @@
     },
     {
       "node_id": {
-        "digest": "1457994a48571fe11059dcbbe81a3e54a0ef0e14a4b917a11d72a9de6815fb54",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "acme/shapes",
+        "path": [
+          "model",
+          "tuple_value_type",
+          "ix://acme/shapes/Swap"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1884,8 +4300,13 @@
     },
     {
       "node_id": {
-        "digest": "6cb9af1911fc38c0360147c7bfbf08ebfab6ee35e9f2577d073ab49bba409f03",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "acme/shapes",
+        "path": [
+          "model",
+          "tuple_value_type",
+          "ix://acme/shapes/Nest"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1902,8 +4323,13 @@
     },
     {
       "node_id": {
-        "digest": "2f7b92a6733029cca709d0d5c4d850c876ac0fb542ef676992e9f5273095ad46",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "acme/shapes",
+        "path": [
+          "model",
+          "variant_type",
+          "ix://acme/shapes/Shape"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1920,8 +4346,13 @@
     },
     {
       "node_id": {
-        "digest": "3afe2c468acfb1b0d17dcbef22fe66f12b1f93a2024131110bc97a1ad71452e1",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "acme/shapes",
+        "path": [
+          "model",
+          "variant_type",
+          "ix://acme/shapes/Color"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1938,8 +4369,13 @@
     },
     {
       "node_id": {
-        "digest": "887b32c65277454f77bf672ea95a9cfddb6ad4d18b872f02148f156e873c44a2",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "acme/shapes",
+        "path": [
+          "model",
+          "tuple_value_type",
+          "ix://acme/shapes/Cell"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1956,8 +4392,13 @@
     },
     {
       "node_id": {
-        "digest": "c1f26f0a2b11f98b1c3418cd86af73c493d03e24c0e4bfce6ec8c930f0027442",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "acme/shapes",
+        "path": [
+          "model",
+          "variant_type",
+          "ix://acme/shapes/List"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1974,8 +4415,12 @@
     },
     {
       "node_id": {
-        "digest": "9964390677844ad66b781babdbfa95933bc2b16ef1e86f67005966b77e6db3aa",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "boolean"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -1992,8 +4437,12 @@
     },
     {
       "node_id": {
-        "digest": "07f6dca966d22bde13d3bb198f12610e57d8e1e04d0476bbab03f405d2b04e32",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "integer"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2010,8 +4459,12 @@
     },
     {
       "node_id": {
-        "digest": "0062ac9eee212061689152b5b0d62c5b3a6ca69ce83c1897b8c0624837ab5659",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "text"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2028,8 +4481,20 @@
     },
     {
       "node_id": {
-        "digest": "03a8898fec9612e8a5faac4927eef10568cd62179e71acc17c86eddb12a792e9",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "literal",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2046,8 +4511,21 @@
     },
     {
       "node_id": {
-        "digest": "22fec75bfbe7f7c5d20d19818c4d7c41bf1ebaf9a94569374228ba9a13376779",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "literal",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "0"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2064,8 +4542,21 @@
     },
     {
       "node_id": {
-        "digest": "833ceccc8eed0661d0edc4b5f1ccb5e6df51da22a979423327b2aeba83bb8366",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "literal",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "1"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2082,8 +4573,21 @@
     },
     {
       "node_id": {
-        "digest": "dc40fc497d27404e8730953ab54eb950c01883ca7a4bb47f609ebf98002760dc",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "literal",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "2"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2100,8 +4604,41 @@
     },
     {
       "node_id": {
-        "digest": "28b6e81e26777db5d4d33946eabad05fc929e334b6b90329f34d9936988e0a4f",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "pp",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "0",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "tuple_value_type",
+              "ix://acme/shapes/Pair"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2118,8 +4655,41 @@
     },
     {
       "node_id": {
-        "digest": "b4f1a9bc733e81180a1e5a52949ae7d4c5fc1b111bbfef1eb704a6fce835cc93",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "ps",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "1",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Shape"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2136,8 +4706,40 @@
     },
     {
       "node_id": {
-        "digest": "6079f748d67b01a942928e5d43a72a300b5b188c8a098b5c31177a23cf1e5e50",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "bf",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "2",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2154,8 +4756,41 @@
     },
     {
       "node_id": {
-        "digest": "e8fb2661007246ad812224853516472fa8e3bed49e2168865b8f9d4acaf1f2e1",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "bq",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "2",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "tuple_value_type",
+              "ix://acme/shapes/Pair"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2172,8 +4807,41 @@
     },
     {
       "node_id": {
-        "digest": "e8f313a0868f5516512cf1a7bb00aecf573300807b8a9009a89de45c23d8e051",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "pcell",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "0",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "tuple_value_type",
+              "ix://acme/shapes/Cell"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2190,8 +4858,41 @@
     },
     {
       "node_id": {
-        "digest": "096d226dd1d145034b5902a46a721b40fe602d99b51769d4ad18e666f8439059",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "pl1",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "0",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/List"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2208,8 +4909,41 @@
     },
     {
       "node_id": {
-        "digest": "714049cde40c3daa10e66a67fbb5c102786f7607f11afcfbb5ef26f05fcc670d",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "pl2",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "1",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/List"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2226,8 +4960,41 @@
     },
     {
       "node_id": {
-        "digest": "c5feaacf8adf6cf744ad4edc8ad579dfda398c16f9a2b2184f0e7e4d5c3d8a67",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "pc1",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "0",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Color"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2244,8 +5011,41 @@
     },
     {
       "node_id": {
-        "digest": "babb4d17c0628b17af76e9335757dc2bd42ed53262c1581d655e8412d875da98",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "pc2",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "1",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Color"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2262,8 +5062,41 @@
     },
     {
       "node_id": {
-        "digest": "d71da0484abd839a708480abf5f722f01cce85eb0b1fdc7306423a98ba0ae305",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "pshape1",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "0",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Shape"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2280,8 +5113,41 @@
     },
     {
       "node_id": {
-        "digest": "86af6a8f52d222c86cac9266bb4438fdf3b0fc778d120f6eb48e2c95025493e2",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "parameter",
+          "name",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "text"
+            ]
+          },
+          "pshape2",
+          "level",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          },
+          "1",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Shape"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2298,8 +5164,22 @@
     },
     {
       "node_id": {
-        "digest": "c38e0b9349a1974bc271b1fd67f9833a9c7daeb938ce22b2ea7aa60bcc4e927e",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "union_value",
+          "Empty",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Shape"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2316,8 +5196,38 @@
     },
     {
       "node_id": {
-        "digest": "96ea484476eab7c369e23cb11ccb8243bd20b8bda74d535bc646424096a76a1d",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "union_value",
+          "Flag",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "boolean"
+                ]
+              }
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Shape"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2334,8 +5244,59 @@
     },
     {
       "node_id": {
-        "digest": "b9ea1540ec12b80405c5ea76a6102287fab3b801c8f2215292bfa744ccfea55b",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "union_value",
+          "Both",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pp",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
+              }
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Shape"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2352,8 +5313,22 @@
     },
     {
       "node_id": {
-        "digest": "cf82e5577ce3001598614a326071d866a62d6c30d39713a574fc70604d96acce",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "union_value",
+          "Nil",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/List"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2370,8 +5345,59 @@
     },
     {
       "node_id": {
-        "digest": "8196c67a49dfda3ad2c708f0bf202d5c7728598befd0389b84e07b1f941db540",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "union_value",
+          "Cons",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pcell",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Cell"
+                ]
+              }
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/List"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2388,8 +5414,22 @@
     },
     {
       "node_id": {
-        "digest": "c5b4741ba77f2c9ae90fbfff890638bcf4ef6400574dc5dece37683300ebcc74",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "value",
+          "enum_value",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "variant_type",
+              "ix://acme/shapes/Color"
+            ]
+          },
+          "Red"
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2406,8 +5446,68 @@
     },
     {
       "node_id": {
-        "digest": "a16e36344e60b6a2bccd6efc64e42a428420a93b55174669a2f0390eb11912a8",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "query",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pp",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
+              }
+            ]
+          },
+          "quire.op.tuple.project",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "tuple_value_type",
+              "ix://acme/shapes/Pair"
+            ]
+          },
+          "query",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2424,8 +5524,68 @@
     },
     {
       "node_id": {
-        "digest": "2daf200a9b18a755955dd36af4bd65d439fe8ab3d223fa6d61d6470e7f37c88d",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "query",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pp",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
+              }
+            ]
+          },
+          "quire.op.tuple.project",
+          {
+            "ordinal": 0,
+            "package": "acme/shapes",
+            "path": [
+              "model",
+              "tuple_value_type",
+              "ix://acme/shapes/Pair"
+            ]
+          },
+          "query",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2442,8 +5602,186 @@
     },
     {
       "node_id": {
-        "digest": "4ea005a164150dcb6137a3811a691b4d6f53d7f45a7faf46e38f0aae63ec7c11",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "case",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "ps",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Shape"
+                ]
+              }
+            ]
+          },
+          "Both",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "bq",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "tuple_value_type",
+                  "ix://acme/shapes/Pair"
+                ]
+              }
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1"
+            ]
+          },
+          "Empty",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0"
+            ]
+          },
+          "Flag",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "bf",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "boolean"
+                ]
+              }
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "literal",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "2"
+            ]
+          },
+          "quire.op.control.case",
+          "case",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "integer"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2460,8 +5798,96 @@
     },
     {
       "node_id": {
-        "digest": "407a2cf949f9c76736c81d42181422148418eecfe15ea7e537735afef4e20cbc",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "binary",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pshape1",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Shape"
+                ]
+              }
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pshape2",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Shape"
+                ]
+              }
+            ]
+          },
+          "quire.op.structural.eq",
+          "binary",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2478,8 +5904,96 @@
     },
     {
       "node_id": {
-        "digest": "e19d17a4ad91e7dc9caee0c06a59b959d80492948284ab578be428cf7c6d9a99",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "binary",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pl1",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/List"
+                ]
+              }
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pl2",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/List"
+                ]
+              }
+            ]
+          },
+          "quire.op.structural.eq",
+          "binary",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2496,8 +6010,96 @@
     },
     {
       "node_id": {
-        "digest": "0bfeb08ccdfdbeac96cb45d9c578ad4b4d73f1f6d4ac1a3966b24bc271754d1f",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "expression",
+          "binary",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pc1",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "0",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Color"
+                ]
+              }
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "value",
+              "parameter",
+              "name",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "text"
+                ]
+              },
+              "pc2",
+              "level",
+              {
+                "ordinal": 0,
+                "package": "example",
+                "path": [
+                  "scalar_type",
+                  "integer"
+                ]
+              },
+              "1",
+              {
+                "ordinal": 0,
+                "package": "acme/shapes",
+                "path": [
+                  "model",
+                  "variant_type",
+                  "ix://acme/shapes/Color"
+                ]
+              }
+            ]
+          },
+          "quire.op.enum.eq",
+          "binary",
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "scalar_type",
+              "boolean"
+            ]
+          }
+        ]
       },
       "ordinal": 0,
       "regions": [
@@ -2514,8 +6116,12 @@
     },
     {
       "node_id": {
-        "digest": "0bc6a49167dd5c9c205bfae94d177e5e83f34a6d658d79b11e1b544e3d54bbf1",
-        "domain": "quire.checked-semantic-node/v1"
+        "ordinal": 0,
+        "package": "acme/shapes",
+        "path": [
+          "model",
+          "model_root"
+        ]
       },
       "ordinal": 0,
       "regions": [

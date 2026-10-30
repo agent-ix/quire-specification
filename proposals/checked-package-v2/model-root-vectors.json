@@ -1,6 +1,6 @@
 {
   "base": "fixtures/positive-all-families.json",
-  "note": "RFC 6902 patches applied to the base; each patch ends by replacing package_id with the recomputed package id. A schema of invalid fails the V2 schema and a reader refuses it malformed_wire at the locus; a schema of valid passes it. Outcomes are the first reader refusal. BLOCKED-BY STD-583 (owner: planner titan:QSL:plan): package_id",
+  "note": "RFC 6902 patches applied to the base. A schema of invalid fails the V2 schema and a reader refuses it malformed_wire at the locus; a schema of valid passes it. Outcomes are the first reader refusal.",
   "vectors": [
     {
       "id": "MR-00",
@@ -23,8 +23,12 @@
             },
             "dependencies": [],
             "node_id": {
-              "domain": "quire.checked-semantic-node/v1",
-              "digest": "33c1a40235a4a0904a3af6be1b53182b5032e145c2d4424f6e86d4853f61bd4c"
+              "package": "acme/unselected",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
             },
             "node_tag": "model",
             "occurrences": [
@@ -40,8 +44,12 @@
             "schema_version": "quire.checked-semantic-graph/v2",
             "semantic_form": "model_root",
             "semantic_type": {
-              "domain": "quire.checked-semantic-node/v1",
-              "digest": "33c1a40235a4a0904a3af6be1b53182b5032e145c2d4424f6e86d4853f61bd4c"
+              "package": "acme/unselected",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
             }
           }
         },
@@ -50,8 +58,12 @@
           "path": "/source_map/-",
           "value": {
             "node_id": {
-              "domain": "quire.checked-semantic-node/v1",
-              "digest": "33c1a40235a4a0904a3af6be1b53182b5032e145c2d4424f6e86d4853f61bd4c"
+              "package": "acme/unselected",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
             },
             "ordinal": 0,
             "regions": [
@@ -66,11 +78,6 @@
             ],
             "role": "generated"
           }
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "54e5c44541f967cd1f840d437611463a4cb5a4c6f0ca83c29925feaa1c9086c9"
         }
       ],
       "schema": "valid",
@@ -92,8 +99,12 @@
             },
             "dependencies": [],
             "node_id": {
-              "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
             },
             "node_tag": "model",
             "occurrences": [
@@ -109,15 +120,14 @@
             "schema_version": "quire.checked-semantic-graph/v2",
             "semantic_form": "model_root",
             "semantic_type": {
-              "digest": "dd19b24c52507cc463d24a83f6f43c7daefed55b775bb0e1895c0d58c3f6e3b0",
-              "domain": "quire.checked-semantic-node/v1"
+              "package": "acme/orders",
+              "path": [
+                "model",
+                "model_root"
+              ],
+              "ordinal": 0
             }
           }
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "279eb05f5fef998b70b2c2d22ece0018b5d7fad307bcbacb00c4645916c15612"
         }
       ],
       "schema": "valid",
@@ -131,11 +141,6 @@
         {
           "op": "remove",
           "path": "/semantic_graph/nodes/46/owner"
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "7203328a3f4d39ddf05950a743ed7dc238ec3ee96a1e1fb38d7adcfc68dfa365"
         }
       ],
       "schema": "invalid",
@@ -150,11 +155,6 @@
           "op": "add",
           "path": "/semantic_graph/nodes/46/owner/version",
           "value": "1"
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "a3f5dc016122d5a70d74a8d0a03624946bd0feb2b299f72cfcf8a409e626bfb2"
         }
       ],
       "schema": "invalid",
@@ -172,11 +172,6 @@
             "identity": "acme/orders",
             "kind": "model_root"
           }
-        },
-        {
-          "op": "replace",
-          "path": "/package_id/digest",
-          "value": "6acc87d2469e75d34aaac294ffde20509e6c4ef1c5ee3aaaa7405203c68dba26"
         }
       ],
       "schema": "invalid",

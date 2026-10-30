@@ -14,7 +14,7 @@ consumer holds a copy of this schema.
 - `schema.json` is the closed Draft 2020-12 schema
   `urn:quire:backend-provider:v1`. Every member's description names its
   owning requirement. It references the checked-package schema
-  `urn:quire:checked-package:v2` for `PackageId`, `NodeId`, `Occurrence`,
+  `urn:quire:checked-package:v2` for `NodeId`, `Occurrence`,
   `Rational` and the decimal-string forms, so those shapes have one
   definition.
 - `vectors.json` holds positive vectors, each with an `owners` map from a JSON

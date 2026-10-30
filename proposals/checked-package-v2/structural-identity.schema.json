@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:quire:structural-identity:v1",
+  "title": "Structural identities of FR-201 (MemberId, VariantId, UnitId, UniverseId, PopulationId)",
+  "$defs": {
+    "NodeId": {
+      "type": "object",
+      "required": [
+        "package",
+        "path",
+        "ordinal"
+      ],
+      "properties": {
+        "package": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/$defs/NodeId"
+              }
+            ]
+          }
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
+    },
+    "EffectiveId": {
+      "type": "object",
+      "required": [
+        "owner_effective_type",
+        "original"
+      ],
+      "properties": {
+        "owner_effective_type": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/EffectiveId"
+            }
+          ]
+        },
+        "original": {
+          "type": "object",
+          "required": [
+            "package",
+            "node"
+          ],
+          "properties": {
+            "package": {
+              "type": "string",
+              "minLength": 1
+            },
+            "node": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "MemberId": {
+      "type": "object",
+      "required": [
+        "owner",
+        "member"
+      ],
+      "properties": {
+        "owner": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "node_id"
+              ],
+              "properties": {
+                "node_id": {
+                  "$ref": "#/$defs/NodeId"
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "effective_id"
+              ],
+              "properties": {
+                "effective_id": {
+                  "$ref": "#/$defs/EffectiveId"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "member": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "VariantId": {
+      "type": "object",
+      "required": [
+        "owner",
+        "case"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/NodeId"
+        },
+        "case": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "UnitId": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "declared"
+          ],
+          "properties": {
+            "declared": {
+              "$ref": "#/$defs/NodeId"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "terms"
+          ],
+          "properties": {
+            "terms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "unit",
+                  "exponent"
+                ],
+                "properties": {
+                  "unit": {
+                    "$ref": "#/$defs/NodeId"
+                  },
+                  "exponent": {
+                    "type": "string",
+                    "pattern": "^-?[1-9][0-9]*$"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "UniverseId": {
+      "$ref": "#/$defs/NodeId"
+    },
+    "PopulationId": {
+      "$ref": "#/$defs/NodeId"
+    }
+  }
+}

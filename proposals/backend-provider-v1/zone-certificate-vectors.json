@@ -1,20 +1,29 @@
 {
   "version": "quire.zone-certificate-vectors/v1",
-  "encoding": "RFC 8785 JCS, UTF-8, over the FR-331 ZoneCertificate value; digests and state keys are illustrative fixed hex, not computed from a model",
+  "encoding": "RFC 8785 JCS, UTF-8, over the FR-331 ZoneCertificate value; states are illustrative state keys, not computed from a model",
   "vectors": [
     {
       "id": "ZC-10",
       "description": "Refinement-form certificate of the TReq safety half (FR-430-AC-1 shape): two positions, two nodes, two edges, one initial state.",
       "document": {
         "identity": {
-          "domain": "quire.ir-proof.obligation-identity/v1",
-          "algorithm": "sha256",
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          "node_id": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Safety"
+            ]
+          },
+          "model": "example",
+          "ordinal": 0
         },
         "scale": "1",
         "bounds": [
           {
-            "state": "1111111111111111111111111111111111111111111111111111111111111111",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "clock": "r.x",
             "lower": {
               "bound": "1",
@@ -23,7 +32,9 @@
             "upper": "infinity"
           },
           {
-            "state": "2222222222222222222222222222222222222222222222222222222222222222",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "clock": "r.x",
             "lower": {
               "bound": "1",
@@ -34,7 +45,9 @@
         ],
         "nodes": [
           {
-            "state": "1111111111111111111111111111111111111111111111111111111111111111",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "automaton": 0,
             "zone": [
               [
@@ -57,7 +70,9 @@
             ]
           },
           {
-            "state": "2222222222222222222222222222222222222222222222222222222222222222",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "automaton": 1,
             "zone": [
               [
@@ -115,29 +130,29 @@
           ]
         },
         "refinement": {
-          "concrete_package": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "4444444444444444444444444444444444444444444444444444444444444444"
-          },
-          "abstract_package": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "5555555555555555555555555555555555555555555555555555555555555555"
-          },
+          "concrete_package": "example",
+          "abstract_package": "test/predicates",
           "positions": [
             {
-              "concrete": "1111111111111111111111111111111111111111111111111111111111111111",
+              "concrete": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              },
               "history": [],
               "abstract_states": [
-                "6666666666666666666666666666666666666666666666666666666666666666"
+                {
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                }
               ]
             },
             {
-              "concrete": "2222222222222222222222222222222222222222222222222222222222222222",
+              "concrete": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              },
               "history": [],
               "abstract_states": [
-                "7777777777777777777777777777777777777777777777777777777777777777"
+                {
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjcifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                }
               ]
             }
           ],
@@ -172,31 +187,43 @@
             }
           ],
           "refinement_node": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Refinement"
+            ]
           }
         },
         "initials": [
           0
         ]
       },
-      "canonical_text": "{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":[{\"clock\":\"r.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"upper\":\"infinity\"},{\"clock\":\"r.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"upper\":\"infinity\"}],\"edges\":[{\"node\":0,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"TReq::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}},{\"node\":1,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"TReq::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}}],\"identity\":{\"algorithm\":\"sha256\",\"digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"domain\":\"quire.ir-proof.obligation-identity/v1\"},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":1,\"state\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"-1\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"refinement\":{\"abstract_package\":{\"algorithm\":\"sha256\",\"digest\":\"5555555555555555555555555555555555555555555555555555555555555555\",\"domain\":\"quire.package.semantic/v2\"},\"concrete_package\":{\"algorithm\":\"sha256\",\"digest\":\"4444444444444444444444444444444444444444444444444444444444444444\",\"domain\":\"quire.package.semantic/v2\"},\"positions\":[{\"abstract_states\":[\"6666666666666666666666666666666666666666666666666666666666666666\"],\"concrete\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"history\":[]},{\"abstract_states\":[\"7777777777777777777777777777777777777777777777777777777777777777\"],\"concrete\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"history\":[]}],\"refinement_node\":{\"digest\":\"3333333333333333333333333333333333333333333333333333333333333333\",\"domain\":\"quire.checked-semantic-node/v1\"},\"taken\":[{\"transitions\":[{\"arguments\":[],\"operation\":\"Req::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}],\"type\":\"abstract\"},{\"transitions\":[{\"arguments\":[],\"operation\":\"Req::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}],\"type\":\"abstract\"}]},\"scale\":\"1\"}",
-      "byte_length": 2343,
-      "bytes_hex": "7b2261646d6974746564223a7b226564676573223a5b305d2c227374617274223a307d2c22626f756e6473223a5b7b22636c6f636b223a22722e78222c226c6f776572223a7b22626f756e64223a2231222c22737472696374223a66616c73657d2c227374617465223a2231313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131222c227570706572223a22696e66696e697479227d2c7b22636c6f636b223a22722e78222c226c6f776572223a7b22626f756e64223a2231222c22737472696374223a66616c73657d2c227374617465223a2232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232222c227570706572223a22696e66696e697479227d5d2c226564676573223a5b7b226e6f6465223a302c22746172676574223a312c227472616e736974696f6e223a7b22617267756d656e7473223a5b5d2c226f7065726174696f6e223a22545265713a3a73656e64222c227265636569766572223a7b2274797065223a2274657874222c2276616c7565223a2272227d2c2274797065223a227472616e736974696f6e227d7d2c7b226e6f6465223a312c22746172676574223a312c227472616e736974696f6e223a7b22617267756d656e7473223a5b5d2c226f7065726174696f6e223a22545265713a3a73656e64222c227265636569766572223a7b2274797065223a2274657874222c2276616c7565223a2272227d2c2274797065223a227472616e736974696f6e227d7d5d2c226964656e74697479223a7b22616c676f726974686d223a22736861323536222c22646967657374223a2261616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161222c22646f6d61696e223a2271756972652e69722d70726f6f662e6f626c69676174696f6e2d6964656e746974792f7631227d2c22696e697469616c73223a5b305d2c226e6f646573223a5b7b226175746f6d61746f6e223a302c227374617465223a2231313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131222c227a6f6e65223a5b5b7b22626f756e64223a2230222c22737472696374223a66616c73657d2c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d2c5b22696e66696e697479222c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d5d7d2c7b226175746f6d61746f6e223a312c227374617465223a2232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232222c227a6f6e65223a5b5b7b22626f756e64223a2230222c22737472696374223a66616c73657d2c7b22626f756e64223a222d31222c22737472696374223a66616c73657d5d2c5b22696e66696e697479222c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d5d7d5d2c22726566696e656d656e74223a7b2261627374726163745f7061636b616765223a7b22616c676f726974686d223a22736861323536222c22646967657374223a2235353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535222c22646f6d61696e223a2271756972652e7061636b6167652e73656d616e7469632f7632227d2c22636f6e63726574655f7061636b616765223a7b22616c676f726974686d223a22736861323536222c22646967657374223a2234343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434222c22646f6d61696e223a2271756972652e7061636b6167652e73656d616e7469632f7632227d2c22706f736974696f6e73223a5b7b2261627374726163745f737461746573223a5b2236363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636225d2c22636f6e6372657465223a2231313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131222c22686973746f7279223a5b5d7d2c7b2261627374726163745f737461746573223a5b2237373737373737373737373737373737373737373737373737373737373737373737373737373737373737373737373737373737373737373737373737373737225d2c22636f6e6372657465223a2232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232222c22686973746f7279223a5b5d7d5d2c22726566696e656d656e745f6e6f6465223a7b22646967657374223a2233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333222c22646f6d61696e223a2271756972652e636865636b65642d73656d616e7469632d6e6f64652f7631227d2c2274616b656e223a5b7b227472616e736974696f6e73223a5b7b22617267756d656e7473223a5b5d2c226f7065726174696f6e223a225265713a3a73656e64222c227265636569766572223a7b2274797065223a2274657874222c2276616c7565223a2272227d2c2274797065223a227472616e736974696f6e227d5d2c2274797065223a226162737472616374227d2c7b227472616e736974696f6e73223a5b7b22617267756d656e7473223a5b5d2c226f7065726174696f6e223a225265713a3a73656e64222c227265636569766572223a7b2274797065223a2274657874222c2276616c7565223a2272227d2c2274797065223a227472616e736974696f6e227d5d2c2274797065223a226162737472616374227d5d7d2c227363616c65223a2231227d"
+      "canonical_text": "{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":[{\"clock\":\"r.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":\"infinity\"},{\"clock\":\"r.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":\"infinity\"}],\"edges\":[{\"node\":0,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"TReq::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}},{\"node\":1,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"TReq::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}}],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Safety\"]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":1,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"-1\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"refinement\":{\"abstract_package\":\"test/predicates\",\"concrete_package\":\"example\",\"positions\":[{\"abstract_states\":[{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"}],\"concrete\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"history\":[]},{\"abstract_states\":[{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjcifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"}],\"concrete\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"history\":[]}],\"refinement_node\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Refinement\"]},\"taken\":[{\"transitions\":[{\"arguments\":[],\"operation\":\"Req::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}],\"type\":\"abstract\"},{\"transitions\":[{\"arguments\":[],\"operation\":\"Req::send\",\"receiver\":{\"type\":\"text\",\"value\":\"r\"},\"type\":\"transition\"}],\"type\":\"abstract\"}]},\"scale\":\"1\"}",
+      "byte_length": 2569
     },
     {
       "id": "ZC-11",
       "description": "Time-lock-freedom shape: component index per node, reasons per component, divergence target per node, no refinement.",
       "document": {
         "identity": {
-          "domain": "quire.ir-proof.obligation-identity/v1",
-          "algorithm": "sha256",
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          "node_id": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Safety"
+            ]
+          },
+          "model": "example",
+          "ordinal": 0
         },
         "scale": "1",
         "bounds": [
           {
-            "state": "1111111111111111111111111111111111111111111111111111111111111111",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "clock": "c.x",
             "lower": {
               "bound": "1",
@@ -208,7 +235,9 @@
             }
           },
           {
-            "state": "2222222222222222222222222222222222222222222222222222222222222222",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "clock": "c.x",
             "lower": {
               "bound": "1",
@@ -222,7 +251,9 @@
         ],
         "nodes": [
           {
-            "state": "1111111111111111111111111111111111111111111111111111111111111111",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "automaton": 0,
             "zone": [
               [
@@ -248,7 +279,9 @@
             ]
           },
           {
-            "state": "2222222222222222222222222222222222222222222222222222222222222222",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "automaton": 0,
             "zone": [
               [
@@ -327,29 +360,39 @@
           0
         ]
       },
-      "canonical_text": "{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":[{\"clock\":\"c.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"upper\":{\"bound\":\"3\",\"strict\":false}},{\"clock\":\"c.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"upper\":{\"bound\":\"3\",\"strict\":false}}],\"components\":[0,1],\"divergence\":[1,1],\"edges\":[{\"node\":0,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"Call::reply\",\"receiver\":{\"type\":\"text\",\"value\":\"c\"},\"type\":\"transition\"}},{\"node\":1,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"Call::tick\",\"receiver\":{\"type\":\"text\",\"value\":\"c\"},\"type\":\"transition\"}}],\"identity\":{\"algorithm\":\"sha256\",\"digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"domain\":\"quire.ir-proof.obligation-identity/v1\"},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[{\"bound\":\"3\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":0,\"state\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"reasons\":[{\"set\":\"accepting\",\"type\":\"missing-acceptance\"},{\"constraint\":\"fair weak serve\",\"type\":\"weak-fairness\"}],\"scale\":\"1\"}",
-      "byte_length": 1432,
-      "bytes_hex": "7b2261646d6974746564223a7b226564676573223a5b305d2c227374617274223a307d2c22626f756e6473223a5b7b22636c6f636b223a22632e78222c226c6f776572223a7b22626f756e64223a2231222c22737472696374223a66616c73657d2c227374617465223a2231313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131222c227570706572223a7b22626f756e64223a2233222c22737472696374223a66616c73657d7d2c7b22636c6f636b223a22632e78222c226c6f776572223a7b22626f756e64223a2231222c22737472696374223a66616c73657d2c227374617465223a2232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232222c227570706572223a7b22626f756e64223a2233222c22737472696374223a66616c73657d7d5d2c22636f6d706f6e656e7473223a5b302c315d2c22646976657267656e6365223a5b312c315d2c226564676573223a5b7b226e6f6465223a302c22746172676574223a312c227472616e736974696f6e223a7b22617267756d656e7473223a5b5d2c226f7065726174696f6e223a2243616c6c3a3a7265706c79222c227265636569766572223a7b2274797065223a2274657874222c2276616c7565223a2263227d2c2274797065223a227472616e736974696f6e227d7d2c7b226e6f6465223a312c22746172676574223a312c227472616e736974696f6e223a7b22617267756d656e7473223a5b5d2c226f7065726174696f6e223a2243616c6c3a3a7469636b222c227265636569766572223a7b2274797065223a2274657874222c2276616c7565223a2263227d2c2274797065223a227472616e736974696f6e227d7d5d2c226964656e74697479223a7b22616c676f726974686d223a22736861323536222c22646967657374223a2261616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161222c22646f6d61696e223a2271756972652e69722d70726f6f662e6f626c69676174696f6e2d6964656e746974792f7631227d2c22696e697469616c73223a5b305d2c226e6f646573223a5b7b226175746f6d61746f6e223a302c227374617465223a2231313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131222c227a6f6e65223a5b5b7b22626f756e64223a2230222c22737472696374223a66616c73657d2c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d2c5b7b22626f756e64223a2233222c22737472696374223a66616c73657d2c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d5d7d2c7b226175746f6d61746f6e223a302c227374617465223a2232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232222c227a6f6e65223a5b5b7b22626f756e64223a2230222c22737472696374223a66616c73657d2c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d2c5b22696e66696e697479222c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d5d7d5d2c22726561736f6e73223a5b7b22736574223a22616363657074696e67222c2274797065223a226d697373696e672d616363657074616e6365227d2c7b22636f6e73747261696e74223a2266616972207765616b207365727665222c2274797065223a227765616b2d666169726e657373227d5d2c227363616c65223a2231227d"
+      "canonical_text": "{\"admitted\":{\"edges\":[0],\"start\":0},\"bounds\":[{\"clock\":\"c.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":{\"bound\":\"3\",\"strict\":false}},{\"clock\":\"c.x\",\"lower\":{\"bound\":\"1\",\"strict\":false},\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":{\"bound\":\"3\",\"strict\":false}}],\"components\":[0,1],\"divergence\":[1,1],\"edges\":[{\"node\":0,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"Call::reply\",\"receiver\":{\"type\":\"text\",\"value\":\"c\"},\"type\":\"transition\"}},{\"node\":1,\"target\":1,\"transition\":{\"arguments\":[],\"operation\":\"Call::tick\",\"receiver\":{\"type\":\"text\",\"value\":\"c\"},\"type\":\"transition\"}}],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Safety\"]},\"ordinal\":0},\"initials\":[0],\"nodes\":[{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[{\"bound\":\"3\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"reasons\":[{\"set\":\"accepting\",\"type\":\"missing-acceptance\"},{\"constraint\":\"fair weak serve\",\"type\":\"weak-fairness\"}],\"scale\":\"1\"}",
+      "byte_length": 1672
     },
     {
       "id": "ZC-12",
       "description": "Refinement form with two initial states, the first failing check_initial and time-locked: initials[0] is a locked entry node carrying the reserved index positions.len(), admitted starts at the positioned initials[1], and there are no edges, so taken is empty.",
       "document": {
         "identity": {
-          "domain": "quire.ir-proof.obligation-identity/v1",
-          "algorithm": "sha256",
-          "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          "node_id": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Safety"
+            ]
+          },
+          "model": "example",
+          "ordinal": 0
         },
         "scale": "1",
         "bounds": [
           {
-            "state": "1111111111111111111111111111111111111111111111111111111111111111",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "clock": "r.x",
             "lower": "infinity",
             "upper": "infinity"
           },
           {
-            "state": "2222222222222222222222222222222222222222222222222222222222222222",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "clock": "r.x",
             "lower": "infinity",
             "upper": "infinity"
@@ -357,7 +400,9 @@
         ],
         "nodes": [
           {
-            "state": "2222222222222222222222222222222222222222222222222222222222222222",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "automaton": 1,
             "locked": true,
             "zone": [
@@ -384,7 +429,9 @@
             ]
           },
           {
-            "state": "1111111111111111111111111111111111111111111111111111111111111111",
+            "state": {
+              "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+            },
             "automaton": 0,
             "zone": [
               [
@@ -413,29 +460,29 @@
           "edges": []
         },
         "refinement": {
-          "concrete_package": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "4444444444444444444444444444444444444444444444444444444444444444"
-          },
-          "abstract_package": {
-            "domain": "quire.package.semantic/v2",
-            "algorithm": "sha256",
-            "digest": "5555555555555555555555555555555555555555555555555555555555555555"
-          },
+          "concrete_package": "example",
+          "abstract_package": "test/predicates",
           "positions": [
             {
-              "concrete": "1111111111111111111111111111111111111111111111111111111111111111",
+              "concrete": {
+                "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+              },
               "history": [],
               "abstract_states": [
-                "6666666666666666666666666666666666666666666666666666666666666666"
+                {
+                  "key": "eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0"
+                }
               ]
             }
           ],
           "taken": [],
           "refinement_node": {
-            "domain": "quire.checked-semantic-node/v1",
-            "digest": "3333333333333333333333333333333333333333333333333333333333333333"
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Refinement"
+            ]
           }
         },
         "initials": [
@@ -443,9 +490,8 @@
           1
         ]
       },
-      "canonical_text": "{\"admitted\":{\"edges\":[],\"start\":1},\"bounds\":[{\"clock\":\"r.x\",\"lower\":\"infinity\",\"state\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"upper\":\"infinity\"},{\"clock\":\"r.x\",\"lower\":\"infinity\",\"state\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"upper\":\"infinity\"}],\"edges\":[],\"identity\":{\"algorithm\":\"sha256\",\"digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"domain\":\"quire.ir-proof.obligation-identity/v1\"},\"initials\":[0,1],\"nodes\":[{\"automaton\":1,\"locked\":true,\"state\":\"2222222222222222222222222222222222222222222222222222222222222222\",\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":0,\"state\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"refinement\":{\"abstract_package\":{\"algorithm\":\"sha256\",\"digest\":\"5555555555555555555555555555555555555555555555555555555555555555\",\"domain\":\"quire.package.semantic/v2\"},\"concrete_package\":{\"algorithm\":\"sha256\",\"digest\":\"4444444444444444444444444444444444444444444444444444444444444444\",\"domain\":\"quire.package.semantic/v2\"},\"positions\":[{\"abstract_states\":[\"6666666666666666666666666666666666666666666666666666666666666666\"],\"concrete\":\"1111111111111111111111111111111111111111111111111111111111111111\",\"history\":[]}],\"refinement_node\":{\"digest\":\"3333333333333333333333333333333333333333333333333333333333333333\",\"domain\":\"quire.checked-semantic-node/v1\"},\"taken\":[]},\"scale\":\"1\"}",
-      "byte_length": 1617,
-      "bytes_hex": "7b2261646d6974746564223a7b226564676573223a5b5d2c227374617274223a317d2c22626f756e6473223a5b7b22636c6f636b223a22722e78222c226c6f776572223a22696e66696e697479222c227374617465223a2231313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131222c227570706572223a22696e66696e697479227d2c7b22636c6f636b223a22722e78222c226c6f776572223a22696e66696e697479222c227374617465223a2232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232222c227570706572223a22696e66696e697479227d5d2c226564676573223a5b5d2c226964656e74697479223a7b22616c676f726974686d223a22736861323536222c22646967657374223a2261616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161222c22646f6d61696e223a2271756972652e69722d70726f6f662e6f626c69676174696f6e2d6964656e746974792f7631227d2c22696e697469616c73223a5b302c315d2c226e6f646573223a5b7b226175746f6d61746f6e223a312c226c6f636b6564223a747275652c227374617465223a2232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232222c227a6f6e65223a5b5b7b22626f756e64223a2230222c22737472696374223a66616c73657d2c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d2c5b7b22626f756e64223a2230222c22737472696374223a66616c73657d2c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d5d7d2c7b226175746f6d61746f6e223a302c227374617465223a2231313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131222c227a6f6e65223a5b5b7b22626f756e64223a2230222c22737472696374223a66616c73657d2c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d2c5b22696e66696e697479222c7b22626f756e64223a2230222c22737472696374223a66616c73657d5d5d7d5d2c22726566696e656d656e74223a7b2261627374726163745f7061636b616765223a7b22616c676f726974686d223a22736861323536222c22646967657374223a2235353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535353535222c22646f6d61696e223a2271756972652e7061636b6167652e73656d616e7469632f7632227d2c22636f6e63726574655f7061636b616765223a7b22616c676f726974686d223a22736861323536222c22646967657374223a2234343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434343434222c22646f6d61696e223a2271756972652e7061636b6167652e73656d616e7469632f7632227d2c22706f736974696f6e73223a5b7b2261627374726163745f737461746573223a5b2236363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636225d2c22636f6e6372657465223a2231313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131222c22686973746f7279223a5b5d7d5d2c22726566696e656d656e745f6e6f6465223a7b22646967657374223a2233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333222c22646f6d61696e223a2271756972652e636865636b65642d73656d616e7469632d6e6f64652f7631227d2c2274616b656e223a5b5d7d2c227363616c65223a2231227d"
+      "canonical_text": "{\"admitted\":{\"edges\":[],\"start\":1},\"bounds\":[{\"clock\":\"r.x\",\"lower\":\"infinity\",\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":\"infinity\"},{\"clock\":\"r.x\",\"lower\":\"infinity\",\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"upper\":\"infinity\"}],\"edges\":[],\"identity\":{\"model\":\"example\",\"node_id\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Safety\"]},\"ordinal\":0},\"initials\":[0,1],\"nodes\":[{\"automaton\":1,\"locked\":true,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjIifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}]]},{\"automaton\":0,\"state\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"zone\":[[{\"bound\":\"0\",\"strict\":false},{\"bound\":\"0\",\"strict\":false}],[\"infinity\",{\"bound\":\"0\",\"strict\":false}]]}],\"refinement\":{\"abstract_package\":\"test/predicates\",\"concrete_package\":\"example\",\"positions\":[{\"abstract_states\":[{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjYifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"}],\"concrete\":{\"key\":\"eyJmaWVsZHMiOlt7Im5hbWUiOiJuIiwidmFsdWUiOnsidHlwZSI6ImludGVnZXIiLCJ2YWx1ZSI6IjEifX1dLCJuYW1lIjoiU3RhdGUiLCJ0eXBlIjoicmVjb3JkIn0\"},\"history\":[]}],\"refinement_node\":{\"ordinal\":0,\"package\":\"example\",\"path\":[\"Example\",\"Refinement\"]},\"taken\":[]},\"scale\":\"1\"}",
+      "byte_length": 1701
     }
   ]
 }
