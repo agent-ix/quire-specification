@@ -8525,17 +8525,10 @@ fn required_owner_kind(node: &Value) -> Option<&'static str> {
     let structural = node["body"]["term"] != "application";
     if !structural {
         None
-    } else if node.get("declaration").is_some() {
-        if node["node_tag"] == "scalar_type"
-            && matches!(
-                node["semantic_form"].as_str(),
-                Some("enum" | "dimension" | "unit")
-            )
-        {
-            Some("definition")
-        } else {
-            Some("source")
-        }
+    } else if node.get("declaration").is_some()
+        || (node["node_tag"] == "scalar_type" && node["semantic_form"] == "dimension_equivalence")
+    {
+        Some("source")
     } else if node["node_tag"] == "model" && node["semantic_form"] == "model_root" {
         Some("model_root")
     } else if is_model_declaration(node) || node["node_tag"] == "function" {
@@ -8622,7 +8615,6 @@ fn tc_233_every_positive_fixture_carries_owners_exactly_where_the_rule_requires(
         BTreeSet::from([
             "model".to_owned(),
             "model_root".to_owned(),
-            "definition".to_owned(),
             "source".to_owned()
         ])
     );

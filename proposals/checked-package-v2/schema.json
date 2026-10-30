@@ -2234,10 +2234,10 @@
       "if": {
         "properties": {
           "node_tag": {
-            "const": "state"
+            "const": "scalar_type"
           },
           "semantic_form": {
-            "const": "frame"
+            "const": "dimension_equivalence"
           }
         },
         "required": [
@@ -2248,13 +2248,15 @@
       "then": {
         "properties": {
           "body": {
-            "$ref": "#/$defs/FrameBody"
+            "$ref": "#/$defs/DimensionEquivalenceBody"
           },
           "occurrences": {
+            "minItems": 1,
+            "maxItems": 1,
             "items": {
               "properties": {
                 "role": {
-                  "const": "generated"
+                  "const": "anchor"
                 }
               }
             }
@@ -2265,10 +2267,10 @@
         "if": {
           "properties": {
             "node_tag": {
-              "const": "correspondence"
+              "const": "state"
             },
             "semantic_form": {
-              "const": "abstraction_relation"
+              "const": "frame"
             }
           },
           "required": [
@@ -2279,13 +2281,13 @@
         "then": {
           "properties": {
             "body": {
-              "$ref": "#/$defs/AbstractionRelationBody"
+              "$ref": "#/$defs/FrameBody"
             },
             "occurrences": {
               "items": {
                 "properties": {
                   "role": {
-                    "const": "declaration"
+                    "const": "generated"
                   }
                 }
               }
@@ -2296,10 +2298,10 @@
           "if": {
             "properties": {
               "node_tag": {
-                "const": "extension"
+                "const": "correspondence"
               },
               "semantic_form": {
-                "const": "extension_form"
+                "const": "abstraction_relation"
               }
             },
             "required": [
@@ -2310,11 +2312,9 @@
           "then": {
             "properties": {
               "body": {
-                "$ref": "#/$defs/ExtensionFormBody"
+                "$ref": "#/$defs/AbstractionRelationBody"
               },
               "occurrences": {
-                "minItems": 1,
-                "maxItems": 1,
                 "items": {
                   "properties": {
                     "role": {
@@ -2329,10 +2329,10 @@
             "if": {
               "properties": {
                 "node_tag": {
-                  "const": "relation"
+                  "const": "extension"
                 },
                 "semantic_form": {
-                  "const": "refinement"
+                  "const": "extension_form"
                 }
               },
               "required": [
@@ -2343,540 +2343,809 @@
             "then": {
               "properties": {
                 "body": {
-                  "$ref": "#/$defs/RefinementBody"
-                }
-              },
-              "occurrences": {
-                "items": {
-                  "properties": {
-                    "role": {
-                      "enum": [
-                        "declaration",
-                        "generated"
-                      ]
+                  "$ref": "#/$defs/ExtensionFormBody"
+                },
+                "occurrences": {
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "items": {
+                    "properties": {
+                      "role": {
+                        "const": "declaration"
+                      }
                     }
                   }
                 }
               }
             },
             "else": {
+              "if": {
+                "properties": {
+                  "node_tag": {
+                    "const": "relation"
+                  },
+                  "semantic_form": {
+                    "const": "refinement"
+                  }
+                },
+                "required": [
+                  "node_tag",
+                  "semantic_form"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "body": {
+                    "$ref": "#/$defs/RefinementBody"
+                  }
+                },
+                "occurrences": {
+                  "items": {
+                    "properties": {
+                      "role": {
+                        "enum": [
+                          "declaration",
+                          "generated"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "body": {
+                    "$ref": "#/$defs/SemanticTerm"
+                  }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "protocol"
+                        },
+                        "semantic_form": {
+                          "const": "protocol_reference"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/ProtocolReferenceBody"
+                        },
+                        "occurrences": {
+                          "minItems": 1,
+                          "items": {
+                            "properties": {
+                              "role": {
+                                "const": "expression"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "declaration"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "owner"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "recursion_group"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "state"
+                        },
+                        "semantic_form": {
+                          "const": "state_clause"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/StateClauseBody"
+                        },
+                        "occurrences": {
+                          "items": {
+                            "properties": {
+                              "role": {
+                                "const": "claim"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "state"
+                        },
+                        "semantic_form": {
+                          "const": "operation_anchor"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/OperationAnchorBody"
+                        },
+                        "occurrences": {
+                          "items": {
+                            "properties": {
+                              "role": {
+                                "const": "anchor"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "state"
+                        },
+                        "semantic_form": {
+                          "const": "transition"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/StateTransitionBody"
+                        },
+                        "occurrences": {
+                          "items": {
+                            "properties": {
+                              "role": {
+                                "const": "claim"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "temporal"
+                        },
+                        "semantic_form": {
+                          "const": "formula"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/TemporalFormulaBody"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "temporal"
+                        },
+                        "semantic_form": {
+                          "const": "fairness"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/TemporalFairnessBody"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "temporal"
+                        },
+                        "semantic_form": {
+                          "const": "temporal_clause"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/TemporalClauseBody"
+                        },
+                        "occurrences": {
+                          "items": {
+                            "properties": {
+                              "role": {
+                                "const": "claim"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "composite_type"
+                        },
+                        "semantic_form": {
+                          "const": "union"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/UnionTypeBody"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "value"
+                        },
+                        "semantic_form": {
+                          "const": "union_value"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/UnionValueBody"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "value"
+                        },
+                        "semantic_form": {
+                          "const": "option_value"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/OptionValueBody"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "expression"
+                        },
+                        "semantic_form": {
+                          "const": "case"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/CaseBody"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "value"
+                        },
+                        "semantic_form": {
+                          "const": "parameter"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/ParameterBody"
+                        },
+                        "occurrences": {
+                          "items": {
+                            "properties": {
+                              "role": {
+                                "const": "expression"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "hybrid"
+                        },
+                        "semantic_form": {
+                          "const": "hybrid_model"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/HybridModelBody"
+                        },
+                        "occurrences": {
+                          "minItems": 1,
+                          "maxItems": 1,
+                          "items": {
+                            "properties": {
+                              "role": {
+                                "const": "declaration"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "recursion_group"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "hybrid"
+                        },
+                        "semantic_form": {
+                          "const": "hybrid_mode"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/HybridModeBody"
+                        },
+                        "occurrences": {
+                          "minItems": 1,
+                          "maxItems": 1,
+                          "items": {
+                            "properties": {
+                              "role": {
+                                "const": "declaration"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "recursion_group"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "node_tag": {
+                          "const": "hybrid"
+                        },
+                        "semantic_form": {
+                          "const": "hybrid_transition"
+                        }
+                      },
+                      "required": [
+                        "node_tag",
+                        "semantic_form"
+                      ]
+                    },
+                    "then": {
+                      "properties": {
+                        "body": {
+                          "$ref": "#/$defs/HybridTransitionBody"
+                        },
+                        "occurrences": {
+                          "minItems": 1,
+                          "items": {
+                            "properties": {
+                              "role": {
+                                "const": "expression"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "recursion_group"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "node_tag": {
+                  "const": "protocol"
+                },
+                "semantic_form": {
+                  "const": "protocol_clause"
+                }
+              },
+              "required": [
+                "node_tag",
+                "semantic_form"
+              ]
+            },
+            "then": {
               "properties": {
                 "body": {
-                  "$ref": "#/$defs/SemanticTerm"
+                  "properties": {
+                    "operation": {
+                      "properties": {
+                        "member": {
+                          "properties": {
+                            "operator": {
+                              "enum": [
+                                "protocol"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "node_tag": {
+                  "const": "protocol"
+                },
+                "semantic_form": {
+                  "const": "role"
                 }
               },
-              "allOf": [
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "protocol"
-                      },
-                      "semantic_form": {
-                        "const": "protocol_reference"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/ProtocolReferenceBody"
-                      },
-                      "occurrences": {
-                        "minItems": 1,
-                        "items": {
-                          "properties": {
-                            "role": {
-                              "const": "expression"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "not": {
-                      "anyOf": [
-                        {
-                          "required": [
-                            "declaration"
-                          ]
-                        },
-                        {
-                          "required": [
-                            "owner"
-                          ]
-                        },
-                        {
-                          "required": [
-                            "recursion_group"
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "state"
-                      },
-                      "semantic_form": {
-                        "const": "state_clause"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/StateClauseBody"
-                      },
-                      "occurrences": {
-                        "items": {
-                          "properties": {
-                            "role": {
-                              "const": "claim"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "state"
-                      },
-                      "semantic_form": {
-                        "const": "operation_anchor"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/OperationAnchorBody"
-                      },
-                      "occurrences": {
-                        "items": {
-                          "properties": {
-                            "role": {
-                              "const": "anchor"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "state"
-                      },
-                      "semantic_form": {
-                        "const": "transition"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/StateTransitionBody"
-                      },
-                      "occurrences": {
-                        "items": {
-                          "properties": {
-                            "role": {
-                              "const": "claim"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "temporal"
-                      },
-                      "semantic_form": {
-                        "const": "formula"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/TemporalFormulaBody"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "temporal"
-                      },
-                      "semantic_form": {
-                        "const": "fairness"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/TemporalFairnessBody"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "temporal"
-                      },
-                      "semantic_form": {
-                        "const": "temporal_clause"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/TemporalClauseBody"
-                      },
-                      "occurrences": {
-                        "items": {
-                          "properties": {
-                            "role": {
-                              "const": "claim"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "composite_type"
-                      },
-                      "semantic_form": {
-                        "const": "union"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/UnionTypeBody"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "value"
-                      },
-                      "semantic_form": {
-                        "const": "union_value"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/UnionValueBody"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "value"
-                      },
-                      "semantic_form": {
-                        "const": "option_value"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/OptionValueBody"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "expression"
-                      },
-                      "semantic_form": {
-                        "const": "case"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/CaseBody"
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "value"
-                      },
-                      "semantic_form": {
-                        "const": "parameter"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/ParameterBody"
-                      },
-                      "occurrences": {
-                        "items": {
-                          "properties": {
-                            "role": {
-                              "const": "expression"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "hybrid"
-                      },
-                      "semantic_form": {
-                        "const": "hybrid_model"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/HybridModelBody"
-                      },
-                      "occurrences": {
-                        "minItems": 1,
-                        "maxItems": 1,
-                        "items": {
-                          "properties": {
-                            "role": {
-                              "const": "declaration"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "not": {
-                      "anyOf": [
-                        {
-                          "required": [
-                            "recursion_group"
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "hybrid"
-                      },
-                      "semantic_form": {
-                        "const": "hybrid_mode"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/HybridModeBody"
-                      },
-                      "occurrences": {
-                        "minItems": 1,
-                        "maxItems": 1,
-                        "items": {
-                          "properties": {
-                            "role": {
-                              "const": "declaration"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "not": {
-                      "anyOf": [
-                        {
-                          "required": [
-                            "recursion_group"
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "if": {
-                    "properties": {
-                      "node_tag": {
-                        "const": "hybrid"
-                      },
-                      "semantic_form": {
-                        "const": "hybrid_transition"
-                      }
-                    },
-                    "required": [
-                      "node_tag",
-                      "semantic_form"
-                    ]
-                  },
-                  "then": {
-                    "properties": {
-                      "body": {
-                        "$ref": "#/$defs/HybridTransitionBody"
-                      },
-                      "occurrences": {
-                        "minItems": 1,
-                        "items": {
-                          "properties": {
-                            "role": {
-                              "const": "expression"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "not": {
-                      "anyOf": [
-                        {
-                          "required": [
-                            "recursion_group"
-                          ]
-                        }
-                      ]
-                    }
-                  }
-                }
+              "required": [
+                "node_tag",
+                "semantic_form"
               ]
-            }
-          }
-        }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "node_tag": {
-                "const": "protocol"
-              },
-              "semantic_form": {
-                "const": "protocol_clause"
-              }
             },
-            "required": [
-              "node_tag",
-              "semantic_form"
-            ]
+            "then": {
+              "properties": {
+                "body": {
+                  "properties": {
+                    "operation": {
+                      "properties": {
+                        "member": {
+                          "properties": {
+                            "operator": {
+                              "enum": [
+                                "role"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
-          "then": {
-            "properties": {
-              "body": {
-                "properties": {
-                  "operation": {
-                    "properties": {
-                      "member": {
-                        "properties": {
-                          "operator": {
-                            "enum": [
-                              "protocol"
-                            ]
+          {
+            "if": {
+              "properties": {
+                "node_tag": {
+                  "const": "protocol"
+                },
+                "semantic_form": {
+                  "const": "channel"
+                }
+              },
+              "required": [
+                "node_tag",
+                "semantic_form"
+              ]
+            },
+            "then": {
+              "properties": {
+                "body": {
+                  "properties": {
+                    "operation": {
+                      "properties": {
+                        "member": {
+                          "properties": {
+                            "operator": {
+                              "enum": [
+                                "channel"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "node_tag": {
+                  "const": "protocol"
+                },
+                "semantic_form": {
+                  "const": "queue"
+                }
+              },
+              "required": [
+                "node_tag",
+                "semantic_form"
+              ]
+            },
+            "then": {
+              "properties": {
+                "body": {
+                  "properties": {
+                    "operation": {
+                      "properties": {
+                        "member": {
+                          "properties": {
+                            "operator": {
+                              "enum": [
+                                "queue"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "node_tag": {
+                  "const": "protocol"
+                },
+                "semantic_form": {
+                  "const": "obligation"
+                }
+              },
+              "required": [
+                "node_tag",
+                "semantic_form"
+              ]
+            },
+            "then": {
+              "properties": {
+                "body": {
+                  "properties": {
+                    "operation": {
+                      "properties": {
+                        "member": {
+                          "properties": {
+                            "operator": {
+                              "enum": [
+                                "finish",
+                                "terminal"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "node_tag": {
+                  "const": "protocol"
+                },
+                "semantic_form": {
+                  "const": "control"
+                }
+              },
+              "required": [
+                "node_tag",
+                "semantic_form"
+              ]
+            },
+            "then": {
+              "properties": {
+                "body": {
+                  "properties": {
+                    "operation": {
+                      "properties": {
+                        "member": {
+                          "properties": {
+                            "operator": {
+                              "enum": [
+                                "sequence",
+                                "choice",
+                                "parallel",
+                                "repeat",
+                                "await",
+                                "check",
+                                "send",
+                                "receive",
+                                "attempt",
+                                "effect",
+                                "event",
+                                "commit",
+                                "fence"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "node_tag": {
+                  "const": "protocol"
+                },
+                "semantic_form": {
+                  "const": "compensation"
+                }
+              },
+              "required": [
+                "node_tag",
+                "semantic_form"
+              ]
+            },
+            "then": {
+              "properties": {
+                "body": {
+                  "properties": {
+                    "operation": {
+                      "properties": {
+                        "member": {
+                          "properties": {
+                            "operator": {
+                              "enum": [
+                                "compensate"
+                              ]
+                            }
                           }
                         }
                       }
@@ -2886,243 +3155,8 @@
               }
             }
           }
-        },
-        {
-          "if": {
-            "properties": {
-              "node_tag": {
-                "const": "protocol"
-              },
-              "semantic_form": {
-                "const": "role"
-              }
-            },
-            "required": [
-              "node_tag",
-              "semantic_form"
-            ]
-          },
-          "then": {
-            "properties": {
-              "body": {
-                "properties": {
-                  "operation": {
-                    "properties": {
-                      "member": {
-                        "properties": {
-                          "operator": {
-                            "enum": [
-                              "role"
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "node_tag": {
-                "const": "protocol"
-              },
-              "semantic_form": {
-                "const": "channel"
-              }
-            },
-            "required": [
-              "node_tag",
-              "semantic_form"
-            ]
-          },
-          "then": {
-            "properties": {
-              "body": {
-                "properties": {
-                  "operation": {
-                    "properties": {
-                      "member": {
-                        "properties": {
-                          "operator": {
-                            "enum": [
-                              "channel"
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "node_tag": {
-                "const": "protocol"
-              },
-              "semantic_form": {
-                "const": "queue"
-              }
-            },
-            "required": [
-              "node_tag",
-              "semantic_form"
-            ]
-          },
-          "then": {
-            "properties": {
-              "body": {
-                "properties": {
-                  "operation": {
-                    "properties": {
-                      "member": {
-                        "properties": {
-                          "operator": {
-                            "enum": [
-                              "queue"
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "node_tag": {
-                "const": "protocol"
-              },
-              "semantic_form": {
-                "const": "obligation"
-              }
-            },
-            "required": [
-              "node_tag",
-              "semantic_form"
-            ]
-          },
-          "then": {
-            "properties": {
-              "body": {
-                "properties": {
-                  "operation": {
-                    "properties": {
-                      "member": {
-                        "properties": {
-                          "operator": {
-                            "enum": [
-                              "finish",
-                              "terminal"
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "node_tag": {
-                "const": "protocol"
-              },
-              "semantic_form": {
-                "const": "control"
-              }
-            },
-            "required": [
-              "node_tag",
-              "semantic_form"
-            ]
-          },
-          "then": {
-            "properties": {
-              "body": {
-                "properties": {
-                  "operation": {
-                    "properties": {
-                      "member": {
-                        "properties": {
-                          "operator": {
-                            "enum": [
-                              "sequence",
-                              "choice",
-                              "parallel",
-                              "repeat",
-                              "await",
-                              "check",
-                              "send",
-                              "receive",
-                              "attempt",
-                              "effect",
-                              "event",
-                              "commit",
-                              "fence"
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "node_tag": {
-                "const": "protocol"
-              },
-              "semantic_form": {
-                "const": "compensation"
-              }
-            },
-            "required": [
-              "node_tag",
-              "semantic_form"
-            ]
-          },
-          "then": {
-            "properties": {
-              "body": {
-                "properties": {
-                  "operation": {
-                    "properties": {
-                      "member": {
-                        "properties": {
-                          "operator": {
-                            "enum": [
-                              "compensate"
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      ]
+        ]
+      }
     },
     "DeclarationTagRules": {
       "if": {
@@ -3150,6 +3184,20 @@
               },
               "semantic_form": {
                 "const": "enum_value"
+              }
+            },
+            "required": [
+              "node_tag",
+              "semantic_form"
+            ]
+          },
+          {
+            "properties": {
+              "node_tag": {
+                "const": "scalar_type"
+              },
+              "semantic_form": {
+                "const": "dimension_equivalence"
               }
             },
             "required": [
@@ -3247,26 +3295,6 @@
       },
       "additionalProperties": false
     },
-    "DefinitionOwner": {
-      "type": "object",
-      "required": [
-        "kind",
-        "authority",
-        "identity"
-      ],
-      "properties": {
-        "kind": {
-          "const": "definition"
-        },
-        "authority": {
-          "$ref": "#/$defs/Nonempty"
-        },
-        "identity": {
-          "$ref": "#/$defs/Nonempty"
-        }
-      },
-      "additionalProperties": false
-    },
     "ModelOwner": {
       "type": "object",
       "required": [
@@ -3317,9 +3345,6 @@
       "oneOf": [
         {
           "$ref": "#/$defs/SourceOwner"
-        },
-        {
-          "$ref": "#/$defs/DefinitionOwner"
         },
         {
           "$ref": "#/$defs/ModelOwner"
@@ -3457,10 +3482,36 @@
               }
             },
             "else": {
-              "not": {
+              "if": {
+                "properties": {
+                  "node_tag": {
+                    "const": "scalar_type"
+                  },
+                  "semantic_form": {
+                    "const": "dimension_equivalence"
+                  }
+                },
+                "required": [
+                  "node_tag",
+                  "semantic_form"
+                ]
+              },
+              "then": {
                 "required": [
                   "owner"
-                ]
+                ],
+                "properties": {
+                  "owner": {
+                    "$ref": "#/$defs/SourceOwner"
+                  }
+                }
+              },
+              "else": {
+                "not": {
+                  "required": [
+                    "owner"
+                  ]
+                }
               }
             }
           }
@@ -11862,9 +11913,6 @@
           "$ref": "#/$defs/SourceOwner"
         },
         {
-          "$ref": "#/$defs/DefinitionOwner"
-        },
-        {
           "$ref": "#/$defs/ModelOwner"
         }
       ]
@@ -11895,6 +11943,44 @@
         },
         "denominator": {
           "$ref": "#/$defs/PositiveIntegerString"
+        }
+      },
+      "additionalProperties": false
+    },
+    "DimensionEquivalenceBody": {
+      "type": "object",
+      "required": [
+        "term",
+        "dimension_node_ids",
+        "root_scale"
+      ],
+      "properties": {
+        "term": {
+          "const": "dimension_equivalence"
+        },
+        "dimension_node_ids": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/NodeRef"
+          }
+        },
+        "root_scale": {
+          "type": "object",
+          "required": [
+            "numerator",
+            "denominator"
+          ],
+          "properties": {
+            "numerator": {
+              "$ref": "#/$defs/PositiveIntegerString"
+            },
+            "denominator": {
+              "$ref": "#/$defs/PositiveIntegerString"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

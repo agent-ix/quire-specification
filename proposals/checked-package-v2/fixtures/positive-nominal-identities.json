@@ -126,9 +126,9 @@
           }
         ],
         "owner": {
-          "kind": "definition",
+          "kind": "source",
           "authority": "agent-ix",
-          "identity": "example-model"
+          "identity": "example"
         },
         "body": {
           "term": "aggregate",
@@ -178,9 +178,9 @@
           }
         ],
         "owner": {
-          "kind": "definition",
+          "kind": "source",
           "authority": "agent-ix",
-          "identity": "example-model"
+          "identity": "example"
         },
         "body": {
           "term": "aggregate",
@@ -221,13 +221,163 @@
           }
         ],
         "owner": {
-          "kind": "definition",
+          "kind": "source",
           "authority": "agent-ix",
-          "identity": "example-model"
+          "identity": "example"
         },
         "body": {
           "term": "aggregate",
           "members": []
+        }
+      },
+      {
+        "node_id": {
+          "package": "example",
+          "path": [
+            "Example",
+            "Distance"
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "scalar_type",
+        "semantic_form": "dimension",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "Example",
+            "Distance"
+          ],
+          "ordinal": 0
+        },
+        "declaration": {
+          "qualified_name": [
+            "Example",
+            "Distance"
+          ]
+        },
+        "dependencies": [],
+        "occurrences": [
+          {
+            "role": "declaration",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "source",
+          "authority": "agent-ix",
+          "identity": "example"
+        },
+        "body": {
+          "term": "aggregate",
+          "members": []
+        }
+      },
+      {
+        "node_id": {
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "dimension_equivalence",
+            {
+              "package": "example",
+              "path": [
+                "Example",
+                "Length"
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "Example",
+                "Distance"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "node_tag": "scalar_type",
+        "semantic_form": "dimension_equivalence",
+        "semantic_type": {
+          "package": "example",
+          "path": [
+            "scalar_type",
+            "dimension_equivalence",
+            {
+              "package": "example",
+              "path": [
+                "Example",
+                "Length"
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "Example",
+                "Distance"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "ordinal": 0
+        },
+        "dependencies": [
+          {
+            "package": "example",
+            "path": [
+              "Example",
+              "Length"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "Example",
+              "Distance"
+            ],
+            "ordinal": 0
+          }
+        ],
+        "occurrences": [
+          {
+            "role": "anchor",
+            "ordinal": 0
+          }
+        ],
+        "owner": {
+          "kind": "source",
+          "authority": "agent-ix",
+          "identity": "example"
+        },
+        "body": {
+          "term": "dimension_equivalence",
+          "dimension_node_ids": [
+            {
+              "package": "example",
+              "path": [
+                "Example",
+                "Length"
+              ],
+              "ordinal": 0
+            },
+            {
+              "package": "example",
+              "path": [
+                "Example",
+                "Distance"
+              ],
+              "ordinal": 0
+            }
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1"
+          }
         }
       }
     ]
@@ -327,6 +477,66 @@
           },
           "start": 3,
           "end": 4
+        }
+      ]
+    },
+    {
+      "node_id": {
+        "package": "example",
+        "path": [
+          "Example",
+          "Distance"
+        ],
+        "ordinal": 0
+      },
+      "role": "declaration",
+      "ordinal": 0,
+      "regions": [
+        {
+          "source": {
+            "authority": "agent-ix",
+            "identity": "example"
+          },
+          "start": 4,
+          "end": 5
+        }
+      ]
+    },
+    {
+      "node_id": {
+        "package": "example",
+        "path": [
+          "scalar_type",
+          "dimension_equivalence",
+          {
+            "package": "example",
+            "path": [
+              "Example",
+              "Length"
+            ],
+            "ordinal": 0
+          },
+          {
+            "package": "example",
+            "path": [
+              "Example",
+              "Distance"
+            ],
+            "ordinal": 0
+          }
+        ],
+        "ordinal": 0
+      },
+      "role": "anchor",
+      "ordinal": 0,
+      "regions": [
+        {
+          "source": {
+            "authority": "agent-ix",
+            "identity": "example"
+          },
+          "start": 5,
+          "end": 6
         }
       ]
     }

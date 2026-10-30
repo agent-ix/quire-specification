@@ -768,7 +768,7 @@ A frame body refusal, meaning-join or canonical-order
   node's position.
 - `owner` — the owner of a node, carried on the node
   so that a consumer reads it from the package alone. An **owner-bearing node** is a
-  structural node (a nominal node excluded, and a body whose root is
+  structural node (a body whose root is
   not an `application`) that either carries a `declaration` or is a
   **model-owned node** (QSL FR-094) carrying none: a model declaration node
   (`model`/`model_root`, `model`/`object_type`, `model`/`record_value_type`,
@@ -777,14 +777,16 @@ A frame body refusal, meaning-join or canonical-order
   `model`/`persistence_interface`, `model`/`systems_interface`,
   `relation`/`relationship` or `relation`/`population`) or a clause function
   (`function`). A declared
-  owner-bearing node carries the `SourceOwner` of the source unit that
-  declares it, `{kind: "source", authority, identity}`; a model-owned node
+  owner-bearing node, a source `enum`, `unit` or `dimension` included, carries
+  the `SourceOwner` of the source unit that
+  declares it, `{kind: "source", authority, identity}`, as does a
+  `scalar_type`/`dimension_equivalence` node, which has no `declaration`; a model-owned node
   carries its `ModelOwner`, `{kind: "model", identity, node}`, with no
   `version` member, or the `ModelRootOwner`
   `{kind: "model_root", identity}` for a `model`/`model_root`.
   The latter's identity is that of a supplied domain package. Every other
   node carries no `owner`: a builtin or anonymous type, an undeclared value,
-  parameter or expression, any other undeclared node, a nominal node and an
+  parameter or expression, any other undeclared node and an
   application node, a `state`/`state_clause` node included. A
   `DefinitionOwner` is never a node `owner`. A reader reads a
   node's owner only from this member: never from the source map, a source
@@ -793,9 +795,13 @@ A frame body refusal, meaning-join or canonical-order
   `malformed_wire` at the node.
 - Nominal nodes — each enum declaration/member, dimension,
   dimension-equivalence or declared-unit node is identified by its declaration
-  path like any declared node and carries its facts (qualified declaration,
-  member terms, dimension terms, the two dimensions of an equivalence, a unit's
-  dimension and target) in its `body`. Owner subjects must join an exact lock
+  path like any declared node (a dimension equivalence by its structural id,
+  which names its two dimension nodes). A source `enum`, `unit` and `dimension`
+  node carries an empty `aggregate` body, its name in `declaration` and its
+  `SourceOwner`; its member terms, dimension terms and a unit's dimension and
+  target are carried by its `semantic_type` and `dependencies`. A dimension
+  equivalence carries its pair and scale in its body and its `SourceOwner`.
+  Owner subjects must join an exact lock
   selection. A reader joins enum member declaration/case to `semantic_type`,
   dependency and literal body; dimension terms to self-type/dependencies; a
   dimension equivalence's two dimension ids to self-type/dependencies; and unit
@@ -1087,10 +1093,7 @@ owner definitions. `ModelRootOwner` is `{kind: "model_root", identity,
 }` and its `identity` is that of a supplied domain package.
 The node definition carries one
 further rule, `OwnerPresenceRule`, in its `allOf`. A node is
-**structural** for this rule when it is not a nominal node (a
-`scalar_type`/`dimension`, `scalar_type`/`unit` or
-`scalar_type`/`dimension_equivalence` node, a source `enum` or a node of a
-recursion group) and its `body.term` is not `application` (an application
+**structural** for this rule when it is not a node of a recursion group and its `body.term` is not `application` (an application
 stands only at a body root, so this is "its body holds no application"). This
 includes a `correspondence`/`abstraction_relation` node, which the derived-shape
 semantic checks exclude, but the rule never asks it for an `owner`: `DeclarationTagRules`
@@ -1100,6 +1103,7 @@ neither model-owned row, so it falls in the last row and carries none.
 | Node | `owner` |
 | --- | --- |
 | structural, carries `declaration` | required, `SourceOwner` |
+| structural, no `declaration`, `node_tag`/`semantic_form` `scalar_type`/`dimension_equivalence` | required, `SourceOwner` |
 | structural, no `declaration`, `node_tag`/`semantic_form` `model`/`model_root` | required, `ModelRootOwner` |
 | structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`tuple_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`state_machine`, `model`/`process`, `model`/`persistence_interface`, `model`/`systems_interface`, `relation`/`relationship` or `relation`/`population` | required, `ModelOwner` |
 | structural, no `declaration`, `node_tag` `function` | required, `ModelOwner` |
@@ -1287,9 +1291,9 @@ constraints ("Reference conformance" below).
    declaration `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;`) is one `scalar_type`/
    `dimension_equivalence` node, appended to the unit graph beside the
    dimension nodes and never changing one: the nodes it relates keep their
-   `node_id`s. It is self-typed and carries no `declaration`. Its
-   `body` carries `owner`, `dimension_node_ids` and `root_scale`, where `owner` is the `SourceOwner` of the
-   source that declares it, `dimension_node_ids` lists the `node_id`s of the two
+   `node_id`s. It is self-typed and carries no `declaration`. It carries the
+   `SourceOwner` of the source that declares it, and its
+   `body` is the closed `{term: "dimension_equivalence", dimension_node_ids, root_scale}`, where `dimension_node_ids` lists the `node_id`s of the two
    related dimension nodes, distinct and in ascending node-id order, and
    `root_scale` is the exact positive rational (`numerator`, `denominator`
    decimal strings, reduced, the numerator at least 1) for which one canonical
@@ -1322,7 +1326,7 @@ constraints ("Reference conformance" below).
    `dimension_node_ids` list of other than two entries and a `declaration`
    member refuse `malformed_wire` at the node, never `invalid_semantic_graph`.
    A schema-valid but unreduced `root_scale` (`2000/2`) refuses
-   `invalid_semantic_graph` at the node (FR-322-AC-139). A package holding no equivalence node
+   `invalid_semantic_graph` at the node. A package holding no equivalence node
    reads as before. A unit `typeRef` that names no unit of the checked package refuses
    `missing_declaration`/`missing-name`. A declared type outside the table, an `unbounded`
    upper bound with a lower bound above `0` and an operation with no result
@@ -3001,7 +3005,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-48 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 | FR-322-AC-49 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 | FR-322-AC-50 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-322-AC-51 | Every owner-bearing node of every published V2 package carries `owner`, a `SourceOwner` on a declared structural node and a `ModelOwner` on a model declaration node or clause function; no other node carries one. The V2 schema refuses, and a reader refuses `malformed_wire`: a declared record without `owner`, a declared record with a `ModelOwner`, a model declaration node without `owner` or with a `SourceOwner`, an `owner` on the builtin `Integer` node, on a nominal enum node and on an application node, a `DefinitionOwner`, a `SourceOwner` with an extra member and a `ModelOwner` with `version`. | Test |
+| FR-322-AC-51 | Every owner-bearing node of every published V2 package carries `owner`, a `SourceOwner` on a declared structural node and a `ModelOwner` on a model declaration node or clause function; no other node carries one. The V2 schema refuses, and a reader refuses `malformed_wire`: a declared record without `owner`, a declared record with a `ModelOwner`, a model declaration node without `owner` or with a `SourceOwner`, an `owner` on the builtin `Integer` node and on an application node, a `DefinitionOwner`, a `SourceOwner` with an extra member and a `ModelOwner` with `version`. | Test |
 | FR-322-AC-52 | The owner join joins each node's `owner` to the lock before the derived-shape semantic checks: a `SourceOwner` whose (`authority`, `identity`) is no `lock.sources` entry's, and a `ModelOwner` whose `identity` is that of no `model_root` owner, refuse `missing_declaration`/`missing-selection` at that node's `node_id` (`/owner` for a `ModelOwner` on a tuple or variant model type, FR-322-AC-169), and are reported ahead of a derived-shape refusal at a node of lower node-id order. A declared node's `owner` and its source map agree: changing the `source` of the region of a declared node's `declaration` occurrence to another lock source refuses `invalid_package`/`invalid-value` at that occurrence's `source_map` entry. | Test |
 | FR-322-AC-53 | The two-owner fixtures `positive-two-owners-a.json` and `positive-two-owners-b.json` declare the same records `Point { x: Integer; }` and `List { next?: List; }`, with the qualified names QSL emits for them, `["Point"]` and `["List"]` (QSL FR-092 D1), in both, with identical bodies, under the `SourceOwner`s (`agent-ix`, `example-a`) and (`agent-ix`, `example-b`). Both are admitted. Both also declare `three` (qualified name `["three"]`), a declared `value` whose body root is the application `1 + 2` (no `owner`). Their `Point` and `List` nodes have different `node_id`s, since their `package` differs, and the two packages are structurally unequal. | Test |
 | FR-322-AC-54 | The derived-shape semantic checks leave every `correspondence`/`abstraction_relation` node untouched: `positive-clause-operations.json`'s `correspondence`/`abstraction_relation` node passes the stage and the full reader admits the package. | Test |
