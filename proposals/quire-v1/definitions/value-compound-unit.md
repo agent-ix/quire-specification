@@ -8,15 +8,15 @@ forms is a separate I04 node, identified by FR-322's structural node id; its
 terms follow this identity's term order, and neither identity is derived from
 the other.
 
-The normative preimage shape is
+The normative identity shape is
 [value-compound-unit.schema.json](value-compound-unit.schema.json).
 The normative examples and mutations are
 [value-compound-unit-vectors.json](value-compound-unit-vectors.json).
 
-A value identity is the schema-valid preimage itself, compared componentwise (terms in order, each term's node id and exponent); nothing is hashed.
+A value identity is the schema-valid identity value itself, compared componentwise (terms in order, each term's node id and exponent); nothing is hashed.
 Terms reference admitted canonical root-unit I04 node IDs, use nonzero
 mathematical integer exponents written as canonical decimal strings (never
 `-0`), and are strictly ascending by canonical node
 key. Duplicate terms refuse internal construction. The empty list is the sole
-dimensionless identity. An evaluator constructs only the canonical preimage and
+dimensionless identity. An evaluator constructs only the canonical identity and
 does not accept a caller-supplied identity assertion.

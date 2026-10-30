@@ -755,7 +755,7 @@ A frame body refusal, meaning-join or canonical-order
   cause `declaration-nominal-mismatch`. The one exception is a nominal node
   whose `owner` is a `ModelOwner` (a dimension or unit an admitted domain
   package declares, "Model-owned members" step 4): it carries no
-  `declaration`, and its preimage's `qualified_declaration` is the
+  `declaration`, and its `qualified_declaration` is the
   one-segment `[<name>]`, the last segment of its FCD identity; two nodes carrying the same name in one namespace refuse
   as `ambiguous_declaration` with cause `ambiguous-name`, both before any
   operation refusal. The namespaces are three: dimensions
@@ -810,9 +810,9 @@ A frame body refusal, meaning-join or canonical-order
   `invalid_semantic_graph` at the node, whichever case it names: a member of
   a union is constructed by a `union_value` node, a nullary one included
   ("Tuple value types and payload-bearing variant types").
-  The `case` of such a node and of its member preimage is the declared case
+  The `case` of such a node and of its member id is the declared case
   name, any non-empty string, matched byte for byte as UTF-8; the identifier
-  requirement of the member preimage holds for a `scalar_type`/`enum` member
+  requirement of the member id holds for a `scalar_type`/`enum` member
   only (FR-141).
 - `source_map` — the total semantic-occurrence to original source-region
   mapping. An occurrence key is (`node_id`, `role`, `ordinal`), where role is

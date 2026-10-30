@@ -55,7 +55,7 @@ case convention or cross-catalog spelling alias.
 A canonical source result whose strict-reader validation fails yields `invalid-source-result` before
 mapping. `identity-mismatch` applies only after valid source acceptance to a
 missing/conflicting target context or a derived projection identity that does
-not match its exact preimage. The two outcomes cannot share a code merely
+not match its exact key. The two outcomes cannot share a code merely
 because both mention an identity.
 
 This catalog owns the six projection-adapter refusal spellings. FR-271's native

@@ -19,7 +19,7 @@ When a human accepts, rejects or limits a qualification or release scope, the pr
 ## Properties
 
 - `contract_version` — exactly `quire.human-decision/v1`.
-- `decision_id` — domain-separated identity over all fields except itself.
+- `decision_id` — the identity assigned to the decision when it is recorded, compared as an exact string.
 - `actor` — authenticated human identity and authority reference.
 - `scope` — exact qualification, release, capability and artifact identities.
 - `evidence` — immutable evidence set reviewed.
@@ -29,7 +29,7 @@ When a human accepts, rejects or limits a qualification or release scope, the pr
 
 ## Identity and validation
 
-The decision key is `decision_id`; its preimage includes actor, authority, scope, evidence, disposition, rationale and supersession.
+The decision key is `decision_id`. It is not computed from the other members: no identity is derived from the bytes of actor, authority, scope, evidence, disposition, rationale or supersession.
 A document whose `contract_version` is not that identifier, missing required
 properties, duplicate keys, out-of-domain values and non-canonical encodings
 refuse before consumption.
