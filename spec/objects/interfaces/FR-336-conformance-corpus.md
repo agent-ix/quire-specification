@@ -152,7 +152,7 @@ order; object maps retain their string keys.
 | `supplied_limits` | `ReplayRequestWire.supplied_limits`: `null` or complete FR-323 `limits.supplied` object `{admission_work_units, conversion_work_units, numeric_magnitude_bits}`. |
 | `object_environment` | `ReplayRequestWire.object_environment`: `null` or FR-106 reference `{identity}`; identity has the four FR-001 labels. |
 | `declared_domains` | `ReplayRequestWire.declared_domains`: ordered `DeclaredDomain` objects as specified below. |
-| `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows `{authority, identity, bytes_path}`; the adapter reads each referenced sibling file as raw bytes and constructs `(authority, identity, bytes)`. |
+| `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows `{identity, bytes_path}`; `identity` carries the four source labels defined by QSL FR-001. The adapter reads each referenced sibling file as raw bytes and constructs an ordered, unkeyed provision that preserves row order and labels. |
 
 #### FR-323 replay source and target
 
@@ -205,12 +205,14 @@ decimal strings and unsigned integers use canonical unsigned decimal strings.
 All object and enum forms are closed. `$defs.ReplayRequest` and its referenced
 structural definitions publish these rules in the JSON Schema.
 
-Each adapter `byte_provision` row is exactly
-`{authority, identity, bytes_path}`. `bytes_path` is relative to the
-vector directory and SHALL resolve to exactly one `kind: bytes` path listed in the same vector. It SHALL be
-nonempty, relative and contain no parent traversal. The adapter reads raw
-bytes and supplies those bytes for the row's `{authority, identity}` key. The path is not
-added to the typed product request.
+Each adapter `byte_provision` row is exactly `{identity, bytes_path}`. The
+`identity` member contains the four source labels defined by QSL FR-001:
+`authority`, `identity`, `revision_namespace` and `revision`. `bytes_path` is
+relative to the vector directory and SHALL resolve to exactly one `kind: bytes`
+path listed in the same vector. It SHALL be nonempty, relative and contain no
+parent traversal. The adapter reads raw bytes and supplies them with the row's
+labels at the row's ordered position. The path is not added to the typed
+product request, and the adapter neither derives nor records a digest key.
 
 ## Identity and validation
 
@@ -232,9 +234,9 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-3 | A producer cannot qualify itself solely with an oracle sharing its implementation. | Analysis |
 | FR-336-AC-4 | The published schema admits the complete-v1 fixture and refuses a missing required member, an unknown member, and out-of-domain class, consumer-type or expected-disposition values. | Test |
 | FR-336-AC-5 | The published schema admits each `input.files[*].kind` in the closed vocabulary `source`, `model`, `input`, `call`, `object-context`, `population`, `replay-request` and `bytes`, and refuses another kind. | Test |
-| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `authority`, `identity` and `bytes_path` and refuses extra members. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test |
+| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `identity` and `bytes_path`, where `identity` has exactly the four QSL FR-001 labels; it refuses missing or malformed labels, `digest` or `digest_domain` members and any other extra member. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test (TC-970) |
 | FR-336-AC-7 | A `replay-request` file matches the closed `$defs.ReplayRequest`; all 15 top-level fields map to their `ReplayRequestWire` fields, each nested value follows its FR-323 or structural type mapping, integers use canonical decimal strings, unknown object members and tags are refused, and setting names outside FR-255 are refused by the consumer decoder. The Witness/Input source arms, FR-323 replay target members and one-result envelope retain their stated shapes. | Test (TC-970) |
-| FR-336-AC-8 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and supplies it under the row's `{authority, identity}`. | Test (TC-970) |
+| FR-336-AC-8 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and supplies them with the row's four QSL FR-001 labels at the same ordered position, without a digest key. | Test (TC-970) |
 
 ## Dependencies
 

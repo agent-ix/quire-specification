@@ -28,9 +28,9 @@ The corpus has four top-level members:
   FR-323 source, target and result members are reused; other nested types have
   closed structural encodings with `snake_case` Rust fields, tagged variants,
   decimal-string integers and no unknown members.
-  `$defs.ReplayProvisionPath` rows carry the document's `authority` and
-  `identity` and a `bytes_path` to a sibling `bytes` file. The consumer reads
-  raw file bytes into its typed provision. These are harness adapters, not
+  `$defs.ReplayProvisionPath` rows carry the four QSL FR-001 identity labels
+  under `identity` and a `bytes_path` to a sibling `bytes` file. The consumer
+  reads raw file bytes into the ordered, unkeyed provision. These are harness adapters, not
   product wires.
   `expected.disposition` is either `value` or `refusal`. `value` carries the
   operation's typed JSON result; `refusal` carries the typed code and cause,

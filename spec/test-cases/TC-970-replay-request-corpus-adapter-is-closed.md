@@ -15,7 +15,7 @@ Verify the corpus-owned replay adapter fixture against the published schema,
 including FR-323 source and target forms, structural nested types, and the
 relative byte-provision reference rule.
 
-Scope: FR-336-AC-7, FR-336-AC-8.
+Scope: FR-336-AC-6, FR-336-AC-7, FR-336-AC-8.
 
 ## Test Procedure
 
@@ -32,17 +32,22 @@ the `replay_target.members` accepts exactly one FR-323 target member, and the
 expected result retains the FR-323 `results` envelope with one FR-072 replay
 result.
 
-For `byte_provision`, construct a replay vector with one listed `bytes` file
-and a matching relative `bytes_path`; verify that the adapter reads the file's
-raw bytes and maps them to that provision entry. Then separately use an absent,
-unlisted, absolute and parent-traversing path and verify refusal before
-`ReplayRequestWire` construction.
+For `byte_provision`, construct a replay vector with one listed `bytes` file,
+a matching relative `bytes_path` and its four QSL FR-001 identity labels;
+verify that the adapter reads the file's raw bytes and preserves the row and
+labels at the same position in the ordered provision, without a digest key.
+Then separately use an absent, unlisted, absolute and parent-traversing path
+and verify refusal before `ReplayRequestWire` construction.
 
-Tag the tests `#[trace("TC-970", "FR-336-AC-7", "FR-336-AC-8")]`.
+The QSpec schema test is tagged `#[trace("TC-970", "FR-336-AC-6")]` for
+the closed provision-row shape. QSL consumer adapter tests are tagged
+`TC-970` with FR-336-AC-7 and FR-336-AC-8 for request decoding and path
+resolution.
 
 ## Expected Results
 
 The published replay fixture validates, all documented source and target
 forms map to their named FR-323 members, structural values reject unknown
 fields and tags, and byte paths admit only listed sibling `bytes` files whose
-raw bytes supply the located provision.
+raw bytes are paired with the row's four QSL FR-001 labels in the ordered
+provision. Provision rows have no digest or digest-domain key.

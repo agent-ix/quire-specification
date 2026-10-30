@@ -178,11 +178,8 @@
         "bytes_path"
       ],
       "properties": {
-        "authority": {
-          "type": "string"
-        },
         "identity": {
-          "$ref": "#/$defs/Nonempty"
+          "$ref": "#/$defs/SourceIdentityLabels"
         },
         "bytes_path": {
           "$ref": "#/$defs/Nonempty"
@@ -1773,6 +1770,22 @@
         "identity": {
           "type": "string"
         }
+      },
+      "additionalProperties": false
+    },
+    "SourceIdentityLabels": {
+      "type": "object",
+      "required": [
+        "authority",
+        "identity",
+        "revision_namespace",
+        "revision"
+      ],
+      "properties": {
+        "authority": {"$ref": "#/$defs/Nonempty"},
+        "identity": {"$ref": "#/$defs/Nonempty"},
+        "revision_namespace": {"$ref": "#/$defs/Nonempty"},
+        "revision": {"$ref": "#/$defs/Nonempty"}
       },
       "additionalProperties": false
     },

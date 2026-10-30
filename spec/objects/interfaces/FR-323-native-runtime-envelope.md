@@ -2,6 +2,7 @@
 id: FR-323
 title: "Native runtime request and result envelope"
 type: FR
+object: value_object
 relationships:
   - target: ix://agent-ix/quire-specification/interface_005
     type: specifies
@@ -71,16 +72,23 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   An edit that removes or retypes an export the proved package uses
   makes the recompile itself refuse at rule 2 (`missing_declaration` or
   `ill_typed`).
-- `byte_provision` — present on a replay request only: the bytes of every
-  source and definition input the replay recompiles, each keyed by the
-  `{authority, identity}` its lock `sources` entry names, and every
-  domain-package document, keyed by the identity its own `package.identity` member declares (QSL ADR-013 QC-1), the entries forming one ordered provision whose position is the request's position (FR-336), with no version, digest or expected value compared. A second document under one key is a duplicate definition and refuses `invalid_package`/`conflicting-definition`. The executor obtains every recompilation input from this
-  provision and never from a path, environment variable or search location.
-  Before any recompile, an input the `package` reference names that the
-  provision does not carry refuses `missing_import`/`missing-selection`,
-  naming the requested `{authority, identity}` or the requested
-  domain-package identity, and the member of
-  the `package` reference that names it.
+- `byte_provision` — present on a replay request only: an ordered list of
+  `{identity, bytes}` entries. Each `identity` contains the four source labels
+  defined by QSL FR-001: `authority`, `identity`, `revision_namespace` and
+  `revision`; `bytes` is the document's exact byte sequence. The list is
+  unkeyed: the executor selects a source or definition by the labels named in
+  `package.sources`, and a domain package by its declared package identity.
+  A required input absent from the list refuses
+  `missing_import`/`missing-selection`, naming the requested identity and the
+  member of `package` that names it. Two source or definition documents with
+  the same four labels, or two domain-package documents declaring one identity,
+  refuse `invalid_package`/`conflicting-definition` naming both entries before
+  recompilation. A document whose bytes changed while its identity labels stay
+  the same is consumed as supplied; the executor compares no digest, version,
+  package id or other content-derived value to classify it as stale. The
+  recompile and subsequent checks report their ordinary typed outcomes. An
+  unselected entry has no effect. Every recompilation input comes from this
+  list, never from a path, environment variable or search location.
 - `selection` — ordered clause/function identifiers.
 - `state_environment` — typed anchors, values, object populations, frames and invocation captures.
 - `limits` — the `quire.value.accounting/v1` limit objects: `ScalarLimitsV1`,
@@ -496,9 +504,9 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-2 | Replay uses the same evaluator and inputs rather than a generated-oracle shortcut. | Analysis |
 | FR-323-AC-3 | Missing anchors, exhausted limits and false predicates remain distinct. | Analysis |
 | FR-323-AC-4 | The outcome-to-verdict map assigns one verdict per QSL ADR-013 O-16 category, fixed independently of any request; an `Undefined` outcome and a refused `FamilyOutcome` never settle agreement. | Test (TC-273) |
-| FR-323-AC-5 | A replay request's `byte_provision` supplies every source and definition input the replay recompiles, each located by the `{authority, identity}` its lock `sources` entry names, and every domain-package document, an entry of the ordered provision located by the identity it declares; the executor reads no recompilation input by path, environment variable or search location. Before any recompile, a named input the provision does not carry refuses `missing_import`/`missing-selection` naming the requested `{authority, identity}`, or the requested domain-package identity, and the `package` member that names it; a second document under one key is a duplicate definition and refuses `invalid_package`/`conflicting-definition`. | Test (TC-277) |
+| FR-323-AC-5 | A replay request's `byte_provision` supplies every required source and definition input selected by the four QSL FR-001 labels named in `package.sources`, and every required domain-package document selected by its declared package identity. A missing document refuses `missing_import`/`missing-selection`, naming the requested identity and the `package` member that names it, before recompilation. Two documents with the same four source labels, or two domain-package documents declaring one identity, refuse `invalid_package`/`conflicting-definition` naming both entries before recompilation. | Test (TC-277) |
 | FR-323-AC-6 | A replay request's `replay` property carries the `ReplaySource`, the replay target (`function`, `frame_operation` or `state_clause`), for a function request arguments keyed by parameter node id, the semantic profile selections, for a function request the failing node's occurrence key, the proof bounds and declared domains, the trace position and the `backend` member; a non-replay request carries no `replay` property. | Test (TC-278) |
-| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per identity in its derived closure, in ascending UTF-8 identity order, each carrying that dependency's `identity` and own lock `sources`, including transitive-only dependencies. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import in the dependency tree reaches `invalid_package`/`invalid-value`. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. None yields a result. | Test (TC-277) |
+| FR-323-AC-7 | A replay request's `package` reference names the proved package's own `sources` and one `dependencies` entry per identity in its derived closure, in ascending UTF-8 identity order, each carrying that dependency's `identity` and own lock `sources`, including transitive-only dependencies. The executor refuses by the first rule of its order: swapped or repeated entries `invalid_package`/`invalid-value` at `/package/dependencies` before any recompile; an entry whose source shares the authority and identity of another source `invalid_package`/`conflicting-definition` naming both; a removed entry `missing_import`/`missing-selection`; an entry no import in the dependency tree reaches `invalid_package`/`invalid-value`. An edit removing an export the proved package calls instead refuses in the recompile, `missing_declaration`/`missing-name`. Recompiled inputs come from the unkeyed byte provision selected by QSL FR-001 labels or declared package identity. None yields a result. | Test (TC-277) |
 | FR-323-AC-8 | A replay request's `stage_limits` entry raises its named stage limit for the replay recompile, a stage limit the request does not name runs at its published default, and an entry naming no stage-limit setting refuses before any stage runs. | Test (TC-426) |
 | FR-323-AC-9 | Withdrawn: the replay comparison of the recompiled checked package with a supplied one is removed; replay recompiles the supplied inputs and uses the result. | Withdrawn |
 | FR-323-AC-10 | Applicable replay/non-replay requests carry complete effective u64 `limits.supplied` A/H ceilings and B (AC-15), independent of unchanged ScalarLimitsV1, PopulationAdmissionLimitsV1 and per-argument C/occ. Zero permits no event; either changed ceiling changes request identity. Supplied fields in `stage_limits` refuse before stages run. No absent ceiling borrows evaluator/population/stage work; a ceiling omitted at the caller API resolves to its own published default 16777216, while a wire `limits.supplied` object that is incomplete or malformed refuses before consumption. | Test (TC-278) |
@@ -516,10 +524,10 @@ out-of-domain values and non-canonical encodings refuse before consumption.
 | FR-323-AC-22 | A `function` replay request with no `occurrence_key` refuses `invalid_runtime_input`/`missing-member` at `/replay/occurrence_key` at decode, before the byte-provision rule and any recompile, so the same request with a byte-provision entry removed reports the same refusal. The occurrence key selects the claim the replay decides (QSL FR-098). | Test (TC-278) |
 | FR-323-AC-23 | A replay whose recompiled sources select a domain package that `byte_provision` carries no entry for refuses `missing_import`/`missing-selection` naming the requested domain-package identity when the recompile reaches that selection, after the source and definition inputs of FR-323-AC-5 are present and before any result is produced. | Test (TC-277) |
 | FR-323-AC-24 | Withdrawn: a changed domain-package document is not detected by intake or replay. | Withdrawn |
-| FR-323-AC-25 | A `byte_provision` carrying two domain-package entries that declare one identity refuses `invalid_package`/`conflicting-definition` naming both entries at decode, before any recompile, whichever `package.version` members the two documents state (a document's own member; no version is compared); `duplicate_selection`/`duplicate-identity` applies only to a source that selects one identity twice (FR-321-AC-5). | Test (TC-277) |
-| FR-323-AC-26 | A domain-package entry of `byte_provision` that no recompiled source selects is not read: no refusal. | Test (TC-277) |
-| FR-323-AC-27 | The executor reads no recompilation input by path, environment variable or search location: every source, definition and domain-package input comes from `byte_provision`. | Test (TC-277) |
-| FR-323-AC-28 | Withdrawn: the raw-byte digest and digest-domain refusals are removed with the source byte digests. | Withdrawn |
+| FR-323-AC-25 | A `byte_provision` carrying two source or definition documents with the same four QSL FR-001 labels, or two domain-package documents declaring one identity, refuses `invalid_package`/`conflicting-definition` naming both entries at decode, before any recompile, irrespective of document members; `duplicate_selection`/`duplicate-identity` applies only to a source that selects one identity twice (FR-321-AC-5). | Test (TC-277) |
+| FR-323-AC-26 | A domain-package entry of `byte_provision` that no recompiled source selects is not read and has no effect. | Test (TC-277) |
+| FR-323-AC-27 | The executor reads no recompilation input by path, environment variable or search location: every source and definition is selected from the ordered `byte_provision` by QSL FR-001 labels, and every domain package by its declared package identity; no input is selected by a content digest. | Test (TC-277) |
+| FR-323-AC-28 | A `byte_provision` document whose bytes differ from an earlier document with the same QSL FR-001 labels or declared package identity is consumed as the current supplied document; no digest, digest-domain or content-derived stale refusal is produced. A malformed or invalid current document receives the ordinary typed refusal of the stage that reads it. | Test (TC-277) |
 
 ## Dependencies
 

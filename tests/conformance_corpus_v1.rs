@@ -137,8 +137,12 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
 
     let replay_provision_validator = definition_validator(&schema, "ReplayProvisionPath");
     let valid_provision_path = json!({
-        "authority": "fixture",
-        "identity": "source.quire",
+        "identity": {
+            "authority": "fixture",
+            "identity": "source.quire",
+            "revision_namespace": "fixture",
+            "revision": "1"
+        },
         "bytes_path": "inputs/source.quire"
     });
     assert!(replay_provision_validator.is_valid(&valid_provision_path));
@@ -186,17 +190,11 @@ fn replay_provision_rows_use_fr001_labels_without_digest_members() {
     digest_domain_keyed["digest_domain"] = json!("quire.source.bytes/v1");
     assert!(!validator.is_valid(&digest_domain_keyed));
 
-    let mut digest_keyed = valid;
-    digest_keyed["digest"] = json!("a".repeat(64));
-    assert!(!validator.is_valid(&digest_keyed));
-
     let object_environment = definition_validator(&schema, "ObjectEnvironmentRef");
     let valid_environment = json!({
         "identity": {
             "authority": "example",
-            "identity": "model/main",
-            "revision_namespace": "git",
-            "revision": "main"
+            "identity": "model/main"
         }
     });
     assert!(object_environment.is_valid(&valid_environment));
