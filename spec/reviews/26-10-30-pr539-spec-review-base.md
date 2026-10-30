@@ -1,0 +1,58 @@
+---
+id: SR-2026103001
+title: "Base review of the TW-06 to TW-09 owner-only vectors"
+type: SpecReview
+analysis: base
+scope: "agent-ix/quire-specification; proposals/checked-package-v2/model-tuple-union-vectors.json (TW-06..TW-09); spec/objects/interfaces/FR-322-checked-package-artifact.md (stage-order and owner-join locus paragraphs); spec/test-cases/TC-940 (context)"
+review_set: base
+---
+
+## Summary
+
+Ticket: none (no tracker id in branch or title); PR quire-specification#539.
+Reviewed the diff of `origin/main...origin/fix/tw-06-09-structural-vectors`.
+Each of TW-06 to TW-09 now applies one `replace` of
+`/semantic_graph/nodes/{n}/owner/node` to `fixtures/positive-model-tuple-union.json`.
+Applied with Python and validated against `proposals/checked-package-v2/schema.json`
+(jsonschema): all four are schema-valid, as the vectors state, and every
+`semantic_type`, `dependencies`, body node reference and `source_map` `node_id`
+resolves. On `main` the same check found six dangling edges per case. FR-322's
+owner join (stage 2, ascending node-id) reports `missing_declaration`/
+`missing-selection` at `/semantic_graph/nodes/{n}/owner` first: stage 1 has no
+defect to report (TW-00 is admitted and no application node changed), and the
+reader takes the declaration from `owner.node`, not from the `node_id` path. No
+digest, pin or stored hash is added.
+
+## Findings
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-001 | medium | TC-940 step 6 still expects a model declaration node with a non-empty body to be refused (`invalid_package`/`invalid-derived-shape` at `node_id`), but no published vector covers it since TW-05 was deleted in #518; adverse.json's derived-shape cases cover only population bounds | spec/test-cases/TC-940-variant-type-node-key-is-alias-independent.md:65-67,98-100; FR-322 tuple Refusals paragraph | correct-requirement-no-evidence |
+| FND-002 | medium | The stage-order paragraph this PR edits still cites FR-322-AC-169, which is Withdrawn. With TW-06 to TW-09 now carrying one defect each and NK-13 removed, no live AC or vector has both an owner defect and a dangling `semantic_type`/`dependencies` edge, so a reader that runs stage 4 before stage 2 passes every published vector | spec/objects/interfaces/FR-322-checked-package-artifact.md:461,481-485,3171 | correct-requirement-no-evidence |
+| FND-003 | low | The new sentence says the owner join is "the vector's one defect", but FR-322 also says a model node's `node_id.path` is `[node_tag, semantic_form, <FCD identity>]` and "a function of the owner alone". In TW-06 to TW-09 the path keeps naming Pair or Shape while `owner.node` names another node, so the package breaks that producer rule too. Say that the reader does not compare the path with `owner.node`, and that the owner join is the one defect the reader checks | spec/objects/interfaces/FR-322-checked-package-artifact.md:489-493,764,1284,1400-1402,1527 | wrong-requirement |
+
+## Verdict
+
+The vector rewrite is correct: (a) every edge resolves in all four patched
+packages, (b) the stated code, cause and locus are the first refusal FR-322's
+stage order gives, and (d) no hash, digest or pin was added. The edited prose
+in FR-322 at lines 481-493 correctly states the stage order and the reason the
+`node_id` is kept. FND-003 is a wording fix. FND-001 and FND-002 are coverage gaps:
+FND-001 was already flagged by the author, and FND-002 is evidence this PR removes
+without replacing. The rest of the edited prose and all four vectors were
+examined and are clean.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-004 | high | Fix commit b9b8727d adds TW-28 as the 27th wire case, but `tc_940_tuple_node_wire_cases_run_from_the_published_vectors` still asserts `ids.len() == 26`, so TC-940's wire replay fails at the #539 head. The assert is a count pin (the same defect as #540's FND-001): delete it rather than bump it | tests/checked_package_v2.rs:14307; proposals/checked-package-v2/model-tuple-union-vectors.json (TW-28) | implementation-bug-despite-evidence |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | deferred | Not fixed on #539. It is covered by open PR #540, whose TW-27 is the non-empty-body vector for TC-940 step 6, and it is closed when #540 merges. |
+| FND-002 | fixed | TW-28 (owner `ix://acme/shapes/Missing` plus node 14's `semantic_type` naming the absent `Absent` node) is schema-valid, and its one dangling edge is the stage 4 edge. It refuses at the stage 2 owner join, at `/semantic_graph/nodes/0/owner`. The paragraph now cites live FR-322-AC-275 and TW-28. |
+| FND-003 | fixed | The paragraph now says the reader does not compare `node_id.path` with `owner.node`, names the broken producer rule, and calls the owner join the one defect a reader checks. |
+| FND-004 | fixed | 3cfe82ad deletes `assert_eq!(ids.len(), 26, ...)` from `tc_940_tuple_node_wire_cases_run_from_the_published_vectors` and keeps the uniqueness assert, so the replay no longer pins the case count and TW-28 runs. |
