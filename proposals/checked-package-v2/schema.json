@@ -3443,6 +3443,23 @@
                     "const": "function"
                   }
                 }
+              },
+              {
+                "required": [
+                  "node_tag",
+                  "semantic_form"
+                ],
+                "properties": {
+                  "node_tag": {
+                    "const": "scalar_type"
+                  },
+                  "semantic_form": {
+                    "enum": [
+                      "dimension",
+                      "unit"
+                    ]
+                  }
+                }
               }
             ]
           },

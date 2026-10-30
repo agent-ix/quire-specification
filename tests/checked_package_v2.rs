@@ -8531,7 +8531,11 @@ fn required_owner_kind(node: &Value) -> Option<&'static str> {
         Some("source")
     } else if node["node_tag"] == "model" && node["semantic_form"] == "model_root" {
         Some("model_root")
-    } else if is_model_declaration(node) || node["node_tag"] == "function" {
+    } else if is_model_declaration(node)
+        || node["node_tag"] == "function"
+        || (node["node_tag"] == "scalar_type"
+            && matches!(node["semantic_form"].as_str(), Some("dimension" | "unit")))
+    {
         Some("model")
     } else {
         None

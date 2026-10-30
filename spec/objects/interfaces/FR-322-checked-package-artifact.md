@@ -775,11 +775,13 @@ A frame body refusal, meaning-join or canonical-order
   `model`/`tuple_value_type`, `model`/`event_type`,
   `model`/`variant_type`, `model`/`state_machine`, `model`/`process`,
   `model`/`persistence_interface`, `model`/`systems_interface`,
-  `relation`/`relationship` or `relation`/`population`) or a clause function
-  (`function`). A declared
+  `relation`/`relationship` or `relation`/`population`), a `scalar_type`/`dimension`
+  or `scalar_type`/`unit` node an admitted domain package declares, or a clause function
+  (`function`). A node with a `declaration` carries a `SourceOwner`; a node without one
+  carries the `ModelOwner` that admitted it (or the `ModelRootOwner` of a `model`/`model_root`). A declared
   owner-bearing node, a source `enum`, `unit` or `dimension` included, carries
   the `SourceOwner` of the source unit that
-  declares it, `{kind: "source", authority, identity}`, as does a
+  declares it, `{kind: "source", authority, identity}`, as does, as the one exception, a
   `scalar_type`/`dimension_equivalence` node, which has no `declaration`; a model-owned node
   carries its `ModelOwner`, `{kind: "model", identity, node}`, with no
   `version` member, or the `ModelRootOwner`
@@ -1105,7 +1107,7 @@ neither model-owned row, so it falls in the last row and carries none.
 | structural, carries `declaration` | required, `SourceOwner` |
 | structural, no `declaration`, `node_tag`/`semantic_form` `scalar_type`/`dimension_equivalence` | required, `SourceOwner` |
 | structural, no `declaration`, `node_tag`/`semantic_form` `model`/`model_root` | required, `ModelRootOwner` |
-| structural, no `declaration`, `node_tag`/`semantic_form` `model`/`object_type`, `model`/`record_value_type`, `model`/`tuple_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`state_machine`, `model`/`process`, `model`/`persistence_interface`, `model`/`systems_interface`, `relation`/`relationship` or `relation`/`population` | required, `ModelOwner` |
+| structural, no `declaration`, `node_tag`/`semantic_form` `scalar_type`/`dimension`, `scalar_type`/`unit`, `model`/`object_type`, `model`/`record_value_type`, `model`/`tuple_value_type`, `model`/`event_type`, `model`/`variant_type`, `model`/`state_machine`, `model`/`process`, `model`/`persistence_interface`, `model`/`systems_interface`, `relation`/`relationship` or `relation`/`population` | required, `ModelOwner` |
 | structural, no `declaration`, `node_tag` `function` | required, `ModelOwner` |
 | every other node | absent |
 
