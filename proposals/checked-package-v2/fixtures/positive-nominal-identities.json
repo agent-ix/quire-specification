@@ -131,8 +131,11 @@
           "identity": "example"
         },
         "body": {
-          "term": "aggregate",
-          "members": []
+          "term": "enum",
+          "ordered": false,
+          "members": [
+            "READY"
+          ]
         }
       },
       {
@@ -183,8 +186,24 @@
           "identity": "example"
         },
         "body": {
-          "term": "aggregate",
-          "members": []
+          "term": "unit",
+          "dimension_node_id": {
+            "package": "example",
+            "path": [
+              "Example",
+              "Length"
+            ],
+            "ordinal": 0
+          },
+          "target_unit_node_id": null,
+          "scale": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "offset": {
+            "numerator": "0",
+            "denominator": "1"
+          }
         }
       },
       {
@@ -226,8 +245,8 @@
           "identity": "example"
         },
         "body": {
-          "term": "aggregate",
-          "members": []
+          "term": "dimension",
+          "terms": []
         }
       },
       {
@@ -269,8 +288,8 @@
           "identity": "example"
         },
         "body": {
-          "term": "aggregate",
-          "members": []
+          "term": "dimension",
+          "terms": []
         }
       },
       {

@@ -7083,7 +7083,7 @@ fn is_body_term(term: &Value) -> bool {
     match term["term"].as_str() {
         Some("application") => all_members(&term["arguments"]),
         Some("aggregate") => all_members(&term["members"]),
-        Some("frame" | "abstraction_relation" | "dimension_equivalence") => true,
+        Some("frame" | "abstraction_relation" | "dimension_equivalence" | "enum" | "dimension" | "unit") => true,
         Some("extension_form") => term["clauses"].as_array().is_some_and(|clauses| {
             clauses
                 .iter()
@@ -8542,8 +8542,7 @@ fn required_owner_kind(node: &Value) -> Option<&'static str> {
     }
 }
 
-/// Apply `edit` to the node at `index`, keep the node id, and recompute the
-/// package id.
+/// Apply `edit` to the node at `index` and keep the node id.
 fn edit_node(package: &mut Value, index: usize, edit: impl Fn(&mut Value)) {
     edit(
         package
@@ -8624,6 +8623,63 @@ fn tc_233_every_positive_fixture_carries_owners_exactly_where_the_rule_requires(
     );
 }
 
+/// FR-322-AC-269: a source `enum`, `dimension` and `unit` node carries its
+/// closed body. Each refused mutation (`NB-01`..`NB-05`) fails the V2 schema at
+/// the recorded locus inside the node's body, which a reader reports
+/// `malformed_wire`; the code is derived here from the schema result, not read
+/// from the vector. `NB-06` (an enum with `ordered` true) is admitted.
+#[trace("TC-233", "FR-322-AC-269")]
+#[test]
+fn tc_233_nominal_body_mutations_fail_the_schema_as_malformed_wire() {
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let base = parsed_fixture(POSITIVE_NOMINAL_IDENTITIES);
+    assert!(schema.is_valid(&base), "the base is admitted");
+    let adverse = parsed_fixture(ADVERSE);
+    let mutations = adverse["nominal_body_mutations"]
+        .as_array()
+        .expect("nominal body mutations");
+    let ids: Vec<&str> = mutations.iter().map(|m| m["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, ["NB-01", "NB-02", "NB-03", "NB-04", "NB-05", "NB-06"]);
+    for mutation in mutations {
+        let id = mutation["id"].as_str().expect("id");
+        let index = node_index_where(&base, |node| {
+            node["node_tag"] == mutation["node"]["node_tag"]
+                && node["semantic_form"] == mutation["node"]["semantic_form"]
+                && node.get("declaration").is_some()
+        });
+        let mut candidate = base.clone();
+        edit_node(&mut candidate, index, |node| {
+            for patch in mutation["patch"].as_array().expect("patch") {
+                apply_authored_patch(node, patch);
+            }
+        });
+        let body_schema = schema_for_def(&parsed_fixture(SCHEMA), mutation["body_def"].as_str().unwrap());
+        let body = &candidate["semantic_graph"]["nodes"][index]["body"];
+        let observed = if schema.is_valid(&candidate) {
+            assert!(body_schema.is_valid(body), "{id}: the body meets its closed def");
+            "admitted".to_owned()
+        } else {
+            // The node-level `oneOf` hides the failing rule, so the rule is read
+            // from the closed body def: the recorded locus inside the body.
+            let locus = mutation["locus"].as_str().expect("refused vectors record a locus");
+            let paths: Vec<String> = body_schema
+                .iter_errors(body)
+                .map(|error| error.instance_path().to_string())
+                .collect();
+            assert!(
+                paths.iter().any(|path| path == locus),
+                "{id}: the body def refuses at {locus:?}, got {paths:?}"
+            );
+            "refused:malformed_wire".to_owned()
+        };
+        assert_eq!(observed, mutation["outcome"], "{id}");
+    }
+    let enum_index = node_index_where(&base, |node| {
+        node["semantic_form"] == "enum" && node.get("declaration").is_some()
+    });
+    assert_eq!(base["semantic_graph"]["nodes"][enum_index]["body"]["ordered"], false);
+}
+
 /// FR-322-AC-51: each owner mutation fails the V2 schema, which a reader
 /// reports `malformed_wire`.
 #[trace("TC-233", "FR-322-AC-51")]
@@ -8656,8 +8712,7 @@ fn tc_233_owner_mutations_fail_the_schema_as_malformed_wire() {
 }
 
 /// FR-322-AC-52: a declared node's owner and its source map agree. Moving the
-/// declaration region to another lock source changes no node id and not the
-/// package id, and is refused invalid-value at that source-map entry.
+/// declaration region to another lock source changes no node id and is refused invalid-value at that source-map entry.
 #[trace("TC-233", "FR-322-AC-52")]
 #[test]
 fn tc_233_a_moved_declaration_region_refuses_invalid_value_at_its_source_map_entry() {
@@ -13476,7 +13531,7 @@ fn timed_clause_case_package(case: &Value) -> Value {
 }
 
 /// Replays every case of the clause vectors: the patch applied to the clause
-/// fixture, schema validity, current keys and package id, and the refusal.
+/// fixture, schema validity and the refusal.
 fn timed_clause_vector_defects(skip: &str) -> Vec<String> {
     let vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
     let document = parsed_fixture(SELECTED_TIMED_CLAUSE_DOCUMENT);

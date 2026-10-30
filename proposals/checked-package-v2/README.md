@@ -100,6 +100,7 @@ structures, but any external consumer receives only the contract.
   projection by owner.
 - `node-ordinal-vectors.json` supplies the cases `NO-01` to `NO-04` of TC-233: a `node_id.ordinal` of 0 and of 9007199254740991 is admitted, and 9007199254740992, -1, `1.5`, `1e2` and the string `"1"` are each `malformed_wire` at the ordinal (FR-322-AC-171).
 - `structural-identity.schema.json` and `structural-identity-vectors.json` give the closed shapes of FR-201's `MemberId`, `VariantId`, `UnitId`, `UniverseId` and `PopulationId` (and the `EffectiveId` an effective `MemberId` owner holds) and the TC-233 cases `SI-01` to `SI-06` (FR-201-AC-11): each comparison is equal or different, and orders as recorded, componentwise; nothing is hashed.
+- `adverse.json` `nominal_body_mutations` supplies the cases `NB-01` to `NB-06` of TC-233 (FR-322-AC-269): a source enum, dimension or unit node with an `aggregate` body, an empty enum, a unit without `scale`, an extra unit member or a non-integer dimension exponent fails the closed body schema at the recorded locus (`malformed_wire`), and an enum with `ordered` true is admitted.
 - `class-catalog-vectors.json` supplies the canonical `class_catalog` of TC-233 `CCW-10` (effect, commit, event, attempt, `cend`, the three drain entries and `memory flush`) with schema and reader mutations.
 - `refinement-step-occurrence-vectors.json` supplies the cases `RS-01` to `RS-24` (`RS-23`, a step-order refusal, is withdrawn; steps are in declaration order) of
   FR-322's refinement step occurrences: a refinement owner's `declaration` and

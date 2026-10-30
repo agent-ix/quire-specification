@@ -4133,8 +4133,8 @@
       },
       {
         "body": {
-          "members": [],
-          "term": "aggregate"
+          "term": "dimension",
+          "terms": []
         },
         "declaration": {
           "qualified_name": [
@@ -4176,8 +4176,24 @@
       },
       {
         "body": {
-          "members": [],
-          "term": "aggregate"
+          "term": "unit",
+          "dimension_node_id": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Time"
+            ]
+          },
+          "target_unit_node_id": null,
+          "scale": {
+            "numerator": "1",
+            "denominator": "1"
+          },
+          "offset": {
+            "numerator": "0",
+            "denominator": "1"
+          }
         },
         "declaration": {
           "qualified_name": [
