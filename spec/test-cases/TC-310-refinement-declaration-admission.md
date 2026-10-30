@@ -215,10 +215,9 @@ Mutations, each applied alone to the positive unit:
     machine key with an object-type key; `SM-04` omits the abstract machine's
     row; `SM-05` duplicates that row.
     For each selected model package in these writes, also verify exactly one
-    `model_root` node whose `ModelRootOwner` identity and version join the
-    selected `model_root` node, whose generated occurrence ordinal zero
+    `model_root` node whose `ModelRootOwner` identity is the selected package identity, whose generated occurrence ordinal zero
     maps to the model-selection source region, and whose identity is derived
-    from the selected package identity and version, independent of alias
+    from the selected package identity, independent of alias
     spelling. Verify the model-only
     refinement's `abstract` and `semantic_type` name the roots, while a
     protocol refinement keeps `protocol` at the exact clause key and the

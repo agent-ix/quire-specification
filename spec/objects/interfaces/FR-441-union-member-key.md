@@ -61,8 +61,6 @@ implementation distinguishes the same members of the same checked package.
 | FR-441-AC-2 | Withdrawn: the member-key hash vectors it tested are removed. | Withdrawn |
 | FR-441-AC-3 | Withdrawn: the member-key hash vectors it tested are removed. | Withdrawn |
 | FR-441-AC-4 | Withdrawn: the member-key hash vectors it tested are removed. | Withdrawn |
-| FR-441-AC-5 | The members `Circle` and `Empty` of one union have distinct member keys, the member `Circle` of a second union has a member key different from the first union's `Circle`, and an enum member `Circle` is not equal to either. | Test (TC-396) |
-| FR-441-AC-6 | Changing the `member` of the `U1`/`Circle` key to `circle`, or its `declaration_node_id` to the `U2` node id, yields a different member key, so a member key binds the member identifier byte for byte and its union; a payload does not change the key. | Test (TC-396) |
 
 ## Dependencies
 
