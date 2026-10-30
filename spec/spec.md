@@ -1028,8 +1028,8 @@ The requirement artifacts are indexed below.
 | [FR-419](functional/analysis/FR-419-analyze-task-set-schedulability.md) | FR | Analyze task-set schedulability |
 | [FR-420](functional/analysis/FR-420-sample-stochastic-timed-models.md) | FR | Interpret and sample stochastic timed models |
 | [FR-421](functional/temporal/FR-421-check-probabilistic-timed-claims-exactly.md) | FR | Check probabilistic timed claims exactly through digital clocks |
-| [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package union, union-value and case nodes, explicit union-value application-preimage selection, and the `quire.op.control.case` catalog entry |
-| [FR-441](objects/interfaces/FR-441-union-member-key.md) | FR | Union member key: the `quire.union-member-node/v1` preimage |
+| [FR-440](objects/interfaces/FR-440-checked-package-union-and-case-nodes.md) | FR | Checked-package union, union-value and case nodes, explicit union-value application selection, and the `quire.op.control.case` catalog entry |
+| [FR-441](objects/interfaces/FR-441-union-member-key.md) | FR | Union member key: the (declaration node id, member) pair |
 | [FR-478](functional/type-model/FR-478-convert-text-to-a-number.md) | FR | Text and String to a number: one locale-free grammar per integer, decimal, rational, IEEE and quantity target |
 | [FR-469](objects/interfaces/FR-469-checked-package-extension-nodes.md) | FR | Checked-package extension form node: one `extension`/`extension_form` tag with the node kind as body data, its structural key, and the reader joins for a held, selected extension definition |
 | [FR-390](functional/analysis/FR-390-analyze-state-graph-claims.md) | FR | State-graph claims `possible`, `always possible` and `unique path` over a model subject: forms, graph semantics and admission |
@@ -1199,7 +1199,7 @@ The requirement artifacts are indexed below.
 | [FR-268](objects/observation/FR-268-progress-and-late-data-authority.md) | FR (value_object) | Object layer; Progress and late-data authority |
 | [FR-269](objects/observation/FR-269-consumer-mapping-loss.md) | FR (enumeration) | Object layer; Consumer mapping-loss classification |
 | [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
-| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; admitted-observation identity preimage and byte uniqueness |
+| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; admitted observation key, key uniqueness and strict-reader order |
 | [FR-297](objects/output-mapping/FR-297-output-mapping-consumer-profile.md) | FR (value_object) | Object layer; exact target standard and mapping-profile selection |
 | [FR-298](objects/output-mapping/FR-298-per-obligation-output-mapping-record.md) | FR (entity) | Object layer; identity-bearing source-bound mapping disposition |
 | [FR-299](objects/output-mapping/FR-299-generated-output-package.md) | FR (aggregate_root) | Object layer; immutable target bytes and complete ordered mapping record set |
@@ -1228,7 +1228,7 @@ The requirement artifacts are indexed below.
 | [FR-283](objects/protocol/FR-283-projection-refusal-code.md) | FR (enumeration) | Object layer; Projection refusal code vocabulary |
 | [FR-284](objects/protocol/FR-284-scope-progress-and-closure-state.md) | FR (enumeration) | Object layer; the two-member state vocabulary carried by the four decision-scope and surrounding-execution progress/closure axes |
 | [FR-285](objects/protocol/FR-285-participation-fact.md) | FR (value_object) | Object layer; exact known/unknown source participation without importing target status labels |
-| [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; canonical-result identity preimage and strict-reader order |
+| [FR-286](objects/protocol/FR-286-canonical-protocol-result-identity-preimage.md) | FR (value_object) | Object layer; canonical protocol result key, key uniqueness and strict-reader order |
 | [FR-287](objects/protocol/FR-287-authority-qualified-runtime-subject-reference.md) | FR (value_object) | Object layer; authority-qualified opaque runtime subject identity and non-causal canonical order |
 | [FR-479](objects/protocol/FR-479-obligation-activation-binding.md) | FR | Object layer; exact producer-to-consumer protocol-obligation activation binding over the FR-464 activation relation |
 | [FR-288](objects/protocol/FR-288-qualified-protocol-definition-identity.md) | FR (value_object) | Object layer; exact linked protocol-definition qualifier across source, declaration ownership and semantic selections |
@@ -1260,7 +1260,7 @@ The requirement artifacts are indexed below.
 | [FR-289](objects/temporal/FR-289-observation-temporal-boundary-mapping.md) | FR (value_object) | Object layer; explicit half-open observation to inclusive temporal boundary mapping |
 | [FR-294](objects/observation/FR-294-late-data-classification.md) | FR (enumeration) | Object layer; exact on-time and late observation classification |
 | [FR-295](objects/observation/FR-295-input-completeness-state.md) | FR (enumeration) | Object layer; independent input-completeness state derived from an exact fact population |
-| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; admitted-observation identity preimage and byte uniqueness |
+| [FR-296](objects/observation/FR-296-admitted-observation-identity-preimage.md) | FR (value_object) | Object layer; admitted observation key, key uniqueness and strict-reader order |
 | [FR-375](functional/analysis/FR-375-declare-model-refinement.md) | FR | Draft; Refinement declaration between two state models: syntax, row checks, checked-package node |
 | [FR-376](functional/analysis/FR-376-evaluate-population-valued-mapping-expressions.md) | FR | Draft; Population-valued expressions in refinement mappings |
 | [FR-377](functional/analysis/FR-377-decide-model-refinement.md) | FR | Draft; Refinement between two model subjects: step rules, abstract progress, terminal states |

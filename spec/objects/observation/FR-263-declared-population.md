@@ -94,7 +94,7 @@ configuration, or closure input".
 ## Completeness boundary
 
 FR-295 completeness is a separate derived fact about the exact declared
-population. It does not participate in the population identity preimage and
+population. It does not participate in the population identity and
 cannot be inferred from progress or closure alone.
 
 ## Status

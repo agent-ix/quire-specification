@@ -4,7 +4,7 @@ Definition identity: `quire.value.compound-unit/v1`.
 This evaluator-owned value identity is selected by `quire.value.complete/v1`.
 This value identity is not an I04 checked-semantic node key and has no source
 occurrence. The `scalar_type`/`compound_unit` node that a checked source type
-forms is a separate I04 node, keyed by FR-322's structural node preimage; its
+forms is a separate I04 node, identified by FR-322's structural node id; its
 terms follow this identity's term order, and neither identity is derived from
 the other.
 
