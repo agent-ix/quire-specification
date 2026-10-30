@@ -41,3 +41,17 @@ in FR-322 at lines 481-493 correctly states the stage order and the reason the
 FND-001 was already flagged by the author, and FND-002 is evidence this PR removes
 without replacing. The rest of the edited prose and all four vectors were
 examined and are clean.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs | Escape Cause |
+| --- | --- | --- | --- | --- |
+| FND-004 | high | Fix commit b9b8727d adds TW-28 as the 27th wire case, but `tc_940_tuple_node_wire_cases_run_from_the_published_vectors` still asserts `ids.len() == 26`, so TC-940's wire replay fails at the #539 head. The assert is a count pin (the same defect as #540's FND-001): delete it rather than bump it | tests/checked_package_v2.rs:14307; proposals/checked-package-v2/model-tuple-union-vectors.json (TW-28) | implementation-bug-despite-evidence |
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | deferred | Not fixed on #539. It is covered by open PR #540, whose TW-27 is the non-empty-body vector for TC-940 step 6, and it is closed when #540 merges. |
+| FND-002 | fixed | TW-28 (owner `ix://acme/shapes/Missing` plus node 14's `semantic_type` naming the absent `Absent` node) is schema-valid, and its one dangling edge is the stage 4 edge. It refuses at the stage 2 owner join, at `/semantic_graph/nodes/0/owner`. The paragraph now cites live FR-322-AC-275 and TW-28. |
+| FND-003 | fixed | The paragraph now says the reader does not compare `node_id.path` with `owner.node`, names the broken producer rule, and calls the owner join the one defect a reader checks. |
