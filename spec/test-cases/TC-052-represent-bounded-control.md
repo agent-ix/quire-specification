@@ -38,5 +38,4 @@ All and only causally valid interleavings admit. Timestamp/input order adds no
 edge. Every semantic mutation requires a new qualified definition identity;
 reusing the old identity refuses as a contradiction instead of approximating.
 External path/locus/rendering metadata does not independently extend the graph
-key, while an authored source-byte change still changes the raw-source digest
-already carried by the qualified definition.
+key, while an authored source-byte change is a changed source document.

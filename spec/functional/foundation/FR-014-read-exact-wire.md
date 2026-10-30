@@ -22,7 +22,7 @@ A structurally valid selected record or a wire diagnostic.
 
 ## Behavior
 
-Decoded duplicate keys, unknown members, omitted required members, invalid scalar strings and unsupported versions refuse. requiredFeatures is explicit, duplicate-free and compared as a set. Schema validation is separate from authority, digest, canonicalization and source-map validation.
+Decoded duplicate keys, unknown members, omitted required members, invalid scalar strings and unsupported versions refuse. requiredFeatures is explicit, duplicate-free and compared as a set. Schema validation is separate from authority, canonicalization and source-map validation.
 
 ## Acceptance Criteria
 

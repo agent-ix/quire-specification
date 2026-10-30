@@ -233,7 +233,7 @@ finite_bound_available: false}` and nothing else:
 `request_index` is the item's zero-based position, and a result, a
 disposition and a terminal record name their item by it (FR-331 "Items"), so
 the position is part of the wire. The request writer SHALL order the items by
-structure alone, never by a digest, a hash or a map's iteration order:
+structure alone, never by a map's iteration order:
 
 1. The items the caller requested, authored and `refinement`, first, in the
    caller's order. Adding or removing a derived item, as a `terminal any`

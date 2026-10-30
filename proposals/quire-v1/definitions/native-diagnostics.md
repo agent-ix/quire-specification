@@ -227,7 +227,7 @@ Each payload value is written as one exact ASCII string:
 - a label is exactly `authority` or `identity`.
 
 Other retained host/source codes keep their selected broad meaning and original
-structured producer cause: I/O error, malformed command, invalid digest/identifier,
+structured producer cause: I/O error, malformed command, invalid identifier,
 output serialization failure, invalid Quire context and invalid source map. This catalog does not interpret their OS or upstream codes as
 native subvariants. Readers retain that upstream selection explicitly; unknown
 upstream meaning cannot establish a native semantic result.

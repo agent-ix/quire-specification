@@ -13,36 +13,22 @@ relationships:
 
 ## Description
 
-When a digest is compared to another digest, the reader SHALL compare the
-selected identity domain before the bytes, so that an identity derived under one
-domain is unequal to an identity derived under another regardless of byte
-equality.
-
-## Values
-
-| Value | Description |
-| --- | --- |
-| `ir-canonical` | Existing contract-IR canonical identity. Retains its original bare-hex syntax and algorithm; it does not adopt the JCS prefix or canonicalization. |
-| `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
-| `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout. |
-| `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
-| `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
+When two identities are compared, the reader SHALL compare them componentwise
+by their named components ("Structural identities" below), so that no identity
+is derived from a hash of bytes and no identity is compared by anything other
+than its components.
 
 ## Identity and comparison
 
-- **Identity kind** — *value*. A domain label has no identity of its own; it is
-  compared componentwise as an exact string.
-- **Key** — the label itself. Matching is exact. Spellings are not normalized
-  aliases, and a hyphenated and an underscored spelling are different labels.
-- **Key order** — lexicographic over the label, for collection comparison only.
-  It carries no precedence, preference or causal meaning between domains.
-- **Absence** — a digest supplied without a selected domain has an absent
-  domain. An absent domain compares only to absence; it is never defaulted to
-  `raw-artifact-digest` or to any other member.
-- **Causal order** — not applicable. A domain label participates in no causal
+- **Identity kind** — *value*, compared componentwise.
+- **Key** — the named components of the identity, matched exactly. Spellings are
+  not normalized aliases.
+- **Key order** — the component order stated below, for collection comparison
+  only. It carries no precedence, preference or causal meaning.
+- **Absence** — an absent component compares only to absence and is never
+  defaulted.
+- **Causal order** — not applicable. An identity participates in no causal
   structure.
-- **Cross-domain rule** — two identities bearing different domain labels are
-  unequal. Byte equality of their digests does not make them equal.
 
 ## Structural identities
 
@@ -64,9 +50,9 @@ record that carries an identity contributes to it.
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-201-AC-1 | Each member's value equals the exact label string in the table, and an underscored spelling does not match a hyphenated one. | Inspection |
-| FR-201-AC-2 | Two identities with equal digest bytes and different domain labels compare unequal. | Analysis |
-| FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
+| FR-201-AC-1 | Withdrawn: the identity-domain label vocabulary is removed with the digest domains it labelled. | Withdrawn |
+| FR-201-AC-2 | Withdrawn: it compared digests across domain labels, and no digest domain remains. | Withdrawn |
+| FR-201-AC-3 | Withdrawn: it concerned a digest with an absent domain, and no digest remains. | Withdrawn |
 | FR-201-AC-4 | Withdrawn: the lock-file digest and package fingerprint domains are removed. | Withdrawn |
 | FR-201-AC-7 | Withdrawn: the byte-equality test of the exposed constants against their files is removed. | Withdrawn |
 | FR-201-AC-8 | Withdrawn: it existed only for the cache key, which is removed with the result cache. | Withdrawn |
@@ -75,8 +61,6 @@ record that carries an identity contributes to it.
 
 ## Dependencies
 
-- [FR-015](../../functional/foundation/FR-015-preserve-canonical-domains.md) establishes the
-  distinct domains and the substitution prohibitions.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
 - [FR-150](../../functional/type-model/FR-150-preserve-model-normalization-provenance.md)
   defines the effective declaration identity.
@@ -88,4 +72,4 @@ record that carries an identity contributes to it.
 
 ## Status
 
-Accepted complete-V1 identity-domain contract.
+Accepted complete-V1 structural identity contract.

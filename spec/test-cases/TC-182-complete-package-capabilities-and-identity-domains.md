@@ -11,7 +11,7 @@ relationships:
 
 ## Description
 
-Substitute a digest across every typed identity domain and add an unknown required capability.
+Add an unknown required capability.
 
 ## Test Procedure
 

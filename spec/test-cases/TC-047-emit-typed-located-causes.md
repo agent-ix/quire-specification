@@ -40,7 +40,7 @@ response wire. Compare these paired failures independently:
 
 Supply each valid diagnostic to its strict consumer, then remove a required cause
 field, substitute another cause kind while keeping the same message, change the
-catalog digest, add an unknown required variant, and erase an originating stage
+catalog identity, add an unknown required variant, and erase an originating stage
 through a wrapper. Each mutant refuses this interpretation. Localize messages
 and change display paths separately: code, typed cause and semantic subject stay
 equal. A changed response catalog is retained in response provenance without

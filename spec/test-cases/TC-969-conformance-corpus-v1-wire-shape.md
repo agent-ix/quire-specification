@@ -29,7 +29,7 @@ and validate each document; replace it once with `unknown` and validate again.
 Compile the published `$defs.InputValue`, `$defs.CallInput` and
 `$defs.ReplayProvisionPath` and validate
 each tagged value, a call with all four value tags, and invalid tag, member,
-decimal, identity, malformed accounting-decimal and replay digest mutations.
+decimal, identity, malformed accounting-decimal and replay path mutations.
 Verify that call arguments are a positional array of tagged values and that a
 `{parameter, value}` argument object is refused by the schema.
 
