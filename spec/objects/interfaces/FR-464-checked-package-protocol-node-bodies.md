@@ -87,16 +87,19 @@ FR-466, with the first refusal in the order below.
   reached by the body plus `owner_model` when present.
 - **node id** — FR-322's structural `node_id` `{package, path, ordinal}`
   for a protocol node, where `path` is the node's declaration path or, for a
-  derived node, FR-322's derived form; `owner_model` is carried only by a
+  derived node outside a recursion group, FR-322's derived form; `owner_model` is carried only by a
   protocol clause. Under Option A below, `recursion_group` is absent for a
   protocol node outside a cyclic reference component. Every node in a cyclic
   component, including nodes with another `node_tag`, uses FR-322's
   recursion-group encoding: one explicit shared `recursion_group`, and each
   reference to a member of that same component is an ordinary `reference` to
   the member's `node_id` on the checked wire (spelled `group_reference` in the
-  written form). A member node's id is a
-  function of its declaration path and, for a derived node, of the ids of the
-  nodes it references, and of nothing in the source text but those.
+  written form). The id of a node outside every
+  recursion group is a function of its declaration path and, for a derived
+  node, of the ids of the nodes it references, and of nothing in the source
+  text but those. A recursion-group member, derived members included, carries
+  the group's declaration path (FR-322), never an operand-derived one, and is
+  told apart from the other members by its producer-assigned `node_id.ordinal`.
   Reformatting the source, adding a comment or a second reference to a
   protocol changes no node id. Changing any name, member, reference or
   literal, or the order of an ordered list, yields a different node
