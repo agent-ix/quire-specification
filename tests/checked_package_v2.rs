@@ -15776,10 +15776,13 @@ fn path_embeds_an_operand(node_id: &Value) -> bool {
         .any(Value::is_object)
 }
 
-/// FR-322 recursion groups: a recursion-group member that is a declared
-/// record is identified by `{package, path, ordinal}` with `path` its declared
-/// name path and `ordinal` its position within the group (the recursion-group rule); its id is
-/// never derived by embedding an operand node id.
+/// FR-322 recursion groups: every member of a recursion group, the declared
+/// record and the anonymous derived members alike, is identified by
+/// `{package, path, ordinal}` with `path` the group's declared name path; its
+/// id is never derived by embedding an operand node id. Members of one group
+/// share that path and are told apart by `node_id.ordinal`, which is
+/// producer-assigned and unique among nodes sharing `package` and `path`; the
+/// member's position in its group is the separate `recursion` rule.
 #[trace("TC-233", "FR-322-AC-53")]
 #[test]
 fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
@@ -15802,9 +15805,30 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
             id["path"], node["declaration"]["qualified_name"],
             "member {position}: the path is the declared name path"
         );
-        // Holds only because List and Tree have distinct paths; the recursion-group ordinal rule is separate.
-        assert_eq!(id["ordinal"], 0, "member {position}: one node of that path");
         assert!(!path_embeds_an_operand(id), "member {position}: no operand is embedded");
+    }
+    // Every member of a group, derived ones included, carries the group's
+    // declared name path, and no two nodes of one package and path share an
+    // ordinal.
+    let declared_path = |label: &Value| {
+        nodes
+            .iter()
+            .find(|node| node["semantic_form"] == "record" && node["recursion_group"] == *label)
+            .map(|node| node["declaration"]["qualified_name"].clone())
+            .expect("the group's declared record")
+    };
+    let mut seen = std::collections::BTreeSet::new();
+    for (position, node) in nodes.iter().enumerate() {
+        let Some(label) = node.get("recursion_group") else { continue };
+        assert_eq!(
+            node["node_id"]["path"],
+            declared_path(label),
+            "node {position}: a group member carries the group's declared name path"
+        );
+        assert!(
+            seen.insert(node["node_id"].to_string()),
+            "node {position}: members sharing a path differ by ordinal"
+        );
     }
     // An id derived by embedding an operand is detected as such, and is not
     // the id the group member carries.
@@ -15821,11 +15845,11 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
     });
     assert!(path_embeds_an_operand(&embedded));
     assert_ne!(embedded, list["node_id"]);
-    // The anonymous derived members of the group do embed their operand.
+    // The anonymous derived members of the group do not embed their operand.
     assert!(nodes
         .iter()
         .filter(|node| node.get("recursion_group").is_some() && node["semantic_form"] != "record")
-        .all(|node| path_embeds_an_operand(&node["node_id"])));
+        .all(|node| !path_embeds_an_operand(&node["node_id"])));
 }
 
 const NODE_ORDINAL_VECTORS: &str =

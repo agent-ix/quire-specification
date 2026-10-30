@@ -605,9 +605,10 @@ A frame body refusal, meaning-join or canonical-order
   and `semantic_type` `null` exactly when the node is its own type, and `owner`
   exactly when it is owner-bearing. The members of a recursion group are the
   nodes carrying its `recursion_group` label, a non-empty string the producer
-  chooses and all members share; a member's `ordinal` (its `node_id.ordinal`) is
-  its position among them in graph order. A node whose form is not one of the
-  shapes above, a member with an `ordinal` that is not its position, or two
+  chooses and all members share; a member's group position, the `ordinal` of its
+  `recursion` `{size, ordinal}`, is its position among them in graph order, and
+  is a separate rule from its `node_id.ordinal`. A node whose form is not one of the
+  shapes above, a member whose group position is not its position, or two
   groups sharing a label with unequal membership refuses
   `invalid_package`/`invalid-value` at the node's `node_id`.
 - `dependencies` — the nodes a node's definition is built from: a list of
@@ -997,11 +998,11 @@ hashed. It is a closed object with exactly these members:
 | --- | --- |
 | `package` | The `name` of the package the node belongs to (for a `model_root` node and for a node a domain package owns, that domain package's identity). |
 | `path` | A non-empty array of segments. A declared node's path is its declaration path, the declaring scopes' names outermost first. A derived node (no `declaration`, for example `Set<Integer>`, an application or a literal) outside every recursion group has the path `[node_tag, semantic_form, ...operands]`; each operand is a string (a literal's text, an operator or member name) or the `node_id` of an operand node. |
-| `ordinal` | A non-negative JSON integer from `0` to 9007199254740991 (2^53-1, the I-JSON safe integer), assigned by the producer. It tells apart nodes that share one `package` and `path`; the reader's only rule is that no two nodes sharing a `package` and `path` have the same `ordinal`. It need not be `0`, need not be contiguous and need not follow sibling or graph order, and a reader never derives one. The members of a recursion group are the one case with a rule of its own (`recursion_group`, below). |
+| `ordinal` | A non-negative JSON integer from `0` to 9007199254740991 (2^53-1, the I-JSON safe integer), assigned by the producer. It tells apart nodes that share one `package` and `path`; the reader's only rule is that no two nodes sharing a `package` and `path` have the same `ordinal`. It need not be `0`, need not be contiguous and need not follow sibling or graph order, and a reader never derives one. A recursion-group member's `ordinal` is no exception: it is still producer-assigned and unique among nodes sharing its `package` and `path`; the member's position in its group is the separate `recursion` `{size, ordinal}` (`recursion_group`, below). |
 
 Ordinals compare numerically; `package` and `path` strings compare as UTF-8 bytes. An `ordinal` that is negative, above 9007199254740991, not a JSON integer (a string, a fraction or an exponent form, for example) is a malformed integer and is refused `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal`, `i` the node's graph index; the same bound and the same refusal apply to every `node_id` held in a reference, dependency, `semantic_type` or nested path operand, at that member's pointer.
 
-A recursion-group member is identified by `{package, path, ordinal}`, with `path` its declared name path and `ordinal` governed by the recursion-group rule of `semantic_graph` nodes (its position among the group's members in graph order); its `path` is never derived by operand embedding. Only a derived node outside every recursion group embeds operand `node_id`s. A producer disambiguates other nodes sharing a package and path by distinct ordinals of its choosing; body content is not part of the path.
+A recursion-group member is identified by `{package, path, ordinal}`, with `path` its declared name path, `[<declared name>]`, never derived by operand embedding, so every member of a group, anonymous derived members included, carries the group's declared name path. Members of one group share that `package` and `path` and are told apart by `ordinal`, which is producer-assigned like any other (unique among nodes sharing `package` and `path`, in graph order for readability); the member's position in its group is the separate `recursion` `{size, ordinal}` of `semantic_graph` nodes. Only a derived node outside every recursion group embeds operand `node_id`s. A producer disambiguates other nodes sharing a package and path by distinct ordinals of its choosing; body content is not part of the path.
 
 A node belongs to the package that contains it, and an imported node keeps its
 own package name. Two nodes with equal `package`, `path` and `ordinal` have the

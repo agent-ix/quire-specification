@@ -100,7 +100,7 @@
           "members": [
             {
               "target": {
-                "ordinal": 0,
+                "ordinal": 1,
                 "package": "example-a",
                 "path": [
                   "List"
@@ -113,7 +113,7 @@
         },
         "dependencies": [
           {
-            "ordinal": 0,
+            "ordinal": 1,
             "package": "example-a",
             "path": [
               "List"
@@ -124,15 +124,7 @@
           "ordinal": 0,
           "package": "example-a",
           "path": [
-            "composite_type",
-            "option",
-            {
-              "ordinal": 0,
-              "package": "example-a",
-              "path": [
-                "List"
-              ]
-            }
+            "List"
           ]
         },
         "node_tag": "composite_type",
@@ -149,15 +141,7 @@
           "ordinal": 0,
           "package": "example-a",
           "path": [
-            "composite_type",
-            "option",
-            {
-              "ordinal": 0,
-              "package": "example-a",
-              "path": [
-                "List"
-              ]
-            }
+            "List"
           ]
         }
       },
@@ -177,15 +161,7 @@
                         "ordinal": 0,
                         "package": "example-a",
                         "path": [
-                          "composite_type",
-                          "option",
-                          {
-                            "ordinal": 0,
-                            "package": "example-a",
-                            "path": [
-                              "List"
-                            ]
-                          }
+                          "List"
                         ]
                       },
                       "term": "reference"
@@ -208,20 +184,12 @@
             "ordinal": 0,
             "package": "example-a",
             "path": [
-              "composite_type",
-              "option",
-              {
-                "ordinal": 0,
-                "package": "example-a",
-                "path": [
-                  "List"
-                ]
-              }
+              "List"
             ]
           }
         ],
         "node_id": {
-          "ordinal": 0,
+          "ordinal": 1,
           "package": "example-a",
           "path": [
             "List"
@@ -243,7 +211,7 @@
         "schema_version": "quire.checked-semantic-graph/v2",
         "semantic_form": "record",
         "semantic_type": {
-          "ordinal": 0,
+          "ordinal": 1,
           "package": "example-a",
           "path": [
             "List"
@@ -583,15 +551,7 @@
         "ordinal": 0,
         "package": "example-a",
         "path": [
-          "composite_type",
-          "option",
-          {
-            "ordinal": 0,
-            "package": "example-a",
-            "path": [
-              "List"
-            ]
-          }
+          "List"
         ]
       },
       "ordinal": 0,
@@ -609,7 +569,7 @@
     },
     {
       "node_id": {
-        "ordinal": 0,
+        "ordinal": 1,
         "package": "example-a",
         "path": [
           "List"
