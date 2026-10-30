@@ -1574,59 +1574,8 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/0",
-          "value": {
-            "body": {
-              "members": [],
-              "term": "aggregate"
-            },
-            "dependencies": [],
-            "node_id": {
-              "package": "acme/shapes",
-              "path": [
-                "model",
-                "tuple_value_type",
-                "ix://acme/shapes/Color"
-              ],
-              "ordinal": 0
-            },
-            "node_tag": "model",
-            "occurrences": [
-              {
-                "ordinal": 0,
-                "role": "expression"
-              }
-            ],
-            "owner": {
-              "kind": "model",
-              "identity": "acme/shapes",
-              "node": "ix://acme/shapes/Color"
-            },
-            "schema_version": "quire.checked-semantic-graph/v2",
-            "semantic_form": "tuple_value_type",
-            "semantic_type": {
-              "package": "acme/shapes",
-              "path": [
-                "model",
-                "tuple_value_type",
-                "ix://acme/shapes/Color"
-              ],
-              "ordinal": 0
-            }
-          }
-        },
-        {
-          "op": "replace",
-          "path": "/source_map/0/node_id",
-          "value": {
-            "package": "acme/shapes",
-            "path": [
-              "model",
-              "tuple_value_type",
-              "ix://acme/shapes/Color"
-            ],
-            "ordinal": 0
-          }
+          "path": "/semantic_graph/nodes/0/owner/node",
+          "value": "ix://acme/shapes/Color"
         }
       ],
       "schema": "valid",
@@ -1640,59 +1589,8 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/0",
-          "value": {
-            "body": {
-              "members": [],
-              "term": "aggregate"
-            },
-            "dependencies": [],
-            "node_id": {
-              "package": "acme/shapes",
-              "path": [
-                "model",
-                "tuple_value_type",
-                "ix://acme/shapes/Holder"
-              ],
-              "ordinal": 0
-            },
-            "node_tag": "model",
-            "occurrences": [
-              {
-                "ordinal": 0,
-                "role": "expression"
-              }
-            ],
-            "owner": {
-              "kind": "model",
-              "identity": "acme/shapes",
-              "node": "ix://acme/shapes/Holder"
-            },
-            "schema_version": "quire.checked-semantic-graph/v2",
-            "semantic_form": "tuple_value_type",
-            "semantic_type": {
-              "package": "acme/shapes",
-              "path": [
-                "model",
-                "tuple_value_type",
-                "ix://acme/shapes/Holder"
-              ],
-              "ordinal": 0
-            }
-          }
-        },
-        {
-          "op": "replace",
-          "path": "/source_map/0/node_id",
-          "value": {
-            "package": "acme/shapes",
-            "path": [
-              "model",
-              "tuple_value_type",
-              "ix://acme/shapes/Holder"
-            ],
-            "ordinal": 0
-          }
+          "path": "/semantic_graph/nodes/0/owner/node",
+          "value": "ix://acme/shapes/Holder"
         }
       ],
       "schema": "valid",
@@ -1706,59 +1604,8 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/0",
-          "value": {
-            "body": {
-              "members": [],
-              "term": "aggregate"
-            },
-            "dependencies": [],
-            "node_id": {
-              "package": "acme/shapes",
-              "path": [
-                "model",
-                "tuple_value_type",
-                "ix://acme/shapes/Missing"
-              ],
-              "ordinal": 0
-            },
-            "node_tag": "model",
-            "occurrences": [
-              {
-                "ordinal": 0,
-                "role": "expression"
-              }
-            ],
-            "owner": {
-              "kind": "model",
-              "identity": "acme/shapes",
-              "node": "ix://acme/shapes/Missing"
-            },
-            "schema_version": "quire.checked-semantic-graph/v2",
-            "semantic_form": "tuple_value_type",
-            "semantic_type": {
-              "package": "acme/shapes",
-              "path": [
-                "model",
-                "tuple_value_type",
-                "ix://acme/shapes/Missing"
-              ],
-              "ordinal": 0
-            }
-          }
-        },
-        {
-          "op": "replace",
-          "path": "/source_map/0/node_id",
-          "value": {
-            "package": "acme/shapes",
-            "path": [
-              "model",
-              "tuple_value_type",
-              "ix://acme/shapes/Missing"
-            ],
-            "ordinal": 0
-          }
+          "path": "/semantic_graph/nodes/0/owner/node",
+          "value": "ix://acme/shapes/Missing"
         }
       ],
       "schema": "valid",
@@ -1772,59 +1619,8 @@
       "patch": [
         {
           "op": "replace",
-          "path": "/semantic_graph/nodes/3",
-          "value": {
-            "body": {
-              "members": [],
-              "term": "aggregate"
-            },
-            "dependencies": [],
-            "node_id": {
-              "package": "acme/shapes",
-              "path": [
-                "model",
-                "variant_type",
-                "ix://acme/shapes/Pair"
-              ],
-              "ordinal": 0
-            },
-            "node_tag": "model",
-            "occurrences": [
-              {
-                "ordinal": 0,
-                "role": "expression"
-              }
-            ],
-            "owner": {
-              "kind": "model",
-              "identity": "acme/shapes",
-              "node": "ix://acme/shapes/Pair"
-            },
-            "schema_version": "quire.checked-semantic-graph/v2",
-            "semantic_form": "variant_type",
-            "semantic_type": {
-              "package": "acme/shapes",
-              "path": [
-                "model",
-                "variant_type",
-                "ix://acme/shapes/Pair"
-              ],
-              "ordinal": 0
-            }
-          }
-        },
-        {
-          "op": "replace",
-          "path": "/source_map/3/node_id",
-          "value": {
-            "package": "acme/shapes",
-            "path": [
-              "model",
-              "variant_type",
-              "ix://acme/shapes/Pair"
-            ],
-            "ordinal": 0
-          }
+          "path": "/semantic_graph/nodes/3/owner/node",
+          "value": "ix://acme/shapes/Pair"
         }
       ],
       "schema": "valid",

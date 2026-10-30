@@ -480,13 +480,17 @@ A frame body refusal, meaning-join or canonical-order
   artifact adds no semantics to it. No other order is a reading of this artifact. An owner
   defect therefore outranks every dangling `semantic_type` or `dependencies`
   edge. A `semantic_type` or `dependencies` target is not resolved in stage 1
-  (that step compares the list and does not resolve its targets), so an edge
-  that dangles because a node's owner changed is reported by stage 4, after the
-  owner join (`TW-06` to `TW-09`).
+  (that step compares the list and does not resolve its targets), so a package
+  with both an owner defect and a dangling edge reports the owner join, and the
+  dangling edge is reported by stage 4 only once every owner joins.
   **Locus of an owner-join refusal.** `missing_declaration`/`missing-selection`
   is at the node's `/semantic_graph/nodes/{n}/node_id`, except a `ModelOwner`
   refusal of a `model`/`tuple_value_type` or `model`/`variant_type` node, which
-  is at the node's `/semantic_graph/nodes/{n}/owner` (`TW-06` to `TW-09`). A
+  is at the node's `/semantic_graph/nodes/{n}/owner` (`TW-06` to `TW-09`). Each
+  of those vectors replaces only the node's `owner/node` and keeps its
+  `node_id`: a reader derives no `node_id` from an owner, so every
+  `semantic_type`, `dependencies` and member edge to the node still resolves and
+  the owner join is the vector's one defect. A
   `ModelRootOwner` refusal of a `model_root` is `missing_import`/`missing-selection`
   at `/semantic_graph/nodes/{n}/owner/identity` (`MR` vectors).
 - owner join stage — after graph shape and before any declaration, frame,
