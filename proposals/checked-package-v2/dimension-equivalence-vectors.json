@@ -1,0 +1,216 @@
+{
+  "version": 1,
+  "note": "FR-322-AC-268 (TC-280 MU-25..MU-27): dimension equivalence over base dimension nodes of three packages. Each node is a structural id {package,path,ordinal}; `form` is the node's scalar_type form. `pair` names two entries of `nodes`; root_scale is the exact positive rational for which one canonical root of the first equals root_scale canonical roots of the second. `at` is the index in `equivalences` of the refused node (the later in node-id order). The equivalence node's own id is assigned: path [scalar_type, dimension_equivalence, first id, second id] in package `example`, ordinal from the entry (default 0).",
+  "nodes": {
+    "clock_time": {
+      "package": "acme/clock",
+      "path": [
+        "Time"
+      ],
+      "ordinal": 0,
+      "form": "dimension"
+    },
+    "flow_time": {
+      "package": "acme/flow",
+      "path": [
+        "Time"
+      ],
+      "ordinal": 0,
+      "form": "dimension"
+    },
+    "rpc_time": {
+      "package": "acme/rpc",
+      "path": [
+        "Time"
+      ],
+      "ordinal": 0,
+      "form": "dimension"
+    },
+    "rpc_s": {
+      "package": "acme/rpc",
+      "path": [
+        "s"
+      ],
+      "ordinal": 0,
+      "form": "unit"
+    }
+  },
+  "cases": [
+    {
+      "id": "XP-01",
+      "note": "one canonical clock root is 1/1000 of a flow or rpc root; the flow and rpc roots are equal; the cycle product is 1",
+      "equivalences": [
+        {
+          "pair": [
+            "clock_time",
+            "flow_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        },
+        {
+          "pair": [
+            "clock_time",
+            "rpc_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        },
+        {
+          "pair": [
+            "flow_time",
+            "rpc_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1"
+          }
+        }
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "XP-02",
+      "note": "descending pair",
+      "equivalences": [
+        {
+          "pair": [
+            "flow_time",
+            "clock_time"
+          ],
+          "root_scale": {
+            "numerator": "1000",
+            "denominator": "1"
+          }
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 0
+    },
+    {
+      "id": "XP-03",
+      "note": "a pair of one node twice",
+      "equivalences": [
+        {
+          "pair": [
+            "flow_time",
+            "flow_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1"
+          }
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 0
+    },
+    {
+      "id": "XP-04",
+      "note": "a pair repeated by a second node",
+      "equivalences": [
+        {
+          "pair": [
+            "clock_time",
+            "flow_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        },
+        {
+          "pair": [
+            "clock_time",
+            "flow_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          },
+          "ordinal": 1
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 1
+    },
+    {
+      "id": "XP-05",
+      "note": "a pair naming a unit node",
+      "equivalences": [
+        {
+          "pair": [
+            "clock_time",
+            "rpc_s"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1"
+          }
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 0
+    },
+    {
+      "id": "XP-06",
+      "note": "the cycle product is 2, not 1",
+      "equivalences": [
+        {
+          "pair": [
+            "clock_time",
+            "flow_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        },
+        {
+          "pair": [
+            "clock_time",
+            "rpc_time"
+          ],
+          "root_scale": {
+            "numerator": "1",
+            "denominator": "1000"
+          }
+        },
+        {
+          "pair": [
+            "flow_time",
+            "rpc_time"
+          ],
+          "root_scale": {
+            "numerator": "2",
+            "denominator": "1"
+          }
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 2
+    },
+    {
+      "id": "XP-07",
+      "note": "schema-valid unreduced scale 2/2000",
+      "equivalences": [
+        {
+          "pair": [
+            "clock_time",
+            "flow_time"
+          ],
+          "root_scale": {
+            "numerator": "2",
+            "denominator": "2000"
+          }
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 0
+    }
+  ]
+}
