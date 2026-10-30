@@ -67,8 +67,7 @@ states are refused with the specified stable code and without a
 `TechniqueResult`. An invalid source is always
 `invalid-source-result`, including when another source defect is present; it is
 never reported as `identity-mismatch`. `identity-mismatch` is emitted only after
-the source result is valid and a target-context or derived-projection identity
-does not match its normative tuple.
+the source result is valid and a target context is missing or conflicting.
 Known participation derives `not-required`, `complete`, `partial` or
 `not-started` from the exact required and participating sets; unknown derives
 `unknown` while retaining every known participant, missing dependency and typed

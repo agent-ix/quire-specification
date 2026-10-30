@@ -55,9 +55,8 @@ or `finding-loss`, plus the affected exact identity.
 
 The projection adapter SHALL validate the canonical protocol result
 before mapping it. An invalid source SHALL yield `invalid-source-result`. After
-source acceptance, a missing/conflicting target-context identity or a derived
-projection identity that disagrees with its exact key SHALL yield
-`identity-mismatch`. The adapter SHALL preserve
+source acceptance, a missing/conflicting target-context identity SHALL yield
+`identity-mismatch`. The derived projection identity is the structural key `{sourceResultKey, adapter}` and is compared against no recomputed value. The adapter SHALL preserve
 every independent execution, activation, observation, participation, assumption
 and logical finding required by quire-verification FR-007. The adapter SHALL
 describe protocol adequacy only in the canonical protocol result through the
@@ -134,9 +133,9 @@ another repository.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-062-AC-1 | Every source-state row maps to the selected E02 contract and retains every simultaneous independent FR-007 finding with no sufficiency decision. | Test (TC-064) |
-| FR-062-AC-2 | Every projected result has a distinct deterministic identity, exact target execution binding and retained URI/media-type reference to unchanged canonical protocol-result bytes; substituting any identity refuses the projection. | Test (TC-064) |
+| FR-062-AC-2 | Withdrawn: it refused a projection whose identity was substituted, a comparison of a recorded projection identity with a recomputed one; the projection identity is the structural key `{sourceResultKey, adapter}` and no such comparison exists. | Withdrawn |
 | FR-062-AC-3 | E02 adequacy is derived only from observation adequacy; protocol adequacy remains in the canonical result and neither adequacy domain can establish the other or an evidence-sufficiency decision. | Test (TC-064) |
-| FR-062-AC-4 | An invalid source yields `invalid-source-result`; an invalid derived projection identity or exact target-context mismatch yields `identity-mismatch`; unknown revisions/features, unrepresented states and finding loss yield their corresponding stable codes, all without a `TechniqueResult`. | Test (TC-064) |
+| FR-062-AC-4 | An invalid source yields `invalid-source-result`; an exact target-context mismatch yields `identity-mismatch`; unknown revisions/features, unrepresented states and finding loss yield their corresponding stable codes, all without a `TechniqueResult`. | Test (TC-064) |
 
 ## Dependencies
 

@@ -19,7 +19,7 @@ When an authored verification plan completes linking, the producer SHALL use the
 ## Properties
 
 - `contract_version` — exactly `quire.verification-plan/v1`.
-- `plan_id` — identity over canonical source, checked package and resolved selections.
+- `plan_id` — the identity assigned to the plan, compared as an exact string. It is not computed from the other members.
 - `obligations` — exact clauses/claims and expected evidence class.
 - `methods` — ordered provider-independent method selections.
 - `domains` — explicit model/input/trace/time/candidate domains.
@@ -30,7 +30,7 @@ When an authored verification plan completes linking, the producer SHALL use the
 
 ## Identity and validation
 
-The plan key covers all fields except execution results. Source order is retained for diagnostics but dependency order governs execution.
+The plan key is `plan_id`; no identity is derived from the other fields. Source order is retained for diagnostics but dependency order governs execution.
 A document whose `contract_version` is not that identifier, missing required
 properties, duplicate keys, out-of-domain values and non-canonical encodings
 refuse before consumption.
