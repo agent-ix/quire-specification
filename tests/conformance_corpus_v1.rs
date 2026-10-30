@@ -3,7 +3,7 @@
 
 //! FR-336's closed conformance-corpus v1 structural contract.
 
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 use ix_trace_rs::trace;
 use quire_verification_contracts::jcs_canonicalize;
@@ -155,7 +155,7 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
     assert!(!replay_provision_validator.is_valid(&extra_provision_member));
 }
 
-#[trace("TC-970", "FR-336-AC-8")]
+#[trace("TC-970", "FR-336-AC-6")]
 #[test]
 fn replay_provision_rows_use_fr001_labels_without_digest_members() {
     let schema = parsed(SCHEMA);
@@ -177,6 +177,14 @@ fn replay_provision_rows_use_fr001_labels_without_digest_members() {
         .unwrap()
         .remove("revision");
     assert!(!validator.is_valid(&missing_label));
+
+    let mut digest_keyed = valid.clone();
+    digest_keyed["digest"] = json!("c".repeat(64));
+    assert!(!validator.is_valid(&digest_keyed));
+
+    let mut digest_domain_keyed = valid.clone();
+    digest_domain_keyed["digest_domain"] = json!("quire.source.bytes/v1");
+    assert!(!validator.is_valid(&digest_domain_keyed));
 
     let mut digest_keyed = valid;
     digest_keyed["digest"] = json!("a".repeat(64));

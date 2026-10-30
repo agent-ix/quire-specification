@@ -97,5 +97,15 @@
       }
     }
   ],
-  "byte_provision": []
+  "byte_provision": [
+    {
+      "identity": {
+        "authority": "fixture",
+        "identity": "source/zero",
+        "revision_namespace": "fixture",
+        "revision": "1"
+      },
+      "bytes_path": "inputs/replay-source.native"
+    }
+  ]
 }
