@@ -131,7 +131,7 @@ FR-465-AC-9.
 | TM12 | the condition reads the activation binder `opened` | `missing_declaration`/`missing-name` at the node, stage `terminal` |
 | TM11 | the condition reads `view` (`over`, the model observation) | admitted |
 | TM8 | the clause's `terminal` names the `finish` node | `invalid_model_binding`/`malformed-declaration` at the target |
-| TM9 | `terminal` removed from the clause | admitted; the clause node id changes |
+| TM9 | `terminal` removed from the clause | admitted; the clause body changes, not its node id |
 
 ## Runtime-subject vectors
 

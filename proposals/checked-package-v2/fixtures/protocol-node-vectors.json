@@ -358,7 +358,7 @@
       "section": "Keys and declarations",
       "id": "K2",
       "Edit to the base": "rename role `Fulfillment` to `Shipping`",
-      "Expected": "the role's node id and every node that references it change"
+      "Expected": "the role's node id changes (its declaration path is the renamed name), and so does the id of every operand-derived node that references it"
     },
     {
       "test_case": "TC-946",
@@ -379,14 +379,14 @@
       "section": "Keys and declarations",
       "id": "K4",
       "Edit to the base": "change `max 3` to `max 4`",
-      "Expected": "`Poll`'s node id and its ancestors' node ids change"
+      "Expected": "`Poll`'s body changes; no node id changes, since a declared node's id is its declaration path and producer-assigned ordinal"
     },
     {
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "id": "K5",
       "Edit to the base": "retarget `Applied`'s `of` from `Charged` to `Requested`",
-      "Expected": "`Applied`'s node id changes and the reader refuses `invalid_model_binding`/`malformed-declaration` at the target (not an `attempt`)"
+      "Expected": "`Applied`'s body changes, no node id changes, and the reader refuses `invalid_model_binding`/`malformed-declaration` at the target (not an `attempt`)"
     },
     {
       "test_case": "TC-946",
@@ -470,7 +470,7 @@
       "section": "Clause body",
       "id": "C4",
       "Edit to the base": "`scheduling` removed from the base",
-      "Expected": "the clause node id changes"
+      "Expected": "the clause body changes; no node id changes"
     },
     {
       "test_case": "TC-946",
@@ -1877,7 +1877,7 @@
       "section": "Sequence, choice and parallel",
       "id": "S1",
       "Edit": "swap `Requested` and `Charged` in `Main`'s `children`",
-      "Expected": "`Main`'s node id changes; the reader refuses `definition-cycle` for the `receive`/`send` edge (`Requested` and `Received`)"
+      "Expected": "`Main`'s body changes (the order of its `children`), not its node id; the reader refuses `definition-cycle` for the `receive`/`send` edge (`Requested` and `Received`)"
     },
     {
       "test_case": "TC-948",

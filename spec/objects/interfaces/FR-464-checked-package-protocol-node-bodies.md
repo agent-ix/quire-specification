@@ -103,11 +103,12 @@ FR-466, with the first refusal in the order below.
   Reformatting the source, adding a comment or a second reference to a
   protocol changes no node id. Changing any name, member, reference or
   literal, or the order of an ordered list, yields a different (structurally
-  unequal) node, and changes the id of each derived node outside every
-  recursion group whose operand ids it changes; a recursion-group member keeps
-  its producer-assigned id across such an edit
+  unequal) node
   ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)
-  AC-4).
+  AC-4), and changes the id of each derived node outside every recursion
+  group whose operand ids it changes; a recursion-group member keeps its
+  producer-assigned id across such an edit (FR-322, "Structural node
+  identity").
 - **operation anchors** — an `attempt` resolves its operation through the
   `state`/`operation_anchor` of that operation (FR-342). A protocol-only
   anchor has no `execution_point`; if a state clause also names the operation
