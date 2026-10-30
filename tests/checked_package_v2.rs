@@ -15850,9 +15850,10 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         );
         assert!(!path_embeds_an_operand(id), "member {position}: no operand is embedded");
     }
-    // Every member of a group, derived ones included, carries the group's
-    // declaration path, and no two nodes of one package and path share an
-    // ordinal.
+    // Each fixture's group has exactly one declared member, so its anonymous
+    // derived members carry that member's path (FR-322: a declared member
+    // keeps its own declaration path); no two nodes of one package and path
+    // share an ordinal.
     let declared_path = |label: &Value| {
         nodes
             .iter()
@@ -15866,7 +15867,7 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         assert_eq!(
             node["node_id"]["path"],
             declared_path(label),
-            "node {position}: a group member carries the group's declaration path"
+            "node {position}: an anonymous member carries the group's one declared member's path"
         );
         assert!(
             seen.insert(node["node_id"].to_string()),
@@ -15897,7 +15898,7 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
                 .find(|n| n["semantic_form"] == "record" && n["recursion_group"] == *label)
                 .map(|n| n["declaration"]["qualified_name"].clone());
             if Some(node["node_id"]["path"].clone()) != declared {
-                failures.push(format!("{fixture} node {position}: path is not the declaration path"));
+                failures.push(format!("{fixture} node {position}: path is not the one declared member's path"));
             }
             if path_embeds_an_operand(&node["node_id"]) {
                 failures.push(format!("{fixture} node {position}: path embeds an operand"));
