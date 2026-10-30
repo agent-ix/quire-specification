@@ -15747,6 +15747,133 @@ fn tc_233_node_id_ordinal_vectors_run_from_the_published_file() {
     );
 }
 
+const STRUCTURAL_IDENTITY_SCHEMA: &str =
+    include_str!("../proposals/checked-package-v2/structural-identity.schema.json");
+const STRUCTURAL_IDENTITY_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/structural-identity-vectors.json");
+
+/// FR-201 "Structural identities": `EffectiveId` compares
+/// `owner_effective_type` (`null` first, then recursively) then `original`
+/// by `package` then `node`.
+fn effective_id_order(left: &Value, right: &Value) -> std::cmp::Ordering {
+    let owner = match (&left["owner_effective_type"], &right["owner_effective_type"]) {
+        (Value::Null, Value::Null) => std::cmp::Ordering::Equal,
+        (Value::Null, _) => std::cmp::Ordering::Less,
+        (_, Value::Null) => std::cmp::Ordering::Greater,
+        (left, right) => effective_id_order(left, right),
+    };
+    let bytes = |value: &Value, member: &str| value["original"][member].as_str().unwrap().as_bytes().to_vec();
+    owner
+        .then_with(|| bytes(left, "package").cmp(&bytes(right, "package")))
+        .then_with(|| bytes(left, "node").cmp(&bytes(right, "node")))
+}
+
+/// The arms of a `MemberId` owner or a `UnitId` in comparison order: the
+/// arm named first orders first.
+fn arm_rank(value: &Value, arms: &[&str]) -> usize {
+    arms.iter()
+        .position(|arm| value.get(*arm).is_some())
+        .unwrap_or_else(|| panic!("{value} names none of {arms:?}"))
+}
+
+/// Componentwise order of the structural identity `kind`, without hashing.
+fn structural_identity_order(kind: &str, left: &Value, right: &Value) -> std::cmp::Ordering {
+    let bytes = |value: &Value, member: &str| value[member].as_str().unwrap().as_bytes().to_vec();
+    match kind {
+        "UniverseId" | "PopulationId" => node_id_order(left, right),
+        "VariantId" => node_id_order(&left["owner"], &right["owner"])
+            .then_with(|| bytes(left, "case").cmp(&bytes(right, "case"))),
+        "MemberId" => {
+            let arms = ["node_id", "effective_id"];
+            let (l, r) = (&left["owner"], &right["owner"]);
+            arm_rank(l, &arms)
+                .cmp(&arm_rank(r, &arms))
+                .then_with(|| match arm_rank(l, &arms) {
+                    0 => node_id_order(&l["node_id"], &r["node_id"]),
+                    _ => effective_id_order(&l["effective_id"], &r["effective_id"]),
+                })
+                .then_with(|| bytes(left, "member").cmp(&bytes(right, "member")))
+        }
+        "UnitId" => {
+            let arms = ["declared", "terms"];
+            arm_rank(left, &arms)
+                .cmp(&arm_rank(right, &arms))
+                .then_with(|| match arm_rank(left, &arms) {
+                    0 => node_id_order(&left["declared"], &right["declared"]),
+                    _ => {
+                        let (l, r) = (left["terms"].as_array().unwrap(), right["terms"].as_array().unwrap());
+                        l.iter()
+                            .zip(r)
+                            .map(|(l, r)| {
+                                node_id_order(&l["unit"], &r["unit"]).then_with(|| {
+                                    let exponent = |term: &Value| term["exponent"].as_str().unwrap().parse::<i128>().unwrap();
+                                    exponent(l).cmp(&exponent(r))
+                                })
+                            })
+                            .find(|order| order.is_ne())
+                            .unwrap_or_else(|| l.len().cmp(&r.len()))
+                    }
+                })
+        }
+        other => panic!("unknown structural identity {other}"),
+    }
+}
+
+/// FR-201-AC-11 (TC-233 `SI-01`..`SI-06`): every vector identity meets the
+/// closed schema of its kind, and each comparison is equal or different, and
+/// orders as recorded, by the componentwise comparison; a value is also equal
+/// exactly when the two JSON values are equal.
+#[trace("TC-233", "FR-201-AC-11")]
+#[test]
+fn tc_233_structural_identity_vectors_compare_componentwise() {
+    let schema = parsed_fixture(STRUCTURAL_IDENTITY_SCHEMA);
+    let vectors = parsed_fixture(STRUCTURAL_IDENTITY_VECTORS);
+    let validator = |kind: &str| {
+        jsonschema::validator_for(&json!({"$ref": format!("#/$defs/{kind}"), "$defs": schema["$defs"].clone()}))
+            .expect("kind schema")
+    };
+    let cases = vectors["cases"].as_array().unwrap();
+    let ids: Vec<&str> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
+    for id in ["SI-01", "SI-02", "SI-03", "SI-04", "SI-05", "SI-06"] {
+        assert!(ids.contains(&id), "{id} is published");
+    }
+    let mut kinds = BTreeSet::new();
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        let kind = case["kind"].as_str().unwrap();
+        kinds.insert(kind);
+        let valid = validator(kind);
+        let base = &case["base"];
+        assert!(valid.is_valid(base), "{id}: the base is a {kind}");
+        for comparison in case["comparisons"].as_array().unwrap() {
+            let other = &comparison["other"];
+            assert!(valid.is_valid(other), "{id}: the other is a {kind}");
+            let order = structural_identity_order(kind, base, other);
+            let reverse = structural_identity_order(kind, other, base);
+            assert_eq!(order, reverse.reverse(), "{id}: the order is antisymmetric");
+            let equal = order.is_eq();
+            assert_eq!(equal, base == other, "{id}: componentwise equality is value equality");
+            match comparison["relation"].as_str().unwrap() {
+                "equal" => assert!(equal, "{id}: equal"),
+                "different" => assert!(!equal, "{id}: different"),
+                other => panic!("{id}: unknown relation {other}"),
+            }
+            if comparison["base_orders"] == "before" {
+                assert_eq!(order, std::cmp::Ordering::Less, "{id}: the base orders first");
+            }
+        }
+    }
+    assert_eq!(
+        kinds,
+        BTreeSet::from(["MemberId", "PopulationId", "UnitId", "UniverseId", "VariantId"]),
+        "every structural identity has a vector"
+    );
+    // The closed arms refuse a stray member and an unknown arm.
+    assert!(!validator("MemberId").is_valid(&json!({"owner": {"node_id": cases[0]["base"]["owner"]["node_id"], "extra": 1}, "member": "x"})));
+    assert!(!validator("UnitId").is_valid(&json!({"declared": cases[2]["base"]["declared"], "terms": []})));
+    assert!(!validator("UnitId").is_valid(&json!({"terms": [{"unit": cases[2]["base"]["declared"], "exponent": "0"}]})));
+}
+
 
 /// Every node body of every published V2 package is in the closed
 /// five-stratum body grammar.
