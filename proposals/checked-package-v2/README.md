@@ -242,15 +242,7 @@ dimension node ids. Cross-field joins are exact: an enum member's `semantic_type
 and sole dependency equal its declaration node id and its enum literal
 body equals the declared case; a dimension is self-typed and depends exactly on
 its term node ids; a unit's `semantic_type` equals its dimension node id and its
-dependencies are exactly that dimension plus its non-null target; a
-`scalar_type`/`dimension_equivalence` node (FR-142 "Dimension equivalence") is
-self-typed, carries no `declaration`, holds a `SourceOwner` and the node ids of the
-two dimension nodes it relates, distinct and in ascending node-id order, and a
-`root_scale` (a positive reduced rational: one canonical root of the first node
-is `root_scale` canonical roots of the second), and depends on exactly those
-node ids. The `root_scale` values of the base pairs multiply to one around every
-cycle, and a pair of two non-base nodes carries the ratio their base roots fix. Readers recompute the equivalence classes from
-these nodes, so no other member records one. Changing a
+dependencies are exactly that dimension plus its non-null target. Changing a
 body/type/dependency while retaining the nominal declaration therefore refuses.
 Runtime compound-unit values are evaluator-owned
 `quire.value.compound-unit/v1` identities defined with the complete-value
