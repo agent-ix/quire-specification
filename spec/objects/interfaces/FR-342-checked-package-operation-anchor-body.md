@@ -73,8 +73,8 @@ below.
 One `operation_anchor` node stands for one (declaring type, operation name,
 execution point) tuple, where absence is a distinct value for an anchor with
 no clause binding. The declaring type is an object type, a process or a state
-machine, and its `frame` target is the node of that operation's frame. A frame node's key
-hashes its body and its `semantic_type`, so operations of one declaring type
+machine, and its `frame` target is the node of that operation's frame. A frame node's identity
+is derived from its body and its `semantic_type`, so operations of one declaring type
 whose frames are equal share one frame node, each through its own anchor; an
 anchor of another declaring type cannot share it, because the frame's
 `semantic_type` equals the anchor's `context`. An operation a subtype inherits
