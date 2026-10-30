@@ -71,7 +71,7 @@ code from `invalid-source-result`, `unsupported-source-version`,
 | `invalid-source-result` | The source result fails its strict reader (FR-062). |
 | `unsupported-source-version` | The source contract version or a required feature is unknown (FR-062). |
 | `unsupported-target-version` | The target contract version or a required feature is unknown (FR-062). |
-| `identity-mismatch` | An exact target context is missing/conflicting (FR-062). The derived projection identity is compared against no recomputed value. |
+| `identity-mismatch` | A supplied exact target context is missing or conflicting (FR-062). |
 | `unrepresented-source-state` | A source state has no mapping in the selected table (FR-062). |
 | `finding-loss` | The output would lose an applicable quire-verification FR-007 finding (FR-062). |
 

@@ -24,7 +24,7 @@ values in that catalog, not aliases for native producer codes in another catalog
 | `invalid-source-result` | The canonical protocol result did not validate before mapping was attempted (FR-062). |
 | `unsupported-source-version` | The source result's contract version is not one this adapter maps from (FR-062). |
 | `unsupported-target-version` | The requested target contract version is not one this adapter maps to (FR-062). |
-| `identity-mismatch` | A target-context identity does not agree with the exact selected tuple (FR-062). It does not classify invalid canonical source bytes. |
+| `identity-mismatch` | A supplied target context is missing or conflicting (FR-062). It does not classify invalid canonical source bytes. |
 | `unrepresented-source-state` | A source state has no mapping in the selected table. It cannot be reclassified as a malformed source (FR-062). |
 | `finding-loss` | The output would lose an applicable FR-007 finding (FR-062). |
 

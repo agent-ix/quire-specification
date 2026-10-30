@@ -39,8 +39,7 @@ and adapter identity, then assess the emitted
 For each case, mutate the canonical result key,
 target obligation, execution binding, adapter version and one source state in
 turn. Separately preserve a
-strict-reader-accepted source result while corrupting only the target-context or
-derived-projection identity. Permute JSON
+strict-reader-accepted source result while corrupting only the target context. Permute JSON
 object-member presentation while preserving the semantic `bindingRefs` order.
 Cross-wire protocol adequacy into E02 adequacy, remove the retained
 canonical-result artifact, label a shared oracle contribution independent,

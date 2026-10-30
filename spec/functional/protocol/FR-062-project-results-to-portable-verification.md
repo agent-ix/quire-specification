@@ -56,7 +56,7 @@ or `finding-loss`, plus the affected exact identity.
 The projection adapter SHALL validate the canonical protocol result
 before mapping it. An invalid source SHALL yield `invalid-source-result`. After
 source acceptance, a missing/conflicting target-context identity SHALL yield
-`identity-mismatch`. The derived projection identity is the structural key `{sourceResultKey, adapter}` and is compared against no recomputed value. The adapter SHALL preserve
+`identity-mismatch`. The derived projection identity is the structural key `{sourceResultKey, adapter}`. The adapter SHALL preserve
 every independent execution, activation, observation, participation, assumption
 and logical finding required by quire-verification FR-007. The adapter SHALL
 describe protocol adequacy only in the canonical protocol result through the
