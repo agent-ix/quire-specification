@@ -1,0 +1,15 @@
+{
+  "note": "TC-233, FR-322-AC-55, FR-322-AC-266: the domain package document each published positive fixture selects, for every fixture with a model-owned name. Keys are fixture paths and values document paths, both relative to this directory. Several documents carry one identity (acme/orders) and declare different members, so a fixture, and a vector patch of it, is read against the document its entry names and no other.",
+  "selected_documents": {
+    "fixtures/positive-all-families.json": "domain-package-acme-orders.json",
+    "fixtures/positive-clause-operations.json": "domain-package-acme-orders.json",
+    "fixtures/positive-dependency-library.json": "domain-package-acme-orders.json",
+    "fixtures/positive-model-tuple-union.json": "domain-package-acme-shapes.json",
+    "fixtures/positive-operation-identities.json": "domain-package-acme-orders.json",
+    "fixtures/positive-state-transition.json": "domain-package-acme-orders.json",
+    "fixtures/positive-tick-timed-model-nodes.json": "domain-package-acme-timed-slots.json",
+    "fixtures/positive-timed-clause-nodes.json": "domain-package-acme-timed-clauses.json",
+    "fixtures/positive-timed-model-nodes.json": "domain-package-acme-timed-slots.json",
+    "fixtures/positive-timed-slot-nodes.json": "domain-package-acme-timed-slots.json"
+  }
+}

@@ -8,6 +8,11 @@ structures, but any external consumer receives only the contract.
 ## Contract contents
 
 - `schema.json` defines the closed `quire.checked-package/v2` wire shape.
+- `selected-documents.json` maps each positive fixture that names a
+  model-owned field, operation or owner to the `domain-package-*.json`
+  document it selects (TC-233, FR-322-AC-266). Several documents carry the
+  identity `acme/orders`, so a reader takes a fixture's document, and the
+  document of a vector patch of that fixture, from this map.
 - The closed `quire.checked-operation-catalog/v1` is not kept here. Its only copy is
   `contracts/checked-operation-catalog-v1.json` in `agent-ix/quire-verification-contracts`,
   which the tests read through that crate. It holds
