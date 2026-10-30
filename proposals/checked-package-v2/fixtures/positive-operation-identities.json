@@ -3268,7 +3268,16 @@
                 ]
               },
               "kind": "relationship_end",
-              "name": "order"
+              "name": "order",
+              "destination_type": {
+                "ordinal": 0,
+                "package": "acme/orders",
+                "path": [
+                  "model",
+                  "object_type",
+                  "ix://acme/orders/Shipment"
+                ]
+              }
             },
             "mode": null
           },
