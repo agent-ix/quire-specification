@@ -98,7 +98,9 @@ Expected results:
 
 6. The first is admitted with family `tuple`; the owner-less node, the
    `SourceOwner` node, the `declaration` node and the versioned owner fail the V2
-   schema (`malformed_wire`); the non-empty body is refused; the three owners
+   schema (`malformed_wire`); the non-empty body (wire case `TW-27`) refuses
+   `invalid_package`/`invalid-derived-shape` at `/semantic_graph/nodes/0/node_id`;
+   the three owners
    refuse `missing_declaration`/`missing-selection` in the owner join. The
    undeclared owner with the dangling `semantic_type` refuses
    `missing_declaration`/`missing-selection` at `/semantic_graph/nodes/0/owner`:

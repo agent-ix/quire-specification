@@ -5870,6 +5870,33 @@
       "locus": "/semantic_graph/nodes/31"
     },
     {
+      "id": "TW-27",
+      "description": "the Pair tuple node whose body carries a Boolean literal member: a model declaration node's body is the empty aggregate, and its structural node id is unchanged",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/0/body/members/-",
+          "value": {
+            "term": "literal",
+            "type": {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "scalar_type",
+                "boolean"
+              ]
+            },
+            "value": true,
+            "value_kind": "boolean"
+          }
+        }
+      ],
+      "schema": "valid",
+      "outcome": "refused:invalid_package",
+      "locus": "/semantic_graph/nodes/0/node_id",
+      "cause": "invalid-derived-shape"
+    },
+    {
       "id": "TW-28",
       "description": "the Pair tuple node owned by a node the document does not declare, and the Pair-typed parameter whose semantic_type names a node the graph lacks: the owner join (stage 2) is reported before the dangling semantic_type edge (stage 4)",
       "patch": [
