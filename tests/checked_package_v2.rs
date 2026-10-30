@@ -15778,12 +15778,12 @@ fn path_embeds_an_operand(node_id: &Value) -> bool {
 
 /// FR-322 recursion groups: every member of a recursion group, the declared
 /// record and the anonymous derived members alike, is identified by
-/// `{package, path, ordinal}` with `path` the group's declared name path; its
+/// `{package, path, ordinal}` with `path` the group's declaration path; its
 /// id is never derived by embedding an operand node id. Members of one group
 /// share that path and are told apart by `node_id.ordinal`, which is
 /// producer-assigned and unique among nodes sharing `package` and `path`; the
 /// member's position in its group is the separate `recursion` rule.
-#[trace("TC-233", "FR-322-AC-53")]
+#[trace("TC-233", "FR-322-AC-53", "FR-322-AC-274")]
 #[test]
 fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
@@ -15803,12 +15803,12 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         assert_eq!(id["package"], package["name"], "member {position}");
         assert_eq!(
             id["path"], node["declaration"]["qualified_name"],
-            "member {position}: the path is the declared name path"
+            "member {position}: the path is the declaration path"
         );
         assert!(!path_embeds_an_operand(id), "member {position}: no operand is embedded");
     }
     // Every member of a group, derived ones included, carries the group's
-    // declared name path, and no two nodes of one package and path share an
+    // declaration path, and no two nodes of one package and path share an
     // ordinal.
     let declared_path = |label: &Value| {
         nodes
@@ -15823,13 +15823,48 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         assert_eq!(
             node["node_id"]["path"],
             declared_path(label),
-            "node {position}: a group member carries the group's declared name path"
+            "node {position}: a group member carries the group's declaration path"
         );
         assert!(
             seen.insert(node["node_id"].to_string()),
             "node {position}: members sharing a path differ by ordinal"
         );
     }
+    // The same holds in the two-owner and integer-literal fixtures, so a
+    // regression to an operand-derived member path there fails too.
+    let mut failures = Vec::new();
+    for (fixture, text) in [
+        ("positive-recursive-records", POSITIVE_RECURSIVE_RECORDS),
+        ("positive-two-owners-a", POSITIVE_TWO_OWNERS_A),
+        ("positive-two-owners-b", POSITIVE_TWO_OWNERS_B),
+        ("positive-integer-literal-references", POSITIVE_INTEGER_LITERAL_REFERENCES),
+    ] {
+        let package = parsed_fixture(text);
+        let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+        let mut ids = std::collections::BTreeSet::new();
+        let mut members = 0;
+        for (position, node) in nodes.iter().enumerate() {
+            let Some(label) = node.get("recursion_group") else { continue };
+            members += 1;
+            let declared = nodes
+                .iter()
+                .find(|n| n["semantic_form"] == "record" && n["recursion_group"] == *label)
+                .map(|n| n["declaration"]["qualified_name"].clone());
+            if Some(node["node_id"]["path"].clone()) != declared {
+                failures.push(format!("{fixture} node {position}: path is not the declaration path"));
+            }
+            if path_embeds_an_operand(&node["node_id"]) {
+                failures.push(format!("{fixture} node {position}: path embeds an operand"));
+            }
+            if !ids.insert(node["node_id"].to_string()) {
+                failures.push(format!("{fixture} node {position}: duplicate node id"));
+            }
+        }
+        if members == 0 {
+            failures.push(format!("{fixture}: no recursion-group member"));
+        }
+    }
+    assert!(failures.is_empty(), "{failures:#?}");
     // An id derived by embedding an operand is detected as such, and is not
     // the id the group member carries.
     let (_, list) = members[0];
