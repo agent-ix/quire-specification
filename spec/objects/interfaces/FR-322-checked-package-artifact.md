@@ -627,7 +627,7 @@ A frame body refusal, meaning-join or canonical-order
      `operation.member` names and that member's `population` node, as the
      application-node rule above states;
   3. for a `bounded_domain` node, its `semantic_type`, the type it bounds;
-  4. for a nominal node (an enum, dimension, dimension equivalence or unit),
+  4. for a nominal node (an enum, dimension or unit),
      the nodes its body names (FR-142 for dimensions and units), and for a `state`/`frame` node the entries of its body
      ([FR-340](FR-340-checked-package-frame-location.md)).
 
@@ -792,13 +792,11 @@ A frame body refusal, meaning-join or canonical-order
   rule ("Owner member schema" below), and a node that breaks it refuses
   `malformed_wire` at the node.
 - Nominal nodes — each enum declaration/member, dimension,
-  dimension-equivalence or declared-unit node is identified by its declaration
-  path like any declared node and carries its facts (qualified declaration,
-  member terms, dimension terms, the two dimensions of an equivalence, a unit's
-  dimension and target) in its `body`. Owner subjects must join an exact lock
+  or declared-unit node is identified by its declaration
+  path like any declared node and carries its facts (member terms, dimension
+  terms, a unit's dimension and target) in its `body`. Owner subjects must join an exact lock
   selection. A reader joins enum member declaration/case to `semantic_type`,
-  dependency and literal body; dimension terms to self-type/dependencies; a
-  dimension equivalence's two dimension ids to self-type/dependencies; and unit
+  dependency and literal body; dimension terms to self-type/dependencies; and unit
   dimension/target to `semantic_type`/dependencies.
     An `enum_value` node whose `semantic_type` is a
   `model`/`variant_type` node joins the same way, and its `case` SHALL be a case
@@ -1284,45 +1282,12 @@ constraints ("Reference conformance" below).
    package.
 
    A dimension equivalence (FR-142 "Dimension equivalence", the source
-   declaration `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;`) is one `scalar_type`/
-   `dimension_equivalence` node, appended to the unit graph beside the
-   dimension nodes and never changing one: the nodes it relates keep their
-   `node_id`s. It is self-typed and carries no `declaration`. Its
-   `body` carries `owner`, `dimension_node_ids` and `root_scale`, where `owner` is the `SourceOwner` of the
-   source that declares it, `dimension_node_ids` lists the `node_id`s of the two
-   related dimension nodes, distinct and in ascending node-id order, and
-   `root_scale` is the exact positive rational (`numerator`, `denominator`
-   decimal strings, reduced, the numerator at least 1) for which one canonical
-   root of the first listed node equals `root_scale` canonical roots of the
-   second (the root ratio FR-142 "Dimension equivalence" reduces the `by`
-   clause to; a declaration written in the other node order stores the
-   reciprocal), so `R::Time ~ F::Time by 1 R::s = 1000 F::ms` and
-   `F::Time ~ R::Time by 1000 F::ms = 1 R::s` write one body and one
-   `node_id`. It depends on exactly those two nodes, and its one occurrence has role
-   `anchor` and the ordinal of the declaration among the equivalence
-   declarations of its source in source order, with the declaration's region.
-   A reader recomputes the equivalence classes from these nodes alone: the
-   connected components of the pairs `dimension_node_ids`, with the base classes
-   the components of the pairs whose two nodes are both `terms`-empty
-   `dimension` nodes, and applies FR-142's effect rules to the `node_id`s it
-   reads, so no package member records a class, a root or a conversion edge.
-   Each pair is a pair of `scalar_type`/`dimension` nodes, else the reader
-   refuses `invalid_semantic_graph`; a pair repeated by two nodes, a pair of one
-   node twice, a pair of two nodes that are not both base dimensions and
-   whose normalized maps differ (under the base classes) or whose `root_scale`
-   differs from the ratio the base roots fix, and a cycle of base pairs whose
-   `root_scale` values do not multiply to exactly one (a pair read against its
-   listed order counting as its reciprocal) refuse
-   `invalid_semantic_graph` at the later node in node-id order, as FR-142
-   refuses the source declaration. Wire precedes graph: the closed V2 schema
-   requires `root_scale`, bounds `dimension_node_ids` to exactly two entries,
-   admits only a positive-integer `numerator` and `denominator`, and forbids a
-   `declaration` member on this node (its one occurrence has role `anchor`), so
-   a missing `root_scale`, a zero or negative `numerator` or `denominator`, a
-   `dimension_node_ids` list of other than two entries and a `declaration`
-   member refuse `malformed_wire` at the node, never `invalid_semantic_graph`.
-   A schema-valid but unreduced `root_scale` (`2000/2`) refuses
-   `invalid_semantic_graph` at the node (FR-322-AC-139). A package holding no equivalence node
+   declaration `dimension R::Time ~ F::Time by 1 R::s = 1000 F::ms;`) is decided
+   by the checker from its source declaration. The V2 schema names the form
+   `scalar_type`/`dimension_equivalence` but publishes no body, owner or
+   dependency shape for it and no published fixture holds one, so a checked
+   package carries no equivalence relation and a reader recomputes none from
+   the package. A package holding no equivalence node
    reads as before. A unit `typeRef` that names no unit of the checked package refuses
    `missing_declaration`/`missing-name`. A declared type outside the table, an `unbounded`
    upper bound with a lower bound above `0` and an operation with no result
