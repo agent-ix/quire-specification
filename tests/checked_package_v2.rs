@@ -15802,6 +15802,7 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
             id["path"], node["declaration"]["qualified_name"],
             "member {position}: the path is the declared name path"
         );
+        // Holds only because List and Tree have distinct paths; the recursion-group ordinal rule is separate.
         assert_eq!(id["ordinal"], 0, "member {position}: one node of that path");
         assert!(!path_embeds_an_operand(id), "member {position}: no operand is embedded");
     }
@@ -15888,7 +15889,10 @@ fn tc_233_node_id_ordinal_vectors_run_from_the_published_file() {
 /// producer-assigned. Sibling nodes of one `package` and `path` at ordinals
 /// that are not 0, not contiguous and not in graph order are admitted; two
 /// nodes of an equal `{package, path, ordinal}` are refused
-/// `invalid_semantic_graph` at the second node's `node_id`.
+/// `invalid_semantic_graph` at the second node's `node_id`. The reader that
+/// decides the refusal is quire-contract-ir's and the vectors are authoritative
+/// for it; `duplicate_node_id_index` is a standalone helper, not wired into the
+/// shared model oracle, so the oracle's own refusal is not run on `NO-07`/`NO-08`.
 #[trace("TC-233", "FR-322-AC-272", "FR-322-AC-273")]
 #[test]
 fn tc_233_a_producer_assigned_ordinal_is_unique_and_otherwise_free() {

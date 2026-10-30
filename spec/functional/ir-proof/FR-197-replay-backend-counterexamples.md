@@ -78,8 +78,10 @@ revisions.
 
 ## Failing-node identity and stage limits
 
-A node id is positional, `{package, path, ordinal}` (FR-322), and a second node
-with an equal node id is refused, so one node id names one node. One node may
+A node id is the structural `{package, path, ordinal}` (FR-322), whose
+ordinal the producer assigns so that nodes sharing a package and path differ by
+it, and a second node with an equal node id is refused, so one node id names
+one node. One node may
 occur at several source positions, and a bare node id does not tell apart the
 occurrences of one failing node; the occurrence key is FR-322's `source_map` key,
 (`node_id`, `role`, `ordinal`) (QC-8; QSL ADR-013 O-07, O-09).
