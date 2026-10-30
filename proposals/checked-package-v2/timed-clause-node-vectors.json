@@ -1,7 +1,6 @@
 {
   "version": "quire.checked-timed-clause-node-vectors/v1",
   "fixture": "fixtures/positive-timed-clause-nodes.json",
-  "selected_document": "domain-package-acme-timed-clauses.json",
   "note": "The clause package is the dense timed fixture plus the places, anchors, frames, parameters, constraints, resets, guard and invariant that CL-01 lists; every clause is listed by the root and every reference is joined. The two clock-bearing operations are arm(c: Clock), touch(i: Integer) and size(); a clause refers to an operation by the operation_anchor node of its declaring model with no execution point (FR-342-AC-11). The selected document also declares the entity Gadget with one operation, ping(), only so that CL-25 can name an anchor of another model; no other clause names it.",
   "node_indexes": {
     "clock_constraint_place": [

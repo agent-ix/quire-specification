@@ -15433,7 +15433,10 @@ fn shapes_project_document(document: &Value) -> Value {
 fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_derived_from_it() {
     let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
     let document = parsed_fixture(SHAPES_DOCUMENT);
-    assert_eq!(vectors["selected_document"], "domain-package-acme-shapes.json");
+    assert_eq!(
+        selected_documents()[vectors["base"].as_str().expect("the vectors' base")],
+        "domain-package-acme-shapes.json"
+    );
     assert_eq!(document["contractVersion"], "2.0.0");
     assert_eq!(document["package"]["identity"], "acme/shapes");
     for member in ["constructs", "types"] {
@@ -17482,7 +17485,10 @@ fn tc_367_timed_slot_vectors_name_a_complete_selected_package() {
     let document = parsed_fixture(SELECTED_TIMED_SLOT_DOCUMENT);
     let package = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
     let base = parsed_fixture(POSITIVE_TIMED_MODEL_NODES);
-    assert_eq!(vectors["selected_document"], "domain-package-acme-timed-slots.json");
+    assert_eq!(
+        selected_documents()[vectors["selected_package"].as_str().expect("the selected package")],
+        "domain-package-acme-timed-slots.json"
+    );
     assert_eq!(vectors["selected_package"], "fixtures/positive-timed-slot-nodes.json");
     assert_eq!(document["contractVersion"], "2.0.0");
     assert_eq!(document["package"]["identity"], "acme/orders");
