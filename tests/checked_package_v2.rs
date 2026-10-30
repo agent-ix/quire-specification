@@ -2865,7 +2865,8 @@ enum ReadRefusal {
     GraphShape(Value),
     /// `invalid_package`/`invalid-derived-shape` at the `node_id` of a derived
     /// shape (reference, population, compound unit) whose body is not well
-    /// formed (FR-322 "Derived type forms").
+    /// formed (FR-322 "Derived type forms"), or of a model declaration node
+    /// whose body is not the empty aggregate.
     DerivedShape(Value),
     /// `invalid_model_binding`/`malformed-declaration` at `package_read`: a
     /// `populations` entry of the selected document that is no FCD population.
@@ -3000,6 +3001,11 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                     previous = Some(unit_id);
                     !valid_root || !valid_exponent || !ordered
                 })
+            }
+            // FR-322 owner join stage: a model declaration node (a `ModelOwner`
+            // node) has the empty aggregate body (`TW-27`).
+            (Some("model"), _) if node["owner"]["kind"] == "model" => {
+                node["body"] != json!({"term": "aggregate", "members": []})
             }
             _ => false,
         },
@@ -14262,6 +14268,19 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
                         format!("/semantic_graph/nodes/{position}"),
                     ))
                 }
+                Err(ReadRefusal::DerivedShape(id)) => {
+                    let position = package["semantic_graph"]["nodes"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .position(|node| node["node_id"] == id)
+                        .unwrap();
+                    Some((
+                        "invalid_package".to_owned(),
+                        "invalid-derived-shape".to_owned(),
+                        format!("/semantic_graph/nodes/{position}/node_id"),
+                    ))
+                }
                 Err(ReadRefusal::Operation(refusal)) => {
                     let oracle = OperationOracle::for_package(&catalog, &package);
                     let mut ordered = oracle.nodes.iter().enumerate().collect::<Vec<_>>();
@@ -14304,7 +14323,7 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
         };
         assert_eq!(observed, expected, "{id}");
     }
-    assert_eq!(ids.len(), 26, "every published wire case ran");
+    assert_eq!(ids.len(), 27, "every published wire case ran");
 }
 
 
