@@ -177,6 +177,15 @@ state contract requires every contract and invariant input to name:
   context universe of that observation: it holds that one context and no objects, and
   identity equality is never applied to it. No relation between the contexts
   of different invocations is bound.
+- **Context universe key.** Where a structural node id names the context
+  universe (a `UniverseId`, FR-201), it is the model declaration node of the
+  most-specific machine: `{package: <selected identity>, path: ["model",
+  "state_machine", <the machine's FCD identity>], ordinal: 0}`, the node whose
+  `ModelOwner` names that machine (FR-322). No node is added for it, and the
+  key is the same in the pre and post observations and in a pre-call
+  observation's pre snapshot, since identity equality never compares contexts.
+  It never equals an object universe key, because a state machine has no
+  object universe and so is never the least root type of one.
 - **Contexts per observation.** Each of the invocation's pre and post
   observations, and the pre snapshot of a pre-call observation, holds exactly
   one context of the machine, a value of the
@@ -462,6 +471,7 @@ the names alone, never on the spelling of `Alias`.
 | FR-208-AC-17 | `Alias::Tier::Gold` has static type `Alias::Tier` and the value of the case `Gold`; the Text literal `"Gold"`, the Integer literal `0` and a bare `Gold` at an `Alias::Tier` slot are `ill_typed`/`type-mismatch`. `Alias::Tier::Silver` (a case `Tier` does not declare) and `Alias::Tier::gold` are `ill_typed`/`type-mismatch` naming the type and the case. `Alias::Nope::Gold` and `Alias::Nope` in a type position are `missing_declaration`/`missing-name`. An ordering comparison over `Alias::Tier` is `ill_typed`/`operator-ineligible`, and an equality of `Alias::Level::Gold` with `Alias::Tier::Gold` is `ill_typed`/`type-mismatch`. A unit that selects the package under another alias resolves the same type and case. | Test (TC-941) |
 | FR-208-AC-18 | The effective field order of a record value type, event type, state machine or process is the supertypes' effective fields in `supertypes` array order, then its own fields in declaration order, a field reached twice once at its first position and a redefining field at the position of the field it hides, with hiding applied once over the whole walk; it never depends on node identity, and a supertype cycle is refused `specialization-cycle` before any order is read. | Test (TC-386) |
 | FR-208-AC-19 | A tuple value type has declaration identity `<package identity>/<tuple name>` and ordered positions `p0` through `pN-1`, each with exactly one admitted value type and no name; `N` is at least one, position order is the authored order, and the ordered ordinal/type pairs form the tuple's type identity and product order. Reordering a tuple's position/type pairs changes its type identity but not its declaration identity. A field, parameter, result, tuple position or union payload may name the tuple type. A gap, empty tuple, absent `typeRef` or unsupported type is refused `invalid_model_binding`/`malformed-declaration`; a missing package reference is `missing_declaration`/`missing-name`; two positions with one ordinal identity are `invalid_model_binding`/`conflicting-binding` at the later position. | Test (TC-234, TC-235) |
+| FR-208-AC-20 | A state-machine context of machine `M` (FCD identity `I`) in a selected domain package `P`, read in the pre observation, the post observation or a pre-call observation's pre snapshot, has context universe key `{package: P, path: ["model", "state_machine", I], ordinal: 0}`, the model declaration node of `M`; a context of a subtype machine `N` has the key of `N`'s node, and no context universe key equals the key of an object universe of the package. | Analysis |
 
 ## Dependencies
 
