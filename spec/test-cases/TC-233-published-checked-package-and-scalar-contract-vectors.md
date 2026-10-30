@@ -27,6 +27,12 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-274
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-55
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-262
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-266
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-270
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-271
@@ -323,6 +329,10 @@ each admitted; `population-owned-by-an-object-type` and `population-owned-by-an-
 read with the full reader (FR-322-AC-51, FR-322-AC-55). The `state`/`state_clause` nodes of
 `positive-clause-operations.json` carry no `owner`, and the schema refuses one
 that does.
+
+Each positive fixture that names a model-owned field, operation or owner resolves every such name in the domain document it selects (FR-322-AC-55, FR-322-AC-266): `positive-all-families`, `positive-clause-operations`, `positive-dependency-library`, `positive-operation-identities` and `positive-state-transition` select `domain-package-acme-orders.json`; `positive-model-tuple-union` selects `domain-package-acme-shapes.json`; `positive-timed-model-nodes`, `positive-tick-timed-model-nodes` and `positive-timed-slot-nodes` select `domain-package-acme-timed-slots.json`; `positive-timed-clause-nodes` selects `domain-package-acme-timed-clauses.json`. The three `acme/orders` documents declare different members, so a fixture is checked against its own document only.
+
+Every vector patch (the timed-clause, timed-slot-selector and model-root vectors) applied to its base keeps each node's `dependencies` the unique, node-id-ascending list of exactly the nodes its rules name (FR-322-AC-262): a patch that edits a body `reference` edits `dependencies` with it, so the reader reaches the recorded refusal and not a dependency refusal first. A patched package a vector records as admitted resolves its model-owned names in the document its base selects (FR-322-AC-266). The one vector whose refusal is the dependency defect itself (`target-listed-in-dependencies`) is outside this rule.
 
 `positive-clause-operations.json`
 gains one `correspondence`/`abstraction_relation` node (FR-451): no `owner`, empty `objects` and
