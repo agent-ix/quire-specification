@@ -435,7 +435,42 @@
       "section": "Keys and declarations",
       "id": "K14",
       "Edit to the base": "a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic",
-      "Expected": "the complete cyclic reference component shares one `recursion_group`, each member has its FR-322 `{size, ordinal}` coordinate and intra-component edges use `group_reference`; the reader admits the package. `Plain` and every other node outside that component have no `recursion_group` and `recursion` `null`"
+      "Expected": "the complete cyclic reference component shares one `recursion_group`, each member has its FR-322 `{size, ordinal}` coordinate and `node_id.ordinal` its graph-order position, and intra-component edges are plain `node_id` references; the reader admits the package. `Plain` and every other node outside that component have no `recursion_group` and `recursion` `null`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K16",
+      "Edit to the base": "the function of K14 refers to `Flow` through a `protocol_reference` carrier `R` whose target is `Flow`, so `R`, the function and `Flow` form one cycle; `R` carries the component's `recursion_group`",
+      "Expected": "admitted; `R` has `recursion` `{size, ordinal}` and `node_id.ordinal` its graph-order position among the members, and its body target and the members' references to it are plain `node_id`s"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K17",
+      "Edit to the base": "the K16 package with 100,000 or more members in the cyclic component, under a caller-funded work-unit budget",
+      "Expected": "admitted; no fixed cap on the component size and no stack growth with it"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K18",
+      "Edit to the base": "an acyclic `protocol_reference` carrier to `Plain` adds a `recursion_group`",
+      "Expected": "refuses `malformed_wire` at `/semantic_graph/nodes/{n}/recursion_group` before the target join"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K19",
+      "Edit to the base": "in the K16 cycle, the second member in graph order names another `recursion_group` label",
+      "Expected": "refuses `invalid_semantic_graph` at that member's `/semantic_graph/nodes/{n}/recursion_group`"
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K20",
+      "Edit to the base": "in the K16 cycle, the carrier `R` carries no `recursion_group` while the other members do",
+      "Expected": "refuses `invalid_semantic_graph` at `/semantic_graph/nodes/{n}`, the carrier's node"
     },
     {
       "test_case": "TC-946",

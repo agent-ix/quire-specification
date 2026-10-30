@@ -2412,7 +2412,7 @@ fn protocol_node_vectors_match_the_fr464_operator_catalog() {
     }
 }
 
-#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15", "FR-464-AC-16")]
+#[trace("TC-946", "TC-947", "TC-948", "FR-464-AC-15", "FR-464-AC-16", "FR-322-AC-66")]
 #[test]
 fn protocol_node_case_vectors_publish_the_qspec_examples() {
     let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
@@ -2425,7 +2425,7 @@ fn protocol_node_case_vectors_publish_the_qspec_examples() {
             .filter(|case| case["test_case"] == test_case)
             .count()
     });
-    assert_eq!(counts, [138, 88, 172]);
+    assert_eq!(counts, [143, 88, 172]);
     // Every vector id a QSpec table row names is published as a case: a row
     // the table adds without a vector (TC-946 K10, K14) fails here.
     for (test_case, table) in [
