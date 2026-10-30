@@ -21,6 +21,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-418
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
 ---
 
 # FR-417: Settle time-lock freedom for every timed subject
@@ -56,7 +58,11 @@ derived item reports every time-lock.
 For each distinct timed subject among a request's items the request writer
 adds exactly one derived item of fixed kind `time-lock-freedom`, beside the
 derived deadlock-freedom item. It has no opt-out. Its obligation identity is
-the subject and the item kind. It settles with the verdict kinds of FR-161.
+the subject and the item kind. It has no node of its own. It is keyed by its
+subject, the subject's `model`/`model_root` anchor (the node that the
+subject's deadlock-freedom item is keyed by) and its `item_kind`
+`time-lock-freedom`
+([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) "Derived request items"). It settles with the verdict kinds of FR-161.
 
 ### Protocol subjects
 
@@ -119,6 +125,7 @@ reachable, and settles only after the checker accepts it.
 | FR-417-AC-4 | In the strict-guard variant the deadlock-freedom item settles `proved` and the time-lock is reported only by the time-lock-freedom item; with non-strict guards both settle `proved`. | Test (TC-370) |
 | FR-417-AC-5 | A time-lock-freedom proof settles only after its zone certificate is accepted. | Test (TC-370, TC-371) |
 | FR-417-AC-6 | A timed model subject over the model that a protocol subject reads keeps its time-lock-freedom item. | Test (TC-370) |
+| FR-417-AC-7 | A time-lock-freedom item adds no node to the checked package. Its claim node is the subject's `model`/`model_root` node, `{package: "acme/orders", path: ["model", "model_root"], ordinal: 0}` in `derived-items-request`, at occurrence `generated` 0. That is the same claim as the subject's deadlock-freedom item, and the two differ only in `item_kind`. Its key is (subject, anchor `node_id`, `item_kind`). | Test (TC-431 BP-51) |
 
 ## Dependencies
 

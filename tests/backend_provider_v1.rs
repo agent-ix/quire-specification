@@ -1729,6 +1729,121 @@ fn tc_431_abstract_subject_package_is_one_of_the_request_dependencies() {
     assert!(!in_dependencies(&none), "a request with no dependencies has no abstract package");
 }
 
+/// FR-322 "Derived request items": a derived freedom item has no node of its
+/// own and is keyed by (subject, anchor `node_id`, `item_kind`). The reader
+/// resolves the claim node by exact `node_id` in the package the request
+/// carries and checks its tag, form and occurrence for the item's subject. The
+/// schema admits a retargeted claim, so the refusal is the reader's. No node
+/// other than the anchor has a `semantic_form` naming the item's kind, and the
+/// checked-package schema refuses a node of such a form.
+#[trace("TC-431", "FR-322-AC-276")]
+#[trace("TC-431", "FR-322-AC-277")]
+#[trace("TC-431", "FR-366-AC-11")]
+#[trace("TC-431", "FR-429-AC-17")]
+#[trace("TC-431", "FR-417-AC-7")]
+#[trace("TC-431", "FR-438-AC-9")]
+#[test]
+fn tc_431_a_derived_item_is_keyed_by_its_anchor_node_and_kind() {
+    const DERIVED: [&str; 3] = ["deadlock-freedom", "time-lock-freedom", "race-freedom"];
+    let package = parsed(PACKAGE_FIXTURE);
+    let nodes = package["semantic_graph"]["nodes"].as_array().expect("nodes");
+    // The reader's anchor check: Some((tag, form)) of the resolved anchor, or None when refused.
+    let anchor_of = |document: &Value, index: usize| -> Option<(String, String)> {
+        let item = &document["request"]["items"][index];
+        let kind = item["temporal"]["item_kind"].as_str().expect("kind");
+        let protocol = item["temporal"]["subject"] == document["request"]["items"][1]["temporal"]["subject"];
+        let (tag, form, role) = match (protocol, kind) {
+            (false, "deadlock-freedom" | "time-lock-freedom") => ("model", "model_root", "generated"),
+            (true, "deadlock-freedom" | "race-freedom") => ("protocol", "protocol_clause", "declaration"),
+            _ => return None,
+        };
+        let node = nodes.iter().find(|node| node["node_id"] == item["claim"]["node"])?;
+        (node["node_tag"] == tag
+            && node["semantic_form"] == form
+            && item["claim"]["occurrence"] == serde_json::json!({"role": role, "ordinal": 0}))
+        .then(|| (tag.to_owned(), form.to_owned()))
+    };
+    // FR-322: the nodes, other than the anchor, whose `semantic_form` names the item's kind.
+    let item_nodes = |graph: &[Value], kind: &str, anchor: &Value| -> Vec<Value> {
+        let underscored = kind.replace('-', "_");
+        graph
+            .iter()
+            .filter(|node| node["node_id"] != *anchor)
+            .filter(|node| node["semantic_form"] == kind || node["semantic_form"] == underscored.as_str())
+            .map(|node| node["node_id"].clone())
+            .collect()
+    };
+    let document = composed(&positive("derived-items-request"));
+    assert_eq!(errors(&validator(), &document), Vec::<String>::new());
+    let items = document["request"]["items"].as_array().expect("items");
+    let kind = |index: usize| items[index]["temporal"]["item_kind"].as_str().expect("kind").to_owned();
+    for index in 3..=6 {
+        assert!(DERIVED.contains(&kind(index).as_str()), "item {index} is derived");
+        assert!(anchor_of(&document, index).is_some(), "item {index} resolves through its anchor");
+        assert_eq!(
+            item_nodes(nodes, &kind(index), &items[index]["claim"]["node"]),
+            Vec::<Value>::new(),
+            "item {index}: the package holds no node of its own for it"
+        );
+    }
+    let model_root = serde_json::json!({"package": "acme/orders", "path": ["model", "model_root"], "ordinal": 0});
+    let handshake = serde_json::json!({"package": "example", "path": ["Example", "Handshake"], "ordinal": 0});
+    assert_eq!(items[3]["claim"]["node"], model_root);
+    assert_eq!(items[5]["claim"]["node"], handshake);
+    assert_eq!(anchor_of(&document, 3), Some(("model".into(), "model_root".into())));
+    assert_eq!(anchor_of(&document, 5), Some(("protocol".into(), "protocol_clause".into())));
+    // Items sharing an anchor and a subject differ only in item_kind: the key is (subject, node_id, item_kind).
+    for (a, b) in [(3, 4), (5, 6)] {
+        assert_eq!(items[a]["claim"], items[b]["claim"], "items {a} and {b} share their anchor");
+        assert_eq!(items[a]["temporal"]["subject"], items[b]["temporal"]["subject"], "items {a} and {b} share their subject");
+        assert_ne!(kind(a), kind(b), "items {a} and {b} are told apart by item_kind");
+    }
+    // A package that mints a node for the model subject's deadlock-freedom item: the no-node check
+    // finds it and the checked-package schema refuses it.
+    let registry = registry();
+    let package_validator = jsonschema::options()
+        .with_registry(&registry)
+        .build(&parsed(CHECKED_PACKAGE_SCHEMA))
+        .expect("checked-package schema compiles");
+    assert!(package_validator.is_valid(&package), "the fixture package is admitted");
+    let mut minted = package.clone();
+    let mut node = nodes.iter().find(|node| node["node_id"] == model_root).expect("model_root node").clone();
+    node["semantic_form"] = serde_json::json!("deadlock_freedom");
+    node["node_id"] = serde_json::json!({"package": "acme/orders", "path": ["model", "deadlock_freedom", model_root], "ordinal": 0});
+    minted["semantic_graph"]["nodes"].as_array_mut().expect("nodes").push(node.clone());
+    let minted_nodes = minted["semantic_graph"]["nodes"].as_array().expect("nodes");
+    assert_eq!(item_nodes(minted_nodes, &kind(3), &model_root), vec![node["node_id"].clone()], "the no-node check finds the minted node");
+    assert!(!package_validator.is_valid(&minted), "the checked-package schema refuses a node for a derived item");
+    // Retarget item 3 (claim node with its infinite-trace domain, or the occurrence alone):
+    // the schema admits each, the reader refuses.
+    let absent = serde_json::json!({"package": "acme/orders", "path": ["model", "model_root"], "ordinal": 1});
+    assert!(nodes.iter().all(|node| node["node_id"] != absent), "the retarget is absent from the graph");
+    let retarget_node = |target: Value| {
+        move |item: &mut Value| {
+            item["claim"]["node"] = target.clone();
+            for domain in item["extent"]["domains"].as_array_mut().expect("domains") {
+                if domain["kind"] == "infinite-trace" {
+                    domain["domain"]["node"] = target.clone();
+                }
+            }
+        }
+    };
+    let retargets: Vec<(&str, Box<dyn Fn(&mut Value)>)> = vec![
+        ("the protocol clause node", Box::new(retarget_node(items[5]["claim"]["node"].clone()))),
+        ("item 0's temporal formula node", Box::new(retarget_node(items[0]["claim"]["node"].clone()))),
+        ("an absent node id", Box::new(retarget_node(absent))),
+        ("the declaration occurrence", Box::new(|item: &mut Value| {
+            item["claim"]["occurrence"] = serde_json::json!({"role": "declaration", "ordinal": 0});
+        })),
+    ];
+    for (name, retarget) in retargets {
+        let mut retargeted = document.clone();
+        retarget(&mut retargeted["request"]["items"][3]);
+        assert_eq!(errors(&validator(), &retargeted), Vec::<String>::new(), "{name}: the schema admits it");
+        assert_eq!(anchor_of(&retargeted, 3), None, "{name}: the reader refuses it");
+    }
+}
+
 /// FR-368-AC-20: a derived item takes the provider defaults for `max_depth`
 /// and the limits; FR-331 has no request-level limits, so none is inherited.
 #[trace("TC-431", "FR-368-AC-20")]

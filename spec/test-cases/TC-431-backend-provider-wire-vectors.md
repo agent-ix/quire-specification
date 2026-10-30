@@ -13,6 +13,16 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-193
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-366
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-429
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-417
+    type: verifies
+  - target: ix://agent-ix/quire-specification/FR-438
+    type: verifies
 ---
 
 # TC-431: The backend provider wire schema admits its positive vectors and refuses its adverse ones
@@ -76,6 +86,7 @@ bytes against the checked package they carry. Runs as
 | BP-47 | `tc_431_a_model_subject_over_several_selections_has_no_derived_item`: the fixture package, then a copy with a second `model_root` node | One `model_root` is the derived items' anchor; two give the producer-side settlement `unsupported_projection`/`unsupported-requested-capability` and no request item (the settlement writes no frame, so there is no wire adverse vector) | FR-368-AC-22 |
 | BP-49 | `tc_431_a_protocol_subject_of_a_unit_without_a_protocol_profile_has_no_derived_item`: a unit that selects no protocol profile, with a protocol clause over a weak `parallel` with a non-atomic shared access | The clause is checked and has no node, so the subject has no anchor; its `deadlock-freedom` and `race-freedom` items each give the producer-side settlement `unsupported_projection`/`unsupported-requested-capability` with a `detail` naming the item kind and that the unit selects no protocol profile, and no request item is written | FR-368-AC-24 |
 | BP-50 | BP-49's unit | No `time-lock-freedom` item is settled or written for the subject, including over a timed model | FR-368-AC-25 |
+| BP-51 | `tc_431_a_derived_item_is_keyed_by_its_anchor_node_and_kind`: `derived-items-request`'s derived items 3 to 6 looked up in the package it carries; a copy of the package with an added `model`/`deadlock_freedom` node over the `model_root` anchor; then four retargetings of item 3, one at a time: its `claim.node` (with its `infinite-trace` domain node moved with it) to item 5's protocol clause node, to item 0's `temporal`/`formula` claim node, and to `{package: "acme/orders", path: ["model", "model_root"], ordinal: 1}`, which is absent from the graph; and its `claim.occurrence` alone to `{role: "declaration", ordinal: 0}` | Items 3 and 4 resolve to the `model`/`model_root` node `{package: "acme/orders", path: ["model", "model_root"], ordinal: 0}` at occurrence `generated` 0. Items 5 and 6 resolve to the `protocol`/`protocol_clause` node `{package: "example", path: ["Example", "Handshake"], ordinal: 0}` at occurrence `declaration` 0. Each pair has one `subject` and differs only in `item_kind`. For each item, no node other than its anchor has a `semantic_form` naming its kind; the copy with the added node fails the checked-package schema and the no-node check finds the added node. The schema admits each retargeted request, and the reader refuses each one before consumption | FR-322-AC-276, FR-322-AC-277, FR-366-AC-11, FR-429-AC-17, FR-417-AC-7, FR-438-AC-9 |
 
 ## Expected Results
 

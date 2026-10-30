@@ -15,6 +15,8 @@ relationships:
     type: depends_on
   - target: ix://agent-ix/quire-specification/FR-439
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
 ---
 
 # FR-438: Report data races on non-atomic locations through a derived item
@@ -151,7 +153,10 @@ weak and that has a non-atomic shared access, the request writer SHALL add one
 raced)`, where `raced` is derived, not authored, and is true at the post-state
 of a step that completes a data race. Its obligation identity is (subject,
 resolved models, item kind `race-freedom`). It has no opt-out. Under `sc` the
-item is not derived.
+item is not derived. It has no node of its own. It is keyed by its subject, its
+anchor (the subject's `protocol`/`protocol_clause` node at its declaration
+path) and its `item_kind`
+([FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) "Derived request items").
 
 It settles as a reachable-state invariant: `proved` with no race; `refuted`
 with a race counterexample; and `inconclusive` (including
@@ -191,6 +196,7 @@ settles `inconclusive`, cause `replay-parity`.
 | FR-438-AC-6 | In the message-passing protocol of FR-438-AC-1 under `ra`, after the writer's `data := 1` the `memory` member holds one race-summary entry, for `data`, whose value is `{"last_write":{"thread":<writer>,"atomic":false},"last_reads":{}}`; the writer's `cur` and `acq` views map `data` to `{"write":true,"reads":{}}`, and every other view, among them the reader's `cur` and the writer's `rel` for `flag`, maps it to `{"write":false,"reads":{}}`. After the writer's flag store, the new `flag` message's view maps `data` to `"write":true` when the store is `release` and to `"write":false` when it is `relaxed`. With the `release` store and an `acquire` load that reads that message, the reader's `cur` maps `data` to `"write":true` and its data load completes no race; with `relaxed` flags, the data load after a flag load that read 1 completes a race. With the flag passed instead by a `send` after `data := 1` and a `receive` before the data load, the queue entry's `view` member is the writer's `cur` view, whose `race` member maps `data` to `"write":true`; after the `receive` the reader's `cur` maps `data` to `"write":true`, and the item settles `proved`. A protocol whose shared accesses are all atomic has no race-summary entry and no view `race` member. | Test (TC-392) |
 | FR-438-AC-7 | In the message-passing protocol of FR-438-AC-1 under `tso`, after the writer's `data := 1` the race-summary entry for `data` is `{"last_write":{"thread":<writer>,"atomic":false},"last_reads":{}}`; the writer's `race-summaries` entry maps `data` to `{"write":true,"reads":{}}` in `cur` and `acq` and to `{"write":false,"reads":{}}` in `rel` for `flag`, the reader's maps it to `"write":false` in `cur`, and the buffered `data` element's `race` member maps it to `"write":false`. After the writer's flag store, the buffered `flag` element maps `data` to `"write":true` when the store is `release` and `"write":false` when it is `relaxed`, and after `flush(writer)` of that element the `race-memory` entry for `flag` holds the same map. With the `release` store and an `acquire` load of `flag` that reads 1 from memory, the reader's `cur` maps `data` to `"write":true` and its data load completes no race, so the race-freedom item settles `proved`; with `relaxed` flags the data load after a flag load that read 1 completes a race and the item settles `refuted` on `data`. With the flag passed by a `send` after `data := 1` and a `receive` before the data load, the queue entry's `race` member maps `data` to `"write":true` and the item settles `proved`. | Test (TC-392) |
 | FR-438-AC-8 | A protocol whose thread `a` loads `x` non-atomically and then stores `x := 1` with `release`, and whose thread `b` runs a `fetch_add(1)` on `x` with `ordering acquire` and the precondition `x.v = 1`, so that it is enabled only when it reads `a`'s store (FR-435-AC-5), settles its race-freedom item `proved` under `ra` and under `tso`: when the RMW reads `a`'s store, it joins that store's race map, in which `a`'s read Boolean of `x` is true, before deciding its write part. With the RMW `ordering relaxed` and the same precondition, the item settles `refuted`, and its only race is the RMW against `a`'s load: the counterexample is on `x` whose `earlier` is `a`'s load and whose `later` is the RMW. | Test (TC-392) |
+| FR-438-AC-9 | A race-freedom item adds no node to the checked package. Its claim node is the subject's `protocol`/`protocol_clause` node, `{package: "example", path: ["Example", "Handshake"], ordinal: 0}` in `derived-items-request`, at occurrence `declaration` 0. That is the same claim as the subject's deadlock-freedom item, and the two differ only in `item_kind`. Its key is (subject, anchor `node_id`, `item_kind`). | Test (TC-431 BP-51) |
 
 ## Dependencies
 
