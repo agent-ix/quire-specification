@@ -3,14 +3,14 @@
   "vectors": [
     {
       "name": "dimensionless",
-      "preimage": {
+      "identity": {
         "version": "quire.value.compound-unit/v1",
         "terms": []
       }
     },
     {
       "name": "metre-per-second",
-      "preimage": {
+      "identity": {
         "version": "quire.value.compound-unit/v1",
         "terms": [
           {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:quire:value-compound-unit:v1",
-  "title": "Evaluator-owned complete-V1 compound-unit identity preimage",
+  "title": "Evaluator-owned complete-V1 compound-unit identity",
   "type": "object",
   "required": ["version", "terms"],
   "properties": {

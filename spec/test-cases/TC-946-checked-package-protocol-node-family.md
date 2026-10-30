@@ -114,7 +114,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | K11 | a `queue` node carries a `declaration` | refuses `malformed_wire` (a `generated`-only node carries no declaration) |
 | K12 | a `role` node has no `declaration` occurrence | refuses `malformed_wire` (`declaration` is present exactly with a `declaration` occurrence) |
 | K14 | a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic | the complete cyclic reference component shares one `recursion_group`, each member has its FR-322 `{size, ordinal}` coordinate and intra-component edges use `group_reference`; the reader admits the package. `Plain` and every other node outside that component have no `recursion_group` and `recursion` `null` |
-| K15 | Add a state precondition on the operation named by `Charged`'s attempt, with accepted `Pre{operation: "charge"}` | the attempt still references the no-point `operation_anchor`; the clause references a distinct point-bearing anchor; both anchors reference the same frame; the reader admits both nodes and each node id re-derives from its own body |
+| K15 | Add a state precondition on the operation named by `Charged`'s attempt, with accepted `Pre{operation: "charge"}` | the attempt still references the no-point `operation_anchor`; the clause references a distinct point-bearing anchor; both anchors reference the same frame; the reader admits both nodes |
 
 ## Clause body
 

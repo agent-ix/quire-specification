@@ -47,7 +47,7 @@ FR-146 "Case result type". Union construction charges the existing
 package, a union is a `composite_type`/`union` node, a construction a
 `value`/`union_value` node and a `case` an `expression`/`case` node whose arms
 lower in member declaration order (FR-440), and each member is keyed by the
-`quire.union-member-node/v1` preimage (FR-441).
+(declaration node id, member) pair (FR-441).
 
 ## Views
 

@@ -46,8 +46,7 @@ When a canonical protocol result is projected to portable verification, the proj
   it is a *semantic* order, not a key order: "`bindingRefs` uses the selected E02
   semantic order and SHALL NOT be resorted by presentation text" (FR-062). No
   requirement states a total order over derived result identities, so none is
-  declared here. Any collection comparison over the preimage is fixed by RFC 8785
-  canonicalization, which is a serialization rule and carries no causal meaning.
+  declared here.
 - **Causal order** — the source-to-derived edge only: the derived result
   references the canonical protocol result it was projected from. That edge is
   never derived from key order, timestamp or source position.
@@ -72,7 +71,7 @@ code from `invalid-source-result`, `unsupported-source-version`,
 | `invalid-source-result` | The source result fails its strict reader (FR-062). |
 | `unsupported-source-version` | The source contract version or a required feature is unknown (FR-062). |
 | `unsupported-target-version` | The target contract version or a required feature is unknown (FR-062). |
-| `identity-mismatch` | An exact target context is missing/conflicting or the derived projection identity does not match its exact preimage (FR-062, FR-062-AC-2). |
+| `identity-mismatch` | A supplied exact target context is missing or conflicting (FR-062). |
 | `unrepresented-source-state` | A source state has no mapping in the selected table (FR-062). |
 | `finding-loss` | The output would lose an applicable quire-verification FR-007 finding (FR-062). |
 
@@ -113,10 +112,10 @@ emit a sufficiency decision."
 ## Resolved refusal and source-domain boundary
 
 The adapter validates the canonical source result
-before deriving or checking the projection identity. Any failure in that source
+before deriving the projection identity. Any failure in that source
 validation yields
-`invalid-source-result`. Only a valid source can reach target-context and
-projection-preimage checks; those mismatches yield `identity-mismatch`.
+`invalid-source-result`. Only a valid source can reach target-context
+checks; a mismatch yields `identity-mismatch`.
 
 FR-062's mapping is total over the selected source and target revisions. FR-284
 defines the four progress/closure axes, and

@@ -39,8 +39,7 @@ and adapter identity, then assess the emitted
 For each case, mutate the canonical result key,
 target obligation, execution binding, adapter version and one source state in
 turn. Separately preserve a
-strict-reader-accepted source result while corrupting only the target-context or
-derived-projection identity. Permute JSON
+strict-reader-accepted source result while corrupting only the target context. Permute JSON
 object-member presentation while preserving the semantic `bindingRefs` order.
 Cross-wire protocol adequacy into E02 adequacy, remove the retained
 canonical-result artifact, label a shared oracle contribution independent,
@@ -67,8 +66,7 @@ states are refused with the specified stable code and without a
 `TechniqueResult`. An invalid source is always
 `invalid-source-result`, including when another source defect is present; it is
 never reported as `identity-mismatch`. `identity-mismatch` is emitted only after
-the source result is valid and a target-context or derived-projection identity
-does not match its normative tuple.
+the source result is valid and a target context is missing or conflicting.
 Known participation derives `not-required`, `complete`, `partial` or
 `not-started` from the exact required and participating sets; unknown derives
 `unknown` while retaining every known participant, missing dependency and typed

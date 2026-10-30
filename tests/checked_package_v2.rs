@@ -8594,7 +8594,7 @@ fn add_lock_source(package: &mut Value, source: &Value) {
 
 /// FR-322-AC-51: a node carries `owner` exactly when it is declared by a
 /// source or a model; the full reader admits every positive fixture.
-#[trace("TC-233", "FR-322-AC-51", "FR-322-AC-50")]
+#[trace("TC-233", "FR-322-AC-51")]
 #[test]
 fn tc_233_every_positive_fixture_carries_owners_exactly_where_the_rule_requires() {
     let catalog = parsed_fixture(OPERATION_CATALOG);
@@ -16074,7 +16074,7 @@ fn tc_233_declaration_members_name_every_declaring_node_exactly_once() {
 }
 
 
-#[trace("TC-966", "FR-481-AC-1", "FR-481-AC-2", "FR-481-AC-6")]
+#[trace("TC-966", "FR-481-AC-1", "FR-481-AC-6")]
 #[test]
 fn tc_966_hybrid_model_nodes_meet_the_schema_and_are_self_typed() {
     let vectors = parsed_fixture(HYBRID_NODE_VECTORS);

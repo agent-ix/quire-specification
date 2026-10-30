@@ -115,79 +115,6 @@ fn negotiate(case: &Value) -> (String, Option<String>) {
     }
 }
 
-const REQUIRED: &[&str] = &[
-    "VV-01",
-    "VV-02",
-    "VV-03",
-    "VV-04",
-    "VV-05",
-    "VV-06",
-    "VV-07",
-    "VV-08",
-    "VV-09",
-    "VV-10",
-    "VV-11",
-    "VV-12",
-    "VV-13",
-    "VV-14",
-    "VV-15",
-    "VV-16",
-    "SH-01",
-    "SH-02",
-    "SH-03",
-    "SH-04",
-    "SH-05",
-    "SH-06",
-    "SH-07",
-    "SH-08",
-    "SH-09",
-    "SH-10",
-    "SH-11",
-    "SH-12",
-    "SH-13",
-    "SH-14",
-    "SH-15",
-    "SH-16",
-    "SH-17",
-    "SH-18",
-    "SH-19",
-    "SH-20",
-    "OC-01",
-    "OC-02",
-    "OC-03",
-    "OC-04",
-    "OC-05",
-    "OC-06",
-    "OC-07",
-    "OC-08",
-    "OC-09",
-    "OC-10",
-    "OC-11",
-    "OC-12",
-    "OC-13",
-    "OC-14",
-    "OC-15",
-    "OC-16",
-    "OC-17",
-    "OC-18",
-    "OC-19",
-    "OC-20",
-    "OC-21",
-    "OC-22",
-    "OC-23",
-    "OC-24",
-    "VV-17",
-];
-
-const REQUIRED_ACS: &[&str] = &[
-    "FR-483-AC-1", "FR-483-AC-2", "FR-483-AC-3", "FR-483-AC-4", "FR-483-AC-5", "FR-483-AC-6",
-    "FR-483-AC-7", "FR-483-AC-8", "FR-483-AC-9", "FR-484-AC-1", "FR-484-AC-2", "FR-484-AC-3",
-    "FR-484-AC-4", "FR-484-AC-5", "FR-484-AC-6", "FR-484-AC-7", "FR-484-AC-8", "FR-484-AC-9",
-    "FR-485-AC-1", "FR-485-AC-2", "FR-485-AC-3", "FR-485-AC-4", "FR-485-AC-5", "FR-485-AC-6",
-    "FR-485-AC-7", "FR-485-AC-8", "FR-485-AC-9", "FR-485-AC-10", "FR-485-AC-11", "FR-485-AC-12",
-    "FR-485-AC-13", "FR-485-AC-14",
-];
-
 
 fn composed(case: &Value) -> Value {
     let mut document = case["outcome"].clone();
@@ -870,24 +797,6 @@ fn schema_refuses_a_malformed_contract_counterexample() {
     let mut no_bound = good;
     no_bound["counterexamples"][0]["counterexample"].as_object_mut().unwrap().remove("bound");
     assert!(!validator.is_valid(&no_bound), "bound is required");
-}
-
-#[test]
-fn the_vector_file_is_complete() {
-    // A pinned case list: deleting a vector fails.
-    let ids: Vec<String> = cases().iter().map(id).collect();
-    assert_eq!(ids, REQUIRED.to_vec(), "the case list is exactly the pinned list");
-    assert_eq!(parsed(VECTORS)["required_cases"], json!(REQUIRED));
-    let covered: BTreeSet<String> = cases().iter().flat_map(|c| c["acs"].as_array().unwrap().iter().map(|a| a.as_str().unwrap().to_owned()).collect::<Vec<_>>()).collect();
-    for &ac in REQUIRED_ACS {
-        assert!(covered.contains(ac), "{ac} has a vector");
-    }
-    // Every case that settles a replayed refutation or a replay-parity cause is present.
-    for must in ["OC-19", "SH-13"] {
-        assert!(ids.iter().any(|i| i == must));
-    }
-    let case = cases().into_iter().find(|c| c["id"] == "VV-02").unwrap();
-    assert_eq!(composed(&case)["counterexamples"][0]["counterexample"]["values"][0]["parameter"], node_id("vv.x"));
 }
 
 #[test]

@@ -27,7 +27,7 @@ When a checked package is executed or replayed, the producer SHALL use the immut
 ## Properties
 
 - `contract_version` — exactly `quire.native-runtime/v1`.
-- `request_id` — identity over package, selection, inputs, limits and options.
+- `request_id` — the identity assigned to the request, compared as an exact string. It is not computed from the other members.
 - `package` — exact FR-322 checked-package reference; a non-replay request
   carries the reference alone, and a replay request adds the `sources` and
   `dependencies` members below, as
@@ -485,7 +485,7 @@ category's verdict.
 
 ## Identity and validation
 
-Request identity includes every semantic input and limit. Result identity additionally includes the canonical per-item results.
+Two requests are equal exactly when every semantic input and limit is equal, compared componentwise, and two results exactly when their canonical per-item results are also equal. Neither `request_id` nor any result identity is computed from those members.
 A document whose `contract_version` is not `quire.native-runtime/v1`, missing required properties, duplicate keys,
 out-of-domain values and non-canonical encodings refuse before consumption.
 
