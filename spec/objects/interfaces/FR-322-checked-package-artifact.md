@@ -752,7 +752,9 @@ A frame body refusal, meaning-join or canonical-order
   body is `aggregate{[]}` and names
   no member, so the reader derives the member from the domain package the
   lock selects for its owner, in the four steps of
-  "Model-owned members" below.
+  "Model-owned members" below. Having no node, a field or operation is
+  named in a domain key under its declaring type's model declaration node
+  (FR-331 "Model member domain keys").
 - `model_root` — one self-typed `model` node the producer derives for each
   selected domain-package identity. It has no `declaration`, an
   empty aggregate body and a `ModelRootOwner`; unlike a declaration node, it

@@ -446,6 +446,43 @@ in milliseconds (FR-462).
   `cardinality{maximum}`, `integer-range{lower, upper}` or `depth{maximum}`
   with `maximum` non-zero. QSL FR-358's `variants` is a harness bound, never
   a B-4 substitution kind, so it is not an `extent` bound.
+- **Model member domain keys.** A field and an operation of a selected
+  domain package have no node of their own (FR-322 `model_member`), so a
+  domain rooted at a field, at an operation parameter or at an operation
+  result is a `{type: "node", node, path}` key whose `node` is the model
+  declaration node of the type that *declares* the member: the
+  `{package: <selected identity>, path: [node_tag, semantic_form, <the
+  type's FCD identity>], ordinal: 0}` node whose `ModelOwner` names that
+  type (FR-322). An inherited member is keyed under its declaring type,
+  never under the subtype it is reached through; an operation a subtype
+  redefines is declared by that subtype and keyed under it. `path` is a
+  member-kind tag, then the member's position, then the child-index path
+  into the member's declared type (QSL ADR-014 §4: element, field, variant
+  payload; empty for the whole value):
+  - a field: `[0, f, ...]`, `f` the field's ordinal among the declaring
+    type's own fields in ascending field-name UTF-8 byte order;
+  - an operation parameter: `[1, o, p, ...]`, `o` the operation's ordinal
+    among the declaring type's own operations in ascending operation-name
+    UTF-8 byte order and `p` the parameter's zero-based position among the
+    operation's declared parameters in declaration order (the receiver is
+    not a declared parameter and is no such root);
+  - an operation result: `[2, o, ...]`, `o` as for a parameter.
+
+  The key is a function of the package and the selected document alone, so
+  every producer writes the same key and no node is added for it. It is
+  unique: model declaration nodes are distinct per declaring type; the
+  tag separates fields, parameters and results under one node; FR-154
+  refuses a repeated member identity `<owner identity>/<member name>` and a
+  repeated parameter identity, so `f`, `o` and `p` each name one member; and
+  the rest of the path is a position in that member's type. A population is
+  keyed by the `population` variant, never by a `node` key. Reordering
+  fields or operations in the document changes no key. With the published
+  `acme/orders` document, `Order`'s node is `{package: "acme/orders", path:
+  ["model", "object_type", "ix://acme/orders/Order"], ordinal: 0}`; under it
+  the field `total` is `[0, 17]`, the parameter `n` of `scaled` is
+  `[1, 1, 0]`, `scaled`'s result is `[2, 1]` and `size`'s result is
+  `[2, 2]`, while `Sub`'s redefinition of `size` has result `[2, 1]` under
+  `Sub`'s node.
 - Every `ProofBound`, in `extent.bounds` and in a temporal subject's
   `proof_bounds`, is `{domain, kind, bound}`: `kind` is the bounded domain's
   ADR-014 domain kind, from the same vocabulary as an unbounded extent's
@@ -802,6 +839,7 @@ computed.
 | FR-331-AC-47 | A `refinement` item is admitted with `abstract_subject` `{identity, initial_states}` and refused without it; a `formula` or derived item carrying `abstract_subject`, an `abstract_subject` with a `universes` member, one without `initial_states` and one whose `identity` is not a string are each refused. That `identity` names a package of `request.dependencies` is a reader obligation the schema cannot state. The vector's consistency with it is checked (TC-431): the composed positive request carries the abstract package, the real fixture `positive-dependency-library.json` with its own v2 bytes, as its one dependency, and an `identity` no dependency carries is schema-admitted, so it is the reader that refuses it. | Test (TC-431) |
 | FR-331-AC-48 | The request identity includes the request's `memory` selections: two requests that differ only in one `memory` entry's model have different request identities, as FR-434-AC-1 requires of obligation identities. | Test (TC-431) |
 | FR-331-AC-49 | Withdrawn: the `stale-dependency` cause is removed; replay recompiles the supplied inputs and compares nothing against a supplied package. | Withdrawn |
+| FR-331-AC-50 | A domain rooted at a field, an operation parameter or an operation result of a selected domain package is a `node` key under the model declaration node of the member's declaring type, with path `[0, f, ...]`, `[1, o, p, ...]` or `[2, o, ...]` as "Model member domain keys" defines; over the published `acme/orders` document, `Order.total` is `[0, 17]`, `Order.scaled`'s parameter `n` is `[1, 1, 0]`, its result is `[2, 1]`, `Order.size`'s result is `[2, 2]` and `Sub.size`'s result is `[2, 1]` under `Sub`'s node, and no two roots of the document share a key. | Analysis |
 
 ## Dependencies
 
