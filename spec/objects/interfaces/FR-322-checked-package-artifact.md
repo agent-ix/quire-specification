@@ -1303,8 +1303,12 @@ constraints ("Reference conformance" below).
    second (the root ratio FR-142 "Dimension equivalence" reduces the `by`
    clause to; a declaration written in the other node order stores the
    reciprocal), so `R::Time ~ F::Time by 1 R::s = 1000 F::ms` and
-   `F::Time ~ R::Time by 1000 F::ms = 1 R::s` write one body and one
-   `node_id`. It depends on exactly those two nodes, and its one occurrence has role
+   `F::Time ~ R::Time by 1000 F::ms = 1 R::s` write one body. The producer
+   assigns the node's structural id `node_id`; a reader derives no path from the
+   body, and checks the id's structural shape, its uniqueness among the nodes and
+   that the `node_id.path` it reads equals the declared path (the published
+   fixture's path `["scalar_type", "dimension_equivalence", <first id>, <second id>]`
+   is a fixture convention, not a rule). It depends on exactly those two nodes, and its one occurrence has role
    `anchor` and the ordinal of the declaration among the equivalence
    declarations of its source in source order, with the declaration's region.
    A reader recomputes the equivalence classes from these nodes alone: the
