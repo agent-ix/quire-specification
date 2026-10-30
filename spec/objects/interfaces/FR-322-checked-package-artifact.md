@@ -432,7 +432,8 @@ boundary.
   An `expression` whose body root is
   an application has the `semantic_form` fixed by its operator class; the
   node's `dependencies` are exactly the unique node-id-ascending `reference`
-  term targets, member declarations and member `population` nodes of its body;
+  term targets, member declarations and member `population` nodes of its body
+  (a member `destination_type` is not one);
   a `dependency_reference` contributes none. A contradictory form or
   dependency list is `invalid_semantic_graph`; for a dependency list the locus
   is the node's `dependencies` member, `/semantic_graph/nodes/{n}/dependencies`.
@@ -1866,6 +1867,22 @@ the `population` node, so a list that omits it is `invalid_semantic_graph` at `/
 does not choose an occurrence of the population node: a reader that selects the
 population by occurrence takes the `Type` occurrence with the least ordinal.
 
+### Destination type of a relationship end
+
+The `relationship_end` member of `quire.op.model.reaches` and
+`quire.op.model.navigate` carries one further required key, `destination_type`,
+the `NodeId` `{package, path, ordinal}` of the destination end's type node
+(the semantic IR's `relationship_end`, FR-038, names the destination type). The
+producer supplies it; the reader recomputes no node id, never derives the value
+from the relationship or the selected document, and returns it verbatim. The
+reader checks the shape of the value only, a structural `NodeId`, and does not
+resolve it: the destination type node MAY be absent from the package's graph
+(for example a type of a package the graph does not carry), and the id is not a
+`dependencies` entry of the application, because a `dependencies` entry names a
+node the graph carries. A `destination_type` that is missing, is not a
+structural `NodeId` or carries a member beyond `package`, `path` and `ordinal`
+fails the V2 schema (`malformed_wire`).
+
 ### Population references
 
 A state clause names a population its domain package declares by the
@@ -3168,6 +3185,8 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-267 | The checked package excludes three source forms by rule, each refused by the producer `unsupported_construct`/`expression-form` at the form and naming the construct (`proposals/checked-package-v2/timed-clause-node-vectors.json`, `excluded_forms`): a guard disjunct that reads no clock (`GJ-01`; every disjunct that reads a clock is built, `GJ-02`, `GJ-03`), a clock write that is not a reset to a constant, namely a whole-collection write (`CW-01`, `CW-02`), the drop `self.v = absent` (`CW-03`) and the ordered element write `self.ts[i] = Timer { ... }` (`CW-06`), and a selection reset whose condition reads element data (`SD-01`). A constant write to a guarded place is a built reset (`CW-04`), a presence requirement is a postcondition predicate with no clause node (`CW-05`) and a condition over the binder's presence is built (`SD-02`). The reader rows are `CL-20` (a part with no constraint, refused by both schemas), `CL-55` (a place reset with no `value`, refused by both schemas at the node's `body`) and `CL-56` (a reset of a collection place with no slot term, `ill_typed`/`operator-ineligible` at `/semantic_graph/nodes/84/body/members/4/value`); no reader rule is added or relaxed. | Test (TC-367; CK-32, CK-38; CL-20, CL-55, CL-56, GJ-01..GJ-03, CW-01..CW-06, SD-01, SD-02) |
 | FR-322-AC-268 | The two dimension nodes of a dimension equivalence may belong to different packages: a consistent graph of equivalences over the `Time` dimensions of three packages is admitted, with the root ratio of each pair fixed by the base roots and the product around the cycle exactly one. A pair in descending order, a pair of one node twice, a pair repeated by a second equivalence node, a pair naming a node that is not a dimension, a cycle whose root-scale product is not one and a schema-valid unreduced `root_scale`, an equivalence of derived dimensions whose normalized maps are unequal (`XP-08`) and one whose scale is inconsistent with the base roots (`XP-09`) each refuse `invalid_semantic_graph` at the later equivalence node in node-id order (`proposals/checked-package-v2/dimension-equivalence-vectors.json`, `XP-01` to `XP-10`; the reader that decides them is quire-contract-ir's, FR-063, and the vectors are authoritative for it). | Test (TC-280) |
 | FR-322-AC-269 | A source `enum`, `dimension` and `unit` node carries the closed body of FR-322 "Nominal nodes" (`enum` `{term, ordered, members}`, `dimension` `{term, terms}`, `unit` `{term, dimension_node_id, target_unit_node_id, scale, offset}`), and the V2 schema refuses, as `malformed_wire`, an empty `aggregate` body on one of them (`NB-01`), an enum with no members (`NB-02`), a unit without `scale` (`NB-03`), an extra member on a unit body (`NB-04`) and a non-integer dimension exponent (`NB-05`); an enum with `ordered` true (`NB-06`) is admitted and is `ordered_enum`. | Test (TC-233) |
+| FR-322-AC-270 | The `relationship_end` member carries `destination_type`, a producer-supplied structural `NodeId` that the reader returns verbatim without resolving or deriving it (FR-322 "Destination type of a relationship end"). `fixtures/positive-operation-identities.json` names a destination type node absent from the graph, is admitted by the full reader, and lists no `destination_type` among the node's `dependencies`; `DT-05` of `adverse.json` `destination_type_mutations`, a destination naming a node present in the graph, is admitted and kept verbatim. | Test (TC-233) |
+| FR-322-AC-271 | A `relationship_end` member with no `destination_type` (`DT-01`), a `destination_type` that is a string (`DT-02`), one with a member beyond `package`, `path` and `ordinal` (`DT-03`) or one whose `ordinal` is a string (`DT-04`) fails the V2 schema, which a reader reports `malformed_wire`. | Test (TC-233) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the node. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 
 ## Dependencies

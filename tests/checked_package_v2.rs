@@ -8680,6 +8680,79 @@ fn tc_233_nominal_body_mutations_fail_the_schema_as_malformed_wire() {
     assert_eq!(base["semantic_graph"]["nodes"][enum_index]["body"]["ordered"], false);
 }
 
+/// FR-322-AC-270: the `relationship_end` member carries `destination_type`, a
+/// producer-supplied structural `NodeId` the reader returns verbatim. The
+/// published operation-identities fixture names a destination type node that
+/// is absent from the graph; it is admitted, the id is not a dependency, and a
+/// destination naming a node present in the graph (`DT-05`) is admitted too.
+/// FR-322-AC-271: a missing, non-structural or malformed `destination_type`
+/// (`DT-01`..`DT-04`) fails the V2 schema, which a reader reports
+/// `malformed_wire`.
+#[trace("TC-233", "FR-322-AC-270", "FR-322-AC-271")]
+#[test]
+fn tc_233_a_relationship_end_carries_a_producer_supplied_destination_type() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let base = parsed_fixture(POSITIVE_OPERATION_IDENTITIES);
+    assert!(schema.is_valid(&base), "the base is admitted");
+    let index = node_index_where(&base, |node| {
+        node["body"]["operation"]["member"]["kind"] == "relationship_end"
+    });
+    let node = &base["semantic_graph"]["nodes"][index];
+    let destination = &node["body"]["operation"]["member"]["destination_type"];
+    assert!(is_node_id(destination), "destination_type is a structural id");
+    let nodes = base["semantic_graph"]["nodes"].as_array().expect("nodes");
+    assert!(
+        nodes.iter().all(|other| other["node_id"] != *destination),
+        "the destination type node is absent from the graph"
+    );
+    assert!(
+        node["dependencies"]
+            .as_array()
+            .expect("dependencies")
+            .iter()
+            .all(|dependency| dependency != destination),
+        "destination_type is not a dependency"
+    );
+    assert_eq!(
+        read_package_semantics(&base, &catalog),
+        Ok(()),
+        "an absent destination is admitted; the reader does not resolve it"
+    );
+
+    let adverse = parsed_fixture(ADVERSE);
+    let mutations = adverse["destination_type_mutations"]
+        .as_array()
+        .expect("destination type mutations");
+    let ids: Vec<&str> = mutations.iter().map(|m| m["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, ["DT-01", "DT-02", "DT-03", "DT-04", "DT-05"]);
+    for mutation in mutations {
+        let id = mutation["id"].as_str().expect("id");
+        let mut candidate = base.clone();
+        edit_node(&mut candidate, index, |node| {
+            for patch in mutation["patch"].as_array().expect("patch") {
+                apply_authored_patch(node, patch);
+            }
+        });
+        match mutation["outcome"].as_str() {
+            Some("admitted") => {
+                assert!(schema.is_valid(&candidate), "{id}: the schema admits it");
+                assert_eq!(read_package_semantics(&candidate, &catalog), Ok(()), "{id}");
+                assert_eq!(
+                    candidate["semantic_graph"]["nodes"][index]["body"]["operation"]["member"]
+                        ["destination_type"],
+                    mutation["patch"][0]["value"],
+                    "{id}: the value is kept verbatim"
+                );
+            }
+            Some("refused:malformed_wire") => {
+                assert!(!schema.is_valid(&candidate), "{id}: the schema refuses it");
+            }
+            other => panic!("{id}: unexpected outcome {other:?}"),
+        }
+    }
+}
+
 /// FR-322-AC-51: each owner mutation fails the V2 schema, which a reader
 /// reports `malformed_wire`.
 #[trace("TC-233", "FR-322-AC-51")]
@@ -9198,10 +9271,11 @@ fn tc_233_a_reaches_population_link_names_a_population_over_its_role_end_type() 
                     .map(|member| member.keys().cloned().collect::<BTreeSet<_>>()),
                 Some(BTreeSet::from([
                     "declaration".to_owned(),
+                    "destination_type".to_owned(),
                     "kind".to_owned(),
                     "name".to_owned()
                 ])),
-                "{id}: the published member names exactly kind, declaration and name"
+                "{id}: the published member names exactly kind, declaration, name and destination_type"
             );
         }
         let outcome = read_package_semantics(&candidate, &catalog);

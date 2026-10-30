@@ -4006,7 +4006,8 @@
           "required": [
             "kind",
             "declaration",
-            "name"
+            "name",
+            "destination_type"
           ],
           "properties": {
             "kind": {
@@ -4017,6 +4018,10 @@
             },
             "name": {
               "$ref": "#/$defs/Identifier"
+            },
+            "destination_type": {
+              "description": "The destination end's type node id, supplied by the producer and returned verbatim. The reader checks its shape only; the node may be absent from the graph, and it is not a dependency.",
+              "$ref": "#/$defs/NodeId"
             },
             "population": {
               "$ref": "#/$defs/NodeId"

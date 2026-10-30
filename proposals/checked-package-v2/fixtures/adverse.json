@@ -1910,5 +1910,79 @@
       "note": "an enum with ordered true is admitted and is an ordered_enum",
       "body_def": "EnumBody"
     }
+  ],
+  "destination_type_mutations": [
+    {
+      "id": "DT-01",
+      "base": "positive-operation-identities",
+      "patch": [
+        {
+          "op": "remove",
+          "path": "/body/operation/member/destination_type"
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "the member omits destination_type"
+    },
+    {
+      "id": "DT-02",
+      "base": "positive-operation-identities",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body/operation/member/destination_type",
+          "value": "ix://acme/orders/Order"
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "destination_type is a string, not a structural NodeId"
+    },
+    {
+      "id": "DT-03",
+      "base": "positive-operation-identities",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/body/operation/member/destination_type/version",
+          "value": "1"
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "destination_type carries a member beyond package, path and ordinal"
+    },
+    {
+      "id": "DT-04",
+      "base": "positive-operation-identities",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body/operation/member/destination_type/ordinal",
+          "value": "0"
+        }
+      ],
+      "outcome": "refused:malformed_wire",
+      "note": "the ordinal is a string, not a count"
+    },
+    {
+      "id": "DT-05",
+      "base": "positive-operation-identities",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body/operation/member/destination_type",
+          "value": {
+            "package": "acme/orders",
+            "path": [
+              "model",
+              "object_type",
+              "ix://acme/orders/Order"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "outcome": "admitted",
+      "note": "a destination_type naming a node present in the graph is also returned verbatim"
+    }
   ]
 }
