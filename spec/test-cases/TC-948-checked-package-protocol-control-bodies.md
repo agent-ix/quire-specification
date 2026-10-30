@@ -58,7 +58,7 @@ FR-466-AC-18.
 
 | Vector | Edit | Expected |
 | --- | --- | --- |
-| S1 | swap `Requested` and `Charged` in `Main`'s `children` | `Main`'s node id changes; the reader refuses `definition-cycle` for the `receive`/`send` edge (`Requested` and `Received`) |
+| S1 | swap `Requested` and `Charged` in `Main`'s `children` | `Main`'s body changes (the order of its `children`), not its node id; the reader refuses `definition-cycle` for the `receive`/`send` edge (`Requested` and `Received`) |
 | S2 | a child of `Main` that is a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
 | S3 | a child of `Main` that is a node of the graph absent from `dependencies` | `invalid_semantic_graph` at `/semantic_graph/nodes/{i}/dependencies` of the `Main` node (graph stage, FR-322-AC-96, before any body step) |
 | S3a | a child of `Main` that is a local node id no node of the graph carries, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target |

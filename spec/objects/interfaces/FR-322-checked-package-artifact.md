@@ -266,7 +266,10 @@ boundary.
   A model member (field, operation, clause) has no node of
   its own: it is named by its declaring node and its name. A recursive reference is legal only
   when every cycle member names the same explicit `recursion_group`; all other
-  graph cycles refuse. Every node has one or more exact source occurrences.
+  graph cycles refuse. A `recursion_group` label on a node outside every
+  cycle is admitted and means nothing: the label constrains cycles only, and
+  no refusal is invented for an acyclic node that carries one.
+  Every node has one or more exact source occurrences.
 - `operation` — every `application` semantic term, wherever it occurs in a node
   body, carries `operator`, `operation: {identity, laws, mode, member,
   leaves}`, `result_type` (the node id of the package type the application
@@ -395,9 +398,7 @@ boundary.
   a `relation`/`refinement` node, is identified by its structural `node_id`
   like every node. Its operation identity, laws, mode, member and leaves are
   part of its body and are compared structurally with the package value.
-  `declaration` is the node's `declaration` member or `null`; `recursion` is
-  `null` or `{size, ordinal}` of the node inside its `recursion_group` in graph
-  order. For a `state`/`state_clause`,
+  `declaration` is the node's `declaration` member or `null`. For a `state`/`state_clause`,
   `operation.member.execution_point` is part of this body. For a
   `state`/`operation_anchor`, the optional fourth `execution_point` binding is
   part of its body. The schema admits only FR-341/FR-342's closed four-variant
@@ -601,15 +602,12 @@ A frame body refusal, meaning-join or canonical-order
     correspondence therefore cannot be decided from the wire and stays
     unclaimed in IR-1043; STD-505 closes with this statement, not with a
     decidable relation.
-  A structural node outside every recursion group carries `recursion` `null`
-  and `semantic_type` `null` exactly when the node is its own type, and `owner`
+  A structural node carries `semantic_type` `null` exactly when the node is its own type, and `owner`
   exactly when it is owner-bearing. The members of a recursion group are the
   nodes carrying its `recursion_group` label, a non-empty string the producer
-  chooses and all members share; a member's group position, the `ordinal` of its
-  `recursion` `{size, ordinal}`, is its position among them in graph order, and
-  is a separate rule from its `node_id.ordinal`. A node whose form is not one of the
-  shapes above, a member whose group position is not its position, or two
-  groups sharing a label with unequal membership refuses
+  chooses and all members share. Membership is that label alone: the wire has
+  no member for a node's position in its group, and a reader derives none. A
+  node whose form is not one of the shapes above refuses
   `invalid_package`/`invalid-value` at the node's `node_id`.
 - `dependencies` — the nodes a node's definition is built from: a list of
   node ids of the node's own graph, unique and ascending by node-id. A reader follows it beside `semantic_type` and the body's
@@ -998,11 +996,11 @@ hashed. It is a closed object with exactly these members:
 | --- | --- |
 | `package` | The `name` of the package the node belongs to (for a `model_root` node and for a node a domain package owns, that domain package's identity). |
 | `path` | A non-empty array of segments. A declared node's path is its declaration path, the declaring scopes' names outermost first. A derived node (no `declaration`, for example `Set<Integer>`, an application or a literal) outside every recursion group has the path `[node_tag, semantic_form, ...operands]`; each operand is a string (a literal's text, an operator or member name) or the `node_id` of an operand node. |
-| `ordinal` | A non-negative JSON integer from `0` to 9007199254740991 (2^53-1, the I-JSON safe integer), assigned by the producer. It tells apart nodes that share one `package` and `path`; the reader's only rule is that no two nodes sharing a `package` and `path` have the same `ordinal`. It need not be `0`, need not be contiguous and need not follow sibling or graph order, and a reader never derives one. A recursion-group member's `ordinal` is no exception: it is still producer-assigned and unique among nodes sharing its `package` and `path`; the member's position in its group is the separate `recursion` `{size, ordinal}` (`recursion_group`, below). |
+| `ordinal` | A non-negative JSON integer from `0` to 9007199254740991 (2^53-1, the I-JSON safe integer), assigned by the producer. It tells apart nodes that share one `package` and `path`; the reader's only rule is that no two nodes sharing a `package` and `path` have the same `ordinal`. It need not be `0`, need not be contiguous and need not follow sibling or graph order, and a reader never derives one. A recursion-group member's `ordinal` is no exception: it is producer-assigned and unique among nodes sharing its `package` and `path`, and it is not a position in the group (`recursion_group`, below). |
 
 Ordinals compare numerically; `package` and `path` strings compare as UTF-8 bytes. An `ordinal` that is negative, above 9007199254740991, not a JSON integer (a string, a fraction or an exponent form, for example) is a malformed integer and is refused `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal`, `i` the node's graph index; the same bound and the same refusal apply to every `node_id` held in a reference, dependency, `semantic_type` or nested path operand, at that member's pointer.
 
-A recursion-group member is identified by `{package, path, ordinal}`, with `path` the group's declaration path (the declaring scopes' names outermost first, as for any declared node), never derived by operand embedding, so every member of a group, anonymous derived members included, carries that declaration path. Members of one group share that `package` and `path` and are told apart by `ordinal`, which is producer-assigned like any other (unique among nodes sharing `package` and `path`; a producer may use graph order, but need not); the member's position in its group is the separate `recursion` `{size, ordinal}` of `semantic_graph` nodes. Only a derived node outside every recursion group embeds operand `node_id`s. A producer disambiguates other nodes sharing a package and path by distinct ordinals of its choosing; body content is not part of the path.
+A recursion-group member is identified by `{package, path, ordinal}`, with `path` shared by every member of the group, never derived by operand embedding, so every member, anonymous derived members included, carries the same `package` and `path`. That shared `path` is a declaration path (the declaring scopes' names outermost first, as for any declared node) wherever a member's `declaration` or `owner` names one; a group with no declared member and no owner, such as an owner-free one-member self-option group or a lone labelled node, has no external anchor for its path, is admitted, and nothing is invented for it or refused. Members of one group are told apart by `ordinal`, which is producer-assigned like any other (unique among nodes sharing `package` and `path`; a producer may use graph order, but need not); membership of a group is the shared `recursion_group` label alone, and the reader derives no position in the group. Only a derived node outside every recursion group embeds operand `node_id`s. A producer disambiguates other nodes sharing a package and path by distinct ordinals of its choosing; body content is not part of the path.
 
 A node belongs to the package that contains it, and an imported node keeps its
 own package name. Two nodes with equal `package`, `path` and `ordinal` have the
@@ -2554,8 +2552,7 @@ partial checked package.
 
 **Integers.** An integer *value*, meaning a literal's `value` of `value_kind`
 `integer` and so every range or cardinality bound, is an `IntegerString`, the
-canonical decimal string, at every magnitude. A *counter*, meaning
-`recursion.size`, `recursion.ordinal` and an
+canonical decimal string, at every magnitude. A *counter*, meaning an
 `operation.member` `position`, is a JSON number when its value is at most
 2^53-1 (9007199254740991), and its canonical decimal string otherwise
 (QSL ADR-013 O-09). A `node_id.ordinal` is always a JSON number and has the one
@@ -3191,8 +3188,8 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-270 | The `relationship_end` member carries `destination_type`, a producer-supplied structural `NodeId` that the reader returns verbatim without resolving or deriving it (FR-322 "Destination type of a relationship end"). `fixtures/positive-operation-identities.json` names a destination type node absent from the graph, is admitted by the full reader, and lists no `destination_type` among the node's `dependencies`; `DT-05` of `adverse.json` `destination_type_mutations`, a destination naming a node present in the graph, is admitted and kept verbatim. | Test (TC-233) |
 | FR-322-AC-271 | A `relationship_end` member with no `destination_type` (`DT-01`), a `destination_type` that is a string (`DT-02`), one with a member beyond `package`, `path` and `ordinal` (`DT-03`) or one whose `ordinal` is a string (`DT-04`) fails the V2 schema, which a reader reports `malformed_wire`. | Test (TC-233) |
 | FR-322-AC-272 | A node `ordinal` is producer-assigned. Nodes sharing one `package` and `path` at ordinals that are not `0` (`NO-05`: one sibling at `7`), not contiguous and in neither ordinal nor graph order (`NO-06`: siblings at `3` then `2` placed before the node at `0`) are admitted by the full reader; the reader neither requires `0`, contiguity or sibling order nor derives an ordinal. | Test (TC-233) |
-| FR-322-AC-273 | Two nodes of an equal `{package, path, ordinal}` refuse `invalid_semantic_graph` at the second node's `node_id`, `/semantic_graph/nodes/{i}/node_id`: a sibling at the original's ordinal `0` (`NO-07`) and two siblings both at ordinal `4` (`NO-08`, refused at the second). A recursion-group member's `ordinal` keeps its own rule. The reader that decides these refusals is quire-contract-ir's, and the vectors (`proposals/checked-package-v2/node-ordinal-vectors.json`, `NO-07`, `NO-08`) are authoritative for it; the test here checks them with a standalone duplicate-id helper, not with the shared model oracle's own refusal. | Test (TC-233) |
-| FR-322-AC-274 | Every member of a recursion group, the declared node and the anonymous derived members alike, carries the group's declaration path as its `path`, never a path derived from operands, and members sharing it are told apart by their producer-assigned `ordinal`, unique among nodes sharing `package` and `path`. The `positive-recursive-records`, `positive-two-owners-a`, `positive-two-owners-b` and `positive-integer-literal-references` fixtures each hold this for every group member. | Test (TC-233) |
+| FR-322-AC-273 | Two nodes of an equal `{package, path, ordinal}` refuse `invalid_semantic_graph` at the second node's `node_id`, `/semantic_graph/nodes/{i}/node_id`: a sibling at the original's ordinal `0` (`NO-07`) and two siblings both at ordinal `4` (`NO-08`, refused at the second). A recursion-group member's `ordinal` is held to the same uniqueness rule. The reader that decides these refusals is quire-contract-ir's, and the vectors (`proposals/checked-package-v2/node-ordinal-vectors.json`, `NO-07`, `NO-08`) are authoritative for it; the test here checks them with a standalone duplicate-id helper, not with the shared model oracle's own refusal. | Test (TC-233) |
+| FR-322-AC-274 | All members of a recursion group, the declared node and the anonymous derived members alike, share one `{package, path}`, never a path derived from operands, and are told apart by their producer-assigned `ordinal`, unique among nodes sharing `package` and `path`. The shared `path` equals a declaration path where a member's `declaration` or `owner` names one; a group with no declared member and no owner has no external anchor, is admitted, and nothing is invented or refused. Group membership is the shared `recursion_group` label alone: no node carries a group-position member. The `positive-recursive-records`, `positive-two-owners-a`, `positive-two-owners-b` and `positive-integer-literal-references` fixtures, each group of which has a declared member, each hold this for every group member. | Test (TC-233) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the node. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 
 ## Dependencies

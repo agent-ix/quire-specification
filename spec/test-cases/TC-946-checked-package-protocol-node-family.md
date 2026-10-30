@@ -102,18 +102,18 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | Vector | Edit to the base | Expected |
 | --- | --- | --- |
 | K1 | reformat the source; add a comment; add a second source reference to the protocol; declare the roles in another source order | every node id unchanged; the carrier gains one `expression` occurrence |
-| K2 | rename role `Fulfillment` to `Shipping` | the role's node id and every node that references it change |
+| K2 | rename role `Fulfillment` to `Shipping` | the role's node id changes (its declaration path is the renamed name), and so does the id of every operand-derived node that references it |
 | K3 | swap `Orders` and `Payments` in the clause's `roles` set | `invalid_semantic_graph` at the clause node (a set out of ascending node-id order); no role node id changes |
 | K13 | list `Outcome.cases` with `shipped` before `failed`'s sorted position; and, separately, swap two independent `children` of `Finalized`'s holder | the unsorted `cases` is `invalid_semantic_graph` at `Outcome`; swapping two `children` of a `sequence` changes the sequence |
-| K4 | change `max 3` to `max 4` | `Poll`'s node id and its ancestors' node ids change |
-| K5 | retarget `Applied`'s `of` from `Charged` to `Requested` | `Applied`'s node id changes and the reader refuses `invalid_model_binding`/`malformed-declaration` at the target (not an `attempt`) |
+| K4 | change `max 3` to `max 4` | `Poll`'s body changes; no node id changes, since a declared node's id is its declaration path and producer-assigned ordinal |
+| K5 | retarget `Applied`'s `of` from `Charged` to `Requested` | `Applied`'s body changes, no node id changes, and the reader refuses `invalid_model_binding`/`malformed-declaration` at the target (not an `attempt`) |
 | K6 | a role `Main`, a channel `Main`, a template `Main` and the root control `Main` | admitted: four distinct declarations (`role`, `channel`, `compensate`, `run` segments) |
 | K7 | two roles named `Orders` | `ambiguous_declaration`/`ambiguous-name` naming both node ids |
 | K8 | two controls on one path named `Done` | `ambiguous_declaration`/`ambiguous-name` naming both node ids |
-| K10 | an acyclic protocol node adds `recursion_group` but leaves `recursion` `null` | refuses `malformed_wire` (`malformed_wire`) |
+| K10 | an acyclic protocol node adds a lone `recursion_group` label | admitted: the label means nothing outside a cycle (FR-322), and the base package is otherwise unchanged |
 | K11 | a `queue` node carries a `declaration` | refuses `malformed_wire` (a `generated`-only node carries no declaration) |
 | K12 | a `role` node has no `declaration` occurrence | refuses `malformed_wire` (`declaration` is present exactly with a `declaration` occurrence) |
-| K14 | a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic | the complete cyclic reference component shares one `recursion_group`, each member has its FR-322 `{size, ordinal}` coordinate and intra-component edges use `group_reference`; the reader admits the package. `Plain` and every other node outside that component have no `recursion_group` and `recursion` `null` |
+| K14 | a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic | the complete cyclic reference component shares one `recursion_group`, its in-component references are ordinary `reference`s to member `node_id`s (spelled `group_reference` in the written form); the reader admits the package. `Plain` and every node outside that component carry no `recursion_group` from a producer (a label there is admitted and means nothing) |
 | K15 | Add a state precondition on the operation named by `Charged`'s attempt, with accepted `Pre{operation: "charge"}` | the attempt still references the no-point `operation_anchor`; the clause references a distinct point-bearing anchor; both anchors reference the same frame; the reader admits both nodes |
 
 ## Clause body
@@ -123,7 +123,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | C1 | none | admitted: thirteen bindings `over`, `activation`, `captures`, `roles`, `relationships`, `channels`, `queues`, `requirements`, `compensations`, `terminal`, `scheduling`, `run`, `finish` in that order, plus the node-level `owner_model` edge |
 | C2 | `activation on origin` | `activation` is `{kind: origin}`; admitted |
 | C3 | a protocol with no relationship, requirement, compensation, `terminal` or `scheduling` | empty lists and absent optionals; admitted |
-| C4 | `scheduling` removed from the base | the clause node id changes |
+| C4 | `scheduling` removed from the base | the clause body changes; no node id changes |
 | C5 | `roles` and `channels` swapped in the body | refuses `malformed_wire` (binding names out of order) |
 | C6 | the `finish` binding missing | refuses `malformed_wire` |
 | C7 | `over` is a `literal` | refuses `malformed_wire` |

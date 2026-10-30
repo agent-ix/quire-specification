@@ -437,7 +437,8 @@ concrete model and every row are equal, and each node carries its own
 declaration occurrence and source-map entry. This follows the owner-nested
 declaration identities of FR-322, in which a declaration's name enters its
 identity; it also matches the protocol rule above, where a changed part of the
-declaration's meaning gives a different node. Renaming a refinement therefore
+declaration's meaning gives a structurally unequal node whose id is unchanged
+except by a rename. Renaming a refinement therefore
 changes its node id and the obligation identity of every
 item that cites it; renaming a model or profile alias does not. Two refinement
 declarations of one unit with the same name refuse
