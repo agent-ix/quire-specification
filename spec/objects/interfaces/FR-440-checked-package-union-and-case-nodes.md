@@ -131,7 +131,7 @@ whose joins below do not hold with the refusal this requirement names, in
 - **Declaration-wide leaf identity** — every declared member participates
   in the walk, including members inactive in both compared values. The
   exact member identifier and zero-based payload position are separate
-  segments; a path carries no union node key or member ordinal. The
+  segments; a path carries no union node id or member ordinal. The
   enclosing operand/result type binds union identity. FR-322's "Union
   text-leaf vectors" U1–U7 fix profiles, nested wrappers, recursion and
   mutual record/union recursion. Its catalog leaf-source rules also apply
@@ -144,8 +144,8 @@ whose joins below do not hold with the refusal this requirement names, in
   enumerate `case` among the application operator classes and
   `quire.op.control.case` among the operation identities, so they enumerate
   exactly the catalog's identities and operator classes (FR-322-AC-17) once
-  the catalog holds the entry above. The node-identity preimage schema
-  defines `UnionMemberPreimage` ([FR-441](FR-441-union-member-key.md)).
+  the catalog holds the entry above. The member identity of a union is
+  defined by [FR-441](FR-441-union-member-key.md).
   The published fixture `positive-union-nodes.json` is a package carrying
   every encoding above.
 
@@ -181,7 +181,7 @@ nested `Only` arm's `x` takes `5`.
 ## Reader joins
 
 The reader checks these joins at FR-322's operation step, in ascending
-node-id digest order, each node at its place in that order:
+node-id order, each node at its place in that order:
 
 1. **Case placement.** A `quire.op.control.case` application at the body
    root of any node other than an `expression`/`case` node refuses
@@ -216,11 +216,10 @@ node-id digest order, each node at its place in that order:
    any of them refuses `ill_typed`/`operator-ineligible`, located at the
    `case` node.
 
-A `case` node and a `union_value` node are keyed by the
-`quire.application-node/v1` preimage and the node identity preimage FR-322
-already defines; a `case` node's arms enter that preimage in member
-declaration order, so reordering the arms of a source `case` changes no node
-id and no `package_id`.
+A `case` node and a `union_value` node take the structural `node_id`
+FR-322 already defines for derived nodes; a `case` node's arms enter its
+path in member declaration order, so reordering the arms of a source `case`
+changes no node id.
 
 ## Acceptance Criteria
 
@@ -235,14 +234,14 @@ id and no `package_id`.
 | FR-440-AC-7 | A `quire.op.control.case` application as the body root of a `function` node refuses `ill_typed`/`operator-ineligible` at that node, and the same `case` as an `expression`/`case` node referenced from the function body is admitted; the same `case` application nested in another application's arguments refuses `ill_typed`/`operator-ineligible` at that nested application's `operator` member, not `malformed_wire`. | Test (TC-395) |
 | FR-440-AC-8 | `quire.op.structural.eq` over two `Label` values carries the leaves `["member:Named", "position:0"]` and `["member:Tagged", "position:1"]` and none for `Empty`; over two `List` values of `union List { Cons(Integer, List), Nil }` it is admitted with empty `leaves`; and over two `Chain` values of `union Chain { Link(Text[0,8;nfc], Chain), End }` it is admitted with the leaves `["member:Link", "position:0"]` and `["member:Link", "position:1", "recursion:0"]`. | Test (TC-395) |
 | FR-440-AC-9 | Structural equality and inequality over each FR-322 Union text-leaf vector U1–U7 require exactly that vector's complete ordered list, independent of active values. U2's member rename, member reorder, payload swap and source arm reorder have exactly the effects stated with those vectors. | Test |
-| FR-440-AC-10 | Fixed `record_value` and `tuple_value` inputs whose bodies contain no application retain their existing `quire.structural-node/v1` preimage bytes and keys. Reordering the source arms of AC-3's `case` retains its declared-order body, node id and package id. | Test (TC-395) |
-| FR-440-AC-11 | For fixed union and payload node ids, nullary `Shape::Empty` and `Shape::Rect` with two reference payloads each select `quire.application-node/v1` with the exact aggregate body, `declaration: null`, no `owner` and `recursion: null` outside a recursion group. The producer and strict reader independently match fixed RFC 8785 preimage bytes and canonical node keys; retaining the structural-preimage key refuses `invalid_package`/`stale-node-key` at the application-node key stage. | Test |
+| FR-440-AC-10 | Reordering the source arms of AC-3's `case` retains its declared-order body and node id. | Test (TC-395) |
+| FR-440-AC-11 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 
 ## Dependencies
 
 - [FR-322](FR-322-checked-package-artifact.md) owns the `semantic_graph`,
   the operation catalog and its families, groups and constraints, the
-  application-node preimage and the reader's refusal order.
+  application-node dependency rule and the reader's refusal order.
 - [FR-341](FR-341-checked-package-state-clause-body.md) owns the
   `value`/`parameter` node body an arm binder uses.
 - [FR-143](../../functional/type-model/FR-143-evaluate-record-tuple-recursive-values.md)

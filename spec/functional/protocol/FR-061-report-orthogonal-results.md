@@ -217,7 +217,7 @@ The strict reader SHALL enforce the following result-combination rules.
 | FR-061-AC-1 | Healthy, violating, inactive, pending, incomplete, refused, unsupported, failed and settled-open-subject cases remain discriminable without diagnostic prose, including independent assumption, observation-adequacy and protocol-adequacy facts. | Test (TC-061) |
 | FR-061-AC-2 | Removing a trigger, required role, provider observation, population member or negative case cannot improve truth, adequacy or package-level status. | Test (TC-061) |
 | FR-061-AC-3 | Every result binds its exact result-contract version and identity plus source/profile/model/protocol/request/binding/input/decision-scope progress/closure/surrounding-execution progress/closure/complete-global-conformance closure/backend identities, settlement basis and decision-support identities. | Test (TC-061) |
-| FR-061-AC-4 | A result with an impossible dimension combination, stale identity or conflicting claim strength is refused by a strict reader. | Test (TC-061) |
+| FR-061-AC-4 | A result with an impossible dimension combination or conflicting claim strength is refused by a strict reader. | Test (TC-061) |
 | FR-061-AC-5 | One unsupported request does not remove an independent supported result, while package complete success remains unavailable. | Test (TC-061) |
 | FR-061-AC-6 | Every row of the normative result-combination table admits its valid boundary case and refuses every one-axis forbidden combination. | Test (TC-061) |
 | FR-061-AC-7 | Every decision-support record retains its exact oracle/observation identities and dependence relation; missing, self-referential or cyclic derived lineage and invented independence are refused. | Test (TC-061) |

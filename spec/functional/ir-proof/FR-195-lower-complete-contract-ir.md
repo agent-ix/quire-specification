@@ -60,7 +60,7 @@ value. These two defensive dispositions emit no substitute node and preserve
 the failed body's source correspondence; they do not replace ordinary reader
 refusal or incomplete results. FR-330's serialized `feature_accounting` admits
 all seven dispositions under the exact payloads FR-038 consumes. A lowered
-item includes all reachable dependencies and a canonical semantic digest.
+item includes all reachable dependencies.
 The complete-V1 lowerer consumes an admitted `quire.checked-package/v2` package through the I04
 V2 reader and requires the nominal identity evidence carried by that contract.
 The V2 reader refuses an unknown member or node tag before admission.

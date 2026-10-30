@@ -13,7 +13,7 @@ relationships:
 
 ## Description
 
-Resolve a diamond and reject conflict, cycle, ambiguity and a package whose `package_id` does not match its preimage.
+Resolve a diamond and reject conflict, cycle and ambiguity.
 
 ## Test Procedure
 
@@ -27,19 +27,18 @@ charge. Every `ill-typed` expectation is a type-checking
 `refused { code: ill_typed }` made before any charge.
 
 Build libraries and importing packages as CheckedPackage V2 artifacts, and
-compare each lock selection with the `package_id` its supplied library
-compiles to.
+compare each lock selection with the identity its supplied library is
+supplied under.
 
 | Vector | Input | Expected result/disposition |
 | --- | --- | --- |
-| L01 | L, supplied under identity `L`, exports `function f using v(x: Int[0, 9]): Boolean pure { x < 5 }`. `import "L" as l;` using `l::f(x)` | admitted, the call's callee the export identity (L package key, `f` node key), and the lock's selection of `L` the `package_id` L's source compiles to |
+| L01 | L, supplied under identity `L`, exports `function f using v(x: Int[0, 9]): Boolean pure { x < 5 }`. `import "L" as l;` using `l::f(x)` | admitted, the call's callee the export identity (library identity `L`, `f` node_id), and the lock's selection of `L` the entry `{identity: L}` |
 | L02 | `import "L";` without `as`, then a use `f(x)` of L's export; then a use `L::f(x)` | the import is admitted and verified but binds no qualifier; `refused { code: missing_declaration, cause: missing-name }` at `f`; the same refusal at `L::f`, because the library name is not a qualifier |
 | L03 | two imports of different libraries both `as a`, then `a::f(x)` | each use is `refused { code: ambiguous_declaration, cause: ambiguous-name }` listing both import paths |
-| L04 | P imports A and B; A and B each import L, supplied once, and call `l::f`; then P links A and B as checked packages whose locks select L with different `package_id`s | one export identity for `f` and one lock selection for L; `refused { code: invalid_package, cause: conflicting-definition }` listing `P -> A -> L` and `P -> B -> L` |
+| L04 | P imports A and B; A and B each import L, supplied once, and call `l::f`; then P links A and B as checked packages whose locks select L with structurally unequal packages | one export identity for `f` and one lock selection for L; `refused { code: invalid_package, cause: conflicting-definition }` listing `P -> A -> L` and `P -> B -> L` |
 | L05 | A imports B and B imports A | `refused { code: invalid_package, cause: definition-cycle }` whose dependency-edge payload lists `A -> B -> A` |
 | L06 | P imports libraries `Z` and `A` in that source order | the lock lists `A` then `Z` |
-| L08 | L' is L with a changed export, presented as a checked package retaining L's `package_id`; then P links L' as its selection of `L` | `refused { code: invalid_package, cause: invalid-value }` at member path `/package_id`, because the recomputed digest of L''s identity preimage differs; P's import resolves no L' and binds no lock selection |
-| L09 | `import "test/geometry" as g;` with a library supplied as `test/geometry`, together with a library supplied as `test/geometry/extra`; then `import "test/geometry" digest "<64 lowercase hex>" as g;` and `import "test/geometry" version "1.0.0" as g;`; then two libraries supplied as `test/geometry`, first differing and then identical; then no library supplied as `test/geometry`; then, with `test/geometry` also exporting a record `R`, a use `g::R` | admitted, bound to the library supplied as `test/geometry` and to no other, the lock's selection of `test/geometry` the `package_id` its source compiles to; `refused { code: invalid_syntax, cause: unexpected-token }` at the `digest` token and at the `version` token; `refused { code: invalid_package, cause: conflicting-definition }` before any compile, naming both supplied libraries by their identity, in both cases; `refused { code: missing_import, cause: missing-selection }` at the import's identity string; `refused { code: ill_typed, cause: operator-ineligible }` at `g::R` |
+| L09 | `import "test/geometry" as g;` with a library supplied as `test/geometry`, together with a library supplied as `test/geometry/extra`; then `import "test/geometry" digest "<64 lowercase hex>" as g;` and `import "test/geometry" version "1.0.0" as g;`; then two libraries supplied as `test/geometry`, first differing and then identical; then no library supplied as `test/geometry`; then, with `test/geometry` also exporting a record `R`, a use `g::R` | admitted, bound to the library supplied as `test/geometry` and to no other, the lock's selection of `test/geometry` the entry `{identity: test/geometry}`; `refused { code: invalid_syntax, cause: unexpected-token }` at the `digest` token and at the `version` token; `refused { code: invalid_package, cause: conflicting-definition }` before any compile, naming both supplied libraries by their identity, in both cases; `refused { code: missing_import, cause: missing-selection }` at the import's identity string; `refused { code: ill_typed, cause: operator-ineligible }` at `g::R` |
 | L10 | A imports B, B imports C, and A has no direct import of C; compare the produced locks and recompile A against an altered A lock that also lists C | A emits only B, B emits only C, and A derives B and C in its closure. The altered A lock differs from recompilation and is not certified as canonical producer output |
 
 ## Expected Results

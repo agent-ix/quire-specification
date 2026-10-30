@@ -17,8 +17,10 @@ At a given `trace`/`step`/`choice`, `draw` is a decimal string of a `u64`
 value that starts at 0 and increments after every draw value computed for that
 choice, accepted or rejected.
 
-Draw `draw` is `SHA-256(JCS{choice, draw, seed, step, trace})`, and `v` is the
-draw value bytes read as a big-endian `u256`.
+The draw function maps `{choice, draw, seed, step, trace}` to its draw value as
+`SHA-256(JCS{choice, draw, seed, step, trace})`, and `v` is the
+draw value bytes read as a big-endian `u256`. The draw function is computed at
+run time; no draw value is stored or compared as an identity.
 
 ## Choices within a step
 

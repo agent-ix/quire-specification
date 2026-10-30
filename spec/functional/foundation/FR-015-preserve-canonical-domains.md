@@ -12,15 +12,15 @@ relationships:
 
 ## Description
 
-When a canonical identity is derived, the deriving tool shall use the exact selected domain algorithm.
+When a canonical identity is derived, the deriving tool shall derive it only from a typed derivation and only as the structural identity of FR-201.
 
 ## Inputs
 
-Qualified canonicalizer input, object kind where required, domain/version and expected identity.
+Qualified canonicalizer input and object kind where required.
 
 ## Outputs
 
-Canonical bytes/digest or an unsupported-canonicalization refusal.
+A structural identity or an unsupported-canonicalization refusal.
 
 ## Behavior
 
@@ -38,9 +38,8 @@ Source-free typed-expression identity requires a typed derivation. Current nativ
 ## Dependencies
 
 - [US-004](../../usecase/US-004-retain-evidence-meaning.md) supplies the user need.
-- [FR-201](../../objects/foundation/FR-201-canonical-identity-domain.md) lists the identity domain vocabulary.
+- [FR-201](../../objects/foundation/FR-201-canonical-identity-domain.md) defines the structural identities.
 
 ## Status
 
-Accepted by FS05 as standard behavior. Historical bytes and domain algorithms
-remain unchanged; consumer-specific execution and matrix status stay separate.
+Accepted by FS05 as standard behavior. Consumer-specific execution and matrix status stay separate.

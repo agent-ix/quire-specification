@@ -59,13 +59,13 @@ The deadlock-freedom item's obligation identity is the subject with item kind
 omitted runs under the provider's published default, and its terminal record
 names the effective value (FR-368-AC-7).
 The request with the solver budgets is admitted. The two `max_solver_time`
-forms have equal request identity and cache key bytes, the two
+forms have equal request identity, the two
 `max_solver_steps` forms different ones, and the `max_solver_time` stop is
 stored by neither request. The 1.5 and the two 0 values are refused before
 consumption (FR-368-AC-11; vectors `temporal-limits-solver-time-fractional`,
 `temporal-limits-solver-time-zero` and `temporal-limits-solver-steps-zero`).
 The reused record states `max_solver_time` 5. The two `smt_encoding` forms
-have different request identities and cache keys and share no result; the
+have different request identities and share no result; the
 empty object, the unknown member, the 0 and the 1.5 are refused before
 consumption (FR-368-AC-12; vectors `temporal-smt-encoding-empty`,
 `temporal-smt-encoding-unknown-member`, `temporal-smt-encoding-zero` and

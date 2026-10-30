@@ -63,8 +63,8 @@ request:
 - `item_kind` — one of `formula`, `deadlock-freedom`, `time-lock-freedom`,
   `race-freedom` and `refinement` ("Item kinds" below); no other spelling is a
   kind, and one refuses before consumption;
-- `abstract_subject` — present exactly on a `refinement` item: `package_id`, the
-  id of the abstract subject's package (a package of the request's
+- `abstract_subject` — present exactly on a `refinement` item: `identity`, the
+  identity of the abstract subject's package (a package of the request's
   `dependencies`), and `initial_states`, the ordered list of the abstract
   subject's initial-state snapshots as byte-provision references, spelled as
   `subject.initial_states` is ([FR-377](../analysis/FR-377-decide-model-refinement.md)
@@ -233,7 +233,7 @@ finite_bound_available: false}` and nothing else:
 `request_index` is the item's zero-based position, and a result, a
 disposition and a terminal record name their item by it (FR-331 "Items"), so
 the position is part of the wire. The request writer SHALL order the items by
-structure alone, never by a digest, a hash or a map's iteration order:
+structure alone, never by a map's iteration order:
 
 1. The items the caller requested, authored and `refinement`, first, in the
    caller's order. Adding or removing a derived item, as a `terminal any`
@@ -358,7 +358,7 @@ object whose members are `PositiveCount`s, each a limit under
   member, a zero and a non-integer value refuse before consumption.
 - The values decide whether a query can be encoded at all, so they change
   the result (`limit-reached` against a proof) and are part of the request
-  identity .
+  identity.
 - An encoder stop at a member settles FR-331 result `incomplete`,
   `limit-reached{limit, value, setting}` naming the member, its value and
   its setting (FR-363 "Undecided k-induction runs", rule 3). A provider
@@ -453,7 +453,7 @@ infinite-trace formula that no registered candidate decides.
 | FR-368-AC-16 | A derived or `refinement` item classifies `unbounded` with `finite_bound_available` false, an `infinite-trace` domain keyed by the claim's node with the empty path, and no `extent.bounds`; the same item with a `bounded` extent, or with no `infinite-trace` domain, is refused. | Test (TC-431) |
 | FR-368-AC-17 | In a request, the caller's items come first in the caller's order and the derived items follow, grouped by subject in order of the subject's first occurrence among the caller's items and, within a subject, as `deadlock-freedom`, `time-lock-freedom`, `race-freedom`; `request_index` is the position; the order depends on the caller's order of items and adds no sort key. Exchanging two derived items of one subject, or moving a derived item before a caller's item, breaks the order. | Test (TC-302, TC-431) |
 | FR-368-AC-18 | A derived or `refinement` item is a `temporal-satisfaction` item with no `hybrid` and no `requirements`, routed by FR-290's tables; a request that gains a derived item changes no caller's item's `request_index`. | Test (TC-302) |
-| FR-368-AC-19 | A `refinement` item carries `abstract_subject` (`package_id`, `initial_states`) beside its concrete `subject`, and an item of any other kind carrying one is refused; a refinement item without one, one whose `abstract_subject` has an extra member such as `universes` or `proof_bounds`, and one whose `package_id` is not a package id are refused, and a `package_id` that no entry of `request.dependencies` carries is refused by the reader (the schema cannot relate the two members); two refinement items that differ only in `abstract_subject` have different obligation identities. | Test (TC-431) |
+| FR-368-AC-19 | A `refinement` item carries `abstract_subject` (`identity`, `initial_states`) beside its concrete `subject`, and an item of any other kind carrying one is refused; a refinement item without one, one whose `abstract_subject` has an extra member such as `universes` or `proof_bounds`, and one whose `identity` is not a package identity are refused, and an `identity` that no entry of `request.dependencies` carries is refused by the reader (the schema cannot relate the two members); two refinement items that differ only in `abstract_subject` have different obligation identities. | Test (TC-431) |
 | FR-368-AC-20 | A derived item carries no `max_depth` (a derived item with one is refused) and takes the provider defaults for `limits` it has no caller setting for; it may carry `limits` only of `max_states`, `max_transitions`, `max_clocks`, `max_store_buffer`, `max_messages`, `max_live_instances`, `max_solver_steps` and `max_solver_time`, for a caller's FR-461 setting, and `max_automaton_states`, `max_walk_steps`, `max_witness_set` or `max_relation_tuples` in a derived item's `limits` is refused as an unknown member; no item inherits `limits`, `max_depth` or `smt_encoding` from another, so an authored item's `max_depth` and `limits` are absent from the request's derived items. | Test (TC-431) |
 | FR-368-AC-21 | `transfer` is not an `item_kind` and a transfer item is not a request item: it is evaluated by the planner and never reaches a provider. | Test (TC-431) |
 | FR-368-AC-22 | A derived item over a model subject whose package has one `model_root` is anchored at it; one over a subject that reads several `model_root` nodes, or none, is settled `unsupported`, `unsupported_projection`/`unsupported-requested-capability`, by the producer, which writes no request item for it. | Test (TC-431 BP-47 for several; TC-290 step 10 for none) |

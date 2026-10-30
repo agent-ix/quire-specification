@@ -25,8 +25,7 @@ FR-465-AC-9.
    overflow `reject`; it has `finish Closed` and `terminal any`. Add a
    replicated role `w each M::Worker from workers max 2 lifetime
    until(w.done)` for the role vectors.
-2. Apply each vector below to the base package, recompute node and package
-   identities after each edit, and run the full reader.
+2. Apply each vector below to the base package and run the full reader.
 3. Compile the base package with no workflow instance, delivery, clock
    observation or runtime binding supplied.
 
@@ -54,8 +53,8 @@ FR-465-AC-9.
 | RL17 | a role body with an `internality` binding | refuses `malformed_wire` |
 | RL18 | `replication` holds only `population` | refuses `malformed_wire` |
 | RL19 | `population` is an integer literal | refuses `malformed_wire` |
-| RL20 | a static role whose `model` is the text `identity` of a `model_root` node of the package, with no `model` dependency | admitted as a role on a whole model; its node key differs from RL1's role on a model type of that selection (FR-465-AC-9) |
-| RL21 | RL20's clause with a second role whose text is a second `model_root` node's `identity`; and RL20 in clauses whose `over` type is a scalar, a record and a `Set<M::Cell>`, one each | admitted; the two roles have different node keys; each `over` type is admitted |
+| RL20 | a static role whose `model` is the text `identity` of a `model_root` node of the package, with no `model` dependency | admitted as a role on a whole model; its node id differs from RL1's role on a model type of that selection (FR-465-AC-9) |
+| RL21 | RL20's clause with a second role whose text is a second `model_root` node's `identity`; and RL20 in clauses whose `over` type is a scalar, a record and a `Set<M::Cell>`, one each | admitted; the two roles have different node ids; each `over` type is admitted |
 | RL22 | RL20 with a text naming no `model_root` node | `missing_declaration`/`missing-selection` at the role node, retaining the text |
 | RL23 | RL20 with a non-empty `replication` Group | `invalid_model_binding`/`malformed-declaration` at the role node |
 | RL24 | `model` is an integer, a Boolean and a Group, one each | refuses `malformed_wire` |
@@ -83,18 +82,18 @@ FR-465-AC-9.
 | CH10a | `to` names a local node id that is no node of the graph, listed in the node's `dependencies` (body target and dependency change together; the graph stage compares the list without resolving that target, FR-322-AC-96) | `missing_declaration`/`missing-name` at the target |
 | CH11 | `carries` names a `model`/`record_value_type`, a `model`/`event_type`, a `model`/`variant_type`, a `composite_type` and a `scalar_type` node, one each | admitted |
 | CH12 | `carries` names a `role` node | `invalid_model_binding`/`malformed-declaration` at the target |
-| CH13 | `delivery` is each of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise` | admitted: four distinct node keys |
+| CH13 | `delivery` is each of `unknown`, `at-most-once`, `at-least-once` and `exactly-once-premise` | admitted: four distinct node ids |
 | CH14 | `delivery` is `exactly-once` | refuses `malformed_wire` |
 | CH15 | `delivery` removed | refuses `malformed_wire` |
 | CH16 | `ordering` removed | refuses `malformed_wire` |
-| CH17 | changing `delivery` from `at-least-once` to `unknown` | the channel's node key, the clause's and the `package_id` change |
+| CH17 | changing `delivery` from `at-least-once` to `unknown` | the channel's body, the clause's and the checked package change |
 
 ## Queue vectors
 
 | Vector | Edit | Expected |
 | --- | --- | --- |
 | QU1 | none: `literal 4`, `reject` | admitted; occurrence role `generated`, no `declaration`, `dependencies` the channel only |
-| QU2 | each of `reject`, `block`, `loss head`, `loss tail`, `loss new` with `literal` and with `symbolic(bound)` | admitted: ten distinct node keys (the selector enters the node key) |
+| QU2 | each of `reject`, `block`, `loss head`, `loss tail`, `loss new` with `literal` and with `symbolic(bound)` | admitted: ten distinct node ids (the selector enters the node id) |
 | QU3 | `literal` capacity `0` | admitted |
 | QU4 | `literal` capacity with a `name` binding | refuses `malformed_wire` |
 | QU5 | `symbolic` capacity with a `value` binding | refuses `malformed_wire` |
@@ -124,7 +123,7 @@ FR-465-AC-9.
 | TM2 | `terminal when { k.v = 3 }` | admitted; `condition` holds the Boolean term |
 | TM3 | `mode: when` with no condition | refuses `malformed_wire` |
 | TM4 | `mode: any` with a condition | refuses `malformed_wire` |
-| TM5 | a second `terminal` node of the same clause | `ambiguous_declaration`/`ambiguous-name` naming both node keys |
+| TM5 | a second `terminal` node of the same clause | `ambiguous_declaration`/`ambiguous-name` naming both node ids |
 | TM6 | the condition is an integer term | `ill_typed`/`non-boolean-root` at the node |
 | TM7 | the condition reads `sent` | `missing_declaration`/`missing-name` at the node, stage `terminal` |
 | TM10 | the condition reads the capture `order` of the `on each` base protocol | `missing_declaration`/`missing-name` at the node, stage `terminal` |
@@ -132,7 +131,7 @@ FR-465-AC-9.
 | TM12 | the condition reads the activation binder `opened` | `missing_declaration`/`missing-name` at the node, stage `terminal` |
 | TM11 | the condition reads `view` (`over`, the model observation) | admitted |
 | TM8 | the clause's `terminal` names the `finish` node | `invalid_model_binding`/`malformed-declaration` at the target |
-| TM9 | `terminal` removed from the clause | admitted; the clause node key changes |
+| TM9 | `terminal` removed from the clause | admitted; the clause node id changes |
 
 ## Runtime-subject vectors
 

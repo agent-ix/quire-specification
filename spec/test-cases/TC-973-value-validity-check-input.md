@@ -17,7 +17,7 @@ Check the value-validity forms: a Boolean clause with a function application, a 
 
 ## Test Procedure
 
-Read `proposals/backend-check-arm-v1/vectors.json`. For each case, derive each `$node:<label>` NodeId from its label as the file's `rekey` member states, recompute the FR-290 disposition from the case's registry and item, validate the case's outcome stage against `proposals/backend-provider-v1/schema.json`, apply the arm's own refusal gate, and compare the arm outcome with the result. The harness is `tests/backend_check_arm_v1.rs`; its pinned case list fails when a vector is removed.
+Read `proposals/backend-check-arm-v1/vectors.json`. For each case, resolve each `$node:<label>` to the NodeId of the node it labels, recompute the FR-290 disposition from the case's registry and item, validate the case's outcome stage against `proposals/backend-provider-v1/schema.json`, apply the arm's own refusal gate, and compare the arm outcome with the result. The harness is `tests/backend_check_arm_v1.rs`; its pinned case list fails when a vector is removed.
 
 Each case with a `model` is evaluated by the harness's own native evaluator under the mathematical-integer semantics of FR-484: the harness enumerates the declared domain, recomputes `proved`, `refuted`, vacuous, not-evaluable or `incomplete`, and replays the recorded counterexample, which must reproduce the violation. A refutation is checked by replaying its counterexample, never by comparing it with one expected counterexample.
 

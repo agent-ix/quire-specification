@@ -19,7 +19,7 @@ When a protocol claim is submitted to an analyzer, the producer SHALL use the im
 ## Properties
 
 - `contract_version` — exactly `quire.protocol.assessment/v1`.
-- `request_id` — identity over protocol, claim, premises, domain, provider and limits.
+- `request_id` — the identity assigned to the request, compared as an exact string. It is not computed from the other members.
 - `claim` — conformance, projection, realizability, composition or refinement with exact strength.
 - `subject` — checked protocol plus observations or finite model.
 - `premises` — closure, fairness, channel, population and environment assumptions.

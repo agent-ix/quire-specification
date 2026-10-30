@@ -66,8 +66,7 @@ the `quire.op.state.transition` application of a Boolean model-field
 semantics: only the catalog law role requires this profile. A producer that
 emits a `state`/`transition` node SHALL write the `protocol_profile` selection
 of this profile into the package lock even when the package declares no
-protocol (the selection enters the identity preimage and so the `package_id`),
-and a reader refuses a transition under a lock without it as
+protocol, and a reader refuses a transition under a lock without it as
 `operation-law-unselected`.
 
 ## Selected protocol rules

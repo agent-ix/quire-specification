@@ -74,7 +74,7 @@ examined once an earlier one is refused.
 
 Source order is the order of the package's source documents as the checked
 request lists them, then the byte offset of the declaration within its
-document; a unit's node key is not computable before its target chain is known
+document; a unit's node id is not computable before its target chain is known
 to be acyclic, so no key order is used.
 
 The checker SHALL build the list of turns by walking the package's declarations
@@ -159,8 +159,7 @@ names no base dimension, so it creates no base-dimension obligation.
 The checker SHALL admit no unit mapping of a refused dimension. A refusal
 refuses the package, as every other refusal of this requirement does, and the
 `quire.checked-package/v2` strict reader refuses the same shapes, as an
-already-built package, with `invalid_semantic_graph` (FR-322
-`nominal_identity_preimage`), not with these causes.
+already-built package, with `invalid_semantic_graph` (FR-322), not with these causes.
 
 A unit is affine exactly when the offset of its composed mapping to the
 canonical root is nonzero; a declared edge offset alone does not decide it, so a
@@ -185,7 +184,7 @@ compound unit and then to another declared unit with an equal base-dimension
 map is two admitted explicit steps. Every declared canonical root of a
 dimension is, by definition, coherent with the product of the canonical roots
 of that dimension's base-dimension terms raised to their exponents, with scale
-one and offset zero; no unit preimage carries a coherence scale. A compound
+one and offset zero; no unit body carries a coherence scale. A compound
 value is therefore the value in the declared side's canonical root.
 
 Type checking decides the static quantity refusals before any evaluation or
@@ -215,24 +214,22 @@ equality plan is compared by exact value in its identical unit and charges only
 its `equality.pair`. Quantity comparison between
 distinct units requires an explicit prior conversion.
 
-Base-dimension and unit identities are opaque I04 checked-semantic-graph node
-keys. A base dimension's `quire.checked-semantic-node/v1` digest is SHA-256 over
-RFC 8785 JCS of `{ version: quire.dimension-node/v1, owner,
-qualified_declaration, terms }`, where owner is the stable subject projection of
-an exact admitted source, DefinitionRef or selected domain package identity and must join that lock or model_root
-selection. A unit digest uses `{ version: quire.unit-node/v1, owner,
-qualified_declaration, dimension_node_id, target_unit_node_id, scale,
-offset }`, with normalized exact rationals. A dimension or unit an admitted
+Base-dimension and unit identities are I04 checked-semantic-graph structural
+node ids `{package, path, ordinal}`. A base dimension's `package` is the
+identity of the exact admitted source, DefinitionRef or selected domain package
+that owns it (which must join that lock or model_root selection), and its
+`path` is its declaration path; the body holds its terms. A unit's body holds
+`dimension_node_id`, `target_unit_node_id`, `scale` and `offset`, with
+normalized exact rationals. A dimension or unit an admitted
 domain package declares (FR-154) has as `owner` its selection's `ModelOwner`
 and as `qualified_declaration` the one-segment `[<name>]`, the last segment
-of its FCD identity; it carries no `declaration` (FR-322), and its key differs
-from a source declaration of the same name, whose owner is a `SourceOwner`. Acyclic unit targets make these keys
-recomputable in root-to-leaf order. The strict I04 reader refuses a body/key
-mismatch as `invalid_semantic_graph`. A dimension node is self-typed and depends
+of its FCD identity; it carries no `declaration` (FR-322), and its node id differs
+from a source declaration of the same name, whose owner is a `SourceOwner`.
+The strict I04 reader refuses a body that disagrees with its dimension or unit
+references as `invalid_semantic_graph`. A dimension node is self-typed and depends
 exactly on the base-dimension keys in its terms. A unit's `semantic_type` equals
 `dimension_node_id`; its dependencies are exactly that dimension plus its
-non-null target. Contradictory semantic fields refuse even when the retained
-preimage and key agree. Equal names, scales or dimension shapes do
+non-null target. Contradictory semantic fields refuse. Equal names, scales or dimension shapes do
 not confer identity, while the same exact imported owner/declaration remains
 stable across unrelated package edits. Dimension exponents are mathematical signed integers subject to
 explicit operation limits; implementations cannot narrow them to a machine
@@ -253,16 +250,15 @@ affine unit does. The operation lowers to `quire.op.quantity.negate` (FR-322).
 Multiplication, division and integer power first convert every non-affine
 operand to its dimension's canonical root, perform exact value arithmetic and
 normalize the resulting base-dimension exponents. The result unit is an
-evaluator-owned value identity in the `quire.value.compound-unit/v1` domain.
-Its JCS preimage is `{ version: quire.value.compound-unit/v1, terms }`, where
-`terms` is the ascending list of admitted I04 canonical root-unit node IDs with
-their nonzero mathematical integer exponents. The empty list is the
-dimensionless unit. This runtime value digest is not an I04 checked-semantic
-node key, graph reference, declaration or source-mapped authority, and
+evaluator-owned value identity `terms`, the ascending list of admitted I04
+canonical root-unit node ids with their nonzero mathematical integer exponents,
+compared structurally. The empty list is the
+dimensionless unit. This runtime value identity is not an I04 checked-semantic
+node id, graph reference, declaration or source-mapped authority, and
 evaluation does not insert it into the checked package. A compound unit that
 a checked source type forms is a separate thing: the I04
 `scalar_type`/`compound_unit` node of FR-322 "Derived type forms and
-forwarding", keyed by FR-322's structural node preimage, whose terms follow
+forwarding", identified by FR-322's structural node id, whose terms follow
 this order. Neither identity is derived from the other. The value
 identity's closed schema and vectors are selected
 by `quire.value.complete/v1`. An explicit later conversion may select a
@@ -288,7 +284,7 @@ its own units, and no equal name, scale or shape makes them one by itself.
   two dimension nodes that no dimension equivalence relates, whichever owners
   declare them.
 - The checker SHALL form the normalized dimension map of a multiplication,
-  division or integer power over base-dimension node keys, so the base
+  division or integer power over base-dimension node ids, so the base
   dimensions of two owners are two entries until an equivalence relates
   them: with no equivalence, `Quantity<R::s>` divided by `Quantity<F::s>` has a
   map of `R::Time` with exponent 1 and `F::Time` with exponent -1 and is not
@@ -385,7 +381,7 @@ pair after the last turn, and the pairs in source order within each phase.
 **Effect.** Every effect below is derived from the declared pairs, with no
 node rewritten:
 
-- The least node key, by ascending digest, of the base class's members is the
+- The least node id, by ascending node-id, of the base class's members is the
   base class's representative, and a normalized dimension map holds the
   representative in place of each member of its class. Every member of a pair
   has a unit (step 4 names one), so the base-dimension rule is decided by the
@@ -393,7 +389,7 @@ node rewritten:
   has none.
 - The units of the dimension nodes in one equivalence class form one unit
   graph: the union of the members' graphs with the canonical root of the member
-  holding the least dimension node key as the class root, and every other
+  holding the least dimension node id as the class root, and every other
   member's canonical root as a unit that targets the class root with offset
   zero and with the scale equal to the product of the root ratios along the
   declared pairs from that member to the class root (a pair taken from the
@@ -533,7 +529,7 @@ the element of `Option` and of the collection types, and the target of
 | FR-142-AC-5 | Exact affine conversion composes through the unique canonical root; arithmetic on a unit with a nonzero composed offset refuses; quantity ordering compares root values. | Test (TC-187) |
 | FR-142-AC-6 | Multiplication, division and integer power produce the exact value in the canonical compound-unit identity, including dimensionless cancellation, `0^0 = 1` and an undefined zero base under a negative exponent. | Test (TC-187) |
 | FR-142-AC-7 | Exact-bound accounting succeeds and denial of a named next unit charge returns incomplete without a partial quantity or compound identity; every schedule boundary, including decimal-target rounding and membership, occurs at its defined charge position. | Test (TC-187) |
-| FR-142-AC-8 | The published `quire.value.compound-unit/v1` schema and vectors fix the compound-unit identity preimage: each vector is schema-valid, its RFC 8785 JCS SHA-256 equals its recorded identity, and its terms name admitted root-unit node keys with nonzero exponents in strictly ascending key order; each authored stale-key mutation changes the identity and each authored noncanonical mutation, including a `-0` exponent, is refused by exactly its named schema or semantic check. | Test (TC-233) |
+| FR-142-AC-8 | The published `quire.value.compound-unit/v1` schema and vectors fix the compound-unit value identity: each vector is schema-valid, and its terms name admitted root-unit node ids with nonzero exponents in strictly ascending node-id order; each authored noncanonical mutation, including a `-0` exponent, is refused by exactly its named schema or semantic check. | Test (TC-233) |
 | FR-142-AC-9 | Equality or ordering of quantities in distinct units refuses `ill_typed` before any charge, while identical-unit equality and ordering compare exact root values after the left and then the right root path. | Test (TC-187) |
 | FR-142-AC-10 | A conversion with a compound side compares normalized base-dimension maps, traverses only the declared side's root path, and admits a declared-to-compound-to-declared pivot in two explicit steps. | Test (TC-187) |
 | FR-142-AC-11 | With the dimension `T`, the unit `s` (root of `T`) and the unit `ms` (target `s`, scale `1/1000`), a function `f(d: Quantity<ms>)` called as `f(3 ms)` admits the argument `3 ms` and refuses `f(3 s)` with `ill_typed`/`type-mismatch` at the argument; `d: Quantity<T>` (a dimension) and `d: Quantity<nothing>` each refuse `missing_declaration`/`missing-name` at the name, and a bare `d: ms` refuses `missing_declaration`/`missing-name` at `ms`. | Test (TC-187) |

@@ -22,7 +22,7 @@ Unique resolved declaration handles or import diagnostics.
 
 ## Behavior
 
-The spec's artifacts declare the domain model. The domain package lifted from them is the only source of domain declarations. Import aliases are lexical names. Package identity uses the owner/name contract; a declaration key (domain package identity, IR node identity) is separate from it. The source names a domain package by identity alone and states no digest; the linker checks the lock and transitive closure, and the replay package_id comparison catches a changed domain package (FR-323).
+The spec's artifacts declare the domain model. The domain package lifted from them is the only source of domain declarations. Import aliases are lexical names. Package identity uses the owner/name contract; a declaration key (domain package identity, IR node identity) is separate from it. The source names a domain package by identity alone; the linker checks the lock and transitive closure.
 
 ## Acceptance Criteria
 
@@ -31,7 +31,7 @@ The spec's artifacts declare the domain model. The domain package lifted from th
 | FR-002-AC-1 | An exact import resolves a qualified domain type name to its stable declaration key. | Test |
 | FR-002-AC-2 | An absent package receives missing_import. | Test |
 | FR-002-AC-3 | Two declarations with the same selected qualified name receive ambiguous_declaration. | Test |
-| FR-002-AC-4 | Withdrawn: it existed only for the `package_id` staleness comparison, which is removed. | Withdrawn |
+| FR-002-AC-4 | Withdrawn: the replay refusal of a recompiled checked package that differs from a supplied one is removed; replay recompiles the supplied inputs and uses the result. | Withdrawn |
 | FR-002-AC-5 | An undeclared authority receives foreign_reference. | Test |
 
 ## Dependencies

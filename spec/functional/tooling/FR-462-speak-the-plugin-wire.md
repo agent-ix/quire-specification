@@ -23,7 +23,7 @@ carrying FR-331 manifests, requests and results.
 ## Inputs
 
 The plugin executable at the path the caller names; the items routed to it;
-the checked package's v2 bytes and its `package_id`; the caller's
+the checked package's v2 bytes; the caller's
 frame-length, total-byte, deadline, grace-period, memory and CPU-time limits.
 
 ## Outputs
@@ -66,7 +66,7 @@ other before reading the body. The bodies are:
 | Kind | Sender | Body |
 | --- | --- | --- |
 | `hello` | plugin | the FR-331 `quire.backend-provider/v1` manifest stage, whose one descriptor is the plugin's: its advertised FR-290 (kind, mode) pairs, domains, options and bounds |
-| `request` | host | the FR-331 request stage: the routed items; the checked package as `package`, the unpadded base64url spelling of its RFC 8785 v2 bytes, with its `package_id`; and the provider limits, including `deadline_ms` |
+| `request` | host | the FR-331 request stage: the routed items; the checked package as `package`, the unpadded base64url spelling of its RFC 8785 v2 bytes; and the provider limits, including `deadline_ms` |
 | `result` | plugin | the FR-331 outcome stage for the request whose id it names |
 | `cancel` | host | the id of the request to cancel |
 | `shutdown` | host | empty |
@@ -77,10 +77,10 @@ Each body is one stage of the FR-331 wire schema
 The bytes travel as a string because a JSON frame cannot hold raw bytes, and
 unpadded base64url with zero trailing bits gives each byte string one
 spelling, so the frame keeps its one RFC 8785 encoding. The plugin decodes
-`package` and admits it with the v2 reader before any item runs. A plugin that refuses a `request` body answers it with one
+`package`, admits it with the v2 reader before any item runs. A plugin that refuses a `request` body answers it with one
 `result` that settles every routed item FR-331 `failed` with the refusal as
-its `diagnostic`: `invalid_runtime_input`/`invalid-value` for a `package` that is not the
-canonical spelling. No item runs.
+its `diagnostic`: `invalid_runtime_input`/`invalid-value` for a `package`
+that is not the canonical spelling. No item runs.
 
 ### Backend identity
 
@@ -153,7 +153,7 @@ total for `total-bytes`. No other defect carries them.
 | FR-462-AC-4 | A crash, a non-zero exit, a result for an item not routed to the plugin, a result for an unadvertised capability kind and a missing terminal record each settle every affected item `failed` with a tool-failure cause, while items routed to other providers keep their own records. | Test (TC-428) |
 | FR-462-AC-5 | Cancelling a run sends `cancel` with the request id; a plugin that answers settles each open item `incomplete` with cause cancelled, and a plugin that does not answer within the grace period is ended with the same settlement. A deadline overrun ends the process and settles each open item `incomplete` with cause `timed-out`. | Test (TC-428) |
 | FR-462-AC-6 | The host starts the plugin only at the path the caller names, and text the plugin writes to standard error changes no settlement. | Test (TC-428) |
-| FR-462-AC-7 | A `request` body carries `package`, the unpadded base64url spelling of the package's RFC 8785 v2 bytes, which decodes to exactly those bytes, and that package's `package_id`; a plugin given a body whose `package` is padded, uses the standard alphabet or has nonzero trailing bits, runs no item and settles every routed item `failed` with the refusal as its diagnostic. | Test (TC-428) |
+| FR-462-AC-7 | A `request` body carries `package`, the unpadded base64url spelling of the package's RFC 8785 v2 bytes, which decodes to exactly those bytes; a plugin given a body whose `package` is padded, uses the standard alphabet or has nonzero trailing bits, runs no item and settles every routed item `failed` with the refusal as its diagnostic. | Test (TC-428) |
 | FR-462-AC-8 | Each wire failure of the failure table settles every affected item `failed` with cause `tool-failure` and that row's `defect`. | Test (TC-428) |
 | FR-462-AC-9 | A `hello` whose only defects are FR-290 registration causes is refused as that registration, keyed by backend identity, and settles no item `failed`; a request naming that identity receives the unknown-backend mark. | Test (TC-428) |
 | FR-462-AC-10 | A frame one byte over a frame-length limit of 1048576 settles each affected item `failed` with `{"type": "tool-failure", "defect": "frame-length", "limit": 1048576, "value": 1048577}`, and frames whose running total first exceeds a total-byte limit of 4194304 at 4194305 bytes settle `{"type": "tool-failure", "defect": "total-bytes", "limit": 4194304, "value": 4194305}`; every other defect's cause carries neither member. | Test (TC-428) |

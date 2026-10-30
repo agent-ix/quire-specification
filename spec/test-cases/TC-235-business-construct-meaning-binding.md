@@ -26,7 +26,7 @@ Use the subject and inputs named by FR-208 and FR-154. Execute each positive cas
 Select `quire.model.complete/v1` through
 [`model-complete.md`](../../proposals/quire-v1/definitions/model-complete.md).
 Node names, declaration keys, the source `S1` and the admission of a
-re-digested package follow TC-234. Every type definition and population is
+domain package document follow TC-234. Every type definition and population is
 declared by its own artifact, and its identity is `ix://test/orders/<artifact
 id>`. A clause, state, transition and step identity is `<owner identity>/<member name>` (FR-154); K2's clauses, states and steps use their names as member names, and its transitions use any member names not used by another member of the machine. `UUID`, `Integer`, `String`, `Boolean` and `Timestamp` are native value
 types and are not IR nodes.

@@ -83,7 +83,7 @@ Population reference:
 | --- | --- | --- |
 | `boolean` | `kind`, `value` | `value` is a JSON boolean. |
 | `integer` | `kind`, `decimal` | `decimal` is FR-038's canonical signed decimal integer string. |
-| `reference` | `kind`, `universe`, `type`, `object_identity` | Reuses FR-100's canonical typed Reference form: the first two are 64 lowercase hexadecimal digits; `object_identity` is nonempty UTF-8. |
+| `reference` | `kind`, `universe`, `type`, `object_identity` | Reuses FR-100's canonical typed Reference form: `universe` and `type` are node ids `{package, path, ordinal}` (FR-322); `object_identity` is nonempty UTF-8. |
 | `population` | `kind`, `name` | Harness-only reference to the `population` member's declaration identity in this vector's `population` file. It is resolved by that consumer's adapter after population admission; the file does not carry or mint a `PopulationId`. |
 
 Every tag is a closed object; no other tag or member is admitted. The JSON
@@ -140,11 +140,11 @@ order; object maps retain their string keys.
 | JSON member | Rust field and value mapping |
 | --- | --- |
 | `profile_selections` | `ReplayRequestWire.profile_selections`: ordered `ProfileSelection` objects `{profile, value}`. |
-| `package` | `ReplayRequestWire.package`: the FR-323 package identity and version `{identity, version}`. |
-| `dependencies` | `ReplayRequestWire.dependencies`: ordered `DependencyEntryWire` objects `{identity, version}`. |
+| `package` | `ReplayRequestWire.package`: FR-323 `package.checked_package`, the proved checked-package value. |
+| `dependencies` | `ReplayRequestWire.dependencies`: ordered `DependencyEntryWire` objects `{identity, checked_package, sources}`; package and source values use FR-323 package/source shapes. |
 | `replay_target` | `ReplayRequestWire.replay_target`: FR-323 target members under `members`, plus request fields `arguments`, `occurrence_key` and `over`. |
 | `source` | `ReplayRequestWire.source`: the FR-323 `ReplaySource`, one `witness` or `input` arm. |
-| `obligation_identity` | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; obligation_identity hash) `ReplayRequestWire.obligation_identity`: 64 lowercase hexadecimal digits decoded to the 32-byte identity. |
+| `obligation_identity` | `ReplayRequestWire.obligation_identity`: the structural obligation identity `{node_id, model, ordinal}` (FR-479). |
 | `backend` | `ReplayRequestWire.backend`: FR-323 backend identity string, unchanged. |
 | `state_environment` | `ReplayRequestWire.state_environment`: ordered `[name, value]` string pairs, preserving the stored tuple order. |
 | `accounting_limits` | `ReplayRequestWire.accounting_limits`: complete FR-255 `ScalarLimitsV1`; every numeric member is an unsigned decimal string. |
@@ -152,7 +152,7 @@ order; object maps retain their string keys.
 | `supplied_limits` | `ReplayRequestWire.supplied_limits`: `null` or complete FR-323 `limits.supplied` object `{admission_work_units, conversion_work_units, numeric_magnitude_bits}`. |
 | `object_environment` | `ReplayRequestWire.object_environment`: `null` or FR-106 reference `{identity}`; identity has the four FR-001 labels. |
 | `declared_domains` | `ReplayRequestWire.declared_domains`: ordered `DeclaredDomain` objects as specified below. |
-| `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows; the adapter reads each referenced sibling file as raw bytes and constructs the ordered byte provision, each row's bytes at the row's position. |
+| `byte_provision` | `ReplayRequestWire.byte_provision`: ordered `$defs.ReplayProvisionPath` rows `{authority, identity, bytes_path}`; the adapter reads each referenced sibling file as raw bytes and constructs `(authority, identity, bytes)`. |
 
 #### FR-323 replay source and target
 
@@ -161,8 +161,8 @@ order; object maps retain their string keys.
 `{"kind":"input","assignments":[...]}`. A witness transcript is the
 admitted, trimmed assertion-block transcript; decoded values are not stored
 beside it. An input assignment is keyed by parameter node id, never by
-position: `{"parameter": NODE_ID, "value": VALUE}`. `NODE_ID` is 64 lowercase
-hexadecimal digits. `VALUE` uses the structural `WitnessValue` tagged union
+position: `{"parameter": NODE_ID, "value": VALUE}`. `NODE_ID` is a node id
+`{package, path, ordinal}` (FR-322). `VALUE` uses the structural `WitnessValue` tagged union
 below because replay assignments may contain complete-V1 values beyond the
 corpus call `InputValue` forms. No other replay-source arm is admitted by
 this adapter.
@@ -189,7 +189,7 @@ copied from actual replay.
 | Rust type | Closed structural fields |
 | --- | --- |
 | `ProfileSelection` | `{profile, value}`; both strings. |
-| `DependencyEntryWire` | `{identity, version}`; both strings. |
+| `DependencyEntryWire` | `{identity, checked_package, sources}`; identity string, checked package and source entries use the FR-323 shapes. |
 | `ScalarLimits` | `integer_bits`, `decimal_digits`, `scale_expansion`, `text_input_bytes`, `text_scalars`, `normalized_scalars`, `unit_edges`, `value_occurrences`, `work_units`, `result_units`; each is an unsigned decimal string. |
 | `RequestTargetWire` | `{members, arguments, occurrence_key, over}` as described above. |
 | `ReplayOverBinding` | `{population, key}`, both strings. |
@@ -199,17 +199,17 @@ copied from actual replay.
 | `WitnessValue` | closed tagged variants `boolean(value)`, `integer(decimal)`, `exact_integer(decimal)`, `enum(declaration, member)`, `text(value)`, `uuid(value)`, `timestamp(decimal)`, `string(value)`, `rational(numerator, denominator)`, `decimal(coefficient, scale)`, `float32(bits)`, `float64(bits)`, `quantity(magnitude, unit)`, `reference(universe, object_type, identity)`, `option(value)`, `record(declaration, fields)`, `tuple(declaration, components)`, `union(declaration, member, components)`, `sequence(elements)`, `ordered_set(elements)`, `set(elements)`, and `bag(elements)`. `option.value` is null or another `WitnessValue`; record fields are ordered `{name, slot}` objects whose slot is tagged `present(value)`, `absent` or `null`; quantity magnitude is tagged `rational(numerator, denominator)` or `decimal(coefficient, scale)`. |
 | `StateEnvironment` | ordered `[name, value]` pairs of strings, matching its stored tuples. |
 
-Node bytes use 64 lowercase hexadecimal digits; arbitrary byte
+Arbitrary byte
 vectors use lowercase hexadecimal; signed integers use canonical signed
 decimal strings and unsigned integers use canonical unsigned decimal strings.
 All object and enum forms are closed. `$defs.ReplayRequest` and its referenced
 structural definitions publish these rules in the JSON Schema.
 
 Each adapter `byte_provision` row is exactly
-`{bytes_path}`, and its position in the ordered list is its position in the request's provision. `bytes_path` is relative to the
+`{authority, identity, bytes_path}`. `bytes_path` is relative to the
 vector directory and SHALL resolve to exactly one `kind: bytes` path listed in the same vector. It SHALL be
 nonempty, relative and contain no parent traversal. The adapter reads raw
-bytes and supplies those bytes at the row's position. The path is not
+bytes and supplies those bytes for the row's `{authority, identity}` key. The path is not
 added to the typed product request.
 
 ## Identity and validation
@@ -232,9 +232,9 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-3 | A producer cannot qualify itself solely with an oracle sharing its implementation. | Analysis |
 | FR-336-AC-4 | The published schema admits the complete-v1 fixture and refuses a missing required member, an unknown member, and out-of-domain class, consumer-type or expected-disposition values. | Test |
 | FR-336-AC-5 | The published schema admits each `input.files[*].kind` in the closed vocabulary `source`, `model`, `input`, `call`, `object-context`, `population`, `replay-request` and `bytes`, and refuses another kind. | Test |
-| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `digest_domain`, `digest` and `bytes_path` and refuses extra members or malformed digest text. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test |
+| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `authority`, `identity` and `bytes_path` and refuses extra members. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test |
 | FR-336-AC-7 | A `replay-request` file matches the closed `$defs.ReplayRequest`; all 15 top-level fields map to their `ReplayRequestWire` fields, each nested value follows its FR-323 or structural type mapping, integers use canonical decimal strings, unknown object members and tags are refused, and setting names outside FR-255 are refused by the consumer decoder. The Witness/Input source arms, FR-323 replay target members and one-result envelope retain their stated shapes. | Test (TC-970) |
-| FR-336-AC-8 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and supplies it at the row's position. | Test (TC-970) |
+| FR-336-AC-8 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and supplies it under the row's `{authority, identity}`. | Test (TC-970) |
 
 ## Dependencies
 

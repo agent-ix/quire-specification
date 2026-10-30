@@ -51,7 +51,7 @@ possibly before when `a.earliest < b.latest`. Overlap preserves both admissible
 orders. A repair identifies the superseded revision and atom/event identities,
 invalidates their temporal dependency closure, and recomputes that closure in
 event-time order. Unaffected results retain their identities; replaced results
-link both the prior and replacement evidence digests.
+link both the prior and replacement evidence identities.
 
 ## Acceptance Criteria
 

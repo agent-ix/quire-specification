@@ -21,7 +21,7 @@ without normalizing authored bytes.
 
 ## Inputs
 
-Original source bytes, source digest and explicit extraction map.
+Original source bytes and explicit extraction map.
 
 ## Outputs
 
@@ -42,7 +42,7 @@ source occurrence exists and typed runtime paths otherwise.
 | --- | --- | --- |
 | FR-134-AC-1 | CRLF, LF and absent-final-newline inputs retain exact original spans through parsing and formatting. | Test (TC-184) |
 | FR-134-AC-2 | Declared container-owned indentation deletion maps every retained token monotonically to its original bytes. | Test (TC-184) |
-| FR-134-AC-3 | An undeclared deletion, reordered segment or mismatched source digest refuses before a derived artifact is published. | Test (TC-184) |
+| FR-134-AC-3 | An undeclared deletion or reordered segment refuses before a derived artifact is published. | Test (TC-184) |
 | FR-134-AC-4 | A declaration carried through linking and lowering reaches every checked node, IR node and result with the same original span it had after parsing; a synthesized node names the authored span it derives from. | Test (TC-184) |
 | FR-134-AC-5 | A diagnostic, counterexample or output-mapping record raised at any stage after parsing reports the original source span rather than a derived or reconstructed position. | Test (TC-184) |
 

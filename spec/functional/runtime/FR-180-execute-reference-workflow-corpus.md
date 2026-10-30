@@ -41,7 +41,7 @@ compensation and partial recovery.
 
 Each corpus case's source/package bytes are emitted by I04 `link_and_check`
 as `quire.checked-package/v2` with its `state` nodes; the corpus holds those
-exact bytes and the case's `package_id`, and the runtime admits them only
+exact bytes, and the runtime admits them only
 through I04 `read`. ConfigVersion cases replay on the complete-V1 value
 runtime only.
 

@@ -43,8 +43,6 @@ Other definition families remain editable candidates under their owning tickets.
 | `quire.simulation.sampler/v1` | [Simulation sampler](simulation-sampler.md) |
 | `quire.model.complete/v1` | [Complete model root](model-complete.md) |
 | `quire.model.complete.rules/v1` | [Complete-model normalization rules](model-complete-rules.json) |
-| `quire.model.effective-declaration.schema/v1` | [Effective declaration schema](../../checked-package-v2/model-effective-declaration.schema.json) |
-| `quire.model.effective-declaration.vectors/v1` | [Effective declaration vectors](../../checked-package-v2/model-effective-declaration-vectors.json) |
 | `quire.temporal.complete/v1` | [Complete temporal root](temporal-complete.md) |
 
 ## Header-selectable layers
@@ -78,5 +76,6 @@ are current semantic inputs to these definitions.
 FS03 accepts the ordered state closure, FS04 accepts the temporal/observation
 closure, and FS05 accepts the linked-package
 interpretation plus its selected strict reference/canonical/migration contracts.
-Other listed family definitions retain their own acceptance tickets. This authoring workflow does not weaken the product semantics of FR-030/032/035
+Other listed family definitions retain their own acceptance tickets. Runtime identity, source provenance and refusal of
+mismatched inputs remain required by FR-030/032/035. This authoring workflow does not weaken those product semantics
 or rewrite previously accepted profiles.

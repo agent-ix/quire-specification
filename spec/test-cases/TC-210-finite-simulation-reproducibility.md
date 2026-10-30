@@ -101,7 +101,5 @@ For seed `424242`, trace `0`, choice `0` and enabled-successor-set size
 `n = 5`, a real implementation of the counter-mode generator draws, at
 `draw = 0` for every step: index `1` at step `0`, index `3` at step `1`,
 index `3` at step `2`, index `4` at step `3` and index `4` at step `4`. The
-step-0 preimage is
-`{"choice":"0","draw":"0","seed":"424242","step":"0","trace":"0"}`; its
-SHA-256 is
-`d5160380d7495443315376de306a5d3613f3e010df74a5db92853829205995f2`.
+step-0 draw function input is
+`{"choice":"0","draw":"0","seed":"424242","step":"0","trace":"0"}`.

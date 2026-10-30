@@ -30,7 +30,7 @@ components}`:
 
 | Member | Content |
 | --- | --- |
-| `identity` | The item's obligation identity: the canonical identity digest (FR-201) that binds the proof to the exact subject and claim it proves. |
+| `identity` | The item's obligation identity, the structural `{node_id, model, ordinal}` of FR-418-AC-9, that binds the proof to the exact subject and claim it proves. |
 | `objective` | The target or decided states, the reward, the optimisation, and the claim's fairness set when it states one. The optimisation is `minimum` or `maximum` over every scheduler; `workload` under a workload that leaves no choice; or `workload-minimum` or `workload-maximum` under a workload over a timed subject with free delays, the minimum or maximum over those delays' choices. |
 | `kind` | `lower`, `upper`, `exact` or `long-run`. |
 | `values` | One exact rational per product state the certificate names (a dyadic value is an exact rational), keyed by product state key (FR-411). |
@@ -47,15 +47,15 @@ the model state key, monitor state and accumulator, including the
 activation flag. For the intermediate states of QSL
 FR-196 / ADR-028 SCH-2, it SHALL also preserve the pending scheduled
 identity and drawn vector. For an exact-only form, the absent monitor and
-accumulator remain absent. A model-state digest alone SHALL NOT stand for
-a bounded or intermediate product state. No new digest domain is implied.
+accumulator remain absent. A model state key alone SHALL NOT stand for
+a bounded or intermediate product state.
 
 QSL FR-196 / ADR-028 PR-4 now own the complete canonical octet basis:
 `["quire.probability-product-key/v1", model, monitor, accumulator, pending]`
 in RFC 8785 UTF-8, with every component present and actual None as null.
 FR-331 transports those complete octets as `ProbabilityProductKey` in
 each existing `state` row member and at `{product_key}` in a rejection.
-The model is the full canonical simulation-state body, not its digest;
+The model is the full canonical simulation-state body;
 formula monitors embed the complete parsed FR-338 array. The checker
 SHALL admit every component under the actual subject/claim and compare
 complete decoded canonical octets. Distinct accumulator values,
@@ -134,14 +134,14 @@ re-enumeration plus one pass over the edges.
 | FR-412-AC-5 | A `lower` certificate is checked over its named states and their successors only, with each unnamed successor at value 0. | Test (TC-363) |
 | FR-412-AC-6 | The checker recomputes every qualitative set and component itself and reads no other output of the provider. | Test (TC-363) |
 | FR-412-AC-7 | The checker accepts the `FairTerminates` `exact` certificate, whose objective names the fairness set, after recomputing that no fair end component exists. | Test (TC-363) |
-| FR-412-AC-8 | Two named product states with the same model state but different monitor states or accumulators retain distinct keys in `values`, `ranking`, `policy`, component `bias` and state-located rejections after serialization and reading. Intermediate states that differ only in their pending action or draw also remain distinct; replacing either complete key with the model-state digest fails the comparison. | Test (TC-363) |
+| FR-412-AC-8 | Two named product states with the same model state but different monitor states or accumulators retain distinct keys in `values`, `ranking`, `policy`, component `bias` and state-located rejections after serialization and reading. Intermediate states that differ only in their pending action or draw also remain distinct; replacing either complete key with the model state key alone fails the comparison. | Test (TC-363) |
 
 ## Dependencies
 
 - [FR-411](../../functional/analysis/FR-411-settle-probabilistic-claims-exactly.md)
   produces the certificate and defines the product.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the
-  canonical identity digest of the obligation.
+- [FR-201](../foundation/FR-201-canonical-identity-domain.md) defines the structural
+  identity of the obligation.
 - [FR-331](FR-331-backend-provider-envelope.md) carries the certificate in
   the result.
 

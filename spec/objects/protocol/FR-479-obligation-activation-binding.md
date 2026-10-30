@@ -87,6 +87,9 @@ component of that key is taken from anywhere else.
   requires, never an empty identity, a caller-selected obligation or a
   successful binding. An `origin` row carries the workflow execution identity
   as its origin identity, never an absent trigger placeholder (FR-230-AC-4).
+- **Obligation identity** — the structural triple (the claim or obligation
+  `node_id`, the identity of the model that owns it, ordinal), compared
+  componentwise; it is not hashed and carries no domain.
 
 ## Refusals
 

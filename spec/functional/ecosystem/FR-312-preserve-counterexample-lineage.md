@@ -35,7 +35,7 @@ loss is explicit and prevents claims requiring removed replay material.
 
 ## Revision and equivalence contract
 
-Each counterexample revision has a canonical digest, parent digest,
+Each counterexample revision has a revision identity, a parent revision identity,
 transformation identity/options and replay result. A transformation may shrink,
 normalize, translate or redact; it cannot overwrite its input. Two examples are
 equivalent only relative to a named claim when both are domain-valid and replay

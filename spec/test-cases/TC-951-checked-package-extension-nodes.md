@@ -29,28 +29,25 @@ cause and pointer. Scope: FR-469-AC-1 to FR-469-AC-10.
   carries the form `retention Audit { subject: "audit", days: 30 }`, its two
   clause subnodes and a lock whose `definition_selections` holds the
   `retention` definition and whose `required_features` lists no definition
-  identity. Its node keys and `package_id` are recomputed from their
-  preimages. `positive-all-families.json` carries the same form beside the
+  identity. `positive-all-families.json` carries the same form beside the
   other node families.
 - `proposals/checked-package-v2/extension-definitions.json` publishes the
   `policy`, `quota` and `retention` definitions every vector below holds;
   `extension-definition-vectors.json` lists the withheld-definition controls.
 - Both V2 schemas enumerate the `extension` tag and `extension_form` form and
-  define `ExtensionFormBody` and the `ExtensionFormNode` preimage.
+  define `ExtensionFormBody`.
 
 ## Test Procedure
 
 Read the fixture through the strict V2 reader with the `retention` definition
 held, then read each vector below. Unless a vector says otherwise, a mutation
-keeps every other member, recomputes every changed node key and recomputes
-`package_id`.
+keeps every other member.
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| X01 | The fixture | admitted; one `extension`/`extension_form` node with `declaration` `["Audit"]`, a `SourceOwner`, the `retention` `DefinitionRef`, `node_kind` `retention`, bindings `subject`, `days` in order, each a `reference` to a subnode typed `Text` and `Int[1, 3650]`, `dependencies` those subnodes in digest order, and one `declaration` occurrence whose region spans the whole form (FR-469-AC-1) |
-| X02 | Recompute the node key from its `ExtensionFormNode` preimage; then change, one at a time, the definition `identity`, the `node_kind` (to a second node kind of the same definition), the declared name, the owner `identity` (with that source added to `lock.sources` and the region moved to it) and the `days` subnode (to `31`) | the recomputed key equals the retained key; each change yields a different node id and `package_id` (FR-469-AC-2) |
-| X03 | Move the form's `source_map` region by one byte, keys untouched | admitted; node id and `package_id` unchanged (FR-469-AC-2) |
-| X04 | X02's definition-identity change with the old node key retained | `refused { code: invalid_package, cause: stale-node-key }` at the node's `node_id` (FR-469-AC-2) |
+| X01 | The fixture | admitted; one `extension`/`extension_form` node with `declaration` `["Audit"]`, a `SourceOwner`, the `retention` `DefinitionRef`, `node_kind` `retention`, bindings `subject`, `days` in order, each a `reference` to a subnode typed `Text` and `Int[1, 3650]`, `dependencies` those subnodes in node-id order, and one `declaration` occurrence whose region spans the whole form (FR-469-AC-1) |
+| X02 | Change, one at a time, the definition `identity`, the `node_kind` (to a second node kind of the same definition), the declared name, the owner `identity` (with that source added to `lock.sources` and the region moved to it) and the `days` subnode (to `31`) | each change yields a different checked package, and the declared-name and owner changes each yield a different node id (FR-469-AC-2) |
+| X03 | Move the form's `source_map` region by one byte | admitted; node id unchanged (FR-469-AC-2) |
 | X05 | The fixture read by a reader that does not hold the `retention` definition | `refused { code: unknown_required_capability }` with no cause, `locus` the node's `node_id`, `document_pointer` `/semantic_graph/nodes/{i}/body/definition`; the lock, source map and node are byte-identical to the input (FR-469-AC-3) |
 | X06 | The `retention` entry removed from `lock.definition_selections`, read by a reader that holds it and by one that does not | both `refused { code: missing_declaration, cause: missing-selection }` at `/body/definition` (FR-469-AC-3) |
 | X07 | `node_kind` `retentions` | `refused { code: missing_declaration, cause: missing-name }` at `/body/node_kind` (FR-469-AC-4) |

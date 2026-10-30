@@ -49,7 +49,7 @@ support.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-310-AC-1 | Every subsystem result traces to exact requirement, assumptions, method/provider and semantic subject. | Test (TC-230) |
-| FR-310-AC-2 | Cross-kind identity substitution or stale subject revision refuses evidence attachment. | Test (TC-230) |
+| FR-310-AC-2 | Cross-kind identity substitution refuses evidence attachment. | Test (TC-230) |
 | FR-310-AC-3 | Unsupported circular discharge remains unresolved and visible. | Test (TC-230) |
 
 ## Dependencies

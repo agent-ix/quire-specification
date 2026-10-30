@@ -63,7 +63,7 @@ claim, and the body, through the node's references, and from nothing else.
       level and type (FR-322), so two executions of one operation have
       distinct binder nodes, and the body tells their reads apart;
     - `binding("preconditions", …)` and `binding("postconditions", …)`, each
-      an aggregate of `reference`s, ascending by node-id digest, to every
+      an aggregate of `reference`s, ascending by node id, to every
       `state`/`state_clause` node of that clause kind whose anchor argument
       is the execution's `operation` node: the operation's effective
       precondition and postcondition;
@@ -74,7 +74,7 @@ claim, and the body, through the node's references, and from nothing else.
       `{term: "aggregate", members: []}` when no relation binds it;
   - `invariants` — an aggregate of one `binding(alias, aggregate)` per
     `subjects` entry, in the same order, whose aggregate holds `reference`s,
-    ascending by node-id digest, to every `state`/`state_clause` node of
+    ascending by node id, to every `state`/`state_clause` node of
     clause kind `invariant` anchored at an object type, process or state
     machine of that alias's model: the model's declared invariants;
   - `body` — a `reference` to the `expression` node of the relation's
@@ -86,13 +86,13 @@ claim, and the body, through the node's references, and from nothing else.
 - **declaration** — `{qualified_name}`, the relation's declared name.
 - **owner** — the declaring source unit's `SourceOwner`
   ([FR-322](FR-322-checked-package-artifact.md) `owner`), required for a
-  declared node whose body holds no application; it enters the node key.
+  declared node whose body holds no application; it enters the node id.
 - **occurrences** — one occurrence of role `declaration`, at the relation's
   declaration, and one of role `claim`, which provider requests name. The
   model claim and, when requested, the code claim are two items over that
   `claim` occurrence, told apart by their capability kinds (FR-402
   "Obligation identity").
-- **dependencies** — exactly the unique, digest-ascending set of the body's
+- **dependencies** — exactly the unique, node-id-ascending set of the body's
   `reference` targets.
 
 Premises are reached through references, never copied: each precondition,
@@ -108,10 +108,10 @@ yields the model claim alone (FR-397 "Code claim").
 
 ## Identity
 
-The node key follows FR-322's rules over the body, so the subjects, the
+The node id follows FR-322's rules over the body, so the subjects, the
 execution variables in order with their operations, the parameters, every
 precondition, postcondition and invariant, the implementation bindings and
-the body each enter the node id and the `package_id`. The obligation
+the body each enter the node id. The obligation
 identities of the model claim and the code claim are FR-402's.
 
 ## Reader order
@@ -119,7 +119,7 @@ identities of the model claim and the code claim are FR-402's.
 The step-relation step is a body step of
 [FR-322](FR-322-checked-package-artifact.md) "Body steps": it runs after the
 terminal step and before the protocol step. It visits every
-`claim`/`step_relation` node in ascending node-id digest order. For one node, the checks run in this order and the
+`claim`/`step_relation` node in ascending node-id order. For one node, the checks run in this order and the
 first failing check is its defect:
 
 1. **Shape.** The body is an aggregate of exactly the four bindings in
@@ -154,7 +154,7 @@ first failing check is its defect:
 | --- | --- | --- |
 | FR-477-AC-1 | A determinism relation `x: V::Vault::step, y: V::Vault::step` over a vault whose `step` is bound by an abstraction relation produces one `claim`/`step_relation` node whose body has `subjects`, `executions`, `invariants` and `body` in order; `subjects` holds `V` once; each of the two `executions` entries holds alias `V`, a reference to `step`'s `state`/`operation_anchor` node, its own `self` and `i` parameter nodes in FR-341 order (`step` has no result), `x`'s at levels 0 and 1 and `y`'s at levels 2 and 3, `step`'s precondition and postcondition nodes and a reference to the abstraction relation node; `invariants` holds `Vault`'s invariant nodes; the node carries `declaration` `Det`, its `owner`, and one `declaration` and one `claim` occurrence. | Test (TC-962) |
 | FR-477-AC-2 | The same relation over a vault whose `step` has no binding has empty `implementation` members and yields the model claim alone; with the binding it yields both claims, with different obligation identities (FR-402-AC-4). | Test (TC-962) |
-| FR-477-AC-3 | Adding a declared invariant to `Vault`, changing `step`'s precondition, or swapping `x` and `y` changes the node id and the `package_id`; the same relation respelled with different whitespace and comments has the same node id. | Test (TC-962) |
+| FR-477-AC-3 | Adding a declared invariant to `Vault`, changing `step`'s precondition, or swapping `x` and `y` changes the node id; the same relation respelled with different whitespace and comments has the same node id. | Test (TC-962) |
 | FR-477-AC-4 | An `executions` entry missing `implementation` refuses `invalid_semantic_graph`; an `alias` naming no `subjects` binding refuses `missing_declaration`/`missing-name`; an `operation` naming an object type node, and an `implementation` naming an abstraction relation with no `frames` entry for `step`, refuse `invalid_model_binding`/`malformed-declaration`; a `preconditions` aggregate missing `step`'s precondition and an `invariants` aggregate missing one of `Vault`'s invariants refuse `invalid_model_binding`/`malformed-declaration`; a `body` naming an integer-typed expression node refuses `ill_typed`/`non-boolean-root`. | Test (TC-962) |
 | FR-477-AC-5 | In AC-1's node, `x`'s and `y`'s `self` nodes are different nodes, as are their `i` nodes, and the body's `pre(x.self.l) = pre(y.self.l)` reads both; an `executions` entry for `y` that references `x`'s `self` and `i` nodes refuses `invalid_model_binding`/`malformed-declaration` at `y`'s `parameters`. | Test (TC-962) |
 

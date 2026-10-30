@@ -49,29 +49,26 @@ nothing else.
   tuple-field index string. **RustReceiver** is `"self"` or a
   `RustIdentifier`. Each string has FR-450's "Rust spellings" syntax.
 - **Keys.** An object entry's key is its `type` target, a `model`/
-  `object_type` node, whose node key is the object type's AD-006
+  `object_type` node, whose node id is the object type's AD-006
   effective-declaration key carried as its `ModelOwner` (FR-322
   "Model-owned members"). A population entry's `population` value is the
-  `NodeId` of its target `relation`/`population` node, not the population's
+  `node_id` of its target `relation`/`population` node, not the population's
   declaration key directly, its member type, a collection node, or a scalar
   text node. The target is the FR-322 "Population references" node: its
   `owner` is `{kind: "model", identity, node}`, where `identity` is the
   selected domain package identity and `node` is the population declaration's
   IR identity; its `node_tag`/`semantic_form` are `relation`/`population`, its
   body is `{term: "aggregate", members: []}`, its `semantic_type` is its own
-  `node_id`, and its `dependencies` are empty. Its `node_id` is the JCS
-  SHA-256 of the FR-322 `quire.structural-node/v1` preimage containing exactly
-  that tag, form, owner, self-typing inputs and body. It therefore identifies
-  the declaration through its `ModelOwner`, while the enclosing abstraction
-  relation's `dependencies` includes this target node id. The published
-  P7/P8 identity vectors in
+  `node_id`, and its `dependencies` are empty. Its `node_id` is the
+  structural id of FR-322, `{package, path, ordinal}`, whose `path` is the
+  population's declaration path. It therefore identifies the declaration
+  through its `ModelOwner`, while the enclosing abstraction relation's
+  `dependencies` includes this target node id. The P7/P8 cases in
   [model-owner-form-vectors.json](../../../proposals/checked-package-v2/model-owner-form-vectors.json)
-  are two concrete cases: `acme/runs/counters` targets P7
-  (`15ed74b124665e2fb9375dc02e715243dce2eb0d7d63d1f36c52f5fa1241a91a`),
-  and `acme/runs/archive` targets P8
-  (`cc575f3d64f43a4bf787f5febdc73fbc9f2212617393877fa00371611204be24`).
-  Both use the same node shape and package identity, but their declaration
-  identities produce distinct owner nodes, target ids and relation keys. A
+  are two concrete cases: `acme/runs/counters` targets P7 and
+  `acme/runs/archive` targets P8. Both use the same node shape and package
+  identity, but their declaration paths produce distinct owner nodes and
+  target ids. A
   frame entry's key is the
   operation key: its `context` target, a `model`/`object_type` node, and
   its `operation` identifier, the same pair a `state`/`operation_anchor`
@@ -82,22 +79,22 @@ nothing else.
   pair; the entry carries neither, and binds an operation whether or not
   the package holds those nodes.
 - **semantic_type** — the node's own `node_id`.
-- **dependencies** — exactly the unique, digest-ascending set of every
+- **dependencies** — exactly the unique, node-id-ascending set of every
   `type`, `population` and `context` target in the body.
 - **occurrences** — every occurrence has role `declaration`, at the
   `abstraction-decl` it was produced from.
-- **node_id** — the JCS SHA-256 of `{version:
-  "quire.abstraction-relation-node/v1", body}`. Every binding is therefore
-  part of the node key, and through the `identity_projection` of the
-  package id (FR-322): changing any binding changes the package id, so a
-  rebinding is a new relation revision that never reinterprets a contract
-  generated from the earlier package (FR-353-AC-5).
+- **node_id** — the structural node id of FR-322: the node's package, its
+  declaration path and its ordinal, compared componentwise. No hash of the
+  body is computed; a rebinding is a different checked-package value, and
+  two checked packages are the same package only when their values are
+  equal (FR-322).
 
 ## Canonical order
 
-`objects` is sorted ascending by its `type` digest, `populations` by its
-`population` digest and `frames` by its `context` digest and then its
-`operation` as UTF-8 bytes, each digest compared as unsigned bytes. `fields`
+`objects` is sorted ascending by its `type` node id, `populations` by its
+`population` node id and `frames` by its `context` node id and then its
+`operation` as UTF-8 bytes, each node id compared in ascending node-id
+order. `fields`
 and `parameters` are sorted ascending by `name` as UTF-8 bytes. A member
 array out of this order refuses `invalid_semantic_graph`, as FR-322-AC-10
 does for every other noncanonical order.
@@ -106,12 +103,11 @@ does for every other noncanonical order.
 
 The abstraction step runs after the state step of
 [FR-341](FR-341-checked-package-state-clause-body.md), over every
-`correspondence`/`abstraction_relation` node in ascending node-id digest
+`correspondence`/`abstraction_relation` node in ascending node-id
 order. For one node, the checks run in this order and the first failing
 check is its defect:
 
-1. **Identity.** The node's `node_id` is the digest of its preimage, else
-   `invalid_semantic_graph`; its `semantic_type` is its own `node_id` and
+1. **Identity.** The node's `semantic_type` is its own `node_id` and
    its `dependencies` are exactly the body's targets, else
    `invalid_semantic_graph`.
 2. **Order.** The canonical order above holds, else
@@ -122,8 +118,8 @@ check is its defect:
    is not `model`/`object_type`, or a `population` target that is not
    `relation`/`population`, refuses `invalid_model_binding`/
    `malformed-declaration`; a target whose `ModelOwner` names no selected
-   declaration of its kind was refused earlier by FR-322's derived-shape key
-   stage owner join (`missing_declaration`/`missing-selection`). The locus is the target.
+   declaration of its kind was refused earlier by FR-322's
+   owner join (`missing_declaration`/`missing-selection`). The locus is the target.
 4. **Members**, entry by entry in the same order: two `fields` entries of
    one object entry with equal `name` refuse `invalid_model_binding`/
    `conflicting-binding` naming both entries and the name; otherwise, a
@@ -138,7 +134,7 @@ check is its defect:
 
 Once every node's own checks hold, the reader checks package-wide key
 uniqueness over all `correspondence`/`abstraction_relation` nodes, in
-ascending node-id digest order and body order: the second entry to claim an
+ascending node-id order and body order: the second entry to claim an
 object, population or operation key refuses `invalid_model_binding`/
 `conflicting-binding`, naming both entries and the key (FR-353-AC-4).
 
@@ -148,17 +144,17 @@ object, population or operation key refuses `invalid_model_binding`/
 | --- | --- | --- |
 | FR-451-AC-1 | A package produced from FR-450-AC-1's declaration holds exactly one `correspondence`/`abstraction_relation` node whose body validates against the published schema and yields the same three keys and values the source declared; a body missing `frames`, a `RustPath` that is an empty array, a frame entry without `receiver`, and an occurrence of role `anchor` each fail the schema. | Test (TC-412) |
 | FR-451-AC-2 | A frame entry keyed by (`ConfigVersion`, `attemptUpdate`) is admitted in a package that holds no `state`/`frame` node for that operation; in a package that holds one, the entry's pair equals that frame's `operation_anchor` pair. | Test (TC-412) |
-| FR-451-AC-3 | A node whose `node_id` is not the digest of its preimage, whose `dependencies` omit a body target, or whose `objects` are out of digest order refuses `invalid_semantic_graph`. | Test (TC-412) |
+| FR-451-AC-3 | A node whose `dependencies` omit a body target, or whose `objects` are out of node-id order refuses `invalid_semantic_graph`. | Test (TC-412) |
 | FR-451-AC-4 | A `type` target naming a `relation`/`population` node and a `population` target naming an object type refuse `invalid_model_binding`/`malformed-declaration` at the target; a target missing from `dependencies` refuses `missing_declaration`/`missing-name`; a frame `operation` the context only inherits refuses `invalid_model_binding`/`malformed-declaration`; a `parameters` list missing a declared parameter refuses `invalid_model_binding`/`malformed-declaration` at the entry. | Test (TC-412) |
-| FR-451-AC-5 | Two nodes that bind one object key refuse `invalid_model_binding`/`conflicting-binding` naming both entries and the key, at the second in ascending node-id digest order. | Test (TC-412) |
-| FR-451-AC-6 | Recompiling an unchanged unit gives the same node id and package id; changing one field's `rust_field` changes both. | Test (TC-412) |
+| FR-451-AC-5 | Two nodes that bind one object key refuse `invalid_model_binding`/`conflicting-binding` naming both entries and the key, at the second in ascending node-id order. | Test (TC-412) |
+| FR-451-AC-6 | Recompiling an unchanged unit gives the same node id; changing one field's `rust_field` changes the compiled package. | Test (TC-412) |
 | FR-451-AC-7 | An object entry holding two `fields` entries named `version`, bound to different Rust fields, refuses `invalid_model_binding`/`conflicting-binding` naming both entries and `version`. | Test (TC-412) |
-| FR-451-AC-8 | The `population` value of an abstraction entry is the `node_id` of the FR-322 population declaration node: the P7 `counters` case and P8 `archive` case each admit the exact `relation`/`population` node, owner, empty aggregate body, self `semantic_type`, empty dependencies and identity preimage in `model-owner-form-vectors.json`; the enclosing relation depends on that node id. The two targets remain distinct although they share package identity and node shape. A member-type or text-literal node used in place of either target refuses `invalid_model_binding`/`malformed-declaration` at the target. | Test (TC-412) |
+| FR-451-AC-8 | The `population` value of an abstraction entry is the `node_id` of the FR-322 population declaration node: the P7 `counters` case and P8 `archive` case each admit the exact `relation`/`population` node, owner, empty aggregate body, self `semantic_type` and empty dependencies in `model-owner-form-vectors.json`; the enclosing relation depends on that node id. The two targets remain distinct although they share package identity and node shape. A member-type or text-literal node used in place of either target refuses `invalid_model_binding`/`malformed-declaration` at the target. | Test (TC-412) |
 
 ## Dependencies
 
-- [FR-322](FR-322-checked-package-artifact.md) owns the graph, node keys,
-  model-owned member resolution, the `identity_projection` and the reader's
+- [FR-322](FR-322-checked-package-artifact.md) owns the graph, node ids,
+  model-owned member resolution and the reader's
   refusal order.
 - [FR-353](../../functional/ir-proof/FR-353-declare-abstraction-relation.md)
   owns the relation's meaning and refusals.

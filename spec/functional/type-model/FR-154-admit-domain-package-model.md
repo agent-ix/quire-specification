@@ -80,7 +80,7 @@ dropped without a diagnostic. A digest is not part of the grammar.
 The package input maps each domain package identity to one domain package
 document; a supplier states no digest and no version. At most one document is
 supplied per identity; a second document supplied under an identity already
-supplied is
+supplied is a duplicate definition and
 `refused { code: invalid_package, cause: conflicting-definition }` before intake
 runs, naming both. One document per identity is the rule: a package that needs
 two releases of one domain package is not supported in v1, and a source that
@@ -92,10 +92,9 @@ document's own identity with the selection, then records the selection as the
 `model_root` node of identity (FR-321, FR-322); the lock records nothing.
 
 The lock holds no model record. The `model_root` node of the identity is the only
-record of the selection. No lock row, digest, version or staleness comparison of a model
-exists. Intake does not detect a changed domain package: an edit of the document
-under an unchanged identity goes undetected, and no check or refusal stands in
-for it. The package document's own `version` member is not read by intake
+record of the selection. No lock row or version of a model
+exists. A replay recompiles against the supplied document and uses the result
+(FR-323). The package document's own `version` member is not read by intake
 and is not recorded.
 
 Intake keeps the authored order of every type's `fields` and `supertypes`
@@ -206,7 +205,7 @@ variants refusals name these members:
   `TypeDefinition.variants[i]`, naming the shared identity. The collision is
   checked before either case's identity, origin or payload checks. This keeps
   FR-095's slot form unchanged while ensuring that two source declarations
-  cannot alias one admitted node key.
+  cannot alias one admitted node id.
 
 A field `typeRef`, an operation parameter's `typeRef` and an operation result's
 `typeRef` each take one of three forms, and no other form is read. A native
@@ -648,9 +647,9 @@ Admission checks are decided before the first charge.
 | FR-154-AC-33 | A tuple type with declaration identity `<package identity>/Pair` and positions `p0: Boolean`, `p1: Integer` is admitted as one tuple declaration plus two ordered position declarations; swapping the position types keeps the declaration identity but changes which type is bound to each position identity, and therefore changes the tuple's type identity and product order; an empty positions list, a gap, absent `typeRef` or unsupported type, or an extra field, identity field, operation, supertype or clause refuses `invalid_model_binding`/`malformed-declaration`; an unresolved package `typeRef` refuses `missing_declaration`/`missing-name`; two positions with one `pN` identity refuse `invalid_model_binding`/`conflicting-binding` at the later position. | Test (TC-234) |
 | FR-154-AC-34 | `model M = "test/orders";` is a source selection of identity `test/orders` and no other: it carries no version and no digest. The same declaration followed by a `version` or a `digest` token, or by any token other than `;`, refuses `invalid_syntax`/`unexpected-token` at that token. | Test (TC-234) |
 | FR-154-AC-35 | A `model` whose identity string is absent, is not a string, or is followed by the end of the source, refuses `invalid_syntax` (`unexpected-token` at the offending token, `unexpected-end` at the end of the source) and is never dropped without a diagnostic. | Test (TC-234) |
-| FR-154-AC-36 | Admitting the document supplied under `test/orders` yields the `model_root` node of identity `test/orders` and no lock row; no source, input, lock or expected value states a digest or a version; the supplied document's own `package.version` member is data of that document and is never compared. | Test (TC-234) |
+| FR-154-AC-36 | Admitting the document supplied under `test/orders` yields the `model_root` node of identity `test/orders` and no lock row; no source, input, lock or expected value states a digest or a version. | Test (TC-234) |
 | FR-154-AC-37 | Two documents supplied under one domain package identity, whether or not they differ, refuse `invalid_package`/`conflicting-definition` before intake, naming both; a selection whose identity no supplied document has refuses `missing_import`/`missing-selection` at the identity string. | Test (TC-234) |
-| FR-154-AC-38 | Withdrawn: a changed domain-package document is not detected by intake. | Withdrawn |
+| FR-154-AC-38 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 
 ## Dependencies
 

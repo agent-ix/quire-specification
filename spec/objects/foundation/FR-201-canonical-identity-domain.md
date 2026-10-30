@@ -13,77 +13,75 @@ relationships:
 
 ## Description
 
-When a digest is compared to another digest, the reader SHALL compare the
-selected identity domain before the bytes, so that an identity derived under one
-domain is unequal to an identity derived under another regardless of byte
-equality.
-
-## Values
-
-| Value | Description |
-| --- | --- |
-| `ir-canonical` | Existing contract-IR canonical identity. Retains its original bare-hex syntax and algorithm; it does not adopt the JCS prefix or canonicalization. |
-| `ir-bound` | Existing contract-IR bound identity. Held distinct from `ir-canonical` by FR-015. |
-| `raw-artifact-digest` | Raw artifact digest. Hashes the complete supplied bytes, including layout. |
-| `quire.package.semantic/v2` | Complete-V1 CheckedPackage V2 semantic-package graph domain; distinct from every other identity/digest domain. |
-| `quire.checked-semantic-node/v1` | Checked semantic-node identity; distinct from its source occurrence and from the enclosing package identity. |
-| `quire.generated-artifact.bytes/v1` | Exact generated artifact bytes under its selected artifact kind/profile. |
-| `typed-expression-identity` | Source-free typed-expression identity. Requires a typed derivation; an unlinked syntax tree cannot claim it, and current native syntax has no qualified canonical semantic identity (FR-015, FR-015-AC-4). |
-| `quire.model.effective-declaration/v2` | (BLOCKED-BY STD-604, owner: planner titan:QSL:plan; effective-declaration hash identity) QSL-derived effective-declaration identity. SHA-256 over the RFC 8785 canonical bytes of `{version, owner_effective_type, original, derivation}` (FR-150). Distinct from the `quire.checked-semantic-node/v1` domain. |
-| `quire.model.effective-view/v2` | (BLOCKED-BY STD-604, owner: planner titan:QSL:plan; effective-view hash identity) QSL-derived effective-view identity for one normalized model. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection, rule manifest and every effective declaration sorted by identity (FR-150). Distinct from every other identity/digest domain. |
-| `quire.model.object-universe/v2` | (BLOCKED-BY STD-604, owner: planner titan:QSL:plan; object-universe hash identity) QSL-derived object-universe identity for a connected supertype component. SHA-256 over the RFC 8785 canonical bytes of the ModelSelection and its sorted root effective-declaration identities (FR-150). Distinct from every other identity/digest domain. |
-| `quire.ir-proof.obligation-identity/v1` | (BLOCKED-BY STD-583, owner: planner titan:QSL:plan; obligation_identity hash) CG obligation identity. SHA-256 over the RFC 8785 canonical bytes, through QSL ADR-013 §2's one encoder, of an object with exactly four members: the subject node id, the subject's occurrence key (`node_id`, `role`, `ordinal`), the obligation kind and `arguments`, except for a parity claim, whose whole preimage is the QSL ADR-013 O-09 parity preimage (members `arguments`, `node`, `obligation_kind` and `occurrence_key` = `{ordinal, role}`). The subject is a clause, an operation application, a function (occurrence role `declaration`) or the application node of a parity claim (occurrence role `expression`). For a clause, an application or a function, `arguments` holds one entry per parameter, each a parameter node id with its declared per-argument domain; for a parity claim it holds one entry per operand position, each `{operand, position, domain}`, as that preimage encodes it. A per-step protocol record is one other form: its object has exactly the members `subject_kind` (the string `protocol-refinement-step`) and `record` (the canonical `StepSimulationRecord`), and no occurrence key. A function-value parity claim (QSL FR-357, function level) is the other: its object has exactly the members `subject_kind` (the string `function-value-parity`), `node` (the function node id), `occurrence_key` (`{ordinal: 0, role: "declaration"}`) and `arguments` (one `{parameter, position, type}` entry per declared parameter in declared order, `type` the parameter node's `semantic_type`), with no obligation kind, as QSL FR-484 spells it. Every other member of the CG obligation record (resource ceilings, embedded oracles, module, harness and contract symbols, subject path, results, solver, unwind and options), `source_span` and every source region are outside the preimage, so changing any of them leaves the identity unchanged. CG mints the digest for the clause, application, function, parity and per-step forms; QSL recomputes the parity form from the same preimage, and QSL alone mints the function-value parity form (at `qsl_replay::call_site`) and recomputes it at replay. Distinct from `quire.checked-semantic-node/v1` and every other identity/digest domain. |
+When two identities are compared, the reader SHALL compare them componentwise
+by their named components ("Structural identities" below), so that no identity
+is derived from a hash of bytes and no identity is compared by anything other
+than its components.
 
 ## Identity and comparison
 
-- **Identity kind** — *value*. A domain label has no identity of its own; it is
-  compared componentwise as an exact string.
-- **Key** — the label itself. Matching is exact. Spellings are not normalized
-  aliases, and a hyphenated and an underscored spelling are different labels.
-- **Key order** — lexicographic over the label, for collection comparison only.
-  It carries no precedence, preference or causal meaning between domains.
-- **Absence** — a digest supplied without a selected domain has an absent
-  domain. An absent domain compares only to absence; it is never defaulted to
-  `raw-artifact-digest` or to any other member.
-- **Causal order** — not applicable. A domain label participates in no causal
+- **Identity kind** — *value*, compared componentwise.
+- **Key** — the named components of the identity, matched exactly. Spellings are
+  not normalized aliases.
+- **Key order** — the component order stated below, for collection comparison
+  only. It carries no precedence, preference or causal meaning.
+- **Absence** — an absent component compares only to absence and is never
+  defaulted.
+- **Causal order** — not applicable. An identity participates in no causal
   structure.
-- **Cross-domain rule** — two identities bearing different domain labels are
-  unequal. Byte equality of their digests does not make them equal, and a raw
-  `sha256` digest cannot substitute for another domain's digest.
 
-## Remaining dependents
+## Structural identities
 
-BLOCKED-BY QSpec #517: FR-322, IT-070, TC-952, AD-006, `proposals/checked-package-v2/README.md`.
+A structural identity is a value of named components compared componentwise,
+never a digest and never derived from a hash. Two structural identities are
+equal exactly when every component is equal; no other member of the record
+that carries an identity contributes to it. Every component below is a value
+defined elsewhere in this specification; no identity adds a package string, a
+model selection identity or a digest. Components compare in the order stated,
+strings by their UTF-8 bytes, arrays element by element with a proper prefix
+first and integers numerically.
 
-BLOCKED-BY QSpec #518: `proposals/backend-provider-v1`, the `proposals/checked-package-v2` data files, `proposals/conformance-corpus-v1`, `tests/backend_provider_v1.rs`, `tests/checked_package_v2.rs` and `tests/model_member_types.rs`.
+| Identity | Exact members, in comparison order | Components |
+| --- | --- | --- |
+| `NodeId` | `package`, `path`, `ordinal` | The checked-package node id of FR-322 "Structural node identity": `package` a string, `path` an array of strings and nested node ids, `ordinal` an integer in `0..=9007199254740991`. |
+| `EffectiveId` | `owner_effective_type`, `original` | The effective declaration identity of FR-150: `owner_effective_type` is `null` (compared first) or an `EffectiveId`; `original` is the original declaration key `{package, node}`, compared by `package` then `node`. |
+| `MemberId` | `owner`, `member` | One record, event or object member. `owner` is the arm `{"node_id": NodeId}` for a member of a declaration node (a `composite_type`/`record` node, a `model`/`record_value_type` or `model`/`event_type` node), or the arm `{"effective_id": EffectiveId}` for a member of an effective declaration (the `EffectiveId` of the effective type that owns the member); `member` is the declared field identifier, byte for byte (FR-143 "Declarations and identity"). The arm `node_id` compares before the arm `effective_id`, then the arm value componentwise, then `member`. |
+| `VariantId` | `owner`, `case` | One enumeration or sum case. `owner` is the `NodeId` of the declaration node (the `scalar_type`/`enum`, `composite_type`/`union` or `model`/`variant_type` node); `case` is the case or member identifier, byte for byte (FR-141, FR-441). It is the pair that the path of the `value`/`enum_value` node carries. |
+| `UnitId` | one arm: `declared`, or `terms` | The arm `declared` holds the `NodeId` of the declared unit node (FR-142). The arm `terms` holds the ascending array of `{unit, exponent}`, `unit` a `NodeId` of a canonical root unit, `exponent` a nonzero mathematical integer written as a canonical decimal string (FR-142, the evaluator-owned compound unit value); the empty array is the dimensionless unit. The arm `declared` compares before the arm `terms`; `terms` elements compare by `unit` then `exponent` numerically. |
+| `UniverseId` | the `NodeId` itself | The `NodeId` of the declaration node of the least root type of the object universe (FR-150 "Object universe"). |
+| `PopulationId` | the `NodeId` itself | The `NodeId` of the `relation`/`population` node that carries the declared population (FR-322 "Population references"). The binding, anchor and declared maximum are not components. |
+
+An object's identity stays the authored object identity within its universe and
+type, the FR-204 triple (universe, type, object identity), and an obligation
+identity is (the claim or subject `node_id`, the identity of the model that
+owns it, an ordinal) (FR-418-AC-9). An effective declaration identity is
+`{owner_effective_type, original}` and carries no ordinal.
 
 ## Acceptance Criteria
 
 | ID | Criteria | Verification |
 | --- | --- | --- |
-| FR-201-AC-1 | Each member's value equals the exact label string in the table, and an underscored spelling does not match a hyphenated one. | Inspection |
-| FR-201-AC-2 | Two identities with equal digest bytes and different domain labels compare unequal. | Analysis |
-| FR-201-AC-3 | A digest with an absent domain compares only to absence and receives no default member. | Analysis |
+| FR-201-AC-1 | Withdrawn: the identity-domain label vocabulary is removed with the digest domains it labelled. | Withdrawn |
+| FR-201-AC-2 | Withdrawn: it compared digests across domain labels, and no digest domain remains. | Withdrawn |
+| FR-201-AC-3 | Withdrawn: it concerned a digest with an absent domain, and no digest remains. | Withdrawn |
 | FR-201-AC-4 | Withdrawn: the lock-file digest and package fingerprint domains are removed. | Withdrawn |
 | FR-201-AC-7 | Withdrawn: the byte-equality test of the exposed constants against their files is removed. | Withdrawn |
 | FR-201-AC-8 | Withdrawn: it existed only for the cache key, which is removed with the result cache. | Withdrawn |
 | FR-201-AC-9 | Package selection is exact under the closed triggers `text_bearing`, `ieee_operation` and `integer_div_rem`, and each accepted and refused selection vector is admitted or refused with exactly its recorded selection code. | Test (TC-233) |
-| FR-201-AC-10 | Two obligations of one clause, application, function, parity claim, function-value parity claim or per-step record whose records differ only in a member outside the preimage (`source_span`, a resource ceiling, an embedded oracle, a symbol, the subject path, the results, the solver, `unwind` or an option) have equal `quire.ir-proof.obligation-identity/v1` digests; changing the subject node id, the occurrence key's `role` or `ordinal`, the obligation kind, one argument's parameter node id or declared domain (for a parity claim, an operand, its position or its domain, an inline literal's value included; for a function-value parity claim, a parameter node id, its position or its declared type node) or a per-step record member gives a different digest; the per-step digest is unchanged by its occurrence key; and the digest compares unequal to a digest with equal bytes in any other domain. | Test (TC-952) |
+| FR-201-AC-10 | Two obligations of one clause, application, function, parity claim, function-value parity claim or per-step record whose records differ only in a member outside the triple (`source_span`, a resource ceiling, an embedded oracle, a symbol, the subject path, the results, the solver, `unwind` or an option) have equal obligation identities; changing the subject `node_id`, the owning model identity or the ordinal gives a different identity. | Test (TC-952) |
+| FR-201-AC-11 | Each of `MemberId`, `VariantId`, `UnitId`, `UniverseId` and `PopulationId` is the exact member list of "Structural identities": two values are equal exactly when their arms and components are equal, a change of any single component gives a different identity, and the comparison order of that table orders a collection of them. | Test (TC-233) |
 
 ## Dependencies
 
-- [FR-015](../../functional/foundation/FR-015-preserve-canonical-domains.md) establishes the
-  distinct domains and the substitution prohibitions.
 - [FR-200](FR-200-quire-assessment-domain.md) supplies the identity discipline.
 - [FR-150](../../functional/type-model/FR-150-preserve-model-normalization-provenance.md)
-  defines the `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2`
-  and `quire.model.object-universe/v2` preimages.
+  defines the effective declaration identity.
 - QSL ADR-013 O-09 and [AD-016](../../assurance/AD-016-semantic-family-extension-path.md)
-  arrow 5 define the `quire.ir-proof.obligation-identity/v1` preimage;
+  arrow 5 define the obligation identity;
   [FR-196](../../functional/ir-proof/FR-196-generate-kani-contracts.md) and
   [FR-197](../../functional/ir-proof/FR-197-replay-backend-counterexamples.md)
   generate and replay the obligations it identifies.
 
 ## Status
 
-Accepted complete-V1 identity-domain contract.
+Accepted complete-V1 structural identity contract.

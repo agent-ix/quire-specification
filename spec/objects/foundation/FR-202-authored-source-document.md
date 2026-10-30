@@ -36,7 +36,7 @@ produce no semantic tokens (FR-036).
 
 - **Identity kind** — *authored*. The document is written by a person; its
   identity is carried in the exchange, not computed from its content.
-- **Key** — `document_identity`. The file path, the display name and
+- **Key** — `document_identity`. Equality is exact over this one member. The file path, the display name and
   any rendering of the document never participate: FR-003 binds a location to
   the document identity, and FR-047-AC-4 requires that diagnostics "do not
   reconstruct a location by searching for a repeated name".
@@ -45,6 +45,7 @@ produce no semantic tokens (FR-036).
   and no causal meaning.
 - **Causal order** — none. A document participates in no causal structure;
   FR-052 forbids deriving causal edges from source order.
+- **Absence** — an absent document identity compares only to absence.
 
 ## Acceptance Criteria
 
@@ -52,7 +53,7 @@ produce no semantic tokens (FR-036).
 | --- | --- | --- |
 | FR-202-AC-1 | Two source documents with identical bytes and different document identities compare unequal. | Analysis |
 | FR-202-AC-2 | A document key compares equal only when the document identities compare equal. | Analysis |
-| FR-202-AC-3 | Withdrawn: the document carries no digest. | Withdrawn |
+| FR-202-AC-3 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 | FR-202-AC-4 | Path and display name are absent from the key. | Inspection |
 
 ## Dependencies

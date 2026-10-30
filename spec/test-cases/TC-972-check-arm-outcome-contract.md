@@ -19,7 +19,7 @@ Check the shared check-arm contract over both kinds: negotiation dispositions, t
 
 ## Test Procedure
 
-Read `proposals/backend-check-arm-v1/vectors.json`. For each case, derive each `$node:<label>` NodeId from its label as the file's `rekey` member states, recompute the FR-290 disposition from the case's registry and item, validate the case's outcome stage against `proposals/backend-provider-v1/schema.json`, apply the arm's own refusal gate, and compare the arm outcome with the result. The harness is `tests/backend_check_arm_v1.rs`; its pinned case list fails when a vector is removed.
+Read `proposals/backend-check-arm-v1/vectors.json`. For each case, resolve each `$node:<label>` to the NodeId of the node it labels, recompute the FR-290 disposition from the case's registry and item, validate the case's outcome stage against `proposals/backend-provider-v1/schema.json`, apply the arm's own refusal gate, and compare the arm outcome with the result. The harness is `tests/backend_check_arm_v1.rs`; its pinned case list fails when a vector is removed.
 
 The harness recomputes the proof basis and certification of every `proved` entry from the case's `method` (enumeration `exhaustive`/`uncertified`, Kani `bounded-proof`/`certified`, SMT `bounded-complete` or `inductive` with depth 0 for a value item and 1 for a contract item, plugin `trusted`), the effective `max_cases` (the item's `check.limits.max_cases`, else the descriptor default), the schema refusal of a zero or non-count `max_cases`, the population domain rule and the independence of items that share a claim.
 

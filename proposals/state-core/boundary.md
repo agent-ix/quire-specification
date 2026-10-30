@@ -9,8 +9,8 @@ these examples or freeze another consumer's method/result contract around them.
 Local display names are aliases, never declaration identity. The language must
 not infer type definitions from application Rust strings or runtime examples.
 
-Resolve imports by identity alone, then by
-exports. Do not choose the first duplicate or a
+Resolve imports by identity alone (a model's lock row is its identity and no digest exists), then by
+exports and transitive lock closure. Do not choose the first duplicate or a
 reachable but undeclared package. Reject
 missing, ambiguous, foreign, ill-typed and unsupported definitions with
 both reference and available declaration loci. Stable declaration IDs survive

@@ -35,7 +35,7 @@ effect observations re-enter through the observation authority contract.
 ## Effect-adapter protocol
 
 The evaluator emits an immutable recommendation. A human or policy decision
-binds its digest, actor, authority grant, decision time and approved effect
+binds its identity, actor, authority grant, decision time and approved effect
 parameters. The adapter derives one idempotency key from adapter identity,
 decision identity and effect identity, persists the pending request before
 transport, and reconciles retries against that record. A reused key is valid

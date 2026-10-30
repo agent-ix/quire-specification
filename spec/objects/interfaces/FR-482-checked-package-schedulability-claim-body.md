@@ -75,7 +75,7 @@ refusal in the reader order below.
   magnitude in that unit, spelled as [FR-322](FR-322-checked-package-artifact.md)
   "Scalar literal values" says.
 - **semantic_type** — the `scalar_type`/`boolean` node.
-- **declaration** — none. The node is content-addressed, as a
+- **declaration** — none. The node has a derived node id, as a
   `claim`/`state_graph` node is ([FR-475](FR-475-checked-package-state-graph-claim-body.md)):
   it carries no `declaration` and no `owner`, two claims with equal checked
   content share one node, and each declaration is one `claim` occurrence of
@@ -110,7 +110,7 @@ initial state enters the identity.
 The schedulability step is the last of the body steps, after the protocol
 step, in the one order [FR-322](FR-322-checked-package-artifact.md) "Body
 steps" fixes. It visits every `claim`/`schedulability` node in ascending
-node-id digest order. For one node, the checks run in this order and the
+ascending node-id order. For one node, the checks run in this order and the
 first failing check is its defect:
 
 1. **Shape.** The body is an aggregate of exactly the five bindings in
@@ -157,7 +157,7 @@ step.
 | --- | --- | --- |
 | FR-482-AC-1 | Over TC-372's `Ctl` in a unit that declares the unit `ms` of the dimension `Time`, `schedulable CtlFp on Ctl under fixed_priority;` produces one `claim`/`schedulability` node whose body has exactly the bindings `kind`, `policy`, `task`, `bound` and `tasks` in that order, with `kind` `schedulable`, `policy` `fixed-priority`, `task` and `bound` the empty aggregate, and `tasks` the three task aggregates `t1`, `t2`, `t3`, each with its ten bindings: `arrival` `periodic`, `period` `4`, `6`, `12`, `deadline` equal to the period, `wcet` `1`, `2`, `5`, `wcet_hi` the empty aggregate, `criticality` `lo`, `priority` `1`, `2`, `3`, and `jitter` and `blocking` `0`, every time value a `quantity` literal typed by the `ms` unit node. The node has `semantic_type` the `scalar_type`/`boolean` node, no `declaration`, no `owner`, one occurrence of role `claim` and `dependencies` `[]`. `response T3 on Ctl.t3 <= 12 ms under fixed_priority;` produces a node with `kind` `response`, `policy` `fixed-priority`, `task` the text `t3` and `bound` the `quantity` literal `12`. | Test (TC-967) |
 | FR-482-AC-2 | `CtlFp` and `schedulable CtlEdf on Ctl under edf;` have different node ids and different obligation identities; `CtlFp` over `Ctl` with `t3`'s `wcet` 6 ms has a different node id and obligation identity; `CtlFp` over `Ctl` with its tasks listed `t3`, `t1`, `t2`, with `jitter 0 ms` added to `t1`, with other whitespace and comments, or with the claim named `Other` has `CtlFp`'s node id and obligation identity; one unit declaring `CtlFp`'s claim twice, as `CtlFp` and `CtlFp2`, has one node with two `claim` occurrences, ordinals 0 and 1. | Test (TC-967) |
-| FR-482-AC-3 | Fed to the reader, each edit of `CtlFp`'s node, with its key and the `package_id` recomputed, refuses with the code at the locus stated: `tasks` with no member, `invalid_semantic_graph` at `tasks`; `policy` and `kind` swapped in order, `invalid_semantic_graph` at the body; `policy` `rate-monotonic`, `invalid_package`/`invalid-value` at `/semantic_graph/nodes/{n}/body/members/1`; `kind` `response` with `task` still the empty aggregate, `invalid_semantic_graph` at the `task` binding; `t1`'s `wcet_hi` a `quantity` literal with `criticality` `lo`, `invalid_semantic_graph` at `t1`'s `wcet_hi` binding; tasks in the order `t2`, `t1`, `t3`, `invalid_semantic_graph` at `tasks`; `T3`'s `task` the text `t9`, `invalid_semantic_graph` at the `task` binding; `t2`'s `period` typed by a unit of length, `ill_typed`/`type-mismatch` at that literal; `t1`'s `period` `0`, `invalid_timed_model`/`invalid-task-set` at `t1`'s aggregate; `t2`'s `jitter` `-1`, `invalid_timed_model`/`invalid-task-set` at `t2`'s aggregate; `t3`'s `priority` `1`, `invalid_timed_model`/`invalid-task-set` at `t3`'s aggregate; `dependencies` naming the `ms` unit node, `invalid_semantic_graph` at `/dependencies`. The same equal-priority edit of `CtlEdf`'s node is admitted. | Test (TC-967) |
+| FR-482-AC-3 | Fed to the reader, each edit of `CtlFp`'s node refuses with the code at the locus stated: `tasks` with no member, `invalid_semantic_graph` at `tasks`; `policy` and `kind` swapped in order, `invalid_semantic_graph` at the body; `policy` `rate-monotonic`, `invalid_package`/`invalid-value` at `/semantic_graph/nodes/{n}/body/members/1`; `kind` `response` with `task` still the empty aggregate, `invalid_semantic_graph` at the `task` binding; `t1`'s `wcet_hi` a `quantity` literal with `criticality` `lo`, `invalid_semantic_graph` at `t1`'s `wcet_hi` binding; tasks in the order `t2`, `t1`, `t3`, `invalid_semantic_graph` at `tasks`; `T3`'s `task` the text `t9`, `invalid_semantic_graph` at the `task` binding; `t2`'s `period` typed by a unit of length, `ill_typed`/`type-mismatch` at that literal; `t1`'s `period` `0`, `invalid_timed_model`/`invalid-task-set` at `t1`'s aggregate; `t2`'s `jitter` `-1`, `invalid_timed_model`/`invalid-task-set` at `t2`'s aggregate; `t3`'s `priority` `1`, `invalid_timed_model`/`invalid-task-set` at `t3`'s aggregate; `dependencies` naming the `ms` unit node, `invalid_semantic_graph` at `/dependencies`. The same equal-priority edit of `CtlEdf`'s node is admitted. | Test (TC-967) |
 
 ## Published artifacts
 

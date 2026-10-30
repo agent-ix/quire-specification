@@ -69,44 +69,39 @@ uses declaration order for comparison; insertion or reordering therefore
 creates a new declaration revision. Optional display strings never participate
 in equality or ordering.
 
-Declaration identity is the opaque node key of an I04 `scalar_type`/`enum`
-node. Its `quire.checked-semantic-node/v1` digest is SHA-256 over RFC 8785 JCS of
-`{ version: quire.enum-declaration-node/v1, owner, qualified_declaration,
-ordered, members }`, where `owner` is the stable subject projection of an exact
-admitted source, DefinitionRef or selected domain package identity (and must join that lock or model_root selection)
-and `members` is the declaration-ordered list of semantic case names
-(sorted by case name for an unordered enum). Member identity is the opaque key
-of an I04 `value`/`enum_value` node whose `semantic_type` references that
-declaration; its digest preimage is
-`{ version: quire.enum-member-node/v1, declaration_node_id, case }`. For an ordinary `scalar_type`/`enum` node `case` is an identifier
+Declaration identity is the structural `node_id` of an I04 `scalar_type`/`enum`
+node, `{package, path, ordinal}`, where `path` is the declaration path of the
+enum and `package` is the identity of the exact admitted source, DefinitionRef
+or selected domain package that owns it (it must join that lock or model_root
+selection). The declaration-ordered list of semantic case names (sorted by case
+name for an unordered enum) is the enum node's body. Member identity is the
+`node_id` of an I04 `value`/`enum_value` node whose `semantic_type` references
+that declaration; its `path` is `["value", "enum_value", declaration_node_id,
+case]`. For an ordinary `scalar_type`/`enum` node `case` is an identifier
 (`^[A-Za-z_][A-Za-z0-9_]*$`). For a member of a `model`/`variant_type` node,
 `case` is the declared case name, any non-empty string (`Gold Plus`, `2x`,
 `Café`), compared byte for byte as UTF-8 and never altered to fit an
-identifier; its key is the digest over that name. Display
-text and source loci are excluded from both preimages. The enum-value node has
-that declaration as its sole dependency and its enum literal body carries the
-same case; the strict reader joins all three fields to the preimage.
+identifier. Display text and source loci are excluded from both ids. The
+enum-value node has that declaration as its sole dependency and its enum
+literal body carries the same case; the strict reader joins all three fields.
 
 An enumeration declared by a model package is a `model`/`variant_type` node
 (FR-322), not a `scalar_type`/`enum` node: its declaration identity is that
-node's key, the JCS SHA-256 of its `ModelDeclarationNode` preimage, a function of
-the selected document's identity and the declaration node alone, never of a
-model alias. Its member identity is the key of the `value`/`enum_value` node
-whose `semantic_type` references it, with the preimage
-`{ version: quire.enum-member-node/v1, declaration_node_id, case }` over that
-node's key and the case name. Two units that select one package under different
-aliases therefore assign equal keys, and the same case built in either is
-equal.
+node's `node_id`, a function of the selected document's identity and the
+declaration path alone, never of a model alias. Its member identity is the
+`node_id` of the `value`/`enum_value` node whose `semantic_type` references it,
+over that node id and the case name. Two units that select one package under
+different aliases therefore assign equal ids, and the same case built in
+either is equal.
 
-The strict I04 reader recomputes the enum node digests of `scalar_type`/`enum`
-nodes from the admitted semantic graph. Retaining a key while changing owner,
-declaration membership, case meaning or ordered position of such a node is
-`invalid_semantic_graph`. For a `model`/`variant_type` node the declaration key
-is the node preimage's, which names no case, so adding, renaming or removing a
-case leaves it unchanged (FR-322). Recomputing after
-such a change yields a new declaration/member identity. The same exact imported
-owner and declaration retain the same keys across otherwise different packages;
-an unrelated package edit cannot rename them. Neither key is a local name,
+The strict I04 reader joins the enum nodes of `scalar_type`/`enum` nodes with
+the admitted semantic graph. Changing owner, declaration membership, case
+meaning or ordered position of such a node is `invalid_semantic_graph` unless
+its body and its enum-value members agree. For a `model`/`variant_type` node
+the declaration id names no case, so adding, renaming or removing a case leaves
+it unchanged (FR-322). The same exact imported owner and declaration retain the
+same ids across otherwise different packages; an unrelated package edit cannot
+rename them. Neither id is a local name,
 source position or caller-computed assertion. Under
 `quire.value.accounting/v1`, text normalization charges the named input,
 normalization and result points before publishing a value; exhaustion is
@@ -118,11 +113,11 @@ incomplete, not a truncated string.
 | --- | --- | --- |
 | FR-141-AC-1 | Canonically equivalent text compares according to the selected normalization profile and distinct text remains distinct. | Test (TC-186) |
 | FR-141-AC-2 | Comparing members of different enum declarations refuses `ill_typed`; equal member spellings are never equal across declarations. | Test (TC-186) |
-| FR-141-AC-3 | Missing text bounds, invalid scalars, unordered enum ordering or an enum node whose content does not match its normative key preimage refuses. | Test (TC-186) |
+| FR-141-AC-3 | Missing text bounds, invalid scalars, unordered enum ordering or an enum node whose body disagrees with its enum-value members refuses. | Test (TC-186) |
 | FR-141-AC-4 | Each text profile applies its exact length and lexicographic comparison domain, with scalar length measured after the profile's normalization and the length-bound refusal, `text_length_out_of_domain`/`outside-domain`, after that profile's last size charge and before `text.result-retain`; equal display text under different profiles remains differently typed. | Test (TC-186) |
 | FR-141-AC-5 | An unordered enumeration comparison other than equality, or any cross-declaration enumeration comparison, refuses with `ill_typed` before any charge, while an ordered enumeration follows declaration order only. | Test (TC-186) |
 | FR-141-AC-6 | Exact-bound accounting succeeds and denial of a named next text or enum charge returns incomplete without a truncated value or Boolean. | Test (TC-186) |
-| FR-141-AC-7 | The `enum_value` node of a case of a model variant type, `Tier` with `Gold`, has the key of the preimage `{ version: quire.enum-member-node/v1, declaration_node_id, case }` with `declaration_node_id` the `model`/`variant_type` node key of `Tier` and `case` `Gold`; two units that select the package as `Config` and as `Cfg` derive equal keys for `Tier` and for `Gold`, and `Gold` of one equals `Gold` of the other. A case name changed in the package yields a new key, and `Tier::Gold` and `Level::Gold` are unequal. | Test (TC-940) |
+| FR-141-AC-7 | The `enum_value` node of a case of a model variant type, `Tier` with `Gold`, has the member id over `declaration_node_id` the `model`/`variant_type` node id of `Tier` and `case` `Gold`; two units that select the package as `Config` and as `Cfg` derive equal ids for `Tier` and for `Gold`, and `Gold` of one equals `Gold` of the other. A case name changed in the package yields a new member id, and `Tier::Gold` and `Level::Gold` are unequal. | Test (TC-940) |
 | FR-141-AC-8 | A variant type with cases `Gold`, `Gold Plus`, `2x` and `Café` is admitted, each case has its own member key over its exact name, the four keys are pairwise distinct, and `Gold` and `Gold Plus` are unequal. A `Set` of those cases orders `2x`, `Café`, `Gold`, `Gold Plus` (ascending UTF-8 bytes). An `enum_value` node of an ordinary `scalar_type`/`enum` whose case is not an identifier refuses `invalid_semantic_graph` at that node, since the case is not among the declaration's members. | Test (TC-942) |
 
 ## Dependencies

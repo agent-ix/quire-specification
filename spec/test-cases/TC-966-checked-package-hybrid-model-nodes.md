@@ -27,26 +27,24 @@ declaration and `SlowEnough` claim, and as `restored_nodes` those of
 vectors through the real local Rust boundary; for HY-03 to HY-14, HY-17 to
 HY-19 and HY-23 edit the
 node of HY-01 as stated, adding to the graph any node the edit references,
-then set each edited node's `dependencies` to its body's targets, recompute
-its key and every key that references it, and recompute the `package_id`
-over the derived identity projection, as TC-233 does for its patched
-vectors, and feed the package to the reader.
+then set each edited node's `dependencies` to its body's targets, as TC-233
+does for its patched vectors, and feed the package to the reader.
 
 ## Vectors
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| HN-01 | the published nodes | every node meets `SemanticNode` and holds the key of its own preimage; each `hybrid` node's preimage meets `HybridNode`, the node is its own `semantic_type` and its `dependencies` are its body's targets; FR-481-AC-1's model, modes, variables and classes, `Moving`'s rates `-a`, `0` and `1`, its transition's target 1, guard `v = 0` and reset `(0, 0)`; the clock `t`'s rate is the rational literal `1` in both modes; FR-481-AC-6's `SlowEnough` |
-| HN-02 | `Moving`'s rate of `v` replaced by `-(2 * a)`, then rekeyed up the references | the added term nodes hold their own keys; new keys for `Moving`, `Braking`, `h` and `SlowEnough`; rekeying the unchanged nodes keeps every key |
+| HN-01 | the published nodes | every node meets `SemanticNode`; each `hybrid` node meets `HybridNode`, the node is its own `semantic_type` and its `dependencies` are its body's targets; FR-481-AC-1's model, modes, variables and classes, `Moving`'s rates `-a`, `0` and `1`, its transition's target 1, guard `v = 0` and reset `(0, 0)`; the clock `t`'s rate is the rational literal `1` in both modes; FR-481-AC-6's `SlowEnough` |
+| HN-02 | Withdrawn: the rekeying behaviour it tested is removed. | Withdrawn |
 | HN-03 to HN-10 | the `schema_refusals` cases: a transition with a `declaration`; a mode occurrence of role `claim`; `modes` before `variables`; class `continuous`; a reference `target`; a mode with no rates; form `hybrid_flow`; a model without `owner` | each fails `SemanticNode`, so a reader refuses it `malformed_wire` at strict wire validation |
-| HN-11 | the `restored_nodes` with `nodes` as one graph | every restored node meets `SemanticNode` and holds the key of its own preimage, each `hybrid` one self-typed with its body's targets as `dependencies`; FR-481-AC-8's `initial` and reset relation; `Braking` has no `initial` binding |
+| HN-11 | the `restored_nodes` with `nodes` as one graph | every restored node meets `SemanticNode`, each `hybrid` one self-typed with its body's targets as `dependencies`; FR-481-AC-8's `initial` and reset relation; `Braking` has no `initial` binding |
 | HN-12 | `Slows` and `Recent` | FR-481-AC-9's clock, activation, trigger and read levels, capture, fairness member and intervals |
 | HN-13 | `Braking2`'s model with an empty `initial`; an initial entry without `condition`; `T2`'s reset `relation` `approx`, then `eq` | each fails `SemanticNode`, so a reader refuses it `malformed_wire` |
 | HN-14 | `Slows`'s `eventually` interval with `upper` `null` and `upper_end` `open` | meets `SemanticNode` |
-| HN-15 | `positive-all-families.json`'s `Tank` | a `hybrid_model`, a `hybrid_mode` and a `hybrid_transition` node, each holding its own key; `x`'s rate and `x`'s reset value reference `y`'s variable node; `y`, classed `hybrid`, has the rate literal `1`; the full reader admits the package |
+| HN-15 | `positive-all-families.json`'s `Tank` | a `hybrid_model`, a `hybrid_mode` and a `hybrid_transition` node; `x`'s rate and `x`'s reset value reference `y`'s variable node; `y`, classed `hybrid`, has the rate literal `1`; the full reader admits the package |
 | HN-16 | every `code`/`cause` pair FR-481 and FR-193 name, scanned from their text | each cause listed in its code's native-diagnostics row; each cause of a V2 `Diagnostic` code, `non-boolean-root` included, in the `cause_tag` enum and admitted by the schema with that code |
 | HY-01 | `Braking` and `SlowEnough` of QSL FR-447, compiled and emitted | the HN-01 nodes; the full reader admits the package |
-| HY-02 | HY-01 respelled with other whitespace and comments | one `package_id` with HY-01 |
+| HY-02 | HY-01 respelled with other whitespace and comments | a checked package structurally equal to HY-01's |
 | HY-03 | `modes` listing `Moving` twice | `invalid_semantic_graph` at the second entry |
 | HY-04 | `v`'s parameter node typed `scalar_type`/`integer`; `a`'s at level 2 | `invalid_model_binding`/`malformed-declaration` at the target, each |
 | HY-05 | `Moving` with a fourth rate | `invalid_model_binding`/`malformed-declaration` at `rates` |
@@ -71,6 +69,6 @@ vectors, and feed the package to the reader.
 ## Expected Results
 
 The hybrid model, its modes, transitions, variables and classes and each
-claim over it are graph nodes whose keys carry every member, each malformed
+claim over it are graph nodes that carry every member, each malformed
 node refuses at the first failing schema or reader step, and a process
 provider serves the claim from the package bytes alone.

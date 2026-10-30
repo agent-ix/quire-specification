@@ -29,7 +29,7 @@ response wire. Compare these paired failures independently:
 | Pair/control | Required structured distinction |
 | --- | --- |
 | Missing definition versus a cyclic definition graph | Missing selection or identified cycle edges; no common message-only fallback. |
-| Request retaining a node identity taken from another package versus one retaining its subject's own node identity | `stale_dependency`/`content-mismatch` naming the retained and the carried identity versus acceptance; no revision comparison decides it. |
+| Request retaining a node identity taken from another package versus one retaining its subject's own node identity | `invalid_runtime_input`/`invalid-value` naming the retained and the carried identity versus acceptance; no revision comparison decides it. |
 | Valid observation binding with no required record versus supplied record from another invocation | Incomplete missing input versus refused wrong invocation, with separate expected/actual handles. |
 | Unknown source tokens versus recognized integer division under a refusing profile | Syntax failure versus profile refusal, preserving the actual stage and construct. |
 | Failure to prove a rational divisor nonzero versus a valid predicate evaluating false | Definedness refusal versus ordinary logical violation, without error-code substitution. |
@@ -40,7 +40,7 @@ response wire. Compare these paired failures independently:
 
 Supply each valid diagnostic to its strict consumer, then remove a required cause
 field, substitute another cause kind while keeping the same message, change the
-catalog digest, add an unknown required variant, and erase an originating stage
+catalog identity, add an unknown required variant, and erase an originating stage
 through a wrapper. Each mutant refuses this interpretation. Localize messages
 and change display paths separately: code, typed cause and semantic subject stay
 equal. A changed response catalog is retained in response provenance without

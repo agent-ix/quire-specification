@@ -71,9 +71,9 @@ not hold, with the first refusal in the reader order below.
 - **occurrences** — every occurrence has role `claim`.
 - **formula and fairness nodes** — a `temporal`/`formula` or
   `temporal`/`fairness` node has the clause's `semantic_type`, occurrences of
-  role `expression`, and FR-322's application-node identity and dependencies.
+  role `expression`, and FR-322's application-node dependencies.
 - **dependencies** — FR-322's application-node rule: the unique
-  digest-ascending `reference` targets and member declarations of the body.
+  node-id-ascending `reference` targets and member declarations of the body.
 
 ## Operation catalog entries
 
@@ -159,10 +159,9 @@ to a fairness member. For one member, in this order:
    `semantic_form` `object_type`, else `invalid_model_binding`/
    `malformed-declaration`, located at the target.
 2. **Owner.** FR-322 step 2 looks up the declaration the node's
-   `ModelOwner` names. A node that is not its own preimage, or whose owner
-   names no selected declaration of its kind, was refused earlier by
-   FR-322's derived-shape key stage (`missing_declaration`/
-   `missing-selection` or `invalid_package`/`stale-node-key`).
+   `ModelOwner` names. A node whose owner names no selected declaration of its
+   kind was refused earlier by FR-322 (`missing_declaration`/
+   `missing-selection`).
 3. **Name.** Exactly one effective operation member matches `name`; two or
    more refuse `ambiguous_declaration`/`ambiguous-name`, and none refuses
    `missing_declaration`/`missing-name`.
@@ -265,9 +264,9 @@ before any operation refusal ([FR-322](FR-322-checked-package-artifact.md)).
 Strict wire validation, which refuses a negative or malformed bound,
 precedes it. Within it, the reader first checks the placement of every
 temporal application and of every reference to a `temporal`/`formula` or
-`temporal`/`fairness` node, in ascending node-id digest order; then every
+`temporal`/`fairness` node, in ascending node-id order; then every
 diagnostic `details` term, in entry order and then `details` order; then,
-for each `temporal`/`temporal_clause` node in ascending node-id digest
+for each `temporal`/`temporal_clause` node in ascending node-id
 order: the profile check ("Profile check"); then the `over`
 reference targets a declared `value`/`parameter` dependency, else
 `missing_declaration`/`missing-name` or `invalid_model_binding`/
@@ -297,8 +296,7 @@ applications' catalog checks at the operation step.
 
 ## Published artifacts and the operation catalog
 
-`proposals/checked-package-v2/schema.json` and
-`node-identity-preimage.schema.json` enumerate the `quire.op.temporal.*`
+`proposals/checked-package-v2/schema.json` enumerates the `quire.op.temporal.*`
 identities, the `temporal_formula` and `temporal_fairness` operator classes and
 the `temporal_interval` and `fairness` member kinds, with the `null`, integer
 and timed interval forms and their non-negative bound patterns, and fix the
@@ -316,7 +314,7 @@ member.
 ## Dependencies
 
 - [FR-322](FR-322-checked-package-artifact.md) owns the `semantic_graph`, the
-  operation catalog, the application-node preimage and the reader's refusal
+  operation catalog, the application-node dependency rule and the reader's refusal
   order this artifact adds the temporal step to.
 - [FR-362](../../functional/temporal/FR-362-apply-fairness-constraints.md) and
   [FR-367](../../functional/temporal/FR-367-evaluate-interval-operators-under-infinite-trace.md)

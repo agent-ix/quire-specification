@@ -49,7 +49,7 @@ nothing else.
     Boolean state predicate `P`; for `any`, the empty aggregate
     `{term: "aggregate", members: []}`.
 - **declaration** — none. A `temporal` node carries no `declaration` (the
-  schema's `DeclarationTagRules`). The node is content-addressed and nested
+  schema's `DeclarationTagRules`). The node has a derived node id and is nested
   under its model by the `model` reference: the written name `T` of
   `terminal T using v on M …` is presentation, carried only by the node's
   source occurrence, so renaming `T` changes neither the node id nor any
@@ -60,7 +60,7 @@ nothing else.
   every other undeclared clause node carries
   ([FR-341](FR-341-checked-package-state-clause-body.md),
   [FR-370](FR-370-checked-package-temporal-clause-body.md)).
-- **dependencies** — exactly the unique, digest-ascending set of the body's
+- **dependencies** — exactly the unique, node-id-ascending set of the body's
   `reference` targets: the `model` node, the `self` parameter node when
   present and, for `when`, the condition node.
 
@@ -69,22 +69,22 @@ profile, which the lock already selects.
 
 ## Identity
 
-The node key follows FR-322's rules over the body, so the mode, the model
-and the condition each enter the node id and the `package_id`. Two packages
-whose `terminal` declarations differ only in mode, or only in the condition,
-have different `package_id`s. A model subject binds its checked package
+The node id follows FR-322's rules over the body, so the mode, the model
+and the condition each enter the node id. Two packages whose `terminal`
+declarations differ only in mode, or only in the condition, are not
+structurally equal. A model subject binds its checked package
 through the package identity
 ([FR-361](../../functional/temporal/FR-361-read-model-behaviours-as-temporal-traces.md)),
 so every obligation identity over the subject, the derived deadlock-freedom
-item's included, changes with the model's `terminal` node; the request
-carries no separate terminal member.
+item's included, is a different identity when the model's `terminal` node
+differs; the request carries no separate terminal member.
 
 ## Reader order
 
 The terminal step is a body step of
 [FR-322](FR-322-checked-package-artifact.md) "Body steps": it runs after the
 abstraction step and before the protocol step. It visits
-every `temporal`/`terminal` node in ascending node-id digest order. For one
+every `temporal`/`terminal` node in ascending node-id order. For one
 node, the checks run in this order and the first failing check is its
 defect:
 
@@ -110,7 +110,7 @@ defect:
    locus is the target.
 5. **One per model.** Once every `temporal`/`terminal` node's own checks
    hold, a second node that references the same `model` node, in ascending
-   node-id digest order, refuses `ambiguous_declaration`/`ambiguous-name` at
+   node-id order, refuses `ambiguous_declaration`/`ambiguous-name` at
    that second node, naming both nodes (FR-366); a node that carries two or
    more `claim` occurrences, two equal declarations for one model, refuses
    `ambiguous_declaration`/`ambiguous-name` at that node, naming the first
@@ -127,8 +127,8 @@ which precedes this step.
 | --- | --- | --- |
 | FR-476-AC-1 | `terminal Done using v on M when { P }` produces one `temporal`/`terminal` node whose body has the bindings `model`, `mode`, `parameters` and `condition` in that order, with `mode` `when` and `condition` a reference to `P`'s `expression` node; `terminal Halt using v on M any` produces `mode` `any`, an empty `parameters` and an empty `condition`; neither node carries a `declaration`, its occurrences have role `claim` and its `dependencies` are exactly the body's targets. | Test (TC-961) |
 | FR-476-AC-2 | A `when` condition that reads `self` holds one reference in `parameters`, to the `self` parameter node at level 0 typed `Reference<M::C>`; one that reads no `self` has empty `parameters`. | Test (TC-961) |
-| FR-476-AC-3 | Changing the mode or the condition changes the node id and the `package_id`; renaming `T` changes neither; the deadlock-freedom item over a subject whose model has a `terminal` node has a different obligation identity, through the `package_id`, from the same subject whose model has none. | Test (TC-961) |
-| FR-476-AC-4 | With `dependencies`, the projection entry and the `package_id` rebuilt after each edit: a body with `mode` and `condition` swapped in order refuses `invalid_semantic_graph`; `mode` `some` refuses `invalid_package`/`invalid-value`; an `any` node with a `condition` reference, a `when` node with an empty `condition`, a `parameters` with two entries, and an `any` node with both a `parameters` entry and a `condition` reference (at `parameters`) refuse `invalid_semantic_graph`; a `model` target that is a `value`/`parameter` node refuses `invalid_model_binding`/`malformed-declaration`; a `parameters` entry naming a parameter `result` or typed `Reference<M::D>` for another object type refuses `ill_typed`/`operator-ineligible`; a `condition` naming an integer-typed expression node refuses `ill_typed`/`non-boolean-root`; two `terminal` nodes on one `model` node refuse `ambiguous_declaration`/`ambiguous-name` at the second, naming both, and a node given a second `claim` occurrence and `source_map` entry refuses the same at that node. | Test (TC-961) |
+| FR-476-AC-3 | Changing the mode or the condition changes the node id; renaming `T` does not; the deadlock-freedom item over a subject whose model has a `terminal` node has a different obligation identity from the same subject whose model has none. | Test (TC-961) |
+| FR-476-AC-4 | With `dependencies` rebuilt after each edit: a body with `mode` and `condition` swapped in order refuses `invalid_semantic_graph`; `mode` `some` refuses `invalid_package`/`invalid-value`; an `any` node with a `condition` reference, a `when` node with an empty `condition`, a `parameters` with two entries, and an `any` node with both a `parameters` entry and a `condition` reference (at `parameters`) refuse `invalid_semantic_graph`; a `model` target that is a `value`/`parameter` node refuses `invalid_model_binding`/`malformed-declaration`; a `parameters` entry naming a parameter `result` or typed `Reference<M::D>` for another object type refuses `ill_typed`/`operator-ineligible`; a `condition` naming an integer-typed expression node refuses `ill_typed`/`non-boolean-root`; two `terminal` nodes on one `model` node refuse `ambiguous_declaration`/`ambiguous-name` at the second, naming both, and a node given a second `claim` occurrence and `source_map` entry refuses the same at that node. | Test (TC-961) |
 
 ## Published artifacts
 

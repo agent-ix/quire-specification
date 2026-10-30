@@ -46,7 +46,7 @@ For a safety form (TT-1, TT-2, TT-3, the deadlock-freedom item):
 
 | Member | Content |
 | --- | --- |
-| `identity` | The item's obligation identity, the canonical identity digest (FR-201) binding the proof to the exact subject and claim. |
+| `identity` | The item's obligation identity, the structural `{node_id, model, ordinal}` (FR-479) binding the proof to the exact subject and claim. |
 | `scale` | The common denominator the constants were scaled by. |
 | `bounds` | The per-clock lower and upper bounds `L` and `U`, per discrete state, used by the simulation test. |
 | `nodes` | A finite list of nodes `(s, q, Z)`: discrete state key, claim-automaton state, canonical DBM. |
@@ -91,8 +91,8 @@ read over the refinement product (QSL FR-244 "Refinement form"):
 
 | Member | Content |
 | --- | --- |
-| `refinement_node` | The refinement node's id (FR-322 `NodeId`). The part itself is `refinement` and an `edges` entry's `node` is an index, so no name stands for two things. |
-| `concrete_package`, `abstract_package` | The two packages' ids (FR-322 `PackageId`). |
+| `refinement_node` | The refinement node's `node_id` (FR-322). The part itself is `refinement` and an `edges` entry's `node` is an index, so no name stands for two things. |
+| `concrete_package`, `abstract_package` | The two packages' identities (FR-322 package `name`). |
 | `positions` | Nonempty (an admitted refinement half starts at a positioned initial node, so it certifies at least one position). The certified positions: each `{concrete, history, abstract_states}`, a concrete `StateKey`, the FR-378 history values as FR-181 typed values in history-row order, and the sorted abstract `StateKey`s. |
 | `taken` | One entry per element of `edges`, in order: `null` for an edge into or inside the locked region (QSL FR-244), else `{type: "stutter"}` or `{type: "abstract", transitions}` with FR-181 transition identities. |
 
@@ -128,22 +128,18 @@ and AC-5), and the encoding is a function of the value alone.
   `divergence`, `refinement`, `locked`) is omitted, never `null`; `locked` is
   present only as `true`. In an array a position is significant, so the one
   option inside an array, a `taken` entry that is `None`, is `null`.
-- **Embedded digests.** The certificate embeds no digest or hash of the
+- **No embedded digests.** The certificate embeds no digest or hash of the
   certificate itself, of a node or zone, of the checker, the producer or a
-  manifest, or of any run output, and has no checksum member. Every digest it
-  carries is an identity derived from the inputs both sides hold: `identity`
-  (FR-201's obligation identity), each `StateKey` (the discrete state's own
-  identity, FR-181) and, as the one stated exception, in a refinement form the
-  three input identities `refinement_node` (the refinement node's id), `concrete_package` and
-  `abstract_package` (package ids). QSL FR-244 lists them as members of
-  `RefinementPart` and FR-245 compares them with the item's to refuse
-  `stale_dependency`/`content-mismatch` (FR-144 "Certificate identity"), so
-  the wire carries them; they are references to the checker's own inputs,
-  never a hash of a produced artifact. Whether QSL should drop them is
-  tracked as STD-523.
+  manifest, or of any run output, and has no checksum member. What it carries
+  that names the checker's inputs is structural: `identity` (the obligation
+  identity), each `StateKey` (the discrete state's own identity, FR-181) and,
+  in a refinement form, `refinement_node` (a `node_id`), `concrete_package`
+  and `abstract_package` (package identities). The checker compares nothing
+  against them; it checks the certificate's rules against the packages it is
+  given.
 - **Vectors.** The worked certificates ZC-10 to ZC-12, with their bytes, are
   published in `proposals/backend-provider-v1/zone-certificate-vectors.json`
-  (TC-371). Their state keys and digests are fixed illustrative values, not
+  (TC-371). Their state keys are fixed illustrative values, not
   computed from a model.
 
 ## Checker
@@ -158,7 +154,7 @@ numbering and each component's stated reason, and reads no output of the
 search beyond the certificate. It refuses a certificate whose `identity`
 differs from the item's with `invalid_runtime_input`/`conflicting-identity`.
 A rejected certificate settles `inconclusive`, `certificate-rejected{rule,
-at}` (FR-331): `initial-missing` at the State locus `{domain, digest}` of
+at}` (FR-331): `initial-missing` at the State locus `{key}` of
 the initial discrete state, when no node of it covers the initial symbolic state (in a refinement form, of the discrete state of concrete initial state `i`, when `initials[i]` does not cover that state's symbolic state, for each `i`); `successor-missing` at
 `{node}` when a node's successor by an identity is not covered by its named
 target; `bad-state` at `{node}` for a bad node; `backward-edge` at `{edge}`
@@ -191,7 +187,7 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 | FR-418-AC-6 | The bytes of a zone certificate are the RFC 8785 UTF-8 serialization of its `ZoneCertificate` value with members in ascending code-unit order and arrays in the stated order, and the bytes of ZC-10, ZC-11 and ZC-12 equal the published bytes, byte for byte, across two runs. | Test (TC-371) |
 | FR-418-AC-7 | An index is a JSON integer in 0 to 2^53 − 1 and a scale or a bound an integer string; a bound written as a JSON number, with a leading zero, a `+` or `-0`, or a scale `0`, is not a `ZoneCertificate`, and a bound of 27 digits is carried exactly. | Test (TC-371) |
 | FR-418-AC-8 | An absent optional member is omitted: `components`, `reasons`, `divergence` or `refinement` as `null` is not a `ZoneCertificate`, `locked` is present only as `true`, and a `taken` entry that is absent is `null`. | Test (TC-371) |
-| FR-418-AC-9 | The only digest-bearing members of a certificate are `identity` and, in a refinement form, the part's `refinement_node`, `concrete_package` and `abstract_package`; no member carries a digest, hash or checksum of the certificate or of another artifact. | Test (TC-371) |
+| FR-418-AC-9 | `identity` is the structural obligation identity, and in a refinement form the part's `refinement_node` is a `node_id` and `concrete_package` and `abstract_package` are package identities; no member carries a digest, hash or checksum of the certificate or of another artifact. | Test (TC-371) |
 | FR-418-AC-10 | Every certificate lists `initials` (nonempty), and a refinement-form certificate lists, in its part, `positions` (nonempty) and `taken`, so a refinement part with empty `positions` is not a `ZoneCertificate`; ZC-12's first initial node (`initials[0]`) is a `locked` node with `automaton` equal to the number of positions and its `admitted` starts at the positioned `initials[1]`, a refinement form whose `initials[i]` does not cover concrete initial state `i` is `initial-missing` at that state's State record (the locus is the discrete state; two initial states sharing one discrete state share the locus, and the checker reports the lowest failing index first), `admitted` may start at any positioned `initials[i]`, and a certificate without `initials` or `admitted`, or with an `initial` member, is not a `ZoneCertificate`; nor is a refinement part whose node-id member is named `refinement` or `node` rather than `refinement_node`. | Test (TC-371); the checker clauses by QSL TC-700 and TC-371 ZC-14 |
 
 ## Dependencies
@@ -199,8 +195,6 @@ budget. Its cost is linear in the certificate's edges times the DBM operations.
 - [FR-416](../../functional/temporal/FR-416-evaluate-timed-temporal-claims.md)
   and [FR-417](../../functional/temporal/FR-417-settle-time-lock-freedom.md)
   settle the proofs this certificate carries.
-- [FR-201](../foundation/FR-201-canonical-identity-domain.md) supplies the
-  canonical identity digest.
 - [FR-331](FR-331-backend-provider-envelope.md) carries the certificate in
   the result.
 

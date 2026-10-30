@@ -127,8 +127,8 @@ model without hybrid dynamics, which has the same kind.
 - A hybrid item with no candidate SHALL settle `unsupported`,
   `unsupported_projection`/`unsupported-requested-capability`, the warning
   naming `temporal-satisfaction` and the requirement `hybrid-dynamics`.
-- `requirements` SHALL be part of the request identity; `dynamics` is part of the descriptor, and so of its manifest
-  digest.
+- `requirements` SHALL be part of the request identity;
+  `dynamics` is part of the descriptor.
 - A registration that advertises `temporal-satisfaction` SHALL be refused
   `invalid_capability`/`invalid-dynamics`, keyed by backend identity, when
   its `dynamics` is present and is not a list (`not-a-list`, retaining the
@@ -484,9 +484,9 @@ defaulting a limit apply to both. Their setting names are
   for both budgets ("Routing a hybrid item"); a value present in the
   request SHALL always apply. Each provider publishes its own defaults, and
   this requirement states no number.
-- `max_solver_time` is a wall-clock setting. The request identity and the
-  request identity SHALL exclude it, no member of a stored record SHALL record wall
-  time, and a result it limits (`timed-out`) SHALL NOT be reused between invocations. Two requests that differ only in `max_solver_time` SHALL have
+- `max_solver_time` is a wall-clock setting. The request identity
+  SHALL exclude it, and no member of a stored record SHALL record wall
+  time. Two requests that differ only in `max_solver_time` SHALL have
   equal request identity.
 
 A hybrid item settles `refuted` only through exact replay ("Trace

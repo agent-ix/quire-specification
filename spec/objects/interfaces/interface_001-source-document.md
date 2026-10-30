@@ -21,9 +21,9 @@ relationships:
 
 ```yaml
 name: SourceDocument
-associated_types: [SourceUnitId, SourceDigest, SourceRegion]
+associated_types: [SourceUnitId, SourceRegion]
 operations:
-  - { name: read, inputs: [unit identity, byte limit], output: exact bytes or typed non-result, semantics: bytes are immutable and digest-bound }
+  - { name: read, inputs: [unit identity, byte limit], output: exact bytes or typed non-result, semantics: bytes are immutable }
 invariants:
   - every region indexes the returned original bytes
   - no newline or Unicode normalization occurs

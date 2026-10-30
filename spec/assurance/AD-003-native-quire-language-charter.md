@@ -144,7 +144,7 @@ bracketed-interval productions or any `0-draft` bytes.
 | --- | --- |
 | State / ConfigVersion | Parent ordering true versus false; a cycle; missing/unknown population closure; dangling/foreign reference; resource exhaustion; original minimum-only integer and recursive parent design gate versus the bounded 0..1000 worked corpus. |
 | Timed refund | Matching versus wrong order/payment/refund identity; correct versus wrong amount; observed failure/timeout versus silence; untriggered compensation; missing progress/completeness; attempt, receipt, business effect and achieved recovery remain separate. |
-| Verification portfolio | Exact source, model, definition, tool, harness and package identities; missing harness, stale package, unsupported method and failed execution cannot become a source-language pass or adequate evidence. |
+| Verification portfolio | Exact source, model, definition, tool, harness and package identities; missing harness, unsupported method and failed execution cannot become a source-language pass or adequate evidence. |
 
 ## Decisions
 

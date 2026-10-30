@@ -21,15 +21,13 @@ Compile each vector through the real local Rust boundary, read the
 `claim`/`state_graph` node, and compute each item's obligation identity;
 compare node ids and identities pairwise. For SN-08 to SN-14 and SN-17, edit the node
 of SN-01, SN-02 or SN-03 as stated; except in SN-12, set its `dependencies`
-to the body's targets; then recompute its node key and recompute the
-`package_id` over the derived identity projection, as TC-233 does
-for its patched vectors, and feed the package to the reader.
+to the body's targets, as TC-233 does for its patched vectors, and feed the package to the reader.
 
 ## Vectors
 
 | Vector | Input | Expected result |
 | --- | --- | --- |
-| SN-01 | TC-331 PV-01, `possible ReachesTwo using v over (c: Config::ConfigVersion) { c.versionNumber = 2 }` | one node, with no `declaration` and no `owner`; body `kind` `possible`, `over` a reference to `c`'s parameter node, `from` the empty aggregate, `target` a reference to the `expression` node of `c.versionNumber = 2`; occurrence role `claim`; `dependencies` the two targets in digest order |
+| SN-01 | TC-331 PV-01, `possible ReachesTwo using v over (c: Config::ConfigVersion) { c.versionNumber = 2 }` | one node, with no `declaration` and no `owner`; body `kind` `possible`, `over` a reference to `c`'s parameter node, `from` the empty aggregate, `target` a reference to the `expression` node of `c.versionNumber = 2`; occurrence role `claim`; `dependencies` the two targets in node-id order |
 | SN-02 | TC-332 AP-02, `always possible CanStillWin using v over (x: G::Game) from (x.phase != G::Phase::Lost) { x.phase = G::Phase::Won }` | `kind` `always-possible`; `from` references the `expression` node of `x.phase != G::Phase::Lost` |
 | SN-03 | TC-333 UP-01, `unique path InOneWay` | `kind` `unique-path`; `from` references `X`'s node and `target` `Y`'s node |
 | SN-04 | `possible Anything using v { true }` | admitted; `over` the empty aggregate; `target` a reference to the Boolean `value`/`literal` node of `true`; `dependencies` that node only |

@@ -64,7 +64,7 @@ and the declaration key of its most-specific type. Each member's key is
 `(ModelSelection key, effective type identity of the member's most-specific
 type, FR-204 reference triple)`. Effective identities are used after
 normalization; original identities appear only in provenance. Duplicate member
-records collapse only when their keys and member digests are equal; otherwise,
+records collapse only when their keys and member values are equal; otherwise,
 and whenever two members share universe and object identity with different
 types, binding admission refuses `invalid_runtime_input`/`conflicting-identity`.
 A member type not covered by the population declaration's member types is
