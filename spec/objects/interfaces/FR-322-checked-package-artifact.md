@@ -2814,7 +2814,7 @@ row.
 
 **Selected timed package.** The slot vectors do not stand alone: they name a
 complete selected package (`selected_package`), its selected document
-(`selected_document`, a full FCD semantic IR 2.0.0 document of `acme/orders`
+(the one `selected-documents.json` pairs with that package, a full FCD semantic IR 2.0.0 document of `acme/orders`
 built as in FR-322-AC-151, carrying no digest member) and the identity of the package's `model_root` owner
 (`selection_identity`). The package is the dense timed fixture with the places
 of `SL-01` to `SL-07`, the places `v` and `q` of the presence section, their

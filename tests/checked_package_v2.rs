@@ -15433,7 +15433,10 @@ fn shapes_project_document(document: &Value) -> Value {
 fn tc_940_the_selected_document_is_a_full_semantic_ir_whose_projection_is_derived_from_it() {
     let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
     let document = parsed_fixture(SHAPES_DOCUMENT);
-    assert_eq!(vectors["selected_document"], "domain-package-acme-shapes.json");
+    assert_eq!(
+        selected_documents()[vectors["base"].as_str().expect("the vectors' base")],
+        "domain-package-acme-shapes.json"
+    );
     assert_eq!(document["contractVersion"], "2.0.0");
     assert_eq!(document["package"]["identity"], "acme/shapes");
     for member in ["constructs", "types"] {
@@ -15950,67 +15953,66 @@ fn document_declares(document: &Value, kind: &str, node: &str, name: Option<&str
     }
 }
 
+/// The published checked-package-v2 proposal directory.
+fn checked_package_v2_directory() -> std::path::PathBuf {
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("proposals/checked-package-v2")
+}
+
+/// `selected-documents.json`'s pairing: each positive fixture path that
+/// names a model-owned name, mapped to its selected document's path, both
+/// relative to the proposal directory (TC-233).
+fn selected_documents() -> serde_json::Map<String, Value> {
+    let path = checked_package_v2_directory().join("selected-documents.json");
+    let index = parsed_fixture(
+        &std::fs::read_to_string(&path).expect("selected-documents.json is readable"),
+    );
+    index["selected_documents"]
+        .as_object()
+        .expect("selected_documents is an object")
+        .clone()
+}
+
+/// The published domain document `fixture` selects, as `selected-documents.json` names it.
+fn selected_document(fixture: &str) -> Value {
+    let pairs = selected_documents();
+    let name = pairs[fixture]
+        .as_str()
+        .unwrap_or_else(|| panic!("{fixture} has a selected document"));
+    assert!(
+        name.starts_with("domain-package-"),
+        "{fixture} selects a published domain document, not {name}"
+    );
+    parsed_fixture(
+        &std::fs::read_to_string(checked_package_v2_directory().join(name))
+            .unwrap_or_else(|error| panic!("{name}: {error}")),
+    )
+}
+
 /// FR-322-AC-266, FR-322-AC-55 and FR-322-AC-30: every field, operation and
 /// owner a positive fixture names in a model-owned position resolves in the
-/// domain document that fixture selects. Documents of one identity
-/// (`acme/orders`) differ, so each fixture is checked against its own selected
-/// document, not against any document of that identity.
+/// domain document that fixture selects, as `selected-documents.json` pairs
+/// them. Documents of one identity (`acme/orders`) differ, so each fixture is
+/// checked against its own selected document, not against any document of
+/// that identity; every positive fixture with a model root has an entry.
 #[trace("TC-233", "FR-322-AC-55", "FR-322-AC-266")]
 #[test]
 fn tc_233_every_positive_fixture_resolves_its_model_references_in_its_selected_document() {
-    let orders = parsed_fixture(DOMAIN_DOCUMENT);
-    let clauses = parsed_fixture(SELECTED_TIMED_CLAUSE_DOCUMENT);
-    let slots = parsed_fixture(SELECTED_TIMED_SLOT_DOCUMENT);
-    let shapes = parsed_fixture(SHAPES_DOCUMENT);
-    let tuple_union =
-        include_str!("../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json");
-    let cases: [(&str, &str, &Value); 10] = [
-        ("positive-all-families", POSITIVE_ALL_FAMILIES, &orders),
-        (
-            "positive-clause-operations",
-            POSITIVE_CLAUSE_OPERATIONS,
-            &orders,
-        ),
-        (
-            "positive-dependency-library",
-            POSITIVE_DEPENDENCY_LIBRARY,
-            &orders,
-        ),
-        (
-            "positive-operation-identities",
-            POSITIVE_OPERATION_IDENTITIES,
-            &orders,
-        ),
-        (
-            "positive-state-transition",
-            POSITIVE_STATE_TRANSITION,
-            &orders,
-        ),
-        ("positive-model-tuple-union", tuple_union, &shapes),
-        (
-            "positive-tick-timed-model-nodes",
-            POSITIVE_TICK_TIMED_MODEL_NODES,
-            &slots,
-        ),
-        (
-            "positive-timed-model-nodes",
-            POSITIVE_TIMED_MODEL_NODES,
-            &slots,
-        ),
-        (
-            "positive-timed-slot-nodes",
-            POSITIVE_TIMED_SLOT_NODES,
-            &slots,
-        ),
-        (
-            "positive-timed-clause-nodes",
-            POSITIVE_TIMED_CLAUSE_NODES,
-            &clauses,
-        ),
-    ];
+    let directory = checked_package_v2_directory();
     let mut failures = Vec::new();
-    for (fixture, text, document) in cases {
-        let package = parsed_fixture(text);
+    let pairs = selected_documents();
+    for (name, package) in published_positive_packages() {
+        if !model_root_positions(&package).is_empty()
+            && !pairs.contains_key(&format!("fixtures/{name}"))
+        {
+            failures.push(format!("{name}: has a model root and no selected document"));
+        }
+    }
+    for fixture in pairs.keys() {
+        let package = parsed_fixture(
+            &std::fs::read_to_string(directory.join(fixture))
+                .unwrap_or_else(|error| panic!("{fixture}: {error}")),
+        );
+        let document = &selected_document(fixture);
         let mut found = Vec::new();
         model_references(&package, &mut found);
         let identity = document["package"]["identity"]
@@ -16131,9 +16133,9 @@ fn tc_233_every_vector_patch_keeps_dependencies_equal_to_its_body_references() {
     let clause_base = parsed_fixture(POSITIVE_TIMED_CLAUSE_NODES);
     let slot_base = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
     let root_base = parsed_fixture(POSITIVE_ALL_FAMILIES);
-    let clause_document = parsed_fixture(SELECTED_TIMED_CLAUSE_DOCUMENT);
-    let slot_document = parsed_fixture(SELECTED_TIMED_SLOT_DOCUMENT);
-    let orders_document = parsed_fixture(DOMAIN_DOCUMENT);
+    let clause_document = selected_document("fixtures/positive-timed-clause-nodes.json");
+    let slot_document = selected_document("fixtures/positive-timed-slot-nodes.json");
+    let orders_document = selected_document("fixtures/positive-all-families.json");
     let slot_cases = slot_vectors["aggregate_order"]["cases"]
         .as_array()
         .expect("aggregate order cases")
@@ -17483,7 +17485,10 @@ fn tc_367_timed_slot_vectors_name_a_complete_selected_package() {
     let document = parsed_fixture(SELECTED_TIMED_SLOT_DOCUMENT);
     let package = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
     let base = parsed_fixture(POSITIVE_TIMED_MODEL_NODES);
-    assert_eq!(vectors["selected_document"], "domain-package-acme-timed-slots.json");
+    assert_eq!(
+        selected_documents()[vectors["selected_package"].as_str().expect("the selected package")],
+        "domain-package-acme-timed-slots.json"
+    );
     assert_eq!(vectors["selected_package"], "fixtures/positive-timed-slot-nodes.json");
     assert_eq!(document["contractVersion"], "2.0.0");
     assert_eq!(document["package"]["identity"], "acme/orders");

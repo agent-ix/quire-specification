@@ -1,7 +1,6 @@
 {
   "version": "quire.checked-timed-slot-selector-vectors/v1",
   "fixture": "fixtures/positive-timed-model-nodes.json",
-  "selected_document": "domain-package-acme-timed-slots.json",
   "selected_package": "fixtures/positive-timed-slot-nodes.json",
   "selected_note": "The selected package carries the nodes of SL-01..SL-05, SL-06 (the published place), SL-07, the places and parameters of the presence section and PR-01 and PR-03, each at the graph index package_node names, and its timed root lists every place; the projection of the selected document, whose projection of Order, Timer, ClockRow and ClockMap is the only declaration source of every resolved_path row. SL-03 and SL-04 declare the fields b and o (a model has one field c); the timed root lists its aggregates in declared order (FR-322-AC-260); the parameter node i, no longer the slot term of any admitted vector (PR-02 was dropped), stays published because PR-05 and PR-06 use it as an Integer owner and the owner/slot type checks name it.",
   "nested_collection": {
