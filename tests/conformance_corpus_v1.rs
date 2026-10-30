@@ -190,6 +190,18 @@ fn replay_provision_rows_use_fr001_labels_without_digest_members() {
     digest_domain_keyed["digest_domain"] = json!("quire.source.bytes/v1");
     assert!(!validator.is_valid(&digest_domain_keyed));
 
+    let domain_package = json!({
+        "identity": {"domain_package": true},
+        "bytes_path": "inputs/package.json"
+    });
+    assert!(validator.is_valid(&domain_package));
+
+    let malformed_selector = json!({
+        "identity": {"domain_package": "test/pkg"},
+        "bytes_path": "inputs/package.json"
+    });
+    assert!(!validator.is_valid(&malformed_selector));
+
     let object_environment = definition_validator(&schema, "ObjectEnvironmentRef");
     let valid_environment = json!({
         "identity": {

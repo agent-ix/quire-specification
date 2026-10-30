@@ -73,10 +73,13 @@ When a checked package is executed or replayed, the producer SHALL use the immut
   makes the recompile itself refuse at rule 2 (`missing_declaration` or
   `ill_typed`).
 - `byte_provision` — present on a replay request only: an ordered list of
-  `{identity, bytes}` entries. Each `identity` contains the four source labels
-  defined by QSL FR-001: `authority`, `identity`, `revision_namespace` and
-  `revision`; `bytes` is the document's exact byte sequence. The list is
-  unkeyed: the executor selects a source or definition by the labels named in
+  `{identity, bytes}` entries. For a source or definition document,
+  `identity` is its four source labels defined by QSL FR-001: `authority`,
+  `identity`, `revision_namespace` and `revision`. For a domain-package
+  document, `identity` is the closed marker `{domain_package: true}`; the
+  executor reads the document and selects it by its declared package identity.
+  `bytes` is the document's exact byte sequence. The list is unkeyed: the
+  executor selects a source or definition by the labels named in
   `package.sources`, and a domain package by its declared package identity.
   A required input absent from the list refuses
   `missing_import`/`missing-selection`, naming the requested identity and the

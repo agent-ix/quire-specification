@@ -179,13 +179,24 @@
       ],
       "properties": {
         "identity": {
-          "$ref": "#/$defs/SourceIdentityLabels"
+          "$ref": "#/$defs/ReplayProvisionIdentity"
         },
         "bytes_path": {
           "$ref": "#/$defs/Nonempty"
         }
       },
       "additionalProperties": false
+    },
+    "ReplayProvisionIdentity": {
+      "oneOf": [
+        {"$ref": "#/$defs/SourceIdentityLabels"},
+        {
+          "type": "object",
+          "required": ["domain_package"],
+          "properties": {"domain_package": {"const": true}},
+          "additionalProperties": false
+        }
+      ]
     },
     "CanonicalUnsignedDecimal": {
       "type": "string",

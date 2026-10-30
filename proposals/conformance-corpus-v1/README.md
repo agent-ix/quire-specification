@@ -28,10 +28,12 @@ The corpus has four top-level members:
   FR-323 source, target and result members are reused; other nested types have
   closed structural encodings with `snake_case` Rust fields, tagged variants,
   decimal-string integers and no unknown members.
-  `$defs.ReplayProvisionPath` rows carry the four QSL FR-001 identity labels
-  under `identity` and a `bytes_path` to a sibling `bytes` file. The consumer
-  reads raw file bytes into the ordered, unkeyed provision. These are harness adapters, not
-  product wires.
+  `$defs.ReplayProvisionPath` rows carry either the four QSL FR-001 source
+  labels under `identity`, or `{ "domain_package": true }` for a package
+  document selected by its declared package identity after intake, plus a
+  `bytes_path` to a sibling `bytes` file. The consumer reads raw file bytes
+  into the ordered, unkeyed provision. These are harness adapters, not product
+  wires.
   `expected.disposition` is either `value` or `refusal`. `value` carries the
   operation's typed JSON result; `refusal` carries the typed code and cause,
   and may carry operation-defined details. A vector class of `incomplete`

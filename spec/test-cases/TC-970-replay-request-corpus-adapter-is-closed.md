@@ -32,10 +32,11 @@ the `replay_target.members` accepts exactly one FR-323 target member, and the
 expected result retains the FR-323 `results` envelope with one FR-072 replay
 result.
 
-For `byte_provision`, construct a replay vector with one listed `bytes` file,
-a matching relative `bytes_path` and its four QSL FR-001 identity labels;
-verify that the adapter reads the file's raw bytes and preserves the row and
-labels at the same position in the ordered provision, without a digest key.
+For `byte_provision`, construct replay rows for both a source document (four
+QSL FR-001 identity labels) and a domain-package document (`identity` is
+`{"domain_package": true}`), each with a listed `bytes` file and matching
+relative `bytes_path`; verify that the adapter reads raw bytes and preserves
+each row and selector at the same ordered position, without a digest key.
 Then separately use an absent, unlisted, absolute and parent-traversing path
 and verify refusal before `ReplayRequestWire` construction.
 

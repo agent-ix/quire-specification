@@ -205,14 +205,17 @@ decimal strings and unsigned integers use canonical unsigned decimal strings.
 All object and enum forms are closed. `$defs.ReplayRequest` and its referenced
 structural definitions publish these rules in the JSON Schema.
 
-Each adapter `byte_provision` row is exactly `{identity, bytes_path}`. The
-`identity` member contains the four source labels defined by QSL FR-001:
-`authority`, `identity`, `revision_namespace` and `revision`. `bytes_path` is
-relative to the vector directory and SHALL resolve to exactly one `kind: bytes`
-path listed in the same vector. It SHALL be nonempty, relative and contain no
-parent traversal. The adapter reads raw bytes and supplies them with the row's
-labels at the row's ordered position. The path is not added to the typed
-product request, and the adapter neither derives nor records a digest key.
+Each adapter `byte_provision` row is exactly `{identity, bytes_path}`. For a
+source or definition document, `identity` contains the four source labels
+defined by QSL FR-001: `authority`, `identity`, `revision_namespace` and
+`revision`. For a domain-package document, it is exactly
+`{"domain_package": true}`; package selection uses the identity declared by
+the document after intake. `bytes_path` is relative to the vector directory
+and SHALL resolve to exactly one `kind: bytes` path listed in the same vector.
+It SHALL be nonempty, relative and contain no parent traversal. The adapter
+reads raw bytes and supplies them with the row's identity at the same ordered
+position. The path is not added to the typed product request, and the adapter
+neither derives nor records a digest key.
 
 ## Identity and validation
 
@@ -234,7 +237,7 @@ execution failure, not a corpus preflight refusal.
 | FR-336-AC-3 | A producer cannot qualify itself solely with an oracle sharing its implementation. | Analysis |
 | FR-336-AC-4 | The published schema admits the complete-v1 fixture and refuses a missing required member, an unknown member, and out-of-domain class, consumer-type or expected-disposition values. | Test |
 | FR-336-AC-5 | The published schema admits each `input.files[*].kind` in the closed vocabulary `source`, `model`, `input`, `call`, `object-context`, `population`, `replay-request` and `bytes`, and refuses another kind. | Test |
-| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `identity` and `bytes_path`, where `identity` has exactly the four QSL FR-001 labels; it refuses missing or malformed labels, `digest` or `digest_domain` members and any other extra member. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test (TC-970) |
+| FR-336-AC-6 | The published schema admits exactly the four tagged input-value forms and the closed call-file object with required `function`, positional `arguments` containing only tagged input values, and `accounting`; it refuses an unknown tag, unknown member, named `{parameter, value}` argument object, malformed decimal or identity, and a malformed accounting decimal. It also admits a replay-provision path row with exactly `identity` and `bytes_path`, where `identity` is either the four QSL FR-001 labels or the closed `{domain_package: true}` marker; it refuses missing or malformed labels, digest-key members and any other extra member. The consumer adapter refuses a canonical accounting decimal greater than `u64::MAX` before constructing the call. | Test (TC-970) |
 | FR-336-AC-7 | A `replay-request` file matches the closed `$defs.ReplayRequest`; all 15 top-level fields map to their `ReplayRequestWire` fields, each nested value follows its FR-323 or structural type mapping, integers use canonical decimal strings, unknown object members and tags are refused, and setting names outside FR-255 are refused by the consumer decoder. The Witness/Input source arms, FR-323 replay target members and one-result envelope retain their stated shapes. | Test (TC-970) |
 | FR-336-AC-8 | For a replay-request input, each `byte_provision[*].bytes_path` resolves relative to the vector directory to exactly a path listed as `kind: bytes` in that vector; an absent, unlisted, absolute or parent-traversing path is refused before request construction. The consumer reads the referenced file as raw bytes and supplies them with the row's four QSL FR-001 labels at the same ordered position, without a digest key. | Test (TC-970) |
 
