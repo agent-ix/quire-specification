@@ -1303,12 +1303,15 @@ constraints ("Reference conformance" below).
    second (the root ratio FR-142 "Dimension equivalence" reduces the `by`
    clause to; a declaration written in the other node order stores the
    reciprocal), so `R::Time ~ F::Time by 1 R::s = 1000 F::ms` and
-   `F::Time ~ R::Time by 1000 F::ms = 1 R::s` write one body. The producer
-   assigns the node's structural id `node_id`; a reader derives no path from the
-   body, and checks the id's structural shape, its uniqueness among the nodes and
-   that the `node_id.path` it reads equals the declared path (the published
+   `F::Time ~ R::Time by 1000 F::ms = 1 R::s` write one body. The node's
+   `node_id.path` is an assigned identity label the producer chooses; no rule derives it
+   from the body. The reader checks only the structural shape of the id, the
+   uniqueness of its {`package`, `path`, `ordinal`}, that `dimension_node_ids`
+   resolve to two distinct dimension nodes in ascending node-id order, and
+   path equality with a `declaration` only where a declaration exists, which it
+   does not here (the published
    fixture's path `["scalar_type", "dimension_equivalence", <first id>, <second id>]`
-   is a fixture convention, not a rule). It depends on exactly those two nodes, and its one occurrence has role
+   is an example convention only). It depends on exactly those two nodes, and its one occurrence has role
    `anchor` and the ordinal of the declaration among the equivalence
    declarations of its source in source order, with the declaration's region.
    A reader recomputes the equivalence classes from these nodes alone: the
@@ -3011,7 +3014,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-48 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 | FR-322-AC-49 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
 | FR-322-AC-50 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-322-AC-51 | Every owner-bearing node of every published V2 package carries `owner`, a `SourceOwner` on a declared structural node and a `ModelOwner` on a model declaration node or clause function; no other node carries one. The V2 schema refuses, and a reader refuses `malformed_wire`: a declared record without `owner`, a declared record with a `ModelOwner`, a model declaration node without `owner` or with a `SourceOwner`, an `owner` on the builtin `Integer` node and on an application node, a `DefinitionOwner`, a `SourceOwner` with an extra member and a `ModelOwner` with `version`. | Test |
+| FR-322-AC-51 | Every owner-bearing node of every published V2 package carries `owner`: a `SourceOwner` on a node with a `declaration` and on a `dimension_equivalence` node, and the `ModelOwner` that admitted it on a model declaration node, clause function or model-owned nominal unit or dimension; no other node carries one. The V2 schema refuses, and a reader refuses `malformed_wire`: a declared record without `owner`, a declared record with a `ModelOwner`, a model declaration node without `owner` or with a `SourceOwner`, an `owner` on the builtin `Integer` node and on an application node, a `DefinitionOwner`, a `SourceOwner` with an extra member and a `ModelOwner` with `version`. | Test |
 | FR-322-AC-52 | The owner join joins each node's `owner` to the lock before the derived-shape semantic checks: a `SourceOwner` whose (`authority`, `identity`) is no `lock.sources` entry's, and a `ModelOwner` whose `identity` is that of no `model_root` owner, refuse `missing_declaration`/`missing-selection` at that node's `node_id` (`/owner` for a `ModelOwner` on a tuple or variant model type, FR-322-AC-169), and are reported ahead of a derived-shape refusal at a node of lower node-id order. A declared node's `owner` and its source map agree: changing the `source` of the region of a declared node's `declaration` occurrence to another lock source refuses `invalid_package`/`invalid-value` at that occurrence's `source_map` entry. | Test |
 | FR-322-AC-53 | The two-owner fixtures `positive-two-owners-a.json` and `positive-two-owners-b.json` declare the same records `Point { x: Integer; }` and `List { next?: List; }`, with the qualified names QSL emits for them, `["Point"]` and `["List"]` (QSL FR-092 D1), in both, with identical bodies, under the `SourceOwner`s (`agent-ix`, `example-a`) and (`agent-ix`, `example-b`). Both are admitted. Both also declare `three` (qualified name `["three"]`), a declared `value` whose body root is the application `1 + 2` (no `owner`). Their `Point` and `List` nodes have different `node_id`s, since their `package` differs, and the two packages are structurally unequal. | Test |
 | FR-322-AC-54 | The derived-shape semantic checks leave every `correspondence`/`abstraction_relation` node untouched: `positive-clause-operations.json`'s `correspondence`/`abstraction_relation` node passes the stage and the full reader admits the package. | Test |

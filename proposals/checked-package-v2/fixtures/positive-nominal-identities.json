@@ -283,7 +283,7 @@
               "package": "example",
               "path": [
                 "Example",
-                "Length"
+                "Distance"
               ],
               "ordinal": 0
             },
@@ -291,7 +291,7 @@
               "package": "example",
               "path": [
                 "Example",
-                "Distance"
+                "Length"
               ],
               "ordinal": 0
             }
@@ -310,7 +310,7 @@
               "package": "example",
               "path": [
                 "Example",
-                "Length"
+                "Distance"
               ],
               "ordinal": 0
             },
@@ -318,7 +318,7 @@
               "package": "example",
               "path": [
                 "Example",
-                "Distance"
+                "Length"
               ],
               "ordinal": 0
             }
@@ -330,7 +330,7 @@
             "package": "example",
             "path": [
               "Example",
-              "Length"
+              "Distance"
             ],
             "ordinal": 0
           },
@@ -338,7 +338,7 @@
             "package": "example",
             "path": [
               "Example",
-              "Distance"
+              "Length"
             ],
             "ordinal": 0
           }
@@ -361,7 +361,7 @@
               "package": "example",
               "path": [
                 "Example",
-                "Length"
+                "Distance"
               ],
               "ordinal": 0
             },
@@ -369,7 +369,7 @@
               "package": "example",
               "path": [
                 "Example",
-                "Distance"
+                "Length"
               ],
               "ordinal": 0
             }
@@ -512,7 +512,7 @@
             "package": "example",
             "path": [
               "Example",
-              "Length"
+              "Distance"
             ],
             "ordinal": 0
           },
@@ -520,7 +520,7 @@
             "package": "example",
             "path": [
               "Example",
-              "Distance"
+              "Length"
             ],
             "ordinal": 0
           }

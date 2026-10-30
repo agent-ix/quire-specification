@@ -7083,7 +7083,7 @@ fn is_body_term(term: &Value) -> bool {
     match term["term"].as_str() {
         Some("application") => all_members(&term["arguments"]),
         Some("aggregate") => all_members(&term["members"]),
-        Some("frame" | "abstraction_relation") => true,
+        Some("frame" | "abstraction_relation" | "dimension_equivalence") => true,
         Some("extension_form") => term["clauses"].as_array().is_some_and(|clauses| {
             clauses
                 .iter()
