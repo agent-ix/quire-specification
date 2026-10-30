@@ -15934,6 +15934,235 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         .all(|node| !path_embeds_an_operand(&node["node_id"])));
 }
 
+/// Every model-owned name a package carries: a frame or member entry of kind
+/// `field` or `operation` (`declaration` an object-type node id, `name`) and a
+/// `ModelOwner` (`identity`, `node`).
+fn model_references(value: &Value, found: &mut Vec<(String, String, Option<String>, String)>) {
+    match value {
+        Value::Object(map) => {
+            let kind = map.get("kind").and_then(Value::as_str);
+            if let (Some(kind @ ("field" | "operation")), Some(name), Some(declaration)) =
+                (kind, map.get("name").and_then(Value::as_str), map.get("declaration"))
+            {
+                let owner = declaration["path"].as_array().and_then(|path| path.last());
+                if let (Some(owner), Some(package)) = (owner.and_then(Value::as_str), declaration["package"].as_str()) {
+                    if owner.starts_with("ix://") {
+                        found.push((kind.to_owned(), owner.to_owned(), Some(name.to_owned()), package.to_owned()));
+                    }
+                }
+            }
+            if kind == Some("model") {
+                if let (Some(node), Some(identity)) =
+                    (map.get("node").and_then(Value::as_str), map.get("identity").and_then(Value::as_str))
+                {
+                    found.push(("owner".to_owned(), node.to_owned(), None, identity.to_owned()));
+                }
+            }
+            for inner in map.values() {
+                model_references(inner, found);
+            }
+        }
+        Value::Array(items) => items.iter().for_each(|inner| model_references(inner, found)),
+        _ => {}
+    }
+}
+
+/// Whether a selected domain document declares the named model-owned entity:
+/// a type (with the named field or operation), a relationship, or a
+/// `Type/member` owner node.
+fn document_declares(document: &Value, kind: &str, node: &str, name: Option<&str>) -> bool {
+    let types = document["types"].as_array().expect("document types");
+    let member_of = |ty: &str, member: &str, operation: bool| {
+        types.iter().filter(|t| t["identity"] == ty).any(|t| {
+            let list = if operation { &t["operations"] } else { &t["fields"] };
+            list.as_array().map_or(false, |members| members.iter().any(|m| m["name"] == member))
+        })
+    };
+    match (kind, name) {
+        ("owner", _) => {
+            types.iter().any(|t| {
+                t["identity"] == node
+                    || t["relationships"]
+                        .as_array()
+                        .map_or(false, |rels| rels.iter().any(|r| r["identity"] == node))
+            }) || node.rsplit_once('/').map_or(false, |(ty, member)| {
+                member_of(ty, member, false) || member_of(ty, member, true)
+            })
+        }
+        ("field", Some(name)) => member_of(node, name, false),
+        ("operation", Some(name)) => member_of(node, name, true),
+        _ => false,
+    }
+}
+
+/// FR-322-AC-266, FR-322-AC-55 and FR-322-AC-30: every field, operation and
+/// owner a positive fixture names in a model-owned position resolves in the
+/// domain document that fixture selects. Documents of one identity
+/// (`acme/orders`) differ, so each fixture is checked against its own selected
+/// document, not against any document of that identity.
+#[trace("TC-233", "FR-322-AC-55", "FR-322-AC-266")]
+#[test]
+fn tc_233_every_positive_fixture_resolves_its_model_references_in_its_selected_document() {
+    let orders = parsed_fixture(DOMAIN_DOCUMENT);
+    let clauses = parsed_fixture(SELECTED_TIMED_CLAUSE_DOCUMENT);
+    let slots = parsed_fixture(SELECTED_TIMED_SLOT_DOCUMENT);
+    let shapes = parsed_fixture(SHAPES_DOCUMENT);
+    let tuple_union =
+        include_str!("../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json");
+    let cases: [(&str, &str, &Value); 10] = [
+        ("positive-all-families", POSITIVE_ALL_FAMILIES, &orders),
+        ("positive-clause-operations", POSITIVE_CLAUSE_OPERATIONS, &orders),
+        ("positive-dependency-library", POSITIVE_DEPENDENCY_LIBRARY, &orders),
+        ("positive-operation-identities", POSITIVE_OPERATION_IDENTITIES, &orders),
+        ("positive-state-transition", POSITIVE_STATE_TRANSITION, &orders),
+        ("positive-model-tuple-union", tuple_union, &shapes),
+        ("positive-tick-timed-model-nodes", POSITIVE_TICK_TIMED_MODEL_NODES, &slots),
+        ("positive-timed-model-nodes", POSITIVE_TIMED_MODEL_NODES, &slots),
+        ("positive-timed-slot-nodes", POSITIVE_TIMED_SLOT_NODES, &slots),
+        ("positive-timed-clause-nodes", POSITIVE_TIMED_CLAUSE_NODES, &clauses),
+    ];
+    let mut failures = Vec::new();
+    for (fixture, text, document) in cases {
+        let package = parsed_fixture(text);
+        let mut found = Vec::new();
+        model_references(&package, &mut found);
+        let identity = document["package"]["identity"].as_str().expect("document identity");
+        let mut resolved = 0;
+        for (kind, node, name, package_identity) in &found {
+            if package_identity != identity {
+                continue;
+            }
+            if document_declares(document, kind, node, name.as_deref()) {
+                resolved += 1;
+            } else {
+                failures.push(format!("{fixture}: {kind} {node} {name:?} is not declared by its selected document"));
+            }
+        }
+        if resolved == 0 {
+            failures.push(format!("{fixture}: no model reference resolved against its selected document"));
+        }
+    }
+    assert!(failures.is_empty(), "{failures:#?}");
+}
+
+/// What a patched package breaks of FR-322's dependencies rule, against the
+/// published package it patches: a node's `dependencies` is the unique,
+/// node-id-ascending list of exactly the nodes its rules name. A body
+/// `reference` target absent from the list, a repeated or out-of-order entry,
+/// and a listed node no `reference` names (other than the ones the base node,
+/// or a base node of the same form, lists for another rule) each break it.
+fn dependency_defects(label: &str, base: &Value, package: &Value) -> Vec<String> {
+    let nodes_of = |package: &Value| package["semantic_graph"]["nodes"].as_array().expect("nodes").clone();
+    let base_nodes = nodes_of(base);
+    let listed_beyond_references = |node: &Value| -> Vec<Value> {
+        let targets = body_reference_targets(&node["body"]);
+        let mut extra: Vec<Value> = node["dependencies"]
+            .as_array()
+            .map_or_else(Vec::new, Clone::clone)
+            .into_iter()
+            .filter(|dependency| !targets.contains(dependency))
+            .collect();
+        extra.sort_by(node_id_order);
+        extra
+    };
+    let mut defects = Vec::new();
+    for (position, node) in nodes_of(package).iter().enumerate() {
+        let listed: Vec<Value> = node["dependencies"].as_array().map_or_else(Vec::new, Clone::clone);
+        let targets = body_reference_targets(&node["body"]);
+        let at = format!("{label} node {position}");
+        for target in &targets {
+            if !listed.contains(target) {
+                defects.push(format!("{at}: a body reference is not listed in dependencies"));
+            }
+        }
+        if listed.windows(2).any(|pair| node_id_order(&pair[0], &pair[1]) != std::cmp::Ordering::Less) {
+            defects.push(format!("{at}: dependencies are not unique and node-id ascending"));
+        }
+        let allowed = match base_nodes.iter().find(|candidate| candidate["node_id"] == node["node_id"]) {
+            Some(published) => listed_beyond_references(published),
+            None => base_nodes
+                .iter()
+                .find(|candidate| {
+                    candidate["semantic_form"] == node["semantic_form"]
+                        && !listed_beyond_references(candidate).is_empty()
+                })
+                .map_or_else(Vec::new, |_| listed_beyond_references(node)),
+        };
+        if listed_beyond_references(node) != allowed {
+            defects.push(format!("{at}: dependencies list a node the body does not reference"));
+        }
+    }
+    defects
+}
+
+/// FR-322-AC-266 and FR-322-AC-262: every published vector patch applied to
+/// its base keeps each node's `dependencies` equal to what the dependencies
+/// rule names (a patch that edits a body `reference` edits `dependencies`
+/// with it, so the reader reaches the recorded refusal and not a dependency
+/// refusal first), and a patched package its vector records as admitted
+/// still resolves every model-owned name in the document its base selects.
+#[trace("TC-233", "FR-322-AC-262", "FR-322-AC-266")]
+#[test]
+fn tc_233_every_vector_patch_keeps_dependencies_equal_to_its_body_references() {
+    let clause_vectors = parsed_fixture(TIMED_CLAUSE_NODE_VECTORS);
+    let slot_vectors = parsed_fixture(TIMED_SLOT_SELECTOR_VECTORS);
+    let root_vectors = parsed_fixture(MODEL_ROOT_VECTORS);
+    let clause_base = parsed_fixture(POSITIVE_TIMED_CLAUSE_NODES);
+    let slot_base = parsed_fixture(POSITIVE_TIMED_SLOT_NODES);
+    let root_base = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let clause_document = parsed_fixture(SELECTED_TIMED_CLAUSE_DOCUMENT);
+    let slot_document = parsed_fixture(SELECTED_TIMED_SLOT_DOCUMENT);
+    let orders_document = parsed_fixture(DOMAIN_DOCUMENT);
+    let slot_cases = slot_vectors["aggregate_order"]["cases"]
+        .as_array()
+        .expect("aggregate order cases")
+        .iter()
+        .chain(slot_vectors["guards"].as_array().expect("guards"));
+    let groups: [(&str, &Value, Vec<&Value>, &str, &Value); 3] = [
+        (
+            "clause",
+            &clause_base,
+            clause_vectors["cases"].as_array().expect("cases").iter().collect(),
+            "expected",
+            &clause_document,
+        ),
+        ("slot", &slot_base, slot_cases.collect(), "expected", &slot_document),
+        (
+            "root",
+            &root_base,
+            root_vectors["vectors"].as_array().expect("vectors").iter().collect(),
+            "outcome",
+            &orders_document,
+        ),
+    ];
+    let mut failures = Vec::new();
+    let mut patched = 0;
+    for (group, base, cases, outcome_key, document) in groups {
+        for case in cases {
+            let Some(patch) = case.get("patch").and_then(Value::as_array) else { continue };
+            let id = case["id"].as_str().expect("case id");
+            let mut package = base.clone();
+            for operation in patch {
+                apply_json_patch(&mut package, operation);
+            }
+            patched += 1;
+            failures.extend(dependency_defects(&format!("{group} {id}"), base, &package));
+            if case[outcome_key].as_str() == Some("admitted") {
+                let mut found = Vec::new();
+                model_references(&package, &mut found);
+                let identity = document["package"]["identity"].as_str().expect("document identity");
+                for (kind, node, name, package_identity) in &found {
+                    if package_identity == identity && !document_declares(document, kind, node, name.as_deref()) {
+                        failures.push(format!("{group} {id}: {kind} {node} {name:?} is not declared by its document"));
+                    }
+                }
+            }
+        }
+    }
+    assert!(patched >= 70, "every published patch is replayed, {patched} found");
+    assert!(failures.is_empty(), "{failures:#?}");
+}
+
 const NODE_ORDINAL_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/node-ordinal-vectors.json");
 
