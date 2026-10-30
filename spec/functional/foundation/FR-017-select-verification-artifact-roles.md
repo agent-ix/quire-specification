@@ -23,8 +23,9 @@ consumer's expected role. The amendment is defined in the
 
 ## Outputs
 
-A checked reference or a distinct invalid-wire, unsupported-version
-or identity-mismatch refusal. Exhaustion yields
+A checked reference, a distinct invalid-wire or unsupported-version refusal,
+or a refusal of the match for the requested role. `identity-mismatch` is not
+used here: it is reserved for a missing or conflicting target context (FR-283). Exhaustion yields
 incomplete with no accepted reference, as specified by
 [NFR-002](../../non-functional/NFR-002-classify-resource-incompleteness.md).
 
@@ -43,7 +44,7 @@ and closed vocabulary. This amendment adds no migration inference.
 | ID | Criteria | Verification |
 | --- | --- | --- |
 | FR-017-AC-1 | Each of the six new kinds is structurally representable under the selected versions and matches the same requested role. | Test (TC-001) |
-| FR-017-AC-2 | Substituting a nearby generic kind or any other added kind for the requested role refuses with identity-mismatch, even when bytes and every other reference field agree. | Test (TC-002) |
+| FR-017-AC-2 | Substituting a nearby generic kind or any other added kind for the requested role refuses the match for that role, even when bytes and every other reference field agree. | Test (TC-002) |
 | FR-017-AC-3 | Unknown kinds, extra members and omitted required fields refuse; changing only the envelope or artifact version never selects a fallback decoder. | Test (TC-002) |
 | FR-017-AC-4 | Exact property, subject, binding, dependency-closure and run references fail matching after one-axis authority, identity or wire changes. | Test (TC-002) |
 | FR-017-AC-5 | The closed state-core shared-reference 1-draft schema refuses each new role. | Test (TC-002) |

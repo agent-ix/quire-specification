@@ -5,7 +5,7 @@
     "replaceKindWith": ["trace","fault-model","review-procedure","oracle","observation","review-disposition","generated-artifact"],
     "excludeSameKind": true,
     "expectedStructure": "valid",
-    "expectedRoleMatch": "identity-mismatch"
+    "expectedRoleMatch": "refused"
   },
   "structuralMutations": [
     {"base":"semantic.json","pointer":"/wireVersion","replacement":"ix.shared-reference/unknown","expected":"unsupported-version"},
@@ -20,7 +20,7 @@
     "roles": ["property","source","binding","dependency-closure","run-artifact"],
     "subjectRole": "source",
     "pointers": ["/authority","/identity","/wire/identity","/wire/version"],
-    "expected": "identity-mismatch",
+    "expected": "refused",
     "note": "Use a distinct valid replacement value on one axis; source is this byte-only subject fixture's explicit role, not a normative role for every semantic subject."
   }
 }
