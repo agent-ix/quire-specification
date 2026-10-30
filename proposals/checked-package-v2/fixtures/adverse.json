@@ -1801,7 +1801,9 @@
         }
       ],
       "outcome": "refused:malformed_wire",
-      "note": "a source enum body is the closed enum body, not an empty aggregate"
+      "note": "a source enum body is the closed enum body, not an empty aggregate",
+      "locus": "/term",
+      "body_def": "EnumBody"
     },
     {
       "id": "NB-02",
@@ -1818,7 +1820,9 @@
         }
       ],
       "outcome": "refused:malformed_wire",
-      "note": "an enum body names at least one member"
+      "note": "an enum body names at least one member",
+      "locus": "/members",
+      "body_def": "EnumBody"
     },
     {
       "id": "NB-03",
@@ -1834,7 +1838,9 @@
         }
       ],
       "outcome": "refused:malformed_wire",
-      "note": "a unit body requires scale"
+      "note": "a unit body requires scale",
+      "locus": "",
+      "body_def": "UnitBody"
     },
     {
       "id": "NB-04",
@@ -1851,7 +1857,9 @@
         }
       ],
       "outcome": "refused:malformed_wire",
-      "note": "a unit body is closed"
+      "note": "a unit body is closed",
+      "locus": "",
+      "body_def": "UnitBody"
     },
     {
       "id": "NB-05",
@@ -1880,7 +1888,27 @@
         }
       ],
       "outcome": "refused:malformed_wire",
-      "note": "a dimension term exponent is an integer string"
+      "note": "a dimension term exponent is an integer string",
+      "locus": "/terms/0/exponent",
+      "body_def": "DimensionBody"
+    },
+    {
+      "id": "NB-06",
+      "base": "positive-nominal-identities",
+      "node": {
+        "node_tag": "scalar_type",
+        "semantic_form": "enum"
+      },
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/body/ordered",
+          "value": true
+        }
+      ],
+      "outcome": "admitted",
+      "note": "an enum with ordered true is admitted and is an ordered_enum",
+      "body_def": "EnumBody"
     }
   ]
 }

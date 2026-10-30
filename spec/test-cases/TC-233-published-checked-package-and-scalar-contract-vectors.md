@@ -19,6 +19,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-78
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-269
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-79
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-75
@@ -252,7 +254,7 @@ declared record without `owner` and with a `ModelOwner`, a model
 declaration node without `owner` and with a `SourceOwner`, an `owner` on the
 `Integer`, nominal enum and application nodes, a `DefinitionOwner`, a
 `SourceOwner` with an extra member and a `ModelOwner` with `version`) and
-read each with the full reader (FR-322-AC-51). Read the owner-change
+read each with the full reader (FR-322-AC-51). Apply each `nominal_body_mutations` case `NB-01`..`NB-06` of `adverse.json` to the nominal-identities fixture (FR-322-AC-269): `NB-01`..`NB-05` fail the V2 schema at the recorded locus in the node's body (`malformed_wire`), and `NB-06`, an enum with `ordered` true, is admitted. Read the owner-change
 mutation, whose new source is added to `lock.sources` and receives the
 node's `declaration` occurrence regions, the unjoined
 `SourceOwner` and `ModelOwner` mutations, the unjoined-owner mutation, and the
