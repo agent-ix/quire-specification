@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "TC-233 NO-01..NO-04: a node_id ordinal is a JSON integer in 0..=9007199254740991 written canonically. Each ordinals entry is the raw JSON text of the ordinal member; the refusal is malformed_wire at the locus, with {i} the node's position.",
+  "note": "TC-233 NO-01..NO-04: a node_id ordinal is a JSON integer in 0..=9007199254740991 written canonically. Each ordinals entry is the raw JSON text of the ordinal member; the refusal is malformed_wire at the locus, with {i} the node's position. uniqueness_cases NO-05..NO-08 (FR-322-AC-272, FR-322-AC-273): each case adds sibling nodes, clones of the all-families fixture's derived Integer node, at the listed ordinals (placement \"before\" inserts them ahead of the original in graph order, \"after\" appends them). The original keeps ordinal 0. A refusal is invalid_semantic_graph at /semantic_graph/nodes/{i}/node_id of the sibling at index \"at\" among the added ones.",
   "cases": [
     {
       "id": "NO-01",
@@ -35,6 +35,62 @@
       ],
       "expected": "malformed_wire",
       "locus": "/semantic_graph/nodes/{i}/node_id/ordinal"
+    }
+  ],
+  "uniqueness_cases": [
+    {
+      "id": "NO-05",
+      "subject": "one sibling at ordinal 7: neither 0 nor contiguous with the original's 0",
+      "placement": "after",
+      "siblings": [
+        {
+          "ordinal": 7
+        }
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "NO-06",
+      "subject": "two siblings at ordinals 3 then 2, placed before the original: in neither ordinal order nor graph order",
+      "placement": "before",
+      "siblings": [
+        {
+          "ordinal": 3
+        },
+        {
+          "ordinal": 2
+        }
+      ],
+      "expected": "admitted"
+    },
+    {
+      "id": "NO-07",
+      "subject": "a sibling at ordinal 0, the original's own ordinal",
+      "placement": "after",
+      "siblings": [
+        {
+          "ordinal": 0
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 0,
+      "locus": "/semantic_graph/nodes/{i}/node_id"
+    },
+    {
+      "id": "NO-08",
+      "subject": "two siblings both at ordinal 4",
+      "placement": "after",
+      "siblings": [
+        {
+          "ordinal": 4
+        },
+        {
+          "ordinal": 4
+        }
+      ],
+      "expected": "invalid_semantic_graph",
+      "at": 1,
+      "locus": "/semantic_graph/nodes/{i}/node_id"
     }
   ]
 }
