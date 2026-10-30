@@ -138,8 +138,8 @@ A named, source-declared `scalar_type`, `composite_type`, `bounded_domain`,
 carries `declaration: {qualified_name}` exactly when it has a `declaration`
 source occurrence; builtin and anonymous nodes, expressions and every other node
 do not, and no name is invented. `qualified_name` is the package-local
-declaration path. It is part of the node identity. It equals a nominal node's
-`qualified_declaration`, and no two nodes share it. A qualified reference
+declaration path. It is part of the node identity. On a source `enum`, `unit` or `dimension` node it equals the
+node's `node_id.path`, and no two nodes share it. A qualified reference
 `a::Name` resolves `a` to exactly one locked package and then matches `Name`
 byte for byte against that package's declaration paths. Library exports
 ([FR-307](../../functional/tooling/FR-307-package-reusable-semantic-libraries.md))
