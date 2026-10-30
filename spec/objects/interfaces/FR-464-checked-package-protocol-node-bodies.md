@@ -98,10 +98,13 @@ FR-466, with the first refusal in the order below.
   written form). The id of a node outside every
   recursion group is a function of its declaration path and, for a derived
   node, of the ids of the nodes it references, and of nothing in the source
-  text but those. A recursion-group member, derived members included, carries
-  the group's shared path (FR-322; a declaration path where a member's
-  declaration or owner names one), never an operand-derived one, and is
-  told apart from the other members by its producer-assigned `node_id.ordinal`.
+  text but those. A recursion-group member keeps its declaration path
+  when it has a declaration, so a cyclic component of several declared nodes
+  (a protocol, its predicate-join function, a holder) carries each node's own
+  declaration path; an anonymous derived member carries the path of the group's
+  declared member where there is exactly one (FR-322). No member's path is
+  operand-derived, and nodes sharing a path are told apart by the producer-assigned
+  `node_id.ordinal`.
   Reformatting the source, adding a comment or a second reference to a
   protocol changes no node id. Changing any name, member, reference or
   literal, or the order of an ordered list, yields a different (structurally

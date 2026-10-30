@@ -434,8 +434,55 @@
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "id": "K14",
-      "Edit to the base": "a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic",
-      "Expected": "the complete cyclic reference component shares one `recursion_group`, its in-component references are ordinary `reference`s to member `node_id`s (spelled `group_reference` in the written form); the reader admits the package. `Plain` and every node outside that component carry no `recursion_group` from a producer (a label there is admitted and means nothing)"
+      "Edit to the base": "a protocol `Flow` has a `parallel` predicate join whose function `joinPred` body references `protocol Flow`, and a holder `Holder` is referenced by `Flow` and references `joinPred`, so the three declared nodes form one cycle; a second protocol `Plain` is acyclic",
+      "Expected": "the complete cyclic reference component shares one `recursion_group`; each of its three declared members keeps its own declaration path, and the members are told apart by `node_id.ordinal` among nodes sharing a path (FR-322); its in-component references are ordinary `reference`s to member `node_id`s (spelled `group_reference` in the written form); the reader admits the package. `Plain` and every node outside that component carry no `recursion_group` from a producer (a label there is admitted and means nothing)",
+      "Node set": [
+        {
+          "name": "Flow",
+          "declaration": [
+            "Flow"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Flow"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        },
+        {
+          "name": "joinPred",
+          "declaration": [
+            "joinPred"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "joinPred"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        },
+        {
+          "name": "Holder",
+          "declaration": [
+            "Holder"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Holder"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        }
+      ]
     },
     {
       "test_case": "TC-946",
@@ -1709,7 +1756,7 @@
       "section": "Finish and terminal vectors",
       "id": "TM9",
       "Edit": "`terminal` removed from the clause",
-      "Expected": "admitted; the clause node key changes"
+      "Expected": "admitted; the clause body changes (its terminal disposition), not its declared node id"
     },
     {
       "test_case": "TC-947",

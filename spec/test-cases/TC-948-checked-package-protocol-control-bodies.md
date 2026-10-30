@@ -242,7 +242,7 @@ FR-466-AC-18.
 ## Expected Results
 
 1. L1 to L9 are admitted with the keys stated; L10 to L18 refuse `malformed_wire`; L19 refuses `operation-member-mismatch` (FR-466-AC-1).
-2. S1 changes the keys stated and refuses `definition-cycle`; S2, S3 and S3a
+2. S1 changes the body stated, not the declared node id, and refuses `definition-cycle`; S2, S3 and S3a
    refuse as listed (FR-466-AC-2).
 3. CE1 to CE11 behave as listed; CE6, CE7 and CE11 are admitted
    (FR-466-AC-3).

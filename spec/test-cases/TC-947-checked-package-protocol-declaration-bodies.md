@@ -131,7 +131,7 @@ FR-465-AC-9.
 | TM12 | the condition reads the activation binder `opened` | `missing_declaration`/`missing-name` at the node, stage `terminal` |
 | TM11 | the condition reads `view` (`over`, the model observation) | admitted |
 | TM8 | the clause's `terminal` names the `finish` node | `invalid_model_binding`/`malformed-declaration` at the target |
-| TM9 | `terminal` removed from the clause | admitted; the clause body changes, not its node id |
+| TM9 | `terminal` removed from the clause | admitted; the clause body changes (its terminal disposition), not its declared node id |
 
 ## Runtime-subject vectors
 
@@ -157,7 +157,7 @@ FR-465-AC-9.
    FR-465-AC-5, FR-465-AC-7, FR-465-AC-8).
 4. QU7 refuses `invalid_package`/`invalid-value`; RL11, RL12, RL15, RL16, CH5, CH6, CH7a to CH7c, CH7e, FN2, FN4, TM6, TM7, TM10, TM12 and FN7 refuse as
    listed (FR-465-AC-2, FR-465-AC-3, FR-465-AC-6, FR-465-AC-7).
-5. CH17 changes the keys stated; TM5 refuses `ambiguous-name` (FR-465-AC-4,
+5. CH17 changes the bodies stated and no declared node id; TM5 refuses `ambiguous-name` (FR-465-AC-4,
    FR-465-AC-7).
 6. RT3 holds (FR-465-AC-8).
 7. RL20 and RL21 are admitted with distinct keys, each distinct from RL1's;

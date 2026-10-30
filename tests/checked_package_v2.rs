@@ -2265,6 +2265,49 @@ fn state_transition_operators() -> Vec<String> {
     vec!["transition".to_owned()]
 }
 
+/// FR-322-AC-274 and FR-464-AC-15 (TC-946 `K14`): a cyclic component of three
+/// declared nodes shares one `recursion_group`, and each member keeps its own
+/// declaration path as its node id path, so no two of them need share a path;
+/// nodes that do share a package and path differ by ordinal.
+#[trace("TC-946", "FR-464-AC-15", "FR-322-AC-274")]
+#[test]
+fn tc_946_k14_a_cycle_of_declared_nodes_keeps_each_declaration_path() {
+    fn find<'a>(value: &'a Value, id: &str) -> Option<&'a Value> {
+        match value {
+            Value::Object(map) => {
+                if map.get("id").and_then(Value::as_str) == Some(id) {
+                    return Some(value);
+                }
+                map.values().find_map(|inner| find(inner, id))
+            }
+            Value::Array(items) => items.iter().find_map(|inner| find(inner, id)),
+            _ => None,
+        }
+    }
+    let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
+    let k14 = find(&vectors, "K14").expect("K14 vector");
+    let nodes = k14["Node set"].as_array().expect("K14 node set");
+    assert!(nodes.len() >= 3, "at least three declared members");
+    let group = nodes[0]["recursion_group"].clone();
+    let mut ids = std::collections::BTreeSet::new();
+    for node in nodes {
+        assert_eq!(node["recursion_group"], group, "one shared recursion_group");
+        assert_eq!(
+            node["node_id"]["path"], node["declaration"],
+            "{}: a declared member keeps its declaration path",
+            node["name"]
+        );
+        assert!(
+            ids.insert(node["node_id"].to_string()),
+            "{}: nodes sharing package and path differ by ordinal",
+            node["name"]
+        );
+    }
+    let paths: std::collections::BTreeSet<String> =
+        nodes.iter().map(|node| node["node_id"]["path"].to_string()).collect();
+    assert_eq!(paths.len(), nodes.len(), "the members' paths are distinct");
+}
+
 /// FR-464-AC-1: every protocol operator of the vectors has exactly one argument
 /// rule in the schema, laying out its arguments in the vector's order.
 #[trace("TC-946", "FR-464-AC-1")]
@@ -15776,15 +15819,13 @@ fn path_embeds_an_operand(node_id: &Value) -> bool {
         .any(Value::is_object)
 }
 
-/// FR-322 recursion groups: every member of a recursion group, the declared
-/// record and the anonymous derived members alike, is identified by
-/// `{package, path, ordinal}` with `path` the group's shared path (a declaration path where a member
-/// names one, as in these fixtures); its
-/// id is never derived by embedding an operand node id. Members of one group
-/// share that path and are told apart by `node_id.ordinal`, which is
-/// producer-assigned and unique among nodes sharing `package` and `path`; the
-/// group membership is the shared `recursion_group` label alone, and no node
-/// carries a group-position member.
+/// FR-322 recursion groups: a declared member keeps its declaration path and
+/// an anonymous derived member carries the path of the group's one declared
+/// member (each group of these fixtures has exactly one); no member's id is
+/// derived by embedding an operand node id. Nodes sharing `package` and `path`
+/// are told apart by `node_id.ordinal`, which is producer-assigned and unique
+/// among them; group membership is the shared `recursion_group` label alone,
+/// and no node carries a group-position member.
 #[trace("TC-233", "FR-322-AC-53", "FR-322-AC-274")]
 #[test]
 fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
@@ -15809,9 +15850,10 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         );
         assert!(!path_embeds_an_operand(id), "member {position}: no operand is embedded");
     }
-    // Every member of a group, derived ones included, carries the group's
-    // declaration path, and no two nodes of one package and path share an
-    // ordinal.
+    // Each fixture's group has exactly one declared member, so its anonymous
+    // derived members carry that member's path (FR-322: a declared member
+    // keeps its own declaration path); no two nodes of one package and path
+    // share an ordinal.
     let declared_path = |label: &Value| {
         nodes
             .iter()
@@ -15825,7 +15867,7 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
         assert_eq!(
             node["node_id"]["path"],
             declared_path(label),
-            "node {position}: a group member carries the group's declaration path"
+            "node {position}: an anonymous member carries the group's one declared member's path"
         );
         assert!(
             seen.insert(node["node_id"].to_string()),
@@ -15856,7 +15898,7 @@ fn tc_233_a_recursion_group_member_is_identified_by_its_declared_name_path() {
                 .find(|n| n["semantic_form"] == "record" && n["recursion_group"] == *label)
                 .map(|n| n["declaration"]["qualified_name"].clone());
             if Some(node["node_id"]["path"].clone()) != declared {
-                failures.push(format!("{fixture} node {position}: path is not the declaration path"));
+                failures.push(format!("{fixture} node {position}: path is not the one declared member's path"));
             }
             if path_embeds_an_operand(&node["node_id"]) {
                 failures.push(format!("{fixture} node {position}: path embeds an operand"));

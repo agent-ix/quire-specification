@@ -215,7 +215,7 @@ A node id is the structural `{package, path, ordinal}` compared componentwise,
 never hashed (FR-322). `package` is the `name` of the package the node belongs
 to, `path` is the node's declaration path or, for a derived or anonymous node outside
 every recursion group, `[node_tag, semantic_form, ...operands]` (every member of a
-recursion group, derived ones included, carries the group's shared path, a declaration path where a member's declaration or owner names one), and `ordinal` is a producer-assigned
+recursion group, derived ones included, keeps its declaration path when it has a declaration; an anonymous derived member carries the declared member's path where the group has exactly one), and `ordinal` is a producer-assigned
 non-negative integer that tells apart nodes sharing a `package` and `path`; the
 reader requires only that no two such nodes share an ordinal, not `0`, not
 contiguity and not graph order. Two nodes with equal `package`, `path` and

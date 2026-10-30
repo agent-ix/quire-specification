@@ -94,7 +94,8 @@ process provider alike.
     producer's classification of the source rate spellings, carried because
     the nodes cannot re-derive it: `t' = 1` and `t' = rational(2, 2)` lower
     to the same literal node, a clock and hybrid dynamics respectively. It
-    enters the node id like every other member;
+    is part of the body, compared structurally, and does not enter the declared
+    node's id;
   - `modes` — an aggregate of one `reference` per mode, in declared order,
     to its `hybrid`/`hybrid_mode` node;
   - `initial` — an aggregate of one entry per initial entry (FR-193 "Initial
