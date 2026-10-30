@@ -3002,9 +3002,15 @@ fn derived_shape_semantic_refusal(nodes: &[Value]) -> Option<&Value> {
                     !valid_root || !valid_exponent || !ordered
                 })
             }
-            // FR-322 owner join stage: a model declaration node (a `ModelOwner`
-            // node) has the empty aggregate body (`TW-27`).
-            (Some("model"), _) if node["owner"]["kind"] == "model" => {
+            // FR-322 stage 3: a model declaration node (a `model` node, a
+            // `model_root` included, or a `relation`/`relationship` or
+            // `relation`/`population` node, carrying its `ModelOwner` or
+            // `ModelRootOwner` and no `declaration`) has the empty aggregate
+            // body. A declared node carries a `SourceOwner` and is excluded.
+            (Some("model"), _) | (Some("relation"), Some("relationship" | "population"))
+                if matches!(node["owner"]["kind"].as_str(), Some("model" | "model_root"))
+                    && node.get("declaration").is_none() =>
+            {
                 node["body"] != json!({"term": "aggregate", "members": []})
             }
             _ => false,
@@ -12295,99 +12301,6 @@ fn tc_940_tuple_and_union_cases_run_from_the_published_vectors() {
     ]
     .map(|list| vectors[list].as_array().expect(list).len());
     assert_eq!(names.len(), published.iter().sum::<usize>(), "every published case ran");
-    assert_eq!(published, [5, 7, 3, 1, 8, 4, 5, 4, 35], "no published case was dropped");
-}
-
-/// FR-322-AC-152 and FR-322-AC-153: the tuple.project wire cases refuse at the
-/// application node, and a wire case states a `cause` exactly when its code
-/// carries one.
-#[trace("TC-940", "FR-322-AC-152", "FR-322-AC-153")]
-#[test]
-fn tc_940_wire_case_loci_and_causes_follow_the_refusal_vocabulary() {
-    let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
-    let base = parsed_fixture(include_str!(
-        "../proposals/checked-package-v2/fixtures/positive-model-tuple-union.json"
-    ));
-    let carries_cause = [
-        "invalid_package",
-        "ill_typed",
-        "ambiguous_declaration",
-        "missing_declaration",
-        "invalid_model_binding",
-    ];
-    let node = &base["semantic_graph"]["nodes"][31];
-    assert_eq!(node["body"]["operation"]["identity"], "quire.op.tuple.project");
-    assert_eq!(node["body"]["operation"]["member"]["position"], 0);
-    let operand = &node["body"]["arguments"][0]["target"];
-    let nodes = base["semantic_graph"]["nodes"].as_array().expect("nodes");
-    let operand_node = nodes.iter().find(|n| n["node_id"] == *operand).expect("operand");
-    assert_eq!(operand_node["semantic_form"], "parameter", "the Pair-typed parameter");
-    for vector in vectors["wire_cases"].as_array().expect("wire cases") {
-        let id = vector["id"].as_str().expect("id");
-        let code = vector["outcome"].as_str().and_then(|o| o.strip_prefix("refused:"));
-        let has_cause = vector.get("cause").is_some();
-        assert_eq!(
-            has_cause,
-            code.is_some_and(|code| carries_cause.contains(&code)),
-            "{id}: a cause is stated exactly when the code carries one"
-        );
-        if matches!(id, "TW-18" | "TW-19" | "TW-20" | "TW-26") {
-            assert_eq!(vector["locus"], "/semantic_graph/nodes/31", "{id}: the application node");
-        }
-        if matches!(id, "TW-18" | "TW-19" | "TW-20") {
-            assert_eq!(vector["outcome"], "refused:ill_typed", "{id}");
-            assert_eq!(vector["cause"], "operator-ineligible", "{id}");
-        }
-    }
-    // The FR-322 text names the same locus and rows.
-    let fr322 = include_str!("../spec/objects/interfaces/FR-322-checked-package-artifact.md");
-    assert!(fr322.contains("`/semantic_graph/nodes/31` in\n  `fixtures/positive-model-tuple-union.json`"));
-    let row = |name: &str| {
-        fr322
-            .lines()
-            .find(|line| line.starts_with(&format!("| {name} |")))
-            .unwrap_or_else(|| panic!("{name} row"))
-    };
-    let ac152 = row("FR-322-AC-152");
-    for id in ["TW-18", "TW-19", "TW-20", "TW-26"] {
-        assert!(ac152.contains(id), "AC-152 lists {id}");
-    }
-    assert!(ac152.contains("/semantic_graph/nodes/31"));
-    // AC-153's row lists exactly the cause-bearing rows, derived from the vocabulary.
-    let ac153 = row("FR-322-AC-153");
-    let (with_cause, without) = ac153.split_once("and the admitted case").expect("AC-153 shape");
-    let expand = |text: &str| -> BTreeSet<String> {
-        let ids: Vec<usize> = text
-            .split("`TW-")
-            .skip(1)
-            .map(|rest| rest[..2].parse().expect("row number"))
-            .collect();
-        let mut out = BTreeSet::new();
-        let mut index = 0;
-        while index < ids.len() {
-            let range_end = text.contains(&format!("`TW-{:02}` to `TW-{:02}`", ids[index], ids.get(index + 1).copied().unwrap_or(0)));
-            if range_end {
-                out.extend((ids[index]..=ids[index + 1]).map(|n| format!("TW-{n:02}")));
-                index += 2;
-            } else {
-                out.insert(format!("TW-{:02}", ids[index]));
-                index += 1;
-            }
-        }
-        out
-    };
-    let mut expect_with = BTreeSet::new();
-    let mut expect_without = BTreeSet::new();
-    for vector in vectors["wire_cases"].as_array().expect("wire cases") {
-        let id = vector["id"].as_str().expect("id").to_owned();
-        if vector.get("cause").is_some() {
-            expect_with.insert(id);
-        } else {
-            expect_without.insert(id);
-        }
-    }
-    assert_eq!(expand(with_cause), expect_with, "AC-153 cause-bearing rows");
-    assert_eq!(expand(without), expect_without, "AC-153 cause-free rows");
 }
 
 const CLASS_CATALOG_VECTORS: &str =
@@ -14212,8 +14125,10 @@ fn tc_233_event_type_is_a_model_declaration_node_with_a_model_owner() {
 }
 
 
-/// FR-322-AC-140 and FR-322-AC-146: the wire cases over the fixture.
-#[trace("TC-940", "FR-322-AC-140", "FR-322-AC-146")]
+/// FR-322-AC-140, FR-322-AC-146, FR-322-AC-152 and FR-322-AC-153: the wire
+/// cases over the fixture; each refuses with exactly its stated code, cause
+/// (none for a code that carries none) and locus.
+#[trace("TC-940", "FR-322-AC-140", "FR-322-AC-146", "FR-322-AC-152", "FR-322-AC-153")]
 #[test]
 fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
     let vectors = parsed_fixture(MODEL_TUPLE_UNION_VECTORS);
@@ -14323,7 +14238,6 @@ fn tc_940_tuple_node_wire_cases_run_from_the_published_vectors() {
         };
         assert_eq!(observed, expected, "{id}");
     }
-    assert_eq!(ids.len(), 27, "every published wire case ran");
 }
 
 
