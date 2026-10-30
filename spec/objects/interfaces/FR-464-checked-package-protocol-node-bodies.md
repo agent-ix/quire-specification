@@ -102,7 +102,10 @@ FR-466, with the first refusal in the order below.
   told apart from the other members by its producer-assigned `node_id.ordinal`.
   Reformatting the source, adding a comment or a second reference to a
   protocol changes no node id. Changing any name, member, reference or
-  literal, or the order of an ordered list, yields a different node
+  literal, or the order of an ordered list, yields a different (structurally
+  unequal) node, and changes the id of each derived node outside every
+  recursion group whose operand ids it changes; a recursion-group member keeps
+  its producer-assigned id across such an edit
   ([FR-052](../../functional/protocol/FR-052-represent-bounded-control.md)
   AC-4).
 - **operation anchors** — an `attempt` resolves its operation through the
