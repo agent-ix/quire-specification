@@ -25,7 +25,7 @@ one at a time. Submit each added role under the previous closed schema.
 
 ## Expected Results
 
-Valid nearby kinds still refuse intended-role matching with identity-mismatch.
+Valid nearby kinds still refuse intended-role matching.
 Malformed shapes refuse invalid-wire and unsupported selections refuse their
 version/kind interpretation. Every exact-reference mutation fails equality.
 The state-core 1-draft schema rejects the added kinds.

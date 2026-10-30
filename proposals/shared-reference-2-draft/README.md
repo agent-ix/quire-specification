@@ -34,7 +34,7 @@ dependency-closure. The six additional kinds have these exact roles:
 | review-disposition | External disposition artifact about an exact reviewed core; separate from its procedure and observations. |
 
 The consumer selects its expected role explicitly. A structurally valid nearby
-kind is an identity-mismatch for that role. No generic-kind fallback is permitted.
+kind does not match that role and is refused. No generic-kind fallback is permitted.
 Artifact identity is the exact tuple of kind, authority, identity and
 wire under its selected refVersion. Equal bytes alone cannot join different
 roles. Changing versions requires a separately accepted
