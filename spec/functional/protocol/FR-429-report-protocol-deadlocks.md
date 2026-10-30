@@ -23,6 +23,8 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-433
     type: references
+  - target: ix://agent-ix/quire-specification/FR-322
+    type: references
 ---
 
 # FR-429: Read protocol terminal states and report protocol deadlocks
@@ -108,7 +110,10 @@ trigger arrives, and none is promised.
 The derived deadlock-freedom item is the reachable-state invariant `always
 holds(not deadlocked)` with `deadlocked` read as above, an empty authored
 fairness set, and obligation identity (subject, item kind
-`deadlock-freedom`). A deadlock settles it `refuted`, basis
+`deadlock-freedom`). It has no node of its own. It is keyed by its anchor, the
+subject's `protocol`/`protocol_clause` node at its declaration path, together
+with its `item_kind`, as
+[FR-322](../../objects/interfaces/FR-322-checked-package-artifact.md) "Derived request items" states. A deadlock settles it `refuted`, basis
 `decisive-counterexample`, with a finite-prefix counterexample of `kind:
 deadlock` ([FR-433](FR-433-replay-protocol-counterexamples.md)). A deadlock
 changes no authored claim's verdict.
@@ -199,6 +204,7 @@ state key.
 | FR-429-AC-14 | A node owned by a replicated role `r` whose population universe is empty, or whose every object is retired, so that `r` has no live instance and no `spawn` is enabled, deadlocks with the thread `no-role-instance` naming `r`; when a `spawn` is enabled the thread is not waiting on the role. | Test (TC-383) |
 | FR-429-AC-15 | A thread at a `fence` whose memory model's fence rule is false (a `seq_cst` fence under `tso` with a non-empty buffer) has cause `gate` and no other cause when the cause function is evaluated at that state. A deadlock report never shows it under the built-in models, because `flush` is enabled while the buffer is non-empty, so the state is not terminal. | Test (TC-383) |
 | FR-429-AC-16 | The protocol system reads no clock, so no protocol state is time-locked. | Test (TC-370) |
+| FR-429-AC-17 | A protocol subject's deadlock-freedom item adds no node to the checked package. Its claim node is the subject's `protocol`/`protocol_clause` node, `{package: "example", path: ["Example", "Handshake"], ordinal: 0}` in `derived-items-request`, at occurrence `declaration` 0, and the item is told apart from the race-freedom item on that node by `item_kind` alone. | Test (TC-431 BP-51) |
 
 ## Dependencies
 

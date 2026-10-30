@@ -76,6 +76,22 @@ relationships:
     type: references
   - target: ix://agent-ix/quire-specification/FR-415
     type: references
+  - target: ix://agent-ix/quire-specification/FR-368
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-366
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-429
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-417
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-438
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-331
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-364
+    type: references
+  - target: ix://agent-ix/quire-specification/FR-433
+    type: references
 ---
 
 # FR-322: Immutable checked-package artifact
@@ -1027,6 +1043,60 @@ other comparison of a recorded value with a recomputed one exists. A
 are its unit terms' `node_id`s; the evaluator's runtime compound-unit value
 (`quire.value.compound-unit/v1`, FR-142) is a different thing and is never a
 node id.
+
+### Derived request items
+
+The deadlock-freedom item
+([FR-366](../../functional/temporal/FR-366-check-deadlock-freedom.md) over a
+model subject,
+[FR-429](../../functional/protocol/FR-429-report-protocol-deadlocks.md) over a
+protocol subject), the time-lock-freedom item
+([FR-417](../../functional/temporal/FR-417-settle-time-lock-freedom.md)) and
+the race-freedom item
+([FR-438](../../functional/memory/FR-438-report-data-races.md)) are request
+items that the request writer derives
+([FR-368](../../functional/temporal/FR-368-negotiate-temporal-model-check-items.md)).
+They are not package content, so none of them has a node. `semantic_graph`
+holds no node for any of them. They have no `node_tag`, no `semantic_form` and
+no derived path, and a producer mints no `node_id` for them. Each one is keyed
+by the pair of its anchor node's `node_id` and its `item_kind`. The anchor node
+is the `claim.node` that FR-368 "Claim and anchor of a derived or refinement
+item" writes, and it is an ordinary node of the graph:
+
+| Item | Subject | Anchor node (`claim.node`) | `node_tag`/`semantic_form` | Anchor `node_id` | `claim.occurrence` |
+| --- | --- | --- | --- | --- | --- |
+| `deadlock-freedom` | model subject | the `model_root` node of the one model selection the subject reads | `model`/`model_root` | `{package: <selected identity>, path: ["model", "model_root"], ordinal: 0}` ("Model root") | `generated`, 0 |
+| `time-lock-freedom` | timed model subject | the same `model_root` node | `model`/`model_root` | as above | `generated`, 0 |
+| `deadlock-freedom` | protocol subject | the subject's protocol clause node | `protocol`/`protocol_clause` | its declaration path, the protocol's qualified name, at the ordinal the producer gave the node | `declaration`, 0 |
+| `race-freedom` | protocol subject with a weak `parallel` | the same protocol clause node | `protocol`/`protocol_clause` | as above | `declaration`, 0 |
+
+The anchor is never embedded as an operand of a derived path, because no
+derived path exists for these items. Two derived items of one subject share
+an anchor and are told apart by `item_kind`: the deadlock-freedom and
+time-lock-freedom items of one model subject, and the deadlock-freedom and
+race-freedom items of one protocol subject. Items over two subjects with one
+anchor, for example two sets of initial states over one model, are told apart
+by their `subject`, which belongs to the obligation identity (FR-368). No key
+is derived from the package's `name` or contents for these items. A key of
+that kind would be the package identity, which no item has.
+
+A reader admits a derived item by resolving its `claim.node` by exact
+`node_id` in `semantic_graph`. For a `deadlock-freedom` or `time-lock-freedom`
+item over a model subject, that must be the `model`/`model_root` node of the
+model selection that the subject reads. For a `deadlock-freedom` or
+`race-freedom` item over a protocol subject, it must be the subject's
+`protocol`/`protocol_clause` node. The reader also checks that
+`claim.occurrence` is the occurrence FR-368 chooses. A claim node that the
+graph does not hold, or a node of another tag, form or subject, is refused
+before consumption ([FR-331](FR-331-backend-provider-envelope.md) "Items").
+Replay ([FR-364](../../functional/temporal/FR-364-replay-temporal-counterexamples.md),
+[FR-433](../../functional/protocol/FR-433-replay-protocol-counterexamples.md),
+[FR-438](../../functional/memory/FR-438-report-data-races.md) "Race replay")
+resolves the item by the same pair in the recompiled package. It learns which
+derived item it replays from the item's `item_kind`, never from a node. FR-368
+gives some subjects no anchor (FR-368-AC-22, FR-368-AC-24). Such a subject has
+no key. The producer settles its derived items `unsupported` and writes no
+request item, so nothing is left to key or replay.
 
 ## Body grammar
 
@@ -3190,6 +3260,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-272 | A node `ordinal` is producer-assigned. Nodes sharing one `package` and `path` at ordinals that are not `0` (`NO-05`: one sibling at `7`), not contiguous and in neither ordinal nor graph order (`NO-06`: siblings at `3` then `2` placed before the node at `0`) are admitted by the full reader; the reader neither requires `0`, contiguity or sibling order nor derives an ordinal. | Test (TC-233) |
 | FR-322-AC-273 | Two nodes of an equal `{package, path, ordinal}` refuse `invalid_semantic_graph` at the second node's `node_id`, `/semantic_graph/nodes/{i}/node_id`: a sibling at the original's ordinal `0` (`NO-07`) and two siblings both at ordinal `4` (`NO-08`, refused at the second). A recursion-group member's `ordinal` is held to the same uniqueness rule. The reader that decides these refusals is quire-contract-ir's, and the vectors (`proposals/checked-package-v2/node-ordinal-vectors.json`, `NO-07`, `NO-08`) are authoritative for it; the test here checks them with a standalone duplicate-id helper, not with the shared model oracle's own refusal. | Test (TC-233) |
 | FR-322-AC-274 | A recursion-group member never carries a path derived from operands. A member with a `declaration` keeps its declaration path, so a group may hold several declared members with distinct paths (the Flow, joinPred and Holder cycle of TC-946 K14); an anonymous derived member carries the path of the group's declared member where there is exactly one, and a producer-chosen path, admitted, where there is none or several. Nodes sharing `package` and `path` are told apart by their producer-assigned `ordinal`, unique among nodes sharing them. Group membership is the shared `recursion_group` label alone: no node carries a group-position member. The `positive-recursive-records`, `positive-two-owners-a`, `positive-two-owners-b` and `positive-integer-literal-references` fixtures, each group of which has one declared member, hold this for every group member, and the K14 node set holds it for three declared members. | Test (TC-233) |
+| FR-322-AC-275 | The derived deadlock-freedom, time-lock-freedom and race-freedom items add no node to `semantic_graph` and have no `node_tag`, `semantic_form` or derived path; each is keyed by its anchor `node_id` and its `item_kind`. In the `derived-items-request` vector, the model subject's deadlock-freedom and time-lock-freedom items both have claim node `{package: "acme/orders", path: ["model", "model_root"], ordinal: 0}` (`model`/`model_root`, occurrence `generated` 0). The protocol subject's deadlock-freedom and race-freedom items both have claim node `{package: "example", path: ["Example", "Handshake"], ordinal: 0}` (`protocol`/`protocol_clause`, occurrence `declaration` 0). Each node resolves in the package the request carries, and the two items that share a node differ only in `item_kind`. If the model subject's deadlock-freedom claim is retargeted to the protocol clause node, to item 0's `temporal`/`formula` node or to a `node_id` absent from the graph, the reader refuses the item before consumption. | Test (TC-431 BP-51) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the node. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 
 ## Dependencies
