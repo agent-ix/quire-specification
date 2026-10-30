@@ -413,7 +413,7 @@
       "test_case": "TC-946",
       "section": "Keys and declarations",
       "id": "K10",
-      "Edit to the base": "an acyclic protocol node adds `recursion_group` but leaves `recursion` `null`",
+      "Edit to the base": "an acyclic protocol node adds `recursion_group`",
       "Expected": "refuses `malformed_wire` (`malformed_wire`)"
     },
     {
@@ -435,7 +435,7 @@
       "section": "Keys and declarations",
       "id": "K14",
       "Edit to the base": "a protocol `Flow` has a `parallel` predicate join whose function body references `protocol Flow`; a second protocol `Plain` is acyclic",
-      "Expected": "the complete cyclic reference component shares one `recursion_group`, each member has its FR-322 `{size, ordinal}` coordinate and intra-component edges use `group_reference`; the reader admits the package. `Plain` and every other node outside that component have no `recursion_group` and `recursion` `null`"
+      "Expected": "the complete cyclic reference component shares one `recursion_group`, its in-component references are ordinary `reference`s to member `node_id`s (spelled `group_reference` in the written form); the reader admits the package. `Plain` and every node outside that component have no `recursion_group`"
     },
     {
       "test_case": "TC-946",

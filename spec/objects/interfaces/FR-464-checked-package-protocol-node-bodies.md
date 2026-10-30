@@ -91,9 +91,10 @@ FR-466, with the first refusal in the order below.
   protocol clause. Under Option A below, `recursion_group` is absent for a
   protocol node outside a cyclic reference component. Every node in a cyclic
   component, including nodes with another `node_tag`, uses FR-322's
-  recursion-group encoding: one explicit shared `recursion_group`, the
-  component's `{size, ordinal}` coordinates, and `group_reference` for each
-  reference to a member of that same component. A member node's id is a
+  recursion-group encoding: one explicit shared `recursion_group`, and each
+  reference to a member of that same component is an ordinary `reference` to
+  the member's `node_id` on the checked wire (spelled `group_reference` in the
+  written form). A member node's id is a
   function of its declaration path and, for a derived node, of the ids of the
   nodes it references, and of nothing in the source text but those.
   Reformatting the source, adding a comment or a second reference to a
@@ -661,8 +662,8 @@ the resulting checked-node references form a cycle. The reader uses FR-322's
 existing recursion-group mechanism for the entire cyclic strongly connected
 component; the group is not restricted to `protocol` nodes. FR-322's generic
 graph-cycle validation assigns and validates the group before the
-protocol-specific body step. Acyclic protocol nodes keep `recursion` `null`
-and have no `recursion_group`. This adds no protocol-specific wire variant or
+protocol-specific body step. Acyclic protocol nodes have no
+`recursion_group`. This adds no protocol-specific wire variant or
 alternate cycle encoding.
 
 ## Acceptance Criteria
@@ -683,7 +684,7 @@ alternate cycle encoding.
 | FR-464-AC-12 | The protocol step runs after the state, temporal, abstraction and refinement steps and before the operation step and reports, in order, placement, operator, declaration, member, membership, clause and refinement class-catalog graph-join defects; within a clause the cycle and progress defects precede the slot checks, and within a slot the `over`/model-state refusal precedes the binder-scope refusal, which precedes the decision-fact refusal; a state-step defect and a protocol defect in one package report the state-step defect. | Test (TC-946, TC-310) |
 | FR-464-AC-13 | The activation relation of an admitted protocol is derived from its clause node's `activation` and `requirements` alone: `activation on each (opened)` with `requires temporal OrderClosureBounded` gives exactly one row, the clause key, `each` with `opened`'s node id and `OrderClosureBounded`'s node id; under `activation on origin` the one row carries `origin` and no trigger; a protocol with no requirement has no row; a second `requires temporal OrderClosureBounded` leaves one row; a second required temporal clause gives two rows in ascending node-id order; a temporal clause that shares the protocol's clock but is not required gives no row; a `requirements` entry or an `each` trigger that is a node absent from the clause's `dependencies` refuses `invalid_semantic_graph` at the clause's `/dependencies` (graph stage, FR-322-AC-96, before the protocol step) and one that names no node refuses `missing_declaration`/`missing-name` at the target, each with no relation. | Test (TC-946) |
 | FR-464-AC-14 | A complete refinement class catalog whose rows agree with it is admitted after its selected protocol graph passes the protocol step. When one otherwise valid package has both an independent protocol-body member defect and a rekeyed catalog class associated with the wrong existing control node, the protocol-body defect refuses first; after repairing only that defect and rebuilding the changed keys and package identity, the catalog association refuses. A refinement row/catalog mismatch instead refuses at the earlier refinement step before either protocol defect. | Test (TC-310) |
-| FR-464-AC-15 | When a predicate-join function refers to its own protocol and the checked-node references form a cycle, the reader admits the package using FR-322's recursion-group encoding for the entire cyclic component, including non-protocol nodes: all component members share the group, carry `{size, ordinal}` coordinates and encode in-component references as `group_reference`. Acyclic protocol nodes have no `recursion_group`, use `recursion` `null` and retain their existing key inputs. | Test (TC-946) |
+| FR-464-AC-15 | When a predicate-join function refers to its own protocol and the checked-node references form a cycle, the reader admits the package using FR-322's recursion-group encoding for the entire cyclic component, including non-protocol nodes: all component members share the group, and in-component references are ordinary `reference`s to member `node_id`s (spelled `group_reference` in the written form). Acyclic protocol nodes have no `recursion_group` and retain their existing key inputs. | Test (TC-946) |
 | FR-464-AC-16 | Every `protocol_clause` node has one `owner_model` local `NodeRef` to its exact model declaration node; the edge is present in both V2 schemas, included in the clause's exact dependencies, and absent from every other node. A missing edge, external key, non-model target or missing dependency refuses at the edge or dependency before clause interpretation, in the stage and with the code that FR-464-AC-20 states. Retargeting only the edge yields a different clause node. FR-375 includes every clause whose edge is the object-type node of a model owned by the selected concrete declaration in its class catalog, even when no step row names its classes, and excludes a clause whose edge names a model owned by another declaration. | Test (TC-946, TC-310) |
 | FR-464-AC-17 | An `attempt` references the no-point `operation_anchor` for its operation. When a state clause names that same operation with a `ClauseBinding.execution_point`, the package has a distinct point-bearing anchor for the clause and a no-point anchor for the attempt; both may reference the operation's shared frame. Altering either point-bearing anchor changes its identity without changing the protocol attempt's anchor reference. | Test (TC-946) |
 | FR-464-AC-18 | A protocol clause retains `owner_model` as the owner model's object-type node even when its package also has a `model_root`; the root identifies the selected package as a whole and MUST NOT replace or alter the clause's owner edge or dependencies. Refinement class-catalog joins resolve exact clause owners first, then associate them with the selected package identity. | Test (TC-946, TC-310) |
