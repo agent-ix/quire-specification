@@ -55,7 +55,7 @@ and a second variant type `Level` with cases `Gold` and `Silver`.
 
 ## Tuple value types and payload-bearing variant types (STD-519)
 
-Scope: FR-322-AC-140 to FR-322-AC-147, FR-322-AC-151 to FR-322-AC-153 and FR-322-AC-181 to FR-322-AC-183 (payload and position types with no step 4 row: intake cases `TK-11` to `TK-35`, and the member refusal in TC-280). Use `model-tuple-union-vectors.json`
+Scope: FR-322-AC-140 to FR-322-AC-147, FR-322-AC-151 to FR-322-AC-153, FR-322-AC-181 to FR-322-AC-183 and FR-322-AC-275 (payload and position types with no step 4 row: intake cases `TK-11` to `TK-35`, and the member refusal in TC-280). Use `model-tuple-union-vectors.json`
 and its selected document `domain-package-acme-shapes.json`:
 the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 `p1: Integer`), `Swap` (`p0: Integer`, `p1: Boolean`) and `Nest` (`p0: Pair`,
@@ -65,7 +65,9 @@ the package `acme/shapes` declares the tuples `Pair` (`p0: Boolean`,
 6. Validate a `model`/`tuple_value_type` node owned by `Pair` against both V2
    schemas; remove its `owner`, give it a
    `SourceOwner`, a `declaration`, a `version` in its owner and a non-empty body.
-   Own it by `Color`, by `Holder` and by an undeclared node.
+   Own it by `Color`, by `Holder` and by an undeclared node. Own it by an
+   undeclared node while the `Pair`-typed parameter's `semantic_type` names a
+   node the graph lacks (`TW-28`).
 7. Project position 0, position 1 and position 2 of `Pair`; project positions of
    `Nest`; read a `Holder` field typed `Pair`.
 8. Select the package with `Swap` replacing `Pair` and with the positions of
@@ -97,7 +99,10 @@ Expected results:
 6. The first is admitted with family `tuple`; the owner-less node, the
    `SourceOwner` node, the `declaration` node and the versioned owner fail the V2
    schema (`malformed_wire`); the non-empty body is refused; the three owners
-   refuse `missing_declaration`/`missing-selection` in the owner join.
+   refuse `missing_declaration`/`missing-selection` in the owner join. The
+   undeclared owner with the dangling `semantic_type` refuses
+   `missing_declaration`/`missing-selection` at `/semantic_graph/nodes/0/owner`:
+   the owner join runs before the stage 4 edge check (FR-322-AC-275).
 7. Position 0 is `Boolean`, position 1 `Integer`, position 2 refuses
    `ill_typed`/`operator-ineligible`; `Nest` gives the `Pair` and `Shape`
    nodes; the field is the `Pair` node.
