@@ -458,7 +458,7 @@ A frame body refusal, meaning-join or canonical-order
   step (FR-481), the timed-model step (FR-230), the protocol step (FR-464)
   and the schedulability step (FR-482). Each body artifact's "Reader order" fixes the
   checks inside its step; its place among the steps is this list's.
-- **One total order of the join stages** (FR-322-AC-169). Before
+- **One total order of the join stages** (FR-322-AC-275). Before
   every declaration, frame, state and operation refusal the reader runs these
   stages in this order, each over every node before the next starts, and reports
   the first refusal: (1) graph shape, the `dependencies` checks above and an
@@ -481,13 +481,20 @@ A frame body refusal, meaning-join or canonical-order
   artifact adds no semantics to it. No other order is a reading of this artifact. An owner
   defect therefore outranks every dangling `semantic_type` or `dependencies`
   edge. A `semantic_type` or `dependencies` target is not resolved in stage 1
-  (that step compares the list and does not resolve its targets), so an edge
-  that dangles because a node's owner changed is reported by stage 4, after the
-  owner join (`TW-06` to `TW-09`).
+  (that step compares the list and does not resolve its targets), so a package
+  with both an owner defect and a dangling edge reports the owner join, and the
+  dangling edge is reported by stage 4 only once every owner joins (`TW-28`).
   **Locus of an owner-join refusal.** `missing_declaration`/`missing-selection`
   is at the node's `/semantic_graph/nodes/{n}/node_id`, except a `ModelOwner`
   refusal of a `model`/`tuple_value_type` or `model`/`variant_type` node, which
-  is at the node's `/semantic_graph/nodes/{n}/owner` (`TW-06` to `TW-09`). A
+  is at the node's `/semantic_graph/nodes/{n}/owner` (`TW-06` to `TW-09`). Each
+  of those vectors replaces only the node's `owner/node` and keeps its
+  `node_id`: a reader derives no `node_id` from an owner and does not compare
+  a model node's `node_id.path` with its `owner.node`, so every
+  `semantic_type`, `dependencies` and member edge to the node still resolves.
+  The kept path still names the original declaration, which breaks the producer
+  rule that a model node's path is a function of its owner; no reader check
+  sees that, so the owner join is the one defect a reader checks. A
   `ModelRootOwner` refusal of a `model_root` is `missing_import`/`missing-selection`
   at `/semantic_graph/nodes/{n}/owner/identity` (`MR` vectors).
 - owner join stage — after graph shape and before any declaration, frame,
@@ -3194,6 +3201,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-272 | A node `ordinal` is producer-assigned. Nodes sharing one `package` and `path` at ordinals that are not `0` (`NO-05`: one sibling at `7`), not contiguous and in neither ordinal nor graph order (`NO-06`: siblings at `3` then `2` placed before the node at `0`) are admitted by the full reader; the reader neither requires `0`, contiguity or sibling order nor derives an ordinal. | Test (TC-233) |
 | FR-322-AC-273 | Two nodes of an equal `{package, path, ordinal}` refuse `invalid_semantic_graph` at the second node's `node_id`, `/semantic_graph/nodes/{i}/node_id`: a sibling at the original's ordinal `0` (`NO-07`) and two siblings both at ordinal `4` (`NO-08`, refused at the second). A recursion-group member's `ordinal` is held to the same uniqueness rule. The reader that decides these refusals is quire-contract-ir's, and the vectors (`proposals/checked-package-v2/node-ordinal-vectors.json`, `NO-07`, `NO-08`) are authoritative for it; the test here checks them with a standalone duplicate-id helper, not with the shared model oracle's own refusal. | Test (TC-233) |
 | FR-322-AC-274 | A recursion-group member never carries a path derived from operands. A member with a `declaration` keeps its declaration path, so a group may hold several declared members with distinct paths (the Flow, joinPred and Holder cycle of TC-946 K14); an anonymous derived member carries the path of the group's declared member where there is exactly one, and a producer-chosen path, admitted, where there is none or several. Nodes sharing `package` and `path` are told apart by their producer-assigned `ordinal`, unique among nodes sharing them. Group membership is the shared `recursion_group` label alone: no node carries a group-position member. The `positive-recursive-records`, `positive-two-owners-a`, `positive-two-owners-b` and `positive-integer-literal-references` fixtures, each group of which has one declared member, hold this for every group member, and the K14 node set holds it for three declared members. | Test (TC-233) |
+| FR-322-AC-275 | The join stages run in the order "One total order of the join stages" states, each over every node before the next starts: a package whose `model`/`tuple_value_type` node `Pair` has a `ModelOwner` naming a node its selected document does not declare, and whose `Pair`-typed parameter carries a `semantic_type` naming a node the graph lacks, refuses `missing_declaration`/`missing-selection` at `/semantic_graph/nodes/0/owner` (stage 2, the owner join), never the dangling edge of stage 4 (`TW-28`). | Test (TC-940) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the node. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 
 ## Dependencies

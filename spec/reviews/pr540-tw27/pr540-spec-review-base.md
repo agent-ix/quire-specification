@@ -42,3 +42,11 @@ TW-05's deletion. The PR is not mergeable as-is:
 - FND-002: widen the reader-model arm to FR-322's full list of model declaration
   nodes.
 - FND-003: place the check in stage 3's list.
+
+## Dispositions
+
+| FND | Outcome | Reason |
+| --- | --- | --- |
+| FND-001 | fixed | 18f206c5 deletes `assert_eq!(ids.len(), 27, ...)` and the neighbouring `published == [5, 7, 3, 1, 8, 4, 5, 4, 35]` pin. The uniqueness assert and the `names.len() == sum(published)` all-cases-ran check stay. |
+| FND-002 | fixed | The arm now covers `model`/* (a `model_root` included) and `relation`/`relationship`/`population` with a `ModelOwner` or `ModelRootOwner` and no `declaration`. No published fixture or schema-valid vector gives any of these a non-empty body, so no other vector changes outcome. |
+| FND-003 | fixed | Stage 3 now names the model declaration body check (citing TW-27), and the owner join paragraph places it in stage 3, after every owner joins. |
