@@ -49,7 +49,7 @@ format reader and writer.
    to a stack. An input that fits the stage's resource limits is admitted or
    refused on its content, whatever its depth.
 2. **Stack use does not grow with input.** Every structure walk, including
-   the copy, comparison, hashing, rendering and release of a recursive value,
+   the copy, comparison, rendering and release of a recursive value,
    uses memory that the stage's node, byte or work limits already charge. A
    walk never uses host call-stack frames in proportion to input size or
    depth.

@@ -159,11 +159,6 @@ structures, but any external consumer receives only the contract.
   as a non-callee argument and as a node body root, and the target listed in
   `dependencies`. Each records its refusal `outcome` and its `locus`, the JSON
   pointer FR-322 fixes for it in the mutated package.
-- `fixtures/positive-compound-unit.json` is a V2 package of four nodes: a
-  nominal `dimension` (`Length`), a nominal root `unit` `U` (`metre`), the
-  builtin `Integer`, and the structural `scalar_type`/`compound_unit` node
-  `metre^1` that holds `unit` = `reference(U)` and an exponent. It is the base
-  of the compound-unit package test (FR-322-AC-169).
 - `fixtures/` contains independently authored positive package documents and
   structural refusal/mutation cases. Exact reader-limit boundaries,
   duplicate-member/noncanonical raw-byte cases and production-reader outcomes
@@ -227,12 +222,9 @@ selection; source/definition owners use authority plus identity, and model
 owners use the domain package identity plus the IR node identity: a checked
 package selects at most one domain package per identity (FR-321), so the owner's
 `identity` scopes a `ModelOwner` node's identity to its declaring domain
-package. A node id depends only on content: an unchanged source- or
-definition-owned declaration retains its identity across unrelated document
-changes. A structural node carries its `owner` member (`SourceOwner` on a
+package. A structural node carries its `owner` member (`SourceOwner` on a
 declared node, `ModelOwner` on a model declaration node or clause function, none
-elsewhere), which the derived identity projection carries, so a reader re-derives
-every structural key from the package alone. `fixtures/positive-two-owners-a.json`
+elsewhere). `fixtures/positive-two-owners-a.json`
 and `-b.json` declare the same records under two `SourceOwner`s and differ in
 every owner-keyed node id. Qualified names are arrays of ASCII identifier segments.
 Arbitrary-precision integers/rationals use canonical decimal strings with no

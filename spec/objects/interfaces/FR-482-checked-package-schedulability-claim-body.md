@@ -75,7 +75,7 @@ refusal in the reader order below.
   magnitude in that unit, spelled as [FR-322](FR-322-checked-package-artifact.md)
   "Scalar literal values" says.
 - **semantic_type** — the `scalar_type`/`boolean` node.
-- **declaration** — none. The node is content-addressed, as a
+- **declaration** — none. The node has a derived node id, as a
   `claim`/`state_graph` node is ([FR-475](FR-475-checked-package-state-graph-claim-body.md)):
   it carries no `declaration` and no `owner`, two claims with equal checked
   content share one node, and each declaration is one `claim` occurrence of

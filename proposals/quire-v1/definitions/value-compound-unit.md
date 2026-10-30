@@ -13,7 +13,7 @@ The normative preimage shape is
 The normative examples and mutations are
 [value-compound-unit-vectors.json](value-compound-unit-vectors.json).
 
-(BLOCKED-BY STD-605, owner: planner titan:QSL:plan; compound-unit identity digests.) A value identity is SHA-256 over RFC 8785 JCS of the schema-valid preimage.
+A value identity is the schema-valid preimage itself, compared componentwise (terms in order, each term's node id and exponent); nothing is hashed.
 Terms reference admitted canonical root-unit I04 node IDs, use nonzero
 mathematical integer exponents written as canonical decimal strings (never
 `-0`), and are strictly ascending by canonical node

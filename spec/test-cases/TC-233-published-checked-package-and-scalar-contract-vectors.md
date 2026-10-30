@@ -549,6 +549,17 @@ that the schema refuses. How QSL's first transition emitter chooses among
 several pre or post clauses is QSL-owned and OPEN (QSL-1163, e38), so XT-01
 through XT-20 do not close the QSL-authored part of IR-1052 AC-7.
 
+### Node id ordinal bound vectors
+
+Each vector patches the `node_id.ordinal` of one node of the all-families fixture (FR-322-AC-171).
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| NO-01 | `ordinal` `0` | Admitted | FR-322-AC-171 |
+| NO-02 | `ordinal` `9007199254740991` (at the limit) | Admitted; it orders after every smaller ordinal of equal `package` and `path` | FR-322-AC-171 |
+| NO-03 | `ordinal` `9007199254740992` (over the limit) | `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal` | FR-322-AC-171 |
+| NO-04 | `ordinal` `-1`, `1.5`, `1e2` and the string `"1"`, each in turn | Each `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal` | FR-322-AC-171 |
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.

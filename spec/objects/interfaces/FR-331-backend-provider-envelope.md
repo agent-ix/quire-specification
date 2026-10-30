@@ -245,7 +245,7 @@ FR-196 / ADR-028 PR-4's RFC 8785 UTF-8 octets of
 `["quire.probability-product-key/v1", model, monitor, accumulator, pending]`.
 All five members are required. `model` retains the full typed canonical
 simulation state (including digital clock, deadline and tail control when
-applicable), not its digest. The remaining members retain their actual
+applicable). The remaining members retain their actual
 FR-196 closed forms, including activation, the accumulator,
 actual units, and the complete scheduled identity and declaration-ordered
 drawn vector. Actual None is JSON null in that canonical body, not an

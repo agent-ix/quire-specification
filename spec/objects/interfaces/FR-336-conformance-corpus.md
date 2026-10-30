@@ -83,7 +83,7 @@ Population reference:
 | --- | --- | --- |
 | `boolean` | `kind`, `value` | `value` is a JSON boolean. |
 | `integer` | `kind`, `decimal` | `decimal` is FR-038's canonical signed decimal integer string. |
-| `reference` | `kind`, `universe`, `type`, `object_identity` | Reuses FR-100's canonical typed Reference form: the first two are 64 lowercase hexadecimal digits; `object_identity` is nonempty UTF-8. |
+| `reference` | `kind`, `universe`, `type`, `object_identity` | Reuses FR-100's canonical typed Reference form: `universe` and `type` are node ids `{package, path, ordinal}` (FR-322); `object_identity` is nonempty UTF-8. |
 | `population` | `kind`, `name` | Harness-only reference to the `population` member's declaration identity in this vector's `population` file. It is resolved by that consumer's adapter after population admission; the file does not carry or mint a `PopulationId`. |
 
 Every tag is a closed object; no other tag or member is admitted. The JSON
@@ -161,8 +161,8 @@ order; object maps retain their string keys.
 `{"kind":"input","assignments":[...]}`. A witness transcript is the
 admitted, trimmed assertion-block transcript; decoded values are not stored
 beside it. An input assignment is keyed by parameter node id, never by
-position: `{"parameter": NODE_ID, "value": VALUE}`. `NODE_ID` is 64 lowercase
-hexadecimal digits. `VALUE` uses the structural `WitnessValue` tagged union
+position: `{"parameter": NODE_ID, "value": VALUE}`. `NODE_ID` is a node id
+`{package, path, ordinal}` (FR-322). `VALUE` uses the structural `WitnessValue` tagged union
 below because replay assignments may contain complete-V1 values beyond the
 corpus call `InputValue` forms. No other replay-source arm is admitted by
 this adapter.

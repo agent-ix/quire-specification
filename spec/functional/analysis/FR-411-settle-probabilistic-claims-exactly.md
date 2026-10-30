@@ -62,8 +62,8 @@ Formula monitors retain the full parsed QSL FR-338 automaton array, not a
 local state index. Exact-only forms retain actual None monitor/accumulator;
 digital model forms retain actual clocks, deadline and tail control.
 Equality/order SHALL compare complete decoded unsigned octets, not a
-model digest or local product number. FR-331 owns their transport spelling
-in FR-412 certificates and rejections; no new digest or canonical
+bare model state key or local product number. FR-331 owns their transport spelling
+in FR-412 certificates and rejections; no new canonical
 representation is defined here. A product edge retains QSL FR-196's full
 semantic ProductAction, actual action/draw and probability.
 Every product path reaches an accepting or rejecting monitor state, a **decided**

@@ -31,7 +31,7 @@ package, its ModelSelection (FR-321) and the selected
 ## Outputs
 
 An immutable retained-original inventory and a structural effective view,
-carried as one `quire.model.effective-view/v2` identity, or a typed refusal.
+carried as one `quire.model.effective-view/v2` value, or a typed refusal.
 The structural view is checking input, not a validated checked package.
 
 ## Behavior
@@ -51,9 +51,9 @@ actual FCD origin in the immutable selection inventory, including originals
 whose kinds have no phase-2 qualify rule. It SHALL derive effective entries
 only for the selected rules' kinds. A retained scalar, population, namespace, or non-`quire` clause
 without such a rule SHALL NOT receive an invented qualify fact, effective
-declaration or additional declaration/hash charge. An operation's `Pre:` or `Post:` contract clause is not a declaration, so it is neither retained nor qualified. Effective entries and fact
+declaration or additional declaration charge. An operation's `Pre:` or `Post:` contract clause is not a declaration, so it is neither retained nor qualified. Effective entries and fact
 inputs reference keys from the exact retained inventory. This inventory is
-existing selection data, not an added effective-identity preimage member.
+existing selection data, not an added member of an effective declaration identity.
 
 The effective member key is `(owner effective type identity, original
 declaration key)`. Paths that reach the same original declaration collapse to
@@ -65,45 +65,43 @@ model-owned `field` or `operation` member of a checked package, when a V2
 reader resolves that member's name (FR-322 "Model-owned members" step 3);
 the effective view keeps both members.
 
-Each effective declaration identity is `quire.model.effective-declaration/v2`
-over `{version, owner_effective_type, original, derivation}`, whose facts are
-`{ordinal, rule, inputs, parent}`; the effective view
-is `quire.model.effective-view/v2` over the ModelSelection, rule manifest and
-every effective declaration sorted by identity; and the object universe of a
-connected supertype component is `quire.model.object-universe/v2`. The exact
-preimages, orders and vectors are defined by the selected
-`quire.model.complete/v1` definition.
-BLOCKED-BY STD-604 (owner: planner titan:QSL:plan): effective-declaration hash,
-the `quire.model.effective-declaration/v2`, `quire.model.effective-view/v2` and
-`quire.model.object-universe/v2` digests and their preimages, orders and vectors
-(the schema and vector files are removed).
-These domains differ from the I04 node domain, so no
-derived identity equals an I04 node id. The
+Each effective declaration identity is the structural
+`{owner_effective_type, original}`, compared componentwise: `original` is the
+original declaration key and `owner_effective_type` is `null` for an effective
+type and the owning effective type's identity for a member. Nothing is hashed.
+Its facts are `{ordinal, rule, inputs, parent}`, with `parent` the structural
+identity of the one parent a fact links to; the effective view
+(`quire.model.effective-view/v2`) is the value
+`{model_selection, rules, declarations}` holding the ModelSelection, rule
+manifest and every effective declaration with its facts, ascending by identity;
+and the object universe of a connected supertype component
+(`quire.model.object-universe/v2`) is the value `{model_selection, root_types}`.
+The exact shapes and orders are defined by the selected
+`quire.model.complete/v1` definition. A node id of the checked package is
+`{package, path, ordinal}` (FR-322) and an effective declaration identity has
+the different shape above, so no effective identity equals a node id. The
 effective view is carried in the checked package as a `correspondence` node
 with semantic form `model_correspondence`.
 
 ### Chain-link identity
 
-An effective declaration's preimage binds exactly its own content and the
-effective identity of each direct parent: for a type, each direct supertype;
+An effective declaration's facts bind exactly its own content and a link to the
+effective declaration of each direct parent: for a type, each direct supertype;
 for a member `(T, m)`, the member `(P, m)` of each direct supertype `P` of `T`
-that has it. The `parent` of an inherit fact is that fixed-width digest; every
-other fact has `parent` `null`. The preimage never contains an ancestor path
+that has it. The `parent` of an inherit fact is that parent's identity; every
+other fact has `parent` `null`. A fact never contains an ancestor path
 longer than one edge, so a diamond stores one inherit fact per direct edge and
-the retained facts and hashed bytes grow with the number of types and direct
+the retained facts grow with the number of types and direct
 edges, not with the number of ancestor paths. The selected
 `quire.model.complete/v1` definition owns the exact fact list and order.
 
 The full path-form derivation, every distinct inheritance path included, is
 the deterministic expansion of the retained facts through the parent
-identities. A reader expands it on demand under its own limits; identity
-hashing never encodes or hashes an expanded path. Equal preimages have equal
+links. A reader expands it on demand under its own limits; normalization
+never encodes an expanded path. Equal facts have equal
 expansions, so declarations that differ in owner, original key or expanded
-facts have different preimages, and one effective declaration has exactly one
-preimage. The strict reader refuses a link of the wrong kind, owner or
-original. Every published identity vector is replaced by this change; a `/v1`
-identity digest is not an identity under the `/v2` domains, and no dual
-reader, digest relabelling or compatibility shim exists.
+facts differ, and one effective declaration has exactly one fact list. The
+strict reader refuses a link of the wrong kind, owner or original.
 
 ## Normalization derivation
 
@@ -133,15 +131,14 @@ whose target is not an inherited member is refused
 `invalid_model_binding`/`redefinition-target`. A supertype cycle is refused
 `invalid_model_binding`/`specialization-cycle`. A ModelSelection row is `{identity}` and carries no digest or version (FR-154). A model `variant` type
 referenced by source is admitted (FR-208). Canonical ordering
-affects identity bytes only; it never changes a declaration key or resolves
+affects serialization only; it never changes a declaration key or resolves
 semantic ambiguity.
 
 Normalization and later conformance share the one operation-owned meter under
 `ModelNormalizationLimitsV1` of the selected
 `quire.value.accounting/v1` definition at its named record, fact, cycle-check,
-redefinition-check, conflict-check, declaration and preimage-hash charge
-points, the last by JCS byte length counted from the preimage's parts before
-it is encoded. `derivation_facts` counts the retained facts, not the path-form
+redefinition-check, conflict-check and declaration charge
+points. `derivation_facts` counts the retained facts, not the path-form
 facts of their expansion, and each direct supertype edge is charged once,
 however many paths reach its target. Each normalization phase checks
 exhaustively and reports every refusal it exposes in charge order; a phase that
@@ -155,18 +152,18 @@ reports a refusal ends checking. Exhaustion ends checking as
 | FR-150-AC-1 | An inherited/redefined member links its normalized identity to every contributing original declaration and rule. | Test (TC-195) |
 | FR-150-AC-2 | Two equal effective shapes from distinct original identities remain distinguishable. | Test (TC-195) |
 | FR-150-AC-3 | A conflicting phase 4 derivation refuses normalization with its named cause, and a supplied document is admitted at the normalization boundary under the identity its lock row records. | Test (TC-195) |
-| FR-150-AC-4 | Replaying the ordered derivation from the same domain package reproduces the `quire.model.effective-view/v2` identity, independent of IR node order. | Test (TC-195) |
+| FR-150-AC-4 | Replaying the ordered derivation from the same domain package reproduces the `quire.model.effective-view/v2` value by structural equality, independent of IR node order. | Test (TC-195) |
 | FR-150-AC-5 | Conflicting derivations report both rule paths and expose no chosen effective member. | Test (TC-195) |
-| FR-150-AC-6 | Diamond paths reaching one original declaration collapse to one effective member with one inherit fact per direct parent, whose expansion lists every path, and each effective identity equals its published vector. | Test (TC-195) |
-| FR-150-AC-7 | Declaration keys are fixed by the domain package identity and IR node identity: two versions of one package with equal nodes yield equal effective declaration identities and different effective views. | Test (TC-195) |
+| FR-150-AC-6 | Diamond paths reaching one original declaration collapse to one effective member with one inherit fact per direct parent, whose expansion lists every path, | Test (TC-195) |
+| FR-150-AC-7 | Declaration keys are fixed by the domain package identity and IR node identity: two documents of one package with equal nodes yield equal effective declaration identities and equal effective views. | Test (TC-195) |
 | FR-150-AC-8 | A normalization run at its exact `ModelNormalizationLimitsV1` bound completes, and the one-less run is incomplete at the named charge point. | Test (TC-195) |
-| FR-150-AC-9 | An admitted scalar without a phase-2 qualify rule remains retrievable by its byte-identical original key and origin, with no scalar qualify fact, effective entry or extra effective-declaration/hash charge; all effective/fact-origin keys belong to the retained intake inventory. | Test |
+| FR-150-AC-9 | An admitted scalar without a phase-2 qualify rule remains retrievable by its byte-identical original key and origin, with no scalar qualify fact, effective entry or extra effective-declaration charge; all effective/fact-origin keys belong to the retained intake inventory. | Test |
 | FR-150-AC-10 | Transfer from structural normalization to checked-fact admission and conformance preserves the same model counters; a denied next charge follows no work and exposes no validated effective view or unfinished-stage failure, including failures already collected from another selected model. | Test |
 | FR-150-AC-11 | A walk following n supertype edges admits at ancestor_steps=n; at n-1 it returns exactly incomplete(ancestor_steps,n-1,n-1,1,model.ancestor-edge), and zero denies its first edge. An unavailable owning work charge wins before a simultaneous edge denial; previously admitted axis work is never refunded. | Test |
 | FR-150-AC-12 | Expanding the retained facts of every effective declaration through its parent identities yields the path-form facts of an independent enumeration over the original declarations, in phase, input and rule order with multiplicity, for a chain, a diamond and a hidden redefinition; a link naming a declaration of the wrong kind, owner or original is refused. | Test (TC-195) |
-| FR-150-AC-13 | Changing one ancestor's original declaration key, one parent link or one phase-4 fact changes the identity of every descendant that reaches it and of no other declaration, and no two distinct effective declarations of a fixture set share an identity. | Test (TC-195) |
-| FR-150-AC-14 | Hashed bytes, retained facts and work units of a chain, a width-2 diamond ladder and a dense multi-parent shape equal the closed figures of TC-195 N13; a ladder whose path count is exponential is admitted at the default limits. | Test (TC-195) |
-| FR-150-AC-15 | For a single-inheritance chain of 10,000 edges (10,001 effective types), normalization at the default limits eagerly computes every effective identity and the complete view with 20,001 retained facts, at most 16,777,216 hashed bytes and at most 100,000 work units. | Test (TC-195) |
+| FR-150-AC-13 | Changing one parent link or one phase-4 fact changes the facts of the declaration that holds it and of no other declaration, and no two distinct effective declarations of a fixture set share an identity. | Test (TC-195) |
+| FR-150-AC-14 | Retained facts and work units of a chain, a width-2 diamond ladder and a dense multi-parent shape equal the closed figures of TC-195 N13; a ladder whose path count is exponential is admitted at the default limits. | Test (TC-195) |
+| FR-150-AC-15 | For a single-inheritance chain of 10,000 edges (10,001 effective types), normalization at the default limits eagerly forms every effective declaration and the complete view with 20,001 retained facts and at most 100,000 work units. | Test (TC-195) |
 | FR-150-AC-16 | The FR-150-AC-15 case, run in an isolated release-profile process on the reference host Terra, has a peak resident set of at most 21,474,836,480 bytes and a wall time of at most 30 seconds, each measured from package input admission through retention of the complete result. | Test (TC-195) |
 | FR-150-AC-18 | A dispatch link whose family walks (the redefinition-family walk and every effective-precondition walk, together) follow n distinct `redefines` edges, each charged once however many walks follow it, admits at `family_steps = n`; at n-1 it returns exactly `incomplete(family_steps, n-1, n-1, 1, model.family-edge)` and no dispatch table or ambiguity result, and zero denies its first edge. An unavailable earlier counter's charge wins before a simultaneous edge denial. | Test |
 
