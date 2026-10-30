@@ -991,7 +991,15 @@ before a nested `node_id`; nested `node_id`s compare recursively by this same
 order; a proper prefix sorts first), then `ordinal`. A reader recomputes no
 identifier: it checks that every `node_id` is unique, that every reference,
 dependency, `semantic_type` and recursion-group member resolves, and that a
-declared node's `path` equals its `declaration.qualified_name`. A
+declared node's `path` equals its `declaration.qualified_name`. A derived
+node's `path` is an identity label: the reader does not compare it with the
+node's body or operands, and a `path` that differs from what a producer would
+write for that body is not a defect. Within one package a `{package, path,
+ordinal}` is simply unique or a duplicate. When the same `{package, path}`
+reaches a reader in two places with differing bodies (the diamond of
+FR-322-AC-75, where two dependency closures reach one identity as unequal
+packages), the reader refuses `invalid_package`/`conflicting-definition`; no
+other comparison of a recorded value with a recomputed one exists. A
 `scalar_type`/`compound_unit` node is an ordinary derived node whose operands
 are its unit terms' `node_id`s; the evaluator's runtime compound-unit value
 (`quire.value.compound-unit/v1`, FR-142) is a different thing and is never a
