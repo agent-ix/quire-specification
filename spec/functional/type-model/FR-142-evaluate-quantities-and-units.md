@@ -222,7 +222,7 @@ that owns it (which must join that lock or model_root selection), and its
 `dimension_node_id`, `target_unit_node_id`, `scale` and `offset`, with
 normalized exact rationals. A dimension or unit an admitted
 domain package declares (FR-154) has as `owner` its selection's `ModelOwner`
-and as `qualified_declaration` the one-segment `[<name>]`, the last segment
+and as `node_id.path` the one-segment `[<name>]`, the last segment
 of its FCD identity; it carries no `declaration` (FR-322), and its node id differs
 from a source declaration of the same name, whose owner is a `SourceOwner`.
 The strict I04 reader refuses a body that disagrees with its dimension or unit

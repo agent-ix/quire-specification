@@ -402,8 +402,7 @@ source occurrence; builtin and anonymous nodes and every other node carry none,
 and a producer never invents a name. `qualified_name` is the package-local
 declaration path; `a::Name` resolves `a` to one selected package and then matches
 `Name` byte for byte against that package's declaration paths. The member is
-part of the node identity. On a nominal node it equals the nominal
-`qualified_declaration` (else `declaration-nominal-mismatch`, `invalid_package`),
+part of the node identity. On a source `enum`, `unit` or `dimension` node it equals `node_id.path` (else `declaration-nominal-mismatch`, `invalid_package`),
 and two nodes declaring one name refuse as `ambiguous-name`
 (`ambiguous_declaration`). Library exports resolve only through this member.
 - `fixtures/positive-integer-literal-references.json` is the reference form of the `three` application of `positive-two-owners-a.json` (its integer literal operands are references to `value`/`literal` nodes); the reader admits it under a node identity different from the inline form's.
