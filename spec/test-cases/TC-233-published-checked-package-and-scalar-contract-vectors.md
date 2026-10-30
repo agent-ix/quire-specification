@@ -551,6 +551,19 @@ Each vector patches the `node_id.ordinal` of one node of the all-families fixtur
 | NO-03 | `ordinal` `9007199254740992` (over the limit) | `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal` | FR-322-AC-171 |
 | NO-04 | `ordinal` `-1`, `1.5`, `1e2` and the string `"1"`, each in turn | Each `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal` | FR-322-AC-171 |
 
+### Structural identity member vectors
+
+Each vector gives two identities as the JSON values below and states whether they are equal (FR-201-AC-11). Comparison order is the table of FR-201 "Structural identities".
+
+| Vector | Identity A | Identity B | Result |
+| --- | --- | --- | --- |
+| SI-01 `MemberId` | `{"owner":{"node_id":{"package":"acme/shapes","path":["Point"],"ordinal":0}},"member":"x"}` | `{"owner":{"node_id":{"package":"acme/shapes","path":["Point"],"ordinal":0}},"member":"x"}`; then member `"y"`; then owner node id `{"package":"acme/shapes","path":["Line"],"ordinal":0}` | Equal for the first; different for the second and third; `x` orders before `y`; the `node_id` arm orders before `{"effective_id":{"owner_effective_type":null,"original":{"package":"acme/orders","node":"Order"}}}` with member `"x"` |
+| SI-02 `VariantId` | `{"owner":{"package":"acme/shapes","path":["Shape"],"ordinal":0},"case":"Circle"}` | `{"owner":{"package":"acme/shapes","path":["Shape"],"ordinal":0},"case":"Circle"}`; then case `"Square"`; then owner `{"package":"acme/shapes","path":["Line"],"ordinal":0}` | Equal for the first; different for the second and third; `Circle` orders before `Square` |
+| SI-03 `UnitId` | `{"declared":{"package":"acme/shapes","path":["m"],"ordinal":0}}` | `{"declared":{"package":"acme/shapes","path":["m"],"ordinal":0}}`; then `{"terms":[{"unit":{"package":"acme/shapes","path":["m"],"ordinal":0},"exponent":"1"},{"unit":{"package":"acme/shapes","path":["s"],"ordinal":0},"exponent":"-1"}]}` | Equal for the first; different for the second, and the `declared` arm orders before the `terms` arm; two `terms` arrays of the same `{unit, exponent}` elements are equal, and exponents `"2"` and `"10"` order numerically |
+| SI-04 `UniverseId` | `{"package":"acme/shapes","path":["Shape"],"ordinal":0}` | `{"package":"acme/shapes","path":["Shape"],"ordinal":0}`; then `{"package":"acme/shapes","path":["Line"],"ordinal":0}` | Equal for the first; different for the second |
+| SI-05 `PopulationId` | `{"package":"acme/shapes","path":["counters"],"ordinal":0}` | `{"package":"acme/shapes","path":["counters"],"ordinal":0}`; then `{"package":"acme/shapes","path":["archive"],"ordinal":0}` | Equal for the first; different for the second, although both populations have the same member type |
+| SI-06 owner arm | `{"owner":{"effective_id":{"owner_effective_type":null,"original":{"package":"acme/orders","node":"Order"}}},"member":"total"}` | `{"owner":{"effective_id":{"owner_effective_type":null,"original":{"package":"acme/orders","node":"Invoice"}}},"member":"total"}` | Different: the `original` nodes differ; the two `EffectiveId` values compare by `owner_effective_type` (`null` first) then `original` |
+
 ## Expected Results
 
 Each event type vector gives exactly its recorded result.
