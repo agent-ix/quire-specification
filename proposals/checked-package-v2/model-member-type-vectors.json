@@ -3368,7 +3368,8 @@
       "member": {
         "kind": "field",
         "declaration": "M5",
-        "name": "total"
+        "name": "total",
+        "read_form": "explicit_deref"
       },
       "expected": {
         "resolves": "ix://acme/orders/Order/total",
@@ -3376,7 +3377,8 @@
           "type": "Int",
           "min": "0",
           "max": "9"
-        }
+        },
+        "read_form": "explicit_deref"
       }
     },
     {
@@ -3402,7 +3404,8 @@
       "member": {
         "kind": "field",
         "declaration": "M1",
-        "name": "invoice"
+        "name": "invoice",
+        "read_form": "explicit_deref"
       },
       "expected": {
         "resolves": "ix://acme/orders/Order/invoice",
@@ -3417,7 +3420,8 @@
             ],
             "ordinal": 0
           }
-        }
+        },
+        "read_form": "explicit_deref"
       }
     },
     {
@@ -3458,7 +3462,8 @@
       "member": {
         "kind": "field",
         "declaration": "M1",
-        "name": "total"
+        "name": "total",
+        "read_form": "explicit_deref"
       },
       "expected": {
         "refused": {
@@ -3483,7 +3488,8 @@
       "member": {
         "kind": "field",
         "declaration": "M1",
-        "name": "total"
+        "name": "total",
+        "read_form": "explicit_deref"
       },
       "expected": {
         "refused": {
@@ -3508,7 +3514,8 @@
       "member": {
         "kind": "field",
         "declaration": "M4",
-        "name": "total"
+        "name": "total",
+        "read_form": "explicit_deref"
       },
       "expected": {
         "refused": {
@@ -3533,7 +3540,8 @@
       "member": {
         "kind": "field",
         "declaration": "M2",
-        "name": "total"
+        "name": "total",
+        "read_form": "explicit_deref"
       },
       "expected": {
         "refused": {
@@ -3556,12 +3564,178 @@
       "member": {
         "kind": "field",
         "declaration": "M5",
-        "name": "total"
+        "name": "total",
+        "read_form": "explicit_deref"
       },
       "expected": {
         "refused": {
           "code": "ill_typed",
           "cause": "operator-ineligible"
+        }
+      }
+    },
+    {
+      "name": "RP-09",
+      "source_expression": "view.total",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M5"
+        },
+        "result_type": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total",
+        "read_form": "bare"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/total",
+        "member_type": {
+          "type": "Int",
+          "min": "0",
+          "max": "9"
+        },
+        "read_form": "bare"
+      }
+    },
+    {
+      "name": "RP-10",
+      "source_expression": "deref(view).total",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M5"
+        },
+        "result_type": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total",
+        "read_form": "explicit_deref"
+      },
+      "expected": {
+        "resolves": "ix://acme/orders/Order/total",
+        "member_type": {
+          "type": "Int",
+          "min": "0",
+          "max": "9"
+        },
+        "read_form": "explicit_deref"
+      }
+    },
+    {
+      "name": "RP-11",
+      "source_expression": "view.total with an unrecognized field read form",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M5"
+        },
+        "result_type": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total",
+        "read_form": "implicit"
+      },
+      "expected": {
+        "refused": {
+          "code": "malformed_wire"
+        }
+      }
+    },
+    {
+      "name": "RP-12",
+      "source_expression": "view.total without its required field read form",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "deref": {
+          "reference": "M5"
+        },
+        "result_type": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total"
+      },
+      "expected": {
+        "refused": {
+          "code": "malformed_wire"
+        }
+      }
+    },
+    {
+      "name": "RP-13",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "reference": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total",
+        "read_form": "bare"
+      },
+      "expected": {
+        "refused": {
+          "code": "malformed_wire"
+        }
+      },
+      "source_expression": "reference.total with an inapplicable read form"
+    },
+    {
+      "name": "RP-14",
+      "source_expression": "record.amount_minor with an inapplicable model read form",
+      "result_type": {
+        "type": "Integer"
+      },
+      "operand": {
+        "record": {
+          "type": "Money",
+          "fields": [
+            {
+              "name": "amount_minor",
+              "type": {
+                "type": "Integer"
+              }
+            }
+          ]
+        }
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "Money",
+        "name": "amount_minor",
+        "read_form": "bare"
+      },
+      "expected": {
+        "refused": {
+          "code": "malformed_wire"
         }
       }
     }
