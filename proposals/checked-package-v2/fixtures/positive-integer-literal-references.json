@@ -272,12 +272,7 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example-a",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 2
             },
             "1"
           ]
@@ -322,12 +317,7 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example-a",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 2
             },
             "2"
           ]
@@ -426,12 +416,7 @@
                   "value",
                   "literal",
                   {
-                    "ordinal": 0,
-                    "package": "example-a",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
+                    "node": 2
                   },
                   "1"
                 ]
@@ -446,12 +431,7 @@
                   "value",
                   "literal",
                   {
-                    "ordinal": 0,
-                    "package": "example-a",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
+                    "node": 2
                   },
                   "2"
                 ]
@@ -490,12 +470,7 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example-a",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 2
               },
               "1"
             ]
@@ -507,12 +482,7 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example-a",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 2
               },
               "2"
             ]
@@ -618,12 +588,7 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example-a",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 2
           },
           "1"
         ]
@@ -649,12 +614,7 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example-a",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 2
           },
           "2"
         ]

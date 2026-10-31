@@ -164,12 +164,7 @@
             "integer_range",
             "min",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "0",
             "max",
@@ -219,12 +214,7 @@
                   "integer_range",
                   "min",
                   {
-                    "ordinal": 0,
-                    "package": "test/predicates",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
+                    "node": 0
                   },
                   "0",
                   "max",
@@ -342,12 +332,7 @@
           "integer_range",
           "min",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "0",
           "max",

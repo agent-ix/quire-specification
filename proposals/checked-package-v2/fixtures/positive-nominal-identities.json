@@ -40,12 +40,7 @@
             "value",
             "enum_value",
             {
-              "package": "example",
-              "path": [
-                "Example",
-                "Status"
-              ],
-              "ordinal": 0
+              "node": 1
             },
             "READY"
           ],
@@ -299,20 +294,10 @@
             "scalar_type",
             "dimension_equivalence",
             {
-              "package": "example",
-              "path": [
-                "Example",
-                "Distance"
-              ],
-              "ordinal": 0
+              "node": 4
             },
             {
-              "package": "example",
-              "path": [
-                "Example",
-                "Length"
-              ],
-              "ordinal": 0
+              "node": 3
             }
           ],
           "ordinal": 0
@@ -326,20 +311,10 @@
             "scalar_type",
             "dimension_equivalence",
             {
-              "package": "example",
-              "path": [
-                "Example",
-                "Distance"
-              ],
-              "ordinal": 0
+              "node": 4
             },
             {
-              "package": "example",
-              "path": [
-                "Example",
-                "Length"
-              ],
-              "ordinal": 0
+              "node": 3
             }
           ],
           "ordinal": 0
@@ -409,12 +384,7 @@
           "value",
           "enum_value",
           {
-            "package": "example",
-            "path": [
-              "Example",
-              "Status"
-            ],
-            "ordinal": 0
+            "node": 1
           },
           "READY"
         ],
@@ -528,20 +498,10 @@
           "scalar_type",
           "dimension_equivalence",
           {
-            "package": "example",
-            "path": [
-              "Example",
-              "Distance"
-            ],
-            "ordinal": 0
+            "node": 4
           },
           {
-            "package": "example",
-            "path": [
-              "Example",
-              "Length"
-            ],
-            "ordinal": 0
+            "node": 3
           }
         ],
         "ordinal": 0

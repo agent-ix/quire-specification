@@ -189,7 +189,9 @@ boundary.
   identifiers are unique within the graph. **Graph order** is the order of the
   `semantic_graph.nodes` array, which the producer chooses. A reader neither
   sorts the nodes nor requires them in any sort order, so a graph in any order
-  is admitted when every other check passes. Graph order is part of the package
+  is admitted when every other check passes. Graph order is also the index an
+  operand index segment holds ("Operand index segments" below), so reordering
+  the nodes rewrites every index segment to its node's new index. Graph order is part of the package
   value that structural equality compares; a node's `ordinal` is producer-assigned
   and is not read from graph order (`Structural node identity` below). Where this
   artifact says that a reader checks nodes "in ascending node-id order", that
@@ -1012,24 +1014,26 @@ as they are traversed; the first exhausted limit returns `incomplete` with its
 actual counter, its configured bound and its setting name
 ([FR-461](../../functional/foundation/FR-461-name-the-limit-value-and-setting.md)),
 and no admitted package. Equal-limit input is admitted if all later checks
-succeed. The reader has no depth limit: the body grammar fixes the JSON depth
-of every package
+succeed. The reader has no depth limit: the body grammar and the index
+segments of node ids ("Operand index segments") fix the JSON depth of every
+package
 ([FR-460](../../functional/foundation/FR-460-bound-every-stage-by-resource-limits.md)).
 
 ## Structural node identity
 
-A node's `node_id` is its structural position, compared componentwise and never
-hashed. It is a closed object with exactly these members:
+A node's identity is its *structural key*, the node's structural position,
+compared componentwise and never hashed. A node's `node_id` is the wire form of
+that key: a closed object with exactly these members:
 
 | Member | Value |
 | --- | --- |
 | `package` | The `name` of the package the node belongs to (for a `model_root` node and for a node a domain package owns, that domain package's identity). |
-| `path` | A non-empty array of segments. A declared node's path is its declaration path, the declaring scopes' names outermost first. A derived node (no `declaration`, for example `Set<Integer>`, an application or a literal) outside every recursion group has the path `[node_tag, semantic_form, ...operands]`; each operand is a string (a literal's text, an operator or member name) or the `node_id` of an operand node. |
+| `path` | A non-empty array of segments, each a string or an *index segment* `{"node": i}` ("Operand index segments" below). A declared node's path is its declaration path, the declaring scopes' names outermost first, all strings. A derived node (no `declaration`, for example `Set<Integer>`, an application or a literal) outside every recursion group has the path `[node_tag, semantic_form, ...operands]`; each operand is a string (a literal's text, an operator or member name) or an operand node, which the path holds as the index segment naming that operand node in `semantic_graph.nodes`. A path never holds a `node_id` object. |
 | `ordinal` | A non-negative JSON integer from `0` to 9007199254740991 (2^53-1, the I-JSON safe integer), assigned by the producer. It tells apart nodes that share one `package` and `path`; the reader's only rule is that no two nodes sharing a `package` and `path` have the same `ordinal`. It need not be `0`, need not be contiguous and need not follow sibling or graph order, and a reader never derives one. A recursion-group member's `ordinal` is no exception: it is producer-assigned and unique among nodes sharing its `package` and `path`, and it is not a position in the group (`recursion_group`, below). |
 
-Ordinals compare numerically; `package` and `path` strings compare as UTF-8 bytes. An `ordinal` that is negative, above 9007199254740991, not a JSON integer (a string, a fraction or an exponent form, for example) is a malformed integer and is refused `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal`, `i` the node's graph index; the same bound and the same refusal apply to every `node_id` held in a reference, dependency, `semantic_type` or nested path operand, at that member's pointer.
+Ordinals compare numerically; `package` and `path` strings compare as UTF-8 bytes. An `ordinal` that is negative, above 9007199254740991, not a JSON integer (a string, a fraction or an exponent form, for example) is a malformed integer and is refused `malformed_wire` at `/semantic_graph/nodes/{i}/node_id/ordinal`, `i` the node's graph index; the same bound and the same refusal apply to every `node_id` held in a reference, dependency, `semantic_type` or `source_map` entry, and to the `node` member of every index segment, at that member's pointer.
 
-A recursion-group member is identified by `{package, path, ordinal}`, and its `path` is never derived by operand embedding. A member that carries a `declaration` keeps its declaration path (the declaring scopes' names outermost first), as every declared node does, so the members of one group need not share one `path`: a group may hold several declared members, each with its own declaration path. An anonymous derived member carries the path of the group's declared member where the group has exactly one; where the group has none, or several, there is no external anchor for it, and the producer chooses its path, which is admitted, with nothing invented or refused. Nodes sharing a `package` and `path`, members or not, are told apart by `ordinal`, which is producer-assigned like any other (unique among nodes sharing `package` and `path`; a producer may use graph order, but need not); membership of a group is the shared `recursion_group` label alone, and the reader derives no position in the group. Only a derived node outside every recursion group embeds operand `node_id`s. A producer disambiguates other nodes sharing a package and path by distinct ordinals of its choosing; body content is not part of the path.
+A recursion-group member is identified by `{package, path, ordinal}`, and its `path` is never derived from its operands. A member that carries a `declaration` keeps its declaration path (the declaring scopes' names outermost first), as every declared node does, so the members of one group need not share one `path`: a group may hold several declared members, each with its own declaration path. An anonymous derived member carries the path of the group's declared member where the group has exactly one; where the group has none, or several, there is no external anchor for it, and the producer chooses its path, which is admitted, with nothing invented or refused. Nodes sharing a `package` and `path`, members or not, are told apart by `ordinal`, which is producer-assigned like any other (unique among nodes sharing `package` and `path`; a producer may use graph order, but need not); membership of a group is the shared `recursion_group` label alone, and the reader derives no position in the group. Only a derived node outside every recursion group derives its path from its operands, each operand node written as an index segment. A producer disambiguates other nodes sharing a package and path by distinct ordinals of its choosing; body content is not part of the path.
 
 A node belongs to the package that contains it, and an imported node keeps its
 own package name. Two nodes with equal `package`, `path` and `ordinal` have the
@@ -1039,8 +1043,10 @@ equal `node_id` refuses `invalid_semantic_graph` at the second node's `node_id`
 ordinals or out of graph order are admitted (`NO-05`, `NO-06`). The
 node order used wherever this artifact says "ascending node-id order" is
 `package` in UTF-8 byte order, then `path` element by element (a string sorts
-before a nested `node_id`; nested `node_id`s compare recursively by this same
-order; a proper prefix sorts first), then `ordinal`. A reader recomputes no
+before an operand; two operands compare by their structural keys, recursively
+by this same order; a proper prefix sorts first), then `ordinal`. It is an
+order of structural keys, never of graph indexes: the index an index segment
+holds takes no part in it. A reader recomputes no
 identifier: it checks that every `node_id` is unique, that every reference,
 dependency, `semantic_type` and recursion-group member resolves, and that a
 declared node's `path` equals its `declaration.qualified_name`. A derived
@@ -1053,11 +1059,85 @@ FR-322-AC-75, where two dependency closures reach one identity as unequal
 packages), the reader refuses `invalid_package`/`conflicting-definition`; no
 other comparison of a recorded value with a recomputed one exists. A
 `scalar_type`/`compound_unit` node is an ordinary derived node whose operands
-are, for each unit term in turn, the term's root-unit `node_id` followed by its
+are, for each unit term in turn, the term's root-unit node followed by its
 exponent's text ("Derived type forms and forwarding"), so its path names every
 exponent and two compound units never share a path; the evaluator's runtime compound-unit value
 (`quire.value.compound-unit/v1`, FR-142) is a different thing and is never a
 node id.
+
+### Operand index segments
+
+An operand node is never written inside another node's id. The wire holds it
+as an *index segment*, the closed object `{"node": i}` whose one member `node`
+is a JSON integer from `0` to 9007199254740991 naming `semantic_graph.nodes[i]`
+by its graph index. Any other segment object (a `node_id` object, an extra
+member, a missing `node`, a string, negative, fractional or exponent-form
+`node`) fails the V2 schema and refuses `malformed_wire`. So a `node_id` has a
+fixed JSON depth (the object, its `path` array and an index segment), whatever
+the depth of the expression it names, and its size is linear in its path length.
+A package of *n* nodes whose paths hold *s* segments in all has node ids of
+O(*n* + *s*) bytes, and a left-nested chain of 100,000 applications has one
+index segment per operand rather than 100,000 nested ids.
+
+- **Scope.** Every index segment in a checked package document names a node of
+  that same document's `semantic_graph.nodes`. This holds for a node's own
+  `node_id` and for every `node_id` the document carries anywhere else: a
+  body `reference` `target`, a literal's `type`, an application's
+  `result_type`, a `dependencies` entry, a `semantic_type`, an `owner.node`, a
+  `source_map` entry's `node_id`, the node ids of a nominal, timed, protocol,
+  refinement or extension body, and every other `NodeRef`. An imported node
+  is present in the importing graph (it keeps its own `package`), so its operands
+  are local nodes too, and its index segments name the importing graph.
+  A document outside the package that names one of its nodes (a request item,
+  a `ContractPackage` entry, a report or a diagnostic locus) holds that node's
+  `node_id` as the package writes it, so its index segments name the graph of
+  the checked package it is about.
+- **Dependency references.** A `dependency_reference` `node` names a declared
+  node of another package's graph, so it holds no index segment: its `path` is
+  the declaration path, all strings, and the V2 schema gives `node` the shape of
+  a `node_id` whose `path` items are strings. An index segment there fails the
+  schema and refuses `malformed_wire`.
+- **Order.** Graph order stays the producer's choice. An index segment may name
+  a node earlier or later in graph order, and a reader requires no topological
+  or sorted order of the nodes. The relation in which node *k* names node *j*
+  through an index segment of its own `node_id.path` is acyclic: no node's key
+  is defined in terms of itself.
+- **Reader checks.** After the V2 schema check and before every
+  `semantic_graph` check (so before the duplicate-`node_id` refusal), the reader
+  checks index segments and refuses `malformed_wire`, with no cause, at the
+  segment's `node` member pointer, such as
+  `/semantic_graph/nodes/{k}/node_id/path/{s}/node` or
+  `/source_map/{j}/node_id/path/{s}/node`:
+  1. an index not below the length of `semantic_graph.nodes`, the first such
+     segment in the order of the document's canonical bytes;
+  2. otherwise a cycle: the first segment, by the graph index *k* of the node
+     whose own `node_id.path` holds it and then by its position *s* in that
+     path, whose named node reaches node *k* through own-path index segments.
+     A node that names itself is such a cycle.
+- **Rebuilding the key.** The structural key of a node is its `node_id` with
+  each index segment replaced by the structural key of the node it names; the
+  structural key of a `node_id` held anywhere else in the document is built the
+  same way. A reader rebuilds every key after the index checks, resolving each
+  named node once and sharing its key wherever it is named, so the rebuilt keys
+  form a directed acyclic graph of size linear in the package and no key is
+  copied into another. Identity, equality, uniqueness, resolution and the node
+  order above are defined on structural keys. Within one admitted document
+  the rebuilt keys of the nodes are distinct, so two node ids of that document
+  are equal exactly when they are equal as wire values; a reader may compare the
+  wire values there once the duplicate-`node_id` check has passed. Across two
+  documents (an importer and the dependency it imports, or the two packages of
+  FR-322-AC-75's diamond), the same node can carry different index segments,
+  and only the structural keys are compared.
+- **Producing.** A producer interns each operand node in the graph before it
+  writes the user's `node_id`, and writes each operand as the index segment of
+  that node. Two derived nodes have one structural key exactly when they have
+  the same `node_tag`, `semantic_form`, string operands and operand keys, in
+  order, so a producer that interns by structural key emits each one once.
+- **Notation.** Where this artifact writes an operand of a path as `X's
+  node_id`, `X.node_id` or "the `node_id` of `X`", the structural key holds
+  `X`'s key and the wire holds `X`'s index segment. The FR-201 `NodeId`
+  identity value is the structural key; FR-201 states it with nested operand
+  ids because it is a value, not a wire encoding.
 
 ### Derived request items
 
@@ -1133,8 +1213,9 @@ request item, so nothing is left to key or replay.
 ## Body grammar
 
 A node's `body` is drawn from a closed grammar of five strata. No production
-names itself or a higher stratum, so the JSON depth of every V2 package is
-fixed by the schema, whatever the model's size.
+names itself or a higher stratum, and a `node_id` holds its operands as index
+segments, never as nested node ids ("Operand index segments"), so the JSON depth
+of every V2 package is fixed by the schema, whatever the model's size.
 
 | Stratum | Productions |
 | --- | --- |
@@ -3136,7 +3217,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-33 | `quire.op.reference.eq` and `quire.op.reference.ne` admit two references to selected object types of which one conforms to the other along declared supertypes: two of one type, a subtype and its supertype in either operand order, a subtype two levels down, and a type with two supertypes against either. A systems interface with no declared supertype against an unrelated object type, two unrelated object types, a reference to a relationship, even compared with itself, and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand whose owner is not selected refuses `missing_declaration`/`missing-selection`, even compared with itself. | Test |
 | FR-322-AC-34 | `quire.op.record.project` over a `quire.op.model.deref` result reads a field of a model object: the `deref` result has family `object`, the projection resolves the field on the declaring object type, own or inherited, and its result is the field's member type. A projection over a reference that is not dereferenced, a `field` member naming a node other than the operand's object type, a `deref` whose `result_type` is not the operand's object type, a `deref` result of a relationship, and a projection whose `result_type` is not the field's member type refuse `ill_typed`/`operator-ineligible`. | Test |
 | FR-322-AC-35 | A `dependency_selections` entry is a closed `DependencySelection` `{identity}`: the published package carrying two such direct entries, one per identity in ascending identity order in its lock, is admitted by the V2 schema; an entry with a `Selection` or `DefinitionRef` shape, no `identity`, any member beside `identity` or an extra `version` member fails the schema at the mutated entry, and a lock with a `model_selections` member fails the schema; a reader refuses a `DependencySelection` carrying `version` `unknown_member`, since a library binds by its `name` and a model by the identity of its `model_root`. Entries ordered by UTF-8 bytes where UTF-16 code-unit order differs are admitted; a second entry of one identity refuses `invalid_package`/`conflicting-definition` with both entries as loci, and an entry not strictly after its predecessor refuses `invalid_package`/`invalid-value` at its pointer. | Test (TC-233) |
-| FR-322-AC-36 | A `{term: "dependency_reference", package, node}` term whose `package` is a dependency identity string and whose `node` is a `NodeId` is admitted by the V2 schema as an application argument; an empty `package`, a missing `node` and an extra member each fail the schema. | Test |
+| FR-322-AC-36 | A `{term: "dependency_reference", package, node}` term whose `package` is a dependency identity string and whose `node` is a `NodeId` whose `path` holds only strings is admitted by the V2 schema as an application argument; an empty `package`, a missing `node`, an extra member and a `node` whose `path` holds an index segment (`NI-07`) each fail the schema. | Test |
 | FR-322-AC-37 | A package whose function calls a dependency `function` declaration over `Int[0, 9]` returning `Boolean`, through a `dependency_reference` callee, with the Boolean node as `result_type` and no `dependencies` entry for the target, is admitted when the dependency's admitted package is supplied. With no dependency package supplied it refuses `missing_import`/`missing-selection` at the selection entry; with the callee's `package` absent from `dependency_selections`, `missing_declaration`/`missing-selection`; with `node` naming a node that carries no `declaration`, `missing_declaration`/`missing-name`; with `node` naming a declared record, a function returning a declared record, a function over `Set<R>` or over a tuple holding `R` for a declared record `R`, a function over `Reference<M::T>` for a model type `M::T`, or with the term as a non-callee argument or as a node body root, `ill_typed`/`operator-ineligible`; with the target listed in `dependencies`, `invalid_semantic_graph` at the node's `dependencies`. The published `fixtures/positive-dependency-library.json`, `fixtures/positive-dependency-call.json` and `dependency-call-vectors.json` carry the library, the importer and each mutation with its refusal and locus. | Test (TC-233) |
 | FR-322-AC-38 | `quire.op.model.reaches_field` admits a field edge of the owner's own reference type: `Order.parent` (`Option<Reference<Order>>`), `Order.prior` (`Sequence<Reference<Order>>[0, 3]`) and `Order.origin` (`Reference<Order>`), the inherited `parent` read on `Sub`, and a target of a subtype of `Order`. A set edge, an unbounded sequence edge, an edge to another object type, a non-reference field, a target of an unrelated type, an operand 0 of a type other than the member's declaring node, an undeclared field name and an operand of family `object` refuse `ill_typed`/`operator-ineligible`; an ambiguous field name refuses `ambiguous_declaration`/`ambiguous-name`, and a declaring node owned by a domain package identity the lock does not select `missing_declaration`/`missing-selection`. | Test (TC-281) |
 | FR-322-AC-39 | Every node body of every published V2 package conforms to the five-stratum body grammar, and the V2 schema admits exactly that grammar. | Test |
@@ -3194,7 +3275,7 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-92 | In every published producer-output package (every published positive package except the reader-admission fixture `positive-integer-literal-references.json` of FR-322-AC-93), each operand of a `quire.op.integer.add`, `sub`, `mul`, `negate`, `eq` or `ne` application that is an integer literal typed at the builtin Integer node is an inline `literal` term with `value_kind` `integer` and that type, and no such operand is a `reference` to a `value`/`literal` node of `value_kind` `integer`, whatever the node's type. In `positive-two-owners-a.json` and `-b.json` the `three` application holds the inline operands `1` and `2` and has empty `dependencies`; in `positive-operation-identities.json` the `integer.mul` and `integer.add` hold `7` and `-2` inline, and the `value`/`literal` nodes `7` and `-2` are present for the nodes that reference them. | Test (TC-233) |
 | FR-322-AC-93 | The reader admits the reference form of an integer literal operand under the six operators: `positive-integer-literal-references.json`, whose `three` application is `quire.op.integer.add` over references to two `value`/`literal` nodes, validates against the V2 schema and passes every reader check, and its `three` node has a different `node_id` from that of `positive-two-owners-a.json`, which holds the inline form. | Test (TC-233) |
 | FR-322-AC-94 | `quire.op.reference.upcast` admits an operand `Reference<S>` with `type_argument` `Reference<T>` exactly when `S` and `T` are selected object types of one document and `S` conforms to `T` along declared supertypes: one type to itself, a subtype to its supertype, a subtype two levels down to its root, and a type with two supertypes to either. A supertype to its subtype (a downcast), two unrelated object types, a systems interface with no declared supertype to an object type, a reference to a relationship at either end and an operand of family `object` refuse `ill_typed`/`operator-ineligible`. An operand or member whose owner is not selected refuses `missing_declaration`/`missing-selection`. | Test |
-| FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id order. Each reorder that changes the node sequence yields a structurally unequal package, and the reader reports no refusal for the order of the nodes. | Test (TC-233) |
+| FR-322-AC-95 | The full reader admits each published positive fixture whose graph holds no `recursion_group`, both as published, where all but `positive-nominal-identities.json` list their nodes out of ascending node-id order, and with its `semantic_graph.nodes` reversed and with them sorted ascending by node-id order, each index segment of the document rewritten to its node's new graph index. A reversed graph names later nodes through its index segments, and it is admitted. Each reorder that changes the node sequence yields a structurally unequal package whose nodes have the same structural keys, and the reader reports no refusal for the order of the nodes. | Test (TC-233) |
 | FR-322-AC-96 | Every node of every published positive fixture carries exactly the `dependencies` list that FR-322 `dependencies` rules 1 to 4 rebuild from the node as written, or, for a node form whose body artifact states its own list, that list: in `positive-all-families.json` the `expression`/`reference` node and the `correspondence`/`source_locus` node each list their body target, and the `bounded_domain`/`integer_range` node lists its `semantic_type`; in `positive-operation-identities.json` the `bounded_domain`/`model_population` node lists its `semantic_type` alone, not its `max` literal's `type`. The full reader refuses `invalid_semantic_graph` at the node's `/dependencies` for the `expression`/`reference` node with `[]`, the `integer_range` node with `[]`, the `model_population` node with the Integer node added, and a `value`/`parameter` node listing its `semantic_type`. | Test (TC-233) |
 | FR-322-AC-97 | The V2 schema admits a `value`/`parameter` node whose body binds `name` then `level`, and a `scalar_type`/`compound_unit` node; a parameter body with `level` before `name`, or with a third member, fails the V2 schema (`malformed_wire`). The full reader admits every published positive fixture, and each `value`/`parameter` node of one is distinct by `name` and `level`. | Test (TC-233) |
 | FR-322-AC-98 | Step 1 over a selected document that carries `dimensions` and `units` (FR-154-AC-19's `Time`, `Rate`, `s` and `ms`) and an object type with a clock field reads every dimension and unit node and the clock field into the declarations steps 2 to 4 read, in authored order; the same document with `dimensions` and `units` absent reads as one with both lists empty; a selected document whose `units` holds a unit with `scale` `0` refuses at stage `package_read` with FR-154's `invalid_model_binding`/`malformed-declaration` and its loci. | Test (TC-280) |
@@ -3295,6 +3376,10 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-275 | The join stages run in the order "One total order of the join stages" states, each over every node before the next starts: a package whose `model`/`tuple_value_type` node `Pair` has a `ModelOwner` naming a node its selected document does not declare, and whose `Pair`-typed parameter carries a `semantic_type` naming a node the graph lacks, refuses `missing_declaration`/`missing-selection` at `/semantic_graph/nodes/0/owner` (stage 2, the owner join), never the dangling edge of stage 4 (`TW-28`). | Test (TC-940) |
 | FR-322-AC-276 | The derived deadlock-freedom, time-lock-freedom and race-freedom items add no node to `semantic_graph` and have no `node_tag`, `semantic_form` or derived path. Each is keyed by its `subject`, its anchor `node_id` and its `item_kind`. In the `derived-items-request` vector, the model subject's deadlock-freedom and time-lock-freedom items both have claim node `{package: "acme/orders", path: ["model", "model_root"], ordinal: 0}` (`model`/`model_root`, occurrence `generated` 0). The protocol subject's deadlock-freedom and race-freedom items both have claim node `{package: "example", path: ["Example", "Handshake"], ordinal: 0}` (`protocol`/`protocol_clause`, occurrence `declaration` 0). Each node resolves in the package the request carries. The two items that share a node have one `subject` and differ only in `item_kind`. No node of the package other than the anchor has a `semantic_form` that names the item's kind. A copy of the package that adds a `model`/`deadlock_freedom` node over the `model_root` anchor fails the checked-package schema. If the model subject's deadlock-freedom claim is retargeted to the protocol clause node, to item 0's `temporal`/`formula` node or to a `node_id` absent from the graph, the reader refuses the item before consumption. | Test (TC-431 BP-51) |
 | FR-322-AC-277 | A derived item whose claim names its correct anchor node with an occurrence other than the one FR-368 picks is refused before consumption: the model subject's deadlock-freedom item of `derived-items-request` with `claim.occurrence` `{role: "declaration", ordinal: 0}` in place of `{role: "generated", ordinal: 0}` is admitted by the schema and refused by the reader. | Test (TC-431 BP-51) |
+| FR-322-AC-278 | No published V2 package, fixture or vector holds a `node_id` object inside a `node_id.path`: every operand is an index segment `{"node": i}`. Over `fixtures/positive-dependency-call.json`, the V2 schema refuses as `malformed_wire`, at the patched segment, a path segment that is a nested `node_id` object (`NI-01`), `{"node": -1}` (`NI-02`), `{"node": "0"}` (`NI-03`), `{"node": 1.5}` (`NI-04`), `{"node": 0, "ordinal": 0}` (`NI-05`) and `{}` (`NI-06`), and a `dependency_reference` `node` whose path holds an index segment (`NI-07`). | Test (TC-233; NI-01..NI-07) |
+| FR-322-AC-279 | A schema-valid index segment whose `node` is not below the length of `semantic_graph.nodes` refuses `malformed_wire`, with no cause, at that segment's `node` member, before every `semantic_graph` check: in a node's own `node_id` (`NI-08`, index `4` of four nodes, at `/semantic_graph/nodes/2/node_id/path/3/node`), in a literal's `type` (`NI-09`, index 9007199254740991) and in a `source_map` entry's `node_id` (`NI-10`, at `/source_map/2/node_id/path/3/node`). | Test (TC-233; NI-08..NI-10) |
+| FR-322-AC-280 | A cycle through own-path index segments refuses `malformed_wire`, with no cause, at the first segment by holding node's graph index and then path position whose named node reaches the holding node: a node that names itself (`NI-11`, at `/semantic_graph/nodes/2/node_id/path/3/node`) and two nodes that name each other (`NI-12`, at node `0`'s segment `/semantic_graph/nodes/0/node_id/path/2/node`). An index segment that names a later node without a cycle is admitted (the reversed fixtures of FR-322-AC-95). | Test (TC-233; NI-11, NI-12) |
+| FR-322-AC-281 | A graph holding the Integer node and a left-nested chain of 100,000 derived `expression`/`application` nodes, each naming the previous one through one index segment (`NI-13`), writes its node ids in at most 200 bytes per node, at the same maximum JSON nesting depth as a chain of 100, and its text is parsed by a JSON reader with a nesting limit of 128. The index checks admit it, and its rebuilt structural keys are 100,001 distinct keys, the key of each chain node holding its predecessor's key as its last path element. | Test (TC-233; NI-13) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the node. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 
 ## Dependencies

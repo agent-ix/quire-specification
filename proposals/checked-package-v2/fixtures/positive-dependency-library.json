@@ -192,12 +192,7 @@
             "integer_range",
             "min",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "0",
             "max",
@@ -271,43 +266,16 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 2
             },
             "x",
             "level",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "0",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "bounded_domain",
-                "integer_range",
-                "min",
-                {
-                  "ordinal": 0,
-                  "package": "test/predicates",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "0",
-                "max",
-                "9"
-              ]
+              "node": 3
             }
           ]
         },
@@ -328,12 +296,7 @@
             "integer_range",
             "min",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "0",
             "max",
@@ -358,43 +321,16 @@
                         "parameter",
                         "name",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "text"
-                          ]
+                          "node": 2
                         },
                         "x",
                         "level",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         },
                         "0",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "bounded_domain",
-                            "integer_range",
-                            "min",
-                            {
-                              "ordinal": 0,
-                              "package": "test/predicates",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ]
-                            },
-                            "0",
-                            "max",
-                            "9"
-                          ]
+                          "node": 3
                         }
                       ]
                     },
@@ -422,43 +358,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 2
               },
               "x",
               "level",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "0",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "bounded_domain",
-                  "integer_range",
-                  "min",
-                  {
-                    "ordinal": 0,
-                    "package": "test/predicates",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  "0",
-                  "max",
-                  "9"
-                ]
+                "node": 3
               }
             ]
           }
@@ -594,43 +503,16 @@
                         "parameter",
                         "name",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "text"
-                          ]
+                          "node": 2
                         },
                         "x",
                         "level",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         },
                         "0",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "bounded_domain",
-                            "integer_range",
-                            "min",
-                            {
-                              "ordinal": 0,
-                              "package": "test/predicates",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ]
-                            },
-                            "0",
-                            "max",
-                            "9"
-                          ]
+                          "node": 3
                         }
                       ]
                     },
@@ -658,43 +540,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 2
               },
               "x",
               "level",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "0",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "bounded_domain",
-                  "integer_range",
-                  "min",
-                  {
-                    "ordinal": 0,
-                    "package": "test/predicates",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  "0",
-                  "max",
-                  "9"
-                ]
+                "node": 3
               }
             ]
           }
@@ -764,12 +619,7 @@
             "composite_type",
             "set",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "Lib",
-                "Point"
-              ]
+              "node": 6
             }
           ]
         },
@@ -789,12 +639,7 @@
             "composite_type",
             "set",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "Lib",
-                "Point"
-              ]
+              "node": 6
             }
           ]
         }
@@ -848,39 +693,16 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 2
             },
             "points",
             "level",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "0",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "composite_type",
-                "set",
-                {
-                  "ordinal": 0,
-                  "package": "test/predicates",
-                  "path": [
-                    "Lib",
-                    "Point"
-                  ]
-                }
-              ]
+              "node": 8
             }
           ]
         },
@@ -900,12 +722,7 @@
             "composite_type",
             "set",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "Lib",
-                "Point"
-              ]
+              "node": 6
             }
           ]
         }
@@ -927,39 +744,16 @@
                         "parameter",
                         "name",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "text"
-                          ]
+                          "node": 2
                         },
                         "points",
                         "level",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         },
                         "0",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "composite_type",
-                            "set",
-                            {
-                              "ordinal": 0,
-                              "package": "test/predicates",
-                              "path": [
-                                "Lib",
-                                "Point"
-                              ]
-                            }
-                          ]
+                          "node": 8
                         }
                       ]
                     },
@@ -987,39 +781,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 2
               },
               "points",
               "level",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "0",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "composite_type",
-                  "set",
-                  {
-                    "ordinal": 0,
-                    "package": "test/predicates",
-                    "path": [
-                      "Lib",
-                      "Point"
-                    ]
-                  }
-                ]
+                "node": 8
               }
             ]
           }
@@ -1108,20 +879,10 @@
             "composite_type",
             "tuple",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "Lib",
-                "Point"
-              ]
+              "node": 6
             }
           ]
         },
@@ -1141,20 +902,10 @@
             "composite_type",
             "tuple",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "Lib",
-                "Point"
-              ]
+              "node": 6
             }
           ]
         }
@@ -1208,47 +959,16 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 2
             },
             "pair",
             "level",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "0",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "composite_type",
-                "tuple",
-                {
-                  "ordinal": 0,
-                  "package": "test/predicates",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                {
-                  "ordinal": 0,
-                  "package": "test/predicates",
-                  "path": [
-                    "Lib",
-                    "Point"
-                  ]
-                }
-              ]
+              "node": 11
             }
           ]
         },
@@ -1268,20 +988,10 @@
             "composite_type",
             "tuple",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "Lib",
-                "Point"
-              ]
+              "node": 6
             }
           ]
         }
@@ -1303,47 +1013,16 @@
                         "parameter",
                         "name",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "text"
-                          ]
+                          "node": 2
                         },
                         "pair",
                         "level",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         },
                         "0",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "composite_type",
-                            "tuple",
-                            {
-                              "ordinal": 0,
-                              "package": "test/predicates",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ]
-                            },
-                            {
-                              "ordinal": 0,
-                              "package": "test/predicates",
-                              "path": [
-                                "Lib",
-                                "Point"
-                              ]
-                            }
-                          ]
+                          "node": 11
                         }
                       ]
                     },
@@ -1371,47 +1050,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 2
               },
               "pair",
               "level",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "0",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "composite_type",
-                  "tuple",
-                  {
-                    "ordinal": 0,
-                    "package": "test/predicates",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  {
-                    "ordinal": 0,
-                    "package": "test/predicates",
-                    "path": [
-                      "Lib",
-                      "Point"
-                    ]
-                  }
-                ]
+                "node": 11
               }
             ]
           }
@@ -1522,13 +1170,7 @@
             "composite_type",
             "reference",
             {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "model",
-                "object_type",
-                "ix://acme/orders/Order"
-              ]
+              "node": 14
             }
           ]
         },
@@ -1548,13 +1190,7 @@
             "composite_type",
             "reference",
             {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "model",
-                "object_type",
-                "ix://acme/orders/Order"
-              ]
+              "node": 14
             }
           ]
         }
@@ -1608,40 +1244,16 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 2
             },
             "order",
             "level",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "0",
             {
-              "ordinal": 0,
-              "package": "test/predicates",
-              "path": [
-                "composite_type",
-                "reference",
-                {
-                  "ordinal": 0,
-                  "package": "acme/orders",
-                  "path": [
-                    "model",
-                    "object_type",
-                    "ix://acme/orders/Order"
-                  ]
-                }
-              ]
+              "node": 15
             }
           ]
         },
@@ -1661,13 +1273,7 @@
             "composite_type",
             "reference",
             {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "model",
-                "object_type",
-                "ix://acme/orders/Order"
-              ]
+              "node": 14
             }
           ]
         }
@@ -1689,40 +1295,16 @@
                         "parameter",
                         "name",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "text"
-                          ]
+                          "node": 2
                         },
                         "order",
                         "level",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         },
                         "0",
                         {
-                          "ordinal": 0,
-                          "package": "test/predicates",
-                          "path": [
-                            "composite_type",
-                            "reference",
-                            {
-                              "ordinal": 0,
-                              "package": "acme/orders",
-                              "path": [
-                                "model",
-                                "object_type",
-                                "ix://acme/orders/Order"
-                              ]
-                            }
-                          ]
+                          "node": 15
                         }
                       ]
                     },
@@ -1750,40 +1332,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 2
               },
               "order",
               "level",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "0",
               {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "composite_type",
-                  "reference",
-                  {
-                    "ordinal": 0,
-                    "package": "acme/orders",
-                    "path": [
-                      "model",
-                      "object_type",
-                      "ix://acme/orders/Order"
-                    ]
-                  }
-                ]
+                "node": 15
               }
             ]
           }
@@ -1933,12 +1491,7 @@
           "integer_range",
           "min",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "0",
           "max",
@@ -1967,43 +1520,16 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 2
           },
           "x",
           "level",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "0",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "bounded_domain",
-              "integer_range",
-              "min",
-              {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "0",
-              "max",
-              "9"
-            ]
+            "node": 3
           }
         ]
       },
@@ -2094,12 +1620,7 @@
           "composite_type",
           "set",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "Lib",
-              "Point"
-            ]
+            "node": 6
           }
         ]
       },
@@ -2125,39 +1646,16 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 2
           },
           "points",
           "level",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "0",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "composite_type",
-              "set",
-              {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "Lib",
-                  "Point"
-                ]
-              }
-            ]
+            "node": 8
           }
         ]
       },
@@ -2204,20 +1702,10 @@
           "composite_type",
           "tuple",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "Lib",
-              "Point"
-            ]
+            "node": 6
           }
         ]
       },
@@ -2243,47 +1731,16 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 2
           },
           "pair",
           "level",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "0",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "composite_type",
-              "tuple",
-              {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              {
-                "ordinal": 0,
-                "package": "test/predicates",
-                "path": [
-                  "Lib",
-                  "Point"
-                ]
-              }
-            ]
+            "node": 11
           }
         ]
       },
@@ -2353,13 +1810,7 @@
           "composite_type",
           "reference",
           {
-            "ordinal": 0,
-            "package": "acme/orders",
-            "path": [
-              "model",
-              "object_type",
-              "ix://acme/orders/Order"
-            ]
+            "node": 14
           }
         ]
       },
@@ -2385,40 +1836,16 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 2
           },
           "order",
           "level",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "0",
           {
-            "ordinal": 0,
-            "package": "test/predicates",
-            "path": [
-              "composite_type",
-              "reference",
-              {
-                "ordinal": 0,
-                "package": "acme/orders",
-                "path": [
-                  "model",
-                  "object_type",
-                  "ix://acme/orders/Order"
-                ]
-              }
-            ]
+            "node": 15
           }
         ]
       },

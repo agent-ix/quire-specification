@@ -260,30 +260,16 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 1
             },
             "s",
             "level",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "0",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Shape"
-              ]
+              "node": 2
             }
           ]
         },
@@ -353,22 +339,12 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 1
             },
             "r",
             "level",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "1"
           ]
@@ -440,22 +416,12 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 1
             },
             "w",
             "level",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "1"
           ]
@@ -527,22 +493,12 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 1
             },
             "h",
             "level",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "2"
           ]
@@ -587,12 +543,7 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "0"
           ]
@@ -637,12 +588,7 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "2"
           ]
@@ -687,12 +633,7 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "3"
           ]
@@ -731,12 +672,7 @@
                         "value",
                         "literal",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         },
                         "2"
                       ]
@@ -751,12 +687,7 @@
                         "value",
                         "literal",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         },
                         "3"
                       ]
@@ -778,12 +709,7 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "2"
             ]
@@ -795,12 +721,7 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "3"
             ]
@@ -814,45 +735,13 @@
             "union_value",
             "Rect",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "2"
-              ]
+              "node": 8
             },
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "3"
-              ]
+              "node": 9
             },
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Shape"
-              ]
+              "node": 2
             }
           ]
         },
@@ -896,11 +785,7 @@
             "union_value",
             "Empty",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Shape"
-              ]
+              "node": 2
             }
           ]
         },
@@ -933,22 +818,12 @@
                   "parameter",
                   "name",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ]
+                    "node": 1
                   },
                   "w",
                   "level",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
+                    "node": 0
                   },
                   "1"
                 ]
@@ -964,22 +839,12 @@
                   "parameter",
                   "name",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ]
+                    "node": 1
                   },
                   "h",
                   "level",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
+                    "node": 0
                   },
                   "2"
                 ]
@@ -1014,22 +879,12 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 1
               },
               "h",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "2"
             ]
@@ -1042,22 +897,12 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 1
               },
               "w",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "1"
             ]
@@ -1070,70 +915,15 @@
             "expression",
             "binary",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ]
-                },
-                "w",
-                "level",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "1"
-              ]
+              "node": 5
             },
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ]
-                },
-                "h",
-                "level",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "2"
-              ]
+              "node": 6
             },
             "quire.op.integer.mul",
             "binary",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             }
           ]
         },
@@ -1167,30 +957,16 @@
                   "parameter",
                   "name",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ]
+                    "node": 1
                   },
                   "s",
                   "level",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
+                    "node": 0
                   },
                   "0",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "Shape"
-                    ]
+                    "node": 2
                   }
                 ]
               },
@@ -1212,22 +988,12 @@
                             "parameter",
                             "name",
                             {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "text"
-                              ]
+                              "node": 1
                             },
                             "r",
                             "level",
                             {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ]
+                              "node": 0
                             },
                             "1"
                           ]
@@ -1246,22 +1012,12 @@
                         "parameter",
                         "name",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "text"
-                          ]
+                          "node": 1
                         },
                         "r",
                         "level",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         },
                         "1"
                       ]
@@ -1288,22 +1044,12 @@
                             "parameter",
                             "name",
                             {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "text"
-                              ]
+                              "node": 1
                             },
                             "w",
                             "level",
                             {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ]
+                              "node": 0
                             },
                             "1"
                           ]
@@ -1319,22 +1065,12 @@
                             "parameter",
                             "name",
                             {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "text"
-                              ]
+                              "node": 1
                             },
                             "h",
                             "level",
                             {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ]
+                              "node": 0
                             },
                             "2"
                           ]
@@ -1352,70 +1088,15 @@
                         "expression",
                         "binary",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "value",
-                            "parameter",
-                            "name",
-                            {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "text"
-                              ]
-                            },
-                            "w",
-                            "level",
-                            {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ]
-                            },
-                            "1"
-                          ]
+                          "node": 5
                         },
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "value",
-                            "parameter",
-                            "name",
-                            {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "text"
-                              ]
-                            },
-                            "h",
-                            "level",
-                            {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ]
-                            },
-                            "2"
-                          ]
+                          "node": 6
                         },
                         "quire.op.integer.mul",
                         "binary",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         }
                       ]
                     },
@@ -1442,12 +1123,7 @@
                         "value",
                         "literal",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 0
                         },
                         "0"
                       ]
@@ -1485,70 +1161,15 @@
               "expression",
               "binary",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ]
-                  },
-                  "w",
-                  "level",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  "1"
-                ]
+                "node": 5
               },
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ]
-                  },
-                  "h",
-                  "level",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  "2"
-                ]
+                "node": 6
               },
               "quire.op.integer.mul",
               "binary",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               }
             ]
           },
@@ -1559,12 +1180,7 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "0"
             ]
@@ -1577,22 +1193,12 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 1
               },
               "h",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "2"
             ]
@@ -1605,22 +1211,12 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 1
               },
               "r",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "1"
             ]
@@ -1633,30 +1229,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 1
               },
               "s",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "0",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "Shape"
-                ]
+                "node": 2
               }
             ]
           },
@@ -1668,22 +1250,12 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 1
               },
               "w",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "1"
             ]
@@ -1696,227 +1268,30 @@
             "expression",
             "case",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ]
-                },
-                "s",
-                "level",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "0",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "Shape"
-                  ]
-                }
-              ]
+              "node": 3
             },
             "Circle",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ]
-                },
-                "r",
-                "level",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "1"
-              ]
+              "node": 4
             },
             "Rect",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ]
-                },
-                "w",
-                "level",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "1"
-              ]
+              "node": 5
             },
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ]
-                },
-                "h",
-                "level",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "2"
-              ]
+              "node": 6
             },
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "expression",
-                "binary",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ]
-                    },
-                    "w",
-                    "level",
-                    {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ]
-                    },
-                    "1"
-                  ]
-                },
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ]
-                    },
-                    "h",
-                    "level",
-                    {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ]
-                    },
-                    "2"
-                  ]
-                },
-                "quire.op.integer.mul",
-                "binary",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                }
-              ]
+              "node": 12
             },
             "Empty",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "literal",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "0"
-              ]
+              "node": 7
             },
             "quire.op.control.case",
             "case",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             }
           ]
         },
@@ -2015,30 +1390,16 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 1
           },
           "s",
           "level",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "0",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Shape"
-            ]
+            "node": 2
           }
         ]
       },
@@ -2064,22 +1425,12 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 1
           },
           "r",
           "level",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "1"
         ]
@@ -2106,22 +1457,12 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 1
           },
           "w",
           "level",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "1"
         ]
@@ -2148,22 +1489,12 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 1
           },
           "h",
           "level",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "2"
         ]
@@ -2189,12 +1520,7 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "0"
         ]
@@ -2220,12 +1546,7 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "2"
         ]
@@ -2251,12 +1572,7 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "3"
         ]
@@ -2283,45 +1599,13 @@
           "union_value",
           "Rect",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "literal",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "2"
-            ]
+            "node": 8
           },
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "literal",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "3"
-            ]
+            "node": 9
           },
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Shape"
-            ]
+            "node": 2
           }
         ]
       },
@@ -2347,11 +1631,7 @@
           "union_value",
           "Empty",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Shape"
-            ]
+            "node": 2
           }
         ]
       },
@@ -2376,70 +1656,15 @@
           "expression",
           "binary",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "parameter",
-              "name",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
-              },
-              "w",
-              "level",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "1"
-            ]
+            "node": 5
           },
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "parameter",
-              "name",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
-              },
-              "h",
-              "level",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "2"
-            ]
+            "node": 6
           },
           "quire.op.integer.mul",
           "binary",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           }
         ]
       },
@@ -2464,227 +1689,30 @@
           "expression",
           "case",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "parameter",
-              "name",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
-              },
-              "s",
-              "level",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "0",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "Shape"
-                ]
-              }
-            ]
+            "node": 3
           },
           "Circle",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "parameter",
-              "name",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
-              },
-              "r",
-              "level",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "1"
-            ]
+            "node": 4
           },
           "Rect",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "parameter",
-              "name",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
-              },
-              "w",
-              "level",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "1"
-            ]
+            "node": 5
           },
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "parameter",
-              "name",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
-              },
-              "h",
-              "level",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "2"
-            ]
+            "node": 6
           },
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "expression",
-              "binary",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ]
-                  },
-                  "w",
-                  "level",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  "1"
-                ]
-              },
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ]
-                  },
-                  "h",
-                  "level",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  "2"
-                ]
-              },
-              "quire.op.integer.mul",
-              "binary",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              }
-            ]
+            "node": 12
           },
           "Empty",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "literal",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "0"
-            ]
+            "node": 7
           },
           "quire.op.control.case",
           "case",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           }
         ]
       },
