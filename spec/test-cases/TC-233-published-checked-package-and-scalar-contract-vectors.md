@@ -55,6 +55,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-81
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-287
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-82
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-83
@@ -618,6 +620,14 @@ Each vector gives two identities as the JSON values below and states whether the
 | SI-04 `UniverseId` | `{"package":"acme/shapes","path":["Shape"],"ordinal":0}` | `{"package":"acme/shapes","path":["Shape"],"ordinal":0}`; then `{"package":"acme/shapes","path":["Line"],"ordinal":0}` | Equal for the first; different for the second |
 | SI-05 `PopulationId` | `{"package":"acme/shapes","path":["counters"],"ordinal":0}` | `{"package":"acme/shapes","path":["counters"],"ordinal":0}`; then `{"package":"acme/shapes","path":["archive"],"ordinal":0}` | Equal for the first; different for the second, although both populations have the same member type |
 | SI-06 owner arm | `{"owner":{"effective_id":{"owner_effective_type":null,"original":{"package":"acme/orders","node":"Order"}}},"member":"total"}` | `{"owner":{"effective_id":{"owner_effective_type":null,"original":{"package":"acme/orders","node":"Invoice"}}},"member":"total"}` | Different: the `original` nodes differ; the two `EffectiveId` values compare by `owner_effective_type` (`null` first) then `original` |
+
+### Equivalence anchor ordinal vector
+
+`EA-01` is built by the test from a unit that declares three dimension equivalences in source order, `E0`, `E1` and `E2`.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| EA-01 | the emitted package of that unit; then the same package with its `dimension_equivalence` nodes reordered in `semantic_graph.nodes` | Each node has one `source_map` entry of role `anchor`, at ordinal `0` for `E0`, `1` for `E1` and `2` for `E2`, each region the node's own declaration; the reordered package gives the same ordinals | FR-322-AC-287 |
 
 ## Expected Results
 
