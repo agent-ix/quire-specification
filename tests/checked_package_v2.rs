@@ -20,6 +20,8 @@ const POSITIVE_OPERATION_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-operation-identities.json");
 const NODE_IDENTITY_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/node-identity-vectors.json");
+const COLLECTION_POPULATION_TYPE_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/collection-population-type-vectors.json");
 const POSITIVE_ALL_FAMILIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-all-families.json");
 const POSITIVE_TIMED_MODEL_NODES: &str =
@@ -17167,6 +17169,179 @@ const STRUCTURAL_IDENTITY_SCHEMA: &str =
     include_str!("../proposals/checked-package-v2/structural-identity.schema.json");
 const STRUCTURAL_IDENTITY_VECTORS: &str =
     include_str!("../proposals/checked-package-v2/structural-identity-vectors.json");
+
+fn expand_structural_key(name: &str, keys: &serde_json::Map<String, Value>) -> Value {
+    let encoded = keys
+        .get(name)
+        .unwrap_or_else(|| panic!("missing structural node key {name}"))
+        .clone();
+    let mut key = json!({
+        "package": encoded["package"],
+        "path": encoded["segments"],
+        "ordinal": encoded["ordinal"]
+    });
+    expand_structural_key_references(&mut key, keys);
+    key
+}
+
+fn expand_structural_key_references(value: &mut Value, keys: &serde_json::Map<String, Value>) {
+    if let Some(reference) = value.get("node_key_ref").and_then(Value::as_str) {
+        *value = expand_structural_key(reference, keys);
+        return;
+    }
+    match value {
+        Value::Object(members) => {
+            for member in members.values_mut() {
+                expand_structural_key_references(member, keys);
+            }
+        }
+        Value::Array(items) => {
+            for item in items {
+                expand_structural_key_references(item, keys);
+            }
+        }
+        _ => {}
+    }
+}
+
+/// FR-144-AC-9/AC-13 and FR-153-AC-9 (TC-189, TC-247): publish complete structural
+/// node keys for collection and population type forms. The consumer that
+/// computes these keys is QSL's checked-package reader; this QSpec test keeps
+/// every key schema-valid and every case's source type, element, bounds and
+/// selected key in sync.
+#[trace("TC-189", "TC-247", "FR-144-AC-9", "FR-144-AC-13", "FR-153-AC-9")]
+#[test]
+fn tc_189_247_collection_and_population_type_vectors_publish_structural_keys() {
+    let structural_schema = parsed_fixture(STRUCTURAL_IDENTITY_SCHEMA);
+    let key_schema = schema_for_def(&structural_schema, "NodeId");
+    let vectors = parsed_fixture(COLLECTION_POPULATION_TYPE_VECTORS);
+    let node_keys = vectors["node_keys"].as_object().expect("node key table");
+    for name in node_keys.keys() {
+        let key = expand_structural_key(name, node_keys);
+        assert!(
+            key_schema.is_valid(&key),
+            "{name}: expected a structural NodeId"
+        );
+    }
+
+    let collections = vectors["collection_type_cases"]
+        .as_array()
+        .expect("collection type cases");
+    let collection_ids: BTreeSet<_> = collections
+        .iter()
+        .map(|case| case["id"].as_str().expect("case id"))
+        .collect();
+    assert_eq!(
+        collection_ids,
+        BTreeSet::from([
+            "CT-01", "CT-02", "CT-03", "CT-04", "CT-05", "CT-06", "CT-07", "CT-08"
+        ])
+    );
+    for case in collections {
+        let id = case["id"].as_str().unwrap();
+        let element_key_name = case["element_type_node_key"].as_str().unwrap();
+        let element_key = expand_structural_key(element_key_name, node_keys);
+        let key_name = case["expected_node_key"].as_str().unwrap();
+        let key = expand_structural_key(key_name, node_keys);
+        assert_eq!(
+            case["bounds"].is_null(),
+            key["path"][0] == "composite_type",
+            "{id}: only an unbounded collection uses its composite type key directly"
+        );
+        if !case["bounds"].is_null() {
+            assert_eq!(key["path"][0], "bounded_domain", "{id}: bounded key family");
+            assert_eq!(
+                key["path"][1], "collection_bounds",
+                "{id}: collection bound form"
+            );
+            assert_eq!(
+                key["path"][4],
+                case["bounds"]["minimum"].as_u64().unwrap().to_string(),
+                "{id}: minimum value"
+            );
+            assert_eq!(
+                key["path"][6],
+                case["bounds"]["maximum"].as_u64().unwrap().to_string(),
+                "{id}: maximum value"
+            );
+        }
+        assert!(
+            case["source_type"].as_str().is_some(),
+            "{id}: source type is recorded"
+        );
+        assert!(
+            case["kind"].as_str().is_some(),
+            "{id}: collection kind is recorded"
+        );
+        assert!(
+            case["element_type"].as_str().is_some(),
+            "{id}: element type is recorded"
+        );
+        assert!(
+            key.to_string().contains(&element_key.to_string()),
+            "{id}: key contains its element type identity"
+        );
+    }
+
+    let populations = vectors["population_type_cases"]
+        .as_array()
+        .expect("population type cases");
+    let population_ids: BTreeSet<_> = populations
+        .iter()
+        .map(|case| case["id"].as_str().expect("case id"))
+        .collect();
+    assert_eq!(population_ids, BTreeSet::from(["PT-01", "PT-02", "PT-03"]));
+    for case in populations {
+        let id = case["id"].as_str().unwrap();
+        let semantic_name = case["semantic_type_node_key"].as_str().unwrap();
+        let semantic_key = expand_structural_key(semantic_name, node_keys);
+        let expected_name = case["expected_node_key"].as_str().unwrap();
+        let key = expand_structural_key(expected_name, node_keys);
+        assert_eq!(
+            key["path"][0], "bounded_domain",
+            "{id}: population key family"
+        );
+        assert_eq!(key["path"][1], "model_population", "{id}: population form");
+        assert_eq!(
+            case["maximum"].is_null(),
+            !key["path"].get(2).is_some_and(|part| part == "max"),
+            "{id}: maximum presence agrees with key"
+        );
+        if case["maximum"].is_null() {
+            assert_eq!(
+                key["path"][2], semantic_key,
+                "{id}: unbounded population embeds its semantic Set type"
+            );
+        } else {
+            assert_eq!(
+                key["path"][2], "max",
+                "{id}: bounded population marks its maximum"
+            );
+            assert_eq!(
+                key["path"][3],
+                expand_structural_key("integer", node_keys),
+                "{id}: maximum is typed Integer"
+            );
+            assert_eq!(
+                key["path"][4],
+                case["maximum"].as_u64().unwrap().to_string(),
+                "{id}: maximum value"
+            );
+            assert_eq!(
+                key["path"][5], semantic_key,
+                "{id}: bounded population embeds its semantic Set type"
+            );
+        }
+        assert!(
+            case["source_type"].as_str().is_some(),
+            "{id}: source type is recorded"
+        );
+        assert!(
+            case["element_type"].as_str().is_some(),
+            "{id}: element type is recorded"
+        );
+    }
+}
 
 /// FR-201 "Structural identities": `EffectiveId` compares
 /// `owner_effective_type` (`null` first, then recursively) then `original`
