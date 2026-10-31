@@ -5575,7 +5575,7 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
     }
 }
 
-/// FR-340-AC-1/AC-2/AC-3/AC-4/AC-6/AC-8/AC-9/AC-16/AC-17, through the full
+/// FR-340-AC-1/AC-3/AC-4/AC-6/AC-8/AC-9/AC-16/AC-17, through the full
 /// normative reader: every published `frame_mutations` vector of
 /// `node-identity-vectors.json` is spliced into the all-families fixture's
 /// published frame node (its `dependencies` and

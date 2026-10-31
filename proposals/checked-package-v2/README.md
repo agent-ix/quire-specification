@@ -113,7 +113,7 @@ structures, but any external consumer receives only the contract.
   FR-322's refinement step occurrences: a refinement owner's `declaration` and
   `generated` `source_map` entries against its step rows, its `steps` (in declaration order) and
   whether it is proof-eligible (its hidden fields derived from `abstract_fields` against the `objects` rows). Cases `RS-18` to `RS-24` cover the closed, identity-excluded `refinement_step_rows` sidecar and its comparison with generated occurrences. The refinement members of these cases remain illustrative and are not a published package; a real entry uses the closed `RefinementBody` in `schema.json` and is compared by node id.
-- `node-identity-vectors.json` holds the `frame_mutations` vectors (FR-340-AC-1 to AC-9, AC-16, AC-17; TC-233). Each vector records its `expected_code`, its `expected_cause` (`null` for the cause-less `invalid_semantic_graph` order refusal) and its locus as `expected_locus_node_id`, a structural node id `{package, path, ordinal}`. No vector carries a digest or key.
+- `node-identity-vectors.json` holds the `frame_mutations` vectors (FR-340-AC-1, AC-3, AC-4, AC-6, AC-8, AC-9, AC-16, AC-17; TC-233). Each vector records its `expected_code`, its `expected_cause` (`null` for the cause-less `invalid_semantic_graph` order refusal) and its locus as `expected_locus_node_id`, a structural node id `{package, path, ordinal}`. No vector carries a digest or key.
   The frame vectors' `frame_mutations` are applied to the semantic graph and evaluated at the
   frame step of `read_package_semantics` (FR-322, FR-340); source-map checks
   are outside a vector's expectation. Most vectors replace the all-families
