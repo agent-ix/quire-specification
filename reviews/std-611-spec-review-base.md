@@ -35,3 +35,9 @@ Finding to fix. FR-322 uses “inapplicable” for rejected read_form values but
 | --- | --- | --- | --- |
 | FND-001 | medium | State that a non-model record projection carrying read_form is refused as malformed_wire, and add a vector. The current schema permits the optional member on every field OperationMember, while FR-322-AC-34 only says a model-object projection requires it and tests inapplicability on an undereferenced reference. | FR-322-AC-34; OperationMember |
 
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The fix states that read_form is reserved for model-object projections over model.deref and ordinary record projections must omit it; carrying it refuses malformed_wire. RP-14 covers this malformed case. |
