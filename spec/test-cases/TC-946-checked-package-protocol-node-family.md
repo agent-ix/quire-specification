@@ -115,6 +115,14 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 | K12 | a `role` node has no `declaration` occurrence | refuses `malformed_wire` (`declaration` is present exactly with a `declaration` occurrence) |
 | K14 | a protocol `Flow` has a `parallel` predicate join whose function `joinPred` body references `protocol Flow`, and a holder `Holder` is referenced by `Flow` and references `joinPred`, so the three declared nodes form one cycle; a second protocol `Plain` is acyclic | the complete cyclic reference component shares one `recursion_group`; each of its three declared members keeps its own declaration path (`Flow` `{P, [Flow], 0}`, `joinPred` `{P, [joinPred], 0}`, `Holder` `{P, [Holder], 0}`, each with the `SourceOwner` of its unit), and nodes sharing a path are told apart by `node_id.ordinal` (FR-322); its in-component references are ordinary `reference`s to member `node_id`s (spelled `group_reference` in the written form); the reader admits the package. `Plain` and every node outside that component carry no `recursion_group` from a producer (a label there is admitted and means nothing) |
 | K15 | Add a state precondition on the operation named by `Charged`'s attempt, with accepted `Pre{operation: "charge"}` | the attempt still references the no-point `operation_anchor`; the clause references a distinct point-bearing anchor; both anchors reference the same frame; the reader admits both nodes |
+| K16 | the `K14` cycle closed through a `protocol_reference` carrier `R` (path `["R"]`, ordinal `0`; body target `Flow`'s `node_id`; sole dependency `Flow`; one `expression` occurrence) that the function `joinPred` references in place of `Flow`, so `Flow`, `Holder`, `R` and `joinPred` form one cycle | admitted: the four members share one `recursion_group`, `R` is an anonymous derived member whose path is producer-chosen (the group has three declared members) and whose ordinal is producer-assigned, every in-component reference is an ordinary `reference` to a member `node_id`, and changing only `R`'s ordinal to another unused value changes no other node id |
+| K17 | an acyclic carrier to `Plain`, once with one `expression` occurrence and once with a lone `recursion_group` label | admitted both times: the unlabelled carrier keeps its derived id `{package, path: ["protocol", "protocol_reference", Plain's node_id], ordinal: 0}`; the label means nothing outside a cycle and changes no other node |
+| K18 | `K16` with `R`'s `recursion_group` removed | `invalid_semantic_graph`, no cause, at `R`'s node, `/semantic_graph/nodes/{n}`, in the graph-shape step before the owner join and the carrier join |
+| K19 | `K16` with `R`'s `recursion_group` changed to a label other than the others' | `invalid_semantic_graph`, no cause, at `R`'s `/semantic_graph/nodes/{n}/recursion_group` |
+| K20 | `K16` with `Holder`'s `recursion_group` removed | `invalid_semantic_graph`, no cause, at `Holder`'s node (the first deviating member in node-id order: `Flow`, `Holder`, `R`, `joinPred`) |
+| K21 | `K16` with every member's `recursion_group` removed | `invalid_semantic_graph`, no cause, at `Flow`'s node, the component's first member |
+| K22 | `K16` plus a second cyclic component of the same shape (`Flow2`, `Holder2`, carrier `R2`, `joinPred2`) carrying the same `recursion_group` label as the first | admitted: each component is compared with its own first member, the label's nodes are one group by label alone, nothing is refused and no node id changes; a producer-chosen path for a carrier is admitted because the group holds more than one declared member |
+| K23 | `K16` plus a second `protocol_reference` carrier of `Flow` at path `["R"]`, ordinal `1`, with the same label and dependency | `invalid_semantic_graph`, no cause, at the second carrier's `/semantic_graph/nodes/{n}/node_id` (FR-322-AC-286): the id differs but the body target repeats |
 
 ## Clause body
 
@@ -254,6 +262,7 @@ node and the `value`/`parameter` binder nodes. The binders have levels
 3. K2 to K4 change exactly the keys stated; K7 to K12 refuse as listed;
    K15 is admitted with the two expected point-distinct anchors
    (FR-464-AC-3, FR-464-AC-4).
+   K16, K17 and K22 are admitted as listed; K18 to K21 and K23 refuse `invalid_semantic_graph` at the stated loci (FR-464-AC-15, FR-322-AC-283 to FR-322-AC-286).
 4. C1 to C13a hold (FR-464-AC-5, FR-464-AC-6).
 5. M1 to M10 refuse as listed (FR-464-AC-4, FR-464-AC-6).
 6. B2 to B26 behave as listed (FR-464-AC-7, FR-464-AC-8).

@@ -2536,11 +2536,6 @@
                                   "required": [
                                     "owner"
                                   ]
-                                },
-                                {
-                                  "required": [
-                                    "recursion_group"
-                                  ]
                                 }
                               ]
                             }

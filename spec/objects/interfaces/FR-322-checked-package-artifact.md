@@ -216,7 +216,8 @@ boundary.
   node id of a `protocol` node in this same
   `semantic_graph.nodes` collection. It has one or more `expression`
   occurrences, one for each source reference to that target, and no other role;
-  no `declaration`, `owner`, `nominal_structure` or `recursion_group`,
+  no `declaration`, `owner` or `nominal_structure`, a `recursion_group` only as
+  "Carrier in a cyclic component" below states,
   the same `semantic_type` as its target, and `dependencies` containing
   exactly that target. A reader identifies the carrier by its tag and form,
   never by a name, a generic reference term in another node or a separate
@@ -244,6 +245,30 @@ boundary.
   are checked only at the later carrier join. The carrier has no package
   selector: a key absent locally
   fails this join even if a selected dependency contains that key.
+  **Carrier in a cyclic component.** A carrier is a node of the graph like any
+  other and takes part in the cycle rule of the `structural` node forms
+  ("A recursive reference is legal only when ..."). A predicate-join function
+  that refers to its own protocol closes a cycle through the carrier (the
+  protocol, the function, the carrier and the protocol again, with any
+  further nodes between them). The carrier is then a member of that cyclic
+  component, and it MUST carry the component's `recursion_group`, the label
+  every other member carries: a producer SHALL write it and a reader SHALL require it. A carrier outside every cycle carries none from a producer, and a label
+  on one is admitted and means nothing, as for every node outside every cycle.
+  The closed V2 schema therefore admits `recursion_group` on the carrier and
+  cannot say whether it is required, because only the graph shows a cycle; the
+  reader decides, at the cycle check below. A carrier in a group keeps every
+  other carrier rule unchanged: its body `{term: "reference", target}`, its
+  `dependencies` (exactly the target), its `expression` occurrences and
+  `source_map` entries, the one carrier per target, the carrier join and the
+  visiting order of the declaration step, and the caller-funded limits. The
+  target is written as the target's `node_id`, an ordinary `reference`, as for
+  every reference to a member of a recursion group; the wire has no coordinate
+  and no separate in-group reference form. Its `node_id` follows the group rule
+  of "Structural node identity": the carrier is an anonymous derived member, so
+  its `path` is the path of the group's declared member where the group has
+  exactly one and a producer-chosen path otherwise, never derived from the
+  target's id, and its `ordinal` is producer-assigned and unique among nodes
+  sharing its `package` and `path`. The carrier's structural key is therefore its `node_id` with no index segment. The reference body and target remain part of the package value but not of a grouped carrier's id, as for every group member, so a body edit does not change that id. Because the id no longer carries the target, the reader enforces the one carrier per target that a derived id enforces by collision: a second carrier whose body target equals an earlier carrier's refuses `invalid_semantic_graph`, with no cause, at the later carrier's `/semantic_graph/nodes/{n}/node_id`, in the graph-shape step with the node-id checks and before the cycle check below (FR-322-AC-286). A carrier outside every group keeps the derived id below.
   For a worked admitted example, take `positive-all-families.json`; its
   `protocol`/`protocol_clause` node `Example::Handshake` is `P`, with the
   conforming FR-464 body. Add one
@@ -287,6 +312,36 @@ boundary.
   graph cycles refuse. A `recursion_group` label on a node outside every
   cycle is admitted and means nothing: the label constrains cycles only, and
   no refusal is invented for an acyclic node that carries one.
+  **Cycle check.** A **cyclic component** is a set of two or more nodes that
+  reach one another, or one node that reaches itself, through the edges a reader
+  follows when it builds a node's closure: a non-null `semantic_type` other
+  than the node's own, each `dependencies` entry and each `reference` term
+  target in the body (a self-typed node's absent `semantic_type` edge is not
+  one; an own-path index segment is not an edge, its cycles refuse
+  `malformed_wire` earlier, FR-322-AC-280). The reader checks every cyclic
+  component in the graph-shape step, after the node-id, dependency-list and
+  dangling-`reference` checks and before the owner join, over
+  the edges whose two ends are nodes of the graph (an edge to an absent node is
+  reported by the later join that owns it, and closes no cycle). The component's
+  first member is its member lowest in ascending node-id order. The reader
+  refuses `invalid_semantic_graph`, with no cause, at the first member in
+  ascending node-id order, across all components, that carries no
+  `recursion_group` or whose `recursion_group` differs from that of its
+  component's first member (so an unlabelled first member is itself the one
+  refused). The locus is `/semantic_graph/nodes/{n}` for a member with no
+  label and `/semantic_graph/nodes/{n}/recursion_group` for a member whose
+  label differs. The reader finds components with an iterative algorithm whose time is linear in the nodes and edges, with no native call-stack recursion, because a cycle may span any number of nodes. The check adds no limit: a group has no maximum size, the
+  caller-funded limits of the reader apply to it as to every other node
+  count, and the reader's order after the check, including the carrier join, is
+  unchanged. A package whose graph has no cyclic component is read exactly as
+  before. Each component is compared with its own first member only, so two
+  disjoint cyclic components that reuse one label are both admitted: the
+  label's nodes are one group by the rule above, which refuses nothing and
+  changes no node id, and the "exactly one declared member" anchor rule of
+  "Structural node identity" counts the declared members of all the nodes
+  carrying that label, so a producer that reuses a label across components
+  chooses the path of an anonymous member as it does for a group of several
+  declared members.
   Every node has one or more exact source occurrences.
 - `operation` — every `application` semantic term, wherever it occurs in a node
   body, carries `operator`, `operation: {identity, laws, mode, member,
@@ -479,8 +534,9 @@ A frame body refusal, meaning-join or canonical-order
 - **One total order of the join stages** (FR-322-AC-275). Before
   every declaration, frame, state and operation refusal the reader runs these
   stages in this order, each over every node before the next starts, and reports
-  the first refusal: (1) graph shape, the `dependencies` checks above and an
-  independent dangling `reference` term; (2) the owner join of the
+  the first refusal: (1) graph shape, the `dependencies` checks above, an
+  independent dangling `reference` term and the cycle check of the
+  recursion-group rule, last; (2) the owner join of the
   owner-bearing nodes; (3) the derived-shape semantic checks, which refuse a
   derived shape (reference, population, compound unit) whose body is not well
   formed, and a model declaration node whose body is not the empty aggregate,
@@ -3408,6 +3464,10 @@ the graph and verifies the same normalized constraints.
 | FR-322-AC-280 | A cycle through own-path index segments refuses `malformed_wire`, with no cause, at the first segment by holding node's graph index and then path position whose named node reaches the holding node: a node that names itself (`NI-11`, at `/semantic_graph/nodes/2/node_id/path/3/node`) and two nodes that name each other (`NI-12`, at node `0`'s segment `/semantic_graph/nodes/0/node_id/path/2/node`). An index segment that names a later node without a cycle is admitted (the reversed fixtures of FR-322-AC-95). | Test (TC-233; NI-11, NI-12) |
 | FR-322-AC-281 | A graph holding the Integer node and a left-nested chain of 100,000 derived `expression`/`application` nodes, each naming the previous one through one index segment (`NI-13`), writes its node ids in at most 200 bytes per node, at the same maximum JSON nesting depth as a chain of 100, and its text is parsed by a JSON reader with a nesting limit of 128. The index checks admit it, and its rebuilt structural keys are 100,001 distinct keys, the key of each chain node holding its predecessor's key as its last path element. | Test (TC-233; NI-13) |
 | FR-322-AC-282 | An index segment resolves against the graph of the document the id belongs to, never the graph of the id's `package`: in `fixtures/positive-dependency-call.json` with its nodes reversed (FR-322-AC-95), the importer's id of the imported `Int[0, 9]`, `package` `test/predicates` with `{"node": 3}` naming the importer's Integer node, copied into a document about the importer (`NI-14`), rebuilds against the importer's graph to the structural key of `fixtures/positive-dependency-library.json`'s `Int[0, 9]`; resolved against that library's own graph, where index `3` is `Int[0, 9]` itself, it would name itself and refuse as a cycle. | Test (TC-233; NI-14) |
+| FR-322-AC-283 | A cyclic predicate join that includes its `protocol_reference` carrier is admitted when every member, the carrier included, carries one `recursion_group` (TC-946 `K16`): the Flow, joinPred and Holder cycle of `K14` closed through a carrier `R` whose body target is `Flow`'s `node_id`, whose only dependency is `Flow`, and whose single `expression` occurrence keeps its `source_map` entry; `R` is an anonymous derived member whose `path` is a producer-chosen path (the group holds three declared members; `K16` uses `["R"]`) and whose `ordinal` is producer-assigned, so changing `R`'s ordinal to another unused value, or its path to another producer-chosen path, is admitted and no other node id changes. The V2 schema admits `recursion_group` on `R`. | Test (TC-946; K16) |
+| FR-322-AC-284 | An acyclic carrier keeps its derived id `{package, path: ["protocol", "protocol_reference", target node_id], ordinal: 0}` and the single-target behaviour of FR-322-AC-66 (TC-946 `K17`). A lone `recursion_group` label on it is admitted, with the same package otherwise unchanged and no refusal, because the label constrains cycles only; the closed V2 schema no longer refuses it `malformed_wire`. | Test (TC-946; K17) |
+| FR-322-AC-285 | Malformed membership of a cyclic component refuses `invalid_semantic_graph`, with no cause, in the graph-shape step, before the owner join and before the carrier join (TC-946 `K18` to `K21`, over the `K16` node set, whose members in node-id order are `Flow`, `Holder`, the carrier `R` and `joinPred`): `R` with no label while the others carry one (`K18`) is refused at `/semantic_graph/nodes/{n}` of `R`; `R` with a label other than the others' (`K19`) at `R`'s `/recursion_group`; `Holder` with no label while `R` and the rest carry one (`K20`) at `Holder`'s node, the first deviating member; and every member unlabelled (`K21`) at `Flow`, the component's first member. A component with no cycle through the carrier, and an acyclic carrier alone, are not refused (FR-322-AC-284). No group is refused for its size, and two disjoint cyclic components that reuse one label are both admitted (`K22`, with each component labelled consistently). | Test (TC-946; K18 to K22) |
+| FR-322-AC-286 | Two `protocol_reference` carriers with one body target refuse `invalid_semantic_graph`, with no cause, at the later carrier's `/semantic_graph/nodes/{n}/node_id`, in node-id order, in the graph-shape step before the cycle check: `K23`, the `K16` node set plus a second carrier of `Flow` at path `["R"]`, ordinal `1`, is refused at that second carrier even though its `node_id` differs from the first's. A grouped carrier and an acyclic carrier to different targets are not refused. | Test (TC-946; K23) |
 | FR-322-AC-244 | TC-971 resolves OV-01 and OV-02's option element type and checked-payload selectors against the published integer-literal fixture. The closed body has exactly one `value` binding to a payload reference; changing the selected type or payload changes the node. OV-SR1..OV-SR4 (empty members, wrong binding name, inline literal instead of a reference, and multiple bindings) fail the closed body schema. The strict reader admits each positive package and refuses OV-R1's non-composite semantic type and OV-R2's non-option composite semantic type as `invalid_semantic_graph` at `semantic_type`; OV-R3's boolean payload and OV-R4's option-type node used as a payload as `ill_typed`/`type-mismatch` at `body/members/0/value`; and OV-R5's dependency list with an extra target as `invalid_semantic_graph` at `dependencies`. | Test (TC-971) |
 
 ## Dependencies
