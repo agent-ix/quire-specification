@@ -350,7 +350,8 @@ references, package provenance, the closed lowering-profile reference shape,
 source-map totality, and feature-accounting/request bijection
 before exposing an admitted typed value to a consumer. The order
 after generic wire checks is: outer version, all top-level and nested closed
-shapes and typed values, `source_keys` and source-key reference checks (below),
+shapes and typed values, the index checks (below: output graph, then
+`source_keys`, then source-key references),
 package provenance and lowering-profile reference
 shape, source-map totality, accounting/request consistency, then dependency inputs
 in lock order, then graph references. It returns the existing typed `admitted`, `refused`, or `incomplete` result
@@ -389,21 +390,33 @@ validation; FR-330 defines the distinct typed reader-refusal pointer here.
 Limits remain caller inputs to reading and
 lowering; they are not package data.
 
-The `source_keys` checks apply FR-322's index-segment rules to the
-`source_keys` table. An index segment `{"node": i}` inside a `source_keys`
-entry that is not below the length of `source_keys` refuses `malformed_wire`,
-with no cause, at that segment's `node` member, for example
-`/source_keys/{k}/path/{s}/node`, the first such segment in the order of the
-canonical bytes. Otherwise a cycle (an entry that reaches itself through
-own-path index segments, a self-naming entry included) refuses `malformed_wire`
-at the first such segment's `node` member, ordered as FR-322 orders it. A
-source-key reference `{"source_key": i}` whose `i` is not below the length of
-`source_keys` refuses `malformed_wire`, with no cause, at the `source_key`
-member, for example `/feature_accounting/{r}/node_id/source_key`, the first such
-reference in the order of the canonical bytes. A reference of any other shape
-(an extra member, a missing `source_key`, a negative, fractional, string or
-exponent-form index) fails the closed shape and is `malformed_wire` at the same
-member. Two `source_keys` entries that rebuild to one structural key refuse
+The index checks run once, after the closed shapes and typed values are
+checked and before any stage that rebuilds a structural key (the
+cross-frame comparisons, source-map totality and accounting/request
+consistency), in this order: the output `semantic_graph`, then `source_keys`,
+then source-key references. Each applies FR-322's index-segment rules, an
+out-of-range index first and otherwise a cycle, in FR-322's order, and refuses
+`malformed_wire` with no cause at the segment's member:
+
+1. Output graph: an index segment `{"node": i}` in an output node id or body
+   reference, `i` not below the length of `semantic_graph.nodes`, or a cycle
+   through own-path index segments, at `/semantic_graph/nodes/{k}/node_id/path/{s}/node`
+   (or the pointer of the referencing member).
+2. `source_keys`: an index segment `{"node": i}` inside an entry, `i` not below
+   the length of `source_keys`, or a cycle (a self-naming entry included), at
+   `/source_keys/{k}/path/{s}/node`.
+3. Source-key references: a `{"source_key": i}` with `i` not below the length
+   of `source_keys`, at its `source_key` member, for example
+   `/feature_accounting/{r}/node_id/source_key`.
+
+A source-key reference whose shape is wrong is a closed-shape defect, not an
+index defect, and is checked with the closed shapes: an extra member is
+`invalid_package`/`unknown-member` at the reference object, a missing
+`source_key` is `invalid_package`/`missing-member` at the reference object, a
+non-integer kind (string, fraction as a non-integer number, `null`) is
+`invalid_package`/`wrong-value-kind` and a negative or above-bound integer is
+`invalid_package`/`invalid-value`, each at the `source_key` member. Two
+`source_keys` entries that rebuild to one structural key refuse
 `invalid_package`/`invalid-value` at the later entry, `/source_keys/{k}`.
 
 The reader input also includes one admitted FR-322 dependency package for every
@@ -493,7 +506,7 @@ this reader and the I2 reader together, is outside this requirement.
 | FR-330-AC-12 | A reader `incomplete` result is `stage_limit_exceeded` at stage `package_read`, category incomplete, with the cause the table gives for its `limit_kind` (`bytes`, `nodes`, `edges`, `occurrences`, `work`), `bound` its `limit`, `actual` its `consumed`, the location its `path` (none for `bytes`) and `setting` the value `CheckedPackageReadLimits.<limit_kind>`; an exact-limit input is admitted and the reader reports no `diagnostics` stop. | Test (TC-937) |
 | FR-330-AC-13 | The ContractPackage reader derives every direct input's closure recursively and refuses a diamond that reaches one library identity at two structurally unequal packages as `invalid_package`/`conflicting-definition` with both selection-path JSON pointers rooted at `/package/source/lock/dependency_selections` as loci, before graph-reference checks. | Test (TC-937, planned) |
 | FR-330-AC-14 | A ContractPackage whose requested key is absent and derived (its structural key holds at least one index segment) carries that key in `source_keys` exactly as the source wrote it, with its index segments naming other `source_keys` entries; the requested id is the source-key reference to it, and the package is admitted with `invalid_input` and an empty output graph. No source-frame id resolves against the output graph or a source package graph. | Test (TC-934) |
-| FR-330-AC-15 | A `{"source_key": i}` reference with `i` not below the length of `source_keys`, or of any other shape, and a `source_keys` index segment out of range or in a cycle (a self-naming entry included), each refuse `malformed_wire` with no cause at the offending `source_key` or `node` member pointer. Two `source_keys` entries with one rebuilt structural key refuse `invalid_package`/`invalid-value` at the later entry. | Test (TC-937) |
+| FR-330-AC-15 | The reader runs the index checks once before any stage that rebuilds a structural key, in one order: output `semantic_graph` index segments, then `source_keys` index segments, then source-key references. An out-of-range index, then a cycle (a self-naming entry included), refuses `malformed_wire` with no cause at the segment's `node` pointer (output graph, `source_keys`) or the reference's `source_key` pointer. A wrong-shape `{"source_key": i}` is a closed-shape defect: `invalid_package` with `unknown-member`, `missing-member`, `wrong-value-kind` or `invalid-value` per AC-11. Two `source_keys` entries with one rebuilt structural key refuse `invalid_package`/`invalid-value` at the later entry. | Test (TC-937) |
 | FR-330-AC-16 | A `lowered` record's source key and its output root node's id rebuild to the same structural key, and the accounting/request bijection and the refusal's requested-id pointer compare rebuilt structural keys, not table or graph indexes: a package that reorders `source_keys` or the output graph without changing any key is equal in every such comparison. | Test (TC-934) |
 
 ## Dependencies

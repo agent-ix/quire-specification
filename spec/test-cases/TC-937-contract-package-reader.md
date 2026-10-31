@@ -186,13 +186,22 @@ count, `setting` `CheckedPackageReadLimits.bytes`, `.nodes`, `.edges`,
 `.occurrences` or `.work`, and the location the `path` (none for `bytes`). No
 input yields a `diagnostics` stop.
 
-## Source-key refusal vectors (FR-330-AC-15)
+## Index and source-key refusal vectors (FR-330-AC-15)
 
-Apply one mutation per case to an otherwise admitted value: set a
-`feature_accounting` `node_id` to `{"source_key": n}` with `n` equal to the
-length of `source_keys`; give it a negative, fractional or string index or an
-extra member; set a `source_keys` index segment out of range; make an entry
-name itself, and make two entries name each other; duplicate a `source_keys`
-entry. The first five refuse `malformed_wire` with no cause at the offending
-`source_key` or `node` member pointer; the duplicate refuses
+Apply one mutation per case to an otherwise admitted value. Index defects
+refuse `malformed_wire` with no cause at the named pointer: an output graph
+`{"node": i}` with `i` equal to the length of `semantic_graph.nodes`
+(`/semantic_graph/nodes/{k}/node_id/path/{s}/node`); an output node that names
+itself, and two output nodes that name each other; a `source_keys` index
+segment out of range; a `source_keys` entry that names itself, and two that
+name each other; a `feature_accounting` `node_id` `{"source_key": n}` with `n`
+equal to the length of `source_keys`. Require that when an output graph index
+defect and a `source_keys` index defect coexist the output graph one is
+reported, and that both are reported before any structural-key comparison
+(a package whose only defect is a cycle never reaches accounting consistency).
+
+Shape defects refuse `invalid_package`: a source-key reference with an extra
+member (`unknown-member`), with no `source_key` (`missing-member`), with a
+string, fractional or `null` index (`wrong-value-kind`) or a negative index
+(`invalid-value`). Duplicating a `source_keys` entry refuses
 `invalid_package`/`invalid-value` at the later `/source_keys/{k}`.
