@@ -18,6 +18,8 @@ const SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json")
 const OPERATION_CATALOG: &str = CHECKED_OPERATION_CATALOG_V1;
 const POSITIVE_OPERATION_IDENTITIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-operation-identities.json");
+const NODE_IDENTITY_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/node-identity-vectors.json");
 const POSITIVE_ALL_FAMILIES: &str =
     include_str!("../proposals/checked-package-v2/fixtures/positive-all-families.json");
 const POSITIVE_TIMED_MODEL_NODES: &str =
@@ -5345,6 +5347,109 @@ fn tc_233_frame_body_outputs_are_exactly_the_schemas_required_members() {
             Ok(()),
             "{label}: every published frame is admitted by the same oracle read_package_semantics uses"
         );
+    }
+}
+
+/// FR-340-AC-1/AC-2/AC-3/AC-4/AC-6/AC-8/AC-9/AC-16/AC-17, through the full
+/// normative reader: every published `frame_mutations` vector of
+/// `node-identity-vectors.json` is spliced into the all-families fixture's
+/// published frame node (its `dependencies` and
+/// `modifies`/`creates`/`deletes`/`deletes_scoped` replaced wholesale) and
+/// read with `read_package_semantics`. Each vector names the refusal code,
+/// the cause where it has one, and the locus as a structural node id
+/// (`expected_locus_node_id`). The `deletes-misordered`,
+/// `precedence-node-id-within-group` and `cross-frame-lower-node-id-wins`
+/// vectors depend on the componentwise node-id order and not on any hash. The
+/// last one is the only vector with a `second_frame`: a complete
+/// `state`/`frame` node inserted verbatim whose node id orders before the
+/// published frame's, so the lower-id frame's own canonical-order defect is
+/// reported ahead of the published frame's meaning-join defect.
+#[trace("TC-233", "FR-340-AC-1")]
+#[trace("TC-233", "FR-340-AC-3")]
+#[trace("TC-233", "FR-340-AC-4")]
+#[trace("TC-233", "FR-340-AC-6")]
+#[trace("TC-233", "FR-340-AC-8")]
+#[trace("TC-233", "FR-340-AC-9")]
+#[trace("TC-233", "FR-340-AC-16")]
+#[trace("TC-233", "FR-340-AC-17")]
+#[test]
+fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cause() {
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let mutations = vectors["frame_mutations"]
+        .as_array()
+        .expect("frame_mutations is an array");
+    assert_eq!(
+        mutations.len(),
+        37,
+        "frame_mutations covers all thirty-seven authored vectors"
+    );
+
+    let causes = mutations
+        .iter()
+        .filter_map(|mutation| mutation["expected_cause"].as_str())
+        .collect::<BTreeSet<_>>();
+    assert_eq!(
+        causes,
+        [
+            FrameRefusal::MissingName,
+            FrameRefusal::MalformedDeclaration,
+            FrameRefusal::ConflictingBinding,
+        ]
+        .into_iter()
+        .map(FrameRefusal::cause)
+        .collect::<BTreeSet<_>>(),
+        "the mutations exercise every frame refusal cause"
+    );
+    assert!(
+        mutations
+            .iter()
+            .any(|mutation| mutation["expected_cause"].is_null()
+                && mutation["expected_code"] == "invalid_semantic_graph"),
+        "at least one vector exercises the cause-less canonical-order refusal"
+    );
+
+    let package = parsed_fixture(POSITIVE_ALL_FAMILIES);
+    let frame_index = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("nodes")
+        .iter()
+        .position(|node| node["node_tag"] == "state" && node["semantic_form"] == "frame")
+        .expect("a frame node is published");
+
+    for mutation in mutations {
+        let name = mutation["name"]
+            .as_str()
+            .expect("mutation name is a string");
+        let mut candidate = package.clone();
+        let frame = &mut candidate["semantic_graph"]["nodes"][frame_index];
+        frame["dependencies"] = mutation["dependencies"].clone();
+        frame["body"]["modifies"] = mutation["modifies"].clone();
+        frame["body"]["creates"] = mutation["creates"].clone();
+        frame["body"]["deletes"] = mutation["deletes"].clone();
+        if let Some(scoped) = mutation.get("deletes_scoped") {
+            frame["body"]["deletes_scoped"] = scoped.clone();
+        }
+        if let Some(second_frame) = mutation.get("second_frame") {
+            candidate["semantic_graph"]["nodes"]
+                .as_array_mut()
+                .expect("nodes is an array")
+                .push(second_frame.clone());
+        }
+
+        let expected_code = mutation["expected_code"]
+            .as_str()
+            .expect("expected_code is a string");
+        match read_package_semantics(&candidate, &catalog) {
+            Err(ReadRefusal::Frame(refusal, locus)) => {
+                assert_eq!(refusal.code(), expected_code, "{name}: code");
+                assert_eq!(locus, mutation["expected_locus_node_id"], "{name}: locus");
+                if let Some(expected_cause) = mutation["expected_cause"].as_str() {
+                    assert_eq!(refusal.cause(), expected_cause, "{name}: cause");
+                }
+            }
+            other => panic!("{name}: expected a frame refusal, got {other:?}"),
+        }
     }
 }
 
