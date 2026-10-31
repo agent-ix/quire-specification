@@ -26,3 +26,11 @@ Examined:
 ## Verdict
 
 The test splices the same members QSL's conformance test splices. The base `deletes_scoped` is `[]`, so leaving it unset when a vector omits it gives the same result as QSL resetting it to `[]`. The test appends `second_frame` and compares the locus as a structural node id. A null cause always comes with the cause-less `invalid_semantic_graph` code, so skipping the cause check there is sound, and `CanonicalOrder.cause()` is never reached. The test passes, 1 passed and 0 failed. It cannot catch SR-2026103004 FND-001, because both orders of a scope conflict pass. That defect is in the data, not the test. One low finding.
+
+## Dispositions
+
+Round 1, reviewed at 46165a13.
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | The count assertion is deleted. In its place is a check that no two vectors are equal once `name` is removed, which tests real data integrity. |

@@ -55,3 +55,14 @@ The file has the shape QSL reads: `dependencies`, `modifies`, `creates`, `delete
 The restored QSpec test passes, 1 passed and 0 failed. `quire validate` reports two structural errors on FR-340, but this PR does not touch that file. TC-233 validates.
 
 **Not mergeable until FND-001 is fixed.** Fix FND-002 in the same PR. FND-003 and FND-004 are small edits.
+
+## Dispositions
+
+Round 1, reviewed at 46165a13 (fix diff df27b5d5..46165a13; df27b5d5 changed only the README AC list and one test doc comment, and conflicts with nothing).
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | 46165a13 lists `receiver` before `every-object`. Derived by hand: the order key ties on declaration and name, and `every-object` sorts first, so the array is also misordered. FR-340 ranks `conflicting-binding` after every other meaning-join defect (here there is none: the one dependency is the object type `Account`, which declares `balance`) and above any canonical-order defect. The result is `invalid_model_binding`/`conflicting-binding` at `Example/Account`, as recorded. A new distinctness check in the test refuses two vectors that differ only by name. |
+| FND-002 | fixed | `deletes_scoped_parameter_cases` DS-01..05 are restored, with `tc_233_deletes_scoped_parameter_entries_name_a_reference_parameter` (TC-233, FR-340-AC-17). The cases hold no node ids, digests or 64-hex strings, and their locus is `"frame"`. The expected outcomes follow FR-340: a reference-typed `p0` is admitted (DS-01), an Integer `p0` is `missing-name` (DS-02), an entry `q` with only `p0` declared is `missing-name` (DS-03), `receiver` is admitted (DS-04), and `receiver` then `p0` is admitted (DS-05). The test passes. |
+| FND-003 | fixed | The README now limits `frame_mutations` to the refusals of the listed ACs, names DS-01..05, and includes `deletes_scoped` among the replaced members. |
+| FND-004 | fixed | The top-level `version` member is deleted. |
