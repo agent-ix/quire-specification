@@ -104,14 +104,18 @@ not unique), `peers` (`Order` `[0, 3]`, unordered, unique) and `trail`
 | RU-12 | `reference.upcast` of an `Order` object operand to `Reference<Order>` | `ill_typed`/`operator-ineligible`: family `object` is not `reference` | FR-322-AC-94 |
 | RU-13 | `reference.upcast` of `Reference<Both>` to `Reference<Coded>` | Admitted: `Both` conforms to its second supertype `Coded` | FR-322-AC-94 |
 | RU-14 | `reference.upcast` of a reference to the relationship `Order-order-Order` (M4) to `Reference<Order>` | `ill_typed`/`operator-ineligible`: a relationship at the source end | FR-322-AC-94 |
-| RP-01 | `record.project` of field `total` of M5 over `deref` of `Reference<Sub>` typed M5 | Resolves the inherited `Order/total`; type `Int[0, 9]` | FR-322-AC-34 |
-| RP-02 | `record.project` of field `invoice` of M1 over `deref` of `Reference<Order>` typed M1 | Resolves `Order/invoice`; type `Reference<Invoice>` over M3 | FR-322-AC-34 |
+| RP-01 | `record.project` of field `total` of M5 over an explicit `deref` of `Reference<Sub>` typed M5 | Resolves the inherited `Order/total`; type `Int[0, 9]`; field member `read_form` is `explicit_deref` | FR-322-AC-34 |
+| RP-02 | `record.project` of field `invoice` of M1 over an explicit `deref` of `Reference<Order>` typed M1 | Resolves `Order/invoice`; type `Reference<Invoice>` over M3; field member `read_form` is `explicit_deref` | FR-322-AC-34 |
 | RP-03 | `record.project` of field `total` of M5 over a `Reference<Sub>` operand with no `deref` | `ill_typed`/`operator-ineligible` | FR-322-AC-34 |
 | RP-04 | `record.project` of field `total` of M1 over `deref` of `Reference<Sub>` typed M5 | `ill_typed`/`operator-ineligible`: `member_of` fails | FR-322-AC-34 |
 | RP-05 | `deref` of `Reference<Sub>` declared as M1 | `ill_typed`/`operator-ineligible` | FR-322-AC-34 |
 | RP-06 | `deref` of a reference to M4 typed M4 | `ill_typed`/`operator-ineligible`: a relation node has no family | FR-322-AC-34 |
 | RP-07 | `record.project` of field `total` of M2 over `deref` of a reference to M2 typed M2 | `missing_declaration`/`missing-selection` | FR-322-AC-34 |
 | RP-08 | RP-01 declared with `result_type` `Integer` | `ill_typed`/`operator-ineligible`: not the member type `Int[0, 9]` | FR-322-AC-34 |
+| RP-09 | Bare source field read `view.total` of M5 | Resolves the inherited `Order/total`; type `Int[0, 9]`; field member `read_form` is `bare` | FR-322-AC-34 |
+| RP-10 | Explicit source read `deref(view).total` of M5 | Resolves the inherited `Order/total`; type `Int[0, 9]`; field member `read_form` is `explicit_deref`; all other projection data equals RP-09 | FR-322-AC-34 |
+| RP-11 | RP-09 with `read_form` `implicit` | Fails the closed V2 schema and is refused `malformed_wire` | FR-322-AC-34 |
+| RP-12 | A model-object projection with no `read_form` | The schema shape is valid, but the full reader refuses `malformed_wire` | FR-322-AC-34 |
 | RE-01 | `reaches_field` over `Reference<Order>` twice, field `parent` of M1 | Admitted: `Option<Reference<Order>>` | FR-322-AC-38 |
 | RE-02 | Field `prior` of M1 | Admitted: `Sequence<Reference<Order>>[0, 3]` | FR-322-AC-38 |
 | RE-03 | Field `origin` of M1 | Admitted: `Reference<Order>` | FR-322-AC-38 |

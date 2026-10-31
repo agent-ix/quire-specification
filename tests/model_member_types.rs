@@ -911,6 +911,19 @@ fn projection(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -
     let [position] = string_positions(entry)[..] else {
         panic!("record.project takes one operand");
     };
+    let has_model_deref = case["operand"].get("deref").is_some();
+    let read_form = case["member"].get("read_form");
+    if has_model_deref
+        && !matches!(
+            read_form.and_then(Value::as_str),
+            Some("bare" | "explicit_deref")
+        )
+    {
+        return json!({"refused": {"code": "malformed_wire"}});
+    }
+    if !has_model_deref && read_form.is_some() {
+        return json!({"refused": {"code": "malformed_wire"}});
+    }
     let Some(operand) = projection_operand(catalog, nodes, &case["operand"]) else {
         return ineligible();
     };
@@ -932,10 +945,16 @@ fn projection(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -
         }
     }
     // The `member` result form: the declared `result_type` is the step 4 type.
-    let derived = derive(package, nodes, member);
+    let mut derived = derive(package, nodes, member);
     match derived.get("member_type") {
         Some(member_type) if *member_type != case["result_type"] => ineligible(),
-        _ => derived,
+        Some(_) => {
+            if let Some(read_form) = read_form {
+                derived["read_form"] = read_form.clone();
+            }
+            derived
+        }
+        None => derived,
     }
 }
 
@@ -991,6 +1010,66 @@ fn tc_281_record_projection_reads_a_model_field_over_a_deref_result() {
             text(case, "name")
         );
     }
+
+    let cases = array(&vectors, "projection_cases");
+    let case = |name: &str| {
+        cases
+            .iter()
+            .find(|case| case["name"] == name)
+            .unwrap_or_else(|| panic!("{name} projection vector"))
+    };
+    let bare = case("RP-09");
+    let explicit = case("RP-10");
+    assert_eq!(bare["source_expression"], "view.total");
+    assert_eq!(explicit["source_expression"], "deref(view).total");
+    assert_eq!(bare["operand"], explicit["operand"]);
+    assert_eq!(bare["result_type"], explicit["result_type"]);
+    let mut bare_member = bare["member"].clone();
+    let mut explicit_member = explicit["member"].clone();
+    bare_member
+        .as_object_mut()
+        .expect("field member is an object")
+        .remove("read_form");
+    explicit_member
+        .as_object_mut()
+        .expect("field member is an object")
+        .remove("read_form");
+    assert_eq!(bare_member, explicit_member, "only read_form differs");
+
+    let schema = parsed(SCHEMA);
+    let member_schema = json!({
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$ref": "#/$defs/OperationMember",
+        "$defs": schema["$defs"].clone()
+    });
+    let validator =
+        jsonschema::validator_for(&member_schema).expect("the operation-member schema is valid");
+    let wire_member = |case: &Value| {
+        let mut member = case["member"].clone();
+        let declaration = text(&member, "declaration");
+        member["declaration"] = array(&vectors, "model_declaration_nodes")
+            .iter()
+            .find(|node| node["name"] == declaration)
+            .unwrap_or_else(|| panic!("{declaration} node"))["node_id"]
+            .clone();
+        member
+    };
+    assert!(
+        validator.is_valid(&wire_member(bare)),
+        "bare mode is in the closed schema"
+    );
+    assert!(
+        validator.is_valid(&wire_member(explicit)),
+        "explicit mode is in the closed schema"
+    );
+    assert!(
+        !validator.is_valid(&wire_member(case("RP-11"))),
+        "an unrecognized read_form fails the closed schema"
+    );
+    assert!(
+        validator.is_valid(&wire_member(case("RP-12"))),
+        "read_form is optional in the member shape; the full reader refuses its omission"
+    );
 }
 
 /// FR-322 steps 2 and 3 for one member named `name` on the node vector

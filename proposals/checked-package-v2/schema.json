@@ -3982,6 +3982,12 @@
             },
             "name": {
               "$ref": "#/$defs/Identifier"
+            },
+            "read_form": {
+              "enum": [
+                "bare",
+                "explicit_deref"
+              ]
             }
           },
           "additionalProperties": false
