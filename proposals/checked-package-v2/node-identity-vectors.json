@@ -1,0 +1,1733 @@
+{
+  "frame_mutations": [
+    {
+      "name": "literal-in-modifies",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "enabled"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "enabled"
+            ]
+          },
+          "kind": "relationship"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "enabled"
+        ]
+      }
+    },
+    {
+      "name": "relationship-in-creates",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "acme/orders",
+          "path": [
+            "relation",
+            "relationship",
+            "ix://acme/orders/relationship/Order-order-Order"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [
+        {
+          "ordinal": 0,
+          "package": "acme/orders",
+          "path": [
+            "relation",
+            "relationship",
+            "ix://acme/orders/relationship/Order-order-Order"
+          ]
+        }
+      ],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "acme/orders",
+        "path": [
+          "relation",
+          "relationship",
+          "ix://acme/orders/relationship/Order-order-Order"
+        ]
+      }
+    },
+    {
+      "name": "event-type-field-in-modifies",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Deposited"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Deposited"
+            ]
+          },
+          "kind": "field",
+          "name": "stage",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Deposited"
+        ]
+      }
+    },
+    {
+      "name": "object-type-as-relationship-in-modifies",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "relationship"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Account"
+        ]
+      }
+    },
+    {
+      "name": "relationship-as-field-in-modifies",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "acme/orders",
+          "path": [
+            "relation",
+            "relationship",
+            "ix://acme/orders/relationship/Order-order-Order"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "acme/orders",
+            "path": [
+              "relation",
+              "relationship",
+              "ix://acme/orders/relationship/Order-order-Order"
+            ]
+          },
+          "kind": "field",
+          "name": "links",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "acme/orders",
+        "path": [
+          "relation",
+          "relationship",
+          "ix://acme/orders/relationship/Order-order-Order"
+        ]
+      }
+    },
+    {
+      "name": "record-value-type-in-creates",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Address"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Address"
+          ]
+        }
+      ],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Address"
+        ]
+      }
+    },
+    {
+      "name": "event-type-in-deletes",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Deposited"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [],
+      "deletes": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Deposited"
+          ]
+        }
+      ],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Deposited"
+        ]
+      }
+    },
+    {
+      "name": "undeclared-entry",
+      "dependencies": [],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "acme/orders",
+            "path": [
+              "relation",
+              "relationship",
+              "ix://acme/orders/relationship/Order-order-Order"
+            ]
+          },
+          "kind": "relationship"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-name",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "acme/orders",
+        "path": [
+          "relation",
+          "relationship",
+          "ix://acme/orders/relationship/Order-order-Order"
+        ]
+      }
+    },
+    {
+      "name": "undeclared-field-entry",
+      "dependencies": [],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-name",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Account"
+        ]
+      }
+    },
+    {
+      "name": "absent-entry",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Absent"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Absent"
+            ]
+          },
+          "kind": "relationship"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "missing_declaration",
+      "expected_cause": "missing-name",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Absent"
+        ]
+      }
+    },
+    {
+      "name": "deletes-misordered",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        },
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Session"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [],
+      "deletes": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Session"
+          ]
+        },
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        }
+      ],
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "state",
+          "frame",
+          {
+            "node": 13
+          },
+          {
+            "node": 14
+          },
+          {
+            "node": 7
+          },
+          "balance"
+        ]
+      }
+    },
+    {
+      "name": "modifies-misordered-by-name",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "total",
+          "scope": "every-object"
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "state",
+          "frame",
+          {
+            "node": 13
+          },
+          {
+            "node": 14
+          },
+          {
+            "node": 7
+          },
+          "balance"
+        ]
+      }
+    },
+    {
+      "name": "precedence-group-outranks-node-id",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Deposited"
+          ]
+        },
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Session"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "kind": "relationship",
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Session"
+            ]
+          }
+        }
+      ],
+      "creates": [],
+      "deletes": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Deposited"
+          ]
+        }
+      ],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Session"
+        ]
+      }
+    },
+    {
+      "name": "precedence-node-id-within-group",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        },
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Session"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Session"
+            ]
+          },
+          "kind": "relationship"
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "relationship"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Account"
+        ]
+      }
+    },
+    {
+      "name": "systems-part-in-modifies",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pump"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Pump"
+            ]
+          },
+          "kind": "field",
+          "name": "x",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Pump"
+        ]
+      }
+    },
+    {
+      "name": "systems-part-in-creates",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pump"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pump"
+          ]
+        }
+      ],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Pump"
+        ]
+      }
+    },
+    {
+      "name": "systems-part-in-deletes",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pump"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [],
+      "deletes": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pump"
+          ]
+        }
+      ],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Pump"
+        ]
+      }
+    },
+    {
+      "name": "systems-port-in-modifies",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Inlet"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Inlet"
+            ]
+          },
+          "kind": "field",
+          "name": "x",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Inlet"
+        ]
+      }
+    },
+    {
+      "name": "systems-port-in-creates",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Inlet"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Inlet"
+          ]
+        }
+      ],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Inlet"
+        ]
+      }
+    },
+    {
+      "name": "systems-port-in-deletes",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Inlet"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [],
+      "deletes": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Inlet"
+          ]
+        }
+      ],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Inlet"
+        ]
+      }
+    },
+    {
+      "name": "systems-interface-in-modifies",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Flowable"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Flowable"
+            ]
+          },
+          "kind": "field",
+          "name": "x",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Flowable"
+        ]
+      }
+    },
+    {
+      "name": "systems-interface-in-creates",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Flowable"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Flowable"
+          ]
+        }
+      ],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Flowable"
+        ]
+      }
+    },
+    {
+      "name": "systems-interface-in-deletes",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Flowable"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [],
+      "deletes": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Flowable"
+          ]
+        }
+      ],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Flowable"
+        ]
+      }
+    },
+    {
+      "name": "systems-connection-in-modifies",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pipe"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Pipe"
+            ]
+          },
+          "kind": "field",
+          "name": "x",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Pipe"
+        ]
+      }
+    },
+    {
+      "name": "systems-connection-in-creates",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pipe"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pipe"
+          ]
+        }
+      ],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Pipe"
+        ]
+      }
+    },
+    {
+      "name": "systems-connection-in-deletes",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pipe"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [],
+      "deletes": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Pipe"
+          ]
+        }
+      ],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Pipe"
+        ]
+      }
+    },
+    {
+      "name": "systems-allocation-in-modifies",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "PumpToPipe"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "PumpToPipe"
+            ]
+          },
+          "kind": "field",
+          "name": "x",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "PumpToPipe"
+        ]
+      }
+    },
+    {
+      "name": "systems-allocation-in-creates",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "PumpToPipe"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "PumpToPipe"
+          ]
+        }
+      ],
+      "deletes": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "PumpToPipe"
+        ]
+      }
+    },
+    {
+      "name": "systems-allocation-in-deletes",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "PumpToPipe"
+          ]
+        }
+      ],
+      "modifies": [],
+      "creates": [],
+      "deletes": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "PumpToPipe"
+          ]
+        }
+      ],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "PumpToPipe"
+        ]
+      }
+    },
+    {
+      "name": "cross-frame-lower-node-id-wins",
+      "dependencies": [],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "acme/orders",
+            "path": [
+              "relation",
+              "relationship",
+              "ix://acme/orders/relationship/Order-order-Order"
+            ]
+          },
+          "kind": "relationship"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "second_frame": {
+        "body": {
+          "creates": [],
+          "deletes": [
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "Account"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Config",
+                "ConfigVersion"
+              ]
+            },
+            {
+              "ordinal": 0,
+              "package": "example",
+              "path": [
+                "Example",
+                "Session"
+              ]
+            }
+          ],
+          "deletes_scoped": [],
+          "modifies": [],
+          "term": "frame"
+        },
+        "dependencies": [
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Config",
+              "ConfigVersion"
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Session"
+            ]
+          }
+        ],
+        "node_id": {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "state",
+            "frame",
+            {
+              "node": 13
+            }
+          ]
+        },
+        "node_tag": "state",
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "role": "generated"
+          }
+        ],
+        "schema_version": "quire.checked-semantic-graph/v2",
+        "semantic_form": "frame",
+        "semantic_type": {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        }
+      },
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "state",
+          "frame",
+          {
+            "node": 13
+          }
+        ]
+      }
+    },
+    {
+      "name": "scope-conflict-every-object-and-receiver",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "every-object"
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "receiver"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "deletes_scoped": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "conflicting-binding",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Account"
+        ]
+      }
+    },
+    {
+      "name": "scope-conflict-listed-receiver-first",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "receiver"
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "every-object"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "deletes_scoped": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "conflicting-binding",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Account"
+        ]
+      }
+    },
+    {
+      "name": "scope-conflict-ranks-after-another-meaning-join",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        },
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "enabled"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "every-object"
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "receiver"
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "enabled"
+            ]
+          },
+          "kind": "relationship"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "deletes_scoped": [],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "enabled"
+        ]
+      }
+    },
+    {
+      "name": "deletes-scoped-parameter-before-receiver",
+      "dependencies": [],
+      "modifies": [],
+      "creates": [],
+      "deletes": [],
+      "deletes_scoped": [
+        {
+          "kind": "parameter",
+          "name": "a"
+        },
+        {
+          "kind": "receiver"
+        }
+      ],
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "state",
+          "frame",
+          {
+            "node": 13
+          },
+          {
+            "node": 14
+          },
+          {
+            "node": 7
+          },
+          "balance"
+        ]
+      }
+    },
+    {
+      "name": "deletes-scoped-parameters-descending",
+      "dependencies": [],
+      "modifies": [],
+      "creates": [],
+      "deletes": [],
+      "deletes_scoped": [
+        {
+          "kind": "parameter",
+          "name": "b"
+        },
+        {
+          "kind": "parameter",
+          "name": "a"
+        }
+      ],
+      "expected_code": "invalid_semantic_graph",
+      "expected_cause": null,
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "state",
+          "frame",
+          {
+            "node": 13
+          },
+          {
+            "node": 14
+          },
+          {
+            "node": 7
+          },
+          "balance"
+        ]
+      }
+    },
+    {
+      "name": "scope-conflict-outranks-deletes-scoped-order",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "Account"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "every-object"
+        },
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "Account"
+            ]
+          },
+          "kind": "field",
+          "name": "balance",
+          "scope": "receiver"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "deletes_scoped": [
+        {
+          "kind": "parameter",
+          "name": "a"
+        },
+        {
+          "kind": "receiver"
+        }
+      ],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "conflicting-binding",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "Account"
+        ]
+      }
+    },
+    {
+      "name": "meaning-join-outranks-deletes-scoped-order",
+      "dependencies": [
+        {
+          "ordinal": 0,
+          "package": "example",
+          "path": [
+            "Example",
+            "enabled"
+          ]
+        }
+      ],
+      "modifies": [
+        {
+          "declaration": {
+            "ordinal": 0,
+            "package": "example",
+            "path": [
+              "Example",
+              "enabled"
+            ]
+          },
+          "kind": "relationship"
+        }
+      ],
+      "creates": [],
+      "deletes": [],
+      "deletes_scoped": [
+        {
+          "kind": "parameter",
+          "name": "a"
+        },
+        {
+          "kind": "receiver"
+        }
+      ],
+      "expected_code": "invalid_model_binding",
+      "expected_cause": "malformed-declaration",
+      "expected_locus_node_id": {
+        "ordinal": 0,
+        "package": "example",
+        "path": [
+          "Example",
+          "enabled"
+        ]
+      }
+    }
+  ],
+  "deletes_scoped_parameter_cases": [
+    {
+      "entries": [
+        {
+          "kind": "parameter",
+          "name": "p0"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      },
+      "name": "DS-01",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "test/config-version"
+      }
+    },
+    {
+      "entries": [
+        {
+          "kind": "parameter",
+          "name": "p0"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "cause": "missing-name",
+          "code": "missing_declaration",
+          "locus": "frame"
+        }
+      },
+      "name": "DS-02",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "ix://quire/native/Integer"
+      }
+    },
+    {
+      "entries": [
+        {
+          "kind": "parameter",
+          "name": "q"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "cause": "missing-name",
+          "code": "missing_declaration",
+          "locus": "frame"
+        }
+      },
+      "name": "DS-03",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "test/config-version"
+      }
+    },
+    {
+      "entries": [
+        {
+          "kind": "receiver"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      },
+      "name": "DS-04",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "test/config-version"
+      }
+    },
+    {
+      "entries": [
+        {
+          "kind": "receiver"
+        },
+        {
+          "kind": "parameter",
+          "name": "p0"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      },
+      "name": "DS-05",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "test/config-version"
+      }
+    }
+  ]
+}
