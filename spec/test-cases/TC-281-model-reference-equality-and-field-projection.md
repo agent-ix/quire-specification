@@ -116,6 +116,7 @@ not unique), `peers` (`Order` `[0, 3]`, unordered, unique) and `trail`
 | RP-10 | Explicit source read `deref(view).total` of M5 | Resolves the inherited `Order/total`; type `Int[0, 9]`; field member `read_form` is `explicit_deref`; all other projection data equals RP-09 | FR-322-AC-34 |
 | RP-11 | RP-09 with `read_form` `implicit` | Fails the closed V2 schema and is refused `malformed_wire` | FR-322-AC-34 |
 | RP-12 | A model-object projection with no `read_form` | The schema shape is valid, but the full reader refuses `malformed_wire` | FR-322-AC-34 |
+| RP-13 | RP-03 with `read_form: bare` on its undereferenced reference operand | The schema shape is valid, but the full reader refuses the inapplicable `read_form` as `malformed_wire` | FR-322-AC-34 |
 | RE-01 | `reaches_field` over `Reference<Order>` twice, field `parent` of M1 | Admitted: `Option<Reference<Order>>` | FR-322-AC-38 |
 | RE-02 | Field `prior` of M1 | Admitted: `Sequence<Reference<Order>>[0, 3]` | FR-322-AC-38 |
 | RE-03 | Field `origin` of M1 | Admitted: `Reference<Order>` | FR-322-AC-38 |

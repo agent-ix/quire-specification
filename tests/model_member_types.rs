@@ -1070,6 +1070,10 @@ fn tc_281_record_projection_reads_a_model_field_over_a_deref_result() {
         validator.is_valid(&wire_member(case("RP-12"))),
         "read_form is optional in the member shape; the full reader refuses its omission"
     );
+    assert!(
+        validator.is_valid(&wire_member(case("RP-13"))),
+        "read_form's applicability to the operand is decided by the full reader"
+    );
 }
 
 /// FR-322 steps 2 and 3 for one member named `name` on the node vector

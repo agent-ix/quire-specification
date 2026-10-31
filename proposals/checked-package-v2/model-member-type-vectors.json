@@ -3684,6 +3684,29 @@
           "code": "malformed_wire"
         }
       }
+    },
+    {
+      "name": "RP-13",
+      "result_type": {
+        "type": "Int",
+        "min": "0",
+        "max": "9"
+      },
+      "operand": {
+        "reference": "M5"
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "M5",
+        "name": "total",
+        "read_form": "bare"
+      },
+      "expected": {
+        "refused": {
+          "code": "malformed_wire"
+        }
+      },
+      "source_expression": "reference.total with an inapplicable read form"
     }
   ],
   "reaches_cases": [
