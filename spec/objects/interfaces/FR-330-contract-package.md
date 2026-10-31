@@ -51,7 +51,7 @@ The ContractPackage is a closed object with exactly six required members:
 - `semantic_graph`: the closed object `{graph_version, nodes}` with exactly
   one `nodes` array. `graph_version` is exactly
   `quire.checked-semantic-graph/v2`. The node array uses FR-322's closed
-  node-tag vocabulary, ascending node-id order, stable references,
+  node-tag vocabulary, producer-chosen node order (FR-322-AC-95), stable references,
   dependency-reference and recursion-group rules. Each node occurs once.
   `types`, `expressions`, `clauses`, and `protocol_references` are not graph
   properties or separate reference forms. A protocol reference is FR-322's
@@ -495,7 +495,7 @@ this reader and the I2 reader together, is outside this requirement.
 | FR-330-AC-1 | Every represented node has identical native meaning to its originating checked-package node under the source profiles selected by the exact FR-322 lock. | Test (TC-935) |
 | FR-330-AC-2 | An unrepresentable item has no substitute node and retains exactly one typed terminal refusal with every available source locus (or its exact requested identity when no source key exists), while independent sibling records remain unchanged. | Test (TC-933, TC-934) |
 | FR-330-AC-3 | Withdrawn: the content-hash identity (package id, node key, digest or stale comparison) this criterion tested is removed. | Withdrawn |
-| FR-330-AC-4 | A package has exactly one semantic node collection ordered by FR-322's ascending node-id order; each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, a `protocol`/`protocol_reference` carrier binds by its body target to a local `protocol` node under FR-322-AC-66, and recursion is represented only by permitted keyed references. | Test |
+| FR-330-AC-4 | A package has exactly one semantic node collection in FR-322's producer-chosen node order (FR-322-AC-95); each node occurs once, local references resolve to compatible nodes, dependency references retain FR-322 selection semantics, a `protocol`/`protocol_reference` carrier binds by its body target to a local `protocol` node under FR-322-AC-66, and recursion is represented only by permitted keyed references. | Test |
 | FR-330-AC-5 | The embedded source `identity` and lock exactly equal the `name` and lock of the originating admitted checked package, and the explicit lowering-profile reference is retained in its closed `{authority, identity}` form separately from the lock's source-profile selections. | Test (TC-932, TC-935) |
 | FR-330-AC-6 | `feature_accounting` has one ordered record for each requested item and exactly one disposition from the seven-member vocabulary; non-`lowered` records have no substitute node, and `invalid_body.refusal` and `body_incomplete.incomplete` use the exact closed nested shapes and omission rules above. | Test (TC-933) |
 | FR-330-AC-7 | `source_map` has an entry for every semantic node, requested item, and refusal; an absent node_id remains an explicitly mapped `invalid_input` with no fabricated region, while every available occurrence and region matches FR-322 exactly. | Test (TC-934) |
