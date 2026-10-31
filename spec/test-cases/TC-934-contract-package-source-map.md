@@ -9,6 +9,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-330-AC-7
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-330-AC-14
+    type: verifies
 ---
 # TC-934: ContractPackage source map is total for nodes, requests and refusals
 
@@ -45,3 +47,11 @@ refused as `invalid_package`/`invalid-value` at
 entries are refused as `invalid_package`/`invalid-value` for source-map
 totality at `/source_map` before consumption. Encode each valid-JSON mutation
 as canonical RFC 8785 bytes before reading.
+
+## Source-frame id with an empty output graph
+
+Lower a package whose only requested key is absent from the checked graph, so
+the output `semantic_graph` is empty. The requested item keeps the exact
+source-indexed id, is recorded `invalid_input`, and the package is admitted:
+the id's index segments resolve against the source package's graph, not the
+empty output graph.

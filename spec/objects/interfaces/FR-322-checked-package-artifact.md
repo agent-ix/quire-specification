@@ -1102,12 +1102,20 @@ index segment per operand rather than 100,000 nested ids.
     `request.package` ([FR-331](FR-331-backend-provider-envelope.md); an
     in-process request, which has no `package` member, by the checked package
     handed to the provider), a `ContractPackage`'s `package.source.identity`
-    ([FR-330](FR-330-contract-package.md)), a conformance-corpus replay
+    ([FR-330](FR-330-contract-package.md); only for its source-frame ids, see
+    below), a conformance-corpus replay
     request's top-level `package` and any other corpus vector's compiled
     `input` ([FR-336](FR-336-conformance-corpus.md)), and a report or
     diagnostic by the checked package it reports on. The importer's id of an
     imported node, copied into such a document about the importer, resolves
     against the importer's graph.
+  - A `ContractPackage` holds ids in two frames. An id naming an output
+    semantic node (a `source_map.nodes[].node_id` entry and any other id naming
+    an output node) resolves against the ContractPackage's own output
+    `semantic_graph`. A source-frame id (every requested-item id, every
+    refusal's requested id, and every `SourceMapEntry` or occurrence `node_id`)
+    is held exactly as the source checked package writes it and resolves
+    against that source package's graph, never against the output graph.
   - An external `{package, node}` refinement key of
     [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md)
     resolves its `node` against the graph of the dependency named by the key's

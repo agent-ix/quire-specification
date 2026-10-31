@@ -291,7 +291,17 @@ and `refusals` collections:
   id and disposition and preserves every source occurrence available in the
   checked package, even when no output node is emitted.
 
-An absent requested key has an explicit requested-item entry with an empty
+Ids in `source_map` are held in two frames. Each `nodes` entry's own
+`node_id` names an output semantic node and resolves against this
+ContractPackage's output `semantic_graph`. Every requested-item id, every
+refusal's requested id, and every occurrence `node_id` is held exactly as the
+source checked package writes it and resolves against that source package's
+graph (named by `package.source.identity`), never against the output graph
+([FR-322](FR-322-checked-package-artifact.md)).
+
+An absent requested key keeps its exact source-indexed id, whose index segments
+resolve in the source graph; the package is therefore valid with
+`invalid_input` and an empty output graph. It has an explicit requested-item entry with an empty
 `occurrences` array and exact requested-id subject; it MUST NOT be given a
 guessed source span or silently omitted. Occurrence keys, source-region
 identity, byte intervals, and ordering are exactly those in FR-322. A
@@ -439,6 +449,7 @@ this reader and the I2 reader together, is outside this requirement.
 | FR-330-AC-11 | A reader `refused` result is a diagnostic at stage `package_read` carrying the reader's code and cause unchanged, every returned code having an FR-271 row and the category its code and cause map to; its `path` is the FR-274 `json_path` location and a node-level refusal carries the `locus` payload. A wrong outer contract version is `unknown_contract_version` and bytes that are not well-formed JSON are `malformed_wire`; a member outside the closed schema is `invalid_package`. A duplicate or unknown member is `invalid_package` with cause `duplicate-member` or `unknown-member`, never the code `duplicate_member` or `unknown_member`, and the reader never returns `unknown_required_capability`. | Test (TC-937) |
 | FR-330-AC-12 | A reader `incomplete` result is `stage_limit_exceeded` at stage `package_read`, category incomplete, with the cause the table gives for its `limit_kind` (`bytes`, `nodes`, `edges`, `occurrences`, `work`), `bound` its `limit`, `actual` its `consumed`, the location its `path` (none for `bytes`) and `setting` the value `CheckedPackageReadLimits.<limit_kind>`; an exact-limit input is admitted and the reader reports no `diagnostics` stop. | Test (TC-937) |
 | FR-330-AC-13 | The ContractPackage reader derives every direct input's closure recursively and refuses a diamond that reaches one library identity at two structurally unequal packages as `invalid_package`/`conflicting-definition` with both selection-path JSON pointers rooted at `/package/source/lock/dependency_selections` as loci, before graph-reference checks. | Test (TC-937, planned) |
+| FR-330-AC-14 | A ContractPackage whose requested key is absent keeps the exact source-indexed requested id, resolves it against the source package's graph rather than the output graph, and is admitted with `invalid_input` and an empty output graph. | Test (TC-934) |
 
 ## Dependencies
 
