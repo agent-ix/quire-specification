@@ -33,6 +33,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-281
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-282
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-274
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-55
@@ -600,6 +602,7 @@ through XT-20 do not close the QSL-authored part of IR-1052 AC-7.
 | NI-11 | node `2`'s segment as `{"node": 2}`, itself | `malformed_wire` at `/semantic_graph/nodes/2/node_id/path/3/node` | FR-322-AC-280 |
 | NI-12 | node `0`'s path extended with `{"node": 2}`, so `0` and `2` name each other | `malformed_wire` at `/semantic_graph/nodes/0/node_id/path/2/node`, the first segment on the cycle by holding node | FR-322-AC-280 |
 | NI-13 | built by the test: a `semantic_graph.nodes` array of the Integer node and a chain of `n` derived `expression`/`application` nodes, chain node `k + 1` having the path `["expression", "application", "quire.op.integer.negate", {"node": k}]`, for `n` = 100 and `n` = 100,000 | Node ids of at most 200 bytes per node and one maximum JSON nesting depth for both lengths; the 100,000-node text parses under a nesting limit of 128; the index checks admit it, and the 100,001 rebuilt keys are distinct, each chain node's key ending with its predecessor's key | FR-322-AC-281 |
+| NI-14 | built by the test: `positive-dependency-call.json` reversed with its index segments rewritten; the id of its imported `Int[0, 9]` (`package` `test/predicates`, operand `{"node": 3}`) copied into a request-style document whose package is that reversed importer | Rebuilt against the importer's graph, the key equals `positive-dependency-library.json`'s `Int[0, 9]` key; index `3` of the library's graph is `Int[0, 9]` itself, so resolving by the id's `package` would be a self-cycle | FR-322-AC-282 |
 
 For FR-322-AC-95, rewrite each index segment of the reordered document to its node's new graph index, and check that each node's rebuilt structural key is unchanged by the reorder.
 

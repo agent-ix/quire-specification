@@ -45,3 +45,19 @@ the reader on both reorders, or the trace narrowed to the clause it covers.
 Clean units: FR-201 NodeId row; Operand index segments Order, Reader checks,
 Rebuilding the key, Producing and Notation bullets; FR-322-AC-278..AC-281 and
 TC-233 NI-01..NI-13; and the Body grammar and resource-limit depth statements.
+
+## New findings (disposition pass 1)
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-005 | medium | The fix for FND-001/FND-002 added a rule to the FR-322 Scope bullet: "A node id outside its own package document resolves its index segments against the `semantic_graph.nodes` of the package its `package` member names." That rule keys on `node_id.package`, which is the node's owner, not the document that holds it. An imported derived node sits in the importing graph and carries the dependency's `package`. In `positive-dependency-call.json`, node 2 is `{package: "test/predicates", path: [..., {"node": 0}, ...]}`, and its `{"node": 0}` is the importer's index. The bullet's own earlier sentence says such segments name the importing graph. So a request or report about `example` that copies node 2's id as the package writes it would be resolved against the `test/predicates` graph. It is correct in the fixture only because Integer sits at index 0 in both graphs. FR-375-AC-35 keys on the key's `package`, not the node's, so the two rules also disagree for a domain-owned abstract declaration. The rule should name the graph by document context: the checked package the document is about, or the FR-375 key's `package`. | spec/objects/interfaces/FR-322-checked-package-artifact.md:1085-1099; spec/functional/analysis/FR-375-declare-model-refinement.md:421-431; proposals/checked-package-v2/fixtures/positive-dependency-call.json |
+| FND-006 | medium | FR-322-AC-95 claims "each published positive fixture whose graph holds no `recursion_group`". The reworked test walks `positive_fixtures()`, which holds 11 such fixtures of the 18. It skips `positive-dependency-call`, `positive-integer-literal-references`, `positive-model-tuple-union`, `positive-tick-timed-model-nodes`, `positive-timed-clause-nodes`, `positive-timed-model-nodes` and `positive-timed-slot-nodes`. These include the imported-derived-node fixture and the largest graphs, so the AC's universal claim is still partly untested. | spec/objects/interfaces/FR-322-checked-package-artifact.md:3278; tests/checked_package_v2.rs:8860,18099-18168 |
+
+## Dispositions
+
+| FND | outcome | reason |
+| --- | --- | --- |
+| FND-001 | fixed | Corpus `$defs/NodeId` now `$ref`s `urn:quire:checked-package:v2#/$defs/NodeId`; FR-336 states the shape and the graph it resolves against; `conformance_corpus_v1` admits `{"node": 2}` and refuses a nested id (passes at a538b816). |
+| FND-002 | fixed | FR-375 now resolves an external key's index segments against the dependency its `package` names, adds an out-of-range `malformed_wire` refusal at `.../node/path/{s}/node`, and adds FR-375-AC-35 with TC-310 RW-09 (importing graph longer than `N`, so it discriminates). |
+| FND-003 | fixed | FR-322:716 now reads "`node` has the `DeclaredNodeId` shape, a `node_id` whose `path` holds only strings". |
+| FND-004 | fixed | The AC-95 test now runs `read_package_semantics` on each fixture as published, reversed and sorted ascending by structural key, with keys unchanged (passes at a538b816); the fixture-set gap is FND-006. |

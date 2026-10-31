@@ -169,9 +169,14 @@ checked-package `NodeId` shape: the corpus schema's `$defs.NodeId` is
 `urn:quire:checked-package:v2#/$defs/NodeId`, so a path segment is a string or
 an index segment `{"node": i}` and never a nested node id. A corpus document
 holds no semantic graph, so each index segment of a corpus node id resolves
-against the `semantic_graph.nodes` of the checked package its `package` member
-names, the package the vector compiles or replays, exactly as that package
-writes the id (FR-322 "Operand index segments"). `VALUE` uses the structural `WitnessValue` tagged union
+against the `semantic_graph.nodes` of the checked package the document is
+about, exactly as that package writes the id (FR-322 "Operand index
+segments"): for a replay request, the checked package of its top-level
+`package` member (`ReplayRequestWire.package`), never a `dependencies` entry;
+for any other corpus vector, the checked package its `input` compiles to. A
+node id's own `package` member names the node's owner and selects no graph: an
+imported node's id resolves against the importing package's graph, where the
+imported node sits. `VALUE` uses the structural `WitnessValue` tagged union
 below because replay assignments may contain complete-V1 values beyond the
 corpus call `InputValue` forms. No other replay-source arm is admitted by
 this adapter.

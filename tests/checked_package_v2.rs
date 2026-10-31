@@ -18126,14 +18126,34 @@ fn tc_233_a_reordered_graph_keeps_every_structural_key() {
         (candidate, new_index)
     }
     let catalog = parsed_fixture(OPERATION_CATALOG);
+    // The dependency call reads with its selected library supplied.
+    let library = parsed_fixture(POSITIVE_DEPENDENCY_LIBRARY);
+    let read_with = |package: &Value| {
+        let supplied: Vec<(String, Value)> = package["lock"]["dependency_selections"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter(|entry| entry["identity"] == library["name"])
+            .map(|entry| (entry["identity"].as_str().unwrap().to_owned(), library.clone()))
+            .collect();
+        read_package_semantics_with(package, &catalog, &supplied)
+    };
     let mut forward = 0;
     let mut read = 0;
-    for (name, package) in positive_fixtures() {
+    let mut fixtures = Vec::new();
+    for (name, package) in published_positive_packages() {
         let nodes = package["semantic_graph"]["nodes"].as_array().unwrap().clone();
         if nodes.iter().any(|node| node.get("recursion_group").is_some()) {
             continue;
         }
-        assert_eq!(read_package_semantics(&package, &catalog), Ok(()), "{name} as published");
+        // FR-322-AC-95 excludes these two: their clock-clause and slot
+        // applications are joined by the timed oracles (TC-367), which the
+        // shared simulated reader does not carry.
+        if matches!(name.as_str(), "positive-timed-clause-nodes.json" | "positive-timed-slot-nodes.json") {
+            continue;
+        }
+        fixtures.push(name.clone());
+        assert_eq!(read_with(&package), Ok(()), "{name} as published");
         let count = nodes.len();
         let keys = structural(&json!(nodes), &nodes);
         let mut sorted: Vec<usize> = (0..count).collect();
@@ -18143,7 +18163,7 @@ fn tc_233_a_reordered_graph_keeps_every_structural_key() {
             let (candidate, new_index) = reordered(&package, &order);
             let candidate_nodes = candidate["semantic_graph"]["nodes"].as_array().unwrap();
             assert_eq!(node_index_refusal(&candidate), None, "{name} {label}: the index checks admit it");
-            assert_eq!(read_package_semantics(&candidate, &catalog), Ok(()), "{name} {label}: the full reader admits it");
+            assert_eq!(read_with(&candidate), Ok(()), "{name} {label}: the full reader admits it");
             if label == "reversed" {
                 forward += own_path_edges(candidate_nodes)
                     .iter()
@@ -18166,4 +18186,60 @@ fn tc_233_a_reordered_graph_keeps_every_structural_key() {
     }
     assert!(read >= 2, "the reader ran on reordered packages");
     assert!(forward > 0, "some reversed index segment names a later node");
+    for required in [
+        "positive-dependency-call.json",
+        "positive-model-tuple-union.json",
+        "positive-tick-timed-model-nodes.json",
+        "positive-timed-model-nodes.json",
+    ] {
+        assert!(fixtures.iter().any(|name| name == required), "{required} is reordered and read");
+    }
+    assert_eq!(fixtures.len(), 13, "every published positive fixture with no recursion group but the two timed exclusions");
+}
+
+/// FR-322-AC-282 (TC-233 `NI-14`): an index segment resolves against the graph
+/// of the document the id belongs to, not the graph of the id's `package`.
+/// The reversed importer's id of the imported `Int[0, 9]` (package
+/// `test/predicates`, operand `{"node": 3}`), copied into a document about the
+/// importer, rebuilds to the library's `Int[0, 9]` key; in the library's own
+/// graph index 3 is `Int[0, 9]` itself, a self-cycle.
+#[trace("TC-233", "FR-322-AC-282")]
+#[test]
+fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
+    let importer = parsed_fixture(POSITIVE_DEPENDENCY_CALL);
+    let library = parsed_fixture(POSITIVE_DEPENDENCY_LIBRARY);
+    let nodes = importer["semantic_graph"]["nodes"].as_array().unwrap();
+    let count = nodes.len();
+    let mut reversed = importer.clone();
+    fn rewrite(value: &mut Value, count: usize) {
+        match value {
+            Value::Object(members) => {
+                if let Some(Value::Number(index)) = members.get("node")
+                    && members.len() == 1
+                {
+                    let old = index.as_u64().unwrap() as usize;
+                    members.insert("node".to_owned(), json!(count - 1 - old));
+                    return;
+                }
+                members.values_mut().for_each(|member| rewrite(member, count));
+            }
+            Value::Array(items) => items.iter_mut().for_each(|item| rewrite(item, count)),
+            _ => {}
+        }
+    }
+    rewrite(&mut reversed, count);
+    reversed["semantic_graph"]["nodes"].as_array_mut().unwrap().reverse();
+    let reversed_nodes = reversed["semantic_graph"]["nodes"].as_array().unwrap();
+    let at = node_index_where(&reversed, |node| node["semantic_form"] == "integer_range");
+    let copied = reversed_nodes[at]["node_id"].clone();
+    assert_eq!(copied["package"], "test/predicates", "the id names the node's owner");
+    assert_eq!(copied["path"][3], json!({"node": 3}));
+    // A request-style document about the importer resolves against its graph.
+    let document = json!({"package": reversed["name"], "item": {"node": copied}});
+    let rebuilt = structural(&document["item"]["node"], reversed_nodes);
+    let library_nodes = library["semantic_graph"]["nodes"].as_array().unwrap();
+    let library_at = node_index_where(&library, |node| node["semantic_form"] == "integer_range");
+    assert_eq!(rebuilt, structural(&library_nodes[library_at]["node_id"], library_nodes));
+    // Resolved by the id's `package` (the library's graph), index 3 is the node itself.
+    assert_eq!(library_at, 3);
 }
