@@ -9294,6 +9294,123 @@ fn positive_fixtures() -> [(&'static str, Value); 12] {
     ]
 }
 
+/// Model field projections are the sole `record.project` inputs whose target
+/// is a model `deref` node. Their member must preserve source explicitness.
+fn model_field_projections_missing_read_form(package: &Value) -> Vec<String> {
+    let nodes = package["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("the semantic graph has a node array");
+    let model_derefs: Vec<Value> = nodes
+        .iter()
+        .filter(|node| node["body"]["operation"]["identity"] == "quire.op.model.deref")
+        .map(|node| node["node_id"].clone())
+        .collect();
+    nodes
+        .iter()
+        .enumerate()
+        .filter_map(|(index, node)| {
+            let body = &node["body"];
+            if body["operation"]["identity"] != "quire.op.record.project"
+                || body["operation"]["member"]["kind"] != "field"
+            {
+                return None;
+            }
+            let reads_model_object = body["arguments"]
+                .as_array()
+                .is_some_and(|arguments| {
+                    arguments
+                        .iter()
+                        .any(|argument| model_derefs.contains(&argument["target"]))
+                });
+            if !reads_model_object {
+                return None;
+            }
+            let read_form = body["operation"]["member"]["read_form"].as_str();
+            if matches!(read_form, Some("bare" | "explicit_deref")) {
+                None
+            } else {
+                Some(format!("node {index}: {read_form:?}"))
+            }
+        })
+        .collect()
+}
+
+/// FR-322-AC-34: every published positive package fixture and every admitted
+/// model-object projection vector carries the required source read form.
+/// RP-12 remains the malformed twin proving that omission is refused.
+#[trace("TC-233", "FR-322-AC-34")]
+#[test]
+fn positive_packages_and_projection_vectors_carry_model_read_form() {
+    let mut fixture_paths: Vec<_> = std::fs::read_dir("proposals/checked-package-v2/fixtures")
+        .expect("the fixture directory is readable")
+        .map(|entry| entry.expect("fixture directory entry").path())
+        .filter(|path| {
+            path.file_name()
+                .and_then(|name| name.to_str())
+                .is_some_and(|name| name.starts_with("positive-") && name.ends_with(".json"))
+        })
+        .collect();
+    fixture_paths.sort();
+    assert!(!fixture_paths.is_empty(), "positive fixtures exist");
+    for path in &fixture_paths {
+        let bytes = std::fs::read(path).expect("positive fixture is readable");
+        let package: Value = serde_json::from_slice(&bytes).expect("positive fixture is JSON");
+        assert!(
+            model_field_projections_missing_read_form(&package).is_empty(),
+            "{} has model-object field projections missing read_form: {:?}",
+            path.display(),
+            model_field_projections_missing_read_form(&package)
+        );
+    }
+
+    let transition = parsed_fixture(POSITIVE_STATE_TRANSITION);
+    let transition_nodes = transition["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("the transition graph has a node array");
+    let switch_on = transition_nodes
+        .iter()
+        .find(|node| {
+            let member = &node["body"]["operation"]["member"];
+            node["body"]["operation"]["identity"] == "quire.op.record.project"
+                && member["kind"] == "field"
+                && member["name"] == "on"
+                && member["declaration"]["path"]
+                    .as_array()
+                    .and_then(|path| path.last())
+                    .is_some_and(|name| name == "ix://acme/orders/Switch")
+        })
+        .expect("the transition fixture projects Switch.on");
+    assert_eq!(
+        switch_on["body"]["operation"]["member"]["read_form"],
+        "bare",
+        "FR-341-AC-17's source expression `on` is a bare model-field read"
+    );
+
+    let vectors = parsed_fixture(MODEL_MEMBER_TYPE_VECTORS);
+    let projections = vectors["projection_cases"]
+        .as_array()
+        .expect("the member-type vectors have projection cases");
+    for case in projections {
+        if case["operand"].get("deref").is_some() && case["expected"].get("resolves").is_some() {
+            assert!(
+                matches!(
+                    case["member"]["read_form"].as_str(),
+                    Some("bare" | "explicit_deref")
+                ),
+                "{} is a positive model-object projection and needs read_form",
+                case["name"].as_str().expect("a named projection case")
+            );
+        }
+    }
+    let omitted = projections
+        .iter()
+        .find(|case| case["name"] == "RP-12")
+        .expect("RP-12 is the missing-read_form malformed twin");
+    assert!(omitted["operand"].get("deref").is_some());
+    assert!(omitted["member"].get("read_form").is_none());
+    assert_eq!(omitted["expected"]["refused"]["code"], "malformed_wire");
+}
+
 /// The owner kind FR-322's presence rule requires of a node: a structural
 /// node (no application at its body root) carries a
 /// `SourceOwner` when declared, and a `ModelOwner` when it is a model
