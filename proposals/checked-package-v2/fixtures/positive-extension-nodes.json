@@ -165,12 +165,7 @@
             "integer_range",
             "min",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "1",
             "max",
@@ -217,12 +212,7 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 1
             },
             "audit"
           ]
@@ -267,33 +257,11 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "30",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "bounded_domain",
-                "integer_range",
-                "min",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "1",
-                "max",
-                "3650"
-              ]
+              "node": 2
             }
           ]
         },
@@ -314,12 +282,7 @@
             "integer_range",
             "min",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 0
             },
             "1",
             "max",
@@ -341,12 +304,7 @@
                     "value",
                     "literal",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ]
+                      "node": 1
                     },
                     "audit"
                   ]
@@ -365,33 +323,11 @@
                     "value",
                     "literal",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ]
+                      "node": 0
                     },
                     "30",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "bounded_domain",
-                        "integer_range",
-                        "min",
-                        {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
-                        },
-                        "1",
-                        "max",
-                        "3650"
-                      ]
+                      "node": 2
                     }
                   ]
                 },
@@ -419,33 +355,11 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 0
               },
               "30",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "bounded_domain",
-                  "integer_range",
-                  "min",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  "1",
-                  "max",
-                  "3650"
-                ]
+                "node": 2
               }
             ]
           },
@@ -456,12 +370,7 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 1
               },
               "audit"
             ]
@@ -552,12 +461,7 @@
           "integer_range",
           "min",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "1",
           "max",
@@ -585,12 +489,7 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 1
           },
           "audit"
         ]
@@ -616,33 +515,11 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 0
           },
           "30",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "bounded_domain",
-              "integer_range",
-              "min",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "1",
-              "max",
-              "3650"
-            ]
+            "node": 2
           }
         ]
       },

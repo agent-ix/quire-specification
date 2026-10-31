@@ -5743,22 +5743,12 @@
                     "temporal",
                     "formula",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "Example",
-                        "enabled"
-                      ]
+                      "node": 3
                     },
                     "quire.op.temporal.holds",
                     "temporal_formula",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "Example",
-                        "Flag"
-                      ]
+                      "node": 0
                     }
                   ]
                 },
@@ -5780,22 +5770,12 @@
                           "temporal",
                           "formula",
                           {
-                            "ordinal": 0,
-                            "package": "example",
-                            "path": [
-                              "Example",
-                              "enabled"
-                            ]
+                            "node": 3
                           },
                           "quire.op.temporal.holds",
                           "temporal_formula",
                           {
-                            "ordinal": 0,
-                            "package": "example",
-                            "path": [
-                              "Example",
-                              "Flag"
-                            ]
+                            "node": 0
                           }
                         ]
                       },
@@ -5847,40 +5827,12 @@
                     "temporal",
                     "formula",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "temporal",
-                        "formula",
-                        {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "Example",
-                            "enabled"
-                          ]
-                        },
-                        "quire.op.temporal.holds",
-                        "temporal_formula",
-                        {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "Example",
-                            "Flag"
-                          ]
-                        }
-                      ]
+                      "node": 28
                     },
                     "quire.op.temporal.eventually",
                     "temporal_formula",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "Example",
-                        "Flag"
-                      ]
+                      "node": 0
                     }
                   ]
                 },
@@ -5902,40 +5854,12 @@
                           "temporal",
                           "formula",
                           {
-                            "ordinal": 0,
-                            "package": "example",
-                            "path": [
-                              "temporal",
-                              "formula",
-                              {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "Example",
-                                  "enabled"
-                                ]
-                              },
-                              "quire.op.temporal.holds",
-                              "temporal_formula",
-                              {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "Example",
-                                  "Flag"
-                                ]
-                              }
-                            ]
+                            "node": 28
                           },
                           "quire.op.temporal.eventually",
                           "temporal_formula",
                           {
-                            "ordinal": 0,
-                            "package": "example",
-                            "path": [
-                              "Example",
-                              "Flag"
-                            ]
+                            "node": 0
                           }
                         ]
                       },

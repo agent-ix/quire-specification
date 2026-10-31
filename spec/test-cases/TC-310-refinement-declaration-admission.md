@@ -169,14 +169,14 @@ Mutations, each applied alone to the positive unit:
     in the unit that declares the refinement, so the clause node is local to
     the refinement's checked package; compare its `protocol` key and
     `dependencies` with mutation 13's directly selected dependency clause.
-26. **Checked-package read/write vectors (RW-01 to RW-08).** Emit the
+26. **Checked-package read/write vectors (RW-01 to RW-09).** Emit the
     admitted package of mutation 24 with only the `ImplA` refinement as
     `RW-01`. Pass the emitted canonical bytes through the strict V2 reader,
     then write the admitted package and read it again. Use a separate
     producer-emitted package of mutation 2 (`peek -> any`) as the base for
     `RW-04`, so the refinement is not proof-eligible and carries only its
     `declaration` occurrence. Use mutation 13's producer-emitted package as
-    the base for `RW-06`, with `abstract` a `{package, node}` key of a directly
+    the base for `RW-06` and `RW-09`, with `abstract` a `{package, node}` key of a directly
     selected dependency. Use the positive unit's producer-emitted package as
     the base for `RW-07` and `RW-08`.
 
@@ -199,6 +199,7 @@ Mutations, each applied alone to the positive unit:
     | `RW-06` | Mutation 13 package: remove the direct selection for the external package named by `body.abstract`, leaving that `{package, node}` key unchanged. |
     | `RW-07` | Positive package: replace `body.objects[0].concrete_type` with the existing local Boolean `scalar_type` key. |
     | `RW-08` | Positive package: replace `body.objects[0].fields[0].expression` with the inline Boolean literal `{term: "literal", type: B, value_kind: "boolean", value: true}`, where `B` is the package's local Boolean node id. |
+    | `RW-09` | Mutation 13 package, its importing graph extended until it has more than `N` nodes: append the index segment `{"node": N}` to `body.abstract.node.path`, `N` the length of the selected dependency's `semantic_graph.nodes`. |
 
 27. **State-machine field-set rows (SM-01 to SM-05).** Build an abstract
     package with a `state_machine` declaration `SpecMachine` and a concrete
@@ -400,6 +401,7 @@ and writes no package from that read. The first refusal is exactly:
 | `RW-06` | `missing_declaration` / `missing-selection` | `/semantic_graph/nodes/{n}/body/abstract/package`, refinement step 3; supplying the removed dependency without restoring its direct selection changes nothing. |
 | `RW-07` | `invalid_model_binding` / `malformed-declaration` | `/semantic_graph/nodes/{n}/body/objects/0/concrete_type`, refinement step 5. |
 | `RW-08` | `ill_typed` / `type-mismatch` | `/semantic_graph/nodes/{n}/body/objects/0/fields/0/expression`, refinement step 5. |
+| `RW-09` | `malformed_wire` / no cause | `/semantic_graph/nodes/{n}/body/abstract/node/path/{s}/node`, `s` the appended segment's position, when the reader binds the dependency package: the index is resolved against the dependency's graph, in which it is out of range, although the importing graph has node `N` (FR-375-AC-35). |
 
 `RW-04` to `RW-08` exercise FR-375-AC-21's ordered checks and both row
 target and row type joins. Each is refused after the earlier FR-322 stages

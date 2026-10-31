@@ -211,6 +211,32 @@
     "NodeRef": {
       "$ref": "#/$defs/NodeId"
     },
+    "DeclaredNodeId": {
+      "type": "object",
+      "required": [
+        "package",
+        "path",
+        "ordinal"
+      ],
+      "properties": {
+        "package": {
+          "$ref": "#/$defs/Nonempty"
+        },
+        "path": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
+    },
     "Identifier": {
       "type": "string",
       "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
@@ -4390,7 +4416,7 @@
               "$ref": "#/$defs/Nonempty"
             },
             "node": {
-              "$ref": "#/$defs/NodeId"
+              "$ref": "#/$defs/DeclaredNodeId"
             }
           },
           "additionalProperties": false
@@ -4658,7 +4684,7 @@
               "$ref": "#/$defs/Nonempty"
             },
             "node": {
-              "$ref": "#/$defs/NodeId"
+              "$ref": "#/$defs/DeclaredNodeId"
             }
           },
           "additionalProperties": false
@@ -12017,9 +12043,23 @@
           "type": "string"
         },
         {
-          "$ref": "#/$defs/NodeId"
+          "$ref": "#/$defs/NodeIndex"
         }
       ]
+    },
+    "NodeIndex": {
+      "type": "object",
+      "required": [
+        "node"
+      ],
+      "properties": {
+        "node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
     },
     "IntegerString": {
       "type": "string",

@@ -1,0 +1,215 @@
+{
+  "version": "quire.checked-node-index-vectors/v1",
+  "note": "TC-233 NI-01..NI-12 (FR-322 \"Operand index segments\"). Each case is an RFC 6902 patch over the base package. A schema of invalid fails the V2 schema and is malformed_wire at the patched member (locus); a schema of valid passes it and the reader's index check refuses malformed_wire, with no cause, at locus, before every semantic_graph check. NI-13 (the deep chain) is built by the test, not published.",
+  "base": "fixtures/positive-dependency-call.json",
+  "cases": [
+    {
+      "id": "NI-01",
+      "criterion": "FR-322-AC-278",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {
+            "package": "test/predicates",
+            "path": [
+              "scalar_type",
+              "integer"
+            ],
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/2/node_id/path/3",
+      "note": "an operand written as a nested node_id object"
+    },
+    {
+      "id": "NI-02",
+      "criterion": "FR-322-AC-278",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {
+            "node": -1
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/2/node_id/path/3",
+      "note": "a negative index"
+    },
+    {
+      "id": "NI-03",
+      "criterion": "FR-322-AC-278",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {
+            "node": "0"
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/2/node_id/path/3",
+      "note": "a string index"
+    },
+    {
+      "id": "NI-04",
+      "criterion": "FR-322-AC-278",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {
+            "node": 1.5
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/2/node_id/path/3",
+      "note": "a fractional index"
+    },
+    {
+      "id": "NI-05",
+      "criterion": "FR-322-AC-278",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {
+            "node": 0,
+            "ordinal": 0
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/2/node_id/path/3",
+      "note": "an extra member"
+    },
+    {
+      "id": "NI-06",
+      "criterion": "FR-322-AC-278",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {}
+        }
+      ],
+      "schema": "invalid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/2/node_id/path/3",
+      "note": "no node member"
+    },
+    {
+      "id": "NI-07",
+      "criterion": "FR-322-AC-278",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/0/node/path/1",
+          "value": {
+            "node": 0
+          }
+        }
+      ],
+      "schema": "invalid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/3/body/arguments/0/node/path/1",
+      "note": "an index segment in a dependency_reference node"
+    },
+    {
+      "id": "NI-08",
+      "criterion": "FR-322-AC-279",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {
+            "node": 4
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/2/node_id/path/3/node",
+      "note": "an own-path index equal to the node count"
+    },
+    {
+      "id": "NI-09",
+      "criterion": "FR-322-AC-279",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/3/body/arguments/1/type/path/3",
+          "value": {
+            "node": 9007199254740991
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/3/body/arguments/1/type/path/3/node",
+      "note": "an out-of-range index in a literal's type"
+    },
+    {
+      "id": "NI-10",
+      "criterion": "FR-322-AC-279",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/source_map/2/node_id/path/3",
+          "value": {
+            "node": 4
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/source_map/2/node_id/path/3/node",
+      "note": "an out-of-range index in a source_map entry"
+    },
+    {
+      "id": "NI-11",
+      "criterion": "FR-322-AC-280",
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/semantic_graph/nodes/2/node_id/path/3",
+          "value": {
+            "node": 2
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/2/node_id/path/3/node",
+      "note": "a node that names itself"
+    },
+    {
+      "id": "NI-12",
+      "criterion": "FR-322-AC-280",
+      "patch": [
+        {
+          "op": "add",
+          "path": "/semantic_graph/nodes/0/node_id/path/2",
+          "value": {
+            "node": 2
+          }
+        }
+      ],
+      "schema": "valid",
+      "expected": "malformed_wire",
+      "locus": "/semantic_graph/nodes/0/node_id/path/2/node",
+      "note": "nodes 0 and 2 name each other; node 0's segment is the first by graph index"
+    }
+  ]
+}

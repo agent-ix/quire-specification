@@ -242,12 +242,7 @@
             "integer_range",
             "min",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "0",
             "max",
@@ -353,20 +348,10 @@
             "expression",
             "reference",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "enabled"
-              ]
+              "node": 3
             },
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "Flag"
-              ]
+              "node": 0
             }
           ]
         },
@@ -557,40 +542,16 @@
                   "parameter",
                   "name",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ]
+                    "node": 23
                   },
                   "self",
                   "level",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
+                    "node": 24
                   },
                   "0",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "composite_type",
-                      "reference",
-                      {
-                        "ordinal": 0,
-                        "package": "acme/orders",
-                        "path": [
-                          "model",
-                          "object_type",
-                          "ix://acme/orders/Order"
-                        ]
-                      }
-                    ]
+                    "node": 26
                   }
                 ]
               },
@@ -647,40 +608,12 @@
                   "temporal",
                   "formula",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "temporal",
-                      "formula",
-                      {
-                        "ordinal": 0,
-                        "package": "example",
-                        "path": [
-                          "Example",
-                          "enabled"
-                        ]
-                      },
-                      "quire.op.temporal.holds",
-                      "temporal_formula",
-                      {
-                        "ordinal": 0,
-                        "package": "example",
-                        "path": [
-                          "Example",
-                          "Flag"
-                        ]
-                      }
-                    ]
+                    "node": 28
                   },
                   "quire.op.temporal.eventually",
                   "temporal_formula",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "Example",
-                      "Flag"
-                    ]
+                    "node": 0
                   }
                 ]
               },
@@ -721,40 +654,12 @@
               "temporal",
               "formula",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "temporal",
-                  "formula",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "Example",
-                      "enabled"
-                    ]
-                  },
-                  "quire.op.temporal.holds",
-                  "temporal_formula",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "Example",
-                      "Flag"
-                    ]
-                  }
-                ]
+                "node": 28
               },
               "quire.op.temporal.eventually",
               "temporal_formula",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "Example",
-                  "Flag"
-                ]
+                "node": 0
               }
             ]
           },
@@ -766,40 +671,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 23
               },
               "self",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 24
               },
               "0",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "composite_type",
-                  "reference",
-                  {
-                    "ordinal": 0,
-                    "package": "acme/orders",
-                    "path": [
-                      "model",
-                      "object_type",
-                      "ix://acme/orders/Order"
-                    ]
-                  }
-                ]
+                "node": 26
               }
             ]
           }
@@ -811,115 +692,22 @@
             "temporal",
             "temporal_clause",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ]
-                },
-                "self",
-                "level",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "0",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "composite_type",
-                    "reference",
-                    {
-                      "ordinal": 0,
-                      "package": "acme/orders",
-                      "path": [
-                        "model",
-                        "object_type",
-                        "ix://acme/orders/Order"
-                      ]
-                    }
-                  ]
-                }
-              ]
+              "node": 27
             },
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 23
             },
             "model-steps",
             "kind",
             "origin",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "temporal",
-                "formula",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "temporal",
-                    "formula",
-                    {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "Example",
-                        "enabled"
-                      ]
-                    },
-                    "quire.op.temporal.holds",
-                    "temporal_formula",
-                    {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "Example",
-                        "Flag"
-                      ]
-                    }
-                  ]
-                },
-                "quire.op.temporal.eventually",
-                "temporal_formula",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "Example",
-                    "Flag"
-                  ]
-                }
-              ]
+              "node": 29
             },
             "quire.op.temporal.clause",
             "quire.temporal.event-position.false-extension/v1",
             "temporal",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "Flag"
-              ]
+              "node": 0
             }
           ]
         },
@@ -956,40 +744,16 @@
                     "parameter",
                     "name",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ]
+                      "node": 23
                     },
                     "self",
                     "level",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ]
+                      "node": 24
                     },
                     "0",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "composite_type",
-                        "reference",
-                        {
-                          "ordinal": 0,
-                          "package": "acme/orders",
-                          "path": [
-                            "model",
-                            "object_type",
-                            "ix://acme/orders/Order"
-                          ]
-                        }
-                      ]
+                      "node": 26
                     }
                   ]
                 },
@@ -1202,40 +966,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 23
               },
               "self",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 24
               },
               "0",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "composite_type",
-                  "reference",
-                  {
-                    "ordinal": 0,
-                    "package": "acme/orders",
-                    "path": [
-                      "model",
-                      "object_type",
-                      "ix://acme/orders/Order"
-                    ]
-                  }
-                ]
+                "node": 26
               }
             ]
           }
@@ -1369,20 +1109,10 @@
             "correspondence",
             "source_locus",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "enabled"
-              ]
+              "node": 3
             },
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "Flag"
-              ]
+              "node": 0
             }
           ]
         },
@@ -1619,29 +1349,13 @@
             "state",
             "frame",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "Account"
-              ]
+              "node": 13
             },
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "Session"
-              ]
+              "node": 14
             },
             {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "relation",
-                "relationship",
-                "ix://acme/orders/relationship/Order-order-Order"
-              ]
+              "node": 7
             },
             "balance"
           ]
@@ -2108,13 +1822,7 @@
             "composite_type",
             "reference",
             {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "model",
-                "object_type",
-                "ix://acme/orders/Order"
-              ]
+              "node": 44
             }
           ]
         },
@@ -2134,13 +1842,7 @@
             "composite_type",
             "reference",
             {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "model",
-                "object_type",
-                "ix://acme/orders/Order"
-              ]
+              "node": 44
             }
           ]
         }
@@ -2194,40 +1896,16 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 23
             },
             "self",
             "level",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "0",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "composite_type",
-                "reference",
-                {
-                  "ordinal": 0,
-                  "package": "acme/orders",
-                  "path": [
-                    "model",
-                    "object_type",
-                    "ix://acme/orders/Order"
-                  ]
-                }
-              ]
+              "node": 26
             }
           ]
         },
@@ -2247,13 +1925,7 @@
             "composite_type",
             "reference",
             {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "model",
-                "object_type",
-                "ix://acme/orders/Order"
-              ]
+              "node": 44
             }
           ]
         }
@@ -2308,22 +1980,12 @@
             "temporal",
             "formula",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "enabled"
-              ]
+              "node": 3
             },
             "quire.op.temporal.holds",
             "temporal_formula",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "Flag"
-              ]
+              "node": 0
             }
           ]
         },
@@ -2356,22 +2018,12 @@
                   "temporal",
                   "formula",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "Example",
-                      "enabled"
-                    ]
+                    "node": 3
                   },
                   "quire.op.temporal.holds",
                   "temporal_formula",
                   {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "Example",
-                      "Flag"
-                    ]
+                    "node": 0
                   }
                 ]
               },
@@ -2410,22 +2062,12 @@
               "temporal",
               "formula",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "Example",
-                  "enabled"
-                ]
+                "node": 3
               },
               "quire.op.temporal.holds",
               "temporal_formula",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "Example",
-                  "Flag"
-                ]
+                "node": 0
               }
             ]
           }
@@ -2437,40 +2079,12 @@
             "temporal",
             "formula",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "temporal",
-                "formula",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "Example",
-                    "enabled"
-                  ]
-                },
-                "quire.op.temporal.holds",
-                "temporal_formula",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "Example",
-                    "Flag"
-                  ]
-                }
-              ]
+              "node": 28
             },
             "quire.op.temporal.eventually",
             "temporal_formula",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "Flag"
-              ]
+              "node": 0
             }
           ]
         },
@@ -2606,12 +2220,7 @@
             "integer_range",
             "min",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "1",
             "max",
@@ -2658,12 +2267,7 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 23
             },
             "audit"
           ]
@@ -2708,33 +2312,11 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "30",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "bounded_domain",
-                "integer_range",
-                "min",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "1",
-                "max",
-                "3650"
-              ]
+              "node": 31
             }
           ]
         },
@@ -2755,12 +2337,7 @@
             "integer_range",
             "min",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "1",
             "max",
@@ -2782,12 +2359,7 @@
                     "value",
                     "literal",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ]
+                      "node": 23
                     },
                     "audit"
                   ]
@@ -2806,33 +2378,11 @@
                     "value",
                     "literal",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ]
+                      "node": 24
                     },
                     "30",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "bounded_domain",
-                        "integer_range",
-                        "min",
-                        {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
-                        },
-                        "1",
-                        "max",
-                        "3650"
-                      ]
+                      "node": 31
                     }
                   ]
                 },
@@ -2860,33 +2410,11 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 24
               },
               "30",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "bounded_domain",
-                  "integer_range",
-                  "min",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  "1",
-                  "max",
-                  "3650"
-                ]
+                "node": 31
               }
             ]
           },
@@ -2897,12 +2425,7 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 23
               },
               "audit"
             ]
@@ -3018,31 +2541,16 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 23
             },
             "x",
             "level",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "0",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ]
+              "node": 35
             }
           ]
         },
@@ -3113,31 +2621,16 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 23
             },
             "y",
             "level",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "1",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ]
+              "node": 35
             }
           ]
         },
@@ -3181,12 +2674,7 @@
             "value",
             "literal",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "rational"
-              ]
+              "node": 35
             },
             "1"
           ]
@@ -3280,31 +2768,16 @@
                               "parameter",
                               "name",
                               {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "scalar_type",
-                                  "text"
-                                ]
+                                "node": 23
                               },
                               "y",
                               "level",
                               {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "scalar_type",
-                                  "integer"
-                                ]
+                                "node": 24
                               },
                               "1",
                               {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "scalar_type",
-                                  "rational"
-                                ]
+                                "node": 35
                               }
                             ]
                           },
@@ -3338,31 +2811,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 23
               },
               "y",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 24
               },
               "1",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "rational"
-                ]
+                "node": 35
               }
             ]
           }
@@ -3375,61 +2833,18 @@
             "hybrid_transition",
             "target",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "0",
             "guard",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "enabled"
-              ]
+              "node": 3
             },
             "resets",
             "variable",
             "value",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ]
-                },
-                "y",
-                "level",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "1",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ]
-                }
-              ]
+              "node": 37
             }
           ]
         },
@@ -3450,61 +2865,18 @@
             "hybrid_transition",
             "target",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "0",
             "guard",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "Example",
-                "enabled"
-              ]
+              "node": 3
             },
             "resets",
             "variable",
             "value",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "value",
-                "parameter",
-                "name",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "text"
-                  ]
-                },
-                "y",
-                "level",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ]
-                },
-                "1",
-                {
-                  "ordinal": 0,
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "rational"
-                  ]
-                }
-              ]
+              "node": 37
             }
           ]
         }
@@ -3541,31 +2913,16 @@
                         "parameter",
                         "name",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "text"
-                          ]
+                          "node": 23
                         },
                         "y",
                         "level",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 24
                         },
                         "1",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "rational"
-                          ]
+                          "node": 35
                         }
                       ]
                     },
@@ -3579,12 +2936,7 @@
                         "value",
                         "literal",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "rational"
-                          ]
+                          "node": 35
                         },
                         "1"
                       ]
@@ -3609,61 +2961,18 @@
                         "hybrid_transition",
                         "target",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "scalar_type",
-                            "integer"
-                          ]
+                          "node": 24
                         },
                         "0",
                         "guard",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "Example",
-                            "enabled"
-                          ]
+                          "node": 3
                         },
                         "resets",
                         "variable",
                         "value",
                         {
-                          "ordinal": 0,
-                          "package": "example",
-                          "path": [
-                            "value",
-                            "parameter",
-                            "name",
-                            {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "text"
-                              ]
-                            },
-                            "y",
-                            "level",
-                            {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ]
-                            },
-                            "1",
-                            {
-                              "ordinal": 0,
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "rational"
-                              ]
-                            }
-                          ]
+                          "node": 37
                         }
                       ]
                     },
@@ -3700,61 +3009,18 @@
               "hybrid_transition",
               "target",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 24
               },
               "0",
               "guard",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "Example",
-                  "enabled"
-                ]
+                "node": 3
               },
               "resets",
               "variable",
               "value",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ]
-                  },
-                  "y",
-                  "level",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ]
-                  },
-                  "1",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "rational"
-                    ]
-                  }
-                ]
+                "node": 37
               }
             ]
           },
@@ -3765,12 +3031,7 @@
               "value",
               "literal",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "rational"
-                ]
+                "node": 35
               },
               "1"
             ]
@@ -3783,31 +3044,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 23
               },
               "y",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 24
               },
               "1",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "rational"
-                ]
+                "node": 35
               }
             ]
           }
@@ -3867,31 +3113,16 @@
                               "parameter",
                               "name",
                               {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "scalar_type",
-                                  "text"
-                                ]
+                                "node": 23
                               },
                               "x",
                               "level",
                               {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "scalar_type",
-                                  "integer"
-                                ]
+                                "node": 24
                               },
                               "0",
                               {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "scalar_type",
-                                  "rational"
-                                ]
+                                "node": 35
                               }
                             ]
                           },
@@ -3932,31 +3163,16 @@
                               "parameter",
                               "name",
                               {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "scalar_type",
-                                  "text"
-                                ]
+                                "node": 23
                               },
                               "y",
                               "level",
                               {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "scalar_type",
-                                  "integer"
-                                ]
+                                "node": 24
                               },
                               "1",
                               {
-                                "ordinal": 0,
-                                "package": "example",
-                                "path": [
-                                  "scalar_type",
-                                  "rational"
-                                ]
+                                "node": 35
                               }
                             ]
                           },
@@ -4035,31 +3251,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 23
               },
               "x",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 24
               },
               "0",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "rational"
-                ]
+                "node": 35
               }
             ]
           },
@@ -4071,31 +3272,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 23
               },
               "y",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 24
               },
               "1",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "rational"
-                ]
+                "node": 35
               }
             ]
           }
@@ -4224,40 +3410,16 @@
                     "parameter",
                     "name",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ]
+                      "node": 23
                     },
                     "closing",
                     "level",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ]
+                      "node": 24
                     },
                     "1",
                     {
-                      "ordinal": 0,
-                      "package": "example",
-                      "path": [
-                        "composite_type",
-                        "reference",
-                        {
-                          "ordinal": 0,
-                          "package": "acme/orders",
-                          "path": [
-                            "model",
-                            "object_type",
-                            "ix://acme/orders/Order"
-                          ]
-                        }
-                      ]
+                      "node": 26
                     }
                   ]
                 },
@@ -4334,40 +3496,16 @@
               "parameter",
               "name",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
+                "node": 23
               },
               "closing",
               "level",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
+                "node": 24
               },
               "1",
               {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "composite_type",
-                  "reference",
-                  {
-                    "ordinal": 0,
-                    "package": "acme/orders",
-                    "path": [
-                      "model",
-                      "object_type",
-                      "ix://acme/orders/Order"
-                    ]
-                  }
-                ]
+                "node": 26
               }
             ]
           }
@@ -4488,40 +3626,16 @@
             "parameter",
             "name",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "text"
-              ]
+              "node": 23
             },
             "closing",
             "level",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "scalar_type",
-                "integer"
-              ]
+              "node": 24
             },
             "1",
             {
-              "ordinal": 0,
-              "package": "example",
-              "path": [
-                "composite_type",
-                "reference",
-                {
-                  "ordinal": 0,
-                  "package": "acme/orders",
-                  "path": [
-                    "model",
-                    "object_type",
-                    "ix://acme/orders/Order"
-                  ]
-                }
-              ]
+              "node": 26
             }
           ]
         },
@@ -4541,13 +3655,7 @@
             "composite_type",
             "reference",
             {
-              "ordinal": 0,
-              "package": "acme/orders",
-              "path": [
-                "model",
-                "object_type",
-                "ix://acme/orders/Order"
-              ]
+              "node": 44
             }
           ]
         }
@@ -4666,40 +3774,16 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 23
           },
           "self",
           "level",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 24
           },
           "0",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "composite_type",
-              "reference",
-              {
-                "ordinal": 0,
-                "package": "acme/orders",
-                "path": [
-                  "model",
-                  "object_type",
-                  "ix://acme/orders/Order"
-                ]
-              }
-            ]
+            "node": 26
           }
         ]
       },
@@ -4747,31 +3831,16 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 23
           },
           "x",
           "level",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 24
           },
           "0",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "rational"
-            ]
+            "node": 35
           }
         ]
       },
@@ -4842,61 +3911,18 @@
           "hybrid_transition",
           "target",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 24
           },
           "0",
           "guard",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "enabled"
-            ]
+            "node": 3
           },
           "resets",
           "variable",
           "value",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "parameter",
-              "name",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
-              },
-              "y",
-              "level",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "1",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "rational"
-                ]
-              }
-            ]
+            "node": 37
           }
         ]
       },
@@ -5056,12 +4082,7 @@
           "integer_range",
           "min",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 24
           },
           "0",
           "max",
@@ -5089,22 +4110,12 @@
           "temporal",
           "formula",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "enabled"
-            ]
+            "node": 3
           },
           "quire.op.temporal.holds",
           "temporal_formula",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Flag"
-            ]
+            "node": 0
           }
         ]
       },
@@ -5196,29 +4207,13 @@
           "state",
           "frame",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Account"
-            ]
+            "node": 13
           },
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Session"
-            ]
+            "node": 14
           },
           {
-            "ordinal": 0,
-            "package": "acme/orders",
-            "path": [
-              "relation",
-              "relationship",
-              "ix://acme/orders/relationship/Order-order-Order"
-            ]
+            "node": 7
           },
           "balance"
         ]
@@ -5244,20 +4239,10 @@
           "expression",
           "reference",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "enabled"
-            ]
+            "node": 3
           },
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Flag"
-            ]
+            "node": 0
           }
         ]
       },
@@ -5347,13 +4332,7 @@
           "composite_type",
           "reference",
           {
-            "ordinal": 0,
-            "package": "acme/orders",
-            "path": [
-              "model",
-              "object_type",
-              "ix://acme/orders/Order"
-            ]
+            "node": 44
           }
         ]
       },
@@ -5378,12 +4357,7 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "rational"
-            ]
+            "node": 35
           },
           "1"
         ]
@@ -5498,33 +4472,11 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 24
           },
           "30",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "bounded_domain",
-              "integer_range",
-              "min",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "1",
-              "max",
-              "3650"
-            ]
+            "node": 31
           }
         ]
       },
@@ -5593,12 +4545,7 @@
           "value",
           "literal",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 23
           },
           "audit"
         ]
@@ -5649,31 +4596,16 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 23
           },
           "y",
           "level",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 24
           },
           "1",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "rational"
-            ]
+            "node": 35
           }
         ]
       },
@@ -5698,115 +4630,22 @@
           "temporal",
           "temporal_clause",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "value",
-              "parameter",
-              "name",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "text"
-                ]
-              },
-              "self",
-              "level",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ]
-              },
-              "0",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "composite_type",
-                  "reference",
-                  {
-                    "ordinal": 0,
-                    "package": "acme/orders",
-                    "path": [
-                      "model",
-                      "object_type",
-                      "ix://acme/orders/Order"
-                    ]
-                  }
-                ]
-              }
-            ]
+            "node": 27
           },
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 23
           },
           "model-steps",
           "kind",
           "origin",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "temporal",
-              "formula",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "temporal",
-                  "formula",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "Example",
-                      "enabled"
-                    ]
-                  },
-                  "quire.op.temporal.holds",
-                  "temporal_formula",
-                  {
-                    "ordinal": 0,
-                    "package": "example",
-                    "path": [
-                      "Example",
-                      "Flag"
-                    ]
-                  }
-                ]
-              },
-              "quire.op.temporal.eventually",
-              "temporal_formula",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "Example",
-                  "Flag"
-                ]
-              }
-            ]
+            "node": 29
           },
           "quire.op.temporal.clause",
           "quire.temporal.event-position.false-extension/v1",
           "temporal",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Flag"
-            ]
+            "node": 0
           }
         ]
       },
@@ -5854,12 +4693,7 @@
           "integer_range",
           "min",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 24
           },
           "1",
           "max",
@@ -5887,20 +4721,10 @@
           "correspondence",
           "source_locus",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "enabled"
-            ]
+            "node": 3
           },
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Flag"
-            ]
+            "node": 0
           }
         ]
       },
@@ -5947,40 +4771,12 @@
           "temporal",
           "formula",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "temporal",
-              "formula",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "Example",
-                  "enabled"
-                ]
-              },
-              "quire.op.temporal.holds",
-              "temporal_formula",
-              {
-                "ordinal": 0,
-                "package": "example",
-                "path": [
-                  "Example",
-                  "Flag"
-                ]
-              }
-            ]
+            "node": 28
           },
           "quire.op.temporal.eventually",
           "temporal_formula",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "Example",
-              "Flag"
-            ]
+            "node": 0
           }
         ]
       },
@@ -6051,40 +4847,16 @@
           "parameter",
           "name",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "text"
-            ]
+            "node": 23
           },
           "closing",
           "level",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "scalar_type",
-              "integer"
-            ]
+            "node": 24
           },
           "1",
           {
-            "ordinal": 0,
-            "package": "example",
-            "path": [
-              "composite_type",
-              "reference",
-              {
-                "ordinal": 0,
-                "package": "acme/orders",
-                "path": [
-                  "model",
-                  "object_type",
-                  "ix://acme/orders/Order"
-                ]
-              }
-            ]
+            "node": 26
           }
         ]
       },

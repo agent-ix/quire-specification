@@ -124,7 +124,14 @@ fn node_id_order(left: &Value, right: &Value) -> std::cmp::Ordering {
                     (Some(left), Some(right)) => left.as_bytes().cmp(right.as_bytes()),
                     (Some(_), None) => std::cmp::Ordering::Less,
                     (None, Some(_)) => std::cmp::Ordering::Greater,
-                    (None, None) => node_id_order(left, right),
+                    // Two wire index segments: no graph is at hand, so order
+                    // by index, a total order that agrees with wire equality.
+                    // A caller that needs FR-322's key order passes ids
+                    // rebuilt by `structural`.
+                    (None, None) => match (index_segment(left), index_segment(right)) {
+                        (Some(left), Some(right)) => left.as_u64().cmp(&right.as_u64()),
+                        _ => node_id_order(left, right),
+                    },
                 })
                 .find(|order| order.is_ne())
                 .unwrap_or_else(|| left_path.len().cmp(&right_path.len()))
@@ -152,6 +159,280 @@ impl PartialOrd for OrderedId {
 /// The node of `nodes` whose `node_id` equals `id`.
 fn node_by_id<'a>(nodes: &'a [Value], id: &Value) -> Option<&'a Value> {
     nodes.iter().find(|node| node["node_id"] == *id)
+}
+
+/// The graph index an operand index segment `{"node": i}` holds (FR-322
+/// "Operand index segments"), or `None` for a string or any other segment.
+fn index_segment(segment: &Value) -> Option<&Value> {
+    segment
+        .as_object()
+        .filter(|object| object.len() == 1)
+        .and_then(|object| object.get("node"))
+}
+
+/// FR-322 "Operand index segments": the reader's index checks, run after the
+/// schema and before every `semantic_graph` check. Returns the `node` member
+/// pointer of the first out-of-range index segment in canonical byte order,
+/// else of the first own-path segment (by holding node, then path position)
+/// whose named node reaches the holding node; `None` when every index is in
+/// range and the own-path relation is acyclic.
+fn node_index_refusal(package: &Value) -> Option<String> {
+    let nodes = package["semantic_graph"]["nodes"].as_array()?;
+    let count = nodes.len() as u64;
+    let mut pending = vec![(package, String::new())];
+    while let Some((value, pointer)) = pending.pop() {
+        match value {
+            Value::Object(members) => {
+                if is_node_id(value)
+                    && let Some(path) = value["path"].as_array()
+                    && let Some((position, _)) = path.iter().enumerate().find(|(_, segment)| {
+                        index_segment(segment).is_some_and(|index| index.as_u64().is_none_or(|i| i >= count))
+                    })
+                {
+                    return Some(format!("{pointer}/path/{position}/node"));
+                }
+                // Canonical (JCS) member order; pushed reversed so the first pops first.
+                let mut keys: Vec<&String> = members.keys().collect();
+                keys.sort_by(|left, right| left.encode_utf16().cmp(right.encode_utf16()));
+                for key in keys.into_iter().rev() {
+                    let escaped = key.replace('~', "~0").replace('/', "~1");
+                    pending.push((&members[key.as_str()], format!("{pointer}/{escaped}")));
+                }
+            }
+            Value::Array(items) => {
+                for (index, item) in items.iter().enumerate().rev() {
+                    pending.push((item, format!("{pointer}/{index}")));
+                }
+            }
+            _ => {}
+        }
+    }
+    let edges = own_path_edges(nodes);
+    let component = strongly_connected_components(&edges);
+    edges.iter().enumerate().find_map(|(holder, targets)| {
+        targets
+            .iter()
+            .find(|(_, target)| component[*target] == component[holder])
+            .map(|(position, _)| format!("/semantic_graph/nodes/{holder}/node_id/path/{position}/node"))
+    })
+}
+
+/// For each node, the `(path position, named node)` of every index segment of
+/// its own `node_id.path`. The indexes must already be in range.
+fn own_path_edges(nodes: &[Value]) -> Vec<Vec<(usize, usize)>> {
+    nodes
+        .iter()
+        .map(|node| {
+            node["node_id"]["path"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .enumerate()
+                .filter_map(|(position, segment)| {
+                    let index = index_segment(segment)?.as_u64()?;
+                    Some((position, usize::try_from(index).expect("an in-range index fits usize")))
+                })
+                .collect()
+        })
+        .collect()
+}
+
+/// Iterative Tarjan: the strongly connected component of each node. A node
+/// that names itself shares its component with itself through that edge, so
+/// "same component" decides a cycle for a self-edge too.
+fn strongly_connected_components(edges: &[Vec<(usize, usize)>]) -> Vec<usize> {
+    let count = edges.len();
+    let (mut index, mut low, mut component) = (vec![usize::MAX; count], vec![0; count], vec![usize::MAX; count]);
+    let (mut on_stack, mut stack, mut next, mut components) = (vec![false; count], Vec::new(), 0, 0);
+    for root in 0..count {
+        if index[root] != usize::MAX {
+            continue;
+        }
+        let mut frames = vec![(root, 0usize)];
+        index[root] = next;
+        low[root] = next;
+        next += 1;
+        stack.push(root);
+        on_stack[root] = true;
+        while let Some(&mut (node, ref mut edge)) = frames.last_mut() {
+            if let Some(&(_, target)) = edges[node].get(*edge) {
+                *edge += 1;
+                if index[target] == usize::MAX {
+                    index[target] = next;
+                    low[target] = next;
+                    next += 1;
+                    stack.push(target);
+                    on_stack[target] = true;
+                    frames.push((target, 0));
+                } else if on_stack[target] {
+                    low[node] = low[node].min(index[target]);
+                }
+                continue;
+            }
+            frames.pop();
+            if let Some(&(parent, _)) = frames.last() {
+                low[parent] = low[parent].min(low[node]);
+            }
+            if low[node] == index[node] {
+                while let Some(member) = stack.pop() {
+                    on_stack[member] = false;
+                    component[member] = components;
+                    if member == node {
+                        break;
+                    }
+                }
+                components += 1;
+            }
+        }
+    }
+    component
+}
+
+/// One segment of an interned structural key: a string, or the interned id of
+/// an operand's key.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+enum KeySegment {
+    Text(String),
+    Operand(usize),
+}
+
+/// Hash-consed structural keys (FR-322 "Rebuilding the key"): equal keys get
+/// one id, so rebuilt keys share every operand key and compare in O(1).
+#[derive(Default)]
+struct KeyInterner {
+    ids: BTreeMap<(String, Vec<KeySegment>, u64), usize>,
+}
+
+impl KeyInterner {
+    fn intern(&mut self, shape: (String, Vec<KeySegment>, u64)) -> usize {
+        let next = self.ids.len();
+        *self.ids.entry(shape).or_insert(next)
+    }
+
+    /// The interned key of every node of a graph that passed
+    /// [`node_index_refusal`], resolving each named node once, iteratively.
+    fn graph_keys(&mut self, nodes: &[Value]) -> Vec<usize> {
+        let edges = own_path_edges(nodes);
+        let mut keys = vec![None; nodes.len()];
+        for root in 0..nodes.len() {
+            let mut pending = vec![root];
+            while let Some(&node) = pending.last() {
+                if keys[node].is_some() {
+                    pending.pop();
+                    continue;
+                }
+                let unresolved: Vec<usize> =
+                    edges[node].iter().map(|(_, target)| *target).filter(|target| keys[*target].is_none()).collect();
+                if !unresolved.is_empty() {
+                    pending.extend(unresolved);
+                    continue;
+                }
+                pending.pop();
+                keys[node] = Some(self.key_of(&nodes[node]["node_id"], &keys));
+            }
+        }
+        keys.into_iter().map(|key| key.expect("every key is rebuilt")).collect()
+    }
+
+    /// The interned key of a `node_id` whose index segments name nodes whose
+    /// keys are already in `keys`.
+    fn key_of(&mut self, node_id: &Value, keys: &[Option<usize>]) -> usize {
+        let path = node_id["path"]
+            .as_array()
+            .expect("path")
+            .iter()
+            .map(|segment| match index_segment(segment).and_then(Value::as_u64) {
+                Some(index) => KeySegment::Operand(keys[index as usize].expect("operand key is rebuilt")),
+                None => KeySegment::Text(segment.as_str().expect("string segment").to_owned()),
+            })
+            .collect();
+        self.intern((
+            node_id["package"].as_str().expect("package").to_owned(),
+            path,
+            node_id["ordinal"].as_u64().expect("ordinal"),
+        ))
+    }
+}
+
+/// `value` with every index segment of every node id in it replaced by the
+/// structural key, in nested form, of the node of `nodes` it names: the
+/// in-memory structural keys of FR-322, for comparing and ordering ids across
+/// documents or by [`node_id_order`]. For fixture-sized graphs only.
+fn structural(value: &Value, nodes: &[Value]) -> Value {
+    fn node_key(index: usize, nodes: &[Value], memo: &mut Vec<Option<Value>>) -> Value {
+        if let Some(key) = &memo[index] {
+            return key.clone();
+        }
+        let key = rebuild(&nodes[index]["node_id"], nodes, memo);
+        memo[index] = Some(key.clone());
+        key
+    }
+    fn rebuild(value: &Value, nodes: &[Value], memo: &mut Vec<Option<Value>>) -> Value {
+        match value {
+            Value::Object(members) if is_node_id(value) => {
+                let mut out = members.clone();
+                if let Some(path) = value["path"].as_array() {
+                    out["path"] = path
+                        .iter()
+                        .map(|segment| match index_segment(segment).and_then(Value::as_u64) {
+                            Some(index) if (index as usize) < nodes.len() => node_key(index as usize, nodes, memo),
+                            _ => segment.clone(),
+                        })
+                        .collect();
+                }
+                Value::Object(out)
+            }
+            Value::Object(members) => Value::Object(
+                members.iter().map(|(key, member)| (key.clone(), rebuild(member, nodes, memo))).collect(),
+            ),
+            Value::Array(items) => Value::Array(items.iter().map(|item| rebuild(item, nodes, memo)).collect()),
+            other => other.clone(),
+        }
+    }
+    rebuild(value, nodes, &mut vec![None; nodes.len()])
+}
+
+/// A package with every node id in it rebuilt to its nested structural key.
+fn structural_package(package: &Value) -> Value {
+    let nodes = package["semantic_graph"]["nodes"].as_array().cloned().unwrap_or_default();
+    structural(package, &nodes)
+}
+
+/// The inverse of [`structural_package`]: a package whose node ids nest their
+/// operands' structural keys, written back to the wire, each operand key
+/// becoming the index segment of the graph node that has that key.
+fn wire_package(package: &Value) -> Value {
+    fn write(value: &Value, index: &BTreeMap<String, usize>) -> Value {
+        match value {
+            Value::Object(members) if is_node_id(value) => {
+                let mut out = members.clone();
+                if let Some(path) = value["path"].as_array() {
+                    out["path"] = path
+                        .iter()
+                        .map(|segment| match segment {
+                            Value::String(_) => segment.clone(),
+                            // An operand that is no graph node (a dangling id) stays as written.
+                            operand => index.get(&operand.to_string()).map_or_else(|| operand.clone(), |at| json!({"node": at})),
+                        })
+                        .collect();
+                }
+                Value::Object(out)
+            }
+            Value::Object(members) => {
+                Value::Object(members.iter().map(|(key, member)| (key.clone(), write(member, index))).collect())
+            }
+            Value::Array(items) => Value::Array(items.iter().map(|item| write(item, index)).collect()),
+            other => other.clone(),
+        }
+    }
+    let index = package["semantic_graph"]["nodes"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .enumerate()
+        .map(|(at, node)| (node["node_id"].to_string(), at))
+        .collect();
+    write(package, &index)
 }
 
 /// The mathematical integer denoted by a canonical decimal-string member.
@@ -3236,9 +3517,49 @@ fn read_package_semantics(package: &Value, catalog: &Value) -> Result<(), ReadRe
     read_package_semantics_with(package, catalog, &[])
 }
 
+impl ReadRefusal {
+    /// The refusal with each node id it names written back to the wire form of
+    /// the package read (the structural package has the same graph order).
+    fn into_wire(self, structural_package: &Value) -> Self {
+        let wire = |id: Value| {
+            let mut probe = structural_package.clone();
+            probe["probe"] = id;
+            wire_package(&probe)["probe"].clone()
+        };
+        match self {
+            Self::GraphShape(id) => Self::GraphShape(wire(id)),
+            Self::DerivedShape(id) => Self::DerivedShape(wire(id)),
+            Self::OwnerSelection(id) => Self::OwnerSelection(wire(id)),
+            Self::InvalidSemanticGraph(id) => Self::InvalidSemanticGraph(wire(id)),
+            Self::Declaration(refusal, id) => Self::Declaration(refusal, wire(id)),
+            Self::Frame(refusal, id) => Self::Frame(refusal, wire(id)),
+            Self::State(refusal, id) => Self::State(refusal, wire(id)),
+            Self::Abstraction(id) => Self::Abstraction(wire(id)),
+            Self::OptionValue(code, cause, id, member) => Self::OptionValue(code, cause, wire(id), member),
+            other @ (Self::PopulationRecord(_)
+            | Self::InvalidOwnerValue(_)
+            | Self::Dependency(..)
+            | Self::Operation(_)) => other,
+        }
+    }
+}
+
 /// `read_package_semantics` for a reader supplied the admitted packages of a
 /// package's `dependency_selections`, as `(identity, package)` pairs.
 fn read_package_semantics_with(
+    package: &Value,
+    catalog: &Value,
+    supplied: &[(String, Value)],
+) -> Result<(), ReadRefusal> {
+    // FR-322 "Rebuilding the key": every check runs on structural keys, and a
+    // refusal names its node by the package's own wire id.
+    let package = structural_package(package);
+    let supplied: Vec<(String, Value)> =
+        supplied.iter().map(|(identity, dependency)| (identity.clone(), structural_package(dependency))).collect();
+    read_structural_package_semantics(&package, catalog, &supplied).map_err(|refusal| refusal.into_wire(&package))
+}
+
+fn read_structural_package_semantics(
     package: &Value,
     catalog: &Value,
     supplied: &[(String, Value)],
@@ -10608,10 +10929,11 @@ fn read_extension_package(
         .as_array()
         .expect("package nodes are an array");
     for node in nodes.iter().filter(|node| node["node_tag"] == "extension") {
-        let mut targets = body_targets(&node["body"]);
+        // Ascending node-id order is an order of structural keys.
+        let mut targets = body_targets(&structural(&node["body"], nodes));
         targets.sort_by(node_id_order);
         targets.dedup();
-        if node["dependencies"] != json!(targets) {
+        if structural(&node["dependencies"], nodes) != json!(targets) {
             return Err(ExtensionRefusal {
                 locus: Some(node["node_id"].clone()),
                 ..extension_refusal("invalid_semantic_graph", None, "/dependencies")
@@ -16185,7 +16507,11 @@ fn tc_233_every_vector_patch_keeps_dependencies_equal_to_its_body_references() {
                 apply_json_patch(&mut package, operation);
             }
             patched += 1;
-            failures.extend(dependency_defects(&format!("{group} {id}"), base, &package));
+            failures.extend(dependency_defects(
+                &format!("{group} {id}"),
+                &structural_package(base),
+                &structural_package(&package),
+            ));
             if case[outcome_key].as_str() == Some("admitted") {
                 let mut found = Vec::new();
                 model_references(&package, &mut found);
@@ -16964,7 +17290,10 @@ fn tc_966_restored_hybrid_forms_meet_the_schema_and_are_self_typed() {
         assert!(node_schema.is_valid(node), "restored node {index} meets SemanticNode");
         if node["node_tag"] == "hybrid" {
             assert_eq!(node["semantic_type"], node["node_id"], "restored node {index} is self-typed");
-            assert_eq!(node["dependencies"], json!(body_reference_targets(&node["body"])));
+            assert_eq!(
+                structural(&node["dependencies"], &all),
+                json!(body_reference_targets(&structural(&node["body"], &all)))
+            );
         }
     }
     let at = |role: &Value| &restored[role.as_u64().expect("index") as usize];
@@ -17055,8 +17384,15 @@ fn tc_971_option_value_body_is_closed_and_binds_type_and_payload() {
     });
     let schema = jsonschema::validator_for(&node_schema).expect("semantic-node schema is valid");
     let vectors = parsed_fixture(OPTION_VALUE_VECTORS);
-    let fixture = parsed_fixture(POSITIVE_INTEGER_LITERAL_REFERENCES);
-    let boolean_fixture = parsed_fixture(POSITIVE_CONTROL_OPERATIONS);
+    // Built on structural keys, where an option id nests its operands, and
+    // written back to the wire (index segments) for the schema and the reader.
+    let fixture = structural_package(&parsed_fixture(POSITIVE_INTEGER_LITERAL_REFERENCES));
+    let boolean_fixture = structural_package(&parsed_fixture(POSITIVE_CONTROL_OPERATIONS));
+    let wire_node = |package: &Value, form: &str| {
+        let wire = wire_package(package);
+        let index = node_index_where(&wire, |node| node["semantic_form"] == form);
+        wire["semantic_graph"]["nodes"][index].clone()
+    };
     let catalog = parsed_fixture(OPERATION_CATALOG);
     let template = fixture["semantic_graph"]["nodes"]
         .as_array()
@@ -17142,16 +17478,16 @@ fn tc_971_option_value_body_is_closed_and_binds_type_and_payload() {
             observed_ids.insert(OrderedId(id)),
             "positive ids are distinct"
         );
-        assert!(
-            schema.is_valid(&node),
-            "{} is a closed option-value node",
-            vector["id"]
-        );
         let mut package = fixture.clone();
         install(&mut package, type_node.clone());
         install(&mut package, node);
+        assert!(
+            schema.is_valid(&wire_node(&package, "option_value")),
+            "{} is a closed option-value node",
+            vector["id"]
+        );
         assert_eq!(
-            read_package_semantics(&package, &catalog),
+            read_package_semantics(&wire_package(&package), &catalog),
             Ok(()),
             "{} is admitted by the strict reader",
             vector["id"]
@@ -17187,8 +17523,11 @@ fn tc_971_option_value_body_is_closed_and_binds_type_and_payload() {
             }
             other => panic!("unknown schema mutation: {other:?}"),
         }
+        let mut package = base_package.clone();
+        let index = node_index_where(&package, |node| node["semantic_form"] == "option_value");
+        package["semantic_graph"]["nodes"][index] = node;
         assert!(
-            !schema.is_valid(&node),
+            !schema.is_valid(&wire_node(&package, "option_value")),
             "{} is refused by OptionValueBody",
             refusal["id"]
         );
@@ -17261,6 +17600,8 @@ fn tc_971_option_value_body_is_closed_and_binds_type_and_payload() {
             .as_array_mut()
             .unwrap()
             .sort_by(|left, right| node_id_order(&left["node_id"], &right["node_id"]));
+        // The reader names its refusal by the wire id, so the locus is found on the wire package.
+        let package = wire_package(&package);
         let result = read_package_semantics(&package, &catalog);
         let (code, cause, locus, index) = match result {
             Err(ReadRefusal::GraphShape(id)) => {
@@ -17507,11 +17848,17 @@ fn tc_367_timed_slot_vectors_name_a_complete_selected_package() {
     // Every published base node is unchanged except the timed root, and the operation anchor, its frame and
     // the model root, which follow the places added before them.
     let base_nodes = base["semantic_graph"]["nodes"].as_array().unwrap();
+    // The two graphs index their operands differently, so nodes compare by structural key.
+    let keyed = |node: &Value, graph: &[Value]| structural(node, graph);
     for (at, node) in base_nodes.iter().enumerate().filter(|(at, _)| ![52, 57, 58, 59].contains(at)) {
-        assert_eq!(nodes[at], *node, "base node {at} is unchanged");
+        assert_eq!(keyed(&nodes[at], nodes), keyed(node, base_nodes), "base node {at} is unchanged");
     }
     for (base_at, at) in [(57, 70), (58, 71)] {
-        assert_eq!(nodes[at], base_nodes[base_at], "base node {base_at} follows the added places at {at}");
+        assert_eq!(
+            keyed(&nodes[at], nodes),
+            keyed(&base_nodes[base_at], base_nodes),
+            "base node {base_at} follows the added places at {at}"
+        );
     }
     assert_eq!(nodes.last().unwrap()["semantic_form"], "model_root", "the root is last");
 
@@ -17587,4 +17934,312 @@ fn tc_367_selected_package_assertions_each_fail_on_their_mutation() {
     let root_at = unlisted["semantic_graph"]["nodes"].as_array().unwrap().iter().position(|n| n["semantic_form"] == "timed_model").unwrap();
     unlisted["semantic_graph"]["nodes"][root_at]["body"]["members"][3]["value"]["members"].as_array_mut().unwrap().remove(0);
     assert!(defect(&vectors, &document, &unlisted).contains("not listed"));
+}
+
+const NODE_INDEX_VECTORS: &str =
+    include_str!("../proposals/checked-package-v2/node-index-vectors.json");
+
+/// Every published JSON file under `proposals/checked-package-v2`, recursively.
+fn published_checked_package_files() -> Vec<(String, Value)> {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("proposals/checked-package-v2");
+    let mut pending = vec![root.clone()];
+    let mut files = Vec::new();
+    while let Some(directory) = pending.pop() {
+        for entry in std::fs::read_dir(&directory).expect("directory is readable") {
+            let path = entry.expect("directory entry").path();
+            if path.is_dir() {
+                pending.push(path);
+            } else if path.extension().is_some_and(|extension| extension == "json") {
+                let text = std::fs::read_to_string(&path).expect("file is readable");
+                let name = path.strip_prefix(&root).expect("under the root").display().to_string();
+                files.push((name, parsed_fixture(&text)));
+            }
+        }
+    }
+    files.sort_by(|left, right| left.0.cmp(&right.0));
+    files
+}
+
+/// FR-322-AC-278: no published package, fixture or vector nests a `node_id`
+/// object inside a `node_id.path`; every object segment is an index segment.
+#[trace("TC-233", "FR-322-AC-278")]
+#[test]
+fn tc_233_no_published_node_id_nests_an_operand_node_id() {
+    let mut nested = Vec::new();
+    let mut index_segments = 0;
+    for (name, document) in published_checked_package_files() {
+        let mut pending = vec![(&document, String::new())];
+        while let Some((value, pointer)) = pending.pop() {
+            match value {
+                Value::Object(members) => {
+                    if is_node_id(value) {
+                        for (position, segment) in value["path"].as_array().into_iter().flatten().enumerate() {
+                            if index_segment(segment).is_some() {
+                                index_segments += 1;
+                            } else if !segment.is_string() {
+                                nested.push(format!("{name}{pointer}/path/{position}"));
+                            }
+                        }
+                    }
+                    pending.extend(members.iter().map(|(key, member)| (member, format!("{pointer}/{key}"))));
+                }
+                Value::Array(items) => {
+                    pending.extend(items.iter().enumerate().map(|(at, item)| (item, format!("{pointer}/{at}"))));
+                }
+                _ => {}
+            }
+        }
+    }
+    assert!(nested.is_empty(), "{nested:#?}");
+    assert!(index_segments > 0, "the published packages hold index segments");
+}
+
+/// FR-322-AC-36 and FR-322-AC-278..AC-280 (TC-233 `NI-01`..`NI-12`): each case
+/// patches `positive-dependency-call.json`. A `schema: invalid` case fails the
+/// V2 schema; a `schema: valid` case passes it and the reader's index check
+/// refuses it at exactly its locus.
+#[trace("TC-233", "FR-322-AC-36", "FR-322-AC-278", "FR-322-AC-279", "FR-322-AC-280")]
+#[test]
+fn tc_233_node_index_vectors_refuse_at_their_loci() {
+    let vectors = parsed_fixture(NODE_INDEX_VECTORS);
+    assert_eq!(vectors["base"], "fixtures/positive-dependency-call.json");
+    let schema = jsonschema::validator_for(&parsed_fixture(SCHEMA)).expect("V2 schema is valid");
+    let base = parsed_fixture(POSITIVE_DEPENDENCY_CALL);
+    assert!(schema.is_valid(&base));
+    assert_eq!(node_index_refusal(&base), None, "the base passes the index checks");
+    let cases = vectors["cases"].as_array().expect("cases");
+    let ids: Vec<&str> = cases.iter().map(|case| case["id"].as_str().unwrap()).collect();
+    assert_eq!(ids, (1..=12).map(|n| format!("NI-{n:02}")).collect::<Vec<_>>());
+    for case in cases {
+        let id = case["id"].as_str().unwrap();
+        let mut package = base.clone();
+        for operation in case["patch"].as_array().unwrap() {
+            apply_json_patch(&mut package, operation);
+        }
+        assert_eq!(case["expected"], "malformed_wire", "{id}");
+        match case["schema"].as_str().unwrap() {
+            "invalid" => assert!(!schema.is_valid(&package), "{id} fails the V2 schema"),
+            "valid" => {
+                assert!(schema.is_valid(&package), "{id} passes the V2 schema");
+                assert_eq!(node_index_refusal(&package).as_deref(), case["locus"].as_str(), "{id}");
+            }
+            other => panic!("{id}: unknown schema expectation {other}"),
+        }
+    }
+}
+
+/// FR-322-AC-281 (TC-233 `NI-13`): a chain of derived nodes, each naming its
+/// predecessor through one index segment, has node ids of bounded size and a
+/// JSON depth that does not grow with the chain, parses under serde_json's
+/// default nesting limit of 128, passes the index checks and rebuilds to
+/// distinct keys, each ending with its predecessor's key.
+#[trace("TC-233", "FR-322-AC-281")]
+#[test]
+fn tc_233_a_deep_chain_has_linear_wire_and_fixed_depth() {
+    fn depth(value: &Value) -> usize {
+        let mut deepest = 0;
+        let mut pending = vec![(value, 1)];
+        while let Some((value, at)) = pending.pop() {
+            deepest = deepest.max(at);
+            match value {
+                Value::Object(members) => pending.extend(members.values().map(|member| (member, at + 1))),
+                Value::Array(items) => pending.extend(items.iter().map(|item| (item, at + 1))),
+                _ => {}
+            }
+        }
+        deepest
+    }
+    let chain = |length: usize| {
+        let mut nodes = vec![json!({"node_tag": "scalar_type", "semantic_form": "integer",
+            "node_id": {"package": "example", "path": ["scalar_type", "integer"], "ordinal": 0}})];
+        for previous in 0..length {
+            nodes.push(json!({"node_tag": "expression", "semantic_form": "application",
+                "node_id": {"package": "example",
+                    "path": ["expression", "application", "quire.op.integer.negate", {"node": previous}],
+                    "ordinal": 0}}));
+        }
+        json!({"semantic_graph": {"nodes": nodes}})
+    };
+    let short = chain(100);
+    let long = chain(100_000);
+    let text = serde_json::to_string(&long).expect("serializes");
+    let reparsed: Value = serde_json::from_str(&text).expect("parses under the default nesting limit of 128");
+    assert_eq!(depth(&reparsed), depth(&short), "the nesting depth does not grow with the chain");
+    let nodes = long["semantic_graph"]["nodes"].as_array().unwrap();
+    for node in nodes {
+        let bytes = serde_json::to_string(&node["node_id"]).unwrap().len();
+        assert!(bytes <= 200, "a node id of {bytes} bytes");
+    }
+    assert_eq!(node_index_refusal(&long), None, "the index checks admit the chain");
+    let mut interner = KeyInterner::default();
+    let keys = interner.graph_keys(nodes);
+    assert_eq!(keys.iter().collect::<BTreeSet<_>>().len(), 100_001, "every rebuilt key is distinct");
+    let mut operands = BTreeMap::new();
+    for (shape, id) in &interner.ids {
+        operands.insert(*id, shape.1.last().cloned());
+    }
+    for at in 1..keys.len() {
+        assert_eq!(
+            operands[&keys[at]],
+            Some(KeySegment::Operand(keys[at - 1])),
+            "chain node {at}'s key ends with its predecessor's"
+        );
+    }
+}
+
+/// FR-322-AC-95 and FR-322-AC-280: each published positive fixture with no
+/// `recursion_group` is reordered twice, reversed and sorted ascending by
+/// node-id order (an order of structural keys), with every index segment
+/// rewritten to its node's new index. The reversed graph's index segments name
+/// later nodes. The full reader admits both reorders, each reorder that changes
+/// the node sequence is a structurally unequal package, and every node keeps
+/// its structural key.
+#[trace("TC-233", "FR-322-AC-95", "FR-322-AC-280")]
+#[test]
+fn tc_233_a_reordered_graph_keeps_every_structural_key() {
+    fn rewrite(value: &mut Value, new_index: &[usize]) {
+        match value {
+            Value::Object(members) => {
+                if let Some(Value::Number(index)) = members.get("node")
+                    && members.len() == 1
+                {
+                    let old = index.as_u64().unwrap() as usize;
+                    members.insert("node".to_owned(), json!(new_index[old]));
+                    return;
+                }
+                members.values_mut().for_each(|member| rewrite(member, new_index));
+            }
+            Value::Array(items) => items.iter_mut().for_each(|item| rewrite(item, new_index)),
+            _ => {}
+        }
+    }
+    /// `package` with its nodes in the order `order` (old indexes, new order).
+    fn reordered(package: &Value, order: &[usize]) -> (Value, Vec<usize>) {
+        let mut new_index = vec![0; order.len()];
+        for (new, old) in order.iter().enumerate() {
+            new_index[*old] = new;
+        }
+        let mut candidate = package.clone();
+        rewrite(&mut candidate, &new_index);
+        let nodes = candidate["semantic_graph"]["nodes"].as_array().unwrap().clone();
+        candidate["semantic_graph"]["nodes"] = order.iter().map(|old| nodes[*old].clone()).collect();
+        (candidate, new_index)
+    }
+    let catalog = parsed_fixture(OPERATION_CATALOG);
+    // The dependency call reads with its selected library supplied.
+    let library = parsed_fixture(POSITIVE_DEPENDENCY_LIBRARY);
+    let read_with = |package: &Value| {
+        let supplied: Vec<(String, Value)> = package["lock"]["dependency_selections"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter(|entry| entry["identity"] == library["name"])
+            .map(|entry| (entry["identity"].as_str().unwrap().to_owned(), library.clone()))
+            .collect();
+        read_package_semantics_with(package, &catalog, &supplied)
+    };
+    let mut forward = 0;
+    let mut read = 0;
+    let mut fixtures = Vec::new();
+    for (name, package) in published_positive_packages() {
+        let nodes = package["semantic_graph"]["nodes"].as_array().unwrap().clone();
+        if nodes.iter().any(|node| node.get("recursion_group").is_some()) {
+            continue;
+        }
+        // FR-322-AC-95 excludes these two: their clock-clause and slot
+        // applications are joined by the timed oracles (TC-367), which the
+        // shared simulated reader does not carry.
+        if matches!(name.as_str(), "positive-timed-clause-nodes.json" | "positive-timed-slot-nodes.json") {
+            continue;
+        }
+        fixtures.push(name.clone());
+        assert_eq!(read_with(&package), Ok(()), "{name} as published");
+        let count = nodes.len();
+        let keys = structural(&json!(nodes), &nodes);
+        let mut sorted: Vec<usize> = (0..count).collect();
+        sorted.sort_by(|left, right| node_id_order(&keys[*left]["node_id"], &keys[*right]["node_id"]));
+        let reversed: Vec<usize> = (0..count).rev().collect();
+        for (label, order) in [("reversed", reversed), ("sorted", sorted)] {
+            let (candidate, new_index) = reordered(&package, &order);
+            let candidate_nodes = candidate["semantic_graph"]["nodes"].as_array().unwrap();
+            assert_eq!(node_index_refusal(&candidate), None, "{name} {label}: the index checks admit it");
+            assert_eq!(read_with(&candidate), Ok(()), "{name} {label}: the full reader admits it");
+            if label == "reversed" {
+                forward += own_path_edges(candidate_nodes)
+                    .iter()
+                    .enumerate()
+                    .flat_map(|(holder, targets)| targets.iter().map(move |(_, target)| (holder, *target)))
+                    .filter(|(holder, target)| target > holder)
+                    .count();
+            }
+            let mut interner = KeyInterner::default();
+            let before = interner.graph_keys(&nodes);
+            let after = interner.graph_keys(candidate_nodes);
+            for old in 0..count {
+                assert_eq!(before[old], after[new_index[old]], "{name} {label}: node {old} keeps its structural key");
+            }
+            if order.iter().enumerate().any(|(new, old)| new != *old) {
+                assert_ne!(candidate, package, "{name} {label}: the reorder is a structurally unequal package");
+            }
+            read += 1;
+        }
+    }
+    assert!(read >= 2, "the reader ran on reordered packages");
+    assert!(forward > 0, "some reversed index segment names a later node");
+    for required in [
+        "positive-dependency-call.json",
+        "positive-model-tuple-union.json",
+        "positive-tick-timed-model-nodes.json",
+        "positive-timed-model-nodes.json",
+    ] {
+        assert!(fixtures.iter().any(|name| name == required), "{required} is reordered and read");
+    }
+    assert_eq!(fixtures.len(), 13, "every published positive fixture with no recursion group but the two timed exclusions");
+}
+
+/// FR-322-AC-282 (TC-233 `NI-14`): an index segment resolves against the graph
+/// of the document the id belongs to, not the graph of the id's `package`.
+/// The reversed importer's id of the imported `Int[0, 9]` (package
+/// `test/predicates`, operand `{"node": 3}`), copied into a document about the
+/// importer, rebuilds to the library's `Int[0, 9]` key; in the library's own
+/// graph index 3 is `Int[0, 9]` itself, a self-cycle.
+#[trace("TC-233", "FR-322-AC-282")]
+#[test]
+fn tc_233_an_imported_node_id_resolves_against_the_importer_graph() {
+    let importer = parsed_fixture(POSITIVE_DEPENDENCY_CALL);
+    let library = parsed_fixture(POSITIVE_DEPENDENCY_LIBRARY);
+    let nodes = importer["semantic_graph"]["nodes"].as_array().unwrap();
+    let count = nodes.len();
+    let mut reversed = importer.clone();
+    fn rewrite(value: &mut Value, count: usize) {
+        match value {
+            Value::Object(members) => {
+                if let Some(Value::Number(index)) = members.get("node")
+                    && members.len() == 1
+                {
+                    let old = index.as_u64().unwrap() as usize;
+                    members.insert("node".to_owned(), json!(count - 1 - old));
+                    return;
+                }
+                members.values_mut().for_each(|member| rewrite(member, count));
+            }
+            Value::Array(items) => items.iter_mut().for_each(|item| rewrite(item, count)),
+            _ => {}
+        }
+    }
+    rewrite(&mut reversed, count);
+    reversed["semantic_graph"]["nodes"].as_array_mut().unwrap().reverse();
+    let reversed_nodes = reversed["semantic_graph"]["nodes"].as_array().unwrap();
+    let at = node_index_where(&reversed, |node| node["semantic_form"] == "integer_range");
+    let copied = reversed_nodes[at]["node_id"].clone();
+    assert_eq!(copied["package"], "test/predicates", "the id names the node's owner");
+    assert_eq!(copied["path"][3], json!({"node": 3}));
+    // A request-style document about the importer resolves against its graph.
+    let document = json!({"package": reversed["name"], "item": {"node": copied}});
+    let rebuilt = structural(&document["item"]["node"], reversed_nodes);
+    let library_nodes = library["semantic_graph"]["nodes"].as_array().unwrap();
+    let library_at = node_index_where(&library, |node| node["semantic_form"] == "integer_range");
+    assert_eq!(rebuilt, structural(&library_nodes[library_at]["node_id"], library_nodes));
+    // Resolved by the id's `package` (the library's graph), index 3 is the node itself.
+    assert_eq!(library_at, 3);
 }

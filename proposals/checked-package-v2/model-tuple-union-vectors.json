@@ -1665,12 +1665,7 @@
                             "value",
                             "literal",
                             {
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ],
-                              "ordinal": 0
+                              "node": 8
                             },
                             "1"
                           ],
@@ -1689,12 +1684,7 @@
                   "value",
                   "literal",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "1"
                 ],
@@ -1708,30 +1698,10 @@
                 "union_value",
                 "Flag",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "literal",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "1"
-                  ],
-                  "ordinal": 0
+                  "node": 12
                 },
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "variant_type",
-                    "ix://acme/shapes/Shape"
-                  ],
-                  "ordinal": 0
+                  "node": 3
                 }
               ],
               "ordinal": 0
@@ -1766,30 +1736,10 @@
               "union_value",
               "Flag",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "literal",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "1"
-                ],
-                "ordinal": 0
+                "node": 12
               },
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "variant_type",
-                  "ix://acme/shapes/Shape"
-                ],
-                "ordinal": 0
+                "node": 3
               }
             ],
             "ordinal": 0
@@ -1830,13 +1780,7 @@
                 "union_value",
                 "Flag",
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "variant_type",
-                    "ix://acme/shapes/Shape"
-                  ],
-                  "ordinal": 0
+                  "node": 3
                 }
               ],
               "ordinal": 0
@@ -1871,13 +1815,7 @@
               "union_value",
               "Flag",
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "variant_type",
-                  "ix://acme/shapes/Shape"
-                ],
-                "ordinal": 0
+                "node": 3
               }
             ],
             "ordinal": 0
@@ -1914,12 +1852,7 @@
                             "value",
                             "literal",
                             {
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "boolean"
-                              ],
-                              "ordinal": 0
+                              "node": 7
                             }
                           ],
                           "ordinal": 0
@@ -1937,12 +1870,7 @@
                   "value",
                   "literal",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "boolean"
-                    ],
-                    "ordinal": 0
+                    "node": 7
                   }
                 ],
                 "ordinal": 0
@@ -1955,29 +1883,10 @@
                 "union_value",
                 "Empty",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "literal",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "boolean"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 10
                 },
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "variant_type",
-                    "ix://acme/shapes/Shape"
-                  ],
-                  "ordinal": 0
+                  "node": 3
                 }
               ],
               "ordinal": 0
@@ -2012,29 +1921,10 @@
               "union_value",
               "Empty",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "literal",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "boolean"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 10
               },
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "variant_type",
-                  "ix://acme/shapes/Shape"
-                ],
-                "ordinal": 0
+                "node": 3
               }
             ],
             "ordinal": 0
@@ -2075,13 +1965,7 @@
                 "union_value",
                 "Missing",
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "variant_type",
-                    "ix://acme/shapes/Shape"
-                  ],
-                  "ordinal": 0
+                  "node": 3
                 }
               ],
               "ordinal": 0
@@ -2116,13 +2000,7 @@
               "union_value",
               "Missing",
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "variant_type",
-                  "ix://acme/shapes/Shape"
-                ],
-                "ordinal": 0
+                "node": 3
               }
             ],
             "ordinal": 0
@@ -2163,13 +2041,7 @@
                 "union_value",
                 "Red",
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "variant_type",
-                    "ix://acme/shapes/Color"
-                  ],
-                  "ordinal": 0
+                  "node": 4
                 }
               ],
               "ordinal": 0
@@ -2204,13 +2076,7 @@
               "union_value",
               "Red",
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "variant_type",
-                  "ix://acme/shapes/Color"
-                ],
-                "ordinal": 0
+                "node": 4
               }
             ],
             "ordinal": 0
@@ -2250,32 +2116,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "ps",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "1",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "variant_type",
-                          "ix://acme/shapes/Shape"
-                        ],
-                        "ordinal": 0
+                        "node": 3
                       }
                     ],
                     "ordinal": 0
@@ -2299,32 +2149,16 @@
                                 "parameter",
                                 "name",
                                 {
-                                  "package": "example",
-                                  "path": [
-                                    "scalar_type",
-                                    "text"
-                                  ],
-                                  "ordinal": 0
+                                  "node": 9
                                 },
                                 "bq",
                                 "level",
                                 {
-                                  "package": "example",
-                                  "path": [
-                                    "scalar_type",
-                                    "integer"
-                                  ],
-                                  "ordinal": 0
+                                  "node": 8
                                 },
                                 "2",
                                 {
-                                  "package": "acme/shapes",
-                                  "path": [
-                                    "model",
-                                    "tuple_value_type",
-                                    "ix://acme/shapes/Pair"
-                                  ],
-                                  "ordinal": 0
+                                  "node": 0
                                 }
                               ],
                               "ordinal": 0
@@ -2340,12 +2174,7 @@
                             "value",
                             "literal",
                             {
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ],
-                              "ordinal": 0
+                              "node": 8
                             },
                             "1"
                           ],
@@ -2373,12 +2202,7 @@
                             "value",
                             "literal",
                             {
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ],
-                              "ordinal": 0
+                              "node": 8
                             },
                             "0"
                           ],
@@ -2405,12 +2229,7 @@
                   "value",
                   "literal",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "0"
                 ],
@@ -2422,12 +2241,7 @@
                   "value",
                   "literal",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "1"
                 ],
@@ -2440,32 +2254,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "bq",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "2",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
+                    "node": 0
                   }
                 ],
                 "ordinal": 0
@@ -2477,32 +2275,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "ps",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "1",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Shape"
-                    ],
-                    "ordinal": 0
+                    "node": 3
                   }
                 ],
                 "ordinal": 0
@@ -2516,122 +2298,21 @@
                 "case",
                 "quire.op.control.case",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "ps",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "1",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "variant_type",
-                        "ix://acme/shapes/Shape"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 15
                 },
                 "Both",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "bq",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "2",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "tuple_value_type",
-                        "ix://acme/shapes/Pair"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 17
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "literal",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "1"
-                  ],
-                  "ordinal": 0
+                  "node": 12
                 },
                 "Empty",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "literal",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0"
-                  ],
-                  "ordinal": 0
+                  "node": 11
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
+                  "node": 8
                 }
               ],
               "ordinal": 0
@@ -2666,122 +2347,21 @@
               "case",
               "quire.op.control.case",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "ps",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "1",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Shape"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 15
               },
               "Both",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "bq",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "2",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 17
               },
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "literal",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "1"
-                ],
-                "ordinal": 0
+                "node": 12
               },
               "Empty",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "literal",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "0"
-                ],
-                "ordinal": 0
+                "node": 11
               },
               {
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ],
-                "ordinal": 0
+                "node": 8
               }
             ],
             "ordinal": 0
@@ -2821,32 +2401,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "ps",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "1",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "variant_type",
-                          "ix://acme/shapes/Shape"
-                        ],
-                        "ordinal": 0
+                        "node": 3
                       }
                     ],
                     "ordinal": 0
@@ -2870,31 +2434,16 @@
                                 "parameter",
                                 "name",
                                 {
-                                  "package": "example",
-                                  "path": [
-                                    "scalar_type",
-                                    "text"
-                                  ],
-                                  "ordinal": 0
+                                  "node": 9
                                 },
                                 "bf",
                                 "level",
                                 {
-                                  "package": "example",
-                                  "path": [
-                                    "scalar_type",
-                                    "integer"
-                                  ],
-                                  "ordinal": 0
+                                  "node": 8
                                 },
                                 "2",
                                 {
-                                  "package": "example",
-                                  "path": [
-                                    "scalar_type",
-                                    "boolean"
-                                  ],
-                                  "ordinal": 0
+                                  "node": 7
                                 }
                               ],
                               "ordinal": 0
@@ -2910,12 +2459,7 @@
                             "value",
                             "literal",
                             {
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ],
-                              "ordinal": 0
+                              "node": 8
                             },
                             "2"
                           ],
@@ -2943,12 +2487,7 @@
                             "value",
                             "literal",
                             {
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ],
-                              "ordinal": 0
+                              "node": 8
                             },
                             "0"
                           ],
@@ -2976,32 +2515,16 @@
                                 "parameter",
                                 "name",
                                 {
-                                  "package": "example",
-                                  "path": [
-                                    "scalar_type",
-                                    "text"
-                                  ],
-                                  "ordinal": 0
+                                  "node": 9
                                 },
                                 "bq",
                                 "level",
                                 {
-                                  "package": "example",
-                                  "path": [
-                                    "scalar_type",
-                                    "integer"
-                                  ],
-                                  "ordinal": 0
+                                  "node": 8
                                 },
                                 "2",
                                 {
-                                  "package": "acme/shapes",
-                                  "path": [
-                                    "model",
-                                    "tuple_value_type",
-                                    "ix://acme/shapes/Pair"
-                                  ],
-                                  "ordinal": 0
+                                  "node": 0
                                 }
                               ],
                               "ordinal": 0
@@ -3017,12 +2540,7 @@
                             "value",
                             "literal",
                             {
-                              "package": "example",
-                              "path": [
-                                "scalar_type",
-                                "integer"
-                              ],
-                              "ordinal": 0
+                              "node": 8
                             },
                             "1"
                           ],
@@ -3049,12 +2567,7 @@
                   "value",
                   "literal",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "0"
                 ],
@@ -3066,12 +2579,7 @@
                   "value",
                   "literal",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "1"
                 ],
@@ -3083,12 +2591,7 @@
                   "value",
                   "literal",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "2"
                 ],
@@ -3101,31 +2604,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "bf",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "2",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "boolean"
-                    ],
-                    "ordinal": 0
+                    "node": 7
                   }
                 ],
                 "ordinal": 0
@@ -3137,32 +2625,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "bq",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "2",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
+                    "node": 0
                   }
                 ],
                 "ordinal": 0
@@ -3174,32 +2646,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "ps",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "1",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Shape"
-                    ],
-                    "ordinal": 0
+                    "node": 3
                   }
                 ],
                 "ordinal": 0
@@ -3213,176 +2669,28 @@
                 "case",
                 "quire.op.control.case",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "ps",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "1",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "variant_type",
-                        "ix://acme/shapes/Shape"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 15
                 },
                 "Flag",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "bf",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "2",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "boolean"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 16
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "literal",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "2"
-                  ],
-                  "ordinal": 0
+                  "node": 13
                 },
                 "Empty",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "literal",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0"
-                  ],
-                  "ordinal": 0
+                  "node": 11
                 },
                 "Both",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "bq",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "2",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "tuple_value_type",
-                        "ix://acme/shapes/Pair"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 17
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "literal",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "1"
-                  ],
-                  "ordinal": 0
+                  "node": 12
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
+                  "node": 8
                 }
               ],
               "ordinal": 0
@@ -3417,176 +2725,28 @@
               "case",
               "quire.op.control.case",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "ps",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "1",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Shape"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 15
               },
               "Flag",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "bf",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "2",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "boolean"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 16
               },
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "literal",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "2"
-                ],
-                "ordinal": 0
+                "node": 13
               },
               "Empty",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "literal",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "0"
-                ],
-                "ordinal": 0
+                "node": 11
               },
               "Both",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "bq",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "2",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 17
               },
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "literal",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "1"
-                ],
-                "ordinal": 0
+                "node": 12
               },
               {
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ],
-                "ordinal": 0
+                "node": 8
               }
             ],
             "ordinal": 0
@@ -3638,32 +2798,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "pp",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "0",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "tuple_value_type",
-                          "ix://acme/shapes/Pair"
-                        ],
-                        "ordinal": 0
+                        "node": 0
                       }
                     ],
                     "ordinal": 0
@@ -3696,32 +2840,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "pp",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "0",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
+                    "node": 0
                   }
                 ],
                 "ordinal": 0
@@ -3735,58 +2863,13 @@
                 "query",
                 "quire.op.tuple.project",
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "tuple_value_type",
-                    "ix://acme/shapes/Pair"
-                  ],
-                  "ordinal": 0
+                  "node": 0
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "pp",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "tuple_value_type",
-                        "ix://acme/shapes/Pair"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 14
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
+                  "node": 8
                 }
               ],
               "ordinal": 0
@@ -3821,58 +2904,13 @@
               "query",
               "quire.op.tuple.project",
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "tuple_value_type",
-                  "ix://acme/shapes/Pair"
-                ],
-                "ordinal": 0
+                "node": 0
               },
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "pp",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "0",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 14
               },
               {
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ],
-                "ordinal": 0
+                "node": 8
               }
             ],
             "ordinal": 0
@@ -3924,32 +2962,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "pp",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "0",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "tuple_value_type",
-                          "ix://acme/shapes/Pair"
-                        ],
-                        "ordinal": 0
+                        "node": 0
                       }
                     ],
                     "ordinal": 0
@@ -3982,32 +3004,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "pp",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "0",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
+                    "node": 0
                   }
                 ],
                 "ordinal": 0
@@ -4021,58 +3027,13 @@
                 "query",
                 "quire.op.tuple.project",
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "tuple_value_type",
-                    "ix://acme/shapes/Swap"
-                  ],
-                  "ordinal": 0
+                  "node": 1
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "pp",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "tuple_value_type",
-                        "ix://acme/shapes/Pair"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 14
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
+                  "node": 8
                 }
               ],
               "ordinal": 0
@@ -4107,58 +3068,13 @@
               "query",
               "quire.op.tuple.project",
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "tuple_value_type",
-                  "ix://acme/shapes/Swap"
-                ],
-                "ordinal": 0
+                "node": 1
               },
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "pp",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "0",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 14
               },
               {
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ],
-                "ordinal": 0
+                "node": 8
               }
             ],
             "ordinal": 0
@@ -4210,32 +3126,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "pp",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "0",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "tuple_value_type",
-                          "ix://acme/shapes/Pair"
-                        ],
-                        "ordinal": 0
+                        "node": 0
                       }
                     ],
                     "ordinal": 0
@@ -4268,32 +3168,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "pp",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "0",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
+                    "node": 0
                   }
                 ],
                 "ordinal": 0
@@ -4307,58 +3191,13 @@
                 "query",
                 "quire.op.tuple.project",
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "tuple_value_type",
-                    "ix://acme/shapes/Pair"
-                  ],
-                  "ordinal": 0
+                  "node": 0
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "pp",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "tuple_value_type",
-                        "ix://acme/shapes/Pair"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 14
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "integer"
-                  ],
-                  "ordinal": 0
+                  "node": 8
                 }
               ],
               "ordinal": 1
@@ -4393,58 +3232,13 @@
               "query",
               "quire.op.tuple.project",
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "tuple_value_type",
-                  "ix://acme/shapes/Pair"
-                ],
-                "ordinal": 0
+                "node": 0
               },
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "pp",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "0",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "tuple_value_type",
-                      "ix://acme/shapes/Pair"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 14
               },
               {
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "integer"
-                ],
-                "ordinal": 0
+                "node": 8
               }
             ],
             "ordinal": 1
@@ -4495,13 +3289,7 @@
                 "value",
                 "enum_value",
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "variant_type",
-                    "ix://acme/shapes/Color"
-                  ],
-                  "ordinal": 0
+                  "node": 4
                 },
                 "Blue"
               ],
@@ -4536,13 +3324,7 @@
               "value",
               "enum_value",
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "variant_type",
-                  "ix://acme/shapes/Color"
-                ],
-                "ordinal": 0
+                "node": 4
               },
               "Blue"
             ],
@@ -4593,13 +3375,7 @@
                 "value",
                 "enum_value",
                 {
-                  "package": "acme/shapes",
-                  "path": [
-                    "model",
-                    "variant_type",
-                    "ix://acme/shapes/Shape"
-                  ],
-                  "ordinal": 0
+                  "node": 3
                 },
                 "Empty"
               ],
@@ -4634,13 +3410,7 @@
               "value",
               "enum_value",
               {
-                "package": "acme/shapes",
-                "path": [
-                  "model",
-                  "variant_type",
-                  "ix://acme/shapes/Shape"
-                ],
-                "ordinal": 0
+                "node": 3
               },
               "Empty"
             ],
@@ -4680,32 +3450,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "pshape1",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "0",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "variant_type",
-                          "ix://acme/shapes/Shape"
-                        ],
-                        "ordinal": 0
+                        "node": 3
                       }
                     ],
                     "ordinal": 0
@@ -4720,32 +3474,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "pshape2",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "1",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "variant_type",
-                          "ix://acme/shapes/Shape"
-                        ],
-                        "ordinal": 0
+                        "node": 3
                       }
                     ],
                     "ordinal": 0
@@ -4769,32 +3507,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "pshape1",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "0",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Shape"
-                    ],
-                    "ordinal": 0
+                    "node": 3
                   }
                 ],
                 "ordinal": 0
@@ -4806,32 +3528,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "pshape2",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "1",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Shape"
-                    ],
-                    "ordinal": 0
+                    "node": 3
                   }
                 ],
                 "ordinal": 0
@@ -4845,86 +3551,13 @@
                 "binary",
                 "quire.op.enum.eq",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "pshape1",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "variant_type",
-                        "ix://acme/shapes/Shape"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 23
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "pshape2",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "1",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "variant_type",
-                        "ix://acme/shapes/Shape"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 24
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "boolean"
-                  ],
-                  "ordinal": 0
+                  "node": 7
                 }
               ],
               "ordinal": 0
@@ -4959,86 +3592,13 @@
               "binary",
               "quire.op.enum.eq",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "pshape1",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "0",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Shape"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 23
               },
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "pshape2",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "1",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Shape"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 24
               },
               {
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "boolean"
-                ],
-                "ordinal": 0
+                "node": 7
               }
             ],
             "ordinal": 0
@@ -5078,32 +3638,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "pc1",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "0",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "variant_type",
-                          "ix://acme/shapes/Color"
-                        ],
-                        "ordinal": 0
+                        "node": 4
                       }
                     ],
                     "ordinal": 0
@@ -5118,32 +3662,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "pc2",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "1",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "variant_type",
-                          "ix://acme/shapes/Color"
-                        ],
-                        "ordinal": 0
+                        "node": 4
                       }
                     ],
                     "ordinal": 0
@@ -5167,32 +3695,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "pc1",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "0",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Color"
-                    ],
-                    "ordinal": 0
+                    "node": 4
                   }
                 ],
                 "ordinal": 0
@@ -5204,32 +3716,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "pc2",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "1",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Color"
-                    ],
-                    "ordinal": 0
+                    "node": 4
                   }
                 ],
                 "ordinal": 0
@@ -5243,86 +3739,13 @@
                 "binary",
                 "quire.op.structural.eq",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "pc1",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "variant_type",
-                        "ix://acme/shapes/Color"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 21
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "pc2",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "1",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "variant_type",
-                        "ix://acme/shapes/Color"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 22
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "boolean"
-                  ],
-                  "ordinal": 0
+                  "node": 7
                 }
               ],
               "ordinal": 0
@@ -5357,86 +3780,13 @@
               "binary",
               "quire.op.structural.eq",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "pc1",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "0",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Color"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 21
               },
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "pc2",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "1",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/Color"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 22
               },
               {
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "boolean"
-                ],
-                "ordinal": 0
+                "node": 7
               }
             ],
             "ordinal": 0
@@ -5484,32 +3834,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "pl1",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "0",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "variant_type",
-                          "ix://acme/shapes/List"
-                        ],
-                        "ordinal": 0
+                        "node": 6
                       }
                     ],
                     "ordinal": 0
@@ -5524,32 +3858,16 @@
                       "parameter",
                       "name",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "text"
-                        ],
-                        "ordinal": 0
+                        "node": 9
                       },
                       "pl2",
                       "level",
                       {
-                        "package": "example",
-                        "path": [
-                          "scalar_type",
-                          "integer"
-                        ],
-                        "ordinal": 0
+                        "node": 8
                       },
                       "1",
                       {
-                        "package": "acme/shapes",
-                        "path": [
-                          "model",
-                          "variant_type",
-                          "ix://acme/shapes/List"
-                        ],
-                        "ordinal": 0
+                        "node": 6
                       }
                     ],
                     "ordinal": 0
@@ -5573,32 +3891,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "pl1",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "0",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/List"
-                    ],
-                    "ordinal": 0
+                    "node": 6
                   }
                 ],
                 "ordinal": 0
@@ -5610,32 +3912,16 @@
                   "parameter",
                   "name",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
+                    "node": 9
                   },
                   "pl2",
                   "level",
                   {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
+                    "node": 8
                   },
                   "1",
                   {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/List"
-                    ],
-                    "ordinal": 0
+                    "node": 6
                   }
                 ],
                 "ordinal": 0
@@ -5649,86 +3935,13 @@
                 "binary",
                 "quire.op.structural.eq",
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "pl1",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "0",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "variant_type",
-                        "ix://acme/shapes/List"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 19
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "value",
-                    "parameter",
-                    "name",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "text"
-                      ],
-                      "ordinal": 0
-                    },
-                    "pl2",
-                    "level",
-                    {
-                      "package": "example",
-                      "path": [
-                        "scalar_type",
-                        "integer"
-                      ],
-                      "ordinal": 0
-                    },
-                    "1",
-                    {
-                      "package": "acme/shapes",
-                      "path": [
-                        "model",
-                        "variant_type",
-                        "ix://acme/shapes/List"
-                      ],
-                      "ordinal": 0
-                    }
-                  ],
-                  "ordinal": 0
+                  "node": 20
                 },
                 {
-                  "package": "example",
-                  "path": [
-                    "scalar_type",
-                    "boolean"
-                  ],
-                  "ordinal": 0
+                  "node": 7
                 }
               ],
               "ordinal": 0
@@ -5763,86 +3976,13 @@
               "binary",
               "quire.op.structural.eq",
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "pl1",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "0",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/List"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 19
               },
               {
-                "package": "example",
-                "path": [
-                  "value",
-                  "parameter",
-                  "name",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "text"
-                    ],
-                    "ordinal": 0
-                  },
-                  "pl2",
-                  "level",
-                  {
-                    "package": "example",
-                    "path": [
-                      "scalar_type",
-                      "integer"
-                    ],
-                    "ordinal": 0
-                  },
-                  "1",
-                  {
-                    "package": "acme/shapes",
-                    "path": [
-                      "model",
-                      "variant_type",
-                      "ix://acme/shapes/List"
-                    ],
-                    "ordinal": 0
-                  }
-                ],
-                "ordinal": 0
+                "node": 20
               },
               {
-                "package": "example",
-                "path": [
-                  "scalar_type",
-                  "boolean"
-                ],
-                "ordinal": 0
+                "node": 7
               }
             ],
             "ordinal": 0

@@ -10,6 +10,7 @@ use quire_verification_contracts::jcs_canonicalize;
 
 const SCHEMA: &str = include_str!("../proposals/conformance-corpus-v1/schema.json");
 const FIXTURE: &str = include_str!("../proposals/conformance-corpus-v1/fixtures/complete-v1.json");
+const CHECKED_PACKAGE_SCHEMA: &str = include_str!("../proposals/checked-package-v2/schema.json");
 
 fn parsed(text: &str) -> Value {
     serde_json::from_str(text).expect("authored JSON is valid")
@@ -21,7 +22,21 @@ fn definition_validator(schema: &Value, name: &str) -> jsonschema::Validator {
         "$defs": schema["$defs"],
         "$ref": format!("#/$defs/{name}"),
     });
-    jsonschema::validator_for(&wrapper).expect("definition compiles")
+    compile(&wrapper)
+}
+
+/// A corpus node id is the checked-package `NodeId` (FR-336, FR-322 "Operand
+/// index segments"), so the corpus schema compiles against that schema.
+fn compile(schema: &Value) -> jsonschema::Validator {
+    let registry = jsonschema::Registry::new()
+        .add("urn:quire:checked-package:v2", parsed(CHECKED_PACKAGE_SCHEMA))
+        .expect("checked-package schema registers")
+        .prepare()
+        .expect("registry prepares");
+    jsonschema::options()
+        .with_registry(&registry)
+        .build(schema)
+        .expect("schema compiles")
 }
 
 #[test]
@@ -33,7 +48,7 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
         schema["$id"], "urn:quire:conformance-corpus:v1",
         "FR-336 contract id is fixed"
     );
-    let validator = jsonschema::validator_for(&schema).expect("schema compiles");
+    let validator = compile(&schema);
     let fixture = parsed(FIXTURE);
     assert!(validator.is_valid(&fixture), "fixture follows the schema");
     assert_eq!(
@@ -153,4 +168,20 @@ fn conformance_corpus_v1_fixture_is_admitted_and_invalid_shapes_are_refused() {
     let mut extra_provision_member = valid_provision_path;
     extra_provision_member["bytes"] = json!([1, 2, 3]);
     assert!(!replay_provision_validator.is_valid(&extra_provision_member));
+
+    // A corpus node id is the checked-package NodeId: a derived parameter key
+    // holds its operands as index segments into the named package's graph,
+    // and a nested operand node id is refused.
+    let node_id_validator = definition_validator(&schema, "NodeId");
+    assert!(node_id_validator.is_valid(&json!({
+        "package": "fixture",
+        "path": ["value", "parameter", "name", {"node": 2}, "x"],
+        "ordinal": 0
+    })));
+    assert!(!node_id_validator.is_valid(&json!({
+        "package": "fixture",
+        "path": ["value", "parameter", "name",
+            {"package": "fixture", "path": ["scalar_type", "text"], "ordinal": 0}, "x"],
+        "ordinal": 0
+    })));
 }
