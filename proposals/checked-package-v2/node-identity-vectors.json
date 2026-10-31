@@ -1,5 +1,4 @@
 {
-  "version": "quire.checked-semantic-node-vectors/v1",
   "frame_mutations": [
     {
       "name": "literal-in-modifies",
@@ -1353,7 +1352,7 @@
           },
           "kind": "field",
           "name": "balance",
-          "scope": "every-object"
+          "scope": "receiver"
         },
         {
           "declaration": {
@@ -1366,7 +1365,7 @@
           },
           "kind": "field",
           "name": "balance",
-          "scope": "receiver"
+          "scope": "every-object"
         }
       ],
       "creates": [],
@@ -1636,6 +1635,98 @@
           "Example",
           "enabled"
         ]
+      }
+    }
+  ],
+  "deletes_scoped_parameter_cases": [
+    {
+      "entries": [
+        {
+          "kind": "parameter",
+          "name": "p0"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      },
+      "name": "DS-01",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "test/config-version"
+      }
+    },
+    {
+      "entries": [
+        {
+          "kind": "parameter",
+          "name": "p0"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "cause": "missing-name",
+          "code": "missing_declaration",
+          "locus": "frame"
+        }
+      },
+      "name": "DS-02",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "ix://quire/native/Integer"
+      }
+    },
+    {
+      "entries": [
+        {
+          "kind": "parameter",
+          "name": "q"
+        }
+      ],
+      "expected": {
+        "refused": {
+          "cause": "missing-name",
+          "code": "missing_declaration",
+          "locus": "frame"
+        }
+      },
+      "name": "DS-03",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "test/config-version"
+      }
+    },
+    {
+      "entries": [
+        {
+          "kind": "receiver"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      },
+      "name": "DS-04",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "test/config-version"
+      }
+    },
+    {
+      "entries": [
+        {
+          "kind": "receiver"
+        },
+        {
+          "kind": "parameter",
+          "name": "p0"
+        }
+      ],
+      "expected": {
+        "admitted": true
+      },
+      "name": "DS-05",
+      "parameter": {
+        "name": "p0",
+        "typeRef": "test/config-version"
       }
     }
   ]

@@ -5604,11 +5604,16 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
     let mutations = vectors["frame_mutations"]
         .as_array()
         .expect("frame_mutations is an array");
-    assert_eq!(
-        mutations.len(),
-        37,
-        "frame_mutations covers all thirty-seven authored vectors"
-    );
+    let mut distinct = BTreeSet::new();
+    for mutation in mutations {
+        let mut body = mutation.clone();
+        body.as_object_mut().expect("vector is an object").remove("name");
+        assert!(
+            distinct.insert(body.to_string()),
+            "{}: no two vectors may differ only by name",
+            mutation["name"]
+        );
+    }
 
     let causes = mutations
         .iter()
@@ -5675,6 +5680,60 @@ fn tc_233_frame_mutations_refuse_through_the_full_reader_with_their_recorded_cau
             }
             other => panic!("{name}: expected a frame refusal, got {other:?}"),
         }
+    }
+}
+
+/// FR-340-AC-17 state step: every `parameter` entry of a frame's
+/// `deletes_scoped` names a reference parameter of the operation its anchor
+/// resolves, else `missing_declaration`/`missing-name` at the frame node; a
+/// `receiver` entry needs no parameter.
+#[trace("TC-233", "FR-340-AC-17")]
+#[test]
+fn tc_233_deletes_scoped_parameter_entries_name_a_reference_parameter() {
+    let vectors = parsed_fixture(NODE_IDENTITY_VECTORS);
+    let cases = vectors["deletes_scoped_parameter_cases"]
+        .as_array()
+        .expect("cases");
+    assert!(cases.len() >= 5, "the vectors cover each outcome");
+    for case in cases {
+        let name = case["name"].as_str().expect("case name");
+        let mut package = parsed_fixture(POSITIVE_CLAUSE_OPERATIONS);
+        let mut bindings = clause_model_bindings(0);
+        bindings["domain_package"]["object_types"][0]["operations"][0]["parameters"] = json!([{
+            "name": case["parameter"]["name"],
+            "typeRef": case["parameter"]["typeRef"],
+            "multiplicity": {"lower": "1", "upper": "1", "ordered": false, "unique": true},
+        }]);
+        package["model_bindings"] = bindings;
+        let frame_index = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes")
+            .iter()
+            .position(|node| node["node_tag"] == "state" && node["semantic_form"] == "frame")
+            .expect("a frame node is published");
+        package["semantic_graph"]["nodes"][frame_index]["body"]["deletes_scoped"] =
+            case["entries"].clone();
+        let frame_id = package["semantic_graph"]["nodes"][frame_index]["node_id"].clone();
+        assert_eq!(
+            package_frame_refusal(&package),
+            Ok(()),
+            "{name}: frame step admits the body"
+        );
+        let nodes = package["semantic_graph"]["nodes"]
+            .as_array()
+            .expect("nodes");
+        let anchor = nodes
+            .iter()
+            .find(|node| node["node_tag"] == "state" && node["semantic_form"] == "operation_anchor")
+            .expect("an anchor is published");
+        let decided = match anchor_refusal(anchor, nodes, model_index(&package).as_ref()) {
+            Ok(()) => json!({"admitted": true}),
+            Err((refusal, locus)) => {
+                assert_eq!(locus, frame_id, "{name}: locus is the frame node");
+                json!({"refused": {"code": refusal.code(), "cause": refusal.cause(), "locus": "frame"}})
+            }
+        };
+        assert_eq!(decided, case["expected"], "{name}");
     }
 }
 
