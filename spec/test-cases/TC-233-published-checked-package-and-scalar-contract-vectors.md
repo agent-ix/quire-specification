@@ -623,11 +623,12 @@ Each vector gives two identities as the JSON values below and states whether the
 
 ### Equivalence anchor ordinal vector
 
-`EA-01` is built by the test from a unit that declares three dimension equivalences in source order, `E0`, `E1` and `E2`.
+`EA-01` and `EA-02` are built by the test over base dimensions `A`, `B`, `C` and `D`, whose node ids ascend in that order, so `A ~ B` has the lower node id than `B ~ C`.
 
 | Vector | Input | Expected result | Criteria |
 | --- | --- | --- | --- |
-| EA-01 | the emitted package of that unit; then the same package with its `dimension_equivalence` nodes reordered in `semantic_graph.nodes` | Each node has one `source_map` entry of role `anchor`, at ordinal `0` for `E0`, `1` for `E1` and `2` for `E2`, each region the node's own declaration; the reordered package gives the same ordinals | FR-322-AC-287 |
+| EA-01 | a unit that declares `E0` = `B ~ C` then `E1` = `A ~ B`, emitted | Each node has one `source_map` entry of role `anchor`: ordinal `0` for `E0`'s node and `1` for `E1`'s, though `E1`'s node sorts first by node id; each region is the node's own declaration | FR-322-AC-287 |
+| EA-02 | EA-01 with `C ~ D` declared between `E0` and `E1` | `E0`'s anchor is at ordinal `0`, `C ~ D`'s at `1` and `E1`'s at `2` | FR-322-AC-287 |
 
 ## Expected Results
 
