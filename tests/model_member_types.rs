@@ -758,14 +758,20 @@ fn node_vector<'a>(nodes: &'a [Value], name: &str) -> &'a Value {
 enum Operand<'a> {
     Reference(&'a str),
     Object(&'a str),
+    Record(&'a Value),
 }
 
 impl<'a> Operand<'a> {
     fn from_case(value: &'a Value) -> Self {
-        match (value["reference"].as_str(), value["object"].as_str()) {
-            (Some(node), None) => Self::Reference(node),
-            (None, Some(node)) => Self::Object(node),
-            _ => panic!("an operand names a reference or an object"),
+        match (
+            value["reference"].as_str(),
+            value["object"].as_str(),
+            value.get("record"),
+        ) {
+            (Some(node), None, None) => Self::Reference(node),
+            (None, Some(node), None) => Self::Object(node),
+            (None, None, Some(record)) => Self::Record(record),
+            _ => panic!("an operand names exactly one reference, object or record"),
         }
     }
 
@@ -775,6 +781,7 @@ impl<'a> Operand<'a> {
     fn family(self, nodes: &[Value]) -> Option<&'static str> {
         match self {
             Self::Reference(_) => Some("reference"),
+            Self::Record(_) => Some("record"),
             Self::Object(name) => {
                 let vector = node_vector(nodes, name);
                 match (text(vector, "node_tag"), text(vector, "semantic_form")) {
@@ -923,6 +930,26 @@ fn projection(catalog: &Value, package: &Value, nodes: &[Value], case: &Value) -
     }
     if !has_model_deref && read_form.is_some() {
         return json!({"refused": {"code": "malformed_wire"}});
+    }
+    if let Some(record) = case["operand"].get("record") {
+        let declaration = text(&case["member"], "declaration");
+        if text(record, "type") != declaration {
+            return ineligible();
+        }
+        let Some(field) = record["fields"].as_array().and_then(|fields| {
+            fields
+                .iter()
+                .find(|field| field["name"] == case["member"]["name"])
+        }) else {
+            return ineligible();
+        };
+        if field["type"] != case["result_type"] {
+            return ineligible();
+        }
+        return json!({
+            "resolves": format!("{declaration}/{}", text(&case["member"], "name")),
+            "member_type": field["type"]
+        });
     }
     let Some(operand) = projection_operand(catalog, nodes, &case["operand"]) else {
         return ineligible();
@@ -1073,6 +1100,32 @@ fn tc_281_record_projection_reads_a_model_field_over_a_deref_result() {
     assert!(
         validator.is_valid(&wire_member(case("RP-13"))),
         "read_form's applicability to the operand is decided by the full reader"
+    );
+    assert_eq!(case("RP-14")["member"]["read_form"], "bare");
+    let mut ordinary_record_member = wire_member(bare);
+    ordinary_record_member["read_form"] = case("RP-14")["member"]["read_form"].clone();
+    assert!(
+        validator.is_valid(&ordinary_record_member),
+        "the field member shape admits read_form; the full reader checks applicability"
+    );
+
+    let mut ordinary_record = case("RP-14").clone();
+    ordinary_record["member"]
+        .as_object_mut()
+        .expect("ordinary record field member is an object")
+        .remove("read_form");
+    assert_eq!(
+        projection(
+            &catalog,
+            &vectors["domain_package"],
+            nodes,
+            &ordinary_record
+        ),
+        json!({
+            "resolves": "Money/amount_minor",
+            "member_type": {"type": "Integer"}
+        }),
+        "an ordinary record projection is valid without model source metadata"
     );
 }
 

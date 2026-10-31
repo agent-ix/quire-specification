@@ -3707,6 +3707,37 @@
         }
       },
       "source_expression": "reference.total with an inapplicable read form"
+    },
+    {
+      "name": "RP-14",
+      "source_expression": "record.amount_minor with an inapplicable model read form",
+      "result_type": {
+        "type": "Integer"
+      },
+      "operand": {
+        "record": {
+          "type": "Money",
+          "fields": [
+            {
+              "name": "amount_minor",
+              "type": {
+                "type": "Integer"
+              }
+            }
+          ]
+        }
+      },
+      "member": {
+        "kind": "field",
+        "declaration": "Money",
+        "name": "amount_minor",
+        "read_form": "bare"
+      },
+      "expected": {
+        "refused": {
+          "code": "malformed_wire"
+        }
+      }
     }
   ],
   "reaches_cases": [
