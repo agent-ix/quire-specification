@@ -511,7 +511,16 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Holder"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "Holder",
@@ -526,11 +535,19 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "joinPred"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "R",
-          "owner": "SourceOwner S",
           "node_id": {
             "package": "P",
             "path": [
@@ -573,7 +590,16 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "R"
+              ],
+              "ordinal": 0
+            }
+          ]
         }
       ]
     },
@@ -586,7 +612,6 @@
       "Node set": [
         {
           "name": "Plain carrier",
-          "owner": "SourceOwner S",
           "semantic_form": "protocol_reference",
           "node_id": {
             "package": "P",
@@ -602,7 +627,6 @@
         },
         {
           "name": "Plain carrier, lone label",
-          "owner": "SourceOwner S",
           "semantic_form": "protocol_reference",
           "node_id": {
             "package": "P",
@@ -639,7 +663,16 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Holder"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "Holder",
@@ -654,11 +687,19 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "joinPred"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "R",
-          "owner": "SourceOwner S",
           "node_id": {
             "package": "P",
             "path": [
@@ -700,7 +741,16 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "R"
+              ],
+              "ordinal": 0
+            }
+          ]
         }
       ]
     },
@@ -724,7 +774,16 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Holder"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "Holder",
@@ -739,11 +798,19 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "joinPred"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "R",
-          "owner": "SourceOwner S",
           "node_id": {
             "package": "P",
             "path": [
@@ -786,7 +853,16 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "R"
+              ],
+              "ordinal": 0
+            }
+          ]
         }
       ]
     },
@@ -810,7 +886,16 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Holder"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "Holder",
@@ -824,11 +909,19 @@
               "Holder"
             ],
             "ordinal": 0
-          }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "joinPred"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "R",
-          "owner": "SourceOwner S",
           "node_id": {
             "package": "P",
             "path": [
@@ -871,7 +964,16 @@
             ],
             "ordinal": 0
           },
-          "recursion_group": "Flow"
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "R"
+              ],
+              "ordinal": 0
+            }
+          ]
         }
       ]
     },
@@ -894,7 +996,16 @@
               "Flow"
             ],
             "ordinal": 0
-          }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Holder"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "Holder",
@@ -908,11 +1019,19 @@
               "Holder"
             ],
             "ordinal": 0
-          }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "joinPred"
+              ],
+              "ordinal": 0
+            }
+          ]
         },
         {
           "name": "R",
-          "owner": "SourceOwner S",
           "node_id": {
             "package": "P",
             "path": [
@@ -953,7 +1072,374 @@
               "joinPred"
             ],
             "ordinal": 0
-          }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "R"
+              ],
+              "ordinal": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K22",
+      "Edit to the base": "`K16` plus a second cyclic component of the same shape (`Flow2`, `Holder2`, carrier `R2`, `joinPred2`, each with its own declaration path or producer-chosen path `[\"R2\"]`) that carries the same `recursion_group` label as the first",
+      "Expected": "admitted: each component is compared with its own first member and every member of both carries the one label; the label's nodes are one group by label alone, so nothing is refused and no node id changes, and the carriers' producer-chosen paths are admitted because the group holds more than one declared member",
+      "Node set": [
+        {
+          "name": "Flow",
+          "declaration": [
+            "Flow"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Flow"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Holder"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "Holder",
+          "declaration": [
+            "Holder"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Holder"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "joinPred"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "R",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "R"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "semantic_form": "protocol_reference",
+          "body": {
+            "term": "reference",
+            "target": {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "joinPred",
+          "declaration": [
+            "joinPred"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "joinPred"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "R"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "Flow2",
+          "declaration": [
+            "Flow2"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Flow2"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Holder2"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "Holder2",
+          "declaration": [
+            "Holder2"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Holder2"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "joinPred2"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "R2",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "R2"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "semantic_form": "protocol_reference",
+          "body": {
+            "term": "reference",
+            "target": {
+              "package": "P",
+              "path": [
+                "Flow2"
+              ],
+              "ordinal": 0
+            }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Flow2"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "joinPred2",
+          "declaration": [
+            "joinPred2"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "joinPred2"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "R2"
+              ],
+              "ordinal": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K23",
+      "Edit to the base": "`K16` plus a second `protocol_reference` carrier of `Flow` at path `[\"R\"]`, ordinal `1`, with the same label and dependency",
+      "Expected": "`invalid_semantic_graph`, no cause, at the second carrier's `/semantic_graph/nodes/{n}/node_id` (FR-322-AC-286): the id differs but the body target repeats",
+      "Node set": [
+        {
+          "name": "Flow",
+          "declaration": [
+            "Flow"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Flow"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Holder"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "Holder",
+          "declaration": [
+            "Holder"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Holder"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "joinPred"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "R",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "R"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "semantic_form": "protocol_reference",
+          "body": {
+            "term": "reference",
+            "target": {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "joinPred",
+          "declaration": [
+            "joinPred"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "joinPred"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "R"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "R again",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "R"
+            ],
+            "ordinal": 1
+          },
+          "recursion_group": "Flow",
+          "semantic_form": "protocol_reference",
+          "body": {
+            "term": "reference",
+            "target": {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          ]
         }
       ]
     },
