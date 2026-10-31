@@ -9363,6 +9363,29 @@ fn positive_packages_and_projection_vectors_carry_model_read_form() {
         );
     }
 
+    let transition = parsed_fixture(POSITIVE_STATE_TRANSITION);
+    let transition_nodes = transition["semantic_graph"]["nodes"]
+        .as_array()
+        .expect("the transition graph has a node array");
+    let switch_on = transition_nodes
+        .iter()
+        .find(|node| {
+            let member = &node["body"]["operation"]["member"];
+            node["body"]["operation"]["identity"] == "quire.op.record.project"
+                && member["kind"] == "field"
+                && member["name"] == "on"
+                && member["declaration"]["path"]
+                    .as_array()
+                    .and_then(|path| path.last())
+                    .is_some_and(|name| name == "ix://acme/orders/Switch")
+        })
+        .expect("the transition fixture projects Switch.on");
+    assert_eq!(
+        switch_on["body"]["operation"]["member"]["read_form"],
+        "bare",
+        "FR-341-AC-17's source expression `on` is a bare model-field read"
+    );
+
     let vectors = parsed_fixture(MODEL_MEMBER_TYPE_VECTORS);
     let projections = vectors["projection_cases"]
         .as_array()
