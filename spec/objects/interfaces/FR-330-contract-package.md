@@ -32,7 +32,7 @@ structure, authored source, or semantic authority.
 
 ## Properties
 
-The ContractPackage is a closed object with exactly five required members:
+The ContractPackage is a closed object with exactly six required members:
 
 - `contract_version`: exactly `quire.contract-package/v1`.
 - `package`: the closed object `{source, lowering_profile}`. `source` is the
@@ -60,6 +60,15 @@ The ContractPackage is a closed object with exactly five required members:
   dependency and semantic-type joins retain FR-322's validation and identity
   rules; no separate protocol-reference collection or implicit target lookup
   is introduced.
+- `source_keys`: an array of node ids in FR-322 wire form,
+  `{package, path, ordinal}` with each `path` segment a string or an index
+  segment `{"node": i}`, holding the structural key of every source-frame id
+  the document mentions, closed under operands. An index segment inside a
+  `source_keys` entry names another `source_keys` entry (earlier or later),
+  never an output `semantic_graph` node. Order is the producer's choice and
+  entries are unique by rebuilt structural key. The ContractPackage is
+  self-contained: the reader never receives the source checked package's
+  graph, so a source-frame id resolves here and nowhere else.
 - `source_map`: the total source correspondence defined below.
 - `feature_accounting`: exactly one lowering record for every requested item,
   in the caller's request order, using the seven-member typed disposition
@@ -151,13 +160,13 @@ cannot re-check compatibility from the emitted reference alone; this is the
 lowerer's producer obligation, verified against its typed operation input.
 
 Each `feature_accounting` record is a closed object with exactly the common
-members `node_id` and `disposition`; `node_id` is the requested exact
-`node_id`, and `disposition` is one of the seven values below. Each
+members `node_id` and `disposition`; `node_id` is the requested
+exact id as a source-key reference, and `disposition` is one of the seven values below. Each
 variant has exactly the additional payload members listed for it and no
 others:
 
-- `lowered`: no additional payload; `node_id` is the root node_id in
-  `semantic_graph`, and all reachable compatible dependencies are present by
+- `lowered`: no additional payload; the record's source key and the root
+  node's id in `semantic_graph` rebuild to the same structural key, and all reachable compatible dependencies are present by
   node_id.
 - `unsupported`: the requested `node_id`, the first unsupported reachable
   `unsupported_node_id` in ascending node-id order, and its `node_tag`.
@@ -189,8 +198,8 @@ FR-038's `CheckedPackageRefusal`, carried by FR-322; QSL FR-096 constrains the
 QSL producer's path semantics:
 `code` uses the exact FR-322 code spelling;
 `path` is its RFC 6901 pointer into the checked-package document; `cause` uses
-the FR-272 spelling paired by FR-322; `locus` is its exact closed
-structural `node_id` object `{package, path, ordinal}`; `contract_version` is the string
+the FR-272 spelling paired by FR-322; `locus` is its exact structural node id, written as a
+source-key reference; `contract_version` is the string
 read for `unknown_contract_version`; and
 `document_pointer` is its RFC 6901 pointer into a supplied domain-package
 document. Each optional JSON member is present exactly when the corresponding
@@ -243,15 +252,30 @@ does not infer whether `consumed` could have resulted from a charge against
 FR-038 and is checked against the originating typed outcome by the producer,
 as TC-933 asserts.
 
+### Source-key references
+
+A source-frame id is the closed object `{"source_key": i}` whose one member
+`source_key` is a JSON integer from `0` to 9007199254740991 naming
+`source_keys[i]`. Source-frame ids are every requested-item id, every
+refusal's requested id, each `feature_accounting[].node_id`, the accounting
+payload ids `unsupported_node_id`, `unbounded_type`, `body_node_id` and
+`refusal.locus`, and every source-map `SourceMapEntry`/occurrence `node_id`.
+Output-frame ids (output graph nodes, body references, the protocol binding by
+exact local node_id, and `source_map.nodes[].node_id`) stay FR-322 node ids
+indexed into this package's `semantic_graph`. Equality across the frames, and
+every comparison of two source-frame ids, is by rebuilt structural key
+([FR-322](FR-322-checked-package-artifact.md) "Rebuilding the key"), never by
+table index or by comparing an index segment with a graph index.
+
 For example, this illustrates the serialized shape of a defensive body-limit
 result. Node IDs and pointer are illustrative; member names
 and field types are normative.
 
 ```json
 {
-  "node_id": {"package": "Orders", "path": ["Orders", "Order", "total"], "ordinal": 0},
+  "node_id": {"source_key": 0},
   "disposition": "body_incomplete",
-  "body_node_id": {"package": "Orders", "path": ["Orders", "Order", "total", "body"], "ordinal": 0},
+  "body_node_id": {"source_key": 1},
   "incomplete": {
     "limit_kind": "work",
     "limit": "8",
@@ -280,10 +304,10 @@ and `refusals` collections:
 - Each `nodes` entry is `{node_id, occurrences}`. `node_id` is one output
   semantic node's node_id, and `occurrences` is an ordered array of exact
   FR-322 `SourceMapEntry` values `{node_id, role, ordinal, regions}` from the
-  originating checked package. There is exactly one entry per output semantic
+  originating checked package, whose `node_id` is a source-key reference. There is exactly one entry per output semantic
   node.
 - Each `requested_items` entry is `{requested_item, occurrences}`. It names
-  the exact requested `node_id` and the ordered FR-322 source-map entries
+  the exact requested id, a source-key reference, and the ordered FR-322 source-map entries
   for the source occurrences associated with that request. There is exactly
   one entry per requested item.
 - Each `refusals` entry is `{requested_item, disposition, occurrences}`. It
@@ -291,7 +315,18 @@ and `refusals` collections:
   id and disposition and preserves every source occurrence available in the
   checked package, even when no output node is emitted.
 
-An absent requested key has an explicit requested-item entry with an empty
+Ids in `source_map` are held in two frames. Each `nodes` entry's own
+`node_id` names an output semantic node and is a FR-322 node id into this
+ContractPackage's `semantic_graph`. Every requested-item id, every refusal's
+requested id and every occurrence `node_id` is a source-key reference into
+`source_keys`, never an index into the output graph. The refusal pointer "by
+exact requested id" and the accounting/request bijection compare rebuilt
+structural keys.
+
+An absent requested key keeps its exact structural key in `source_keys`, written
+as the source wrote it, with its index segments naming other `source_keys`
+entries; the package is valid with `invalid_input` and an empty output graph.
+It has an explicit requested-item entry with an empty
 `occurrences` array and exact requested-id subject; it MUST NOT be given a
 guessed source span or silently omitted. Occurrence keys, source-region
 identity, byte intervals, and ordering are exactly those in FR-322. A
@@ -315,7 +350,9 @@ references, package provenance, the closed lowering-profile reference shape,
 source-map totality, and feature-accounting/request bijection
 before exposing an admitted typed value to a consumer. The order
 after generic wire checks is: outer version, all top-level and nested closed
-shapes and typed values, package provenance and lowering-profile reference
+shapes and typed values, the index checks (below: output graph, then
+`source_keys`, then source-key references),
+package provenance and lowering-profile reference
 shape, source-map totality, accounting/request consistency, then dependency inputs
 in lock order, then graph references. It returns the existing typed `admitted`, `refused`, or `incomplete` result
 envelope shape, with FR-330 validation failures mapped to the existing FR-322
@@ -352,6 +389,35 @@ FR-322-AC-35's "at the mutated entry" describes schema
 validation; FR-330 defines the distinct typed reader-refusal pointer here.
 Limits remain caller inputs to reading and
 lowering; they are not package data.
+
+The index checks run once, after the closed shapes and typed values are
+checked and before any stage that rebuilds a structural key (the
+cross-frame comparisons, source-map totality and accounting/request
+consistency), in this order: the output `semantic_graph`, then `source_keys`,
+then source-key references. Each applies FR-322's index-segment rules, an
+out-of-range index first and otherwise a cycle, in FR-322's order, and refuses
+`malformed_wire` with no cause at the segment's member:
+
+1. Output graph: an index segment `{"node": i}` in an output node id or body
+   reference, `i` not below the length of `semantic_graph.nodes`, or a cycle
+   through own-path index segments, at `/semantic_graph/nodes/{k}/node_id/path/{s}/node`
+   (or the pointer of the referencing member).
+2. `source_keys`: an index segment `{"node": i}` inside an entry, `i` not below
+   the length of `source_keys`, or a cycle (a self-naming entry included), at
+   `/source_keys/{k}/path/{s}/node`.
+3. Source-key references: a `{"source_key": i}` with `i` not below the length
+   of `source_keys`, at its `source_key` member, for example
+   `/feature_accounting/{r}/node_id/source_key`.
+
+A source-key reference whose shape is wrong is a closed-shape defect, not an
+index defect, and is checked with the closed shapes: an extra member is
+`invalid_package`/`unknown-member` at the reference object, a missing
+`source_key` is `invalid_package`/`missing-member` at the reference object, a
+non-integer kind (string, fraction as a non-integer number, `null`) is
+`invalid_package`/`wrong-value-kind` and a negative or above-bound integer is
+`invalid_package`/`invalid-value`, each at the `source_key` member. Two
+`source_keys` entries that rebuild to one structural key refuse
+`invalid_package`/`invalid-value` at the later entry, `/source_keys/{k}`.
 
 The reader input also includes one admitted FR-322 dependency package for every
 entry of `package.source.lock.dependency_selections`, keyed by that entry's
@@ -439,6 +505,9 @@ this reader and the I2 reader together, is outside this requirement.
 | FR-330-AC-11 | A reader `refused` result is a diagnostic at stage `package_read` carrying the reader's code and cause unchanged, every returned code having an FR-271 row and the category its code and cause map to; its `path` is the FR-274 `json_path` location and a node-level refusal carries the `locus` payload. A wrong outer contract version is `unknown_contract_version` and bytes that are not well-formed JSON are `malformed_wire`; a member outside the closed schema is `invalid_package`. A duplicate or unknown member is `invalid_package` with cause `duplicate-member` or `unknown-member`, never the code `duplicate_member` or `unknown_member`, and the reader never returns `unknown_required_capability`. | Test (TC-937) |
 | FR-330-AC-12 | A reader `incomplete` result is `stage_limit_exceeded` at stage `package_read`, category incomplete, with the cause the table gives for its `limit_kind` (`bytes`, `nodes`, `edges`, `occurrences`, `work`), `bound` its `limit`, `actual` its `consumed`, the location its `path` (none for `bytes`) and `setting` the value `CheckedPackageReadLimits.<limit_kind>`; an exact-limit input is admitted and the reader reports no `diagnostics` stop. | Test (TC-937) |
 | FR-330-AC-13 | The ContractPackage reader derives every direct input's closure recursively and refuses a diamond that reaches one library identity at two structurally unequal packages as `invalid_package`/`conflicting-definition` with both selection-path JSON pointers rooted at `/package/source/lock/dependency_selections` as loci, before graph-reference checks. | Test (TC-937, planned) |
+| FR-330-AC-14 | A ContractPackage whose requested key is absent and derived (its structural key holds at least one index segment) carries that key in `source_keys` exactly as the source wrote it, with its index segments naming other `source_keys` entries; the requested id is the source-key reference to it, and the package is admitted with `invalid_input` and an empty output graph. No source-frame id resolves against the output graph or a source package graph. | Test (TC-934) |
+| FR-330-AC-15 | The reader runs the index checks once before any stage that rebuilds a structural key, in one order: output `semantic_graph` index segments, then `source_keys` index segments, then source-key references. An out-of-range index, then a cycle (a self-naming entry included), refuses `malformed_wire` with no cause at the segment's `node` pointer (output graph, `source_keys`) or the reference's `source_key` pointer. A wrong-shape `{"source_key": i}` is a closed-shape defect: `invalid_package` with `unknown-member`, `missing-member`, `wrong-value-kind` or `invalid-value` per AC-11. Two `source_keys` entries with one rebuilt structural key refuse `invalid_package`/`invalid-value` at the later entry. | Test (TC-937) |
+| FR-330-AC-16 | A `lowered` record's source key and its output root node's id rebuild to the same structural key, and the accounting/request bijection and the refusal's requested-id pointer compare rebuilt structural keys, not table or graph indexes: a package that reorders `source_keys` or the output graph without changing any key is equal in every such comparison. | Test (TC-934) |
 
 ## Dependencies
 

@@ -1101,13 +1101,20 @@ index segment per operand rather than 100,000 nested ids.
     package is named by one member of the document: a backend request's
     `request.package` ([FR-331](FR-331-backend-provider-envelope.md); an
     in-process request, which has no `package` member, by the checked package
-    handed to the provider), a `ContractPackage`'s `package.source.identity`
-    ([FR-330](FR-330-contract-package.md)), a conformance-corpus replay
+    handed to the provider), a conformance-corpus replay
     request's top-level `package` and any other corpus vector's compiled
     `input` ([FR-336](FR-336-conformance-corpus.md)), and a report or
     diagnostic by the checked package it reports on. The importer's id of an
     imported node, copied into such a document about the importer, resolves
     against the importer's graph.
+  - A `ContractPackage` ([FR-330](FR-330-contract-package.md)) is
+    self-contained. An id naming an output semantic node resolves in the
+    ContractPackage's own output `semantic_graph`. A source-frame id (a
+    requested item, a refusal's requested id, an accounting payload id or a
+    source-map occurrence `node_id`) is written `{"source_key": i}` and
+    resolves in the ContractPackage's own `source_keys` table, whose entries
+    are FR-322 node ids whose index segments name other `source_keys` entries.
+    No ContractPackage id resolves against the source package's graph.
   - An external `{package, node}` refinement key of
     [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md)
     resolves its `node` against the graph of the dependency named by the key's
