@@ -493,6 +493,472 @@
     },
     {
       "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K16",
+      "Edit to the base": "the `K14` cycle closed through a `protocol_reference` carrier `R` (path `[\"R\"]`, ordinal `0`; body target `Flow`'s `node_id`; sole dependency `Flow`; one `expression` occurrence) that the function `joinPred` references in place of `Flow`, so `Flow`, `Holder`, `R` and `joinPred` form one cycle",
+      "Expected": "admitted: the four members share one `recursion_group`, `R` is an anonymous derived member whose path is producer-chosen (the group has three declared members) and whose ordinal is producer-assigned, every in-component reference is an ordinary `reference` to a member `node_id`, and changing only `R`'s ordinal to another unused value changes no other node id",
+      "Node set": [
+        {
+          "name": "Flow",
+          "declaration": [
+            "Flow"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Flow"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        },
+        {
+          "name": "Holder",
+          "declaration": [
+            "Holder"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Holder"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        },
+        {
+          "name": "R",
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "R"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "semantic_form": "protocol_reference",
+          "body": {
+            "term": "reference",
+            "target": {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "joinPred",
+          "declaration": [
+            "joinPred"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "joinPred"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        }
+      ]
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K17",
+      "Edit to the base": "an acyclic carrier to `Plain`, once with one `expression` occurrence and once with a lone `recursion_group` label",
+      "Expected": "admitted both times: the unlabelled carrier keeps its derived id `{package, path: [\"protocol\", \"protocol_reference\", Plain's node_id], ordinal: 0}`; the label means nothing outside a cycle and changes no other node",
+      "Node set": [
+        {
+          "name": "Plain carrier",
+          "owner": "SourceOwner S",
+          "semantic_form": "protocol_reference",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "protocol",
+              "protocol_reference",
+              {
+                "node": 0
+              }
+            ],
+            "ordinal": 0
+          }
+        },
+        {
+          "name": "Plain carrier, lone label",
+          "owner": "SourceOwner S",
+          "semantic_form": "protocol_reference",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "protocol",
+              "protocol_reference",
+              {
+                "node": 0
+              }
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Lone"
+        }
+      ]
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K18",
+      "Edit to the base": "`K16` with `R`'s `recursion_group` removed",
+      "Expected": "`invalid_semantic_graph`, no cause, at `R`'s node, `/semantic_graph/nodes/{n}`, in the graph-shape step before the owner join and the carrier join",
+      "Node set": [
+        {
+          "name": "Flow",
+          "declaration": [
+            "Flow"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Flow"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        },
+        {
+          "name": "Holder",
+          "declaration": [
+            "Holder"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Holder"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        },
+        {
+          "name": "R",
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "R"
+            ],
+            "ordinal": 0
+          },
+          "semantic_form": "protocol_reference",
+          "body": {
+            "term": "reference",
+            "target": {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "joinPred",
+          "declaration": [
+            "joinPred"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "joinPred"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        }
+      ]
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K19",
+      "Edit to the base": "`K16` with `R`'s `recursion_group` changed to a label other than the others'",
+      "Expected": "`invalid_semantic_graph`, no cause, at `R`'s `/semantic_graph/nodes/{n}/recursion_group`",
+      "Node set": [
+        {
+          "name": "Flow",
+          "declaration": [
+            "Flow"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Flow"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        },
+        {
+          "name": "Holder",
+          "declaration": [
+            "Holder"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Holder"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        },
+        {
+          "name": "R",
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "R"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Other",
+          "semantic_form": "protocol_reference",
+          "body": {
+            "term": "reference",
+            "target": {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "joinPred",
+          "declaration": [
+            "joinPred"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "joinPred"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        }
+      ]
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K20",
+      "Edit to the base": "`K16` with `Holder`'s `recursion_group` removed",
+      "Expected": "`invalid_semantic_graph`, no cause, at `Holder`'s node (the first deviating member in node-id order: `Flow`, `Holder`, `R`, `joinPred`)",
+      "Node set": [
+        {
+          "name": "Flow",
+          "declaration": [
+            "Flow"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Flow"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        },
+        {
+          "name": "Holder",
+          "declaration": [
+            "Holder"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Holder"
+            ],
+            "ordinal": 0
+          }
+        },
+        {
+          "name": "R",
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "R"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow",
+          "semantic_form": "protocol_reference",
+          "body": {
+            "term": "reference",
+            "target": {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "joinPred",
+          "declaration": [
+            "joinPred"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "joinPred"
+            ],
+            "ordinal": 0
+          },
+          "recursion_group": "Flow"
+        }
+      ]
+    },
+    {
+      "test_case": "TC-946",
+      "section": "Keys and declarations",
+      "id": "K21",
+      "Edit to the base": "`K16` with every member's `recursion_group` removed",
+      "Expected": "`invalid_semantic_graph`, no cause, at `Flow`'s node, the component's first member",
+      "Node set": [
+        {
+          "name": "Flow",
+          "declaration": [
+            "Flow"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Flow"
+            ],
+            "ordinal": 0
+          }
+        },
+        {
+          "name": "Holder",
+          "declaration": [
+            "Holder"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "Holder"
+            ],
+            "ordinal": 0
+          }
+        },
+        {
+          "name": "R",
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "R"
+            ],
+            "ordinal": 0
+          },
+          "semantic_form": "protocol_reference",
+          "body": {
+            "term": "reference",
+            "target": {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          },
+          "dependencies": [
+            {
+              "package": "P",
+              "path": [
+                "Flow"
+              ],
+              "ordinal": 0
+            }
+          ]
+        },
+        {
+          "name": "joinPred",
+          "declaration": [
+            "joinPred"
+          ],
+          "owner": "SourceOwner S",
+          "node_id": {
+            "package": "P",
+            "path": [
+              "joinPred"
+            ],
+            "ordinal": 0
+          }
+        }
+      ]
+    },
+    {
+      "test_case": "TC-946",
       "section": "Clause body",
       "id": "C1",
       "Edit to the base": "none",

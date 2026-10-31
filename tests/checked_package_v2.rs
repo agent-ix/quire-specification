@@ -2589,6 +2589,88 @@ fn tc_946_k14_a_cycle_of_declared_nodes_keeps_each_declaration_path() {
     assert_eq!(paths.len(), nodes.len(), "the members' paths are distinct");
 }
 
+/// The member of a cyclic component the FR-322 cycle check refuses, if any:
+/// the first member in componentwise node-id order that has no label or whose
+/// label differs from the first member's.
+fn refused_cycle_member(nodes: &[Value]) -> Option<String> {
+    let mut ordered: Vec<&Value> = nodes.iter().collect();
+    ordered.sort_by_key(|n| {
+        let path = n["node_id"]["path"].as_array().unwrap().iter().map(|s| s.to_string()).collect::<Vec<_>>();
+        (path, n["node_id"]["ordinal"].as_u64().unwrap())
+    });
+    let first = ordered[0]["recursion_group"].clone();
+    ordered
+        .iter()
+        .find(|n| n.get("recursion_group").is_none() || n["recursion_group"] != first)
+        .map(|n| n["name"].as_str().unwrap().to_owned())
+}
+
+/// FR-322-AC-283 to FR-322-AC-285 (TC-946 `K16` to `K21`): a cyclic component
+/// that includes the `protocol_reference` carrier is admitted when every member
+/// shares one label and otherwise refuses at the first deviating member.
+#[trace("TC-946", "FR-464-AC-15", "FR-322-AC-283", "FR-322-AC-284", "FR-322-AC-285")]
+#[test]
+fn tc_946_k16_to_k21_a_carrier_in_a_cyclic_component_shares_its_group() {
+    let vectors = parsed_fixture(PROTOCOL_NODE_VECTORS);
+    let nodes_of = |id: &str| -> Vec<Value> {
+        vectors["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|case| case["test_case"] == "TC-946" && case["id"] == id)
+            .unwrap_or_else(|| panic!("{id} vector"))["Node set"]
+            .as_array()
+            .unwrap()
+            .clone()
+    };
+    let k16 = nodes_of("K16");
+    assert_eq!(k16.len(), 4, "Flow, Holder, the carrier and joinPred");
+    let carrier = k16.iter().find(|n| n["name"] == "R").expect("carrier");
+    assert_eq!(carrier["semantic_form"], "protocol_reference");
+    assert_eq!(carrier["body"]["term"], "reference");
+    assert_eq!(carrier["dependencies"], json!([carrier["body"]["target"].clone()]));
+    assert!(carrier.get("declaration").is_none(), "an anonymous derived member");
+    assert_eq!(refused_cycle_member(&k16), None, "K16 is admitted");
+    for (id, refused) in [("K18", "R"), ("K19", "R"), ("K20", "Holder"), ("K21", "Flow")] {
+        assert_eq!(refused_cycle_member(&nodes_of(id)).as_deref(), Some(refused), "{id}");
+    }
+    let k17 = nodes_of("K17");
+    assert_eq!(k17[0]["node_id"], k17[1]["node_id"], "a lone label changes no id");
+    assert!(k17[0].get("recursion_group").is_none() && k17[1].get("recursion_group").is_some());
+}
+
+/// FR-322-AC-283/284: the closed V2 schema admits `recursion_group` on the
+/// `protocol_reference` carrier and still refuses `declaration` and `owner`.
+#[trace("TC-946", "FR-322-AC-283", "FR-322-AC-284")]
+#[test]
+fn tc_946_the_schema_admits_a_recursion_group_on_the_protocol_reference_carrier() {
+    fn carrier_rules(value: &Value, found: &mut Vec<Value>) {
+        match value {
+            Value::Object(map) => {
+                if map.get("if").is_some_and(|c| c["properties"]["semantic_form"]["const"] == "protocol_reference") {
+                    found.push(map["then"]["not"]["anyOf"].clone());
+                }
+                map.values().for_each(|v| carrier_rules(v, found));
+            }
+            Value::Array(items) => items.iter().for_each(|v| carrier_rules(v, found)),
+            _ => {}
+        }
+    }
+    let schema = parsed_fixture(SCHEMA);
+    let mut found = Vec::new();
+    carrier_rules(&schema, &mut found);
+    assert!(!found.is_empty(), "the carrier rule exists");
+    for forbidden in found {
+        let members: Vec<String> = forbidden
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|r| r["required"][0].as_str().unwrap().to_owned())
+            .collect();
+        assert_eq!(members, ["declaration", "owner"]);
+    }
+}
+
 /// FR-464-AC-1: every protocol operator of the vectors has exactly one argument
 /// rule in the schema, laying out its arguments in the vector's order.
 #[trace("TC-946", "FR-464-AC-1")]
