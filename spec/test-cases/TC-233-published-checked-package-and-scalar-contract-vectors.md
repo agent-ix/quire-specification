@@ -55,6 +55,8 @@ relationships:
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-81
     type: verifies
+  - target: ix://agent-ix/quire-specification/FR-322-AC-287
+    type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-82
     type: verifies
   - target: ix://agent-ix/quire-specification/FR-322-AC-83
@@ -618,6 +620,15 @@ Each vector gives two identities as the JSON values below and states whether the
 | SI-04 `UniverseId` | `{"package":"acme/shapes","path":["Shape"],"ordinal":0}` | `{"package":"acme/shapes","path":["Shape"],"ordinal":0}`; then `{"package":"acme/shapes","path":["Line"],"ordinal":0}` | Equal for the first; different for the second |
 | SI-05 `PopulationId` | `{"package":"acme/shapes","path":["counters"],"ordinal":0}` | `{"package":"acme/shapes","path":["counters"],"ordinal":0}`; then `{"package":"acme/shapes","path":["archive"],"ordinal":0}` | Equal for the first; different for the second, although both populations have the same member type |
 | SI-06 owner arm | `{"owner":{"effective_id":{"owner_effective_type":null,"original":{"package":"acme/orders","node":"Order"}}},"member":"total"}` | `{"owner":{"effective_id":{"owner_effective_type":null,"original":{"package":"acme/orders","node":"Invoice"}}},"member":"total"}` | Different: the `original` nodes differ; the two `EffectiveId` values compare by `owner_effective_type` (`null` first) then `original` |
+
+### Equivalence anchor ordinal vector
+
+`EA-01` and `EA-02` are built by the test over base dimensions `A`, `B`, `C` and `D`, whose node ids ascend in that order, so `A ~ B` has the lower node id than `B ~ C`.
+
+| Vector | Input | Expected result | Criteria |
+| --- | --- | --- | --- |
+| EA-01 | a unit that declares `E0` = `B ~ C` then `E1` = `A ~ B`, emitted | Each node has one `source_map` entry of role `anchor`: ordinal `0` for `E0`'s node and `1` for `E1`'s, though `E1`'s node sorts first by node id; each region is the node's own declaration | FR-322-AC-287 |
+| EA-02 | EA-01 with `C ~ D` declared between `E0` and `E1` | `E0`'s anchor is at ordinal `0`, `C ~ D`'s at `1` and `E1`'s at `2` | FR-322-AC-287 |
 
 ## Expected Results
 
