@@ -548,7 +548,8 @@
                 ]
               },
               "kind": "field",
-              "name": "on"
+              "name": "on",
+              "read_form": "bare"
             },
             "mode": null
           },
