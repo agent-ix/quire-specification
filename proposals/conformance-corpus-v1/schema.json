@@ -1728,37 +1728,7 @@
       "additionalProperties": false
     },
     "NodeId": {
-      "type": "object",
-      "required": [
-        "package",
-        "path",
-        "ordinal"
-      ],
-      "properties": {
-        "package": {
-          "type": "string",
-          "minLength": 1
-        },
-        "path": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "$ref": "#/$defs/NodeId"
-              }
-            ]
-          }
-        },
-        "ordinal": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "additionalProperties": false
+      "$ref": "urn:quire:checked-package:v2#/$defs/NodeId"
     },
     "SourceRef": {
       "type": "object",

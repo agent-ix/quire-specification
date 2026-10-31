@@ -418,7 +418,17 @@ node id (below), so two declarations never share a node. A `NodeRef` has
 FR-322's `node_id` shape and names a node of this graph. A `{package, node}` key
 is the closed `{package: identity, node: node_id}` shape, `identity` being the
 dependency package's identity string, and names a node of a directly
-selected dependency package. A `RefinementKey` is exactly one of those two
+selected dependency package. Its `node` is that node's `node_id` as the
+dependency package writes it: each index segment `{"node": i}` of `node.path`
+names `semantic_graph.nodes[i]` of the dependency package the key's `package`
+names, never a node of this graph (FR-322 "Operand index segments"), so a key
+naming a derived node, such as the no-point `operation_anchor` of an abstract
+operation target, keeps its index segments and its fixed depth. When the reader
+binds the selected dependency's admitted package, before every refinement join,
+an index segment of such a key whose index is not below the length of that
+package's `semantic_graph.nodes` refuses `malformed_wire`, with no cause, at
+the segment's `node` member, `.../node/path/{s}/node`; the key then joins the
+dependency node by its rebuilt structural key. A `RefinementKey` is exactly one of those two
 shapes: a key for this graph MUST be a `NodeRef`, and a key for a dependency
 MUST be a `{package, node}` key. Source aliases and source-order positions are
 never keys. `abstract`
@@ -840,6 +850,7 @@ before this step and cannot substitute for a missing body key.
 | FR-375-AC-32 | A step row's `self` and concrete operation arguments are `reference` terms to FR-341 `value`/`parameter` nodes: `self` named `"self"` at level 0 with `Reference<C>`, then each parameter by declared name at levels 1..n in declared order; a step row has no `result` binder and an object row has `self` alone; the nodes are those of the operation's precondition clause. A reference to a node with a wrong name, level or type refuses `invalid_model_binding`/`malformed-declaration` at the reference. | Test (TC-310) |
 | FR-375-AC-33 | The refinement's concrete identity is the `identity` of the `model_root` owner joined by its `semantic_type`. With two or more selected models, swapping only a valid refinement's `semantic_type` to the root of another selected model refuses, in this order: an absent concrete catalog on a protocol subject `invalid_semantic_graph` at `/body/class_catalog`; the first concrete key (array order of reader step 2) whose declaration or anchor owner is not the concrete identity `invalid_model_binding`/`malformed-declaration` at that key; then, at FR-464 step 7, `invalid_semantic_graph` at the first discrepancy between the catalog and the classes the new concrete identity derives, walked together in catalog-key order: at the entry for a class the identity does not derive, at the `class_catalog/concrete` array for a derived class the catalog lacks. The swap is undetectable only when the refinement has no concrete key and the swapped-to model derives an identical class set (every protocol subject with an empty concrete catalog over a model deriving no class, and every model subject, which carries no catalog): it is then admitted as a different node whose id differs by `semantic_type` (FR-375-AC-7). Protocol-body nodes are compared only at step 7. No `model_root` nodes or wire field is added. | Test (TC-310) |
 | FR-375-AC-34 | A refinement whose `semantic_type` root is the same node as its `abstract` model root is admitted when every concrete key and the concrete catalog agree with that one identity as in FR-375-AC-33; FR-375 imposes no distinctness between the two. | Test (TC-310) |
+| FR-375-AC-35 | The index segments of an external `{package, node}` key resolve against the graph of the dependency package its `package` names, never the importing graph: mutation 13's package with an index segment `{"node": N}` appended to `body.abstract.node.path`, `N` the length of the selected dependency's `semantic_graph.nodes`, passes the V2 schema and refuses `malformed_wire`, with no cause, at `/semantic_graph/nodes/{n}/body/abstract/node/path/{s}/node`, `s` the appended segment's position, even when `N` is below the length of the importing graph (`RW-09`). | Test (TC-310) |
 
 ## Dependencies
 

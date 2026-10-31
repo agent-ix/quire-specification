@@ -713,7 +713,7 @@ A frame body refusal, meaning-join or canonical-order
   `dependency_selections` refuses `missing_declaration`/`missing-selection`,
   even if that package occurs in the derived closure through another selection.
   On the wire it is the term
-  `{term: "dependency_reference", package, node}`, where `package` is a dependency identity string and `node` has the `NodeId` shape. It stands only as the
+  `{term: "dependency_reference", package, node}`, where `package` is a dependency identity string and `node` has the `DeclaredNodeId` shape, a `node_id` whose `path` holds only strings ("Operand index segments"). It stands only as the
   callee, argument 0, of a `quire.op.function.call` application, and names
   a declaration node of the dependency, never a node of the importing
   graph. A node's `dependencies` list names nodes of its own graph only, so a
@@ -1088,10 +1088,15 @@ index segment per operand rather than 100,000 nested ids.
   refinement or extension body, and every other `NodeRef`. An imported node
   is present in the importing graph (it keeps its own `package`), so its operands
   are local nodes too, and its index segments name the importing graph.
-  A document outside the package that names one of its nodes (a request item,
-  a `ContractPackage` entry, a report or a diagnostic locus) holds that node's
-  `node_id` as the package writes it, so its index segments name the graph of
-  the checked package it is about.
+  A node id outside its own package document resolves its index segments
+  against the `semantic_graph.nodes` of the package its `package` member
+  names, never against the referencing document's graph: a document outside the
+  package (a request item, a `ContractPackage` entry, a conformance-corpus
+  vector ([FR-336](FR-336-conformance-corpus.md)), a report or a diagnostic
+  locus) and an external `{package, node}` refinement key of
+  [FR-375](../../functional/analysis/FR-375-declare-model-refinement.md),
+  which names a node of a selected dependency, hold that node's `node_id` as
+  that package writes it.
 - **Dependency references.** A `dependency_reference` `node` names a declared
   node of another package's graph, so it holds no index segment: its `path` is
   the declaration path, all strings, and the V2 schema gives `node` the shape of

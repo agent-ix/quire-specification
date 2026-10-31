@@ -1,0 +1,47 @@
+---
+id: SR-1337001
+title: "Spec review of quire-specification PR #546 (QSL-1337): FR-322 operand index segments"
+type: SpecReview
+analysis: base
+scope: "agent-ix/quire-specification@81b2a6af (PR #546, fr322-operand-node-reference) vs origin/main; FR-322 Structural node identity and Operand index segments, FR-322-AC-36, AC-95, AC-278..AC-281, FR-201 NodeId row, TC-233 NI-01..NI-13, proposals/checked-package-v2 schema, fixtures and vectors, proposals/backend-provider-v1/vectors.json; cross-checked FR-336 and proposals/conformance-corpus-v1/schema.json, FR-375 RefinementKey, FR-418, FR-479, TC-952"
+review_set: base
+date: "2026-10-31"
+---
+
+## Summary
+
+Ticket: QSL-1337. The index-segment design keeps node identity exactly
+structural inside one checked package. The structural key is well-defined for
+any acyclic, non-topological graph. The refusal order (out-of-range in
+canonical byte order, then a cycle by holding node and path position) is
+total, and it sits as a wire check ahead of the join stages. The mechanical
+conversion is faithful: for every converted fixture, rebuilding the keys
+reproduces the origin/main document exactly. Every vector file maps each index
+to exactly one original nested id, and the ids agree with the base fixture, or
+with the node a patch inserts. The four new TC-233 tests pass at the head.
+
+Two cross-document gaps remain. First, the conformance corpus wire still nests
+node ids. Second, FR-375's external `{package, node}` refinement keys were not
+given the dependency-reference treatment.
+
+## Findings
+
+| ID | Severity | Summary | Refs |
+| --- | --- | --- | --- |
+| FND-001 | high | `proposals/conformance-corpus-v1/schema.json` `$defs/NodeId` still allows only nested operand node ids and rejects `{"node": i}`. FR-336 says every corpus node id is an FR-322 node id: replay `parameter` keys, `occurrence_key`, `obligation_identity`, `DomainKey`. FR-322 now says such an external document holds the id "as the package writes it", with index segments, and that a path never holds a node_id object. A real `value`/`parameter` or `bounded_domain` id is derived and has operands, so it has no conformant corpus encoding. | proposals/conformance-corpus-v1/schema.json:1730; spec/objects/interfaces/FR-336-conformance-corpus.md:164; spec/objects/interfaces/FR-322-checked-package-artifact.md:1082-1095 |
+| FND-002 | high | FR-375's external `{package, node}` `RefinementKey` (`abstract`, `protocol`, and the abstract operation target `operation` naming a dependency's no-point `operation_anchor`) carries a full `node_id` of a node in a dependency graph. Dependency nodes join through the dependency package and are not in the importing graph. The new Scope bullet says every index segment in the document names the importing graph. Only `dependency_reference` got string-only `DeclaredNodeId`. An `operation_anchor` is derived, with operand index segments, as in every published anchor. So this key is either inexpressible or resolves against the wrong graph. | spec/functional/analysis/FR-375-declare-model-refinement.md:418-423,514-515; spec/objects/interfaces/FR-322-checked-package-artifact.md:1082-1099 |
+| FND-003 | medium | Leftover text: the `dependency_reference` paragraph still says "`node` has the `NodeId` shape". The new "Dependency references" bullet and the schema make it `DeclaredNodeId`, with string-only paths, so FR-322 states two shapes for one member. | spec/objects/interfaces/FR-322-checked-package-artifact.md:716,1096-1100 |
+| FND-004 | medium | FR-322-AC-95 is newly traced by `tc_233_a_reordered_graph_keeps_every_structural_key`. That test only runs the index checks and compares rebuilt keys on the reversed graph. It never runs the full reader on the reordered package, and it never builds the "sorted ascending by node-id order" variant that the AC names. The AC's admission claim stays untested while the matrix reports it as covered. | spec/objects/interfaces/FR-322-checked-package-artifact.md:3278; tests/checked_package_v2.rs:18094-18140 |
+
+## Verdict
+
+Not mergeable until FND-001 and FND-002 are resolved. Each needs a stated rule
+for how an id that names a node outside this document is written: string-only
+`DeclaredNodeId` where the target is always declared, or an explicit
+graph-scoped encoding. The corpus schema also has to adopt the checked-package
+`NodeId` shape. FND-003 is a one-line fix. FND-004 needs the AC-95 test to run
+the reader on both reorders, or the trace narrowed to the clause it covers.
+
+Clean units: FR-201 NodeId row; Operand index segments Order, Reader checks,
+Rebuilding the key, Producing and Notation bullets; FR-322-AC-278..AC-281 and
+TC-233 NI-01..NI-13; and the Body grammar and resource-limit depth statements.

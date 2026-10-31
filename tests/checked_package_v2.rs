@@ -18087,10 +18087,13 @@ fn tc_233_a_deep_chain_has_linear_wire_and_fixed_depth() {
     }
 }
 
-/// FR-322-AC-95 and FR-322-AC-280: reversing a published graph, with every
-/// index segment rewritten to its node's new index, makes index segments name
-/// later nodes; the reordered package passes the index checks and every node
-/// keeps its structural key.
+/// FR-322-AC-95 and FR-322-AC-280: each published positive fixture with no
+/// `recursion_group` is reordered twice, reversed and sorted ascending by
+/// node-id order (an order of structural keys), with every index segment
+/// rewritten to its node's new index. The reversed graph's index segments name
+/// later nodes. The full reader admits both reorders, each reorder that changes
+/// the node sequence is a structurally unequal package, and every node keeps
+/// its structural key.
 #[trace("TC-233", "FR-322-AC-95", "FR-322-AC-280")]
 #[test]
 fn tc_233_a_reordered_graph_keeps_every_structural_key() {
@@ -18110,31 +18113,57 @@ fn tc_233_a_reordered_graph_keeps_every_structural_key() {
             _ => {}
         }
     }
+    /// `package` with its nodes in the order `order` (old indexes, new order).
+    fn reordered(package: &Value, order: &[usize]) -> (Value, Vec<usize>) {
+        let mut new_index = vec![0; order.len()];
+        for (new, old) in order.iter().enumerate() {
+            new_index[*old] = new;
+        }
+        let mut candidate = package.clone();
+        rewrite(&mut candidate, &new_index);
+        let nodes = candidate["semantic_graph"]["nodes"].as_array().unwrap().clone();
+        candidate["semantic_graph"]["nodes"] = order.iter().map(|old| nodes[*old].clone()).collect();
+        (candidate, new_index)
+    }
+    let catalog = parsed_fixture(OPERATION_CATALOG);
     let mut forward = 0;
+    let mut read = 0;
     for (name, package) in positive_fixtures() {
         let nodes = package["semantic_graph"]["nodes"].as_array().unwrap().clone();
-        let count = nodes.len();
-        let new_index: Vec<usize> = (0..count).map(|old| count - 1 - old).collect();
-        let mut reversed = package.clone();
-        rewrite(&mut reversed, &new_index);
-        reversed["semantic_graph"]["nodes"].as_array_mut().unwrap().reverse();
-        assert_eq!(node_index_refusal(&reversed), None, "{name}: the reversed graph passes the index checks");
-        let reversed_nodes = reversed["semantic_graph"]["nodes"].as_array().unwrap();
-        forward += own_path_edges(reversed_nodes)
-            .iter()
-            .enumerate()
-            .flat_map(|(holder, targets)| targets.iter().map(move |(_, target)| (holder, *target)))
-            .filter(|(holder, target)| target > holder)
-            .count();
-        let mut interner = KeyInterner::default();
-        let before = interner.graph_keys(&nodes);
-        let after = interner.graph_keys(reversed_nodes);
-        for old in 0..count {
-            assert_eq!(before[old], after[new_index[old]], "{name}: node {old} keeps its structural key");
+        if nodes.iter().any(|node| node.get("recursion_group").is_some()) {
+            continue;
         }
-        if new_index.iter().enumerate().any(|(old, new)| old != *new) {
-            assert_ne!(reversed, package, "{name}: the reorder is a structurally unequal package");
+        assert_eq!(read_package_semantics(&package, &catalog), Ok(()), "{name} as published");
+        let count = nodes.len();
+        let keys = structural(&json!(nodes), &nodes);
+        let mut sorted: Vec<usize> = (0..count).collect();
+        sorted.sort_by(|left, right| node_id_order(&keys[*left]["node_id"], &keys[*right]["node_id"]));
+        let reversed: Vec<usize> = (0..count).rev().collect();
+        for (label, order) in [("reversed", reversed), ("sorted", sorted)] {
+            let (candidate, new_index) = reordered(&package, &order);
+            let candidate_nodes = candidate["semantic_graph"]["nodes"].as_array().unwrap();
+            assert_eq!(node_index_refusal(&candidate), None, "{name} {label}: the index checks admit it");
+            assert_eq!(read_package_semantics(&candidate, &catalog), Ok(()), "{name} {label}: the full reader admits it");
+            if label == "reversed" {
+                forward += own_path_edges(candidate_nodes)
+                    .iter()
+                    .enumerate()
+                    .flat_map(|(holder, targets)| targets.iter().map(move |(_, target)| (holder, *target)))
+                    .filter(|(holder, target)| target > holder)
+                    .count();
+            }
+            let mut interner = KeyInterner::default();
+            let before = interner.graph_keys(&nodes);
+            let after = interner.graph_keys(candidate_nodes);
+            for old in 0..count {
+                assert_eq!(before[old], after[new_index[old]], "{name} {label}: node {old} keeps its structural key");
+            }
+            if order.iter().enumerate().any(|(new, old)| new != *old) {
+                assert_ne!(candidate, package, "{name} {label}: the reorder is a structurally unequal package");
+            }
+            read += 1;
         }
     }
+    assert!(read >= 2, "the reader ran on reordered packages");
     assert!(forward > 0, "some reversed index segment names a later node");
 }

@@ -162,7 +162,16 @@ order; object maps retain their string keys.
 admitted, trimmed assertion-block transcript; decoded values are not stored
 beside it. An input assignment is keyed by parameter node id, never by
 position: `{"parameter": NODE_ID, "value": VALUE}`. `NODE_ID` is a node id
-`{package, path, ordinal}` (FR-322). `VALUE` uses the structural `WitnessValue` tagged union
+`{package, path, ordinal}` (FR-322). Every node id of a corpus document (a
+replay `parameter` key, an `occurrence_key` or `obligation_identity`
+`node_id`, a `DomainKey` node, a `reference`'s `universe` and `type`) has the
+checked-package `NodeId` shape: the corpus schema's `$defs.NodeId` is
+`urn:quire:checked-package:v2#/$defs/NodeId`, so a path segment is a string or
+an index segment `{"node": i}` and never a nested node id. A corpus document
+holds no semantic graph, so each index segment of a corpus node id resolves
+against the `semantic_graph.nodes` of the checked package its `package` member
+names, the package the vector compiles or replays, exactly as that package
+writes the id (FR-322 "Operand index segments"). `VALUE` uses the structural `WitnessValue` tagged union
 below because replay assignments may contain complete-V1 values beyond the
 corpus call `InputValue` forms. No other replay-source arm is admitted by
 this adapter.
